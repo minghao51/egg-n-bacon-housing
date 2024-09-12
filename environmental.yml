@@ -1,0 +1,14 @@
+name: demo1
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - ipykernel # required for jupyter notebook in VS Code
+  - pandas
+  - numpy
+  - seaborn
+  - scikit-learn
+  - python-dotenv
+#   - pip  # if you need more packages installed from pip 
+#   - pip:
+#     - foo
