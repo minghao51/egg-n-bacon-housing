@@ -1,6 +1,7 @@
 {
-	"name": "poetry3-poetry-pyenv",
+	"name": "minimamba-pyhton-pyenv",
 	"build": {
+		"context":"..",
 		"dockerfile": "Dockerfile"
 	},
 
@@ -17,7 +18,7 @@
 	"customizations": {
         "vscode": {
 			"settings": {
-				"python.defaultInterpreterPath": "/opt/conda/envs/demo1"
+				"python.defaultInterpreterPath": "/opt/conda/envs/demo"
 			},
             "extensions":[
 				"ms-python.python",
@@ -29,7 +30,7 @@
 				"njpwerner.autodocstring"
 			]
             }
-		},
+		}
 		// "features": {
 		// 	"ghcr.io/mamba-org/devcontainer-features/micromamba:1": {}
 		// }
