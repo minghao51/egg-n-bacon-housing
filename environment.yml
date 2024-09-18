@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: demo
 channels:
   - conda-forge
@@ -18,3 +19,24 @@ dependencies:
   - pip:
     - h3
     - boto3
+=======
+name: demo
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - ipykernel # required for jupyter notebook in VS Code
+  - pandas
+  - numpy
+  - seaborn
+  - scikit-learn
+  - python-dotenv
+  - geopandas
+  - requests
+  - ipywidgets
+  - langchain=0.3.0
+  - langchain-google-genai=2.0.0
+#   - pip  # if you need more packages installed from pip 
+  # - pip:
+  #   - 
+>>>>>>> 034b9bd90693e51692f6bb1db6b28b5bb52b4aa0
