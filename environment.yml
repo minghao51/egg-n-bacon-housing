@@ -13,4 +13,5 @@ dependencies:
   - requests
 #   - pip  # if you need more packages installed from pip 
   - pip:
-    - 
+    - h3
+    - boto3
