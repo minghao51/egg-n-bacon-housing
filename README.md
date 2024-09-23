@@ -15,7 +15,13 @@
     - will need to add aws users setup.
 
 ## Secret/API Keys
+API key name
 - [onemap](https://www.onemap.gov.sg/apidocs/register)
+    - ONEMAP_EMAIL
+    - ONEMAP_EMAIL_PASSWORD
+- gcp gemini access key
+    - GEMINI_API
+
 
 
 ## References

@@ -1,0 +1,7 @@
+[core]
+    remote = myremote
+['remote "storage"']
+    url = s3://public-git-data/egg-n-bacon-housing/dvcstore
+['remote "myremote"']
+    url = s3://public-git-data/egg-n-bacon-housing/dvcstore
+    profile = sandbox
