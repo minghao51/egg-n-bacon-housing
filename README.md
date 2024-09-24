@@ -20,7 +20,7 @@ API key name
     - ONEMAP_EMAIL
     - ONEMAP_EMAIL_PASSWORD
 - gcp gemini access key
-    - GEMINI_API
+    - GOOGLE_API_KEY
 
 
 
