@@ -15,7 +15,11 @@ dependencies:
   - langchain=0.3.0
   - langchain-google-genai=2.0.0
   - langchain-experimental=0.3.0
+  - dvc
 #   - pip  # if you need more packages installed from pip 
   - pip:
     - h3
     - boto3
+    - awscli
+    - streamlit
+    - pygwalker
