@@ -20,10 +20,10 @@ dashboard = st.Page(
 )
 bugs = st.Page("apps/google_api.py", title="Bug reports", icon=":material/bug_report:")
 bugs2 = st.Page("apps/google_api2.py", title="Bug reports", icon=":material/bug_report:")
+bugs3 = st.Page("apps/google_api3.py", title="GEMINI CHAT UI", icon=":material/bug_report:")
 alerts = st.Page(
     "apps/spiral3.py", title="System alerts", icon=":material/notification_important:"
 )
-
 # search = st.Page("tools/spiral.py", title="Search", icon=":material/search:")
 # history = st.Page("tools/spiral2.py", title="History", icon=":material/history:")
 
@@ -31,7 +31,7 @@ alerts = st.Page(
 pg = st.navigation(
     {
         # "Account": [logout_page],
-        "Reports": [dashboard, bugs, bugs2, alerts],
+        "Reports": [dashboard, bugs, bugs2, bugs3, alerts],
         # "Tools": [search, history],
     }
 )
