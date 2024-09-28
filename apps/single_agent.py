@@ -23,9 +23,9 @@ llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-flash-latest", api_key=st.session_state['GOOGLE_API_KEY'])
 
 system_prompt = 'You are a virtual real estate agent.'
-memory = MemorySaver() #TODO: memory not working. Possible due to streamlit re-run the entire script when an action on the page is triggered. https://python.langchain.com/docs/integrations/memory/streamlit_chat_message_history/
-config = {"configurable": {"thread_id": "abc123"}}
-agent_executor = create_react_agent(llm, tools=[], state_modifier=system_prompt, checkpointer = memory)
+# memory = MemorySaver() #TODO: memory not working. Possible due to streamlit re-run the entire script when an action on the page is triggered. https://python.langchain.com/docs/integrations/memory/streamlit_chat_message_history/
+# config = {"configurable": {"thread_id": "abc123"}}
+agent_executor = create_react_agent(llm, tools=[], state_modifier=system_prompt)
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [ChatMessage(
@@ -39,9 +39,9 @@ if prompt := st.chat_input():
     st.chat_message("user").write(prompt)
 
     with st.chat_message("assistant"):
-        stream_handler = StreamHandler(st.empty())
+        # stream_handler = StreamHandler(st.empty())
 
-        response = agent_executor.invoke(input = {"messages": [HumanMessage(content=prompt)]}, config = config)
+        response = agent_executor.invoke(input = {"messages": [HumanMessage(content=prompt)]})
         st.write(response['messages'][1].content)
         st.session_state.messages.append(ChatMessage(role="assistant", content=response['messages'][1].content))
         
