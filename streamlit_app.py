@@ -20,7 +20,7 @@ dashboard = st.Page(
 bugs = st.Page("apps/google_api.py", title="Bug reports", icon=":material/bug_report:")
 bugs2 = st.Page("apps/google_api2.py", title="Bug reports", icon=":material/bug_report:")
 bugs3 = st.Page("apps/single_agent.py", title="Single Agent - No Memory", icon=":material/bug_report:")
-bugs4 = st.Page("apps/single_agent2.py", title="Single Agent - Memory (WIP)", icon=":material/bug_report:")
+bugs4 = st.Page("apps/single_agent2.py", title="Single Agent - Memory", icon=":material/bug_report:")
 alerts = st.Page(
     "apps/spiral3.py", title="System alerts", icon=":material/notification_important:"
 )
