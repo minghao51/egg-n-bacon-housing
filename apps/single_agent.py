@@ -25,5 +25,5 @@ if prompt := st.chat_input():
     with st.chat_message("assistant"):
 
         response = agent_executor.invoke(input = {"messages": [HumanMessage(content=prompt)]})
-        st.write(response['messages'][1].content)
-        st.session_state.messages.append(ChatMessage(role="assistant", content=response['messages'][1].content))
+        st.write(response['messages'][-1].content)
+        st.session_state.messages.append(ChatMessage(role="assistant", content=response['messages'][-1].content))
