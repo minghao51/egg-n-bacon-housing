@@ -21,8 +21,9 @@ API key name
     - ONEMAP_EMAIL_PASSWORD
 - gcp gemini access key
     - GOOGLE_API_KEY
-
-
+- supabase
+    - SUPABASE_URL
+    - SUPABASE_KEY
 
 ## References
 
