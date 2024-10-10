@@ -14,7 +14,15 @@
     - check .dvc config
     - will need to add aws users setup.
 
+
+## DVC S3 loging
+- To setup aws credentials:
+    - login to aws console[https://d-9067d20287.awsapps.com/start/#]
+    - copy and set the access key id and secret access key
+
 ## Secret/API Keys
+use .env.example as template to create .env.
+
 API key name
 - [onemap](https://www.onemap.gov.sg/apidocs/register)
     - ONEMAP_EMAIL
