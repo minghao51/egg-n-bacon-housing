@@ -23,7 +23,6 @@
 ## Secret/API Keys
 use .env.example as template to create .env.
 
-API key name
 - [onemap](https://www.onemap.gov.sg/apidocs/register)
     - ONEMAP_EMAIL
     - ONEMAP_EMAIL_PASSWORD
