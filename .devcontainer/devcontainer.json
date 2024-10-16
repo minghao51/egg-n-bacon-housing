@@ -12,7 +12,7 @@
 	// "forwardPorts": [],
 
 	// 👇 Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "conda init",
+	// "postCreateCommand": "conda init",
 	// "mounts": [
 	// 	"source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached"
 	// ],
@@ -20,7 +20,7 @@
 	"customizations": {
         "vscode": {
 			"settings": {
-				"python.defaultInterpreterPath": "/opt/conda/envs/demo"
+				"python.defaultInterpreterPath": "/opt/conda/bin/python"
 			},
             "extensions":[
 				"ms-python.python",
