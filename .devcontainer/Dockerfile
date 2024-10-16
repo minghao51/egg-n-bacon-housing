@@ -8,6 +8,7 @@ RUN micromamba install -y -n base -f /tmp/env.yaml && \
 
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssh-client \
     git \
     && rm -rf /var/lib/apt/lists/*
 
