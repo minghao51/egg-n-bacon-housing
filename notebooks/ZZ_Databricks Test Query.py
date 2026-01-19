@@ -34,8 +34,8 @@
 
 # COMMAND ----------
 
+
 from openai import OpenAI
-import os
 
 # How to get your Databricks token: https://docs.databricks.com/en/dev-tools/auth/pat.html
 # DATABRICKS_TOKEN = os.environ.get('DATABRICKS_TOKEN')

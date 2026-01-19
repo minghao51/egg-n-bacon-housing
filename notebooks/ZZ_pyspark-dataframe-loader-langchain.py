@@ -25,7 +25,7 @@
 
 # MAGIC %pip install --upgrade langchain faiss-cpu mlflow
 # MAGIC %pip install langchain-community
-# MAGIC # For GPU clusters use the following 
+# MAGIC # For GPU clusters use the following
 # MAGIC # %pip install --upgrade langchain faiss-gpu mlflow
 
 # COMMAND ----------
@@ -42,7 +42,6 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
-import os
 
 # os.environ["OPENAI_API_KEY"] = ""
 
@@ -55,7 +54,7 @@ display(wikipedia_dataframe)
 
 # COMMAND ----------
 
-# MAGIC %md The following lines are all that is needed for loading data from a PySpark Dataframe into Langchain 
+# MAGIC %md The following lines are all that is needed for loading data from a PySpark Dataframe into Langchain
 
 # COMMAND ----------
 
@@ -89,8 +88,8 @@ db = FAISS.from_documents(texts, embeddings)
 
 # COMMAND ----------
 
-from langchain.chains import RetrievalQA
 from langchain import OpenAI
+from langchain.chains import RetrievalQA
 
 retrieval_qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=db.as_retriever())
 

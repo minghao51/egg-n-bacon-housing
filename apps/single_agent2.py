@@ -1,9 +1,10 @@
-from langchain.schema import ChatMessage
-from langchain_google_genai import ChatGoogleGenerativeAI
+
 import streamlit as st
+from langchain.schema import ChatMessage
 from langchain_core.messages import HumanMessage
-import os
+
 from src.agent import general_agent
+
 # from langgraph.prebuilt import create_react_agent
 # from langgraph.checkpoint.memory import MemorySaver
 
@@ -26,12 +27,12 @@ if prompt := st.chat_input():
         # Append the user's message to session state and display it
         config = {"configurable": {"thread_id": "abc123"}} # TODO: remove hardcode
         response = agent_executor.invoke(input = {"messages": [HumanMessage(content=prompt)]}, config = config)
-        
+
         # Extract and display the assistant's response, also append it to session state
         assistant_response = response['messages'][-1].content
         st.write(response['messages'][-1].content)
         st.session_state.messages.append(ChatMessage(role="assistant", content=assistant_response))
-        
+
 # Add a refresh button to reset the conversation
 if st.button("Refresh Thread"):
     st.session_state.clear()

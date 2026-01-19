@@ -1,0 +1,4 @@
+# Jupytext Configuration
+# Pair Jupyter notebooks (.ipynb) with Python scripts (.py)
+formats = "ipynb,py:percent"
+

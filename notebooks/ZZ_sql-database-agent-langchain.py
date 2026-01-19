@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %md # Use Langchain to interact with a SQL database 
+# MAGIC %md # Use Langchain to interact with a SQL database
 # MAGIC
 # MAGIC The following code showcases an example of the Databricks SQL Agent. With the Databricks SQL agent any Databricks users can interact with a specified schema in Databrick Unity Catalog and generate insights on their data.
 # MAGIC
@@ -55,7 +55,6 @@ from langchain.agents import create_sql_agent
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.sql_database import SQLDatabase
 from langchain_community.llms import Databricks
-from langchain import OpenAI
 
 db = SQLDatabase.from_databricks(catalog="samples", schema="nyctaxi")
 

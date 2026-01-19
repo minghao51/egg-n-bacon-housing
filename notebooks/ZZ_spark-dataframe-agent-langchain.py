@@ -40,7 +40,6 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
-from langchain.llms import OpenAI
 # from langchain.agents import create_spark_dataframe_agent
 from langchain_experimental.agents import create_spark_dataframe_agent
 

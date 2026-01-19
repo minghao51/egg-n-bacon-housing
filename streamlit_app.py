@@ -1,9 +1,8 @@
-import altair as alt
-import numpy as np
-import pandas as pd
+import os
+
 import streamlit as st
 from dotenv import load_dotenv
-import os
+
 load_dotenv()
 st.session_state['GOOGLE_API_KEY'] = os.environ["GOOGLE_API_KEY"]
 """
@@ -13,7 +12,7 @@ st.session_state['GOOGLE_API_KEY'] = os.environ["GOOGLE_API_KEY"]
 
 if 'GOOGLE_API_KEY' not in st.session_state:
     GOOGLE_API_KEY = st.sidebar.text_input("GOOGLE_API_KEY", type="password")
-    
+
 dashboard = st.Page(
     "apps/spiral.py", title="Dashboard", icon=":material/dashboard:", default=True
 )

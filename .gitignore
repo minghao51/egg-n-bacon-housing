@@ -2,3 +2,10 @@
 .env
 *.pyc
 __pycache__
+
+# Parquet data files (local storage)
+/data/parquets/
+/data/*.parquet
+
+# Keep metadata.json for version tracking
+!data/metadata.json.DS_Store

@@ -2,8 +2,6 @@
 # Placeholder
 """
 
-from pygwalker.api.streamlit import StreamlitRenderer
-import pandas as pd
 import streamlit as st
 
 # # Adjust the width of the Streamlit page

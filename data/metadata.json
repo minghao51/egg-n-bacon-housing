@@ -1,0 +1,23 @@
+{
+  "datasets": {
+    "test_dataset": {
+      "path": "test_dataset.parquet",
+      "version": "2026-01-20",
+      "rows": 3,
+      "created": "2026-01-20T01:00:07.106501",
+      "source": "test",
+      "checksum": "7e91655d",
+      "mode": "overwrite"
+    },
+    "test_metadata": {
+      "path": "test_metadata.parquet",
+      "version": "2026-01-20",
+      "rows": 2,
+      "created": "2026-01-20T01:00:10.280209",
+      "source": "unit test",
+      "checksum": "cf251fe0",
+      "mode": "overwrite"
+    }
+  },
+  "last_updated": "2026-01-20T01:00:10.280221"
+}
