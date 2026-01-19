@@ -17,7 +17,43 @@
       "source": "unit test",
       "checksum": "cf251fe0",
       "mode": "overwrite"
+    },
+    "pipeline_test": {
+      "path": "pipeline_test.parquet",
+      "version": "2026-01-20",
+      "rows": 3,
+      "created": "2026-01-20T01:08:44.732726",
+      "source": "pipeline test",
+      "checksum": "51f903ad",
+      "mode": "overwrite"
+    },
+    "demo_raw_properties": {
+      "path": "demo_raw_properties.parquet",
+      "version": "2026-01-20",
+      "rows": 5,
+      "created": "2026-01-20T01:09:35.041107",
+      "source": "mock_data.gov.sg",
+      "checksum": "561011d0",
+      "mode": "overwrite"
+    },
+    "demo_L1_processed_properties": {
+      "path": "demo_L1/processed_properties.parquet",
+      "version": "2026-01-20",
+      "rows": 5,
+      "created": "2026-01-20T01:09:35.043753",
+      "source": "demo_raw_properties",
+      "checksum": "95a82c46",
+      "mode": "overwrite"
+    },
+    "demo_L2_features": {
+      "path": "demo_L2/features.parquet",
+      "version": "2026-01-20",
+      "rows": 5,
+      "created": "2026-01-20T01:09:35.046374",
+      "source": "demo_L1_processed_properties",
+      "checksum": "c0c3ea8b",
+      "mode": "overwrite"
     }
   },
-  "last_updated": "2026-01-20T01:00:10.280221"
+  "last_updated": "2026-01-20T01:09:35.046375"
 }
