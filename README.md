@@ -1,72 +1,289 @@
-# Housing Agent Assist App
+# Egg-n-Bacon-Housing 🏠🥓✨
 
-- [Notion Page (invite only)](https://www.notion.so/Housing-Agents-App-0c4bdd40940542b2bcd366207428e517?pvs=4)
+A Singapore housing data pipeline and ML analysis platform with AI-powered agent assistance.
 
-## Dev setup
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![uv](https://img.shields.io/badge/uv-0.1.0+-brightgreen.svg)](https://github.com/astral-sh/uv)
 
-- VSC
-    - with remote development package with WSL and docker desktop
-    ![alt text](image.png)
-- codespace
-- dvc
-    - to use with data setup
-    - check .dvc config
-    - will need to add aws users setup.
+## 🚀 Quick Start
 
-## DVC S3 loging
-- To setup aws credentials:
-    - login to aws console[https://d-9067d20287.awsapps.com/start/#]
-    - copy and set the access key id and secret access key
+```bash
+# Install uv (one-time)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-## Secret/API Keys
-use .env.example as template to create .env.
+# Clone and setup
+git clone <repo-url>
+cd egg-n-bacon-housing
+uv sync
 
-- [onemap](https://www.onemap.gov.sg/apidocs/register)
-    - ONEMAP_EMAIL
-    - ONEMAP_EMAIL_PASSWORD
-- gcp gemini access key
-    - GOOGLE_API_KEY
-- supabase
-    - SUPABASE_URL
-    - SUPABASE_KEY
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys
 
-## Dagster Pipeline
+# Run tests
+uv run pytest
 
-The project now includes a Dagster pipeline for data processing and model training. To run the pipeline:
+# Start Jupyter
+uv run jupyter notebook
+```
 
-1. Install Dagster and other required dependencies:
+## 📋 Overview
+
+Egg-n-Bacon-Housing collects, processes, and analyzes Singapore housing data from multiple government APIs. It provides:
+
+- **Data Pipeline**: Automated ETL from data.gov.sg, OneMap, and other sources
+- **Feature Engineering**: Rich features for ML models and analysis
+- **AI Agents**: LangChain-powered agents for querying housing data
+- **Interactive Apps**: Streamlit dashboards for data exploration
+
+## 🏗️ Architecture
+
+```
+L0: Data Collection (External APIs)
+    ↓
+L1: Data Processing (Cleaning, Standardization)
+    ↓
+L2: Feature Engineering (Distance, Aggregation)
+    ↓
+L3: Export (S3, Supabase, Apps)
+```
+
+**Key Technologies**:
+- **Package Manager**: uv (10-100x faster than conda/pip)
+- **Data Storage**: Local parquet files with metadata tracking
+- **Notebooks**: Jupyter + Jupytext (paired .py files for version control)
+- **Testing**: pytest + ruff
+- **Configuration**: Centralized in `src/config.py`
+- **ML/AI**: LangChain + LangGraph + Google Gemini
+
+## 📚 Documentation
+
+- **[Architecture Documentation](docs/20250120-architecture.md)** - System architecture and design
+- **[Data Pipeline Documentation](docs/20250120-data-pipeline.md)** - Pipeline details and data flow
+- **[Development Workflow](CLAUDE.md)** - Development principles and guidelines
+- **[Migration Summary](docs/20250120-migration-summary.md)** - DVC → Parquet migration guide
+
+## 🔧 Setup
+
+### Prerequisites
+
+- Python 3.11+
+- uv package manager
+- API keys (see below)
+
+### Installation
+
+1. **Install uv** (one-time):
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
-   pip install dagster dagster-pandas scikit-learn joblib dagit
+
+2. **Install dependencies**:
+   ```bash
+   uv sync
    ```
 
-2. Run the Dagster pipeline using one of the following methods:
-
-   a. Run directly:
-   ```
-   python pipeline/housing_agent_pipeline.py
-   ```
-
-   b. Use Dagster webserver (recommended):
-   ```
-   dagster dev -f pipeline/housing_agent_pipeline.py
+3. **Configure environment**:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your API keys
    ```
 
-   This will start the Dagster webserver. Open your browser and navigate to `http://localhost:3000` to access the Dagit UI.
+### API Keys Required
 
-3. In the Dagit UI:
-   - Go to the "Assets" tab to see all available assets.
-   - Click on "Materialize all" to run the entire pipeline and materialize all assets.
-   - Alternatively, you can materialize individual assets by clicking on them and selecting "Materialize".
+Create a `.env` file in the project root:
 
-The pipeline includes the following steps:
-- Load and preprocess data
-- Split data into training and test sets
-- Scale features
-- Train a Random Forest model
-- Evaluate the model
+```bash
+# OneMap API (free registration required)
+ONEMAP_EMAIL=your_email@example.com
+ONEMAP_EMAIL_PASSWORD=your_password
 
-You can monitor the pipeline execution, view logs, and check asset lineage in the Dagit UI.
+# Google AI (for LangChain agents)
+GOOGLE_API_KEY=your_google_api_key
 
-## References
+# Supabase (optional, for database export)
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_key
 
-- https://github.com/crazy4pi314/conda-devcontainer-demo/tree/main
+# Jina AI (optional, for web scraping)
+JINA_AI=your_jina_ai_key
+```
+
+**Register for APIs**:
+- [OneMap API](https://www.onemap.gov.sg/apidocs/register) - Free
+- [Google AI Studio](https://makersuite.google.com/app/apikey) - Free tier available
+- [Supabase](https://supabase.com/) - Free tier available
+
+## 🎯 Usage
+
+### Running the Pipeline
+
+Run notebooks in order:
+
+```bash
+# L0: Data Collection
+uv run jupyter notebook notebooks/L0_datagovsg.ipynb
+uv run jupyter notebook notebooks/L0_onemap.ipynb
+uv run jupyter notebook notebooks/L0_wiki.ipynb
+
+# L1: Data Processing
+uv run jupyter notebook notebooks/L1_ura_transactions_processing.ipynb
+uv run jupyter notebook notebooks/L1_utilities_processing.ipynb
+
+# L2: Feature Engineering
+uv run jupyter notebook notebooks/L2_sales_facilities.ipynb
+
+# L3: Export (optional)
+uv run jupyter notebook notebooks/L3_upload_s3.ipynb
+```
+
+### Using Jupytext (Recommended)
+
+All notebooks are paired with `.py` files for better version control:
+
+```bash
+# Edit the .py file in VS Code
+code notebooks/L0_datagovsg.py
+
+# Run the .py file
+uv run python notebooks/L0_datagovsg.py
+
+# Sync back to .ipynb (automatic, or manual)
+cd notebooks
+uv run jupytext --sync L0_datagovsg.ipynb
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+uv run pytest
+
+# Run with verbose output
+uv run pytest -v
+
+# Run specific test
+uv run pytest tests/test_data_helpers.py
+```
+
+### Running Apps
+
+```bash
+# Streamlit apps
+uv run streamlit run apps/single_agent.py
+uv run streamlit run apps/spiral.py
+```
+
+### Code Quality
+
+```bash
+# Check linting
+uv run ruff check .
+
+# Auto-fix issues
+uv run ruff check --fix .
+```
+
+## 📁 Project Structure
+
+```
+egg-n-bacon-housing/
+├── data/               # Data directory
+│   ├── parquets/      # All parquet files (gitignored)
+│   └── metadata.json  # Dataset registry (git-tracked)
+├── notebooks/         # Jupyter notebooks (paired with .py)
+├── src/              # Source code
+│   ├── config.py     # Centralized configuration
+│   ├── data_helpers.py # Parquet management
+│   ├── agent/        # LangChain agents
+│   └── pipeline/     # Extracted pipeline logic
+├── apps/             # Streamlit applications
+├── tests/            # Test suite
+└── docs/             # Documentation
+```
+
+## 🎓 Learning Resources
+
+### For New Developers
+
+1. **Start here**: Read [CLAUDE.md](CLAUDE.md) for development principles
+2. **Understand architecture**: Read [docs/20250120-architecture.md](docs/20250120-architecture.md)
+3. **Learn the pipeline**: Read [docs/20250120-data-pipeline.md](docs/20250120-data-pipeline.md)
+4. **Check progress**: See [docs/progress/20250120-dvc-to-parquet-migration-progress.md](docs/progress/20250120-dvc-to-parquet-migration-progress.md)
+
+### Key Concepts
+
+**Data Management**:
+- Uses local parquet files (not DVC/S3) for faster access
+- Metadata tracked in `data/metadata.json`
+- Load/save via `src/data_helpers.py`
+
+**Configuration**:
+- All settings in `src/config.py`
+- Environment variables in `.env`
+- Validation prevents errors
+
+**Testing**:
+- 7 tests passing (pytest)
+- Linting configured (ruff)
+- Run `uv run pytest` to verify
+
+## 🚧 Recent Changes
+
+### v0.2.0 (2025-01-20) - Major Update
+
+**Migration Complete**:
+- ✅ Removed DVC, migrated to local parquet
+- ✅ Migrated to uv (from conda)
+- ✅ Setup Jupytext for all notebooks
+- ✅ Created centralized config
+- ✅ Added basic tests (7 passing)
+- ✅ Configured ruff linting
+- ✅ Added comprehensive documentation
+
+**Benefits**:
+- 10-100x faster data access
+- Simpler workflow (uv run)
+- Better version control (Jupytext)
+- Comprehensive testing
+
+See [docs/20250120-parquet-migration-design.md](docs/20250120-parquet-migration-design.md) for details.
+
+## 🤝 Contributing
+
+See [CLAUDE.md](CLAUDE.md) for development principles.
+
+**Quick Start**:
+1. Read `CLAUDE.md`
+2. Run `uv sync`
+3. Run `uv run pytest`
+4. Check `docs/` for details
+
+## 🔮 Future Improvements
+
+- [ ] Extract notebook logic to `src/pipeline/*.py` scripts
+- [ ] Consolidate Streamlit apps into multi-page app
+- [ ] Add integration tests
+- [ ] Setup CI/CD pipeline
+- [ ] Add more agent tools
+
+## 📞 Support
+
+- **Issues**: Create a GitHub issue
+- **Questions**: Check [docs/](docs/) first
+- **Notion**: [Internal documentation (invite only)](https://www.notion.so/Housing-Agents-App-0c4bdd40940542b2bcd366207428e517?pvs=4)
+
+## 📄 License
+
+[Add your license here]
+
+## 🙏 Acknowledgments
+
+- data.gov.sg for open housing data
+- OneMap for excellent geospatial APIs
+- LangChain team for the framework
+- Supabase for the generous free tier
+
+---
+
+**Made with ❤️ and 🥓 for Singapore housing agents**
