@@ -10,17 +10,19 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+from src.config import Config
+
+# Get logger (don't call basicConfig - let the main script configure logging)
 logger = logging.getLogger(__name__)
 
 # Path configuration
-DATA_DIR = Path(__file__).parent.parent / "data"
-PARQUETS_DIR = DATA_DIR / "parquets"
-METADATA_FILE = DATA_DIR / "metadata.json"
+DATA_DIR = Config.DATA_DIR
+PARQUETS_DIR = Config.PARQUETS_DIR
+METADATA_FILE = Config.METADATA_FILE
 
 
 def load_parquet(dataset_name: str, version: str | None = None) -> pd.DataFrame:
@@ -80,7 +82,9 @@ def save_parquet(
     dataset_name: str,
     source: str | None = None,
     version: str | None = None,
-    mode: str = "overwrite"
+    mode: str = "overwrite",
+    partition_cols: Optional[list[str]] = None,
+    compression: Optional[str] = None
 ) -> None:
     """
     Save DataFrame to parquet with validation and error handling.
@@ -91,6 +95,8 @@ def save_parquet(
         source: Source dataset or description (for lineage tracking)
         version: Version string (defaults to current date)
         mode: 'overwrite' to replace existing data, 'append' to add to it
+        partition_cols: Columns to partition by (e.g., ['year', 'month'])
+        compression: Compression codec (defaults to Config.PARQUET_COMPRESSION)
 
     Raises:
         ValueError: If df is empty or invalid mode
@@ -107,17 +113,33 @@ def save_parquet(
     if version is None:
         version = datetime.now().strftime("%Y-%m-%d")
 
+    # Use config compression if not specified
+    if compression is None:
+        compression = Config.PARQUET_COMPRESSION
+
     # Determine path from dataset name
     path_parts = dataset_name.replace("L1_", "L1/").replace("L2_", "L2/").replace("L3_", "L3/").replace("raw_data", "raw_data")
-    parquet_path = PARQUETS_DIR / f"{path_parts}.parquet"
+
+    # If partitioning, save to directory instead of file
+    if partition_cols:
+        parquet_path = PARQUETS_DIR / path_parts  # Directory
+    else:
+        parquet_path = PARQUETS_DIR / f"{path_parts}.parquet"  # File
 
     # Create parent directories
-    parquet_path.parent.mkdir(parents=True, exist_ok=True)
+    if partition_cols:
+        parquet_path.mkdir(parents=True, exist_ok=True)
+    else:
+        parquet_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Handle append vs overwrite
     if mode == "append" and parquet_path.exists():
         try:
-            existing_df = pd.read_parquet(parquet_path)
+            if partition_cols:
+                # For partitioned data, read and concat
+                existing_df = pd.read_parquet(parquet_path)
+            else:
+                existing_df = pd.read_parquet(parquet_path)
             original_rows = len(existing_df)
             df = pd.concat([existing_df, df], ignore_index=True)
             logger.info(f"Appended {len(df) - original_rows} rows to {dataset_name}")
@@ -126,13 +148,28 @@ def save_parquet(
 
     # Save parquet
     try:
-        df.to_parquet(parquet_path, index=False, compression="snappy")
-        logger.info(f"Saved {len(df)} rows to {parquet_path}")
+        save_kwargs = {
+            "index": Config.PARQUET_INDEX,
+            "compression": compression,
+            "engine": Config.PARQUET_ENGINE,
+        }
+
+        if partition_cols:
+            # Save as partitioned dataset
+            df.to_parquet(parquet_path, partition_cols=partition_cols, **save_kwargs)
+            logger.info(f"Saved {len(df)} rows to {parquet_path} (partitioned by {partition_cols})")
+        else:
+            # Save as single file
+            df.to_parquet(parquet_path, **save_kwargs)
+            logger.info(f"Saved {len(df)} rows to {parquet_path} (compression: {compression})")
     except Exception as e:
         raise RuntimeError(f"Failed to save parquet {parquet_path}: {e}")
 
-    # Calculate checksum
-    checksum = _calculate_checksum(parquet_path)
+    # Calculate checksum (for single files only, not partitioned datasets)
+    if not partition_cols:
+        checksum = _calculate_checksum(parquet_path)
+    else:
+        checksum = None  # Partitioned datasets don't have single checksum
 
     # Update metadata
     metadata = _load_metadata()
@@ -145,15 +182,26 @@ def save_parquet(
                 f"Overwriting {dataset_name}: version {old_version} -> {version}"
             )
 
-    metadata["datasets"][dataset_name] = {
+    # Prepare metadata entry
+    dataset_metadata = {
         "path": str(parquet_path.relative_to(PARQUETS_DIR)),
         "version": version,
         "rows": len(df),
         "created": datetime.now().isoformat(),
         "source": source or "unknown",
-        "checksum": checksum,
-        "mode": mode
+        "mode": mode,
+        "compression": compression,
     }
+
+    # Add checksum only for non-partitioned datasets
+    if checksum:
+        dataset_metadata["checksum"] = checksum
+
+    # Add partition info if applicable
+    if partition_cols:
+        dataset_metadata["partition_cols"] = partition_cols
+
+    metadata["datasets"][dataset_name] = dataset_metadata
     metadata["last_updated"] = datetime.now().isoformat()
 
     _save_metadata(metadata)

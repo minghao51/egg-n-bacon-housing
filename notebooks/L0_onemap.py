@@ -40,7 +40,8 @@ import requests
 from shapely.geometry import shape
 
 # Add src directory to path for imports
-sys.path.append('../src')
+import pathlib
+sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
 
 from data_helpers import save_parquet
 
@@ -50,16 +51,61 @@ from data_helpers import save_parquet
 
 # %%
 
-url = "https://www.onemap.gov.sg/api/auth/post/getToken"
+# Try to use existing token from .env
+access_token = os.environ.get('ONEMAP_TOKEN')
 
-payload = {
-        "email": os.environ['ONEMAP_EMAIL'],
-        "password": os.environ['ONEMAP_EMAIL_PASSWORD']
-      }
+if access_token:
+    # Decode JWT to check expiration
+    try:
+        import base64
+        import time
+        parts = access_token.split('.')
+        if len(parts) == 3:
+            payload = parts[1]
+            payload += '=' * (4 - len(payload) % 4)
+            decoded = base64.b64decode(payload)
+            token_data = json.loads(decoded)
 
-response = requests.request("POST", url, json=payload)
-access_token = json.loads(response.text)['access_token']
-headers = {"Authorization": f"{access_token}"}
+            current_time = time.time()
+            if token_data.get('exp', 0) > current_time:
+                print(f"✅ Using existing OneMap token from .env")
+                print(f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours")
+                headers = {"Authorization": f"{access_token}"}
+            else:
+                print("⚠️  Token in .env has expired")
+                access_token = None
+        else:
+            print("⚠️  Invalid token format")
+            access_token = None
+    except Exception as e:
+        print(f"⚠️  Error decoding token: {e}")
+        access_token = None
+
+# Fallback: try to get new token (if email/password are configured)
+if not access_token:
+    print("Attempting to get new OneMap token...")
+    url = "https://www.onemap.gov.sg/api/auth/post/getToken"
+
+    payload = {
+        "email": os.environ.get('ONEMAP_EMAIL'),
+        "password": os.environ.get('ONEMAP_EMAIL_PASSWORD')
+    }
+
+    response = requests.request("POST", url, json=payload)
+    print(f"API Response Status: {response.status_code}")
+
+    if response.status_code == 200:
+        response_data = json.loads(response.text)
+        access_token = response_data.get('access_token')
+        if access_token:
+            print("✅ Successfully obtained new OneMap token")
+            headers = {"Authorization": f"{access_token}"}
+        else:
+            print(f"❌ No access_token in response: {response.text}")
+            raise KeyError("access_token not found in API response")
+    else:
+        print(f"❌ Failed to get token: {response.text}")
+        raise Exception(f"Token request failed with status {response.status_code}")
 
 # %% [markdown]
 # # One Map
@@ -68,7 +114,7 @@ headers = {"Authorization": f"{access_token}"}
 # # planning area polygon
 
 # %%
-year = "2024"
+year = "2019"  # API only accepts: 1998, 2008, 2014, 2019
 url = f"https://www.onemap.gov.sg/api/public/popapi/getAllPlanningarea?year={year}"
 response = requests.request("GET", url, headers=headers)
 print(response.text)
@@ -80,8 +126,12 @@ df['geometry'] = df['geojson'].apply(shape)
 df = gpd.GeoDataFrame(df).set_geometry('geometry')
 df = df.drop('geojson', axis=1)
 
-df.to_file('../data/raw_data/onemap_planning_area_polygon.shp')
-df.to_file('../data/raw_data/onemap_planning_area_polygon.geojson', driver='GeoJSON')
+# Save planning area polygon data
+data_base_path = pathlib.Path(__file__).parent.parent / 'data' / 'raw_data'
+data_base_path.mkdir(parents=True, exist_ok=True)
+
+df.to_file(data_base_path / 'onemap_planning_area_polygon.shp')
+df.to_file(data_base_path / 'onemap_planning_area_polygon.geojson', driver='GeoJSON')
 
 # %%
 df = df.drop('geojson', axis=1)
@@ -92,7 +142,7 @@ df = df.drop('geojson', axis=1)
 # %%
 import requests
 
-url = "https://www.onemap.gov.sg/api/public/popapi/getPlanningareaNames?year=2023"
+url = "https://www.onemap.gov.sg/api/public/popapi/getPlanningareaNames?year=2019"  # API only accepts: 1998, 2008, 2014, 2019
 response = requests.request("GET", url, headers=headers)
 df = pd.DataFrame(json.loads(response.text))
 save_parquet(df, "raw_onemap_planning_area_names", source="onemap API")

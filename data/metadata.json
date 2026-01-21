@@ -53,7 +53,115 @@
       "source": "demo_L1_processed_properties",
       "checksum": "c0c3ea8b",
       "mode": "overwrite"
+    },
+    "raw_datagov_general_sale": {
+      "path": "raw_datagov_general_sale.parquet",
+      "version": "2026-01-21",
+      "rows": 348,
+      "created": "2026-01-21T01:31:00.329183",
+      "source": "data.gov.sg API",
+      "checksum": "f03b5fe3",
+      "mode": "overwrite"
+    },
+    "raw_datagov_rental_index": {
+      "path": "raw_datagov_rental_index.parquet",
+      "version": "2026-01-21",
+      "rows": 505,
+      "created": "2026-01-21T01:31:03.289577",
+      "source": "data.gov.sg API",
+      "checksum": "45bd0c32",
+      "mode": "overwrite"
+    },
+    "raw_datagov_price_index": {
+      "path": "raw_datagov_price_index.parquet",
+      "version": "2026-01-21",
+      "rows": 609,
+      "created": "2026-01-21T01:31:06.259432",
+      "source": "data.gov.sg API",
+      "checksum": "6aa268b2",
+      "mode": "overwrite"
+    },
+    "raw_datagov_median_price_via_property_type": {
+      "path": "raw_datagov_median_price_via_property_type.parquet",
+      "version": "2026-01-21",
+      "rows": 30,
+      "created": "2026-01-21T01:31:06.775995",
+      "source": "data.gov.sg API",
+      "checksum": "b79d0f79",
+      "mode": "overwrite"
+    },
+    "raw_datagov_private_transactions_property_type": {
+      "path": "raw_datagov_private_transactions_property_type.parquet",
+      "version": "2026-01-21",
+      "rows": 416,
+      "created": "2026-01-21T01:31:09.228993",
+      "source": "data.gov.sg API",
+      "checksum": "4a6856c3",
+      "mode": "overwrite"
+    },
+    "L1_housing_ec_transaction": {
+      "path": "L1/housing_ec_transaction.parquet",
+      "version": "2026-01-22",
+      "rows": 17051,
+      "created": "2026-01-22T00:17:03.721820",
+      "source": "URA CSV data",
+      "checksum": "b0f72195",
+      "mode": "overwrite"
+    },
+    "raw_datagov_resale_flat_all": {
+      "path": "raw_datagov_resale_flat_all.parquet",
+      "version": "2026-01-21",
+      "rows": 969748,
+      "created": "2026-01-21T01:31:10.226848",
+      "source": "data.gov.sg CSV (all files)",
+      "checksum": "61fd8386",
+      "mode": "overwrite"
+    },
+    "L1_housing_condo_transaction": {
+      "path": "L1/housing_condo_transaction.parquet",
+      "version": "2026-01-22",
+      "rows": 49052,
+      "created": "2026-01-22T00:17:03.748084",
+      "source": "URA CSV data",
+      "checksum": "1766e3cc",
+      "mode": "overwrite"
+    },
+    "L1_housing_residential_transaction": {
+      "path": "L1/housing_residential_transaction.parquet",
+      "version": "2026-01-22",
+      "rows": 61037,
+      "created": "2026-01-22T00:17:03.778220",
+      "source": "URA CSV data",
+      "checksum": "9061d5c1",
+      "mode": "overwrite"
+    },
+    "L1_housing_hdb_transaction": {
+      "path": "L1/housing_hdb_transaction.parquet",
+      "version": "2026-01-22",
+      "rows": 969748,
+      "created": "2026-01-22T00:17:03.997484",
+      "source": "data.gov.sg CSV data",
+      "checksum": "627b8d8d",
+      "mode": "overwrite"
+    },
+    "raw_datagov_resale_flat_price_2015_2016_api": {
+      "path": "raw_datagov_resale_flat_price_2015_2016_api.parquet",
+      "version": "2026-01-21",
+      "rows": 9200,
+      "created": "2026-01-21T01:31:30.791794",
+      "source": "data.gov.sg API",
+      "checksum": "68bb3291",
+      "mode": "overwrite"
+    },
+    "raw_wiki_shopping_mall": {
+      "path": "raw_wiki_shopping_mall.parquet",
+      "version": "2026-01-21",
+      "rows": 113,
+      "created": "2026-01-21T01:36:13.463328",
+      "source": "wikipedia.org",
+      "checksum": "9b7ab33e",
+      "mode": "overwrite"
     }
   },
-  "last_updated": "2026-01-20T01:09:35.046375"
+  "last_updated": "2026-01-22T00:17:03.997487"
 }

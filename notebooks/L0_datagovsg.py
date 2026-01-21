@@ -25,7 +25,9 @@ import requests
 # Test comment for jupytext sync verification
 
 # Add src directory to path for imports
-sys.path.append('../src')
+import os
+import pathlib
+sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
 
 from data_helpers import save_parquet
 
@@ -79,6 +81,10 @@ def fetch_data(url: str, dataset_id: str) -> pd.DataFrame:
             break
 
     # Concatenate the DataFrames
+    if len(_response_agg) == 0:
+        print(f"Warning: No data fetched for dataset {dataset_id}")
+        return pd.DataFrame()  # Return empty DataFrame
+
     df = pd.concat(_response_agg, ignore_index=True)
 
     return df
@@ -97,7 +103,8 @@ property_transasctions = fetch_data(
     url="https://data.gov.sg/api/action/datastore_search?resource_id=",
     dataset_id="d_5785799d63a9da091f4e0b456291eeb8"
     )
-save_parquet(property_transasctions, "raw_datagov_general_sale", source="data.gov.sg API")
+if not property_transasctions.empty:
+    save_parquet(property_transasctions, "raw_datagov_general_sale", source="data.gov.sg API")
 
 # %% [markdown]
 # ### Private Residential Property Rental Index , (Base Quarter 2009-Q1 = 100), Quarterly
@@ -108,7 +115,8 @@ rental_index = fetch_data(
     url="https://data.gov.sg/api/action/datastore_search?resource_id=",
     dataset_id="d_8e4c50283fb7052a391dfb746a05c853"
     )
-save_parquet(rental_index, "raw_datagov_rental_index", source="data.gov.sg API")
+if not rental_index.empty:
+    save_parquet(rental_index, "raw_datagov_rental_index", source="data.gov.sg API")
 
 # %% [markdown]
 # ### Private Residential Property Price Index (Base Quarter 2009-Q1 = 100), Quarterly
@@ -119,7 +127,8 @@ price_index = fetch_data(
     url="https://data.gov.sg/api/action/datastore_search?resource_id=",
     dataset_id="d_97f8a2e995022d311c6c68cfda6d034c"
     )
-save_parquet(price_index, "raw_datagov_price_index", source="data.gov.sg API")
+if not price_index.empty:
+    save_parquet(price_index, "raw_datagov_price_index", source="data.gov.sg API")
 
 # %% [markdown]
 # ### Median Annual Value and Property Tax By Type of Private Residential Property
@@ -131,7 +140,8 @@ median_val_property_tax = fetch_data(
     url="https://data.gov.sg/api/action/datastore_search?resource_id=",
     dataset_id="d_774a81df45dca33112e59207e6dae1af"
     )
-save_parquet(median_val_property_tax, "raw_datagov_median_price_via_property_type", source="data.gov.sg API")
+if not median_val_property_tax.empty:
+    save_parquet(median_val_property_tax, "raw_datagov_median_price_via_property_type", source="data.gov.sg API")
 
 # %% [markdown]
 # ### Private Residential Property Transactions in the Whole of Singapore, Quarterly
@@ -143,7 +153,8 @@ private_residential_transactions_whole = fetch_data(
     url="https://data.gov.sg/api/action/datastore_search?resource_id=",
     dataset_id="d_7c69c943d5f0d89d6a9a773d2b51f337"
     )
-save_parquet(private_residential_transactions_whole, "raw_datagov_private_transactions_property_type", source="data.gov.sg API")
+if not private_residential_transactions_whole.empty:
+    save_parquet(private_residential_transactions_whole, "raw_datagov_private_transactions_property_type", source="data.gov.sg API")
 
 # %% [markdown]
 # ## Resale Flat Prices
@@ -151,11 +162,52 @@ save_parquet(private_residential_transactions_whole, "raw_datagov_private_transa
 # - download manually, just converting it here
 
 # %%
-resale_flat_2015 = pd.read_csv('../data/raw_data/csv/ResaleFlatPricesBasedonRegistrationDateFromJan2015toDec2016.csv')
-resale_flat_2017 = pd.read_csv('../data/raw_data/csv/ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv')
+csv_base_path = pathlib.Path(__file__).parent.parent / 'data' / 'raw_data' / 'csv'
+resale_prices_path = csv_base_path / 'ResaleFlatPrices'
 
-save_parquet(resale_flat_2015, "raw_datagov_resale_flat_2015_2016", source="data.gov.sg CSV")
-save_parquet(resale_flat_2017, "raw_datagov_resale_flat_2017_onwards", source="data.gov.sg CSV")
+# Load all CSV files from ResaleFlatPrices folder
+resale_files = list(resale_prices_path.glob('*.csv'))
+print(f"Found {len(resale_files)} resale flat price files")
+
+resale_dfs = []
+for file in resale_files:
+    print(f"Loading: {file.name}")
+    df = pd.read_csv(file)
+    resale_dfs.append(df)
+
+# Combine all resale data
+resale_flat_all = pd.concat(resale_dfs, ignore_index=True)
+print(f"Total resale records: {len(resale_flat_all)}")
+
+# Convert remaining_lease from text format (e.g., "61 years 04 months") to numeric months
+def convert_lease_to_months(lease_str):
+    """Convert lease string like '61 years 04 months' to total months"""
+    if pd.isna(lease_str):
+        return None
+
+    if isinstance(lease_str, (int, float)):
+        return int(lease_str)
+
+    # Parse format like "61 years 04 months" or "60 years" or "05 months"
+    import re
+    lease_str = str(lease_str).lower()
+
+    years_match = re.search(r'(\d+)\s*years?', lease_str)
+    months_match = re.search(r'(\d+)\s*months?', lease_str)
+
+    years = int(years_match.group(1)) if years_match else 0
+    months = int(months_match.group(1)) if months_match else 0
+
+    return years * 12 + months
+
+if 'remaining_lease' in resale_flat_all.columns:
+    print("Converting 'remaining_lease' from text to months...")
+    resale_flat_all['remaining_lease_months'] = resale_flat_all['remaining_lease'].apply(convert_lease_to_months)
+    # Keep original column as string for reference, add numeric version
+    resale_flat_all['remaining_lease'] = resale_flat_all['remaining_lease'].astype(str)
+    print(f"Converted {resale_flat_all['remaining_lease_months'].notna().sum()} lease values")
+
+save_parquet(resale_flat_all, "raw_datagov_resale_flat_all", source="data.gov.sg CSV (all files)")
 
 # %%
 # resale_flat_df = fetch_data(
@@ -164,10 +216,12 @@ save_parquet(resale_flat_2017, "raw_datagov_resale_flat_2017_onwards", source="d
 #     )
 
 # %%
-save_parquet(resale_flat_df, "raw_datagov_resale_flat_price_2017onwards", source="data.gov.sg API")
+# Note: resale_flat_df variable not defined - data already saved as resale_flat_all above
+# save_parquet(resale_flat_df, "raw_datagov_resale_flat_price_2017onwards", source="data.gov.sg API")
 
 # %%
-response.json()
+# Note: response variable not defined - commented out
+# response.json()
 
 # %%
 resale_flat_df_jan2015 = fetch_data(
@@ -175,7 +229,8 @@ resale_flat_df_jan2015 = fetch_data(
     dataset_id="d_ea9ed51da2787afaf8e51f827c304208"
     )
 
-save_parquet(resale_flat_df_jan2015, "raw_datagov_resale_flat_price_2015_2016_api", source="data.gov.sg API")
+if not resale_flat_df_jan2015.empty:
+    save_parquet(resale_flat_df_jan2015, "raw_datagov_resale_flat_price_2015_2016_api", source="data.gov.sg API")
 
 # %% [markdown]
 # ## Private Residential Property Transactions in Outside Central Region, Quarterly

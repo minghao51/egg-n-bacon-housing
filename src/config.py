@@ -30,12 +30,21 @@ class Config:
 
     # ============== DATA PIPELINE SETTINGS ==============
     # Parquet settings
-    PARQUET_COMPRESSION = "snappy"  # Options: snappy, gzip, brotli
+    PARQUET_COMPRESSION = "snappy"  # Options: snappy, gzip, brotli, zstd
     PARQUET_INDEX = False  # Whether to include index in parquet files
+    PARQUET_PARTITION_BY_DATE = True  # Partition parquet files by date columns
+    PARQUET_ENGINE = "pyarrow"  # Options: pyarrow, fastparquet
 
     # Feature flags
     USE_CACHING = True
+    CACHE_DIR = DATA_DIR / "cache"
+    CACHE_DURATION_HOURS = 24  # Default cache duration for API calls
     VERBOSE_LOGGING = True
+
+    # Geocoding settings
+    GEOCODING_MAX_WORKERS = 5  # Parallel workers for geocoding (respect API limits)
+    GEOCODING_API_DELAY = 1.0  # Delay between API calls in seconds
+    GEOCODING_TIMEOUT = 30  # Request timeout in seconds
 
     # ============== NOTEBOOK SETTINGS ==============
     # Automatically add src to path in notebooks
@@ -68,6 +77,9 @@ class Config:
 
         if not cls.PARQUETS_DIR.exists():
             cls.PARQUETS_DIR.mkdir(parents=True, exist_ok=True)
+
+        if not cls.CACHE_DIR.exists():
+            cls.CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
     @classmethod
     def print_config(cls) -> None:
