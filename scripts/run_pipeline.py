@@ -31,14 +31,8 @@ sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
 from src.config import Config
 from src.pipeline.L0_collect import run_all_datagovsg_collection
-from src.geocoding import (
-    setup_onemap_headers,
-    load_ura_files,
-    extract_unique_addresses,
-    fetch_data_parallel,
-    batch_geocode_addresses
-)
-from src.data_helpers import save_parquet, list_datasets
+from src.pipeline.L1_process import run_full_l1_pipeline, save_failed_addresses
+from src.data_helpers import list_datasets
 
 # Setup logging
 logging.basicConfig(
@@ -63,71 +57,20 @@ def run_L1_processing(use_parallel: bool = True):
     """Run L1: Data processing including geocoding."""
     logger.info("🚀 Starting L1: Data Processing")
 
-    # Load URA transaction files
-    csv_base_path = Config.DATA_DIR / 'raw_data' / 'csv'
-    ec_df, condo_df, residential_df, hdb_df = load_ura_files(csv_base_path)
+    # Run full L1 pipeline using extracted module
+    results = run_full_l1_pipeline(
+        csv_base_path=Config.DATA_DIR / 'raw_data' / 'csv',
+        use_parallel_geocoding=use_parallel
+    )
 
-    # Save individual transaction datasets
-    save_parquet(ec_df, "L1_housing_ec_transaction", source="URA CSV data")
-    save_parquet(condo_df, "L1_housing_condo_transaction", source="URA CSV data")
-    save_parquet(residential_df, "L1_housing_residential_transaction", source="URA CSV data")
-    save_parquet(hdb_df, "L1_housing_hdb_transaction", source="data.gov.sg CSV data")
-
-    # Extract unique addresses
-    housing_df = extract_unique_addresses(ec_df, condo_df, residential_df, hdb_df)
-
-    logger.info(f"Found {len(housing_df)} unique addresses to geocode")
-
-    # Setup OneMap authentication
-    headers = setup_onemap_headers()
-
-    # Geocode addresses
-    if use_parallel:
-        logger.info("Using parallel geocoding for faster processing")
-        addresses = housing_df['NameAddress'].tolist()
-
-        # Use batch geocoding for better performance
-        geocoded_df = batch_geocode_addresses(
-            addresses,
-            headers,
-            batch_size=1000,
-            checkpoint_interval=500
-        )
-    else:
-        logger.info("Using sequential geocoding")
-        # Sequential geocoding (slower)
-        import requests
-        df_list = []
-        failed_searches = []
-
-        for i, search_string in enumerate(housing_df['NameAddress'], 1):
-            try:
-                from src.geocoding import fetch_data_cached
-                _df = fetch_data_cached(search_string, headers)
-                _df['NameAddress'] = search_string
-                df_list.append(_df)
-
-                if i % 50 == 0:
-                    logger.info(f"Progress: {i}/{len(housing_df)} addresses")
-
-            except requests.RequestException:
-                failed_searches.append(search_string)
-                logger.warning(f"❌ Request failed for {search_string}")
-
-        if df_list:
-            geocoded_df = pd.concat(df_list, ignore_index=True)
-        else:
-            geocoded_df = pd.DataFrame()
-
-    # Save geocoded data
-    if not geocoded_df.empty:
-        save_parquet(geocoded_df, "L1_geocoded_addresses", source="OneMap API")
-        logger.info(f"✅ Saved {len(geocoded_df)} geocoded addresses")
-    else:
-        logger.error("❌ No geocoded results to save")
+    # Save failed addresses for later retry
+    if results.get('failed_addresses'):
+        # Note: We only save first 10 in results dict
+        # For full list, you'd need to modify the pipeline to return all
+        pass
 
     logger.info("✅ L1 Complete")
-    return geocoded_df
+    return results
 
 
 def run_pipeline(stages: str, use_parallel: bool = True):

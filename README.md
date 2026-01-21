@@ -118,6 +118,18 @@ JINA_AI=your_jina_ai_key
 
 ### Running the Pipeline
 
+**Option 1: Run Automated Scripts (Recommended)**
+
+```bash
+# Run complete pipeline with checkpointing and resume capability
+uv run python scripts/run_pipeline.py
+
+# Run geocoding with parallel batched processing (~5x faster)
+uv run python scripts/geocode_addresses_batched.py
+```
+
+**Option 2: Run Notebooks Manually**
+
 Run notebooks in order:
 
 ```bash
@@ -166,6 +178,19 @@ uv run pytest -v
 uv run pytest tests/test_data_helpers.py
 ```
 
+### Monitoring Background Jobs
+
+```bash
+# Check running geocoding processes
+ps aux | grep geocode_addresses_batched | grep -v grep
+
+# View real-time logs
+tail -f data/logs/geocoding_batched_*.log
+
+# Check latest checkpoint
+ls -lh data/checkpoints/L2_housing_unique_searched_checkpoint_*.parquet
+```
+
 ### Running Apps
 
 ```bash
@@ -190,13 +215,21 @@ uv run ruff check --fix .
 egg-n-bacon-housing/
 ├── data/               # Data directory
 │   ├── parquets/      # All parquet files (gitignored)
+│   ├── checkpoints/   # Pipeline checkpoints (gitignored)
+│   ├── logs/          # Pipeline logs (gitignored)
 │   └── metadata.json  # Dataset registry (git-tracked)
 ├── notebooks/         # Jupyter notebooks (paired with .py)
 ├── src/              # Source code
 │   ├── config.py     # Centralized configuration
 │   ├── data_helpers.py # Parquet management
+│   ├── geocoding.py  # OneMap API geocoding utilities
+│   ├── cache.py      # API response caching
 │   ├── agent/        # LangChain agents
 │   └── pipeline/     # Extracted pipeline logic
+├── scripts/          # Automated pipeline scripts
+│   ├── run_pipeline.py           # Complete pipeline runner
+│   ├── geocode_addresses_batched.py # Parallel batched geocoding (recommended)
+│   └── geocode_addresses.py      # Sequential geocoding (legacy)
 ├── apps/             # Streamlit applications
 ├── tests/            # Test suite
 └── docs/             # Documentation
@@ -229,6 +262,22 @@ egg-n-bacon-housing/
 - Run `uv run pytest` to verify
 
 ## 🚧 Recent Changes
+
+### v0.3.0 (2026-01-22) - Batched Geocoding
+
+**Performance Improvements**:
+- ✅ Added parallel batched geocoding script (~5x faster)
+- ✅ 5 parallel workers with checkpointing and resume
+- ✅ Fixed import issues in src/ modules
+- ✅ Comprehensive progress logging and monitoring
+
+**Benefits**:
+- Geocoding time reduced from 4-7 hours to ~48 minutes
+- Better error handling and graceful shutdown
+- Real-time progress monitoring
+- Auto-resume from checkpoints
+
+See [docs/20260122-geocoding-batched-restart.md](docs/20260122-geocoding-batched-restart.md) for details.
 
 ### v0.2.0 (2025-01-20) - Major Update
 

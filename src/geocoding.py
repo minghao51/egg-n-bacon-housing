@@ -22,8 +22,12 @@ import requests
 from tenacity import retry, wait_exponential
 from dotenv import load_dotenv
 
-from src.config import Config
-from src.cache import cached_call
+try:
+    from src.config import Config
+    from src.cache import cached_call
+except ImportError:
+    from config import Config
+    from cache import cached_call
 
 load_dotenv()
 

@@ -1,0 +1,50 @@
+2026-01-21 17:56:40,377 - INFO - ================================================================================
+2026-01-21 17:56:40,377 - INFO - 🧪 GEOCODING CHECKPOINT TEST
+2026-01-21 17:56:40,377 - INFO -    Will process 100 addresses
+2026-01-21 17:56:40,377 - INFO -    Progress log: every 25 addresses
+2026-01-21 17:56:40,378 - INFO -    Checkpoint: every 50 addresses
+2026-01-21 17:56:40,378 - INFO - ================================================================================
+2026-01-21 17:56:40,378 - INFO - 
+2026-01-21 17:56:40,378 - INFO - 📋 Test Plan:
+2026-01-21 17:56:40,378 - INFO -    1. Start processing...
+2026-01-21 17:56:40,378 - INFO -    2. At ~50 addresses, checkpoint will be saved
+2026-01-21 17:56:40,378 - INFO -    3. Press Ctrl+C to test graceful shutdown
+2026-01-21 17:56:40,378 - INFO -    4. Run this script again to test resume
+2026-01-21 17:56:40,378 - INFO -    5. Complete to 100 addresses
+2026-01-21 17:56:40,378 - INFO - 
+2026-01-21 17:56:40,378 - INFO - 🚀 Auto-starting (background mode detected)...
+2026-01-21 17:56:40,378 - INFO - 
+2026-01-21 17:56:40,378 - INFO - ✅ Signal handlers registered
+2026-01-21 17:56:40,378 - INFO - 📂 Loading URA files...
+2026-01-21 17:56:41,216 - INFO - 🔍 Extracting addresses...
+2026-01-21 17:56:41,315 - INFO - 🧪 LIMIT: Processing only 100 addresses
+2026-01-21 17:56:41,315 - INFO - 
+2026-01-21 17:56:41,315 - INFO - 🔑 OneMap authentication...
+2026-01-21 17:56:41,315 - INFO - 
+2026-01-21 17:56:41,316 - INFO - No checkpoint found. Starting fresh...
+2026-01-21 17:56:41,316 - INFO - 
+2026-01-21 17:56:41,316 - INFO - 🧪 TEST: Geocoding 100 addresses...
+2026-01-21 17:56:41,316 - INFO - ⏱️  Estimated time: ~8 minutes
+2026-01-21 17:58:51,837 - INFO - 📊 Test Progress: 25/100 (25.0%)
+2026-01-21 18:01:00,279 - INFO - 📊 Test Progress: 50/100 (50.0%)
+2026-01-21 18:01:00,319 - INFO - 💾 Test checkpoint saved: /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/checkpoints/L2_housing_unique_searched_checkpoint_1.parquet
+2026-01-21 18:01:00,319 - INFO -    Total addresses: 49
+2026-01-21 18:01:00,319 - INFO - 🧪 Test: Checkpoint 1 saved - you can test Ctrl+C resume now
+2026-01-21 18:03:16,193 - INFO - 📊 Test Progress: 75/100 (75.0%)
+2026-01-21 18:05:24,467 - INFO - 📊 Test Progress: 100/100 (100.0%)
+2026-01-21 18:05:24,469 - INFO - 💾 Test checkpoint saved: /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/checkpoints/L2_housing_unique_searched_checkpoint_2.parquet
+2026-01-21 18:05:24,469 - INFO -    Total addresses: 98
+2026-01-21 18:05:24,469 - INFO - 🧪 Test: Checkpoint 2 saved - you can test Ctrl+C resume now
+2026-01-21 18:05:24,469 - INFO - ✅ Test completed: 100/100 successful
+2026-01-21 18:05:24,469 - INFO - 💾 Saving test results...
+2026-01-21 18:05:24,471 - INFO - ✅ Test results saved: /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/parquets/TEST_L2_housing_unique_searched.parquet
+2026-01-21 18:05:24,471 - INFO - 
+2026-01-21 18:05:24,471 - INFO - ================================================================================
+2026-01-21 18:05:24,471 - INFO - ✅ TEST PASSED!
+2026-01-21 18:05:24,471 - INFO -    Total API calls: 100
+2026-01-21 18:05:24,471 - INFO -    Successful results: 98
+2026-01-21 18:05:24,471 - INFO - ================================================================================
+2026-01-21 18:05:24,471 - INFO - 
+2026-01-21 18:05:24,471 - INFO - 🎯 Checkpoint functionality verified!
+2026-01-21 18:05:24,471 - INFO -    Ready to run full pipeline:
+2026-01-21 18:05:24,471 - INFO -    nohup uv run python scripts/geocode_addresses.py > /dev/null 2>&1 &

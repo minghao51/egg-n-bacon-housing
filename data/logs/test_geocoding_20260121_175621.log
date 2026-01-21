@@ -1,0 +1,20 @@
+2026-01-21 17:56:21,343 - INFO - ================================================================================
+2026-01-21 17:56:21,343 - INFO - 🧪 GEOCODING CHECKPOINT TEST
+2026-01-21 17:56:21,343 - INFO -    Will process 100 addresses
+2026-01-21 17:56:21,343 - INFO -    Progress log: every 25 addresses
+2026-01-21 17:56:21,343 - INFO -    Checkpoint: every 50 addresses
+2026-01-21 17:56:21,343 - INFO - ================================================================================
+2026-01-21 17:56:21,343 - INFO - 
+2026-01-21 17:56:21,343 - INFO - 📋 Test Plan:
+2026-01-21 17:56:21,344 - INFO -    1. Start processing...
+2026-01-21 17:56:21,344 - INFO -    2. At ~50 addresses, checkpoint will be saved
+2026-01-21 17:56:21,344 - INFO -    3. Press Ctrl+C to test graceful shutdown
+2026-01-21 17:56:21,344 - INFO -    4. Run this script again to test resume
+2026-01-21 17:56:21,344 - INFO -    5. Complete to 100 addresses
+2026-01-21 17:56:21,344 - INFO - 
+2026-01-21 17:56:21,344 - ERROR - 💥 Test failed: EOF when reading a line
+Traceback (most recent call last):
+  File "/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/test_geocoding_checkpoint.py", line 203, in main
+    input("Press Enter to start test...")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line

@@ -10,3 +10,4 @@ __pycache__
 # Keep metadata.json for version tracking
 !data/metadata.json.DS_Store
 .DS_Store
+data/cache/

@@ -14,7 +14,10 @@ from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
-from src.config import Config
+try:
+    from src.config import Config
+except ImportError:
+    from config import Config
 
 logger = logging.getLogger(__name__)
 

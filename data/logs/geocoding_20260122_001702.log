@@ -1,0 +1,36 @@
+2026-01-22 00:17:02,933 - INFO - ================================================================================
+2026-01-22 00:17:02,933 - INFO - 🚀 Starting URA Address Geocoding Pipeline
+2026-01-22 00:17:02,933 - INFO - ================================================================================
+2026-01-22 00:17:02,933 - INFO - ✅ Signal handlers registered (SIGINT, SIGTERM)
+2026-01-22 00:17:02,933 - INFO - 📂 Loading URA transaction files...
+2026-01-22 00:17:03,702 - INFO - 💾 Saving transaction datasets...
+2026-01-22 00:17:03,721 - INFO - Saved 17051 rows to /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/parquets/L1/housing_ec_transaction.parquet
+2026-01-22 00:17:03,721 - WARNING - Overwriting L1_housing_ec_transaction: version 2026-01-21 -> 2026-01-22
+2026-01-22 00:17:03,746 - INFO - Saved 49052 rows to /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/parquets/L1/housing_condo_transaction.parquet
+2026-01-22 00:17:03,748 - WARNING - Overwriting L1_housing_condo_transaction: version 2026-01-21 -> 2026-01-22
+2026-01-22 00:17:03,776 - INFO - Saved 61037 rows to /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/parquets/L1/housing_residential_transaction.parquet
+2026-01-22 00:17:03,778 - WARNING - Overwriting L1_housing_residential_transaction: version 2026-01-21 -> 2026-01-22
+2026-01-22 00:17:03,988 - INFO - Saved 969748 rows to /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/parquets/L1/housing_hdb_transaction.parquet
+2026-01-22 00:17:03,997 - WARNING - Overwriting L1_housing_hdb_transaction: version 2026-01-21 -> 2026-01-22
+2026-01-22 00:17:03,997 - INFO - 🔍 Extracting unique addresses...
+2026-01-22 00:17:04,088 - INFO - 🔑 Setting up OneMap authentication...
+2026-01-22 00:17:04,088 - INFO - 📂 Found checkpoint: /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/checkpoints/L2_housing_unique_searched_checkpoint_1.parquet
+2026-01-22 00:17:04,088 - INFO - 🔄 Auto-resuming from checkpoint (background mode)...
+2026-01-22 00:17:04,088 - INFO - 📂 Loading checkpoint: /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/checkpoints/L2_housing_unique_searched_checkpoint_1.parquet
+2026-01-22 00:17:04,101 - INFO - ✅ Checkpoint loaded: 488 addresses already processed
+2026-01-22 00:17:04,102 - INFO - 🔄 Resuming from checkpoint: 488 addresses already done
+2026-01-22 00:17:04,102 - INFO - 📊 Remaining to process: 13399 addresses
+2026-01-22 00:17:04,102 - INFO - 🚀 Starting geocoding for 13399 unique addresses...
+2026-01-22 00:17:04,102 - INFO - ⏱️  Estimated time: 223-447 minutes
+2026-01-22 00:17:04,102 - INFO - 📝 Progress log interval: every 200 addresses
+2026-01-22 00:17:04,102 - INFO - 💾 Checkpoint interval: every 500 addresses
+2026-01-22 00:17:24,304 - INFO - 💾 Checkpoint saved: /Users/minghao/Desktop/personal/egg-n-bacon-housing/data/checkpoints/L2_housing_unique_searched_checkpoint_1.parquet
+2026-01-22 00:17:24,304 - INFO -    Total addresses in checkpoint: 0
+2026-01-22 00:18:05,092 - INFO - 💓 Heartbeat: Process 530/14369 addresses | Elapsed: 0:01:00.989909
+2026-01-22 00:19:05,804 - INFO - 💓 Heartbeat: Process 584/14369 addresses | Elapsed: 0:02:01.701866
+2026-01-22 00:19:24,175 - INFO - 📊 Progress: 600/14369 addresses (4.2%) | ETA: ~53m
+2026-01-22 00:20:24,509 - INFO - 💓 Heartbeat: Process 653/14369 addresses | Elapsed: 0:03:20.406558
+2026-01-22 00:53:02,330 - WARNING - ⚠️  Shutdown signal received (signal 15)
+2026-01-22 00:53:02,330 - INFO - Finishing current batch and will save checkpoint...
+2026-01-22 00:53:02,330 - WARNING - ⚠️  Shutdown signal received (signal 15)
+2026-01-22 00:53:02,330 - INFO - Finishing current batch and will save checkpoint...

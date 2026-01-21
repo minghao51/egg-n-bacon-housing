@@ -103,10 +103,11 @@
       "path": "L1/housing_ec_transaction.parquet",
       "version": "2026-01-22",
       "rows": 17051,
-      "created": "2026-01-22T00:17:03.721820",
+      "created": "2026-01-22T00:55:56.969267",
       "source": "URA CSV data",
-      "checksum": "b0f72195",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy",
+      "checksum": "b0f72195"
     },
     "raw_datagov_resale_flat_all": {
       "path": "raw_datagov_resale_flat_all.parquet",
@@ -121,28 +122,31 @@
       "path": "L1/housing_condo_transaction.parquet",
       "version": "2026-01-22",
       "rows": 49052,
-      "created": "2026-01-22T00:17:03.748084",
+      "created": "2026-01-22T00:55:56.995362",
       "source": "URA CSV data",
-      "checksum": "1766e3cc",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy",
+      "checksum": "1766e3cc"
     },
     "L1_housing_residential_transaction": {
       "path": "L1/housing_residential_transaction.parquet",
       "version": "2026-01-22",
       "rows": 61037,
-      "created": "2026-01-22T00:17:03.778220",
+      "created": "2026-01-22T00:55:57.025900",
       "source": "URA CSV data",
-      "checksum": "9061d5c1",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy",
+      "checksum": "9061d5c1"
     },
     "L1_housing_hdb_transaction": {
       "path": "L1/housing_hdb_transaction.parquet",
       "version": "2026-01-22",
       "rows": 969748,
-      "created": "2026-01-22T00:17:03.997484",
+      "created": "2026-01-22T00:55:57.249492",
       "source": "data.gov.sg CSV data",
-      "checksum": "627b8d8d",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy",
+      "checksum": "627b8d8d"
     },
     "raw_datagov_resale_flat_price_2015_2016_api": {
       "path": "raw_datagov_resale_flat_price_2015_2016_api.parquet",
@@ -163,5 +167,5 @@
       "mode": "overwrite"
     }
   },
-  "last_updated": "2026-01-22T00:17:03.997487"
+  "last_updated": "2026-01-22T00:55:57.249496"
 }

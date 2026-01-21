@@ -1,12 +1,34 @@
 # Background Geocoding Guide
 **Date:** 2026-01-21
+**Last Updated:** 2026-01-22
 **Purpose:** Run long-running OneMap geocoding in the background with monitoring
+
+---
+
+## ⚡ RECOMMENDED: Use Batched Geocoding (v0.3.0+)
+
+**As of 2026-01-22, there is a faster batched geocoding script available:**
+
+```bash
+# Use this instead (5x faster, ~48 minutes vs 4-7 hours)
+nohup uv run python scripts/geocode_addresses_batched.py > /dev/null 2>&1 &
+```
+
+**Benefits:**
+- ✅ **5 parallel workers** instead of sequential processing
+- ✅ **~48 minutes** vs 4-7 hours (old approach)
+- ✅ Same checkpointing and resume capability
+- ✅ Better error handling and monitoring
+
+**See:** [20260122-geocoding-batched-restart.md](20260122-geocoding-batched-restart.md) for full details.
 
 ---
 
 ## Overview
 
-The OneMap API has rate limits that make geocoding 12,166 addresses take 10-33 hours. This guide shows how to run the geocoding process in the background with automatic checkpointing and progress monitoring.
+The OneMap API has rate limits that make geocoding 14,369 addresses take considerable time. This guide shows how to run the geocoding process in the background with automatic checkpointing and progress monitoring.
+
+**Note:** This guide describes the original sequential approach. For new installations, use the batched version above.
 
 **Key Features:**
 - ✅ Runs in background (doesn't block your terminal)
@@ -110,16 +132,32 @@ screen -r geocoding
 
 ## Expected Runtime
 
+### Sequential Approach (Legacy `geocode_addresses.py`)
+
 **Estimates based on configuration:**
-- **Total addresses:** ~12,166
-- **API delay:** 5 seconds per call (respects rate limits)
-- **Estimated time:** 10-33 hours
+- **Total addresses:** ~14,369
+- **API delay:** 1 second per call (respects rate limits)
+- **Estimated time:** 4-7 hours
 
 **Time breakdown:**
-- First checkpoint (500 addresses): ~40 minutes
-- 1,000 addresses: ~1.5 hours
-- 5,000 addresses: ~7 hours
-- All 12,166 addresses: ~17 hours (average)
+- First checkpoint (500 addresses): ~8 minutes
+- 1,000 addresses: ~17 minutes
+- 5,000 addresses: ~1.4 hours
+- All 14,369 addresses: ~4 hours (average)
+
+### Batched Approach (Recommended `geocode_addresses_batched.py`)
+
+**Performance improvements:**
+- **Total addresses:** ~14,369
+- **Parallel workers:** 5 concurrent threads
+- **API delay:** 1 second per call (per worker)
+- **Estimated time:** ~48 minutes (5x faster!)
+
+**Time breakdown:**
+- First checkpoint (500 addresses): ~2 minutes
+- 1,000 addresses: ~3 minutes
+- 5,000 addresses: ~17 minutes
+- All 14,369 addresses: ~48 minutes
 
 ---
 
@@ -329,19 +367,39 @@ Once geocoding completes successfully:
 
 ## Summary
 
+### Batched Approach (Recommended)
+
 **What happens:**
-1. Script loads 12,166 unique addresses from URA/HDB CSV files
-2. Calls OneMap API for each address (5 second delay between calls)
-3. Saves checkpoint every 500 addresses (~40 minutes)
-4. Logs progress every 200 addresses (~15 minutes)
+1. Script loads 14,369 unique addresses from URA/HDB CSV files
+2. Processes in batches of 1,000 using 5 parallel workers
+3. Each worker calls OneMap API with 1 second delay between calls
+4. Saves checkpoint every 500 addresses (~2 minutes)
+5. Logs progress every 200 addresses (~40 seconds)
+6. If interrupted, saves current state as checkpoint
+7. On restart, auto-resumes from checkpoint (background mode)
+8. When complete, saves final parquet files
+
+**What you do:**
+1. Start script in background: `nohup uv run python scripts/geocode_addresses_batched.py > /dev/null 2>&1 &`
+2. Monitor progress: `tail -f data/logs/geocoding_batched_*.log`
+3. Wait ~48 minutes (or until completion)
+4. Verify output files created
+
+### Sequential Approach (Legacy)
+
+**What happens:**
+1. Script loads 14,369 unique addresses from URA/HDB CSV files
+2. Calls OneMap API for each address (1 second delay between calls)
+3. Saves checkpoint every 500 addresses (~8 minutes)
+4. Logs progress every 200 addresses (~3 minutes)
 5. If interrupted, saves current state as checkpoint
 6. On restart, offers to resume from checkpoint
 7. When complete, saves final parquet files
 
 **What you do:**
 1. Start script in background: `nohup uv run python scripts/geocode_addresses.py > /dev/null 2>&1 &`
-2. Check progress every 30 minutes: `uv run python scripts/check_geocoding_progress.py`
-3. Wait 10-33 hours (or until completion)
+2. Check progress periodically: `uv run python scripts/check_geocoding_progress.py`
+3. Wait 4-7 hours (or until completion)
 4. Verify output files created
 
 **What could go wrong:**

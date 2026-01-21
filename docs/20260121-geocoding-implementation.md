@@ -1,6 +1,26 @@
 # Geocoding Implementation Summary
 **Date:** 2026-01-21
-**Status:** Active Implementation
+**Last Updated:** 2026-01-22
+**Status:** ✅ Batched Implementation Complete
+
+---
+
+## ⚡ IMPORTANT UPDATE: Batched Implementation (2026-01-22)
+
+**A new parallel batched geocoding implementation is now available and RECOMMENDED:**
+
+- **Script:** `scripts/geocode_addresses_batched.py`
+- **Speed:** ~5x faster (48 min vs 4-7 hours)
+- **Workers:** 5 parallel threads using ThreadPoolExecutor
+- **Benefits:**
+  - Dramatically faster completion time
+  - Same checkpointing and resume capability
+  - Better error handling
+  - Real-time progress monitoring
+
+**See:** [20260122-geocoding-batched-restart.md](20260122-geocoding-batched-restart.md) for complete details.
+
+**This document** describes the original sequential implementation. Use `geocode_addresses_batched.py` for new runs.
 
 ---
 
