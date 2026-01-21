@@ -314,70 +314,38 @@ L2/L3 Data
 ### Purpose
 Export processed and feature-engineered data to external systems.
 
-### Export Destinations
+### Current Status (2026-01-22)
 
-#### 1. S3 (Amazon Simple Storage Service)
-**Notebooks**: `L3_upload_s3.ipynb`
+The pipeline currently operates entirely with local parquet files. Cloud export functionality (S3, Supabase, Databricks) has been deprecated and archived.
 
-**Purpose**: Backup and archival
+**Why local-only?**
+- Faster development iteration
+- No dependency on external services
+- Simpler architecture
+- Sufficient for local analysis and ML model development
 
-**Buckets**:
-- `egg-n-bacon-housing-raw` - Raw data backups
-- `egg-n-bacon-housing-processed` - Processed data
-- `egg-n-bacon-housing-features` - Feature-engineered data
+### Local Output Format
 
-**Upload Process**:
-```python
-import boto3
+All L3 datasets are saved as parquet files in `data/parquets/`:
+- `L3_property` - Enhanced property data with features
+- `L3_private_property_facilities` - Private property facilities
+- `L3_property_nearby_facilities` - Nearby amenities counts
+- `L3_property_transactions_sales` - Transaction sales data
+- `L3_property_listing_sales` - Listing sales data
 
-s3 = boto3.client('s3')
-s3.upload_file(
-    local_path,
-    bucket_name,
-    s3_path,
-    ExtraArgs={'ServerSideEncryption': 'AES256'}
-)
-```
+### Restoring Cloud Export (Optional)
 
-**Frequency**: After each successful notebook run
+If you need S3/Supabase/Databricks integration in the future:
 
-#### 2. Supabase (PostgreSQL Database)
-**Purpose**: Production database for applications
+1. **Archived notebooks available in**: `docs/archive/notebooks/`
+   - `L3_upload_s3.ipynb` - S3 and Supabase export
+   - `L4_s3_databricks_catalog.py` - Databricks Delta tables
 
-**Tables**:
-- `properties` - Master property table
-- `transactions` - Transaction records
-- `amenities` - Amenity locations
-- `property_features` - Feature table
-
-**Schema**:
-```sql
-CREATE TABLE properties (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    property_id VARCHAR(255) UNIQUE NOT NULL,
-    property_type VARCHAR(50),
-    price NUMERIC,
-    price_per_sqft NUMERIC,
-    floor_size NUMERIC,
-    latitude NUMERIC,
-    longitude NUMERIC,
-    postal_code INTEGER,
-    planning_area VARCHAR(100),
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Upload Process**:
-```python
-from supabase import create_client
-
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-data = df.to_dict('records')
-response = supabase.table('properties').upsert(data).execute()
-```
-
-**Frequency**: Daily or on-demand
+2. **To restore**:
+   - Copy archived notebooks back to `notebooks/` directory
+   - Configure AWS credentials in `.env` for S3
+   - Configure `SUPABASE_URL` and `SUPABASE_KEY` for Supabase
+   - Run in Databricks environment for L4
 
 ---
 
@@ -396,8 +364,11 @@ response = supabase.table('properties').upsert(data).execute()
    - `ONEMAP_EMAIL` - For OneMap API
    - `ONEMAP_EMAIL_PASSWORD` - For OneMap API
    - `GOOGLE_API_KEY` - For LangChain agents
-   - `SUPABASE_URL` - For Supabase export (optional)
-   - `SUPABASE_KEY` - For Supabase export (optional)
+
+3. **Optional API Keys** (for archived cloud export):
+   - `SUPABASE_URL` - For Supabase export (deprecated, see `docs/archive/notebooks/`)
+   - `SUPABASE_KEY` - For Supabase export (deprecated, see `docs/archive/notebooks/`)
+   - `AWS credentials` - For S3 export (deprecated, see `docs/archive/notebooks/`)
 
 ### Execution Order
 
@@ -421,10 +392,7 @@ Run notebooks in order:
    uv run jupyter notebook notebooks/L2_sales_facilities.ipynb
    ```
 
-4. **L3: Export** (Optional)
-   ```bash
-   uv run jupyter notebook notebooks/L3_upload_s3.ipynb
-   ```
+**Pipeline Complete**: All data is now available as local parquet files for analysis and ML model development.
 
 ### Using the Paired .py Files
 
@@ -468,9 +436,12 @@ uv run jupytext --sync L0_datagovsg.ipynb
 - ✅ Correlation matrix sanity check
 
 #### L3 Validation
-- ✅ S3 upload successful
-- ✅ Supabase insert successful
-- ✅ Record counts match
+- ✅ Parquet files successfully created
+- ✅ Row counts match expectations
+- ✅ No missing critical fields
+- ✅ Feature distributions reasonable
+
+**Note**: Cloud export validation (S3, Supabase) deprecated - see `docs/archive/notebooks/` if needed
 
 ### Monitoring
 

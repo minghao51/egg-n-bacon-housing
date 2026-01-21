@@ -144,9 +144,6 @@ uv run jupyter notebook notebooks/L1_utilities_processing.ipynb
 
 # L2: Feature Engineering
 uv run jupyter notebook notebooks/L2_sales_facilities.ipynb
-
-# L3: Export (optional)
-uv run jupyter notebook notebooks/L3_upload_s3.ipynb
 ```
 
 ### Using Jupytext (Recommended)
