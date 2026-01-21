@@ -165,7 +165,27 @@
       "source": "wikipedia.org",
       "checksum": "9b7ab33e",
       "mode": "overwrite"
+    },
+    "L2_housing_unique_full_searched": {
+      "path": "L2/housing_unique_full_searched.parquet",
+      "version": "2026-01-22",
+      "rows": 24808,
+      "created": "2026-01-22T02:11:29.428941",
+      "source": "L1 transaction data",
+      "mode": "overwrite",
+      "compression": "snappy",
+      "checksum": "fa930bee"
+    },
+    "L2_housing_unique_searched": {
+      "path": "L2/housing_unique_searched.parquet",
+      "version": "2026-01-22",
+      "rows": 17720,
+      "created": "2026-01-22T02:11:29.454064",
+      "source": "L2 housing data",
+      "mode": "overwrite",
+      "compression": "snappy",
+      "checksum": "6ebea314"
     }
   },
-  "last_updated": "2026-01-22T00:55:57.249496"
+  "last_updated": "2026-01-22T02:11:29.454067"
 }

@@ -11,3 +11,12 @@ __pycache__
 !data/metadata.json.DS_Store
 .DS_Store
 data/cache/
+
+# Runtime data (generated during pipeline execution)
+data/logs/
+data/checkpoints/
+data/cache/
+data/failed_addresses/
+
+# But keep metadata.json
+!data/metadata.json
