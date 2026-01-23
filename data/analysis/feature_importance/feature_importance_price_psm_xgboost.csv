@@ -1,0 +1,122 @@
+feature,importance,target,model
+property_type_HDB,0.41465375,price_psm,xgboost
+storey_range_None,0.22982095,price_psm,xgboost
+flat_type_None,0.21833873,price_psm,xgboost
+flat_model_Other,0.10956868,price_psm,xgboost
+psm_tier_High PSM,0.011120749,price_psm,xgboost
+property_type_Condominium,0.0035498166,price_psm,xgboost
+psm_tier_Low PSM,0.0034396327,price_psm,xgboost
+psm_tier_Medium PSM,0.0034059396,price_psm,xgboost
+property_type_EC,0.000977733,price_psm,xgboost
+market_tier_Luxury,0.0007464134,price_psm,xgboost
+stratified_median_price,0.00039495167,price_psm,xgboost
+hawker_within_2km,0.00030719364,price_psm,xgboost
+market_tier_Mass Market,0.00019865429,price_psm,xgboost
+remaining_lease_months,0.00019797777,price_psm,xgboost
+market_tier_Mid-Tier,0.00018602442,price_psm,xgboost
+town_PASIR RIS,0.00018534141,price_psm,xgboost
+hawker_within_1km,0.00018030251,price_psm,xgboost
+flat_model_Improved,0.00015748819,price_psm,xgboost
+town_QUEENSTOWN,0.00014723596,price_psm,xgboost
+flat_model_New Generation,0.00013890192,price_psm,xgboost
+flat_model_DBSS,0.0001275046,price_psm,xgboost
+floor_area_sqm,0.00011738192,price_psm,xgboost
+flat_model_NEW GENERATION,0.00010666945,price_psm,xgboost
+town_Other,8.341238e-05,price_psm,xgboost
+flat_model_IMPROVED,7.60085e-05,price_psm,xgboost
+flat_model_STANDARD,7.359984e-05,price_psm,xgboost
+flat_type_3 ROOM,7.231388e-05,price_psm,xgboost
+storey_range_01 TO 03,5.6449368e-05,price_psm,xgboost
+flat_model_Standard,5.5472734e-05,price_psm,xgboost
+volume_12m_avg,5.53666e-05,price_psm,xgboost
+dist_to_nearest_supermarket,5.2999963e-05,price_psm,xgboost
+storey_range_04 TO 06,4.782933e-05,price_psm,xgboost
+storey_range_19 TO 21,4.4295135e-05,price_psm,xgboost
+preschool_within_500m,4.345904e-05,price_psm,xgboost
+storey_range_28 TO 30,4.1957417e-05,price_psm,xgboost
+flat_model_MODEL A,4.026657e-05,price_psm,xgboost
+flat_model_Simplified,3.948198e-05,price_psm,xgboost
+supermarket_within_500m,3.765706e-05,price_psm,xgboost
+flat_type_2 ROOM,3.7423502e-05,price_psm,xgboost
+supermarket_within_2km,3.646305e-05,price_psm,xgboost
+preschool_within_2km,3.4872777e-05,price_psm,xgboost
+storey_range_34 TO 36,3.2471162e-05,price_psm,xgboost
+flat_model_Model A,3.245473e-05,price_psm,xgboost
+storey_range_07 TO 09,3.088584e-05,price_psm,xgboost
+town_ANG MO KIO,2.926361e-05,price_psm,xgboost
+flat_type_EXECUTIVE,2.8799777e-05,price_psm,xgboost
+storey_range_25 TO 27,2.8743409e-05,price_psm,xgboost
+storey_range_10 TO 12,2.8643015e-05,price_psm,xgboost
+park_within_2km,2.7659591e-05,price_psm,xgboost
+mrt_within_500m,2.7513968e-05,price_psm,xgboost
+momentum_signal_missing,2.6969943e-05,price_psm,xgboost
+supermarket_within_1km,2.5287676e-05,price_psm,xgboost
+storey_range_37 TO 39,2.5154779e-05,price_psm,xgboost
+childcare_within_2km,2.4664347e-05,price_psm,xgboost
+flat_type_1 ROOM,2.4071653e-05,price_psm,xgboost
+flat_model_Premium Apartment,2.335543e-05,price_psm,xgboost
+town_BUKIT MERAH,2.2364617e-05,price_psm,xgboost
+storey_range_31 TO 33,2.1831866e-05,price_psm,xgboost
+town_BEDOK,2.083353e-05,price_psm,xgboost
+childcare_within_500m,2.0629606e-05,price_psm,xgboost
+storey_range_22 TO 24,1.932296e-05,price_psm,xgboost
+flat_model_Model A2,1.8939534e-05,price_psm,xgboost
+park_within_500m,1.7717464e-05,price_psm,xgboost
+dist_to_nearest_mrt,1.676539e-05,price_psm,xgboost
+flat_model_Maisonette,1.6414555e-05,price_psm,xgboost
+town_BISHAN,1.6155775e-05,price_psm,xgboost
+storey_range_40 TO 42,1.6027278e-05,price_psm,xgboost
+town_CLEMENTI,1.5915997e-05,price_psm,xgboost
+volume_3m_avg,1.52858e-05,price_psm,xgboost
+park_within_1km,1.5137926e-05,price_psm,xgboost
+mrt_within_2km,1.4727983e-05,price_psm,xgboost
+town_GEYLANG,1.4297742e-05,price_psm,xgboost
+transaction_count,1.3995763e-05,price_psm,xgboost
+childcare_within_1km,1.3770269e-05,price_psm,xgboost
+town_KALLANG/WHAMPOA,1.3326803e-05,price_psm,xgboost
+dist_to_nearest_park,1.3111318e-05,price_psm,xgboost
+town_SERANGOON,1.3043212e-05,price_psm,xgboost
+town_YISHUN,1.3002496e-05,price_psm,xgboost
+town_PUNGGOL,1.2696526e-05,price_psm,xgboost
+storey_range_01 TO 05,1.0688432e-05,price_psm,xgboost
+dist_to_nearest_preschool,1.0154075e-05,price_psm,xgboost
+storey_range_43 TO 45,9.663834e-06,price_psm,xgboost
+flat_type_4 ROOM,9.1671e-06,price_psm,xgboost
+dist_to_nearest_hawker,9.096469e-06,price_psm,xgboost
+dist_to_nearest_childcare,8.2669285e-06,price_psm,xgboost
+storey_range_21 TO 25,8.1843245e-06,price_psm,xgboost
+mrt_within_1km,7.847697e-06,price_psm,xgboost
+storey_range_46 TO 48,7.63358e-06,price_psm,xgboost
+storey_range_16 TO 18,7.6094766e-06,price_psm,xgboost
+storey_range_16 TO 20,7.2236066e-06,price_psm,xgboost
+flat_model_SIMPLIFIED,7.0942615e-06,price_psm,xgboost
+flat_model_MAISONETTE,7.0699352e-06,price_psm,xgboost
+storey_range_26 TO 30,7.021666e-06,price_psm,xgboost
+storey_range_06 TO 10,6.9264584e-06,price_psm,xgboost
+town_JURONG EAST,6.8690497e-06,price_psm,xgboost
+storey_range_11 TO 15,6.860673e-06,price_psm,xgboost
+town_WOODLANDS,6.405035e-06,price_psm,xgboost
+flat_model_Adjoined flat,6.25266e-06,price_psm,xgboost
+preschool_within_1km,6.225616e-06,price_psm,xgboost
+town_SENGKANG,6.000945e-06,price_psm,xgboost
+town_JURONG WEST,5.8424193e-06,price_psm,xgboost
+town_HOUGANG,5.8157766e-06,price_psm,xgboost
+flat_type_5 ROOM,5.793713e-06,price_psm,xgboost
+town_TAMPINES,5.6252393e-06,price_psm,xgboost
+flat_model_Model A-Maisonette,5.5150567e-06,price_psm,xgboost
+town_CHOA CHU KANG,4.686204e-06,price_psm,xgboost
+town_TOA PAYOH,3.37239e-06,price_psm,xgboost
+momentum_signal_strong_acceleration,1.964243e-06,price_psm,xgboost
+momentum_signal_moderate_deceleration,1.9465658e-06,price_psm,xgboost
+flat_type_MULTI GENERATION,1.8103214e-06,price_psm,xgboost
+hawker_within_500m,1.7816496e-06,price_psm,xgboost
+flat_model_APARTMENT,1.3571624e-06,price_psm,xgboost
+storey_range_13 TO 15,1.3116719e-06,price_psm,xgboost
+momentum_signal_strong_deceleration,9.647723e-07,price_psm,xgboost
+flat_type_MULTI-GENERATION,4.7282e-07,price_psm,xgboost
+flat_model_MODEL A-MAISONETTE,3.8037012e-07,price_psm,xgboost
+momentum_signal_stable,3.1524428e-07,price_psm,xgboost
+momentum_signal_moderate_acceleration,1.661634e-07,price_psm,xgboost
+storey_range_49 TO 51,0.0,price_psm,xgboost
+storey_range_36 TO 40,0.0,price_psm,xgboost
+flat_model_Apartment,0.0,price_psm,xgboost

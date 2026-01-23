@@ -1,0 +1,105 @@
+feature,importance,target,model
+town_QUEENSTOWN,0.12826455,rental_yield_pct,xgboost
+town_ANG MO KIO,0.11306563,rental_yield_pct,xgboost
+town_PASIR RIS,0.08899592,rental_yield_pct,xgboost
+town_JURONG WEST,0.069195025,rental_yield_pct,xgboost
+town_TAMPINES,0.06035442,rental_yield_pct,xgboost
+momentum_signal_strong_deceleration,0.04805065,rental_yield_pct,xgboost
+town_BEDOK,0.03810709,rental_yield_pct,xgboost
+hawker_within_2km,0.034610555,rental_yield_pct,xgboost
+town_BUKIT MERAH,0.028238283,rental_yield_pct,xgboost
+stratified_median_price,0.02480283,rental_yield_pct,xgboost
+town_BISHAN,0.022777466,rental_yield_pct,xgboost
+town_YISHUN,0.020051247,rental_yield_pct,xgboost
+town_HOUGANG,0.019885276,rental_yield_pct,xgboost
+town_SERANGOON,0.018763846,rental_yield_pct,xgboost
+volume_12m_avg,0.018584304,rental_yield_pct,xgboost
+town_GEYLANG,0.017008124,rental_yield_pct,xgboost
+town_CLEMENTI,0.016452018,rental_yield_pct,xgboost
+volume_3m_avg,0.014400884,rental_yield_pct,xgboost
+supermarket_within_2km,0.01338827,rental_yield_pct,xgboost
+town_Other,0.013363178,rental_yield_pct,xgboost
+childcare_within_2km,0.012414012,rental_yield_pct,xgboost
+town_SEMBAWANG,0.011997663,rental_yield_pct,xgboost
+town_CHOA CHU KANG,0.011747018,rental_yield_pct,xgboost
+town_KALLANG/WHAMPOA,0.011629246,rental_yield_pct,xgboost
+preschool_within_2km,0.008586901,rental_yield_pct,xgboost
+mrt_within_2km,0.008489345,rental_yield_pct,xgboost
+flat_type_3 ROOM,0.008446178,rental_yield_pct,xgboost
+town_TOA PAYOH,0.008306929,rental_yield_pct,xgboost
+remaining_lease_months,0.0077322586,rental_yield_pct,xgboost
+town_SENGKANG,0.007579009,rental_yield_pct,xgboost
+park_within_2km,0.007368667,rental_yield_pct,xgboost
+town_WOODLANDS,0.0053962665,rental_yield_pct,xgboost
+dist_to_nearest_hawker,0.004724098,rental_yield_pct,xgboost
+momentum_signal_strong_acceleration,0.004443148,rental_yield_pct,xgboost
+transaction_count,0.0043405886,rental_yield_pct,xgboost
+hawker_within_500m,0.0041397493,rental_yield_pct,xgboost
+market_tier_Mid-Tier,0.004005387,rental_yield_pct,xgboost
+mrt_within_1km,0.0037928156,rental_yield_pct,xgboost
+town_PUNGGOL,0.0037240472,rental_yield_pct,xgboost
+hawker_within_1km,0.0036773093,rental_yield_pct,xgboost
+momentum_signal_stable,0.003451714,rental_yield_pct,xgboost
+momentum_signal_moderate_deceleration,0.0033940056,rental_yield_pct,xgboost
+flat_model_Improved,0.0033319264,rental_yield_pct,xgboost
+momentum_signal_moderate_acceleration,0.0033191245,rental_yield_pct,xgboost
+childcare_within_1km,0.0031926318,rental_yield_pct,xgboost
+psm_tier_High PSM,0.0030891811,rental_yield_pct,xgboost
+childcare_within_500m,0.0027762982,rental_yield_pct,xgboost
+market_tier_Luxury,0.0024009068,rental_yield_pct,xgboost
+dist_to_nearest_childcare,0.00201367,rental_yield_pct,xgboost
+preschool_within_1km,0.0019610338,rental_yield_pct,xgboost
+flat_model_Standard,0.0019279667,rental_yield_pct,xgboost
+flat_type_2 ROOM,0.0017091836,rental_yield_pct,xgboost
+flat_model_Simplified,0.001683583,rental_yield_pct,xgboost
+dist_to_nearest_mrt,0.0016359219,rental_yield_pct,xgboost
+supermarket_within_1km,0.001590566,rental_yield_pct,xgboost
+park_within_1km,0.0015038413,rental_yield_pct,xgboost
+preschool_within_500m,0.0012155566,rental_yield_pct,xgboost
+dist_to_nearest_park,0.00096394453,rental_yield_pct,xgboost
+flat_model_Model A,0.00096312317,rental_yield_pct,xgboost
+storey_range_16 TO 18,0.00092692755,rental_yield_pct,xgboost
+floor_area_sqm,0.0008230626,rental_yield_pct,xgboost
+supermarket_within_500m,0.000799678,rental_yield_pct,xgboost
+storey_range_10 TO 12,0.0006936298,rental_yield_pct,xgboost
+park_within_500m,0.00065880845,rental_yield_pct,xgboost
+dist_to_nearest_supermarket,0.00057348463,rental_yield_pct,xgboost
+dist_to_nearest_preschool,0.00054799125,rental_yield_pct,xgboost
+psm_tier_Medium PSM,0.00043455517,rental_yield_pct,xgboost
+storey_range_13 TO 15,0.00039912376,rental_yield_pct,xgboost
+flat_type_4 ROOM,0.00033470633,rental_yield_pct,xgboost
+storey_range_19 TO 21,0.00023287654,rental_yield_pct,xgboost
+storey_range_22 TO 24,0.00021602846,rental_yield_pct,xgboost
+storey_range_07 TO 09,0.00018905613,rental_yield_pct,xgboost
+flat_model_New Generation,8.980971e-05,rental_yield_pct,xgboost
+storey_range_04 TO 06,4.225261e-05,rental_yield_pct,xgboost
+flat_model_Model A2,4.916101e-06,rental_yield_pct,xgboost
+flat_type_5 ROOM,3.9935944e-06,rental_yield_pct,xgboost
+mrt_within_500m,2.812338e-06,rental_yield_pct,xgboost
+flat_model_Adjoined flat,1.5840279e-06,rental_yield_pct,xgboost
+storey_range_01 TO 03,3.6962777e-07,rental_yield_pct,xgboost
+flat_model_Premium Maisonette,0.0,rental_yield_pct,xgboost
+storey_range_40 TO 42,0.0,rental_yield_pct,xgboost
+flat_type_EXECUTIVE,0.0,rental_yield_pct,xgboost
+flat_type_MULTI-GENERATION,0.0,rental_yield_pct,xgboost
+property_type_HDB,0.0,rental_yield_pct,xgboost
+flat_model_2-room,0.0,rental_yield_pct,xgboost
+flat_model_3Gen,0.0,rental_yield_pct,xgboost
+market_tier_Mass Market,0.0,rental_yield_pct,xgboost
+flat_model_Apartment,0.0,rental_yield_pct,xgboost
+storey_range_46 TO 48,0.0,rental_yield_pct,xgboost
+storey_range_43 TO 45,0.0,rental_yield_pct,xgboost
+storey_range_37 TO 39,0.0,rental_yield_pct,xgboost
+flat_model_Premium Apartment Loft,0.0,rental_yield_pct,xgboost
+storey_range_34 TO 36,0.0,rental_yield_pct,xgboost
+storey_range_31 TO 33,0.0,rental_yield_pct,xgboost
+storey_range_28 TO 30,0.0,rental_yield_pct,xgboost
+storey_range_25 TO 27,0.0,rental_yield_pct,xgboost
+flat_model_DBSS,0.0,rental_yield_pct,xgboost
+flat_model_Improved-Maisonette,0.0,rental_yield_pct,xgboost
+flat_model_Maisonette,0.0,rental_yield_pct,xgboost
+flat_model_Model A-Maisonette,0.0,rental_yield_pct,xgboost
+flat_model_Multi Generation,0.0,rental_yield_pct,xgboost
+flat_model_Premium Apartment,0.0,rental_yield_pct,xgboost
+flat_model_Terrace,0.0,rental_yield_pct,xgboost
+flat_type_1 ROOM,0.0,rental_yield_pct,xgboost

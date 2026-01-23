@@ -1,0 +1,109 @@
+feature,importance,target,model
+town_SERANGOON,0.16339019,yoy_change_pct,xgboost
+town_QUEENSTOWN,0.0823162,yoy_change_pct,xgboost
+town_BUKIT MERAH,0.057600755,yoy_change_pct,xgboost
+town_BISHAN,0.051650792,yoy_change_pct,xgboost
+town_KALLANG/WHAMPOA,0.04152842,yoy_change_pct,xgboost
+momentum_signal_stable,0.038599886,yoy_change_pct,xgboost
+mrt_within_1km,0.034058847,yoy_change_pct,xgboost
+town_PUNGGOL,0.031098332,yoy_change_pct,xgboost
+supermarket_within_2km,0.028370898,yoy_change_pct,xgboost
+town_GEYLANG,0.027479239,yoy_change_pct,xgboost
+dist_to_nearest_hawker,0.026487712,yoy_change_pct,xgboost
+volume_12m_avg,0.025844347,yoy_change_pct,xgboost
+volume_3m_avg,0.024979882,yoy_change_pct,xgboost
+transaction_count,0.02480052,yoy_change_pct,xgboost
+stratified_median_price,0.024210094,yoy_change_pct,xgboost
+town_CHOA CHU KANG,0.018179405,yoy_change_pct,xgboost
+market_tier_Luxury,0.015425719,yoy_change_pct,xgboost
+momentum_signal_strong_acceleration,0.015369158,yoy_change_pct,xgboost
+flat_model_Apartment,0.015288057,yoy_change_pct,xgboost
+town_ANG MO KIO,0.0146404505,yoy_change_pct,xgboost
+town_HOUGANG,0.014263415,yoy_change_pct,xgboost
+preschool_within_1km,0.014156321,yoy_change_pct,xgboost
+town_BEDOK,0.0139674675,yoy_change_pct,xgboost
+town_PASIR RIS,0.013480712,yoy_change_pct,xgboost
+park_within_2km,0.012819565,yoy_change_pct,xgboost
+momentum_signal_moderate_acceleration,0.012720576,yoy_change_pct,xgboost
+mrt_within_2km,0.012239547,yoy_change_pct,xgboost
+town_JURONG WEST,0.011687084,yoy_change_pct,xgboost
+hawker_within_2km,0.011203477,yoy_change_pct,xgboost
+dist_to_nearest_childcare,0.010862698,yoy_change_pct,xgboost
+town_WOODLANDS,0.010628088,yoy_change_pct,xgboost
+town_Other,0.007865839,yoy_change_pct,xgboost
+town_CLEMENTI,0.007243203,yoy_change_pct,xgboost
+momentum_signal_strong_deceleration,0.0065747746,yoy_change_pct,xgboost
+storey_range_10 TO 12,0.0061575887,yoy_change_pct,xgboost
+childcare_within_2km,0.005960361,yoy_change_pct,xgboost
+storey_range_31 TO 33,0.005699096,yoy_change_pct,xgboost
+town_SEMBAWANG,0.0056705438,yoy_change_pct,xgboost
+town_TAMPINES,0.005520672,yoy_change_pct,xgboost
+town_JURONG EAST,0.005351299,yoy_change_pct,xgboost
+storey_range_34 TO 36,0.004948855,yoy_change_pct,xgboost
+town_YISHUN,0.0038475627,yoy_change_pct,xgboost
+supermarket_within_1km,0.0038240645,yoy_change_pct,xgboost
+remaining_lease_months,0.0035730703,yoy_change_pct,xgboost
+town_SENGKANG,0.003401499,yoy_change_pct,xgboost
+floor_area_sqm,0.0030982485,yoy_change_pct,xgboost
+dist_to_nearest_park,0.002957296,yoy_change_pct,xgboost
+momentum_signal_moderate_deceleration,0.0028338714,yoy_change_pct,xgboost
+preschool_within_500m,0.0021231545,yoy_change_pct,xgboost
+flat_model_Type S1,0.0017705698,yoy_change_pct,xgboost
+hawker_within_1km,0.0017239345,yoy_change_pct,xgboost
+flat_model_Adjoined flat,0.0015979669,yoy_change_pct,xgboost
+storey_range_22 TO 24,0.0012678796,yoy_change_pct,xgboost
+flat_model_Premium Apartment,0.0011430774,yoy_change_pct,xgboost
+dist_to_nearest_mrt,0.00096598355,yoy_change_pct,xgboost
+psm_tier_High PSM,0.0009211014,yoy_change_pct,xgboost
+preschool_within_2km,0.000813957,yoy_change_pct,xgboost
+storey_range_07 TO 09,0.0007327473,yoy_change_pct,xgboost
+park_within_1km,0.0005695913,yoy_change_pct,xgboost
+dist_to_nearest_preschool,0.0005318718,yoy_change_pct,xgboost
+flat_model_DBSS,0.00046376628,yoy_change_pct,xgboost
+storey_range_25 TO 27,0.00038639948,yoy_change_pct,xgboost
+flat_type_5 ROOM,0.00024822963,yoy_change_pct,xgboost
+flat_model_New Generation,0.0002051149,yoy_change_pct,xgboost
+dist_to_nearest_supermarket,0.0002030075,yoy_change_pct,xgboost
+storey_range_13 TO 15,0.00018713342,yoy_change_pct,xgboost
+storey_range_04 TO 06,8.450794e-05,yoy_change_pct,xgboost
+flat_model_Improved,6.394205e-05,yoy_change_pct,xgboost
+flat_model_Model A,4.7450456e-05,yoy_change_pct,xgboost
+storey_range_16 TO 18,3.925373e-05,yoy_change_pct,xgboost
+flat_type_4 ROOM,1.3857364e-05,yoy_change_pct,xgboost
+childcare_within_1km,1.2985102e-05,yoy_change_pct,xgboost
+storey_range_01 TO 03,6.7072865e-06,yoy_change_pct,xgboost
+flat_model_Other,0.0,yoy_change_pct,xgboost
+flat_model_2-room,0.0,yoy_change_pct,xgboost
+storey_range_43 TO 45,0.0,yoy_change_pct,xgboost
+storey_range_46 TO 48,0.0,yoy_change_pct,xgboost
+storey_range_49 TO 51,0.0,yoy_change_pct,xgboost
+supermarket_within_500m,0.0,yoy_change_pct,xgboost
+market_tier_Mass Market,0.0,yoy_change_pct,xgboost
+market_tier_Mid-Tier,0.0,yoy_change_pct,xgboost
+psm_tier_Medium PSM,0.0,yoy_change_pct,xgboost
+psm_tier_Low PSM,0.0,yoy_change_pct,xgboost
+storey_range_37 TO 39,0.0,yoy_change_pct,xgboost
+property_type_HDB,0.0,yoy_change_pct,xgboost
+hawker_within_500m,0.0,yoy_change_pct,xgboost
+mrt_within_500m,0.0,yoy_change_pct,xgboost
+flat_type_MULTI-GENERATION,0.0,yoy_change_pct,xgboost
+flat_model_Maisonette,0.0,yoy_change_pct,xgboost
+storey_range_40 TO 42,0.0,yoy_change_pct,xgboost
+flat_model_3Gen,0.0,yoy_change_pct,xgboost
+park_within_500m,0.0,yoy_change_pct,xgboost
+flat_type_EXECUTIVE,0.0,yoy_change_pct,xgboost
+flat_model_Premium Apartment Loft,0.0,yoy_change_pct,xgboost
+flat_model_Simplified,0.0,yoy_change_pct,xgboost
+flat_model_Standard,0.0,yoy_change_pct,xgboost
+flat_model_Terrace,0.0,yoy_change_pct,xgboost
+flat_model_Type S2,0.0,yoy_change_pct,xgboost
+flat_model_Multi Generation,0.0,yoy_change_pct,xgboost
+childcare_within_500m,0.0,yoy_change_pct,xgboost
+flat_type_1 ROOM,0.0,yoy_change_pct,xgboost
+flat_model_Model A2,0.0,yoy_change_pct,xgboost
+flat_model_Model A-Maisonette,0.0,yoy_change_pct,xgboost
+flat_model_Improved-Maisonette,0.0,yoy_change_pct,xgboost
+flat_type_2 ROOM,0.0,yoy_change_pct,xgboost
+flat_type_3 ROOM,0.0,yoy_change_pct,xgboost
+storey_range_28 TO 30,0.0,yoy_change_pct,xgboost
+storey_range_19 TO 21,0.0,yoy_change_pct,xgboost
