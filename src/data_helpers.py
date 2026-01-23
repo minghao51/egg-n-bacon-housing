@@ -87,7 +87,8 @@ def save_parquet(
     version: str | None = None,
     mode: str = "overwrite",
     partition_cols: Optional[list[str]] = None,
-    compression: Optional[str] = None
+    compression: Optional[str] = None,
+    calculate_checksum: bool = False
 ) -> None:
     """
     Save DataFrame to parquet with validation and error handling.
@@ -100,6 +101,7 @@ def save_parquet(
         mode: 'overwrite' to replace existing data, 'append' to add to it
         partition_cols: Columns to partition by (e.g., ['year', 'month'])
         compression: Compression codec (defaults to Config.PARQUET_COMPRESSION)
+        calculate_checksum: Whether to calculate MD5 checksum (default False for performance)
 
     Raises:
         ValueError: If df is empty or invalid mode
@@ -169,10 +171,12 @@ def save_parquet(
         raise RuntimeError(f"Failed to save parquet {parquet_path}: {e}")
 
     # Calculate checksum (for single files only, not partitioned datasets)
-    if not partition_cols:
+    if not partition_cols and calculate_checksum:
+        logger.info("🔐 Calculating checksum...")
         checksum = _calculate_checksum(parquet_path)
+        logger.info(f"✅ Checksum: {checksum}")
     else:
-        checksum = None  # Partitioned datasets don't have single checksum
+        checksum = None  # Skip checksum by default for performance
 
     # Update metadata
     metadata = _load_metadata()
@@ -245,15 +249,19 @@ def verify_metadata() -> bool:
             all_valid = False
             continue
 
-        current_checksum = _calculate_checksum(parquet_path)
-        if current_checksum != info["checksum"]:
-            logger.error(
-                f"Dataset {name}: checksum mismatch. "
-                f"Expected {info['checksum']}, got {current_checksum}"
-            )
-            all_valid = False
+        # Only verify checksum if it exists
+        if "checksum" in info:
+            current_checksum = _calculate_checksum(parquet_path)
+            if current_checksum != info["checksum"]:
+                logger.error(
+                    f"Dataset {name}: checksum mismatch. "
+                    f"Expected {info['checksum']}, got {current_checksum}"
+                )
+                all_valid = False
+            else:
+                logger.info(f"Dataset {name}: OK ({info['rows']} rows, checksum: {current_checksum})")
         else:
-            logger.info(f"Dataset {name}: OK ({info['rows']} rows)")
+            logger.info(f"Dataset {name}: OK ({info['rows']} rows, no checksum)")
 
     return all_valid
 

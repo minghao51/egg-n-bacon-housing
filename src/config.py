@@ -43,7 +43,7 @@ class Config:
 
     # Geocoding settings
     GEOCODING_MAX_WORKERS = 5  # Parallel workers for geocoding (respect API limits)
-    GEOCODING_API_DELAY = 1.0  # Delay between API calls in seconds
+    GEOCODING_API_DELAY = 1.2  # Delay between API calls in seconds (increased from 1.0 to respect rate limits)
     GEOCODING_TIMEOUT = 30  # Request timeout in seconds
 
     # ============== NOTEBOOK SETTINGS ==============
