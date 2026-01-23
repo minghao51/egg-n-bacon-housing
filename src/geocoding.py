@@ -16,10 +16,11 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import quote
 
 import pandas as pd
 import requests
-from tenacity import retry, wait_exponential
+from tenacity import retry, wait_exponential, stop_after_attempt
 from dotenv import load_dotenv
 
 try:
@@ -102,7 +103,11 @@ initial_backoff = 1  # seconds
 max_backoff = 32  # seconds
 
 
-@retry(wait=wait_exponential(multiplier=1, min=initial_backoff, max=max_backoff))
+@retry(
+    wait=wait_exponential(multiplier=1, min=initial_backoff, max=max_backoff),
+    stop=stop_after_attempt(3),
+    before_sleep=lambda retry_state: logger.warning(f"Retrying OneMap API ({retry_state.attempt_number}/3) after error: {retry_state.outcome.exception()}")
+)
 def fetch_data(search_string: str, headers: Dict[str, str], timeout: int = 30) -> pd.DataFrame:
     """
     Fetch geocoding data from OneMap API for a given address.
@@ -119,14 +124,15 @@ def fetch_data(search_string: str, headers: Dict[str, str], timeout: int = 30) -
         requests.RequestException: If API call fails after retries
         requests.Timeout: If request times out
     """
-    url = f"https://www.onemap.gov.sg/api/common/elastic/search?searchVal={search_string}&returnGeom=Y&getAddrDetails=Y&pageNum=1"
+    encoded_search = quote(search_string, safe='')
+    url = f"https://www.onemap.gov.sg/api/common/elastic/search?searchVal={encoded_search}&returnGeom=Y&getAddrDetails=Y&pageNum=1"
     response = requests.get(url, headers=headers, timeout=timeout)
     response.raise_for_status()
     return pd.DataFrame(json.loads(response.text)['results']).reset_index().rename(
         {'index': 'search_result'}, axis=1)
 
 
-def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Load all URA transaction CSV files.
 
@@ -134,25 +140,22 @@ def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Data
         base_path: Base path to data/raw_data/csv directory
 
     Returns:
-        Tuple of (ec_df, condo_df, residential_df, hdb_df)
+        Tuple of (ec_df, condo_df, hdb_df)
     """
     import re
 
     # File lists
     ec_list = [
-        "URA_ResidentialTransaction_EC2020_20240917220317",
-        "URA_ResidentialTransaction_EC2021_20240917220358",
+        "ECResidentialTransaction20260121003532",
+        "ECResidentialTransaction20260121003707",
     ]
 
     condo_list = [
-        "URA_ResidentialTransaction_Conda2020_20240917220234",
-        "URA_ResidentialTransaction_Conda2021_20240917220149",
-        "URA_ResidentialTransaction_Conda2022_20240917220116",
-        "URA_ResidentialTransaction_Conda2023_20240917215948",
-        "URA_ResidentialTransaction_Condo2024_20240917215852",
-    ]
-
-    residential_list = [
+        "ResidentialTransaction20260121003944",
+        "ResidentialTransaction20260121004101",
+        "ResidentialTransaction20260121004213",
+        "ResidentialTransaction20260121004407",
+        "ResidentialTransaction20260121004517",
         "ResidentialTransaction20260121005130",
         "ResidentialTransaction20260121005233",
         "ResidentialTransaction20260121005346",
@@ -173,14 +176,6 @@ def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Data
     condo_df['Area (SQM)'] = condo_df['Area (SQM)'].str.replace(',', '').str.strip()
     condo_df['Area (SQM)'] = pd.to_numeric(condo_df['Area (SQM)'], errors='coerce')
     print(f"✅ Loaded {len(condo_df)} condo transactions from {len(condo_list)} files")
-
-    # Load Residential files
-    residential_dfs = [pd.read_csv(base_path / 'ura' / f"{res}.csv", encoding='latin1') for res in residential_list]
-    residential_df = pd.concat(residential_dfs, ignore_index=True)
-    if 'Area (SQM)' in residential_df.columns:
-        residential_df['Area (SQM)'] = residential_df['Area (SQM)'].str.replace(',', '').str.strip()
-        residential_df['Area (SQM)'] = pd.to_numeric(residential_df['Area (SQM)'], errors='coerce')
-    print(f"✅ Loaded {len(residential_df)} residential transactions from {len(residential_list)} files")
 
     # Load HDB files
     hdb_resale_path = base_path / 'ResaleFlatPrices'
@@ -211,12 +206,11 @@ def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Data
     hdb_df.drop('remaining_lease', axis=1, inplace=True)
     print(f"✅ Loaded {len(hdb_df)} HDB transactions from {len(hdb_files)} files")
 
-    return ec_df, condo_df, residential_df, hdb_df
+    return ec_df, condo_df, hdb_df
 
 
 def extract_unique_addresses(ec_df: pd.DataFrame,
                             condo_df: pd.DataFrame,
-                            residential_df: pd.DataFrame,
                             hdb_df: pd.DataFrame) -> pd.DataFrame:
     """
     Extract unique property addresses from all transaction data.
@@ -224,7 +218,6 @@ def extract_unique_addresses(ec_df: pd.DataFrame,
     Args:
         ec_df: Executive condominium transactions
         condo_df: Condo transactions
-        residential_df: Residential transactions
         hdb_df: HDB transactions
 
     Returns:
@@ -233,8 +226,6 @@ def extract_unique_addresses(ec_df: pd.DataFrame,
     # Add property type column
     condo_df['property_type'] = 'private'
     ec_df['property_type'] = 'private'
-    if len(residential_df) > 0:
-        residential_df['property_type'] = 'private'
     hdb_df['property_type'] = 'hdb'
 
     # Combine and get unique addresses
@@ -242,7 +233,6 @@ def extract_unique_addresses(ec_df: pd.DataFrame,
         [
             condo_df[["Project Name", "Street Name", "property_type"]].drop_duplicates(),
             ec_df[["Project Name", "Street Name", 'property_type']].drop_duplicates(),
-            residential_df[["Project Name", "Street Name", 'property_type']].drop_duplicates() if len(residential_df) > 0 else pd.DataFrame(),
             hdb_df[["block", "street_name", 'property_type']].drop_duplicates(),
         ],
         ignore_index=True,
@@ -354,6 +344,8 @@ def fetch_data_parallel(
                 if show_progress and completed % 50 == 0:
                     progress = completed / total * 100
                     logger.info(f"Progress: {completed}/{total} addresses ({progress:.1f}%)")
+                elif show_progress and completed == total:
+                    logger.info(f"✅ Final address processed: {completed}/{total}")
 
             except Exception as e:
                 logger.error(f"❌ Unexpected error for '{address}': {e}")
@@ -396,7 +388,7 @@ def batch_geocode_addresses(
     """
     from src.data_helpers import save_parquet
 
-    all_results = []
+    batch_dataframes = []  # Store concatenated batch results
     total = len(addresses)
 
     # Process in batches
@@ -414,22 +406,29 @@ def batch_geocode_addresses(
             show_progress=True
         )
 
-        all_results.extend(batch_results)
+        # Concatenate batch results immediately to avoid memory issues
+        if batch_results:
+            logger.info(f"🔄 Concatenating {len(batch_results)} results from batch {batch_num}...")
+            batch_df = pd.concat(batch_results, ignore_index=True)
+            batch_dataframes.append(batch_df)
+            logger.info(f"✅ Batch {batch_num} concatenated: {len(batch_df)} rows")
 
         # Log failed addresses in this batch
         if failed:
             logger.warning(f"⚠️  Batch {batch_num}: {len(failed)} failed addresses")
 
         # Save checkpoint periodically
-        if checkpoint_interval and (batch_end) % checkpoint_interval == 0:
-            checkpoint_df = pd.concat(all_results, ignore_index=True)
-            logger.info(f"💾 Saving checkpoint at {batch_end} addresses...")
+        if checkpoint_interval and (batch_end) % checkpoint_interval == 0 and batch_dataframes:
+            checkpoint_df = pd.concat(batch_dataframes, ignore_index=True)
+            logger.info(f"💾 Checkpoint at {batch_end} addresses: {len(checkpoint_df)} total rows")
             # Note: You might want to save to a temporary checkpoint file here
             # save_parquet(checkpoint_df, f"checkpoint_geocoding_{batch_end}")
 
-    # Combine all results
-    if all_results:
-        final_df = pd.concat(all_results, ignore_index=True)
+    # Combine all batch results
+    logger.info(f"🔄 Combining results from {len(batch_dataframes)} batches...")
+    if batch_dataframes:
+        logger.info("🔄 Starting final pd.concat operation...")
+        final_df = pd.concat(batch_dataframes, ignore_index=True)
         logger.info(f"✅ Geocoding complete: {len(final_df)} results from {total} addresses")
         return final_df
     else:

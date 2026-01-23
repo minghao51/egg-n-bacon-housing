@@ -20,15 +20,15 @@ from src.geocoding import (
     extract_unique_addresses,
     setup_onemap_headers,
     fetch_data_parallel,
-    batch_geocode_addresses
+    batch_geocode_addresses,
 )
 
 logger = logging.getLogger(__name__)
 
 
 def load_and_save_transaction_data(
-    csv_base_path: Optional[Path] = None
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    csv_base_path: Optional[Path] = None,
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Load URA and HDB transaction files and save individual datasets.
 
@@ -36,19 +36,19 @@ def load_and_save_transaction_data(
         csv_base_path: Base path to CSV files (defaults to Config.DATA_DIR / 'raw_data' / 'csv')
 
     Returns:
-        Tuple of (ec_df, condo_df, residential_df, hdb_df)
+        Tuple of (ec_df, condo_df, hdb_df)
 
     Example:
-        >>> ec_df, condo_df, res_df, hdb_df = load_and_save_transaction_data()
+        >>> ec_df, condo_df, hdb_df = load_and_save_transaction_data()
         >>> print(f"Loaded {len(ec_df)} EC transactions")
     """
     if csv_base_path is None:
-        csv_base_path = Config.DATA_DIR / 'raw_data' / 'csv'
+        csv_base_path = Config.DATA_DIR / "raw_data" / "csv"
 
     logger.info("Loading URA and HDB transaction files...")
 
     # Load all transaction files
-    ec_df, condo_df, residential_df, hdb_df = load_ura_files(csv_base_path)
+    ec_df, condo_df, hdb_df = load_ura_files(csv_base_path)
 
     # Save individual transaction datasets
     save_parquet(ec_df, "L1_housing_ec_transaction", source="URA CSV data")
@@ -57,20 +57,14 @@ def load_and_save_transaction_data(
     save_parquet(condo_df, "L1_housing_condo_transaction", source="URA CSV data")
     logger.info(f"✅ Saved {len(condo_df)} condo transactions")
 
-    save_parquet(residential_df, "L1_housing_residential_transaction", source="URA CSV data")
-    logger.info(f"✅ Saved {len(residential_df)} residential transactions")
-
     save_parquet(hdb_df, "L1_housing_hdb_transaction", source="data.gov.sg CSV data")
     logger.info(f"✅ Saved {len(hdb_df)} HDB transactions")
 
-    return ec_df, condo_df, residential_df, hdb_df
+    return ec_df, condo_df, hdb_df
 
 
 def prepare_unique_addresses(
-    ec_df: pd.DataFrame,
-    condo_df: pd.DataFrame,
-    residential_df: pd.DataFrame,
-    hdb_df: pd.DataFrame
+    ec_df: pd.DataFrame, condo_df: pd.DataFrame, hdb_df: pd.DataFrame
 ) -> pd.DataFrame:
     """
     Extract and prepare unique property addresses from all transaction data.
@@ -78,24 +72,23 @@ def prepare_unique_addresses(
     Args:
         ec_df: Executive condominium transactions
         condo_df: Condo transactions
-        residential_df: Residential transactions
         hdb_df: HDB transactions
 
     Returns:
         DataFrame with unique addresses and property types
 
     Example:
-        >>> addresses_df = prepare_unique_addresses(ec_df, condo_df, res_df, hdb_df)
+        >>> addresses_df = prepare_unique_addresses(ec_df, condo_df, hdb_df)
         >>> print(f"Found {len(addresses_df)} unique addresses")
     """
     logger.info("Extracting unique addresses...")
 
-    housing_df = extract_unique_addresses(ec_df, condo_df, residential_df, hdb_df)
+    housing_df = extract_unique_addresses(ec_df, condo_df, hdb_df)
 
     logger.info(f"✅ Extracted {len(housing_df)} unique addresses")
 
     # Display sample addresses
-    sample_addresses = housing_df['NameAddress'].head(10).tolist()
+    sample_addresses = housing_df["NameAddress"].head(10).tolist()
     logger.info(f"Sample addresses: {sample_addresses[:3]}...")
 
     return housing_df
@@ -104,7 +97,8 @@ def prepare_unique_addresses(
 def geocode_addresses(
     addresses: List[str],
     use_parallel: bool = True,
-    show_progress: bool = True
+    show_progress: bool = True,
+    check_existing: bool = True,
 ) -> Tuple[pd.DataFrame, List[str]]:
     """
     Geocode property addresses using OneMap API.
@@ -113,6 +107,7 @@ def geocode_addresses(
         addresses: List of address strings to geocode
         use_parallel: Use parallel geocoding (5x faster)
         show_progress: Show progress messages
+        check_existing: Check for already geocoded addresses in L2 data
 
     Returns:
         Tuple of (geocoded_df, failed_addresses)
@@ -121,10 +116,40 @@ def geocode_addresses(
         >>> addresses_df = prepare_unique_addresses(...)
         >>> geocoded_df, failed = geocode_addresses(
         ...     addresses_df['NameAddress'].tolist(),
-        ...     use_parallel=True
+        ...     use_parallel=True,
+        ...     check_existing=True
         ... )
         >>> print(f"Geocoded {len(geocoded_df)} addresses")
     """
+    # Check for existing geocoded data
+    existing_geocoded_df = pd.DataFrame()
+    if check_existing:
+        existing_path = Config.PARQUETS_DIR / "L2" / "housing_unique_searched.parquet"
+        if existing_path.exists():
+            logger.info(f"Found existing geocoded data: {existing_path}")
+            try:
+                existing_geocoded_df = pd.read_parquet(existing_path)
+                existing_addresses = set(existing_geocoded_df["NameAddress"].tolist())
+                logger.info(f"✅ Loaded {len(existing_geocoded_df)} existing geocoded addresses")
+
+                # Filter out already geocoded addresses
+                new_addresses = [addr for addr in addresses if addr not in existing_addresses]
+
+                logger.info(
+                    f"Addresses to geocode: {len(new_addresses)} new / {len(addresses)} total"
+                )
+
+                if len(new_addresses) == 0:
+                    logger.info("✅ All addresses already geocoded! Using existing data.")
+                    return existing_geocoded_df, []
+
+                addresses = new_addresses
+            except Exception as e:
+                logger.warning(f"Could not load existing data: {e}")
+                logger.info("Will geocode all addresses from scratch")
+    else:
+        logger.info("Skipping existing data check (check_existing=False)")
+
     # Setup OneMap authentication
     headers = setup_onemap_headers()
 
@@ -133,21 +158,20 @@ def geocode_addresses(
 
     if use_parallel:
         logger.info("Using parallel geocoding (5x faster)")
-        logger.info(f"Estimated time: ~{total / Config.GEOCODING_MAX_WORKERS * Config.GEOCODING_API_DELAY / 60:.1f} minutes")
+        logger.info(
+            f"Estimated time: ~{total / Config.GEOCODING_MAX_WORKERS * Config.GEOCODING_API_DELAY / 60:.1f} minutes"
+        )
 
         # Use batch geocoding for better performance
-        geocoded_df = batch_geocode_addresses(
-            addresses,
-            headers,
-            batch_size=1000,
-            checkpoint_interval=500
+        new_geocoded_df = batch_geocode_addresses(
+            addresses, headers, batch_size=1000, checkpoint_interval=500
         )
 
         # Determine failed addresses
-        if geocoded_df.empty:
+        if new_geocoded_df.empty:
             failed = addresses
         else:
-            geocoded_set = set(geocoded_df['NameAddress'].tolist())
+            geocoded_set = set(new_geocoded_df["NameAddress"].tolist())
             failed = [addr for addr in addresses if addr not in geocoded_set]
 
     else:
@@ -163,11 +187,11 @@ def geocode_addresses(
         for i, search_string in enumerate(addresses, 1):
             try:
                 _df = fetch_data_cached(search_string, headers, timeout=Config.GEOCODING_TIMEOUT)
-                _df['NameAddress'] = search_string
+                _df["NameAddress"] = search_string
                 df_list.append(_df)
 
                 if show_progress and i % 50 == 0:
-                    logger.info(f"Progress: {i}/{total} addresses ({i/total*100:.1f}%)")
+                    logger.info(f"Progress: {i}/{total} addresses ({i / total * 100:.1f}%)")
 
             except requests.RequestException:
                 failed.append(search_string)
@@ -175,14 +199,30 @@ def geocode_addresses(
 
         # Combine results
         if df_list:
-            geocoded_df = pd.concat(df_list, ignore_index=True)
+            new_geocoded_df = pd.concat(df_list, ignore_index=True)
         else:
-            geocoded_df = pd.DataFrame()
+            new_geocoded_df = pd.DataFrame()
 
-    logger.info(f"✅ Completed geocoding: {len(geocoded_df)}/{total} successful")
+    logger.info(f"✅ Completed geocoding: {len(new_geocoded_df)}/{total} successful")
 
     if failed:
         logger.warning(f"⚠️  Failed to retrieve data for {len(failed)} addresses")
+
+    # Merge with existing data if available
+    logger.info("🔄 Merging geocoded results...")
+    if not existing_geocoded_df.empty:
+        if not new_geocoded_df.empty:
+            logger.info(
+                f"🔄 Concatenating existing ({len(existing_geocoded_df)} rows) + new ({len(new_geocoded_df)} rows)..."
+            )
+            geocoded_df = pd.concat([existing_geocoded_df, new_geocoded_df], ignore_index=True)
+            logger.info(f"✅ Merged with existing data: {len(geocoded_df)} total addresses")
+        else:
+            logger.info("✅ No new geocoded data, using existing data")
+            geocoded_df = existing_geocoded_df
+    else:
+        logger.info(f"✅ No existing data, using new geocoded data: {len(new_geocoded_df)} rows")
+        geocoded_df = new_geocoded_df
 
     return geocoded_df, failed
 
@@ -191,7 +231,7 @@ def process_geocoded_results(
     geocoded_df: pd.DataFrame,
     housing_df: pd.DataFrame,
     save_full: bool = True,
-    save_filtered: bool = True
+    save_filtered: bool = True,
 ) -> pd.DataFrame:
     """
     Process and filter geocoded results.
@@ -221,40 +261,33 @@ def process_geocoded_results(
 
     # Save full dataset
     if save_full:
-        save_parquet(
-            geocoded_df,
-            "L2_housing_unique_full_searched",
-            source="L1 transaction data"
-        )
+        logger.info(f"💾 Saving full dataset ({len(geocoded_df)} rows)...")
+        save_parquet(geocoded_df, "L2_housing_unique_full_searched", source="L1 transaction data")
         logger.info(f"✅ Saved full dataset: {len(geocoded_df)} rows")
 
     # Filter for best match (search_result == 0)
-    filtered_df = geocoded_df[
-        geocoded_df['search_result'] == 0
-    ].reset_index(drop=True)
+    logger.info("🔍 Filtering for best match (search_result == 0)...")
+    filtered_df = geocoded_df[geocoded_df["search_result"] == 0].reset_index(drop=True)
+    logger.info(f"✅ Filtered to {len(filtered_df)} best-match addresses")
 
     # Add property_type column from original housing_df
     # Match by NameAddress
-    property_type_map = housing_df.set_index('NameAddress')['property_type'].to_dict()
-    filtered_df['property_type'] = filtered_df['NameAddress'].map(property_type_map)
-
-    logger.info(f"Filtered to {len(filtered_df)} best-match addresses")
+    logger.info("🏷️  Adding property_type column...")
+    property_type_map = housing_df.set_index("NameAddress")["property_type"].to_dict()
+    filtered_df["property_type"] = filtered_df["NameAddress"].map(property_type_map)
+    logger.info(f"✅ Added property_type to {len(filtered_df)} addresses")
 
     # Save filtered dataset
     if save_filtered:
-        save_parquet(
-            filtered_df,
-            "L2_housing_unique_searched",
-            source="L2 housing data"
-        )
+        logger.info(f"💾 Saving filtered dataset ({len(filtered_df)} rows)...")
+        save_parquet(filtered_df, "L2_housing_unique_searched", source="L2 housing data")
         logger.info(f"✅ Saved filtered dataset: {len(filtered_df)} rows")
 
     return filtered_df
 
 
-def run_full_l1_pipeline(
-    csv_base_path: Optional[Path] = None,
-    use_parallel_geocoding: bool = True
+def run_processing_pipeline(
+    csv_base_path: Optional[Path] = None, use_parallel_geocoding: bool = True
 ) -> Dict:
     """
     Run complete L1 processing pipeline.
@@ -273,7 +306,7 @@ def run_full_l1_pipeline(
         Dictionary with pipeline results
 
     Example:
-        >>> results = run_full_l1_pipeline(use_parallel_geocoding=True)
+        >>> results = run_processing_pipeline(use_parallel_geocoding=True)
         >>> print(f"Geocoded {results['geocoded_count']} addresses")
     """
     logger.info("=" * 80)
@@ -285,51 +318,46 @@ def run_full_l1_pipeline(
 
     # Step 1: Load transaction data
     logger.info("Step 1: Loading transaction data...")
-    ec_df, condo_df, residential_df, hdb_df = load_and_save_transaction_data(csv_base_path)
+    ec_df, condo_df, hdb_df = load_and_save_transaction_data(csv_base_path)
 
-    results['transaction_counts'] = {
-        'ec': len(ec_df),
-        'condo': len(condo_df),
-        'residential': len(residential_df),
-        'hdb': len(hdb_df)
-    }
+    results["transaction_counts"] = {"ec": len(ec_df), "condo": len(condo_df), "hdb": len(hdb_df)}
 
     # Step 2: Extract unique addresses
     logger.info("Step 2: Extracting unique addresses...")
-    housing_df = prepare_unique_addresses(ec_df, condo_df, residential_df, hdb_df)
-    results['total_addresses'] = len(housing_df)
+    housing_df = prepare_unique_addresses(ec_df, condo_df, hdb_df)
+    results["total_addresses"] = len(housing_df)
 
     # Step 3: Geocode addresses
     logger.info("Step 3: Geocoding addresses...")
-    addresses_list = housing_df['NameAddress'].tolist()
+    addresses_list = housing_df["NameAddress"].tolist()
 
     geocoded_df, failed_addresses = geocode_addresses(
-        addresses_list,
-        use_parallel=use_parallel_geocoding,
-        show_progress=True
+        addresses_list, use_parallel=use_parallel_geocoding, show_progress=True
     )
 
-    results['geocoded_count'] = len(geocoded_df)
-    results['failed_count'] = len(failed_addresses)
-    results['failed_addresses'] = failed_addresses[:10]  # Store first 10
+    results["geocoded_count"] = len(geocoded_df)
+    results["failed_count"] = len(failed_addresses)
+    results["failed_addresses"] = failed_addresses[:10]  # Store first 10
+
+    logger.info(f"Step 3 Complete: Collected {len(geocoded_df)} results. Moving to Step 4...")
 
     # Step 4: Process results
     logger.info("Step 4: Processing geocoded results...")
     filtered_df = process_geocoded_results(
-        geocoded_df,
-        housing_df,
-        save_full=True,
-        save_filtered=True
+        geocoded_df, housing_df, save_full=True, save_filtered=True
     )
+    logger.info(f"Step 4 Complete: Filtered to {len(filtered_df)} addresses.")
 
-    results['filtered_count'] = len(filtered_df)
+    results["filtered_count"] = len(filtered_df)
 
     # Summary
     logger.info("=" * 80)
     logger.info("✅ L1 Pipeline Complete!")
     logger.info(f"   Transactions loaded: {sum(results['transaction_counts'].values())}")
     logger.info(f"   Unique addresses: {results['total_addresses']}")
-    logger.info(f"   Successfully geocoded: {results['geocoded_count']} ({results['geocoded_count']/results['total_addresses']*100:.1f}%)")
+    logger.info(
+        f"   Successfully geocoded: {results['geocoded_count']} ({results['geocoded_count'] / results['total_addresses'] * 100:.1f}%)"
+    )
     logger.info(f"   Failed: {results['failed_count']}")
     logger.info(f"   Final filtered results: {results['filtered_count']}")
     logger.info("=" * 80)
@@ -337,7 +365,9 @@ def run_full_l1_pipeline(
     return results
 
 
-def save_failed_addresses(failed_addresses: List[str], filename: str = "failed_geocoding.txt") -> None:
+def save_failed_addresses(
+    failed_addresses: List[str], filename: str = "failed_geocoding.txt"
+) -> None:
     """
     Save list of failed addresses to file for later retry.
 
@@ -353,12 +383,12 @@ def save_failed_addresses(failed_addresses: List[str], filename: str = "failed_g
         logger.info("No failed addresses to save")
         return
 
-    log_dir = Config.DATA_DIR / 'logs'
+    log_dir = Config.DATA_DIR / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
 
     output_file = log_dir / filename
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         f.write(f"# Failed Geocoding Addresses\n")
         f.write(f"# Total: {len(failed_addresses)}\n")
         f.write(f"# Generated: {pd.Timestamp.now()}\n\n")

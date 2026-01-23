@@ -37,37 +37,39 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         ...     "d_5785799d63a9da091f4e0b456291eeb8"
         ... )
     """
+
     def _fetch_from_api():
         response_agg = []
         offset_value = 0
         total_records = 0
+        current_url = url
 
         while True:
             try:
-                response = requests.get(f"{url}{dataset_id}")
+                response = requests.get(f"{current_url}{dataset_id}")
                 response_text = response.json()
 
                 # Extract records from response
-                if 'result' not in response_text or 'records' not in response_text['result']:
+                if "result" not in response_text or "records" not in response_text["result"]:
                     logger.warning(f"No records found in dataset {dataset_id}")
                     break
 
-                records = response_text['result']['records']
+                records = response_text["result"]["records"]
                 response_agg.append(pd.DataFrame(records))
 
                 # Check pagination
-                if 'next' not in response_text['result'].get('_links', {}):
+                if "next" not in response_text["result"].get("_links", {}):
                     break
 
                 # Get next URL
-                next_url = response_text['result']['_links']['next']
-                url = 'https://data.gov.sg' + next_url
+                next_url = response_text["result"]["_links"]["next"]
+                current_url = "https://data.gov.sg" + next_url
 
                 # Update offset for pagination
-                match = re.search(r'offset=(\d+)', url)
+                match = re.search(r"offset=(\d+)", current_url)
                 if match:
                     offset_value = int(match.group(1))
-                    total_records = response_text['result']['total']
+                    total_records = response_text["result"]["total"]
 
                     if offset_value > total_records:
                         break
@@ -94,7 +96,7 @@ def fetch_private_property_transactions() -> Optional[pd.DataFrame]:
     """Fetch private residential property transactions in rest of central region."""
     df = fetch_datagovsg_dataset(
         url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_5785799d63a9da091f4e0b456291eeb8"
+        dataset_id="d_5785799d63a9da091f4e0b456291eeb8",
     )
     if not df.empty:
         save_parquet(df, "raw_datagov_general_sale", source="data.gov.sg API")
@@ -107,7 +109,7 @@ def fetch_rental_index() -> Optional[pd.DataFrame]:
     """Fetch private residential property rental index."""
     df = fetch_datagovsg_dataset(
         url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_8e4c50283fb7052a391dfb746a05c853"
+        dataset_id="d_8e4c50283fb7052a391dfb746a05c853",
     )
     if not df.empty:
         save_parquet(df, "raw_datagov_rental_index", source="data.gov.sg API")
@@ -120,7 +122,7 @@ def fetch_price_index() -> Optional[pd.DataFrame]:
     """Fetch private residential property price index."""
     df = fetch_datagovsg_dataset(
         url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_97f8a2e995022d311c6c68cfda6dae1af"
+        dataset_id="d_97f8a2e995022d311c6c68cfda6dae1af",
     )
     if not df.empty:
         save_parquet(df, "raw_datagov_price_index", source="data.gov.sg API")
@@ -133,7 +135,7 @@ def fetch_median_property_tax() -> Optional[pd.DataFrame]:
     """Fetch median annual value and property tax by property type."""
     df = fetch_datagovsg_dataset(
         url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_774a81df45dca33112e59207e6dae1af"
+        dataset_id="d_774a81df45dca33112e59207e6dae1af",
     )
     if not df.empty:
         save_parquet(df, "raw_datagov_median_price_via_property_type", source="data.gov.sg API")
@@ -146,7 +148,7 @@ def fetch_private_transactions_whole() -> Optional[pd.DataFrame]:
     """Fetch private residential property transactions in whole of Singapore."""
     df = fetch_datagovsg_dataset(
         url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_7c69c943d5f0d89d6a9a773d2b51f337"
+        dataset_id="d_7c69c943d5f0d89d6a9a773d2b51f337",
     )
     if not df.empty:
         save_parquet(df, "raw_datagov_private_transactions_property_type", source="data.gov.sg API")
@@ -170,10 +172,10 @@ def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFram
         >>> print(f"Loaded {len(df)} resale records")
     """
     if csv_base_path is None:
-        csv_base_path = Config.DATA_DIR / 'raw_data' / 'csv'
+        csv_base_path = Config.DATA_DIR / "raw_data" / "csv"
 
-    resale_prices_path = csv_base_path / 'ResaleFlatPrices'
-    resale_files = list(resale_prices_path.glob('*.csv'))
+    resale_prices_path = csv_base_path / "ResaleFlatPrices"
+    resale_files = list(resale_prices_path.glob("*.csv"))
 
     if not resale_files:
         logger.warning(f"No CSV files found in {resale_prices_path}")
@@ -192,13 +194,15 @@ def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFram
     logger.info(f"Total resale records: {len(resale_flat_all)}")
 
     # Convert remaining_lease to months
-    if 'remaining_lease' in resale_flat_all.columns:
+    if "remaining_lease" in resale_flat_all.columns:
         logger.info("Converting 'remaining_lease' from text to months...")
-        resale_flat_all['remaining_lease_months'] = resale_flat_all['remaining_lease'].apply(
+        resale_flat_all["remaining_lease_months"] = resale_flat_all["remaining_lease"].apply(
             _convert_lease_to_months
         )
-        resale_flat_all['remaining_lease'] = resale_flat_all['remaining_lease'].astype(str)
-        logger.info(f"Converted {resale_flat_all['remaining_lease_months'].notna().sum()} lease values")
+        resale_flat_all["remaining_lease"] = resale_flat_all["remaining_lease"].astype(str)
+        logger.info(
+            f"Converted {resale_flat_all['remaining_lease_months'].notna().sum()} lease values"
+        )
 
     return resale_flat_all
 
@@ -213,8 +217,8 @@ def _convert_lease_to_months(lease_str) -> Optional[int]:
 
     lease_str = str(lease_str).lower()
 
-    years_match = re.search(r'(\d+)\s*years?', lease_str)
-    months_match = re.search(r'(\d+)\s*months?', lease_str)
+    years_match = re.search(r"(\d+)\s*years?", lease_str)
+    months_match = re.search(r"(\d+)\s*months?", lease_str)
 
     years = int(years_match.group(1)) if years_match else 0
     months = int(months_match.group(1)) if months_match else 0
@@ -222,7 +226,7 @@ def _convert_lease_to_months(lease_str) -> Optional[int]:
     return years * 12 + months
 
 
-def run_all_datagovsg_collection() -> dict:
+def collect_all_datagovsg() -> dict:
     """
     Run all data.gov.sg data collection tasks.
 
@@ -230,7 +234,7 @@ def run_all_datagovsg_collection() -> dict:
         Dictionary with collection results
 
     Example:
-        >>> results = run_all_datagovsg_collection()
+        >>> results = collect_all_datagovsg()
         >>> print(f"Collected {len(results)} datasets")
     """
     logger.info("🚀 Starting data.gov.sg data collection")
@@ -238,21 +242,23 @@ def run_all_datagovsg_collection() -> dict:
     results = {}
 
     # Fetch from API
-    results['private_transactions'] = fetch_private_property_transactions()
-    results['rental_index'] = fetch_rental_index()
-    results['price_index'] = fetch_price_index()
-    results['median_tax'] = fetch_median_property_tax()
-    results['private_whole'] = fetch_private_transactions_whole()
+    results["private_transactions"] = fetch_private_property_transactions()
+    results["rental_index"] = fetch_rental_index()
+    results["price_index"] = fetch_price_index()
+    results["median_tax"] = fetch_median_property_tax()
+    results["private_whole"] = fetch_private_transactions_whole()
 
     # Load resale flat prices from CSV
     resale_df = load_resale_flat_prices()
     if not resale_df.empty:
         save_parquet(resale_df, "raw_datagov_resale_flat_all", source="data.gov.sg CSV (all files)")
-        results['resale_flat_prices'] = resale_df
+        results["resale_flat_prices"] = resale_df
         logger.info(f"✅ Saved resale flat prices: {len(resale_df)} records")
 
     # Count successful collections
     successful = sum(1 for v in results.values() if v is not None and not v.empty)
-    logger.info(f"✅ Data.gov.sg collection complete: {successful}/{len(results)} datasets collected")
+    logger.info(
+        f"✅ Data.gov.sg collection complete: {successful}/{len(results)} datasets collected"
+    )
 
     return results
