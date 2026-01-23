@@ -1,0 +1,165 @@
+SHAP not available - will skip SHAP analysis
+================================================================================
+FEATURE IMPORTANCE ANALYSIS - SINGAPORE HOUSING MARKET
+================================================================================
+
+Configuration:
+  Split Method: Random (80/20)
+  Extract Feature Importance: True
+Loading dataset...
+Loaded 850,872 records with 58 features
+
+================================================================================
+ANALYZING: Transaction Price (PSM)
+================================================================================
+
+Preparing features for target: price_psm
+Selected 39 features
+  Numeric features: 31
+  Categorical features: 8
+
+Final dataset: 850,872 records
+Train set (80%): 680,697 records
+Test set (20%): 170,175 records
+
+Training Linear Regression...
+  Train R²: 0.8987
+  Test R²: 0.8980
+  Test MAE: 743.92
+  Test RMSE: 1393.80
+
+Training Ridge Regression...
+  Train R²: 0.8987
+  Test R²: 0.8980
+  Test MAE: 743.92
+  Test RMSE: 1393.81
+
+Training XGBoost...
+  Train R²: 0.9746
+  Test R²: 0.9747
+  Test MAE: 380.95
+  Test RMSE: 694.60
+
+Training Random Forest...
+  Train R²: 0.9799
+  Test R²: 0.9780
+  Test MAE: 346.01
+  Test RMSE: 647.61
+  Skipping SHAP analysis (SHAP not installed)
+
+Extracting feature importance...
+  RF Feature Importance ERROR: 'StandardScaler' object has no attribute 'feature_names_in_'
+  XGBoost Feature Importance ERROR: 'StandardScaler' object has no attribute 'feature_names_in_'
+
+================================================================================
+ANALYZING: Rental Yield (%)
+================================================================================
+
+Preparing features for target: rental_yield_pct
+Dropped rows with missing rental_yield_pct: 95,531 remaining
+Selected 39 features
+  Numeric features: 31
+  Categorical features: 8
+
+Final dataset: 95,531 records
+Train set (80%): 76,424 records
+Test set (20%): 19,107 records
+
+Training Linear Regression...
+  Train R²: 0.4662
+  Test R²: 0.4568
+  Test MAE: 0.53
+  Test RMSE: 0.69
+
+Training Ridge Regression...
+  Train R²: 0.4662
+  Test R²: 0.4568
+  Test MAE: 0.53
+  Test RMSE: 0.69
+
+Training XGBoost...
+  Train R²: 0.9335
+  Test R²: 0.9304
+  Test MAE: 0.17
+  Test RMSE: 0.25
+
+Training Random Forest...
+  Train R²: 0.9628
+  Test R²: 0.9606
+  Test MAE: 0.08
+  Test RMSE: 0.19
+  Skipping SHAP analysis (SHAP not installed)
+
+Extracting feature importance...
+  RF Feature Importance ERROR: 'StandardScaler' object has no attribute 'feature_names_in_'
+  XGBoost Feature Importance ERROR: 'StandardScaler' object has no attribute 'feature_names_in_'
+
+================================================================================
+ANALYZING: Year-over-Year Appreciation (%)
+================================================================================
+
+Preparing features for target: yoy_change_pct
+Dropped rows with missing yoy_change_pct: 177,023 remaining
+Selected 39 features
+  Numeric features: 31
+  Categorical features: 8
+
+Final dataset: 177,023 records
+Train set (80%): 141,618 records
+Test set (20%): 35,405 records
+
+Training Linear Regression...
+  Train R²: 0.0754
+  Test R²: 0.0761
+  Test MAE: 31.07
+  Test RMSE: 80.43
+
+Training Ridge Regression...
+  Train R²: 0.0754
+  Test R²: 0.0761
+  Test MAE: 31.07
+  Test RMSE: 80.43
+
+Training XGBoost...
+  Train R²: 0.8952
+  Test R²: 0.8830
+  Test MAE: 14.89
+  Test RMSE: 28.62
+
+Training Random Forest...
+  Train R²: 0.9874
+  Test R²: 0.9821
+  Test MAE: 5.13
+  Test RMSE: 11.20
+  Skipping SHAP analysis (SHAP not installed)
+
+Extracting feature importance...
+  RF Feature Importance ERROR: 'StandardScaler' object has no attribute 'feature_names_in_'
+  XGBoost Feature Importance ERROR: 'StandardScaler' object has no attribute 'feature_names_in_'
+
+================================================================================
+COMPILING RESULTS
+================================================================================
+
+Saved model comparison to data/analysis/feature_importance/model_comparison.csv
+
+Model Performance Summary:
+            model                     target_name  test_r2   test_mae   test_rmse
+Linear Regression         Transaction Price (PSM) 0.898005 743.919046 1393.800526
+ Ridge Regression         Transaction Price (PSM) 0.898004 743.917186 1393.806002
+          XGBoost         Transaction Price (PSM) 0.974669 380.953400  694.603439
+    Random Forest         Transaction Price (PSM) 0.977981 346.012642  647.608277
+Linear Regression                Rental Yield (%) 0.456789   0.534710    0.690892
+ Ridge Regression                Rental Yield (%) 0.456799   0.534749    0.690887
+          XGBoost                Rental Yield (%) 0.930437   0.165821    0.247237
+    Random Forest                Rental Yield (%) 0.960569   0.082260    0.186143
+Linear Regression Year-over-Year Appreciation (%) 0.076122  31.069260   80.433878
+ Ridge Regression Year-over-Year Appreciation (%) 0.076134  31.066435   80.433356
+          XGBoost Year-over-Year Appreciation (%) 0.882999  14.894924   28.623720
+    Random Forest Year-over-Year Appreciation (%) 0.982080   5.129162   11.202284
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+
+Results saved to: data/analysis/feature_importance

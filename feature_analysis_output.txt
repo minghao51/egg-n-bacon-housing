@@ -1,0 +1,132 @@
+SHAP not available - will skip SHAP analysis
+================================================================================
+FEATURE IMPORTANCE ANALYSIS - SINGAPORE HOUSING MARKET
+================================================================================
+Loading dataset...
+Loaded 850,872 records with 58 features
+
+================================================================================
+ANALYZING: Transaction Price (PSM)
+================================================================================
+
+Preparing features for target: price_psm
+Selected 39 features
+  Numeric features: 31
+  Categorical features: 8
+
+Final dataset: 850,872 records
+Train set (pre-2020): 671,732 records
+Test set (2020+): 179,140 records
+
+Training Linear Regression...
+  Train R²: 0.8618
+  Test R²: -0.4971
+  Test MAE: 4892.74
+  Test RMSE: 8324.37
+
+Training Ridge Regression...
+  Train R²: 0.8618
+  Test R²: -0.5051
+  Test MAE: 4907.94
+  Test RMSE: 8346.76
+
+Training XGBoost...
+  Train R²: 0.9115
+  Test R²: -0.8129
+  Test MAE: 5578.88
+  Test RMSE: 9160.53
+
+Training Random Forest...
+  Train R²: 0.9203
+  Test R²: -0.8133
+  Test MAE: 5608.62
+  Test RMSE: 9161.39
+  Skipping SHAP analysis (SHAP not installed)
+
+================================================================================
+ANALYZING: Rental Yield (%)
+================================================================================
+
+Preparing features for target: rental_yield_pct
+Dropped rows with missing rental_yield_pct: 95,531 remaining
+Selected 39 features
+  Numeric features: 31
+  Categorical features: 8
+
+Final dataset: 95,531 records
+Train set (pre-2020): 0 records
+Test set (2020+): 95,531 records
+
+Training Linear Regression...
+  ERROR: Found array with 0 sample(s) (shape=(0, 30)) while a minimum of 1 is required by SimpleImputer.
+
+Training Ridge Regression...
+  ERROR: Found array with 0 sample(s) (shape=(0, 30)) while a minimum of 1 is required by SimpleImputer.
+
+Training XGBoost...
+  ERROR: Found array with 0 sample(s) (shape=(0, 30)) while a minimum of 1 is required by SimpleImputer.
+
+Training Random Forest...
+  ERROR: Found array with 0 sample(s) (shape=(0, 30)) while a minimum of 1 is required by SimpleImputer.
+
+================================================================================
+ANALYZING: Year-over-Year Appreciation (%)
+================================================================================
+
+Preparing features for target: yoy_change_pct
+Dropped rows with missing yoy_change_pct: 177,023 remaining
+Selected 39 features
+  Numeric features: 31
+  Categorical features: 8
+
+Final dataset: 177,023 records
+Train set (pre-2020): 63,360 records
+Test set (2020+): 113,663 records
+
+Training Linear Regression...
+  Train R²: 0.2008
+  Test R²: 0.0125
+  Test MAE: 39.85
+  Test RMSE: 102.21
+
+Training Ridge Regression...
+  Train R²: 0.2008
+  Test R²: 0.0126
+  Test MAE: 39.84
+  Test RMSE: 102.20
+
+Training XGBoost...
+  Train R²: 0.9127
+  Test R²: -0.0032
+  Test MAE: 42.69
+  Test RMSE: 103.02
+
+Training Random Forest...
+  Train R²: 0.9785
+  Test R²: -0.0103
+  Test MAE: 43.78
+  Test RMSE: 103.38
+  Skipping SHAP analysis (SHAP not installed)
+
+================================================================================
+COMPILING RESULTS
+================================================================================
+
+Saved model comparison to data/analysis/feature_importance/model_comparison.csv
+
+Model Performance Summary:
+            model                     target_name   test_r2    test_mae   test_rmse
+Linear Regression         Transaction Price (PSM) -0.497074 4892.740829 8324.371551
+ Ridge Regression         Transaction Price (PSM) -0.505136 4907.942352 8346.756011
+          XGBoost         Transaction Price (PSM) -0.812931 5578.880681 9160.526691
+    Random Forest         Transaction Price (PSM) -0.813271 5608.615435 9161.386429
+Linear Regression Year-over-Year Appreciation (%)  0.012539   39.853444  102.206133
+ Ridge Regression Year-over-Year Appreciation (%)  0.012574   39.844137  102.204311
+          XGBoost Year-over-Year Appreciation (%) -0.003242   42.694650  103.019609
+    Random Forest Year-over-Year Appreciation (%) -0.010267   43.778626  103.379658
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+
+Results saved to: data/analysis/feature_importance
