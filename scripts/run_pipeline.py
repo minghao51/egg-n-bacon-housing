@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 """
-Example pipeline runner script.
+Pipeline runner script.
 
-This script demonstrates how to use the extracted pipeline modules
-to run data collection and processing tasks programmatically.
+This script orchestrates all data pipeline stages:
+- L0: Data collection from external APIs
+- L1: Data processing and geocoding
+- L2: Feature engineering (rental yields and property features)
+- L3: Export and final output
 
 Usage:
     uv run python scripts/run_pipeline.py --stage L0
     uv run python scripts/run_pipeline.py --stage L1
+    uv run python scripts/run_pipeline.py --stage L2
+    uv run python scripts/run_pipeline.py --stage L2_rental
+    uv run python scripts/run_pipeline.py --stage L2_features
+    uv run python scripts/run_pipeline.py --stage L3
     uv run python scripts/run_pipeline.py --stage all
 
 Examples:
@@ -16,6 +23,9 @@ Examples:
 
     # Run L1 processing with parallel geocoding
     python scripts/run_pipeline.py --stage L1 --parallel
+
+    # Run L2 features only
+    python scripts/run_pipeline.py --stage L2_features
 
     # Run all stages
     python scripts/run_pipeline.py --stage all --parallel
@@ -27,17 +37,19 @@ import argparse
 from pathlib import Path
 
 # Add src to path
-sys.path.append(str(Path(__file__).parent.parent / 'src'))
+sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 from src.config import Config
-from src.pipeline.L0_collect import run_all_datagovsg_collection
-from src.pipeline.L1_process import run_full_l1_pipeline, save_failed_addresses
+from src.pipeline.L0_collect import collect_all_datagovsg
+from src.pipeline.L1_process import run_processing_pipeline, save_failed_addresses
+from src.pipeline.L2_rental import run_rental_pipeline
+from src.pipeline.L2_features import run_features_pipeline
+from src.pipeline.L3_export import run_export_pipeline
 from src.data_helpers import list_datasets
 
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -47,7 +59,7 @@ def run_L0_collection():
     logger.info("🚀 Starting L0: Data Collection")
 
     # Run data.gov.sg collection
-    results = run_all_datagovsg_collection()
+    results = collect_all_datagovsg()
 
     logger.info(f"✅ L0 Complete: Collected {len(results)} datasets")
     return results
@@ -58,13 +70,12 @@ def run_L1_processing(use_parallel: bool = True):
     logger.info("🚀 Starting L1: Data Processing")
 
     # Run full L1 pipeline using extracted module
-    results = run_full_l1_pipeline(
-        csv_base_path=Config.DATA_DIR / 'raw_data' / 'csv',
-        use_parallel_geocoding=use_parallel
+    results = run_processing_pipeline(
+        csv_base_path=Config.DATA_DIR / "raw_data" / "csv", use_parallel_geocoding=use_parallel
     )
 
     # Save failed addresses for later retry
-    if results.get('failed_addresses'):
+    if results.get("failed_addresses"):
         # Note: We only save first 10 in results dict
         # For full list, you'd need to modify the pipeline to return all
         pass
@@ -73,13 +84,65 @@ def run_L1_processing(use_parallel: bool = True):
     return results
 
 
-def run_pipeline(stages: str, use_parallel: bool = True):
+def run_L2_rental(force: bool = False):
+    """Run L2: Rental yield calculations."""
+    logger.info("🚀 Starting L2: Rental Yield Pipeline")
+
+    results = run_rental_pipeline(force=force)
+
+    logger.info("✅ L2 Rental Complete")
+    return results
+
+
+def run_L2_features():
+    """Run L2: Property feature engineering."""
+    logger.info("🚀 Starting L2: Feature Engineering Pipeline")
+
+    results = run_features_pipeline()
+
+    logger.info("✅ L2 Features Complete")
+    return results
+
+
+def run_L2(force: bool = False):
+    """Run L2: All L2 pipelines (rental + features)."""
+    logger.info("🚀 Starting L2: Full L2 Pipeline")
+
+    results = {}
+
+    results["rental"] = run_rental_pipeline(force=force)
+    results["features"] = run_features_pipeline()
+
+    logger.info("✅ L2 Complete")
+    return results
+
+
+def run_L3(upload_s3: bool = False, export_csv: bool = False):
+    """Run L3: Export and final output."""
+    logger.info("🚀 Starting L3: Export Pipeline")
+
+    results = run_export_pipeline(upload_s3=upload_s3, export_csv=export_csv)
+
+    logger.info("✅ L3 Complete")
+    return results
+
+
+def run_pipeline(
+    stages: str,
+    use_parallel: bool = True,
+    force: bool = False,
+    upload_s3: bool = False,
+    export_csv: bool = False,
+):
     """
     Run the data pipeline.
 
     Args:
-        stages: Which stages to run (L0, L1, or 'all')
+        stages: Which stages to run (L0, L1, L2, L2_rental, L2_features, L3, or 'all')
         use_parallel: Whether to use parallel processing for geocoding
+        force: Force re-download for rental data
+        upload_s3: Upload outputs to S3 (L3 only)
+        export_csv: Export outputs to CSV (L3 only)
     """
     logger.info("🥓🥚 Egg-n-Bacon Housing Pipeline Starting")
     logger.info(f"Configuration: stages={stages}, parallel={use_parallel}")
@@ -95,13 +158,29 @@ def run_pipeline(stages: str, use_parallel: bool = True):
     Config.print_config()
 
     # Run requested stages
-    if stages in ['L0', 'all']:
+    if stages in ["L0", "all"]:
         logger.info("=" * 80)
         run_L0_collection()
 
-    if stages in ['L1', 'all']:
+    if stages in ["L1", "all"]:
         logger.info("=" * 80)
         run_L1_processing(use_parallel=use_parallel)
+
+    if stages in ["L2", "all"]:
+        logger.info("=" * 80)
+        run_L2(force=force)
+
+    if stages == "L2_rental":
+        logger.info("=" * 80)
+        run_L2_rental(force=force)
+
+    if stages == "L2_features":
+        logger.info("=" * 80)
+        run_L2_features()
+
+    if stages in ["L3", "all"]:
+        logger.info("=" * 80)
+        run_L3(upload_s3=upload_s3, export_csv=export_csv)
 
     # Summary
     logger.info("=" * 80)
@@ -116,25 +195,26 @@ def run_pipeline(stages: str, use_parallel: bool = True):
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Run the Egg-n-Bacon Housing data pipeline"
+    parser = argparse.ArgumentParser(description="Run the Egg-n-Bacon Housing data pipeline")
+    parser.add_argument(
+        "--stage",
+        choices=["L0", "L1", "L2", "L2_rental", "L2_features", "L3", "all"],
+        default="all",
+        help="Which pipeline stage to run (default: all)",
     )
     parser.add_argument(
-        '--stage',
-        choices=['L0', 'L1', 'all'],
-        default='all',
-        help='Which pipeline stage to run (default: all)'
+        "--parallel", action="store_true", help="Use parallel processing for geocoding (faster)"
     )
     parser.add_argument(
-        '--parallel',
-        action='store_true',
-        help='Use parallel processing for geocoding (faster)'
+        "--no-parallel",
+        action="store_true",
+        help="Disable parallel processing for geocoding (slower but safer)",
     )
     parser.add_argument(
-        '--no-parallel',
-        action='store_true',
-        help='Disable parallel processing for geocoding (slower but safer)'
+        "--force", action="store_true", help="Force re-download of rental data even if fresh"
     )
+    parser.add_argument("--upload-s3", action="store_true", help="Upload L3 outputs to S3")
+    parser.add_argument("--export-csv", action="store_true", help="Export L3 outputs to CSV")
 
     args = parser.parse_args()
 
@@ -143,7 +223,13 @@ def main():
 
     # Run pipeline
     try:
-        run_pipeline(stages=args.stage, use_parallel=use_parallel)
+        run_pipeline(
+            stages=args.stage,
+            use_parallel=use_parallel,
+            force=args.force,
+            upload_s3=args.upload_s3,
+            export_csv=args.export_csv,
+        )
     except Exception as e:
         logger.exception(f"❌ Pipeline failed: {e}")
         sys.exit(1)
