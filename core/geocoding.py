@@ -24,10 +24,12 @@ from tenacity import retry, wait_exponential, stop_after_attempt
 from dotenv import load_dotenv
 
 try:
-    from src.config import Config
-    from src.cache import cached_call
+    from core.config import Config
+    from core.cache import cached_call
+    from core.data_helpers import save_parquet
 except ImportError:
     from config import Config
+    from data_helpers import save_parquet
     from cache import cached_call
 
 load_dotenv()
@@ -386,7 +388,7 @@ def batch_geocode_addresses(
         ...     batch_size=500
         ... )
     """
-    from src.data_helpers import save_parquet
+    # save_parquet is imported at the top of the file to support multiprocessing
 
     batch_dataframes = []  # Store concatenated batch results
     total = len(addresses)

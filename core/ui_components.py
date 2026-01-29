@@ -6,18 +6,12 @@ import streamlit as st
 from typing import Optional, List, Dict, Any
 
 def load_css() -> None:
-    """Load the Tailwind CSS framework via CDN."""
+    """Load minimal custom CSS if needed."""
     st.markdown(
         """
-        <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            /* Custom overrides if needed */
             .stApp {
                 background-color: #f8fafc;
-            }
-            /* Hide Streamlit default elements if needed */
-            [data-testid="stHeader"] {
-                background-color: transparent;
             }
         </style>
         """,
@@ -94,21 +88,17 @@ def section_header(title: str, icon: str = "") -> None:
     st.markdown(html, unsafe_allow_html=True)
 
 def info_box(content: str, box_type: str = "info") -> None:
-    """Create a styled info/alert box."""
-    styles = {
-        "info": "bg-blue-50 border-blue-500 text-blue-800",
-        "success": "bg-emerald-50 border-emerald-500 text-emerald-800",
-        "warning": "bg-amber-50 border-amber-500 text-amber-800",
-        "error": "bg-red-50 border-red-500 text-red-800",
-    }
-    style_class = styles.get(box_type, styles["info"])
-    
-    html = f"""
-<div class="{style_class} border-l-4 p-4 rounded-md mb-4 text-sm shadow-sm">
-    {content}
-</div>
-"""
-    st.markdown(html, unsafe_allow_html=True)
+    """Create an info/alert box using native Streamlit components."""
+    if box_type == "info":
+        st.info(content)
+    elif box_type == "success":
+        st.success(content)
+    elif box_type == "warning":
+        st.warning(content)
+    elif box_type == "error":
+        st.error(content)
+    else:
+        st.info(content)
 
 def premium_card(content: str) -> None:
     """Create a premium card container."""

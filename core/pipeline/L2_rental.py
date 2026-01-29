@@ -14,7 +14,7 @@ from typing import Dict
 
 import pandas as pd
 
-from src.config import Config
+from core.config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ def download_hdb_rental_data(force: bool = False) -> bool:
     logger.info("Step 1: HDB Rental Data")
     logger.info("=" * 60)
 
-    output_path = Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet"
+    output_path = Config.PIPELINE_DIR / "L1" / "housing_hdb_rental.parquet"
 
     if not force and check_file_freshness(output_path, max_age_days=30):
         logger.info(f"✓ HDB rental data is fresh (< 30 days old)")
@@ -85,7 +85,7 @@ def download_ura_rental_index(force: bool = False) -> bool:
     logger.info("Step 2: URA Rental Index")
     logger.info("=" * 60)
 
-    output_path = Config.PARQUETS_DIR / "L1" / "housing_ura_rental_index.parquet"
+    output_path = Config.PIPELINE_DIR / "L1" / "housing_ura_rental_index.parquet"
 
     if not force and check_file_freshness(output_path, max_age_days=90):
         logger.info(f"✓ URA rental index is fresh (< 90 days old)")
@@ -116,8 +116,8 @@ def calculate_hdb_rental_yield() -> pd.DataFrame:
     """
     logger.info("Calculating HDB rental yields...")
 
-    rental_path = Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet"
-    trans_path = Config.PARQUETS_DIR / "L1" / "housing_hdb_transaction.parquet"
+    rental_path = Config.PIPELINE_DIR / "L1" / "housing_hdb_rental.parquet"
+    trans_path = Config.PIPELINE_DIR / "L1" / "housing_hdb_transaction.parquet"
 
     rental_df = pd.read_parquet(rental_path)
     trans_df = pd.read_parquet(trans_path)
@@ -178,8 +178,8 @@ def calculate_condo_rental_yield() -> pd.DataFrame:
         "28": "Outside Central Region",
     }
 
-    rental_path = Config.PARQUETS_DIR / "L1" / "housing_ura_rental_index.parquet"
-    trans_path = Config.PARQUETS_DIR / "L1" / "housing_condo_transaction.parquet"
+    rental_path = Config.PIPELINE_DIR / "L1" / "housing_ura_rental_index.parquet"
+    trans_path = Config.PIPELINE_DIR / "L1" / "housing_condo_transaction.parquet"
 
     rental_df = pd.read_parquet(rental_path)
     trans_df = pd.read_parquet(trans_path)
@@ -232,8 +232,8 @@ def calculate_rental_yields() -> bool:
     logger.info("Step 3: Calculate Rental Yields")
     logger.info("=" * 60)
 
-    hdb_path = Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet"
-    ura_path = Config.PARQUETS_DIR / "L1" / "housing_ura_rental_index.parquet"
+    hdb_path = Config.PIPELINE_DIR / "L1" / "housing_hdb_rental.parquet"
+    ura_path = Config.PIPELINE_DIR / "L1" / "housing_ura_rental_index.parquet"
 
     if not hdb_path.exists():
         logger.error(f"❌ HDB rental data not found: {hdb_path}")
@@ -265,7 +265,7 @@ def calculate_rental_yields() -> bool:
 
         all_yields["month"] = all_yields["month"].astype(str)
 
-        output_path = Config.PARQUETS_DIR / "L2" / "rental_yield.parquet"
+        output_path = Config.PIPELINE_DIR / "L2" / "rental_yield.parquet"
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         all_yields.to_parquet(output_path, compression="snappy", index=False)

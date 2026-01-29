@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
 try:
-    from src.config import Config
+    from core.config import Config
 except ImportError:
     from config import Config
 

@@ -15,10 +15,28 @@ class Config:
     # ============== PATHS ==============
     BASE_DIR = Path(__file__).parent.parent
     DATA_DIR = BASE_DIR / "data"
-    PARQUETS_DIR = DATA_DIR / "parquets"
+
+    # Pipeline data (L0-L3 outputs)
+    PIPELINE_DIR = DATA_DIR / "pipeline"
+    PARQUETS_DIR = PIPELINE_DIR  # Alias for backwards compatibility
+
+    # Manual downloads (CSVs, geojsons, etc.)
+    MANUAL_DIR = DATA_DIR / "manual"
+
+    # Analytics outputs (segmentation, feature importance, etc.)
+    ANALYSIS_DIR = DATA_DIR / "analysis"
+
+    # Archive for old/unused data
+    ARCHIVE_DIR = DATA_DIR / "archive"
+
+    # Other directories
     METADATA_FILE = DATA_DIR / "metadata.json"
     NOTEBOOKS_DIR = BASE_DIR / "notebooks"
-    SRC_DIR = BASE_DIR / "src"
+    CORE_DIR = BASE_DIR / "core"
+    SCRIPTS_DIR = BASE_DIR / "scripts"
+    ANALYSIS_SCRIPTS_DIR = SCRIPTS_DIR / "analysis"
+    ANALYSIS_OUTPUT_DIR = ANALYSIS_DIR
+    L4_REPORT_PATH = ANALYSIS_DIR / "L4_summary_report.md"
 
     # ============== API KEYS ==============
     ONEMAP_EMAIL = os.getenv("ONEMAP_EMAIL")
@@ -75,9 +93,22 @@ class Config:
         if not cls.DATA_DIR.exists():
             raise ValueError(f"DATA_DIR does not exist: {cls.DATA_DIR}")
 
-        if not cls.PARQUETS_DIR.exists():
-            cls.PARQUETS_DIR.mkdir(parents=True, exist_ok=True)
+        # Create pipeline directories
+        for stage_dir in ["L0", "L1", "L2", "L3"]:
+            (cls.PIPELINE_DIR / stage_dir).mkdir(parents=True, exist_ok=True)
 
+        # Create manual data subdirectories
+        (cls.MANUAL_DIR / "csv").mkdir(parents=True, exist_ok=True)
+        (cls.MANUAL_DIR / "geojsons").mkdir(parents=True, exist_ok=True)
+        (cls.MANUAL_DIR / "crosswalks").mkdir(parents=True, exist_ok=True)
+
+        # Create analytics directory
+        cls.ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+
+        # Create archive directory
+        cls.ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+
+        # Create cache directory
         if not cls.CACHE_DIR.exists():
             cls.CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -86,7 +117,9 @@ class Config:
         """Print current configuration (safe for logging)."""
         print(f"BASE_DIR: {cls.BASE_DIR}")
         print(f"DATA_DIR: {cls.DATA_DIR}")
-        print(f"PARQUETS_DIR: {cls.PARQUETS_DIR}")
+        print(f"PIPELINE_DIR: {cls.PIPELINE_DIR}")
+        print(f"MANUAL_DIR: {cls.MANUAL_DIR}")
+        print(f"ANALYSIS_DIR: {cls.ANALYSIS_DIR}")
         print(f"USE_CACHING: {cls.USE_CACHING}")
         print(
             f"API Keys configured: {sum([

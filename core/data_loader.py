@@ -13,9 +13,11 @@ import pandas as pd
 import streamlit as st
 from shapely.geometry import Point, shape
 
+from core.config import Config
+
 # Constants
-DATA_DIR = Path("data/parquets")
-RAW_DATA_DIR = Path("data/raw_data")
+DATA_DIR = Config.PIPELINE_DIR
+RAW_DATA_DIR = Config.MANUAL_DIR / "geojsons"
 SINGAPORE_CENTER = {"lat": 1.3521, "lon": 103.8198}
 
 
@@ -118,10 +120,14 @@ def load_hdb_resale() -> pd.DataFrame:
     if 'month' in df.columns:
         df['month'] = pd.to_datetime(df['month'])
 
-    # Calculate price per sqm if not present
-    if 'price_psm' not in df.columns and 'resale_price' in df.columns and 'floor_area_sqm' in df.columns:
-        df['price_psm'] = df['resale_price'] / df['floor_area_sqm']
-        df['price_psf'] = df['price_psm'] * 0.092903  # Convert to sqft
+    # Calculate price per sqft (primary) and per sqm (derived) if not present
+    if 'price_psf' not in df.columns and 'resale_price' in df.columns:
+        if 'floor_area_sqft' in df.columns:
+            df['price_psf'] = df['resale_price'] / df['floor_area_sqft']
+            df['price_psm'] = df['price_psf'] * 10.764  # Convert to sqm
+        elif 'floor_area_sqm' in df.columns:
+            df['price_psm'] = df['resale_price'] / df['floor_area_sqm']
+            df['price_psf'] = df['price_psm'] * 10.764  # Convert to sqft
 
     return df
 
@@ -489,7 +495,8 @@ def apply_unified_filters(
     towns: list[str] | None = None,
     price_range: tuple[int, int] | None = None,
     date_range: tuple[datetime, datetime] | None = None,
-    floor_area_range: tuple[int, int] | None = None
+    floor_area_range: tuple[int, int] | None = None,
+    era: str | None = None
 ) -> pd.DataFrame:
     """
     Apply filters to unified property data.
@@ -503,6 +510,7 @@ def apply_unified_filters(
         price_range: Tuple of (min_price, max_price)
         date_range: Tuple of (start_date, end_date)
         floor_area_range: Tuple of (min_area, max_area) in sqft
+        era: Era filter ('pre_covid', 'recent', or None for whole)
 
     Returns:
         Filtered DataFrame
@@ -535,7 +543,81 @@ def apply_unified_filters(
             (filtered_df['floor_area_sqft'].between(floor_area_range[0], floor_area_range[1]))
         ]
 
+    # Era filter (Phase 3 enhancement)
+    if era and era != 'whole' and 'era' in filtered_df.columns:
+        filtered_df = filtered_df[filtered_df['era'] == era]
+
     return filtered_df
+
+
+def filter_by_era(df: pd.DataFrame, era: str) -> pd.DataFrame:
+    """
+    Filter data by era mode.
+
+    Args:
+        df: Unified property data from L3
+        era: Era mode - 'whole', 'pre_covid', or 'recent'
+
+    Returns:
+        Filtered DataFrame
+    """
+    if era is None or era == 'whole':
+        return df
+
+    if 'era' not in df.columns:
+        # If era column doesn't exist, try to create it from year
+        if 'year' in df.columns:
+            df = df.copy()
+            df['era'] = df['year'].apply(lambda y: 'pre_covid' if y <= 2021 else 'recent')
+        elif 'transaction_date' in df.columns:
+            df = df.copy()
+            df['year'] = df['transaction_date'].dt.year
+            df['era'] = df['year'].apply(lambda y: 'pre_covid' if y <= 2021 else 'recent')
+
+    if 'era' in df.columns:
+        return df[df['era'] == era]
+
+    return df
+
+
+def get_era_summary(df: pd.DataFrame) -> dict:
+    """
+    Get summary statistics by era.
+
+    Args:
+        df: Unified property data from L3
+
+    Returns:
+        Dictionary with era summaries
+    """
+    if df.empty:
+        return {}
+
+    summary = {}
+
+    # Check if era column exists
+    if 'era' not in df.columns:
+        if 'year' in df.columns:
+            df = df.copy()
+            df['era'] = df['year'].apply(lambda y: 'pre_covid' if y <= 2021 else 'recent')
+        elif 'transaction_date' in df.columns:
+            df = df.copy()
+            df['year'] = df['transaction_date'].dt.year
+            df['era'] = df['year'].apply(lambda y: 'pre_covid' if y <= 2021 else 'recent')
+
+    if 'era' in df.columns:
+        for era in df['era'].unique():
+            era_df = df[df['era'] == era]
+            summary[era] = {
+                'count': len(era_df),
+                'median_price': era_df['price'].median() if 'price' in era_df.columns else None,
+                'date_range': (
+                    era_df['transaction_date'].min().strftime('%Y-%m') if 'transaction_date' in era_df.columns else 'N/A',
+                    era_df['transaction_date'].max().strftime('%Y-%m') if 'transaction_date' in era_df.columns else 'N/A'
+                )
+            }
+
+    return summary
 
 
 def get_unified_data_summary(df: pd.DataFrame) -> dict:

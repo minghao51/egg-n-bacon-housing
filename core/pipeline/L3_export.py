@@ -13,8 +13,8 @@ from typing import Dict, Optional
 
 import pandas as pd
 
-from src.config import Config
-from src.data_helpers import load_parquet, save_parquet, list_datasets
+from core.config import Config
+from core.data_helpers import load_parquet, save_parquet, list_datasets
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +85,35 @@ def create_unified_dataset(
     property_with_transactions = property_with_transactions.drop(
         columns=duplicate_cols, errors="ignore"
     )
+
+    # Add nearest MRT information for properties with lat/lon
+    if 'lat' in property_with_transactions.columns and 'lon' in property_with_transactions.columns:
+        logger.info("Adding nearest MRT station information...")
+        # Import here to avoid circular dependencies
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from mrt_distance import calculate_nearest_mrt
+
+        # Filter to properties with valid coordinates
+        has_coords = property_with_transactions['lat'].notna() & property_with_transactions['lon'].notna()
+
+        if has_coords.sum() > 0:
+            property_with_coords = property_with_transactions[has_coords].copy()
+
+            # Calculate nearest MRT
+            property_with_coords = calculate_nearest_mrt(
+                property_with_coords,
+                show_progress=True
+            )
+
+            # Merge back
+            property_with_transactions = pd.concat([
+                property_with_coords,
+                property_with_transactions[~has_coords]
+            ], ignore_index=True)
+
+            logger.info(f"  Added MRT info for {has_coords.sum():,} properties with coordinates")
 
     logger.info(f"  Created unified dataset with {len(property_with_transactions):,} records")
     return property_with_transactions

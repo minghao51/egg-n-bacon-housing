@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 from shapely.geometry import Polygon
 
-from src.config import Config
-from src.data_helpers import load_parquet, save_parquet
+from core.config import Config
+from core.data_helpers import load_parquet, save_parquet
 
 from .spatial_h3 import generate_polygons
 
@@ -66,15 +66,15 @@ def load_planning_area(data_base_path: Optional[Path] = None) -> Optional[gpd.Ge
     """Load planning area shapefile.
 
     Args:
-        data_base_path: Base path to data directory
+        data_base_path: Base path to data directory (defaults to Config.MANUAL_DIR / 'geojsons')
 
     Returns:
         GeoDataFrame with planning areas, or None if not found
     """
     if data_base_path is None:
-        data_base_path = Config.DATA_DIR
+        data_base_path = Config.MANUAL_DIR / "geojsons"
 
-    planning_area_path = data_base_path / "raw_data" / "onemap_planning_area_polygon.shp"
+    planning_area_path = data_base_path / "onemap_planning_area_polygon.shp"
 
     if planning_area_path.exists():
         planning_area_gpd = gpd.read_file(planning_area_path)

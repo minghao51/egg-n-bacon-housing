@@ -12,9 +12,9 @@ from typing import Optional
 import pandas as pd
 import requests
 
-from src.config import Config
-from src.data_helpers import save_parquet
-from src.cache import cached_call
+from core.config import Config
+from core.data_helpers import save_parquet
+from core.cache import cached_call
 
 logger = logging.getLogger(__name__)
 
@@ -162,7 +162,7 @@ def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFram
     Load HDB resale flat prices from CSV files.
 
     Args:
-        csv_base_path: Base path to CSV files (defaults to Config.DATA_DIR / 'raw_data' / 'csv')
+        csv_base_path: Base path to CSV files (defaults to Config.MANUAL_DIR / 'csv')
 
     Returns:
         DataFrame with all resale flat prices
@@ -172,7 +172,7 @@ def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFram
         >>> print(f"Loaded {len(df)} resale records")
     """
     if csv_base_path is None:
-        csv_base_path = Config.DATA_DIR / "raw_data" / "csv"
+        csv_base_path = Config.MANUAL_DIR / "csv"
 
     resale_prices_path = csv_base_path / "ResaleFlatPrices"
     resale_files = list(resale_prices_path.glob("*.csv"))

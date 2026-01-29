@@ -13,9 +13,9 @@ from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from src.config import Config
-from src.data_helpers import save_parquet
-from src.geocoding import (
+from core.config import Config
+from core.data_helpers import save_parquet
+from core.geocoding import (
     load_ura_files,
     extract_unique_addresses,
     setup_onemap_headers,
@@ -33,7 +33,7 @@ def load_and_save_transaction_data(
     Load URA and HDB transaction files and save individual datasets.
 
     Args:
-        csv_base_path: Base path to CSV files (defaults to Config.DATA_DIR / 'raw_data' / 'csv')
+        csv_base_path: Base path to CSV files (defaults to Config.MANUAL_DIR / 'csv')
 
     Returns:
         Tuple of (ec_df, condo_df, hdb_df)
@@ -43,7 +43,7 @@ def load_and_save_transaction_data(
         >>> print(f"Loaded {len(ec_df)} EC transactions")
     """
     if csv_base_path is None:
-        csv_base_path = Config.DATA_DIR / "raw_data" / "csv"
+        csv_base_path = Config.MANUAL_DIR / "csv"
 
     logger.info("Loading URA and HDB transaction files...")
 
@@ -124,7 +124,7 @@ def geocode_addresses(
     # Check for existing geocoded data
     existing_geocoded_df = pd.DataFrame()
     if check_existing:
-        existing_path = Config.PARQUETS_DIR / "L2" / "housing_unique_searched.parquet"
+        existing_path = Config.PIPELINE_DIR / "L2" / "housing_unique_searched.parquet"
         if existing_path.exists():
             logger.info(f"Found existing geocoded data: {existing_path}")
             try:
@@ -150,8 +150,24 @@ def geocode_addresses(
     else:
         logger.info("Skipping existing data check (check_existing=False)")
 
-    # Setup OneMap authentication
-    headers = setup_onemap_headers()
+    # Only setup OneMap authentication if we have addresses to geocode
+    if len(addresses) == 0:
+        logger.info("No addresses to geocode, returning existing data")
+        return existing_geocoded_df, []
+
+    # Setup OneMap authentication (with error handling for invalid credentials)
+    try:
+        headers = setup_onemap_headers()
+    except Exception as e:
+        logger.error(f"❌ Failed to authenticate with OneMap API: {e}")
+        if len(existing_geocoded_df) > 0:
+            logger.warning(f"⚠️  Using existing cached data ({len(existing_geocoded_df)} addresses)")
+            logger.warning(f"⚠️  {len(addresses)} new addresses will not be geocoded")
+            logger.warning(f"⚠️  To geocode these addresses, please update your OneMap credentials in .env")
+            return existing_geocoded_df, addresses  # Return new addresses as failed
+        else:
+            logger.error("❌ No cached geocoded data available and cannot authenticate with OneMap")
+            raise Exception("Cannot proceed without OneMap authentication. Please check your credentials in .env")
 
     total = len(addresses)
     logger.info(f"Starting geocoding for {total} unique addresses...")
@@ -179,7 +195,7 @@ def geocode_addresses(
         logger.warning("This may take 30+ minutes due to API rate limiting")
 
         import requests
-        from src.geocoding import fetch_data_cached
+        from core.geocoding import fetch_data_cached
 
         df_list = []
         failed = []

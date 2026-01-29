@@ -29,6 +29,60 @@ PRICE_COLORSCALE = [
     [1.0, "#CB4335"]     # Red (high)
 ]
 
+
+def get_color_from_scale(value: float) -> str:
+    """
+    Get color from PRICE_COLORSCALE at a given normalized value (0-1).
+
+    Args:
+        value: Normalized value between 0 and 1
+
+    Returns:
+        Hex color string
+    """
+    # Find the two color points to interpolate between
+    for i in range(len(PRICE_COLORSCALE) - 1):
+        point1 = PRICE_COLORSCALE[i]
+        point2 = PRICE_COLORSCALE[i + 1]
+
+        if point1[0] <= value <= point2[0]:
+            # Interpolate between these two colors
+            ratio = (value - point1[0]) / (point2[0] - point1[0])
+            color1 = point1[1]
+            color2 = point2[1]
+            return interpolate_color(color1, color2, ratio)
+
+    # Fallback to endpoints
+    if value <= 0:
+        return PRICE_COLORSCALE[0][1]
+    else:
+        return PRICE_COLORSCALE[-1][1]
+
+
+def interpolate_color(color1: str, color2: str, ratio: float) -> str:
+    """
+    Interpolate between two hex colors.
+
+    Args:
+        color1: First hex color (e.g., "#2E5EAA")
+        color2: Second hex color (e.g., "#54A24B")
+        ratio: Interpolation ratio (0 = color1, 1 = color2)
+
+    Returns:
+        Interpolated hex color string
+    """
+    # Remove '#' and convert to RGB
+    r1, g1, b1 = int(color1[1:3], 16), int(color1[3:5], 16), int(color1[5:7], 16)
+    r2, g2, b2 = int(color2[1:3], 16), int(color2[3:5], 16), int(color2[5:7], 16)
+
+    # Interpolate
+    r = int(r1 + (r2 - r1) * ratio)
+    g = int(g1 + (g2 - g1) * ratio)
+    b = int(b1 + (b2 - b1) * ratio)
+
+    # Convert back to hex
+    return f"#{r:02x}{g:02x}{b:02x}"
+
 # Theme selection - Plotly native styles
 # Available styles: https://plotly.com/python/mapbox-layers/#mapbox-tile-layers
 MAP_STYLES = {
@@ -76,14 +130,14 @@ def get_color_column_value(color_by_name: str) -> str:
 
 def aggregate_by_planning_area(
     df: pd.DataFrame,
-    color_column: str = "price"
+    price_column: str = "price"
 ) -> pd.DataFrame:
     """
     Aggregate property data by planning area with statistics.
 
     Args:
         df: DataFrame with property data including 'planning_area', 'lat', 'lon'
-        color_column: Column to use for color coding (e.g., 'price', 'price_psf')
+        price_column: Column to use for price aggregation
 
     Returns:
         Aggregated DataFrame with statistics per planning area:
@@ -102,7 +156,7 @@ def aggregate_by_planning_area(
         df_copy['lon'] = pd.to_numeric(df_copy['lon'], errors='coerce')
 
     # Drop rows with invalid coordinates or missing planning area
-    df_copy = df_copy.dropna(subset=['planning_area', 'lat', 'lon', color_column])
+    df_copy = df_copy.dropna(subset=['planning_area', 'lat', 'lon', price_column])
 
     if df_copy.empty:
         return pd.DataFrame()
@@ -111,7 +165,7 @@ def aggregate_by_planning_area(
     agg_df = df_copy.groupby('planning_area').agg({
         'lat': 'median',
         'lon': 'median',
-        color_column: ['count', 'median', 'mean', 'min', 'max', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
+        price_column: ['count', 'median', 'mean', 'min', 'max', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
     }).reset_index()
 
     # Flatten column names
@@ -129,7 +183,7 @@ def aggregate_by_planning_area(
 def aggregate_by_h3(
     df: pd.DataFrame,
     resolution: int = 7,
-    color_column: str = "price"
+    price_column: str = "price"
 ) -> pd.DataFrame:
     """
     Aggregate property data by H3 hexagonal grid with statistics.
@@ -137,7 +191,7 @@ def aggregate_by_h3(
     Args:
         df: DataFrame with property data including 'lat', 'lon'
         resolution: H3 resolution (5-9, higher = more detailed)
-        color_column: Column to use for color coding
+        price_column: Column to use for price aggregation
 
     Returns:
         Aggregated DataFrame with statistics per H3 cell:
@@ -156,7 +210,7 @@ def aggregate_by_h3(
         df_copy['lon'] = pd.to_numeric(df_copy['lon'], errors='coerce')
 
     # Drop invalid coordinates
-    df_copy = df_copy.dropna(subset=['lat', 'lon', color_column])
+    df_copy = df_copy.dropna(subset=['lat', 'lon', price_column])
 
     if df_copy.empty:
         return pd.DataFrame()
@@ -169,7 +223,7 @@ def aggregate_by_h3(
 
     # Aggregate by H3 cell
     agg_df = df_copy.groupby('h3_cell').agg({
-        color_column: ['count', 'median', 'mean', 'min', 'max', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
+        price_column: ['count', 'median', 'mean', 'min', 'max', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
     }).reset_index()
 
     # Flatten column names
@@ -462,6 +516,7 @@ def create_planning_area_polygon_map(
             tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
         ),
         customdata=np.stack([
+            aggregated_df[color_column],  # Selected metric first (highlighted)
             aggregated_df['count'],
             aggregated_df['median_price'],
             aggregated_df['mean_price'],
@@ -471,11 +526,13 @@ def create_planning_area_polygon_map(
         ], axis=-1),
         hovertemplate=(
             "<b>%{location}</b><br>"
-            "Transactions: %{customdata[0]:,.0f}<br>"
-            "Median Price: $%{customdata[1]:,.0f}<br>"
-            "Mean Price: $%{customdata[2]:,.0f}<br>"
-            "Median PSF: $%{customdata[3]:,.0f}<br>"
-            "Price Range: $%{customdata[4]:,.0f} - $%{customdata[5]:,.0f}<br>"
+            "<b>%{z}: %{customdata[0]:,.0f}</b><br>"  # Highlight selected metric
+            "─<br>"
+            "Transactions: %{customdata[1]:,.0f}<br>"
+            "Median Price: $%{customdata[2]:,.0f}<br>"
+            "Mean Price: $%{customdata[3]:,.0f}<br>"
+            "Median PSF: $%{customdata[4]:,.0f}<br>"
+            "Price Range: $%{customdata[5]:,.0f} - $%{customdata[6]:,.0f}<br>"
             "<extra></extra>"
         )
     ))
@@ -509,6 +566,8 @@ def create_h3_grid_map(
     """
     Create map with H3 hexagonal grid showing aggregated statistics.
 
+    Uses filled hexagon polygons to show H3 cells with proper color scaling.
+
     Args:
         aggregated_df: DataFrame from aggregate_by_h3()
         resolution: H3 resolution used for aggregation
@@ -517,62 +576,86 @@ def create_h3_grid_map(
         theme: Map theme (dark or light)
 
     Returns:
-        Plotly Figure with H3 hexagonal markers
+        Plotly Figure with H3 hexagonal polygons
     """
     if aggregated_df.empty:
         return create_base_map(theme=theme)
-
-    # Normalize sizes
-    sizes = aggregated_df[size_column]
-    size_min = sizes.quantile(0.1)
-    size_max = sizes.quantile(0.9)
-    aggregated_df['marker_size'] = 8 + 20 * (
-        (sizes - size_min) / (size_max - size_min + 1)
-    ).clip(0, 1)
 
     # Normalize colors
     colors = aggregated_df[color_column]
     color_min = colors.quantile(0.05)
     color_max = colors.quantile(0.95)
 
-    # Create trace with hexagonal markers
-    fig = go.Figure(go.Scattermapbox(
-        lat=aggregated_df['lat'],
-        lon=aggregated_df['lon'],
-        mode='markers',
+    # Prepare data for plotting
+    # We'll create a single trace with all polygons, using fillcolor property
+    fig = go.Figure()
+
+    # Dynamic hover text based on selected color_column
+    color_label = color_column.replace('_', ' ').title()
+
+    # Create polygon traces for each cell
+    for idx, row in aggregated_df.iterrows():
+        cell = row['h3_cell']
+        cell_value = row[color_column]
+
+        # Get H3 cell boundary coordinates
+        cell_boundary = h3.cell_to_boundary(cell)
+        lats = [coord[0] for coord in cell_boundary] + [cell_boundary[0][0]]
+        lons = [coord[1] for coord in cell_boundary] + [cell_boundary[0][1]]
+
+        # Calculate color using the colorscale
+        normalized_value = (cell_value - color_min) / (color_max - color_min + 1e-10)
+        normalized_value = max(0, min(1, normalized_value))  # Clamp to [0, 1]
+
+        # Get color from colorscale at this position
+        # Simple interpolation from PRICE_COLORSCALE
+        color = get_color_from_scale(normalized_value)
+
+        # Format hover value based on column type
+        if 'price' in color_column.lower():
+            hover_value = f"${cell_value:,.0f}"
+        elif 'psf' in color_column.lower():
+            hover_value = f"${cell_value:,.0f} psf"
+        elif color_column == 'count':
+            hover_value = f"{int(cell_value):,} transactions"
+        else:
+            hover_value = f"{cell_value:,.2f}"
+
+        # Add filled polygon for this cell with fillcolor
+        fig.add_trace(go.Scattermapbox(
+            fill="toself",
+            lat=lats,
+            lon=lons,
+            mode="lines",
+            line=dict(width=1, color='rgba(255,255,255,0.4)'),
+            fillcolor=color,
+            text=f"H3 Cell: {cell}<br>{color_label}: {hover_value}<br>Transactions: {row['count']}",
+            hoverinfo="text",
+            showlegend=False,
+        ))
+
+    # Add a colorbar trace (invisible marker just for the colorbar)
+    fig.add_trace(go.Scattermapbox(
+        lat=[None],
+        lon=[None],
+        mode="markers",
         marker=dict(
-            size=aggregated_df['marker_size'],
-            color=colors,
+            size=1,
+            color=[color_min, color_max],
             colorscale=PRICE_COLORSCALE,
             cmin=color_min,
             cmax=color_max,
-            symbol='hexagon',
-            opacity=0.7,
             colorbar=dict(
                 title=dict(
-                    text=color_column.replace('_', ' ').title(),
+                    text=color_label,
                     font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
                 ),
                 tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
-            )
+            ),
+            showscale=True,
         ),
-        text=aggregated_df['h3_cell'],
-        customdata=aggregated_df[['count', 'median_price', 'mean_price', 'median_psf', 'min_price', 'max_price', 'q1_price', 'q3_price']].values,
-        hovertemplate=(
-            "<b>H3 Cell: %{text}</b><br>"
-            "Transactions: %{customdata[0]:,.0f}<br>"
-            "Median Price: $%{customdata[1]:,.0f}<br>"
-            "Mean Price: $%{customdata[2]:,.0f}<br>"
-            "Median PSF: $%{customdata[3]:,.0f}<br>"
-            "Price Range: $%{customdata[4]:,.0f} - $%{customdata[5]:,.0f}<br>"
-            "<extra></extra>"
-        ) if 'median_psf' in aggregated_df.columns else (
-            "<b>H3 Cell: %{text}</b><br>"
-            "Transactions: %{customdata[0]:,.0f}<br>"
-            "Median Price: $%{customdata[1]:,.0f}<br>"
-            "<extra></extra>"
-        ),
-        name=f'H3 Grid R{resolution}'
+        hoverinfo="none",
+        showlegend=False,
     ))
 
     # Update layout
