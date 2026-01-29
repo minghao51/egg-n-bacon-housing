@@ -5,17 +5,17 @@ from pathlib import Path
 
 import pytest
 
-# Add src to path
+# Add core to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import Config
+from core.config import Config
 
 
 def test_config_paths():
     """Test that all expected paths exist."""
     assert Config.BASE_DIR.exists(), "BASE_DIR should exist"
     assert Config.DATA_DIR.exists(), "DATA_DIR should exist"
-    assert Config.SRC_DIR.exists(), "SRC_DIR should exist"
+    assert Config.CORE_DIR.exists(), "CORE_DIR should exist"
     assert Config.NOTEBOOKS_DIR.exists(), "NOTEBOOKS_DIR should exist"
 
 

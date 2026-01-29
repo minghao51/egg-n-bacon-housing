@@ -5,13 +5,13 @@ import pandas as pd
 import pytest
 from pathlib import Path
 
-from src.pipeline.L0_collect import (
+from core.pipeline.L0_collect import (
     fetch_datagovsg_dataset,
     fetch_private_property_transactions,
     load_resale_flat_prices,
     _convert_lease_to_months
 )
-from src.pipeline.L1_process import (
+from core.pipeline.L1_process import (
     load_and_save_transaction_data,
     prepare_unique_addresses,
     process_geocoded_results,
@@ -254,7 +254,7 @@ class TestPipelineIntegration:
         # This would test the full L0 collection
         # In practice, you'd mock save_parquet to avoid file I/O
 
-    @patch('src.pipeline.L1_process.batch_geocode_addresses')
+    @patch('src.pipeline.L1_process.geocode_addresses')
     @patch('src.pipeline.L1_process.load_and_save_transaction_data')
     @patch('src.pipeline.L1_process.prepare_unique_addresses')
     @patch('src.pipeline.L1_process.process_geocoded_results')
@@ -266,7 +266,6 @@ class TestPipelineIntegration:
         mock_load.return_value = (
             pd.DataFrame({'Project Name': ['EC1']}),
             pd.DataFrame({'Project Name': ['Condo1']}),
-            pd.DataFrame({'Project Name': ['Res1']}),
             pd.DataFrame({'block': ['123']})
         )
 
@@ -293,10 +292,10 @@ class TestPipelineIntegration:
         })
 
         # Run pipeline
-        from src.pipeline.L1_process import run_full_l1_pipeline
+        from core.pipeline.L1_process import run_processing_pipeline
 
         with patch('src.pipeline.L1_process.save_parquet'):
-            results = run_full_l1_pipeline(use_parallel_geocoding=True)
+            results = run_processing_pipeline(use_parallel_geocoding=True)
 
         # Verify results
         assert 'transaction_counts' in results
