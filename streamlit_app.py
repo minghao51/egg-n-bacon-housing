@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.ui_components import load_css, hero_banner, feature_highlight, divider
+from core.ui_components import load_css, hero_banner, feature_highlight, divider
 
 # Load environment variables
 load_dotenv()
@@ -44,6 +44,8 @@ st.set_page_config(
         - Real-time market insights
         - Interactive maps & charts
         - Advanced filtering & analysis
+        - Market segmentation & tier analysis
+        - Town leaderboard rankings
         """
     }
 )
@@ -97,8 +99,16 @@ pages = [
         title="Trends & Analytics"
     ),
     st.Page(
-        "apps/4_market_insights.py",
-        title="Market Insights"
+        "apps/market_insights/4a_segments.py",
+        title="Market Segments"
+    ),
+    st.Page(
+        "apps/market_insights/4b_tier_analysis.py",
+        title="Tier Analysis"
+    ),
+    st.Page(
+        "apps/market_insights/4c_town_leaderboard.py",
+        title="Town Leaderboard"
     ),
 ]
 
