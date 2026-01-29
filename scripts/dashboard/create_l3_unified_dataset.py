@@ -27,7 +27,7 @@ import pandas as pd
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import Config
+from core.config import Config
 
 # Configure logging
 logging.basicConfig(
@@ -340,9 +340,9 @@ def standardize_hdb_data(hdb_df: pd.DataFrame) -> pd.DataFrame:
     # Add town (already exists)
     # No planning area yet (will be added later from coordinates)
 
-    # Add price per square meter/foot
-    df['price_psm'] = df['price'] / df['floor_area_sqm']
-    df['price_psf'] = df['price_psm'] * 0.092903
+    # Add price per square foot (primary) and per square meter (derived)
+    df['price_psf'] = df['price'] / df['floor_area_sqft']
+    df['price_psm'] = df['price_psf'] * 10.764
 
     logger.info(f"Standardized {len(df):,} HDB transactions")
 
@@ -385,9 +385,9 @@ def standardize_condo_data(condo_df: pd.DataFrame) -> pd.DataFrame:
     # Add town (use street name as proxy for now)
     df['town'] = 'Condo - ' + df['Street Name']
 
-    # Add price per square meter/foot
-    df['price_psm'] = df['price'] / df['floor_area_sqm']
+    # Add price per square foot (primary) and per square meter (derived)
     df['price_psf'] = df['Unit Price ($ PSF)']  # Already provided
+    df['price_psm'] = df['price_psf'] * 10.764
 
     # Ensure month is consistent (add if missing)
     if 'month' not in df.columns:
@@ -434,9 +434,9 @@ def standardize_ec_data(ec_df: pd.DataFrame) -> pd.DataFrame:
     # Add town (use street name as proxy for now)
     df['town'] = 'EC - ' + df['Street Name']
 
-    # Add price per square meter/foot
-    df['price_psm'] = df['price'] / df['floor_area_sqm']
+    # Add price per square foot (primary) and per square meter (derived)
     df['price_psf'] = df['Unit Price ($ PSF)']
+    df['price_psm'] = df['price_psf'] * 10.764
 
     # Ensure month is consistent (add if missing)
     if 'month' not in df.columns:
@@ -874,7 +874,7 @@ def filter_final_columns(df: pd.DataFrame) -> pd.DataFrame:
         'year',  # NEW - Transaction year (for period calculation)
         'period_5yr',  # NEW - 5-year period bucket
         'market_tier_period',  # NEW - Period-dependent price tier
-        'psm_tier_period',  # NEW - Period-dependent PSM tier
+        'psf_tier_period',  # NEW - Period-dependent PSF tier
     ]
 
     # Add any other amenity/metric columns that might exist
@@ -912,7 +912,7 @@ def add_period_segmentation(df: pd.DataFrame) -> pd.DataFrame:
         df: Transaction data with price, property_type, and transaction_date
 
     Returns:
-        DataFrame with period_5yr, market_tier_period, and psm_tier_period columns
+        DataFrame with period_5yr, market_tier_period, and psf_tier_period columns
     """
     logger.info("Adding period-dependent market segmentation...")
 
@@ -945,30 +945,30 @@ def add_period_segmentation(df: pd.DataFrame) -> pd.DataFrame:
         lambda g: assign_price_tier(g)
     )
 
-    # Calculate period-dependent PSM tiers (if PSM column exists)
-    if 'price_psm' in df.columns:
-        def assign_psm_tier(group):
-            """Assign PSM tier based on 30/40/30 percentiles within period."""
-            p30 = group['price_psm'].quantile(0.30)
-            p70 = group['price_psm'].quantile(0.70)
+    # Calculate period-dependent PSF tiers (if PSF column exists)
+    if 'price_psf' in df.columns:
+        def assign_psf_tier(group):
+            """Assign PSF tier based on 30/40/30 percentiles within period."""
+            p30 = group['price_psf'].quantile(0.30)
+            p70 = group['price_psf'].quantile(0.70)
 
             tiers = []
-            for psm in group['price_psm']:
-                if psm <= p30:
-                    tiers.append('Low PSM')
-                elif psm <= p70:
-                    tiers.append('Medium PSM')
+            for psf in group['price_psf']:
+                if psf <= p30:
+                    tiers.append('Low PSF')
+                elif psf <= p70:
+                    tiers.append('Medium PSF')
                 else:
-                    tiers.append('High PSM')
+                    tiers.append('High PSF')
 
             return pd.Series(tiers, index=group.index)
 
-        df['psm_tier_period'] = df.groupby(['property_type', 'period_5yr'], group_keys=False).apply(
-            lambda g: assign_psm_tier(g)
+        df['psf_tier_period'] = df.groupby(['property_type', 'period_5yr'], group_keys=False).apply(
+            lambda g: assign_psf_tier(g)
         )
     else:
-        logger.warning("price_psm column not found, skipping PSM tier calculation")
-        df['psm_tier_period'] = None
+        logger.warning("price_psf column not found, skipping PSF tier calculation")
+        df['psf_tier_period'] = None
 
     logger.info(f"Added period segmentation: {len(df):,} transactions classified")
     logger.info(f"Periods: {sorted(df['period_5yr'].unique())}")
@@ -1174,10 +1174,10 @@ def create_lease_decay_stats(df: pd.DataFrame) -> pd.DataFrame:
     # Calculate statistics
     stats = hdb_df.groupby('lease_band', observed=True).agg({
         'price': ['count', 'median', 'mean', 'min', 'max'],
-        'price_psm': ['median', 'mean'] if 'price_psm' in hdb_df.columns else 'count',
+        'price_psf': ['median', 'mean'] if 'price_psf' in hdb_df.columns else 'count',
     }).reset_index()
 
-    stats.columns = ['lease_band', 'transaction_count', 'median_price', 'mean_price', 'min_price', 'max_price', 'median_psm', 'mean_psm']
+    stats.columns = ['lease_band', 'transaction_count', 'median_price', 'mean_price', 'min_price', 'max_price', 'median_psf', 'mean_psf']
 
     # Calculate discount to baseline (90+ years)
     baseline_median = stats[stats['lease_band'] == '90+ years']['median_price'].values
