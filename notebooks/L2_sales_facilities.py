@@ -25,7 +25,7 @@ This notebook runs the L2 features pipeline which creates:
 
 Usage:
     Run all cells to execute the pipeline
-    Or call: from src.pipeline.L2_features import run_l2_features_pipeline; run_l2_features_pipeline()
+    Or call: from core.pipeline.L2_features import run_l2_features_pipeline; run_l2_features_pipeline()
 """
 
 # %%
@@ -36,7 +36,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
 # %%
-from src.pipeline.L2_features import run_l2_features_pipeline
+from core.pipeline.L2_features import run_l2_features_pipeline
 
 # %%
 # Run the L2 features pipeline

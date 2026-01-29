@@ -103,14 +103,14 @@ uv run ruff check .
 
 ### Configuration
 
-All configuration is centralized in `src/config.py`:
+All configuration is centralized in `core/config.py`:
 - Paths (DATA_DIR, PARQUETS_DIR, etc.)
 - API keys (loaded from .env)
 - Feature flags (USE_CACHING, VERBOSE_LOGGING)
 
 Usage:
 ```python
-from src.config import Config
+from core.config import Config
 
 # Access paths
 data_dir = Config.DATA_DIR

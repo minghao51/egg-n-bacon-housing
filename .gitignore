@@ -3,20 +3,35 @@
 *.pyc
 __pycache__
 
-# Parquet data files (local storage)
-/data/parquets/
+# Pipeline data (L0-L3 outputs)
+/data/pipeline/
 /data/*.parquet
 
-# Keep metadata.json for version tracking
-!data/metadata.json.DS_Store
-.DS_Store
+# Manual downloads (we track these in git)
+# /data/manual/  # Comment out if you want to track manual downloads
+
+# Analytics outputs
+/data/analysis/
+
+# Archive (old/unused data)
+/data/archive/
+
+# API cache
 data/cache/
 
 # Runtime data (generated during pipeline execution)
 data/logs/
 data/checkpoints/
-data/cache/
 data/failed_addresses/
 
-# But keep metadata.json
+# Keep metadata.json for version tracking
 !data/metadata.json
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Temporary analysis output files (exclude important docs)
+feature_*.txt
+*_output.txt
+analysis_*.txt

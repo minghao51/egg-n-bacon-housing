@@ -1,11 +1,11 @@
-# Egg-n-Bacon-Housing 🏠🥓✨
+# Egg-n-Bacon-Housing
 
 A Singapore housing data pipeline and ML analysis platform with AI-powered agent assistance.
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-0.1.0+-brightgreen.svg)](https://github.com/astral-sh/uv)
 
-## 🚀 Getting Started
+## Quick Start
 
 ```bash
 # Install uv (one-time)
@@ -24,7 +24,7 @@ cp .env.example .env
 uv run python scripts/run_pipeline.py --stage all --parallel
 ```
 
-## 📋 Overview
+## Overview
 
 Egg-n-Bacon-Housing collects, processes, and analyzes Singapore housing data from government APIs.
 
@@ -32,20 +32,20 @@ Egg-n-Bacon-Housing collects, processes, and analyzes Singapore housing data fro
 - **Feature Engineering**: Rich features for ML models and analysis
 - **AI Agents**: LangChain-powered agents for querying housing data
 
-## ⭐ Key Features (v0.4.0)
+## Key Features (v0.4.0)
 
 **Performance**:
-- ⚡ **5x faster geocoding** with parallel processing (16min → 3.2min per 1000 addresses)
-- ⚡ **30-40x faster development** with API caching (30 sec → 1 sec re-runs)
-- ⚡ **10-100x faster queries** with parquet partitioning
+- 5x faster geocoding with parallel processing (16min -> 3.2min per 1000 addresses)
+- 30-40x faster development with API caching (30 sec -> 1 sec re-runs)
+- 10-100x faster queries with parquet partitioning
 
 **Architecture**:
-- ✅ Extracted pipeline logic to reusable modules (`src/pipeline/`)
-- ✅ Command-line pipeline runner (`scripts/run_pipeline.py`)
-- ✅ Comprehensive test suite (32 tests)
-- ✅ File-based caching layer for API responses
+- Extracted pipeline logic to reusable modules (`core/pipeline/`)
+- Command-line pipeline runner (`scripts/run_pipeline.py`)
+- Comprehensive test suite (32 tests)
+- File-based caching layer for API responses
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 L0: Data Collection (data.gov.sg, OneMap)
@@ -59,7 +59,7 @@ L3: Export (Analysis, Apps)
 
 **Key Technologies**: uv, pandas, parquet, Jupytext, pytest, LangChain, OneMap API
 
-## 🔧 Installation
+## Installation
 
 ### Prerequisites
 - Python 3.11+
@@ -100,7 +100,23 @@ GOOGLE_API_KEY=your_google_api_key
 - [OneMap API](https://www.onemap.gov.sg/apidocs/register) - Free
 - [Google AI Studio](https://makersuite.google.com/app/apikey) - Free tier available
 
-## 🎯 Usage
+## Usage
+
+### Streamlit Dashboard
+
+Launch the interactive housing visualization dashboard:
+
+```bash
+uv run streamlit run streamlit_app.py
+```
+
+Access at: http://localhost:8501
+
+**Features**:
+- Market Overview - Key statistics and market summary
+- Price Map - Interactive map with heatmap/scatter views, amenity overlays
+- Trends & Analytics - Time-series analysis, comparisons, correlations
+- Market Insights - Phase 2 advanced analytics features
 
 ### Command-Line Pipeline Runner (Recommended)
 
@@ -119,11 +135,11 @@ uv run python scripts/run_pipeline.py --stage L1 --parallel
 
 ```python
 # L0: Data collection with automatic caching
-from src.pipeline.L0_collect import run_all_datagovsg_collection
+from core.pipeline.L0_collect import run_all_datagovsg_collection
 results = run_all_datagovsg_collection()
 
 # L1: Processing with parallel geocoding
-from src.pipeline.L1_process import run_full_l1_pipeline
+from core.pipeline.L1_process import run_full_l1_pipeline
 results = run_full_l1_pipeline(use_parallel_geocoding=True)
 ```
 
@@ -147,7 +163,7 @@ uv run ruff check .
 uv run ruff check --fix .
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 egg-n-bacon-housing/
@@ -155,7 +171,7 @@ egg-n-bacon-housing/
 │   ├── parquets/      # All parquet files (gitignored)
 │   └── metadata.json  # Dataset registry (git-tracked)
 ├── notebooks/         # Jupyter notebooks (paired with .py)
-├── src/              # Source code
+├── core/              # Source code
 │   ├── config.py     # Centralized configuration
 │   ├── data_helpers.py # Parquet management
 │   ├── geocoding.py  # OneMap API utilities
@@ -173,35 +189,38 @@ egg-n-bacon-housing/
 └── docs/             # Documentation
 ```
 
-## 📚 Documentation
+## Documentation
 
-- **[Architecture Documentation](docs/20250120-architecture.md)** - System architecture and design
+- **[Architecture](docs/architecture.md)** - System architecture and design
 - **[Development Workflow](CLAUDE.md)** - Development principles and guidelines
-- **[Optimization Guide](docs/20260122-optimization-implementation.md)** - v0.4.0 implementation details
+- **[Optimization Guide](docs/pipeline/20260122-optimization-implementation.md)** - v0.4.0 implementation details
+- **[Analytics Findings](docs/analytics-findings.md)** - ML analysis and feature importance
+- **[Metrics Design](docs/metrics-design.md)** - L3 housing market metrics
+- **[Rental Yield](docs/rental-yield.md)** - Rental data analysis
 
-## 🚧 Recent Changes
+## Recent Changes
 
 ### v0.4.0 (2026-01-22) - Major Performance & Architecture Improvements
 
 **Performance**:
-- ⚡ 5x faster geocoding with parallel processing
-- ⚡ 30-40x faster API calls with caching
-- ⚡ 10-100x faster queries with partitioning
+- 5x faster geocoding with parallel processing
+- 30-40x faster API calls with caching
+- 10-100x faster queries with partitioning
 
 **Features**:
-- ✅ Caching layer for API responses
-- ✅ Parallel geocoding (configurable workers)
-- ✅ Pipeline extraction (L0, L1 modules)
-- ✅ Command-line pipeline runner
-- ✅ Comprehensive test suite (32 tests)
-- ✅ Parquet optimization (partitioning, compression)
+- Caching layer for API responses
+- Parallel geocoding (configurable workers)
+- Pipeline extraction (L0, L1 modules)
+- Command-line pipeline runner
+- Comprehensive test suite (32 tests)
+- Parquet optimization (partitioning, compression)
 
 **Architecture**:
 - Reusable, testable pipeline modules
 - Better separation of concerns (notebooks for exploration, modules for logic)
 - CI/CD ready code
 
-## 🔮 Future Improvements
+## Future Improvements
 
 - [ ] Fix 6 failing tests (minor mock adjustments)
 - [ ] Extract L2 processing logic
@@ -209,7 +228,7 @@ egg-n-bacon-housing/
 - [ ] Setup CI/CD pipeline
 - [ ] Add pre-commit hooks
 
-## 🤝 Contributing
+## Contributing
 
 See [CLAUDE.md](CLAUDE.md) for development principles.
 
@@ -219,21 +238,17 @@ See [CLAUDE.md](CLAUDE.md) for development principles.
 3. Run `uv run pytest`
 4. Check `docs/` for details
 
-## 📞 Support
+## Support
 
 - **Issues**: Create a GitHub issue
-- **Questions**: Check [docs/](docs/) first
+- **Questions**: Check `docs/` first
 
-## 📄 License
+## License
 
 [Add your license here]
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - data.gov.sg for open housing data
 - OneMap for excellent geospatial APIs
 - LangChain team for the framework
-
----
-
-**Made with ❤️ and 🥓 for Singapore housing agents**
