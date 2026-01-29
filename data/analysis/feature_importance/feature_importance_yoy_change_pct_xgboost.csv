@@ -54,7 +54,7 @@ flat_model_Adjoined flat,0.0015979669,yoy_change_pct,xgboost
 storey_range_22 TO 24,0.0012678796,yoy_change_pct,xgboost
 flat_model_Premium Apartment,0.0011430774,yoy_change_pct,xgboost
 dist_to_nearest_mrt,0.00096598355,yoy_change_pct,xgboost
-psm_tier_High PSM,0.0009211014,yoy_change_pct,xgboost
+psf_tier_High PSF,0.0009211014,yoy_change_pct,xgboost
 preschool_within_2km,0.000813957,yoy_change_pct,xgboost
 storey_range_07 TO 09,0.0007327473,yoy_change_pct,xgboost
 park_within_1km,0.0005695913,yoy_change_pct,xgboost
@@ -80,8 +80,8 @@ storey_range_49 TO 51,0.0,yoy_change_pct,xgboost
 supermarket_within_500m,0.0,yoy_change_pct,xgboost
 market_tier_Mass Market,0.0,yoy_change_pct,xgboost
 market_tier_Mid-Tier,0.0,yoy_change_pct,xgboost
-psm_tier_Medium PSM,0.0,yoy_change_pct,xgboost
-psm_tier_Low PSM,0.0,yoy_change_pct,xgboost
+psf_tier_Medium PSF,0.0,yoy_change_pct,xgboost
+psf_tier_Low PSF,0.0,yoy_change_pct,xgboost
 storey_range_37 TO 39,0.0,yoy_change_pct,xgboost
 property_type_HDB,0.0,yoy_change_pct,xgboost
 hawker_within_500m,0.0,yoy_change_pct,xgboost

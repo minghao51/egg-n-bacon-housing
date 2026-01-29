@@ -2,30 +2,30 @@
   "datasets": {
     "test_dataset": {
       "path": "test_dataset.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-29",
       "rows": 3,
-      "created": "2026-01-23T01:31:40.584538",
+      "created": "2026-01-29T10:54:24.138779",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "test_metadata": {
       "path": "test_metadata.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-29",
       "rows": 2,
-      "created": "2026-01-23T01:31:40.597765",
+      "created": "2026-01-29T10:54:24.160164",
       "source": "unit test",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "pipeline_test": {
       "path": "pipeline_test.parquet",
-      "version": "2026-01-20",
+      "version": "2026-01-29",
       "rows": 3,
-      "created": "2026-01-20T01:08:44.732726",
+      "created": "2026-01-29T10:54:24.184253",
       "source": "pipeline test",
-      "checksum": "51f903ad",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy"
     },
     "demo_raw_properties": {
       "path": "demo_raw_properties.parquet",
@@ -56,21 +56,21 @@
     },
     "raw_datagov_general_sale": {
       "path": "raw_datagov_general_sale.parquet",
-      "version": "2026-01-21",
-      "rows": 348,
-      "created": "2026-01-21T01:31:00.329183",
+      "version": "2026-01-28",
+      "rows": 352,
+      "created": "2026-01-28T21:32:01.949793",
       "source": "data.gov.sg API",
-      "checksum": "f03b5fe3",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy"
     },
     "raw_datagov_rental_index": {
       "path": "raw_datagov_rental_index.parquet",
-      "version": "2026-01-21",
-      "rows": 505,
-      "created": "2026-01-21T01:31:03.289577",
+      "version": "2026-01-28",
+      "rows": 510,
+      "created": "2026-01-28T21:32:01.951333",
       "source": "data.gov.sg API",
-      "checksum": "45bd0c32",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy"
     },
     "raw_datagov_price_index": {
       "path": "raw_datagov_price_index.parquet",
@@ -83,45 +83,45 @@
     },
     "raw_datagov_median_price_via_property_type": {
       "path": "raw_datagov_median_price_via_property_type.parquet",
-      "version": "2026-01-21",
+      "version": "2026-01-28",
       "rows": 30,
-      "created": "2026-01-21T01:31:06.775995",
+      "created": "2026-01-28T21:32:01.952265",
       "source": "data.gov.sg API",
-      "checksum": "b79d0f79",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy"
     },
     "raw_datagov_private_transactions_property_type": {
       "path": "raw_datagov_private_transactions_property_type.parquet",
-      "version": "2026-01-21",
-      "rows": 416,
-      "created": "2026-01-21T01:31:09.228993",
+      "version": "2026-01-28",
+      "rows": 420,
+      "created": "2026-01-28T21:32:01.953154",
       "source": "data.gov.sg API",
-      "checksum": "4a6856c3",
-      "mode": "overwrite"
+      "mode": "overwrite",
+      "compression": "snappy"
     },
     "L1_housing_ec_transaction": {
       "path": "L1/housing_ec_transaction.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 17051,
-      "created": "2026-01-23T01:45:00.997132",
+      "created": "2026-01-28T21:32:03.666870",
       "source": "URA CSV data",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "raw_datagov_resale_flat_all": {
       "path": "raw_datagov_resale_flat_all.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 969748,
-      "created": "2026-01-23T01:45:00.219156",
+      "created": "2026-01-28T21:32:02.879537",
       "source": "data.gov.sg CSV (all files)",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L1_housing_condo_transaction": {
       "path": "L1/housing_condo_transaction.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 110089,
-      "created": "2026-01-23T01:45:01.048668",
+      "created": "2026-01-28T21:32:03.718667",
       "source": "URA CSV data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -138,9 +138,9 @@
     },
     "L1_housing_hdb_transaction": {
       "path": "L1/housing_hdb_transaction.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 969748,
-      "created": "2026-01-23T01:45:01.261013",
+      "created": "2026-01-28T21:32:03.932317",
       "source": "data.gov.sg CSV data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -165,18 +165,18 @@
     },
     "L2_housing_unique_full_searched": {
       "path": "L2/housing_unique_full_searched.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 17722,
-      "created": "2026-01-23T01:45:01.609360",
+      "created": "2026-01-28T21:33:16.400742",
       "source": "L1 transaction data",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L2_housing_unique_searched": {
       "path": "L2/housing_unique_searched.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 17722,
-      "created": "2026-01-23T01:45:01.631861",
+      "created": "2026-01-28T21:33:16.426311",
       "source": "L2 housing data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -232,58 +232,58 @@
     },
     "L3_property": {
       "path": "L3/property.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 17722,
-      "created": "2026-01-23T01:45:07.982913",
+      "created": "2026-01-28T21:33:22.842511",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_private_property_facilities": {
       "path": "L3/private_property_facilities.parquet",
-      "version": "2026-01-23",
-      "rows": 43467,
-      "created": "2026-01-23T01:45:07.987231",
+      "version": "2026-01-28",
+      "rows": 43511,
+      "created": "2026-01-28T21:33:22.847075",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_property_nearby_facilities": {
       "path": "L3/property_nearby_facilities.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 116526,
-      "created": "2026-01-23T01:45:08.000064",
+      "created": "2026-01-28T21:33:22.860447",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_property_transactions_sales": {
       "path": "L3/property_transactions_sales.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 1096756,
-      "created": "2026-01-23T01:45:08.392661",
+      "created": "2026-01-28T21:33:23.258122",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_property_listing_sales": {
       "path": "L3/property_listing_sales.parquet",
-      "version": "2026-01-23",
+      "version": "2026-01-28",
       "rows": 9929,
-      "created": "2026-01-23T01:45:08.398686",
+      "created": "2026-01-28T21:33:23.264104",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_unified": {
       "path": "L3/unified.parquet",
-      "version": "2026-01-23",
-      "rows": 1670977,
-      "created": "2026-01-23T01:45:10.677555",
+      "version": "2026-01-28",
+      "rows": 1688246,
+      "created": "2026-01-28T21:33:25.640406",
       "source": "L3 export pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-01-23T01:45:10.677558"
+  "last_updated": "2026-01-29T10:54:24.184256"
 }

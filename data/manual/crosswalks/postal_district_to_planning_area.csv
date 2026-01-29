@@ -1,0 +1,63 @@
+source_type,source_value,planning_area,mapping_type,validation_status
+POSTAL_DISTRICT,1,DOWNTOWN CORE,composite,verified
+POSTAL_DISTRICT,1,MARINA SOUTH,composite,verified
+POSTAL_DISTRICT,2,DOWNTOWN CORE,composite,verified
+POSTAL_DISTRICT,2,MARINA SOUTH,composite,verified
+POSTAL_DISTRICT,2,SINGAPORE RIVER,composite,verified
+POSTAL_DISTRICT,3,OUTRAM,composite,verified
+POSTAL_DISTRICT,3,SINGAPORE RIVER,composite,verified
+POSTAL_DISTRICT,3,ROCHOR,composite,verified
+POSTAL_DISTRICT,4,QUEENSTOWN,composite,verified
+POSTAL_DISTRICT,4,DOWNTOWN CORE,composite,verified
+POSTAL_DISTRICT,5,QUEENSTOWN,composite,verified
+POSTAL_DISTRICT,5,BUKIT MERAH,composite,verified
+POSTAL_DISTRICT,6,ROCHOR,composite,verified
+POSTAL_DISTRICT,6,DOWNTOWN CORE,composite,verified
+POSTAL_DISTRICT,7,ROCHOR,composite,verified
+POSTAL_DISTRICT,7,KALLANG,composite,verified
+POSTAL_DISTRICT,8,KALLANG,composite,verified
+POSTAL_DISTRICT,8,TOA PAYOH,composite,verified
+POSTAL_DISTRICT,9,RIVER VALLEY,composite,verified
+POSTAL_DISTRICT,9,OUTRAM,composite,verified
+POSTAL_DISTRICT,9,SINGAPORE RIVER,composite,verified
+POSTAL_DISTRICT,10,BUKIT TIMAH,composite,verified
+POSTAL_DISTRICT,10,RIVER VALLEY,composite,verified
+POSTAL_DISTRICT,10,NOVENA,composite,verified
+POSTAL_DISTRICT,11,NOVENA,composite,verified
+POSTAL_DISTRICT,11,BUKIT TIMAH,composite,verified
+POSTAL_DISTRICT,12,TOA PAYOH,composite,verified
+POSTAL_DISTRICT,12,SERANGOON,composite,verified
+POSTAL_DISTRICT,13,BISHAN,composite,verified
+POSTAL_DISTRICT,13,SERANGOON,composite,verified
+POSTAL_DISTRICT,14,GEYLANG,composite,verified
+POSTAL_DISTRICT,14,KALLANG,composite,verified
+POSTAL_DISTRICT,15,MARINE PARADE,composite,verified
+POSTAL_DISTRICT,15,GEYLANG,composite,verified
+POSTAL_DISTRICT,19,HOUGANG,composite,verified
+POSTAL_DISTRICT,19,SERANGOON,composite,verified
+POSTAL_DISTRICT,20,BISHAN,composite,verified
+POSTAL_DISTRICT,20,ANG MO KIO,composite,verified
+POSTAL_DISTRICT,16,PASIR RIS,composite,verified
+POSTAL_DISTRICT,16,TAMPINES,composite,verified
+POSTAL_DISTRICT,17,CHANGI,composite,verified
+POSTAL_DISTRICT,17,PASIR RIS,composite,verified
+POSTAL_DISTRICT,18,TAMPINES,composite,verified
+POSTAL_DISTRICT,18,BEDOK,composite,verified
+POSTAL_DISTRICT,21,BUKIT BATOK,composite,verified
+POSTAL_DISTRICT,21,CHOA CHU KANG,composite,verified
+POSTAL_DISTRICT,22,JURONG EAST,composite,verified
+POSTAL_DISTRICT,22,JURONG WEST,composite,verified
+POSTAL_DISTRICT,23,BUKIT PANJANG,composite,verified
+POSTAL_DISTRICT,23,CHOA CHU KANG,composite,verified
+POSTAL_DISTRICT,24,LIM CHU KANG,composite,verified
+POSTAL_DISTRICT,24,BUKIT BATOK,composite,verified
+POSTAL_DISTRICT,25,WOODLANDS,composite,verified
+POSTAL_DISTRICT,25,SEMBAWANG,composite,verified
+POSTAL_DISTRICT,26,SEMBAWANG,composite,verified
+POSTAL_DISTRICT,26,WOODLANDS,composite,verified
+POSTAL_DISTRICT,26,YISHUN,composite,verified
+POSTAL_DISTRICT,27,YISHUN,composite,verified
+POSTAL_DISTRICT,27,SEMBAWANG,composite,verified
+POSTAL_DISTRICT,28,PUNGGOL,composite,verified
+POSTAL_DISTRICT,28,SENGKANG,composite,verified
+POSTAL_DISTRICT,28,HOUGANG,composite,verified

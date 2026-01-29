@@ -51,9 +51,9 @@ storey_range_01 TO 03,0.00010287188502663772,yoy_change_pct,random_forest
 hawker_within_1km,9.766975878610983e-05,yoy_change_pct,random_forest
 flat_type_MULTI-GENERATION,6.442706139195392e-05,yoy_change_pct,random_forest
 flat_model_Multi Generation,5.51881854638206e-05,yoy_change_pct,random_forest
-psm_tier_Medium PSM,5.138562259941386e-05,yoy_change_pct,random_forest
+psf_tier_Medium PSF,5.138562259941386e-05,yoy_change_pct,random_forest
 flat_model_Apartment,4.260168888628067e-05,yoy_change_pct,random_forest
-psm_tier_High PSM,3.332480925378168e-05,yoy_change_pct,random_forest
+psf_tier_High PSF,3.332480925378168e-05,yoy_change_pct,random_forest
 preschool_within_500m,2.6340026204981678e-05,yoy_change_pct,random_forest
 park_within_500m,2.0595805141826814e-05,yoy_change_pct,random_forest
 storey_range_07 TO 09,1.789113042562167e-05,yoy_change_pct,random_forest
@@ -103,7 +103,7 @@ flat_model_3Gen,8.931832464339085e-22,yoy_change_pct,random_forest
 storey_range_43 TO 45,3.515866460472526e-22,yoy_change_pct,random_forest
 flat_model_Type S2,0.0,yoy_change_pct,random_forest
 property_type_HDB,0.0,yoy_change_pct,random_forest
-psm_tier_Low PSM,0.0,yoy_change_pct,random_forest
+psf_tier_Low PSF,0.0,yoy_change_pct,random_forest
 flat_model_Improved-Maisonette,0.0,yoy_change_pct,random_forest
 flat_model_Other,0.0,yoy_change_pct,random_forest
 storey_range_49 TO 51,0.0,yoy_change_pct,random_forest

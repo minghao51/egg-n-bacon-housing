@@ -1,0 +1,35 @@
+source_type,source_value,planning_area,mapping_type,validation_status
+HDB_TOWN,ANG MO KIO,ANG MO KIO,direct,verified
+HDB_TOWN,BEDOK,BEDOK,direct,verified
+HDB_TOWN,BISHAN,BISHAN,direct,verified
+HDB_TOWN,BUKIT BATOK,BUKIT BATOK,direct,verified
+HDB_TOWN,BUKIT MERAH,BUKIT MERAH,direct,verified
+HDB_TOWN,BUKIT PANJANG,BUKIT PANJANG,direct,verified
+HDB_TOWN,BUKIT TIMAH,BUKIT TIMAH,direct,verified
+HDB_TOWN,CENTRAL AREA,DOWNTOWN CORE,composite,verified
+HDB_TOWN,CENTRAL AREA,MARINA SOUTH,composite,verified
+HDB_TOWN,CENTRAL AREA,RIVER VALLEY,composite,verified
+HDB_TOWN,CENTRAL AREA,ROCHOR,composite,verified
+HDB_TOWN,CENTRAL AREA,SINGAPORE RIVER,composite,verified
+HDB_TOWN,CENTRAL AREA,OUTRAM,composite,verified
+HDB_TOWN,CHOA CHU KANG,CHOA CHU KANG,direct,verified
+HDB_TOWN,CLEMENTI,CLEMENTI,direct,verified
+HDB_TOWN,GEYLANG,GEYLANG,direct,verified
+HDB_TOWN,HOUGANG,HOUGANG,direct,verified
+HDB_TOWN,JURONG EAST,JURONG EAST,direct,verified
+HDB_TOWN,JURONG WEST,JURONG WEST,direct,verified
+HDB_TOWN,KALLANG,KALLANG,composite,verified
+HDB_TOWN,KALLANG,MARINE PARADE,composite,verified
+HDB_TOWN,KALLANG/WHAMPOA,KALLANG,direct,verified
+HDB_TOWN,LIM CHU KANG,LIM CHU KANG,direct,verified
+HDB_TOWN,MARINE PARADE,MARINE PARADE,direct,verified
+HDB_TOWN,PASIR RIS,PASIR RIS,direct,verified
+HDB_TOWN,PUNGGOL,PUNGGOL,direct,verified
+HDB_TOWN,QUEENSTOWN,QUEENSTOWN,direct,verified
+HDB_TOWN,SEMBAWANG,SEMBAWANG,direct,verified
+HDB_TOWN,SENGKANG,SENGKANG,direct,verified
+HDB_TOWN,SERANGOON,SERANGOON,direct,verified
+HDB_TOWN,TAMPINES,TAMPINES,direct,verified
+HDB_TOWN,TOA PAYOH,TOA PAYOH,direct,verified
+HDB_TOWN,WOODLANDS,WOODLANDS,direct,verified
+HDB_TOWN,YISHUN,YISHUN,direct,verified

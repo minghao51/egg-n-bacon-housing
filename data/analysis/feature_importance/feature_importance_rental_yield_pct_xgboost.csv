@@ -44,7 +44,7 @@ momentum_signal_moderate_deceleration,0.0033940056,rental_yield_pct,xgboost
 flat_model_Improved,0.0033319264,rental_yield_pct,xgboost
 momentum_signal_moderate_acceleration,0.0033191245,rental_yield_pct,xgboost
 childcare_within_1km,0.0031926318,rental_yield_pct,xgboost
-psm_tier_High PSM,0.0030891811,rental_yield_pct,xgboost
+psf_tier_High PSF,0.0030891811,rental_yield_pct,xgboost
 childcare_within_500m,0.0027762982,rental_yield_pct,xgboost
 market_tier_Luxury,0.0024009068,rental_yield_pct,xgboost
 dist_to_nearest_childcare,0.00201367,rental_yield_pct,xgboost
@@ -65,7 +65,7 @@ storey_range_10 TO 12,0.0006936298,rental_yield_pct,xgboost
 park_within_500m,0.00065880845,rental_yield_pct,xgboost
 dist_to_nearest_supermarket,0.00057348463,rental_yield_pct,xgboost
 dist_to_nearest_preschool,0.00054799125,rental_yield_pct,xgboost
-psm_tier_Medium PSM,0.00043455517,rental_yield_pct,xgboost
+psf_tier_Medium PSF,0.00043455517,rental_yield_pct,xgboost
 storey_range_13 TO 15,0.00039912376,rental_yield_pct,xgboost
 flat_type_4 ROOM,0.00033470633,rental_yield_pct,xgboost
 storey_range_19 TO 21,0.00023287654,rental_yield_pct,xgboost

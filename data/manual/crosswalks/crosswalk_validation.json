@@ -1,0 +1,11 @@
+{
+  "total_hdb_mappings": 34,
+  "total_condo_mappings": 62,
+  "unique_hdb_towns": 28,
+  "unique_condo_districts": 28,
+  "unique_planning_areas": 34,
+  "composite_mappings": 70,
+  "verified_mappings": 96,
+  "status": "PASS",
+  "warnings": "70 composite mappings require aggregation"
+}
