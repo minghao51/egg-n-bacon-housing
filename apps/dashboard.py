@@ -17,10 +17,10 @@ from pathlib import Path
 import streamlit as st
 from dotenv import load_dotenv
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent))
+# Add project root to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.ui_components import load_css, hero_banner, feature_highlight, divider
+from scripts.core.ui_components import load_css, hero_banner, feature_highlight, divider
 
 # Load environment variables
 load_dotenv()
@@ -86,28 +86,28 @@ st.markdown("""
 # Define pages (using list for flat navigation)
 pages = [
     st.Page(
-        "apps/1_market_overview.py",
+        "1_market_overview.py",
         title="Market Overview",
         default=True
     ),
     st.Page(
-        "apps/2_price_map.py",
+        "2_price_map.py",
         title="Price Map"
     ),
     st.Page(
-        "apps/3_trends_analytics.py",
+        "3_trends_analytics.py",
         title="Trends & Analytics"
     ),
     st.Page(
-        "apps/market_insights/4a_segments.py",
+        "market_insights/4a_segments.py",
         title="Market Segments"
     ),
     st.Page(
-        "apps/market_insights/4b_tier_analysis.py",
+        "market_insights/4b_tier_analysis.py",
         title="Tier Analysis"
     ),
     st.Page(
-        "apps/market_insights/4c_town_leaderboard.py",
+        "market_insights/4c_town_leaderboard.py",
         title="Town Leaderboard"
     ),
 ]
