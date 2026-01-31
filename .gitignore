@@ -24,6 +24,11 @@ data/logs/
 data/checkpoints/
 data/failed_addresses/
 
+# Python tool caches
+.pytest_cache/
+.ruff_cache/
+.venv/
+
 # Keep metadata.json for version tracking
 !data/metadata.json
 
@@ -35,3 +40,14 @@ data/failed_addresses/
 feature_*.txt
 *_output.txt
 analysis_*.txt
+
+# Claude Code skills (user-specific)
+*.skill
+
+# Marimo notebooks
+.marimo/
+
+# Backend (Astro/Bun static site)
+backend/node_modules/
+backend/dist/
+backend/.astro/
