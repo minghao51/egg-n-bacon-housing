@@ -12,9 +12,9 @@ from typing import Optional
 import pandas as pd
 import requests
 
-from core.config import Config
-from core.data_helpers import save_parquet
-from core.cache import cached_call
+from scripts.core.config import Config
+from scripts.core.data_helpers import save_parquet
+from scripts.core.cache import cached_call
 
 logger = logging.getLogger(__name__)
 

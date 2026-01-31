@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 from shapely.geometry import Polygon
 
-from core.config import Config
-from core.data_helpers import load_parquet, save_parquet
+from scripts.core.config import Config
+from scripts.core.data_helpers import load_parquet, save_parquet
 
 from .spatial_h3 import generate_polygons
 

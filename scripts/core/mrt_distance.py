@@ -16,7 +16,7 @@ import pandas as pd
 from scipy.spatial import cKDTree
 from tqdm import tqdm
 
-from core.mrt_line_mapping import (
+from scripts.core.mrt_line_mapping import (
     get_station_lines,
     get_station_tier,
     is_interchange,

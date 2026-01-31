@@ -13,9 +13,9 @@ from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from core.config import Config
-from core.data_helpers import save_parquet
-from core.geocoding import (
+from scripts.core.config import Config
+from scripts.core.data_helpers import save_parquet
+from scripts.core.geocoding import (
     load_ura_files,
     extract_unique_addresses,
     setup_onemap_headers,

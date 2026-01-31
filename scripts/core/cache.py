@@ -15,9 +15,12 @@ from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
 try:
-    from core.config import Config
+    from scripts.core.config import Config
 except ImportError:
-    from config import Config
+    try:
+        from core.config import Config
+    except ImportError:
+        from config import Config
 
 logger = logging.getLogger(__name__)
 

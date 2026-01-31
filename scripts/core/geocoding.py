@@ -24,13 +24,18 @@ from tenacity import retry, wait_exponential, stop_after_attempt
 from dotenv import load_dotenv
 
 try:
-    from core.config import Config
-    from core.cache import cached_call
-    from core.data_helpers import save_parquet
+    from scripts.core.config import Config
+    from scripts.core.cache import cached_call
+    from scripts.core.data_helpers import save_parquet
 except ImportError:
-    from config import Config
-    from data_helpers import save_parquet
-    from cache import cached_call
+    try:
+        from core.config import Config
+        from core.cache import cached_call
+        from core.data_helpers import save_parquet
+    except ImportError:
+        from config import Config
+        from cache import cached_call
+        from data_helpers import save_parquet
 
 load_dotenv()
 

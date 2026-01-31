@@ -13,8 +13,8 @@ from typing import Dict, Optional
 
 import pandas as pd
 
-from core.config import Config
-from core.data_helpers import load_parquet, save_parquet, list_datasets
+from scripts.core.config import Config
+from scripts.core.data_helpers import load_parquet, save_parquet, list_datasets
 
 logger = logging.getLogger(__name__)
 

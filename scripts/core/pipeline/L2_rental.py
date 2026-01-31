@@ -14,7 +14,7 @@ from typing import Dict
 
 import pandas as pd
 
-from core.config import Config
+from scripts.core.config import Config
 
 logger = logging.getLogger(__name__)
 

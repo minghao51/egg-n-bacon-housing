@@ -13,7 +13,8 @@ class Config:
     """Configuration class with all project settings."""
 
     # ============== PATHS ==============
-    BASE_DIR = Path(__file__).parent.parent
+    # core/ is now in scripts/core/, so go up 3 levels to reach project root
+    BASE_DIR = Path(__file__).parent.parent.parent
     DATA_DIR = BASE_DIR / "data"
 
     # Pipeline data (L0-L3 outputs)
@@ -32,9 +33,9 @@ class Config:
     # Other directories
     METADATA_FILE = DATA_DIR / "metadata.json"
     NOTEBOOKS_DIR = BASE_DIR / "notebooks"
-    CORE_DIR = BASE_DIR / "core"
+    CORE_DIR = BASE_DIR / "scripts" / "core"  # Updated: core is now inside scripts
     SCRIPTS_DIR = BASE_DIR / "scripts"
-    ANALYSIS_SCRIPTS_DIR = SCRIPTS_DIR / "analysis"
+    ANALYSIS_SCRIPTS_DIR = SCRIPTS_DIR / "analytics"  # Updated: analytics not analysis
     ANALYSIS_OUTPUT_DIR = ANALYSIS_DIR
     L4_REPORT_PATH = ANALYSIS_DIR / "L4_summary_report.md"
 

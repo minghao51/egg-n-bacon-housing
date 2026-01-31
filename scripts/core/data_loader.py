@@ -13,7 +13,7 @@ import pandas as pd
 import streamlit as st
 from shapely.geometry import Point, shape
 
-from core.config import Config
+from scripts.core.config import Config
 
 # Constants
 DATA_DIR = Config.PIPELINE_DIR
