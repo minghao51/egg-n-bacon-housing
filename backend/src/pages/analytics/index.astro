@@ -1,0 +1,243 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import { getAnalyticsDocs } from '@/utils/markdown';
+
+const docs = getAnalyticsDocs();
+---
+
+<Layout title="Analytics - Singapore Housing Market">
+  <Sidebar />
+
+  <main class="flex-1 ml-64">
+    <div class="max-w-4xl mx-auto px-8 py-12">
+      <!-- Header -->
+      <header class="mb-8">
+        <h1 class="text-4xl font-bold text-foreground mb-2">
+          Singapore Housing Market Analytics
+        </h1>
+        <p class="text-lg text-muted-foreground">
+          Comprehensive analysis of HDB and Condo market trends, rental yields,
+          spatial patterns, and policy impacts.
+        </p>
+      </header>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        <div class="bg-card border border-border rounded-lg p-6">
+          <div class="text-sm font-medium text-muted-foreground mb-1">
+            Total Reports
+          </div>
+          <div class="text-3xl font-bold text-foreground">{docs.length}</div>
+        </div>
+        <div class="bg-card border border-border rounded-lg p-6">
+          <div class="text-sm font-medium text-muted-foreground mb-1">
+            Data Coverage
+          </div>
+          <div class="text-3xl font-bold text-foreground">11 Years</div>
+        </div>
+        <div class="bg-card border border-border rounded-lg p-6">
+          <div class="text-sm font-medium text-muted-foreground mb-1">
+            Metrics
+          </div>
+          <div class="text-3xl font-bold text-foreground">6 Core</div>
+        </div>
+      </div>
+
+      <!-- Document Categories -->
+      <div class="space-y-8">
+        <!-- Core Metrics -->
+        <section>
+          <h2 class="text-2xl font-semibold text-foreground mb-4">
+            Core Metrics
+          </h2>
+          <div class="grid grid-cols-1 gap-3">
+            {
+              docs
+                .filter((doc) =>
+                  ['metrics-design', 'findings'].includes(doc.slug)
+                )
+                .map((doc) => (
+                  <a
+                    href={`/analytics/${doc.slug}`}
+                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="font-semibold text-foreground">
+                          {doc.title}
+                        </h3>
+                        <p class="text-sm text-muted-foreground mt-1">
+                          {doc.slug === 'metrics-design'
+                            ? 'Stratified median methodology, 6 core metrics implementation'
+                            : 'Key findings, data quality, recommendations'}
+                        </p>
+                      </div>
+                      <svg
+                        class="w-5 h-5 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </a>
+                ))
+            }
+          </div>
+        </section>
+
+        <!-- Market Analysis -->
+        <section>
+          <h2 class="text-2xl font-semibold text-foreground mb-4">
+            Market Analysis
+          </h2>
+          <div class="grid grid-cols-1 gap-3">
+            {
+              docs
+                .filter((doc) =>
+                  ['rental-yield', 'mrt-impact-analysis'].includes(doc.slug)
+                )
+                .map((doc) => (
+                  <a
+                    href={`/analytics/${doc.slug}`}
+                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="font-semibold text-foreground">
+                          {doc.title}
+                        </h3>
+                        <p class="text-sm text-muted-foreground mt-1">
+                          {doc.slug === 'rental-yield'
+                            ? 'HDB and Condo rental yield analysis, ROI integration'
+                            : 'MRT infrastructure impact on property prices'}
+                        </p>
+                      </div>
+                      <svg
+                        class="w-5 h-5 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </a>
+                ))
+            }
+          </div>
+        </section>
+
+        <!-- Advanced Analytics -->
+        <section>
+          <h2 class="text-2xl font-semibold text-foreground mb-4">
+            Advanced Analytics
+          </h2>
+          <div class="grid grid-cols-1 gap-3">
+            {
+              docs
+                .filter((doc) =>
+                  [
+                    'causal-inference-overview',
+                    'spatial-analytics-overview',
+                  ].includes(doc.slug)
+                )
+                .map((doc) => (
+                  <a
+                    href={`/analytics/${doc.slug}`}
+                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="font-semibold text-foreground">
+                          {doc.title}
+                        </h3>
+                        <p class="text-sm text-muted-foreground mt-1">
+                          {doc.slug === 'causal-inference-overview'
+                            ? 'Difference-in-Differences, Propensity Score Matching, Survival Analysis'
+                            : 'Spatial autocorrelation, hotspots, H3 clustering'}
+                        </p>
+                      </div>
+                      <svg
+                        class="w-5 h-5 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </a>
+                ))
+            }
+          </div>
+        </section>
+
+        <!-- Analysis Scripts -->
+        <section>
+          <h2 class="text-2xl font-semibold text-foreground mb-4">
+            Analysis Reports
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {
+              docs
+                .filter((doc) =>
+                  [
+                    'analyze_policy_impact',
+                    'analyze_lease_decay',
+                    'analyze_h3_clusters',
+                    'analyze_spatial_hotspots',
+                    'analyze_spatial_autocorrelation',
+                  ].includes(doc.slug)
+                )
+                .map((doc) => (
+                  <a
+                    href={`/analytics/${doc.slug}`}
+                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="font-semibold text-foreground text-sm">
+                          {doc.title}
+                        </h3>
+                      </div>
+                      <svg
+                        class="w-4 h-4 text-muted-foreground flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </a>
+                ))
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,35 @@
+---
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout title="Egg n Bacon Housing">
+  <div class="min-h-screen flex items-center justify-center bg-background">
+    <div class="text-center px-8">
+      <h1 class="text-6xl font-bold text-foreground mb-4">
+        Egg n Bacon Housing
+      </h1>
+      <p class="text-xl text-muted-foreground mb-8">
+        Singapore Housing Market Analytics
+      </p>
+      <a
+        href="/analytics/"
+        class="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+      >
+        View Analytics
+        <svg
+          class="w-5 h-5 ml-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width={2}
+            d="M13 7l5 5m0 0l-5 5m5-5H6"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,35 @@
+{
+  "name": "egg-n-bacon-analytics",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/tailwind": "^6.0.2",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@tanstack/react-table": "^8.21.3",
+    "astro": "^5.16.16",
+    "clsx": "^2.1.1",
+    "katex": "^0.16.28",
+    "lucide-react": "^0.563.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.7.0",
+    "shiki": "^3.21.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "3"
+  }
+}

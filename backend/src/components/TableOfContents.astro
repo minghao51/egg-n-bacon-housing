@@ -1,0 +1,104 @@
+---
+/**
+ * TableOfContents.astro
+ * Sticky right sidebar showing H2/H3 headings for document navigation
+ */
+
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+  children?: TocItem[];
+}
+
+interface Props {
+  headings: TocItem[];
+}
+
+const { headings } = Astro.props;
+---
+
+<aside class="hidden xl:block w-64 fixed right-0 top-0 h-full overflow-y-auto border-l border-border bg-card/50 backdrop-blur-sm">
+  <div class="p-6">
+    <h3 class="text-sm font-semibold text-foreground mb-4 uppercase tracking-wide">
+      On This Page
+    </h3>
+
+    <nav class="space-y-2">
+      {
+        headings.map((heading) => (
+          <div key={heading.id}>
+            <a
+              href={`#${heading.id}`}
+              class={`block text-sm py-1 transition-colors hover:text-foreground ${
+                heading.level === 2
+                  ? 'text-foreground font-medium'
+                  : 'text-muted-foreground pl-4'
+              }`}
+            >
+              {heading.text}
+            </a>
+
+            {
+              heading.children && heading.children.length > 0 && (
+                <div class="ml-4 mt-1 space-y-1">
+                  {heading.children.map((child) => (
+                    <a
+                      key={child.id}
+                      href={`#${child.id}`}
+                      class="block text-sm py-1 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {child.text}
+                    </a>
+                  ))}
+                </div>
+              )
+            }
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+</aside>
+
+<style>
+  /* Smooth scroll for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Active section highlighting (handled by IntersectionObserver in client script) */
+  a.active-section {
+    color: hsl(var(--primary)) !important;
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  // Highlight current section in TOC based on scroll position
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const id = entry.target.getAttribute('id');
+        if (id) {
+          const tocLink = document.querySelector(`a[href="#${id}"]`);
+          if (tocLink) {
+            if (entry.isIntersecting) {
+              tocLink.classList.add('active-section');
+            } else {
+              tocLink.classList.remove('active-section');
+            }
+          }
+        }
+      });
+    },
+    { rootMargin: '-20% 0px -70% 0px' } // Trigger when heading is near top of viewport
+  );
+
+  // Observe all headings with IDs
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('h2[id], h3[id]').forEach((heading) => {
+      observer.observe(heading);
+    });
+  });
+</script>

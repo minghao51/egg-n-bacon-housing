@@ -1,0 +1,391 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import InlineChartRenderer from '@/components/charts/InlineChartRenderer';
+import { getAnalyticsDoc, getAnalyticsSlugs, stripTitle } from '@/utils/markdown';
+import { markdownToHtmlWithTables } from '@/utils/markdown-renderer';
+
+// Configure content collection for markdown files
+// This allows Astro to properly parse markdown with frontmatter
+
+// Generate static paths for all markdown files
+export async function getStaticPaths() {
+  const slugs = getAnalyticsSlugs();
+  return slugs.map((slug) => ({
+    params: { slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const doc = getAnalyticsDoc(slug);
+
+if (!doc) {
+  return Astro.redirect('/404');
+}
+
+// Extract metadata
+const title = doc.frontmatter?.title || doc.title;
+const status = doc.frontmatter?.status;
+const date = doc.frontmatter?.date;
+const { content: rawContent } = doc;
+
+// Strip H1 to avoid duplicate title
+const content = stripTitle(rawContent);
+
+// Extract headings for TOC (H2 and H3)
+const headingMatches = content.matchAll(/^#{2,3}\s+(.+)$/gm);
+const headings = Array.from(headingMatches).map((match) => {
+  const fullMatch = match[0];
+  const text = match[1].trim();
+  const level = fullMatch.startsWith('###') ? 3 : 2;
+
+  // Create slug-friendly ID
+  const id = text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .trim();
+
+  return { id, text, level };
+});
+
+// Add IDs to headings for anchor links (in markdown format)
+const contentWithAnchors = content.replace(
+  /^#{2,3}\s+(.+)$/gm,
+  (match, text) => {
+    const level = match.startsWith('###') ? 3 : 2;
+    const id = text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+    return `${'#'.repeat(level)} ${text} {#${id}}`;
+  }
+);
+
+// Convert markdown to HTML with proper table support, syntax highlighting, and extract tables for inline charts
+const { html: htmlContent, tables: chartTables } = await markdownToHtmlWithTables(contentWithAnchors, true);
+---
+
+<Layout title={`${title} - Analytics`}>
+  <Sidebar />
+  <TableOfContents headings={headings} />
+
+  <main class="flex-1 ml-0 lg:ml-64 mr-0 xl:mr-64">
+    <div class="max-w-4xl mx-auto px-4 sm:px-8 py-12">
+      <!-- Breadcrumb -->
+      <nav class="mb-4">
+        <ol class="flex items-center space-x-2 text-sm">
+          <li>
+            <a
+              href="/analytics/"
+              class="text-muted-foreground hover:text-foreground"
+            >
+              Analytics
+            </a>
+          </li>
+          <li class="text-muted-foreground">/</li>
+          <li class="text-foreground font-medium">{title}</li>
+        </ol>
+      </nav>
+
+      <!-- Header -->
+      <header class="mb-8">
+        <div class="flex items-center gap-3 mb-3">
+          <h1 class="text-4xl font-bold text-foreground">{title}</h1>
+          {status && (
+            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary">
+              {status}
+            </span>
+          )}
+        </div>
+        {date && (
+          <p class="text-sm text-muted-foreground">Updated: {date}</p>
+        )}
+      </header>
+
+      <!-- Markdown Content -->
+      <article class="prose prose-slate max-w-none dark:prose-invert mb-8">
+        <div set:html={htmlContent} class="markdown-body" />
+      </article>
+
+      <!-- Formula Rendering Script with KaTeX -->
+      <script>
+        // Load KaTeX from CDN
+        (function() {
+          // Formula conversion functions (matching formula-converter.ts)
+          function convertToLaTeX(formula) {
+            let latex = formula;
+
+            // Escape special characters
+            latex = latex.replace(/%/g, '\\%');
+            latex = latex.replace(/&/g, '\\&');
+
+            // Convert subscripts
+            latex = latex.replace(/([a-zA-Z])_([a-zA-Z0-9]+)/g, '$1_{$2}');
+
+            // Convert superscripts
+            latex = latex.replace(/\^([0-9a-zA-Z])([^{])/g, '^{$1}$2');
+
+            // Convert multiplication
+            latex = latex.replace(/×/g, '\\times ');
+
+            // Convert fractions (parenthesized)
+            latex = latex.replace(/\(([^)]+)\)\s*\/\s*\(([^)]+)\)/g,
+              (match, num, den) => `\\frac{${num.trim()}}{${den.trim()}}`
+            );
+
+            // Convert simple fractions
+            latex = latex.replace(/([a-zA-Z0-9_{}]+)\s*\/\s*([a-zA-Z0-9_{}]+)(?![a-zA-Z])/g,
+              (match, num, den) => {
+                if (num.includes('_') || num.includes('^') || den.includes('_') || den.includes('^')) {
+                  return `\\frac{${num}}{${den}}`;
+                }
+                return match;
+              }
+            );
+
+            return latex.trim();
+          }
+
+          function extractFormula(codeContent) {
+            const lines = codeContent.split('\n');
+            const formulaLines = [];
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.match(/^(Where|Note|For)/i)) break;
+              formulaLines.push(line);
+            }
+
+            return formulaLines.join('\n').trim();
+          }
+
+          // Main rendering function
+          async function renderFormulas() {
+            // Wait for KaTeX to load
+            if (typeof katex === 'undefined') {
+              setTimeout(renderFormulas, 100);
+              return;
+            }
+
+            // Find all formula labels
+            const formulaLabels = document.querySelectorAll('.markdown-body strong');
+
+            formulaLabels.forEach((label) => {
+              const labelText = label.textContent.trim();
+              if (labelText.endsWith('Formula:')) {
+                const parentParagraph = label.parentElement;
+                let nextElement = parentParagraph?.nextElementSibling;
+
+                if (nextElement && nextElement.tagName === 'PRE') {
+                  const codeElement = nextElement.querySelector('code');
+                  if (codeElement) {
+                    const formulaText = extractFormula(codeElement.textContent);
+
+                    // Convert to LaTeX
+                    const latex = convertToLaTeX(formulaText);
+
+                    // Create styled container
+                    const formulaContainer = document.createElement('div');
+                    formulaContainer.className = 'formula-display my-6 p-4 bg-muted/30 rounded-lg border border-border';
+
+                    // Create label
+                    const formulaLabel = document.createElement('div');
+                    formulaLabel.className = 'text-sm font-semibold text-muted-foreground mb-2';
+                    formulaLabel.textContent = labelText;
+
+                    // Create formula content with KaTeX rendering
+                    const formulaContent = document.createElement('div');
+                    formulaContent.className = 'formula-content text-lg overflow-x-auto';
+
+                    try {
+                      // Render with KaTeX
+                      katex.render(latex, formulaContent, {
+                        displayMode: true,
+                        throwOnError: false,
+                        strict: false
+                      });
+                    } catch (error) {
+                      console.warn('KaTeX render error, falling back to plain text:', error);
+                      formulaContent.textContent = formulaText;
+                      formulaContent.style.fontFamily = "'Fira Code', 'Consolas', 'Monaco', monospace";
+                    }
+
+                    // Assemble
+                    formulaContainer.appendChild(formulaLabel);
+                    formulaContainer.appendChild(formulaContent);
+
+                    // Replace the <pre> block
+                    nextElement.replaceWith(formulaContainer);
+
+                    // Remove original label
+                    label.remove();
+                  }
+                }
+              }
+            });
+          }
+
+          // Run after DOM is ready
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', renderFormulas);
+          } else {
+            renderFormulas();
+          }
+        })();
+      </script>
+
+      <style>
+        /* Better markdown table styling */
+    .markdown-body table {
+      @apply w-full border-collapse my-6;
+    }
+    .markdown-body th,
+    .markdown-body td {
+      @apply border border-border px-4 py-2 text-left;
+    }
+    .markdown-body th {
+      @apply bg-muted font-semibold text-foreground;
+    }
+    .markdown-body tr:hover {
+      @apply bg-muted/50;
+    }
+    .markdown-body code {
+      @apply bg-muted px-1.5 py-0.5 rounded text-sm;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    }
+    .markdown-body pre {
+      @apply bg-muted p-4 rounded-lg overflow-x-auto my-4;
+    }
+    .markdown-body pre code {
+      @apply bg-transparent p-0 text-sm;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+      line-height: 1.6;
+    }
+
+    /* Syntax highlighting with Shiki */
+    .markdown-body pre.shiki {
+      @apply bg-transparent p-0 rounded-lg overflow-x-auto my-4;
+      background-color: transparent !important;
+    }
+    .markdown-body pre.shiki code {
+      @apply bg-transparent p-0;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    /* Dark mode syntax highlighting overrides */
+    .dark .markdown-body pre code {
+      color: rgb(220, 223, 228);
+    }
+    .dark .markdown-body pre.shiki {
+      background-color: rgb(33, 38, 48) !important;
+    }
+    .dark .markdown-body pre.shiki code {
+      color: rgb(220, 223, 228) !important;
+    }
+
+    /* Light mode syntax highlighting overrides */
+    .markdown-body pre:not(.shiki) code {
+      color: rgb(57, 58, 52);
+    }
+    .markdown-body pre.shiki {
+      background-color: rgb(246, 248, 250) !important;
+    }
+    .markdown-body pre.shiki code {
+      color: rgb(57, 58, 52) !important;
+    }
+
+    .markdown-body blockquote {
+      @apply border-l-4 border-primary pl-4 italic text-muted-foreground my-4;
+    }
+    .markdown-body h2 {
+      @apply text-3xl font-bold mt-12 mb-4 text-foreground scroll-mt-20;
+    }
+    .markdown-body h3 {
+      @apply text-2xl font-semibold mt-8 mb-3 text-foreground scroll-mt-20;
+    }
+    .markdown-body ul,
+    .markdown-body ol {
+      @apply my-4 space-y-2;
+    }
+    .markdown-body li {
+      @apply ml-6;
+    }
+    .markdown-body ul li {
+      @apply list-disc;
+    }
+    .markdown-body ol li {
+      @apply list-decimal;
+    }
+    .markdown-body img {
+      @apply rounded-lg my-6 shadow-md;
+    }
+
+    /* Inline code should not inherit syntax highlighting */
+    .markdown-body p > code:not(pre > code),
+    .markdown-body li > code:not(pre > code) {
+      @apply bg-muted px-1.5 py-0.5 rounded text-sm;
+    }
+
+    /* KaTeX Math Styling */
+    .markdown-body .katex-display {
+      @apply my-6 overflow-x-auto;
+      margin: 1.5rem 0 !important;
+      padding: 1rem;
+      background-color: hsl(var(--muted) / 0.3);
+      border-radius: 0.5rem;
+    }
+
+    .markdown-body .katex {
+      font-size: 1.1em;
+    }
+
+    .dark .markdown-body .katex-display {
+      background-color: rgb(33, 38, 48, 0.5);
+    }
+
+    .markdown-body .katex-display > .katex {
+      @apply text-center;
+      text-align: center !important;
+    }
+
+    /* Inline math styling */
+    .markdown-body .katex:not(.katex-display) {
+      padding: 0 0.2rem;
+    }
+      </style>
+
+      <!-- Inline Charts (rendered at table locations in content) -->
+      <InlineChartRenderer client:load tables={chartTables} />
+
+      <!-- Footer Navigation -->
+      <nav class="mt-12 pt-8 border-t border-border">
+        <a
+          href="/analytics/"
+          class="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <svg
+            class="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Back to Analytics Overview
+        </a>
+      </nav>
+    </div>
+  </main>
+</Layout>

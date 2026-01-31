@@ -1,0 +1,24 @@
+---
+/**
+ * PlotlyEmbed.astro
+ * Embed interactive Plotly HTML charts in iframes
+ */
+
+interface Props {
+  src: string; // Path to Plotly HTML file (e.g., /plots/chart.html)
+  title?: string;
+}
+
+const { src, title = 'Interactive Chart' } = Astro.props;
+---
+
+<div class="my-6 bg-card border border-border rounded-lg p-4">
+  <h4 class="text-sm font-semibold text-foreground mb-3">{title}</h4>
+  <iframe
+    src={src}
+    title={title}
+    class="w-full rounded border-0"
+    style="height: 500px; min-height: 400px;"
+    loading="lazy"
+  ></iframe>
+</div>

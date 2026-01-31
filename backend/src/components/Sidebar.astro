@@ -1,0 +1,81 @@
+---
+import DarkModeToggle from './DarkModeToggle';
+
+const analyticsDocs = [
+  { title: 'Findings', slug: 'findings' },
+  { title: 'Metrics Design', slug: 'metrics-design' },
+  { title: 'Causal Inference', slug: 'causal-inference-overview' },
+  { title: 'Rental Yield', slug: 'rental-yield' },
+  { title: 'Spatial Analytics', slug: 'spatial-analytics-overview' },
+  { title: 'MRT Impact', slug: 'mrt-impact-analysis' },
+  { title: 'H3 Clusters', slug: 'analyze_h3_clusters' },
+  { title: 'Lease Decay', slug: 'analyze_lease_decay' },
+  { title: 'Policy Impact', slug: 'analyze_policy_impact' },
+  { title: 'Spatial Hotspots', slug: 'analyze_spatial_hotspots' },
+  { title: 'Spatial Autocorrelation', slug: 'analyze_spatial_autocorrelation' },
+];
+---
+
+<aside class="w-64 bg-card border-r border-border fixed h-full overflow-y-auto hidden lg:block z-50">
+  <div class="p-6">
+    <h2 class="text-xl font-bold text-foreground mb-2">Analytics</h2>
+    <p class="text-sm text-muted-foreground">Singapore Housing Market</p>
+  </div>
+
+  <nav class="px-4 pb-4">
+    <div class="mb-4">
+      <DarkModeToggle client:load />
+    </div>
+
+    <ul class="space-y-1">
+      <li>
+        <a
+          href="/analytics/"
+          class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          Overview
+        </a>
+      </li>
+    </ul>
+
+    <div class="mt-6">
+      <h3 class="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        Documents
+      </h3>
+      <ul class="space-y-1">
+        {
+          analyticsDocs.map((doc) => (
+            <li>
+              <a
+                href={`/analytics/${doc.slug}`}
+                class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                {doc.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+</aside>
+
+<style>
+  aside {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+
+  aside::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  aside::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  aside::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted));
+    border-radius: 3px;
+  }
+</style>
