@@ -176,7 +176,7 @@ uv run python demo_pipeline.py
 
 ### Load Demo Data
 ```python
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 # Load final feature dataset
 df = load_parquet('demo_L2_features')
@@ -188,7 +188,7 @@ print(df.describe())
 
 ### List All Datasets
 ```python
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 
 datasets = list_datasets()
 for name, info in datasets.items():

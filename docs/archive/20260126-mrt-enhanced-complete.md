@@ -173,7 +173,7 @@ Higher score = better MRT accessibility
 
 ### Basic Usage
 ```python
-from core.mrt_distance import calculate_nearest_mrt
+from scripts.core.mrt_distance import calculate_nearest_mrt
 
 # Calculate with all enhanced features
 properties_with_mrt = calculate_nearest_mrt(properties_df)
@@ -343,7 +343,7 @@ uv run python test_mrt_enhanced.py
 
 ### L3 Export Pipeline
 ```python
-from core.pipeline.L3_export import run_export_pipeline
+from scripts.core.pipeline.L3_export import run_export_pipeline
 
 # Automatically includes all 8 MRT columns
 results = run_export_pipeline()

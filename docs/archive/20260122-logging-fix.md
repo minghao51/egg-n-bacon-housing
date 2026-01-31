@@ -95,7 +95,7 @@ logging.basicConfig(
 )
 
 # NOW import other modules
-from core.my_module import my_function
+from scripts.core.my_module import my_function
 ```
 
 ### ❌ DON'T: In Library/Utility Modules

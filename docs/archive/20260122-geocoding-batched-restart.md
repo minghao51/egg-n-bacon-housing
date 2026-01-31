@@ -30,9 +30,9 @@ Created `scripts/geocode_addresses_batched.py` with the following improvements:
 ### 2. Fixed Import Issues
 
 Fixed circular import issues in the following files:
-- `core/geocoding.py`: Changed `from core.config import Config` → `from config import Config`
-- `core/cache.py`: Changed `from core.config import Config` → `from config import Config`
-- `core/data_helpers.py`: Changed `from core.config import Config` → `from config import Config`
+- `core/geocoding.py`: Changed `from scripts.core.config import Config` → `from config import Config`
+- `core/cache.py`: Changed `from scripts.core.config import Config` → `from config import Config`
+- `core/data_helpers.py`: Changed `from scripts.core.config import Config` → `from config import Config`
 
 This allows the scripts to properly import modules when the `core` directory is added to the Python path.
 

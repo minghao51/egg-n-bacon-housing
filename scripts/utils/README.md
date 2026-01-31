@@ -123,7 +123,7 @@ Load configuration from `core/config.py`:
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from core.config import Config
+from scripts.core.config import Config
 
 # Use configuration
 data_dir = Config.DATA_DIR

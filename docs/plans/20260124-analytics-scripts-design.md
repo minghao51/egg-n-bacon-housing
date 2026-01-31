@@ -74,7 +74,7 @@ import pandas as pd
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.config import Config
+from scripts.core.config import Config
 
 # Configure logging
 logging.basicConfig(

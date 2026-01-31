@@ -96,7 +96,7 @@ Override era selection with a specific date range slider.
 ## API Usage
 
 ```python
-from core.data_loader import filter_by_era, get_era_summary, apply_unified_filters
+from scripts.core.data_loader import filter_by_era, get_era_summary, apply_unified_filters
 
 import pandas as pd
 

@@ -91,7 +91,7 @@ Optimized tables for Streamlit apps:
 ### Data Management (`core/data_helpers.py`)
 
 ```python
-from core.data_helpers import load_parquet, save_parquet, list_datasets
+from scripts.core.data_helpers import load_parquet, save_parquet, list_datasets
 
 df = load_parquet("L1_housing_hdb_transaction")
 datasets = list_datasets()
@@ -100,7 +100,7 @@ datasets = list_datasets()
 ### Configuration (`core/config.py`)
 
 ```python
-from core.config import Config
+from scripts.core.config import Config
 
 data_dir = Config.DATA_DIR
 api_key = Config.GOOGLE_API_KEY
@@ -110,7 +110,7 @@ Config.validate()
 ### Metrics (`core/metrics.py`)
 
 ```python
-from core.metrics import calculate_roi_score, compute_monthly_metrics
+from scripts.core.metrics import calculate_roi_score, compute_monthly_metrics
 
 roi = calculate_roi_score(feature_df, rental_yield_df)
 metrics = compute_monthly_metrics('2020-01', '2025-12')

@@ -227,7 +227,7 @@ run_all_datagovsg_collection()
 #### Example Usage:
 ```python
 # In a script
-from core.pipeline.L0_collect import run_all_datagovsg_collection
+from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
 
 results = run_all_datagovsg_collection()
 print(f"Collected {len(results)} datasets")
@@ -289,7 +289,7 @@ uv run python scripts/run_pipeline.py --stage L1 --no-parallel
 
 ### Example 1: Run L0 Collection with Caching
 ```python
-from core.pipeline.L0_collect import run_all_datagovsg_collection
+from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
 
 # First run: fetches from API (slow)
 results = run_all_datagovsg_collection()
@@ -300,7 +300,7 @@ results = run_all_datagovsg_collection()
 
 ### Example 2: Parallel Geocoding
 ```python
-from core.geocoding import setup_onemap_headers, batch_geocode_addresses
+from scripts.core.geocoding import setup_onemap_headers, batch_geocode_addresses
 
 headers = setup_onemap_headers()
 addresses = ["123 Main St", "456 Oak Ave", ...]  # 1000 addresses
@@ -315,7 +315,7 @@ results_df = batch_geocode_addresses(
 
 ### Example 3: Save with Partitioning
 ```python
-from core.data_helpers import save_parquet
+from scripts.core.data_helpers import save_parquet
 
 # Partition by year for faster queries
 save_parquet(
@@ -396,7 +396,7 @@ save_parquet(property_transactions, "raw_datagov_general_sale")
 
 **After (simplified)**:
 ```python
-from core.pipeline.L0_collect import run_all_datagovsg_collection
+from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
 
 # One line!
 results = run_all_datagovsg_collection()
@@ -414,7 +414,7 @@ for i, search_string in enumerate(housing_df['NameAddress'], 1):
 
 **After (parallel + cached)**:
 ```python
-from core.geocoding import batch_geocode_addresses
+from scripts.core.geocoding import batch_geocode_addresses
 
 # 5x faster + automatic caching
 results_df = batch_geocode_addresses(
@@ -479,8 +479,8 @@ save_parquet(df, "archive", compression="zstd")
 1. **Extract L1 Processing** - Extract URA transaction processing to `core/pipeline/L1_process.py`
 2. **Add Tests** - Create unit tests for new modules
 3. **Update Notebooks** - Simplify notebooks to use extracted functions
-4. **Monitor Cache** - Check cache size periodically: `from core.cache import get_cache_stats; print(get_cache_stats())`
-5. **Clear Cache** - When data changes: `from core.cache import clear_cache; clear_cache()`
+4. **Monitor Cache** - Check cache size periodically: `from scripts.core.cache import get_cache_stats; print(get_cache_stats())`
+5. **Clear Cache** - When data changes: `from scripts.core.cache import clear_cache; clear_cache()`
 
 ### Optional Enhancements:
 
@@ -497,7 +497,7 @@ save_parquet(df, "archive", compression="zstd")
 ### Issue: Cache not working
 **Solution**: Check `USE_CACHING=True` in Config
 ```python
-from core.config import Config
+from scripts.core.config import Config
 print(f"Caching enabled: {Config.USE_CACHING}")
 ```
 
@@ -521,7 +521,7 @@ results_df = batch_geocode_addresses(
 ### Issue: Old data being returned
 **Solution**: Clear the cache
 ```python
-from core.cache import clear_cache
+from scripts.core.cache import clear_cache
 clear_cache()  # Clear all cache
 # or
 clear_cache("datagovsg:d_5785799d63a9da091f4e0b456291eeb8")  # Clear specific

@@ -150,7 +150,7 @@ egg-n-bacon-housing/
 All configuration is centralized in `core/config.py`:
 
 ```python
-from core.config import Config
+from scripts.core.config import Config
 
 # Access paths
 data_dir = Config.DATA_DIR

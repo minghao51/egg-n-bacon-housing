@@ -546,14 +546,14 @@ logging.basicConfig(level=logging.DEBUG)
 
 Check dataset metadata:
 ```python
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 datasets = list_datasets()
 print(datasets)
 ```
 
 Verify file integrity:
 ```python
-from core.data_helpers import verify_metadata
+from scripts.core.data_helpers import verify_metadata
 is_valid = verify_metadata()
 print(f"All datasets valid: {is_valid}")
 ```

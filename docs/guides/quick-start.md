@@ -279,7 +279,7 @@ plt.savefig('yishun_analysis.png')
 ### Validation
 - Run validation after any changes:
 ```python
-from core.metrics import validate_metrics
+from scripts.core.metrics import validate_metrics
 df = pd.read_parquet('data/parquets/L3/metrics_monthly.parquet')
 results = validate_metrics(df)
 print(results)

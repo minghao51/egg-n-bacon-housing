@@ -35,6 +35,7 @@ dependencies = [
     "libpysal>=4.6.0",
     "esda>=1.5.0",
     "lifelines>=0.27.0",
+    "marimo>=0.19.6",
 ]
 
 [tool.uv]

@@ -107,7 +107,13 @@ GOOGLE_API_KEY=your_google_api_key
 Launch the interactive housing visualization dashboard:
 
 ```bash
-uv run streamlit run streamlit_app.py
+# Main unified dashboard
+uv run streamlit run apps/dashboard.py
+
+# Or run individual apps
+uv run streamlit run apps/1_market_overview.py
+uv run streamlit run apps/2_price_map.py
+uv run streamlit run apps/3_trends_analytics.py
 ```
 
 Access at: http://localhost:8501
@@ -116,7 +122,9 @@ Access at: http://localhost:8501
 - Market Overview - Key statistics and market summary
 - Price Map - Interactive map with heatmap/scatter views, amenity overlays
 - Trends & Analytics - Time-series analysis, comparisons, correlations
-- Market Insights - Phase 2 advanced analytics features
+- Market Insights - Advanced analytics features
+
+See [apps/README.md](apps/README.md) for full documentation.
 
 ### Command-Line Pipeline Runner (Recommended)
 
@@ -131,15 +139,43 @@ uv run python scripts/run_pipeline.py --stage L0
 uv run python scripts/run_pipeline.py --stage L1 --parallel
 ```
 
+### Marimo Notebooks (Reactive Python)
+
+Reactive notebooks for exploratory analysis:
+
+```bash
+# Edit notebooks
+uv run marimo edit marimo/analytics/
+
+# Run as app
+uv run marimo run marimo/analytics/your_notebook.py --port 8080
+```
+
+See [marimo/README.md](marimo/README.md) for details.
+
+### Backend Documentation Site
+
+Static Astro documentation site:
+
+```bash
+cd backend
+bun install
+bun run dev
+```
+
+Access at: http://localhost:4321
+
+See [backend/README.md](backend/README.md) for details.
+
 ### Use Pipeline Modules in Python Code
 
 ```python
 # L0: Data collection with automatic caching
-from core.pipeline.L0_collect import run_all_datagovsg_collection
+from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
 results = run_all_datagovsg_collection()
 
 # L1: Processing with parallel geocoding
-from core.pipeline.L1_process import run_full_l1_pipeline
+from scripts.core.pipeline.L1_process import run_full_l1_pipeline
 results = run_full_l1_pipeline(use_parallel_geocoding=True)
 ```
 
@@ -167,26 +203,66 @@ uv run ruff check --fix .
 
 ```
 egg-n-bacon-housing/
-├── data/               # Data directory
-│   ├── parquets/      # All parquet files (gitignored)
-│   └── metadata.json  # Dataset registry (git-tracked)
-├── notebooks/         # Jupyter notebooks (paired with .py)
-├── core/              # Source code
-│   ├── config.py     # Centralized configuration
-│   ├── data_helpers.py # Parquet management
-│   ├── geocoding.py  # OneMap API utilities
-│   ├── cache.py      # API response caching
-│   ├── agent/        # LangChain agents
-│   └── pipeline/     # Extracted pipeline logic
-│       ├── L0_collect.py    # Data collection
-│       └── L1_process.py    # Processing & geocoding
-├── scripts/          # Pipeline scripts
-│   └── run_pipeline.py     # CLI pipeline runner
-├── tests/            # Test suite (32 tests)
+├── README.md              # Main project README
+├── CLAUDE.md              # Development guidelines
+├── pyproject.toml         # Python dependencies (uv)
+├── jupytext.toml          # Jupyter config
+├── .env.example           # Environment template
+│
+├── scripts/               # Python scripts & core modules
+│   ├── pipeline/          # Pipeline orchestration
+│   ├── analytics/         # Analytics scripts
+│   ├── data/              # Data operations
+│   ├── utils/             # Utility scripts
+│   ├── core/              # Core modules (moved from root)
+│   │   ├── config.py      # Centralized configuration
+│   │   ├── data_helpers.py # Parquet management
+│   │   ├── geocoding.py   # OneMap API utilities
+│   │   ├── cache.py       # API response caching
+│   │   ├── agent/         # LangChain agents
+│   │   └── pipeline/      # Pipeline logic (L0-L4)
+│   └── README.md          # Scripts documentation
+│
+├── apps/                  # Streamlit dashboards
+│   ├── dashboard.py       # Main unified dashboard (moved from root)
+│   ├── 1_market_overview.py
+│   ├── 2_price_map.py
+│   ├── 3_trends_analytics.py
+│   └── market_insights/   # Advanced analytics apps
+│   └── README.md          # Apps documentation
+│
+├── notebooks/             # Jupyter notebooks (paired with .py)
+│   └── exploration/       # Exploratory analysis
+│
+├── marimo/                # Marimo reactive notebooks
+│   └── analytics/         # Reactive analytics notebooks
+│   └── README.md          # Marimo documentation
+│
+├── backend/               # Astro documentation site
+│   ├── README.md          # Backend overview
+│   ├── CHANGELOG.md       # Development changelog
+│   ├── src/               # Astro source code
+│   ├── public/            # Static assets
+│   └── package.json       # Node dependencies
+│
+├── docs/                  # Documentation
+│   ├── analytics/         # Analytics documentation
+│   ├── guides/            # User guides
+│   ├── archive/           # Historical docs
+│   └── architecture.md    # System architecture
+│
+├── tests/                 # Test suite
 │   ├── test_cache.py
 │   ├── test_geocoding.py
-│   └── test_pipeline.py
-└── docs/             # Documentation
+│   ├── test_pipeline.py
+│   └── ...
+│
+└── data/                  # Data directory
+    ├── metadata.json      # Dataset registry (git-tracked)
+    ├── pipeline/          # L0-L3 pipeline outputs (gitignored)
+    ├── analysis/          # Analytics outputs (gitignored)
+    ├── cache/             # API cache (gitignored)
+    └── logs/              # Runtime logs (gitignored)
 ```
 
 ## Documentation

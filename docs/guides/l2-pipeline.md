@@ -173,7 +173,7 @@ data/parquets/L2/rental_yield.parquet
 The rental yield data from this pipeline is used by the enhanced ROI score calculation:
 
 ```python
-from core.metrics import calculate_roi_score
+from scripts.core.metrics import calculate_roi_score
 import pandas as pd
 
 # Load rental yields from L2 pipeline

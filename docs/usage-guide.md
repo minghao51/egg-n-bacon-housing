@@ -101,13 +101,13 @@ uv run jupyter notebook
 ## Loading Data
 
 ```python
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 # Load a dataset
 df = load_parquet("L1_housing_condo_transaction")
 
 # List all datasets
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 datasets = list_datasets()
 ```
 

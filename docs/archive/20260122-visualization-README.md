@@ -309,12 +309,12 @@ uv sync
 
 Test data loading:
 ```bash
-uv run python -c "from core.data_loader import load_combined_data; df = load_combined_data(); print(df.head())"
+uv run python -c "from scripts.core.data_loader import load_combined_data; df = load_combined_data(); print(df.head())"
 ```
 
 Test map utilities:
 ```bash
-uv run python -c "from core.map_utils import create_base_map; fig = create_base_map(); print('Map created successfully')"
+uv run python -c "from scripts.core.map_utils import create_base_map; fig = create_base_map(); print('Map created successfully')"
 ```
 
 ---

@@ -139,7 +139,7 @@ If you have scripts that reference the old paths:
 
 Or use Config:
 ```python
-from core.config import Config
+from scripts.core.config import Config
 
 # Instead of hardcoded paths
 data_path = Config.PIPELINE_DIR / "L1" / "housing_hdb_transaction.parquet"
@@ -156,4 +156,4 @@ The app should work seamlessly as it uses `data_loader.py` which has been update
 If you encounter any issues with the new structure:
 1. Check `core/config.py` for path definitions
 2. Verify files exist in expected locations
-3. Try running: `uv run python -c "from core.config import Config; Config.print_config()"`
+3. Try running: `uv run python -c "from scripts.core.config import Config; Config.print_config()"`

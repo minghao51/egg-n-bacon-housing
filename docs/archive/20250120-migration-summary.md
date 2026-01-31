@@ -159,7 +159,7 @@ cat .gitignore | grep metadata
 ### Step 3: Verify Metadata
 ```python
 # In Python
-from core.data_helpers import list_datasets, verify_metadata
+from scripts.core.data_helpers import list_datasets, verify_metadata
 
 # List all datasets
 datasets = list_datasets()
@@ -189,7 +189,7 @@ verify_metadata()  # Should return True if all valid
 df = pd.read_parquet("../data/L1/housing_condo_transaction.parquet")
 
 # After
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 df = load_parquet("L1_housing_condo_transaction")
 ```
 
@@ -200,7 +200,7 @@ df.to_parquet("../data/L1/output.parquet")
 !dvc add ../data/L1/output.parquet
 
 # After
-from core.data_helpers import save_parquet
+from scripts.core.data_helpers import save_parquet
 save_parquet(df, "L1_output", source="processing step")
 ```
 
@@ -210,7 +210,7 @@ save_parquet(df, "L1_output", source="processing step")
 # Check if file exists, look at .dvc file, etc.
 
 # After
-from core.data_helpers import list_datasets, verify_metadata
+from scripts.core.data_helpers import list_datasets, verify_metadata
 datasets = list_datasets()  # See what's available
 verify_metadata()  # Verify integrity
 ```

@@ -93,7 +93,7 @@ All analytics scripts follow these conventions:
    import sys
    from pathlib import Path
    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-   from core.config import Config
+   from scripts.core.config import Config
    ```
 
 2. **Logging**: Configure logging for output

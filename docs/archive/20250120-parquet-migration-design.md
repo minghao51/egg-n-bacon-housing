@@ -109,7 +109,7 @@ processed = process(df)
 processed.to_csv("data/L1/output.csv")
 
 # After
-from core.data_helpers import load_parquet, save_parquet
+from scripts.core.data_helpers import load_parquet, save_parquet
 
 df = load_parquet("raw_data")
 processed = process(df)
@@ -273,7 +273,7 @@ core/
 ```python
 # tests/test_data_helpers.py
 import pytest
-from core.data_helpers import save_parquet, load_parquet
+from scripts.core.data_helpers import save_parquet, load_parquet
 import pandas as pd
 
 def test_save_and_load():
@@ -284,7 +284,7 @@ def test_save_and_load():
     assert loaded.equals(df)
 
 def test_metadata_tracking():
-    from core.data_helpers import list_datasets
+    from scripts.core.data_helpers import list_datasets
     datasets = list_datasets()
     assert "test_dataset" in datasets
 ```

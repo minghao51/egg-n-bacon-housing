@@ -150,7 +150,7 @@ uv run python notebooks/L2_sales_facilities.py
 ### Check Metadata
 
 ```python
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 
 datasets = list_datasets()
 for name, info in datasets.items():
@@ -160,7 +160,7 @@ for name, info in datasets.items():
 ### Verify Data Quality
 
 ```python
-from core.data_helpers import load_parquet, verify_metadata
+from scripts.core.data_helpers import load_parquet, verify_metadata
 
 # Verify all checksums
 is_valid = verify_metadata()
@@ -255,7 +255,7 @@ uv run python test_pipeline_setup.py
 ### Verify Integrity
 
 ```python
-from core.data_helpers import verify_metadata
+from scripts.core.data_helpers import verify_metadata
 
 is_valid = verify_metadata()
 assert is_valid, "Some datasets are corrupted!"
@@ -269,7 +269,7 @@ After pipeline completes:
 
 1. **Explore Data**
    ```python
-   from core.data_helpers import load_parquet
+   from scripts.core.data_helpers import load_parquet
    df = load_parquet("L3_property")
    ```
 
@@ -296,7 +296,7 @@ After pipeline completes:
 
 ```python
 # Load only needed columns
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 import pandas as pd
 
 # Load specific columns

@@ -286,7 +286,7 @@ Properties are flagged as "coming soon" based on:
 - **New leases** (99+ years remaining)
 
 ```python
-from core.metrics import identify_coming_soon
+from scripts.core.metrics import identify_coming_soon
 
 # Identify coming soon properties
 coming_soon_df = identify_coming_soon(df, months_ahead=3)
@@ -302,7 +302,7 @@ coming_soon_df = identify_coming_soon(df, months_ahead=3)
 | 12-month | Linear trend (12 months data) | ±10% |
 
 ```python
-from core.metrics import calculate_forecasted_metrics
+from scripts.core.metrics import calculate_forecasted_metrics
 
 # Get forecasts for a planning area
 forecasts = calculate_forecasted_metrics(
@@ -323,7 +323,7 @@ forecasts = calculate_forecasted_metrics(
 | Median PSM | $3,850 | $4,200 | $5,200 | +9.1% | +23.8% |
 
 ```python
-from core.metrics import calculate_era_comparison
+from scripts.core.metrics import calculate_era_comparison
 
 # Calculate era comparison for a planning area
 comparison = calculate_era_comparison(
@@ -346,7 +346,7 @@ Composite investment score for coming soon properties:
 | Amenities | 10% | Count of nearby amenities |
 
 ```python
-from core.metrics import calculate_coming_soon_score
+from scripts.core.metrics import calculate_coming_soon_score
 
 # Calculate investment scores
 scored_df = calculate_coming_soon_score(
@@ -500,7 +500,7 @@ data/analysis/coming_soon/
 
 ```python
 import pandas as pd
-from core.data_loader import filter_by_era, get_era_summary
+from scripts.core.data_loader import filter_by_era, get_era_summary
 
 # Load data
 df = pd.read_parquet('data/parquets/L3/housing_unified.parquet')

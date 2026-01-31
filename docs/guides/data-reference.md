@@ -47,7 +47,7 @@ This document provides a quick reference for the housing data available in the p
 ## Loading Data
 
 ```python
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 # Load any dataset
 df = load_parquet("L1_housing_hdb_transaction")

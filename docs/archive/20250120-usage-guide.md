@@ -232,7 +232,7 @@ uv run python notebooks/L3_upload_s3.py
 
 ```python
 # Check current datasets
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 
 datasets = list_datasets()
 for name, info in datasets.items():
@@ -302,7 +302,7 @@ uv run jupytext --sync *.ipynb
 ### Loading Datasets
 
 ```python
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 # Load a dataset
 df = load_parquet("L1_housing_condo_transaction")
@@ -318,7 +318,7 @@ df = pd.read_parquet("data/parquets/L1/housing_condo_transaction.parquet")
 ### Saving Datasets
 
 ```python
-from core.data_helpers import save_parquet
+from scripts.core.data_helpers import save_parquet
 import pandas as pd
 
 # Create or process data
@@ -335,7 +335,7 @@ save_parquet(
 ### Listing Datasets
 
 ```python
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 
 # Get all datasets
 datasets = list_datasets()
@@ -352,7 +352,7 @@ for name, info in datasets.items():
 ### Verifying Data Integrity
 
 ```python
-from core.data_helpers import verify_metadata
+from scripts.core.data_helpers import verify_metadata
 
 # Verify all checksums
 is_valid = verify_metadata()
@@ -393,7 +393,7 @@ uv run python my_script.py
 ### Task 1: Check What Data Exists
 
 ```python
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 
 datasets = list_datasets()
 print(f"Total datasets: {len(datasets)}")
@@ -404,7 +404,7 @@ for name in datasets.keys():
 ### Task 2: Load and Explore Data
 
 ```python
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 import pandas as pd
 
 # Load data
@@ -423,7 +423,7 @@ print(df.columns.tolist())
 
 ```python
 import pandas as pd
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 df = load_parquet("L1_housing_condo_transaction")
 
@@ -441,7 +441,7 @@ recent = df[df['year'] >= 2020]
 
 ```python
 import pandas as pd
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 df = load_parquet("L1_housing_condo_transaction")
 
@@ -459,7 +459,7 @@ count_by_area = df['planning_area'].value_counts()
 
 ```python
 import pandas as pd
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 # Load two datasets
 transactions = load_parquet("L1_housing_condo_transaction")
@@ -477,7 +477,7 @@ merged = transactions.merge(
 
 ```python
 import pandas as pd
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 df = load_parquet("L3_property")
 df.to_csv("output.csv", index=False)
@@ -488,7 +488,7 @@ df.to_csv("output.csv", index=False)
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 
 df = load_parquet("L1_housing_condo_transaction")
 
@@ -522,7 +522,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 ```
 
 Or use from notebooks:
@@ -530,7 +530,7 @@ Or use from notebooks:
 import sys
 sys.path.append('../src')
 
-from core.data_helpers import load_parquet
+from scripts.core.data_helpers import load_parquet
 ```
 
 ### Issue: Dataset Not Found
@@ -543,7 +543,7 @@ from core.data_helpers import load_parquet
 3. Verify the dataset was created
 
 ```python
-from core.data_helpers import list_datasets
+from scripts.core.data_helpers import list_datasets
 datasets = list_datasets()
 print(list(datasets.keys()))
 ```
@@ -682,7 +682,7 @@ python script.py
 ### 3. Check Metadata Before Using Data
 
 ```python
-from core.data_helpers import list_datasets, verify_metadata
+from scripts.core.data_helpers import list_datasets, verify_metadata
 
 # Verify integrity
 assert verify_metadata(), "Some datasets corrupted!"
@@ -695,7 +695,7 @@ datasets = list_datasets()
 
 ```python
 # Good
-from core.config import Config
+from scripts.core.config import Config
 data_dir = Config.DATA_DIR
 
 # Bad (hardcoded paths)
@@ -769,8 +769,8 @@ uv run streamlit run apps/*.py   # Run apps
 
 **Key Modules**:
 ```python
-from core.config import Config           # Configuration
-from core.data_helpers import (          # Data management
+from scripts.core.config import Config           # Configuration
+from scripts.core.data_helpers import (          # Data management
     load_parquet,
     save_parquet,
     list_datasets,

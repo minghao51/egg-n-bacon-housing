@@ -75,7 +75,7 @@ Properties within 1km: 941 (94.1%)
 
 ### Direct Use
 ```python
-from core.mrt_distance import calculate_nearest_mrt, load_mrt_stations
+from scripts.core.mrt_distance import calculate_nearest_mrt, load_mrt_stations
 
 # Load MRT stations
 mrt_stations = load_mrt_stations()
@@ -86,7 +86,7 @@ properties_with_mrt = calculate_nearest_mrt(properties_df, mrt_stations_df=mrt_s
 
 ### Via L3 Export Pipeline
 ```python
-from core.pipeline.L3_export import run_export_pipeline
+from scripts.core.pipeline.L3_export import run_export_pipeline
 
 # Run export pipeline (automatically includes MRT distances)
 results = run_export_pipeline()

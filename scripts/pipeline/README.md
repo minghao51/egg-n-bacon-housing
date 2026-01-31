@@ -30,8 +30,10 @@ uv run python scripts/pipeline/run_pipeline.py --no-cache
 - `--no-cache`: Disable caching and force recalculation
 - `--verbose`: Enable detailed logging
 
-### `create_l3_unified_dataset.py`
+### `create_l3_unified_dataset.py` (located at `scripts/`)
 Creates the comprehensive L3 unified housing dataset.
+
+**Note:** This script is now located at `scripts/create_l3_unified_dataset.py` for convenient access from the project root. It imports the implementation from `scripts/dashboard/create_l3_unified_dataset.py`.
 
 **Features:**
 - Combines HDB, Condo, and EC transactions
@@ -42,7 +44,7 @@ Creates the comprehensive L3 unified housing dataset.
 **Usage:**
 ```bash
 # Create unified dataset
-uv run python scripts/pipeline/create_l3_unified_dataset.py
+uv run python scripts/create_l3_unified_dataset.py
 ```
 
 **Output:**

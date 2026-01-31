@@ -6,6 +6,8 @@ Comprehensive collection of Python scripts for Singapore housing market analysis
 
 ```
 scripts/
+├── create_l3_unified_dataset.py  # L3 unified dataset creation (convenience wrapper)
+│
 ├── analytics/              # Analytics and modeling scripts
 │   ├── calculate/         # Metrics calculation
 │   ├── forecast/          # Time-series forecasting
@@ -17,8 +19,7 @@ scripts/
 │       └── mrt/           # MRT proximity analysis
 │
 ├── pipeline/              # Pipeline orchestration
-│   ├── run_pipeline.py
-│   └── create_l3_unified_dataset.py
+│   └── run_pipeline.py
 │
 ├── data/                  # Data operations
 │   ├── download/          # External data downloads
@@ -26,6 +27,9 @@ scripts/
 │       ├── geocode/       # Geocoding operations
 │       ├── amenities/     # Amenity data processing
 │       └── planning_area/ # Geographic processing
+│
+├── dashboard/             # Dashboard-specific scripts
+│   └── create_l3_unified_dataset.py  # Full implementation
 │
 └── utils/                 # Utility scripts
     ├── Validation
@@ -42,6 +46,12 @@ uv run python scripts/pipeline/run_pipeline.py
 
 # Specific stages
 uv run python scripts/pipeline/run_pipeline.py --stages L0,L1
+```
+
+### Create L3 Unified Dataset
+```bash
+# Create comprehensive unified dataset
+uv run python scripts/create_l3_unified_dataset.py
 ```
 
 ### Calculate Metrics
@@ -89,9 +99,11 @@ uv run python scripts/analytics/forecast/forecast_yields.py
 - Market (4): Rental market, lease decay, policy impact, advanced segmentation
 - MRT (3): Impact, heterogeneous effects, by property type
 
-### Pipeline (2 scripts)
-- Main pipeline orchestration
-- L3 unified dataset creation
+### L3 Unified Dataset (1 script)
+- `create_l3_unified_dataset.py` - Comprehensive dataset creation (wrapper at scripts root, implementation in dashboard/)
+
+### Pipeline (1 script)
+- `run_pipeline.py` - Main pipeline orchestration
 
 ### Data Operations (12 scripts)
 **Download** (4)
@@ -118,7 +130,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.config import Config
+from scripts.core.config import Config
 ```
 
 ### Standard CLI Interface
@@ -279,11 +291,12 @@ For issues or questions:
 
 | Category | Scripts | Most Used |
 |----------|---------|-----------|
+| L3 Unified Dataset | 1 | create_l3_unified_dataset.py |
 | Calculate | 5 | calculate_l3_metrics.py |
 | Forecast | 2 | forecast_prices.py |
 | Segmentation | 3 | create_market_segmentation.py |
 | Analysis | 12 | analyze_amenity_impact.py |
-| Pipeline | 2 | run_pipeline.py |
+| Pipeline | 1 | run_pipeline.py |
 | Data Download | 4 | download_amenity_data.py |
 | Data Process | 8 | geocode_addresses.py |
 | Utilities | 4 | check_geocoding_progress.py |

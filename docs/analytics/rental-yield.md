@@ -150,7 +150,7 @@ Successfully downloaded, processed, and integrated rental transaction data from 
 
 ```python
 import pandas as pd
-from core.config import Config
+from scripts.core.config import Config
 
 # Load rental yield data
 rental_yield_path = Config.PARQUETS_DIR / "L2" / "rental_yield.parquet"
@@ -168,7 +168,7 @@ print(rental_yield_df.head())
 ### 2. Enhanced ROI Score Calculation
 
 ```python
-from core.metrics import calculate_roi_score
+from scripts.core.metrics import calculate_roi_score
 import pandas as pd
 
 # Load feature data with price_momentum, infrastructure_score, amenities_score
@@ -191,7 +191,7 @@ print(f"ROI Scores: {roi_scores.describe()}")
 
 ```python
 import pandas as pd
-from core.config import Config
+from scripts.core.config import Config
 
 # Load data
 rental_df = pd.read_parquet(Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet")
