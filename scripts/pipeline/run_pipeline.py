@@ -36,22 +36,17 @@ import sys
 import argparse
 from pathlib import Path
 
-# Add project root and src to path
-project_root = Path.cwd()
-if (project_root / "src").exists():
-    sys.path.insert(0, str(project_root / "src"))
-else:
-    # Fallback: try relative to script location
-    project_root = Path(__file__).parent.parent
-    sys.path.insert(0, str(project_root / "src"))
+# Add project root to path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
-from config import Config
-from pipeline.L0_collect import collect_all_datagovsg
-from pipeline.L1_process import run_processing_pipeline, save_failed_addresses
-from pipeline.L2_rental import run_rental_pipeline
-from pipeline.L2_features import run_features_pipeline
-from pipeline.L3_export import run_export_pipeline
-from data_helpers import list_datasets
+from scripts.core.config import Config
+from scripts.core.pipeline.L0_collect import collect_all_datagovsg
+from scripts.core.pipeline.L1_process import run_processing_pipeline, save_failed_addresses
+from scripts.core.pipeline.L2_rental import run_rental_pipeline
+from scripts.core.pipeline.L2_features import run_features_pipeline
+from scripts.core.pipeline.L3_export import run_export_pipeline
+from scripts.core.data_helpers import list_datasets
 
 # Setup logging
 logging.basicConfig(

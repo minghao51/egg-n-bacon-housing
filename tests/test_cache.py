@@ -9,8 +9,8 @@ from unittest.mock import patch, MagicMock
 import pandas as pd
 import pytest
 
-from core.cache import CacheManager, cached_call, clear_cache, get_cache_stats
-from core.config import Config
+from scripts.core.cache import CacheManager, cached_call, clear_cache, get_cache_stats
+from scripts.core.config import Config
 
 
 @pytest.fixture

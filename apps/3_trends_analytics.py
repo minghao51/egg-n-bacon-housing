@@ -18,8 +18,8 @@ from datetime import datetime
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.data_loader import load_unified_data, apply_unified_filters
-from core.chart_utils import (
+from scripts.core.data_loader import load_unified_data, apply_unified_filters
+from scripts.core.chart_utils import (
     aggregate_by_timeperiod,
     create_trend_line_chart,
     create_multi_series_trend,

@@ -5,13 +5,13 @@ import pandas as pd
 import pytest
 from pathlib import Path
 
-from core.pipeline.L0_collect import (
+from scripts.core.pipeline.L0_collect import (
     fetch_datagovsg_dataset,
     fetch_private_property_transactions,
     load_resale_flat_prices,
     _convert_lease_to_months
 )
-from core.pipeline.L1_process import (
+from scripts.core.pipeline.L1_process import (
     load_and_save_transaction_data,
     prepare_unique_addresses,
     process_geocoded_results,

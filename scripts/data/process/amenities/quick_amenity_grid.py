@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from core.config import Config
+from scripts.core.config import Config
 
 OUTPUT_DIR = Config.DATA_DIR / "analysis" / "amenity_impact"
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)

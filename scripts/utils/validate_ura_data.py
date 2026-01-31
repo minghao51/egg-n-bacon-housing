@@ -17,7 +17,7 @@ import pandas as pd
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from core.config import Config
+from scripts.core.config import Config
 
 
 def validate_file(file_path: Path, expected_rows_min: int = 1000) -> dict:

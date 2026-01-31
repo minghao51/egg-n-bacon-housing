@@ -16,8 +16,8 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.config import Config
-from core.ui_components import (
+from scripts.core.config import Config
+from scripts.core.ui_components import (
     custom_warning,
     info_box,
     load_css,
@@ -58,7 +58,7 @@ def main():
     # ============================================================================
     st.sidebar.subheader("📅 Period Mode")
 
-    from core.data_loader import load_unified_data
+    from scripts.core.data_loader import load_unified_data
 
     df = load_unified_data()
 

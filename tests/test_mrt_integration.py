@@ -9,8 +9,8 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.config import Config
-from core.mrt_distance import calculate_nearest_mrt, load_mrt_stations
+from scripts.core.config import Config
+from scripts.core.mrt_distance import calculate_nearest_mrt, load_mrt_stations
 
 logging.basicConfig(
     level=logging.INFO,

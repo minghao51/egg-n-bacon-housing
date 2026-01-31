@@ -17,8 +17,8 @@ from pathlib import Path
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.data_loader import load_unified_data, get_unified_data_summary
-from core.ui_components import (
+from scripts.core.data_loader import load_unified_data, get_unified_data_summary
+from scripts.core.ui_components import (
     load_css,
     page_header,
     section_header,

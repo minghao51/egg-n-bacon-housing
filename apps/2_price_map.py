@@ -16,14 +16,14 @@ from pathlib import Path
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.data_loader import (
+from scripts.core.data_loader import (
     load_unified_data,
     load_amenity_locations,
     get_unified_filter_options,
     apply_unified_filters,
     get_unified_data_summary,
 )
-from core.map_utils import (
+from scripts.core.map_utils import (
     aggregate_by_planning_area,
     aggregate_by_h3,
     create_planning_area_polygon_map,
@@ -36,7 +36,7 @@ from core.map_utils import (
     get_available_color_by_options,
     get_color_column_value,
 )
-from core.ui_components import load_css, page_header, section_header, divider, info_box
+from scripts.core.ui_components import load_css, page_header, section_header, divider, info_box
 
 # Page config
 st.set_page_config(page_title="Price Map", page_icon="", layout="wide")

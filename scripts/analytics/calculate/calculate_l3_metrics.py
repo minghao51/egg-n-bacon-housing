@@ -20,8 +20,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from core.config import Config
-from core.metrics import (
+from scripts.core.config import Config
+from scripts.core.metrics import (
     calculate_affordability,
     calculate_roi_score,
     compute_monthly_metrics,

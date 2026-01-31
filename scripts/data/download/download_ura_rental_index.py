@@ -22,8 +22,8 @@ from io import StringIO
 import pandas as pd
 import requests
 
-from core.config import Config
-from core.network_check import check_local_file_exists, require_network
+from scripts.core.config import Config
+from scripts.core.network_check import check_local_file_exists, require_network
 
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 import pytest
 
-from core.geocoding import (
+from scripts.core.geocoding import (
     fetch_data_cached,
     fetch_data_parallel,
     batch_geocode_addresses,
