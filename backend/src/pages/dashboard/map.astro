@@ -1,0 +1,30 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import PriceMap from '@/components/dashboard/PriceMap';
+
+// Client-only component since it uses Leaflet (window object)
+---
+
+<Layout title="Interactive Price Map - Dashboard">
+  <Sidebar />
+
+  <main class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-foreground">Interactive Price Map</h1>
+        <p class="text-muted-foreground mt-2">
+          Spatial analysis of housing prices by planning area. Data aggregated from recent transactions.
+        </p>
+      </header>
+
+      <div class="bg-card border border-border rounded-lg p-1 shadow-sm">
+        <PriceMap 
+          client:only="react" 
+          geoJsonUrl="/data/planning_areas.geojson" 
+          metricsUrl="/data/map_metrics.json" 
+        />
+      </div>
+    </div>
+  </main>
+</Layout>

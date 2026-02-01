@@ -1,0 +1,42 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import TownLeaderboard from '@/components/dashboard/TownLeaderboard';
+import fs from 'fs';
+import path from 'path';
+
+const dataPath = path.resolve('public/data/dashboard_leaderboard.json');
+let leaderboardData = [];
+
+try {
+  if (fs.existsSync(dataPath)) {
+    const rawData = fs.readFileSync(dataPath, 'utf-8');
+    leaderboardData = JSON.parse(rawData);
+  }
+} catch (error) {
+  console.error("Failed to load leaderboard data:", error);
+}
+---
+
+<Layout title="Town Leaderboard - Dashboard">
+  <Sidebar />
+
+  <main class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-foreground">Town Leaderboard</h1>
+        <p class="text-muted-foreground mt-2">
+          Comparative rankings of towns based on yield, growth, and price performance.
+        </p>
+      </header>
+
+      {leaderboardData.length > 0 ? (
+        <TownLeaderboard client:load data={leaderboardData} />
+      ) : (
+        <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
+          Data not available. Please run the export script.
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>

@@ -46,6 +46,7 @@ analysis_*.txt
 
 # Marimo notebooks
 .marimo/
+marimo/
 
 # Backend (Astro/Bun static site)
 backend/node_modules/

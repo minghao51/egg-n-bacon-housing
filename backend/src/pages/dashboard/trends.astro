@@ -1,0 +1,43 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import TrendsDashboard from '@/components/dashboard/TrendsDashboard';
+import fs from 'fs';
+import path from 'path';
+
+// Read data at build time
+const dataPath = path.resolve('public/data/dashboard_trends.json');
+let trendsData;
+
+try {
+  const rawData = fs.readFileSync(dataPath, 'utf-8');
+  trendsData = JSON.parse(rawData);
+} catch (error) {
+  console.error("Failed to load trends data:", error);
+}
+---
+
+<Layout title="Trends Explorer - Dashboard">
+  <Sidebar />
+
+  <main class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      {/* Header */}
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-foreground">Trends Explorer</h1>
+        <p class="text-muted-foreground mt-2">
+          Historical price and volume trends across different property types.
+        </p>
+      </header>
+
+      {/* Dashboard Content */}
+      {trendsData ? (
+        <TrendsDashboard client:load data={trendsData} />
+      ) : (
+        <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
+          Data not available. Please run the export script.
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>

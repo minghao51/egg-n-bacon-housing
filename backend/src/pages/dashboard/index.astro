@@ -1,0 +1,43 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import MarketOverviewDashboard from '@/components/dashboard/MarketOverviewDashboard';
+import fs from 'fs';
+import path from 'path';
+
+// Read data at build time
+const dataPath = path.resolve('public/data/dashboard_overview.json');
+let dashboardData;
+
+try {
+  const rawData = fs.readFileSync(dataPath, 'utf-8');
+  dashboardData = JSON.parse(rawData);
+} catch (error) {
+  console.error("Failed to load dashboard data:", error);
+}
+---
+
+<Layout title="Market Overview - Dashboard">
+  <Sidebar />
+
+  <main class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      {/* Header */}
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-foreground">Market Overview</h1>
+        <p class="text-muted-foreground mt-2">
+          High-level market statistics, key performance indicators, and property distribution analysis.
+        </p>
+      </header>
+
+      {/* Dashboard Content */}
+      {dashboardData ? (
+        <MarketOverviewDashboard client:load data={dashboardData} />
+      ) : (
+        <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
+          Data not available. Please run the export script.
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>

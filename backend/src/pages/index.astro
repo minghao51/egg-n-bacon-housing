@@ -4,32 +4,51 @@ import Layout from '@/layouts/Layout.astro';
 
 <Layout title="Egg n Bacon Housing">
   <div class="min-h-screen flex items-center justify-center bg-background">
-    <div class="text-center px-8">
-      <h1 class="text-6xl font-bold text-foreground mb-4">
+    <div class="max-w-4xl w-full px-8 text-center">
+      <h1 class="text-6xl font-bold text-foreground mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
         Egg n Bacon Housing
       </h1>
-      <p class="text-xl text-muted-foreground mb-8">
-        Singapore Housing Market Analytics
+      <p class="text-xl text-muted-foreground mb-12">
+        Comprehensive Singapore Housing Market Intelligence
       </p>
-      <a
-        href="/analytics/"
-        class="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-      >
-        View Analytics
-        <svg
-          class="w-5 h-5 ml-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Dashboard Card */}
+        <a
+          href="/dashboard"
+          class="group block p-8 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all text-left"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width={2}
-            d="M13 7l5 5m0 0l-5 5m5-5H6"
-          />
-        </svg>
-      </a>
+          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+            Live Dashboard
+          </h2>
+          <p class="text-muted-foreground">
+            Explore interactive market trends, price indices, and visualization of housing data across different eras.
+          </p>
+        </a>
+
+        {/* Analytics Card */}
+        <a
+          href="/analytics/"
+          class="group block p-8 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all text-left"
+        >
+          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+            Analytics Reports
+          </h2>
+          <p class="text-muted-foreground">
+            Deep-dive research papers, methodology documentation, and causal inference analysis findings.
+          </p>
+        </a>
+      </div>
     </div>
   </div>
 </Layout>
