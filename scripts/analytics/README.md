@@ -1,60 +1,13 @@
 # Analytics Scripts
 
-This directory contains all analytics-related scripts for the Singapore housing market analysis system.
+This directory contains analytical functions and modules for the Singapore housing market analysis system.
+
+**Note:** Pipeline scripts (executable scripts with `main()` functions) are located in `scripts/analytics/pipelines/`. This directory contains analytical functions and modules.
 
 ## Structure
 
-### `calculate/`
-Metrics calculation scripts that compute various market indicators and indices.
-
-- **calculate_l3_metrics.py** - Calculate L3 housing market metrics (price growth, PSF, volume, momentum)
-- **calculate_affordability.py** - Compute affordability index by planning area
-- **calculate_income_estimates.py** - Estimate household income using HDB loan eligibility data
-- **calculate_coming_soon_metrics.py** - Calculate metrics for upcoming launches
-- **calculate_condo_amenities.py** - Calculate amenity features for condominiums
-
-**Usage:**
-```bash
-# Calculate market metrics
-uv run python scripts/analytics/calculate/calculate_l3_metrics.py
-
-# Calculate affordability
-uv run python scripts/analytics/calculate/calculate_affordability.py
-```
-
-### `forecast/`
-Time-series forecasting scripts for predicting future market trends.
-
-- **forecast_prices.py** - Forecast housing prices using Prophet (6-month and 1-year horizons)
-- **forecast_yields.py** - Forecast rental yields for different planning areas
-
-**Usage:**
-```bash
-# Forecast prices
-uv run python scripts/analytics/forecast/forecast_prices.py
-
-# Forecast yields
-uv run python scripts/analytics/forecast/forecast_yields.py
-```
-
-### `segmentation/`
-Market segmentation scripts that create property classifications and clusters.
-
-- **create_market_segmentation.py** - Create price tier classifications (Mass Market, Mid-Tier, Luxury)
-- **create_period_segmentation.py** - Create period-dependent market segmentation (5-year buckets)
-- **quick_cluster_profiles.py** - Generate cluster profiles for market segments
-
-**Usage:**
-```bash
-# Create market segmentation
-uv run python scripts/analytics/segmentation/create_market_segmentation.py
-
-# Create period segmentation
-uv run python scripts/analytics/segmentation/create_period_segmentation.py
-```
-
 ### `analysis/`
-In-depth analytical scripts organized by focus area.
+In-depth analytical functions organized by focus area.
 
 #### `analysis/spatial/`
 Spatial analysis and geospatial clustering.
@@ -84,9 +37,40 @@ MRT station impact analysis.
 - **analyze_mrt_heterogeneous.py** - Heterogeneous MRT effects across property types
 - **analyze_mrt_by_property_type.py** - MRT impact by property type
 
+## Running Analysis Scripts
+
+From project root:
+```bash
+# Run spatial analysis
+uv run python scripts/analytics/analysis/spatial/analyze_spatial_hotspots.py
+
+# Run amenity impact analysis
+uv run python scripts/analytics/analysis/amenity/analyze_amenity_impact.py
+
+# Run market analysis
+uv run python scripts/analytics/analysis/market/analyze_hdb_rental_market.py
+```
+
+## Running Pipeline Scripts
+
+Analytics pipelines (executable scripts) are located in `scripts/analytics/pipelines/`:
+
+```bash
+# Forecast prices
+uv run python scripts/analytics/pipelines/forecast_prices_pipeline.py
+
+# Calculate affordability
+uv run python scripts/analytics/pipelines/calculate_affordability_pipeline.py
+
+# Generate cluster profiles
+uv run python scripts/analytics/pipelines/cluster_profiles_pipeline.py
+```
+
+See `scripts/PIPELINE_GUIDE.md` for complete pipeline documentation.
+
 ## Common Patterns
 
-All analytics scripts follow these conventions:
+All analytics functions follow these conventions:
 
 1. **Import paths**: Use relative imports from project root
    ```python
@@ -112,32 +96,15 @@ All analytics scripts follow these conventions:
 - `plotly` - Visualization
 - `statsmodels` - Statistical analysis
 
-## Running Scripts
-
-From project root:
-```bash
-# Calculate metrics
-uv run python scripts/analytics/calculate/calculate_l3_metrics.py
-
-# Run forecast
-uv run python scripts/analytics/forecast/forecast_prices.py
-
-# Create segmentation
-uv run python scripts/analytics/segmentation/create_market_segmentation.py
-
-# Run analysis
-uv run python scripts/analytics/analysis/spatial/analyze_spatial_hotspots.py
-```
-
 ## Output Locations
 
-- **Metrics**: `data/analysis/`
+- **Analysis results**: `data/analysis/`
 - **Forecasts**: `data/forecasts/`
 - **Segmentations**: `data/analysis/market_segmentation/`
-- **Analysis results**: `data/analysis/`
 
 ## Related Documentation
 
+- [Pipeline Guide](../PIPELINE_GUIDE.md)
 - [Architecture Documentation](../../docs/architecture.md)
 - [Quick Start Guide](../../docs/guides/quick-start.md)
 - [Data Reference](../../docs/guides/data-reference.md)

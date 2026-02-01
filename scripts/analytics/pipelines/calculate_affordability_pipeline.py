@@ -20,15 +20,15 @@ def load_data() -> tuple:
     """Load required data files."""
     
     # Load HDB transactions with planning area
-    hdb_path = Path('data/parquets/L1/housing_hdb_transaction.parquet')
+    hdb_path = Path('data/pipeline/L1/housing_hdb_transaction.parquet')
     hdb = pd.read_parquet(hdb_path)
-    
+
     # Load income estimates
-    income_path = Path('data/parquets/L1/household_income_estimates.parquet')
+    income_path = Path('data/pipeline/L1/household_income_estimates.parquet')
     income = pd.read_parquet(income_path)
-    
+
     # Load rental yields (optional, for yield-adjusted affordability)
-    rental_path = Path('data/parquets/L2/rental_yield.parquet')
+    rental_path = Path('data/pipeline/L2/rental_yield.parquet')
     if rental_path.exists():
         rental = pd.read_parquet(rental_path)
     else:
@@ -90,14 +90,14 @@ def calculate_affordability_metrics(
         income['estimated_median_annual_income']
     ))
     
-    # Calculate median price per planning area
-    price_by_pa = hdb.groupby('planning_area')['resale_price'].agg(['median', 'count']).reset_index()
-    price_by_pa.columns = ['planning_area', 'median_price', 'transaction_count']
-    
+    # Calculate median price per town
+    price_by_pa = hdb.groupby('town')['resale_price'].agg(['median', 'count']).reset_index()
+    price_by_pa.columns = ['town', 'median_price', 'transaction_count']
+
     # Merge with income data
     affordability = price_by_pa.merge(
-        income[['planning_area', 'estimated_median_annual_income', 'estimated_median_monthly_income']],
-        on='planning_area',
+        income.rename(columns={'planning_area': 'town'})[['town', 'estimated_median_annual_income', 'estimated_median_monthly_income']],
+        on='town',
         how='left'
     )
     
@@ -138,9 +138,9 @@ def calculate_affordability_metrics(
     if rental is not None:
         # Map rental yields to planning areas
         rental_by_pa = rental.groupby('town')['rental_yield_pct'].mean().reset_index()
-        rental_by_pa.columns = ['planning_area', 'avg_rental_yield']
-        
-        affordability = affordability.merge(rental_by_pa, on='planning_area', how='left')
+        rental_by_pa.columns = ['town', 'avg_rental_yield']
+
+        affordability = affordability.merge(rental_by_pa, on='town', how='left')
         
         # Calculate gross rental yield
         affordability['gross_yield_pct'] = (
@@ -177,23 +177,23 @@ def generate_summary(affordability: pd.DataFrame) -> None:
     print("\n" + "-" * 40)
     print("Most Affordable Planning Areas:")
     most_affordable = affordability.head(5)[
-        ['planning_area', 'median_price', 'estimated_median_annual_income', 
+        ['town', 'median_price', 'estimated_median_annual_income',
          'affordability_ratio', 'mortgage_to_income_pct']
     ]
     for _, row in most_affordable.iterrows():
-        print(f"  {row['planning_area']:20s}: Ratio {row['affordability_ratio']:.2f}, "
+        print(f"  {row['town']:20s}: Ratio {row['affordability_ratio']:.2f}, "
               f"Price ${row['median_price']:,.0f}, "
               f"Mortgage {row['mortgage_to_income_pct']:.1f}% of income")
-    
+
     # Least affordable areas
     print("\n" + "-" * 40)
     print("Least Affordable Planning Areas:")
     least_affordable = affordability.tail(5)[
-        ['planning_area', 'median_price', 'estimated_median_annual_income',
+        ['town', 'median_price', 'estimated_median_annual_income',
          'affordability_ratio', 'mortgage_to_income_pct']
     ]
     for _, row in least_affordable.iterrows():
-        print(f"  {row['planning_area']:20s}: Ratio {row['affordability_ratio']:.2f}, "
+        print(f"  {row['town']:20s}: Ratio {row['affordability_ratio']:.2f}, "
               f"Price ${row['median_price']:,.0f}, "
               f"Mortgage {row['mortgage_to_income_pct']:.1f}% of income")
 
@@ -205,18 +205,18 @@ def create_affordability_by_month(affordability: pd.DataFrame, hdb: pd.DataFrame
     
     # Calculate monthly median prices
     hdb['month'] = pd.to_datetime(hdb['month'])
-    monthly_prices = hdb.groupby(['planning_area', 'month'])['resale_price'].median().reset_index()
-    monthly_prices.columns = ['planning_area', 'month', 'median_price']
-    
+    monthly_prices = hdb.groupby(['town', 'month'])['resale_price'].median().reset_index()
+    monthly_prices.columns = ['town', 'month', 'median_price']
+
     # Load income estimates
-    income = pd.read_parquet('data/parquets/L1/household_income_estimates.parquet')
+    income = pd.read_parquet('data/pipeline/L1/household_income_estimates.parquet')
     income_lookup = dict(zip(
         income['planning_area'],
         income['estimated_median_annual_income']
     ))
-    
+
     # Add income data
-    monthly_prices['estimated_annual_income'] = monthly_prices['planning_area'].map(income_lookup)
+    monthly_prices['estimated_annual_income'] = monthly_prices['town'].map(income_lookup)
     
     # Calculate monthly affordability ratio
     monthly_prices['affordability_ratio'] = (
@@ -231,7 +231,7 @@ def create_affordability_by_month(affordability: pd.DataFrame, hdb: pd.DataFrame
 def main():
     """Main execution function."""
     
-    output_dir = Path('data/parquets/L3')
+    output_dir = Path('data/pipeline/L3')
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Load data

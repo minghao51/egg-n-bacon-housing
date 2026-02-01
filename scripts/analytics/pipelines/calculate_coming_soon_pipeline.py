@@ -70,7 +70,7 @@ class EraComparisonMetric:
 
 def load_base_data() -> pd.DataFrame:
     """Load the unified housing dataset."""
-    l3_path = Path('data/parquets/L3/housing_unified.parquet')
+    l3_path = Path('data/pipeline/L3/housing_unified.parquet')
     
     if not l3_path.exists():
         # Try the period-segmented version

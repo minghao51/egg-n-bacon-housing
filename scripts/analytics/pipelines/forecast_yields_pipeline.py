@@ -33,7 +33,7 @@ class YieldForecastResult:
 
 def load_rental_yield_data() -> pd.DataFrame:
     """Load rental yield data."""
-    path = Path('data/parquets/L2/rental_yield.parquet')
+    path = Path('data/pipeline/L2/rental_yield.parquet')
     df = pd.read_parquet(path)
     
     # Handle mixed date formats (monthly "2021-01" and quarterly "2021Q1")

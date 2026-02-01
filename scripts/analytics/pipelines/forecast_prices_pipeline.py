@@ -36,25 +36,29 @@ class ForecastResult:
 
 
 def load_price_data(property_type: str = 'HDB') -> pd.DataFrame:
-    """Load price data for forecasting."""
-    
-    if property_type == 'HDB':
-        path = Path('data/parquets/L1/housing_hdb_transaction.parquet')
-    else:
-        path = Path('data/parquets/L1/housing_condo_transaction.parquet')
-    
+    """Load price data for forecasting.
+
+    Loads L3 unified data which has floor_area_sqft and planning_area already computed.
+    """
+    path = Path('data/pipeline/L3/housing_unified.parquet')
     df = pd.read_parquet(path)
-    
+
+    # Filter by property type
+    if property_type == 'HDB':
+        df = df[df['property_type'] == 'HDB'].copy()
+    else:
+        df = df[df['property_type'] == 'Condominium'].copy()
+
     # Ensure month is datetime
     df['month'] = pd.to_datetime(df['month'])
-    
+
     return df
 
 
 def prepare_prophet_data(
     df: pd.DataFrame,
     planning_area: str,
-    price_column: str = 'resale_price'
+    price_column: str = 'price'
 ) -> pd.DataFrame:
     """Prepare data for Prophet model.
 
@@ -144,7 +148,7 @@ def calculate_trend_pct(
 def forecast_planning_area(
     df: pd.DataFrame,
     planning_area: str,
-    price_column: str = 'resale_price',
+    price_column: str = 'price',
     horizons: List[int] = [6, 12]  # months
 ) -> List[ForecastResult]:
     """Generate forecasts for a single planning area."""
@@ -220,7 +224,7 @@ def forecast_all_planning_areas(
         try:
             results = forecast_planning_area(
                 df, pa,
-                price_column='resale_price' if property_type == 'HDB' else 'Transacted Price ($)',
+                price_column='price',  # Unified data uses 'price' for all property types
                 horizons=horizons
             )
             

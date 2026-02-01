@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from scripts.core.config import Config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

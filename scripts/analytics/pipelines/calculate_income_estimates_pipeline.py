@@ -174,7 +174,7 @@ def get_hdb_prices_by_planning_area() -> dict:
     """Get median HDB prices by planning area from existing data."""
     
     try:
-        hdb = pd.read_parquet('data/parquets/L1/housing_hdb_transaction.parquet')
+        hdb = pd.read_parquet('data/pipeline/L1/housing_hdb_transaction.parquet')
         
         if 'planning_area' not in hdb.columns:
             print("⚠️  Planning area column not found. Using default prices.")
@@ -192,7 +192,7 @@ def get_flat_type_distribution() -> dict:
     """Get flat type distribution by planning area."""
     
     try:
-        hdb = pd.read_parquet('data/parquets/L1/housing_hdb_transaction.parquet')
+        hdb = pd.read_parquet('data/pipeline/L1/housing_hdb_transaction.parquet')
         
         if 'planning_area' not in hdb.columns:
             return {}
@@ -224,7 +224,7 @@ def generate_all_estimates() -> pd.DataFrame:
     flat_type_dist = get_flat_type_distribution()
     
     # Get list of planning areas from crosswalk
-    crosswalk = pd.read_csv('data/auxiliary/hdb_town_to_planning_area.csv')
+    crosswalk = pd.read_csv('data/manual/crosswalks/hdb_town_to_planning_area.csv')
     planning_areas = crosswalk['planning_area'].unique().tolist()
     
     # Calculate estimates for each planning area
@@ -254,7 +254,7 @@ def generate_all_estimates() -> pd.DataFrame:
 def main():
     """Main execution function."""
     
-    output_dir = Path('data/parquets/L1')
+    output_dir = Path('data/pipeline/L1')
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Generate estimates

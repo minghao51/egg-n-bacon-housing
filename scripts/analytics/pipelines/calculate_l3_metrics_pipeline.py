@@ -15,11 +15,13 @@ This script:
 """
 
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from scripts.core.config import Config
 from scripts.core.metrics import (
     calculate_affordability,
@@ -36,48 +38,29 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load L1 transaction data.
+def load_data() -> pd.DataFrame:
+    """Load L3 unified transaction data.
 
     Returns:
-        Tuple of (hdb_df, condo_df)
+        DataFrame with all transactions (HDB and Condo)
     """
-    logger.info("Loading L1 transaction data...")
+    logger.info("Loading L3 unified transaction data...")
 
-    hdb_path = Config.PARQUETS_DIR / "L1" / "housing_hdb_transaction.parquet"
-    condo_path = Config.PARQUETS_DIR / "L1" / "housing_condo_transaction.parquet"
+    unified_path = Config.PARQUETS_DIR / "L3" / "housing_unified.parquet"
 
-    if not hdb_path.exists():
-        raise FileNotFoundError(f"HDB data not found: {hdb_path}")
-    if not condo_path.exists():
-        raise FileNotFoundError(f"Condo data not found: {condo_path}")
+    if not unified_path.exists():
+        raise FileNotFoundError(f"Unified data not found: {unified_path}")
 
-    hdb_df = pd.read_parquet(hdb_path)
-    condo_df = pd.read_parquet(condo_path)
+    df = pd.read_parquet(unified_path)
 
-    logger.info(f"Loaded {len(hdb_df):,} HDB transactions")
-    logger.info(f"Loaded {len(condo_df):,} Condo transactions")
+    logger.info(f"Loaded {len(df):,} total transactions")
+    logger.info(f"  HDB: {len(df[df['property_type'] == 'HDB']):,}")
+    logger.info(f"  Condominium: {len(df[df['property_type'] == 'Condominium']):,}")
 
-    # Clean condo data: Remove commas from price and convert to numeric
-    condo_df['Transacted Price ($)'] = (
-        condo_df['Transacted Price ($)']
-        .astype(str)
-        .str.replace(',', '')
-        .astype(float)
-    )
+    # Standardize date column
+    df['month'] = pd.to_datetime(df['month']).dt.to_period('M')
 
-    # Standardize date columns
-    # HDB already has month in YYYY-MM format
-    hdb_df['month'] = pd.to_datetime(hdb_df['month'], format='%Y-%m').dt.to_period('M')
-
-    # Condo has MMM-YY format (e.g., "Jan-23")
-    condo_df['month'] = pd.to_datetime(
-        condo_df['Sale Date'],
-        format='%b-%y',
-        errors='coerce'
-    ).dt.to_period('M')
-
-    return hdb_df, condo_df
+    return df
 
 
 def main():
@@ -87,13 +70,12 @@ def main():
     logger.info("=" * 60)
 
     # Load data
-    hdb_df, condo_df = load_data()
+    df = load_data()
 
     # Compute metrics
     logger.info("Computing monthly metrics...")
     metrics_df = compute_monthly_metrics(
-        hdf_df=hdb_df,
-        condo_df=condo_df,
+        unified_df=df,
         start_date='2015-01',  # Focus on recent data
         end_date=None
     )
@@ -116,7 +98,7 @@ def main():
 
     # Save summary
     summary_path = l3_dir / "metrics_summary.csv"
-    summary = metrics_df.groupby(['property_type', 'town']).agg({
+    summary = metrics_df.groupby(['property_type', 'planning_area']).agg({
         'stratified_median_price': 'last',
         'growth_rate': 'last',
         'transaction_count': 'sum'

@@ -41,11 +41,11 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from scripts.core.config import Config
-from scripts.core.pipeline.L0_collect import collect_all_datagovsg
-from scripts.core.pipeline.L1_process import run_processing_pipeline, save_failed_addresses
-from scripts.core.pipeline.L2_rental import run_rental_pipeline
-from scripts.core.pipeline.L2_features import run_features_pipeline
-from scripts.core.pipeline.L3_export import run_export_pipeline
+from scripts.core.stages.L0_collect import collect_all_datagovsg
+from scripts.core.stages.L1_process import run_processing_pipeline, save_failed_addresses
+from scripts.core.stages.L2_rental import run_rental_pipeline
+from scripts.core.stages.L2_features import run_features_pipeline
+from scripts.core.stages.L3_export import run_export_pipeline
 from scripts.core.data_helpers import list_datasets
 
 # Setup logging
