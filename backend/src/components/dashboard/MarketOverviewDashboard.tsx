@@ -64,17 +64,16 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
             <button
               key={key}
               onClick={() => setEra(key)}
-              className={`px-4 py-2 text-sm font-medium rounded-sm transition-all ${
-                era === key
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-sm transition-all ${era === key
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+                }`}
             >
               {key === 'whole'
                 ? 'All Time'
                 : key === 'pre_covid'
-                ? 'Pre-COVID'
-                : 'Recent'}
+                  ? 'Pre-COVID'
+                  : 'Recent'}
             </button>
           ))}
         </div>
@@ -111,7 +110,7 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
             Property Type Distribution
           </h3>
           <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100}>
               <PieChart>
                 <Pie
                   data={propertyTypeData}
@@ -119,7 +118,7 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
                   cy="50%"
                   labelLine={false}
                   label={({ name, percent }) =>
-                    `${name} ${(percent * 100).toFixed(0)}%`
+                    `${name} ${((percent || 0) * 100).toFixed(0)}%`
                   }
                   outerRadius={100}
                   fill="#8884d8"
@@ -132,7 +131,7 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
                     />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
                   itemStyle={{ color: 'hsl(var(--foreground))' }}
                 />
@@ -146,7 +145,7 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
             Top 10 Planning Areas (Volume)
           </h3>
           <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100}>
               <BarChart
                 layout="vertical"
                 data={planningAreaData}

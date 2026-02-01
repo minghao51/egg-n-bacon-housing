@@ -283,7 +283,43 @@
       "source": "L3 export pipeline",
       "mode": "overwrite",
       "compression": "snappy"
+    },
+    "L5_volume_metrics_by_area": {
+      "path": "L5_volume_metrics_by_area.parquet",
+      "version": "2026-02-01",
+      "rows": 15236,
+      "created": "2026-02-01T22:36:24.463878",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_metrics_by_area": {
+      "path": "L5_price_metrics_by_area.parquet",
+      "version": "2026-02-01",
+      "rows": 16395,
+      "created": "2026-02-01T22:36:24.392304",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_growth_metrics_by_area": {
+      "path": "L5_growth_metrics_by_area.parquet",
+      "version": "2026-02-01",
+      "rows": 15236,
+      "created": "2026-02-01T22:36:24.568538",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_appreciation_hotspots": {
+      "path": "L5_appreciation_hotspots.parquet",
+      "version": "2026-02-01",
+      "rows": 46,
+      "created": "2026-02-01T22:36:24.572934",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-01T21:49:08.106492"
+  "last_updated": "2026-02-01T22:36:24.572937"
 }
