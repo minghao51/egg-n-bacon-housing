@@ -29,7 +29,10 @@ from sklearn.model_selection import train_test_split
 import plotly.express as px
 import plotly.graph_objects as go
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add project root to Python path
+from scripts.core.utils import add_project_to_path
+add_project_to_path(Path(__file__))
+
 from scripts.core.config import Config
 
 logging.basicConfig(

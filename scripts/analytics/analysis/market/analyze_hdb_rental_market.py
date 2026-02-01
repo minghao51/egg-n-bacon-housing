@@ -17,8 +17,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Add src directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add project root to Python path
+from scripts.core.utils import add_project_to_path
+add_project_to_path(Path(__file__))
 
 from scripts.core.config import Config
 

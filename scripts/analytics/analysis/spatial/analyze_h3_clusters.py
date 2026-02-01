@@ -17,7 +17,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add project root to Python path
+from scripts.core.utils import add_project_to_path
+add_project_to_path(Path(__file__))
 
 from scripts.core.config import Config
 

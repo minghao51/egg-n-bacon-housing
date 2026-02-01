@@ -18,7 +18,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add project root to Python path
+from scripts.core.utils import add_project_to_path
+add_project_to_path(Path(__file__))
 
 from scripts.core.config import Config
 
@@ -47,15 +49,46 @@ except ImportError:
 
 
 def load_rental_data() -> pd.DataFrame:
-    """Load HDB rental data."""
-    logger.info("Loading HDB rental data...")
-    path = Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet"
-    if not path.exists():
-        logger.error(f"Rental data not found: {path}")
+    """Load HDB rental data with geocoding.
+
+    Joins L1 rental data (monthly_rent) with L2 geocoded property data (lat/lon).
+    """
+    logger.info("Loading HDB rental data with geocoding...")
+
+    # Load L1 rental data
+    rental_path = Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet"
+    if not rental_path.exists():
+        logger.error(f"Rental data not found: {rental_path}")
         return pd.DataFrame()
-    df = pd.read_parquet(path)
+
+    rental_df = pd.read_parquet(rental_path)
+    logger.info(f"Loaded {len(rental_df):,} rental records from L1")
+
+    # Load L2 geocoded property data
+    geo_path = Config.PARQUETS_DIR / "L2" / "housing_unique_searched.parquet"
+    if not geo_path.exists():
+        logger.error(f"Geocoded data not found: {geo_path}")
+        return pd.DataFrame()
+
+    geo_df = pd.read_parquet(geo_path)
+    # Filter only successfully geocoded properties
+    geo_df = geo_df[geo_df['search_result'] == 0].copy()
+    geo_df = geo_df.rename(columns={'LATITUDE': 'lat', 'LONGITUDE': 'lon'})
+    logger.info(f"Loaded {len(geo_df):,} geocoded properties from L2")
+
+    # Create join key from rental data
+    rental_df['join_key'] = rental_df['block'].astype(str) + '_' + rental_df['street_name'].str.upper()
+
+    # Create join key from geo data (BLK_NO + ROAD_NAME)
+    geo_df['join_key'] = geo_df['BLK_NO'].astype(str) + '_' + geo_df['ROAD_NAME'].str.upper()
+
+    # Join rental data with geocoded data
+    df = rental_df.merge(geo_df[['join_key', 'lat', 'lon']], on='join_key', how='inner')
     df['rent_approval_date'] = pd.to_datetime(df['rent_approval_date'], errors='coerce')
-    logger.info(f"Loaded {len(df):,} rental records")
+
+    logger.info(f"Joined to {len(df):,} geocoded rental records")
+    logger.info(f"Geocoding coverage: {len(df) / len(rental_df) * 100:.1f}%")
+
     return df
 
 
