@@ -1,5 +1,6 @@
 """Tests for geocoding module."""
 
+import json
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 import pytest
@@ -39,8 +40,8 @@ def sample_geocoding_response():
 class TestFetchDataCached:
     """Test fetch_data_cached function."""
 
-    @patch('src.geocoding.cached_call')
-    @patch('src.geocoding.fetch_data')
+    @patch('scripts.core.geocoding.cached_call')
+    @patch('scripts.core.geocoding.fetch_data')
     def test_fetch_data_cached_uses_cache(self, mock_fetch, mock_cached_call, mock_headers):
         """Test that fetch_data_cached uses caching layer."""
         # Setup mocks
@@ -58,7 +59,7 @@ class TestFetchDataCached:
 class TestFetchDataParallel:
     """Test fetch_data_parallel function."""
 
-    @patch('src.geocoding.fetch_data_cached')
+    @patch('scripts.core.geocoding.fetch_data_cached')
     def test_parallel_geocoding(self, mock_fetch_cached, mock_headers):
         """Test parallel geocoding with mock data."""
         # Mock successful geocoding
@@ -72,8 +73,8 @@ class TestFetchDataParallel:
         addresses = ["Address 1", "Address 2", "Address 3"]
 
         # Run parallel geocoding
-        with patch('src.config.Config.GEOCODING_MAX_WORKERS', 2):
-            with patch('src.config.Config.GEOCODING_API_DELAY', 0.01):
+        with patch('scripts.core.config.Config.GEOCODING_MAX_WORKERS', 2):
+            with patch('scripts.core.config.Config.GEOCODING_API_DELAY', 0.01):
                 results, failed = fetch_data_parallel(
                     addresses,
                     mock_headers,
@@ -85,11 +86,11 @@ class TestFetchDataParallel:
         assert len(results) == 3
         assert len(failed) == 0
 
-    @patch('src.geocoding.fetch_data_cached')
+    @patch('scripts.core.geocoding.fetch_data_cached')
     def test_parallel_geocoding_with_failures(self, mock_fetch_cached, mock_headers):
         """Test parallel geocoding handles failures gracefully."""
         # Mock mixed success/failure
-        def side_effect(addr):
+        def side_effect(addr, headers, timeout=None):
             if "fail" in addr.lower():
                 raise Exception("API Error")
             return pd.DataFrame({"SEARCHVAL": [addr]})
@@ -99,8 +100,8 @@ class TestFetchDataParallel:
         addresses = ["Address 1", "Address Fail", "Address 2"]
 
         # Run parallel geocoding
-        with patch('src.config.Config.GEOCODING_MAX_WORKERS', 2):
-            with patch('src.config.Config.GEOCODING_API_DELAY', 0.01):
+        with patch('scripts.core.config.Config.GEOCODING_MAX_WORKERS', 2):
+            with patch('scripts.core.config.Config.GEOCODING_API_DELAY', 0.01):
                 results, failed = fetch_data_parallel(
                     addresses,
                     mock_headers,
@@ -117,8 +118,8 @@ class TestFetchDataParallel:
 class TestLoadURAFiles:
     """Test load_ura_files function."""
 
-    @patch('src.geocoding.pd.read_csv')
-    @patch('src.geocoding.Path.exists')
+    @patch('scripts.core.geocoding.pd.read_csv')
+    @patch('scripts.core.geocoding.Path.exists')
     def test_load_ura_files_with_mock_data(self, mock_exists, mock_read_csv):
         """Test loading URA files with mocked data."""
         # Mock file existence
@@ -157,10 +158,8 @@ class TestExtractUniqueAddresses:
             'street_name': ['Street 4']
         })
 
-        residential_df = pd.DataFrame()
-
         # Extract unique addresses
-        result = extract_unique_addresses(ec_df, condo_df, residential_df, hdb_df)
+        result = extract_unique_addresses(ec_df, condo_df, hdb_df)
 
         # Verify
         assert 'NameAddress' in result.columns
@@ -199,7 +198,7 @@ class TestSetupOnemapHeaders:
             assert 'Authorization' in headers
             assert fake_token in headers['Authorization']
 
-    @patch('src.geocoding.requests.request')
+    @patch('scripts.core.geocoding.requests.request')
     @patch.dict('os.environ', {
         'ONEMAP_EMAIL': 'test@example.com',
         'ONEMAP_EMAIL_PASSWORD': 'password'
@@ -222,8 +221,8 @@ class TestSetupOnemapHeaders:
 class TestBatchGeocodeAddresses:
     """Test batch_geocode_addresses function."""
 
-    @patch('src.geocoding.fetch_data_parallel')
-    @patch('src.geocoding.save_parquet')
+    @patch('scripts.core.geocoding.fetch_data_parallel')
+    @patch('scripts.core.geocoding.save_parquet')
     def test_batch_geocoding(self, mock_save, mock_fetch_parallel, mock_headers):
         """Test batch geocoding."""
         # Mock parallel geocoding results

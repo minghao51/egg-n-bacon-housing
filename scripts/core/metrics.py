@@ -547,30 +547,32 @@ def calculate_roi_score(
 # ============================================================================
 
 def compute_monthly_metrics(
-    hdf_df: pd.DataFrame,
-    condo_df: pd.DataFrame,
+    unified_df: pd.DataFrame,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None
 ) -> pd.DataFrame:
     """Compute all monthly metrics for HDB and condo transactions.
 
     Args:
-        hdf_df: HDB transaction DataFrame
-        condo_df: Condo transaction DataFrame
+        unified_df: Unified transaction DataFrame with both HDB and Condo
         start_date: Start date (YYYY-MM format)
         end_date: End date (YYYY-MM format)
 
     Returns:
         DataFrame with all metrics
     """
+    # Split by property type
+    hdb_df = unified_df[unified_df['property_type'] == 'HDB'].copy()
+    condo_df = unified_df[unified_df['property_type'] == 'Condominium'].copy()
+
     # Process HDB
-    hdf_metrics = _process_property_type(hdf_df, 'HDB', start_date, end_date)
+    hdb_metrics = _process_property_type(hdb_df, 'HDB', start_date, end_date)
 
     # Process Condo
     condo_metrics = _process_property_type(condo_df, 'Condo', start_date, end_date)
 
     # Combine
-    all_metrics = pd.concat([hdf_metrics, condo_metrics], ignore_index=True)
+    all_metrics = pd.concat([hdb_metrics, condo_metrics], ignore_index=True)
 
     return all_metrics
 
@@ -598,15 +600,10 @@ def _process_property_type(
     if end_date:
         df = df[df['month'] <= end_date]
 
-    # Determine column names
-    if property_type == 'HDB':
-        price_col = 'resale_price'
-        area_col = 'floor_area_sqft'
-        geo_col = 'town'  # Will change to planning_area later
-    else:  # Condo
-        price_col = 'Transacted Price ($)'
-        area_col = 'Area (SQFT)'
-        geo_col = 'Postal District'  # Will change to planning_area later
+    # Determine column names (unified data uses consistent naming)
+    price_col = 'price'
+    area_col = 'floor_area_sqft'
+    geo_col = 'planning_area'
 
     # Add PSF
     df['psf'] = calculate_psf(df, price_col, area_col)

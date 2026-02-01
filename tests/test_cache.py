@@ -192,7 +192,7 @@ class TestCacheUtilities:
         manager.set("key1", {"data": 1})
 
         # Clear using utility function
-        with patch('src.cache._cache_manager', manager):
+        with patch('scripts.core.cache._cache_manager', manager):
             clear_cache("key1")
 
         assert manager.get("key1") is None
@@ -203,7 +203,7 @@ class TestCacheUtilities:
         manager.set("key1", {"data": 1})
 
         # Get stats using utility function
-        with patch('src.cache._cache_manager', manager):
+        with patch('scripts.core.cache._cache_manager', manager):
             stats = get_cache_stats()
 
         assert stats['count'] == 1
