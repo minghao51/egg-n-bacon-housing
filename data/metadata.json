@@ -2,18 +2,18 @@
   "datasets": {
     "test_dataset": {
       "path": "test_dataset.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 3,
-      "created": "2026-01-31T11:56:44.795329",
+      "created": "2026-02-01T21:49:08.086767",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "test_metadata": {
       "path": "test_metadata.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 2,
-      "created": "2026-01-31T11:56:44.820614",
+      "created": "2026-02-01T21:49:08.106489",
       "source": "unit test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -56,18 +56,18 @@
     },
     "raw_datagov_general_sale": {
       "path": "raw_datagov_general_sale.parquet",
-      "version": "2026-01-28",
+      "version": "2026-02-01",
       "rows": 352,
-      "created": "2026-01-28T21:32:01.949793",
+      "created": "2026-02-01T21:42:21.510094",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "raw_datagov_rental_index": {
       "path": "raw_datagov_rental_index.parquet",
-      "version": "2026-01-28",
-      "rows": 510,
-      "created": "2026-01-28T21:32:01.951333",
+      "version": "2026-02-01",
+      "rows": 300,
+      "created": "2026-02-01T21:42:23.381015",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -101,27 +101,27 @@
     },
     "L1_housing_ec_transaction": {
       "path": "L1/housing_ec_transaction.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 17051,
-      "created": "2026-01-31T11:56:54.631447",
+      "created": "2026-02-01T21:42:25.954288",
       "source": "URA CSV data",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "raw_datagov_resale_flat_all": {
       "path": "raw_datagov_resale_flat_all.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 969748,
-      "created": "2026-01-31T11:56:53.848636",
+      "created": "2026-02-01T21:42:25.184387",
       "source": "data.gov.sg CSV (all files)",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L1_housing_condo_transaction": {
       "path": "L1/housing_condo_transaction.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 110089,
-      "created": "2026-01-31T11:56:54.683272",
+      "created": "2026-02-01T21:42:26.005551",
       "source": "URA CSV data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -138,9 +138,9 @@
     },
     "L1_housing_hdb_transaction": {
       "path": "L1/housing_hdb_transaction.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 969748,
-      "created": "2026-01-31T11:56:54.898450",
+      "created": "2026-02-01T21:42:26.221087",
       "source": "data.gov.sg CSV data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -165,18 +165,18 @@
     },
     "L2_housing_unique_full_searched": {
       "path": "L2/housing_unique_full_searched.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 17722,
-      "created": "2026-01-31T11:56:55.060687",
+      "created": "2026-02-01T21:42:26.467564",
       "source": "L1 transaction data",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L2_housing_unique_searched": {
       "path": "L2/housing_unique_searched.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 17722,
-      "created": "2026-01-31T11:56:55.080582",
+      "created": "2026-02-01T21:42:26.491892",
       "source": "L2 housing data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -232,58 +232,58 @@
     },
     "L3_property": {
       "path": "L3/property.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 17722,
-      "created": "2026-01-31T11:57:01.604826",
+      "created": "2026-02-01T21:42:33.074286",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_private_property_facilities": {
       "path": "L3/private_property_facilities.parquet",
-      "version": "2026-01-31",
-      "rows": 43499,
-      "created": "2026-01-31T11:57:01.609590",
+      "version": "2026-02-01",
+      "rows": 43542,
+      "created": "2026-02-01T21:42:33.078797",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_property_nearby_facilities": {
       "path": "L3/property_nearby_facilities.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 116526,
-      "created": "2026-01-31T11:57:01.622526",
+      "created": "2026-02-01T21:42:33.091942",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_property_transactions_sales": {
       "path": "L3/property_transactions_sales.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 1096756,
-      "created": "2026-01-31T11:57:02.021437",
+      "created": "2026-02-01T21:42:33.488239",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_property_listing_sales": {
       "path": "L3/property_listing_sales.parquet",
-      "version": "2026-01-31",
+      "version": "2026-02-01",
       "rows": 9929,
-      "created": "2026-01-31T11:57:02.027779",
+      "created": "2026-02-01T21:42:33.494726",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     },
     "L3_unified": {
       "path": "L3/unified.parquet",
-      "version": "2026-01-31",
-      "rows": 1667306,
-      "created": "2026-01-31T11:57:04.415147",
+      "version": "2026-02-01",
+      "rows": 1670638,
+      "created": "2026-02-01T21:42:35.871072",
       "source": "L3 export pipeline",
       "mode": "overwrite",
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-01-31T11:57:04.415151"
+  "last_updated": "2026-02-01T21:49:08.106492"
 }
