@@ -196,12 +196,49 @@ export function tableToChartData(
 }
 
 /**
- * Get table caption from preceding text
+ * Parse HTML Table Element into TableData
  */
-export function getTableCaption(
-  markdown: string,
-  tableIndex: number
-): string | undefined {
-  // Simple implementation - could be enhanced to find preceding paragraph
-  return undefined;
+export function parseTableFromElement(tableElement: HTMLTableElement): TableData | null {
+  const headers: string[] = [];
+  const rows: string[][] = [];
+
+  // Parse Headers
+  const thead = tableElement.querySelector('thead');
+  if (thead) {
+    const headerCells = thead.querySelectorAll('th');
+    headerCells.forEach((th) => headers.push(th.textContent?.trim() || ''));
+  } else {
+    // Try to find first row as header if no thead
+    const firstRow = tableElement.querySelector('tr');
+    if (firstRow) {
+      const cells = firstRow.querySelectorAll('th, td');
+      cells.forEach((cell) => headers.push(cell.textContent?.trim() || ''));
+    }
+  }
+
+  // Parse Rows
+  const tbody = tableElement.querySelector('tbody');
+  const rowElements = tbody ? tbody.querySelectorAll('tr') : tableElement.querySelectorAll('tr');
+
+  rowElements.forEach((tr) => {
+    // Skip header row if we already parsed it from tr (when no thead)
+    if (!tbody && tr === tableElement.querySelector('tr')) return;
+
+    const row: string[] = [];
+    const cells = tr.querySelectorAll('td');
+
+    // Only process if it looks like a data row
+    if (cells.length > 0) {
+      cells.forEach((td) => row.push(td.textContent?.trim() || ''));
+      rows.push(row);
+    }
+  });
+
+  if (headers.length === 0 && rows.length === 0) return null;
+
+  return {
+    headers,
+    rows,
+    caption: tableElement.caption?.textContent || undefined,
+  };
 }

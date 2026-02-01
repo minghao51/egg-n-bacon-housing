@@ -92,71 +92,6 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         return _fetch_from_api()
 
 
-def fetch_private_property_transactions() -> Optional[pd.DataFrame]:
-    """Fetch private residential property transactions in rest of central region."""
-    df = fetch_datagovsg_dataset(
-        url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_5785799d63a9da091f4e0b456291eeb8",
-    )
-    if not df.empty:
-        save_parquet(df, "raw_datagov_general_sale", source="data.gov.sg API")
-        logger.info(f"✅ Saved private property transactions: {len(df)} records")
-        return df
-    return None
-
-
-def fetch_rental_index() -> Optional[pd.DataFrame]:
-    """Fetch private residential property rental index."""
-    df = fetch_datagovsg_dataset(
-        url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_8e4c50283fb7052a391dfb746a05c853",
-    )
-    if not df.empty:
-        save_parquet(df, "raw_datagov_rental_index", source="data.gov.sg API")
-        logger.info(f"✅ Saved rental index: {len(df)} records")
-        return df
-    return None
-
-
-def fetch_price_index() -> Optional[pd.DataFrame]:
-    """Fetch private residential property price index."""
-    df = fetch_datagovsg_dataset(
-        url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_97f8a2e995022d311c6c68cfda6dae1af",
-    )
-    if not df.empty:
-        save_parquet(df, "raw_datagov_price_index", source="data.gov.sg API")
-        logger.info(f"✅ Saved price index: {len(df)} records")
-        return df
-    return None
-
-
-def fetch_median_property_tax() -> Optional[pd.DataFrame]:
-    """Fetch median annual value and property tax by property type."""
-    df = fetch_datagovsg_dataset(
-        url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_774a81df45dca33112e59207e6dae1af",
-    )
-    if not df.empty:
-        save_parquet(df, "raw_datagov_median_price_via_property_type", source="data.gov.sg API")
-        logger.info(f"✅ Saved median property tax: {len(df)} records")
-        return df
-    return None
-
-
-def fetch_private_transactions_whole() -> Optional[pd.DataFrame]:
-    """Fetch private residential property transactions in whole of Singapore."""
-    df = fetch_datagovsg_dataset(
-        url="https://data.gov.sg/api/action/datastore_search?resource_id=",
-        dataset_id="d_7c69c943d5f0d89d6a9a773d2b51f337",
-    )
-    if not df.empty:
-        save_parquet(df, "raw_datagov_private_transactions_property_type", source="data.gov.sg API")
-        logger.info(f"✅ Saved private transactions (whole SG): {len(df)} records")
-        return df
-    return None
-
-
 def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFrame:
     """
     Load HDB resale flat prices from CSV files.
@@ -226,6 +161,126 @@ def _convert_lease_to_months(lease_str) -> Optional[int]:
     return years * 12 + months
 
 
+def load_existing_or_fetch(dataset_name: str, fetch_fn, use_cache: bool = True) -> Optional[pd.DataFrame]:
+    """Load existing parquet file or fetch from API.
+
+    Args:
+        dataset_name: Name of the parquet file (without extension)
+        fetch_fn: Function to fetch data from API
+        use_cache: Whether to use API caching
+
+    Returns:
+        DataFrame with data, or None if not available
+    """
+    # Check for existing local data
+    parquet_path = Config.DATA_DIR / "pipeline" / f"{dataset_name}.parquet"
+    if parquet_path.exists():
+        logger.info(f"📂 Found existing {dataset_name}.parquet, loading local copy")
+        df = pd.read_parquet(parquet_path)
+        logger.info(f"   Loaded {len(df)} records from local cache")
+        return df
+
+    # No local data, fetch from API
+    logger.info(f"🌐 No local data found for {dataset_name}, fetching from API...")
+    return fetch_fn(use_cache)
+
+
+def fetch_private_property_transactions(use_cache: bool = True) -> Optional[pd.DataFrame]:
+    """Fetch private residential property transactions in rest of central region."""
+    def _fetch():
+        return fetch_datagovsg_dataset(
+            url="https://data.gov.sg/api/action/datastore_search?resource_id=",
+            dataset_id="d_5785799d63a9da091f4e0b456291eeb8",
+        )
+
+    df = load_existing_or_fetch("raw_datagov_general_sale", _fetch, use_cache)
+    if df is not None and not df.empty:
+        save_parquet(df, "raw_datagov_general_sale", source="data.gov.sg API")
+        logger.info(f"✅ Saved private property transactions: {len(df)} records")
+        return df
+    return None
+
+
+def fetch_rental_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
+    """Fetch private residential property rental index."""
+    def _fetch():
+        return fetch_datagovsg_dataset(
+            url="https://data.gov.sg/api/action/datastore_search?resource_id=",
+            dataset_id="d_8e4c50283fb7052a391dfb746a05c853",
+        )
+
+    df = load_existing_or_fetch("raw_datagov_rental_index", _fetch, use_cache)
+    if df is not None and not df.empty:
+        save_parquet(df, "raw_datagov_rental_index", source="data.gov.sg API")
+        logger.info(f"✅ Saved rental index: {len(df)} records")
+        return df
+    return None
+
+
+def fetch_price_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
+    """Fetch private residential property price index."""
+    def _fetch():
+        return fetch_datagovsg_dataset(
+            url="https://data.gov.sg/api/action/datastore_search?resource_id=",
+            dataset_id="d_97f8a2e995022d311c6c68cfda6dae1af",
+        )
+
+    df = load_existing_or_fetch("raw_datagov_price_index", _fetch, use_cache)
+    if df is not None and not df.empty:
+        save_parquet(df, "raw_datagov_price_index", source="data.gov.sg API")
+        logger.info(f"✅ Saved price index: {len(df)} records")
+        return df
+    return None
+
+
+def fetch_median_property_tax(use_cache: bool = True) -> Optional[pd.DataFrame]:
+    """Fetch median annual value and property tax by property type."""
+    def _fetch():
+        return fetch_datagovsg_dataset(
+            url="https://data.gov.sg/api/action/datastore_search?resource_id=",
+            dataset_id="d_774a81df45dca33112e59207e6dae1af",
+        )
+
+    df = load_existing_or_fetch("raw_datagov_median_price_via_property_type", _fetch, use_cache)
+    if df is not None and not df.empty:
+        save_parquet(df, "raw_datagov_median_price_via_property_type", source="data.gov.sg API")
+        logger.info(f"✅ Saved median property tax: {len(df)} records")
+        return df
+    return None
+
+
+def fetch_private_transactions_whole(use_cache: bool = True) -> Optional[pd.DataFrame]:
+    """Fetch private residential property transactions in whole of Singapore."""
+    def _fetch():
+        return fetch_datagovsg_dataset(
+            url="https://data.gov.sg/api/action/datastore_search?resource_id=",
+            dataset_id="d_7c69c943d5f0d89d6a9a773d2b51f337",
+        )
+
+    df = load_existing_or_fetch("raw_datagov_private_transactions_property_type", _fetch, use_cache)
+    if df is not None and not df.empty:
+        save_parquet(df, "raw_datagov_private_transactions_property_type", source="data.gov.sg API")
+        logger.info(f"✅ Saved private transactions (whole SG): {len(df)} records")
+        return df
+    return None
+
+
+def fetch_school_directory(use_cache: bool = True) -> Optional[pd.DataFrame]:
+    """Fetch MOE school directory with locations and information."""
+    def _fetch():
+        return fetch_datagovsg_dataset(
+            url="https://data.gov.sg/api/action/datastore_search?resource_id=",
+            dataset_id="d_688b934f82c1059ed0a6993d2a829089",
+        )
+
+    df = load_existing_or_fetch("raw_datagov_school_directory", _fetch, use_cache)
+    if df is not None and not df.empty:
+        save_parquet(df, "raw_datagov_school_directory", source="data.gov.sg API")
+        logger.info(f"✅ Saved school directory: {len(df)} schools")
+        return df
+    return None
+
+
 def collect_all_datagovsg() -> dict:
     """
     Run all data.gov.sg data collection tasks.
@@ -247,6 +302,7 @@ def collect_all_datagovsg() -> dict:
     results["price_index"] = fetch_price_index()
     results["median_tax"] = fetch_median_property_tax()
     results["private_whole"] = fetch_private_transactions_whole()
+    results["school_directory"] = fetch_school_directory()
 
     # Load resale flat prices from CSV
     resale_df = load_resale_flat_prices()

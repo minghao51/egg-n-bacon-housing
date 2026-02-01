@@ -2,6 +2,8 @@
 
 A Singapore housing data pipeline and ML analysis platform with AI-powered agent assistance.
 
+> The project(data pipeline) started with manual coding, although the current additional bulk of the codes and exploration are heavily assisted with Claude Code and GLM.
+
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-0.1.0+-brightgreen.svg)](https://github.com/astral-sh/uv)
 

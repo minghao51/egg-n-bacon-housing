@@ -49,7 +49,7 @@ from scripts.core.stages.L0_collect import collect_all_datagovsg
 from scripts.core.stages.L1_process import run_processing_pipeline, save_failed_addresses
 from scripts.core.stages.L2_rental import run_rental_pipeline
 from scripts.core.stages.L2_features import run_features_pipeline
-from scripts.core.stages.L3_export import run_export_pipeline
+from scripts.core.stages.L3_export import run_l3_pipeline
 from scripts.core.stages.L5_metrics import run_metrics_pipeline
 from scripts.core.stages.webapp_data_preparation import export_dashboard_data
 from scripts.core.data_helpers import list_datasets
@@ -126,9 +126,9 @@ def run_L2(force: bool = False):
 
 def run_L3(upload_s3: bool = False, export_csv: bool = False):
     """Run L3: Export and final output."""
-    logger.info("🚀 Starting L3: Export Pipeline")
+    logger.info("🚀 Starting L3: Unified Dataset Creation")
 
-    results = run_export_pipeline(upload_s3=upload_s3, export_csv=export_csv)
+    results = run_l3_pipeline(upload_s3=upload_s3, export_csv=export_csv)
 
     logger.info("✅ L3 Complete")
     return results

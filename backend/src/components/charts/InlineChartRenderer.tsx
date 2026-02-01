@@ -1,52 +1,55 @@
 import React, { useEffect, useRef } from 'react';
 import {
-  extractTables,
   isTimeSeriesTable,
   isComparisonTable,
   tableToChartData,
-  type TableData,
+  parseTableFromElement,
 } from '@/utils/data-parser';
 import TimeSeriesChart from './TimeSeriesChart';
 import ComparisonChart from './ComparisonChart';
 import StatisticalPlot from './StatisticalPlot';
+// @ts-ignore
+import { createRoot } from 'react-dom/client';
 
-interface InlineChartRendererProps {
-  tables: Array<{ id: string; markdown: string }>;
-}
-
-export default function InlineChartRenderer({ tables }: InlineChartRendererProps) {
-  const renderedRef = useRef<Set<string>>(new Set());
+// No props needed, it scans the DOM
+export default function InlineChartRenderer() {
+  const processedTables = useRef<Set<HTMLTableElement>>(new Set());
 
   useEffect(() => {
-    // Only render each chart once
-    if (tables.length === 0) return;
+    // Find all tables in the article content
+    const article = document.getElementById('article-content');
+    if (!article) return;
 
-    tables.forEach((tableData, index) => {
-      if (renderedRef.current.has(tableData.id)) return;
+    const tables = article.querySelectorAll('table');
 
-      const placeholder = document.getElementById(tableData.id);
-      if (!placeholder) return;
+    tables.forEach((table) => {
+      // Cast to HTMLTableElement
+      const tableElement = table as HTMLTableElement;
 
-      // Parse table markdown
-      const extractedTables = extractTables(tableData.markdown);
-      if (extractedTables.length === 0) {
-        console.log(`Table ${tableData.id} not recognized as chart-able, showing HTML table only`);
-        return; // Table still visible in HTML
+      if (processedTables.current.has(tableElement)) return;
+
+      // Prevent processing if it's already part of a chart we created (nested check)
+      if (tableElement.closest('.chart-container')) return;
+
+      const tableData = parseTableFromElement(tableElement);
+      if (!tableData) return;
+
+      const chartData = tableToChartData(tableData);
+      if (!chartData) return;
+
+      const isTimeSeries = isTimeSeriesTable(tableData);
+      const isComparison = isComparisonTable(tableData);
+
+      // Only render if we have a valid visualization type
+      if (!isTimeSeries && !isComparison) {
+        // Maybe just statistical plot? 
+        // For now, let's only auto-chart explicit types to avoid noise
+        return;
       }
-
-      const table = extractedTables[0];
-      const chartData = tableToChartData(table);
-      if (!chartData) {
-        console.log(`Table ${tableData.id} data not chart-able, showing HTML table only`);
-        return; // Table still visible in HTML
-      }
-
-      const isTimeSeries = isTimeSeriesTable(table);
-      const isComparison = isComparisonTable(table);
 
       // Create chart container
       const chartContainer = document.createElement('div');
-      chartContainer.className = 'my-6 bg-card border border-border rounded-lg p-6';
+      chartContainer.className = 'chart-container my-8 bg-card border border-border rounded-lg p-6 shadow-sm';
 
       // Create title
       const title = document.createElement('h4');
@@ -54,56 +57,34 @@ export default function InlineChartRenderer({ tables }: InlineChartRendererProps
       title.textContent = isTimeSeries
         ? 'Time Series Visualization'
         : isComparison
-        ? 'Comparison Chart'
-        : 'Data Visualization';
+          ? 'Comparison Chart'
+          : 'Data Visualization';
       chartContainer.appendChild(title);
 
-      // Create chart sections based on type
+      // Render Charts
       if (isTimeSeries) {
-        const trendSection = createChartSection('Trend Over Time', 'trend-chart');
-        chartContainer.appendChild(trendSection);
-
-        // Time series chart will be rendered by React
-        const trendDiv = trendSection.querySelector('.chart-mount') as HTMLElement;
-        if (trendDiv) {
-          const root = React.createRoot(trendDiv);
-          root.render(<TimeSeriesChart data={chartData} height={300} />);
-        }
+        const section = createChartSection('Trend', 'trend-chart');
+        chartContainer.appendChild(section);
+        const mount = section.querySelector('.chart-mount') as HTMLElement;
+        const root = createRoot(mount);
+        root.render(<TimeSeriesChart data={chartData} height={300} />);
       }
 
       if (isComparison) {
-        const comparisonSection = createChartSection('Comparison', 'comparison-chart');
-        chartContainer.appendChild(comparisonSection);
-
-        const comparisonDiv = comparisonSection.querySelector('.chart-mount') as HTMLElement;
-        if (comparisonDiv) {
-          const root = React.createRoot(comparisonDiv);
-          root.render(<ComparisonChart data={chartData} height={300} />);
-        }
+        const section = createChartSection('Comparison', 'comparison-chart');
+        chartContainer.appendChild(section);
+        const mount = section.querySelector('.chart-mount') as HTMLElement;
+        const root = createRoot(mount);
+        root.render(<ComparisonChart data={chartData} height={300} />);
       }
 
-      // Always add statistical plot
-      const distSection = createChartSection('Distribution', 'distribution-chart');
-      chartContainer.appendChild(distSection);
+      // Insert chart AFTER the table
+      tableElement.insertAdjacentElement('afterend', chartContainer);
 
-      const distDiv = distSection.querySelector('.chart-mount') as HTMLElement;
-      if (distDiv) {
-        const root = React.createRoot(distDiv);
-        root.render(<StatisticalPlot data={chartData} height={300} />);
-      }
-
-      // Insert chart BEFORE placeholder (placeholder is after table, so chart appears after table)
-      placeholder.insertAdjacentElement('beforebegin', chartContainer);
-
-      // Remove placeholder after rendering (cleanup)
-      placeholder.remove();
-
-      renderedRef.current.add(tableData.id);
+      processedTables.current.add(tableElement);
     });
-  }, [tables]);
+  }, []);
 
-  // This component doesn't render anything directly
-  // It just attaches charts to placeholder divs
   return null;
 }
 

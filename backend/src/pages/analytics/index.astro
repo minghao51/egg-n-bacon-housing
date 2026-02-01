@@ -1,9 +1,16 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/Sidebar.astro';
-import { getAnalyticsDocs } from '@/utils/markdown';
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import { getCollection } from 'astro:content';
 
-const docs = getAnalyticsDocs();
+const allDocs = await getCollection('analytics');
+const docs = allDocs.map(doc => ({
+  slug: doc.slug,
+  title: doc.data.title || doc.slug,
+  ...doc.data
+}));
 ---
 
 <Layout title="Analytics - Singapore Housing Market">

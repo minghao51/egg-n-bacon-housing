@@ -9,14 +9,38 @@ import json
 import logging
 from pathlib import Path
 import shutil
+import sys
 import pandas as pd
 import numpy as np
 from datetime import datetime
 
+# Add project root to path for direct script execution
+if __name__ == "__main__" and __file__:
+    project_root = Path(__file__).parent.parent.parent.parent
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
+
 from scripts.core.config import Config
 from scripts.core.data_loader import load_unified_data
+from scripts.core.stages.L5_metrics import (
+    calculate_growth_metrics_by_area,
+    calculate_rental_yield_by_area,
+    calculate_affordability_by_area,
+    identify_appreciation_hotspots
+)
 
 logger = logging.getLogger(__name__)
+
+def safe_float(val, default=None):
+    """Safely convert value to float, returning default if NaN/Inf."""
+    try:
+        f = float(val)
+        if pd.isna(f) or np.isinf(f):
+            return default
+        return round(f, 2)
+    except (ValueError, TypeError):
+        return default
+
 
 def export_dashboard_data():
     """
@@ -79,7 +103,13 @@ def export_dashboard_data():
     leaderboard_data = generate_leaderboard_data(df)
     with open(output_dir / "dashboard_leaderboard.json", "w") as f:
         json.dump(leaderboard_data, f, indent=2)
-        
+
+    # 6. Export Appreciation Hotspots (NEW)
+    logger.info("Exporting hotspots data...")
+    hotspots_data = generate_hotspots_data(df)
+    with open(output_dir / "hotspots.json", "w") as f:
+        json.dump(hotspots_data, f, indent=2)
+
     logger.info(f"Export complete! Files saved to {output_dir}")
 
 def get_stats(sub_df):
@@ -197,17 +227,132 @@ def generate_map_metrics_for_subset(sub_df):
     return map_metrics
 
 def generate_map_data(df):
-    """Aggregates metrics by Planning Area for different eras."""
-    
+    """Aggregates metrics by Planning Area for different eras, including L5 metrics."""
+    logger.info("Generating enhanced map data with L5 metrics...")
+
     # Eras
     pre_covid = df[df["transaction_date"].dt.year <= 2021]
     recent = df[df["transaction_date"].dt.year >= 2022]
-    
-    return {
+
+    # Get base metrics
+    base_metrics = {
         "whole": generate_map_metrics_for_subset(df),
         "pre_covid": generate_map_metrics_for_subset(pre_covid),
         "recent": generate_map_metrics_for_subset(recent)
     }
+
+    # Calculate L5 growth metrics
+    try:
+        growth_df = calculate_growth_metrics_by_area(df)
+        if not growth_df.empty:
+            # Get latest growth metrics per planning area
+            latest_growth = growth_df.sort_values("month").groupby("planning_area").last()
+            # Convert index to lowercase for consistent lookup
+            latest_growth.index = latest_growth.index.str.lower()
+
+            # Merge into metrics
+            for era in ["whole", "pre_covid", "recent"]:
+                for area_name, metrics in base_metrics[era].items():
+                    area_lower = area_name.lower()
+                    if area_lower in latest_growth.index:
+                        row = latest_growth.loc[area_lower]
+                        metrics["mom_change_pct"] = safe_float(row.get("mom_change_pct"), 0)
+                        metrics["yoy_change_pct"] = safe_float(row.get("yoy_change_pct"), 0)
+                        metrics["momentum"] = safe_float(row.get("momentum"), 0)
+                        metrics["momentum_signal"] = str(row.get("momentum_signal", "Unknown"))
+    except Exception as e:
+        logger.warning(f"Could not add growth metrics: {e}")
+
+    # Calculate rental yield metrics
+    try:
+        yield_df = calculate_rental_yield_by_area(df)
+        if not yield_df.empty:
+            # Convert to dict for easy lookup with lowercase keys
+            yield_df_indexed = yield_df.set_index("planning_area")[
+                ["mean", "median", "std"]
+            ]
+            # Convert index to lowercase
+            yield_df_indexed.index = yield_df_indexed.index.str.lower()
+            yield_dict = yield_df_indexed.to_dict("index")
+
+            # Merge into metrics
+            for era in ["whole", "pre_covid", "recent"]:
+                for area_name, metrics in base_metrics[era].items():
+                    area_lower = area_name.lower()
+                    if area_lower in yield_dict:
+                        y_data = yield_dict[area_lower]
+                        metrics["rental_yield_mean"] = safe_float(y_data.get("mean"))
+                        metrics["rental_yield_median"] = safe_float(y_data.get("median"))
+                        metrics["rental_yield_std"] = safe_float(y_data.get("std"))
+    except Exception as e:
+        logger.warning(f"Could not add rental yield metrics: {e}")
+
+    # Calculate affordability metrics
+    try:
+        aff_df = calculate_affordability_by_area(df)
+        if not aff_df.empty:
+            # Convert to dict for easy lookup with lowercase keys
+            aff_df_indexed = aff_df.set_index("planning_area")[
+                ["affordability_ratio", "affordability_class", "mortgage_to_income_pct"]
+            ]
+            # Convert index to lowercase
+            aff_df_indexed.index = aff_df_indexed.index.str.lower()
+            aff_dict = aff_df_indexed.to_dict("index")
+
+            # Merge into metrics
+            for era in ["whole", "pre_covid", "recent"]:
+                for area_name, metrics in base_metrics[era].items():
+                    area_lower = area_name.lower()
+                    if area_lower in aff_dict:
+                        a_data = aff_dict[area_lower]
+                        metrics["affordability_ratio"] = safe_float(a_data.get("affordability_ratio"))
+                        metrics["affordability_class"] = str(a_data.get("affordability_class", "Unknown"))
+                        metrics["mortgage_to_income_pct"] = safe_float(a_data.get("mortgage_to_income_pct"))
+    except Exception as e:
+        logger.warning(f"Could not add affordability metrics: {e}")
+
+    logger.info("Enhanced map data generation complete")
+    return base_metrics
+
+def generate_hotspots_data(df):
+    """Generate appreciation hotspots classification by planning area."""
+    logger.info("Generating hotspots data...")
+
+    # Calculate growth metrics first (needed for hotspot identification)
+    try:
+        growth_df = calculate_growth_metrics_by_area(df)
+        if growth_df.empty:
+            logger.warning("No growth data available for hotspots")
+            return {}
+    except Exception as e:
+        logger.warning(f"Could not calculate growth metrics: {e}")
+        return {}
+
+    # Identify hotspots
+    try:
+        hotspots_df = identify_appreciation_hotspots(growth_df)
+        if hotspots_df.empty:
+            logger.warning("No hotspots identified")
+            return {}
+    except Exception as e:
+        logger.warning(f"Could not identify hotspots: {e}")
+        return {}
+
+    # Convert to dictionary format
+    hotspots = {}
+    for _, row in hotspots_df.iterrows():
+        area_name = row["planning_area"].upper()
+        hotspots[area_name] = {
+            "category": str(row["category"]),
+            "mean_yoy_growth": round(float(row.get("mean_yoy", 0)), 2),
+            "median_yoy_growth": round(float(row.get("median_yoy", 0)), 2),
+            "std_yoy_growth": round(float(row.get("std_yoy", 0)), 2),
+            "consistency": round(float(row.get("consistency", 0)), 2),
+            "years": int(row.get("years", 0))
+        }
+
+    logger.info(f"Generated hotspots data for {len(hotspots)} areas")
+    return hotspots
 
 def generate_segments_data(df):
     """Generate scatter plot data for Market Segments (Price PSF vs Yield)."""

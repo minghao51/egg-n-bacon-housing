@@ -319,7 +319,16 @@
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
+    },
+    "raw_datagov_school_directory": {
+      "path": "raw_datagov_school_directory.parquet",
+      "version": "2026-02-01",
+      "rows": 200,
+      "created": "2026-02-01T22:57:14.245084",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-01T22:36:24.572937"
+  "last_updated": "2026-02-01T22:57:14.245087"
 }

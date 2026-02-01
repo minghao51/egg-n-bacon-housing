@@ -1,14 +1,20 @@
-# /data/*
+# Environment
 .env
+
+# Python
 *.pyc
-__pycache__
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Node.js
+node_modules/
+bun.lockb
 
 # Pipeline data (L0-L3 outputs)
 /data/pipeline/
 /data/*.parquet
-
-# Manual downloads (we track these in git)
-# /data/manual/  # Comment out if you want to track manual downloads
 
 # Analytics outputs
 /data/analysis/
@@ -24,10 +30,10 @@ data/logs/
 data/checkpoints/
 data/failed_addresses/
 
-# Python tool caches
-.pytest_cache/
-.ruff_cache/
-.venv/
+# Manual downloads - large external data files
+data/manual/**/*.geojson
+data/manual/**/*.csv
+!data/manual/**/*.md
 
 # Keep metadata.json for version tracking
 !data/metadata.json
@@ -52,3 +58,7 @@ marimo/
 backend/node_modules/
 backend/dist/
 backend/.astro/
+
+# Generated data files (built by pipeline)
+backend/public/data/*.json
+!backend/public/data/.gitkeep
