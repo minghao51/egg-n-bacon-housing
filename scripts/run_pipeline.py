@@ -7,6 +7,8 @@ This script orchestrates all data pipeline stages:
 - L1: Data processing and geocoding
 - L2: Feature engineering (rental yields and property features)
 - L3: Export and final output
+- L5: Metrics calculation at planning area level
+- Webapp: Export lightweight JSON for dashboard
 
 Usage:
     uv run python scripts/run_pipeline.py --stage L0
@@ -15,6 +17,8 @@ Usage:
     uv run python scripts/run_pipeline.py --stage L2_rental
     uv run python scripts/run_pipeline.py --stage L2_features
     uv run python scripts/run_pipeline.py --stage L3
+    uv run python scripts/run_pipeline.py --stage L5
+    uv run python scripts/run_pipeline.py --stage webapp
     uv run python scripts/run_pipeline.py --stage all
 
 Examples:
@@ -46,6 +50,8 @@ from scripts.core.stages.L1_process import run_processing_pipeline, save_failed_
 from scripts.core.stages.L2_rental import run_rental_pipeline
 from scripts.core.stages.L2_features import run_features_pipeline
 from scripts.core.stages.L3_export import run_export_pipeline
+from scripts.core.stages.L5_metrics import run_metrics_pipeline
+from scripts.core.stages.webapp_data_preparation import export_dashboard_data
 from scripts.core.data_helpers import list_datasets
 
 # Setup logging
@@ -128,22 +134,44 @@ def run_L3(upload_s3: bool = False, export_csv: bool = False):
     return results
 
 
+def run_L5(skip_affordability: bool = False):
+    """Run L5: Metrics calculation at planning area level."""
+    logger.info("🚀 Starting L5: Metrics Pipeline")
+
+    results = run_metrics_pipeline(calculate_affordability=not skip_affordability)
+
+    logger.info("✅ L5 Complete")
+    return results
+
+
+def run_webapp():
+    """Run Webapp: Export lightweight JSON files for dashboard."""
+    logger.info("🚀 Starting Webapp: Data Export")
+
+    export_dashboard_data()
+
+    logger.info("✅ Webapp Export Complete")
+    return {"status": "success"}
+
+
 def run_pipeline(
     stages: str,
     use_parallel: bool = True,
     force: bool = False,
     upload_s3: bool = False,
     export_csv: bool = False,
+    skip_affordability: bool = False,
 ):
     """
     Run the data pipeline.
 
     Args:
-        stages: Which stages to run (L0, L1, L2, L2_rental, L2_features, L3, or 'all')
+        stages: Which stages to run (L0, L1, L2, L2_rental, L2_features, L3, L5, webapp, or 'all')
         use_parallel: Whether to use parallel processing for geocoding
         force: Force re-download for rental data
         upload_s3: Upload outputs to S3 (L3 only)
         export_csv: Export outputs to CSV (L3 only)
+        skip_affordability: Skip affordability calculations in L5 (requires income data)
     """
     logger.info("🥓🥚 Egg-n-Bacon Housing Pipeline Starting")
     logger.info(f"Configuration: stages={stages}, parallel={use_parallel}")
@@ -183,6 +211,14 @@ def run_pipeline(
         logger.info("=" * 80)
         run_L3(upload_s3=upload_s3, export_csv=export_csv)
 
+    if stages in ["L5", "all"]:
+        logger.info("=" * 80)
+        run_L5(skip_affordability=skip_affordability)
+
+    if stages in ["webapp", "all"]:
+        logger.info("=" * 80)
+        run_webapp()
+
     # Summary
     logger.info("=" * 80)
     logger.info("🎉 Pipeline complete!")
@@ -199,7 +235,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run the Egg-n-Bacon Housing data pipeline")
     parser.add_argument(
         "--stage",
-        choices=["L0", "L1", "L2", "L2_rental", "L2_features", "L3", "all"],
+        choices=["L0", "L1", "L2", "L2_rental", "L2_features", "L3", "L5", "webapp", "all"],
         default="all",
         help="Which pipeline stage to run (default: all)",
     )
@@ -216,6 +252,11 @@ def main():
     )
     parser.add_argument("--upload-s3", action="store_true", help="Upload L3 outputs to S3")
     parser.add_argument("--export-csv", action="store_true", help="Export L3 outputs to CSV")
+    parser.add_argument(
+        "--skip-affordability",
+        action="store_true",
+        help="Skip affordability calculations in L5 (no income data required)"
+    )
 
     args = parser.parse_args()
 
@@ -230,6 +271,7 @@ def main():
             force=args.force,
             upload_s3=args.upload_s3,
             export_csv=args.export_csv,
+            skip_affordability=args.skip_affordability,
         )
     except Exception as e:
         logger.exception(f"❌ Pipeline failed: {e}")
