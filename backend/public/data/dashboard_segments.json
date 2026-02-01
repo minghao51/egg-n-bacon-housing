@@ -1,0 +1,786 @@
+[
+  {
+    "name": "ANG MO KIO - HDB (2 ROOM)",
+    "x": 622.8674706935577,
+    "y": 7.198405400552823,
+    "z": 87,
+    "category": "HDB"
+  },
+  {
+    "name": "ANG MO KIO - HDB (3 ROOM)",
+    "x": 529.7377945009353,
+    "y": 7.169104557309897,
+    "z": 2194,
+    "category": "HDB"
+  },
+  {
+    "name": "ANG MO KIO - HDB (4 ROOM)",
+    "x": 563.4724443798168,
+    "y": 7.121501497633456,
+    "z": 1255,
+    "category": "HDB"
+  },
+  {
+    "name": "ANG MO KIO - HDB (5 ROOM)",
+    "x": 622.3085666819682,
+    "y": 7.042599122400325,
+    "z": 552,
+    "category": "HDB"
+  },
+  {
+    "name": "ANG MO KIO - HDB (EXECUTIVE)",
+    "x": 622.8674706935577,
+    "y": 7.034959751599338,
+    "z": 59,
+    "category": "HDB"
+  },
+  {
+    "name": "BEDOK - HDB (2 ROOM)",
+    "x": 614.1872083901069,
+    "y": 6.807629345883109,
+    "z": 14,
+    "category": "HDB"
+  },
+  {
+    "name": "BEDOK - HDB (3 ROOM)",
+    "x": 523.2583557391741,
+    "y": 6.836597987856259,
+    "z": 805,
+    "category": "HDB"
+  },
+  {
+    "name": "BEDOK - HDB (4 ROOM)",
+    "x": 553.8404367835807,
+    "y": 6.753139828012953,
+    "z": 821,
+    "category": "HDB"
+  },
+  {
+    "name": "BEDOK - HDB (5 ROOM)",
+    "x": 555.7979092950739,
+    "y": 6.770186329868453,
+    "z": 619,
+    "category": "HDB"
+  },
+  {
+    "name": "BEDOK - HDB (EXECUTIVE)",
+    "x": 585.4115443156539,
+    "y": 6.782077789123663,
+    "z": 191,
+    "category": "HDB"
+  },
+  {
+    "name": "BISHAN - HDB (3 ROOM)",
+    "x": 680.7994240059459,
+    "y": 5.104862782395191,
+    "z": 168,
+    "category": "HDB"
+  },
+  {
+    "name": "BISHAN - HDB (4 ROOM)",
+    "x": 667.967298402081,
+    "y": 5.068090436393272,
+    "z": 706,
+    "category": "HDB"
+  },
+  {
+    "name": "BISHAN - HDB (5 ROOM)",
+    "x": 685.815107872372,
+    "y": 4.990733284226674,
+    "z": 391,
+    "category": "HDB"
+  },
+  {
+    "name": "BISHAN - HDB (EXECUTIVE)",
+    "x": 702.50113547215,
+    "y": 4.980953436032913,
+    "z": 167,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT MERAH - HDB (1 ROOM)",
+    "x": 728.2338979393678,
+    "y": 5.313046583122556,
+    "z": 33,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT MERAH - HDB (2 ROOM)",
+    "x": 611.8684708169037,
+    "y": 5.358646089303785,
+    "z": 66,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT MERAH - HDB (3 ROOM)",
+    "x": 570.0105184261412,
+    "y": 5.315363887056799,
+    "z": 969,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT MERAH - HDB (4 ROOM)",
+    "x": 854.7008547008548,
+    "y": 5.280271373825999,
+    "z": 1110,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT MERAH - HDB (5 ROOM)",
+    "x": 715.1469459883599,
+    "y": 5.211768852062654,
+    "z": 483,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT PANJANG - HDB (5 ROOM)",
+    "x": 492.1309269135357,
+    "y": 6.480579060731577,
+    "z": 15,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT PANJANG - HDB (EXECUTIVE)",
+    "x": 557.4136008918617,
+    "y": 6.093739627193063,
+    "z": 13,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT TIMAH - HDB (3 ROOM)",
+    "x": 604.5010511955122,
+    "y": 5.287582426090379,
+    "z": 43,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT TIMAH - HDB (4 ROOM)",
+    "x": 692.747191493011,
+    "y": 4.899598773282309,
+    "z": 76,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT TIMAH - HDB (5 ROOM)",
+    "x": 798.3788554440729,
+    "y": 4.469558489130201,
+    "z": 51,
+    "category": "HDB"
+  },
+  {
+    "name": "BUKIT TIMAH - HDB (EXECUTIVE)",
+    "x": 811.3040423939769,
+    "y": 4.457140755444403,
+    "z": 39,
+    "category": "HDB"
+  },
+  {
+    "name": "CHANGI - HDB (3 ROOM)",
+    "x": 492.4534450816086,
+    "y": 5.998472952278653,
+    "z": 18,
+    "category": "HDB"
+  },
+  {
+    "name": "CHOA CHU KANG - HDB (2 ROOM)",
+    "x": 632.5260719340275,
+    "y": 6.4031870846564996,
+    "z": 23,
+    "category": "HDB"
+  },
+  {
+    "name": "CHOA CHU KANG - HDB (3 ROOM)",
+    "x": 508.752556102169,
+    "y": 6.3956053822930645,
+    "z": 320,
+    "category": "HDB"
+  },
+  {
+    "name": "CHOA CHU KANG - HDB (4 ROOM)",
+    "x": 469.6725711218465,
+    "y": 6.437990330283524,
+    "z": 2236,
+    "category": "HDB"
+  },
+  {
+    "name": "CHOA CHU KANG - HDB (5 ROOM)",
+    "x": 466.693185110727,
+    "y": 6.347132880251785,
+    "z": 1598,
+    "category": "HDB"
+  },
+  {
+    "name": "CHOA CHU KANG - HDB (EXECUTIVE)",
+    "x": 483.6017365466927,
+    "y": 6.391941788123137,
+    "z": 486,
+    "category": "HDB"
+  },
+  {
+    "name": "CLEMENTI - HDB (2 ROOM)",
+    "x": 741.3600891861762,
+    "y": 6.865335407146061,
+    "z": 16,
+    "category": "HDB"
+  },
+  {
+    "name": "CLEMENTI - HDB (3 ROOM)",
+    "x": 533.8413839387233,
+    "y": 6.614622297225256,
+    "z": 798,
+    "category": "HDB"
+  },
+  {
+    "name": "CLEMENTI - HDB (4 ROOM)",
+    "x": 599.0664853541108,
+    "y": 6.553490232300314,
+    "z": 531,
+    "category": "HDB"
+  },
+  {
+    "name": "CLEMENTI - HDB (5 ROOM)",
+    "x": 610.8976287348639,
+    "y": 6.451996287596456,
+    "z": 188,
+    "category": "HDB"
+  },
+  {
+    "name": "CLEMENTI - HDB (EXECUTIVE)",
+    "x": 623.1168187689927,
+    "y": 6.443152199787777,
+    "z": 62,
+    "category": "HDB"
+  },
+  {
+    "name": "DOWNTOWN CORE - HDB (3 ROOM)",
+    "x": 573.8081185651519,
+    "y": 5.545876066972946,
+    "z": 36,
+    "category": "HDB"
+  },
+  {
+    "name": "GEYLANG - HDB (2 ROOM)",
+    "x": 566.2614358266533,
+    "y": 6.530084954161355,
+    "z": 81,
+    "category": "HDB"
+  },
+  {
+    "name": "GEYLANG - HDB (3 ROOM)",
+    "x": 530.8700960874874,
+    "y": 6.614094331576154,
+    "z": 867,
+    "category": "HDB"
+  },
+  {
+    "name": "GEYLANG - HDB (4 ROOM)",
+    "x": 661.5458120474843,
+    "y": 6.488754466710488,
+    "z": 433,
+    "category": "HDB"
+  },
+  {
+    "name": "GEYLANG - HDB (5 ROOM)",
+    "x": 599.2580103252039,
+    "y": 6.295290987495352,
+    "z": 182,
+    "category": "HDB"
+  },
+  {
+    "name": "GEYLANG - HDB (EXECUTIVE)",
+    "x": 618.2806032880995,
+    "y": 6.487416057368456,
+    "z": 37,
+    "category": "HDB"
+  },
+  {
+    "name": "HOUGANG - HDB (2 ROOM)",
+    "x": 751.1247104216577,
+    "y": 6.151617644012868,
+    "z": 90,
+    "category": "HDB"
+  },
+  {
+    "name": "HOUGANG - HDB (3 ROOM)",
+    "x": 538.5638655960017,
+    "y": 6.114546733084784,
+    "z": 1022,
+    "category": "HDB"
+  },
+  {
+    "name": "HOUGANG - HDB (4 ROOM)",
+    "x": 514.2804055847535,
+    "y": 6.103808154144681,
+    "z": 1740,
+    "category": "HDB"
+  },
+  {
+    "name": "HOUGANG - HDB (5 ROOM)",
+    "x": 521.1590577444236,
+    "y": 6.0702282999591235,
+    "z": 726,
+    "category": "HDB"
+  },
+  {
+    "name": "HOUGANG - HDB (EXECUTIVE)",
+    "x": 569.793849704989,
+    "y": 6.055592835720349,
+    "z": 388,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG EAST - HDB (2 ROOM)",
+    "x": 692.5441708050404,
+    "y": 7.4260431076429105,
+    "z": 27,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG EAST - HDB (3 ROOM)",
+    "x": 513.0423689800717,
+    "y": 7.429671855823084,
+    "z": 526,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG EAST - HDB (4 ROOM)",
+    "x": 468.22171646856077,
+    "y": 7.35945067318794,
+    "z": 264,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG EAST - HDB (5 ROOM)",
+    "x": 476.3884277517292,
+    "y": 7.31811852595342,
+    "z": 244,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG EAST - HDB (EXECUTIVE)",
+    "x": 480.20500102704443,
+    "y": 7.280901311559552,
+    "z": 58,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG WEST - HDB (3 ROOM)",
+    "x": 489.96400991636256,
+    "y": 7.10623900689362,
+    "z": 795,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG WEST - HDB (4 ROOM)",
+    "x": 441.7389818340213,
+    "y": 7.082029196053746,
+    "z": 1388,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG WEST - HDB (5 ROOM)",
+    "x": 440.5026356717178,
+    "y": 7.009531467566208,
+    "z": 850,
+    "category": "HDB"
+  },
+  {
+    "name": "JURONG WEST - HDB (EXECUTIVE)",
+    "x": 461.0187676549233,
+    "y": 6.933338980826271,
+    "z": 415,
+    "category": "HDB"
+  },
+  {
+    "name": "KALLANG - HDB (3 ROOM)",
+    "x": 572.9754452162479,
+    "y": 5.497681723192252,
+    "z": 1011,
+    "category": "HDB"
+  },
+  {
+    "name": "KALLANG - HDB (4 ROOM)",
+    "x": 888.818478749829,
+    "y": 5.353298817188631,
+    "z": 683,
+    "category": "HDB"
+  },
+  {
+    "name": "KALLANG - HDB (5 ROOM)",
+    "x": 709.8414467979686,
+    "y": 5.314933986070937,
+    "z": 315,
+    "category": "HDB"
+  },
+  {
+    "name": "KALLANG - HDB (EXECUTIVE)",
+    "x": 649.0432339151815,
+    "y": 5.070252061558244,
+    "z": 15,
+    "category": "HDB"
+  },
+  {
+    "name": "MARINE PARADE - HDB (3 ROOM)",
+    "x": 614.5842266243604,
+    "y": 6.9242214600082175,
+    "z": 201,
+    "category": "HDB"
+  },
+  {
+    "name": "MARINE PARADE - HDB (4 ROOM)",
+    "x": 644.6510953403849,
+    "y": 6.360050295530161,
+    "z": 96,
+    "category": "HDB"
+  },
+  {
+    "name": "MARINE PARADE - HDB (5 ROOM)",
+    "x": 690.5618911855548,
+    "y": 6.322865654805343,
+    "z": 104,
+    "category": "HDB"
+  },
+  {
+    "name": "NOVENA - HDB (3 ROOM)",
+    "x": 485.9503187262385,
+    "y": 5.547731521469977,
+    "z": 137,
+    "category": "HDB"
+  },
+  {
+    "name": "NOVENA - HDB (4 ROOM)",
+    "x": 505.34749531405055,
+    "y": 5.37744002232647,
+    "z": 50,
+    "category": "HDB"
+  },
+  {
+    "name": "PASIR RIS - HDB (2 ROOM)",
+    "x": 741.2414905476886,
+    "y": 5.792582846983376,
+    "z": 35,
+    "category": "HDB"
+  },
+  {
+    "name": "PASIR RIS - HDB (3 ROOM)",
+    "x": 754.6522596689821,
+    "y": 5.714974476439792,
+    "z": 59,
+    "category": "HDB"
+  },
+  {
+    "name": "PASIR RIS - HDB (4 ROOM)",
+    "x": 506.58028508725806,
+    "y": 5.7603952929770985,
+    "z": 1114,
+    "category": "HDB"
+  },
+  {
+    "name": "PASIR RIS - HDB (5 ROOM)",
+    "x": 496.21607592622087,
+    "y": 5.70358242015185,
+    "z": 837,
+    "category": "HDB"
+  },
+  {
+    "name": "PASIR RIS - HDB (EXECUTIVE)",
+    "x": 529.9793744497567,
+    "y": 5.680228817168615,
+    "z": 652,
+    "category": "HDB"
+  },
+  {
+    "name": "PUNGGOL - HDB (2 ROOM)",
+    "x": 721.4750507997502,
+    "y": 6.145332421290164,
+    "z": 212,
+    "category": "HDB"
+  },
+  {
+    "name": "PUNGGOL - HDB (3 ROOM)",
+    "x": 655.780706931602,
+    "y": 6.09253745403629,
+    "z": 877,
+    "category": "HDB"
+  },
+  {
+    "name": "PUNGGOL - HDB (4 ROOM)",
+    "x": 607.3610561689104,
+    "y": 6.071048613031107,
+    "z": 3193,
+    "category": "HDB"
+  },
+  {
+    "name": "PUNGGOL - HDB (5 ROOM)",
+    "x": 554.095662791315,
+    "y": 6.026259402225825,
+    "z": 2619,
+    "category": "HDB"
+  },
+  {
+    "name": "PUNGGOL - HDB (EXECUTIVE)",
+    "x": 543.1209444587371,
+    "y": 6.038778354146181,
+    "z": 180,
+    "category": "HDB"
+  },
+  {
+    "name": "QUEENSTOWN - HDB (2 ROOM)",
+    "x": 619.3484454354019,
+    "y": 5.76801714008926,
+    "z": 194,
+    "category": "HDB"
+  },
+  {
+    "name": "QUEENSTOWN - HDB (3 ROOM)",
+    "x": 551.6965383186119,
+    "y": 5.3985550867757786,
+    "z": 5615,
+    "category": "HDB"
+  },
+  {
+    "name": "QUEENSTOWN - HDB (4 ROOM)",
+    "x": 869.0857218206447,
+    "y": 5.263906800352043,
+    "z": 1714,
+    "category": "HDB"
+  },
+  {
+    "name": "QUEENSTOWN - HDB (5 ROOM)",
+    "x": 650.3158677071721,
+    "y": 5.154061779681566,
+    "z": 1095,
+    "category": "HDB"
+  },
+  {
+    "name": "SEMBAWANG - HDB (2 ROOM)",
+    "x": 711.591830925781,
+    "y": 6.2411110624285255,
+    "z": 76,
+    "category": "HDB"
+  },
+  {
+    "name": "SEMBAWANG - HDB (3 ROOM)",
+    "x": 640.7523990644195,
+    "y": 6.318950479239256,
+    "z": 96,
+    "category": "HDB"
+  },
+  {
+    "name": "SEMBAWANG - HDB (4 ROOM)",
+    "x": 518.869043383382,
+    "y": 6.279588981332497,
+    "z": 970,
+    "category": "HDB"
+  },
+  {
+    "name": "SEMBAWANG - HDB (5 ROOM)",
+    "x": 476.66948010649685,
+    "y": 6.3037654259937215,
+    "z": 618,
+    "category": "HDB"
+  },
+  {
+    "name": "SEMBAWANG - HDB (EXECUTIVE)",
+    "x": 507.38930337592546,
+    "y": 6.242467745999731,
+    "z": 131,
+    "category": "HDB"
+  },
+  {
+    "name": "SENGKANG - HDB (2 ROOM)",
+    "x": 706.8650735947523,
+    "y": 6.047205876606732,
+    "z": 115,
+    "category": "HDB"
+  },
+  {
+    "name": "SENGKANG - HDB (3 ROOM)",
+    "x": 637.8364587319811,
+    "y": 6.0831535011009095,
+    "z": 385,
+    "category": "HDB"
+  },
+  {
+    "name": "SENGKANG - HDB (4 ROOM)",
+    "x": 589.3799722691729,
+    "y": 6.100010229667775,
+    "z": 2952,
+    "category": "HDB"
+  },
+  {
+    "name": "SENGKANG - HDB (5 ROOM)",
+    "x": 538.8331475287997,
+    "y": 6.0674570692811365,
+    "z": 1928,
+    "category": "HDB"
+  },
+  {
+    "name": "SENGKANG - HDB (EXECUTIVE)",
+    "x": 531.7853893566038,
+    "y": 6.1147138435273325,
+    "z": 314,
+    "category": "HDB"
+  },
+  {
+    "name": "SERANGOON - HDB (3 ROOM)",
+    "x": 580.6391675956894,
+    "y": 6.098686915228305,
+    "z": 304,
+    "category": "HDB"
+  },
+  {
+    "name": "SERANGOON - HDB (4 ROOM)",
+    "x": 584.7368591125432,
+    "y": 5.9567577206406686,
+    "z": 656,
+    "category": "HDB"
+  },
+  {
+    "name": "SERANGOON - HDB (5 ROOM)",
+    "x": 560.4847502080704,
+    "y": 5.914483084085527,
+    "z": 270,
+    "category": "HDB"
+  },
+  {
+    "name": "SERANGOON - HDB (EXECUTIVE)",
+    "x": 612.6553085575971,
+    "y": 5.879106192246815,
+    "z": 198,
+    "category": "HDB"
+  },
+  {
+    "name": "TAMPINES - HDB (3 ROOM)",
+    "x": 546.1959618481358,
+    "y": 5.942414483367014,
+    "z": 1184,
+    "category": "HDB"
+  },
+  {
+    "name": "TAMPINES - HDB (4 ROOM)",
+    "x": 524.299921630959,
+    "y": 5.919966585807029,
+    "z": 1699,
+    "category": "HDB"
+  },
+  {
+    "name": "TAMPINES - HDB (5 ROOM)",
+    "x": 510.2586624325755,
+    "y": 5.902151713964195,
+    "z": 913,
+    "category": "HDB"
+  },
+  {
+    "name": "TAMPINES - HDB (EXECUTIVE)",
+    "x": 568.4579263174581,
+    "y": 5.823564827729886,
+    "z": 472,
+    "category": "HDB"
+  },
+  {
+    "name": "TOA PAYOH - HDB (3 ROOM)",
+    "x": 526.9083789525062,
+    "y": 5.881173324081328,
+    "z": 551,
+    "category": "HDB"
+  },
+  {
+    "name": "TOA PAYOH - HDB (4 ROOM)",
+    "x": 616.370808678501,
+    "y": 5.695273819142837,
+    "z": 335,
+    "category": "HDB"
+  },
+  {
+    "name": "TOA PAYOH - HDB (5 ROOM)",
+    "x": 577.8959904259459,
+    "y": 5.805192557249607,
+    "z": 139,
+    "category": "HDB"
+  },
+  {
+    "name": "TOA PAYOH - HDB (EXECUTIVE)",
+    "x": 624.1048715004429,
+    "y": 5.682424452683449,
+    "z": 50,
+    "category": "HDB"
+  },
+  {
+    "name": "WOODLANDS - HDB (2 ROOM)",
+    "x": 701.7086110518119,
+    "y": 6.489678422198518,
+    "z": 119,
+    "category": "HDB"
+  },
+  {
+    "name": "WOODLANDS - HDB (3 ROOM)",
+    "x": 502.6903478362681,
+    "y": 6.3713766336800575,
+    "z": 1088,
+    "category": "HDB"
+  },
+  {
+    "name": "WOODLANDS - HDB (4 ROOM)",
+    "x": 495.1384550046758,
+    "y": 6.351601749077092,
+    "z": 3710,
+    "category": "HDB"
+  },
+  {
+    "name": "WOODLANDS - HDB (5 ROOM)",
+    "x": 475.1682222037953,
+    "y": 6.32192560991418,
+    "z": 2427,
+    "category": "HDB"
+  },
+  {
+    "name": "WOODLANDS - HDB (EXECUTIVE)",
+    "x": 504.142357224083,
+    "y": 6.2882405182014365,
+    "z": 760,
+    "category": "HDB"
+  },
+  {
+    "name": "YISHUN - HDB (2 ROOM)",
+    "x": 614.5097857054378,
+    "y": 6.4944646055437945,
+    "z": 46,
+    "category": "HDB"
+  },
+  {
+    "name": "YISHUN - HDB (3 ROOM)",
+    "x": 522.5752508361204,
+    "y": 6.632352312918724,
+    "z": 1484,
+    "category": "HDB"
+  },
+  {
+    "name": "YISHUN - HDB (4 ROOM)",
+    "x": 481.1010245792855,
+    "y": 6.598246059773496,
+    "z": 2260,
+    "category": "HDB"
+  },
+  {
+    "name": "YISHUN - HDB (5 ROOM)",
+    "x": 478.8301407153866,
+    "y": 6.552465421733271,
+    "z": 618,
+    "category": "HDB"
+  },
+  {
+    "name": "YISHUN - HDB (EXECUTIVE)",
+    "x": 526.0212977657072,
+    "y": 6.5222312988299045,
+    "z": 286,
+    "category": "HDB"
+  },
+  {
+    "name": "YISHUN - HDB (MULTI-GENERATION)",
+    "x": 545.0651096822489,
+    "y": 6.4438990012869715,
+    "z": 16,
+    "category": "HDB"
+  }
+]

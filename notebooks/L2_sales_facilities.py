@@ -36,7 +36,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
 # %%
-from scripts.core.pipeline.L2_features import run_l2_features_pipeline
+from scripts.core.stages.L2_features import run_l2_features_pipeline
 
 # %%
 # Run the L2 features pipeline

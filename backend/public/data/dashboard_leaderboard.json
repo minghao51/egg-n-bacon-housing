@@ -1,0 +1,8030 @@
+[
+  {
+    "rank": 1,
+    "town": "Condo - TELOK KURAU ROAD",
+    "median_price": 757500,
+    "median_psf": 1628,
+    "yield": 0,
+    "growth": 194.47,
+    "volume": 68
+  },
+  {
+    "rank": 2,
+    "town": "Condo - IRWELL HILL",
+    "median_price": 1939000,
+    "median_psf": 2988,
+    "yield": 0,
+    "growth": 117.91,
+    "volume": 66
+  },
+  {
+    "rank": 3,
+    "town": "Condo - LORONG N TELOK KURAU",
+    "median_price": 1680000,
+    "median_psf": 1701,
+    "yield": 0,
+    "growth": 116.38,
+    "volume": 57
+  },
+  {
+    "rank": 4,
+    "town": "Condo - MEYAPPA CHETTIAR ROAD",
+    "median_price": 1570000,
+    "median_psf": 2004,
+    "yield": 0,
+    "growth": 110.65,
+    "volume": 140
+  },
+  {
+    "rank": 5,
+    "town": "Condo - JALAN EUNOS",
+    "median_price": 840000,
+    "median_psf": 1445,
+    "yield": 0,
+    "growth": 104.6,
+    "volume": 149
+  },
+  {
+    "rank": 6,
+    "town": "Condo - PATERSON HILL",
+    "median_price": 16090000,
+    "median_psf": 5095,
+    "yield": 0,
+    "growth": 92.91,
+    "volume": 4
+  },
+  {
+    "rank": 7,
+    "town": "Condo - FERNVALE ROAD",
+    "median_price": 1011400,
+    "median_psf": 1578,
+    "yield": 0,
+    "growth": 89.57,
+    "volume": 252
+  },
+  {
+    "rank": 8,
+    "town": "Condo - UPPER THOMSON ROAD",
+    "median_price": 1759000,
+    "median_psf": 2156,
+    "yield": 0,
+    "growth": 89.46,
+    "volume": 992
+  },
+  {
+    "rank": 9,
+    "town": "Condo - BISHAN STREET 15",
+    "median_price": 1650000,
+    "median_psf": 1961,
+    "yield": 0,
+    "growth": 87.26,
+    "volume": 159
+  },
+  {
+    "rank": 10,
+    "town": "Condo - FOWLIE ROAD",
+    "median_price": 800000,
+    "median_psf": 1887,
+    "yield": 0,
+    "growth": 86.31,
+    "volume": 19
+  },
+  {
+    "rank": 11,
+    "town": "Condo - ROSEWOOD DRIVE",
+    "median_price": 975000,
+    "median_psf": 1104,
+    "yield": 0,
+    "growth": 83.94,
+    "volume": 246
+  },
+  {
+    "rank": 12,
+    "town": "Condo - MACKENZIE ROAD",
+    "median_price": 988000,
+    "median_psf": 1651,
+    "yield": 0,
+    "growth": 82.0,
+    "volume": 21
+  },
+  {
+    "rank": 13,
+    "town": "Condo - CHANGI ROAD",
+    "median_price": 827500,
+    "median_psf": 1504,
+    "yield": 0,
+    "growth": 81.61,
+    "volume": 44
+  },
+  {
+    "rank": 14,
+    "town": "Condo - CLEMENTI AVENUE 1",
+    "median_price": 1834000,
+    "median_psf": 2400,
+    "yield": 0,
+    "growth": 78.5,
+    "volume": 588
+  },
+  {
+    "rank": 15,
+    "town": "Condo - LORONG LEW LIAN",
+    "median_price": 1765000,
+    "median_psf": 1974,
+    "yield": 0,
+    "growth": 73.91,
+    "volume": 93
+  },
+  {
+    "rank": 16,
+    "town": "Condo - FOURTH AVENUE",
+    "median_price": 1737500,
+    "median_psf": 2577,
+    "yield": 0,
+    "growth": 72.46,
+    "volume": 44
+  },
+  {
+    "rank": 17,
+    "town": "Condo - TAMPINES ROAD",
+    "median_price": 1100000,
+    "median_psf": 1757,
+    "yield": 0,
+    "growth": 68.47,
+    "volume": 87
+  },
+  {
+    "rank": 18,
+    "town": "Condo - BAYSHORE ROAD",
+    "median_price": 1610000,
+    "median_psf": 1378,
+    "yield": 0,
+    "growth": 63.99,
+    "volume": 301
+  },
+  {
+    "rank": 19,
+    "town": "Condo - PEARL BANK",
+    "median_price": 2980000,
+    "median_psf": 2665,
+    "yield": 0,
+    "growth": 63.74,
+    "volume": 116
+  },
+  {
+    "rank": 20,
+    "town": "Condo - PECK HAY ROAD",
+    "median_price": 2900000,
+    "median_psf": 2086,
+    "yield": 0,
+    "growth": 61.21,
+    "volume": 33
+  },
+  {
+    "rank": 21,
+    "town": "Condo - JALAN LEMPENG",
+    "median_price": 1550000,
+    "median_psf": 1986,
+    "yield": 0,
+    "growth": 58.3,
+    "volume": 470
+  },
+  {
+    "rank": 22,
+    "town": "Condo - BROOKE ROAD",
+    "median_price": 2072500,
+    "median_psf": 2050,
+    "yield": 0,
+    "growth": 57.65,
+    "volume": 6
+  },
+  {
+    "rank": 23,
+    "town": "EC - CANBERRA DRIVE",
+    "median_price": 1338000,
+    "median_psf": 1343,
+    "yield": 0,
+    "growth": 56.87,
+    "volume": 548
+  },
+  {
+    "rank": 24,
+    "town": "Condo - BRIGHT HILL DRIVE",
+    "median_price": 1624000,
+    "median_psf": 1935,
+    "yield": 0,
+    "growth": 56.69,
+    "volume": 94
+  },
+  {
+    "rank": 25,
+    "town": "Condo - MAKEWAY AVENUE",
+    "median_price": 2342205,
+    "median_psf": 2654,
+    "yield": 0,
+    "growth": 56.25,
+    "volume": 180
+  },
+  {
+    "rank": 26,
+    "town": "Condo - FABER WALK",
+    "median_price": 1786000,
+    "median_psf": 2145,
+    "yield": 0,
+    "growth": 55.56,
+    "volume": 402
+  },
+  {
+    "rank": 27,
+    "town": "Condo - PATERSON ROAD",
+    "median_price": 3850000,
+    "median_psf": 2608,
+    "yield": 0,
+    "growth": 54.81,
+    "volume": 48
+  },
+  {
+    "rank": 28,
+    "town": "Condo - ONTARIO AVENUE",
+    "median_price": 2580000,
+    "median_psf": 1581,
+    "yield": 0,
+    "growth": 53.79,
+    "volume": 15
+  },
+  {
+    "rank": 29,
+    "town": "Condo - YISHUN CENTRAL 1",
+    "median_price": 1322000,
+    "median_psf": 1800,
+    "yield": 0,
+    "growth": 51.88,
+    "volume": 105
+  },
+  {
+    "rank": 30,
+    "town": "Condo - NATHAN ROAD",
+    "median_price": 3650000,
+    "median_psf": 2101,
+    "yield": 0,
+    "growth": 49.89,
+    "volume": 65
+  },
+  {
+    "rank": 31,
+    "town": "Condo - JELLICOE ROAD",
+    "median_price": 1600000,
+    "median_psf": 1876,
+    "yield": 0,
+    "growth": 46.57,
+    "volume": 69
+  },
+  {
+    "rank": 32,
+    "town": "KALLANG/WHAMPOA",
+    "median_price": 568000,
+    "median_psf": 639,
+    "yield": 5.66,
+    "growth": 40.54,
+    "volume": 1732
+  },
+  {
+    "rank": 33,
+    "town": "Condo - SHELFORD ROAD",
+    "median_price": 4851000,
+    "median_psf": 3184,
+    "yield": 0,
+    "growth": 43.48,
+    "volume": 265
+  },
+  {
+    "rank": 34,
+    "town": "EC - ANCHORVALE CRESCENT",
+    "median_price": 1530888,
+    "median_psf": 1424,
+    "yield": 0,
+    "growth": 43.37,
+    "volume": 439
+  },
+  {
+    "rank": 35,
+    "town": "EC - SEMBAWANG CRESCENT",
+    "median_price": 1408888,
+    "median_psf": 1321,
+    "yield": 0,
+    "growth": 41.13,
+    "volume": 299
+  },
+  {
+    "rank": 36,
+    "town": "Condo - MOUNT EMILY ROAD",
+    "median_price": 1940000,
+    "median_psf": 2037,
+    "yield": 0,
+    "growth": 39.73,
+    "volume": 39
+  },
+  {
+    "rank": 37,
+    "town": "MARINE PARADE",
+    "median_price": 540000,
+    "median_psf": 654,
+    "yield": 6.97,
+    "growth": 31.7,
+    "volume": 275
+  },
+  {
+    "rank": 38,
+    "town": "Condo - DEVONSHIRE ROAD",
+    "median_price": 1905000,
+    "median_psf": 2470,
+    "yield": 0,
+    "growth": 38.3,
+    "volume": 69
+  },
+  {
+    "rank": 39,
+    "town": "Condo - TANJONG RHU ROAD",
+    "median_price": 2400000,
+    "median_psf": 1775,
+    "yield": 0,
+    "growth": 37.37,
+    "volume": 324
+  },
+  {
+    "rank": 40,
+    "town": "Condo - LORONG 1 TOA PAYOH",
+    "median_price": 2126000,
+    "median_psf": 2710,
+    "yield": 0,
+    "growth": 37.3,
+    "volume": 784
+  },
+  {
+    "rank": 41,
+    "town": "Condo - TOH TUCK ROAD",
+    "median_price": 1703500,
+    "median_psf": 1889,
+    "yield": 0,
+    "growth": 34.46,
+    "volume": 322
+  },
+  {
+    "rank": 42,
+    "town": "Condo - AMBER GARDENS",
+    "median_price": 2809400,
+    "median_psf": 2782,
+    "yield": 0,
+    "growth": 33.3,
+    "volume": 232
+  },
+  {
+    "rank": 43,
+    "town": "Condo - SIMS DRIVE",
+    "median_price": 1527500,
+    "median_psf": 1965,
+    "yield": 0,
+    "growth": 31.61,
+    "volume": 400
+  },
+  {
+    "rank": 44,
+    "town": "Condo - UPPER CHANGI ROAD EAST",
+    "median_price": 1522900,
+    "median_psf": 1302,
+    "yield": 0,
+    "growth": 31.52,
+    "volume": 76
+  },
+  {
+    "rank": 45,
+    "town": "Condo - ANG MO KIO AVENUE 2",
+    "median_price": 1922500,
+    "median_psf": 1956,
+    "yield": 0,
+    "growth": 30.23,
+    "volume": 110
+  },
+  {
+    "rank": 46,
+    "town": "Condo - BUKIT TIMAH ROAD",
+    "median_price": 2880000,
+    "median_psf": 2284,
+    "yield": 0,
+    "growth": 27.75,
+    "volume": 263
+  },
+  {
+    "rank": 47,
+    "town": "Condo - UNITY STREET",
+    "median_price": 2610000,
+    "median_psf": 3359,
+    "yield": 0,
+    "growth": 27.37,
+    "volume": 196
+  },
+  {
+    "rank": 48,
+    "town": "Condo - NORMANTON PARK",
+    "median_price": 1600000,
+    "median_psf": 2086,
+    "yield": 0,
+    "growth": 27.07,
+    "volume": 191
+  },
+  {
+    "rank": 49,
+    "town": "Condo - SUNRISE AVENUE",
+    "median_price": 1418444,
+    "median_psf": 1026,
+    "yield": 0,
+    "growth": 26.85,
+    "volume": 38
+  },
+  {
+    "rank": 50,
+    "town": "Condo - ST. PATRICK'S ROAD",
+    "median_price": 2700000,
+    "median_psf": 2062,
+    "yield": 0,
+    "growth": 25.99,
+    "volume": 66
+  },
+  {
+    "rank": 51,
+    "town": "Condo - SIMS AVENUE",
+    "median_price": 1620000,
+    "median_psf": 2205,
+    "yield": 0,
+    "growth": 25.97,
+    "volume": 372
+  },
+  {
+    "rank": 52,
+    "town": "Condo - YISHUN AVENUE 9",
+    "median_price": 934000,
+    "median_psf": 1301,
+    "yield": 0,
+    "growth": 25.52,
+    "volume": 32
+  },
+  {
+    "rank": 53,
+    "town": "Condo - SILAT AVENUE",
+    "median_price": 1664000,
+    "median_psf": 2293,
+    "yield": 0,
+    "growth": 25.49,
+    "volume": 130
+  },
+  {
+    "rank": 54,
+    "town": "Condo - ANG MO KIO AVENUE 8",
+    "median_price": 1720000,
+    "median_psf": 1897,
+    "yield": 0,
+    "growth": 24.67,
+    "volume": 43
+  },
+  {
+    "rank": 55,
+    "town": "GEYLANG",
+    "median_price": 435000,
+    "median_psf": 571,
+    "yield": 6.63,
+    "growth": 17.78,
+    "volume": 1153
+  },
+  {
+    "rank": 56,
+    "town": "Condo - CANBERRA CRESCENT",
+    "median_price": 1605400,
+    "median_psf": 1996,
+    "yield": 0,
+    "growth": 24.15,
+    "volume": 301
+  },
+  {
+    "rank": 57,
+    "town": "Condo - FERNVALE CLOSE",
+    "median_price": 1342500,
+    "median_psf": 1452,
+    "yield": 0,
+    "growth": 22.81,
+    "volume": 150
+  },
+  {
+    "rank": 58,
+    "town": "Condo - LORONG CHUAN",
+    "median_price": 2331600,
+    "median_psf": 2593,
+    "yield": 0,
+    "growth": 21.03,
+    "volume": 825
+  },
+  {
+    "rank": 59,
+    "town": "Condo - WEST COAST CRESCENT",
+    "median_price": 1380000,
+    "median_psf": 1435,
+    "yield": 0,
+    "growth": 20.42,
+    "volume": 206
+  },
+  {
+    "rank": 60,
+    "town": "Condo - JALAN SENDUDOK",
+    "median_price": 1200000,
+    "median_psf": 1212,
+    "yield": 0,
+    "growth": 20.3,
+    "volume": 68
+  },
+  {
+    "rank": 61,
+    "town": "Condo - BIDADARI PARK DRIVE",
+    "median_price": 1601400,
+    "median_psf": 2310,
+    "yield": 0,
+    "growth": 19.14,
+    "volume": 112
+  },
+  {
+    "rank": 62,
+    "town": "EC - COMPASSVALE BOW",
+    "median_price": 1620000,
+    "median_psf": 1618,
+    "yield": 0,
+    "growth": 18.32,
+    "volume": 125
+  },
+  {
+    "rank": 63,
+    "town": "Condo - MARTIN PLACE",
+    "median_price": 2880000,
+    "median_psf": 2715,
+    "yield": 0,
+    "growth": 18.06,
+    "volume": 84
+  },
+  {
+    "rank": 64,
+    "town": "EC - PASIR RIS LINK",
+    "median_price": 1218888,
+    "median_psf": 1218,
+    "yield": 0,
+    "growth": 18.04,
+    "volume": 75
+  },
+  {
+    "rank": 65,
+    "town": "Condo - NORTHUMBERLAND ROAD",
+    "median_price": 2990000,
+    "median_psf": 2062,
+    "yield": 0,
+    "growth": 17.43,
+    "volume": 71
+  },
+  {
+    "rank": 66,
+    "town": "Condo - QUEENSWAY",
+    "median_price": 1825844,
+    "median_psf": 1714,
+    "yield": 0,
+    "growth": 17.42,
+    "volume": 28
+  },
+  {
+    "rank": 67,
+    "town": "Condo - SIGLAP ROAD",
+    "median_price": 2055000,
+    "median_psf": 1386,
+    "yield": 0,
+    "growth": 16.3,
+    "volume": 126
+  },
+  {
+    "rank": 68,
+    "town": "Condo - JALAN JURONG KECHIL",
+    "median_price": 1586300,
+    "median_psf": 2045,
+    "yield": 0,
+    "growth": 16.07,
+    "volume": 171
+  },
+  {
+    "rank": 69,
+    "town": "Condo - JURONG WEST CENTRAL 3",
+    "median_price": 1801388,
+    "median_psf": 1551,
+    "yield": 0,
+    "growth": 15.96,
+    "volume": 55
+  },
+  {
+    "rank": 70,
+    "town": "HOUGANG",
+    "median_price": 555000,
+    "median_psf": 549,
+    "yield": 6.25,
+    "growth": 9.51,
+    "volume": 3046
+  },
+  {
+    "rank": 71,
+    "town": "Condo - YISHUN AVENUE 1",
+    "median_price": 1368500,
+    "median_psf": 1275,
+    "yield": 0,
+    "growth": 15.64,
+    "volume": 74
+  },
+  {
+    "rank": 72,
+    "town": "Condo - COMMONWEALTH AVENUE",
+    "median_price": 1385000,
+    "median_psf": 2161,
+    "yield": 0,
+    "growth": 14.69,
+    "volume": 139
+  },
+  {
+    "rank": 73,
+    "town": "Condo - COMPASSVALE BOW",
+    "median_price": 1538000,
+    "median_psf": 1748,
+    "yield": 0,
+    "growth": 14.68,
+    "volume": 289
+  },
+  {
+    "rank": 74,
+    "town": "Condo - HARBOURFRONT AVENUE",
+    "median_price": 2354170,
+    "median_psf": 2606,
+    "yield": 0,
+    "growth": 14.16,
+    "volume": 73
+  },
+  {
+    "rank": 75,
+    "town": "PASIR RIS",
+    "median_price": 675000,
+    "median_psf": 528,
+    "yield": 6.01,
+    "growth": 7.89,
+    "volume": 1923
+  },
+  {
+    "rank": 76,
+    "town": "Condo - TAI THONG CRESCENT",
+    "median_price": 1825000,
+    "median_psf": 1823,
+    "yield": 0,
+    "growth": 13.64,
+    "volume": 36
+  },
+  {
+    "rank": 77,
+    "town": "Condo - DUNMAN ROAD",
+    "median_price": 2253500,
+    "median_psf": 2521,
+    "yield": 0,
+    "growth": 13.53,
+    "volume": 920
+  },
+  {
+    "rank": 78,
+    "town": "Condo - OCEAN DRIVE",
+    "median_price": 3055000,
+    "median_psf": 1605,
+    "yield": 0,
+    "growth": 12.9,
+    "volume": 76
+  },
+  {
+    "rank": 79,
+    "town": "Condo - WALLICH STREET",
+    "median_price": 4128000,
+    "median_psf": 3123,
+    "yield": 0,
+    "growth": 12.79,
+    "volume": 19
+  },
+  {
+    "rank": 80,
+    "town": "Condo - LORONG ONG LYE",
+    "median_price": 1500000,
+    "median_psf": 1193,
+    "yield": 0,
+    "growth": 12.7,
+    "volume": 21
+  },
+  {
+    "rank": 81,
+    "town": "Condo - SIN MING WALK",
+    "median_price": 1925000,
+    "median_psf": 1586,
+    "yield": 0,
+    "growth": 11.72,
+    "volume": 166
+  },
+  {
+    "rank": 82,
+    "town": "Condo - CAIRNHILL CIRCLE",
+    "median_price": 3901444,
+    "median_psf": 2491,
+    "yield": 0,
+    "growth": 10.97,
+    "volume": 94
+  },
+  {
+    "rank": 83,
+    "town": "CHOA CHU KANG",
+    "median_price": 558000,
+    "median_psf": 482,
+    "yield": 6.67,
+    "growth": 4.24,
+    "volume": 3392
+  },
+  {
+    "rank": 84,
+    "town": "Condo - KIM SENG ROAD",
+    "median_price": 2594000,
+    "median_psf": 3010,
+    "yield": 0,
+    "growth": 10.6,
+    "volume": 684
+  },
+  {
+    "rank": 85,
+    "town": "Condo - FLORA DRIVE",
+    "median_price": 1200000,
+    "median_psf": 1296,
+    "yield": 0,
+    "growth": 9.92,
+    "volume": 743
+  },
+  {
+    "rank": 86,
+    "town": "TAMPINES",
+    "median_price": 600000,
+    "median_psf": 550,
+    "yield": 6.02,
+    "growth": 2.27,
+    "volume": 3162
+  },
+  {
+    "rank": 87,
+    "town": "YISHUN",
+    "median_price": 482000,
+    "median_psf": 517,
+    "yield": 6.79,
+    "growth": 0.99,
+    "volume": 3439
+  },
+  {
+    "rank": 88,
+    "town": "ANG MO KIO",
+    "median_price": 475000,
+    "median_psf": 559,
+    "yield": 7.36,
+    "growth": 0.1,
+    "volume": 3121
+  },
+  {
+    "rank": 89,
+    "town": "Condo - UPPER BUKIT TIMAH ROAD",
+    "median_price": 1760500,
+    "median_psf": 2062,
+    "yield": 0,
+    "growth": 7.15,
+    "volume": 426
+  },
+  {
+    "rank": 90,
+    "town": "Condo - ADIS ROAD",
+    "median_price": 1220000,
+    "median_psf": 1798,
+    "yield": 0,
+    "growth": 7.0,
+    "volume": 29
+  },
+  {
+    "rank": 91,
+    "town": "Condo - THIAM SIEW AVENUE",
+    "median_price": 2141500,
+    "median_psf": 2789,
+    "yield": 0,
+    "growth": 6.83,
+    "volume": 676
+  },
+  {
+    "rank": 92,
+    "town": "Condo - MARINA GARDENS LANE",
+    "median_price": 1942891,
+    "median_psf": 2952,
+    "yield": 0,
+    "growth": 6.54,
+    "volume": 561
+  },
+  {
+    "rank": 93,
+    "town": "PUNGGOL",
+    "median_price": 623000,
+    "median_psf": 621,
+    "yield": 6.19,
+    "growth": -0.13,
+    "volume": 5185
+  },
+  {
+    "rank": 94,
+    "town": "CLEMENTI",
+    "median_price": 500000,
+    "median_psf": 575,
+    "yield": 6.86,
+    "growth": -0.89,
+    "volume": 1197
+  },
+  {
+    "rank": 95,
+    "town": "Condo - PINE GROVE",
+    "median_price": 2120900,
+    "median_psf": 2464,
+    "yield": 0,
+    "growth": 5.68,
+    "volume": 1110
+  },
+  {
+    "rank": 96,
+    "town": "BUKIT TIMAH",
+    "median_price": 920000,
+    "median_psf": 757,
+    "yield": 4.84,
+    "growth": 0.73,
+    "volume": 165
+  },
+  {
+    "rank": 97,
+    "town": "Condo - TANAH MERAH KECHIL AVENUE",
+    "median_price": 1740000,
+    "median_psf": 1447,
+    "yield": 0,
+    "growth": 5.47,
+    "volume": 97
+  },
+  {
+    "rank": 98,
+    "town": "JURONG WEST",
+    "median_price": 505000,
+    "median_psf": 464,
+    "yield": 7.34,
+    "growth": -1.89,
+    "volume": 2643
+  },
+  {
+    "rank": 99,
+    "town": "Condo - SENGKANG EAST AVENUE",
+    "median_price": 1460000,
+    "median_psf": 1359,
+    "yield": 0,
+    "growth": 5.27,
+    "volume": 95
+  },
+  {
+    "rank": 100,
+    "town": "Condo - STIRLING ROAD",
+    "median_price": 1593000,
+    "median_psf": 2298,
+    "yield": 0,
+    "growth": 5.06,
+    "volume": 347
+  },
+  {
+    "rank": 101,
+    "town": "Condo - WOODLANDS ROAD",
+    "median_price": 830000,
+    "median_psf": 1335,
+    "yield": 0,
+    "growth": 4.82,
+    "volume": 69
+  },
+  {
+    "rank": 102,
+    "town": "Condo - BEDOK CENTRAL",
+    "median_price": 2354500,
+    "median_psf": 2107,
+    "yield": 0,
+    "growth": 4.41,
+    "volume": 38
+  },
+  {
+    "rank": 103,
+    "town": "Condo - PASIR RIS LINK",
+    "median_price": 1214444,
+    "median_psf": 1323,
+    "yield": 0,
+    "growth": 4.03,
+    "volume": 210
+  },
+  {
+    "rank": 104,
+    "town": "EC - TAMPINES STREET 34",
+    "median_price": 1460000,
+    "median_psf": 1147,
+    "yield": 0,
+    "growth": 3.98,
+    "volume": 46
+  },
+  {
+    "rank": 105,
+    "town": "JURONG EAST",
+    "median_price": 460000,
+    "median_psf": 504,
+    "yield": 7.56,
+    "growth": -3.81,
+    "volume": 865
+  },
+  {
+    "rank": 106,
+    "town": "SERANGOON",
+    "median_price": 628444,
+    "median_psf": 599,
+    "yield": 6.07,
+    "growth": -2.39,
+    "volume": 1082
+  },
+  {
+    "rank": 107,
+    "town": "Condo - CACTUS DRIVE",
+    "median_price": 2190000,
+    "median_psf": 1296,
+    "yield": 0,
+    "growth": 3.64,
+    "volume": 24
+  },
+  {
+    "rank": 108,
+    "town": "Condo - POH HUAT ROAD WEST",
+    "median_price": 1730000,
+    "median_psf": 1424,
+    "yield": 0,
+    "growth": 3.56,
+    "volume": 25
+  },
+  {
+    "rank": 109,
+    "town": "Condo - BEDOK RISE",
+    "median_price": 1140000,
+    "median_psf": 1702,
+    "yield": 0,
+    "growth": 3.55,
+    "volume": 117
+  },
+  {
+    "rank": 110,
+    "town": "SENGKANG",
+    "median_price": 638888,
+    "median_psf": 599,
+    "yield": 6.24,
+    "growth": -2.76,
+    "volume": 4033
+  },
+  {
+    "rank": 111,
+    "town": "Condo - FARRER ROAD",
+    "median_price": 2300000,
+    "median_psf": 2138,
+    "yield": 0,
+    "growth": 3.28,
+    "volume": 73
+  },
+  {
+    "rank": 112,
+    "town": "Condo - MOUNT SINAI RISE",
+    "median_price": 3530000,
+    "median_psf": 2228,
+    "yield": 0,
+    "growth": 3.27,
+    "volume": 31
+  },
+  {
+    "rank": 113,
+    "town": "BUKIT MERAH",
+    "median_price": 755000,
+    "median_psf": 783,
+    "yield": 5.36,
+    "growth": -2.55,
+    "volume": 2037
+  },
+  {
+    "rank": 114,
+    "town": "Condo - RHU CROSS",
+    "median_price": 2575000,
+    "median_psf": 1559,
+    "yield": 0,
+    "growth": 2.73,
+    "volume": 64
+  },
+  {
+    "rank": 115,
+    "town": "WOODLANDS",
+    "median_price": 558000,
+    "median_psf": 503,
+    "yield": 6.5,
+    "growth": -3.91,
+    "volume": 6168
+  },
+  {
+    "rank": 116,
+    "town": "Condo - BEDOK SOUTH AVENUE 3",
+    "median_price": 1232500,
+    "median_psf": 1584,
+    "yield": 0,
+    "growth": 2.51,
+    "volume": 254
+  },
+  {
+    "rank": 117,
+    "town": "EC - JURONG EAST STREET 13",
+    "median_price": 1365000,
+    "median_psf": 1088,
+    "yield": 0,
+    "growth": 2.23,
+    "volume": 24
+  },
+  {
+    "rank": 118,
+    "town": "Condo - PASIR RIS GROVE",
+    "median_price": 1400000,
+    "median_psf": 1404,
+    "yield": 0,
+    "growth": 2.0,
+    "volume": 527
+  },
+  {
+    "rank": 119,
+    "town": "Condo - KIM SENG WALK",
+    "median_price": 3275000,
+    "median_psf": 2434,
+    "yield": 0,
+    "growth": 1.95,
+    "volume": 16
+  },
+  {
+    "rank": 120,
+    "town": "Condo - ZION PROMENADE",
+    "median_price": 2053800,
+    "median_psf": 2929,
+    "yield": 0,
+    "growth": 1.79,
+    "volume": 388
+  },
+  {
+    "rank": 121,
+    "town": "Condo - COMPASSVALE ROAD",
+    "median_price": 1331500,
+    "median_psf": 1503,
+    "yield": 0,
+    "growth": 1.3,
+    "volume": 104
+  },
+  {
+    "rank": 122,
+    "town": "SEMBAWANG",
+    "median_price": 550000,
+    "median_psf": 519,
+    "yield": 6.42,
+    "growth": -5.17,
+    "volume": 1457
+  },
+  {
+    "rank": 123,
+    "town": "Condo - HOLLAND GROVE ROAD",
+    "median_price": 1891050,
+    "median_psf": 2421,
+    "yield": 0,
+    "growth": 1.16,
+    "volume": 14
+  },
+  {
+    "rank": 124,
+    "town": "Condo - SIGLAP LINK",
+    "median_price": 1450000,
+    "median_psf": 2258,
+    "yield": 0,
+    "growth": 1.09,
+    "volume": 111
+  },
+  {
+    "rank": 125,
+    "town": "QUEENSTOWN",
+    "median_price": 420000,
+    "median_psf": 584,
+    "yield": 5.58,
+    "growth": -4.78,
+    "volume": 6353
+  },
+  {
+    "rank": 126,
+    "town": "Condo - BRADDELL ROAD",
+    "median_price": 1442000,
+    "median_psf": 1559,
+    "yield": 0,
+    "growth": 0.66,
+    "volume": 35
+  },
+  {
+    "rank": 127,
+    "town": "Condo - JALAN AYER",
+    "median_price": 819000,
+    "median_psf": 1557,
+    "yield": 0,
+    "growth": 0.24,
+    "volume": 10
+  },
+  {
+    "rank": 128,
+    "town": "Condo - MARINA BOULEVARD",
+    "median_price": 1744000,
+    "median_psf": 2058,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 224
+  },
+  {
+    "rank": 129,
+    "town": "Condo - PULASAN ROAD",
+    "median_price": 1750000,
+    "median_psf": 1548,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 130,
+    "town": "Condo - PUNGGOL CENTRAL",
+    "median_price": 1135000,
+    "median_psf": 1639,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 187
+  },
+  {
+    "rank": 131,
+    "town": "Condo - PUNGGOL FIELD WALK",
+    "median_price": 1310000,
+    "median_psf": 1314,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 79
+  },
+  {
+    "rank": 132,
+    "town": "Condo - PUNGGOL WALK",
+    "median_price": 1502500,
+    "median_psf": 1524,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 110
+  },
+  {
+    "rank": 133,
+    "town": "Condo - QUEEN ASTRID GARDENS",
+    "median_price": 5500000,
+    "median_psf": 2281,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 134,
+    "town": "Condo - QUEEN'S ROAD",
+    "median_price": 1500000,
+    "median_psf": 2483,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 135,
+    "town": "Condo - BALMORAL CRESCENT",
+    "median_price": 3765000,
+    "median_psf": 2316,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 136,
+    "town": "Condo - RACE COURSE LANE",
+    "median_price": 757500,
+    "median_psf": 1693,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 137,
+    "town": "Condo - LORONG SARHAD",
+    "median_price": 2084000,
+    "median_psf": 1418,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 138,
+    "town": "Condo - RACE COURSE ROAD",
+    "median_price": 890000,
+    "median_psf": 1565,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 25
+  },
+  {
+    "rank": 139,
+    "town": "Condo - RAMBAI ROAD",
+    "median_price": 1795000,
+    "median_psf": 1638,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 140,
+    "town": "Condo - RAMBUTAN ROAD",
+    "median_price": 1080000,
+    "median_psf": 1371,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 141,
+    "town": "Condo - RANGOON ROAD",
+    "median_price": 828000,
+    "median_psf": 1460,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 142,
+    "town": "Condo - LORONG SALLEH",
+    "median_price": 670000,
+    "median_psf": 1595,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 143,
+    "town": "Condo - RICHARDS AVENUE",
+    "median_price": 1128500,
+    "median_psf": 1539,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 144,
+    "town": "Condo - RIDGEWOOD CLOSE",
+    "median_price": 3450000,
+    "median_psf": 2088,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 45
+  },
+  {
+    "rank": 145,
+    "town": "Condo - RIDLEY PARK",
+    "median_price": 2680000,
+    "median_psf": 2397,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 146,
+    "town": "Condo - RIFLE RANGE ROAD",
+    "median_price": 1685000,
+    "median_psf": 2129,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 65
+  },
+  {
+    "rank": 147,
+    "town": "Condo - PROME ROAD",
+    "median_price": 1630000,
+    "median_psf": 1730,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 148,
+    "town": "Condo - PRINCE CHARLES CRESCENT",
+    "median_price": 1822500,
+    "median_psf": 1978,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 230
+  },
+  {
+    "rank": 149,
+    "town": "Condo - PRINSEP LINK",
+    "median_price": 1640000,
+    "median_psf": 1571,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 150,
+    "town": "Condo - PEMIMPIN DRIVE",
+    "median_price": 1545000,
+    "median_psf": 1470,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 151,
+    "town": "Condo - LOWER DELTA ROAD",
+    "median_price": 2900000,
+    "median_psf": 1645,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 152,
+    "town": "Condo - BARTLEY ROAD",
+    "median_price": 942500,
+    "median_psf": 1667,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 22
+  },
+  {
+    "rank": 153,
+    "town": "Condo - PAYA LEBAR CRESCENT",
+    "median_price": 1830000,
+    "median_psf": 1633,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 154,
+    "town": "Condo - PEACH GARDEN",
+    "median_price": 5075000,
+    "median_psf": 1835,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 155,
+    "town": "Condo - BALMORAL ROAD",
+    "median_price": 3400000,
+    "median_psf": 2564,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 68
+  },
+  {
+    "rank": 156,
+    "town": "Condo - BALMORAL PARK",
+    "median_price": 3525000,
+    "median_psf": 2230,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 36
+  },
+  {
+    "rank": 157,
+    "town": "Condo - PEGU ROAD",
+    "median_price": 812088,
+    "median_psf": 1515,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 158,
+    "town": "Condo - PEPYS ROAD",
+    "median_price": 4500000,
+    "median_psf": 1407,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 159,
+    "town": "Condo - RIVER VALLEY GREEN",
+    "median_price": 1856500,
+    "median_psf": 3125,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 482
+  },
+  {
+    "rank": 160,
+    "town": "Condo - PETAIN ROAD",
+    "median_price": 737000,
+    "median_psf": 1592,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 161,
+    "town": "Condo - PHILLIPS AVENUE",
+    "median_price": 1410000,
+    "median_psf": 1365,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 162,
+    "town": "Condo - PHOENIX AVENUE",
+    "median_price": 1292820,
+    "median_psf": 1887,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 163,
+    "town": "Condo - LORONG STANGEE",
+    "median_price": 2355600,
+    "median_psf": 1563,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 164,
+    "town": "Condo - POH HUAT ROAD",
+    "median_price": 1900000,
+    "median_psf": 1393,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 165,
+    "town": "Condo - LORONG SARINA",
+    "median_price": 1560000,
+    "median_psf": 1376,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 166,
+    "town": "Condo - POTONG PASIR AVENUE 1",
+    "median_price": 1387000,
+    "median_psf": 1930,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 244
+  },
+  {
+    "rank": 167,
+    "town": "Condo - RIVER VALLEY CLOSE",
+    "median_price": 2205000,
+    "median_psf": 3025,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 104
+  },
+  {
+    "rank": 168,
+    "town": "Condo - RIVER VALLEY GROVE",
+    "median_price": 2299000,
+    "median_psf": 2227,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 169,
+    "town": "Condo - LORONG PUNTONG",
+    "median_price": 1444000,
+    "median_psf": 1875,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 58
+  },
+  {
+    "rank": 170,
+    "town": "Condo - SERANGOON NORTH VIEW",
+    "median_price": 1260000,
+    "median_psf": 1817,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 180
+  },
+  {
+    "rank": 171,
+    "town": "Condo - SCIENCE PARK DRIVE",
+    "median_price": 2158000,
+    "median_psf": 2464,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 341
+  },
+  {
+    "rank": 172,
+    "town": "Condo - SEA AVENUE",
+    "median_price": 2225000,
+    "median_psf": 1902,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 173,
+    "town": "Condo - SELETAR ROAD",
+    "median_price": 1120000,
+    "median_psf": 1298,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 122
+  },
+  {
+    "rank": 174,
+    "town": "Condo - SEMBAWANG DRIVE",
+    "median_price": 1310400,
+    "median_psf": 939,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 175,
+    "town": "Condo - SEMBAWANG ROAD",
+    "median_price": 1845000,
+    "median_psf": 1219,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 28
+  },
+  {
+    "rank": 176,
+    "town": "Condo - SERANGOON AVENUE 2",
+    "median_price": 1700000,
+    "median_psf": 1532,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 47
+  },
+  {
+    "rank": 177,
+    "town": "Condo - SERANGOON AVENUE 3",
+    "median_price": 1824000,
+    "median_psf": 1579,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 156
+  },
+  {
+    "rank": 178,
+    "town": "Condo - SERANGOON ROAD",
+    "median_price": 1284000,
+    "median_psf": 1689,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 52
+  },
+  {
+    "rank": 179,
+    "town": "Condo - SANDY LANE",
+    "median_price": 1310000,
+    "median_psf": 1859,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 180,
+    "town": "Condo - SERAYA CRESCENT",
+    "median_price": 1800000,
+    "median_psf": 2050,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 181,
+    "town": "Condo - SERAYA LANE",
+    "median_price": 2018888,
+    "median_psf": 1602,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 182,
+    "town": "Condo - SERAYA ROAD",
+    "median_price": 1900000,
+    "median_psf": 1898,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 183,
+    "town": "Condo - SHAN ROAD",
+    "median_price": 1654000,
+    "median_psf": 1657,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 24
+  },
+  {
+    "rank": 184,
+    "town": "Condo - SHANGHAI ROAD",
+    "median_price": 1590000,
+    "median_psf": 2017,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 185,
+    "town": "Condo - SHENTON WAY",
+    "median_price": 1741500,
+    "median_psf": 1911,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 166
+  },
+  {
+    "rank": 186,
+    "town": "Condo - SHREWSBURY ROAD",
+    "median_price": 1840000,
+    "median_psf": 2241,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 187,
+    "town": "Condo - SARKIES ROAD",
+    "median_price": 1808000,
+    "median_psf": 2096,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 188,
+    "town": "Condo - SAMPAN PLACE",
+    "median_price": 2510000,
+    "median_psf": 1808,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 189,
+    "town": "Condo - LOYANG AVENUE",
+    "median_price": 1700000,
+    "median_psf": 959,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 190,
+    "town": "Condo - ROBIN WALK",
+    "median_price": 3608000,
+    "median_psf": 2483,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 191,
+    "town": "Condo - RIVERVALE CRESCENT",
+    "median_price": 1230000,
+    "median_psf": 1009,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 50
+  },
+  {
+    "rank": 192,
+    "town": "Condo - RIVIERA DRIVE",
+    "median_price": 2515000,
+    "median_psf": 1873,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 193,
+    "town": "Condo - ROBERTSON QUAY",
+    "median_price": 2760000,
+    "median_psf": 2306,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 71
+  },
+  {
+    "rank": 194,
+    "town": "Condo - BELMONT ROAD",
+    "median_price": 4380000,
+    "median_psf": 2119,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 195,
+    "town": "Condo - ROBEY CRESCENT",
+    "median_price": 905000,
+    "median_psf": 1478,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 196,
+    "town": "Condo - ROBIN DRIVE",
+    "median_price": 1865000,
+    "median_psf": 2397,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 197,
+    "town": "Condo - ROBIN ROAD",
+    "median_price": 1250000,
+    "median_psf": 2301,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 33
+  },
+  {
+    "rank": 198,
+    "town": "Condo - ROBINSON ROAD",
+    "median_price": 1180000,
+    "median_psf": 2323,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 199,
+    "town": "Condo - SALAM WALK",
+    "median_price": 2030000,
+    "median_psf": 1300,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 200,
+    "town": "Condo - ROCHESTER DRIVE",
+    "median_price": 1970000,
+    "median_psf": 1571,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 61
+  },
+  {
+    "rank": 201,
+    "town": "Condo - RODYK STREET",
+    "median_price": 2950000,
+    "median_psf": 2309,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 28
+  },
+  {
+    "rank": 202,
+    "town": "Condo - ROSE LANE",
+    "median_price": 1725000,
+    "median_psf": 1509,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 203,
+    "town": "Condo - BALMEG HILL",
+    "median_price": 2765000,
+    "median_psf": 1676,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 18
+  },
+  {
+    "rank": 204,
+    "town": "Condo - ROSYTH AVENUE",
+    "median_price": 1010000,
+    "median_psf": 1340,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 205,
+    "town": "Condo - ROSYTH ROAD",
+    "median_price": 1495000,
+    "median_psf": 1292,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 206,
+    "town": "Condo - SAINT BARNABAS LANE",
+    "median_price": 1816000,
+    "median_psf": 2582,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 83
+  },
+  {
+    "rank": 207,
+    "town": "Condo - BASSEIN ROAD",
+    "median_price": 861500,
+    "median_psf": 1827,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 208,
+    "town": "Condo - PASIR RIS HEIGHTS",
+    "median_price": 1475000,
+    "median_psf": 1362,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 62
+  },
+  {
+    "rank": 209,
+    "town": "Condo - MARINA VIEW",
+    "median_price": 2850000,
+    "median_psf": 3352,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 210,
+    "town": "Condo - MEYER PLACE",
+    "median_price": 2550000,
+    "median_psf": 2729,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 211,
+    "town": "Condo - MIDDLE ROAD",
+    "median_price": 1935000,
+    "median_psf": 2809,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 54
+  },
+  {
+    "rank": 212,
+    "town": "Condo - MILTONIA CLOSE",
+    "median_price": 1100000,
+    "median_psf": 1195,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 143
+  },
+  {
+    "rank": 213,
+    "town": "Condo - MIMOSA CRESCENT",
+    "median_price": 2350000,
+    "median_psf": 1242,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 214,
+    "town": "Condo - MIMOSA ROAD",
+    "median_price": 2680000,
+    "median_psf": 1320,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 215,
+    "town": "Condo - MINBU ROAD",
+    "median_price": 1650000,
+    "median_psf": 1765,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 35
+  },
+  {
+    "rank": 216,
+    "town": "Condo - MISTRI ROAD",
+    "median_price": 1140000,
+    "median_psf": 1751,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 22
+  },
+  {
+    "rank": 217,
+    "town": "Condo - MARGARET DRIVE",
+    "median_price": 2254000,
+    "median_psf": 2762,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 513
+  },
+  {
+    "rank": 218,
+    "town": "Condo - MOHAMED SULTAN ROAD",
+    "median_price": 1690000,
+    "median_psf": 2292,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 219,
+    "town": "Condo - MOONSTONE LANE",
+    "median_price": 1510000,
+    "median_psf": 1417,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 25
+  },
+  {
+    "rank": 220,
+    "town": "Condo - MOULMEIN RISE",
+    "median_price": 2480000,
+    "median_psf": 2211,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 221,
+    "town": "Condo - MOULMEIN ROAD",
+    "median_price": 1688690,
+    "median_psf": 1957,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 222,
+    "town": "Condo - MOUNT ELIZABETH",
+    "median_price": 4682444,
+    "median_psf": 1930,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 223,
+    "town": "Condo - BEDOK RESERVOIR VIEW",
+    "median_price": 1620000,
+    "median_psf": 1269,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 119
+  },
+  {
+    "rank": 224,
+    "town": "Condo - MOUNT FABER ROAD",
+    "median_price": 2050000,
+    "median_psf": 1512,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 225,
+    "town": "Condo - MOUNT SINAI DRIVE",
+    "median_price": 2480000,
+    "median_psf": 1846,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 33
+  },
+  {
+    "rank": 226,
+    "town": "Condo - MOUNT SINAI LANE",
+    "median_price": 3350000,
+    "median_psf": 1799,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 227,
+    "town": "Condo - MANGIS ROAD",
+    "median_price": 1580000,
+    "median_psf": 1595,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 228,
+    "town": "Condo - MEYER ROAD",
+    "median_price": 3363000,
+    "median_psf": 2728,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 374
+  },
+  {
+    "rank": 229,
+    "town": "Condo - BEDOK RIA CRESCENT",
+    "median_price": 1460000,
+    "median_psf": 1099,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 37
+  },
+  {
+    "rank": 230,
+    "town": "Condo - MOUNT VERNON ROAD",
+    "median_price": 1600000,
+    "median_psf": 1835,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 135
+  },
+  {
+    "rank": 231,
+    "town": "Condo - MERGUI ROAD",
+    "median_price": 1767500,
+    "median_psf": 1677,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 58
+  },
+  {
+    "rank": 232,
+    "town": "Condo - MARINA WAY",
+    "median_price": 2280000,
+    "median_psf": 2074,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 55
+  },
+  {
+    "rank": 233,
+    "town": "Condo - MARINE PARADE",
+    "median_price": 3025000,
+    "median_psf": 1790,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 234,
+    "town": "Condo - MARIGOLD DRIVE",
+    "median_price": 2450000,
+    "median_psf": 709,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 235,
+    "town": "Condo - MARINE VISTA",
+    "median_price": 1550000,
+    "median_psf": 1024,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 82
+  },
+  {
+    "rank": 236,
+    "town": "Condo - MARNE ROAD",
+    "median_price": 1168888,
+    "median_psf": 1753,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 237,
+    "town": "Condo - MARSHALL ROAD",
+    "median_price": 1000000,
+    "median_psf": 1826,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 238,
+    "town": "Condo - MARIAM WAY",
+    "median_price": 1405000,
+    "median_psf": 1045,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 40
+  },
+  {
+    "rank": 239,
+    "town": "Condo - MARTABAN ROAD",
+    "median_price": 1800444,
+    "median_psf": 1543,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 240,
+    "town": "Condo - MARTIA ROAD",
+    "median_price": 2325000,
+    "median_psf": 1595,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 241,
+    "town": "Condo - CACTUS ROAD",
+    "median_price": 1000000,
+    "median_psf": 1521,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 242,
+    "town": "Condo - MARGATE ROAD",
+    "median_price": 1850000,
+    "median_psf": 2052,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 243,
+    "town": "Condo - MARTIN ROAD",
+    "median_price": 3124000,
+    "median_psf": 2560,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 18
+  },
+  {
+    "rank": 244,
+    "town": "Condo - MARYMOUNT TERRACE",
+    "median_price": 2025000,
+    "median_psf": 1752,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 245,
+    "town": "Condo - MATTAR ROAD",
+    "median_price": 1448500,
+    "median_psf": 2130,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 58
+  },
+  {
+    "rank": 246,
+    "town": "Condo - MCCALLUM STREET",
+    "median_price": 1056500,
+    "median_psf": 2030,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 50
+  },
+  {
+    "rank": 247,
+    "town": "Condo - MEDIA CIRCLE",
+    "median_price": 1763000,
+    "median_psf": 2498,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 251
+  },
+  {
+    "rank": 248,
+    "town": "Condo - MEI HWAN DRIVE",
+    "median_price": 2915000,
+    "median_psf": 2224,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 249,
+    "town": "Condo - MOUNT SOPHIA",
+    "median_price": 1489444,
+    "median_psf": 2016,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 120
+  },
+  {
+    "rank": 250,
+    "town": "Condo - MOUNTBATTEN ROAD",
+    "median_price": 1900000,
+    "median_psf": 1630,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 251,
+    "town": "Condo - LOYANG BESAR CLOSE",
+    "median_price": 1328000,
+    "median_psf": 1065,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 252,
+    "town": "Condo - OWEN ROAD",
+    "median_price": 900000,
+    "median_psf": 1546,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 253,
+    "town": "Condo - SIGLAP DRIVE",
+    "median_price": 2700000,
+    "median_psf": 1433,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 254,
+    "town": "Condo - OXLEY RISE",
+    "median_price": 2150000,
+    "median_psf": 2295,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 55
+  },
+  {
+    "rank": 255,
+    "town": "Condo - OXLEY ROAD",
+    "median_price": 2450000,
+    "median_psf": 1815,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 256,
+    "town": "Condo - PALM GROVE AVENUE",
+    "median_price": 2100000,
+    "median_psf": 1432,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 257,
+    "town": "Condo - PALM ROAD",
+    "median_price": 1880000,
+    "median_psf": 1565,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 258,
+    "town": "Condo - PANDAN VALLEY",
+    "median_price": 3141900,
+    "median_psf": 1486,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 40
+  },
+  {
+    "rank": 259,
+    "town": "Condo - PARBURY AVENUE",
+    "median_price": 1949628,
+    "median_psf": 1622,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 260,
+    "town": "Condo - PARI DEDAP WALK",
+    "median_price": 1305000,
+    "median_psf": 1123,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 261,
+    "town": "Condo - MACPHERSON ROAD",
+    "median_price": 1355000,
+    "median_psf": 1789,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 262,
+    "town": "Condo - PARK ROAD",
+    "median_price": 1118888,
+    "median_psf": 1251,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 25
+  },
+  {
+    "rank": 263,
+    "town": "Condo - BEDOK SOUTH AVENUE 1",
+    "median_price": 1660000,
+    "median_psf": 1217,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 264,
+    "town": "Condo - LUCKY HEIGHTS",
+    "median_price": 2190000,
+    "median_psf": 1681,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 265,
+    "town": "Condo - PARK VALE",
+    "median_price": 2450000,
+    "median_psf": 1787,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 266,
+    "town": "Condo - PASIR PANJANG CLOSE",
+    "median_price": 1755000,
+    "median_psf": 1315,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 267,
+    "town": "Condo - PASIR PANJANG HILL",
+    "median_price": 1888888,
+    "median_psf": 1579,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 268,
+    "town": "Condo - PASIR PANJANG ROAD",
+    "median_price": 1500000,
+    "median_psf": 1700,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 192
+  },
+  {
+    "rank": 269,
+    "town": "Condo - PASIR RIS DRIVE 8",
+    "median_price": 1735000,
+    "median_psf": 1999,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 64
+  },
+  {
+    "rank": 270,
+    "town": "Condo - OXFORD ROAD",
+    "median_price": 1460000,
+    "median_psf": 1284,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 35
+  },
+  {
+    "rank": 271,
+    "town": "Condo - ORCHARD ROAD",
+    "median_price": 2450000,
+    "median_psf": 2294,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 272,
+    "town": "Condo - NAPIER ROAD",
+    "median_price": 6740000,
+    "median_psf": 3348,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 273,
+    "town": "Condo - ORANGE GROVE ROAD",
+    "median_price": 4890000,
+    "median_psf": 2211,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 274,
+    "town": "Condo - NASSIM HILL",
+    "median_price": 3130000,
+    "median_psf": 3369,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 99
+  },
+  {
+    "rank": 275,
+    "town": "Condo - MANDALAY ROAD",
+    "median_price": 1854444,
+    "median_psf": 1752,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 32
+  },
+  {
+    "rank": 276,
+    "town": "Condo - BEDOK RESERVOIR ROAD",
+    "median_price": 1780000,
+    "median_psf": 1548,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 277
+  },
+  {
+    "rank": 277,
+    "town": "Condo - NEW BRIDGE ROAD",
+    "median_price": 1460000,
+    "median_psf": 2177,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 278,
+    "town": "Condo - NEWTON ROAD",
+    "median_price": 2190444,
+    "median_psf": 2212,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 152
+  },
+  {
+    "rank": 279,
+    "town": "Condo - NIM ROAD",
+    "median_price": 2400000,
+    "median_psf": 1240,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 280,
+    "town": "Condo - BEDOK NORTH DRIVE",
+    "median_price": 1600000,
+    "median_psf": 1789,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 57
+  },
+  {
+    "rank": 281,
+    "town": "Condo - NORTH BRIDGE ROAD",
+    "median_price": 1730000,
+    "median_psf": 1889,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 29
+  },
+  {
+    "rank": 282,
+    "town": "Condo - BEDOK ROAD",
+    "median_price": 2264444,
+    "median_psf": 1658,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 283,
+    "town": "Condo - BEATTY ROAD",
+    "median_price": 1443444,
+    "median_psf": 2080,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 68
+  },
+  {
+    "rank": 284,
+    "town": "Condo - OCEAN WAY",
+    "median_price": 2990000,
+    "median_psf": 1804,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 107
+  },
+  {
+    "rank": 285,
+    "town": "Condo - OEI TIONG HAM PARK",
+    "median_price": 3180000,
+    "median_psf": 1759,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 286,
+    "town": "Condo - OLD UPPER THOMSON ROAD",
+    "median_price": 1474400,
+    "median_psf": 1921,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 287,
+    "town": "Condo - ONAN ROAD",
+    "median_price": 1639000,
+    "median_psf": 1485,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 288,
+    "town": "Condo - ONE TREE HILL",
+    "median_price": 2785000,
+    "median_psf": 2320,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 289,
+    "town": "Condo - ONE-NORTH GATEWAY",
+    "median_price": 1805000,
+    "median_psf": 1641,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 54
+  },
+  {
+    "rank": 290,
+    "town": "Condo - OPAL CRESCENT",
+    "median_price": 666666,
+    "median_psf": 1460,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 291,
+    "town": "Condo - OXLEY GARDEN",
+    "median_price": 3100000,
+    "median_psf": 1882,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 292,
+    "town": "Condo - SIN MING ROAD",
+    "median_price": 1672000,
+    "median_psf": 1763,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 49
+  },
+  {
+    "rank": 293,
+    "town": "Condo - AVA ROAD",
+    "median_price": 1860000,
+    "median_psf": 1499,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 294,
+    "town": "Condo - ARTHUR ROAD",
+    "median_price": 3103500,
+    "median_psf": 2453,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 72
+  },
+  {
+    "rank": 295,
+    "town": "Condo - WOODLEIGH CLOSE",
+    "median_price": 1900000,
+    "median_psf": 1778,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 73
+  },
+  {
+    "rank": 296,
+    "town": "Condo - WOODLEIGH LANE",
+    "median_price": 1465000,
+    "median_psf": 2204,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 145
+  },
+  {
+    "rank": 297,
+    "town": "Condo - WOODSVILLE CLOSE",
+    "median_price": 1438888,
+    "median_psf": 1749,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 298,
+    "town": "Condo - WOOLLERTON PARK",
+    "median_price": 7850000,
+    "median_psf": 2431,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 299,
+    "town": "Condo - YAN KIT ROAD",
+    "median_price": 2180000,
+    "median_psf": 2253,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 300,
+    "town": "Condo - YEW SIANG ROAD",
+    "median_price": 2430500,
+    "median_psf": 2689,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 166
+  },
+  {
+    "rank": 301,
+    "town": "Condo - YIO CHU KANG ROAD",
+    "median_price": 1550000,
+    "median_psf": 1339,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 188
+  },
+  {
+    "rank": 302,
+    "town": "Condo - ALJUNIED ROAD",
+    "median_price": 680000,
+    "median_psf": 1522,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 303,
+    "town": "Condo - ALEXANDRA VIEW",
+    "median_price": 1930000,
+    "median_psf": 2102,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 305
+  },
+  {
+    "rank": 304,
+    "town": "Condo - YISHUN RING ROAD",
+    "median_price": 1117944,
+    "median_psf": 1376,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 50
+  },
+  {
+    "rank": 305,
+    "town": "Condo - YISHUN STREET 81",
+    "median_price": 1035000,
+    "median_psf": 975,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 78
+  },
+  {
+    "rank": 306,
+    "town": "Condo - YONG SIAK STREET",
+    "median_price": 2225000,
+    "median_psf": 2013,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 307,
+    "town": "Condo - YOUNGBERG TERRACE",
+    "median_price": 2938000,
+    "median_psf": 1679,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 308,
+    "town": "Condo - ZEHNDER ROAD",
+    "median_price": 2488888,
+    "median_psf": 1516,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 309,
+    "town": "Condo - ZION CLOSE",
+    "median_price": 1647500,
+    "median_psf": 2264,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 310,
+    "town": "Condo - ZION ROAD",
+    "median_price": 1600000,
+    "median_psf": 2144,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 311,
+    "town": "EC - ANG MO KIO AVENUE 9",
+    "median_price": 1800000,
+    "median_psf": 1240,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 312,
+    "town": "EC - BANGKIT ROAD",
+    "median_price": 1300000,
+    "median_psf": 992,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 313,
+    "town": "EC - BISHAN STREET 11",
+    "median_price": 2155000,
+    "median_psf": 1587,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 314,
+    "town": "Condo - WOODGROVE DRIVE",
+    "median_price": 1270000,
+    "median_psf": 973,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 34
+  },
+  {
+    "rank": 315,
+    "town": "Condo - WOODGROVE AVENUE",
+    "median_price": 900000,
+    "median_psf": 1268,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 39
+  },
+  {
+    "rank": 316,
+    "town": "Condo - WOO MON CHEW ROAD",
+    "median_price": 2780000,
+    "median_psf": 1635,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 317,
+    "town": "Condo - WATTEN ESTATE ROAD",
+    "median_price": 4200000,
+    "median_psf": 1885,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 318,
+    "town": "Condo - UPPER SERANGOON CRESCENT",
+    "median_price": 1292000,
+    "median_psf": 1405,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 127
+  },
+  {
+    "rank": 319,
+    "town": "Condo - UPPER SERANGOON ROAD",
+    "median_price": 1265000,
+    "median_psf": 1677,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 146
+  },
+  {
+    "rank": 320,
+    "town": "Condo - ANDERSON ROAD",
+    "median_price": 21060160,
+    "median_psf": 4692,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 321,
+    "town": "Condo - UPPER WELD ROAD",
+    "median_price": 1400000,
+    "median_psf": 1016,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 322,
+    "town": "Condo - ANAMALAI AVENUE",
+    "median_price": 2010175,
+    "median_psf": 2771,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 42
+  },
+  {
+    "rank": 323,
+    "town": "Condo - WALSHE ROAD",
+    "median_price": 4176500,
+    "median_psf": 2020,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 324,
+    "town": "Condo - WAN THO AVENUE",
+    "median_price": 1675000,
+    "median_psf": 1427,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 325,
+    "town": "Condo - WARINGIN PARK",
+    "median_price": 1864000,
+    "median_psf": 1342,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 326,
+    "town": "Condo - WATTEN VIEW",
+    "median_price": 4950000,
+    "median_psf": 1854,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 327,
+    "town": "Condo - WISHART ROAD",
+    "median_price": 1061444,
+    "median_psf": 2021,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 328,
+    "town": "Condo - WEST COAST DRIVE",
+    "median_price": 1901500,
+    "median_psf": 1638,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 48
+  },
+  {
+    "rank": 329,
+    "town": "Condo - WEST COAST RISE",
+    "median_price": 2424444,
+    "median_psf": 1660,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 330,
+    "town": "Condo - WEST COAST WAY",
+    "median_price": 1815000,
+    "median_psf": 1765,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 331,
+    "town": "Condo - WHAMPOA EAST",
+    "median_price": 1370000,
+    "median_psf": 1813,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 145
+  },
+  {
+    "rank": 332,
+    "town": "Condo - WHITLEY ROAD",
+    "median_price": 2725000,
+    "median_psf": 1682,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 333,
+    "town": "Condo - WILBY ROAD",
+    "median_price": 2925000,
+    "median_psf": 2234,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 36
+  },
+  {
+    "rank": 334,
+    "town": "Condo - WILKIE ROAD",
+    "median_price": 1515000,
+    "median_psf": 1737,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 335,
+    "town": "Condo - WILKIE TERRACE",
+    "median_price": 1216000,
+    "median_psf": 2194,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 336,
+    "town": "EC - BOON LAY DRIVE",
+    "median_price": 1290000,
+    "median_psf": 979,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 41
+  },
+  {
+    "rank": 337,
+    "town": "EC - BUKIT BATOK STREET 21",
+    "median_price": 1490800,
+    "median_psf": 1134,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 338,
+    "town": "EC - BUKIT BATOK WEST AVENUE 5",
+    "median_price": 1519000,
+    "median_psf": 1521,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 512
+  },
+  {
+    "rank": 339,
+    "town": "EC - WESTWOOD AVENUE",
+    "median_price": 1330000,
+    "median_psf": 1236,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 197
+  },
+  {
+    "rank": 340,
+    "town": "EC - SUMANG WALK",
+    "median_price": 1551500,
+    "median_psf": 1449,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 341,
+    "town": "EC - TAMPINES AVENUE 8",
+    "median_price": 1380000,
+    "median_psf": 1327,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 91
+  },
+  {
+    "rank": 342,
+    "town": "EC - TAMPINES STREET 62",
+    "median_price": 1569000,
+    "median_psf": 1756,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 963
+  },
+  {
+    "rank": 343,
+    "town": "EC - TAMPINES STREET 73",
+    "median_price": 1355000,
+    "median_psf": 1003,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 28
+  },
+  {
+    "rank": 344,
+    "town": "EC - TAMPINES STREET 86",
+    "median_price": 1555000,
+    "median_psf": 1560,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 345,
+    "town": "EC - TAO CHING ROAD",
+    "median_price": 1650000,
+    "median_psf": 1396,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 66
+  },
+  {
+    "rank": 346,
+    "town": "EC - TENGAH GARDEN WALK",
+    "median_price": 1650000,
+    "median_psf": 1479,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 27
+  },
+  {
+    "rank": 347,
+    "town": "EC - UPPER SERANGOON VIEW",
+    "median_price": 1600000,
+    "median_psf": 1306,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 96
+  },
+  {
+    "rank": 348,
+    "town": "EC - WOODLANDS AVENUE 6",
+    "median_price": 1405000,
+    "median_psf": 1262,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 68
+  },
+  {
+    "rank": 349,
+    "town": "EC - SENGKANG EAST AVENUE",
+    "median_price": 1375444,
+    "median_psf": 1313,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 118
+  },
+  {
+    "rank": 350,
+    "town": "EC - WOODLANDS DRIVE 16",
+    "median_price": 1231949,
+    "median_psf": 1113,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 161
+  },
+  {
+    "rank": 351,
+    "town": "EC - WOODLANDS DRIVE 72",
+    "median_price": 1135000,
+    "median_psf": 864,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 57
+  },
+  {
+    "rank": 352,
+    "town": "EC - WOODLANDS VIEW",
+    "median_price": 1230000,
+    "median_psf": 1262,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 120
+  },
+  {
+    "rank": 353,
+    "town": "EC - YIO CHU KANG ROAD",
+    "median_price": 1800000,
+    "median_psf": 1826,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 108
+  },
+  {
+    "rank": 354,
+    "town": "EC - YISHUN AVENUE 11",
+    "median_price": 1180000,
+    "median_psf": 1123,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 63
+  },
+  {
+    "rank": 355,
+    "town": "EC - YISHUN AVENUE 6",
+    "median_price": 1110000,
+    "median_psf": 896,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 356,
+    "town": "EC - YISHUN CLOSE",
+    "median_price": 1352112,
+    "median_psf": 1317,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 415
+  },
+  {
+    "rank": 357,
+    "town": "EC - YISHUN STREET 51",
+    "median_price": 1290000,
+    "median_psf": 1268,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 324
+  },
+  {
+    "rank": 358,
+    "town": "EC - SIMEI STREET 4",
+    "median_price": 1250000,
+    "median_psf": 1051,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 49
+  },
+  {
+    "rank": 359,
+    "town": "Condo - ADAM ROAD",
+    "median_price": 1950000,
+    "median_psf": 2015,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 360,
+    "town": "EC - BUKIT BATOK WEST AVENUE 8",
+    "median_price": 1691000,
+    "median_psf": 1481,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 359
+  },
+  {
+    "rank": 361,
+    "town": "EC - FERNVALE CLOSE",
+    "median_price": 1515000,
+    "median_psf": 1350,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 70
+  },
+  {
+    "rank": 362,
+    "town": "EC - CANBERRA CRESCENT",
+    "median_price": 1398000,
+    "median_psf": 1482,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 363,
+    "town": "Condo - AH SOO GARDEN",
+    "median_price": 1650000,
+    "median_psf": 1321,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 364,
+    "town": "EC - CANBERRA WALK",
+    "median_price": 1204000,
+    "median_psf": 1300,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 365,
+    "town": "EC - CHOA CHU KANG AVENUE 3",
+    "median_price": 1462500,
+    "median_psf": 1388,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 178
+  },
+  {
+    "rank": 366,
+    "town": "EC - CHOA CHU KANG STREET 64",
+    "median_price": 1320000,
+    "median_psf": 968,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 81
+  },
+  {
+    "rank": 367,
+    "town": "Condo - AH HOOD ROAD",
+    "median_price": 1590000,
+    "median_psf": 1540,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 368,
+    "town": "EC - EDGEDALE PLAINS",
+    "median_price": 1482500,
+    "median_psf": 1356,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 206
+  },
+  {
+    "rank": 369,
+    "town": "EC - EDGEFIELD PLAINS",
+    "median_price": 1614444,
+    "median_psf": 1394,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 68
+  },
+  {
+    "rank": 370,
+    "town": "EC - FERNVALE LANE",
+    "median_price": 1509000,
+    "median_psf": 1421,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 160
+  },
+  {
+    "rank": 371,
+    "town": "EC - RIVERVALE LINK",
+    "median_price": 1410000,
+    "median_psf": 1066,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 96
+  },
+  {
+    "rank": 372,
+    "town": "EC - HOUGANG AVENUE 7",
+    "median_price": 1356500,
+    "median_psf": 1044,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 62
+  },
+  {
+    "rank": 373,
+    "town": "EC - PASIR RIS DRIVE 1",
+    "median_price": 1470000,
+    "median_psf": 1335,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 53
+  },
+  {
+    "rank": 374,
+    "town": "EC - PASIR RIS DRIVE 3",
+    "median_price": 1228000,
+    "median_psf": 1002,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 375,
+    "town": "EC - PASIR RIS DRIVE 4",
+    "median_price": 1382500,
+    "median_psf": 1096,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 24
+  },
+  {
+    "rank": 376,
+    "town": "EC - PASIR RIS RISE",
+    "median_price": 1577500,
+    "median_psf": 1251,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 60
+  },
+  {
+    "rank": 377,
+    "town": "EC - PASIR RIS STREET 72",
+    "median_price": 1269000,
+    "median_psf": 1068,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 62
+  },
+  {
+    "rank": 378,
+    "town": "EC - PUNGGOL DRIVE",
+    "median_price": 1575000,
+    "median_psf": 1407,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 79
+  },
+  {
+    "rank": 379,
+    "town": "EC - PUNGGOL FIELD WALK",
+    "median_price": 1540000,
+    "median_psf": 1317,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 53
+  },
+  {
+    "rank": 380,
+    "town": "Condo - UPPER EAST COAST ROAD",
+    "median_price": 1884500,
+    "median_psf": 1876,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 232
+  },
+  {
+    "rank": 381,
+    "town": "Condo - UPPER CROSS STREET",
+    "median_price": 2144000,
+    "median_psf": 903,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 382,
+    "town": "Condo - UPPER CHANGI ROAD NORTH",
+    "median_price": 1230000,
+    "median_psf": 1750,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 39
+  },
+  {
+    "rank": 383,
+    "town": "Condo - STEVENS CLOSE",
+    "median_price": 2250000,
+    "median_psf": 1804,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 384,
+    "town": "Condo - SPRINGSIDE GREEN",
+    "median_price": 1357500,
+    "median_psf": 1479,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 385,
+    "town": "Condo - SPRINGSIDE WALK",
+    "median_price": 1049444,
+    "median_psf": 1505,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 386,
+    "town": "Condo - ST. FRANCIS ROAD",
+    "median_price": 1300000,
+    "median_psf": 1185,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 387,
+    "town": "Condo - ST. MARTIN'S DRIVE",
+    "median_price": 3750000,
+    "median_psf": 2240,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 388,
+    "town": "Condo - ST. MICHAEL'S ROAD",
+    "median_price": 1550000,
+    "median_psf": 1520,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 55
+  },
+  {
+    "rank": 389,
+    "town": "Condo - ANTHONY ROAD",
+    "median_price": 3850000,
+    "median_psf": 1736,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 18
+  },
+  {
+    "rank": 390,
+    "town": "Condo - ST. THOMAS WALK",
+    "median_price": 3705000,
+    "median_psf": 2341,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 66
+  },
+  {
+    "rank": 391,
+    "town": "Condo - STAMFORD ROAD",
+    "median_price": 10966600,
+    "median_psf": 3488,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 392,
+    "town": "Condo - STEVENS DRIVE",
+    "median_price": 2954000,
+    "median_psf": 2166,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 393,
+    "town": "Condo - SOUTH BRIDGE ROAD",
+    "median_price": 1720000,
+    "median_psf": 986,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 394,
+    "town": "Condo - STEVENS ROAD",
+    "median_price": 1365000,
+    "median_psf": 2079,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 21
+  },
+  {
+    "rank": 395,
+    "town": "Condo - STILL ROAD",
+    "median_price": 2104500,
+    "median_psf": 2300,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 18
+  },
+  {
+    "rank": 396,
+    "town": "Condo - STILL ROAD SOUTH",
+    "median_price": 1059000,
+    "median_psf": 1819,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 397,
+    "town": "Condo - STURDEE ROAD",
+    "median_price": 1950000,
+    "median_psf": 1564,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 38
+  },
+  {
+    "rank": 398,
+    "town": "Condo - SUFFOLK ROAD",
+    "median_price": 1800000,
+    "median_psf": 1706,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 399,
+    "town": "Condo - SUFFOLK WALK",
+    "median_price": 3800000,
+    "median_psf": 2527,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 400,
+    "town": "Condo - SUNBIRD ROAD",
+    "median_price": 1428000,
+    "median_psf": 1096,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 401,
+    "town": "Condo - ANSON ROAD",
+    "median_price": 1385000,
+    "median_psf": 1206,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 402,
+    "town": "Condo - SOUTH BUONA VISTA ROAD",
+    "median_price": 1289000,
+    "median_psf": 1951,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 110
+  },
+  {
+    "rank": 403,
+    "town": "Condo - SOMMERVILLE WALK",
+    "median_price": 1344000,
+    "median_psf": 1503,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 404,
+    "town": "Condo - SUNSET WAY",
+    "median_price": 2400000,
+    "median_psf": 1574,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 37
+  },
+  {
+    "rank": 405,
+    "town": "Condo - LORONG MARZUKI",
+    "median_price": 1580000,
+    "median_psf": 1411,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 406,
+    "town": "Condo - SIMEI RISE",
+    "median_price": 1400000,
+    "median_psf": 1095,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 143
+  },
+  {
+    "rank": 407,
+    "town": "Condo - SIMEI STREET 1",
+    "median_price": 940000,
+    "median_psf": 914,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 143
+  },
+  {
+    "rank": 408,
+    "town": "Condo - SIMEI STREET 3",
+    "median_price": 1260000,
+    "median_psf": 1180,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 130
+  },
+  {
+    "rank": 409,
+    "town": "Condo - SIMEI STREET 4",
+    "median_price": 1699400,
+    "median_psf": 1284,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 120
+  },
+  {
+    "rank": 410,
+    "town": "Condo - SIMON LANE",
+    "median_price": 1860000,
+    "median_psf": 1588,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 411,
+    "town": "Condo - ARNASALAM CHETTY ROAD",
+    "median_price": 2400000,
+    "median_psf": 2349,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 412,
+    "town": "Condo - ARDMORE PARK",
+    "median_price": 11500000,
+    "median_psf": 4090,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 33
+  },
+  {
+    "rank": 413,
+    "town": "Condo - SIN MING AVENUE",
+    "median_price": 3200000,
+    "median_psf": 1807,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 414,
+    "town": "Condo - ARCADIA ROAD",
+    "median_price": 2890000,
+    "median_psf": 1242,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 38
+  },
+  {
+    "rank": 415,
+    "town": "Condo - SOMMERVILLE ROAD",
+    "median_price": 1830000,
+    "median_psf": 1441,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 416,
+    "town": "Condo - SINARAN DRIVE",
+    "median_price": 2250000,
+    "median_psf": 2019,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 51
+  },
+  {
+    "rank": 417,
+    "town": "Condo - SING AVENUE",
+    "median_price": 1864444,
+    "median_psf": 1317,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 418,
+    "town": "Condo - SING JOO WALK",
+    "median_price": 750000,
+    "median_psf": 1760,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 419,
+    "town": "Condo - SIRAT ROAD",
+    "median_price": 1910000,
+    "median_psf": 1119,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 420,
+    "town": "Condo - SIXTH AVENUE",
+    "median_price": 2955000,
+    "median_psf": 2119,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 421,
+    "town": "Condo - SLIM BARRACKS RISE",
+    "median_price": 2152000,
+    "median_psf": 2468,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 443
+  },
+  {
+    "rank": 422,
+    "town": "Condo - SOMME ROAD",
+    "median_price": 828000,
+    "median_psf": 1574,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 423,
+    "town": "Condo - SOMMERVILLE ESTATE ROAD",
+    "median_price": 4180000,
+    "median_psf": 2137,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 424,
+    "town": "Condo - SUNSET CLOSE",
+    "median_price": 1275000,
+    "median_psf": 1094,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 425,
+    "town": "Condo - SUNSHINE TERRACE",
+    "median_price": 1872500,
+    "median_psf": 1426,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 426,
+    "town": "Condo - ANG MO KIO AVENUE 1",
+    "median_price": 2260000,
+    "median_psf": 1414,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 427,
+    "town": "Condo - TOH YI DRIVE",
+    "median_price": 2500000,
+    "median_psf": 1229,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 428,
+    "town": "Condo - ANG MO KIO RISE",
+    "median_price": 2634000,
+    "median_psf": 2441,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 429,
+    "town": "Condo - TEMBELING ROAD",
+    "median_price": 2208000,
+    "median_psf": 1896,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 44
+  },
+  {
+    "rank": 430,
+    "town": "Condo - TEO KIM ENG ROAD",
+    "median_price": 1310000,
+    "median_psf": 1302,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 431,
+    "town": "Condo - TEOW HOCK AVENUE",
+    "median_price": 1035000,
+    "median_psf": 1265,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 432,
+    "town": "Condo - TERRASSE LANE",
+    "median_price": 1420000,
+    "median_psf": 1447,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 55
+  },
+  {
+    "rank": 433,
+    "town": "Condo - TESSENSOHN ROAD",
+    "median_price": 1928000,
+    "median_psf": 1706,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 434,
+    "town": "Condo - THOMSON ROAD",
+    "median_price": 2060000,
+    "median_psf": 1961,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 131
+  },
+  {
+    "rank": 435,
+    "town": "Condo - ANG MO KIO CENTRAL 3",
+    "median_price": 1788000,
+    "median_psf": 1398,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 55
+  },
+  {
+    "rank": 436,
+    "town": "Condo - TOH YI ROAD",
+    "median_price": 1880000,
+    "median_psf": 882,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 437,
+    "town": "Condo - TELOK BLANGAH DRIVE",
+    "median_price": 2368000,
+    "median_psf": 1617,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 438,
+    "town": "Condo - TOMLINSON ROAD",
+    "median_price": 6258000,
+    "median_psf": 3825,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 21
+  },
+  {
+    "rank": 439,
+    "town": "Condo - TONG WATT ROAD",
+    "median_price": 2440000,
+    "median_psf": 2264,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 40
+  },
+  {
+    "rank": 440,
+    "town": "Condo - TRANSIT ROAD",
+    "median_price": 1270000,
+    "median_psf": 1092,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 441,
+    "town": "Condo - TRAS STREET",
+    "median_price": 1608500,
+    "median_psf": 3337,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 442,
+    "town": "Condo - TREVOSE CRESCENT",
+    "median_price": 3389000,
+    "median_psf": 1982,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 43
+  },
+  {
+    "rank": 443,
+    "town": "Condo - TYRWHITT ROAD",
+    "median_price": 812044,
+    "median_psf": 1610,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 444,
+    "town": "Condo - UPPER BUKIT TIMAH VIEW",
+    "median_price": 2290000,
+    "median_psf": 1623,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 445,
+    "town": "Condo - UPPER CHANGI ROAD",
+    "median_price": 1487500,
+    "median_psf": 1232,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 446,
+    "town": "Condo - TELOK BLANGAH ROAD",
+    "median_price": 1928000,
+    "median_psf": 2157,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 53
+  },
+  {
+    "rank": 447,
+    "town": "Condo - TAY LIAN TECK ROAD",
+    "median_price": 1424000,
+    "median_psf": 1660,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 448,
+    "town": "Condo - SURREY ROAD",
+    "median_price": 2725545,
+    "median_psf": 2637,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 48
+  },
+  {
+    "rank": 449,
+    "town": "Condo - TAMPINES STREET 62",
+    "median_price": 1825500,
+    "median_psf": 2363,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1116
+  },
+  {
+    "rank": 450,
+    "town": "Condo - SWISS VIEW",
+    "median_price": 2740000,
+    "median_psf": 1581,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 451,
+    "town": "Condo - ANGULLIA PARK",
+    "median_price": 7000000,
+    "median_psf": 3033,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 452,
+    "town": "Condo - TAMAN NAKHODA",
+    "median_price": 5075000,
+    "median_psf": 1683,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 453,
+    "town": "Condo - TAMAN SERASI",
+    "median_price": 3650000,
+    "median_psf": 2262,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 454,
+    "town": "Condo - TAMARIND ROAD",
+    "median_price": 1560000,
+    "median_psf": 1199,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 455,
+    "town": "Condo - TAMPINES AVENUE 1",
+    "median_price": 1519000,
+    "median_psf": 1361,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 122
+  },
+  {
+    "rank": 456,
+    "town": "Condo - TAMPINES LANE",
+    "median_price": 1300000,
+    "median_psf": 1706,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 634
+  },
+  {
+    "rank": 457,
+    "town": "Condo - ANGKLONG LANE",
+    "median_price": 3000000,
+    "median_psf": 1787,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 458,
+    "town": "Condo - TAN KIM CHENG ROAD",
+    "median_price": 1750000,
+    "median_psf": 1588,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 459,
+    "town": "Condo - ANG MO KIO STREET 66",
+    "median_price": 1099000,
+    "median_psf": 1431,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 460,
+    "town": "Condo - TAN QUEE LAN STREET",
+    "median_price": 4113250,
+    "median_psf": 2992,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 112
+  },
+  {
+    "rank": 461,
+    "town": "Condo - TANAH MERAH KECHIL LINK",
+    "median_price": 1551500,
+    "median_psf": 2035,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 386
+  },
+  {
+    "rank": 462,
+    "town": "Condo - TANAH MERAH KECHIL ROAD",
+    "median_price": 1541250,
+    "median_psf": 1202,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 66
+  },
+  {
+    "rank": 463,
+    "town": "Condo - TANAH MERAH KECHIL ROAD SOUTH",
+    "median_price": 1249000,
+    "median_psf": 1155,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 464,
+    "town": "Condo - TANGLIN HILL",
+    "median_price": 3950000,
+    "median_psf": 2239,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 465,
+    "town": "Condo - TANGLIN RISE",
+    "median_price": 3008000,
+    "median_psf": 1927,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 466,
+    "town": "Condo - TANGLIN ROAD",
+    "median_price": 3900000,
+    "median_psf": 2392,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 55
+  },
+  {
+    "rank": 467,
+    "town": "Condo - TANJONG KATONG ROAD",
+    "median_price": 1680000,
+    "median_psf": 1768,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 59
+  },
+  {
+    "rank": 468,
+    "town": "Condo - LORONG MELAYU",
+    "median_price": 1260000,
+    "median_psf": 1506,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 469,
+    "town": "Condo - MARGOLIOUTH ROAD",
+    "median_price": 2500000,
+    "median_psf": 2074,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 470,
+    "town": "Condo - LORONG MARICAN",
+    "median_price": 695000,
+    "median_psf": 1556,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 471,
+    "town": "Condo - GOPENG STREET",
+    "median_price": 1185000,
+    "median_psf": 1858,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 82
+  },
+  {
+    "rank": 472,
+    "town": "Condo - GAMBIR WALK",
+    "median_price": 1260000,
+    "median_psf": 1562,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 473,
+    "town": "Condo - GATEWAY DRIVE",
+    "median_price": 1310000,
+    "median_psf": 1996,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 83
+  },
+  {
+    "rank": 474,
+    "town": "Condo - GERALD DRIVE",
+    "median_price": 1358000,
+    "median_psf": 1001,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 41
+  },
+  {
+    "rank": 475,
+    "town": "Condo - GEYLANG EAST AVENUE 1",
+    "median_price": 1490000,
+    "median_psf": 1721,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 85
+  },
+  {
+    "rank": 476,
+    "town": "Condo - GEYLANG EAST AVENUE 2",
+    "median_price": 1326000,
+    "median_psf": 1376,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 42
+  },
+  {
+    "rank": 477,
+    "town": "Condo - GEYLANG ROAD",
+    "median_price": 650000,
+    "median_psf": 1474,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 478,
+    "town": "Condo - GILSTEAD ROAD",
+    "median_price": 2140000,
+    "median_psf": 2278,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 45
+  },
+  {
+    "rank": 479,
+    "town": "Condo - GLASGOW ROAD",
+    "median_price": 735000,
+    "median_psf": 1448,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 480,
+    "town": "Condo - GOLDHILL AVENUE",
+    "median_price": 3730000,
+    "median_psf": 2322,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 481,
+    "town": "Condo - GRANGE GARDEN",
+    "median_price": 5615000,
+    "median_psf": 2807,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 482,
+    "town": "Condo - EVELYN ROAD",
+    "median_price": 2620000,
+    "median_psf": 2761,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 71
+  },
+  {
+    "rank": 483,
+    "town": "Condo - GRAY LANE",
+    "median_price": 1300000,
+    "median_psf": 1473,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 484,
+    "town": "Condo - GREEN LANE",
+    "median_price": 2401900,
+    "median_psf": 1450,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 485,
+    "town": "Condo - GREENWOOD AVENUE",
+    "median_price": 2038000,
+    "median_psf": 1769,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 486,
+    "town": "Condo - GUILLEMARD CRESCENT",
+    "median_price": 1630000,
+    "median_psf": 2091,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 487,
+    "town": "Condo - HACIENDA GROVE",
+    "median_price": 3050000,
+    "median_psf": 1690,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 488,
+    "town": "Condo - HAIG AVENUE",
+    "median_price": 1490000,
+    "median_psf": 1498,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 489,
+    "town": "Condo - HAIG LANE",
+    "median_price": 2108160,
+    "median_psf": 2185,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 490,
+    "town": "Condo - HAIGSVILLE DRIVE",
+    "median_price": 2460000,
+    "median_psf": 1668,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 491,
+    "town": "Condo - HANDY ROAD",
+    "median_price": 2035000,
+    "median_psf": 2653,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 53
+  },
+  {
+    "rank": 492,
+    "town": "Condo - FRASER STREET",
+    "median_price": 1590000,
+    "median_psf": 2192,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 63
+  },
+  {
+    "rank": 493,
+    "town": "Condo - BUANGKOK GREEN",
+    "median_price": 900000,
+    "median_psf": 934,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 494,
+    "town": "Condo - FORT ROAD",
+    "median_price": 1880000,
+    "median_psf": 2051,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 27
+  },
+  {
+    "rank": 495,
+    "town": "Condo - FORD AVENUE",
+    "median_price": 1180000,
+    "median_psf": 2055,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 496,
+    "town": "Condo - EVERITT ROAD NORTH",
+    "median_price": 1100000,
+    "median_psf": 1525,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 497,
+    "town": "Condo - EVERTON ROAD",
+    "median_price": 1900000,
+    "median_psf": 2818,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 498,
+    "town": "Condo - EWE BOON ROAD",
+    "median_price": 2239000,
+    "median_psf": 2256,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 70
+  },
+  {
+    "rank": 499,
+    "town": "Condo - FABER DRIVE",
+    "median_price": 1995000,
+    "median_psf": 1196,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 500,
+    "town": "Condo - FABER HEIGHTS",
+    "median_price": 1576500,
+    "median_psf": 1229,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 24
+  },
+  {
+    "rank": 501,
+    "town": "Condo - FARRER DRIVE",
+    "median_price": 2900000,
+    "median_psf": 2077,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 71
+  },
+  {
+    "rank": 502,
+    "town": "Condo - FERNHILL ROAD",
+    "median_price": 3615000,
+    "median_psf": 1998,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 503,
+    "town": "Condo - BUKIT BATOK EAST AVENUE 2",
+    "median_price": 1250000,
+    "median_psf": 1139,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 57
+  },
+  {
+    "rank": 504,
+    "town": "Condo - FERNVALE LINK",
+    "median_price": 1230000,
+    "median_psf": 1386,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 72
+  },
+  {
+    "rank": 505,
+    "town": "Condo - BUKIT BATOK CENTRAL LINK",
+    "median_price": 1500000,
+    "median_psf": 1334,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 506,
+    "town": "Condo - FERNVALE STREET",
+    "median_price": 1150000,
+    "median_psf": 1623,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 133
+  },
+  {
+    "rank": 507,
+    "town": "Condo - FERNWOOD TERRACE",
+    "median_price": 2550000,
+    "median_psf": 1665,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 24
+  },
+  {
+    "rank": 508,
+    "town": "Condo - FIFTH AVENUE",
+    "median_price": 10894000,
+    "median_psf": 2267,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 509,
+    "town": "Condo - FIRST STREET",
+    "median_price": 864000,
+    "median_psf": 1542,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 510,
+    "town": "Condo - BUCKLEY ROAD",
+    "median_price": 3250000,
+    "median_psf": 2170,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 511,
+    "town": "Condo - FLORA ROAD",
+    "median_price": 1400000,
+    "median_psf": 1134,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 155
+  },
+  {
+    "rank": 512,
+    "town": "Condo - FLORENCE ROAD",
+    "median_price": 1650500,
+    "median_psf": 1351,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 513,
+    "town": "Condo - FOCH ROAD",
+    "median_price": 1215000,
+    "median_psf": 1403,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 514,
+    "town": "Condo - FOO KIM LIN ROAD",
+    "median_price": 1138944,
+    "median_psf": 1483,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 515,
+    "town": "Condo - HAPPY AVENUE NORTH",
+    "median_price": 1530000,
+    "median_psf": 1119,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 516,
+    "town": "Condo - BRISTOL ROAD",
+    "median_price": 1725000,
+    "median_psf": 1282,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 517,
+    "town": "Condo - HAZEL PARK TERRACE",
+    "median_price": 2180000,
+    "median_psf": 1642,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 52
+  },
+  {
+    "rank": 518,
+    "town": "Condo - IPOH LANE",
+    "median_price": 1098888,
+    "median_psf": 1777,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 47
+  },
+  {
+    "rank": 519,
+    "town": "Condo - JALAN AMPANG",
+    "median_price": 3595000,
+    "median_psf": 1621,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 520,
+    "town": "Condo - JALAN AMPAS",
+    "median_price": 1451500,
+    "median_psf": 1579,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 521,
+    "town": "Condo - JALAN ANAK BUKIT",
+    "median_price": 1869410,
+    "median_psf": 2466,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 774
+  },
+  {
+    "rank": 522,
+    "town": "Condo - JALAN BINGKA",
+    "median_price": 408888,
+    "median_psf": 447,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 523,
+    "town": "Condo - JALAN BUKIT HO SWEE",
+    "median_price": 2319000,
+    "median_psf": 2030,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 524,
+    "town": "Condo - JALAN BUNGA RAMPAI",
+    "median_price": 2136000,
+    "median_psf": 1958,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 62
+  },
+  {
+    "rank": 525,
+    "town": "Condo - JALAN DATOH",
+    "median_price": 2400000,
+    "median_psf": 1988,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 526,
+    "town": "Condo - JALAN DAUD",
+    "median_price": 1850000,
+    "median_psf": 1284,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 29
+  },
+  {
+    "rank": 527,
+    "town": "Condo - JALAN DUSUN",
+    "median_price": 1057500,
+    "median_psf": 1771,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 22
+  },
+  {
+    "rank": 528,
+    "town": "Condo - BRADDELL HILL",
+    "median_price": 1682500,
+    "median_psf": 1027,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 112
+  },
+  {
+    "rank": 529,
+    "town": "Condo - JALAN HAJI ALIAS",
+    "median_price": 2650000,
+    "median_psf": 1746,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 530,
+    "town": "Condo - JALAN HAJIJAH",
+    "median_price": 1700000,
+    "median_psf": 1527,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 25
+  },
+  {
+    "rank": 531,
+    "town": "Condo - JALAN JINTAN",
+    "median_price": 2800000,
+    "median_psf": 2076,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 532,
+    "town": "Condo - BOON TECK ROAD",
+    "median_price": 968444,
+    "median_psf": 1494,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 18
+  },
+  {
+    "rank": 533,
+    "town": "Condo - JALAN KEMAMAN",
+    "median_price": 1200000,
+    "median_psf": 1866,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 24
+  },
+  {
+    "rank": 534,
+    "town": "Condo - JALAN KEMBANGAN",
+    "median_price": 1824444,
+    "median_psf": 1574,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 535,
+    "town": "Condo - JALAN KUALA",
+    "median_price": 5200000,
+    "median_psf": 2157,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 536,
+    "town": "Condo - BISHOPSGATE",
+    "median_price": 10698888,
+    "median_psf": 3628,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 537,
+    "town": "Condo - JALAN LIMAU BALI",
+    "median_price": 2088000,
+    "median_psf": 1376,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 538,
+    "town": "Condo - IRRAWADDY ROAD",
+    "median_price": 1760000,
+    "median_psf": 1762,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 28
+  },
+  {
+    "rank": 539,
+    "town": "Condo - INDUS ROAD",
+    "median_price": 1585000,
+    "median_psf": 1584,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 28
+  },
+  {
+    "rank": 540,
+    "town": "Condo - HEMMANT ROAD",
+    "median_price": 1710000,
+    "median_psf": 1551,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 541,
+    "town": "Condo - HUME AVENUE",
+    "median_price": 2053000,
+    "median_psf": 1640,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 117
+  },
+  {
+    "rank": 542,
+    "town": "Condo - HERTFORD ROAD",
+    "median_price": 1090000,
+    "median_psf": 1590,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 543,
+    "town": "Condo - HIGHLAND ROAD",
+    "median_price": 1850000,
+    "median_psf": 1219,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 544,
+    "town": "Condo - HILLCREST ROAD",
+    "median_price": 2000000,
+    "median_psf": 1736,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 545,
+    "town": "Condo - HILLSIDE DRIVE",
+    "median_price": 1420000,
+    "median_psf": 1373,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 546,
+    "town": "Condo - HILLVIEW TERRACE",
+    "median_price": 870000,
+    "median_psf": 1556,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 61
+  },
+  {
+    "rank": 547,
+    "town": "Condo - HINDHEDE DRIVE",
+    "median_price": 1550000,
+    "median_psf": 1246,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 548,
+    "town": "Condo - HINDHEDE WALK",
+    "median_price": 1954500,
+    "median_psf": 1627,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 72
+  },
+  {
+    "rank": 549,
+    "town": "Condo - HOLLAND AVENUE",
+    "median_price": 2850000,
+    "median_psf": 1904,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 550,
+    "town": "Condo - HOLLAND HEIGHTS",
+    "median_price": 3175000,
+    "median_psf": 1695,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 551,
+    "town": "Condo - HOLLAND HILL",
+    "median_price": 3730000,
+    "median_psf": 2209,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 49
+  },
+  {
+    "rank": 552,
+    "town": "Condo - HOLLAND PARK",
+    "median_price": 2250000,
+    "median_psf": 1056,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 553,
+    "town": "Condo - HOLLAND VILLAGE WAY",
+    "median_price": 2300000,
+    "median_psf": 2941,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 726
+  },
+  {
+    "rank": 554,
+    "town": "Condo - HOLT ROAD",
+    "median_price": 3460000,
+    "median_psf": 2102,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 555,
+    "town": "Condo - HONG SAN WALK",
+    "median_price": 1280000,
+    "median_psf": 1048,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 76
+  },
+  {
+    "rank": 556,
+    "town": "Condo - HOUGANG STREET 32",
+    "median_price": 1250000,
+    "median_psf": 1411,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 49
+  },
+  {
+    "rank": 557,
+    "town": "Condo - HOUGANG STREET 92",
+    "median_price": 1239000,
+    "median_psf": 1151,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 69
+  },
+  {
+    "rank": 558,
+    "town": "Condo - HOW SUN DRIVE",
+    "median_price": 1620000,
+    "median_psf": 2299,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 46
+  },
+  {
+    "rank": 559,
+    "town": "Condo - HOW SUN ROAD",
+    "median_price": 2278000,
+    "median_psf": 1935,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 560,
+    "town": "Condo - HULLET ROAD",
+    "median_price": 4340000,
+    "median_psf": 2800,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 561,
+    "town": "Condo - EVERITT ROAD",
+    "median_price": 1825000,
+    "median_psf": 1142,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 562,
+    "town": "Condo - ESSEX ROAD",
+    "median_price": 2038000,
+    "median_psf": 1912,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 563,
+    "town": "Condo - JALAN LOYANG BESAR",
+    "median_price": 1325000,
+    "median_psf": 1177,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 90
+  },
+  {
+    "rank": 564,
+    "town": "Condo - CLARKE QUAY",
+    "median_price": 4680000,
+    "median_psf": 2956,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 50
+  },
+  {
+    "rank": 565,
+    "town": "Condo - CHIN SWEE ROAD",
+    "median_price": 1938901,
+    "median_psf": 2691,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 196
+  },
+  {
+    "rank": 566,
+    "town": "Condo - CHOA CHU KANG AVENUE 3",
+    "median_price": 1578444,
+    "median_psf": 1236,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 40
+  },
+  {
+    "rank": 567,
+    "town": "Condo - CHOA CHU KANG LOOP",
+    "median_price": 1315000,
+    "median_psf": 1094,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 111
+  },
+  {
+    "rank": 568,
+    "town": "Condo - CHOA CHU KANG NORTH 7",
+    "median_price": 1113000,
+    "median_psf": 969,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 58
+  },
+  {
+    "rank": 569,
+    "town": "Condo - CHOA CHU KANG ROAD",
+    "median_price": 1849400,
+    "median_psf": 923,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 570,
+    "town": "Condo - CHONG KUO ROAD",
+    "median_price": 1070000,
+    "median_psf": 1553,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 571,
+    "town": "Condo - CHU LIN ROAD",
+    "median_price": 1730000,
+    "median_psf": 1607,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 572,
+    "town": "Condo - CHUN TIN ROAD",
+    "median_price": 2010000,
+    "median_psf": 1462,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 573,
+    "town": "Condo - CHWEE CHIAN ROAD",
+    "median_price": 2320000,
+    "median_psf": 1466,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 574,
+    "town": "Condo - CLAYMORE DRIVE",
+    "median_price": 3040000,
+    "median_psf": 1599,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 575,
+    "town": "Condo - ENGGOR STREET",
+    "median_price": 1460000,
+    "median_psf": 2213,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 81
+  },
+  {
+    "rank": 576,
+    "town": "Condo - CLAYMORE HILL",
+    "median_price": 3600000,
+    "median_psf": 1663,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 577,
+    "town": "Condo - CLAYMORE ROAD",
+    "median_price": 9000000,
+    "median_psf": 3059,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 578,
+    "town": "Condo - CLEMENCEAU AVENUE NORTH",
+    "median_price": 3330000,
+    "median_psf": 2035,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 579,
+    "town": "Condo - BUKIT BATOK STREET 52",
+    "median_price": 1490000,
+    "median_psf": 1132,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 48
+  },
+  {
+    "rank": 580,
+    "town": "Condo - CLUB STREET",
+    "median_price": 2330000,
+    "median_psf": 2263,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 581,
+    "town": "Condo - CLUNY PARK ROAD",
+    "median_price": 2994000,
+    "median_psf": 2899,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 582,
+    "town": "Condo - BUKIT BATOK STREET 41",
+    "median_price": 1300000,
+    "median_psf": 1633,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 87
+  },
+  {
+    "rank": 583,
+    "town": "Condo - BUKIT BATOK STREET 31",
+    "median_price": 1484000,
+    "median_psf": 1194,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 42
+  },
+  {
+    "rank": 584,
+    "town": "Condo - CORNWALL GARDENS",
+    "median_price": 2390000,
+    "median_psf": 2143,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 585,
+    "town": "Condo - CHIKU ROAD",
+    "median_price": 22230000,
+    "median_psf": 2138,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 586,
+    "town": "Condo - CHESTNUT AVENUE",
+    "median_price": 1460000,
+    "median_psf": 1548,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 109
+  },
+  {
+    "rank": 587,
+    "town": "Condo - CHERRY AVENUE",
+    "median_price": 2340000,
+    "median_psf": 1570,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 588,
+    "town": "Condo - CHAY YAN STREET",
+    "median_price": 2300800,
+    "median_psf": 2290,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 589,
+    "town": "Condo - BUTTERWORTH LANE",
+    "median_price": 2150000,
+    "median_psf": 1709,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 590,
+    "town": "Condo - CAIRNHILL RISE",
+    "median_price": 3220900,
+    "median_psf": 2768,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 53
+  },
+  {
+    "rank": 591,
+    "town": "Condo - CAIRNHILL ROAD",
+    "median_price": 4632010,
+    "median_psf": 3309,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 196
+  },
+  {
+    "rank": 592,
+    "town": "Condo - CAMBRIDGE ROAD",
+    "median_price": 2050000,
+    "median_psf": 1527,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 593,
+    "town": "Condo - BUKIT TIMAH LINK",
+    "median_price": 2011000,
+    "median_psf": 2727,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 97
+  },
+  {
+    "rank": 594,
+    "town": "Condo - CANTONMENT ROAD",
+    "median_price": 1850000,
+    "median_psf": 1663,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 595,
+    "town": "Condo - CARLISLE ROAD",
+    "median_price": 2515444,
+    "median_psf": 1903,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 596,
+    "town": "Condo - CARPMAEL ROAD",
+    "median_price": 2180000,
+    "median_psf": 1538,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 597,
+    "town": "Condo - CASHEW ROAD",
+    "median_price": 2320000,
+    "median_psf": 1471,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 36
+  },
+  {
+    "rank": 598,
+    "town": "Condo - CAVAN ROAD",
+    "median_price": 650000,
+    "median_psf": 1772,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 599,
+    "town": "Condo - CAVENAGH ROAD",
+    "median_price": 2400000,
+    "median_psf": 1812,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 62
+  },
+  {
+    "rank": 600,
+    "town": "Condo - CENTRAL BOULEVARD",
+    "median_price": 3265000,
+    "median_psf": 1943,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 32
+  },
+  {
+    "rank": 601,
+    "town": "Condo - CEYLON LANE",
+    "median_price": 1368888,
+    "median_psf": 1340,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 602,
+    "town": "Condo - CEYLON ROAD",
+    "median_price": 1770000,
+    "median_psf": 1739,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 21
+  },
+  {
+    "rank": 603,
+    "town": "Condo - CHAMPIONS WAY",
+    "median_price": 1538500,
+    "median_psf": 2077,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 304
+  },
+  {
+    "rank": 604,
+    "town": "Condo - CHANCERY LANE",
+    "median_price": 4100000,
+    "median_psf": 1903,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 605,
+    "town": "Condo - BUKIT DRIVE",
+    "median_price": 1840000,
+    "median_psf": 1421,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 606,
+    "town": "Condo - CHAPEL ROAD",
+    "median_price": 1780000,
+    "median_psf": 1876,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 607,
+    "town": "Condo - CHATSWORTH ROAD",
+    "median_price": 6500000,
+    "median_psf": 1911,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 608,
+    "town": "Condo - CORONATION ROAD",
+    "median_price": 2320000,
+    "median_psf": 1858,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 609,
+    "town": "Condo - CORONATION ROAD WEST",
+    "median_price": 4680000,
+    "median_psf": 2242,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 610,
+    "town": "Condo - CORPORATION ROAD",
+    "median_price": 1425000,
+    "median_psf": 1159,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 105
+  },
+  {
+    "rank": 611,
+    "town": "Condo - DUCHESS AVENUE",
+    "median_price": 2942500,
+    "median_psf": 1814,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 58
+  },
+  {
+    "rank": 612,
+    "town": "Condo - DUKE'S ROAD",
+    "median_price": 2884000,
+    "median_psf": 2055,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 613,
+    "town": "Condo - DUKU ROAD",
+    "median_price": 1510000,
+    "median_psf": 1591,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 614,
+    "town": "Condo - DUNDEE ROAD",
+    "median_price": 1600000,
+    "median_psf": 2206,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 122
+  },
+  {
+    "rank": 615,
+    "town": "Condo - DUNEARN ROAD",
+    "median_price": 2190870,
+    "median_psf": 3057,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 231
+  },
+  {
+    "rank": 616,
+    "town": "Condo - BUKIT BATOK EAST AVENUE 6",
+    "median_price": 2900000,
+    "median_psf": 1516,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 617,
+    "town": "Condo - EAST COAST AVENUE",
+    "median_price": 2168000,
+    "median_psf": 1611,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 618,
+    "town": "Condo - EAST COAST ROAD",
+    "median_price": 1750000,
+    "median_psf": 1735,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 113
+  },
+  {
+    "rank": 619,
+    "town": "Condo - EAST COAST TERRACE",
+    "median_price": 2280000,
+    "median_psf": 1568,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 620,
+    "town": "Condo - EASTWOOD ROAD",
+    "median_price": 1400000,
+    "median_psf": 1190,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 41
+  },
+  {
+    "rank": 621,
+    "town": "Condo - EDEN GROVE",
+    "median_price": 1584000,
+    "median_psf": 1279,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 622,
+    "town": "Condo - EDGEDALE PLAINS",
+    "median_price": 1480000,
+    "median_psf": 1384,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 83
+  },
+  {
+    "rank": 623,
+    "town": "Condo - ELIAS GREEN",
+    "median_price": 1430000,
+    "median_psf": 929,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 624,
+    "town": "Condo - ELIAS ROAD",
+    "median_price": 1380000,
+    "median_psf": 1267,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 131
+  },
+  {
+    "rank": 625,
+    "town": "Condo - ELLIOT ROAD",
+    "median_price": 2650000,
+    "median_psf": 1797,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 626,
+    "town": "Condo - ELLIOT WALK",
+    "median_price": 1800000,
+    "median_psf": 1593,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 627,
+    "town": "Condo - EMERALD HILL ROAD",
+    "median_price": 5125000,
+    "median_psf": 2350,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 628,
+    "town": "Condo - ENG HOON STREET",
+    "median_price": 2180000,
+    "median_psf": 1534,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 629,
+    "town": "Condo - ENG KONG CRESCENT",
+    "median_price": 1255000,
+    "median_psf": 1477,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 630,
+    "town": "Condo - ENG NEO AVENUE",
+    "median_price": 2400000,
+    "median_psf": 1770,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 631,
+    "town": "Condo - DUCHESS ROAD",
+    "median_price": 3210000,
+    "median_psf": 2500,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 632,
+    "town": "Condo - DUBLIN ROAD",
+    "median_price": 2850000,
+    "median_psf": 1891,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 633,
+    "town": "Condo - COVE DRIVE",
+    "median_price": 4609400,
+    "median_psf": 1602,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 634,
+    "town": "Condo - DRAYCOTT DRIVE",
+    "median_price": 3330000,
+    "median_psf": 2421,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 635,
+    "town": "Condo - COVE WAY",
+    "median_price": 5508000,
+    "median_psf": 2204,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 93
+  },
+  {
+    "rank": 636,
+    "town": "Condo - CRAIG ROAD",
+    "median_price": 1165000,
+    "median_psf": 1898,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 637,
+    "town": "Condo - CRANE ROAD",
+    "median_price": 1420000,
+    "median_psf": 1466,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 638,
+    "town": "Condo - CUSCADEN ROAD",
+    "median_price": 2667600,
+    "median_psf": 2989,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 186
+  },
+  {
+    "rank": 639,
+    "town": "Condo - CUSCADEN WALK",
+    "median_price": 6975000,
+    "median_psf": 3290,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 640,
+    "town": "Condo - DAIRY FARM HEIGHTS",
+    "median_price": 1600000,
+    "median_psf": 1626,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 57
+  },
+  {
+    "rank": 641,
+    "town": "Condo - DAIRY FARM LANE",
+    "median_price": 1365000,
+    "median_psf": 1835,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 54
+  },
+  {
+    "rank": 642,
+    "town": "Condo - DAIRY FARM ROAD",
+    "median_price": 2308000,
+    "median_psf": 1591,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 21
+  },
+  {
+    "rank": 643,
+    "town": "Condo - DAIRY FARM WALK",
+    "median_price": 2040000,
+    "median_psf": 2048,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 386
+  },
+  {
+    "rank": 644,
+    "town": "Condo - DAISY ROAD",
+    "median_price": 1280000,
+    "median_psf": 1428,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 645,
+    "town": "Condo - DAKOTA CRESCENT",
+    "median_price": 2180000,
+    "median_psf": 1852,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 117
+  },
+  {
+    "rank": 646,
+    "town": "Condo - DALVEY ESTATE",
+    "median_price": 2500000,
+    "median_psf": 1975,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 647,
+    "town": "Condo - DALVEY ROAD",
+    "median_price": 7200000,
+    "median_psf": 3480,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 648,
+    "town": "Condo - DE SOUZA AVENUE",
+    "median_price": 1350000,
+    "median_psf": 1991,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 21
+  },
+  {
+    "rank": 649,
+    "town": "Condo - DELTA ROAD",
+    "median_price": 1950000,
+    "median_psf": 1887,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 650,
+    "town": "Condo - DEPOT ROAD",
+    "median_price": 2680000,
+    "median_psf": 1643,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 123
+  },
+  {
+    "rank": 651,
+    "town": "Condo - DERBYSHIRE ROAD",
+    "median_price": 1880000,
+    "median_psf": 2174,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 39
+  },
+  {
+    "rank": 652,
+    "town": "Condo - BUKIT BATOK STREET 25",
+    "median_price": 1004000,
+    "median_psf": 991,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 60
+  },
+  {
+    "rank": 653,
+    "town": "Condo - DORSET ROAD",
+    "median_price": 2180000,
+    "median_psf": 1406,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 654,
+    "town": "Condo - JALAN LOKAM",
+    "median_price": 1084000,
+    "median_psf": 1559,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 24
+  },
+  {
+    "rank": 655,
+    "town": "Condo - INSTITUTION HILL",
+    "median_price": 1537000,
+    "median_psf": 3081,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 60
+  },
+  {
+    "rank": 656,
+    "town": "Condo - JALAN MALU-MALU",
+    "median_price": 750000,
+    "median_psf": 549,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 657,
+    "town": "Condo - LIM AH WOO ROAD",
+    "median_price": 985000,
+    "median_psf": 1674,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 658,
+    "town": "Condo - LENGKONG TUJOH",
+    "median_price": 1240000,
+    "median_psf": 1488,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 63
+  },
+  {
+    "rank": 659,
+    "town": "Condo - LENTOR CENTRAL",
+    "median_price": 1956000,
+    "median_psf": 2186,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1031
+  },
+  {
+    "rank": 660,
+    "town": "Condo - LENTOR GARDENS",
+    "median_price": 1846000,
+    "median_psf": 2262,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 533
+  },
+  {
+    "rank": 661,
+    "town": "Condo - LENTOR LOOP",
+    "median_price": 1742500,
+    "median_psf": 1533,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 32
+  },
+  {
+    "rank": 662,
+    "town": "Condo - LEONIE HILL",
+    "median_price": 3278500,
+    "median_psf": 1814,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 56
+  },
+  {
+    "rank": 663,
+    "town": "Condo - LEONIE HILL ROAD",
+    "median_price": 3200000,
+    "median_psf": 2245,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 81
+  },
+  {
+    "rank": 664,
+    "town": "Condo - LEW LIAN VALE",
+    "median_price": 1400000,
+    "median_psf": 1758,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 25
+  },
+  {
+    "rank": 665,
+    "town": "Condo - LEWIS ROAD",
+    "median_price": 1950000,
+    "median_psf": 2000,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 666,
+    "town": "Condo - LIM AH PIN ROAD",
+    "median_price": 1790000,
+    "median_psf": 1434,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 667,
+    "town": "Condo - LIM TUA TOW ROAD",
+    "median_price": 971500,
+    "median_psf": 1658,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 668,
+    "town": "Condo - LENGKONG EMPAT",
+    "median_price": 1070000,
+    "median_psf": 1256,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 25
+  },
+  {
+    "rank": 669,
+    "town": "Condo - LLOYD ROAD",
+    "median_price": 3700000,
+    "median_psf": 2339,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 670,
+    "town": "Condo - LORONG 1 REALTY PARK",
+    "median_price": 1479444,
+    "median_psf": 1212,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 671,
+    "town": "Condo - LORONG 101 CHANGI",
+    "median_price": 2900000,
+    "median_psf": 1968,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 672,
+    "town": "Condo - LORONG 102 CHANGI",
+    "median_price": 857944,
+    "median_psf": 1661,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 673,
+    "town": "Condo - LORONG 105 CHANGI",
+    "median_price": 1410000,
+    "median_psf": 1561,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 674,
+    "town": "Condo - LORONG 107 CHANGI",
+    "median_price": 2388000,
+    "median_psf": 1186,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 675,
+    "town": "Condo - LORONG 108 CHANGI",
+    "median_price": 2054000,
+    "median_psf": 1166,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 676,
+    "town": "Condo - LORONG 12 GEYLANG",
+    "median_price": 3599999,
+    "median_psf": 1365,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 677,
+    "town": "Condo - LORONG 13 GEYLANG",
+    "median_price": 1188000,
+    "median_psf": 1972,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 678,
+    "town": "Condo - LENGKONG TIGA",
+    "median_price": 1678000,
+    "median_psf": 1388,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 679,
+    "town": "Condo - LEITH PARK",
+    "median_price": 1105000,
+    "median_psf": 1098,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 680,
+    "town": "Condo - KENT ROAD",
+    "median_price": 866500,
+    "median_psf": 1482,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 681,
+    "town": "Condo - KING ALBERT PARK",
+    "median_price": 1555555,
+    "median_psf": 1815,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 682,
+    "town": "Condo - KHEAM HOCK ROAD",
+    "median_price": 2300000,
+    "median_psf": 1669,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 683,
+    "town": "Condo - KHIANG GUAN AVENUE",
+    "median_price": 1220000,
+    "median_psf": 2327,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 684,
+    "town": "Condo - KILLINEY ROAD",
+    "median_price": 2300000,
+    "median_psf": 2111,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 35
+  },
+  {
+    "rank": 685,
+    "town": "Condo - KIM KEAT CLOSE",
+    "median_price": 1105000,
+    "median_psf": 1259,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 686,
+    "town": "Condo - KIM KEAT LANE",
+    "median_price": 1692500,
+    "median_psf": 1440,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 687,
+    "town": "Condo - KIM KEAT ROAD",
+    "median_price": 1205000,
+    "median_psf": 1504,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 44
+  },
+  {
+    "rank": 688,
+    "town": "Condo - BIDEFORD ROAD",
+    "median_price": 3800000,
+    "median_psf": 2965,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 689,
+    "town": "Condo - KIM TIAN ROAD",
+    "median_price": 2200000,
+    "median_psf": 2323,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 77
+  },
+  {
+    "rank": 690,
+    "town": "Condo - KIM YAM ROAD",
+    "median_price": 2499000,
+    "median_psf": 1967,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 46
+  },
+  {
+    "rank": 691,
+    "town": "Condo - KING'S ROAD",
+    "median_price": 3400000,
+    "median_psf": 1880,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 692,
+    "town": "Condo - LEICESTER ROAD",
+    "median_price": 1867000,
+    "median_psf": 1790,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 693,
+    "town": "Condo - KITCHENER LINK",
+    "median_price": 1945000,
+    "median_psf": 2035,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 53
+  },
+  {
+    "rank": 694,
+    "town": "Condo - KOON SENG ROAD",
+    "median_price": 1922000,
+    "median_psf": 1987,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 32
+  },
+  {
+    "rank": 695,
+    "town": "Condo - KOVAN RISE",
+    "median_price": 1800000,
+    "median_psf": 1834,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 51
+  },
+  {
+    "rank": 696,
+    "town": "Condo - JALAN MASJID",
+    "median_price": 940000,
+    "median_psf": 1493,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 697,
+    "town": "Condo - LADY HILL ROAD",
+    "median_price": 7380000,
+    "median_psf": 2925,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 698,
+    "town": "Condo - LAKESIDE DRIVE",
+    "median_price": 1650000,
+    "median_psf": 1567,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 110
+  },
+  {
+    "rank": 699,
+    "town": "Condo - LANGSAT ROAD",
+    "median_price": 1732500,
+    "median_psf": 1476,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 700,
+    "town": "Condo - LAVENDER STREET",
+    "median_price": 1632000,
+    "median_psf": 1995,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 701,
+    "town": "Condo - LEEDON ROAD",
+    "median_price": 2085000,
+    "median_psf": 2056,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 702,
+    "town": "Condo - LORONG 14 GEYLANG",
+    "median_price": 1074000,
+    "median_psf": 1018,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 32
+  },
+  {
+    "rank": 703,
+    "town": "Condo - LORONG 16 GEYLANG",
+    "median_price": 2634000,
+    "median_psf": 1427,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 704,
+    "town": "Condo - LORONG 17 GEYLANG",
+    "median_price": 1150000,
+    "median_psf": 1257,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 705,
+    "town": "Condo - LORONG G TELOK KURAU",
+    "median_price": 1535000,
+    "median_psf": 1512,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 42
+  },
+  {
+    "rank": 706,
+    "town": "Condo - LORONG 5 TOA PAYOH",
+    "median_price": 1400000,
+    "median_psf": 1902,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 101
+  },
+  {
+    "rank": 707,
+    "town": "Condo - LORONG 6 GEYLANG",
+    "median_price": 677944,
+    "median_psf": 1439,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 708,
+    "town": "Condo - LORONG 7 GEYLANG",
+    "median_price": 990000,
+    "median_psf": 1379,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 709,
+    "town": "Condo - LORONG 8 GEYLANG",
+    "median_price": 1100000,
+    "median_psf": 978,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 710,
+    "town": "Condo - LORONG 9 GEYLANG",
+    "median_price": 1325000,
+    "median_psf": 1076,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 711,
+    "town": "Condo - LORONG AH SOO",
+    "median_price": 750000,
+    "median_psf": 1440,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 712,
+    "town": "Condo - LORONG AMPAS",
+    "median_price": 1340000,
+    "median_psf": 1548,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 713,
+    "town": "Condo - LORONG BANDANG",
+    "median_price": 1239000,
+    "median_psf": 1446,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 714,
+    "town": "Condo - BERNAM STREET",
+    "median_price": 2016000,
+    "median_psf": 2569,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 219
+  },
+  {
+    "rank": 715,
+    "town": "Condo - LORONG H TELOK KURAU",
+    "median_price": 1560000,
+    "median_psf": 1468,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 29
+  },
+  {
+    "rank": 716,
+    "town": "Condo - LORONG 19 GEYLANG",
+    "median_price": 620000,
+    "median_psf": 1516,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 717,
+    "town": "Condo - LORONG HOW SUN",
+    "median_price": 1638444,
+    "median_psf": 1776,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 106
+  },
+  {
+    "rank": 718,
+    "town": "Condo - LORONG J TELOK KURAU",
+    "median_price": 2220000,
+    "median_psf": 1728,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 719,
+    "town": "Condo - LORONG K TELOK KURAU",
+    "median_price": 1737500,
+    "median_psf": 1520,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 74
+  },
+  {
+    "rank": 720,
+    "town": "Condo - LORONG KILAT",
+    "median_price": 1934400,
+    "median_psf": 1093,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 721,
+    "town": "Condo - LORONG KISMIS",
+    "median_price": 1400000,
+    "median_psf": 2035,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 45
+  },
+  {
+    "rank": 722,
+    "town": "Condo - LORONG L TELOK KURAU",
+    "median_price": 1654000,
+    "median_psf": 1472,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 44
+  },
+  {
+    "rank": 723,
+    "town": "Condo - BENCOOLEN STREET",
+    "median_price": 1500000,
+    "median_psf": 1606,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 85
+  },
+  {
+    "rank": 724,
+    "town": "Condo - LORONG LIMAU",
+    "median_price": 954000,
+    "median_psf": 1677,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 26
+  },
+  {
+    "rank": 725,
+    "town": "Condo - LORONG M TELOK KURAU",
+    "median_price": 1645000,
+    "median_psf": 1637,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 56
+  },
+  {
+    "rank": 726,
+    "town": "Condo - LORONG 40 GEYLANG",
+    "median_price": 1920000,
+    "median_psf": 1678,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 53
+  },
+  {
+    "rank": 727,
+    "town": "Condo - LORONG 4 GEYLANG",
+    "median_price": 1389000,
+    "median_psf": 1139,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 728,
+    "town": "Condo - LORONG 39 GEYLANG",
+    "median_price": 1200000,
+    "median_psf": 1602,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 729,
+    "town": "Condo - LORONG 38 GEYLANG",
+    "median_price": 700000,
+    "median_psf": 1657,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 730,
+    "town": "Condo - LORONG 20 GEYLANG",
+    "median_price": 718000,
+    "median_psf": 1269,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 25
+  },
+  {
+    "rank": 731,
+    "town": "Condo - LORONG 22 GEYLANG",
+    "median_price": 625000,
+    "median_psf": 1425,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 732,
+    "town": "Condo - LORONG 24 GEYLANG",
+    "median_price": 780000,
+    "median_psf": 1533,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 733,
+    "town": "Condo - LORONG 25 GEYLANG",
+    "median_price": 660500,
+    "median_psf": 1653,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 734,
+    "town": "Condo - LORONG 25A GEYLANG",
+    "median_price": 1866000,
+    "median_psf": 1876,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 21
+  },
+  {
+    "rank": 735,
+    "town": "Condo - LORONG 26 GEYLANG",
+    "median_price": 740000,
+    "median_psf": 1544,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 35
+  },
+  {
+    "rank": 736,
+    "town": "Condo - LORONG 27 GEYLANG",
+    "median_price": 1395000,
+    "median_psf": 1212,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 737,
+    "town": "Condo - LORONG 27A GEYLANG",
+    "median_price": 1304000,
+    "median_psf": 1084,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 738,
+    "town": "Condo - LORONG 28 GEYLANG",
+    "median_price": 804000,
+    "median_psf": 1445,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 38
+  },
+  {
+    "rank": 739,
+    "town": "Condo - LORONG 29 GEYLANG",
+    "median_price": 1600000,
+    "median_psf": 1167,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 7
+  },
+  {
+    "rank": 740,
+    "town": "Condo - LORONG 3 GEYLANG",
+    "median_price": 1840000,
+    "median_psf": 1410,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 5
+  },
+  {
+    "rank": 741,
+    "town": "Condo - LORONG 3 TOA PAYOH",
+    "median_price": 2210000,
+    "median_psf": 1842,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 76
+  },
+  {
+    "rank": 742,
+    "town": "Condo - LORONG 30 GEYLANG",
+    "median_price": 827500,
+    "median_psf": 1557,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 70
+  },
+  {
+    "rank": 743,
+    "town": "Condo - LORONG 31 GEYLANG",
+    "median_price": 1490000,
+    "median_psf": 1153,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 744,
+    "town": "Condo - LORONG 33 GEYLANG",
+    "median_price": 1259000,
+    "median_psf": 1249,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 745,
+    "town": "Condo - LORONG 34 GEYLANG",
+    "median_price": 1238888,
+    "median_psf": 1309,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 17
+  },
+  {
+    "rank": 746,
+    "town": "Condo - LORONG 35 GEYLANG",
+    "median_price": 988000,
+    "median_psf": 1590,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 747,
+    "town": "Condo - LORONG 36 GEYLANG",
+    "median_price": 1252500,
+    "median_psf": 1270,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 748,
+    "town": "Condo - LORONG 37 GEYLANG",
+    "median_price": 1633500,
+    "median_psf": 1320,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 749,
+    "town": "Condo - KEW CRESCENT",
+    "median_price": 2900000,
+    "median_psf": 896,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 13
+  },
+  {
+    "rank": 750,
+    "town": "Condo - KOVAN ROAD",
+    "median_price": 2150000,
+    "median_psf": 1675,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 164
+  },
+  {
+    "rank": 751,
+    "town": "Condo - JALAN WANGI",
+    "median_price": 1300000,
+    "median_psf": 1232,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 752,
+    "town": "Condo - JALAN WAKAFF",
+    "median_price": 1955000,
+    "median_psf": 1445,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 753,
+    "town": "Condo - JALAN SINGA",
+    "median_price": 1150000,
+    "median_psf": 1495,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 754,
+    "town": "Condo - JALAN SULTAN",
+    "median_price": 1075880,
+    "median_psf": 1156,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 755,
+    "town": "Condo - JALAN TAMAN",
+    "median_price": 1800000,
+    "median_psf": 1439,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 24
+  },
+  {
+    "rank": 756,
+    "town": "Condo - JALAN TANI",
+    "median_price": 736750,
+    "median_psf": 1451,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 757,
+    "town": "Condo - JALAN TARI SERIMPI",
+    "median_price": 3519444,
+    "median_psf": 1979,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 758,
+    "town": "Condo - JALAN TIGA RATUS",
+    "median_price": 1924000,
+    "median_psf": 1195,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 759,
+    "town": "Condo - JALAN TUA KONG",
+    "median_price": 2660000,
+    "median_psf": 1602,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 21
+  },
+  {
+    "rank": 760,
+    "town": "Condo - JALAN ULU SEMBAWANG",
+    "median_price": 1416666,
+    "median_psf": 1158,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 761,
+    "town": "Condo - JALAN YASIN",
+    "median_price": 679000,
+    "median_psf": 1829,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 762,
+    "town": "Condo - JALAN SEMPADAN",
+    "median_price": 1884000,
+    "median_psf": 1353,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 46
+  },
+  {
+    "rank": 763,
+    "town": "Condo - JANSEN ROAD",
+    "median_price": 2065500,
+    "median_psf": 2015,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 20
+  },
+  {
+    "rank": 764,
+    "town": "Condo - BISHAN STREET 21",
+    "median_price": 1853000,
+    "median_psf": 1585,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 49
+  },
+  {
+    "rank": 765,
+    "town": "Condo - JERVOIS CLOSE",
+    "median_price": 2275000,
+    "median_psf": 2198,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 27
+  },
+  {
+    "rank": 766,
+    "town": "Condo - JERVOIS ROAD",
+    "median_price": 2200000,
+    "median_psf": 2528,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 127
+  },
+  {
+    "rank": 767,
+    "town": "Condo - JOO CHIAT LANE",
+    "median_price": 1535000,
+    "median_psf": 1494,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 768,
+    "town": "Condo - JOO CHIAT ROAD",
+    "median_price": 2075000,
+    "median_psf": 2071,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 29
+  },
+  {
+    "rank": 769,
+    "town": "Condo - JOO CHIAT TERRACE",
+    "median_price": 1610000,
+    "median_psf": 1561,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 39
+  },
+  {
+    "rank": 770,
+    "town": "Condo - JURONG EAST AVENUE 1",
+    "median_price": 1550000,
+    "median_psf": 1190,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 65
+  },
+  {
+    "rank": 771,
+    "town": "Condo - BISHAN STREET 25",
+    "median_price": 2510000,
+    "median_psf": 1824,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 49
+  },
+  {
+    "rank": 772,
+    "town": "Condo - JALAN SELANTING",
+    "median_price": 2140000,
+    "median_psf": 1643,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 2
+  },
+  {
+    "rank": 773,
+    "town": "Condo - JURONG EAST STREET 13",
+    "median_price": 1810000,
+    "median_psf": 1051,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 30
+  },
+  {
+    "rank": 774,
+    "town": "Condo - JALAN NOVENA BARAT",
+    "median_price": 1357500,
+    "median_psf": 1588,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 14
+  },
+  {
+    "rank": 775,
+    "town": "Condo - JALAN MAT JAMBOL",
+    "median_price": 1368888,
+    "median_psf": 1876,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 776,
+    "town": "Condo - JALAN MATA AYER",
+    "median_price": 1250000,
+    "median_psf": 951,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 55
+  },
+  {
+    "rank": 777,
+    "town": "Condo - JALAN MEMBINA",
+    "median_price": 2250000,
+    "median_psf": 1685,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 29
+  },
+  {
+    "rank": 778,
+    "town": "Condo - JALAN MERAH SAGA",
+    "median_price": 2715000,
+    "median_psf": 1994,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 8
+  },
+  {
+    "rank": 779,
+    "town": "Condo - JALAN MERLIMAU",
+    "median_price": 1680000,
+    "median_psf": 1794,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 780,
+    "town": "Condo - JALAN MUTIARA",
+    "median_price": 1595000,
+    "median_psf": 2126,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 46
+  },
+  {
+    "rank": 781,
+    "town": "Condo - JALAN NAUNG",
+    "median_price": 1109000,
+    "median_psf": 1506,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 782,
+    "town": "Condo - JALAN NOVENA",
+    "median_price": 1062888,
+    "median_psf": 1599,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 783,
+    "town": "Condo - JALAN PARI KIKIS",
+    "median_price": 1725000,
+    "median_psf": 1187,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 784,
+    "town": "Condo - JALAN SAUDARA KU",
+    "median_price": 900000,
+    "median_psf": 1520,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 785,
+    "town": "Condo - JALAN PELIKAT",
+    "median_price": 875000,
+    "median_psf": 1438,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 29
+  },
+  {
+    "rank": 786,
+    "town": "Condo - JALAN PUNAI",
+    "median_price": 673000,
+    "median_psf": 1540,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 4
+  },
+  {
+    "rank": 787,
+    "town": "Condo - JALAN RAJA UDANG",
+    "median_price": 2700000,
+    "median_psf": 1766,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 31
+  },
+  {
+    "rank": 788,
+    "town": "Condo - JALAN RAJAH",
+    "median_price": 1082500,
+    "median_psf": 1668,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 40
+  },
+  {
+    "rank": 789,
+    "town": "Condo - JALAN RAJAWALI",
+    "median_price": 1734000,
+    "median_psf": 1440,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 790,
+    "town": "Condo - JALAN RAMA RAMA",
+    "median_price": 2310000,
+    "median_psf": 1806,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 791,
+    "town": "Condo - JALAN REMAJA",
+    "median_price": 1342500,
+    "median_psf": 1412,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 792,
+    "town": "Condo - JALAN RUMBIA",
+    "median_price": 3879000,
+    "median_psf": 2416,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 16
+  },
+  {
+    "rank": 793,
+    "town": "Condo - JURONG EAST CENTRAL 1",
+    "median_price": 2132000,
+    "median_psf": 2476,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 355
+  },
+  {
+    "rank": 794,
+    "town": "Condo - LORONG 42 GEYLANG",
+    "median_price": 1425000,
+    "median_psf": 1186,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 11
+  },
+  {
+    "rank": 795,
+    "town": "Condo - KALLANG ROAD",
+    "median_price": 2620000,
+    "median_psf": 2108,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 10
+  },
+  {
+    "rank": 796,
+    "town": "Condo - KENSINGTON PARK DRIVE",
+    "median_price": 2750000,
+    "median_psf": 1597,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 19
+  },
+  {
+    "rank": 797,
+    "town": "Condo - KENG CHIN ROAD",
+    "median_price": 2725000,
+    "median_psf": 2543,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 27
+  },
+  {
+    "rank": 798,
+    "town": "Condo - KENG LEE ROAD",
+    "median_price": 2600000,
+    "median_psf": 1861,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 32
+  },
+  {
+    "rank": 799,
+    "town": "Condo - KEE SENG STREET",
+    "median_price": 1270000,
+    "median_psf": 2226,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 800,
+    "town": "Condo - KAY POH ROAD",
+    "median_price": 1542500,
+    "median_psf": 1912,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 12
+  },
+  {
+    "rank": 801,
+    "town": "Condo - KANG CHOO BIN ROAD",
+    "median_price": 1280000,
+    "median_psf": 1272,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 802,
+    "town": "Condo - JURONG WEST STREET 41",
+    "median_price": 1600000,
+    "median_psf": 1443,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 85
+  },
+  {
+    "rank": 803,
+    "town": "Condo - KELLOCK ROAD",
+    "median_price": 3150000,
+    "median_psf": 1968,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 9
+  },
+  {
+    "rank": 804,
+    "town": "Condo - KAMPONG EUNOS",
+    "median_price": 1768000,
+    "median_psf": 1568,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 15
+  },
+  {
+    "rank": 805,
+    "town": "Condo - KAMPONG BAHRU ROAD",
+    "median_price": 993500,
+    "median_psf": 1649,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 6
+  },
+  {
+    "rank": 806,
+    "town": "Condo - KANDIS LINK",
+    "median_price": 1050000,
+    "median_psf": 1355,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 807,
+    "town": "Condo - BINJAI PARK",
+    "median_price": 1588000,
+    "median_psf": 1586,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 1
+  },
+  {
+    "rank": 808,
+    "town": "Condo - KAMPONG BUGIS",
+    "median_price": 2550000,
+    "median_psf": 2477,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 23
+  },
+  {
+    "rank": 809,
+    "town": "Condo - JURONG EAST STREET 32",
+    "median_price": 1410544,
+    "median_psf": 1204,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 32
+  },
+  {
+    "rank": 810,
+    "town": "Condo - KAMPONG JAVA ROAD",
+    "median_price": 2160000,
+    "median_psf": 1785,
+    "yield": 0,
+    "growth": 0.0,
+    "volume": 3
+  },
+  {
+    "rank": 811,
+    "town": "Condo - PAYA LEBAR ROAD",
+    "median_price": 1520000,
+    "median_psf": 2219,
+    "yield": 0,
+    "growth": -0.31,
+    "volume": 95
+  },
+  {
+    "rank": 812,
+    "town": "Condo - CARDIFF GROVE",
+    "median_price": 715000,
+    "median_psf": 1608,
+    "yield": 0,
+    "growth": -0.35,
+    "volume": 25
+  },
+  {
+    "rank": 813,
+    "town": "Condo - WEST COAST PARK",
+    "median_price": 2180000,
+    "median_psf": 1683,
+    "yield": 0,
+    "growth": -0.86,
+    "volume": 55
+  },
+  {
+    "rank": 814,
+    "town": "Condo - CHOA CHU KANG NORTH 6",
+    "median_price": 1435000,
+    "median_psf": 1141,
+    "yield": 0,
+    "growth": -1.04,
+    "volume": 11
+  },
+  {
+    "rank": 815,
+    "town": "Condo - SHUNFU ROAD",
+    "median_price": 1708000,
+    "median_psf": 2199,
+    "yield": 0,
+    "growth": -1.13,
+    "volume": 251
+  },
+  {
+    "rank": 816,
+    "town": "Condo - ORCHARD BOULEVARD",
+    "median_price": 2491000,
+    "median_psf": 3323,
+    "yield": 0,
+    "growth": -1.42,
+    "volume": 269
+  },
+  {
+    "rank": 817,
+    "town": "Condo - TAMPINES STREET 86",
+    "median_price": 1095000,
+    "median_psf": 1515,
+    "yield": 0,
+    "growth": -1.75,
+    "volume": 515
+  },
+  {
+    "rank": 818,
+    "town": "EC - CHOA CHU KANG AVENUE 5",
+    "median_price": 1450000,
+    "median_psf": 1416,
+    "yield": 0,
+    "growth": -1.88,
+    "volume": 132
+  },
+  {
+    "rank": 819,
+    "town": "EC - TAMPINES CENTRAL 7",
+    "median_price": 1732000,
+    "median_psf": 1486,
+    "yield": 0,
+    "growth": -1.94,
+    "volume": 211
+  },
+  {
+    "rank": 820,
+    "town": "Condo - PHENG GECK AVENUE",
+    "median_price": 1475000,
+    "median_psf": 1726,
+    "yield": 0,
+    "growth": -2.52,
+    "volume": 124
+  },
+  {
+    "rank": 821,
+    "town": "Condo - JELEBU ROAD",
+    "median_price": 820000,
+    "median_psf": 1750,
+    "yield": 0,
+    "growth": -2.64,
+    "volume": 83
+  },
+  {
+    "rank": 822,
+    "town": "Condo - BALESTIER ROAD",
+    "median_price": 1035000,
+    "median_psf": 1667,
+    "yield": 0,
+    "growth": -2.71,
+    "volume": 111
+  },
+  {
+    "rank": 823,
+    "town": "Condo - YUAN CHING ROAD",
+    "median_price": 1644000,
+    "median_psf": 2180,
+    "yield": 0,
+    "growth": -3.32,
+    "volume": 477
+  },
+  {
+    "rank": 824,
+    "town": "Condo - YISHUN CLOSE",
+    "median_price": 1085000,
+    "median_psf": 1295,
+    "yield": 0,
+    "growth": -3.63,
+    "volume": 128
+  },
+  {
+    "rank": 825,
+    "town": "Condo - CANBERRA DRIVE",
+    "median_price": 1300000,
+    "median_psf": 1248,
+    "yield": 0,
+    "growth": -3.65,
+    "volume": 281
+  },
+  {
+    "rank": 826,
+    "town": "Condo - WEST COAST WALK",
+    "median_price": 2530000,
+    "median_psf": 1857,
+    "yield": 0,
+    "growth": -3.7,
+    "volume": 50
+  },
+  {
+    "rank": 827,
+    "town": "Condo - DRAYCOTT PARK",
+    "median_price": 2610700,
+    "median_psf": 3005,
+    "yield": 0,
+    "growth": -3.93,
+    "volume": 78
+  },
+  {
+    "rank": 828,
+    "town": "Condo - AKYAB ROAD",
+    "median_price": 1959000,
+    "median_psf": 1954,
+    "yield": 0,
+    "growth": -4.42,
+    "volume": 28
+  },
+  {
+    "rank": 829,
+    "town": "BISHAN",
+    "median_price": 800000,
+    "median_psf": 710,
+    "yield": 5.2,
+    "growth": -9.79,
+    "volume": 1029
+  },
+  {
+    "rank": 830,
+    "town": "EC - SEGAR ROAD",
+    "median_price": 1280000,
+    "median_psf": 1240,
+    "yield": 0,
+    "growth": -4.89,
+    "volume": 108
+  },
+  {
+    "rank": 831,
+    "town": "Condo - WEST COAST VALE",
+    "median_price": 1224444,
+    "median_psf": 1795,
+    "yield": 0,
+    "growth": -5.05,
+    "volume": 402
+  },
+  {
+    "rank": 832,
+    "town": "Condo - DOVER RISE",
+    "median_price": 1680000,
+    "median_psf": 1496,
+    "yield": 0,
+    "growth": -5.05,
+    "volume": 123
+  },
+  {
+    "rank": 833,
+    "town": "EC - PLANTATION CLOSE",
+    "median_price": 1637000,
+    "median_psf": 1708,
+    "yield": 0,
+    "growth": -5.07,
+    "volume": 1095
+  },
+  {
+    "rank": 834,
+    "town": "Condo - LORONG MYDIN",
+    "median_price": 1319000,
+    "median_psf": 1302,
+    "yield": 0,
+    "growth": -5.14,
+    "volume": 34
+  },
+  {
+    "rank": 835,
+    "town": "BUKIT PANJANG",
+    "median_price": 670000,
+    "median_psf": 556,
+    "yield": 6.38,
+    "growth": -12.12,
+    "volume": 26
+  },
+  {
+    "rank": 836,
+    "town": "EC - CHOA CHU KANG GROVE",
+    "median_price": 1180000,
+    "median_psf": 1402,
+    "yield": 0,
+    "growth": -5.75,
+    "volume": 481
+  },
+  {
+    "rank": 837,
+    "town": "EC - CHOA CHU KANG NORTH 6",
+    "median_price": 1328000,
+    "median_psf": 1034,
+    "yield": 0,
+    "growth": -6.52,
+    "volume": 47
+  },
+  {
+    "rank": 838,
+    "town": "Condo - BEACH ROAD",
+    "median_price": 1935832,
+    "median_psf": 2214,
+    "yield": 0,
+    "growth": -7.62,
+    "volume": 218
+  },
+  {
+    "rank": 839,
+    "town": "BEDOK",
+    "median_price": 570000,
+    "median_psf": 564,
+    "yield": 6.97,
+    "growth": -14.6,
+    "volume": 1793
+  },
+  {
+    "rank": 840,
+    "town": "Condo - JURONG LAKE LINK",
+    "median_price": 1350000,
+    "median_psf": 1761,
+    "yield": 0,
+    "growth": -8.86,
+    "volume": 175
+  },
+  {
+    "rank": 841,
+    "town": "Condo - KEPPEL BAY DRIVE",
+    "median_price": 2450000,
+    "median_psf": 1939,
+    "yield": 0,
+    "growth": -9.39,
+    "volume": 159
+  },
+  {
+    "rank": 842,
+    "town": "EC - ANCHORVALE LANE",
+    "median_price": 1575000,
+    "median_psf": 1604,
+    "yield": 0,
+    "growth": -9.4,
+    "volume": 50
+  },
+  {
+    "rank": 843,
+    "town": "Condo - LENTOR HILLS ROAD",
+    "median_price": 1760000,
+    "median_psf": 2138,
+    "yield": 0,
+    "growth": -9.84,
+    "volume": 835
+  },
+  {
+    "rank": 844,
+    "town": "EC - WOODLANDS AVENUE 5",
+    "median_price": 1430000,
+    "median_psf": 1238,
+    "yield": 0,
+    "growth": -10.13,
+    "volume": 106
+  },
+  {
+    "rank": 845,
+    "town": "Condo - HOLLAND ROAD",
+    "median_price": 2056000,
+    "median_psf": 2763,
+    "yield": 0,
+    "growth": -10.19,
+    "volume": 187
+  },
+  {
+    "rank": 846,
+    "town": "EC - PUNGGOL WALK",
+    "median_price": 1510000,
+    "median_psf": 1358,
+    "yield": 0,
+    "growth": -10.27,
+    "volume": 185
+  },
+  {
+    "rank": 847,
+    "town": "Condo - LEEDON HEIGHTS",
+    "median_price": 2138000,
+    "median_psf": 2138,
+    "yield": 0,
+    "growth": -10.71,
+    "volume": 425
+  },
+  {
+    "rank": 848,
+    "town": "Condo - JOO CHIAT PLACE",
+    "median_price": 1720000,
+    "median_psf": 1615,
+    "yield": 0,
+    "growth": -10.75,
+    "volume": 64
+  },
+  {
+    "rank": 849,
+    "town": "Condo - ELIZABETH DRIVE",
+    "median_price": 1901400,
+    "median_psf": 1645,
+    "yield": 0,
+    "growth": -10.77,
+    "volume": 16
+  },
+  {
+    "rank": 850,
+    "town": "EC - WOODLANDS CRESCENT",
+    "median_price": 1120000,
+    "median_psf": 884,
+    "yield": 0,
+    "growth": -11.67,
+    "volume": 78
+  },
+  {
+    "rank": 851,
+    "town": "Condo - HAIG ROAD",
+    "median_price": 2125000,
+    "median_psf": 1923,
+    "yield": 0,
+    "growth": -12.05,
+    "volume": 110
+  },
+  {
+    "rank": 852,
+    "town": "Condo - MARINE PARADE ROAD",
+    "median_price": 2000000,
+    "median_psf": 1787,
+    "yield": 0,
+    "growth": -13.16,
+    "volume": 205
+  },
+  {
+    "rank": 853,
+    "town": "Condo - NASSIM ROAD",
+    "median_price": 12150000,
+    "median_psf": 3308,
+    "yield": 0,
+    "growth": -13.71,
+    "volume": 20
+  },
+  {
+    "rank": 854,
+    "town": "Condo - WEST COAST ROAD",
+    "median_price": 2100000,
+    "median_psf": 1467,
+    "yield": 0,
+    "growth": -14.65,
+    "volume": 100
+  },
+  {
+    "rank": 855,
+    "town": "Condo - BUKIT BATOK EAST AVENUE 5",
+    "median_price": 1120000,
+    "median_psf": 1046,
+    "yield": 0,
+    "growth": -14.95,
+    "volume": 73
+  },
+  {
+    "rank": 856,
+    "town": "Condo - PERUMAL ROAD",
+    "median_price": 1180000,
+    "median_psf": 2052,
+    "yield": 0,
+    "growth": -16.12,
+    "volume": 15
+  },
+  {
+    "rank": 857,
+    "town": "Condo - SANDILANDS ROAD",
+    "median_price": 1195000,
+    "median_psf": 1316,
+    "yield": 0,
+    "growth": -16.32,
+    "volume": 9
+  },
+  {
+    "rank": 858,
+    "town": "Condo - OXLEY WALK",
+    "median_price": 4600000,
+    "median_psf": 2076,
+    "yield": 0,
+    "growth": -17.39,
+    "volume": 17
+  },
+  {
+    "rank": 859,
+    "town": "Condo - LINCOLN ROAD",
+    "median_price": 2765000,
+    "median_psf": 2209,
+    "yield": 0,
+    "growth": -17.75,
+    "volume": 58
+  },
+  {
+    "rank": 860,
+    "town": "Condo - PETIR ROAD",
+    "median_price": 1468444,
+    "median_psf": 1213,
+    "yield": 0,
+    "growth": -18.41,
+    "volume": 128
+  },
+  {
+    "rank": 861,
+    "town": "Condo - HILLVIEW AVENUE",
+    "median_price": 1806500,
+    "median_psf": 1497,
+    "yield": 0,
+    "growth": -18.58,
+    "volume": 252
+  },
+  {
+    "rank": 862,
+    "town": "Condo - BROOKVALE DRIVE",
+    "median_price": 2200000,
+    "median_psf": 2232,
+    "yield": 0,
+    "growth": -19.17,
+    "volume": 92
+  },
+  {
+    "rank": 863,
+    "town": "Condo - GRANGE ROAD",
+    "median_price": 2505000,
+    "median_psf": 2850,
+    "yield": 0,
+    "growth": -19.42,
+    "volume": 135
+  },
+  {
+    "rank": 864,
+    "town": "Condo - SENGKANG SQUARE",
+    "median_price": 1530000,
+    "median_psf": 1522,
+    "yield": 0,
+    "growth": -20.35,
+    "volume": 145
+  },
+  {
+    "rank": 865,
+    "town": "Condo - HOUGANG STREET 11",
+    "median_price": 1560000,
+    "median_psf": 1468,
+    "yield": 0,
+    "growth": -20.67,
+    "volume": 193
+  },
+  {
+    "rank": 866,
+    "town": "Condo - AMBER ROAD",
+    "median_price": 2460000,
+    "median_psf": 2203,
+    "yield": 0,
+    "growth": -21.9,
+    "volume": 191
+  },
+  {
+    "rank": 867,
+    "town": "Condo - SPOTTISWOODE PARK ROAD",
+    "median_price": 1165000,
+    "median_psf": 2274,
+    "yield": 0,
+    "growth": -23.32,
+    "volume": 124
+  },
+  {
+    "rank": 868,
+    "town": "Condo - SOPHIA ROAD",
+    "median_price": 1596850,
+    "median_psf": 2743,
+    "yield": 0,
+    "growth": -23.38,
+    "volume": 200
+  },
+  {
+    "rank": 869,
+    "town": "Condo - BHAMO ROAD",
+    "median_price": 1325000,
+    "median_psf": 1590,
+    "yield": 0,
+    "growth": -24.88,
+    "volume": 12
+  },
+  {
+    "rank": 870,
+    "town": "Condo - JALAN PARI BURONG",
+    "median_price": 2069000,
+    "median_psf": 1421,
+    "yield": 0,
+    "growth": -26.72,
+    "volume": 2
+  },
+  {
+    "rank": 871,
+    "town": "Condo - MAR THOMA ROAD",
+    "median_price": 1170000,
+    "median_psf": 1520,
+    "yield": 0,
+    "growth": -27.42,
+    "volume": 89
+  },
+  {
+    "rank": 872,
+    "town": "Condo - HAVELOCK ROAD",
+    "median_price": 2266000,
+    "median_psf": 3091,
+    "yield": 0,
+    "growth": -27.59,
+    "volume": 193
+  },
+  {
+    "rank": 873,
+    "town": "Condo - THOMSON LANE",
+    "median_price": 5819000,
+    "median_psf": 2206,
+    "yield": 0,
+    "growth": -28.3,
+    "volume": 16
+  },
+  {
+    "rank": 874,
+    "town": "Condo - RIVER VALLEY ROAD",
+    "median_price": 2255000,
+    "median_psf": 2189,
+    "yield": 0,
+    "growth": -29.54,
+    "volume": 244
+  },
+  {
+    "rank": 875,
+    "town": "Condo - KEPPEL BAY VIEW",
+    "median_price": 2280000,
+    "median_psf": 1728,
+    "yield": 0,
+    "growth": -30.7,
+    "volume": 175
+  },
+  {
+    "rank": 876,
+    "town": "Condo - HOUGANG AVENUE 2",
+    "median_price": 1230000,
+    "median_psf": 1778,
+    "yield": 0,
+    "growth": -31.71,
+    "volume": 346
+  },
+  {
+    "rank": 877,
+    "town": "Condo - HOUGANG AVENUE 7",
+    "median_price": 1120000,
+    "median_psf": 1658,
+    "yield": 0,
+    "growth": -32.26,
+    "volume": 405
+  },
+  {
+    "rank": 878,
+    "town": "Condo - GUILLEMARD ROAD",
+    "median_price": 1494000,
+    "median_psf": 1538,
+    "yield": 0,
+    "growth": -32.7,
+    "volume": 86
+  },
+  {
+    "rank": 879,
+    "town": "TOA PAYOH",
+    "median_price": 627000,
+    "median_psf": 603,
+    "yield": 5.87,
+    "growth": -39.53,
+    "volume": 830
+  },
+  {
+    "rank": 880,
+    "town": "Condo - SERANGOON NORTH AVENUE 1",
+    "median_price": 1300000,
+    "median_psf": 1778,
+    "yield": 0,
+    "growth": -36.36,
+    "volume": 356
+  },
+  {
+    "rank": 881,
+    "town": "CENTRAL AREA",
+    "median_price": 969000,
+    "median_psf": 850,
+    "yield": 0,
+    "growth": -37.1,
+    "volume": 300
+  },
+  {
+    "rank": 882,
+    "town": "Condo - UPPER PAYA LEBAR ROAD",
+    "median_price": 1280000,
+    "median_psf": 1839,
+    "yield": 0,
+    "growth": -38.6,
+    "volume": 215
+  },
+  {
+    "rank": 883,
+    "town": "Condo - LORONG 32 GEYLANG",
+    "median_price": 738944,
+    "median_psf": 1577,
+    "yield": 0,
+    "growth": -39.6,
+    "volume": 34
+  },
+  {
+    "rank": 884,
+    "town": "Condo - HILLVIEW RISE",
+    "median_price": 1529150,
+    "median_psf": 2006,
+    "yield": 0,
+    "growth": -40.78,
+    "volume": 606
+  },
+  {
+    "rank": 885,
+    "town": "Condo - SCOTTS ROAD",
+    "median_price": 3100000,
+    "median_psf": 2481,
+    "yield": 0,
+    "growth": -41.58,
+    "volume": 45
+  },
+  {
+    "rank": 886,
+    "town": "Condo - UPPER SERANGOON VIEW",
+    "median_price": 1200000,
+    "median_psf": 1382,
+    "yield": 0,
+    "growth": -44.3,
+    "volume": 372
+  },
+  {
+    "rank": 887,
+    "town": "Condo - ANG MO KIO AVENUE 9",
+    "median_price": 1840000,
+    "median_psf": 1109,
+    "yield": 0,
+    "growth": -49.54,
+    "volume": 22
+  },
+  {
+    "rank": 888,
+    "town": "Condo - TOPAZ ROAD",
+    "median_price": 678000,
+    "median_psf": 1410,
+    "yield": 0,
+    "growth": -50.18,
+    "volume": 11
+  },
+  {
+    "rank": 889,
+    "town": "Condo - LAKEPOINT DRIVE",
+    "median_price": 1677500,
+    "median_psf": 862,
+    "yield": 0,
+    "growth": -50.91,
+    "volume": 28
+  },
+  {
+    "rank": 890,
+    "town": "Condo - PHOENIX ROAD",
+    "median_price": 1315000,
+    "median_psf": 1720,
+    "yield": 0,
+    "growth": -60.83,
+    "volume": 165
+  },
+  {
+    "rank": 891,
+    "town": "Condo - JALAN TEMBUSU",
+    "median_price": 2327500,
+    "median_psf": 2556,
+    "yield": 0,
+    "growth": -61.46,
+    "volume": 1472
+  },
+  {
+    "rank": 892,
+    "town": "Condo - ALEXANDRA ROAD",
+    "median_price": 2080000,
+    "median_psf": 1837,
+    "yield": 0,
+    "growth": -67.17,
+    "volume": 83
+  }
+]
