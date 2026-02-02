@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-01T23:39:29.581688",
-    "total_records": 911797,
+    "generated_at": "2026-02-03T00:38:09.017901",
+    "total_records": 1116323,
     "date_range": {
       "start": "1990-01-01",
       "end": "2026-01-01"
@@ -9,41 +9,41 @@
   },
   "stats": {
     "whole": {
-      "count": 911797,
-      "median_price": 332800,
-      "median_psf": 307,
-      "volume": 911797
+      "count": 1116323,
+      "median_price": 385000,
+      "median_psf": 372,
+      "volume": 1116323
     },
     "pre_covid": {
-      "count": 741823,
-      "median_price": 283500,
-      "median_psf": 265,
-      "volume": 741823
+      "count": 791115,
+      "median_price": 298000,
+      "median_psf": 276,
+      "volume": 791115
     },
     "recent": {
-      "count": 169974,
-      "median_price": 1028888,
-      "median_psf": 1177,
-      "volume": 169974
+      "count": 325208,
+      "median_price": 968888,
+      "median_psf": 1102,
+      "volume": 325208
     }
   },
   "distributions": {
     "property_type": {
-      "HDB": 785395,
-      "Condominium": 109576,
-      "EC": 16826
+      "HDB": 882427,
+      "Condominium": 202983,
+      "EC": 30913
     },
     "planning_area": {
-      "QUEENSTOWN": 113261,
-      "WOODLANDS": 75935,
-      "YISHUN": 69018,
-      "TAMPINES": 68347,
-      "ANG MO KIO": 59288,
-      "HOUGANG": 51133,
-      "JURONG WEST": 47582,
-      "CHOA CHU KANG": 45109,
-      "BEDOK": 38589,
-      "PASIR RIS": 38485
+      "QUEENSTOWN": 130999,
+      "WOODLANDS": 87802,
+      "TAMPINES": 81495,
+      "YISHUN": 77313,
+      "ANG MO KIO": 70045,
+      "HOUGANG": 60997,
+      "JURONG WEST": 53275,
+      "CHOA CHU KANG": 53073,
+      "BEDOK": 49401,
+      "PASIR RIS": 47502
     }
   }
 }
