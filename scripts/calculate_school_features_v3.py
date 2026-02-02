@@ -28,6 +28,8 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     """Calculate distance in meters between two lat/lon points using Haversine formula."""
     from math import radians, sin, cos, sqrt, asin
 
+    # Ensure coordinates are floats
+    lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
     dlon = lon2 - lon1
@@ -209,7 +211,7 @@ def calculate_school_features(
         prop_lat, prop_lon = prop["lat"], prop["lon"]
 
         # Aggregate school counts
-        for radius_m, col_suffix in DISTANCES.items():
+        for col_suffix, radius_m in DISTANCES.items():
             radius_radians = radius_m / 6371000
             count = all_tree.query_ball_point([prop_lat, prop_lon], r=radius_radians)
             properties_df.at[prop_idx, f"school_within_{col_suffix}"] = len(count)
@@ -239,7 +241,7 @@ def calculate_school_features(
                     properties_df.at[prop_idx, f"nearest_school{level_code}_{key}"] = value
 
             # Level-specific school counts
-            for radius_m, col_suffix in DISTANCES.items():
+            for col_suffix, radius_m in DISTANCES.items():
                 radius_radians = radius_m / 6371000
                 count = tree.query_ball_point([prop_lat, prop_lon], r=radius_radians)
                 properties_df.at[prop_idx, f"school{level_code}_count{col_suffix}"] = len(count)
