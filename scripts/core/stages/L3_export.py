@@ -29,7 +29,7 @@ import geopandas as gpd
 import pandas as pd
 
 from scripts.core.config import Config
-from scripts.calculate_school_features_v3 import calculate_school_features, load_schools
+from scripts.core.school_features import calculate_school_features, load_schools
 
 # Configure logging
 logger = logging.getLogger(__name__)
