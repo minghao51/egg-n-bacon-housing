@@ -65,7 +65,7 @@ class TestL0Collect:
         assert len(result) == 2
         assert 'a' in result.columns or 'b' in result.columns
 
-    @patch('scripts.core.stages.L0_collect.save_parquet')
+    @patch('scripts.core.stages.helpers.collect_helpers.save_parquet')
     @patch('scripts.core.stages.L0_collect.fetch_datagovsg_dataset')
     def test_fetch_private_property_transactions(self, mock_fetch, mock_save):
         """Test fetching private property transactions."""
@@ -74,7 +74,7 @@ class TestL0Collect:
         mock_fetch.return_value = mock_df
 
         # Fetch
-        result = fetch_private_property_transactions()
+        result = fetch_private_property_transactions(use_cache=False)
 
         # Verify save was called
         assert mock_save.called
