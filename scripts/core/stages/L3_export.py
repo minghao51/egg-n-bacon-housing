@@ -6,6 +6,7 @@ This module creates a comprehensive unified housing dataset by combining:
 - Planning areas from geojson
 - Rental yield data
 - Precomputed growth metrics
+- School distance features (nearest school distances, counts, and attributes)
 
 Creates:
     L3/housing_unified.parquet - Complete dataset with all features
@@ -28,6 +29,7 @@ import geopandas as gpd
 import pandas as pd
 
 from scripts.core.config import Config
+from scripts.calculate_school_features_v3 import calculate_school_features, load_schools
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -1460,6 +1462,25 @@ def run_l3_pipeline(
 
     # Add period-dependent market segmentation
     combined = add_period_segmentation(combined)
+
+    # Add school distance features
+    logger.info("=" * 60)
+    logger.info("Adding School Distance Features")
+    logger.info("=" * 60)
+    try:
+        schools_df = load_schools()
+        logger.info(f"Loaded {len(schools_df)} schools")
+
+        # Only process properties that have coordinates
+        combined_with_coords = combined.dropna(subset=['lat', 'lon'])
+        if not combined_with_coords.empty:
+            combined = calculate_school_features(combined, schools_df)
+            logger.info("✅ School features added successfully")
+        else:
+            logger.warning("No properties with coordinates found, skipping school features")
+    except Exception as e:
+        logger.warning(f"Failed to add school features: {e}")
+        logger.info("Continuing without school features...")
 
     # Filter to successfully geocoded properties
     if 'lat' in combined.columns and 'lon' in combined.columns:
