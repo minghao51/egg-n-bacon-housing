@@ -77,9 +77,10 @@ class Config:
         Raises:
             ValueError: If required configuration is missing
         """
+        # Check current environment values (not just cached class attributes)
         required_keys = {
-            "ONEMAP_EMAIL": cls.ONEMAP_EMAIL,
-            "GOOGLE_API_KEY": cls.GOOGLE_API_KEY,
+            "ONEMAP_EMAIL": os.getenv("ONEMAP_EMAIL"),
+            "GOOGLE_API_KEY": os.getenv("GOOGLE_API_KEY"),
         }
 
         missing = [k for k, v in required_keys.items() if not v]
