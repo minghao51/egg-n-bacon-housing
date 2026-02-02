@@ -31,6 +31,21 @@ from scripts.core.stages.L5_metrics import (
 
 logger = logging.getLogger(__name__)
 
+
+def sanitize_for_json(obj):
+    """
+    Recursively replace NaN, Infinity, -Infinity with None (null in JSON).
+    """
+    if isinstance(obj, float):
+        if pd.isna(obj) or np.isinf(obj):
+            return None
+        return obj
+    elif isinstance(obj, dict):
+        return {k: sanitize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_for_json(v) for v in obj]
+    return obj
+
 def safe_float(val, default=None):
     """Safely convert value to float, returning default if NaN/Inf."""
     try:
@@ -70,19 +85,19 @@ def export_dashboard_data():
     logger.info("Exporting overview data...")
     overview_data = generate_overview_data(df)
     with open(output_dir / "dashboard_overview.json", "w") as f:
-        json.dump(overview_data, f, indent=2)
+        json.dump(sanitize_for_json(overview_data), f, indent=2)
         
     # 2. Export Trends Data
     logger.info("Exporting trends data...")
     trends_data = generate_trends_data(df)
     with open(output_dir / "dashboard_trends.json", "w") as f:
-        json.dump(trends_data, f, indent=2)
+        json.dump(sanitize_for_json(trends_data), f, indent=2)
 
     # 3. Export Map Data
     logger.info("Exporting map data...")
     map_data = generate_map_data(df)
     with open(output_dir / "map_metrics.json", "w") as f:
-        json.dump(map_data, f, indent=2)
+        json.dump(sanitize_for_json(map_data), f, indent=2)
         
     # Copy GeoJSON
     geojson_src = Path("data/manual/geojsons/onemap_planning_area_polygon.geojson")
@@ -96,19 +111,19 @@ def export_dashboard_data():
     logger.info("Exporting segments data...")
     segments_data = generate_segments_data(df)
     with open(output_dir / "dashboard_segments.json", "w") as f:
-        json.dump(segments_data, f, indent=2)
+        json.dump(sanitize_for_json(segments_data), f, indent=2)
 
     # 5. Export Town Leaderboard
     logger.info("Exporting leaderboard data...")
     leaderboard_data = generate_leaderboard_data(df)
     with open(output_dir / "dashboard_leaderboard.json", "w") as f:
-        json.dump(leaderboard_data, f, indent=2)
+        json.dump(sanitize_for_json(leaderboard_data), f, indent=2)
 
     # 6. Export Appreciation Hotspots (NEW)
     logger.info("Exporting hotspots data...")
     hotspots_data = generate_hotspots_data(df)
     with open(output_dir / "hotspots.json", "w") as f:
-        json.dump(hotspots_data, f, indent=2)
+        json.dump(sanitize_for_json(hotspots_data), f, indent=2)
 
     logger.info(f"Export complete! Files saved to {output_dir}")
 
@@ -344,10 +359,10 @@ def generate_hotspots_data(df):
         area_name = row["planning_area"].upper()
         hotspots[area_name] = {
             "category": str(row["category"]),
-            "mean_yoy_growth": round(float(row.get("mean_yoy", 0)), 2),
-            "median_yoy_growth": round(float(row.get("median_yoy", 0)), 2),
-            "std_yoy_growth": round(float(row.get("std_yoy", 0)), 2),
-            "consistency": round(float(row.get("consistency", 0)), 2),
+            "mean_yoy_growth": safe_float(row.get("mean_yoy"), 0),
+            "median_yoy_growth": safe_float(row.get("median_yoy"), 0),
+            "std_yoy_growth": safe_float(row.get("std_yoy"), 0),
+            "consistency": safe_float(row.get("consistency"), 0),
             "years": int(row.get("years", 0))
         }
 
