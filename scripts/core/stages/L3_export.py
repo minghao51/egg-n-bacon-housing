@@ -30,6 +30,7 @@ import pandas as pd
 
 from scripts.core.config import Config
 from scripts.core.school_features import calculate_school_features, load_schools
+from scripts.core.stages.helpers import export_helpers
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -76,40 +77,12 @@ def load_condo_transactions() -> pd.DataFrame:
 
     df = pd.read_parquet(path)
 
-    # Clean price column: Remove commas and convert to numeric
-    if 'Transacted Price ($)' in df.columns:
-        df['Transacted Price ($)'] = (
-            df['Transacted Price ($)']
-            .astype(str)
-            .str.replace(',', '')
-            .astype(float)
-        )
+    # Clean numeric columns using helper
+    price_cols = ['Transacted Price ($)']
+    area_cols = ['Area (SQFT)', 'Area (SQM)']
+    psf_cols = ['Unit Price ($ PSF)']
 
-    # Clean area columns: Remove commas and convert to numeric
-    if 'Area (SQFT)' in df.columns:
-        df['Area (SQFT)'] = (
-            df['Area (SQFT)']
-            .astype(str)
-            .str.replace(',', '')
-            .astype(float)
-        )
-
-    if 'Area (SQM)' in df.columns:
-        df['Area (SQM)'] = (
-            df['Area (SQM)']
-            .astype(str)
-            .str.replace(',', '')
-            .astype(float)
-        )
-
-    # Clean PSF column: Remove commas and convert to numeric
-    if 'Unit Price ($ PSF)' in df.columns:
-        df['Unit Price ($ PSF)'] = (
-            df['Unit Price ($ PSF)']
-            .astype(str)
-            .str.replace(',', '')
-            .astype(float)
-        )
+    df = export_helpers.clean_price_columns(df, price_cols, area_cols, psf_cols)
 
     logger.info(f"Loaded {len(df):,} Condo transactions")
 
@@ -132,47 +105,12 @@ def load_ec_transactions() -> pd.DataFrame:
 
     df = pd.read_parquet(path)
 
-    # Clean price column: Remove commas and convert to numeric
-    if 'Transacted Price ($)' in df.columns:
-        df['Transacted Price ($)'] = (
-            df['Transacted Price ($)']
-            .astype(str)
-            .str.replace(',', '')
-            .str.replace('$', '')
-            .str.strip()
-            .astype(float)
-        )
+    # Clean numeric columns using helper (EC has $ sign in price column)
+    price_cols = ['Transacted Price ($)']
+    area_cols = ['Area (SQFT)', 'Area (SQM)']
+    psf_cols = ['Unit Price ($ PSF)', 'Unit Price ($ PSM)']
 
-    # Clean area columns: Remove commas and convert to numeric
-    if 'Area (SQFT)' in df.columns:
-        df['Area (SQFT)'] = (
-            df['Area (SQFT)']
-            .astype(str)
-            .str.replace(',', '')
-            .astype(float)
-        )
-
-    if 'Area (SQM)' in df.columns:
-        # Area SQM is already int64 in EC data
-        df['Area (SQM)'] = pd.to_numeric(df['Area (SQM)'], errors='coerce')
-
-    # Clean PSF column: Remove commas and convert to numeric
-    if 'Unit Price ($ PSF)' in df.columns:
-        df['Unit Price ($ PSF)'] = (
-            df['Unit Price ($ PSF)']
-            .astype(str)
-            .str.replace(',', '')
-            .astype(float)
-        )
-
-    # Clean PSM column
-    if 'Unit Price ($ PSM)' in df.columns:
-        df['Unit Price ($ PSM)'] = (
-            df['Unit Price ($ PSM)']
-            .astype(str)
-            .str.replace(',', '')
-            .astype(float)
-        )
+    df = export_helpers.clean_price_columns(df, price_cols, area_cols, psf_cols)
 
     logger.info(f"Loaded {len(df):,} EC transactions")
 

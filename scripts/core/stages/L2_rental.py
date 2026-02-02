@@ -347,7 +347,7 @@ def main():
     )
 
     args = parser.parse_args()
-    run_l2_rental_pipeline(force=args.force)
+    run_rental_pipeline(force=args.force)
 
 
 if __name__ == "__main__":

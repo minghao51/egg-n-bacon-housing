@@ -15,6 +15,7 @@ import requests
 from scripts.core.config import Config
 from scripts.core.data_helpers import save_parquet
 from scripts.core.cache import cached_call
+from scripts.core.stages.helpers import collect_helpers
 
 logger = logging.getLogger(__name__)
 
@@ -193,12 +194,12 @@ def fetch_private_property_transactions(use_cache: bool = True) -> Optional[pd.D
             dataset_id="d_5785799d63a9da091f4e0b456291eeb8",
         )
 
-    df = load_existing_or_fetch("raw_datagov_general_sale", _fetch, use_cache)
-    if df is not None and not df.empty:
-        save_parquet(df, "raw_datagov_general_sale", source="data.gov.sg API")
-        logger.info(f"✅ Saved private property transactions: {len(df)} records")
-        return df
-    return None
+    return collect_helpers.fetch_and_save_datagovsg_dataset(
+        "raw_datagov_general_sale",
+        "d_5785799d63a9da091f4e0b456291eeb8",
+        _fetch,
+        use_cache
+    )
 
 
 def fetch_rental_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
@@ -209,12 +210,12 @@ def fetch_rental_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
             dataset_id="d_8e4c50283fb7052a391dfb746a05c853",
         )
 
-    df = load_existing_or_fetch("raw_datagov_rental_index", _fetch, use_cache)
-    if df is not None and not df.empty:
-        save_parquet(df, "raw_datagov_rental_index", source="data.gov.sg API")
-        logger.info(f"✅ Saved rental index: {len(df)} records")
-        return df
-    return None
+    return collect_helpers.fetch_and_save_datagovsg_dataset(
+        "raw_datagov_rental_index",
+        "d_8e4c50283fb7052a391dfb746a05c853",
+        _fetch,
+        use_cache
+    )
 
 
 def fetch_price_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
@@ -225,12 +226,12 @@ def fetch_price_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
             dataset_id="d_97f8a2e995022d311c6c68cfda6dae1af",
         )
 
-    df = load_existing_or_fetch("raw_datagov_price_index", _fetch, use_cache)
-    if df is not None and not df.empty:
-        save_parquet(df, "raw_datagov_price_index", source="data.gov.sg API")
-        logger.info(f"✅ Saved price index: {len(df)} records")
-        return df
-    return None
+    return collect_helpers.fetch_and_save_datagovsg_dataset(
+        "raw_datagov_price_index",
+        "d_97f8a2e995022d311c6c68cfda6dae1af",
+        _fetch,
+        use_cache
+    )
 
 
 def fetch_median_property_tax(use_cache: bool = True) -> Optional[pd.DataFrame]:
@@ -241,12 +242,12 @@ def fetch_median_property_tax(use_cache: bool = True) -> Optional[pd.DataFrame]:
             dataset_id="d_774a81df45dca33112e59207e6dae1af",
         )
 
-    df = load_existing_or_fetch("raw_datagov_median_price_via_property_type", _fetch, use_cache)
-    if df is not None and not df.empty:
-        save_parquet(df, "raw_datagov_median_price_via_property_type", source="data.gov.sg API")
-        logger.info(f"✅ Saved median property tax: {len(df)} records")
-        return df
-    return None
+    return collect_helpers.fetch_and_save_datagovsg_dataset(
+        "raw_datagov_median_price_via_property_type",
+        "d_774a81df45dca33112e59207e6dae1af",
+        _fetch,
+        use_cache
+    )
 
 
 def fetch_private_transactions_whole(use_cache: bool = True) -> Optional[pd.DataFrame]:
@@ -257,12 +258,12 @@ def fetch_private_transactions_whole(use_cache: bool = True) -> Optional[pd.Data
             dataset_id="d_7c69c943d5f0d89d6a9a773d2b51f337",
         )
 
-    df = load_existing_or_fetch("raw_datagov_private_transactions_property_type", _fetch, use_cache)
-    if df is not None and not df.empty:
-        save_parquet(df, "raw_datagov_private_transactions_property_type", source="data.gov.sg API")
-        logger.info(f"✅ Saved private transactions (whole SG): {len(df)} records")
-        return df
-    return None
+    return collect_helpers.fetch_and_save_datagovsg_dataset(
+        "raw_datagov_private_transactions_property_type",
+        "d_7c69c943d5f0d89d6a9a773d2b51f337",
+        _fetch,
+        use_cache
+    )
 
 
 def fetch_school_directory(use_cache: bool = True) -> Optional[pd.DataFrame]:
@@ -273,12 +274,12 @@ def fetch_school_directory(use_cache: bool = True) -> Optional[pd.DataFrame]:
             dataset_id="d_688b934f82c1059ed0a6993d2a829089",
         )
 
-    df = load_existing_or_fetch("raw_datagov_school_directory", _fetch, use_cache)
-    if df is not None and not df.empty:
-        save_parquet(df, "raw_datagov_school_directory", source="data.gov.sg API")
-        logger.info(f"✅ Saved school directory: {len(df)} schools")
-        return df
-    return None
+    return collect_helpers.fetch_and_save_datagovsg_dataset(
+        "raw_datagov_school_directory",
+        "d_688b934f82c1059ed0a6993d2a829089",
+        _fetch,
+        use_cache
+    )
 
 
 def collect_all_datagovsg() -> dict:

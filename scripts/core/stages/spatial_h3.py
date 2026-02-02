@@ -16,6 +16,8 @@ from scipy.spatial import cKDTree
 from shapely.geometry import Polygon
 from tqdm import tqdm
 
+from scripts.core.stages.helpers import spatial_helpers
+
 logger = logging.getLogger(__name__)
 
 
@@ -163,52 +165,15 @@ def calculate_amenity_distances(
 
     logger.info(f"  Calculating amenity counts within radius...")
 
-    counts_500m = []
-    counts_1km = []
-    counts_2km = []
-
-    iterator = tqdm(
-        enumerate(property_coords),
-        desc=f"  {amenity_type}",
-        ncols=60,
-        total=len(property_coords),
-        disable=not show_progress,
+    # Use helper for cleaner, more efficient amenity counting
+    counts_500m, counts_1km, counts_2km = spatial_helpers.calculate_amenity_counts_by_radius(
+        property_coords=property_coords,
+        tree=tree,
+        amenities_df=amenities_df,
+        haversine_fn=haversine_distance,
+        radius_km_list=[0.5, 1.0, 2.0],
+        show_progress=show_progress,
     )
-
-    for i, (lon, lat) in iterator:
-        idxs_500m = tree.query_ball_point([lon, lat], r=0.005)
-        idxs_1km = tree.query_ball_point([lon, lat], r=0.01)
-        idxs_2km = tree.query_ball_point([lon, lat], r=0.02)
-
-        if len(idxs_500m) > 0:
-            nearby_amenities = amenities_df.iloc[idxs_500m]
-            actual_distances = [
-                haversine_distance(lon, lat, a["lon"], a["lat"])
-                for _, a in nearby_amenities.iterrows()
-            ]
-            counts_500m.append(sum(1 for d in actual_distances if d <= 500))
-        else:
-            counts_500m.append(0)
-
-        if len(idxs_1km) > 0:
-            nearby_amenities = amenities_df.iloc[idxs_1km]
-            actual_distances = [
-                haversine_distance(lon, lat, a["lon"], a["lat"])
-                for _, a in nearby_amenities.iterrows()
-            ]
-            counts_1km.append(sum(1 for d in actual_distances if d <= 1000))
-        else:
-            counts_1km.append(0)
-
-        if len(idxs_2km) > 0:
-            nearby_amenities = amenities_df.iloc[idxs_2km]
-            actual_distances = [
-                haversine_distance(lon, lat, a["lon"], a["lat"])
-                for _, a in nearby_amenities.iterrows()
-            ]
-            counts_2km.append(sum(1 for d in actual_distances if d <= 2000))
-        else:
-            counts_2km.append(0)
 
     housing_df[f"{amenity_type}_within_500m"] = counts_500m
     housing_df[f"{amenity_type}_within_1km"] = counts_1km

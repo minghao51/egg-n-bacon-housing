@@ -20,12 +20,12 @@ from shapely.geometry import Polygon
 
 from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet, save_parquet
+from scripts.core.stages.helpers import feature_helpers
+from scripts.core.stages.helpers.feature_helpers import SQM_TO_SQFT
 
 from .spatial_h3 import generate_polygons
 
 logger = logging.getLogger(__name__)
-
-SQM_TO_SQFT = 10.764
 
 
 def load_transaction_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -216,23 +216,21 @@ def compute_planning_area(
 def extract_lease_info(lease_info: str) -> Tuple[Optional[int], str]:
     """Extract lease information from tenure string.
 
+    Delegates to feature_helpers.extract_lease_info for consistency.
+
     Args:
         lease_info: Tenure string like "99 yrs lease commencing from 2007" or "Freehold"
 
     Returns:
         Tuple of (commencing_year or None, hold_type)
     """
-    if lease_info == "Freehold":
-        return None, "freehold"
-    else:
-        parts = lease_info.split(" ")
-        if parts[-1].isdigit() and 1900 <= int(parts[-1]) <= 2100:
-            return int(parts[-1]), "leasehold"
-        return None, "leasehold"
+    return feature_helpers.extract_lease_info(lease_info)
 
 
 def extract_two_digits(string: str) -> Tuple[str, str]:
     """Extract first two digits from floor range string.
+
+    Delegates to feature_helpers.extract_floor_range for consistency.
 
     Args:
         string: String like "01 to 05"
@@ -240,8 +238,7 @@ def extract_two_digits(string: str) -> Tuple[str, str]:
     Returns:
         Tuple of (low, high)
     """
-    digits_parts = string.split(" to ")
-    return (digits_parts[0], digits_parts[1])
+    return feature_helpers.extract_floor_range(string)
 
 
 def process_private_transactions(condo_df: pd.DataFrame, ec_df: pd.DataFrame) -> pd.DataFrame:
@@ -258,21 +255,15 @@ def process_private_transactions(condo_df: pd.DataFrame, ec_df: pd.DataFrame) ->
 
     private_df = pd.concat([condo_df, ec_df])
 
-    private_df.columns = (
-        private_df.columns.str.replace(r"\((.*?)\)", r"_\1", regex=True)
-        .str.replace(r"\)$", "", regex=True)
-        .str.replace(r"[^a-zA-Z0-9_]", "", regex=True)
-        .str.replace(r"_$", "", regex=True)
-        .str.lower()
-    )
+    # Standardize column names using helper
+    private_df = feature_helpers.standardize_column_names(private_df)
 
     private_df = private_df.drop(
         ["nettprice", "numberofunits", "typeofarea", "typeofsale"], axis=1, errors="ignore"
     )
 
-    private_df[["lease_start_yr", "hold_type"]] = private_df["tenure"].apply(
-        lambda x: pd.Series(extract_lease_info(x))
-    )
+    # Process tenure using vectorized operations
+    private_df = feature_helpers.process_private_property_tenure(private_df)
 
     private_df["saledate"] = pd.to_datetime(private_df["saledate"], format="%b-%y").dt.date
 
@@ -562,26 +553,26 @@ def create_listing_sales(transaction_sales: pd.DataFrame) -> pd.DataFrame:
 
     listing_sales = pd.concat([hdb_sales, private_sales]).reset_index()
 
-    listing_sales["room_no"] = [
-        i[0] if "room" in i else 0 for i in listing_sales["property_sub_type"]
-    ]
-    listing_sales["room_no"] = [
-        x if x != 0 else np.clip(int(y / np.random.randint(15, 25) / SQM_TO_SQFT), a_min=1, a_max=6)
-        for x, y in zip(listing_sales["room_no"], listing_sales["area_sqft"])
-    ]
-    listing_sales["room_no"] = listing_sales["room_no"].astype("int")
+    # Infer room count using helper (cleaner than nested list comprehensions)
+    listing_sales["room_no"] = listing_sales.apply(
+        lambda row: feature_helpers.infer_room_count(
+            row["property_sub_type"], row["area_sqft"]
+        ),
+        axis=1
+    )
 
-    listing_sales["bathroom_no"] = [
-        np.clip(int(x / np.random.randint(35, 45) / SQM_TO_SQFT), a_min=1, a_max=4)
-        for x in listing_sales["area_sqft"]
-    ]
-    listing_sales["bathroom_no"] = listing_sales["bathroom_no"].astype("int")
+    # Estimate bathroom count using helper
+    listing_sales["bathroom_no"] = listing_sales["area_sqft"].apply(
+        feature_helpers.estimate_bathroom_count
+    )
 
-    listing_sales["floor"] = [
-        int(np.random.randint(int(x.replace("B", "-").lstrip("-").zfill(2)), int(y.replace("B", "-").lstrip("-").zfill(2))))
-        for x, y in zip(listing_sales["floor_low"], listing_sales["floor_high"])
-    ]
-    listing_sales["floor"] = listing_sales["floor"].astype("int")
+    # Calculate floor number using helper
+    listing_sales["floor"] = listing_sales.apply(
+        lambda row: feature_helpers.calculate_floor_number(
+            row["floor_low"], row["floor_high"]
+        ),
+        axis=1
+    )
 
     drop_cols = ["floor_low", "floor_high", "floor_level"]
     listing_sales = listing_sales.drop(columns=drop_cols, errors="ignore")
