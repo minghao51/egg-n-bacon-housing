@@ -63,7 +63,7 @@ def load_parquet(dataset_name: str, version: str | None = None) -> pd.DataFrame:
             f"but {dataset_name} has version {dataset_info['version']}"
         )
 
-    parquet_path = PARQUETS_DIR / dataset_info["path"]
+    parquet_path = Config.PARQUETS_DIR / dataset_info["path"]
 
     # Check if file exists
     if not parquet_path.exists():
@@ -127,9 +127,9 @@ def save_parquet(
 
     # If partitioning, save to directory instead of file
     if partition_cols:
-        parquet_path = PARQUETS_DIR / path_parts  # Directory
+        parquet_path = Config.PARQUETS_DIR / path_parts  # Directory
     else:
-        parquet_path = PARQUETS_DIR / f"{path_parts}.parquet"  # File
+        parquet_path = Config.PARQUETS_DIR / f"{path_parts}.parquet"  # File
 
     # Create parent directories
     if partition_cols:
@@ -191,7 +191,8 @@ def save_parquet(
 
     # Prepare metadata entry
     dataset_metadata = {
-        "path": str(parquet_path.relative_to(PARQUETS_DIR)),
+        "path": str(parquet_path.relative_to(Config.PARQUETS_DIR)),
+        "full_path": str(parquet_path),  # Store as string, not Path object
         "version": version,
         "rows": len(df),
         "created": datetime.now().isoformat(),
@@ -266,29 +267,39 @@ def verify_metadata() -> bool:
     return all_valid
 
 
-def _load_metadata() -> dict:
+def _load_metadata(metadata_file: Path | None = None) -> dict:
     """
     Load metadata.json, create if doesn't exist.
+
+    Args:
+        metadata_file: Optional path to metadata file (defaults to Config.METADATA_FILE)
 
     Returns:
         Metadata dictionary
     """
-    if not METADATA_FILE.exists():
-        logger.info(f"Creating new metadata file at {METADATA_FILE}")
+    if metadata_file is None:
+        metadata_file = Config.METADATA_FILE
+
+    if not metadata_file.exists():
+        logger.info(f"Creating new metadata file at {metadata_file}")
         return {"datasets": {}, "last_updated": None}
 
-    with open(METADATA_FILE) as f:
+    with open(metadata_file) as f:
         return json.load(f)
 
 
-def _save_metadata(metadata: dict) -> None:
+def _save_metadata(metadata: dict, metadata_file: Path | None = None) -> None:
     """
     Save metadata.json with pretty formatting.
 
     Args:
         metadata: Metadata dictionary to save
+        metadata_file: Optional path to metadata file (defaults to Config.METADATA_FILE)
     """
-    with open(METADATA_FILE, "w") as f:
+    if metadata_file is None:
+        metadata_file = Config.METADATA_FILE
+
+    with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
 
 
