@@ -5,16 +5,37 @@ Runner script to export data for the Web Dashboard.
 
 import sys
 from pathlib import Path
-import logging
 
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.core.script_base import setup_script_environment, simple_script_wrapper
+from scripts.core.logging_config import get_logger, setup_logging_from_env
+from scripts.core.config import Config
 
-from scripts.core.stages.web_export import export_dashboard_data
+
+def main():
+    """Export dashboard data."""
+    logger = get_logger(__name__)
+    logger.info("🚀 Starting Webapp Data Export")
+
+    # Import after path setup
+    from scripts.core.stages.webapp_data_preparation import export_dashboard_data
+
+    export_dashboard_data()
+
+    logger.info("✅ Webapp Export Complete")
+
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    export_dashboard_data()
+    # Setup environment and logging
+    setup_script_environment()
+    setup_logging_from_env()
+
+    # Validate configuration
+    try:
+        Config.validate()
+    except ValueError as e:
+        logger = get_logger(__name__)
+        logger.error(f"Configuration error: {e}")
+        sys.exit(1)
+
+    # Run main function
+    main()
