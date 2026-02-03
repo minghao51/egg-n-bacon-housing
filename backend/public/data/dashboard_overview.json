@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-02-03T00:38:09.017901",
+    "generated_at": "2026-02-03T01:16:55.682617",
     "total_records": 1116323,
     "date_range": {
       "start": "1990-01-01",
@@ -25,6 +25,12 @@
       "median_price": 968888,
       "median_psf": 1102,
       "volume": 325208
+    },
+    "year_2025": {
+      "count": 84001,
+      "median_price": 1253000,
+      "median_psf": 1433,
+      "volume": 84001
     }
   },
   "distributions": {

@@ -25,6 +25,10 @@ interface MapData {
   whole: MapMetrics;
   pre_covid: MapMetrics;
   recent: MapMetrics;
+  year_2025: MapMetrics;
+  hdb: MapMetrics;
+  ec: MapMetrics;
+  condo: MapMetrics;
 }
 
 interface PriceMapProps {
@@ -35,7 +39,7 @@ interface PriceMapProps {
 export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [allMetrics, setAllMetrics] = useState<MapData | null>(null);
-  const [era, setEra] = useState<'whole' | 'pre_covid' | 'recent'>('whole');
+  const [era, setEra] = useState<keyof MapData>('whole');
   const [metric, setMetric] = useState<'median_price' | 'median_psf' | 'volume' | 'rental_yield_median' | 'yoy_change_pct' | 'affordability_ratio'>('median_price');
 
   useEffect(() => {
@@ -232,21 +236,21 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
         </div>
 
         {/* Era Selector */}
-        <div className="flex space-x-1 bg-muted p-1 rounded-md">
-          {(['whole', 'pre_covid', 'recent'] as const).map((key) => (
+        <div className="flex space-x-1 bg-muted p-1 rounded-md overflow-x-auto">
+          {(['whole', 'pre_covid', 'recent', 'year_2025', 'hdb', 'ec', 'condo'] as const).map((key) => (
             <button
               key={key}
               onClick={() => setEra(key)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${era === key
+              className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all whitespace-nowrap ${era === key
                 ? 'bg-background text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
                 }`}
             >
-              {key === 'whole'
-                ? 'All Time'
-                : key === 'pre_covid'
-                  ? 'Pre-COVID'
-                  : 'Recent'}
+              {key === 'whole' ? 'All Time' :
+                key === 'pre_covid' ? 'Pre-COVID' :
+                  key === 'recent' ? 'Recent' :
+                    key === 'year_2025' ? '2025' :
+                      key.toUpperCase()}
             </button>
           ))}
         </div>

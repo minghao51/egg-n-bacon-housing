@@ -23,6 +23,7 @@ interface OverviewData {
     whole: StatBlock;
     pre_covid: StatBlock;
     recent: StatBlock;
+    year_2025: StatBlock;
   };
   distributions: {
     property_type: Record<string, number>;
@@ -40,7 +41,7 @@ interface StatBlock {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function MarketOverviewDashboard({ data }: { data: OverviewData }) {
-  const [era, setEra] = useState<'whole' | 'pre_covid' | 'recent'>('whole');
+  const [era, setEra] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
 
   const currentStats = data.stats[era];
 
@@ -60,7 +61,7 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
       <div className="flex justify-between items-center bg-card p-4 rounded-lg border border-border">
         <h2 className="text-xl font-bold text-foreground">Market Snapshot</h2>
         <div className="flex space-x-2 bg-muted p-1 rounded-md">
-          {(['whole', 'pre_covid', 'recent'] as const).map((key) => (
+          {(['whole', 'pre_covid', 'recent', 'year_2025'] as const).map((key) => (
             <button
               key={key}
               onClick={() => setEra(key)}
@@ -73,7 +74,9 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
                 ? 'All Time'
                 : key === 'pre_covid'
                   ? 'Pre-COVID'
-                  : 'Recent'}
+                  : key === 'recent'
+                    ? 'Recent'
+                    : '2025'}
             </button>
           ))}
         </div>

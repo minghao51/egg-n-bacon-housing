@@ -1696,5 +1696,1304 @@
       "affordability_class": "Moderate",
       "mortgage_to_income_pct": 14.44
     }
+  },
+  "year_2025": {
+    "ANG MO KIO": {
+      "median_price": 1485000,
+      "median_psf": 2084,
+      "volume": 5810,
+      "rental_yield_mean": 6.96,
+      "rental_yield_median": 6.9,
+      "rental_yield_std": 0.68,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "BEDOK": {
+      "median_price": 1300000,
+      "median_psf": 1414,
+      "volume": 3774,
+      "rental_yield_mean": 6.49,
+      "rental_yield_median": 6.49,
+      "rental_yield_std": 0.71,
+      "affordability_ratio": 4.67,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.45
+    },
+    "BISHAN": {
+      "median_price": 1128000,
+      "median_psf": 1394,
+      "volume": 1342,
+      "rental_yield_mean": 4.89,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 0.47,
+      "affordability_ratio": 5.18,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 24.91
+    },
+    "BUKIT BATOK": {
+      "median_price": 1577500,
+      "median_psf": 1564,
+      "volume": 596,
+      "affordability_ratio": 16.11,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 77.43
+    },
+    "BUKIT MERAH": {
+      "median_price": 1600000,
+      "median_psf": 1880,
+      "volume": 3196,
+      "rental_yield_mean": 5.11,
+      "rental_yield_median": 5.18,
+      "rental_yield_std": 0.51,
+      "affordability_ratio": 4.83,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 23.23
+    },
+    "BUKIT PANJANG": {
+      "median_price": 1730000,
+      "median_psf": 1661,
+      "volume": 483,
+      "rental_yield_mean": 5.88,
+      "rental_yield_median": 5.96,
+      "rental_yield_std": 0.73,
+      "affordability_ratio": 16.09,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 77.32
+    },
+    "BUKIT TIMAH": {
+      "median_price": 2410000,
+      "median_psf": 2188,
+      "volume": 2083,
+      "rental_yield_mean": 4.59,
+      "rental_yield_median": 4.56,
+      "rental_yield_std": 0.99,
+      "affordability_ratio": 20.33,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 97.72
+    },
+    "CHANGI": {
+      "median_price": 360000,
+      "median_psf": 502,
+      "volume": 8,
+      "rental_yield_mean": 5.69,
+      "rental_yield_median": 5.89,
+      "rental_yield_std": 0.6,
+      "affordability_ratio": 1.99,
+      "affordability_class": "Affordable",
+      "mortgage_to_income_pct": 9.56
+    },
+    "CHOA CHU KANG": {
+      "median_price": 641000,
+      "median_psf": 531,
+      "volume": 2656,
+      "rental_yield_mean": 6.07,
+      "rental_yield_median": 6.3,
+      "rental_yield_std": 0.8,
+      "affordability_ratio": 4.1,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.7
+    },
+    "CLEMENTI": {
+      "median_price": 1615000,
+      "median_psf": 2036,
+      "volume": 3448,
+      "rental_yield_mean": 6.26,
+      "rental_yield_median": 6.34,
+      "rental_yield_std": 1.09,
+      "affordability_ratio": 4.06,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.49
+    },
+    "DOWNTOWN CORE": {
+      "median_price": 1830000,
+      "median_psf": 2271,
+      "volume": 829,
+      "rental_yield_mean": 5.53,
+      "rental_yield_median": 5.48,
+      "rental_yield_std": 0.73,
+      "affordability_ratio": 18.67,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 89.71
+    },
+    "GEYLANG": {
+      "median_price": 1400000,
+      "median_psf": 1858,
+      "volume": 2918,
+      "rental_yield_mean": 6.21,
+      "rental_yield_median": 6.11,
+      "rental_yield_std": 1.05,
+      "affordability_ratio": 4.64,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.32
+    },
+    "HOUGANG": {
+      "median_price": 766500,
+      "median_psf": 677,
+      "volume": 3484,
+      "rental_yield_mean": 5.9,
+      "rental_yield_median": 5.86,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.92,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 18.85
+    },
+    "JURONG EAST": {
+      "median_price": 738000,
+      "median_psf": 664,
+      "volume": 958,
+      "rental_yield_mean": 7.07,
+      "rental_yield_median": 7.31,
+      "rental_yield_std": 0.93,
+      "affordability_ratio": 3.39,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 16.29
+    },
+    "JURONG WEST": {
+      "median_price": 590000,
+      "median_psf": 516,
+      "volume": 2260,
+      "rental_yield_mean": 6.83,
+      "rental_yield_median": 7.06,
+      "rental_yield_std": 0.77,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "KALLANG": {
+      "median_price": 1109444,
+      "median_psf": 1228,
+      "volume": 2012,
+      "rental_yield_mean": 5.33,
+      "rental_yield_median": 5.35,
+      "rental_yield_std": 0.72,
+      "affordability_ratio": 4.33,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 20.83
+    },
+    "MANDAI": {
+      "median_price": 1626500,
+      "median_psf": 972,
+      "volume": 20,
+      "affordability_ratio": 13.89,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 66.75
+    },
+    "MARINA SOUTH": {
+      "median_price": 1940921,
+      "median_psf": 2952,
+      "volume": 557,
+      "affordability_ratio": 21.59,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 103.75
+    },
+    "MARINE PARADE": {
+      "median_price": 2274000,
+      "median_psf": 2309,
+      "volume": 1196,
+      "rental_yield_mean": 6.3,
+      "rental_yield_median": 6.49,
+      "rental_yield_std": 1.18,
+      "affordability_ratio": 17.53,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 84.26
+    },
+    "MUSEUM": {
+      "median_price": 2150000,
+      "median_psf": 2356,
+      "volume": 29,
+      "affordability_ratio": 19.99,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 96.09
+    },
+    "NEWTON": {
+      "median_price": 3900000,
+      "median_psf": 2393,
+      "volume": 191,
+      "affordability_ratio": 41.11,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 197.58
+    },
+    "NOVENA": {
+      "median_price": 2090000,
+      "median_psf": 1977,
+      "volume": 1168,
+      "rental_yield_mean": 5.4,
+      "rental_yield_median": 5.46,
+      "rental_yield_std": 0.8,
+      "affordability_ratio": 16.67,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 80.1
+    },
+    "ORCHARD": {
+      "median_price": 2477000,
+      "median_psf": 3267,
+      "volume": 279,
+      "affordability_ratio": 29.64,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 142.45
+    },
+    "OUTRAM": {
+      "median_price": 1405000,
+      "median_psf": 1395,
+      "volume": 224,
+      "affordability_ratio": 13.93,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 66.96
+    },
+    "PASIR RIS": {
+      "median_price": 995000,
+      "median_psf": 1134,
+      "volume": 2822,
+      "rental_yield_mean": 5.47,
+      "rental_yield_median": 5.67,
+      "rental_yield_std": 0.65,
+      "affordability_ratio": 5.22,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.1
+    },
+    "PUNGGOL": {
+      "median_price": 688000,
+      "median_psf": 694,
+      "volume": 3280,
+      "rental_yield_mean": 5.75,
+      "rental_yield_median": 5.77,
+      "rental_yield_std": 0.67,
+      "affordability_ratio": 6.0,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 28.84
+    },
+    "QUEENSTOWN": {
+      "median_price": 1446000,
+      "median_psf": 1989,
+      "volume": 8870,
+      "rental_yield_mean": 5.02,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 1.1,
+      "affordability_ratio": 3.33,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 16.02
+    },
+    "RIVER VALLEY": {
+      "median_price": 2065000,
+      "median_psf": 2983,
+      "volume": 879,
+      "affordability_ratio": 26.41,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 126.93
+    },
+    "ROCHOR": {
+      "median_price": 1330000,
+      "median_psf": 1855,
+      "volume": 426,
+      "affordability_ratio": 7.33,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 35.24
+    },
+    "SEMBAWANG": {
+      "median_price": 1249000,
+      "median_psf": 1306,
+      "volume": 2408,
+      "rental_yield_mean": 6.1,
+      "rental_yield_median": 6.14,
+      "rental_yield_std": 0.58,
+      "affordability_ratio": 5.39,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.9
+    },
+    "SENGKANG": {
+      "median_price": 790000,
+      "median_psf": 737,
+      "volume": 4174,
+      "rental_yield_mean": 5.85,
+      "rental_yield_median": 5.83,
+      "rental_yield_std": 0.6,
+      "affordability_ratio": 6.09,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 29.26
+    },
+    "SERANGOON": {
+      "median_price": 1150000,
+      "median_psf": 1622,
+      "volume": 1942,
+      "rental_yield_mean": 5.78,
+      "rental_yield_median": 5.7,
+      "rental_yield_std": 0.64,
+      "affordability_ratio": 4.68,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.48
+    },
+    "SINGAPORE RIVER": {
+      "median_price": 2567000,
+      "median_psf": 3084,
+      "volume": 982,
+      "affordability_ratio": 26.4,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 126.88
+    },
+    "SOUTHERN ISLANDS": {
+      "median_price": 3325000,
+      "median_psf": 1749,
+      "volume": 86,
+      "affordability_ratio": 40.22,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 193.32
+    },
+    "TAMPINES": {
+      "median_price": 1504500,
+      "median_psf": 1743,
+      "volume": 7264,
+      "rental_yield_mean": 5.71,
+      "rental_yield_median": 5.78,
+      "rental_yield_std": 0.55,
+      "affordability_ratio": 4.07,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.57
+    },
+    "TANGLIN": {
+      "median_price": 2710000,
+      "median_psf": 2272,
+      "volume": 634,
+      "rental_yield_mean": 5.02,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 1.24,
+      "affordability_ratio": 27.56,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 132.43
+    },
+    "TENGAH": {
+      "median_price": 1675000,
+      "median_psf": 1744,
+      "volume": 679,
+      "affordability_ratio": 17.49,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 84.05
+    },
+    "TOA PAYOH": {
+      "median_price": 1802000,
+      "median_psf": 2415,
+      "volume": 3056,
+      "rental_yield_mean": 5.69,
+      "rental_yield_median": 5.39,
+      "rental_yield_std": 1.2,
+      "affordability_ratio": 4.59,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.05
+    },
+    "WOODLANDS": {
+      "median_price": 620000,
+      "median_psf": 539,
+      "volume": 4184,
+      "rental_yield_mean": 6.17,
+      "rental_yield_median": 6.23,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.67,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 17.62
+    },
+    "YISHUN": {
+      "median_price": 555000,
+      "median_psf": 569,
+      "volume": 2794,
+      "rental_yield_mean": 6.37,
+      "rental_yield_median": 6.45,
+      "rental_yield_std": 0.71,
+      "affordability_ratio": 3.01,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 14.44
+    }
+  },
+  "hdb": {
+    "ANG MO KIO": {
+      "median_price": 248000,
+      "median_psf": 270,
+      "volume": 58935,
+      "rental_yield_mean": 6.96,
+      "rental_yield_median": 6.9,
+      "rental_yield_std": 0.68,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "BEDOK": {
+      "median_price": 305000,
+      "median_psf": 288,
+      "volume": 34245,
+      "rental_yield_mean": 6.49,
+      "rental_yield_median": 6.49,
+      "rental_yield_std": 0.71,
+      "affordability_ratio": 4.67,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.45
+    },
+    "BISHAN": {
+      "median_price": 425000,
+      "median_psf": 357,
+      "volume": 22010,
+      "rental_yield_mean": 4.89,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 0.47,
+      "affordability_ratio": 5.18,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 24.91
+    },
+    "BUKIT MERAH": {
+      "median_price": 335000,
+      "median_psf": 379,
+      "volume": 28549,
+      "rental_yield_mean": 5.11,
+      "rental_yield_median": 5.18,
+      "rental_yield_std": 0.51,
+      "affordability_ratio": 4.83,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 23.23
+    },
+    "BUKIT PANJANG": {
+      "median_price": 515000,
+      "median_psf": 410,
+      "volume": 296,
+      "rental_yield_mean": 5.88,
+      "rental_yield_median": 5.96,
+      "rental_yield_std": 0.73,
+      "affordability_ratio": 16.09,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 77.32
+    },
+    "BUKIT TIMAH": {
+      "median_price": 445000,
+      "median_psf": 370,
+      "volume": 2698,
+      "rental_yield_mean": 4.59,
+      "rental_yield_median": 4.56,
+      "rental_yield_std": 0.99,
+      "affordability_ratio": 20.33,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 97.72
+    },
+    "CHANGI": {
+      "median_price": 179000,
+      "median_psf": 251,
+      "volume": 180,
+      "rental_yield_mean": 5.69,
+      "rental_yield_median": 5.89,
+      "rental_yield_std": 0.6,
+      "affordability_ratio": 1.99,
+      "affordability_class": "Affordable",
+      "mortgage_to_income_pct": 9.56
+    },
+    "CHOA CHU KANG": {
+      "median_price": 355000,
+      "median_psf": 289,
+      "volume": 49373,
+      "rental_yield_mean": 6.07,
+      "rental_yield_median": 6.3,
+      "rental_yield_std": 0.8,
+      "affordability_ratio": 4.1,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.7
+    },
+    "CLEMENTI": {
+      "median_price": 263000,
+      "median_psf": 277,
+      "volume": 25518,
+      "rental_yield_mean": 6.26,
+      "rental_yield_median": 6.34,
+      "rental_yield_std": 1.09,
+      "affordability_ratio": 4.06,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.49
+    },
+    "DOWNTOWN CORE": {
+      "median_price": 230888,
+      "median_psf": 350,
+      "volume": 529,
+      "rental_yield_mean": 5.53,
+      "rental_yield_median": 5.48,
+      "rental_yield_std": 0.73,
+      "affordability_ratio": 18.67,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 89.71
+    },
+    "GEYLANG": {
+      "median_price": 250000,
+      "median_psf": 295,
+      "volume": 21009,
+      "rental_yield_mean": 6.21,
+      "rental_yield_median": 6.11,
+      "rental_yield_std": 1.05,
+      "affordability_ratio": 4.64,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.32
+    },
+    "HOUGANG": {
+      "median_price": 310000,
+      "median_psf": 277,
+      "volume": 51155,
+      "rental_yield_mean": 5.9,
+      "rental_yield_median": 5.86,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.92,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 18.85
+    },
+    "JURONG EAST": {
+      "median_price": 272000,
+      "median_psf": 247,
+      "volume": 17302,
+      "rental_yield_mean": 7.07,
+      "rental_yield_median": 7.31,
+      "rental_yield_std": 0.93,
+      "affordability_ratio": 3.39,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 16.29
+    },
+    "JURONG WEST": {
+      "median_price": 283000,
+      "median_psf": 238,
+      "volume": 50203,
+      "rental_yield_mean": 6.83,
+      "rental_yield_median": 7.06,
+      "rental_yield_std": 0.77,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "KALLANG": {
+      "median_price": 310000,
+      "median_psf": 351,
+      "volume": 19453,
+      "rental_yield_mean": 5.33,
+      "rental_yield_median": 5.35,
+      "rental_yield_std": 0.72,
+      "affordability_ratio": 4.33,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 20.83
+    },
+    "LIM CHU KANG": {
+      "median_price": 61750,
+      "median_psf": 89,
+      "volume": 64,
+      "affordability_ratio": 0.69,
+      "affordability_class": "Affordable",
+      "mortgage_to_income_pct": 3.3
+    },
+    "MARINE PARADE": {
+      "median_price": 350000,
+      "median_psf": 363,
+      "volume": 5739,
+      "rental_yield_mean": 6.3,
+      "rental_yield_median": 6.49,
+      "rental_yield_std": 1.18,
+      "affordability_ratio": 17.53,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 84.26
+    },
+    "NOVENA": {
+      "median_price": 230000,
+      "median_psf": 265,
+      "volume": 2666,
+      "rental_yield_mean": 5.4,
+      "rental_yield_median": 5.46,
+      "rental_yield_std": 0.8,
+      "affordability_ratio": 16.67,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 80.1
+    },
+    "OUTRAM": {
+      "median_price": 920000,
+      "median_psf": 879,
+      "volume": 1701,
+      "affordability_ratio": 13.93,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 66.96
+    },
+    "PASIR RIS": {
+      "median_price": 410000,
+      "median_psf": 300,
+      "volume": 36688,
+      "rental_yield_mean": 5.47,
+      "rental_yield_median": 5.67,
+      "rental_yield_std": 0.65,
+      "affordability_ratio": 5.22,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.1
+    },
+    "PUNGGOL": {
+      "median_price": 513000,
+      "median_psf": 502,
+      "volume": 30684,
+      "rental_yield_mean": 5.75,
+      "rental_yield_median": 5.77,
+      "rental_yield_std": 0.67,
+      "affordability_ratio": 6.0,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 28.84
+    },
+    "QUEENSTOWN": {
+      "median_price": 242000,
+      "median_psf": 294,
+      "volume": 117099,
+      "rental_yield_mean": 5.02,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 1.1,
+      "affordability_ratio": 3.33,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 16.02
+    },
+    "ROCHOR": {
+      "median_price": 325000,
+      "median_psf": 433,
+      "volume": 1755,
+      "affordability_ratio": 7.33,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 35.24
+    },
+    "SEMBAWANG": {
+      "median_price": 390000,
+      "median_psf": 357,
+      "volume": 13480,
+      "rental_yield_mean": 6.1,
+      "rental_yield_median": 6.14,
+      "rental_yield_std": 0.58,
+      "affordability_ratio": 5.39,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.9
+    },
+    "SENGKANG": {
+      "median_price": 485000,
+      "median_psf": 449,
+      "volume": 33264,
+      "rental_yield_mean": 5.85,
+      "rental_yield_median": 5.83,
+      "rental_yield_std": 0.6,
+      "affordability_ratio": 6.09,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 29.26
+    },
+    "SERANGOON": {
+      "median_price": 330000,
+      "median_psf": 289,
+      "volume": 21362,
+      "rental_yield_mean": 5.78,
+      "rental_yield_median": 5.7,
+      "rental_yield_std": 0.64,
+      "affordability_ratio": 4.68,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.48
+    },
+    "TAMPINES": {
+      "median_price": 319000,
+      "median_psf": 274,
+      "volume": 66345,
+      "rental_yield_mean": 5.71,
+      "rental_yield_median": 5.78,
+      "rental_yield_std": 0.55,
+      "affordability_ratio": 4.07,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.57
+    },
+    "TANGLIN": {
+      "median_price": 455000,
+      "median_psf": 364,
+      "volume": 219,
+      "rental_yield_mean": 5.02,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 1.24,
+      "affordability_ratio": 27.56,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 132.43
+    },
+    "TOA PAYOH": {
+      "median_price": 278000,
+      "median_psf": 285,
+      "volume": 13817,
+      "rental_yield_mean": 5.69,
+      "rental_yield_median": 5.39,
+      "rental_yield_std": 1.2,
+      "affordability_ratio": 4.59,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.05
+    },
+    "WOODLANDS": {
+      "median_price": 320000,
+      "median_psf": 272,
+      "volume": 83672,
+      "rental_yield_mean": 6.17,
+      "rental_yield_median": 6.23,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.67,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 17.62
+    },
+    "YISHUN": {
+      "median_price": 258000,
+      "median_psf": 245,
+      "volume": 72417,
+      "rental_yield_mean": 6.37,
+      "rental_yield_median": 6.45,
+      "rental_yield_std": 0.71,
+      "affordability_ratio": 3.01,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 14.44
+    }
+  },
+  "ec": {
+    "ANG MO KIO": {
+      "median_price": 1750000,
+      "median_psf": 1786,
+      "volume": 310,
+      "rental_yield_mean": 6.96,
+      "rental_yield_median": 6.9,
+      "rental_yield_std": 0.68,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "BISHAN": {
+      "median_price": 1980000,
+      "median_psf": 1521,
+      "volume": 82,
+      "rental_yield_mean": 4.89,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 0.47,
+      "affordability_ratio": 5.18,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 24.91
+    },
+    "BUKIT BATOK": {
+      "median_price": 1519000,
+      "median_psf": 1501,
+      "volume": 898,
+      "affordability_ratio": 16.11,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 77.43
+    },
+    "BUKIT PANJANG": {
+      "median_price": 1240000,
+      "median_psf": 1064,
+      "volume": 365,
+      "rental_yield_mean": 5.88,
+      "rental_yield_median": 5.96,
+      "rental_yield_std": 0.73,
+      "affordability_ratio": 16.09,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 77.32
+    },
+    "CHOA CHU KANG": {
+      "median_price": 1280000,
+      "median_psf": 1357,
+      "volume": 2342,
+      "rental_yield_mean": 6.07,
+      "rental_yield_median": 6.3,
+      "rental_yield_std": 0.8,
+      "affordability_ratio": 4.1,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.7
+    },
+    "HOUGANG": {
+      "median_price": 1338000,
+      "median_psf": 1044,
+      "volume": 616,
+      "rental_yield_mean": 5.9,
+      "rental_yield_median": 5.86,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.92,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 18.85
+    },
+    "JURONG EAST": {
+      "median_price": 1250000,
+      "median_psf": 1030,
+      "volume": 82,
+      "rental_yield_mean": 7.07,
+      "rental_yield_median": 7.31,
+      "rental_yield_std": 0.93,
+      "affordability_ratio": 3.39,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 16.29
+    },
+    "JURONG WEST": {
+      "median_price": 1300000,
+      "median_psf": 1136,
+      "volume": 1004,
+      "rental_yield_mean": 6.83,
+      "rental_yield_median": 7.06,
+      "rental_yield_std": 0.77,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "PASIR RIS": {
+      "median_price": 1200000,
+      "median_psf": 1052,
+      "volume": 1204,
+      "rental_yield_mean": 5.47,
+      "rental_yield_median": 5.67,
+      "rental_yield_std": 0.65,
+      "affordability_ratio": 5.22,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.1
+    },
+    "PUNGGOL": {
+      "median_price": 1380000,
+      "median_psf": 1188,
+      "volume": 3003,
+      "rental_yield_mean": 5.75,
+      "rental_yield_median": 5.77,
+      "rental_yield_std": 0.67,
+      "affordability_ratio": 6.0,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 28.84
+    },
+    "SEMBAWANG": {
+      "median_price": 1280000,
+      "median_psf": 1256,
+      "volume": 3292,
+      "rental_yield_mean": 6.1,
+      "rental_yield_median": 6.14,
+      "rental_yield_std": 0.58,
+      "affordability_ratio": 5.39,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.9
+    },
+    "SENGKANG": {
+      "median_price": 1330000,
+      "median_psf": 1233,
+      "volume": 5400,
+      "rental_yield_mean": 5.85,
+      "rental_yield_median": 5.83,
+      "rental_yield_std": 0.6,
+      "affordability_ratio": 6.09,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 29.26
+    },
+    "TAMPINES": {
+      "median_price": 1459500,
+      "median_psf": 1347,
+      "volume": 5920,
+      "rental_yield_mean": 5.71,
+      "rental_yield_median": 5.78,
+      "rental_yield_std": 0.55,
+      "affordability_ratio": 4.07,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.57
+    },
+    "TENGAH": {
+      "median_price": 1574000,
+      "median_psf": 1644,
+      "volume": 1733,
+      "affordability_ratio": 17.49,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 84.05
+    },
+    "WOODLANDS": {
+      "median_price": 1165000,
+      "median_psf": 1018,
+      "volume": 2244,
+      "rental_yield_mean": 6.17,
+      "rental_yield_median": 6.23,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.67,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 17.62
+    },
+    "YISHUN": {
+      "median_price": 1297000,
+      "median_psf": 1274,
+      "volume": 2418,
+      "rental_yield_mean": 6.37,
+      "rental_yield_median": 6.45,
+      "rental_yield_std": 0.71,
+      "affordability_ratio": 3.01,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 14.44
+    }
+  },
+  "condo": {
+    "ANG MO KIO": {
+      "median_price": 1747000,
+      "median_psf": 2126,
+      "volume": 10800,
+      "rental_yield_mean": 6.96,
+      "rental_yield_median": 6.9,
+      "rental_yield_std": 0.68,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "BEDOK": {
+      "median_price": 1490000,
+      "median_psf": 1455,
+      "volume": 15156,
+      "rental_yield_mean": 6.49,
+      "rental_yield_median": 6.49,
+      "rental_yield_std": 0.71,
+      "affordability_ratio": 4.67,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.45
+    },
+    "BISHAN": {
+      "median_price": 1735000,
+      "median_psf": 1757,
+      "volume": 3382,
+      "rental_yield_mean": 4.89,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 0.47,
+      "affordability_ratio": 5.18,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 24.91
+    },
+    "BUKIT BATOK": {
+      "median_price": 1315000,
+      "median_psf": 1508,
+      "volume": 3157,
+      "affordability_ratio": 16.11,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 77.43
+    },
+    "BUKIT MERAH": {
+      "median_price": 1900000,
+      "median_psf": 2090,
+      "volume": 8386,
+      "rental_yield_mean": 5.11,
+      "rental_yield_median": 5.18,
+      "rental_yield_std": 0.51,
+      "affordability_ratio": 4.83,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 23.23
+    },
+    "BUKIT PANJANG": {
+      "median_price": 1531000,
+      "median_psf": 1641,
+      "volume": 3759,
+      "rental_yield_mean": 5.88,
+      "rental_yield_median": 5.96,
+      "rental_yield_std": 0.73,
+      "affordability_ratio": 16.09,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 77.32
+    },
+    "BUKIT TIMAH": {
+      "median_price": 1982000,
+      "median_psf": 2302,
+      "volume": 14681,
+      "rental_yield_mean": 4.59,
+      "rental_yield_median": 4.56,
+      "rental_yield_std": 0.99,
+      "affordability_ratio": 20.33,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 97.72
+    },
+    "CHOA CHU KANG": {
+      "median_price": 1100000,
+      "median_psf": 1028,
+      "volume": 1358,
+      "rental_yield_mean": 6.07,
+      "rental_yield_median": 6.3,
+      "rental_yield_std": 0.8,
+      "affordability_ratio": 4.1,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.7
+    },
+    "CLEMENTI": {
+      "median_price": 1696000,
+      "median_psf": 1751,
+      "volume": 9334,
+      "rental_yield_mean": 6.26,
+      "rental_yield_median": 6.34,
+      "rental_yield_std": 1.09,
+      "affordability_ratio": 4.06,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.49
+    },
+    "DOWNTOWN CORE": {
+      "median_price": 1763342,
+      "median_psf": 2390,
+      "volume": 5005,
+      "rental_yield_mean": 5.53,
+      "rental_yield_median": 5.48,
+      "rental_yield_std": 0.73,
+      "affordability_ratio": 18.67,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 89.71
+    },
+    "GEYLANG": {
+      "median_price": 1550000,
+      "median_psf": 1810,
+      "volume": 12416,
+      "rental_yield_mean": 6.21,
+      "rental_yield_median": 6.11,
+      "rental_yield_std": 1.05,
+      "affordability_ratio": 4.64,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.32
+    },
+    "HOUGANG": {
+      "median_price": 1240000,
+      "median_psf": 1451,
+      "volume": 9226,
+      "rental_yield_mean": 5.9,
+      "rental_yield_median": 5.86,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.92,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 18.85
+    },
+    "JURONG EAST": {
+      "median_price": 1627500,
+      "median_psf": 2139,
+      "volume": 2592,
+      "rental_yield_mean": 7.07,
+      "rental_yield_median": 7.31,
+      "rental_yield_std": 0.93,
+      "affordability_ratio": 3.39,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 16.29
+    },
+    "JURONG WEST": {
+      "median_price": 1400000,
+      "median_psf": 1389,
+      "volume": 2068,
+      "rental_yield_mean": 6.83,
+      "rental_yield_median": 7.06,
+      "rental_yield_std": 0.77,
+      "affordability_ratio": 3.28,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 15.75
+    },
+    "KALLANG": {
+      "median_price": 1603700,
+      "median_psf": 1677,
+      "volume": 6690,
+      "rental_yield_mean": 5.33,
+      "rental_yield_median": 5.35,
+      "rental_yield_std": 0.72,
+      "affordability_ratio": 4.33,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 20.83
+    },
+    "MANDAI": {
+      "median_price": 1250000,
+      "median_psf": 911,
+      "volume": 100,
+      "affordability_ratio": 13.89,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 66.75
+    },
+    "MARINA SOUTH": {
+      "median_price": 1942891,
+      "median_psf": 2952,
+      "volume": 561,
+      "affordability_ratio": 21.59,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 103.75
+    },
+    "MARINE PARADE": {
+      "median_price": 2350000,
+      "median_psf": 2449,
+      "volume": 8696,
+      "rental_yield_mean": 6.3,
+      "rental_yield_median": 6.49,
+      "rental_yield_std": 1.18,
+      "affordability_ratio": 17.53,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 84.26
+    },
+    "MUSEUM": {
+      "median_price": 1799500,
+      "median_psf": 2593,
+      "volume": 308,
+      "affordability_ratio": 19.99,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 96.09
+    },
+    "NEWTON": {
+      "median_price": 3700000,
+      "median_psf": 2547,
+      "volume": 1190,
+      "affordability_ratio": 41.11,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 197.58
+    },
+    "NOVENA": {
+      "median_price": 1858400,
+      "median_psf": 1941,
+      "volume": 7670,
+      "rental_yield_mean": 5.4,
+      "rental_yield_median": 5.46,
+      "rental_yield_std": 0.8,
+      "affordability_ratio": 16.67,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 80.1
+    },
+    "ORCHARD": {
+      "median_price": 2667600,
+      "median_psf": 3171,
+      "volume": 661,
+      "affordability_ratio": 29.64,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 142.45
+    },
+    "OUTRAM": {
+      "median_price": 1917000,
+      "median_psf": 2549,
+      "volume": 1708,
+      "affordability_ratio": 13.93,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 66.96
+    },
+    "PASIR RIS": {
+      "median_price": 1181000,
+      "median_psf": 1253,
+      "volume": 9610,
+      "rental_yield_mean": 5.47,
+      "rental_yield_median": 5.67,
+      "rental_yield_std": 0.65,
+      "affordability_ratio": 5.22,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.1
+    },
+    "PUNGGOL": {
+      "median_price": 1240000,
+      "median_psf": 1385,
+      "volume": 1902,
+      "rental_yield_mean": 5.75,
+      "rental_yield_median": 5.77,
+      "rental_yield_std": 0.67,
+      "affordability_ratio": 6.0,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 28.84
+    },
+    "QUEENSTOWN": {
+      "median_price": 1758000,
+      "median_psf": 2023,
+      "volume": 13900,
+      "rental_yield_mean": 5.02,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 1.1,
+      "affordability_ratio": 3.33,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 16.02
+    },
+    "RIVER VALLEY": {
+      "median_price": 2377050,
+      "median_psf": 2707,
+      "volume": 2906,
+      "affordability_ratio": 26.41,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 126.93
+    },
+    "ROCHOR": {
+      "median_price": 1398444,
+      "median_psf": 1793,
+      "volume": 1620,
+      "affordability_ratio": 7.33,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 35.24
+    },
+    "SEMBAWANG": {
+      "median_price": 1320000,
+      "median_psf": 1458,
+      "volume": 3290,
+      "rental_yield_mean": 6.1,
+      "rental_yield_median": 6.14,
+      "rental_yield_std": 0.58,
+      "affordability_ratio": 5.39,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 25.9
+    },
+    "SENGKANG": {
+      "median_price": 1270000,
+      "median_psf": 1462,
+      "volume": 5122,
+      "rental_yield_mean": 5.85,
+      "rental_yield_median": 5.83,
+      "rental_yield_std": 0.6,
+      "affordability_ratio": 6.09,
+      "affordability_class": "Expensive",
+      "mortgage_to_income_pct": 29.26
+    },
+    "SERANGOON": {
+      "median_price": 1610556,
+      "median_psf": 1752,
+      "volume": 7688,
+      "rental_yield_mean": 5.78,
+      "rental_yield_median": 5.7,
+      "rental_yield_std": 0.64,
+      "affordability_ratio": 4.68,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.48
+    },
+    "SINGAPORE RIVER": {
+      "median_price": 2376000,
+      "median_psf": 2914,
+      "volume": 2171,
+      "affordability_ratio": 26.4,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 126.88
+    },
+    "SOUTHERN ISLANDS": {
+      "median_price": 3620200,
+      "median_psf": 1783,
+      "volume": 548,
+      "affordability_ratio": 40.22,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 193.32
+    },
+    "TAMPINES": {
+      "median_price": 1388888,
+      "median_psf": 1482,
+      "volume": 9230,
+      "rental_yield_mean": 5.71,
+      "rental_yield_median": 5.78,
+      "rental_yield_std": 0.55,
+      "affordability_ratio": 4.07,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 19.57
+    },
+    "TANGLIN": {
+      "median_price": 2540950,
+      "median_psf": 2225,
+      "volume": 4698,
+      "rental_yield_mean": 5.02,
+      "rental_yield_median": 4.82,
+      "rental_yield_std": 1.24,
+      "affordability_ratio": 27.56,
+      "affordability_class": "Severely Unaffordable",
+      "mortgage_to_income_pct": 132.43
+    },
+    "TOA PAYOH": {
+      "median_price": 1709000,
+      "median_psf": 1954,
+      "volume": 7030,
+      "rental_yield_mean": 5.69,
+      "rental_yield_median": 5.39,
+      "rental_yield_std": 1.2,
+      "affordability_ratio": 4.59,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 22.05
+    },
+    "WOODLANDS": {
+      "median_price": 1080000,
+      "median_psf": 1226,
+      "volume": 1886,
+      "rental_yield_mean": 6.17,
+      "rental_yield_median": 6.23,
+      "rental_yield_std": 0.57,
+      "affordability_ratio": 3.67,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 17.62
+    },
+    "YISHUN": {
+      "median_price": 1050000,
+      "median_psf": 1225,
+      "volume": 2478,
+      "rental_yield_mean": 6.37,
+      "rental_yield_median": 6.45,
+      "rental_yield_std": 0.71,
+      "affordability_ratio": 3.01,
+      "affordability_class": "Moderate",
+      "mortgage_to_income_pct": 14.44
+    }
   }
 }
