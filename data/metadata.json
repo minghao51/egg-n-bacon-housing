@@ -5,7 +5,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/test_dataset.parquet",
       "version": "2026-02-03",
       "rows": 100,
-      "created": "2026-02-03T00:39:40.643785",
+      "created": "2026-02-03T21:01:31.564863",
       "source": "test",
       "mode": "overwrite",
       "compression": "gzip"
@@ -15,7 +15,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/test_dataset.parquet",
       "version": "2026-02-03",
       "rows": 100,
-      "created": "2026-02-03T00:39:40.637869",
+      "created": "2026-02-03T21:01:31.559060",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -25,7 +25,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/roundtrip_test.parquet",
       "version": "2026-02-03",
       "rows": 100,
-      "created": "2026-02-03T00:39:40.679427",
+      "created": "2026-02-03T21:01:31.598796",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -35,7 +35,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/versioned_test.parquet",
       "version": "v2.0",
       "rows": 100,
-      "created": "2026-02-03T00:39:40.686084",
+      "created": "2026-02-03T21:01:31.604586",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -45,11 +45,61 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_general_sale.parquet",
       "version": "2026-02-03",
       "rows": 352,
-      "created": "2026-02-03T00:39:23.582252",
+      "created": "2026-02-03T21:01:47.878090",
       "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_rental_index": {
+      "path": "raw_datagov_rental_index.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_rental_index.parquet",
+      "version": "2026-02-03",
+      "rows": 300,
+      "created": "2026-02-03T21:01:47.879837",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_median_price_via_property_type": {
+      "path": "raw_datagov_median_price_via_property_type.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_median_price_via_property_type.parquet",
+      "version": "2026-02-03",
+      "rows": 30,
+      "created": "2026-02-03T21:01:48.343975",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_private_transactions_property_type": {
+      "path": "raw_datagov_private_transactions_property_type.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_private_transactions_property_type.parquet",
+      "version": "2026-02-03",
+      "rows": 420,
+      "created": "2026-02-03T21:01:48.345906",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_school_directory": {
+      "path": "raw_datagov_school_directory.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_school_directory.parquet",
+      "version": "2026-02-03",
+      "rows": 200,
+      "created": "2026-02-03T21:01:48.350704",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_resale_flat_all": {
+      "path": "raw_datagov_resale_flat_all.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_resale_flat_all.parquet",
+      "version": "2026-02-03",
+      "rows": 969748,
+      "created": "2026-02-03T21:01:49.312566",
+      "source": "data.gov.sg CSV (all files)",
       "mode": "overwrite",
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-03T00:39:40.686087"
+  "last_updated": "2026-02-03T21:01:49.312573"
 }
