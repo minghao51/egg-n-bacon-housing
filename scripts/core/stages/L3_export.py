@@ -29,6 +29,7 @@ import geopandas as gpd
 import pandas as pd
 
 from scripts.core.config import Config
+from scripts.core.data_loader import PropertyType, TransactionLoader
 from scripts.core.school_features import calculate_school_features, load_schools
 from scripts.core.stages.helpers import export_helpers
 
@@ -48,13 +49,12 @@ def load_hdb_transactions() -> pd.DataFrame:
     """
     logger.info("Loading HDB transactions from L1...")
 
-    path = Config.PARQUETS_DIR / "L1" / "housing_hdb_transaction.parquet"
+    loader = TransactionLoader()
+    df = loader.load_transaction(PropertyType.HDB, stage="L1")
 
-    if not path.exists():
-        logger.warning(f"HDB data not found: {path}")
+    if df.empty:
+        logger.warning("HDB data not found or empty")
         return pd.DataFrame()
-
-    df = pd.read_parquet(path)
 
     logger.info(f"Loaded {len(df):,} HDB transactions")
 
@@ -69,13 +69,12 @@ def load_condo_transactions() -> pd.DataFrame:
     """
     logger.info("Loading Condo transactions from L1...")
 
-    path = Config.PARQUETS_DIR / "L1" / "housing_condo_transaction.parquet"
+    loader = TransactionLoader()
+    df = loader.load_transaction(PropertyType.CONDO, stage="L1")
 
-    if not path.exists():
-        logger.warning(f"Condo data not found: {path}")
+    if df.empty:
+        logger.warning("Condo data not found or empty")
         return pd.DataFrame()
-
-    df = pd.read_parquet(path)
 
     # Clean numeric columns using helper
     price_cols = ['Transacted Price ($)']
@@ -97,13 +96,12 @@ def load_ec_transactions() -> pd.DataFrame:
     """
     logger.info("Loading Executive Condo (EC) transactions from L1...")
 
-    path = Config.PARQUETS_DIR / "L1" / "housing_ec_transaction.parquet"
+    loader = TransactionLoader()
+    df = loader.load_transaction(PropertyType.EC, stage="L1")
 
-    if not path.exists():
-        logger.warning(f"EC data not found: {path}")
+    if df.empty:
+        logger.warning("EC data not found or empty")
         return pd.DataFrame()
-
-    df = pd.read_parquet(path)
 
     # Clean numeric columns using helper (EC has $ sign in price column)
     price_cols = ['Transacted Price ($)']

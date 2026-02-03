@@ -144,11 +144,14 @@ def get_stats(sub_df):
 
 def generate_overview_data(df):
     pre_covid = df[df["transaction_date"].dt.year <= 2021]
+    pre_covid = df[df["transaction_date"].dt.year <= 2021]
     recent = df[df["transaction_date"].dt.year >= 2022]
+    year_2025 = df[df["transaction_date"].dt.year == 2025]
     
     stats_whole = get_stats(df)
     stats_pre = get_stats(pre_covid)
     stats_recent = get_stats(recent)
+    stats_2025 = get_stats(year_2025)
     
     type_counts = df["property_type"].value_counts().to_dict()
     top_areas = df["planning_area"].value_counts().head(10).to_dict()
@@ -165,7 +168,10 @@ def generate_overview_data(df):
         "stats": {
             "whole": stats_whole,
             "pre_covid": stats_pre,
-            "recent": stats_recent
+            "whole": stats_whole,
+            "pre_covid": stats_pre,
+            "recent": stats_recent,
+            "year_2025": stats_2025
         },
         "distributions": {
             "property_type": type_counts,
@@ -247,13 +253,25 @@ def generate_map_data(df):
 
     # Eras
     pre_covid = df[df["transaction_date"].dt.year <= 2021]
+    pre_covid = df[df["transaction_date"].dt.year <= 2021]
     recent = df[df["transaction_date"].dt.year >= 2022]
+    year_2025 = df[df["transaction_date"].dt.year == 2025]
+    
+    # Property Types
+    # Check for exact matches in your dataset or use str.contains if unsure
+    hdb = df[df["property_type"].isin(["HDB", "HDB Flat"])]
+    ec = df[df["property_type"].isin(["Executive Condominium", "EC"])]
+    condo = df[df["property_type"].isin(["Condominium", "Apartment", "Condo"])]
 
     # Get base metrics
     base_metrics = {
         "whole": generate_map_metrics_for_subset(df),
         "pre_covid": generate_map_metrics_for_subset(pre_covid),
-        "recent": generate_map_metrics_for_subset(recent)
+        "recent": generate_map_metrics_for_subset(recent),
+        "year_2025": generate_map_metrics_for_subset(year_2025),
+        "hdb": generate_map_metrics_for_subset(hdb),
+        "ec": generate_map_metrics_for_subset(ec),
+        "condo": generate_map_metrics_for_subset(condo)
     }
 
     # Calculate L5 growth metrics
@@ -291,7 +309,7 @@ def generate_map_data(df):
             yield_dict = yield_df_indexed.to_dict("index")
 
             # Merge into metrics
-            for era in ["whole", "pre_covid", "recent"]:
+            for era in ["whole", "pre_covid", "recent", "year_2025", "hdb", "ec", "condo"]:
                 for area_name, metrics in base_metrics[era].items():
                     area_lower = area_name.lower()
                     if area_lower in yield_dict:
@@ -315,7 +333,7 @@ def generate_map_data(df):
             aff_dict = aff_df_indexed.to_dict("index")
 
             # Merge into metrics
-            for era in ["whole", "pre_covid", "recent"]:
+            for era in ["whole", "pre_covid", "recent", "year_2025", "hdb", "ec", "condo"]:
                 for area_name, metrics in base_metrics[era].items():
                     area_lower = area_name.lower()
                     if area_lower in aff_dict:

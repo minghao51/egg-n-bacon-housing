@@ -14,6 +14,7 @@ import requests
 
 from scripts.core.config import Config
 from scripts.core.data_helpers import save_parquet
+from scripts.core.data_loader import CSVLoader
 from scripts.core.cache import cached_call
 from scripts.core.stages.helpers import collect_helpers
 
@@ -98,7 +99,7 @@ def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFram
     Load HDB resale flat prices from CSV files.
 
     Args:
-        csv_base_path: Base path to CSV files (defaults to Config.MANUAL_DIR / 'csv')
+        csv_base_path: Base path to CSV files (defaults to Config.CSV_DIR)
 
     Returns:
         DataFrame with all resale flat prices
@@ -107,26 +108,15 @@ def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFram
         >>> df = load_resale_flat_prices()
         >>> print(f"Loaded {len(df)} resale records")
     """
-    if csv_base_path is None:
-        csv_base_path = Config.MANUAL_DIR / "csv"
+    # Use CSVLoader for loading HDB resale data
+    csv_loader = CSVLoader(base_path=csv_base_path)
 
-    resale_prices_path = csv_base_path / "ResaleFlatPrices"
-    resale_files = list(resale_prices_path.glob("*.csv"))
+    resale_flat_all = csv_loader.load_hdb_resale(base_path=csv_base_path)
 
-    if not resale_files:
-        logger.warning(f"No CSV files found in {resale_prices_path}")
+    if resale_flat_all.empty:
+        logger.warning("No HDB resale data found")
         return pd.DataFrame()
 
-    logger.info(f"Found {len(resale_files)} resale flat price files")
-
-    resale_dfs = []
-    for file in resale_files:
-        logger.info(f"Loading: {file.name}")
-        df = pd.read_csv(file)
-        resale_dfs.append(df)
-
-    # Combine all resale data
-    resale_flat_all = pd.concat(resale_dfs, ignore_index=True)
     logger.info(f"Total resale records: {len(resale_flat_all)}")
 
     # Convert remaining_lease to months
