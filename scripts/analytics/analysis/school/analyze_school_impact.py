@@ -152,12 +152,16 @@ def exploratory_analysis(df):
     ax = axes[0, 1]
     if 'school_quality_band' in df.columns:
         band_prices = df.groupby('school_quality_band', observed=True)['price_psf'].mean().sort_index()
-        band_prices.plot(kind='bar', ax=ax, color=['lightcoral', 'gold', 'lightgreen'])
-        ax.set_xlabel('School Quality Band')
-        ax.set_ylabel('Average Price PSF ($)')
-        ax.set_title('Average Price by School Quality')
-        ax.tick_params(axis='x', rotation=45)
-        ax.grid(True, alpha=0.3, axis='y')
+        if not band_prices.empty:
+            band_prices.plot(kind='bar', ax=ax, color=['lightcoral', 'gold', 'lightgreen'])
+            ax.set_xlabel('School Quality Band')
+            ax.set_ylabel('Average Price PSF ($)')
+            ax.set_title('Average Price by School Quality')
+            ax.tick_params(axis='x', rotation=45)
+            ax.grid(True, alpha=0.3, axis='y')
+        else:
+            ax.text(0.5, 0.5, 'No data for quality bands',
+                    ha='center', va='center', transform=ax.transAxes)
     else:
         ax.text(0.5, 0.5, 'School quality data not available',
                 ha='center', va='center', transform=ax.transAxes)
