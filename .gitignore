@@ -78,3 +78,10 @@ backend/.astro/
 # Generated data files (built by pipeline)
 backend/public/data/*.json
 !backend/public/data/.gitkeep
+
+# Export data (temporary)
+data/exports/
+
+# Backup files
+*.bak
+data/metadata.json.bak
