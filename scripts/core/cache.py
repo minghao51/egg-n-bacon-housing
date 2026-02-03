@@ -14,13 +14,7 @@ from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
-try:
-    from scripts.core.config import Config
-except ImportError:
-    try:
-        from core.config import Config
-    except ImportError:
-        from config import Config
+from scripts.core.config import Config
 
 logger = logging.getLogger(__name__)
 

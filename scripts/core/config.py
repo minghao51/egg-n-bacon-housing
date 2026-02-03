@@ -39,6 +39,25 @@ class Config:
     ANALYSIS_OUTPUT_DIR = ANALYSIS_DIR
     L4_REPORT_PATH = ANALYSIS_DIR / "L4_summary_report.md"
 
+    # ============== PIPELINE STAGE SUBDIRECTORIES ==============
+    L0_DIR = PARQUETS_DIR / "L0"
+    L1_DIR = PARQUETS_DIR / "L1"
+    L2_DIR = PARQUETS_DIR / "L2"
+    L3_DIR = PARQUETS_DIR / "L3"
+
+    # ============== MANUAL DATA SUBDIRECTORIES ==============
+    CSV_DIR = MANUAL_DIR / "csv"
+    GEOJSON_DIR = MANUAL_DIR / "geojsons"
+    CROSSWALK_DIR = MANUAL_DIR / "crosswalks"
+    URA_DIR = CSV_DIR / "ura"
+    HDB_RESALE_DIR = CSV_DIR / "ResaleFlatPrices"
+
+    # ============== DATASET FILE NAMES ==============
+    # Dataset names without .parquet extension
+    DATASET_HDB_TRANSACTION = "housing_hdb_transaction"
+    DATASET_CONDO_TRANSACTION = "housing_condo_transaction"
+    DATASET_EC_TRANSACTION = "housing_ec_transaction"
+
     # ============== API KEYS ==============
     ONEMAP_EMAIL = os.getenv("ONEMAP_EMAIL")
     ONEMAP_PASSWORD = os.getenv("ONEMAP_EMAIL_PASSWORD")
@@ -100,9 +119,13 @@ class Config:
             (cls.PIPELINE_DIR / stage_dir).mkdir(parents=True, exist_ok=True)
 
         # Create manual data subdirectories
-        (cls.MANUAL_DIR / "csv").mkdir(parents=True, exist_ok=True)
-        (cls.MANUAL_DIR / "geojsons").mkdir(parents=True, exist_ok=True)
-        (cls.MANUAL_DIR / "crosswalks").mkdir(parents=True, exist_ok=True)
+        cls.CSV_DIR.mkdir(parents=True, exist_ok=True)
+        cls.GEOJSON_DIR.mkdir(parents=True, exist_ok=True)
+        cls.CROSSWALK_DIR.mkdir(parents=True, exist_ok=True)
+
+        # Create URA and HDB resale subdirectories
+        cls.URA_DIR.mkdir(parents=True, exist_ok=True)
+        cls.HDB_RESALE_DIR.mkdir(parents=True, exist_ok=True)
 
         # Create analytics directory
         cls.ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)

@@ -23,19 +23,10 @@ import requests
 from tenacity import retry, wait_exponential, stop_after_attempt
 from dotenv import load_dotenv
 
-try:
-    from scripts.core.config import Config
-    from scripts.core.cache import cached_call
-    from scripts.core.data_helpers import save_parquet
-except ImportError:
-    try:
-        from core.config import Config
-        from core.cache import cached_call
-        from core.data_helpers import save_parquet
-    except ImportError:
-        from config import Config
-        from cache import cached_call
-        from data_helpers import save_parquet
+from scripts.core.config import Config
+from scripts.core.cache import cached_call
+from scripts.core.data_helpers import save_parquet
+from scripts.core.data_loader import CSVLoader
 
 load_dotenv()
 
@@ -139,17 +130,20 @@ def fetch_data(search_string: str, headers: Dict[str, str], timeout: int = 30) -
         {'index': 'search_result'}, axis=1)
 
 
-def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def load_ura_files(base_path: Optional[Path] = None) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Load all URA transaction CSV files.
 
     Args:
-        base_path: Base path to data/raw_data/csv directory
+        base_path: Base path to data directory (defaults to Config.CSV_DIR)
 
     Returns:
         Tuple of (ec_df, condo_df, hdb_df)
     """
     import re
+
+    # Use CSVLoader for HDB data
+    csv_loader = CSVLoader(base_path=base_path)
 
     # File lists
     ec_list = [
@@ -172,23 +166,26 @@ def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Data
         "ResidentialTransaction20260121005734",
     ]
 
+    # Use Config paths for URA directory
+    if base_path is None:
+        ura_dir = Config.URA_DIR
+    else:
+        ura_dir = base_path / 'ura'
+
     # Load EC files
-    ec_dfs = [pd.read_csv(base_path / 'ura' / f"{ec}.csv", encoding='latin1') for ec in ec_list]
+    ec_dfs = [pd.read_csv(ura_dir / f"{ec}.csv", encoding='latin1') for ec in ec_list]
     ec_df = pd.concat(ec_dfs, ignore_index=True)
     print(f"✅ Loaded {len(ec_df)} EC transactions from {len(ec_list)} files")
 
     # Load Condo files
-    condo_dfs = [pd.read_csv(base_path / 'ura' / f"{condo}.csv", encoding='latin1') for condo in condo_list]
+    condo_dfs = [pd.read_csv(ura_dir / f"{condo}.csv", encoding='latin1') for condo in condo_list]
     condo_df = pd.concat(condo_dfs, ignore_index=True)
     condo_df['Area (SQM)'] = condo_df['Area (SQM)'].str.replace(',', '').str.strip()
     condo_df['Area (SQM)'] = pd.to_numeric(condo_df['Area (SQM)'], errors='coerce')
     print(f"✅ Loaded {len(condo_df)} condo transactions from {len(condo_list)} files")
 
-    # Load HDB files
-    hdb_resale_path = base_path / 'ResaleFlatPrices'
-    hdb_files = list(hdb_resale_path.glob('*.csv'))
-    hdb_dfs = [pd.read_csv(f, encoding='latin1') for f in hdb_files]
-    hdb_df = pd.concat(hdb_dfs, ignore_index=True)
+    # Load HDB files using CSVLoader
+    hdb_df = csv_loader.load_hdb_resale(base_path=base_path)
 
     # Standardize lease duration
     def standardize_lease_duration(lease):
@@ -209,9 +206,12 @@ def load_ura_files(base_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Data
             return int(match.group(1)) * 12
         return None
 
-    hdb_df['remaining_lease_months'] = hdb_df['remaining_lease'].apply(standardize_lease_duration)
-    hdb_df.drop('remaining_lease', axis=1, inplace=True)
-    print(f"✅ Loaded {len(hdb_df)} HDB transactions from {len(hdb_files)} files")
+    if 'remaining_lease' in hdb_df.columns:
+        hdb_df['remaining_lease_months'] = hdb_df['remaining_lease'].apply(standardize_lease_duration)
+        hdb_df.drop('remaining_lease', axis=1, inplace=True)
+        print(f"✅ Loaded {len(hdb_df)} HDB transactions with lease standardization")
+    else:
+        print(f"✅ Loaded {len(hdb_df)} HDB transactions (no lease column)")
 
     return ec_df, condo_df, hdb_df
 

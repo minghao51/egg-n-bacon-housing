@@ -7,7 +7,9 @@ for HDB, Condo, and amenity data.
 
 import json
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
+from typing import Literal, Optional
 
 import pandas as pd
 import streamlit as st
@@ -869,3 +871,194 @@ def load_rental_yield_top_combos() -> pd.DataFrame:
         return pd.DataFrame()
 
     return pd.read_parquet(path)
+
+
+# ============================================================================
+# DATA LOADER FACTORY CLASSES (For Pipeline Usage)
+# ============================================================================
+
+class PropertyType(Enum):
+    """Property type enumeration."""
+
+    HDB = "hdb"
+    CONDO = "condo"
+    EC = "ec"
+
+
+class TransactionLoader:
+    """Load transaction data from L1 parquet files.
+
+    This class provides a consistent interface for loading transaction data
+    across different property types and pipeline stages. Uses Config path constants
+    to ensure single source of truth for data locations.
+    """
+
+    def __init__(self, use_config_paths: bool = True):
+        """Initialize loader.
+
+        Args:
+            use_config_paths: If True, use Config path constants; else use custom base
+        """
+        self.use_config_paths = use_config_paths
+
+    def load_transaction(
+        self,
+        property_type: PropertyType | str,
+        stage: Literal["L0", "L1", "L2", "L3"] = "L1",
+    ) -> pd.DataFrame:
+        """Load transaction data for a property type.
+
+        Args:
+            property_type: Type of property (HDB, CONDO, EC) as enum or string
+            stage: Pipeline stage (default "L1")
+
+        Returns:
+            DataFrame with transaction data, empty DataFrame if file not found
+        """
+        # Convert string to PropertyType if needed
+        if isinstance(property_type, str):
+            property_type = PropertyType(property_type.lower())
+
+        # Get dataset name from Config
+        dataset_name_map = {
+            PropertyType.HDB: Config.DATASET_HDB_TRANSACTION,
+            PropertyType.CONDO: Config.DATASET_CONDO_TRANSACTION,
+            PropertyType.EC: Config.DATASET_EC_TRANSACTION,
+        }
+        dataset_name = dataset_name_map[property_type]
+
+        # Build path using Config constants
+        stage_dir = getattr(Config, f"{stage}_DIR", Config.PARQUETS_DIR / stage)
+        path = stage_dir / f"{dataset_name}.parquet"
+
+        if not path.exists():
+            if Config.VERBOSE_LOGGING:
+                print(f"Transaction file not found: {path}")
+            return pd.DataFrame()
+
+        return pd.read_parquet(path)
+
+    def load_all_transactions(
+        self, stage: Literal["L0", "L1", "L2", "L3"] = "L1"
+    ) -> dict[PropertyType, pd.DataFrame]:
+        """Load all transaction types.
+
+        Args:
+            stage: Pipeline stage (default "L1")
+
+        Returns:
+            Dictionary mapping property type to DataFrame
+        """
+        return {
+            pt: self.load_transaction(pt, stage) for pt in PropertyType
+        }
+
+
+class CSVLoader:
+    """Load manual CSV data sources.
+
+    This class provides a consistent interface for loading CSV data from
+    manual downloads (URA, HDB resale, etc.). Uses Config path constants.
+    """
+
+    def __init__(self, base_path: Optional[Path] = None):
+        """Initialize loader.
+
+        Args:
+            base_path: Base path for CSV files (defaults to Config.CSV_DIR)
+        """
+        self.base_path = base_path or Config.CSV_DIR
+
+    def load_ura_data(
+        self, base_path: Optional[Path] = None
+    ) -> dict[str, pd.DataFrame]:
+        """Load URA private property data.
+
+        Args:
+            base_path: Base path for CSV files (defaults to Config.CSV_DIR)
+
+        Returns:
+            Dictionary with keys: 'ec', 'condo', 'condo_rental', 'ec_rental'
+        """
+        if base_path is None:
+            base_path = self.base_path
+
+        ura_dir = base_path / "ura"
+
+        result = {}
+
+        # Load EC data
+        ec_path = ura_dir / "ec.csv"
+        if ec_path.exists():
+            result["ec"] = pd.read_csv(ec_path, encoding="latin1")
+
+        # Load condo data
+        condo_path = ura_dir / "condo.csv"
+        if condo_path.exists():
+            result["condo"] = pd.read_csv(condo_path, encoding="latin1")
+
+        # Load rental data if available
+        condo_rental_path = ura_dir / "condo_rental.csv"
+        if condo_rental_path.exists():
+            result["condo_rental"] = pd.read_csv(condo_rental_path, encoding="latin1")
+
+        ec_rental_path = ura_dir / "ec_rental.csv"
+        if ec_rental_path.exists():
+            result["ec_rental"] = pd.read_csv(ec_rental_path, encoding="latin1")
+
+        return result
+
+    def load_hdb_resale(self, base_path: Optional[Path] = None) -> pd.DataFrame:
+        """Load HDB resale price data.
+
+        Args:
+            base_path: Base path for CSV files (defaults to Config.CSV_DIR)
+
+        Returns:
+            Combined DataFrame of all resale files, empty DataFrame if directory missing
+        """
+        if base_path is None:
+            base_path = self.base_path
+
+        resale_dir = base_path / "ResaleFlatPrices"
+
+        if not resale_dir.exists():
+            if Config.VERBOSE_LOGGING:
+                print(f"HDB resale directory not found: {resale_dir}")
+            return pd.DataFrame()
+
+        files = list(resale_dir.glob("*.csv"))
+
+        if not files:
+            if Config.VERBOSE_LOGGING:
+                print(f"No CSV files found in: {resale_dir}")
+            return pd.DataFrame()
+
+        dfs = [pd.read_csv(f) for f in files]
+
+        return pd.concat(dfs, ignore_index=True)
+
+    def load_csv(
+        self, filename: str, base_path: Optional[Path] = None, **kwargs
+    ) -> pd.DataFrame:
+        """Load a single CSV file.
+
+        Args:
+            filename: Name of CSV file (can include subdirectory like 'ura/ec.csv')
+            base_path: Base path for CSV files (defaults to Config.CSV_DIR)
+            **kwargs: Additional arguments passed to pd.read_csv
+
+        Returns:
+            DataFrame with CSV data, empty DataFrame if file not found
+        """
+        if base_path is None:
+            base_path = self.base_path
+
+        path = base_path / filename
+
+        if not path.exists():
+            if Config.VERBOSE_LOGGING:
+                print(f"CSV file not found: {path}")
+            return pd.DataFrame()
+
+        return pd.read_csv(path, **kwargs)

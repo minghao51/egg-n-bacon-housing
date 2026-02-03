@@ -14,10 +14,7 @@ from typing import Optional
 
 import pandas as pd
 
-try:
-    from scripts.core.config import Config
-except ImportError:
-    from ..config import Config
+from scripts.core.config import Config
 
 # Get logger (don't call basicConfig - let the main script configure logging)
 logger = logging.getLogger(__name__)
