@@ -1,26 +1,47 @@
 # Codebase Concerns
 
 **Analysis Date:** 2026-02-02
+**Last Updated:** 2026-02-03
 
 ## Tech Debt
 
-**Hardcoded Configuration and Data Paths:**
-- Issue: Extensive hardcoded paths and file names throughout the codebase
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/config.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/L0_collect.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py`
-- Impact: Difficult to maintain, deploy, and test; requires manual updates for different environments
-- Fix approach: Centralize all configuration in Config class, use environment variables for paths, implement configuration validation
+### ✅ RESOLVED: Hardcoded Configuration and Data Paths
+- **Status**: Resolved (2026-02-03)
+- **Issue**: Extensive hardcoded paths and file names throughout the codebase
+- **Files**: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/config.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/L0_collect.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py`
+- **Impact**: Difficult to maintain, deploy, and test; requires manual updates for different environments
+- **Fix approach**: Centralized all configuration in Config class with path constants
+- **Implementation**:
+  - Added pipeline stage subdirectory constants (L0_DIR, L1_DIR, L2_DIR, L3_DIR)
+  - Added manual data subdirectory constants (CSV_DIR, GEOJSON_DIR, CROSSWALK_DIR, URA_DIR, HDB_RESALE_DIR)
+  - Added dataset file name constants (DATASET_HDB_TRANSACTION, DATASET_CONDO_TRANSACTION, DATASET_EC_TRANSACTION)
+  - Updated Config.validate() to create all subdirectories
 
-**Duplicate Code in Data Loading:**
-- Issue: Similar data loading logic repeated across multiple files with slight variations
-- Files: Multiple L-stage pipeline files and processing scripts
-- Impact: Code duplication increases maintenance burden and risk of inconsistencies
-- Fix approach: Create a unified data loader factory pattern with common interfaces and shared utilities
+### ✅ RESOLVED: Duplicate Code in Data Loading
+- **Status**: Resolved (2026-02-03)
+- **Issue**: Similar data loading logic repeated across multiple files with slight variations
+- **Files**: Multiple L-stage pipeline files and processing scripts
+- **Impact**: Code duplication increases maintenance burden and risk of inconsistencies
+- **Fix approach**: Created unified data loader factory pattern with common interfaces
+- **Implementation**:
+  - Created TransactionLoader class for loading transaction data from L1 parquet files
+  - Created CSVLoader class for loading manual CSV data sources
+  - Migrated L3_export.py to use TransactionLoader
+  - Migrated geocoding.py to use CSVLoader
+  - Migrated L0_collect.py to use CSVLoader
 
-**Import Path Fragility:**
-- Issue: Complex import patterns with multiple fallbacks (e.g., scripts/core/config.py lines 18-38)
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/cache.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py`
-- Impact: Breaks easily with directory structure changes, makes refactoring difficult
-- Fix approach: Implement proper package structure with consistent imports, use relative imports where appropriate
+### ✅ RESOLVED: Import Path Fragility
+- **Status**: Resolved (2026-02-03)
+- **Issue**: Complex import patterns with multiple fallbacks (e.g., scripts/core/config.py lines 18-38)
+- **Files**: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/cache.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/data_helpers.py`
+- **Impact**: Breaks easily with directory structure changes, makes refactoring difficult
+- **Fix approach**: Implemented proper package structure with consistent absolute imports
+- **Implementation**:
+  - Removed all triple/dual fallback import patterns
+  - Standardized on absolute imports from scripts.core
+  - Created verify_imports.py script to validate imports work correctly
+  - Verified package structure with proper __init__.py files
+  - All existing tests pass with new import structure
 
 ## Known Bugs
 
