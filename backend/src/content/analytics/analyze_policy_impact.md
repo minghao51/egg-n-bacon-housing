@@ -1,3 +1,10 @@
+---
+title: Policy Impact Analysis
+category: advanced
+description: Government policy impact on housing market
+status: published
+---
+
 # Policy Impact Analysis Script
 
 **Script:** `scripts/analysis/analyze_policy_impact.py`

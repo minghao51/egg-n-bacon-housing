@@ -1,3 +1,10 @@
+---
+title: Lease Decay Analysis
+category: advanced
+description: Lease decay impact on property prices
+status: published
+---
+
 # Lease Decay Analysis Script
 
 **Script:** `scripts/analysis/analyze_lease_decay.py`

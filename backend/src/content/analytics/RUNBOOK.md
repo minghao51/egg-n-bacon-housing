@@ -1,3 +1,10 @@
+---
+title: Runbook
+category: reference
+description: Analytics pipeline runbook and procedures
+status: published
+---
+
 # Analytics Runbook
 
 **Last Updated**: 2026-02-01

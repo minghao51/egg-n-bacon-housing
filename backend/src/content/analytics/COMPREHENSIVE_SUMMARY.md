@@ -1,3 +1,10 @@
+---
+title: Comprehensive Summary
+category: reference
+description: Complete analytics summary documentation
+status: published
+---
+
 # Comprehensive Analytics Summary: Price vs Appreciation
 
 **Last Updated**: 2026-02-01

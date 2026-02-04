@@ -1,3 +1,10 @@
+---
+title: H3 Clusters Analysis
+category: advanced
+description: H3 hierarchical clustering analysis
+status: published
+---
+
 # H3 Clusters Analysis Script
 
 **Script:** `scripts/analysis/analyze_h3_clusters.py`

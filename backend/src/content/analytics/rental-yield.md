@@ -1,3 +1,10 @@
+---
+title: Rental Yield
+category: market
+description: HDB and Condo rental yield analysis, ROI integration
+status: published
+---
+
 # Rental Yield Integration - Consolidated Report
 
 **Date:** 2026-01-22 (updated 2026-01-24)

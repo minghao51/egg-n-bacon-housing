@@ -1,3 +1,10 @@
+---
+title: Causal Inference Overview
+category: advanced
+description: Causal inference methods and applications
+status: published
+---
+
 # Causal Inference Overview
 
 **Date:** 2026-01-24

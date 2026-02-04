@@ -1,3 +1,10 @@
+---
+title: MRT Impact Analysis
+category: market
+description: MRT infrastructure impact on property prices
+status: published
+---
+
 # MRT Impact Analysis on Singapore Housing Prices
 
 **Analysis Date**: 2026-01-27

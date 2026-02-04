@@ -1,3 +1,10 @@
+---
+title: Findings
+category: core
+description: Key findings, data quality, recommendations
+status: published
+---
+
 # Analytics Findings Summary
 
 **Last Updated**: 2026-02-01

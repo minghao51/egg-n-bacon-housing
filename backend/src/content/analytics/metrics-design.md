@@ -1,3 +1,10 @@
+---
+title: Metrics Design
+category: core
+description: Stratified median methodology, 6 core metrics implementation
+status: published
+---
+
 # L3 Housing Market Metrics - Design & Implementation Guide
 
 **Created:** 2026-01-22 (updated 2026-01-24)
