@@ -49,6 +49,7 @@ def is_host_reachable(url: str, timeout: float = 5.0) -> bool:
     """
     try:
         import requests
+
         response = requests.head(url, timeout=timeout, allow_redirects=True)
         return response.status_code < 400
     except requests.exceptions.RequestException:

@@ -48,7 +48,7 @@ from scripts.core.config import Config
 from scripts.core.stages.L0_collect import collect_all_datagovsg
 from scripts.core.stages.L1_process import run_processing_pipeline, save_failed_addresses
 from scripts.core.stages.L2_rental import run_rental_pipeline
-from scripts.core.stages.L2_features import run_features_pipeline
+from scripts.core.stages.L2_features import run_l2_features_pipeline
 from scripts.core.stages.L3_export import run_l3_pipeline
 from scripts.core.stages.L5_metrics import run_metrics_pipeline
 from scripts.core.stages.webapp_data_preparation import export_dashboard_data
@@ -105,7 +105,7 @@ def run_L2_features():
     """Run L2: Property feature engineering."""
     logger.info("🚀 Starting L2: Feature Engineering Pipeline")
 
-    results = run_features_pipeline()
+    results = run_l2_features_pipeline()
 
     logger.info("✅ L2 Features Complete")
     return results
@@ -118,7 +118,7 @@ def run_L2(force: bool = False):
     results = {}
 
     results["rental"] = run_rental_pipeline(force=force)
-    results["features"] = run_features_pipeline()
+    results["features"] = run_l2_features_pipeline()
 
     logger.info("✅ L2 Complete")
     return results

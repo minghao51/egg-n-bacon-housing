@@ -4,10 +4,10 @@ Error handling and validation utilities for Singapore Housing Dashboard.
 Provides centralized error handling, validation, and user feedback.
 """
 
-import streamlit as st
-import pandas as pd
-from typing import Optional, Tuple, Any
 import logging
+
+import pandas as pd
+import streamlit as st
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -16,10 +16,13 @@ logger = logging.getLogger(__name__)
 
 class ValidationError(Exception):
     """Custom exception for validation errors."""
+
     pass
 
 
-def validate_coordinates(df: pd.DataFrame, lat_col: str = 'lat', lon_col: str = 'lon') -> Tuple[bool, str]:
+def validate_coordinates(
+    df: pd.DataFrame, lat_col: str = "lat", lon_col: str = "lon"
+) -> tuple[bool, str]:
     """
     Validate coordinate columns in DataFrame.
 
@@ -60,7 +63,7 @@ def validate_coordinates(df: pd.DataFrame, lat_col: str = 'lat', lon_col: str = 
     return True, ""
 
 
-def validate_price_column(df: pd.DataFrame) -> Tuple[bool, str, Optional[str]]:
+def validate_price_column(df: pd.DataFrame) -> tuple[bool, str, str | None]:
     """
     Validate price column exists in DataFrame.
 
@@ -74,7 +77,7 @@ def validate_price_column(df: pd.DataFrame) -> Tuple[bool, str, Optional[str]]:
         return False, "DataFrame is empty", None
 
     # Check possible price column names
-    price_columns = ['resale_price', 'Transacted Price ($)', 'price']
+    price_columns = ["resale_price", "Transacted Price ($)", "price"]
 
     for col in price_columns:
         if col in df.columns:
@@ -84,7 +87,7 @@ def validate_price_column(df: pd.DataFrame) -> Tuple[bool, str, Optional[str]]:
     return False, "No valid price column found", None
 
 
-def validate_date_column(df: pd.DataFrame) -> Tuple[bool, str, Optional[str]]:
+def validate_date_column(df: pd.DataFrame) -> tuple[bool, str, str | None]:
     """
     Validate date column exists in DataFrame.
 
@@ -98,7 +101,7 @@ def validate_date_column(df: pd.DataFrame) -> Tuple[bool, str, Optional[str]]:
         return False, "DataFrame is empty", None
 
     # Check possible date column names
-    date_columns = ['month', 'sale_date', 'Sale Date', 'date']
+    date_columns = ["month", "sale_date", "Sale Date", "date"]
 
     for col in date_columns:
         if col in df.columns:
@@ -107,7 +110,7 @@ def validate_date_column(df: pd.DataFrame) -> Tuple[bool, str, Optional[str]]:
     return False, "No valid date column found", None
 
 
-def safe_load_data(load_func, func_name: str = "Data loading") -> Optional[pd.DataFrame]:
+def safe_load_data(load_func, func_name: str = "Data loading") -> pd.DataFrame | None:
     """
     Safely load data with error handling.
 
@@ -154,33 +157,31 @@ def safe_filter_data(df: pd.DataFrame, filters: dict, func_name: str = "Filterin
         filtered_df = df.copy()
 
         # Property type filter
-        if 'property_types' in filters and filters['property_types']:
-            if 'property_type' in filtered_df.columns:
+        if "property_types" in filters and filters["property_types"]:
+            if "property_type" in filtered_df.columns:
                 filtered_df = filtered_df[
-                    filtered_df['property_type'].isin(filters['property_types'])
+                    filtered_df["property_type"].isin(filters["property_types"])
                 ]
 
         # Town filter
-        if 'towns' in filters and filters['towns']:
-            if 'town' in filtered_df.columns:
-                filtered_df = filtered_df[
-                    filtered_df['town'].isin(filters['towns'])
-                ]
+        if "towns" in filters and filters["towns"]:
+            if "town" in filtered_df.columns:
+                filtered_df = filtered_df[filtered_df["town"].isin(filters["towns"])]
 
         # Price range filter
-        if 'price_range' in filters and filters['price_range']:
-            price_col = 'resale_price' if 'resale_price' in filtered_df.columns else 'Transacted Price ($)'
+        if "price_range" in filters and filters["price_range"]:
+            price_col = (
+                "resale_price" if "resale_price" in filtered_df.columns else "Transacted Price ($)"
+            )
             if price_col in filtered_df.columns:
-                min_price, max_price = filters['price_range']
-                filtered_df = filtered_df[
-                    filtered_df[price_col].between(min_price, max_price)
-                ]
+                min_price, max_price = filters["price_range"]
+                filtered_df = filtered_df[filtered_df[price_col].between(min_price, max_price)]
 
         # Date range filter
-        if 'date_range' in filters and filters['date_range']:
-            date_col = 'month' if 'month' in filtered_df.columns else 'sale_date'
+        if "date_range" in filters and filters["date_range"]:
+            date_col = "month" if "month" in filtered_df.columns else "sale_date"
             if date_col in filtered_df.columns:
-                start_date, end_date = filters['date_range']
+                start_date, end_date = filters["date_range"]
                 filtered_df = filtered_df[
                     pd.to_datetime(filtered_df[date_col]).between(start_date, end_date)
                 ]
@@ -203,8 +204,8 @@ def show_data_quality_warning(df: pd.DataFrame):
     warnings = []
 
     # Check for missing coordinates
-    if 'lat' in df.columns and 'lon' in df.columns:
-        missing_coords = df[['lat', 'lon']].isna().any(axis=1).sum()
+    if "lat" in df.columns and "lon" in df.columns:
+        missing_coords = df[["lat", "lon"]].isna().any(axis=1).sum()
         if missing_coords > 0:
             pct_missing = (missing_coords / len(df)) * 100
             warnings.append(
@@ -212,7 +213,7 @@ def show_data_quality_warning(df: pd.DataFrame):
             )
 
     # Check for missing prices
-    price_col = 'resale_price' if 'resale_price' in df.columns else 'Transacted Price ($)'
+    price_col = "resale_price" if "resale_price" in df.columns else "Transacted Price ($)"
     if price_col in df.columns:
         missing_prices = df[price_col].isna().sum()
         if missing_prices > 0:
@@ -254,7 +255,7 @@ def handle_plotly_error(fig, error_message: str = "Error creating chart"):
         logger.error(f"Plotly error: {e}", exc_info=True)
 
 
-def validate_filters(filters: dict) -> Tuple[bool, str]:
+def validate_filters(filters: dict) -> tuple[bool, str]:
     """
     Validate filter parameters.
 
@@ -265,16 +266,16 @@ def validate_filters(filters: dict) -> Tuple[bool, str]:
         Tuple of (is_valid, error_message)
     """
     # Validate price range
-    if 'price_range' in filters and filters['price_range']:
-        min_price, max_price = filters['price_range']
+    if "price_range" in filters and filters["price_range"]:
+        min_price, max_price = filters["price_range"]
         if min_price > max_price:
             return False, "Minimum price cannot be greater than maximum price"
         if min_price < 0 or max_price < 0:
             return False, "Price values must be positive"
 
     # Validate date range
-    if 'date_range' in filters and filters['date_range']:
-        start_date, end_date = filters['date_range']
+    if "date_range" in filters and filters["date_range"]:
+        start_date, end_date = filters["date_range"]
         if start_date > end_date:
             return False, "Start date cannot be after end date"
 
@@ -293,7 +294,7 @@ def show_info_tooltip(text: str, icon: str = "ℹ️"):
         st.markdown(text)
 
 
-def get_performance_warning(row_count: int, view_mode: str = "scatter") -> Optional[str]:
+def get_performance_warning(row_count: int, view_mode: str = "scatter") -> str | None:
     """
     Get performance warning based on data size.
 
@@ -330,13 +331,13 @@ def log_data_info(df: pd.DataFrame, data_name: str = "Dataset"):
     logger.info(f"  Columns: {list(df.columns)}")
     logger.info(f"  Memory usage: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
 
-    if 'month' in df.columns:
+    if "month" in df.columns:
         logger.info(f"  Date range: {df['month'].min()} to {df['month'].max()}")
 
-    if 'town' in df.columns:
+    if "town" in df.columns:
         logger.info(f"  Towns: {df['town'].nunique()} unique")
 
-    if 'property_type' in df.columns:
+    if "property_type" in df.columns:
         logger.info(f"  Property types: {df['property_type'].unique()}")
 
 

@@ -10,7 +10,6 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 
@@ -25,7 +24,9 @@ PARQUETS_DIR = Config.PARQUETS_DIR
 METADATA_FILE = Config.METADATA_FILE
 
 
-def load_parquet(dataset_name: str, version: str | None = None) -> pd.DataFrame:
+def load_parquet(
+    dataset_name: str, version: str | None = None, columns: list[str] | None = None
+) -> pd.DataFrame:
     """
     Load a parquet file by dataset name with error handling.
 
@@ -47,8 +48,7 @@ def load_parquet(dataset_name: str, version: str | None = None) -> pd.DataFrame:
     if dataset_name not in metadata["datasets"]:
         available = list(metadata["datasets"].keys())
         raise ValueError(
-            f"Dataset '{dataset_name}' not found in metadata. "
-            f"Available datasets: {available}"
+            f"Dataset '{dataset_name}' not found in metadata. Available datasets: {available}"
         )
 
     dataset_info = metadata["datasets"][dataset_name]
@@ -70,7 +70,7 @@ def load_parquet(dataset_name: str, version: str | None = None) -> pd.DataFrame:
         )
 
     try:
-        df = pd.read_parquet(parquet_path)
+        df = pd.read_parquet(parquet_path, columns=columns)
         logger.info(f"Loaded {dataset_name}: {len(df)} rows from {parquet_path}")
         return df
     except Exception as e:
@@ -83,9 +83,9 @@ def save_parquet(
     source: str | None = None,
     version: str | None = None,
     mode: str = "overwrite",
-    partition_cols: Optional[list[str]] = None,
-    compression: Optional[str] = None,
-    calculate_checksum: bool = False
+    partition_cols: list[str] | None = None,
+    compression: str | None = None,
+    calculate_checksum: bool = False,
 ) -> None:
     """
     Save DataFrame to parquet with validation and error handling.
@@ -120,7 +120,12 @@ def save_parquet(
         compression = Config.PARQUET_COMPRESSION
 
     # Determine path from dataset name
-    path_parts = dataset_name.replace("L1_", "L1/").replace("L2_", "L2/").replace("L3_", "L3/").replace("raw_data", "raw_data")
+    path_parts = (
+        dataset_name.replace("L1_", "L1/")
+        .replace("L2_", "L2/")
+        .replace("L3_", "L3/")
+        .replace("raw_data", "raw_data")
+    )
 
     # If partitioning, save to directory instead of file
     if partition_cols:
@@ -182,9 +187,7 @@ def save_parquet(
     if dataset_name in metadata["datasets"] and mode == "overwrite":
         old_version = metadata["datasets"][dataset_name]["version"]
         if old_version != version:
-            logger.warning(
-                f"Overwriting {dataset_name}: version {old_version} -> {version}"
-            )
+            logger.warning(f"Overwriting {dataset_name}: version {old_version} -> {version}")
 
     # Prepare metadata entry
     dataset_metadata = {
@@ -257,7 +260,9 @@ def verify_metadata() -> bool:
                 )
                 all_valid = False
             else:
-                logger.info(f"Dataset {name}: OK ({info['rows']} rows, checksum: {current_checksum})")
+                logger.info(
+                    f"Dataset {name}: OK ({info['rows']} rows, checksum: {current_checksum})"
+                )
         else:
             logger.info(f"Dataset {name}: OK ({info['rows']} rows, no checksum)")
 

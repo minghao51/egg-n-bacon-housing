@@ -5,7 +5,6 @@ and assign importance scores based on line tier and interchange status.
 """
 
 import logging
-from typing import Dict, List, Optional, Set
 
 import pandas as pd
 
@@ -14,206 +13,346 @@ logger = logging.getLogger(__name__)
 # MRT Lines with their metadata
 MRT_LINES = {
     # Major Interchange Lines (Tier 1)
-    'NSL': {
-        'name': 'North-South Line',
-        'color': '#DC241F',
-        'tier': 1,
-        'description': 'Main North-South artery through city center'
+    "NSL": {
+        "name": "North-South Line",
+        "color": "#DC241F",
+        "tier": 1,
+        "description": "Main North-South artery through city center",
     },
-    'EWL': {
-        'name': 'East-West Line',
-        'color': '#009640',
-        'tier': 1,
-        'description': 'Main East-West artery through city center'
+    "EWL": {
+        "name": "East-West Line",
+        "color": "#009640",
+        "tier": 1,
+        "description": "Main East-West artery through city center",
     },
-    'NEL': {
-        'name': 'North-East Line',
-        'color': '#7D2884',
-        'tier': 1,
-        'description': 'North-East to Harbourfront'
+    "NEL": {
+        "name": "North-East Line",
+        "color": "#7D2884",
+        "tier": 1,
+        "description": "North-East to Harbourfront",
     },
-    'CCL': {
-        'name': 'Circle Line',
-        'color': '#C46500',
-        'tier': 1,
-        'description': 'Orbital line connecting major lines'
+    "CCL": {
+        "name": "Circle Line",
+        "color": "#C46500",
+        "tier": 1,
+        "description": "Orbital line connecting major lines",
     },
-
     # Secondary Lines (Tier 2)
-    'DTL': {
-        'name': 'Downtown Line',
-        'color': '#005EC4',
-        'tier': 2,
-        'description': 'Downtown and Bukit Timah corridor'
+    "DTL": {
+        "name": "Downtown Line",
+        "color": "#005EC4",
+        "tier": 2,
+        "description": "Downtown and Bukit Timah corridor",
     },
-    'TEL': {
-        'name': 'Thomson-East Coast Line',
-        'color': '#6C2B95',
-        'tier': 2,
-        'description': 'Thomson corridor to East Coast'
+    "TEL": {
+        "name": "Thomson-East Coast Line",
+        "color": "#6C2B95",
+        "tier": 2,
+        "description": "Thomson corridor to East Coast",
     },
-
     # LRT Lines (Tier 3 - Feeder services)
-    'BPLR': {
-        'name': 'Bukit Panjang LRT',
-        'color': '#9A2F36',
-        'tier': 3,
-        'description': 'Bukit Panjang feeder'
+    "BPLR": {
+        "name": "Bukit Panjang LRT",
+        "color": "#9A2F36",
+        "tier": 3,
+        "description": "Bukit Panjang feeder",
     },
-    'SKRLRT': {
-        'name': 'Sengkang LRT',
-        'color': '#9A2F36',
-        'tier': 3,
-        'description': 'Sengkang feeder'
+    "SKRLRT": {
+        "name": "Sengkang LRT",
+        "color": "#9A2F36",
+        "tier": 3,
+        "description": "Sengkang feeder",
     },
-    'PKLRT': {
-        'name': 'Punggol LRT',
-        'color': '#9A2F36',
-        'tier': 3,
-        'description': 'Punggol feeder'
+    "PKLRT": {
+        "name": "Punggol LRT",
+        "color": "#9A2F36",
+        "tier": 3,
+        "description": "Punggol feeder",
     },
 }
 
 # Station to Line(s) mapping
 # Key: Station name (uppercase, as in geojson)
 # Value: List of line codes
-STATION_LINES: Dict[str, List[str]] = {}
+STATION_LINES: dict[str, list[str]] = {}
 
 # North-South Line (NSL)
 NSL_STATIONS = [
-    'JURONG EAST INTERCHANGE', 'BUKIT BATOK', 'BUKIT GOMBAK', 'CHOA CHU KANG',
-    'YEW TEE', 'KRANJI', 'MARSILING', 'WOODLANDS', 'ADMIRALTY',
-    'SEMBAWANG', 'CANBERRA', 'YISHUN', 'KHATIB', 'YIO CHU KANG',
-    'ANG MO KIO INTERCHANGE', 'BISHAN INTERCHANGE', 'BRADDELL', 'TOA PAYOH',
-    'NOVENA', 'NEWTON INTERCHANGE', 'ORCHARD', 'SOMERSET', 'DHOBY GHAUT INTERCHANGE',
-    'CITY HALL', 'RAFFLES PLACE', 'MARINA BAY', 'MARINA SOUTH'
+    "JURONG EAST INTERCHANGE",
+    "BUKIT BATOK",
+    "BUKIT GOMBAK",
+    "CHOA CHU KANG",
+    "YEW TEE",
+    "KRANJI",
+    "MARSILING",
+    "WOODLANDS",
+    "ADMIRALTY",
+    "SEMBAWANG",
+    "CANBERRA",
+    "YISHUN",
+    "KHATIB",
+    "YIO CHU KANG",
+    "ANG MO KIO INTERCHANGE",
+    "BISHAN INTERCHANGE",
+    "BRADDELL",
+    "TOA PAYOH",
+    "NOVENA",
+    "NEWTON INTERCHANGE",
+    "ORCHARD",
+    "SOMERSET",
+    "DHOBY GHAUT INTERCHANGE",
+    "CITY HALL",
+    "RAFFLES PLACE",
+    "MARINA BAY",
+    "MARINA SOUTH",
 ]
 for station in NSL_STATIONS:
-    STATION_LINES[station] = ['NSL']
+    STATION_LINES[station] = ["NSL"]
 
 # East-West Line (EWL)
 EWL_STATIONS = [
-    'PASIR RIS', 'TAMPINES', 'SAFRA', 'TANAH MERAH', 'BEDOK', 'KEMBANGAN',
-    'EUNOS', 'PAYA LEBAR INTERCHANGE', 'ALJUNIED', 'KALLANG', 'LAVENDER',
-    'BUGIS', 'CITY HALL', 'RAFFLES PLACE', 'MARINA BAY', 'GARDENS BY THE BAY',
-    'JURONG EAST INTERCHANGE', 'CLEMENTI', 'BOON LAY INTERCHANGE',
-    'PIONEER', 'JOO KOON', 'GUL CIRCLE', 'TUAS CRESCENT', 'TUAS WEST ROAD', 'TUAS LINK'
+    "PASIR RIS",
+    "TAMPINES",
+    "SAFRA",
+    "TANAH MERAH",
+    "BEDOK",
+    "KEMBANGAN",
+    "EUNOS",
+    "PAYA LEBAR INTERCHANGE",
+    "ALJUNIED",
+    "KALLANG",
+    "LAVENDER",
+    "BUGIS",
+    "CITY HALL",
+    "RAFFLES PLACE",
+    "MARINA BAY",
+    "GARDENS BY THE BAY",
+    "JURONG EAST INTERCHANGE",
+    "CLEMENTI",
+    "BOON LAY INTERCHANGE",
+    "PIONEER",
+    "JOO KOON",
+    "GUL CIRCLE",
+    "TUAS CRESCENT",
+    "TUAS WEST ROAD",
+    "TUAS LINK",
 ]
 for station in EWL_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('EWL')
+        STATION_LINES[station].append("EWL")
     else:
-        STATION_LINES[station] = ['EWL']
+        STATION_LINES[station] = ["EWL"]
 
 # North-East Line (NEL)
 NEL_STATIONS = [
-    'HARBOURFRONT INTERCHANGE', 'OUTRAM PARK INTERCHANGE', 'CHINATOWN',
-    'CLARKE QUAY', 'DHOBY GHAUT INTERCHANGE', 'LITTLE INDIA', 'FARRER PARK',
-    'BOON KENG', 'SERANGOON INTERCHANGE', 'KOVAN', 'HOUGANG INTERCHANGE',
-    'BUANGKOK', 'SENGKANG', 'PUNGGOL', 'PUNGGOL CENTRAL'
+    "HARBOURFRONT INTERCHANGE",
+    "OUTRAM PARK INTERCHANGE",
+    "CHINATOWN",
+    "CLARKE QUAY",
+    "DHOBY GHAUT INTERCHANGE",
+    "LITTLE INDIA",
+    "FARRER PARK",
+    "BOON KENG",
+    "SERANGOON INTERCHANGE",
+    "KOVAN",
+    "HOUGANG INTERCHANGE",
+    "BUANGKOK",
+    "SENGKANG",
+    "PUNGGOL",
+    "PUNGGOL CENTRAL",
 ]
 for station in NEL_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('NEL')
+        STATION_LINES[station].append("NEL")
     else:
-        STATION_LINES[station] = ['NEL']
+        STATION_LINES[station] = ["NEL"]
 
 # Circle Line (CCL)
 CCL_STATIONS = [
-    'DHOBY GHAUT INTERCHANGE', 'BRAS BASAH', 'ESPLANADE', 'PROMENADE',
-    'NICOLL HIGHWAY', 'STADIUM', 'MOUNTBATTEN', 'DAKOTA', 'PAYA LEBAR INTERCHANGE',
-    'MACPHERSON', 'TAI SENG', 'BARTLEY', 'SERANGOON INTERCHANGE', 'LORONG CHUAN',
-    'BISHAN INTERCHANGE', 'MARYMOUNT', 'CALDECOTT INTERCHANGE', 'BOTANIC GARDENS INTERCHANGE',
-    'FARRER ROAD', 'HOLLAND VILLAGE', 'BUONA VISTA INTERCHANGE', 'ONE NORTH',
-    'LABRADOR PARK', 'TELOK BLANGAH', 'HARBOURFRONT INTERCHANGE',
-    'KEPPEL', 'BUKIT MERAH', 'HARRIER PARK', 'CANTONMENT', 'PRINCE EDWARD ROAD'
+    "DHOBY GHAUT INTERCHANGE",
+    "BRAS BASAH",
+    "ESPLANADE",
+    "PROMENADE",
+    "NICOLL HIGHWAY",
+    "STADIUM",
+    "MOUNTBATTEN",
+    "DAKOTA",
+    "PAYA LEBAR INTERCHANGE",
+    "MACPHERSON",
+    "TAI SENG",
+    "BARTLEY",
+    "SERANGOON INTERCHANGE",
+    "LORONG CHUAN",
+    "BISHAN INTERCHANGE",
+    "MARYMOUNT",
+    "CALDECOTT INTERCHANGE",
+    "BOTANIC GARDENS INTERCHANGE",
+    "FARRER ROAD",
+    "HOLLAND VILLAGE",
+    "BUONA VISTA INTERCHANGE",
+    "ONE NORTH",
+    "LABRADOR PARK",
+    "TELOK BLANGAH",
+    "HARBOURFRONT INTERCHANGE",
+    "KEPPEL",
+    "BUKIT MERAH",
+    "HARRIER PARK",
+    "CANTONMENT",
+    "PRINCE EDWARD ROAD",
 ]
 for station in CCL_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('CCL')
+        STATION_LINES[station].append("CCL")
     else:
-        STATION_LINES[station] = ['CCL']
+        STATION_LINES[station] = ["CCL"]
 
 # Downtown Line (DTL)
 DTL_STATIONS = [
-    'BUKIT PANJANG', 'CHEW SUNG', 'CASH EW', 'HILLVIEW', 'BEAUTY WORLD',
-    'KING ALBERT PARK', 'STEVENS', 'BOTANIC GARDENS INTERCHANGE',
-    'TAN KAH KEE', 'SIXTH AVENUE', 'NEWTON INTERCHANGE', 'LITTLE INDIA',
-    'ROCHOR', 'BUGIS', 'PROMENADE', 'BAYFRONT', 'DOWNTOWN', 'TELOK BLANGAH',
-    'LABRADOR PARK', 'ONE NORTH', 'BUONA VISTA INTERCHANGE', 'HAWKER VILLAGE',
-    'CLEMENTI', 'CLEMENTI ROAD', 'DOVER', 'EXPO INTERCHANGE', 'UPPER CHANGI'
+    "BUKIT PANJANG",
+    "CHEW SUNG",
+    "CASH EW",
+    "HILLVIEW",
+    "BEAUTY WORLD",
+    "KING ALBERT PARK",
+    "STEVENS",
+    "BOTANIC GARDENS INTERCHANGE",
+    "TAN KAH KEE",
+    "SIXTH AVENUE",
+    "NEWTON INTERCHANGE",
+    "LITTLE INDIA",
+    "ROCHOR",
+    "BUGIS",
+    "PROMENADE",
+    "BAYFRONT",
+    "DOWNTOWN",
+    "TELOK BLANGAH",
+    "LABRADOR PARK",
+    "ONE NORTH",
+    "BUONA VISTA INTERCHANGE",
+    "HAWKER VILLAGE",
+    "CLEMENTI",
+    "CLEMENTI ROAD",
+    "DOVER",
+    "EXPO INTERCHANGE",
+    "UPPER CHANGI",
 ]
 for station in DTL_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('DTL')
+        STATION_LINES[station].append("DTL")
     else:
-        STATION_LINES[station] = ['DTL']
+        STATION_LINES[station] = ["DTL"]
 
 # Thomson-East Coast Line (TEL)
 TEL_STATIONS = [
-    'WOODLANDS SOUTH', 'WOODLANDS NORTH', 'WOODLANDS', 'SEMBAWANG',
-    'CANBERRA', 'YISHUN', 'SPRINGLEAF', 'TAGORE', 'BRIGHT HILL INTERCHANGE',
-    'UPPER THOMSON', 'CALDECOTT INTERCHANGE', 'MT PLEASANT', 'STEvens',
-    'ORCHARD BOULEVARD', 'ORCHARD', 'NEWTON INTERCHANGE',
-    'LITTLE INDIA', 'SPOT', 'PENDING', 'GATEWAY', 'MANDAI',
-    'AVIATION PARK', 'CHANGI AIRPORT'
+    "WOODLANDS SOUTH",
+    "WOODLANDS NORTH",
+    "WOODLANDS",
+    "SEMBAWANG",
+    "CANBERRA",
+    "YISHUN",
+    "SPRINGLEAF",
+    "TAGORE",
+    "BRIGHT HILL INTERCHANGE",
+    "UPPER THOMSON",
+    "CALDECOTT INTERCHANGE",
+    "MT PLEASANT",
+    "STEvens",
+    "ORCHARD BOULEVARD",
+    "ORCHARD",
+    "NEWTON INTERCHANGE",
+    "LITTLE INDIA",
+    "SPOT",
+    "PENDING",
+    "GATEWAY",
+    "MANDAI",
+    "AVIATION PARK",
+    "CHANGI AIRPORT",
 ]
 for station in TEL_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('TEL')
+        STATION_LINES[station].append("TEL")
     else:
-        STATION_LINES[station] = ['TEL']
+        STATION_LINES[station] = ["TEL"]
 
 # Bukit Panjang LRT (BPLR)
 BPLR_STATIONS = [
-    'CHOA CHU KANG', 'SOUTH VIEW', 'KEAT HONG', 'TECK WHYE', 'PHOENIX',
-    'BUKIT PANJANG', 'FAJAR', 'SEGAR', 'JELAPANG', 'SENJA'
+    "CHOA CHU KANG",
+    "SOUTH VIEW",
+    "KEAT HONG",
+    "TECK WHYE",
+    "PHOENIX",
+    "BUKIT PANJANG",
+    "FAJAR",
+    "SEGAR",
+    "JELAPANG",
+    "SENJA",
 ]
 for station in BPLR_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('BPLR')
+        STATION_LINES[station].append("BPLR")
     else:
-        STATION_LINES[station] = ['BPLR']
+        STATION_LINES[station] = ["BPLR"]
 
 # Sengkang LRT (SKRLRT)
 SKRLRT_STATIONS = [
-    'SENGKANG', 'CHENG LIM', 'FARMWAY', 'KANGKAR', 'RANGGUNG',
-    'THANGGAM', 'RENJONG', 'COMPASSVALE', 'LAYAR', 'TONGKANG'
+    "SENGKANG",
+    "CHENG LIM",
+    "FARMWAY",
+    "KANGKAR",
+    "RANGGUNG",
+    "THANGGAM",
+    "RENJONG",
+    "COMPASSVALE",
+    "LAYAR",
+    "TONGKANG",
 ]
 for station in SKRLRT_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('SKRLRT')
+        STATION_LINES[station].append("SKRLRT")
     else:
-        STATION_LINES[station] = ['SKRLRT']
+        STATION_LINES[station] = ["SKRLRT"]
 
 # Punggol LRT (PKLRT)
 PKLRT_STATIONS = [
-    'PUNGGOL', 'SOO TECK', 'MERIDIAN', 'CORAL EDGE', 'RIVIERA',
-    'KADALOOR', 'COVE', 'SAMUDERA', 'NIBONG', 'SUMANG', 'OM', 'DAMAI',
-    'PUNGGOL POINT', 'SAMKEE', 'TECK LEE', 'OASIS'
+    "PUNGGOL",
+    "SOO TECK",
+    "MERIDIAN",
+    "CORAL EDGE",
+    "RIVIERA",
+    "KADALOOR",
+    "COVE",
+    "SAMUDERA",
+    "NIBONG",
+    "SUMANG",
+    "OM",
+    "DAMAI",
+    "PUNGGOL POINT",
+    "SAMKEE",
+    "TECK LEE",
+    "OASIS",
 ]
 for station in PKLRT_STATIONS:
     if station in STATION_LINES:
-        STATION_LINES[station].append('PKLRT')
+        STATION_LINES[station].append("PKLRT")
     else:
-        STATION_LINES[station] = ['PKLRT']
+        STATION_LINES[station] = ["PKLRT"]
 
 # Major Interchanges (stations with 3+ lines)
 MAJOR_INTERCHANGES = {
-    'DHOBY GHAUT INTERCHANGE': ['NSL', 'NEL', 'CCL'],
-    'CITY HALL': ['NSL', 'EWL'],
-    'RAFFLES PLACE': ['NSL', 'EWL'],
-    'JURONG EAST INTERCHANGE': ['NSL', 'EWL'],
-    'BISHAN INTERCHANGE': ['NSL', 'CCL'],
-    'BUONA VISTA INTERCHANGE': ['EWL', 'CCL'],
-    'PAYA LEBAR INTERCHANGE': ['EWL', 'CCL'],
-    'SERANGOON INTERCHANGE': ['NEL', 'CCL'],
-    'BOTANIC GARDENS INTERCHANGE': ['CCL', 'DTL'],
-    'NEWTON INTERCHANGE': ['NSL', 'DTL', 'TEL'],
-    'MARINA BAY': ['NSL', 'EWL'],
-    'HARBOURFRONT INTERCHANGE': ['NEL', 'CCL'],
-    'OUTRAM PARK INTERCHANGE': ['NEL', 'EWL'],
-    'CHANGI AIRPORT': ['EWL', 'TEL'],
+    "DHOBY GHAUT INTERCHANGE": ["NSL", "NEL", "CCL"],
+    "CITY HALL": ["NSL", "EWL"],
+    "RAFFLES PLACE": ["NSL", "EWL"],
+    "JURONG EAST INTERCHANGE": ["NSL", "EWL"],
+    "BISHAN INTERCHANGE": ["NSL", "CCL"],
+    "BUONA VISTA INTERCHANGE": ["EWL", "CCL"],
+    "PAYA LEBAR INTERCHANGE": ["EWL", "CCL"],
+    "SERANGOON INTERCHANGE": ["NEL", "CCL"],
+    "BOTANIC GARDENS INTERCHANGE": ["CCL", "DTL"],
+    "NEWTON INTERCHANGE": ["NSL", "DTL", "TEL"],
+    "MARINA BAY": ["NSL", "EWL"],
+    "HARBOURFRONT INTERCHANGE": ["NEL", "CCL"],
+    "OUTRAM PARK INTERCHANGE": ["NEL", "EWL"],
+    "CHANGI AIRPORT": ["EWL", "TEL"],
 }
 
 # Update major interchanges
@@ -221,7 +360,7 @@ for station, lines in MAJOR_INTERCHANGES.items():
     STATION_LINES[station] = lines
 
 
-def get_station_lines(station_name: str) -> List[str]:
+def get_station_lines(station_name: str) -> list[str]:
     """Get MRT line codes for a station.
 
     Args:
@@ -238,7 +377,7 @@ def get_station_lines(station_name: str) -> List[str]:
     station_upper = str(station_name).upper().strip()
 
     # Skip empty names
-    if not station_upper or station_upper == '<NULL>':
+    if not station_upper or station_upper == "<NULL>":
         return []
 
     # Direct lookup
@@ -248,10 +387,10 @@ def get_station_lines(station_name: str) -> List[str]:
     # Fuzzy match - try removing/adding common suffixes
     variants = [
         station_upper,
-        station_upper.replace(' INTERCHANGE', ''),
-        station_upper.replace(' MRT', ''),
-        station_upper + ' INTERCHANGE',
-        station_upper + ' MRT',
+        station_upper.replace(" INTERCHANGE", ""),
+        station_upper.replace(" MRT", ""),
+        station_upper + " INTERCHANGE",
+        station_upper + " MRT",
     ]
 
     for variant in variants:
@@ -282,7 +421,7 @@ def get_station_tier(station_name: str) -> int:
         return 3  # Default to lowest tier
 
     # Get minimum tier among all lines (highest importance)
-    min_tier = min(MRT_LINES.get(line, {}).get('tier', 3) for line in lines)
+    min_tier = min(MRT_LINES.get(line, {}).get("tier", 3) for line in lines)
 
     # Boost major interchanges (3+ lines)
     if len(lines) >= 3:
@@ -352,7 +491,7 @@ def get_line_color(line_code: str) -> str:
     Returns:
         Hex color string
     """
-    return MRT_LINES.get(line_code, {}).get('color', '#CCCCCC')
+    return MRT_LINES.get(line_code, {}).get("color", "#CCCCCC")
 
 
 def get_line_name(line_code: str) -> str:
@@ -364,17 +503,17 @@ def get_line_name(line_code: str) -> str:
     Returns:
         Full line name
     """
-    return MRT_LINES.get(line_code, {}).get('name', 'Unknown Line')
+    return MRT_LINES.get(line_code, {}).get("name", "Unknown Line")
 
 
 if __name__ == "__main__":
     # Test the mapping
     test_stations = [
-        'DHOBY GHAUT INTERCHANGE',
-        'ANG MO KIO INTERCHANGE',
-        'CLEMENTI',
-        'PUNGGOL',
-        'BUKIT PANJANG'
+        "DHOBY GHAUT INTERCHANGE",
+        "ANG MO KIO INTERCHANGE",
+        "CLEMENTI",
+        "PUNGGOL",
+        "BUKIT PANJANG",
     ]
 
     print("MRT Line Mapping Test")

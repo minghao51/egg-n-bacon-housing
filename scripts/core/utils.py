@@ -6,10 +6,9 @@ including path management, progress tracking, and output directory handling.
 
 import sys
 from pathlib import Path
-from typing import Optional
 
 
-def add_project_to_path(file_path: Optional[Path] = None) -> Path:
+def add_project_to_path(file_path: Path | None = None) -> Path:
     """Add project root to Python path from any script location.
 
     This function automatically detects the project root directory by looking
@@ -37,18 +36,20 @@ def add_project_to_path(file_path: Optional[Path] = None) -> Path:
     # Find the project root by looking for 'scripts' directory
     path_parts = file_path.parts
 
-    if 'scripts' in path_parts:
+    if "scripts" in path_parts:
         # Get index of 'scripts' directory
-        scripts_index = path_parts.index('scripts')
+        scripts_index = path_parts.index("scripts")
         # Navigate up to project root (parent of 'scripts')
         project_root = Path(*path_parts[:scripts_index])
     else:
         # Fallback: assume we're in a subdirectory, go up until we find project root markers
         project_root = file_path
         for _ in range(10):  # Safety limit
-            if (project_root / 'scripts').exists() or \
-               (project_root / 'pyproject.toml').exists() or \
-               (project_root / 'data').exists():
+            if (
+                (project_root / "scripts").exists()
+                or (project_root / "pyproject.toml").exists()
+                or (project_root / "data").exists()
+            ):
                 break
             project_root = project_root.parent
 
@@ -76,6 +77,7 @@ def get_analysis_output_dir(script_name: str) -> Path:
         >>> output_dir.mkdir(exist_ok=True, parents=True)
     """
     from scripts.core.config import Config
+
     output_dir = Config.DATA_DIR / "analysis" / script_name
     output_dir.mkdir(exist_ok=True, parents=True)
     return output_dir
@@ -95,6 +97,7 @@ def get_pipeline_output_dir(pipeline_name: str) -> Path:
         >>> output_dir = get_pipeline_output_dir('forecast_prices')
     """
     from scripts.core.config import Config
+
     output_dir = Config.DATA_DIR / "pipelines" / pipeline_name
     output_dir.mkdir(exist_ok=True, parents=True)
     return output_dir

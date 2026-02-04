@@ -18,8 +18,6 @@ Usage:
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
-
 
 # Default log format
 DEFAULT_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -28,9 +26,9 @@ DEFAULT_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 def setup_logging(
     level: int = logging.INFO,
-    format_string: Optional[str] = None,
-    date_format: Optional[str] = None,
-    log_file: Optional[Path] = None,
+    format_string: str | None = None,
+    date_format: str | None = None,
+    log_file: Path | None = None,
 ) -> None:
     """
     Configure root logging for the application.
@@ -136,7 +134,7 @@ def get_logger_level_from_env() -> int:
     return level_map.get(level_str, logging.INFO)
 
 
-def setup_logging_from_env(log_file: Optional[Path] = None) -> None:
+def setup_logging_from_env(log_file: Path | None = None) -> None:
     """
     Setup logging using environment variables.
 

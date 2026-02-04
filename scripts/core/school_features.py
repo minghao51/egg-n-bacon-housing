@@ -2,21 +2,19 @@
 """Calculate school features - optimized using KDTree for nearest search."""
 
 import logging
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
-from rapidfuzz import process, fuzz
+from rapidfuzz import fuzz, process
 from scipy.spatial import cKDTree
 
 from scripts.core.config import Config
 
 # Constants
 DISTANCES = {
-    '500m': 500,
-    '1km': 1000,
-    '2km': 2000,
+    "500m": 500,
+    "1km": 1000,
+    "2km": 2000,
 }
 
 SCHOOL_LEVELS = ["PRIMARY", "SECONDARY (S1-S5)", "JUNIOR COLLEGE"]
@@ -27,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Calculate distance in meters between two lat/lon points using Haversine formula."""
-    from math import radians, sin, cos, sqrt, asin
+    from math import asin, cos, radians, sin, sqrt
 
     # Ensure coordinates are floats
     lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
@@ -35,7 +33,7 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     dlat = lat2 - lat1
     dlon = lon2 - lon1
 
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     return 2 * asin(sqrt(a)) * 6371000  # Earth radius in meters
 
 
@@ -45,14 +43,14 @@ def load_schools() -> pd.DataFrame:
     schools_df = pd.read_parquet(school_path)
 
     # Check if already geocoded
-    if 'latitude' in schools_df.columns and schools_df['latitude'].notna().sum() > 100:
+    if "latitude" in schools_df.columns and schools_df["latitude"].notna().sum() > 100:
         logger.info(f"Loaded {schools_df['latitude'].notna().sum()} pre-geocoded schools")
         return schools_df
 
     # Geocode and save
     logger.info("Geocoding schools...")
     schools_df = _geocode_schools(schools_df)
-    schools_df.to_parquet(school_path, compression='snappy', index=False)
+    schools_df.to_parquet(school_path, compression="snappy", index=False)
     logger.info("Saved geocoded schools")
 
     return schools_df
@@ -99,15 +97,15 @@ def calculate_primary_quality_score(row: pd.Series) -> float:
     score = 0.0
 
     # GEP programme
-    if str(row.get('gep', 'No')).upper() == 'YES':
+    if str(row.get("gep", "No")).upper() == "YES":
         score += 2.5
 
     # SAP status
-    if str(row.get('sap', 'No')).upper() == 'YES':
+    if str(row.get("sap", "No")).upper() == "YES":
         score += 2.0
 
     # Tier classification
-    tier = int(row.get('tier', 3))
+    tier = int(row.get("tier", 3))
     if tier == 1:
         score += 3.0
     elif tier == 2:
@@ -116,14 +114,14 @@ def calculate_primary_quality_score(row: pd.Series) -> float:
         score += 1.0
 
     # Popularity (Phase 2B applicants per vacancy)
-    popularity = row.get('popularity_p2b', None)
-    if pd.notna(popularity) and popularity != 'High':
+    popularity = row.get("popularity_p2b", None)
+    if pd.notna(popularity) and popularity != "High":
         try:
             pop_val = float(popularity)
             score += min(pop_val / 3 * 0.5, 0.5)
         except (ValueError, TypeError):
             pass
-    elif popularity == 'High':
+    elif popularity == "High":
         score += 0.5
 
     return min(score, 10.0)
@@ -141,19 +139,19 @@ def calculate_secondary_quality_score(row: pd.Series) -> float:
     score = 0.0
 
     # IP track
-    if str(row.get('ip', 'No')).upper() == 'YES':
+    if str(row.get("ip", "No")).upper() == "YES":
         score += 3.0
 
     # SAP status
-    if str(row.get('sap', 'No')).upper() == 'YES':
+    if str(row.get("sap", "No")).upper() == "YES":
         score += 2.0
 
     # Autonomous status
-    if str(row.get('autonomous', 'No')).upper() == 'YES':
+    if str(row.get("autonomous", "No")).upper() == "YES":
         score += 1.5
 
     # Tier classification
-    tier = int(row.get('tier', 3))
+    tier = int(row.get("tier", 3))
     if tier == 1:
         score += 3.0
     elif tier == 2:
@@ -162,14 +160,14 @@ def calculate_secondary_quality_score(row: pd.Series) -> float:
         score += 1.0
 
     # IP cut-off quality (inverse - lower is better)
-    cutoff_str = row.get('ip_cutoff_2026', None)
-    if pd.notna(cutoff_str) and cutoff_str != '':
+    cutoff_str = row.get("ip_cutoff_2026", None)
+    if pd.notna(cutoff_str) and cutoff_str != "":
         try:
             # Parse range like "4-6" or "7(M)"
-            if '-' in str(cutoff_str):
-                cutoff = float(str(cutoff_str).split('-')[0])
+            if "-" in str(cutoff_str):
+                cutoff = float(str(cutoff_str).split("-")[0])
             else:
-                cutoff = float(''.join(filter(str.isdigit, str(cutoff_str)[:2])))
+                cutoff = float("".join(filter(str.isdigit, str(cutoff_str)[:2])))
             # Quality score: lower cutoff = higher quality
             cutoff_quality = max(0, (10 - cutoff) / 6 * 1.5)
             score += cutoff_quality
@@ -204,10 +202,8 @@ def calculate_accessibility_score(distance_m: float, quality_score: float) -> fl
 
 
 def fuzzy_match_schools(
-    tier_schools: pd.DataFrame,
-    official_schools: pd.DataFrame,
-    min_score: int = 85
-) -> Tuple[pd.DataFrame, Dict[str, str]]:
+    tier_schools: pd.DataFrame, official_schools: pd.DataFrame, min_score: int = 85
+) -> tuple[pd.DataFrame, dict[str, str]]:
     """Fuzzy match tier CSV school names to official school names.
 
     Args:
@@ -218,13 +214,13 @@ def fuzzy_match_schools(
     Returns:
         Tuple of (tier_schools with matched names, mapping dict)
     """
-    official_names = official_schools['school_name'].unique().tolist()
+    official_names = official_schools["school_name"].unique().tolist()
     official_names_normalized = [name.lower().strip() for name in official_names]
 
     mapping = {}
     matched_count = 0
 
-    for tier_name in tier_schools['school_name']:
+    for tier_name in tier_schools["school_name"]:
         tier_name_normalized = tier_name.lower().strip()
 
         # Try exact match first
@@ -236,9 +232,7 @@ def fuzzy_match_schools(
 
         # Try fuzzy match
         result = process.extractOne(
-            tier_name_normalized,
-            official_names_normalized,
-            scorer=fuzz.WRatio
+            tier_name_normalized, official_names_normalized, scorer=fuzz.WRatio
         )
 
         if result and result[1] >= min_score:
@@ -248,15 +242,18 @@ def fuzzy_match_schools(
         else:
             mapping[tier_name] = None
 
-    logger.info(f"Fuzzy matched {matched_count}/{len(tier_schools)} schools ({matched_count/len(tier_schools)*100:.1f}%)")
+    logger.info(
+        f"Fuzzy matched {matched_count}/{len(tier_schools)} schools ({matched_count / len(tier_schools) * 100:.1f}%)"
+    )
 
     return tier_schools, mapping
 
 
 def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
     """Geocode school addresses using OneMap API."""
-    import requests
     import time
+
+    import requests
 
     schools_df["latitude"] = None
     schools_df["longitude"] = None
@@ -274,9 +271,9 @@ def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
                     "searchVal": postal_code,
                     "returnGeom": "Y",
                     "getAddrDetails": "Y",
-                    "pageNum": "1"
+                    "pageNum": "1",
                 },
-                timeout=10
+                timeout=10,
             )
             data = response.json()
 
@@ -298,17 +295,24 @@ def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
     return schools_df
 
 
-def _initialize_school_columns(
-    df: pd.DataFrame,
-    levels: List[str]
-) -> pd.DataFrame:
+def _initialize_school_columns(df: pd.DataFrame, levels: list[str]) -> pd.DataFrame:
     """Initialize all school-related columns with defaults."""
     # Nearest school columns (NULL)
     for level in levels:
         level_code = level.split()[0]  # PRIMARY, SECONDARY, JUNIOR
-        for suffix in ['_dist', '_name', '_type', '_dgp', '_zone',
-                      '_nature', '_mrt_desc', '_sap', '_autonomous',
-                      '_gifted', '_ip']:
+        for suffix in [
+            "_dist",
+            "_name",
+            "_type",
+            "_dgp",
+            "_zone",
+            "_nature",
+            "_mrt_desc",
+            "_sap",
+            "_autonomous",
+            "_gifted",
+            "_ip",
+        ]:
             df[f"nearest_school{level_code}{suffix}"] = None
 
     # School count columns (0)
@@ -322,30 +326,34 @@ def _initialize_school_columns(
         df[f"school_within_{label}"] = 0
 
     # Quality-weighted columns (0)
-    df['school_accessibility_score'] = 0.0
-    df['school_primary_quality_score'] = 0.0
-    df['school_secondary_quality_score'] = 0.0
-    df['school_primary_dist_score'] = 0.0
-    df['school_secondary_dist_score'] = 0.0
-    df['school_density_score'] = 0.0
+    df["school_accessibility_score"] = 0.0
+    df["school_primary_quality_score"] = 0.0
+    df["school_secondary_quality_score"] = 0.0
+    df["school_primary_dist_score"] = 0.0
+    df["school_secondary_dist_score"] = 0.0
+    df["school_density_score"] = 0.0
 
     return df
 
 
-def _get_school_attributes(school: pd.Series) -> Dict[str, any]:
+def _get_school_attributes(school: pd.Series) -> dict[str, any]:
     """Extract school attributes as a dictionary."""
     return {
-        'dist': None,  # Calculated separately
-        'name': school.get('school_name'),
-        'type': school.get('type_code'),
-        'dgp': school.get('dgp_code'),
-        'zone': school.get('zone_code'),
-        'nature': school.get('nature_code'),
-        'mrt_desc': school.get('mrt_desc'),
-        'sap': (school.get('sap_ind') == "Yes") if pd.notna(school.get('sap_ind')) else None,
-        'autonomous': (school.get('autonomous_ind') == "Yes") if pd.notna(school.get('autonomous_ind')) else None,
-        'gifted': (school.get('gifted_ind') == "Yes") if pd.notna(school.get('gifted_ind')) else None,
-        'ip': (school.get('ip_ind') == "Yes") if pd.notna(school.get('ip_ind')) else None,
+        "dist": None,  # Calculated separately
+        "name": school.get("school_name"),
+        "type": school.get("type_code"),
+        "dgp": school.get("dgp_code"),
+        "zone": school.get("zone_code"),
+        "nature": school.get("nature_code"),
+        "mrt_desc": school.get("mrt_desc"),
+        "sap": (school.get("sap_ind") == "Yes") if pd.notna(school.get("sap_ind")) else None,
+        "autonomous": (school.get("autonomous_ind") == "Yes")
+        if pd.notna(school.get("autonomous_ind"))
+        else None,
+        "gifted": (school.get("gifted_ind") == "Yes")
+        if pd.notna(school.get("gifted_ind"))
+        else None,
+        "ip": (school.get("ip_ind") == "Yes") if pd.notna(school.get("ip_ind")) else None,
     }
 
 
@@ -361,27 +369,27 @@ def _create_unique_location_index(properties_df: pd.DataFrame) -> tuple[pd.DataF
         - index_mapping: Dict mapping unique_idx -> list of original indices
     """
     # Get unique lat/lon combinations
-    unique_coords = properties_df[['lat', 'lon']].drop_duplicates()
+    unique_coords = properties_df[["lat", "lon"]].drop_duplicates()
 
     # Create mapping from unique coordinates back to original indices
     coord_to_idx = {}
-    for orig_idx, row in properties_df[['lat', 'lon']].iterrows():
-        coord_key = (row['lat'], row['lon'])
+    for orig_idx, row in properties_df[["lat", "lon"]].iterrows():
+        coord_key = (row["lat"], row["lon"])
         if coord_key not in coord_to_idx:
             coord_to_idx[coord_key] = []
         coord_to_idx[coord_key].append(orig_idx)
 
     # Convert to index mapping
-    index_mapping = {i: coord_to_idx[(row['lat'], row['lon'])]
-                     for i, row in unique_coords.reset_index(drop=True).iterrows()}
+    index_mapping = {
+        i: coord_to_idx[(row["lat"], row["lon"])]
+        for i, row in unique_coords.reset_index(drop=True).iterrows()
+    }
 
     return unique_coords, index_mapping
 
 
 def calculate_school_features(
-    properties_df: pd.DataFrame,
-    schools_df: pd.DataFrame,
-    levels: List[str] = SCHOOL_LEVELS
+    properties_df: pd.DataFrame, schools_df: pd.DataFrame, levels: list[str] = SCHOOL_LEVELS
 ) -> pd.DataFrame:
     """Calculate school features using KDTree for efficient nearest-neighbor search.
 
@@ -400,12 +408,20 @@ def calculate_school_features(
 
     # Calculate quality scores for tiers
     if not primary_tiers.empty:
-        primary_tiers['quality_score'] = primary_tiers.apply(calculate_primary_quality_score, axis=1)
-        logger.info(f"Primary school quality scores: mean={primary_tiers['quality_score'].mean():.2f}")
+        primary_tiers["quality_score"] = primary_tiers.apply(
+            calculate_primary_quality_score, axis=1
+        )
+        logger.info(
+            f"Primary school quality scores: mean={primary_tiers['quality_score'].mean():.2f}"
+        )
 
     if not secondary_tiers.empty:
-        secondary_tiers['quality_score'] = secondary_tiers.apply(calculate_secondary_quality_score, axis=1)
-        logger.info(f"Secondary school quality scores: mean={secondary_tiers['quality_score'].mean():.2f}")
+        secondary_tiers["quality_score"] = secondary_tiers.apply(
+            calculate_secondary_quality_score, axis=1
+        )
+        logger.info(
+            f"Secondary school quality scores: mean={secondary_tiers['quality_score'].mean():.2f}"
+        )
 
     # Merge quality scores with schools data using fuzzy matching
     schools_with_quality = schools_df.copy()
@@ -418,44 +434,51 @@ def calculate_school_features(
         official_to_quality = {}
         for tier_name, official_name in primary_mapping.items():
             if official_name:
-                tier_row = primary_tiers[primary_tiers['school_name'] == tier_name].iloc[0]
+                tier_row = primary_tiers[primary_tiers["school_name"] == tier_name].iloc[0]
                 official_to_quality[official_name] = {
-                    'quality_score': tier_row['quality_score'],
-                    'gep': tier_row.get('gep', 'No'),
-                    'sap': tier_row.get('sap', 'No'),
-                    'tier': tier_row.get('tier', 3)
+                    "quality_score": tier_row["quality_score"],
+                    "gep": tier_row.get("gep", "No"),
+                    "sap": tier_row.get("sap", "No"),
+                    "tier": tier_row.get("tier", 3),
                 }
 
         # Map quality scores using official school names
-        schools_with_quality['primary_quality'] = schools_with_quality['school_name'].map(
-            lambda x: official_to_quality.get(x, {}).get('quality_score') if x else None
+        schools_with_quality["primary_quality"] = schools_with_quality["school_name"].map(
+            lambda x: official_to_quality.get(x, {}).get("quality_score") if x else None
         )
 
     if not secondary_tiers.empty:
         # Use fuzzy matching for secondary schools too
-        secondary_tiers_matched, secondary_mapping = fuzzy_match_schools(secondary_tiers, schools_df)
+        secondary_tiers_matched, secondary_mapping = fuzzy_match_schools(
+            secondary_tiers, schools_df
+        )
 
         # Create mapping from official name to quality score
         official_to_secondary_quality = {}
         for tier_name, official_name in secondary_mapping.items():
             if official_name:
-                tier_row = secondary_tiers[secondary_tiers['school_name'] == tier_name].iloc[0]
-                official_to_secondary_quality[official_name] = tier_row['quality_score']
+                tier_row = secondary_tiers[secondary_tiers["school_name"] == tier_name].iloc[0]
+                official_to_secondary_quality[official_name] = tier_row["quality_score"]
 
         # Map quality scores using official school names
-        schools_with_quality['secondary_quality'] = schools_with_quality['school_name'].map(official_to_secondary_quality)
+        schools_with_quality["secondary_quality"] = schools_with_quality["school_name"].map(
+            official_to_secondary_quality
+        )
 
     # Combine quality scores (prefer primary, fall back to secondary)
-    if 'primary_quality' in schools_with_quality.columns and 'secondary_quality' in schools_with_quality.columns:
-        schools_with_quality['quality_score'] = schools_with_quality['primary_quality'].fillna(
-            schools_with_quality['secondary_quality']
+    if (
+        "primary_quality" in schools_with_quality.columns
+        and "secondary_quality" in schools_with_quality.columns
+    ):
+        schools_with_quality["quality_score"] = schools_with_quality["primary_quality"].fillna(
+            schools_with_quality["secondary_quality"]
         )
-    elif 'primary_quality' in schools_with_quality.columns:
-        schools_with_quality['quality_score'] = schools_with_quality['primary_quality']
-    elif 'secondary_quality' in schools_with_quality.columns:
-        schools_with_quality['quality_score'] = schools_with_quality['secondary_quality']
+    elif "primary_quality" in schools_with_quality.columns:
+        schools_with_quality["quality_score"] = schools_with_quality["primary_quality"]
+    elif "secondary_quality" in schools_with_quality.columns:
+        schools_with_quality["quality_score"] = schools_with_quality["secondary_quality"]
     else:
-        schools_with_quality['quality_score'] = None
+        schools_with_quality["quality_score"] = None
 
     # Filter and prepare school data
     schools_geo = schools_with_quality.dropna(subset=["latitude", "longitude"]).copy()
@@ -464,10 +487,10 @@ def calculate_school_features(
         return properties_df
 
     # Fill missing quality scores with 0
-    if 'quality_score' not in schools_geo.columns:
-        schools_geo['quality_score'] = 0.0
+    if "quality_score" not in schools_geo.columns:
+        schools_geo["quality_score"] = 0.0
     else:
-        schools_geo['quality_score'] = schools_geo['quality_score'].fillna(0.0)
+        schools_geo["quality_score"] = schools_geo["quality_score"].fillna(0.0)
 
     # Build KD-trees for each school level (convert to radians for distance queries)
     schools_by_level = {}
@@ -476,47 +499,49 @@ def calculate_school_features(
         if level_schools.empty:
             continue
 
-        coords = np.column_stack([
-            np.radians(level_schools["latitude"].values),
-            np.radians(level_schools["longitude"].values)
-        ])
+        coords = np.column_stack(
+            [
+                np.radians(level_schools["latitude"].values),
+                np.radians(level_schools["longitude"].values),
+            ]
+        )
 
         schools_by_level[level] = {
-            'tree': cKDTree(coords),
-            'data': level_schools.reset_index(drop=True),
-            'coords': coords
+            "tree": cKDTree(coords),
+            "data": level_schools.reset_index(drop=True),
+            "coords": coords,
         }
 
     # Build combined tree for aggregate counts (convert to radians for distance queries)
-    all_coords = np.column_stack([
-        np.radians(schools_geo["latitude"].values),
-        np.radians(schools_geo["longitude"].values)
-    ])
+    all_coords = np.column_stack(
+        [np.radians(schools_geo["latitude"].values), np.radians(schools_geo["longitude"].values)]
+    )
     all_tree = cKDTree(all_coords)
 
-    level_summary = ', '.join([
-        f"{k[:3]}({v['data'].shape[0]})"
-        for k, v in schools_by_level.items()
-    ])
+    level_summary = ", ".join(
+        [f"{k[:3]}({v['data'].shape[0]})" for k, v in schools_by_level.items()]
+    )
     logger.info(f"Schools by level: {level_summary}")
 
     # Initialize columns (including new quality columns)
     properties_df = _initialize_school_columns(properties_df, levels)
 
     # Initialize quality-weighted columns
-    properties_df['school_accessibility_score'] = 0.0
-    properties_df['school_primary_quality_score'] = 0.0
-    properties_df['school_secondary_quality_score'] = 0.0
-    properties_df['school_primary_dist_score'] = 0.0
-    properties_df['school_secondary_dist_score'] = 0.0
-    properties_df['school_density_score'] = 0.0
+    properties_df["school_accessibility_score"] = 0.0
+    properties_df["school_primary_quality_score"] = 0.0
+    properties_df["school_secondary_quality_score"] = 0.0
+    properties_df["school_primary_dist_score"] = 0.0
+    properties_df["school_secondary_dist_score"] = 0.0
+    properties_df["school_density_score"] = 0.0
 
     # Create unique location index to avoid redundant calculations
     props_with_coords = properties_df.dropna(subset=["lat", "lon"])
     total_original = len(props_with_coords)
 
     unique_coords, index_mapping = _create_unique_location_index(props_with_coords)
-    logger.info(f"Reduced to {len(unique_coords)} unique locations from {total_original} total records")
+    logger.info(
+        f"Reduced to {len(unique_coords)} unique locations from {total_original} total records"
+    )
 
     # Initialize a DataFrame to store calculated features for unique locations
     unique_features = pd.DataFrame(index=unique_coords.index)
@@ -524,9 +549,19 @@ def calculate_school_features(
     # Initialize all feature columns in unique_features
     for level in levels:
         level_code = level.split()[0]
-        for suffix in ['_dist', '_name', '_type', '_dgp', '_zone',
-                      '_nature', '_mrt_desc', '_sap', '_autonomous',
-                      '_gifted', '_ip']:
+        for suffix in [
+            "_dist",
+            "_name",
+            "_type",
+            "_dgp",
+            "_zone",
+            "_nature",
+            "_mrt_desc",
+            "_sap",
+            "_autonomous",
+            "_gifted",
+            "_ip",
+        ]:
             unique_features[f"nearest_school{level_code}{suffix}"] = None
 
     for level in levels:
@@ -537,12 +572,12 @@ def calculate_school_features(
     for label in DISTANCES.keys():
         unique_features[f"school_within_{label}"] = 0
 
-    unique_features['school_accessibility_score'] = 0.0
-    unique_features['school_primary_quality_score'] = 0.0
-    unique_features['school_secondary_quality_score'] = 0.0
-    unique_features['school_primary_dist_score'] = 0.0
-    unique_features['school_secondary_dist_score'] = 0.0
-    unique_features['school_density_score'] = 0.0
+    unique_features["school_accessibility_score"] = 0.0
+    unique_features["school_primary_quality_score"] = 0.0
+    unique_features["school_secondary_quality_score"] = 0.0
+    unique_features["school_primary_dist_score"] = 0.0
+    unique_features["school_secondary_dist_score"] = 0.0
+    unique_features["school_density_score"] = 0.0
 
     # Process UNIQUE locations only (not all properties)
     for idx, (unique_idx, coord_row) in enumerate(unique_coords.iterrows(), 1):
@@ -550,13 +585,17 @@ def calculate_school_features(
 
         # Calculate school density (schools within 1km)
         radius_radians = 1000 / 6371000
-        nearby_schools = all_tree.query_ball_point([np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians)
-        unique_features.at[unique_idx, 'school_density_score'] = min(len(nearby_schools) / 10, 1.0)
+        nearby_schools = all_tree.query_ball_point(
+            [np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians
+        )
+        unique_features.at[unique_idx, "school_density_score"] = min(len(nearby_schools) / 10, 1.0)
 
         # Aggregate school counts
         for col_suffix, radius_m in DISTANCES.items():
             radius_radians = radius_m / 6371000
-            count = all_tree.query_ball_point([np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians)
+            count = all_tree.query_ball_point(
+                [np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians
+            )
             unique_features.at[unique_idx, f"school_within_{col_suffix}"] = len(count)
 
         # Per-level features with quality scores
@@ -565,52 +604,54 @@ def calculate_school_features(
 
         for level, school_data in schools_by_level.items():
             level_code = level.split()[0]
-            tree = school_data['tree']
-            level_df = school_data['data']
+            tree = school_data["tree"]
+            level_df = school_data["data"]
 
             # Find nearest school (query in radians)
-            dist_radians, nearest_idx = tree.query([np.radians(prop_lat), np.radians(prop_lon)], k=1)
+            dist_radians, nearest_idx = tree.query(
+                [np.radians(prop_lat), np.radians(prop_lon)], k=1
+            )
             nearest_school = level_df.iloc[nearest_idx]
 
             # Calculate true haversine distance
             true_dist = haversine_distance(
-                prop_lat, prop_lon,
-                nearest_school["latitude"],
-                nearest_school["longitude"]
+                prop_lat, prop_lon, nearest_school["latitude"], nearest_school["longitude"]
             )
             unique_features.at[unique_idx, f"nearest_school{level_code}_dist"] = true_dist
 
             # Get school quality score
-            quality_score = nearest_school.get('quality_score', 0.0)
+            quality_score = nearest_school.get("quality_score", 0.0)
             if pd.isna(quality_score):
                 quality_score = 0.0
 
             # Store quality scores
             if level == "PRIMARY":
-                unique_features.at[unique_idx, 'school_primary_quality_score'] = quality_score
+                unique_features.at[unique_idx, "school_primary_quality_score"] = quality_score
                 dist_score = calculate_accessibility_score(true_dist, quality_score) * 10
-                unique_features.at[unique_idx, 'school_primary_dist_score'] = dist_score
+                unique_features.at[unique_idx, "school_primary_dist_score"] = dist_score
                 primary_accessibility = calculate_accessibility_score(true_dist, quality_score)
             elif level == "SECONDARY (S1-S5)":
-                unique_features.at[unique_idx, 'school_secondary_quality_score'] = quality_score
+                unique_features.at[unique_idx, "school_secondary_quality_score"] = quality_score
                 dist_score = calculate_accessibility_score(true_dist, quality_score) * 10
-                unique_features.at[unique_idx, 'school_secondary_dist_score'] = dist_score
+                unique_features.at[unique_idx, "school_secondary_dist_score"] = dist_score
                 secondary_accessibility = calculate_accessibility_score(true_dist, quality_score)
 
             # Get and assign school attributes
             attrs = _get_school_attributes(nearest_school)
             for key, value in attrs.items():
-                if key != 'dist':
+                if key != "dist":
                     unique_features.at[unique_idx, f"nearest_school{level_code}_{key}"] = value
 
             # Level-specific school counts (query in radians)
             for col_suffix, radius_m in DISTANCES.items():
                 radius_radians = radius_m / 6371000
-                count = tree.query_ball_point([np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians)
+                count = tree.query_ball_point(
+                    [np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians
+                )
                 unique_features.at[unique_idx, f"school{level_code}_count{col_suffix}"] = len(count)
 
         # Overall accessibility: weighted combination (40% primary, 60% secondary)
-        unique_features.at[unique_idx, 'school_accessibility_score'] = (
+        unique_features.at[unique_idx, "school_accessibility_score"] = (
             0.4 * primary_accessibility + 0.6 * secondary_accessibility
         )
 
@@ -621,8 +662,7 @@ def calculate_school_features(
     logger.info("Mapping features back to all records...")
 
     # Get feature columns (exclude coordinate columns if they exist)
-    feature_columns = [col for col in unique_features.columns
-                      if col not in ['lat', 'lon']]
+    feature_columns = [col for col in unique_features.columns if col not in ["lat", "lon"]]
 
     # Map features from unique locations back to all original indices
     for unique_idx, orig_indices in index_mapping.items():
@@ -645,7 +685,7 @@ def main():
     logger.info(f"Loaded {len(properties_df)} properties")
 
     properties_df = calculate_school_features(properties_df, schools_df)
-    properties_df.to_parquet(property_path, compression='snappy', index=False)
+    properties_df.to_parquet(property_path, compression="snappy", index=False)
     logger.info("✅ Saved updated data")
 
     # Print statistics
@@ -665,11 +705,11 @@ def main():
     # Print quality score statistics
     logger.info("\n📊 School Quality Score Statistics:")
     for col, label in [
-        ('school_accessibility_score', 'Overall Accessibility'),
-        ('school_primary_quality_score', 'Primary School Quality'),
-        ('school_secondary_quality_score', 'Secondary School Quality'),
-        ('school_primary_dist_score', 'Primary Distance-Weighted'),
-        ('school_secondary_dist_score', 'Secondary Distance-Weighted'),
+        ("school_accessibility_score", "Overall Accessibility"),
+        ("school_primary_quality_score", "Primary School Quality"),
+        ("school_secondary_quality_score", "Secondary School Quality"),
+        ("school_primary_dist_score", "Primary Distance-Weighted"),
+        ("school_secondary_dist_score", "Secondary Distance-Weighted"),
     ]:
         if col in properties_df.columns:
             scores = properties_df[col]

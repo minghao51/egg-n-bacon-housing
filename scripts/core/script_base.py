@@ -20,15 +20,15 @@ Usage:
 """
 
 import argparse
+import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from scripts.core.config import Config
-from scripts.core.logging_config import setup_logging, setup_logging_from_env, get_logger
+from scripts.core.logging_config import get_logger, setup_logging_from_env
 
 
-def setup_script_environment(project_root: Optional[Path] = None) -> Path:
+def setup_script_environment(project_root: Path | None = None) -> Path:
     """
     Setup the Python path for scripts.
 
@@ -90,7 +90,7 @@ class ScriptBase:
         ...     script.execute()
     """
 
-    def __init__(self, description: Optional[str] = None):
+    def __init__(self, description: str | None = None):
         """
         Initialize the script.
 
@@ -261,6 +261,7 @@ def simple_script_wrapper(main_func):
         ...     logger.info("Simple script running")
         ...     # Your logic here
     """
+
     def wrapper():
         setup_script_environment()
         setup_logging_from_env()
@@ -274,6 +275,3 @@ def simple_script_wrapper(main_func):
         return main_func()
 
     return wrapper
-
-
-import logging  # Import at module level for type hints

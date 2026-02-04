@@ -8,24 +8,22 @@ This module provides reusable functions for:
 - Authentication with OneMap API
 """
 
-import os
-import json
-import time
 import base64
+import json
 import logging
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+import os
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 from urllib.parse import quote
 
 import pandas as pd
 import requests
-from tenacity import retry, wait_exponential, stop_after_attempt
 from dotenv import load_dotenv
+from tenacity import retry, stop_after_attempt, wait_exponential
 
-from scripts.core.config import Config
 from scripts.core.cache import cached_call
-from scripts.core.data_helpers import save_parquet
+from scripts.core.config import Config
 from scripts.core.data_loader import CSVLoader
 
 load_dotenv()
@@ -33,7 +31,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-def setup_onemap_headers() -> Dict[str, str]:
+def setup_onemap_headers() -> dict[str, str]:
     """
     Setup OneMap API authentication headers.
 
@@ -43,22 +41,24 @@ def setup_onemap_headers() -> Dict[str, str]:
     Raises:
         Exception: If token cannot be obtained or is invalid
     """
-    access_token = os.environ.get('ONEMAP_TOKEN')
+    access_token = os.environ.get("ONEMAP_TOKEN")
 
     if access_token:
         # Decode JWT to check expiration
         try:
-            parts = access_token.split('.')
+            parts = access_token.split(".")
             if len(parts) == 3:
                 payload = parts[1]
-                payload += '=' * (4 - len(payload) % 4)
+                payload += "=" * (4 - len(payload) % 4)
                 decoded = base64.b64decode(payload)
                 token_data = json.loads(decoded)
 
                 current_time = time.time()
-                if token_data.get('exp', 0) > current_time:
-                    print(f"✅ Using existing OneMap token from .env")
-                    print(f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours")
+                if token_data.get("exp", 0) > current_time:
+                    print("✅ Using existing OneMap token from .env")
+                    print(
+                        f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours"
+                    )
                     return {"Authorization": f"{access_token}"}
                 else:
                     print("⚠️  Token in .env has expired")
@@ -75,8 +75,8 @@ def setup_onemap_headers() -> Dict[str, str]:
         print("Attempting to get new OneMap token...")
         url = "https://www.onemap.gov.sg/api/auth/post/getToken"
         payload = {
-            "email": os.environ.get('ONEMAP_EMAIL'),
-            "password": os.environ.get('ONEMAP_EMAIL_PASSWORD')
+            "email": os.environ.get("ONEMAP_EMAIL"),
+            "password": os.environ.get("ONEMAP_EMAIL_PASSWORD"),
         }
 
         response = requests.request("POST", url, json=payload)
@@ -84,7 +84,7 @@ def setup_onemap_headers() -> Dict[str, str]:
 
         if response.status_code == 200:
             response_data = json.loads(response.text)
-            access_token = response_data.get('access_token')
+            access_token = response_data.get("access_token")
             if access_token:
                 print("✅ Successfully obtained new OneMap token")
                 return {"Authorization": f"{access_token}"}
@@ -104,9 +104,11 @@ max_backoff = 32  # seconds
 @retry(
     wait=wait_exponential(multiplier=1, min=initial_backoff, max=max_backoff),
     stop=stop_after_attempt(3),
-    before_sleep=lambda retry_state: logger.warning(f"Retrying OneMap API ({retry_state.attempt_number}/3) after error: {retry_state.outcome.exception()}")
+    before_sleep=lambda retry_state: logger.warning(
+        f"Retrying OneMap API ({retry_state.attempt_number}/3) after error: {retry_state.outcome.exception()}"
+    ),
 )
-def fetch_data(search_string: str, headers: Dict[str, str], timeout: int = 30) -> pd.DataFrame:
+def fetch_data(search_string: str, headers: dict[str, str], timeout: int = 30) -> pd.DataFrame:
     """
     Fetch geocoding data from OneMap API for a given address.
 
@@ -122,15 +124,20 @@ def fetch_data(search_string: str, headers: Dict[str, str], timeout: int = 30) -
         requests.RequestException: If API call fails after retries
         requests.Timeout: If request times out
     """
-    encoded_search = quote(search_string, safe='')
+    encoded_search = quote(search_string, safe="")
     url = f"https://www.onemap.gov.sg/api/common/elastic/search?searchVal={encoded_search}&returnGeom=Y&getAddrDetails=Y&pageNum=1"
     response = requests.get(url, headers=headers, timeout=timeout)
     response.raise_for_status()
-    return pd.DataFrame(json.loads(response.text)['results']).reset_index().rename(
-        {'index': 'search_result'}, axis=1)
+    return (
+        pd.DataFrame(json.loads(response.text)["results"])
+        .reset_index()
+        .rename({"index": "search_result"}, axis=1)
+    )
 
 
-def load_ura_files(base_path: Optional[Path] = None) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def load_ura_files(
+    base_path: Path | None = None,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Load all URA transaction CSV files.
 
@@ -170,18 +177,18 @@ def load_ura_files(base_path: Optional[Path] = None) -> Tuple[pd.DataFrame, pd.D
     if base_path is None:
         ura_dir = Config.URA_DIR
     else:
-        ura_dir = base_path / 'ura'
+        ura_dir = base_path / "ura"
 
     # Load EC files
-    ec_dfs = [pd.read_csv(ura_dir / f"{ec}.csv", encoding='latin1') for ec in ec_list]
+    ec_dfs = [pd.read_csv(ura_dir / f"{ec}.csv", encoding="latin1") for ec in ec_list]
     ec_df = pd.concat(ec_dfs, ignore_index=True)
     print(f"✅ Loaded {len(ec_df)} EC transactions from {len(ec_list)} files")
 
     # Load Condo files
-    condo_dfs = [pd.read_csv(ura_dir / f"{condo}.csv", encoding='latin1') for condo in condo_list]
+    condo_dfs = [pd.read_csv(ura_dir / f"{condo}.csv", encoding="latin1") for condo in condo_list]
     condo_df = pd.concat(condo_dfs, ignore_index=True)
-    condo_df['Area (SQM)'] = condo_df['Area (SQM)'].str.replace(',', '').str.strip()
-    condo_df['Area (SQM)'] = pd.to_numeric(condo_df['Area (SQM)'], errors='coerce')
+    condo_df["Area (SQM)"] = condo_df["Area (SQM)"].str.replace(",", "").str.strip()
+    condo_df["Area (SQM)"] = pd.to_numeric(condo_df["Area (SQM)"], errors="coerce")
     print(f"✅ Loaded {len(condo_df)} condo transactions from {len(condo_list)} files")
 
     # Load HDB files using CSVLoader
@@ -196,19 +203,21 @@ def load_ura_files(base_path: Optional[Path] = None) -> Tuple[pd.DataFrame, pd.D
         lease_str = str(lease).strip()
         if lease_str.isdigit():
             return int(lease_str) * 12
-        match = re.match(r'(\d+)\s*years?\s*(\d+)\s*months?', lease_str)
+        match = re.match(r"(\d+)\s*years?\s*(\d+)\s*months?", lease_str)
         if match:
             years = int(match.group(1))
             months = int(match.group(2))
             return years * 12 + months
-        match = re.match(r'(\d+)\s*years?', lease_str)
+        match = re.match(r"(\d+)\s*years?", lease_str)
         if match:
             return int(match.group(1)) * 12
         return None
 
-    if 'remaining_lease' in hdb_df.columns:
-        hdb_df['remaining_lease_months'] = hdb_df['remaining_lease'].apply(standardize_lease_duration)
-        hdb_df.drop('remaining_lease', axis=1, inplace=True)
+    if "remaining_lease" in hdb_df.columns:
+        hdb_df["remaining_lease_months"] = hdb_df["remaining_lease"].apply(
+            standardize_lease_duration
+        )
+        hdb_df.drop("remaining_lease", axis=1, inplace=True)
         print(f"✅ Loaded {len(hdb_df)} HDB transactions with lease standardization")
     else:
         print(f"✅ Loaded {len(hdb_df)} HDB transactions (no lease column)")
@@ -216,9 +225,9 @@ def load_ura_files(base_path: Optional[Path] = None) -> Tuple[pd.DataFrame, pd.D
     return ec_df, condo_df, hdb_df
 
 
-def extract_unique_addresses(ec_df: pd.DataFrame,
-                            condo_df: pd.DataFrame,
-                            hdb_df: pd.DataFrame) -> pd.DataFrame:
+def extract_unique_addresses(
+    ec_df: pd.DataFrame, condo_df: pd.DataFrame, hdb_df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Extract unique property addresses from all transaction data.
 
@@ -231,32 +240,34 @@ def extract_unique_addresses(ec_df: pd.DataFrame,
         DataFrame with unique addresses and property types
     """
     # Add property type column
-    condo_df['property_type'] = 'private'
-    ec_df['property_type'] = 'private'
-    hdb_df['property_type'] = 'hdb'
+    condo_df["property_type"] = "private"
+    ec_df["property_type"] = "private"
+    hdb_df["property_type"] = "hdb"
 
     # Combine and get unique addresses
     housing_df = pd.concat(
         [
             condo_df[["Project Name", "Street Name", "property_type"]].drop_duplicates(),
-            ec_df[["Project Name", "Street Name", 'property_type']].drop_duplicates(),
-            hdb_df[["block", "street_name", 'property_type']].drop_duplicates(),
+            ec_df[["Project Name", "Street Name", "property_type"]].drop_duplicates(),
+            hdb_df[["block", "street_name", "property_type"]].drop_duplicates(),
         ],
         ignore_index=True,
     )
 
     # Create search string
-    NameAddress_list = ["Project Name", "Street Name", "block", "street_name"]
-    for col in NameAddress_list:
+    name_address_list = ["Project Name", "Street Name", "block", "street_name"]
+    for col in name_address_list:
         housing_df[col] = housing_df[col].fillna("")
-    housing_df["NameAddress"] = housing_df[NameAddress_list].agg(" ".join, axis=1)
+    housing_df["NameAddress"] = housing_df[name_address_list].agg(" ".join, axis=1)
     housing_df["NameAddress"] = [addr.strip() for addr in housing_df["NameAddress"]]
 
     print(f"✅ Extracted {len(housing_df)} unique addresses")
     return housing_df
 
 
-def fetch_data_cached(search_string: str, headers: Dict[str, str], timeout: int = 30) -> pd.DataFrame:
+def fetch_data_cached(
+    search_string: str, headers: dict[str, str], timeout: int = 30
+) -> pd.DataFrame:
     """
     Fetch geocoding data from OneMap API with caching support.
 
@@ -284,11 +295,11 @@ def fetch_data_cached(search_string: str, headers: Dict[str, str], timeout: int 
 
 
 def fetch_data_parallel(
-    addresses: List[str],
-    headers: Dict[str, str],
-    max_workers: Optional[int] = None,
-    show_progress: bool = True
-) -> Tuple[List[pd.DataFrame], List[str]]:
+    addresses: list[str],
+    headers: dict[str, str],
+    max_workers: int | None = None,
+    show_progress: bool = True,
+) -> tuple[list[pd.DataFrame], list[str]]:
     """
     Fetch geocoding data for multiple addresses in parallel.
 
@@ -316,9 +327,11 @@ def fetch_data_parallel(
     total = len(addresses)
 
     logger.info(f"🚀 Starting parallel geocoding for {total} addresses with {max_workers} workers")
-    logger.info(f"⏱️  Estimated time: {(total / max_workers) * Config.GEOCODING_API_DELAY / 60:.1f} minutes")
+    logger.info(
+        f"⏱️  Estimated time: {(total / max_workers) * Config.GEOCODING_API_DELAY / 60:.1f} minutes"
+    )
 
-    def geocode_single_address(address: str) -> Optional[pd.DataFrame]:
+    def geocode_single_address(address: str) -> pd.DataFrame | None:
         """Geocode a single address with error handling."""
         try:
             # Add delay to respect API rate limits
@@ -331,7 +344,9 @@ def fetch_data_parallel(
     # Use ThreadPoolExecutor for parallel API calls
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Submit all tasks
-        future_to_address = {executor.submit(geocode_single_address, addr): addr for addr in addresses}
+        future_to_address = {
+            executor.submit(geocode_single_address, addr): addr for addr in addresses
+        }
 
         # Process completed tasks
         completed = 0
@@ -342,7 +357,7 @@ def fetch_data_parallel(
             try:
                 result = future.result()
                 if result is not None:
-                    result['NameAddress'] = address
+                    result["NameAddress"] = address
                     results.append(result)
                 else:
                     failed_addresses.append(address)
@@ -358,16 +373,18 @@ def fetch_data_parallel(
                 logger.error(f"❌ Unexpected error for '{address}': {e}")
                 failed_addresses.append(address)
 
-    logger.info(f"✅ Completed geocoding: {len(results)}/{total} successful, {len(failed_addresses)} failed")
+    logger.info(
+        f"✅ Completed geocoding: {len(results)}/{total} successful, {len(failed_addresses)} failed"
+    )
 
     return results, failed_addresses
 
 
 def batch_geocode_addresses(
-    addresses: List[str],
-    headers: Dict[str, str],
+    addresses: list[str],
+    headers: dict[str, str],
     batch_size: int = 1000,
-    checkpoint_interval: int = 100
+    checkpoint_interval: int = 100,
 ) -> pd.DataFrame:
     """
     Geocode addresses in batches with checkpointing support.
@@ -393,8 +410,6 @@ def batch_geocode_addresses(
         ...     batch_size=500
         ... )
     """
-    # save_parquet is imported at the top of the file to support multiprocessing
-
     batch_dataframes = []  # Store concatenated batch results
     total = len(addresses)
 
@@ -404,14 +419,10 @@ def batch_geocode_addresses(
         batch_end = min(i + batch_size, total)
         batch_addresses = addresses[i:batch_end]
 
-        logger.info(f"📦 Processing batch {batch_num} ({i+1}-{batch_end} of {total})")
+        logger.info(f"📦 Processing batch {batch_num} ({i + 1}-{batch_end} of {total})")
 
         # Geocode this batch
-        batch_results, failed = fetch_data_parallel(
-            batch_addresses,
-            headers,
-            show_progress=True
-        )
+        batch_results, failed = fetch_data_parallel(batch_addresses, headers, show_progress=True)
 
         # Concatenate batch results immediately to avoid memory issues
         if batch_results:
@@ -441,4 +452,3 @@ def batch_geocode_addresses(
     else:
         logger.error("❌ No results from geocoding")
         return pd.DataFrame()
-

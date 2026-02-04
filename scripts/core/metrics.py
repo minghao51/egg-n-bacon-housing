@@ -10,12 +10,10 @@ from transaction data, including:
 - ROI potential score (with rental data)
 """
 
-from typing import Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
-
 
 # Default mortgage parameters
 DEFAULT_DOWN_PAYMENT_PCT = 0.20
@@ -27,9 +25,11 @@ DEFAULT_LOAN_TERM_YEARS = 25.0
 # AFFORDABILITY INDEX
 # ============================================================================
 
+
 @dataclass
 class AffordabilityResult:
     """Container for affordability calculation results."""
+
     planning_area: str
     median_price: float
     estimated_annual_income: float
@@ -44,7 +44,7 @@ def calculate_mortgage_payment(
     property_price: float,
     down_payment_pct: float = DEFAULT_DOWN_PAYMENT_PCT,
     interest_rate: float = DEFAULT_INTEREST_RATE,
-    loan_term_years: float = DEFAULT_LOAN_TERM_YEARS
+    loan_term_years: float = DEFAULT_LOAN_TERM_YEARS,
 ) -> float:
     """Calculate estimated monthly mortgage payment.
 
@@ -68,8 +68,8 @@ def calculate_mortgage_payment(
 
     if monthly_rate > 0:
         monthly_payment = loan_amount * (
-            (monthly_rate * (1 + monthly_rate) ** num_payments) /
-            ((1 + monthly_rate) ** num_payments - 1)
+            (monthly_rate * (1 + monthly_rate) ** num_payments)
+            / ((1 + monthly_rate) ** num_payments - 1)
         )
     else:
         monthly_payment = loan_amount / num_payments
@@ -77,10 +77,7 @@ def calculate_mortgage_payment(
     return monthly_payment
 
 
-def calculate_affordability_ratio(
-    property_price: float,
-    annual_household_income: float
-) -> float:
+def calculate_affordability_ratio(property_price: float, annual_household_income: float) -> float:
     """Calculate affordability ratio (price / annual income).
 
     Args:
@@ -107,19 +104,17 @@ def classify_affordability(ratio: float) -> str:
         Classification string
     """
     if ratio < 3.0:
-        return 'Affordable'
+        return "Affordable"
     elif ratio < 5.0:
-        return 'Moderate'
+        return "Moderate"
     elif ratio < 7.0:
-        return 'Expensive'
+        return "Expensive"
     else:
-        return 'Severely Unaffordable'
+        return "Severely Unaffordable"
 
 
 def calculate_affordability_metrics(
-    property_price: float,
-    annual_household_income: float,
-    planning_area: str = None
+    property_price: float, annual_household_income: float, planning_area: str = None
 ) -> AffordabilityResult:
     """Calculate comprehensive affordability metrics.
 
@@ -138,7 +133,9 @@ def calculate_affordability_metrics(
     mortgage = calculate_mortgage_payment(property_price)
 
     # Calculate mortgage as percentage of income
-    mortgage_pct = (mortgage * 12 / annual_household_income * 100) if annual_household_income > 0 else np.nan
+    mortgage_pct = (
+        (mortgage * 12 / annual_household_income * 100) if annual_household_income > 0 else np.nan
+    )
 
     # Calculate months of income to buy
     monthly_income = annual_household_income / 12
@@ -148,23 +145,23 @@ def calculate_affordability_metrics(
     affordability_class = classify_affordability(ratio)
 
     return AffordabilityResult(
-        planning_area=planning_area or '',
+        planning_area=planning_area or "",
         median_price=property_price,
         estimated_annual_income=annual_household_income,
         affordability_ratio=ratio,
         monthly_mortgage=mortgage,
         mortgage_to_income_pct=mortgage_pct,
         months_of_income=months_of_income,
-        affordability_class=affordability_class
+        affordability_class=affordability_class,
     )
 
 
 def calculate_affordability_dataframe(
     prices_df: pd.DataFrame,
     income_df: pd.DataFrame,
-    price_col: str = 'median_price',
-    income_col: str = 'estimated_median_annual_income',
-    geo_col: str = 'planning_area'
+    price_col: str = "median_price",
+    income_col: str = "estimated_median_annual_income",
+    geo_col: str = "planning_area",
 ) -> pd.DataFrame:
     """Calculate affordability metrics for multiple planning areas.
 
@@ -179,31 +176,28 @@ def calculate_affordability_dataframe(
         DataFrame with affordability metrics for each planning area
     """
     # Merge prices and income
-    df = prices_df.merge(
-        income_df[[geo_col, income_col]],
-        on=geo_col,
-        how='left'
-    )
+    df = prices_df.merge(income_df[[geo_col, income_col]], on=geo_col, how="left")
 
     # Calculate metrics
-    df['affordability_ratio'] = df.apply(
-        lambda row: calculate_affordability_ratio(row[price_col], row[income_col]),
-        axis=1
+    df["affordability_ratio"] = df.apply(
+        lambda row: calculate_affordability_ratio(row[price_col], row[income_col]), axis=1
     )
 
-    df['monthly_mortgage'] = df[price_col].apply(calculate_mortgage_payment)
+    df["monthly_mortgage"] = df[price_col].apply(calculate_mortgage_payment)
 
-    df['mortgage_to_income_pct'] = df.apply(
-        lambda row: (row['monthly_mortgage'] * 12 / row[income_col] * 100) if row[income_col] > 0 else np.nan,
-        axis=1
+    df["mortgage_to_income_pct"] = df.apply(
+        lambda row: (row["monthly_mortgage"] * 12 / row[income_col] * 100)
+        if row[income_col] > 0
+        else np.nan,
+        axis=1,
     )
 
-    df['months_of_income'] = df.apply(
+    df["months_of_income"] = df.apply(
         lambda row: row[price_col] / (row[income_col] / 12) if row[income_col] > 0 else np.nan,
-        axis=1
+        axis=1,
     )
 
-    df['affordability_class'] = df['affordability_ratio'].apply(classify_affordability)
+    df["affordability_class"] = df["affordability_ratio"].apply(classify_affordability)
 
     return df
 
@@ -212,11 +206,12 @@ def calculate_affordability_dataframe(
 # STRATIFICATION
 # ============================================================================
 
+
 def assign_price_strata(
     df: pd.DataFrame,
-    price_column: str = 'resale_price',
+    price_column: str = "resale_price",
     n_strata: int = 5,
-    method: str = 'predefined'
+    method: str = "predefined",
 ) -> pd.Series:
     """Assign price stratum to each transaction.
 
@@ -229,31 +224,31 @@ def assign_price_strata(
     Returns:
         Series with stratum assignments (1 to n_strata)
     """
-    if method == 'quantile':
+    if method == "quantile":
         # Data-driven: Create quantile-based strata
-        strata = pd.qcut(df[price_column], q=n_strata, labels=False, duplicates='drop')
+        strata = pd.qcut(df[price_column], q=n_strata, labels=False, duplicates="drop")
         return strata + 1  # 1-indexed
 
     else:  # predefined
         # Predefined price bands for Singapore (adjust as needed)
-        if price_column == 'resale_price':  # HDB
+        if price_column == "resale_price":  # HDB
             # HDB price bands (in SGD)
-            bins = [0, 300000, 450000, 600000, 800000, float('inf')]
-            labels = ['budget', 'mass_market', 'mid_tier', 'premium', 'luxury']
+            bins = [0, 300000, 450000, 600000, 800000, float("inf")]
+            labels = ["budget", "mass_market", "mid_tier", "premium", "luxury"]
         else:  # Condo
             # Condo price bands (in SGD)
-            bins = [0, 800000, 1500000, 2500000, 5000000, float('inf')]
-            labels = ['budget', 'mass_market', 'mid_tier', 'premium', 'luxury']
+            bins = [0, 800000, 1500000, 2500000, 5000000, float("inf")]
+            labels = ["budget", "mass_market", "mid_tier", "premium", "luxury"]
 
         return pd.cut(df[price_column], bins=bins, labels=labels)
 
 
 def calculate_stratified_median(
     df: pd.DataFrame,
-    group_columns: List[str],
-    price_column: str = 'resale_price',
-    strata_column: Optional[str] = None,
-    weight_column: Optional[str] = None
+    group_columns: list[str],
+    price_column: str = "resale_price",
+    strata_column: str | None = None,
+    weight_column: str | None = None,
 ) -> pd.DataFrame:
     """Calculate stratified median price.
 
@@ -271,8 +266,8 @@ def calculate_stratified_median(
 
     # Assign strata if not provided
     if strata_column is None:
-        df['_stratum'] = assign_price_strata(df, price_column)
-        strata_column = '_stratum'
+        df["_stratum"] = assign_price_strata(df, price_column)
+        strata_column = "_stratum"
 
     # Calculate median per stratum per group
     stratum_medians = df.groupby(group_columns + [strata_column])[price_column].median()
@@ -290,18 +285,19 @@ def calculate_stratified_median(
     # Calculate weighted median
     weighted_median = (stratum_medians * weights).groupby(level=group_columns).sum()
 
-    return weighted_median.reset_index(name='stratified_median_price')
+    return weighted_median.reset_index(name="stratified_median_price")
 
 
 # ============================================================================
 # CORE METRICS
 # ============================================================================
 
+
 def calculate_psf(
     df: pd.DataFrame,
-    price_column: str = 'resale_price',
-    area_column: str = 'floor_area_sqft',
-    agg_method: str = 'median'
+    price_column: str = "resale_price",
+    area_column: str = "floor_area_sqft",
+    agg_method: str = "median",
 ) -> pd.Series:
     """Calculate price per square foot.
 
@@ -320,9 +316,9 @@ def calculate_psf(
 
 def calculate_volume_metrics(
     df: pd.DataFrame,
-    date_column: str = 'month',
-    geo_column: str = 'planning_area',
-    rolling_windows: List[int] = [3, 12]
+    date_column: str = "month",
+    geo_column: str = "planning_area",
+    rolling_windows: list[int] = [3, 12],
 ) -> pd.DataFrame:
     """Calculate transaction volume metrics.
 
@@ -336,32 +332,29 @@ def calculate_volume_metrics(
         DataFrame with volume metrics
     """
     # Count transactions per period
-    volume = df.groupby([date_column, geo_column]).size().reset_index(name='transaction_count')
+    volume = df.groupby([date_column, geo_column]).size().reset_index(name="transaction_count")
 
     # Sort for rolling calculations
     volume = volume.sort_values([geo_column, date_column])
 
     # Calculate rolling averages
     for window in rolling_windows:
-        volume[f'volume_{window}m_avg'] = volume.groupby(geo_column)['transaction_count'].transform(
+        volume[f"volume_{window}m_avg"] = volume.groupby(geo_column)["transaction_count"].transform(
             lambda x: x.rolling(window, min_periods=1).mean()
         )
 
     # Calculate changes
-    volume['mom_change_pct'] = volume.groupby(geo_column)['transaction_count'].transform(
+    volume["mom_change_pct"] = volume.groupby(geo_column)["transaction_count"].transform(
         lambda x: x.pct_change() * 100
     )
-    volume['yoy_change_pct'] = volume.groupby(geo_column)['transaction_count'].transform(
+    volume["yoy_change_pct"] = volume.groupby(geo_column)["transaction_count"].transform(
         lambda x: x.pct_change(12) * 100
     )
 
     return volume
 
 
-def calculate_growth_rate(
-    prices: pd.Series,
-    periods: int = 1
-) -> pd.Series:
+def calculate_growth_rate(prices: pd.Series, periods: int = 1) -> pd.Series:
     """Calculate period-over-period growth rate.
 
     Args:
@@ -376,9 +369,9 @@ def calculate_growth_rate(
 
 def calculate_momentum(
     df: pd.DataFrame,
-    date_column: str = 'month',
-    geo_column: str = 'planning_area',
-    price_column: str = 'stratified_median_price'
+    date_column: str = "month",
+    geo_column: str = "planning_area",
+    price_column: str = "stratified_median_price",
 ) -> pd.DataFrame:
     """Calculate market momentum (short-term acceleration).
 
@@ -396,22 +389,27 @@ def calculate_momentum(
     df = df.sort_values([geo_column, date_column])
 
     # Calculate 3M and 12M growth rates
-    df['growth_3m'] = df.groupby(geo_column)[price_column].transform(
+    df["growth_3m"] = df.groupby(geo_column)[price_column].transform(
         lambda x: x.pct_change(3) * 100
     )
-    df['growth_12m'] = df.groupby(geo_column)[price_column].transform(
+    df["growth_12m"] = df.groupby(geo_column)[price_column].transform(
         lambda x: x.pct_change(12) * 100
     )
 
     # Calculate momentum
-    df['momentum'] = df['growth_3m'] - df['growth_12m']
+    df["momentum"] = df["growth_3m"] - df["growth_12m"]
 
     # Add signal
-    df['momentum_signal'] = pd.cut(
-        df['momentum'],
-        bins=[-float('inf'), -5, -2, 2, 5, float('inf')],
-        labels=['strong_deceleration', 'moderate_deceleration', 'stable',
-                'moderate_acceleration', 'strong_acceleration']
+    df["momentum_signal"] = pd.cut(
+        df["momentum"],
+        bins=[-float("inf"), -5, -2, 2, 5, float("inf")],
+        labels=[
+            "strong_deceleration",
+            "moderate_deceleration",
+            "stable",
+            "moderate_acceleration",
+            "strong_acceleration",
+        ],
     )
 
     return df
@@ -421,11 +419,12 @@ def calculate_momentum(
 # ADVANCED METRICS (Updated with estimated income data)
 # ============================================================================
 
+
 def calculate_affordability(
-    property_prices: Union[pd.Series, float],
-    income_data: Union[pd.Series, pd.DataFrame, float],
-    planning_area: Optional[str] = None
-) -> Union[AffordabilityResult, pd.DataFrame]:
+    property_prices: pd.Series | float,
+    income_data: pd.Series | pd.DataFrame | float,
+    planning_area: str | None = None,
+) -> AffordabilityResult | pd.DataFrame:
     """Calculate affordability ratio (price / income).
 
     This function now uses estimated income data based on HDB loan eligibility
@@ -444,32 +443,39 @@ def calculate_affordability(
         return calculate_affordability_metrics(
             property_price=float(property_prices),
             annual_household_income=float(income_data),
-            planning_area=planning_area
+            planning_area=planning_area,
         )
 
     # Handle DataFrame/Series inputs
     if isinstance(income_data, pd.DataFrame):
         # Assume income_data has 'planning_area' and income column
         return calculate_affordability_dataframe(
-            prices_df=pd.DataFrame({'planning_area': planning_area, 'median_price': property_prices}) if isinstance(property_prices, pd.Series) else property_prices,
+            prices_df=pd.DataFrame(
+                {"planning_area": planning_area, "median_price": property_prices}
+            )
+            if isinstance(property_prices, pd.Series)
+            else property_prices,
             income_df=income_data,
-            price_col='median_price' if isinstance(property_prices, pd.DataFrame) else None,
-            income_col='estimated_median_annual_income',
-            geo_col='planning_area'
+            price_col="median_price" if isinstance(property_prices, pd.DataFrame) else None,
+            income_col="estimated_median_annual_income",
+            geo_col="planning_area",
         )
 
     # Handle Series inputs
     if isinstance(property_prices, pd.Series) and isinstance(income_data, pd.Series):
-        result_df = pd.DataFrame({
-            'median_price': property_prices,
-            'estimated_median_annual_income': income_data
-        })
+        result_df = pd.DataFrame(
+            {"median_price": property_prices, "estimated_median_annual_income": income_data}
+        )
         return calculate_affordability_dataframe(
             prices_df=result_df,
-            income_df=pd.DataFrame({'planning_area': result_df.index, 'estimated_median_annual_income': income_data}) if income_data.index.name else result_df,
-            price_col='median_price',
-            income_col='estimated_median_annual_income',
-            geo_col='planning_area'
+            income_df=pd.DataFrame(
+                {"planning_area": result_df.index, "estimated_median_annual_income": income_data}
+            )
+            if income_data.index.name
+            else result_df,
+            price_col="median_price",
+            income_col="estimated_median_annual_income",
+            geo_col="planning_area",
         )
 
     raise ValueError("Unsupported input types for calculate_affordability")
@@ -477,8 +483,8 @@ def calculate_affordability(
 
 def calculate_roi_score(
     feature_df: pd.DataFrame,
-    rental_yield_df: Optional[pd.DataFrame] = None,
-    weights: Optional[Dict[str, float]] = None
+    rental_yield_df: pd.DataFrame | None = None,
+    weights: dict[str, float] | None = None,
 ) -> pd.Series:
     """Calculate ROI potential score.
 
@@ -492,10 +498,10 @@ def calculate_roi_score(
     """
     # Default weights with rental yield included
     default_weights = {
-        'price_momentum': 0.30,
-        'rental_yield': 0.25,
-        'infrastructure': 0.20,
-        'amenities': 0.15,
+        "price_momentum": 0.30,
+        "rental_yield": 0.25,
+        "infrastructure": 0.20,
+        "amenities": 0.15,
         # Missing: economic_indicators (0.10)
     }
 
@@ -503,38 +509,40 @@ def calculate_roi_score(
         weights = default_weights
 
     # Determine which components are available
-    available_components = ['price_momentum', 'infrastructure_score', 'amenities_score']
+    available_components = ["price_momentum", "infrastructure_score", "amenities_score"]
     if rental_yield_df is not None and not rental_yield_df.empty:
         # Merge rental yield data
         merged = feature_df.merge(
-            rental_yield_df[['town', 'month', 'property_type', 'rental_yield_pct']],
-            on=['town', 'month', 'property_type'],
-            how='left'
+            rental_yield_df[["town", "month", "property_type", "rental_yield_pct"]],
+            on=["town", "month", "property_type"],
+            how="left",
         )
         # Fill missing rental yields with median
-        merged['rental_yield_pct'] = merged['rental_yield_pct'].fillna(merged['rental_yield_pct'].median())
-        available_components.append('rental_yield_pct')
+        merged["rental_yield_pct"] = merged["rental_yield_pct"].fillna(
+            merged["rental_yield_pct"].median()
+        )
+        available_components.append("rental_yield_pct")
     else:
         merged = feature_df.copy()
         # Remove rental_yield from weights if not available
-        weights = {k: v for k, v in weights.items() if k != 'rental_yield'}
+        weights = {k: v for k, v in weights.items() if k != "rental_yield"}
 
     # Normalize weights to sum to 1
     total_weight = sum(weights.values())
     weights = {k: v / total_weight for k, v in weights.items()}
 
     # Calculate weighted score
-    score = merged['price_momentum'] * weights['price_momentum']
+    score = merged["price_momentum"] * weights["price_momentum"]
 
-    if 'rental_yield_pct' in merged.columns and 'rental_yield' in weights:
+    if "rental_yield_pct" in merged.columns and "rental_yield" in weights:
         # Normalize rental yield to 0-1 scale (assuming 0-15% range)
-        score += (merged['rental_yield_pct'] / 15.0) * weights['rental_yield']
+        score += (merged["rental_yield_pct"] / 15.0) * weights["rental_yield"]
 
-    if 'infrastructure_score' in merged.columns and 'infrastructure' in weights:
-        score += merged['infrastructure_score'] * weights['infrastructure']
+    if "infrastructure_score" in merged.columns and "infrastructure" in weights:
+        score += merged["infrastructure_score"] * weights["infrastructure"]
 
-    if 'amenities_score' in merged.columns and 'amenities' in weights:
-        score += merged['amenities_score'] * weights['amenities']
+    if "amenities_score" in merged.columns and "amenities" in weights:
+        score += merged["amenities_score"] * weights["amenities"]
 
     # Rescale to 0-100
     score = (score - score.min()) / (score.max() - score.min()) * 100
@@ -546,10 +554,9 @@ def calculate_roi_score(
 # PIPELINE FUNCTIONS
 # ============================================================================
 
+
 def compute_monthly_metrics(
-    unified_df: pd.DataFrame,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None
+    unified_df: pd.DataFrame, start_date: str | None = None, end_date: str | None = None
 ) -> pd.DataFrame:
     """Compute all monthly metrics for HDB and condo transactions.
 
@@ -562,14 +569,14 @@ def compute_monthly_metrics(
         DataFrame with all metrics
     """
     # Split by property type
-    hdb_df = unified_df[unified_df['property_type'] == 'HDB'].copy()
-    condo_df = unified_df[unified_df['property_type'] == 'Condominium'].copy()
+    hdb_df = unified_df[unified_df["property_type"] == "HDB"].copy()
+    condo_df = unified_df[unified_df["property_type"] == "Condominium"].copy()
 
     # Process HDB
-    hdb_metrics = _process_property_type(hdb_df, 'HDB', start_date, end_date)
+    hdb_metrics = _process_property_type(hdb_df, "HDB", start_date, end_date)
 
     # Process Condo
-    condo_metrics = _process_property_type(condo_df, 'Condo', start_date, end_date)
+    condo_metrics = _process_property_type(condo_df, "Condo", start_date, end_date)
 
     # Combine
     all_metrics = pd.concat([hdb_metrics, condo_metrics], ignore_index=True)
@@ -578,10 +585,7 @@ def compute_monthly_metrics(
 
 
 def _process_property_type(
-    df: pd.DataFrame,
-    property_type: str,
-    start_date: Optional[str],
-    end_date: Optional[str]
+    df: pd.DataFrame, property_type: str, start_date: str | None, end_date: str | None
 ) -> pd.DataFrame:
     """Process transactions for a single property type.
 
@@ -596,50 +600,40 @@ def _process_property_type(
     """
     # Filter by date
     if start_date:
-        df = df[df['month'] >= start_date]
+        df = df[df["month"] >= start_date]
     if end_date:
-        df = df[df['month'] <= end_date]
+        df = df[df["month"] <= end_date]
 
     # Determine column names (unified data uses consistent naming)
-    price_col = 'price'
-    area_col = 'floor_area_sqft'
-    geo_col = 'planning_area'
+    price_col = "price"
+    area_col = "floor_area_sqft"
+    geo_col = "planning_area"
 
     # Add PSF
-    df['psf'] = calculate_psf(df, price_col, area_col)
+    df["psf"] = calculate_psf(df, price_col, area_col)
 
     # Calculate stratified median prices
     stratified_prices = calculate_stratified_median(
-        df,
-        group_columns=['month', geo_col],
-        price_column=price_col
+        df, group_columns=["month", geo_col], price_column=price_col
     )
 
     # Calculate volume metrics
-    volume = calculate_volume_metrics(
-        df,
-        date_column='month',
-        geo_column=geo_col
-    )
+    volume = calculate_volume_metrics(df, date_column="month", geo_column=geo_col)
 
     # Merge
-    metrics = stratified_prices.merge(volume, on=['month', geo_col])
+    metrics = stratified_prices.merge(volume, on=["month", geo_col])
 
     # Add property type
-    metrics['property_type'] = property_type
+    metrics["property_type"] = property_type
 
     # Calculate growth rates
-    metrics = metrics.sort_values([geo_col, 'month'])
-    metrics['growth_rate'] = metrics.groupby(geo_col)['stratified_median_price'].transform(
+    metrics = metrics.sort_values([geo_col, "month"])
+    metrics["growth_rate"] = metrics.groupby(geo_col)["stratified_median_price"].transform(
         lambda x: x.pct_change() * 100
     )
 
     # Calculate momentum
-    metrics = calculate_momentum(
-        metrics,
-        date_column='month',
-        geo_column=geo_col
-    )
+    metrics = calculate_momentum(metrics, date_column="month", geo_column=geo_col)
 
     return metrics
 
@@ -648,11 +642,10 @@ def _process_property_type(
 # COMING SOON METRICS
 # ============================================================================
 
+
 def calculate_forecasted_metrics(
-    df: pd.DataFrame,
-    planning_area: str,
-    horizons: List[int] = [6, 12]
-) -> Dict[str, Dict[str, float]]:
+    df: pd.DataFrame, planning_area: str, horizons: list[int] = [6, 12]
+) -> dict[str, dict[str, float]]:
     """Calculate forecasted metrics for future periods.
 
     Args:
@@ -664,16 +657,16 @@ def calculate_forecasted_metrics(
         Dictionary with forecasted metrics for each horizon
     """
     # Filter by planning area
-    pa_df = df[df['planning_area'] == planning_area].copy()
+    pa_df = df[df["planning_area"] == planning_area].copy()
 
     if len(pa_df) < 24:
         return {}
 
     # Aggregate by month
-    pa_df['month'] = pd.to_datetime(pa_df['transaction_date']).dt.to_period('M')
-    monthly = pa_df.groupby('month')['price'].median().reset_index()
-    monthly.columns = ['period', 'median_price']
-    monthly = monthly.sort_values('period')
+    pa_df["month"] = pd.to_datetime(pa_df["transaction_date"]).dt.to_period("M")
+    monthly = pa_df.groupby("month")["price"].median().reset_index()
+    monthly.columns = ["period", "median_price"]
+    monthly = monthly.sort_values("period")
 
     if len(monthly) < 12:
         return {}
@@ -681,13 +674,13 @@ def calculate_forecasted_metrics(
     # Use recent 12 months for trend
     recent = monthly.tail(12)
     x = np.arange(len(recent))
-    y = recent['median_price'].values
+    y = recent["median_price"].values
 
     # Linear trend
     slope, intercept = np.polyfit(x, y, 1)
 
-    last_price = recent['median_price'].iloc[-1]
-    last_date = recent['period'].iloc[-1].to_timestamp()
+    last_price = recent["median_price"].iloc[-1]
+    last_date = recent["period"].iloc[-1].to_timestamp()
 
     forecasts = {}
 
@@ -697,22 +690,20 @@ def calculate_forecasted_metrics(
         # Confidence intervals (wider for longer horizons)
         confidence_multiplier = 1 + (horizon * 0.02)
 
-        forecasts[f'{horizon}m'] = {
-            'predicted_value': round(predicted, 2),
-            'confidence_lower': round(predicted / confidence_multiplier, 2),
-            'confidence_upper': round(predicted * confidence_multiplier, 2),
-            'trend_pct': round(((predicted - last_price) / last_price) * 100, 2),
-            'forecast_date': (last_date + pd.DateOffset(months=horizon)).strftime('%Y-%m-%d'),
+        forecasts[f"{horizon}m"] = {
+            "predicted_value": round(predicted, 2),
+            "confidence_lower": round(predicted / confidence_multiplier, 2),
+            "confidence_upper": round(predicted * confidence_multiplier, 2),
+            "trend_pct": round(((predicted - last_price) / last_price) * 100, 2),
+            "forecast_date": (last_date + pd.DateOffset(months=horizon)).strftime("%Y-%m-%d"),
         }
 
     return forecasts
 
 
 def calculate_era_comparison(
-    df: pd.DataFrame,
-    planning_area: str,
-    metric_column: str = 'price'
-) -> Dict[str, float]:
+    df: pd.DataFrame, planning_area: str, metric_column: str = "price"
+) -> dict[str, float]:
     """Calculate metrics across Pre-COVID, COVID, and Post-COVID periods.
 
     Args:
@@ -723,54 +714,51 @@ def calculate_era_comparison(
     Returns:
         Dictionary with era comparison metrics
     """
-    pa_df = df[df['planning_area'] == planning_area].copy()
+    pa_df = df[df["planning_area"] == planning_area].copy()
 
     # Extract year if needed
-    if 'year' not in pa_df.columns and 'transaction_date' in pa_df.columns:
-        pa_df['year'] = pd.to_datetime(pa_df['transaction_date']).dt.year
+    if "year" not in pa_df.columns and "transaction_date" in pa_df.columns:
+        pa_df["year"] = pd.to_datetime(pa_df["transaction_date"]).dt.year
 
     # Assign era
     def assign_era(year):
         if year <= 2019:
-            return 'pre_covid'
+            return "pre_covid"
         elif year <= 2021:
-            return 'covid'
+            return "covid"
         else:
-            return 'post_covid'
+            return "post_covid"
 
-    pa_df['era'] = pa_df['year'].apply(assign_era)
+    pa_df["era"] = pa_df["year"].apply(assign_era)
 
     # Calculate median by era
-    era_medians = pa_df.groupby('era')[metric_column].median().to_dict()
+    era_medians = pa_df.groupby("era")[metric_column].median().to_dict()
 
     result = {
-        'pre_covid_value': era_medians.get('pre_covid'),
-        'covid_value': era_medians.get('covid'),
-        'post_covid_value': era_medians.get('post_covid'),
+        "pre_covid_value": era_medians.get("pre_covid"),
+        "covid_value": era_medians.get("covid"),
+        "post_covid_value": era_medians.get("post_covid"),
     }
 
     # Calculate impacts
-    pre = result['pre_covid_value'] or 0
-    covid = result['covid_value'] or pre
-    post = result['post_covid_value'] or covid
+    pre = result["pre_covid_value"] or 0
+    covid = result["covid_value"] or pre
+    post = result["post_covid_value"] or covid
 
     if pre > 0:
-        result['covid_impact_pct'] = round(((covid - pre) / pre) * 100, 2)
-        result['recovery_pct'] = round(((post - covid) / covid) * 100, 2) if covid > 0 else 0
+        result["covid_impact_pct"] = round(((covid - pre) / pre) * 100, 2)
+        result["recovery_pct"] = round(((post - covid) / covid) * 100, 2) if covid > 0 else 0
     else:
-        result['covid_impact_pct'] = 0
-        result['recovery_pct'] = 0
+        result["covid_impact_pct"] = 0
+        result["recovery_pct"] = 0
 
     # Whole period value
-    result['whole_period_value'] = pa_df[metric_column].median()
+    result["whole_period_value"] = pa_df[metric_column].median()
 
     return result
 
 
-def identify_coming_soon(
-    df: pd.DataFrame,
-    months_ahead: int = 3
-) -> pd.DataFrame:
+def identify_coming_soon(df: pd.DataFrame, months_ahead: int = 3) -> pd.DataFrame:
     """Identify properties that are 'coming soon' based on patterns.
 
     Args:
@@ -783,31 +771,34 @@ def identify_coming_soon(
     result = df.copy()
 
     # Convert date
-    if 'transaction_date' in result.columns:
-        result['transaction_date'] = pd.to_datetime(result['transaction_date'], errors='coerce')
+    if "transaction_date" in result.columns:
+        result["transaction_date"] = pd.to_datetime(result["transaction_date"], errors="coerce")
 
     current_date = pd.Timestamp.now()
-    cutoff_date = current_date + pd.DateOffset(months=months_ahead)
 
     # Coming soon criteria:
     # 1. Recent transactions (last 3 months) - "just launched"
     three_months_ago = current_date - pd.DateOffset(months=3)
-    result['is_recent'] = result['transaction_date'] >= three_months_ago
+    result["is_recent"] = result["transaction_date"] >= three_months_ago
 
     # 2. High activity areas (top 25% by recent transactions)
-    recent_mask = result['transaction_date'] >= (current_date - pd.DateOffset(months=6))
-    recent_activity = result[recent_mask].groupby('town').size()
-    high_activity_towns = recent_activity[recent_activity >= recent_activity.quantile(0.75)].index.tolist()
-    result['is_high_activity'] = result['town'].isin(high_activity_towns)
+    recent_mask = result["transaction_date"] >= (current_date - pd.DateOffset(months=6))
+    recent_activity = result[recent_mask].groupby("town").size()
+    high_activity_towns = recent_activity[
+        recent_activity >= recent_activity.quantile(0.75)
+    ].index.tolist()
+    result["is_high_activity"] = result["town"].isin(high_activity_towns)
 
     # 3. New leases (99+ years remaining)
-    if 'remaining_lease_years' in result.columns:
-        result['is_new_lease'] = result['remaining_lease_years'] >= 99
+    if "remaining_lease_years" in result.columns:
+        result["is_new_lease"] = result["remaining_lease_years"] >= 99
     else:
-        result['is_new_lease'] = False
+        result["is_new_lease"] = False
 
     # Combined coming soon flag
-    result['is_coming_soon'] = result['is_recent'] | result['is_high_activity'] | result['is_new_lease']
+    result["is_coming_soon"] = (
+        result["is_recent"] | result["is_high_activity"] | result["is_new_lease"]
+    )
 
     return result
 
@@ -817,7 +808,7 @@ def calculate_coming_soon_score(
     yield_weight: float = 0.40,
     momentum_weight: float = 0.30,
     infra_weight: float = 0.20,
-    amenity_weight: float = 0.10
+    amenity_weight: float = 0.10,
 ) -> pd.DataFrame:
     """Calculate investment scores for coming soon properties.
 
@@ -834,56 +825,60 @@ def calculate_coming_soon_score(
     result = property_df.copy()
 
     # 1. Rental yield score
-    if 'rental_yield_pct' in result.columns:
-        yield_vals = result['rental_yield_pct'].fillna(result['rental_yield_pct'].median())
+    if "rental_yield_pct" in result.columns:
+        yield_vals = result["rental_yield_pct"].fillna(result["rental_yield_pct"].median())
         yield_max = yield_vals.max()
         if yield_max > 0:
-            result['yield_score'] = (yield_vals / yield_max) * yield_weight * 100
+            result["yield_score"] = (yield_vals / yield_max) * yield_weight * 100
         else:
-            result['yield_score'] = yield_weight * 50
+            result["yield_score"] = yield_weight * 50
     else:
-        result['yield_score'] = yield_weight * 50
+        result["yield_score"] = yield_weight * 50
 
     # 2. Momentum score
-    if 'mom_change_pct' in result.columns:
-        momentum = result['mom_change_pct'].fillna(0)
+    if "mom_change_pct" in result.columns:
+        momentum = result["mom_change_pct"].fillna(0)
         mom_min, mom_max = momentum.min(), momentum.max()
         if mom_max > mom_min:
-            result['momentum_score'] = ((momentum - mom_min) / (mom_max - mom_min)) * momentum_weight * 100
+            result["momentum_score"] = (
+                ((momentum - mom_min) / (mom_max - mom_min)) * momentum_weight * 100
+            )
         else:
-            result['momentum_score'] = momentum_weight * 50
+            result["momentum_score"] = momentum_weight * 50
     else:
-        result['momentum_score'] = momentum_weight * 50
+        result["momentum_score"] = momentum_weight * 50
 
     # 3. Infrastructure score (inverse of MRT distance)
-    if 'dist_to_nearest_mrt' in result.columns:
-        mrt = result['dist_to_nearest_mrt'].fillna(result['dist_to_nearest_mrt'].median())
+    if "dist_to_nearest_mrt" in result.columns:
+        mrt = result["dist_to_nearest_mrt"].fillna(result["dist_to_nearest_mrt"].median())
         mrt_min, mrt_max = mrt.min(), mrt.max()
         if mrt_max > mrt_min:
-            result['infra_score'] = ((mrt_max - mrt) / (mrt_max - mrt_min)) * infra_weight * 100
+            result["infra_score"] = ((mrt_max - mrt) / (mrt_max - mrt_min)) * infra_weight * 100
         else:
-            result['infra_score'] = infra_weight * 50
+            result["infra_score"] = infra_weight * 50
     else:
-        result['infra_score'] = infra_weight * 50
+        result["infra_score"] = infra_weight * 50
 
     # 4. Amenity score
-    amenity_cols = [c for c in result.columns if 'within' in c.lower() and 'km' in c.lower()]
+    amenity_cols = [c for c in result.columns if "within" in c.lower() and "km" in c.lower()]
     if amenity_cols:
         amenity_vals = result[amenity_cols].mean(axis=1).fillna(0)
         amen_min, amen_max = amenity_vals.min(), amenity_vals.max()
         if amen_max > amen_min:
-            result['amenity_score'] = ((amenity_vals - amen_min) / (amen_max - amen_min)) * amenity_weight * 100
+            result["amenity_score"] = (
+                ((amenity_vals - amen_min) / (amen_max - amen_min)) * amenity_weight * 100
+            )
         else:
-            result['amenity_score'] = amenity_weight * 50
+            result["amenity_score"] = amenity_weight * 50
     else:
-        result['amenity_score'] = amenity_weight * 50
+        result["amenity_score"] = amenity_weight * 50
 
     # Total investment score
-    result['investment_score'] = (
-        result['yield_score'] +
-        result['momentum_score'] +
-        result['infra_score'] +
-        result['amenity_score']
+    result["investment_score"] = (
+        result["yield_score"]
+        + result["momentum_score"]
+        + result["infra_score"]
+        + result["amenity_score"]
     )
 
     return result
@@ -893,7 +888,8 @@ def calculate_coming_soon_score(
 # VALIDATION
 # ============================================================================
 
-def validate_metrics(metrics_df: pd.DataFrame) -> Dict[str, any]:
+
+def validate_metrics(metrics_df: pd.DataFrame) -> dict[str, any]:
     """Validate calculated metrics.
 
     Args:
@@ -903,14 +899,16 @@ def validate_metrics(metrics_df: pd.DataFrame) -> Dict[str, any]:
         Dictionary with validation results
     """
     results = {
-        'total_records': len(metrics_df),
-        'date_range': (metrics_df['month'].min(), metrics_df['month'].max()),
-        'missing_values': metrics_df.isnull().sum().to_dict(),
-        'outliers': {
-            'growth_rate_extreme': ((metrics_df['growth_rate'].abs() > 50).sum()),
-            'negative_prices': ((metrics_df['stratified_median_price'] < 0).sum()),
+        "total_records": len(metrics_df),
+        "date_range": (metrics_df["month"].min(), metrics_df["month"].max()),
+        "missing_values": metrics_df.isnull().sum().to_dict(),
+        "outliers": {
+            "growth_rate_extreme": ((metrics_df["growth_rate"].abs() > 50).sum()),
+            "negative_prices": ((metrics_df["stratified_median_price"] < 0).sum()),
         },
-        'geo_coverage': metrics_df['planning_area'].nunique() if 'planning_area' in metrics_df.columns else None
+        "geo_coverage": metrics_df["planning_area"].nunique()
+        if "planning_area" in metrics_df.columns
+        else None,
     }
 
     return results

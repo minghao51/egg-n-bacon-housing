@@ -7,12 +7,13 @@ and reduce API quota usage.
 
 import hashlib
 import json
-import pickle
 import logging
+import pickle
+from collections.abc import Callable
 from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any
 
 from scripts.core.config import Config
 
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 class CacheManager:
     """File-based cache manager for API responses and computed results."""
 
-    def __init__(self, cache_dir: Optional[Path] = None):
+    def __init__(self, cache_dir: Path | None = None):
         """
         Initialize cache manager.
 
@@ -73,7 +74,7 @@ class CacheManager:
         file_age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
         return file_age > timedelta(hours=duration_hours)
 
-    def get(self, identifier: str, duration_hours: int = 24) -> Optional[Any]:
+    def get(self, identifier: str, duration_hours: int = 24) -> Any | None:
         """
         Retrieve a cached value.
 
@@ -125,7 +126,7 @@ class CacheManager:
         except Exception as e:
             logger.warning(f"⚠️  Failed to cache value: {e}")
 
-    def clear(self, identifier: Optional[str] = None) -> None:
+    def clear(self, identifier: str | None = None) -> None:
         """
         Clear cache entries.
 
@@ -142,7 +143,7 @@ class CacheManager:
             # Clear all cache files
             for cache_file in self.cache_dir.glob("*.pkl"):
                 cache_file.unlink()
-            logger.info(f"🗑️  Cleared all cache files")
+            logger.info("🗑️  Cleared all cache files")
 
     def get_stats(self) -> dict:
         """
@@ -174,7 +175,7 @@ _cache_manager = CacheManager()
 def cached_call(
     identifier: str,
     func: Callable,
-    duration_hours: Optional[int] = None,
+    duration_hours: int | None = None,
 ) -> Any:
     """
     Execute a function with caching.
@@ -208,9 +209,9 @@ def cached_call(
 
 def cached_api_call(
     url: str,
-    params: Optional[dict] = None,
+    params: dict | None = None,
     method: str = "GET",
-    duration_hours: Optional[int] = None,
+    duration_hours: int | None = None,
 ) -> Callable:
     """
     Decorator for caching API calls.
@@ -229,6 +230,7 @@ def cached_api_call(
         >>> def fetch_data():
         ...     return requests.get("https://api.example.com/data", params={"param": "value"})
     """
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
@@ -254,7 +256,7 @@ def cached_api_call(
     return decorator
 
 
-def clear_cache(identifier: Optional[str] = None) -> None:
+def clear_cache(identifier: str | None = None) -> None:
     """
     Clear cache entries.
 

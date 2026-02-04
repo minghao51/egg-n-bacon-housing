@@ -81,7 +81,9 @@ class Config:
 
     # Geocoding settings
     GEOCODING_MAX_WORKERS = 5  # Parallel workers for geocoding (respect API limits)
-    GEOCODING_API_DELAY = 1.2  # Delay between API calls in seconds (increased from 1.0 to respect rate limits)
+    GEOCODING_API_DELAY = (
+        1.2  # Delay between API calls in seconds (increased from 1.0 to respect rate limits)
+    )
     GEOCODING_TIMEOUT = 30  # Request timeout in seconds
 
     # ============== NOTEBOOK SETTINGS ==============
@@ -147,11 +149,9 @@ class Config:
         print(f"ANALYSIS_DIR: {cls.ANALYSIS_DIR}")
         print(f"USE_CACHING: {cls.USE_CACHING}")
         print(
-            f"API Keys configured: {sum([
-                bool(cls.ONEMAP_EMAIL),
-                bool(cls.GOOGLE_API_KEY),
-                bool(cls.SUPABASE_URL)
-            ])}/3"
+            f"API Keys configured: {
+                sum([bool(cls.ONEMAP_EMAIL), bool(cls.GOOGLE_API_KEY), bool(cls.SUPABASE_URL)])
+            }/3"
         )
 
 

@@ -5,16 +5,14 @@ This module provides functions to create interactive maps using
 Plotly with OpenStreetMap tiles.
 """
 
-import streamlit as st
-import plotly.graph_objects as go
-import plotly.express as px
-import pandas as pd
-import numpy as np
-import h3
 import json
-import geopandas as gpd
 from pathlib import Path
-from typing import Optional, List, Tuple
+
+import h3
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
+import streamlit as st
 
 # Constants
 SINGAPORE_CENTER = {"lat": 1.3521, "lon": 103.8198}
@@ -22,11 +20,11 @@ SINGAPORE_ZOOM = 11
 
 # Color scales for price visualization
 PRICE_COLORSCALE = [
-    [0.0, "#2E5EAA"],    # Blue (low)
-    [0.25, "#54A24B"],   # Green
-    [0.5, "#F4D03F"],    # Yellow
-    [0.75, "#DC7633"],   # Orange
-    [1.0, "#CB4335"]     # Red (high)
+    [0.0, "#2E5EAA"],  # Blue (low)
+    [0.25, "#54A24B"],  # Green
+    [0.5, "#F4D03F"],  # Yellow
+    [0.75, "#DC7633"],  # Orange
+    [1.0, "#CB4335"],  # Red (high)
 ]
 
 
@@ -83,6 +81,7 @@ def interpolate_color(color1: str, color2: str, ratio: float) -> str:
     # Convert back to hex
     return f"#{r:02x}{g:02x}{b:02x}"
 
+
 # Theme selection - Plotly native styles
 # Available styles: https://plotly.com/python/mapbox-layers/#mapbox-tile-layers
 MAP_STYLES = {
@@ -128,10 +127,7 @@ def get_color_column_value(color_by_name: str) -> str:
     return COLOR_BY_OPTIONS.get(color_by_name, "median_price")
 
 
-def aggregate_by_planning_area(
-    df: pd.DataFrame,
-    price_column: str = "price"
-) -> pd.DataFrame:
+def aggregate_by_planning_area(df: pd.DataFrame, price_column: str = "price") -> pd.DataFrame:
     """
     Aggregate property data by planning area with statistics.
 
@@ -145,45 +141,68 @@ def aggregate_by_planning_area(
         - count, median_price, mean_price, median_psf
         - min_price, max_price, q1_price, q3_price
     """
-    if df.empty or 'planning_area' not in df.columns:
+    if df.empty or "planning_area" not in df.columns:
         return pd.DataFrame()
 
     # Ensure coordinates are numeric
     df_copy = df.copy()
-    if df_copy['lat'].dtype == 'object':
-        df_copy['lat'] = pd.to_numeric(df_copy['lat'], errors='coerce')
-    if df_copy['lon'].dtype == 'object':
-        df_copy['lon'] = pd.to_numeric(df_copy['lon'], errors='coerce')
+    if df_copy["lat"].dtype == "object":
+        df_copy["lat"] = pd.to_numeric(df_copy["lat"], errors="coerce")
+    if df_copy["lon"].dtype == "object":
+        df_copy["lon"] = pd.to_numeric(df_copy["lon"], errors="coerce")
 
     # Drop rows with invalid coordinates or missing planning area
-    df_copy = df_copy.dropna(subset=['planning_area', 'lat', 'lon', price_column])
+    df_copy = df_copy.dropna(subset=["planning_area", "lat", "lon", price_column])
 
     if df_copy.empty:
         return pd.DataFrame()
 
     # Aggregate by planning area
-    agg_df = df_copy.groupby('planning_area').agg({
-        'lat': 'median',
-        'lon': 'median',
-        price_column: ['count', 'median', 'mean', 'min', 'max', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
-    }).reset_index()
+    agg_df = (
+        df_copy.groupby("planning_area")
+        .agg(
+            {
+                "lat": "median",
+                "lon": "median",
+                price_column: [
+                    "count",
+                    "median",
+                    "mean",
+                    "min",
+                    "max",
+                    lambda x: x.quantile(0.25),
+                    lambda x: x.quantile(0.75),
+                ],
+            }
+        )
+        .reset_index()
+    )
 
     # Flatten column names
-    agg_df.columns = ['planning_area', 'lat', 'lon', 'count', 'median_price', 'mean_price', 'min_price', 'max_price', 'q1_price', 'q3_price']
+    agg_df.columns = [
+        "planning_area",
+        "lat",
+        "lon",
+        "count",
+        "median_price",
+        "mean_price",
+        "min_price",
+        "max_price",
+        "q1_price",
+        "q3_price",
+    ]
 
     # Add price_psf if available
-    if 'price_psf' in df_copy.columns:
-        psf_stats = df_copy.groupby('planning_area')['price_psf'].median().reset_index()
-        psf_stats.columns = ['planning_area', 'median_psf']
-        agg_df = agg_df.merge(psf_stats, on='planning_area', how='left')
+    if "price_psf" in df_copy.columns:
+        psf_stats = df_copy.groupby("planning_area")["price_psf"].median().reset_index()
+        psf_stats.columns = ["planning_area", "median_psf"]
+        agg_df = agg_df.merge(psf_stats, on="planning_area", how="left")
 
     return agg_df
 
 
 def aggregate_by_h3(
-    df: pd.DataFrame,
-    resolution: int = 7,
-    price_column: str = "price"
+    df: pd.DataFrame, resolution: int = 7, price_column: str = "price"
 ) -> pd.DataFrame:
     """
     Aggregate property data by H3 hexagonal grid with statistics.
@@ -199,53 +218,73 @@ def aggregate_by_h3(
         - count, median_price, mean_price, median_psf
         - min_price, max_price, q1_price, q3_price
     """
-    if df.empty or 'lat' not in df.columns or 'lon' not in df.columns:
+    if df.empty or "lat" not in df.columns or "lon" not in df.columns:
         return pd.DataFrame()
 
     # Ensure coordinates are numeric
     df_copy = df.copy()
-    if df_copy['lat'].dtype == 'object':
-        df_copy['lat'] = pd.to_numeric(df_copy['lat'], errors='coerce')
-    if df_copy['lon'].dtype == 'object':
-        df_copy['lon'] = pd.to_numeric(df_copy['lon'], errors='coerce')
+    if df_copy["lat"].dtype == "object":
+        df_copy["lat"] = pd.to_numeric(df_copy["lat"], errors="coerce")
+    if df_copy["lon"].dtype == "object":
+        df_copy["lon"] = pd.to_numeric(df_copy["lon"], errors="coerce")
 
     # Drop invalid coordinates
-    df_copy = df_copy.dropna(subset=['lat', 'lon', price_column])
+    df_copy = df_copy.dropna(subset=["lat", "lon", price_column])
 
     if df_copy.empty:
         return pd.DataFrame()
 
     # Convert lat/lon to H3 cells
-    df_copy['h3_cell'] = df_copy.apply(
-        lambda row: h3.latlng_to_cell(row['lat'], row['lon'], resolution),
-        axis=1
+    df_copy["h3_cell"] = df_copy.apply(
+        lambda row: h3.latlng_to_cell(row["lat"], row["lon"], resolution), axis=1
     )
 
     # Aggregate by H3 cell
-    agg_df = df_copy.groupby('h3_cell').agg({
-        price_column: ['count', 'median', 'mean', 'min', 'max', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
-    }).reset_index()
+    agg_df = (
+        df_copy.groupby("h3_cell")
+        .agg(
+            {
+                price_column: [
+                    "count",
+                    "median",
+                    "mean",
+                    "min",
+                    "max",
+                    lambda x: x.quantile(0.25),
+                    lambda x: x.quantile(0.75),
+                ]
+            }
+        )
+        .reset_index()
+    )
 
     # Flatten column names
-    agg_df.columns = ['h3_cell', 'count', 'median_price', 'mean_price', 'min_price', 'max_price', 'q1_price', 'q3_price']
+    agg_df.columns = [
+        "h3_cell",
+        "count",
+        "median_price",
+        "mean_price",
+        "min_price",
+        "max_price",
+        "q1_price",
+        "q3_price",
+    ]
 
     # Get cell centers from H3 IDs
-    agg_df['lat'] = agg_df['h3_cell'].apply(lambda cell: h3.cell_to_latlng(cell)[0])
-    agg_df['lon'] = agg_df['h3_cell'].apply(lambda cell: h3.cell_to_latlng(cell)[1])
+    agg_df["lat"] = agg_df["h3_cell"].apply(lambda cell: h3.cell_to_latlng(cell)[0])
+    agg_df["lon"] = agg_df["h3_cell"].apply(lambda cell: h3.cell_to_latlng(cell)[1])
 
     # Add price_psf if available
-    if 'price_psf' in df_copy.columns:
-        psf_stats = df_copy.groupby('h3_cell')['price_psf'].median().reset_index()
-        psf_stats.columns = ['h3_cell', 'median_psf']
-        agg_df = agg_df.merge(psf_stats, on='h3_cell', how='left')
+    if "price_psf" in df_copy.columns:
+        psf_stats = df_copy.groupby("h3_cell")["price_psf"].median().reset_index()
+        psf_stats.columns = ["h3_cell", "median_psf"]
+        agg_df = agg_df.merge(psf_stats, on="h3_cell", how="left")
 
     return agg_df
 
 
 def create_base_map(
-    center: dict = None,
-    zoom: int = SINGAPORE_ZOOM,
-    theme: str = DARK_THEME
+    center: dict = None, zoom: int = SINGAPORE_ZOOM, theme: str = DARK_THEME
 ) -> go.Figure:
     """
     Create a base map figure with OpenStreetMap tiles.
@@ -280,10 +319,7 @@ def create_base_map(
 
 
 def create_price_heatmap(
-    df: pd.DataFrame,
-    color_column: str = "resale_price",
-    radius: int = 10,
-    theme: str = DARK_THEME
+    df: pd.DataFrame, color_column: str = "resale_price", radius: int = 10, theme: str = DARK_THEME
 ) -> go.Figure:
     """
     Create density heatmap for price visualization.
@@ -300,20 +336,20 @@ def create_price_heatmap(
     Returns:
         Plotly Figure with density heatmap
     """
-    if df.empty or 'lat' not in df.columns or 'lon' not in df.columns:
+    if df.empty or "lat" not in df.columns or "lon" not in df.columns:
         return create_base_map()
 
     # Filter out invalid coordinates
-    df_valid = df.dropna(subset=['lat', 'lon', color_column]).copy()
+    df_valid = df.dropna(subset=["lat", "lon", color_column]).copy()
 
     # Ensure coordinates are numeric (defensive, handles cached data issues)
-    if df_valid['lat'].dtype == 'object':
-        df_valid['lat'] = pd.to_numeric(df_valid['lat'], errors='coerce')
-    if df_valid['lon'].dtype == 'object':
-        df_valid['lon'] = pd.to_numeric(df_valid['lon'], errors='coerce')
+    if df_valid["lat"].dtype == "object":
+        df_valid["lat"] = pd.to_numeric(df_valid["lat"], errors="coerce")
+    if df_valid["lon"].dtype == "object":
+        df_valid["lon"] = pd.to_numeric(df_valid["lon"], errors="coerce")
 
     # Remove any rows that became NaN after conversion
-    df_valid = df_valid.dropna(subset=['lat', 'lon'])
+    df_valid = df_valid.dropna(subset=["lat", "lon"])
 
     if df_valid.empty:
         st.warning("No valid coordinates found for heatmap")
@@ -324,38 +360,33 @@ def create_price_heatmap(
     zmin = prices.quantile(0.05)  # Exclude extreme outliers
     zmax = prices.quantile(0.95)
 
-    fig = go.Figure(go.Densitymapbox(
-        lat=df_valid['lat'],
-        lon=df_valid['lon'],
-        z=prices,
-        radius=radius,
-        colorscale=PRICE_COLORSCALE,
-        zmin=zmin,
-        zmax=zmax,
-        text=df_valid.get('address', df_valid.index.astype(str)),
-        hovertemplate=(
-            "<b>%{text}</b><br>"
-            "Price: $%{z:,.0f}<br>"
-            "<extra></extra>"
-        ),
-        colorbar=dict(
-            title=dict(
-                text="Price (SGD)",
-                font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+    fig = go.Figure(
+        go.Densitymapbox(
+            lat=df_valid["lat"],
+            lon=df_valid["lon"],
+            z=prices,
+            radius=radius,
+            colorscale=PRICE_COLORSCALE,
+            zmin=zmin,
+            zmax=zmax,
+            text=df_valid.get("address", df_valid.index.astype(str)),
+            hovertemplate=("<b>%{text}</b><br>Price: $%{z:,.0f}<br><extra></extra>"),
+            colorbar=dict(
+                title=dict(
+                    text="Price (SGD)",
+                    font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
+                ),
+                tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
             ),
-            tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
         )
-    ))
+    )
 
     # Update layout with dark theme
     fig.update_layout(
         mapbox=dict(
             style=theme,
-            center=dict(
-                lat=df_valid['lat'].median(),
-                lon=df_valid['lon'].median()
-            ),
-            zoom=SINGAPORE_ZOOM
+            center=dict(lat=df_valid["lat"].median(), lon=df_valid["lon"].median()),
+            zoom=SINGAPORE_ZOOM,
         ),
         height=700,
         margin=dict(l=0, r=0, t=0, b=0),
@@ -370,7 +401,7 @@ def create_planning_area_map(
     aggregated_df: pd.DataFrame,
     color_column: str = "median_price",
     size_column: str = "count",
-    theme: str = DARK_THEME
+    theme: str = DARK_THEME,
 ) -> go.Figure:
     """
     Create map with planning area markers showing aggregated statistics.
@@ -391,9 +422,9 @@ def create_planning_area_map(
     sizes = aggregated_df[size_column]
     size_min = sizes.quantile(0.1)
     size_max = sizes.quantile(0.9)
-    aggregated_df['marker_size'] = 10 + 30 * (
-        (sizes - size_min) / (size_max - size_min + 1)
-    ).clip(0, 1)
+    aggregated_df["marker_size"] = 10 + 30 * ((sizes - size_min) / (size_max - size_min + 1)).clip(
+        0, 1
+    )
 
     # Normalize colors
     colors = aggregated_df[color_column]
@@ -401,60 +432,72 @@ def create_planning_area_map(
     color_max = colors.quantile(0.95)
 
     # Create trace
-    fig = go.Figure(go.Scattermapbox(
-        lat=aggregated_df['lat'],
-        lon=aggregated_df['lon'],
-        mode='markers',
-        marker=dict(
-            size=aggregated_df['marker_size'],
-            color=colors,
-            colorscale=PRICE_COLORSCALE,
-            cmin=color_min,
-            cmax=color_max,
-            opacity=0.7,
-            colorbar=dict(
-                title=dict(
-                    text=color_column.replace('_', ' ').title(),
-                    font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+    fig = go.Figure(
+        go.Scattermapbox(
+            lat=aggregated_df["lat"],
+            lon=aggregated_df["lon"],
+            mode="markers",
+            marker=dict(
+                size=aggregated_df["marker_size"],
+                color=colors,
+                colorscale=PRICE_COLORSCALE,
+                cmin=color_min,
+                cmax=color_max,
+                opacity=0.7,
+                colorbar=dict(
+                    title=dict(
+                        text=color_column.replace("_", " ").title(),
+                        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
+                    ),
+                    tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
                 ),
-                tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+            ),
+            text=aggregated_df["planning_area"],
+            customdata=aggregated_df[
+                [
+                    "count",
+                    "median_price",
+                    "mean_price",
+                    "median_psf",
+                    "min_price",
+                    "max_price",
+                    "q1_price",
+                    "q3_price",
+                ]
+            ].values,
+            hovertemplate=(
+                "<b>%{text}</b><br>"
+                "Transactions: %{customdata[0]:,.0f}<br>"
+                "Median Price: $%{customdata[1]:,.0f}<br>"
+                "Mean Price: $%{customdata[2]:,.0f}<br>"
+                "Median PSF: $%{customdata[3]:,.0f}<br>"
+                "Price Range: $%{customdata[4]:,.0f} - $%{customdata[5]:,.0f}<br>"
+                "<extra></extra>"
             )
-        ),
-        text=aggregated_df['planning_area'],
-        customdata=aggregated_df[['count', 'median_price', 'mean_price', 'median_psf', 'min_price', 'max_price', 'q1_price', 'q3_price']].values,
-        hovertemplate=(
-            "<b>%{text}</b><br>"
-            "Transactions: %{customdata[0]:,.0f}<br>"
-            "Median Price: $%{customdata[1]:,.0f}<br>"
-            "Mean Price: $%{customdata[2]:,.0f}<br>"
-            "Median PSF: $%{customdata[3]:,.0f}<br>"
-            "Price Range: $%{customdata[4]:,.0f} - $%{customdata[5]:,.0f}<br>"
-            "<extra></extra>"
-        ) if 'median_psf' in aggregated_df.columns else (
-            "<b>%{text}</b><br>"
-            "Transactions: %{customdata[0]:,.0f}<br>"
-            "Median Price: $%{customdata[1]:,.0f}<br>"
-            "Mean Price: $%{customdata[2]:,.0f}<br>"
-            "<extra></extra>"
-        ),
-        name='Planning Areas'
-    ))
+            if "median_psf" in aggregated_df.columns
+            else (
+                "<b>%{text}</b><br>"
+                "Transactions: %{customdata[0]:,.0f}<br>"
+                "Median Price: $%{customdata[1]:,.0f}<br>"
+                "Mean Price: $%{customdata[2]:,.0f}<br>"
+                "<extra></extra>"
+            ),
+            name="Planning Areas",
+        )
+    )
 
     # Update layout
     fig.update_layout(
         mapbox=dict(
             style=theme,
-            center=dict(
-                lat=aggregated_df['lat'].median(),
-                lon=aggregated_df['lon'].median()
-            ),
-            zoom=SINGAPORE_ZOOM
+            center=dict(lat=aggregated_df["lat"].median(), lon=aggregated_df["lon"].median()),
+            zoom=SINGAPORE_ZOOM,
         ),
         height=700,
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
         plot_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
-        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
     )
 
     return fig
@@ -464,7 +507,7 @@ def create_planning_area_polygon_map(
     aggregated_df: pd.DataFrame,
     geojson_path: str = "data/raw_data/onemap_planning_area_polygon.geojson",
     color_column: str = "median_price",
-    theme: str = LIGHT_THEME
+    theme: str = LIGHT_THEME,
 ) -> go.Figure:
     """
     Create choropleth map with planning area polygons colored by price metrics.
@@ -494,63 +537,64 @@ def create_planning_area_polygon_map(
 
     aggregated_df = aggregated_df.copy()
 
-    aggregated_df['planning_area'] = aggregated_df['planning_area'].str.strip()
+    aggregated_df["planning_area"] = aggregated_df["planning_area"].str.strip()
 
     color_min = aggregated_df[color_column].quantile(0.05)
     color_max = aggregated_df[color_column].quantile(0.95)
 
-    fig = go.Figure(go.Choroplethmapbox(
-        geojson=geojson_data,
-        locations=aggregated_df['planning_area'],
-        z=aggregated_df[color_column],
-        featureidkey="properties.pln_area_n",
-        colorscale=PRICE_COLORSCALE,
-        zmin=color_min,
-        zmax=color_max,
-        marker=dict(opacity=0.7, line=dict(width=1, color='rgba(255,255,255,0.5)')),
-        colorbar=dict(
-            title=dict(
-                text=color_column.replace('_', ' ').title(),
-                font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+    fig = go.Figure(
+        go.Choroplethmapbox(
+            geojson=geojson_data,
+            locations=aggregated_df["planning_area"],
+            z=aggregated_df[color_column],
+            featureidkey="properties.pln_area_n",
+            colorscale=PRICE_COLORSCALE,
+            zmin=color_min,
+            zmax=color_max,
+            marker=dict(opacity=0.7, line=dict(width=1, color="rgba(255,255,255,0.5)")),
+            colorbar=dict(
+                title=dict(
+                    text=color_column.replace("_", " ").title(),
+                    font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
+                ),
+                tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
             ),
-            tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
-        ),
-        customdata=np.stack([
-            aggregated_df[color_column],  # Selected metric first (highlighted)
-            aggregated_df['count'],
-            aggregated_df['median_price'],
-            aggregated_df['mean_price'],
-            aggregated_df.get('median_psf', [0] * len(aggregated_df)),
-            aggregated_df['min_price'],
-            aggregated_df['max_price']
-        ], axis=-1),
-        hovertemplate=(
-            "<b>%{location}</b><br>"
-            "<b>%{z}: %{customdata[0]:,.0f}</b><br>"  # Highlight selected metric
-            "─<br>"
-            "Transactions: %{customdata[1]:,.0f}<br>"
-            "Median Price: $%{customdata[2]:,.0f}<br>"
-            "Mean Price: $%{customdata[3]:,.0f}<br>"
-            "Median PSF: $%{customdata[4]:,.0f}<br>"
-            "Price Range: $%{customdata[5]:,.0f} - $%{customdata[6]:,.0f}<br>"
-            "<extra></extra>"
+            customdata=np.stack(
+                [
+                    aggregated_df[color_column],  # Selected metric first (highlighted)
+                    aggregated_df["count"],
+                    aggregated_df["median_price"],
+                    aggregated_df["mean_price"],
+                    aggregated_df.get("median_psf", [0] * len(aggregated_df)),
+                    aggregated_df["min_price"],
+                    aggregated_df["max_price"],
+                ],
+                axis=-1,
+            ),
+            hovertemplate=(
+                "<b>%{location}</b><br>"
+                "<b>%{z}: %{customdata[0]:,.0f}</b><br>"  # Highlight selected metric
+                "─<br>"
+                "Transactions: %{customdata[1]:,.0f}<br>"
+                "Median Price: $%{customdata[2]:,.0f}<br>"
+                "Mean Price: $%{customdata[3]:,.0f}<br>"
+                "Median PSF: $%{customdata[4]:,.0f}<br>"
+                "Price Range: $%{customdata[5]:,.0f} - $%{customdata[6]:,.0f}<br>"
+                "<extra></extra>"
+            ),
         )
-    ))
+    )
 
-    lat_center = aggregated_df['lat'].median()
-    lon_center = aggregated_df['lon'].median()
+    lat_center = aggregated_df["lat"].median()
+    lon_center = aggregated_df["lon"].median()
 
     fig.update_layout(
-        mapbox=dict(
-            style=theme,
-            center=dict(lat=lat_center, lon=lon_center),
-            zoom=SINGAPORE_ZOOM
-        ),
+        mapbox=dict(style=theme, center=dict(lat=lat_center, lon=lon_center), zoom=SINGAPORE_ZOOM),
         height=700,
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
         plot_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
-        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
     )
 
     return fig
@@ -561,7 +605,7 @@ def create_h3_grid_map(
     resolution: int,
     color_column: str = "median_price",
     size_column: str = "count",
-    theme: str = DARK_THEME
+    theme: str = DARK_THEME,
 ) -> go.Figure:
     """
     Create map with H3 hexagonal grid showing aggregated statistics.
@@ -591,11 +635,11 @@ def create_h3_grid_map(
     fig = go.Figure()
 
     # Dynamic hover text based on selected color_column
-    color_label = color_column.replace('_', ' ').title()
+    color_label = color_column.replace("_", " ").title()
 
     # Create polygon traces for each cell
     for idx, row in aggregated_df.iterrows():
-        cell = row['h3_cell']
+        cell = row["h3_cell"]
         cell_value = row[color_column]
 
         # Get H3 cell boundary coordinates
@@ -612,67 +656,68 @@ def create_h3_grid_map(
         color = get_color_from_scale(normalized_value)
 
         # Format hover value based on column type
-        if 'price' in color_column.lower():
+        if "price" in color_column.lower():
             hover_value = f"${cell_value:,.0f}"
-        elif 'psf' in color_column.lower():
+        elif "psf" in color_column.lower():
             hover_value = f"${cell_value:,.0f} psf"
-        elif color_column == 'count':
+        elif color_column == "count":
             hover_value = f"{int(cell_value):,} transactions"
         else:
             hover_value = f"{cell_value:,.2f}"
 
         # Add filled polygon for this cell with fillcolor
-        fig.add_trace(go.Scattermapbox(
-            fill="toself",
-            lat=lats,
-            lon=lons,
-            mode="lines",
-            line=dict(width=1, color='rgba(255,255,255,0.4)'),
-            fillcolor=color,
-            text=f"H3 Cell: {cell}<br>{color_label}: {hover_value}<br>Transactions: {row['count']}",
-            hoverinfo="text",
-            showlegend=False,
-        ))
+        fig.add_trace(
+            go.Scattermapbox(
+                fill="toself",
+                lat=lats,
+                lon=lons,
+                mode="lines",
+                line=dict(width=1, color="rgba(255,255,255,0.4)"),
+                fillcolor=color,
+                text=f"H3 Cell: {cell}<br>{color_label}: {hover_value}<br>Transactions: {row['count']}",
+                hoverinfo="text",
+                showlegend=False,
+            )
+        )
 
     # Add a colorbar trace (invisible marker just for the colorbar)
-    fig.add_trace(go.Scattermapbox(
-        lat=[None],
-        lon=[None],
-        mode="markers",
-        marker=dict(
-            size=1,
-            color=[color_min, color_max],
-            colorscale=PRICE_COLORSCALE,
-            cmin=color_min,
-            cmax=color_max,
-            colorbar=dict(
-                title=dict(
-                    text=color_label,
-                    font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+    fig.add_trace(
+        go.Scattermapbox(
+            lat=[None],
+            lon=[None],
+            mode="markers",
+            marker=dict(
+                size=1,
+                color=[color_min, color_max],
+                colorscale=PRICE_COLORSCALE,
+                cmin=color_min,
+                cmax=color_max,
+                colorbar=dict(
+                    title=dict(
+                        text=color_label,
+                        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
+                    ),
+                    tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
                 ),
-                tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+                showscale=True,
             ),
-            showscale=True,
-        ),
-        hoverinfo="none",
-        showlegend=False,
-    ))
+            hoverinfo="none",
+            showlegend=False,
+        )
+    )
 
     # Update layout
     fig.update_layout(
         mapbox=dict(
             style=theme,
-            center=dict(
-                lat=aggregated_df['lat'].median(),
-                lon=aggregated_df['lon'].median()
-            ),
-            zoom=SINGAPORE_ZOOM
+            center=dict(lat=aggregated_df["lat"].median(), lon=aggregated_df["lon"].median()),
+            zoom=SINGAPORE_ZOOM,
         ),
         height=700,
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
         plot_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
-        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
     )
 
     return fig
@@ -680,11 +725,11 @@ def create_h3_grid_map(
 
 def create_scatter_map(
     properties_df: pd.DataFrame,
-    amenities_df: Optional[pd.DataFrame] = None,
-    selected_amenities: Optional[List[str]] = None,
+    amenities_df: pd.DataFrame | None = None,
+    selected_amenities: list[str] | None = None,
     size_column: str = "floor_area_sqft",
     color_column: str = "price_psf",
-    theme: str = DARK_THEME
+    theme: str = DARK_THEME,
 ) -> go.Figure:
     """
     Create scatter plot map with property markers and optional amenity overlays.
@@ -703,22 +748,22 @@ def create_scatter_map(
     Returns:
         Plotly Figure with scatter map
     """
-    if properties_df.empty or 'lat' not in properties_df.columns:
+    if properties_df.empty or "lat" not in properties_df.columns:
         return create_base_map()
 
     fig = go.Figure()
 
     # Filter valid properties
-    props_valid = properties_df.dropna(subset=['lat', 'lon', color_column]).copy()
+    props_valid = properties_df.dropna(subset=["lat", "lon", color_column]).copy()
 
     # Ensure coordinates are numeric (defensive, handles cached data issues)
-    if props_valid['lat'].dtype == 'object':
-        props_valid['lat'] = pd.to_numeric(props_valid['lat'], errors='coerce')
-    if props_valid['lon'].dtype == 'object':
-        props_valid['lon'] = pd.to_numeric(props_valid['lon'], errors='coerce')
+    if props_valid["lat"].dtype == "object":
+        props_valid["lat"] = pd.to_numeric(props_valid["lat"], errors="coerce")
+    if props_valid["lon"].dtype == "object":
+        props_valid["lon"] = pd.to_numeric(props_valid["lon"], errors="coerce")
 
     # Remove any rows that became NaN after conversion
-    props_valid = props_valid.dropna(subset=['lat', 'lon'])
+    props_valid = props_valid.dropna(subset=["lat", "lon"])
 
     if props_valid.empty:
         return create_base_map()
@@ -729,11 +774,11 @@ def create_scatter_map(
         size_min = sizes.quantile(0.1)
         size_max = sizes.quantile(0.9)
         # Scale to 5-25 range
-        props_valid['marker_size'] = 5 + 20 * (
-            (sizes - size_min) / (size_max - size_min + 1)
-        ).clip(0, 1)
+        props_valid["marker_size"] = 5 + 20 * ((sizes - size_min) / (size_max - size_min + 1)).clip(
+            0, 1
+        )
     else:
-        props_valid['marker_size'] = 10
+        props_valid["marker_size"] = 10
 
     # Normalize colors
     colors = props_valid[color_column]
@@ -741,61 +786,63 @@ def create_scatter_map(
     color_max = colors.quantile(0.95)
 
     # Add properties trace
-    fig.add_trace(go.Scattermapbox(
-        lat=props_valid['lat'],
-        lon=props_valid['lon'],
-        mode='markers',
-        marker=dict(
-            size=props_valid['marker_size'],
-            color=colors,
-            colorscale=PRICE_COLORSCALE,
-            cmin=color_min,
-            cmax=color_max,
-            opacity=0.7,
-            colorbar=dict(
-                title=dict(
-                    text="$ PSF",
-                    font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+    fig.add_trace(
+        go.Scattermapbox(
+            lat=props_valid["lat"],
+            lon=props_valid["lon"],
+            mode="markers",
+            marker=dict(
+                size=props_valid["marker_size"],
+                color=colors,
+                colorscale=PRICE_COLORSCALE,
+                cmin=color_min,
+                cmax=color_max,
+                opacity=0.7,
+                colorbar=dict(
+                    title=dict(
+                        text="$ PSF",
+                        font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
+                    ),
+                    tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
                 ),
-                tickfont=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
+            ),
+            text=props_valid.get("address", "Property"),
+            customdata=props_valid[[size_column, color_column]].values
+            if size_column in props_valid.columns
+            else None,
+            hovertemplate=(
+                "<b>%{text}</b><br>"
+                "Price: $%{customdata[1]:,.0f} PSF<br>"
+                "Area: %{customdata[0]:.0f} sqft<br>"
+                "<extra></extra>"
             )
-        ),
-        text=props_valid.get('address', 'Property'),
-        customdata=props_valid[[size_column, color_column]].values if size_column in props_valid.columns else None,
-        hovertemplate=(
-            "<b>%{text}</b><br>"
-            "Price: $%{customdata[1]:,.0f} PSF<br>"
-            "Area: %{customdata[0]:.0f} sqft<br>"
-            "<extra></extra>"
-        ) if size_column in props_valid.columns else (
-            "<b>%{text}</b><br>"
-            "Price: $%{marker.color:.0f}<br>"
-            "<extra></extra>"
-        ),
-        name='Properties'
-    ))
+            if size_column in props_valid.columns
+            else ("<b>%{text}</b><br>Price: $%{marker.color:.0f}<br><extra></extra>"),
+            name="Properties",
+        )
+    )
 
     # Add amenity overlays
     if amenities_df is not None and not amenities_df.empty and selected_amenities:
         amenity_config = {
-            'mrt': {'color': '#E74C3C', 'symbol': 'circle', 'size': 8},
-            'hawker': {'color': '#F39C12', 'symbol': 'square', 'size': 8},
-            'school': {'color': '#3498DB', 'symbol': 'diamond', 'size': 6},
-            'park': {'color': '#27AE60', 'symbol': 'circle-open', 'size': 10},
-            'childcare': {'color': '#9B59B6', 'symbol': 'triangle-up', 'size': 6},
-            'preschool': {'color': '#1ABC9C', 'symbol': 'triangle-up', 'size': 6},
-            'supermarket': {'color': '#E67E22', 'symbol': 'diamond', 'size': 6}
+            "mrt": {"color": "#E74C3C", "symbol": "circle", "size": 8},
+            "hawker": {"color": "#F39C12", "symbol": "square", "size": 8},
+            "school": {"color": "#3498DB", "symbol": "diamond", "size": 6},
+            "park": {"color": "#27AE60", "symbol": "circle-open", "size": 10},
+            "childcare": {"color": "#9B59B6", "symbol": "triangle-up", "size": 6},
+            "preschool": {"color": "#1ABC9C", "symbol": "triangle-up", "size": 6},
+            "supermarket": {"color": "#E67E22", "symbol": "diamond", "size": 6},
         }
 
         for amenity_type in selected_amenities:
             # Filter amenities by type
-            if 'amenity_type' in amenities_df.columns:
+            if "amenity_type" in amenities_df.columns:
                 amenity_subset = amenities_df[
-                    amenities_df['amenity_type'].str.lower() == amenity_type.lower()
+                    amenities_df["amenity_type"].str.lower() == amenity_type.lower()
                 ].copy()
-            elif 'type' in amenities_df.columns:
+            elif "type" in amenities_df.columns:
                 amenity_subset = amenities_df[
-                    amenities_df['type'].str.lower() == amenity_type.lower()
+                    amenities_df["type"].str.lower() == amenity_type.lower()
                 ].copy()
             else:
                 continue
@@ -803,47 +850,45 @@ def create_scatter_map(
             if amenity_subset.empty:
                 continue
 
-            amenity_subset = amenity_subset.dropna(subset=['lat', 'lon'])
+            amenity_subset = amenity_subset.dropna(subset=["lat", "lon"])
 
             config = amenity_config.get(
-                amenity_type.lower(),
-                {'color': '#95A5A6', 'symbol': 'circle', 'size': 8}
+                amenity_type.lower(), {"color": "#95A5A6", "symbol": "circle", "size": 8}
             )
 
-            fig.add_trace(go.Scattermapbox(
-                lat=amenity_subset['lat'],
-                lon=amenity_subset['lon'],
-                mode='markers',
-                marker=dict(
-                    size=config['size'],
-                    color=config['color'],
-                    symbol=config['symbol'],
-                    opacity=0.8
-                ),
-                text=amenity_subset.get('name', amenity_subset.get('address', amenity_type)),
-                hovertemplate="<b>%{text}</b><extra></extra>",
-                name=amenity_type.capitalize()
-            ))
+            fig.add_trace(
+                go.Scattermapbox(
+                    lat=amenity_subset["lat"],
+                    lon=amenity_subset["lon"],
+                    mode="markers",
+                    marker=dict(
+                        size=config["size"],
+                        color=config["color"],
+                        symbol=config["symbol"],
+                        opacity=0.8,
+                    ),
+                    text=amenity_subset.get("name", amenity_subset.get("address", amenity_type)),
+                    hovertemplate="<b>%{text}</b><extra></extra>",
+                    name=amenity_type.capitalize(),
+                )
+            )
 
     # Update layout
     fig.update_layout(
         mapbox=dict(
             style=theme,
-            center=dict(
-                lat=props_valid['lat'].median(),
-                lon=props_valid['lon'].median()
-            ),
-            zoom=SINGAPORE_ZOOM
+            center=dict(lat=props_valid["lat"].median(), lon=props_valid["lon"].median()),
+            zoom=SINGAPORE_ZOOM,
         ),
         height=700,
-        hovermode='closest',
+        hovermode="closest",
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
         plot_bgcolor="#1e1e1e" if theme == DARK_THEME else "#ffffff",
         legend=dict(
             bgcolor="rgba(30, 30, 30, 0.8)" if theme == DARK_THEME else "rgba(255, 255, 255, 0.8)",
-            font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333")
-        )
+            font=dict(color="#e0e0e0" if theme == DARK_THEME else "#333333"),
+        ),
     )
 
     return fig
@@ -851,11 +896,11 @@ def create_scatter_map(
 
 def create_multi_layer_map(
     properties_df: pd.DataFrame,
-    amenities_df: Optional[pd.DataFrame] = None,
+    amenities_df: pd.DataFrame | None = None,
     show_heatmap: bool = True,
     show_amenities: bool = False,
-    amenity_types: Optional[List[str]] = None,
-    theme: str = DARK_THEME
+    amenity_types: list[str] | None = None,
+    theme: str = DARK_THEME,
 ) -> go.Figure:
     """
     Create multi-layer map with toggleable heatmap and scatter layers.
@@ -880,7 +925,7 @@ def create_multi_layer_map(
             properties_df,
             amenities_df if show_amenities else None,
             amenity_types if show_amenities else None,
-            theme=theme
+            theme=theme,
         )
 
 
@@ -897,17 +942,15 @@ def display_map_with_stats(fig: go.Figure, df: pd.DataFrame, theme: str = DARK_T
     total_properties = len(df)
 
     price_col = None
-    for col in ['resale_price', 'Transacted Price ($)', 'price']:
+    for col in ["resale_price", "Transacted Price ($)", "price"]:
         if col in df.columns:
             price_col = col
             break
 
     if price_col:
         median_price = df[price_col].median()
-        avg_price = df[price_col].mean()
     else:
         median_price = 0
-        avg_price = 0
 
     # Display map
     col1, col2, col3 = st.columns([3, 1, 1])
@@ -917,20 +960,16 @@ def display_map_with_stats(fig: go.Figure, df: pd.DataFrame, theme: str = DARK_T
 
     with col2:
         st.metric(
-            "Total Properties",
-            f"{total_properties:,}",
-            help="Number of properties in current view"
+            "Total Properties", f"{total_properties:,}", help="Number of properties in current view"
         )
 
     with col3:
-        st.metric(
-            "Median Price",
-            f"${median_price:,.0f}",
-            help="Median transaction price"
-        )
+        st.metric("Median Price", f"${median_price:,.0f}", help="Median transaction price")
 
 
-def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df: pd.DataFrame = None):
+def display_enhanced_metrics_dashboard(
+    filtered_df: pd.DataFrame, aggregated_df: pd.DataFrame = None
+):
     """
     Display a comprehensive tiered metrics dashboard above the map.
 
@@ -953,7 +992,7 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
 
     # Find price column
     price_col = None
-    for col in ['resale_price', 'Transacted Price ($)', 'price']:
+    for col in ["resale_price", "Transacted Price ($)", "price"]:
         if col in filtered_df.columns:
             price_col = col
             break
@@ -967,9 +1006,9 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
         median_price = avg_price = min_price = max_price = 0
 
     # Calculate PSF
-    if 'price_psf' in filtered_df.columns:
-        avg_psf = filtered_df['price_psf'].mean()
-        median_psf = filtered_df['price_psf'].median()
+    if "price_psf" in filtered_df.columns:
+        avg_psf = filtered_df["price_psf"].mean()
+        median_psf = filtered_df["price_psf"].median()
     else:
         avg_psf = median_psf = 0
 
@@ -980,7 +1019,7 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
         st.metric(
             "🏠 Total Properties",
             f"{total_properties:,}",
-            help="Number of transactions in current view"
+            help="Number of transactions in current view",
         )
 
     with col2:
@@ -988,15 +1027,17 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
             "💰 Median Price",
             f"${median_price:,.0f}",
             delta=f"${avg_price - median_price:,.0f} vs avg" if avg_price != median_price else None,
-            help="Median transaction price"
+            help="Median transaction price",
         )
 
     with col3:
         st.metric(
             "📐 Avg PSF",
             f"${avg_psf:,.0f}" if avg_psf > 0 else "N/A",
-            delta=f"${median_psf - avg_psf:,.0f} vs median" if avg_psf > 0 and median_psf != avg_psf else None,
-            help="Average price per square foot"
+            delta=f"${median_psf - avg_psf:,.0f} vs median"
+            if avg_psf > 0 and median_psf != avg_psf
+            else None,
+            help="Average price per square foot",
         )
 
     with col4:
@@ -1005,7 +1046,7 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
         st.metric(
             "💵 Total Market Value",
             f"${total_value / 1e9:.2f}B" if total_value >= 1e9 else f"${total_value / 1e6:.1f}M",
-            help="Total value of all transactions"
+            help="Total value of all transactions",
         )
 
     st.markdown("---")
@@ -1018,25 +1059,27 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
 
     with col1:
         # Planning areas covered
-        if 'planning_area' in filtered_df.columns:
-            num_pas = filtered_df['planning_area'].nunique()
+        if "planning_area" in filtered_df.columns:
+            num_pas = filtered_df["planning_area"].nunique()
             st.metric("Planning Areas", f"{num_pas}", help="Number of URA planning areas")
 
     with col2:
         # MRT accessibility
-        if 'dist_to_nearest_mrt' in filtered_df.columns:
-            near_mrt = (filtered_df['dist_to_nearest_mrt'] <= 500).sum()
+        if "dist_to_nearest_mrt" in filtered_df.columns:
+            near_mrt = (filtered_df["dist_to_nearest_mrt"] <= 500).sum()
             pct_near = near_mrt / len(filtered_df) * 100
-            st.metric("Near MRT (≤500m)", f"{pct_near:.1f}%", help=f"{near_mrt:,} properties within 500m")
+            st.metric(
+                "Near MRT (≤500m)", f"{pct_near:.1f}%", help=f"{near_mrt:,} properties within 500m"
+            )
         else:
             st.metric("MRT Data", "N/A", "Not available")
 
     with col3:
         # Rental yield
-        if 'rental_yield_pct' in filtered_df.columns:
-            rental_data = filtered_df[filtered_df['rental_yield_pct'].notna()]
+        if "rental_yield_pct" in filtered_df.columns:
+            rental_data = filtered_df[filtered_df["rental_yield_pct"].notna()]
             if not rental_data.empty:
-                avg_yield = rental_data['rental_yield_pct'].mean()
+                avg_yield = rental_data["rental_yield_pct"].mean()
                 st.metric("Avg Rental Yield", f"{avg_yield:.2f}%", help="HDB properties only")
             else:
                 st.metric("Rental Yield", "N/A", "No data")
@@ -1045,12 +1088,14 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
 
     with col4:
         # Amenity coverage
-        amenity_cols = [col for col in filtered_df.columns if '_within_500m' in col]
+        amenity_cols = [col for col in filtered_df.columns if "_within_500m" in col]
         if amenity_cols:
             sample_col = amenity_cols[0]
             with_amenities = (filtered_df[sample_col] >= 1).sum()
             pct = with_amenities / len(filtered_df) * 100
-            st.metric("Near Amenities", f"{pct:.1f}%", help="Properties with ≥1 amenity within 500m")
+            st.metric(
+                "Near Amenities", f"{pct:.1f}%", help="Properties with ≥1 amenity within 500m"
+            )
         else:
             st.metric("Amenity Data", "N/A", "Not available")
 
@@ -1079,34 +1124,36 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
         geo_col1, geo_col2, geo_col3 = st.columns(3)
 
         with geo_col1:
-            if 'town' in filtered_df.columns:
-                num_towns = filtered_df['town'].nunique()
+            if "town" in filtered_df.columns:
+                num_towns = filtered_df["town"].nunique()
                 st.metric("Towns Covered", f"{num_towns}")
 
         with geo_col2:
-            if 'planning_area' in filtered_df.columns:
-                top_pa = filtered_df['planning_area'].value_counts().index[0]
+            if "planning_area" in filtered_df.columns:
+                top_pa = filtered_df["planning_area"].value_counts().index[0]
                 st.metric("Most Active Area", top_pa)
 
         with geo_col3:
-            if 'town' in filtered_df.columns:
-                top_town = filtered_df['town'].value_counts().index[0]
+            if "town" in filtered_df.columns:
+                top_town = filtered_df["town"].value_counts().index[0]
                 st.metric("Most Active Town", top_town)
 
         # Phase 2 metrics
-        if 'period_5yr' in filtered_df.columns or 'market_tier_period' in filtered_df.columns:
+        if "period_5yr" in filtered_df.columns or "market_tier_period" in filtered_df.columns:
             st.markdown("##### ⏳ Phase 2: Time Period Analysis")
 
             phase2_col1, phase2_col2 = st.columns(2)
 
             with phase2_col1:
-                if 'period_5yr' in filtered_df.columns:
-                    current_period = filtered_df['period_5yr'].iloc[0] if len(filtered_df) > 0 else "N/A"
+                if "period_5yr" in filtered_df.columns:
+                    current_period = (
+                        filtered_df["period_5yr"].iloc[0] if len(filtered_df) > 0 else "N/A"
+                    )
                     st.metric("Current Period", current_period)
 
             with phase2_col2:
-                if 'market_tier_period' in filtered_df.columns:
-                    tier_dist = filtered_df['market_tier_period'].value_counts()
+                if "market_tier_period" in filtered_df.columns:
+                    tier_dist = filtered_df["market_tier_period"].value_counts()
                     if not tier_dist.empty:
                         top_tier = tier_dist.index[0]
                         st.metric("Dominant Tier", top_tier)
@@ -1121,12 +1168,11 @@ def display_enhanced_metrics_dashboard(filtered_df: pd.DataFrame, aggregated_df:
                 st.metric("Aggregated Cells", f"{len(aggregated_df):,}")
 
             with agg_col2:
-                if 'count' in aggregated_df.columns:
-                    avg_cell_size = aggregated_df['count'].mean()
+                if "count" in aggregated_df.columns:
+                    avg_cell_size = aggregated_df["count"].mean()
                     st.metric("Avg Properties/Cell", f"{avg_cell_size:.1f}")
 
     st.markdown("---")
-
 
 
 def get_map_bounds(df: pd.DataFrame, padding: float = 0.1) -> dict:
@@ -1140,16 +1186,13 @@ def get_map_bounds(df: pd.DataFrame, padding: float = 0.1) -> dict:
     Returns:
         Dictionary with center and zoom for map
     """
-    if df.empty or 'lat' not in df.columns or 'lon' not in df.columns:
-        return {'center': SINGAPORE_CENTER, 'zoom': SINGAPORE_ZOOM}
+    if df.empty or "lat" not in df.columns or "lon" not in df.columns:
+        return {"center": SINGAPORE_CENTER, "zoom": SINGAPORE_ZOOM}
 
-    lat_min, lat_max = df['lat'].min(), df['lat'].max()
-    lon_min, lon_max = df['lon'].min(), df['lon'].max()
+    lat_min, lat_max = df["lat"].min(), df["lat"].max()
+    lon_min, lon_max = df["lon"].min(), df["lon"].max()
 
-    center = {
-        'lat': (lat_min + lat_max) / 2,
-        'lon': (lon_min + lon_max) / 2
-    }
+    center = {"lat": (lat_min + lat_max) / 2, "lon": (lon_min + lon_max) / 2}
 
     # Calculate zoom based on bounds (simplified)
     lat_range = lat_max - lat_min
@@ -1168,4 +1211,4 @@ def get_map_bounds(df: pd.DataFrame, padding: float = 0.1) -> dict:
     else:
         zoom = 9
 
-    return {'center': center, 'zoom': zoom}
+    return {"center": center, "zoom": zoom}
