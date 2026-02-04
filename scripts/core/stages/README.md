@@ -253,7 +253,7 @@ uv run python -m scripts.core.stages.L5_metrics --skip-affordability
 - `data/pipeline/L3/L3_unified.parquet` - Unified dataset (via `load_unified_data()`)
 - `data/manual/geojsons/onemap_planning_area_polygon.geojson` - Planning area boundaries
 
-**Outputs:** `backend/public/data/`
+**Outputs:** `app/public/data/`
 - `dashboard_overview.json` - Overview statistics (whole, pre-covid, recent)
 - `dashboard_trends.json` - Monthly price and volume trends
 - `map_metrics.json` - Metrics by planning area (whole, pre-covid, recent)
@@ -269,7 +269,7 @@ uv run python -m scripts.core.stages.L5_metrics --skip-affordability
 - `generate_segments_data()` - Market segments scatter data
 - `generate_leaderboard_data()` - Town performance rankings
 
-**Note:** Output location is different from other stages (uses `backend/public/data/` for web serving)
+**Note:** Output location is different from other stages (uses `app/public/data/` for web serving)
 
 ---
 

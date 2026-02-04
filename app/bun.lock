@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "backend",
+      "name": "app",
       "dependencies": {
         "@astrojs/mdx": "^4.3.13",
         "@astrojs/react": "^4.4.2",

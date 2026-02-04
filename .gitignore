@@ -74,13 +74,13 @@ analysis_*.txt
 marimo/
 
 # Backend (Astro/Bun static site)
-backend/node_modules/
-backend/dist/
-backend/.astro/
+app/node_modules/
+app/dist/
+app/.astro/
 
 # Generated data files (EXCEPTION: we track dashboard JSON files)
-# backend/public/data/*.json  # COMMENTED OUT - we track these
-!backend/public/data/.gitkeep
+# app/public/data/*.json  # COMMENTED OUT - we track these
+!app/public/data/.gitkeep
 
 # Export data (temporary)
 data/exports/

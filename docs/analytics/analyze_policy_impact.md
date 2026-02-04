@@ -685,7 +685,7 @@ Where:
 
 ### Related Documents
 - `docs/analytics/causal-inference-overview.md` - DiD methodology background
-- `backend/src/content/analytics/findings.md` - General market findings
+- `app/src/content/analytics/findings.md` - General market findings
 - `docs/analytics/analyze_spatial_hotspots.md` - Spatial analysis methods
 
 ---

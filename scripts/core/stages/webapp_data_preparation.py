@@ -64,8 +64,8 @@ def export_dashboard_data():
     """
     logger.info("Starting web dashboard data export...")
 
-    # Ensure backend data directory exists
-    output_dir = Path("backend/public/data")
+    # Ensure app data directory exists
+    output_dir = Path("app/public/data")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load data

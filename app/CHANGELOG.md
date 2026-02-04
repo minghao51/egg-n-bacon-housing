@@ -144,7 +144,7 @@ Astro/Bun static documentation site for Singapore housing market analytics.
 #### Adding Images
 ```python
 # Python: Save chart
-plt.savefig('backend/public/images/analytics/chart.png', dpi=150)
+plt.savefig('app/public/images/analytics/chart.png', dpi=150)
 ```
 
 ```markdown
@@ -155,7 +155,7 @@ plt.savefig('backend/public/images/analytics/chart.png', dpi=150)
 #### Adding Plotly Charts
 ```python
 # Python: Export Plotly
-fig.write_html('backend/public/plots/price-trend.html')
+fig.write_html('app/public/plots/price-trend.html')
 ```
 
 Auto-detected - just place HTML file in `public/plots/`

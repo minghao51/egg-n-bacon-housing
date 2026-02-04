@@ -81,7 +81,7 @@ results = run_full_l1_pipeline(use_parallel_geocoding=True)
 ### Documentation Site
 
 ```bash
-cd backend
+cd app
 bun install
 bun run dev
 # Visit http://localhost:4321
@@ -96,7 +96,7 @@ egg-n-bacon-housing/
 │   ├── core/         # Config, geocoding, cache, pipeline stages
 │   └── analytics/    # Analysis scripts
 ├── notebooks/        # Exploratory analysis (Jupytext paired)
-├── backend/          # Astro documentation site
+├── app/          # Astro documentation site
 ├── tests/            # Test suite
 ├── docs/             # Architecture & guides
 └── data/             # Pipeline outputs, cache, logs

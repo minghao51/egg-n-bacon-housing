@@ -65,7 +65,7 @@ bun run preview
 ## 📂 Project Structure
 
 ```
-backend/
+app/
 ├── src/
 │   ├── components/
 │   │   ├── charts/              # Chart components
