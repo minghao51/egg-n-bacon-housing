@@ -15,7 +15,7 @@ const analyticsDocs = allDocs
 
 <aside class="w-64 bg-card border-r border-border fixed h-full overflow-y-auto hidden lg:block z-50">
   <div class="p-6">
-    <a href="/" class="block hover:opacity-80 transition-opacity">
+    <a href={import.meta.env.BASE_URL} class="block hover:opacity-80 transition-opacity">
       <h2 class="text-xl font-bold text-foreground mb-2">Egg n Bacon Housing</h2>
     </a>
     <p class="text-sm text-muted-foreground">Analytics Dashboard</p>
@@ -32,31 +32,31 @@ const analyticsDocs = allDocs
           Dashboard
         </div>
         <a
-          href="/dashboard"
+          href={`${import.meta.env.BASE_URL}dashboard`}
           class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           Market Overview
         </a>
         <a
-          href="/dashboard/map"
+          href={`${import.meta.env.BASE_URL}dashboard/map`}
           class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           Price Map
         </a>
         <a
-          href="/dashboard/trends"
+          href={`${import.meta.env.BASE_URL}dashboard/trends`}
           class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           Trends Explorer
         </a>
         <a
-          href="/dashboard/segments"
+          href={`${import.meta.env.BASE_URL}dashboard/segments`}
           class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           Market Segments
         </a>
         <a
-          href="/dashboard/leaderboard"
+          href={`${import.meta.env.BASE_URL}dashboard/leaderboard`}
           class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           Town Leaderboard
@@ -71,7 +71,7 @@ const analyticsDocs = allDocs
       <ul class="space-y-1">
         <li>
           <a
-            href="/analytics/"
+            href={`${import.meta.env.BASE_URL}analytics/`}
             class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             Analytics Index
@@ -81,7 +81,7 @@ const analyticsDocs = allDocs
           analyticsDocs.map((doc) => (
             <li>
               <a
-                href={`/analytics/${doc.slug}`}
+                href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
                 class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 {doc.title}
