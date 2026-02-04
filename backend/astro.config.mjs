@@ -17,8 +17,8 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
   ],
-  site: 'http://localhost:4321',
-  base: '/',
+  site: 'https://minghao51.github.io/egg-n-bacon-housing',
+  base: '/egg-n-bacon-housing/',
   trailingSlash: 'ignore',
   build: {
     format: 'file',
