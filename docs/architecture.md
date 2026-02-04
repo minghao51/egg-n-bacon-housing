@@ -6,7 +6,7 @@
 
 ## Overview
 
-Singapore housing data pipeline and ML analysis platform. Collects data from government APIs, processes it, and provides analysis tools via Streamlit apps and LangChain agents.
+Singapore housing data pipeline and ML analysis platform. Collects data from government APIs, processes it, and provides analysis tools via LangChain agents.
 
 ### Tech Stack
 
@@ -14,7 +14,6 @@ Singapore housing data pipeline and ML analysis platform. Collects data from gov
 - **Package Manager**: uv
 - **Data Storage**: Local parquet files with metadata
 - **Notebooks**: Jupyter + Jupytext (paired .py files)
-- **Apps**: Streamlit
 - **ML/Agents**: LangChain + LangGraph + Google Gemini
 
 ---
@@ -34,11 +33,9 @@ egg-n-bacon-housing/
 ├── core/                   # Source code
 │   ├── config.py          # Centralized configuration
 │   ├── data_helpers.py    # Parquet management
-│   ├── data_loader.py     # Streamlit loaders with caching
 │   ├── metrics.py         # Market metrics calculations
 │   ├── pipeline/          # Pipeline modules (WIP)
 │   └── agent/             # LangChain agents
-├── apps/                  # Streamlit applications
 ├── scripts/               # Standalone scripts
 └── tests/                 # Test suite
 ```
@@ -76,7 +73,7 @@ Creates features for ML/analysis:
 
 ### L3: Precomputed Summary Tables
 
-Optimized tables for Streamlit apps:
+Optimized summary tables:
 
 | Table | Description |
 |-------|-------------|

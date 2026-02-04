@@ -124,15 +124,6 @@ uv run ruff format .    # Format code
 
 ---
 
-## Running Apps
-
-```bash
-uv run streamlit run apps/single_agent.py   # Agent chat
-uv run streamlit run apps/spiral.py         # Dashboard
-```
-
----
-
 ## Troubleshooting
 
 | Issue | Solution |

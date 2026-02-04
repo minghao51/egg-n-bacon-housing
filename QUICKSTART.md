@@ -70,9 +70,6 @@ uv run python run_real_pipeline.py
 # Start Jupyter
 uv run jupyter notebook
 
-# Run Streamlit app
-uv run streamlit run apps/single_agent.py
-
 # Check linting
 uv run ruff check .
 ```

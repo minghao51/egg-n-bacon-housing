@@ -115,10 +115,6 @@ uv run python scripts/utils/refresh_onemap_token.py
 
 ```
 egg-n-bacon-housing/
-├── apps/                      # Streamlit applications
-│   ├── 1_market_overview.py
-│   ├── 2_price_map.py
-│   └── 3_trends_analytics.py
 ├── docs/                      # Documentation
 │   ├── guides/               # This directory
 │   ├── analytics/            # Analysis documentation
