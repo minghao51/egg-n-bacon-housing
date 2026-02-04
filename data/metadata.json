@@ -3,9 +3,9 @@
     "test_dataset": {
       "path": "test_dataset.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/test_dataset.parquet",
-      "version": "2026-02-03",
+      "version": "2026-02-04",
       "rows": 100,
-      "created": "2026-02-03T21:01:31.564863",
+      "created": "2026-02-04T18:53:40.971736",
       "source": "test",
       "mode": "overwrite",
       "compression": "gzip"
@@ -13,9 +13,9 @@
     "L1_test_dataset": {
       "path": "L1/test_dataset.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/test_dataset.parquet",
-      "version": "2026-02-03",
+      "version": "2026-02-04",
       "rows": 100,
-      "created": "2026-02-03T21:01:31.559060",
+      "created": "2026-02-04T18:53:40.966084",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -23,9 +23,9 @@
     "roundtrip_test": {
       "path": "roundtrip_test.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/roundtrip_test.parquet",
-      "version": "2026-02-03",
+      "version": "2026-02-04",
       "rows": 100,
-      "created": "2026-02-03T21:01:31.598796",
+      "created": "2026-02-04T18:53:41.004912",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -35,7 +35,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/versioned_test.parquet",
       "version": "v2.0",
       "rows": 100,
-      "created": "2026-02-03T21:01:31.604586",
+      "created": "2026-02-04T18:53:41.011233",
       "source": "test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -101,5 +101,5 @@
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-03T21:01:49.312573"
+  "last_updated": "2026-02-04T18:53:41.011235"
 }
