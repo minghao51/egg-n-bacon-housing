@@ -1,16 +1,24 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/Sidebar.astro';
-import Layout from '@/layouts/Layout.astro';
-import Sidebar from '@/components/Sidebar.astro';
 import { getCollection } from 'astro:content';
 
 const allDocs = await getCollection('analytics');
-const docs = allDocs.map(doc => ({
-  slug: doc.slug,
-  title: doc.data.title || doc.slug,
-  ...doc.data
-}));
+const docs = allDocs
+  .filter(doc => doc.data.status === 'published')
+  .map(doc => ({
+    slug: doc.slug,
+    title: doc.data.title || doc.slug,
+    description: doc.data.description || '',
+    category: doc.data.category,
+  }));
+
+// Group by category
+const coreDocs = docs.filter(d => d.category === 'core');
+const marketDocs = docs.filter(d => d.category === 'market');
+const advancedDocs = docs.filter(d => d.category === 'advanced');
+const reportsDocs = docs.filter(d => d.category === 'reports');
+const referenceDocs = docs.filter(d => d.category === 'reference');
 ---
 
 <Layout title="Analytics - Singapore Housing Market">
@@ -45,205 +53,218 @@ const docs = allDocs.map(doc => ({
         </div>
         <div class="bg-card border border-border rounded-lg p-6">
           <div class="text-sm font-medium text-muted-foreground mb-1">
-            Metrics
+            Categories
           </div>
-          <div class="text-3xl font-bold text-foreground">6 Core</div>
+          <div class="text-3xl font-bold text-foreground">5</div>
         </div>
       </div>
 
       <!-- Document Categories -->
       <div class="space-y-8">
         <!-- Core Metrics -->
-        <section>
-          <h2 class="text-2xl font-semibold text-foreground mb-4">
-            Core Metrics
-          </h2>
-          <div class="grid grid-cols-1 gap-3">
-            {
-              docs
-                .filter((doc) =>
-                  ['metrics-design', 'findings'].includes(doc.slug)
-                )
-                .map((doc) => (
-                  <a
-                    href={`/analytics/${doc.slug}`}
-                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
-                  >
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="font-semibold text-foreground">
-                          {doc.title}
-                        </h3>
-                        <p class="text-sm text-muted-foreground mt-1">
-                          {doc.slug === 'metrics-design'
-                            ? 'Stratified median methodology, 6 core metrics implementation'
-                            : 'Key findings, data quality, recommendations'}
-                        </p>
-                      </div>
-                      <svg
-                        class="w-5 h-5 text-muted-foreground"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+        {coreDocs.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-semibold text-foreground mb-4">
+              Core Metrics
+            </h2>
+            <div class="grid grid-cols-1 gap-3">
+              {coreDocs.map((doc) => (
+                <a
+                  href={`/analytics/${doc.slug}`}
+                  class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="font-semibold text-foreground">
+                        {doc.title}
+                      </h3>
+                      <p class="text-sm text-muted-foreground mt-1">
+                        {doc.description}
+                      </p>
                     </div>
-                  </a>
-                ))
-            }
-          </div>
-        </section>
+                    <svg
+                      class="w-5 h-5 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
 
         <!-- Market Analysis -->
-        <section>
-          <h2 class="text-2xl font-semibold text-foreground mb-4">
-            Market Analysis
-          </h2>
-          <div class="grid grid-cols-1 gap-3">
-            {
-              docs
-                .filter((doc) =>
-                  ['rental-yield', 'mrt-impact-analysis'].includes(doc.slug)
-                )
-                .map((doc) => (
-                  <a
-                    href={`/analytics/${doc.slug}`}
-                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
-                  >
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="font-semibold text-foreground">
-                          {doc.title}
-                        </h3>
-                        <p class="text-sm text-muted-foreground mt-1">
-                          {doc.slug === 'rental-yield'
-                            ? 'HDB and Condo rental yield analysis, ROI integration'
-                            : 'MRT infrastructure impact on property prices'}
-                        </p>
-                      </div>
-                      <svg
-                        class="w-5 h-5 text-muted-foreground"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+        {marketDocs.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-semibold text-foreground mb-4">
+              Market Analysis
+            </h2>
+            <div class="grid grid-cols-1 gap-3">
+              {marketDocs.map((doc) => (
+                <a
+                  href={`/analytics/${doc.slug}`}
+                  class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="font-semibold text-foreground">
+                        {doc.title}
+                      </h3>
+                      <p class="text-sm text-muted-foreground mt-1">
+                        {doc.description}
+                      </p>
                     </div>
-                  </a>
-                ))
-            }
-          </div>
-        </section>
+                    <svg
+                      class="w-5 h-5 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
 
         <!-- Advanced Analytics -->
-        <section>
-          <h2 class="text-2xl font-semibold text-foreground mb-4">
-            Advanced Analytics
-          </h2>
-          <div class="grid grid-cols-1 gap-3">
-            {
-              docs
-                .filter((doc) =>
-                  [
-                    'causal-inference-overview',
-                    'spatial-analytics-overview',
-                  ].includes(doc.slug)
-                )
-                .map((doc) => (
-                  <a
-                    href={`/analytics/${doc.slug}`}
-                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
-                  >
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="font-semibold text-foreground">
-                          {doc.title}
-                        </h3>
-                        <p class="text-sm text-muted-foreground mt-1">
-                          {doc.slug === 'causal-inference-overview'
-                            ? 'Difference-in-Differences, Propensity Score Matching, Survival Analysis'
-                            : 'Spatial autocorrelation, hotspots, H3 clustering'}
-                        </p>
-                      </div>
-                      <svg
-                        class="w-5 h-5 text-muted-foreground"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+        {advancedDocs.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-semibold text-foreground mb-4">
+              Advanced Analytics
+            </h2>
+            <div class="grid grid-cols-1 gap-3">
+              {advancedDocs.map((doc) => (
+                <a
+                  href={`/analytics/${doc.slug}`}
+                  class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="font-semibold text-foreground">
+                        {doc.title}
+                      </h3>
+                      <p class="text-sm text-muted-foreground mt-1">
+                        {doc.description}
+                      </p>
                     </div>
-                  </a>
-                ))
-            }
-          </div>
-        </section>
+                    <svg
+                      class="w-5 h-5 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
 
-        <!-- Analysis Scripts -->
-        <section>
-          <h2 class="text-2xl font-semibold text-foreground mb-4">
-            Analysis Reports
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {
-              docs
-                .filter((doc) =>
-                  [
-                    'analyze_policy_impact',
-                    'analyze_lease_decay',
-                    'analyze_h3_clusters',
-                    'analyze_spatial_hotspots',
-                    'analyze_spatial_autocorrelation',
-                  ].includes(doc.slug)
-                )
-                .map((doc) => (
-                  <a
-                    href={`/analytics/${doc.slug}`}
-                    class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
-                  >
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="font-semibold text-foreground text-sm">
-                          {doc.title}
-                        </h3>
-                      </div>
-                      <svg
-                        class="w-4 h-4 text-muted-foreground flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+        <!-- Analysis Reports -->
+        {reportsDocs.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-semibold text-foreground mb-4">
+              Analysis Reports
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {reportsDocs.map((doc) => (
+                <a
+                  href={`/analytics/${doc.slug}`}
+                  class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="font-semibold text-foreground text-sm">
+                        {doc.title}
+                      </h3>
+                      <p class="text-xs text-muted-foreground mt-1">
+                        {doc.description}
+                      </p>
                     </div>
-                  </a>
-                ))
-            }
-          </div>
-        </section>
+                    <svg
+                      class="w-4 h-4 text-muted-foreground flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <!-- Reference -->
+        {referenceDocs.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-semibold text-foreground mb-4">
+              Reference
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {referenceDocs.map((doc) => (
+                <a
+                  href={`/analytics/${doc.slug}`}
+                  class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="font-semibold text-foreground text-sm">
+                        {doc.title}
+                      </h3>
+                      <p class="text-xs text-muted-foreground mt-1">
+                        {doc.description}
+                      </p>
+                    </div>
+                    <svg
+                      class="w-4 h-4 text-muted-foreground flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   </main>

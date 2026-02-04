@@ -1,19 +1,16 @@
 ---
 import DarkModeToggle from './DarkModeToggle';
+import { getCollection } from 'astro:content';
 
-const analyticsDocs = [
-  { title: 'Findings', slug: 'findings' },
-  { title: 'Metrics Design', slug: 'metrics-design' },
-  { title: 'Causal Inference', slug: 'causal-inference-overview' },
-  { title: 'Rental Yield', slug: 'rental-yield' },
-  { title: 'Spatial Analytics', slug: 'spatial-analytics-overview' },
-  { title: 'MRT Impact', slug: 'mrt-impact-analysis' },
-  { title: 'H3 Clusters', slug: 'analyze_h3_clusters' },
-  { title: 'Lease Decay', slug: 'analyze_lease_decay' },
-  { title: 'Policy Impact', slug: 'analyze_policy_impact' },
-  { title: 'Spatial Hotspots', slug: 'analyze_spatial_hotspots' },
-  { title: 'Spatial Autocorrelation', slug: 'analyze_spatial_autocorrelation' },
-];
+// Get all analytics docs dynamically
+const allDocs = await getCollection('analytics');
+const analyticsDocs = allDocs
+  .filter(doc => doc.data.status === 'published')
+  .map(doc => ({
+    title: doc.data.title || doc.slug,
+    slug: doc.slug,
+  }))
+  .sort((a, b) => a.title.localeCompare(b.title));
 ---
 
 <aside class="w-64 bg-card border-r border-border fixed h-full overflow-y-auto hidden lg:block z-50">
