@@ -25,7 +25,7 @@ export default defineConfig({
   base: isProduction ? '/egg-n-bacon-housing/' : '/',
   trailingSlash: 'ignore',
   build: {
-    format: 'file',
+    format: 'directory',
   },
   vite: {
     resolve: {
