@@ -8,5 +8,3 @@ This package contains extracted pipeline logic from notebooks:
 """
 
 __version__ = "0.1.0"
-
-

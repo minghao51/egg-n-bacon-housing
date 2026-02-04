@@ -1,7 +1,7 @@
 """Helper functions for L0 data collection."""
 
 import logging
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import pandas as pd
 
@@ -16,7 +16,7 @@ def fetch_and_save_datagovsg_dataset(
     dataset_id: str,
     fetch_fn: Callable,
     use_cache: bool = True,
-) -> Optional[pd.DataFrame]:
+) -> pd.DataFrame | None:
     """
     Fetch dataset from data.gov.sg and save to parquet.
 
@@ -44,7 +44,7 @@ def fetch_and_save_datagovsg_dataset(
 
 def load_existing_or_fetch(
     dataset_name: str, fetch_fn: Callable, use_cache: bool = True
-) -> Optional[pd.DataFrame]:
+) -> pd.DataFrame | None:
     """
     Load existing parquet file or fetch from API.
 

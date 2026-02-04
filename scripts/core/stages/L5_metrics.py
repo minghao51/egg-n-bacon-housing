@@ -8,18 +8,14 @@ This module provides functions for:
 - Creating affordability metrics
 - Identifying investment hotspots
 - Running complete L5 metrics pipeline
-"""
+"""  # noqa: N999
 
 import logging
-from pathlib import Path
-from typing import Dict, Optional, Tuple
 
-import numpy as np
 import pandas as pd
 
-from scripts.core.config import Config
-from scripts.core.data_helpers import load_parquet, save_parquet
 from scripts.core import metrics as metrics_module
+from scripts.core.data_helpers import load_parquet, save_parquet
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +45,7 @@ def load_unified_data() -> pd.DataFrame:
 
 
 def calculate_price_metrics_by_area(
-    df: pd.DataFrame,
-    group_by: list = ["planning_area", "month", "property_type"]
+    df: pd.DataFrame, group_by: list = ["planning_area", "month", "property_type"]
 ) -> pd.DataFrame:
     """Calculate price metrics at planning area level.
 
@@ -97,8 +92,7 @@ def calculate_price_metrics_by_area(
 
     # Flatten column names
     price_metrics.columns = [
-        "_".join(col).strip("_") if col[1] else col[0]
-        for col in price_metrics.columns.values
+        "_".join(col).strip("_") if col[1] else col[0] for col in price_metrics.columns.values
     ]
 
     logger.info(f"  Created price metrics with {len(price_metrics):,} records")
@@ -107,8 +101,7 @@ def calculate_price_metrics_by_area(
 
 
 def calculate_volume_metrics_by_area(
-    df: pd.DataFrame,
-    group_by: list = ["planning_area", "month"]
+    df: pd.DataFrame, group_by: list = ["planning_area", "month"]
 ) -> pd.DataFrame:
     """Calculate transaction volume metrics by planning area.
 
@@ -141,12 +134,12 @@ def calculate_volume_metrics_by_area(
 
         # Calculate rolling averages (3-month, 12-month)
         if "planning_area" in available_group_cols:
-            volume["volume_3m_avg"] = volume.groupby("planning_area")["transaction_count"].transform(
-                lambda x: x.rolling(3, min_periods=1).mean()
-            )
-            volume["volume_12m_avg"] = volume.groupby("planning_area")["transaction_count"].transform(
-                lambda x: x.rolling(12, min_periods=1).mean()
-            )
+            volume["volume_3m_avg"] = volume.groupby("planning_area")[
+                "transaction_count"
+            ].transform(lambda x: x.rolling(3, min_periods=1).mean())
+            volume["volume_12m_avg"] = volume.groupby("planning_area")[
+                "transaction_count"
+            ].transform(lambda x: x.rolling(12, min_periods=1).mean())
 
     logger.info(f"  Created volume metrics with {len(volume):,} records")
 
@@ -157,7 +150,7 @@ def calculate_growth_metrics_by_area(
     df: pd.DataFrame,
     price_col: str = None,
     group_col: str = "planning_area",
-    date_col: str = "month"
+    date_col: str = "month",
 ) -> pd.DataFrame:
     """Calculate month-over-month and year-over-year growth metrics.
 
@@ -224,8 +217,8 @@ def calculate_growth_metrics_by_area(
             "Moderate Deceleration",
             "Stable",
             "Moderate Acceleration",
-            "Strong Acceleration"
-        ]
+            "Strong Acceleration",
+        ],
     )
 
     logger.info(f"  Created growth metrics with {len(monthly_prices):,} records")
@@ -234,8 +227,7 @@ def calculate_growth_metrics_by_area(
 
 
 def calculate_rental_yield_by_area(
-    df: pd.DataFrame,
-    group_by: list = ["planning_area"]
+    df: pd.DataFrame, group_by: list = ["planning_area"]
 ) -> pd.DataFrame:
     """Calculate rental yield statistics by planning area.
 
@@ -263,14 +255,20 @@ def calculate_rental_yield_by_area(
     available_group_cols = [c for c in group_by if c in yield_df.columns]
 
     # Calculate yield statistics
-    yield_stats = yield_df.groupby(available_group_cols)["rental_yield_pct"].agg([
-        ("count", "count"),
-        ("mean", "mean"),
-        ("median", "median"),
-        ("std", "std"),
-        ("min", "min"),
-        ("max", "max")
-    ]).reset_index()
+    yield_stats = (
+        yield_df.groupby(available_group_cols)["rental_yield_pct"]
+        .agg(
+            [
+                ("count", "count"),
+                ("mean", "mean"),
+                ("median", "median"),
+                ("std", "std"),
+                ("min", "min"),
+                ("max", "max"),
+            ]
+        )
+        .reset_index()
+    )
 
     # Filter to areas with sufficient data (>= 10 records)
     yield_stats = yield_stats[yield_stats["count"] >= 10]
@@ -281,8 +279,7 @@ def calculate_rental_yield_by_area(
 
 
 def calculate_affordability_by_area(
-    df: pd.DataFrame,
-    income_df: Optional[pd.DataFrame] = None
+    df: pd.DataFrame, income_df: pd.DataFrame | None = None
 ) -> pd.DataFrame:
     """Calculate affordability metrics by planning area.
 
@@ -321,13 +318,17 @@ def calculate_affordability_by_area(
         area_prices = area_prices.merge(
             income_df[["planning_area", "estimated_median_annual_income"]],
             on="planning_area",
-            how="left"
+            how="left",
         )
         # Fill missing with national median
-        area_prices["estimated_annual_income"] = area_prices["estimated_annual_income"].fillna(90000)
+        area_prices["estimated_annual_income"] = area_prices["estimated_annual_income"].fillna(
+            90000
+        )
 
     # Calculate affordability metrics
-    area_prices["affordability_ratio"] = area_prices["median_price"] / area_prices["estimated_annual_income"]
+    area_prices["affordability_ratio"] = (
+        area_prices["median_price"] / area_prices["estimated_annual_income"]
+    )
 
     # Classify affordability
     def classify_affordability(ratio):
@@ -340,7 +341,9 @@ def calculate_affordability_by_area(
         else:
             return "Severely Unaffordable"
 
-    area_prices["affordability_class"] = area_prices["affordability_ratio"].apply(classify_affordability)
+    area_prices["affordability_class"] = area_prices["affordability_ratio"].apply(
+        classify_affordability
+    )
 
     # Calculate mortgage payment
     area_prices["monthly_mortgage"] = area_prices["median_price"].apply(
@@ -357,9 +360,7 @@ def calculate_affordability_by_area(
 
 
 def identify_appreciation_hotspots(
-    growth_df: pd.DataFrame,
-    consistency_threshold: float = 0.7,
-    min_years: int = 3
+    growth_df: pd.DataFrame, consistency_threshold: float = 0.7, min_years: int = 3
 ) -> pd.DataFrame:
     """Identify planning areas with consistently high appreciation.
 
@@ -385,9 +386,11 @@ def identify_appreciation_hotspots(
         recent_data = growth_df.copy()
 
     # Calculate statistics by planning area
-    hotspots = recent_data.groupby("planning_area").agg({
-        "yoy_change_pct": ["mean", "median", "std", "count"]
-    }).reset_index()
+    hotspots = (
+        recent_data.groupby("planning_area")
+        .agg({"yoy_change_pct": ["mean", "median", "std", "count"]})
+        .reset_index()
+    )
 
     hotspots.columns = ["planning_area", "mean_yoy", "median_yoy", "std_yoy", "years"]
 
@@ -426,9 +429,8 @@ def identify_appreciation_hotspots(
 
 
 def run_metrics_pipeline(
-    calculate_affordability: bool = True,
-    min_records_threshold: int = 10
-) -> Dict:
+    calculate_affordability: bool = True, min_records_threshold: int = 10
+) -> dict:
     """Run complete L5 metrics pipeline.
 
     Args:
@@ -514,7 +516,7 @@ def main():
     parser.add_argument(
         "--skip-affordability",
         action="store_true",
-        help="Skip affordability calculations (requires income data)"
+        help="Skip affordability calculations (requires income data)",
     )
 
     args = parser.parse_args()

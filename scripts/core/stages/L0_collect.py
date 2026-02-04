@@ -2,20 +2,19 @@
 
 This module provides functions for collecting raw data from the data.gov.sg API,
 including private property transactions, rental indices, price indices, and HDB data.
-"""
+"""  # noqa: N999
 
 import logging
 import re
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 import requests
 
+from scripts.core.cache import cached_call
 from scripts.core.config import Config
 from scripts.core.data_helpers import save_parquet
 from scripts.core.data_loader import CSVLoader
-from scripts.core.cache import cached_call
 from scripts.core.stages.helpers import collect_helpers
 
 logger = logging.getLogger(__name__)
@@ -94,7 +93,7 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         return _fetch_from_api()
 
 
-def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFrame:
+def load_resale_flat_prices(csv_base_path: Path | None = None) -> pd.DataFrame:
     """
     Load HDB resale flat prices from CSV files.
 
@@ -133,7 +132,7 @@ def load_resale_flat_prices(csv_base_path: Optional[Path] = None) -> pd.DataFram
     return resale_flat_all
 
 
-def _convert_lease_to_months(lease_str) -> Optional[int]:
+def _convert_lease_to_months(lease_str) -> int | None:
     """Convert lease string like '61 years 04 months' to total months."""
     if pd.isna(lease_str):
         return None
@@ -152,7 +151,9 @@ def _convert_lease_to_months(lease_str) -> Optional[int]:
     return years * 12 + months
 
 
-def load_existing_or_fetch(dataset_name: str, fetch_fn, use_cache: bool = True) -> Optional[pd.DataFrame]:
+def load_existing_or_fetch(
+    dataset_name: str, fetch_fn, use_cache: bool = True
+) -> pd.DataFrame | None:
     """Load existing parquet file or fetch from API.
 
     Args:
@@ -176,8 +177,9 @@ def load_existing_or_fetch(dataset_name: str, fetch_fn, use_cache: bool = True) 
     return fetch_fn(use_cache)
 
 
-def fetch_private_property_transactions(use_cache: bool = True) -> Optional[pd.DataFrame]:
+def fetch_private_property_transactions(use_cache: bool = True) -> pd.DataFrame | None:
     """Fetch private residential property transactions in rest of central region."""
+
     def _fetch():
         return fetch_datagovsg_dataset(
             url="https://data.gov.sg/api/action/datastore_search?resource_id=",
@@ -185,15 +187,13 @@ def fetch_private_property_transactions(use_cache: bool = True) -> Optional[pd.D
         )
 
     return collect_helpers.fetch_and_save_datagovsg_dataset(
-        "raw_datagov_general_sale",
-        "d_5785799d63a9da091f4e0b456291eeb8",
-        _fetch,
-        use_cache
+        "raw_datagov_general_sale", "d_5785799d63a9da091f4e0b456291eeb8", _fetch, use_cache
     )
 
 
-def fetch_rental_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
+def fetch_rental_index(use_cache: bool = True) -> pd.DataFrame | None:
     """Fetch private residential property rental index."""
+
     def _fetch():
         return fetch_datagovsg_dataset(
             url="https://data.gov.sg/api/action/datastore_search?resource_id=",
@@ -201,15 +201,13 @@ def fetch_rental_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
         )
 
     return collect_helpers.fetch_and_save_datagovsg_dataset(
-        "raw_datagov_rental_index",
-        "d_8e4c50283fb7052a391dfb746a05c853",
-        _fetch,
-        use_cache
+        "raw_datagov_rental_index", "d_8e4c50283fb7052a391dfb746a05c853", _fetch, use_cache
     )
 
 
-def fetch_price_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
+def fetch_price_index(use_cache: bool = True) -> pd.DataFrame | None:
     """Fetch private residential property price index."""
+
     def _fetch():
         return fetch_datagovsg_dataset(
             url="https://data.gov.sg/api/action/datastore_search?resource_id=",
@@ -217,15 +215,13 @@ def fetch_price_index(use_cache: bool = True) -> Optional[pd.DataFrame]:
         )
 
     return collect_helpers.fetch_and_save_datagovsg_dataset(
-        "raw_datagov_price_index",
-        "d_97f8a2e995022d311c6c68cfda6dae1af",
-        _fetch,
-        use_cache
+        "raw_datagov_price_index", "d_97f8a2e995022d311c6c68cfda6dae1af", _fetch, use_cache
     )
 
 
-def fetch_median_property_tax(use_cache: bool = True) -> Optional[pd.DataFrame]:
+def fetch_median_property_tax(use_cache: bool = True) -> pd.DataFrame | None:
     """Fetch median annual value and property tax by property type."""
+
     def _fetch():
         return fetch_datagovsg_dataset(
             url="https://data.gov.sg/api/action/datastore_search?resource_id=",
@@ -236,12 +232,13 @@ def fetch_median_property_tax(use_cache: bool = True) -> Optional[pd.DataFrame]:
         "raw_datagov_median_price_via_property_type",
         "d_774a81df45dca33112e59207e6dae1af",
         _fetch,
-        use_cache
+        use_cache,
     )
 
 
-def fetch_private_transactions_whole(use_cache: bool = True) -> Optional[pd.DataFrame]:
+def fetch_private_transactions_whole(use_cache: bool = True) -> pd.DataFrame | None:
     """Fetch private residential property transactions in whole of Singapore."""
+
     def _fetch():
         return fetch_datagovsg_dataset(
             url="https://data.gov.sg/api/action/datastore_search?resource_id=",
@@ -252,12 +249,13 @@ def fetch_private_transactions_whole(use_cache: bool = True) -> Optional[pd.Data
         "raw_datagov_private_transactions_property_type",
         "d_7c69c943d5f0d89d6a9a773d2b51f337",
         _fetch,
-        use_cache
+        use_cache,
     )
 
 
-def fetch_school_directory(use_cache: bool = True) -> Optional[pd.DataFrame]:
+def fetch_school_directory(use_cache: bool = True) -> pd.DataFrame | None:
     """Fetch MOE school directory with locations and information."""
+
     def _fetch():
         return fetch_datagovsg_dataset(
             url="https://data.gov.sg/api/action/datastore_search?resource_id=",
@@ -265,10 +263,7 @@ def fetch_school_directory(use_cache: bool = True) -> Optional[pd.DataFrame]:
         )
 
     return collect_helpers.fetch_and_save_datagovsg_dataset(
-        "raw_datagov_school_directory",
-        "d_688b934f82c1059ed0a6993d2a829089",
-        _fetch,
-        use_cache
+        "raw_datagov_school_directory", "d_688b934f82c1059ed0a6993d2a829089", _fetch, use_cache
     )
 
 

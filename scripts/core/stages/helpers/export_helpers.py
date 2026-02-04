@@ -1,7 +1,6 @@
 """Helper functions for L3 data export and column cleaning."""
 
 import logging
-from typing import List
 
 import pandas as pd
 
@@ -37,9 +36,9 @@ def clean_numeric_column(
 
 def clean_price_columns(
     df: pd.DataFrame,
-    price_cols: List[str],
-    area_cols: List[str],
-    psf_cols: List[str],
+    price_cols: list[str],
+    area_cols: list[str],
+    psf_cols: list[str],
 ) -> pd.DataFrame:
     """
     Clean multiple price, area, and PSF columns in a DataFrame.

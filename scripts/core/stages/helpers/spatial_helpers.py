@@ -1,7 +1,6 @@
 """Helper functions for spatial calculations and distance metrics."""
 
 import logging
-from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -47,8 +46,7 @@ def count_amenities_within_radius(
     # Filter by actual haversine distance
     nearby_amenities = amenities_df.iloc[idxs]
     actual_distances = [
-        haversine_fn(lon, lat, a["lon"], a["lat"])
-        for _, a in nearby_amenities.iterrows()
+        haversine_fn(lon, lat, a["lon"], a["lat"]) for _, a in nearby_amenities.iterrows()
     ]
 
     return sum(1 for d in actual_distances if d <= radius_km * 1000)
@@ -59,9 +57,9 @@ def calculate_amenity_counts_by_radius(
     tree: cKDTree,
     amenities_df: pd.DataFrame,
     haversine_fn,
-    radius_km_list: List[float] = [0.5, 1.0, 2.0],
+    radius_km_list: list[float] = [0.5, 1.0, 2.0],
     show_progress: bool = True,
-) -> Tuple[List[int], List[int], List[int]]:
+) -> tuple[list[int], list[int], list[int]]:
     """
     Calculate amenity counts at multiple radius levels for all properties.
 

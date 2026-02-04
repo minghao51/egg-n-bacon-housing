@@ -19,11 +19,10 @@ Creates:
 Usage:
     from scripts.core.stages.L3_export import run_l3_pipeline
     run_l3_pipeline(upload_s3=False, export_csv=False)
-"""
+"""  # noqa: N999
 
 import logging
 from pathlib import Path
-from typing import Dict, Optional
 
 import geopandas as gpd
 import pandas as pd
@@ -40,6 +39,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # DATA LOADING
 # ============================================================================
+
 
 def load_hdb_transactions() -> pd.DataFrame:
     """Load HDB transaction data from L1.
@@ -77,9 +77,9 @@ def load_condo_transactions() -> pd.DataFrame:
         return pd.DataFrame()
 
     # Clean numeric columns using helper
-    price_cols = ['Transacted Price ($)']
-    area_cols = ['Area (SQFT)', 'Area (SQM)']
-    psf_cols = ['Unit Price ($ PSF)']
+    price_cols = ["Transacted Price ($)"]
+    area_cols = ["Area (SQFT)", "Area (SQM)"]
+    psf_cols = ["Unit Price ($ PSF)"]
 
     df = export_helpers.clean_price_columns(df, price_cols, area_cols, psf_cols)
 
@@ -104,9 +104,9 @@ def load_ec_transactions() -> pd.DataFrame:
         return pd.DataFrame()
 
     # Clean numeric columns using helper (EC has $ sign in price column)
-    price_cols = ['Transacted Price ($)']
-    area_cols = ['Area (SQFT)', 'Area (SQM)']
-    psf_cols = ['Unit Price ($ PSF)', 'Unit Price ($ PSM)']
+    price_cols = ["Transacted Price ($)"]
+    area_cols = ["Area (SQFT)", "Area (SQM)"]
+    psf_cols = ["Unit Price ($ PSF)", "Unit Price ($ PSM)"]
 
     df = export_helpers.clean_price_columns(df, price_cols, area_cols, psf_cols)
 
@@ -222,12 +222,12 @@ def load_school_features() -> pd.DataFrame:
     df = pd.read_parquet(path)
 
     # Extract only school-related columns
-    school_cols = [col for col in df.columns if 'school' in col.lower()]
+    school_cols = [col for col in df.columns if "school" in col.lower()]
     if not school_cols:
         logger.warning("No school features found in unified data")
         return pd.DataFrame()
 
-    school_df = df[['address', 'block', 'street_name'] + school_cols].copy()
+    school_df = df[["address", "block", "street_name"] + school_cols].copy()
     logger.info(f"Loaded {len(school_df)} records with {len(school_cols)} school feature columns")
 
     return school_df
@@ -260,8 +260,8 @@ def load_planning_areas() -> gpd.GeoDataFrame:
         return gpd.GeoDataFrame()
 
     # Ensure CRS is 4326
-    if gdf.crs != 'EPSG:4326':
-        gdf = gdf.to_crs('EPSG:4326')
+    if gdf.crs != "EPSG:4326":
+        gdf = gdf.to_crs("EPSG:4326")
 
     logger.info(f"Loaded {len(gdf)} planning areas")
 
@@ -271,6 +271,7 @@ def load_planning_areas() -> gpd.GeoDataFrame:
 # ============================================================================
 # DATA STANDARDIZATION
 # ============================================================================
+
 
 def standardize_hdb_data(hdb_df: pd.DataFrame) -> pd.DataFrame:
     """Standardize HDB transaction data to unified schema.
@@ -286,27 +287,27 @@ def standardize_hdb_data(hdb_df: pd.DataFrame) -> pd.DataFrame:
     df = hdb_df.copy()
 
     # Add property type
-    df['property_type'] = 'HDB'
+    df["property_type"] = "HDB"
 
     # Standardize price
-    df['price'] = df['resale_price']
+    df["price"] = df["resale_price"]
 
     # Standardize floor area (keep both sqm and sqft)
-    df['floor_area_sqm'] = df['floor_area_sqm']
-    df['floor_area_sqft'] = df['floor_area_sqm'] * 10.764
+    df["floor_area_sqm"] = df["floor_area_sqm"]
+    df["floor_area_sqft"] = df["floor_area_sqm"] * 10.764
 
     # Standardize date
-    df['transaction_date'] = pd.to_datetime(df['month'], format='%Y-%m')
+    df["transaction_date"] = pd.to_datetime(df["month"], format="%Y-%m")
 
     # Standardize address
-    df['address'] = df['block'] + ' ' + df['street_name']
+    df["address"] = df["block"] + " " + df["street_name"]
 
     # Add town (already exists)
     # No planning area yet (will be added later from coordinates)
 
     # Add price per square foot (primary) and per square meter (derived)
-    df['price_psf'] = df['price'] / df['floor_area_sqft']
-    df['price_psm'] = df['price_psf'] * 10.764
+    df["price_psf"] = df["price"] / df["floor_area_sqft"]
+    df["price_psm"] = df["price_psf"] * 10.764
 
     logger.info(f"Standardized {len(df):,} HDB transactions")
 
@@ -327,35 +328,31 @@ def standardize_condo_data(condo_df: pd.DataFrame) -> pd.DataFrame:
     df = condo_df.copy()
 
     # Add property type
-    df['property_type'] = 'Condominium'
+    df["property_type"] = "Condominium"
 
     # Standardize price
-    df['price'] = df['Transacted Price ($)']
+    df["price"] = df["Transacted Price ($)"]
 
     # Standardize floor area
-    df['floor_area_sqft'] = df['Area (SQFT)']
-    df['floor_area_sqm'] = df['Area (SQM)']
+    df["floor_area_sqft"] = df["Area (SQFT)"]
+    df["floor_area_sqm"] = df["Area (SQM)"]
 
     # Standardize date
-    df['transaction_date'] = pd.to_datetime(
-        df['Sale Date'],
-        format='%b-%y',
-        errors='coerce'
-    )
+    df["transaction_date"] = pd.to_datetime(df["Sale Date"], format="%b-%y", errors="coerce")
 
     # Standardize address
-    df['address'] = df['Project Name'] + ', ' + df['Street Name']
+    df["address"] = df["Project Name"] + ", " + df["Street Name"]
 
     # Add town (use street name as proxy for now)
-    df['town'] = 'Condo - ' + df['Street Name']
+    df["town"] = "Condo - " + df["Street Name"]
 
     # Add price per square foot (primary) and per square meter (derived)
-    df['price_psf'] = df['Unit Price ($ PSF)']  # Already provided
-    df['price_psm'] = df['price_psf'] * 10.764
+    df["price_psf"] = df["Unit Price ($ PSF)"]  # Already provided
+    df["price_psm"] = df["price_psf"] * 10.764
 
     # Ensure month is consistent (add if missing)
-    if 'month' not in df.columns:
-        df['month'] = pd.to_datetime(df['transaction_date']).dt.to_period('M').astype(str)
+    if "month" not in df.columns:
+        df["month"] = pd.to_datetime(df["transaction_date"]).dt.to_period("M").astype(str)
 
     logger.info(f"Standardized {len(df):,} Condo transactions")
 
@@ -376,35 +373,31 @@ def standardize_ec_data(ec_df: pd.DataFrame) -> pd.DataFrame:
     df = ec_df.copy()
 
     # Add property type
-    df['property_type'] = 'EC'
+    df["property_type"] = "EC"
 
     # Standardize price
-    df['price'] = df['Transacted Price ($)']
+    df["price"] = df["Transacted Price ($)"]
 
     # Standardize floor area
-    df['floor_area_sqft'] = df['Area (SQFT)']
-    df['floor_area_sqm'] = df['Area (SQM)']
+    df["floor_area_sqft"] = df["Area (SQFT)"]
+    df["floor_area_sqm"] = df["Area (SQM)"]
 
     # Standardize date (EC uses same format as Condo: Dec-22)
-    df['transaction_date'] = pd.to_datetime(
-        df['Sale Date'],
-        format='%b-%y',
-        errors='coerce'
-    )
+    df["transaction_date"] = pd.to_datetime(df["Sale Date"], format="%b-%y", errors="coerce")
 
     # Standardize address
-    df['address'] = df['Project Name'] + ', ' + df['Street Name']
+    df["address"] = df["Project Name"] + ", " + df["Street Name"]
 
     # Add town (use street name as proxy for now)
-    df['town'] = 'EC - ' + df['Street Name']
+    df["town"] = "EC - " + df["Street Name"]
 
     # Add price per square foot (primary) and per square meter (derived)
-    df['price_psf'] = df['Unit Price ($ PSF)']
-    df['price_psm'] = df['price_psf'] * 10.764
+    df["price_psf"] = df["Unit Price ($ PSF)"]
+    df["price_psm"] = df["price_psf"] * 10.764
 
     # Ensure month is consistent (add if missing)
-    if 'month' not in df.columns:
-        df['month'] = pd.to_datetime(df['transaction_date']).dt.to_period('M').astype(str)
+    if "month" not in df.columns:
+        df["month"] = pd.to_datetime(df["transaction_date"]).dt.to_period("M").astype(str)
 
     logger.info(f"Standardized {len(df):,} EC transactions")
 
@@ -415,10 +408,8 @@ def standardize_ec_data(ec_df: pd.DataFrame) -> pd.DataFrame:
 # FEATURE ENRICHMENT
 # ============================================================================
 
-def merge_with_geocoding(
-    transactions_df: pd.DataFrame,
-    geo_df: pd.DataFrame
-) -> pd.DataFrame:
+
+def merge_with_geocoding(transactions_df: pd.DataFrame, geo_df: pd.DataFrame) -> pd.DataFrame:
     """Merge transaction data with geocoded properties.
 
     Args:
@@ -435,8 +426,8 @@ def merge_with_geocoding(
         return transactions_df
 
     # Separate HDB, Condo, and EC for different merge strategies
-    hdb_mask = transactions_df['property_type'] == 'HDB'
-    private_mask = transactions_df['property_type'].isin(['Condominium', 'EC'])
+    hdb_mask = transactions_df["property_type"] == "HDB"
+    private_mask = transactions_df["property_type"].isin(["Condominium", "EC"])
 
     merged_dfs = []
 
@@ -445,26 +436,26 @@ def merge_with_geocoding(
         hdb_df = transactions_df[hdb_mask].copy()
 
         # Prepare geo data for HDB (filter to HDB properties if property_type exists)
-        if 'property_type' in geo_df.columns:
-            geo_hdb = geo_df[geo_df['property_type'] == 'hdb'].copy()
+        if "property_type" in geo_df.columns:
+            geo_hdb = geo_df[geo_df["property_type"] == "hdb"].copy()
         else:
             geo_hdb = geo_df.copy()
 
         if not geo_hdb.empty:
             hdb_merged = pd.merge(
                 hdb_df,
-                geo_hdb[['BLK_NO', 'ROAD_NAME', 'POSTAL', 'LATITUDE', 'LONGITUDE']],
-                left_on=['block', 'street_name'],
-                right_on=['BLK_NO', 'ROAD_NAME'],
-                how='left'
+                geo_hdb[["BLK_NO", "ROAD_NAME", "POSTAL", "LATITUDE", "LONGITUDE"]],
+                left_on=["block", "street_name"],
+                right_on=["BLK_NO", "ROAD_NAME"],
+                how="left",
             )
-            hdb_merged['lat'] = hdb_merged['LATITUDE']
-            hdb_merged['lon'] = hdb_merged['LONGITUDE']
-            hdb_merged.drop(['BLK_NO', 'ROAD_NAME', 'LATITUDE', 'LONGITUDE'], axis=1, inplace=True)
+            hdb_merged["lat"] = hdb_merged["LATITUDE"]
+            hdb_merged["lon"] = hdb_merged["LONGITUDE"]
+            hdb_merged.drop(["BLK_NO", "ROAD_NAME", "LATITUDE", "LONGITUDE"], axis=1, inplace=True)
         else:
             hdb_merged = hdb_df
-            hdb_merged['lat'] = None
-            hdb_merged['lon'] = None
+            hdb_merged["lat"] = None
+            hdb_merged["lon"] = None
 
         merged_dfs.append(hdb_merged)
 
@@ -473,32 +464,34 @@ def merge_with_geocoding(
         private_df = transactions_df[private_mask].copy()
 
         # Prepare geo data for Condo (filter to private housing if property_type exists)
-        if 'property_type' in geo_df.columns:
-            geo_condo = geo_df[geo_df['property_type'] == 'private'].copy()
+        if "property_type" in geo_df.columns:
+            geo_condo = geo_df[geo_df["property_type"] == "private"].copy()
         else:
             geo_condo = geo_df.copy()
 
         if not geo_condo.empty:
             # Drop duplicates on street name (use first occurrence)
-            geo_condo_unique = geo_condo.drop_duplicates(subset=['ROAD_NAME'], keep='first').copy()
-            geo_condo_unique['street_name_upper'] = geo_condo_unique['ROAD_NAME'].str.upper()
+            geo_condo_unique = geo_condo.drop_duplicates(subset=["ROAD_NAME"], keep="first").copy()
+            geo_condo_unique["street_name_upper"] = geo_condo_unique["ROAD_NAME"].str.upper()
 
             private_df = private_df.copy()
-            private_df['street_name_upper'] = private_df['Street Name'].str.upper()
+            private_df["street_name_upper"] = private_df["Street Name"].str.upper()
 
             private_merged = pd.merge(
                 private_df,
-                geo_condo_unique[['street_name_upper', 'LATITUDE', 'LONGITUDE']],
-                on='street_name_upper',
-                how='left'
+                geo_condo_unique[["street_name_upper", "LATITUDE", "LONGITUDE"]],
+                on="street_name_upper",
+                how="left",
             )
-            private_merged['lat'] = private_merged['LATITUDE']
-            private_merged['lon'] = private_merged['LONGITUDE']
-            private_merged.drop(['street_name_upper', 'LATITUDE', 'LONGITUDE'], axis=1, inplace=True)
+            private_merged["lat"] = private_merged["LATITUDE"]
+            private_merged["lon"] = private_merged["LONGITUDE"]
+            private_merged.drop(
+                ["street_name_upper", "LATITUDE", "LONGITUDE"], axis=1, inplace=True
+            )
         else:
             private_merged = private_df
-            private_merged['lat'] = None
-            private_merged['lon'] = None
+            private_merged["lat"] = None
+            private_merged["lon"] = None
 
         merged_dfs.append(private_merged)
 
@@ -506,16 +499,17 @@ def merge_with_geocoding(
     result = pd.concat(merged_dfs, ignore_index=True)
 
     # Report geocoding success
-    geo_count = result['lat'].notna().sum()
+    geo_count = result["lat"].notna().sum()
     total_count = len(result)
-    logger.info(f"Geocoded {geo_count:,} of {total_count:,} properties ({geo_count/total_count*100:.1f}%)")
+    logger.info(
+        f"Geocoded {geo_count:,} of {total_count:,} properties ({geo_count / total_count * 100:.1f}%)"
+    )
 
     return result
 
 
 def add_planning_area(
-    transactions_df: pd.DataFrame,
-    planning_areas_gdf: gpd.GeoDataFrame
+    transactions_df: pd.DataFrame, planning_areas_gdf: gpd.GeoDataFrame
 ) -> pd.DataFrame:
     """Add planning area by spatial join with coordinates.
 
@@ -530,42 +524,37 @@ def add_planning_area(
 
     if planning_areas_gdf.empty:
         logger.warning("No planning area data available, skipping")
-        transactions_df['planning_area'] = None
+        transactions_df["planning_area"] = None
         return transactions_df
 
     # Create GeoDataFrame from transactions
     gdf = gpd.GeoDataFrame(
         transactions_df,
         geometry=gpd.points_from_xy(
-            transactions_df['lon'].astype(float),
-            transactions_df['lat'].astype(float)
+            transactions_df["lon"].astype(float), transactions_df["lat"].astype(float)
         ),
-        crs='EPSG:4326'
+        crs="EPSG:4326",
     )
 
     # Spatial join with planning areas
     result = gpd.sjoin(
-        gdf,
-        planning_areas_gdf[['pln_area_n', 'geometry']],
-        how='left',
-        predicate='within'
+        gdf, planning_areas_gdf[["pln_area_n", "geometry"]], how="left", predicate="within"
     )
 
     # Extract planning area name
-    transactions_df['planning_area'] = result['pln_area_n']
+    transactions_df["planning_area"] = result["pln_area_n"]
 
     # Report coverage
-    coverage = transactions_df['planning_area'].notna().sum()
+    coverage = transactions_df["planning_area"].notna().sum()
     total = len(transactions_df)
-    logger.info(f"Added planning area to {coverage:,} of {total:,} properties ({coverage/total*100:.1f}%)")
+    logger.info(
+        f"Added planning area to {coverage:,} of {total:,} properties ({coverage / total * 100:.1f}%)"
+    )
 
     return transactions_df
 
 
-def add_amenity_features(
-    transactions_df: pd.DataFrame,
-    amenity_df: pd.DataFrame
-) -> pd.DataFrame:
+def add_amenity_features(transactions_df: pd.DataFrame, amenity_df: pd.DataFrame) -> pd.DataFrame:
     """Merge amenity distance and count features.
 
     Args:
@@ -582,31 +571,27 @@ def add_amenity_features(
         return transactions_df
 
     # Try to merge on postal code if available
-    if 'POSTAL' in transactions_df.columns and 'POSTAL' in amenity_df.columns:
+    if "POSTAL" in transactions_df.columns and "POSTAL" in amenity_df.columns:
         # Select ALL amenity columns to merge (distances AND counts)
-        amenity_cols = [col for col in amenity_df.columns
-                       if col.startswith('dist_') or col.startswith('count_') or col.endswith('_within_500m')
-                       or col.endswith('_within_1km') or col.endswith('_within_2km')]
+        amenity_cols = [
+            col
+            for col in amenity_df.columns
+            if col.startswith("dist_")
+            or col.startswith("count_")
+            or col.endswith("_within_500m")
+            or col.endswith("_within_1km")
+            or col.endswith("_within_2km")
+        ]
 
-        merge_cols = ['POSTAL'] + amenity_cols
+        merge_cols = ["POSTAL"] + amenity_cols
 
-        result = pd.merge(
-            transactions_df,
-            amenity_df[merge_cols],
-            on='POSTAL',
-            how='left'
-        )
+        result = pd.merge(transactions_df, amenity_df[merge_cols], on="POSTAL", how="left")
 
         # Log what was added
         added_cols = [col for col in amenity_cols if col in result.columns]
         logger.info(f"Merged {len(added_cols)} amenity columns on postal code")
-    elif 'address' in transactions_df.columns and 'address' in amenity_df.columns:
-        result = pd.merge(
-            transactions_df,
-            amenity_df,
-            on='address',
-            how='left'
-        )
+    elif "address" in transactions_df.columns and "address" in amenity_df.columns:
+        result = pd.merge(transactions_df, amenity_df, on="address", how="left")
         logger.info("Merged amenity features on address")
     else:
         logger.warning("Cannot merge amenity features - no common key")
@@ -616,8 +601,7 @@ def add_amenity_features(
 
 
 def merge_rental_yield(
-    transactions_df: pd.DataFrame,
-    rental_yield_df: pd.DataFrame
+    transactions_df: pd.DataFrame, rental_yield_df: pd.DataFrame
 ) -> pd.DataFrame:
     """Merge rental yield data by town and month.
 
@@ -640,34 +624,39 @@ def merge_rental_yield(
 
     # Ensure month columns are both datetime
     # Convert transactions_df month if it's a string
-    if transactions_df['month'].dtype == 'object':
-        transactions_df['month'] = pd.to_datetime(transactions_df['month'], format='%Y-%m', errors='coerce')
+    if transactions_df["month"].dtype == "object":
+        transactions_df["month"] = pd.to_datetime(
+            transactions_df["month"], format="%Y-%m", errors="coerce"
+        )
 
     # Convert rental_yield_df month if it's a string
-    if rental_yield_df['month'].dtype == 'object':
-        rental_yield_df['month'] = pd.to_datetime(rental_yield_df['month'], format='%Y-%m', errors='coerce')
+    if rental_yield_df["month"].dtype == "object":
+        rental_yield_df["month"] = pd.to_datetime(
+            rental_yield_df["month"], format="%Y-%m", errors="coerce"
+        )
     else:
-        rental_yield_df['month'] = pd.to_datetime(rental_yield_df['month'])
+        rental_yield_df["month"] = pd.to_datetime(rental_yield_df["month"])
 
     # Merge on town and month
     result = pd.merge(
         transactions_df,
-        rental_yield_df[['town', 'month', 'rental_yield_pct']],
-        on=['town', 'month'],
-        how='left'
+        rental_yield_df[["town", "month", "rental_yield_pct"]],
+        on=["town", "month"],
+        how="left",
     )
 
     # Report coverage
-    coverage = result['rental_yield_pct'].notna().sum()
+    coverage = result["rental_yield_pct"].notna().sum()
     total = len(result)
-    logger.info(f"Added rental yield to {coverage:,} of {total:,} records ({coverage/total*100:.1f}%)")
+    logger.info(
+        f"Added rental yield to {coverage:,} of {total:,} records ({coverage / total * 100:.1f}%)"
+    )
 
     return result
 
 
 def merge_precomputed_metrics(
-    transactions_df: pd.DataFrame,
-    metrics_df: pd.DataFrame
+    transactions_df: pd.DataFrame, metrics_df: pd.DataFrame
 ) -> pd.DataFrame:
     """Merge precomputed monthly metrics.
 
@@ -689,39 +678,41 @@ def merge_precomputed_metrics(
     metrics_df = metrics_df.copy()
 
     # Ensure month columns are both datetime
-    if transactions_df['month'].dtype == 'object':
-        transactions_df['month'] = pd.to_datetime(transactions_df['month'], format='%Y-%m', errors='coerce')
+    if transactions_df["month"].dtype == "object":
+        transactions_df["month"] = pd.to_datetime(
+            transactions_df["month"], format="%Y-%m", errors="coerce"
+        )
 
     # Handle different types for metrics_df month (Period, datetime, or string)
-    if str(metrics_df['month'].dtype) == 'period[M]':
+    if str(metrics_df["month"].dtype) == "period[M]":
         # PeriodDtype - convert to timestamp
-        metrics_df['month'] = metrics_df['month'].dt.to_timestamp()
-    elif metrics_df['month'].dtype == 'object':
-        metrics_df['month'] = pd.to_datetime(metrics_df['month'], format='%Y-%m', errors='coerce')
+        metrics_df["month"] = metrics_df["month"].dt.to_timestamp()
+    elif metrics_df["month"].dtype == "object":
+        metrics_df["month"] = pd.to_datetime(metrics_df["month"], format="%Y-%m", errors="coerce")
     else:
         # Already datetime or convertible
-        metrics_df['month'] = pd.to_datetime(metrics_df['month'])
+        metrics_df["month"] = pd.to_datetime(metrics_df["month"])
 
     # Determine join key (prefer planning_area, fall back to town)
-    if 'planning_area' in transactions_df.columns and 'planning_area' in metrics_df.columns:
-        join_key = 'planning_area'
-    elif 'town' in transactions_df.columns and 'town' in metrics_df.columns:
-        join_key = 'town'
+    if "planning_area" in transactions_df.columns and "planning_area" in metrics_df.columns:
+        join_key = "planning_area"
+    elif "town" in transactions_df.columns and "town" in metrics_df.columns:
+        join_key = "town"
     else:
         logger.warning("No common geographic key for merging metrics")
         return transactions_df
 
     # Select key metric columns to merge (include month and join_key)
     metric_cols = [
-        'month',
+        "month",
         join_key,  # Include the join key column
-        'stratified_median_price',
-        'mom_change_pct',
-        'yoy_change_pct',
-        'momentum_signal',
-        'transaction_count',
-        'volume_3m_avg',
-        'volume_12m_avg'
+        "stratified_median_price",
+        "mom_change_pct",
+        "yoy_change_pct",
+        "momentum_signal",
+        "transaction_count",
+        "volume_3m_avg",
+        "volume_12m_avg",
     ]
 
     # Only select columns that exist
@@ -734,15 +725,10 @@ def merge_precomputed_metrics(
     metrics_to_merge = metrics_df[available_cols].copy()
 
     # Merge
-    result = pd.merge(
-        transactions_df,
-        metrics_to_merge,
-        on=['month', join_key],
-        how='left'
-    )
+    result = pd.merge(transactions_df, metrics_to_merge, on=["month", join_key], how="left")
 
     # Log what was added (exclude month and join_key from count)
-    added_cols = [col for col in available_cols if col not in ['month', join_key]]
+    added_cols = [col for col in available_cols if col not in ["month", join_key]]
     logger.info(f"Merged {len(added_cols)} metric columns on {join_key}+month")
 
     return result
@@ -751,6 +737,7 @@ def merge_precomputed_metrics(
 # ============================================================================
 # FINAL COLUMN SELECTION
 # ============================================================================
+
 
 def filter_final_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Select and order final columns for L3 dataset.
@@ -765,18 +752,18 @@ def filter_final_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     # Core columns that must be present (order matters)
     core_columns = [
-        'property_type',  # CRITICAL: Must always be included
-        'transaction_date',
-        'town',
-        'planning_area',  # NEW
-        'address',
-        'price',
-        'floor_area_sqm',
-        'floor_area_sqft',
-        'price_psm',
-        'price_psf',
-        'lat',
-        'lon'
+        "property_type",  # CRITICAL: Must always be included
+        "transaction_date",
+        "town",
+        "planning_area",  # NEW
+        "address",
+        "price",
+        "floor_area_sqm",
+        "floor_area_sqft",
+        "price_psm",
+        "price_psf",
+        "lat",
+        "lon",
     ]
 
     # Ensure all core columns exist (even if null)
@@ -787,72 +774,74 @@ def filter_final_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     # Optional columns to include if present
     optional_columns = [
-        'month',  # Original date column
-        'flat_type',  # HDB only
-        'flat_model',  # HDB only
-        'storey_range',  # HDB only
-        'lease_commence_date',  # HDB only
-        'remaining_lease_months',  # HDB only
-        'Project Name',  # Condo only
-        'Street Name',  # Condo only
-        'Postal District',  # Condo only
-        'Property Type',  # Condo only
-        'Market Segment',  # Condo only
+        "month",  # Original date column
+        "flat_type",  # HDB only
+        "flat_model",  # HDB only
+        "storey_range",  # HDB only
+        "lease_commence_date",  # HDB only
+        "remaining_lease_months",  # HDB only
+        "Project Name",  # Condo only
+        "Street Name",  # Condo only
+        "Postal District",  # Condo only
+        "Property Type",  # Condo only
+        "Market Segment",  # Condo only
         # Amenity distance features
-        'dist_to_nearest_supermarket',
-        'dist_to_nearest_preschool',
-        'dist_to_nearest_park',
-        'dist_to_nearest_hawker',
-        'dist_to_nearest_mrt',
-        'dist_to_nearest_childcare',
+        "dist_to_nearest_supermarket",
+        "dist_to_nearest_preschool",
+        "dist_to_nearest_park",
+        "dist_to_nearest_hawker",
+        "dist_to_nearest_mrt",
+        "dist_to_nearest_childcare",
         # Amenity count features (within radius)
-        'supermarket_within_500m',
-        'supermarket_within_1km',
-        'supermarket_within_2km',
-        'preschool_within_500m',
-        'preschool_within_1km',
-        'preschool_within_2km',
-        'park_within_500m',
-        'park_within_1km',
-        'park_within_2km',
-        'hawker_within_500m',
-        'hawker_within_1km',
-        'hawker_within_2km',
-        'mrt_within_500m',
-        'mrt_within_1km',
-        'mrt_within_2km',
-        'childcare_within_500m',
-        'childcare_within_1km',
-        'childcare_within_2km',
+        "supermarket_within_500m",
+        "supermarket_within_1km",
+        "supermarket_within_2km",
+        "preschool_within_500m",
+        "preschool_within_1km",
+        "preschool_within_2km",
+        "park_within_500m",
+        "park_within_1km",
+        "park_within_2km",
+        "hawker_within_500m",
+        "hawker_within_1km",
+        "hawker_within_2km",
+        "mrt_within_500m",
+        "mrt_within_1km",
+        "mrt_within_2km",
+        "childcare_within_500m",
+        "childcare_within_1km",
+        "childcare_within_2km",
         # Rental yield
-        'rental_yield_pct',  # NEW
+        "rental_yield_pct",  # NEW
         # Precomputed metrics
-        'stratified_median_price',  # NEW
-        'mom_change_pct',  # NEW
-        'yoy_change_pct',  # NEW
-        'momentum_signal',  # NEW
-        'transaction_count',  # NEW
-        'volume_3m_avg',  # NEW
-        'volume_12m_avg',  # NEW
+        "stratified_median_price",  # NEW
+        "mom_change_pct",  # NEW
+        "yoy_change_pct",  # NEW
+        "momentum_signal",  # NEW
+        "transaction_count",  # NEW
+        "volume_3m_avg",  # NEW
+        "volume_12m_avg",  # NEW
         # Period-dependent market segmentation (NEW)
-        'year',  # NEW - Transaction year (for period calculation)
-        'period_5yr',  # NEW - 5-year period bucket
-        'market_tier_period',  # NEW - Period-dependent price tier
-        'psf_tier_period',  # NEW - Period-dependent PSF tier
+        "year",  # NEW - Transaction year (for period calculation)
+        "period_5yr",  # NEW - 5-year period bucket
+        "market_tier_period",  # NEW - Period-dependent price tier
+        "psf_tier_period",  # NEW - Period-dependent PSF tier
         # School features
-        'school_within_500m',
-        'school_within_1km',
-        'school_within_2km',
-        'school_accessibility_score',
-        'school_primary_dist_score',
-        'school_primary_quality_score',
-        'school_secondary_dist_score',
-        'school_secondary_quality_score',
-        'school_density_score',
+        "school_within_500m",
+        "school_within_1km",
+        "school_within_2km",
+        "school_accessibility_score",
+        "school_primary_dist_score",
+        "school_primary_quality_score",
+        "school_secondary_dist_score",
+        "school_secondary_quality_score",
+        "school_density_score",
     ]
 
     # Add any other amenity/metric columns that might exist
-    amenity_cols = [col for col in df.columns if col.startswith('dist_') or col.startswith('count_')]
+    amenity_cols = [
+        col for col in df.columns if col.startswith("dist_") or col.startswith("count_")
+    ]
     optional_columns.extend(amenity_cols)
 
     # Build final column list - ALWAYS start with core_columns
@@ -893,56 +882,57 @@ def add_period_segmentation(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
     # Create 5-year period buckets
-    df['year'] = pd.to_datetime(df['transaction_date']).dt.year
-    df['period_5yr'] = (df['year'] // 5) * 5
-    df['period_5yr'] = df['period_5yr'].astype(str) + '-' + (df['period_5yr'] + 4).astype(str)
+    df["year"] = pd.to_datetime(df["transaction_date"]).dt.year
+    df["period_5yr"] = (df["year"] // 5) * 5
+    df["period_5yr"] = df["period_5yr"].astype(str) + "-" + (df["period_5yr"] + 4).astype(str)
 
     # Calculate period-dependent price tiers
     def assign_price_tier(group):
         """Assign price tier based on 30/40/30 percentiles within period."""
-        p30 = group['price'].quantile(0.30)
-        p70 = group['price'].quantile(0.70)
+        p30 = group["price"].quantile(0.30)
+        p70 = group["price"].quantile(0.70)
 
         tiers = []
-        for price in group['price']:
+        for price in group["price"]:
             if price <= p30:
-                tiers.append('Mass Market')
+                tiers.append("Mass Market")
             elif price <= p70:
-                tiers.append('Mid-Tier')
+                tiers.append("Mid-Tier")
             else:
-                tiers.append('Luxury')
+                tiers.append("Luxury")
 
         return pd.Series(tiers, index=group.index)
 
     # Apply tier assignment within each property type + period
-    df['market_tier_period'] = df.groupby(['property_type', 'period_5yr'], group_keys=False).apply(
+    df["market_tier_period"] = df.groupby(["property_type", "period_5yr"], group_keys=False).apply(
         lambda g: assign_price_tier(g)
     )
 
     # Calculate period-dependent PSF tiers (if PSF column exists)
-    if 'price_psf' in df.columns:
+    if "price_psf" in df.columns:
+
         def assign_psf_tier(group):
             """Assign PSF tier based on 30/40/30 percentiles within period."""
-            p30 = group['price_psf'].quantile(0.30)
-            p70 = group['price_psf'].quantile(0.70)
+            p30 = group["price_psf"].quantile(0.30)
+            p70 = group["price_psf"].quantile(0.70)
 
             tiers = []
-            for psf in group['price_psf']:
+            for psf in group["price_psf"]:
                 if psf <= p30:
-                    tiers.append('Low PSF')
+                    tiers.append("Low PSF")
                 elif psf <= p70:
-                    tiers.append('Medium PSF')
+                    tiers.append("Medium PSF")
                 else:
-                    tiers.append('High PSF')
+                    tiers.append("High PSF")
 
             return pd.Series(tiers, index=group.index)
 
-        df['psf_tier_period'] = df.groupby(['property_type', 'period_5yr'], group_keys=False).apply(
+        df["psf_tier_period"] = df.groupby(["property_type", "period_5yr"], group_keys=False).apply(
             lambda g: assign_psf_tier(g)
         )
     else:
         logger.warning("price_psf column not found, skipping PSF tier calculation")
-        df['psf_tier_period'] = None
+        df["psf_tier_period"] = None
 
     logger.info(f"Added period segmentation: {len(df):,} transactions classified")
     logger.info(f"Periods: {sorted(df['period_5yr'].unique())}")
@@ -953,6 +943,7 @@ def add_period_segmentation(df: pd.DataFrame) -> pd.DataFrame:
 # ============================================================================
 # PRECOMPUTED SUMMARY TABLES
 # ============================================================================
+
 
 def create_market_summary(df: pd.DataFrame) -> pd.DataFrame:
     """Create market summary table with aggregated statistics.
@@ -968,7 +959,7 @@ def create_market_summary(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty:
         return pd.DataFrame()
 
-    group_cols = ['property_type', 'period_5yr', 'market_tier_period']
+    group_cols = ["property_type", "period_5yr", "market_tier_period"]
 
     # Filter to columns that exist
     available_group_cols = [col for col in group_cols if col in df.columns]
@@ -977,26 +968,35 @@ def create_market_summary(df: pd.DataFrame) -> pd.DataFrame:
         logger.warning("Cannot create market summary - missing required columns")
         return pd.DataFrame()
 
-    summary = df.groupby(available_group_cols).agg({
-        'price': ['count', 'median', 'mean', 'min', 'max', 'std'],
-        'price_psm': ['median', 'mean'] if 'price_psm' in df.columns else 'count',
-        'price_psf': ['median', 'mean'] if 'price_psf' in df.columns else 'count',
-        'floor_area_sqft': ['median', 'mean'] if 'floor_area_sqft' in df.columns else 'count',
-    }).reset_index()
+    summary = (
+        df.groupby(available_group_cols)
+        .agg(
+            {
+                "price": ["count", "median", "mean", "min", "max", "std"],
+                "price_psm": ["median", "mean"] if "price_psm" in df.columns else "count",
+                "price_psf": ["median", "mean"] if "price_psf" in df.columns else "count",
+                "floor_area_sqft": ["median", "mean"]
+                if "floor_area_sqft" in df.columns
+                else "count",
+            }
+        )
+        .reset_index()
+    )
 
     # Flatten column names
     summary.columns = [
-        '_'.join(col).strip('_') if isinstance(col, tuple) else col
-        for col in summary.columns
+        "_".join(col).strip("_") if isinstance(col, tuple) else col for col in summary.columns
     ]
 
     # Calculate tier distribution percentages
-    if 'market_tier_period' in available_group_cols:
-        total_by_group = summary.groupby(available_group_cols[:2])['price_count'].sum().reset_index()
-        total_by_group.columns = available_group_cols[:2] + ['total_count']
-        summary = summary.merge(total_by_group, on=available_group_cols[:2], how='left')
-        summary['tier_pct'] = (summary['price_count'] / summary['total_count'] * 100).round(1)
-        summary = summary.drop(columns=['total_count'])
+    if "market_tier_period" in available_group_cols:
+        total_by_group = (
+            summary.groupby(available_group_cols[:2])["price_count"].sum().reset_index()
+        )
+        total_by_group.columns = available_group_cols[:2] + ["total_count"]
+        summary = summary.merge(total_by_group, on=available_group_cols[:2], how="left")
+        summary["tier_pct"] = (summary["price_count"] / summary["total_count"] * 100).round(1)
+        summary = summary.drop(columns=["total_count"])
 
     logger.info(f"Created market summary with {len(summary):,} rows")
     return summary
@@ -1013,49 +1013,51 @@ def create_tier_thresholds_evolution(df: pd.DataFrame) -> pd.DataFrame:
     """
     logger.info("Creating tier thresholds evolution table...")
 
-    if df.empty or 'market_tier_period' not in df.columns:
+    if df.empty or "market_tier_period" not in df.columns:
         return pd.DataFrame()
 
     # Calculate thresholds for each tier
     thresholds = []
 
-    for ptype in df['property_type'].unique():
-        ptype_df = df[df['property_type'] == ptype]
+    for ptype in df["property_type"].unique():
+        ptype_df = df[df["property_type"] == ptype]
 
-        for period in ptype_df['period_5yr'].unique():
-            period_df = ptype_df[ptype_df['period_5yr'] == period]
+        for period in ptype_df["period_5yr"].unique():
+            period_df = ptype_df[ptype_df["period_5yr"] == period]
 
-            for tier in ['Mass Market', 'Mid-Tier', 'Luxury']:
-                tier_data = period_df[period_df['market_tier_period'] == tier]
+            for tier in ["Mass Market", "Mid-Tier", "Luxury"]:
+                tier_data = period_df[period_df["market_tier_period"] == tier]
 
                 if not tier_data.empty:
-                    thresholds.append({
-                        'property_type': ptype,
-                        'period': period,
-                        'tier': tier,
-                        'count': len(tier_data),
-                        'min_price': tier_data['price'].min(),
-                        'max_price': tier_data['price'].max(),
-                        'median_price': tier_data['price'].median(),
-                        'mean_price': tier_data['price'].mean(),
-                    })
+                    thresholds.append(
+                        {
+                            "property_type": ptype,
+                            "period": period,
+                            "tier": tier,
+                            "count": len(tier_data),
+                            "min_price": tier_data["price"].min(),
+                            "max_price": tier_data["price"].max(),
+                            "median_price": tier_data["price"].median(),
+                            "mean_price": tier_data["price"].mean(),
+                        }
+                    )
 
     result = pd.DataFrame(thresholds)
 
     # Pivot to get tier columns for easier comparison
     if not result.empty:
         pivot = result.pivot_table(
-            index=['property_type', 'period'],
-            columns='tier',
-            values='median_price'
+            index=["property_type", "period"], columns="tier", values="median_price"
         ).reset_index()
         pivot.columns.name = None
-        pivot = pivot.rename(columns={
-            'Mass Market': 'mass_market_median',
-            'Mid-Tier': 'mid_tier_median',
-            'Luxury': 'luxury_median'
-        })
-        result = result.merge(pivot, on=['property_type', 'period'], how='left')
+        pivot = pivot.rename(
+            columns={
+                "Mass Market": "mass_market_median",
+                "Mid-Tier": "mid_tier_median",
+                "Luxury": "luxury_median",
+            }
+        )
+        result = result.merge(pivot, on=["property_type", "period"], how="left")
 
     logger.info(f"Created tier thresholds with {len(result):,} rows")
     return result
@@ -1072,39 +1074,46 @@ def create_planning_area_metrics(df: pd.DataFrame) -> pd.DataFrame:
     """
     logger.info("Creating planning area metrics table...")
 
-    if df.empty or 'planning_area' not in df.columns:
+    if df.empty or "planning_area" not in df.columns:
         return pd.DataFrame()
 
-    metrics = df.groupby('planning_area').agg({
-        'price': ['count', 'median', 'mean'],
-        'price_psf': ['median', 'mean'] if 'price_psf' in df.columns else 'count',
-        'rental_yield_pct': ['median', 'mean'] if 'rental_yield_pct' in df.columns else 'count',
-    }).reset_index()
+    metrics = (
+        df.groupby("planning_area")
+        .agg(
+            {
+                "price": ["count", "median", "mean"],
+                "price_psf": ["median", "mean"] if "price_psf" in df.columns else "count",
+                "rental_yield_pct": ["median", "mean"]
+                if "rental_yield_pct" in df.columns
+                else "count",
+            }
+        )
+        .reset_index()
+    )
 
     # Flatten column names
     metrics.columns = [
-        '_'.join(col).strip('_') if isinstance(col, tuple) else col
-        for col in metrics.columns
+        "_".join(col).strip("_") if isinstance(col, tuple) else col for col in metrics.columns
     ]
 
     # Add amenity accessibility scores if available
-    amenity_distance_cols = [col for col in df.columns if col.startswith('dist_to_nearest_')]
+    amenity_distance_cols = [col for col in df.columns if col.startswith("dist_to_nearest_")]
     if amenity_distance_cols:
-        amenity_means = df.groupby('planning_area')[amenity_distance_cols].mean().reset_index()
+        amenity_means = df.groupby("planning_area")[amenity_distance_cols].mean().reset_index()
         # Rename amenity columns to include _avg suffix
-        rename_cols = {col: f'{col}_avg' for col in amenity_means.columns if col != 'planning_area'}
+        rename_cols = {col: f"{col}_avg" for col in amenity_means.columns if col != "planning_area"}
         amenity_means = amenity_means.rename(columns=rename_cols)
-        metrics = metrics.merge(amenity_means, on='planning_area', how='left')
+        metrics = metrics.merge(amenity_means, on="planning_area", how="left")
 
     # Add period breakdown
-    if 'period_5yr' in df.columns:
-        pa_period_counts = df.groupby(['planning_area', 'period_5yr']).size().unstack(fill_value=0)
-        pa_period_counts.columns = [f'transactions_{col}' for col in pa_period_counts.columns]
+    if "period_5yr" in df.columns:
+        pa_period_counts = df.groupby(["planning_area", "period_5yr"]).size().unstack(fill_value=0)
+        pa_period_counts.columns = [f"transactions_{col}" for col in pa_period_counts.columns]
         pa_period_counts = pa_period_counts.reset_index()
-        metrics = metrics.merge(pa_period_counts, on='planning_area', how='left')
+        metrics = metrics.merge(pa_period_counts, on="planning_area", how="left")
 
-    metrics = metrics.rename(columns={'price_count': 'transaction_count'})
-    metrics = metrics.sort_values('transaction_count', ascending=False)
+    metrics = metrics.rename(columns={"price_count": "transaction_count"})
+    metrics = metrics.sort_values("transaction_count", ascending=False)
 
     logger.info(f"Created planning area metrics with {len(metrics):,} rows")
     return metrics
@@ -1125,40 +1134,63 @@ def create_lease_decay_stats(df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
 
     # Filter to HDB with remaining lease
-    hdb_df = df[df['property_type'] == 'HDB'].copy()
+    hdb_df = df[df["property_type"] == "HDB"].copy()
 
-    if 'remaining_lease_months' not in hdb_df.columns and 'remaining_lease_years' not in hdb_df.columns:
+    if (
+        "remaining_lease_months" not in hdb_df.columns
+        and "remaining_lease_years" not in hdb_df.columns
+    ):
         logger.warning("No remaining lease data found, skipping lease decay stats")
         return pd.DataFrame()
 
     # Convert to years if needed
-    if 'remaining_lease_months' in hdb_df.columns and 'remaining_lease_years' not in hdb_df.columns:
-        hdb_df['remaining_lease_years'] = hdb_df['remaining_lease_months'] / 12
+    if "remaining_lease_months" in hdb_df.columns and "remaining_lease_years" not in hdb_df.columns:
+        hdb_df["remaining_lease_years"] = hdb_df["remaining_lease_months"] / 12
 
-    if 'remaining_lease_years' not in hdb_df.columns:
+    if "remaining_lease_years" not in hdb_df.columns:
         return pd.DataFrame()
 
     # Create lease bands
-    hdb_df['lease_band'] = pd.cut(
-        hdb_df['remaining_lease_years'],
+    hdb_df["lease_band"] = pd.cut(
+        hdb_df["remaining_lease_years"],
         bins=[0, 60, 70, 80, 90, 100],
-        labels=['<60 years', '60-70 years', '70-80 years', '80-90 years', '90+ years']
+        labels=["<60 years", "60-70 years", "70-80 years", "80-90 years", "90+ years"],
     )
 
     # Calculate statistics
-    stats = hdb_df.groupby('lease_band', observed=True).agg({
-        'price': ['count', 'median', 'mean', 'min', 'max'],
-        'price_psf': ['median', 'mean'] if 'price_psf' in hdb_df.columns else 'count',
-    }).reset_index()
+    stats = (
+        hdb_df.groupby("lease_band", observed=True)
+        .agg(
+            {
+                "price": ["count", "median", "mean", "min", "max"],
+                "price_psf": ["median", "mean"] if "price_psf" in hdb_df.columns else "count",
+            }
+        )
+        .reset_index()
+    )
 
-    stats.columns = ['lease_band', 'transaction_count', 'median_price', 'mean_price', 'min_price', 'max_price', 'median_psf', 'mean_psf']
+    stats.columns = [
+        "lease_band",
+        "transaction_count",
+        "median_price",
+        "mean_price",
+        "min_price",
+        "max_price",
+        "median_psf",
+        "mean_psf",
+    ]
 
     # Calculate discount to baseline (90+ years)
-    baseline_median = stats[stats['lease_band'] == '90+ years']['median_price'].values
+    baseline_median = stats[stats["lease_band"] == "90+ years"]["median_price"].values
     if len(baseline_median) > 0:
         baseline = baseline_median[0]
-        stats['discount_to_baseline_pct'] = ((baseline - stats['median_price']) / baseline * 100).round(1)
-        stats['annual_decay_pct'] = (stats['discount_to_baseline_pct'] / (99 - stats['lease_band'].astype(str).str.extract(r'(\d+)')[0].astype(float))).round(2)
+        stats["discount_to_baseline_pct"] = (
+            (baseline - stats["median_price"]) / baseline * 100
+        ).round(1)
+        stats["annual_decay_pct"] = (
+            stats["discount_to_baseline_pct"]
+            / (99 - stats["lease_band"].astype(str).str.extract(r"(\d+)")[0].astype(float))
+        ).round(2)
 
     logger.info(f"Created lease decay stats with {len(stats):,} rows")
     return stats
@@ -1175,42 +1207,71 @@ def create_rental_yield_top_combos(df: pd.DataFrame) -> pd.DataFrame:
     """
     logger.info("Creating rental yield top combinations...")
 
-    if df.empty or 'rental_yield_pct' not in df.columns:
+    if df.empty or "rental_yield_pct" not in df.columns:
         return pd.DataFrame()
 
-    rental_df = df[df['rental_yield_pct'].notna()].copy()
+    rental_df = df[df["rental_yield_pct"].notna()].copy()
 
     if rental_df.empty:
         return pd.DataFrame()
 
     # Town + flat type combinations
-    if 'flat_type' in rental_df.columns and 'town' in rental_df.columns:
-        combos = rental_df.groupby(['town', 'flat_type']).agg({
-            'rental_yield_pct': ['median', 'mean', 'count'],
-            'price': ['median', 'mean'],
-        }).reset_index()
+    if "flat_type" in rental_df.columns and "town" in rental_df.columns:
+        combos = (
+            rental_df.groupby(["town", "flat_type"])
+            .agg(
+                {
+                    "rental_yield_pct": ["median", "mean", "count"],
+                    "price": ["median", "mean"],
+                }
+            )
+            .reset_index()
+        )
 
-        combos.columns = ['town', 'flat_type', 'yield_median', 'yield_mean', 'yield_count', 'price_median', 'price_mean']
+        combos.columns = [
+            "town",
+            "flat_type",
+            "yield_median",
+            "yield_mean",
+            "yield_count",
+            "price_median",
+            "price_mean",
+        ]
 
         # Calculate estimated monthly rent
-        combos['monthly_rent_est'] = (combos['price_median'] * combos['yield_median'] / 100 / 12).round(0)
+        combos["monthly_rent_est"] = (
+            combos["price_median"] * combos["yield_median"] / 100 / 12
+        ).round(0)
 
-        combos = combos.sort_values('yield_median', ascending=False)
-        combos['rank'] = range(1, len(combos) + 1)
+        combos = combos.sort_values("yield_median", ascending=False)
+        combos["rank"] = range(1, len(combos) + 1)
 
         logger.info(f"Created {len(combos)} rental yield combinations")
         return combos
 
     # Town only
-    if 'town' in rental_df.columns:
-        town_yields = rental_df.groupby('town').agg({
-            'rental_yield_pct': ['median', 'mean', 'count'],
-            'price': ['median', 'mean'],
-        }).reset_index()
+    if "town" in rental_df.columns:
+        town_yields = (
+            rental_df.groupby("town")
+            .agg(
+                {
+                    "rental_yield_pct": ["median", "mean", "count"],
+                    "price": ["median", "mean"],
+                }
+            )
+            .reset_index()
+        )
 
-        town_yields.columns = ['town', 'yield_median', 'yield_mean', 'yield_count', 'price_median', 'price_mean']
-        town_yields = town_yields.sort_values('yield_median', ascending=False)
-        town_yields['rank'] = range(1, len(town_yields) + 1)
+        town_yields.columns = [
+            "town",
+            "yield_median",
+            "yield_mean",
+            "yield_count",
+            "price_median",
+            "price_mean",
+        ]
+        town_yields = town_yields.sort_values("yield_median", ascending=False)
+        town_yields["rank"] = range(1, len(town_yields) + 1)
 
         logger.info(f"Created {len(town_yields)} town rental yields")
         return town_yields
@@ -1224,7 +1285,7 @@ def save_precomputed_tables(
     pa_metrics: pd.DataFrame,
     lease_decay: pd.DataFrame,
     rental_combos: pd.DataFrame,
-    l3_dir: Path
+    l3_dir: Path,
 ) -> None:
     """Save all precomputed tables to parquet.
 
@@ -1239,17 +1300,17 @@ def save_precomputed_tables(
     logger.info("Saving precomputed tables...")
 
     tables = {
-        'market_summary': market_summary,
-        'tier_thresholds_evolution': tier_thresholds,
-        'planning_area_metrics': pa_metrics,
-        'lease_decay_stats': lease_decay,
-        'rental_yield_top_combos': rental_combos,
+        "market_summary": market_summary,
+        "tier_thresholds_evolution": tier_thresholds,
+        "planning_area_metrics": pa_metrics,
+        "lease_decay_stats": lease_decay,
+        "rental_yield_top_combos": rental_combos,
     }
 
     for name, table in tables.items():
         if not table.empty:
             output_path = l3_dir / f"{name}.parquet"
-            table.to_parquet(output_path, compression='snappy', index=False)
+            table.to_parquet(output_path, compression="snappy", index=False)
             logger.info(f"  Saved {name}: {len(table):,} rows -> {output_path}")
         else:
             logger.warning(f"  Skipping {name}: empty DataFrame")
@@ -1259,7 +1320,8 @@ def save_precomputed_tables(
 # OPTIONAL EXPORT FUNCTIONS
 # ============================================================================
 
-def upload_to_s3(df: pd.DataFrame, key: str, bucket: Optional[str] = None) -> bool:
+
+def upload_to_s3(df: pd.DataFrame, key: str, bucket: str | None = None) -> bool:
     """Upload DataFrame to S3.
 
     Args:
@@ -1278,8 +1340,9 @@ def upload_to_s3(df: pd.DataFrame, key: str, bucket: Optional[str] = None) -> bo
         return False
 
     try:
-        import boto3
         from io import BytesIO
+
+        import boto3
 
         s3_client = boto3.client("s3")
 
@@ -1299,7 +1362,7 @@ def upload_to_s3(df: pd.DataFrame, key: str, bucket: Optional[str] = None) -> bo
         return False
 
 
-def export_to_csv(df: pd.DataFrame, filename: str, output_dir: Optional[Path] = None) -> Path:
+def export_to_csv(df: pd.DataFrame, filename: str, output_dir: Path | None = None) -> Path:
     """Export DataFrame to CSV.
 
     Args:
@@ -1326,11 +1389,10 @@ def export_to_csv(df: pd.DataFrame, filename: str, output_dir: Optional[Path] = 
 # MAIN PIPELINE
 # ============================================================================
 
+
 def run_l3_pipeline(
-    upload_s3: bool = False,
-    export_csv: bool = False,
-    s3_bucket: Optional[str] = None
-) -> Dict:
+    upload_s3: bool = False, export_csv: bool = False, s3_bucket: str | None = None
+) -> dict:
     """Run complete L3 unified dataset creation and export pipeline.
 
     Args:
@@ -1408,7 +1470,7 @@ def run_l3_pipeline(
         logger.info(f"Loaded {len(schools_df)} schools")
 
         # Only process properties that have coordinates
-        combined_with_coords = combined.dropna(subset=['lat', 'lon'])
+        combined_with_coords = combined.dropna(subset=["lat", "lon"])
         if not combined_with_coords.empty:
             combined = calculate_school_features(combined, schools_df)
             logger.info("✅ School features added successfully")
@@ -1419,11 +1481,13 @@ def run_l3_pipeline(
         logger.info("Continuing without school features...")
 
     # Filter to successfully geocoded properties
-    if 'lat' in combined.columns and 'lon' in combined.columns:
+    if "lat" in combined.columns and "lon" in combined.columns:
         before_count = len(combined)
-        combined = combined.dropna(subset=['lat', 'lon'])
+        combined = combined.dropna(subset=["lat", "lon"])
         after_count = len(combined)
-        logger.info(f"Filtered to {after_count:,} geocoded properties (removed {before_count - after_count:,} without coordinates)")
+        logger.info(
+            f"Filtered to {after_count:,} geocoded properties (removed {before_count - after_count:,} without coordinates)"
+        )
 
     # Select final columns
     final_df = filter_final_columns(combined)
@@ -1434,9 +1498,9 @@ def run_l3_pipeline(
 
     # Save main unified dataset
     output_path = l3_dir / "housing_unified.parquet"
-    final_df.to_parquet(output_path, compression='snappy', index=False)
+    final_df.to_parquet(output_path, compression="snappy", index=False)
     logger.info(f"Saved unified dataset to {output_path}")
-    results['unified'] = len(final_df)
+    results["unified"] = len(final_df)
 
     # Optional: Upload to S3
     if upload_s3:
@@ -1463,11 +1527,11 @@ def run_l3_pipeline(
         market_summary, tier_thresholds, pa_metrics, lease_decay, rental_combos, l3_dir
     )
 
-    results['market_summary'] = len(market_summary)
-    results['tier_thresholds'] = len(tier_thresholds)
-    results['planning_area_metrics'] = len(pa_metrics)
-    results['lease_decay_stats'] = len(lease_decay)
-    results['rental_yield_combos'] = len(rental_combos)
+    results["market_summary"] = len(market_summary)
+    results["tier_thresholds"] = len(tier_thresholds)
+    results["planning_area_metrics"] = len(pa_metrics)
+    results["lease_decay_stats"] = len(lease_decay)
+    results["rental_yield_combos"] = len(rental_combos)
 
     logger.info("=" * 60)
     logger.info("Precomputed tables created successfully!")
@@ -1479,34 +1543,52 @@ def run_l3_pipeline(
     logger.info("=" * 60)
     logger.info(f"Total records: {len(final_df):,}")
     logger.info(f"Total columns: {len(final_df.columns)}")
-    logger.info(f"Date range: {final_df['transaction_date'].min()} to {final_df['transaction_date'].max()}")
+    logger.info(
+        f"Date range: {final_df['transaction_date'].min()} to {final_df['transaction_date'].max()}"
+    )
 
-    if 'property_type' in final_df.columns:
-        for ptype, count in final_df['property_type'].value_counts().items():
+    if "property_type" in final_df.columns:
+        for ptype, count in final_df["property_type"].value_counts().items():
             logger.info(f"  {ptype}: {count:,} records")
 
-    if 'planning_area' in final_df.columns:
-        pa_coverage = final_df['planning_area'].notna().sum()
-        logger.info(f"Planning area coverage: {pa_coverage:,} of {len(final_df):,} ({pa_coverage/len(final_df)*100:.1f}%)")
+    if "planning_area" in final_df.columns:
+        pa_coverage = final_df["planning_area"].notna().sum()
+        logger.info(
+            f"Planning area coverage: {pa_coverage:,} of {len(final_df):,} ({pa_coverage / len(final_df) * 100:.1f}%)"
+        )
 
-    if 'price' in final_df.columns:
-        logger.info(f"Price range: ${final_df['price'].min():,.0f} to ${final_df['price'].max():,.0f}")
+    if "price" in final_df.columns:
+        logger.info(
+            f"Price range: ${final_df['price'].min():,.0f} to ${final_df['price'].max():,.0f}"
+        )
         logger.info(f"Median price: ${final_df['price'].median():,.0f}")
 
     # New feature coverage
-    if 'rental_yield_pct' in final_df.columns:
-        ry_coverage = final_df['rental_yield_pct'].notna().sum()
-        logger.info(f"Rental yield coverage: {ry_coverage:,} of {len(final_df):,} ({ry_coverage/len(final_df)*100:.1f}%)")
+    if "rental_yield_pct" in final_df.columns:
+        ry_coverage = final_df["rental_yield_pct"].notna().sum()
+        logger.info(
+            f"Rental yield coverage: {ry_coverage:,} of {len(final_df):,} ({ry_coverage / len(final_df) * 100:.1f}%)"
+        )
 
-    amenity_distance_cols = [col for col in final_df.columns if col.startswith('dist_to_nearest_')]
+    amenity_distance_cols = [col for col in final_df.columns if col.startswith("dist_to_nearest_")]
     if amenity_distance_cols:
         logger.info(f"Amenity distance features: {len(amenity_distance_cols)} columns")
 
-    amenity_count_cols = [col for col in final_df.columns if col.endswith('_within_500m') or col.endswith('_within_1km') or col.endswith('_within_2km')]
+    amenity_count_cols = [
+        col
+        for col in final_df.columns
+        if col.endswith("_within_500m")
+        or col.endswith("_within_1km")
+        or col.endswith("_within_2km")
+    ]
     if amenity_count_cols:
         logger.info(f"Amenity count features: {len(amenity_count_cols)} columns")
 
-    metric_cols = [col for col in final_df.columns if col in ['stratified_median_price', 'mom_change_pct', 'momentum_signal']]
+    metric_cols = [
+        col
+        for col in final_df.columns
+        if col in ["stratified_median_price", "mom_change_pct", "momentum_signal"]
+    ]
     if metric_cols:
         logger.info(f"Precomputed metrics: {len(metric_cols)} columns")
 
@@ -1514,7 +1596,9 @@ def run_l3_pipeline(
     logger.info("-" * 60)
     logger.info("Precomputed Summary Tables:")
     if not market_summary.empty:
-        logger.info(f"  - market_summary: {len(market_summary):,} rows (by property_type/period/tier)")
+        logger.info(
+            f"  - market_summary: {len(market_summary):,} rows (by property_type/period/tier)"
+        )
     if not tier_thresholds.empty:
         logger.info(f"  - tier_thresholds_evolution: {len(tier_thresholds):,} rows")
     if not pa_metrics.empty:

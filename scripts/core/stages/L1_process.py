@@ -5,24 +5,18 @@ This module provides functions for:
 - Extracting unique property addresses
 - Geocoding addresses using OneMap API
 - Combining and filtering geocoded results
-"""
+"""  # noqa: N999
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
-import requests
 
 from scripts.core.config import Config
 from scripts.core.data_helpers import save_parquet
 from scripts.core.geocoding import (
-    load_ura_files,
     extract_unique_addresses,
-    setup_onemap_headers,
-    fetch_data_parallel,
-    batch_geocode_addresses,
-    fetch_data_cached,
+    load_ura_files,
 )
 from scripts.core.stages.helpers import geocoding_helpers
 
@@ -30,8 +24,8 @@ logger = logging.getLogger(__name__)
 
 
 def load_and_save_transaction_data(
-    csv_base_path: Optional[Path] = None,
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    csv_base_path: Path | None = None,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Load URA and HDB transaction files and save individual datasets.
 
@@ -98,11 +92,11 @@ def prepare_unique_addresses(
 
 
 def geocode_addresses(
-    addresses: List[str],
+    addresses: list[str],
     use_parallel: bool = True,
     show_progress: bool = True,
     check_existing: bool = True,
-) -> Tuple[pd.DataFrame, List[str]]:
+) -> tuple[pd.DataFrame, list[str]]:
     """
     Geocode property addresses using OneMap API.
 
@@ -165,9 +159,7 @@ def geocode_addresses(
         logger.warning(f"⚠️  Failed to retrieve data for {len(failed)} addresses")
 
     # Merge with existing data
-    geocoded_df = geocoding_helpers.merge_geocoded_results(
-        existing_geocoded_df, new_geocoded_df
-    )
+    geocoded_df = geocoding_helpers.merge_geocoded_results(existing_geocoded_df, new_geocoded_df)
 
     return geocoded_df, failed
 
@@ -232,8 +224,8 @@ def process_geocoded_results(
 
 
 def run_processing_pipeline(
-    csv_base_path: Optional[Path] = None, use_parallel_geocoding: bool = True
-) -> Dict:
+    csv_base_path: Path | None = None, use_parallel_geocoding: bool = True
+) -> dict:
     """
     Run complete L1 processing pipeline.
 
@@ -311,7 +303,7 @@ def run_processing_pipeline(
 
 
 def save_failed_addresses(
-    failed_addresses: List[str], filename: str = "failed_geocoding.txt"
+    failed_addresses: list[str], filename: str = "failed_geocoding.txt"
 ) -> None:
     """
     Save list of failed addresses to file for later retry.
@@ -334,7 +326,7 @@ def save_failed_addresses(
     output_file = log_dir / filename
 
     with open(output_file, "w") as f:
-        f.write(f"# Failed Geocoding Addresses\n")
+        f.write("# Failed Geocoding Addresses\n")
         f.write(f"# Total: {len(failed_addresses)}\n")
         f.write(f"# Generated: {pd.Timestamp.now()}\n\n")
         for addr in failed_addresses:

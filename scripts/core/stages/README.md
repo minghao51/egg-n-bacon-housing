@@ -83,7 +83,7 @@ L0 (Collection) → L1 (Processing) → L2 (Features) → L3 (Export) → L4 (An
 - `L3_property_listing_sales.parquet` - Derived listings (room counts, bathrooms, floor)
 
 **Key Functions:**
-- `run_features_pipeline()` - Main entry point
+    - `run_l2_features_pipeline()` - Main entry point
 - `create_property_geodataframe()` - Generates H3 polygons for properties
 - `compute_amenity_distances()` - Spatial join to find nearest amenities
 - `compute_planning_area()` - Assigns planning areas via spatial join

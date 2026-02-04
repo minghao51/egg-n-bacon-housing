@@ -1,7 +1,6 @@
 """Helper functions for L2 feature engineering."""
 
 import logging
-from typing import Tuple, Optional
 
 import numpy as np
 import pandas as pd
@@ -13,7 +12,7 @@ SQM_TO_SQFT = 10.764
 SQFT_TO_SQM = 1 / SQM_TO_SQFT
 
 
-def extract_lease_info(lease_str: str) -> Tuple[Optional[int], str]:
+def extract_lease_info(lease_str: str) -> tuple[int | None, str]:
     """
     Extract lease information from tenure string.
 
@@ -35,7 +34,7 @@ def extract_lease_info(lease_str: str) -> Tuple[Optional[int], str]:
     return None, "leasehold"
 
 
-def extract_floor_range(floor_level: str) -> Tuple[str, str]:
+def extract_floor_range(floor_level: str) -> tuple[str, str]:
     """
     Extract first two digits from floor range string.
 

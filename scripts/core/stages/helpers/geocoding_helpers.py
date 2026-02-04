@@ -1,7 +1,6 @@
 """Helper functions for L1 geocoding pipeline."""
 
 import logging
-from typing import List, Optional, Tuple
 
 import pandas as pd
 
@@ -16,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 def load_existing_geocoded_data(
-    addresses: List[str],
-) -> Tuple[pd.DataFrame, List[str]]:
+    addresses: list[str],
+) -> tuple[pd.DataFrame, list[str]]:
     """
     Load existing geocoded data and filter out already geocoded addresses.
 
@@ -44,9 +43,7 @@ def load_existing_geocoded_data(
         # Filter out already geocoded addresses
         new_addresses = [addr for addr in addresses if addr not in existing_addresses]
 
-        logger.info(
-            f"Addresses to geocode: {len(new_addresses)} new / {len(addresses)} total"
-        )
+        logger.info(f"Addresses to geocode: {len(new_addresses)} new / {len(addresses)} total")
 
         if len(new_addresses) == 0:
             logger.info("✅ All addresses already geocoded! Using existing data.")
@@ -76,16 +73,15 @@ def setup_geocoding_auth() -> dict:
     except Exception as e:
         logger.error(f"❌ Failed to authenticate with OneMap API: {e}")
         raise Exception(
-            "Cannot proceed without OneMap authentication. "
-            "Please check your credentials in .env"
+            "Cannot proceed without OneMap authentication. Please check your credentials in .env"
         )
 
 
 def geocode_sequential(
-    addresses: List[str],
+    addresses: list[str],
     headers: dict,
     show_progress: bool = True,
-) -> Tuple[pd.DataFrame, List[str]]:
+) -> tuple[pd.DataFrame, list[str]]:
     """
     Geocode addresses sequentially (slower but more reliable).
 
@@ -129,9 +125,9 @@ def geocode_sequential(
 
 
 def geocode_parallel(
-    addresses: List[str],
+    addresses: list[str],
     headers: dict,
-) -> Tuple[pd.DataFrame, List[str]]:
+) -> tuple[pd.DataFrame, list[str]]:
     """
     Geocode addresses using parallel batch processing (5x faster).
 

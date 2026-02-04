@@ -7,14 +7,12 @@ This module provides functions for:
 """
 
 import logging
-from typing import List
 
 import h3
 import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
 from shapely.geometry import Polygon
-from tqdm import tqdm
 
 from scripts.core.stages.helpers import spatial_helpers
 
@@ -56,7 +54,7 @@ def generate_h3_grid_cell(lat: float, lon: float, resolution: int = 8) -> str:
     return h3.latlng_to_cell(lat, lon, resolution)
 
 
-def generate_grid_disk(cell: str, k: int = 5) -> List[str]:
+def generate_grid_disk(cell: str, k: int = 5) -> list[str]:
     """Generate H3 grid disk from a cell.
 
     Args:
@@ -69,7 +67,7 @@ def generate_grid_disk(cell: str, k: int = 5) -> List[str]:
     return h3.grid_disk(cell, k)
 
 
-def generate_polygon_from_cells(cells: List[str]) -> Polygon:
+def generate_polygon_from_cells(cells: list[str]) -> Polygon:
     """Generate Shapely Polygon from H3 cells.
 
     Args:
@@ -81,7 +79,7 @@ def generate_polygon_from_cells(cells: List[str]) -> Polygon:
     return Polygon(h3.cells_to_geo(cells)["coordinates"][0])
 
 
-def generate_polygons(unique_df: pd.DataFrame, resolution: int = 8, k: int = 3) -> List[Polygon]:
+def generate_polygons(unique_df: pd.DataFrame, resolution: int = 8, k: int = 3) -> list[Polygon]:
     """Generate polygons from unique_df's lat/lon coordinates.
 
     Args:
@@ -163,7 +161,7 @@ def calculate_amenity_distances(
 
     housing_df[f"dist_to_nearest_{amenity_type}"] = distances
 
-    logger.info(f"  Calculating amenity counts within radius...")
+    logger.info("  Calculating amenity counts within radius...")
 
     # Use helper for cleaner, more efficient amenity counting
     counts_500m, counts_1km, counts_2km = spatial_helpers.calculate_amenity_counts_by_radius(

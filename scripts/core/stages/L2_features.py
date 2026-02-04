@@ -6,17 +6,15 @@ This module provides functions for:
 - Computing amenity distances via spatial join
 - Creating property, facilities, and listings tables
 - Running complete L2 features pipeline
-"""
+"""  # noqa: N999
 
 import logging
 import random
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-from shapely.geometry import Polygon
 
 from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet, save_parquet
@@ -28,7 +26,7 @@ from .spatial_h3 import generate_polygons
 logger = logging.getLogger(__name__)
 
 
-def load_transaction_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def load_transaction_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load transaction data from parquet files.
 
     Returns:
@@ -46,7 +44,7 @@ def load_transaction_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     return condo_df, ec_df, hdb_df
 
 
-def load_property_and_amenity_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
+def load_property_and_amenity_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load property and amenity data.
 
     Returns:
@@ -62,7 +60,7 @@ def load_property_and_amenity_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
     return unique_df, amenity_df
 
 
-def load_planning_area(data_base_path: Optional[Path] = None) -> Optional[gpd.GeoDataFrame]:
+def load_planning_area(data_base_path: Path | None = None) -> gpd.GeoDataFrame | None:
     """Load planning area shapefile.
 
     Args:
@@ -181,7 +179,7 @@ def compute_amenity_distances(
 
 
 def compute_planning_area(
-    unique_gdf: gpd.GeoDataFrame, planning_area_gpd: Optional[gpd.GeoDataFrame]
+    unique_gdf: gpd.GeoDataFrame, planning_area_gpd: gpd.GeoDataFrame | None
 ) -> gpd.GeoDataFrame:
     """Assign planning area to each property via spatial join.
 
@@ -213,7 +211,7 @@ def compute_planning_area(
     return unique_gdf_with_area
 
 
-def extract_lease_info(lease_info: str) -> Tuple[Optional[int], str]:
+def extract_lease_info(lease_info: str) -> tuple[int | None, str]:
     """Extract lease information from tenure string.
 
     Delegates to feature_helpers.extract_lease_info for consistency.
@@ -227,7 +225,7 @@ def extract_lease_info(lease_info: str) -> Tuple[Optional[int], str]:
     return feature_helpers.extract_lease_info(lease_info)
 
 
-def extract_two_digits(string: str) -> Tuple[str, str]:
+def extract_two_digits(string: str) -> tuple[str, str]:
     """Extract first two digits from floor range string.
 
     Delegates to feature_helpers.extract_floor_range for consistency.
@@ -302,7 +300,9 @@ def process_private_transactions(condo_df: pd.DataFrame, ec_df: pd.DataFrame) ->
     private_df = private_df.rename(columns=rename_map)
 
     if "project_name" in private_df.columns and "street_name" in private_df.columns:
-        private_df["property_index"] = private_df["project_name"].fillna("") + " " + private_df["street_name"].fillna("")
+        private_df["property_index"] = (
+            private_df["project_name"].fillna("") + " " + private_df["street_name"].fillna("")
+        )
         private_df["property_index"] = private_df["property_index"].str.strip().str.upper()
 
     for col in ["project_name", "street_name", "property_index"]:
@@ -555,10 +555,8 @@ def create_listing_sales(transaction_sales: pd.DataFrame) -> pd.DataFrame:
 
     # Infer room count using helper (cleaner than nested list comprehensions)
     listing_sales["room_no"] = listing_sales.apply(
-        lambda row: feature_helpers.infer_room_count(
-            row["property_sub_type"], row["area_sqft"]
-        ),
-        axis=1
+        lambda row: feature_helpers.infer_room_count(row["property_sub_type"], row["area_sqft"]),
+        axis=1,
     )
 
     # Estimate bathroom count using helper
@@ -568,10 +566,8 @@ def create_listing_sales(transaction_sales: pd.DataFrame) -> pd.DataFrame:
 
     # Calculate floor number using helper
     listing_sales["floor"] = listing_sales.apply(
-        lambda row: feature_helpers.calculate_floor_number(
-            row["floor_low"], row["floor_high"]
-        ),
-        axis=1
+        lambda row: feature_helpers.calculate_floor_number(row["floor_low"], row["floor_high"]),
+        axis=1,
     )
 
     drop_cols = ["floor_low", "floor_high", "floor_level"]
@@ -581,9 +577,9 @@ def create_listing_sales(transaction_sales: pd.DataFrame) -> pd.DataFrame:
     return listing_sales
 
 
-def run_features_pipeline(
-    data_base_path: Optional[Path] = None, include_planning_area: bool = True
-) -> Dict:
+def run_l2_features_pipeline(
+    data_base_path: Path | None = None, include_planning_area: bool = True
+) -> dict:
     """Run complete L2 features pipeline.
 
     Args:

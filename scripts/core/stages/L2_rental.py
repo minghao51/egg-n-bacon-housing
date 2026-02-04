@@ -5,12 +5,11 @@ This module provides functions for:
 - Downloading URA rental index
 - Calculating rental yields for HDB and Condo
 - Running complete L2 rental pipeline
-"""
+"""  # noqa: N999
 
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
 
 import pandas as pd
 
@@ -52,8 +51,8 @@ def download_hdb_rental_data(force: bool = False) -> bool:
     output_path = Config.PIPELINE_DIR / "L1" / "housing_hdb_rental.parquet"
 
     if not force and check_file_freshness(output_path, max_age_days=30):
-        logger.info(f"✓ HDB rental data is fresh (< 30 days old)")
-        logger.info(f"  Skipping download. Use --force to re-download.")
+        logger.info("✓ HDB rental data is fresh (< 30 days old)")
+        logger.info("  Skipping download. Use --force to re-download.")
         return True
 
     try:
@@ -88,8 +87,8 @@ def download_ura_rental_index(force: bool = False) -> bool:
     output_path = Config.PIPELINE_DIR / "L1" / "housing_ura_rental_index.parquet"
 
     if not force and check_file_freshness(output_path, max_age_days=90):
-        logger.info(f"✓ URA rental index is fresh (< 90 days old)")
-        logger.info(f"  Skipping download. Use --force to re-download.")
+        logger.info("✓ URA rental index is fresh (< 90 days old)")
+        logger.info("  Skipping download. Use --force to re-download.")
         return True
 
     try:
@@ -147,7 +146,7 @@ def calculate_condo_rental_yield() -> pd.DataFrame:
     """
     logger.info("Calculating Condo rental yields...")
 
-    DISTRICT_TO_REGION = {
+    district_to_region = {
         "1": "Core Central Region",
         "2": "Core Central Region",
         "3": "Core Central Region",
@@ -196,7 +195,7 @@ def calculate_condo_rental_yield() -> pd.DataFrame:
     trans_df["Transacted Price ($)"] = (
         trans_df["Transacted Price ($)"].astype(str).str.replace(",", "").astype(float)
     )
-    trans_df["region"] = trans_df["Postal District"].astype(str).map(DISTRICT_TO_REGION)
+    trans_df["region"] = trans_df["Postal District"].astype(str).map(district_to_region)
 
     trans_agg = (
         trans_df.groupby(["region", "quarter"])
@@ -289,7 +288,7 @@ def calculate_rental_yields() -> bool:
         return False
 
 
-def run_rental_pipeline(force: bool = False) -> Dict:
+def run_rental_pipeline(force: bool = False) -> dict:
     """Run complete L2 rental pipeline.
 
     Args:
