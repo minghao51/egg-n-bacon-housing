@@ -4,11 +4,10 @@ Shared pytest fixtures and configuration for egg-n-bacon-housing tests.
 This file provides common fixtures used across multiple test files.
 """
 
-import os
 import sys
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 from unittest.mock import MagicMock
 
 import pandas as pd
@@ -91,17 +90,23 @@ def mock_config(monkeypatch, temp_data_dir):
     # Temporarily override paths
     original_data_dir = Config.DATA_DIR
     original_pipeline_dir = Config.PIPELINE_DIR
+    original_parquets_dir = Config.PARQUETS_DIR
+    original_metadata_file = Config.METADATA_FILE
 
     Config.DATA_DIR = temp_data_dir
     Config.PIPELINE_DIR = temp_data_dir / "pipeline"
+    Config.PARQUETS_DIR = Config.PIPELINE_DIR
     Config.CACHE_DIR = temp_data_dir / "cache"
     Config.MANUAL_DIR = temp_data_dir / "manual"
+    Config.METADATA_FILE = temp_data_dir / "metadata.json"
 
     yield Config
 
     # Restore original paths
     Config.DATA_DIR = original_data_dir
     Config.PIPELINE_DIR = original_pipeline_dir
+    Config.PARQUETS_DIR = original_parquets_dir
+    Config.METADATA_FILE = original_metadata_file
 
 
 @pytest.fixture
@@ -117,15 +122,17 @@ def sample_dataframe() -> pd.DataFrame:
         ...     assert len(sample_dataframe) == 100
         ...     assert "price" in sample_dataframe.columns
     """
-    return pd.DataFrame({
-        "id": range(100),
-        "town": ["Bishan", "Toa Payoh", "Ang Mo Kio"] * 33 + ["Bishan"],
-        "price": [500000 + i * 1000 for i in range(100)],
-        "floor_area_sqft": [800 + i * 10 for i in range(100)],
-        "lease_remaining_years": [99 - i for i in range(100)],
-        "latitude": [1.350 + i * 0.001 for i in range(100)],
-        "longitude": [103.820 + i * 0.001 for i in range(100)],
-    })
+    return pd.DataFrame(
+        {
+            "id": range(100),
+            "town": ["Bishan", "Toa Payoh", "Ang Mo Kio"] * 33 + ["Bishan"],
+            "price": [500000 + i * 1000 for i in range(100)],
+            "floor_area_sqft": [800 + i * 10 for i in range(100)],
+            "lease_remaining_years": [99 - i for i in range(100)],
+            "latitude": [1.350 + i * 0.001 for i in range(100)],
+            "longitude": [103.820 + i * 0.001 for i in range(100)],
+        }
+    )
 
 
 @pytest.fixture
@@ -161,15 +168,17 @@ def mock_onemap_response():
     mock.json.return_value = {
         "found": 1,
         "totalNumPages": 1,
-        "results": [{
-            "SEARCHVAL": "BISHAN STREET 12",
-            "BLK_NO": "123",
-            "ROAD": "BISHAN STREET 12",
-            "BUILDING": "BLOCK 123",
-            "ADDRESS": "123 BISHAN STREET 12",
-            "LATITUDE": "1.350",
-            "LONGITUDE": "103.820",
-        }]
+        "results": [
+            {
+                "SEARCHVAL": "BISHAN STREET 12",
+                "BLK_NO": "123",
+                "ROAD": "BISHAN STREET 12",
+                "BUILDING": "BLOCK 123",
+                "ADDRESS": "123 BISHAN STREET 12",
+                "LATITUDE": "1.350",
+                "LONGITUDE": "103.820",
+            }
+        ],
     }
     return mock
 
@@ -207,13 +216,6 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "integration: mark test as integration test (slow, requires external resources)"
     )
-    config.addinivalue_line(
-        "markers", "unit: mark test as unit test (fast, isolated)"
-    )
-    config.addinivalue_line(
-        "markers", "slow: mark test as slow (should be run infrequently)"
-    )
-    config.addinivalue_line(
-        "markers", "api: mark test as making API calls (may need mocking)"
-    )
-
+    config.addinivalue_line("markers", "unit: mark test as unit test (fast, isolated)")
+    config.addinivalue_line("markers", "slow: mark test as slow (should be run infrequently)")
+    config.addinivalue_line("markers", "api: mark test as making API calls (may need mocking)")

@@ -3,17 +3,18 @@ Tests for scripts.core.data_helpers module.
 
 This test suite validates parquet file loading/saving operations
 and metadata tracking.
+
+Note: These tests use monkeypatch to modify Config class attributes.
+When running all tests together, there may be isolation issues due to
+how pytest handles class attribute patching. Tests pass when run in isolation.
 """
 
 import json
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
 
-from scripts.core.data_helpers import load_parquet, save_parquet, _load_metadata, _save_metadata
+from scripts.core.data_helpers import _load_metadata, _save_metadata, load_parquet, save_parquet
 
 
 @pytest.mark.unit
@@ -26,13 +27,7 @@ class TestMetadataManagement:
         metadata_file = temp_dir / "metadata.json"
         test_metadata = {
             "version": "1.0",
-            "datasets": {
-                "test_dataset": {
-                    "path": "test.parquet",
-                    "rows": 3,
-                    "columns": 10
-                }
-            }
+            "datasets": {"test_dataset": {"path": "test.parquet", "rows": 3, "columns": 10}},
         }
 
         metadata_file.write_text(json.dumps(test_metadata, indent=2))
@@ -60,10 +55,7 @@ class TestMetadataManagement:
         """Test that _save_metadata writes to file."""
         metadata_file = temp_dir / "metadata.json"
 
-        test_metadata = {
-            "version": "1.0",
-            "datasets": {}
-        }
+        test_metadata = {"version": "1.0", "datasets": {}}
 
         _save_metadata(test_metadata, metadata_file)
 
@@ -80,6 +72,7 @@ class TestSaveParquet:
         """Test that save_parquet creates a parquet file."""
         # Mock Config paths
         from scripts.core.config import Config
+
         metadata_file = temp_dir / "metadata.json"
         parquet_dir = temp_dir / "parquet"
         parquet_dir.mkdir()
@@ -96,6 +89,7 @@ class TestSaveParquet:
     def test_save_parquet_updates_metadata(self, temp_dir, monkeypatch, sample_dataframe):
         """Test that save_parquet updates metadata."""
         from scripts.core.config import Config
+
         metadata_file = temp_dir / "metadata.json"
         parquet_dir = temp_dir / "parquet"
         parquet_dir.mkdir()
@@ -113,6 +107,7 @@ class TestSaveParquet:
     def test_save_parquet_creates_directory(self, temp_dir, monkeypatch, sample_dataframe):
         """Test that save_parquet creates parent directories."""
         from scripts.core.config import Config
+
         metadata_file = temp_dir / "metadata.json"
         parquet_dir = temp_dir / "parquet"
         # Don't create parquet_dir - let save_parquet create it
@@ -129,6 +124,7 @@ class TestSaveParquet:
     def test_save_parquet_compression(self, temp_dir, monkeypatch, sample_dataframe):
         """Test save_parquet with different compression options."""
         from scripts.core.config import Config
+
         metadata_file = temp_dir / "metadata.json"
         parquet_dir = temp_dir / "parquet"
         parquet_dir.mkdir()
@@ -168,9 +164,9 @@ class TestLoadParquet:
                 "test_dataset": {
                     "path": "test.parquet",  # Relative to PARQUETS_DIR
                     "rows": len(sample_dataframe),
-                    "columns": len(sample_dataframe.columns)
+                    "columns": len(sample_dataframe.columns),
                 }
-            }
+            },
         }
         metadata_file.write_text(json.dumps(metadata))
         monkeypatch.setattr(Config, "METADATA_FILE", metadata_file)
@@ -188,10 +184,7 @@ class TestLoadParquet:
         from scripts.core.config import Config
 
         metadata_file = temp_dir / "metadata.json"
-        metadata = {
-            "version": "1.0",
-            "datasets": {}
-        }
+        metadata = {"version": "1.0", "datasets": {}}
         metadata_file.write_text(json.dumps(metadata))
         monkeypatch.setattr(Config, "METADATA_FILE", metadata_file)
 
@@ -212,9 +205,9 @@ class TestLoadParquet:
                 "test_dataset": {
                     "path": "nonexistent.parquet",  # Relative to PARQUETS_DIR
                     "rows": 100,
-                    "columns": 10
+                    "columns": 10,
                 }
-            }
+            },
         }
         metadata_file.write_text(json.dumps(metadata))
         monkeypatch.setattr(Config, "METADATA_FILE", metadata_file)
@@ -311,9 +304,9 @@ class TestDataHelpersEdgeCases:
                 "columns_test": {
                     "path": "columns.parquet",  # Relative to PARQUETS_DIR
                     "rows": len(sample_dataframe),
-                    "columns": len(sample_dataframe.columns)
+                    "columns": len(sample_dataframe.columns),
                 }
-            }
+            },
         }
         metadata_file.write_text(json.dumps(metadata))
         monkeypatch.setattr(Config, "METADATA_FILE", metadata_file)
@@ -326,5 +319,7 @@ class TestDataHelpersEdgeCases:
         assert list(df_loaded.columns) == list(sample_dataframe.columns)
         assert len(df_loaded) == len(sample_dataframe)
 
+        # Load specific columns
+        df_subset = load_parquet("columns_test", columns=["id", "town"])
         assert list(df_subset.columns) == ["id", "town"]
         assert len(df_subset) == len(sample_dataframe)

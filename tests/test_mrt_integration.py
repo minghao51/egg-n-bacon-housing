@@ -12,10 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from scripts.core.config import Config
 from scripts.core.mrt_distance import calculate_nearest_mrt, load_mrt_stations
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -39,12 +36,12 @@ def main():
     logger.info(f"Columns: {list(df.columns[:10])}...")
 
     # Check if lat/lon exist
-    if 'lat' not in df.columns or 'lon' not in df.columns:
+    if "lat" not in df.columns or "lon" not in df.columns:
         logger.error("Dataset missing lat/lon columns")
         return
 
     # Filter to properties with coordinates
-    has_coords = df['lat'].notna() & df['lon'].notna()
+    has_coords = df["lat"].notna() & df["lon"].notna()
     logger.info(f"Properties with coordinates: {has_coords.sum():,} of {len(df):,}")
 
     # Test on a small sample first
@@ -61,9 +58,7 @@ def main():
     # Calculate nearest MRT
     logger.info("Calculating nearest MRT stations...")
     sample_with_mrt = calculate_nearest_mrt(
-        sample_df,
-        mrt_stations_df=mrt_stations,
-        show_progress=True
+        sample_df, mrt_stations_df=mrt_stations, show_progress=True
     )
 
     # Show results
@@ -71,11 +66,11 @@ def main():
     logger.info("Sample Results:")
     logger.info("=" * 60)
 
-    result_cols = ['address', 'nearest_mrt_name', 'nearest_mrt_distance']
-    if 'town' in sample_with_mrt.columns:
-        result_cols.insert(1, 'town')
-    if 'property_type' in sample_with_mrt.columns:
-        result_cols.insert(1, 'property_type')
+    result_cols = ["address", "nearest_mrt_name", "nearest_mrt_distance"]
+    if "town" in sample_with_mrt.columns:
+        result_cols.insert(1, "town")
+    if "property_type" in sample_with_mrt.columns:
+        result_cols.insert(1, "property_type")
 
     print(sample_with_mrt[result_cols].head(10).to_string())
 
@@ -89,14 +84,18 @@ def main():
     logger.info(f"Min distance: {sample_with_mrt['nearest_mrt_distance'].min():.0f}m")
     logger.info(f"Max distance: {sample_with_mrt['nearest_mrt_distance'].max():.0f}m")
 
-    within_500m = (sample_with_mrt['nearest_mrt_distance'] <= 500).sum()
-    within_1km = (sample_with_mrt['nearest_mrt_distance'] <= 1000).sum()
-    logger.info(f"Properties within 500m: {within_500m:,} ({within_500m/len(sample_with_mrt)*100:.1f}%)")
-    logger.info(f"Properties within 1km: {within_1km:,} ({within_1km/len(sample_with_mrt)*100:.1f}%)")
+    within_500m = (sample_with_mrt["nearest_mrt_distance"] <= 500).sum()
+    within_1km = (sample_with_mrt["nearest_mrt_distance"] <= 1000).sum()
+    logger.info(
+        f"Properties within 500m: {within_500m:,} ({within_500m / len(sample_with_mrt) * 100:.1f}%)"
+    )
+    logger.info(
+        f"Properties within 1km: {within_1km:,} ({within_1km / len(sample_with_mrt) * 100:.1f}%)"
+    )
 
     # Most common MRT stations
     logger.info("\nTop 10 most common nearest MRT stations:")
-    top_mrt = sample_with_mrt['nearest_mrt_name'].value_counts().head(10)
+    top_mrt = sample_with_mrt["nearest_mrt_name"].value_counts().head(10)
     for mrt, count in top_mrt.items():
         logger.info(f"  {mrt}: {count:,} properties")
 
@@ -106,7 +105,7 @@ def main():
 
     # Save test output
     output_path = Config.DATA_DIR / "test_mrt_output.parquet"
-    sample_with_mrt.to_parquet(output_path, compression='snappy', index=False)
+    sample_with_mrt.to_parquet(output_path, compression="snappy", index=False)
     logger.info(f"\nTest output saved to: {output_path}")
 
 

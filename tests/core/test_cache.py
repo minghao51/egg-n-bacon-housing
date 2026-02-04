@@ -6,8 +6,6 @@ cache storage, retrieval, expiration, and management.
 """
 
 import time
-from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
@@ -29,7 +27,7 @@ class TestCacheManager:
     def test_cache_manager_creates_directory(self, temp_dir):
         """Test that CacheManager creates cache directory."""
         cache_subdir = temp_dir / "cache"
-        cache_mgr = CacheManager(cache_dir=cache_subdir)
+        CacheManager(cache_dir=cache_subdir)  # noqa: F841
 
         assert cache_subdir.exists()
         assert cache_subdir.is_dir()
@@ -65,6 +63,7 @@ class TestCacheManager:
         """Test basic cache set and get operations."""
         # Enable caching
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -83,6 +82,7 @@ class TestCacheManager:
     def test_cache_miss_returns_none(self, temp_dir, monkeypatch):
         """Test that cache miss returns None."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -94,6 +94,7 @@ class TestCacheManager:
     def test_cache_disabled(self, temp_dir, monkeypatch):
         """Test that caching is disabled when USE_CACHING is False."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", False)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -106,6 +107,7 @@ class TestCacheManager:
     def test_cache_expiration(self, temp_dir, monkeypatch):
         """Test cache expiration based on duration."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -124,6 +126,7 @@ class TestCacheManager:
         cache_file = cache_mgr._get_cache_path(cache_mgr._get_cache_key(identifier))
         old_time = time.time() - (2 * 3600)  # 2 hours ago
         import os
+
         os.utime(cache_file, (old_time, old_time))
 
         # Get again with 1 hour duration (should be expired)
@@ -133,6 +136,7 @@ class TestCacheManager:
     def test_clear_specific_cache_entry(self, temp_dir, monkeypatch):
         """Test clearing a specific cache entry."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -149,6 +153,7 @@ class TestCacheManager:
     def test_clear_all_cache(self, temp_dir, monkeypatch):
         """Test clearing all cache entries."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -167,6 +172,7 @@ class TestCacheManager:
     def test_cache_stats(self, temp_dir, monkeypatch):
         """Test cache statistics."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -195,6 +201,7 @@ class TestCachedCall:
     def test_cached_call_cache_miss(self, temp_dir, monkeypatch):
         """Test cached_call on cache miss."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
         monkeypatch.setattr(Config, "CACHE_DIR", temp_dir)
 
@@ -213,6 +220,7 @@ class TestCachedCall:
     def test_cached_call_cache_hit(self, temp_dir, monkeypatch):
         """Test cached_call on cache hit."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
         monkeypatch.setattr(Config, "CACHE_DIR", temp_dir)
 
@@ -235,6 +243,7 @@ class TestCachedCall:
     def test_cached_call_with_custom_duration(self, temp_dir, monkeypatch):
         """Test cached_call with custom duration."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
         monkeypatch.setattr(Config, "CACHE_DIR", temp_dir)
 
@@ -253,6 +262,7 @@ class TestClearCache:
     def test_clear_cache_all(self, temp_dir, monkeypatch):
         """Test clearing all cache."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
         monkeypatch.setattr(Config, "CACHE_DIR", temp_dir)
 
@@ -268,6 +278,7 @@ class TestClearCache:
     def test_clear_cache_specific(self, temp_dir, monkeypatch):
         """Test clearing specific cache entry."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -288,6 +299,7 @@ class TestGetCacheStats:
     def test_get_cache_stats_empty(self, temp_dir, monkeypatch):
         """Test get_cache_stats with empty cache."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "CACHE_DIR", temp_dir)
 
         stats = get_cache_stats()
@@ -298,6 +310,7 @@ class TestGetCacheStats:
     def test_get_cache_stats_with_data(self, temp_dir, monkeypatch):
         """Test get_cache_stats with cached data."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
@@ -317,15 +330,13 @@ class TestCacheIntegration:
     def test_cache_dataframe(self, temp_dir, monkeypatch):
         """Test caching pandas DataFrame."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
         monkeypatch.setattr(Config, "CACHE_DIR", temp_dir)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
 
-        df = pd.DataFrame({
-            "a": [1, 2, 3],
-            "b": [4, 5, 6]
-        })
+        df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
 
         cache_mgr.set("test_df", df)
         result = cache_mgr.get("test_df")
@@ -335,16 +346,13 @@ class TestCacheIntegration:
     def test_cache_complex_object(self, temp_dir, monkeypatch):
         """Test caching complex nested objects."""
         from scripts.core.config import Config
+
         monkeypatch.setattr(Config, "USE_CACHING", True)
         monkeypatch.setattr(Config, "CACHE_DIR", temp_dir)
 
         cache_mgr = CacheManager(cache_dir=temp_dir)
 
-        complex_obj = {
-            "list": [1, 2, 3],
-            "nested": {"key": "value"},
-            "tuple": (1, 2, 3)
-        }
+        complex_obj = {"list": [1, 2, 3], "nested": {"key": "value"}, "tuple": (1, 2, 3)}
 
         cache_mgr.set("complex", complex_obj)
         result = cache_mgr.get("complex")

@@ -5,10 +5,8 @@ This test suite validates configuration loading, validation,
 and path management.
 """
 
-import os
-import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -108,7 +106,9 @@ class TestConfigAPIKeys:
 
         # Force reload of config
         import importlib
+
         import scripts.core.config
+
         importlib.reload(scripts.core.config)
         from scripts.core.config import Config
 
@@ -121,7 +121,9 @@ class TestConfigAPIKeys:
 
         # Force reload of config
         import importlib
+
         import scripts.core.config
+
         importlib.reload(scripts.core.config)
         from scripts.core.config import Config
 

@@ -7,6 +7,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+
 def test_config():
     """Test config module."""
     print("Testing config module...")
@@ -21,7 +22,7 @@ def test_config():
         print(f"✅ BASE_DIR: {Config.BASE_DIR}")
         print(f"✅ DATA_DIR: {Config.DATA_DIR}")
         print(f"✅ PARQUETS_DIR: {Config.PARQUETS_DIR}")
-        print(f"✅ Config module working!\n")
+        print("✅ Config module working!\n")
         return True
     except Exception as e:
         print(f"❌ Config test failed: {e}\n")
@@ -32,15 +33,13 @@ def test_data_helpers():
     """Test data_helpers module."""
     print("Testing data_helpers module...")
     try:
-        from core.data_helpers import save_parquet, load_parquet, list_datasets
         import pandas as pd
+        from core.data_helpers import list_datasets, load_parquet, save_parquet
 
         # Create test data
-        df = pd.DataFrame({
-            "id": [1, 2, 3],
-            "name": ["Alice", "Bob", "Charlie"],
-            "value": [10.5, 20.3, 30.1]
-        })
+        df = pd.DataFrame(
+            {"id": [1, 2, 3], "name": ["Alice", "Bob", "Charlie"], "value": [10.5, 20.3, 30.1]}
+        )
 
         # Save
         save_parquet(df, "pipeline_test", source="pipeline test")
@@ -55,11 +54,12 @@ def test_data_helpers():
         assert loaded.equals(df)
         print(f"✅ Loaded {len(loaded)} rows successfully")
 
-        print(f"✅ Data helpers working!\n")
+        print("✅ Data helpers working!\n")
         return True
     except Exception as e:
         print(f"❌ Data helpers test failed: {e}\n")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -81,7 +81,7 @@ def test_parquet_structure():
         for pf in parquet_files[:5]:  # Show first 5
             print(f"  - {pf.relative_to(Config.DATA_DIR)}")
 
-        print(f"✅ Parquet structure correct!\n")
+        print("✅ Parquet structure correct!\n")
         return True
     except Exception as e:
         print(f"❌ Parquet structure test failed: {e}\n")
@@ -93,25 +93,26 @@ def test_metadata():
     print("Testing metadata.json...")
     try:
         import json
+
         from core.config import Config
 
         metadata_file = Config.METADATA_FILE
         assert metadata_file.exists()
 
-        with open(metadata_file, 'r') as f:
+        with open(metadata_file) as f:
             metadata = json.load(f)
 
         assert "datasets" in metadata
         assert "last_updated" in metadata
 
-        print(f"✅ Metadata file exists")
+        print("✅ Metadata file exists")
         print(f"✅ Last updated: {metadata['last_updated']}")
         print(f"✅ Datasets tracked: {len(metadata['datasets'])}")
 
-        for name, info in list(metadata['datasets'].items())[:3]:
+        for name, info in list(metadata["datasets"].items())[:3]:
             print(f"  - {name}: {info['rows']} rows")
 
-        print(f"✅ Metadata working!\n")
+        print("✅ Metadata working!\n")
         return True
     except Exception as e:
         print(f"❌ Metadata test failed: {e}\n")
@@ -123,19 +124,15 @@ def test_notebook_imports():
     print("Testing notebook imports...")
     try:
         # Test common imports used in notebooks
-        import pandas as pd
-        import numpy as np
-        import requests
 
         # Test src imports
-        sys.path.insert(0, 'notebooks')
-        from core.data_helpers import save_parquet, load_parquet
+        sys.path.insert(0, "notebooks")
 
         print("✅ pandas: OK")
         print("✅ numpy: OK")
         print("✅ requests: OK")
         print("✅ src.data_helpers: OK")
-        print(f"✅ Notebook imports working!\n")
+        print("✅ Notebook imports working!\n")
         return True
     except Exception as e:
         print(f"❌ Notebook imports test failed: {e}\n")
