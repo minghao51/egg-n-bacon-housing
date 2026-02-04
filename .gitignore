@@ -32,8 +32,11 @@ bun.lockb
 /data/pipeline/
 /data/*.parquet
 
-# Analytics outputs
+# Analytics outputs (REMOVE from git - pipeline generated)
 /data/analysis/
+
+# Forecasts (REMOVE from git - pipeline generated)
+data/forecasts/
 
 # Archive (old/unused data)
 /data/archive/
@@ -41,14 +44,14 @@ bun.lockb
 # API cache
 data/cache/
 
-# Runtime data (generated during pipeline execution)
-data/logs/
-data/checkpoints/
+# Runtime data (EXCEPTION: we track these)
+# data/logs/               # COMMENTED OUT - we track logs
+# data/checkpoints/        # COMMENTED OUT - we track checkpoints
 data/failed_addresses/
 
-# Manual downloads - large external data files
-data/manual/**/*.geojson
-data/manual/**/*.csv
+# Manual downloads (EXCEPTION: we track these - 85MB of external data)
+# data/manual/**/*.geojson  # COMMENTED OUT - we track these
+# data/manual/**/*.csv      # COMMENTED OUT - we track these
 !data/manual/**/*.md
 
 # Keep metadata.json for version tracking
@@ -75,8 +78,8 @@ backend/node_modules/
 backend/dist/
 backend/.astro/
 
-# Generated data files (built by pipeline)
-backend/public/data/*.json
+# Generated data files (EXCEPTION: we track dashboard JSON files)
+# backend/public/data/*.json  # COMMENTED OUT - we track these
 !backend/public/data/.gitkeep
 
 # Export data (temporary)

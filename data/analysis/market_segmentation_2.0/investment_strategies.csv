@@ -1,7 +1,0 @@
-cluster_id,segment_name,strategy,avg_yield_pct,avg_growth_pct,avg_price_psf
-0,Large Size Stable,BALANCED APPROACH - Moderate yield and growth. Balanced investment strategy.,5.54,8.27,570.0
-1,High Growth Recent,GROWTH PLAY - High appreciation potential. Consider for capital gains.,5.97,24.42,509.0
-2,Speculator Hotspots,GROWTH PLAY - High appreciation potential. Consider for capital gains.,5.22,83.93,550.0
-3,Declining Areas,BALANCED APPROACH - Moderate yield and growth. Balanced investment strategy.,5.69,-3.63,564.0
-4,Mid-Tier Value,HOLD & GROW - High yield + strong appreciation. Ideal for long-term buy-and-hold investors.,6.36,27.75,463.0
-5,Premium New Units,BALANCED APPROACH - Moderate yield and growth. Balanced investment strategy.,5.68,12.29,826.0
