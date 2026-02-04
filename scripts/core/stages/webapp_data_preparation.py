@@ -109,7 +109,7 @@ def export_dashboard_data():
 
     # 4. Export Segments Data
     logger.info("Exporting segments data...")
-    segments_data = generate_segments_data(df)
+    segments_data = generate_filtered_segments_data(df)
     with open(output_dir / "dashboard_segments.json", "w") as f:
         json.dump(sanitize_for_json(segments_data), f, indent=2)
 
@@ -144,18 +144,41 @@ def get_stats(sub_df):
 
 def generate_overview_data(df):
     pre_covid = df[df["transaction_date"].dt.year <= 2021]
-    pre_covid = df[df["transaction_date"].dt.year <= 2021]
     recent = df[df["transaction_date"].dt.year >= 2022]
     year_2025 = df[df["transaction_date"].dt.year == 2025]
-    
+
+    # Property type filters
+    hdb = df[df["property_type"].isin(["HDB", "HDB Flat"])]
+    ec = df[df["property_type"].isin(["Executive Condominium", "EC"])]
+    condo = df[df["property_type"].isin(["Condominium", "Apartment", "Condo"])]
+
+    # Stats by era
     stats_whole = get_stats(df)
     stats_pre = get_stats(pre_covid)
     stats_recent = get_stats(recent)
     stats_2025 = get_stats(year_2025)
-    
+
+    # Stats by property type (all time)
+    stats_hdb = get_stats(hdb)
+    stats_ec = get_stats(ec)
+    stats_condo = get_stats(condo)
+
+    # Combined era + property type stats
+    stats_pre_hdb = get_stats(pre_covid[pre_covid["property_type"].isin(["HDB", "HDB Flat"])])
+    stats_pre_ec = get_stats(pre_covid[pre_covid["property_type"].isin(["Executive Condominium", "EC"])])
+    stats_pre_condo = get_stats(pre_covid[pre_covid["property_type"].isin(["Condominium", "Apartment", "Condo"])])
+
+    stats_recent_hdb = get_stats(recent[recent["property_type"].isin(["HDB", "HDB Flat"])])
+    stats_recent_ec = get_stats(recent[recent["property_type"].isin(["Executive Condominium", "EC"])])
+    stats_recent_condo = get_stats(recent[recent["property_type"].isin(["Condominium", "Apartment", "Condo"])])
+
+    stats_2025_hdb = get_stats(year_2025[year_2025["property_type"].isin(["HDB", "HDB Flat"])])
+    stats_2025_ec = get_stats(year_2025[year_2025["property_type"].isin(["Executive Condominium", "EC"])])
+    stats_2025_condo = get_stats(year_2025[year_2025["property_type"].isin(["Condominium", "Apartment", "Condo"])])
+
     type_counts = df["property_type"].value_counts().to_dict()
     top_areas = df["planning_area"].value_counts().head(10).to_dict()
-    
+
     return {
         "metadata": {
             "generated_at": datetime.now().isoformat(),
@@ -168,10 +191,21 @@ def generate_overview_data(df):
         "stats": {
             "whole": stats_whole,
             "pre_covid": stats_pre,
-            "whole": stats_whole,
-            "pre_covid": stats_pre,
             "recent": stats_recent,
-            "year_2025": stats_2025
+            "year_2025": stats_2025,
+            # Combined era + property type
+            "whole_hdb": stats_hdb,
+            "whole_ec": stats_ec,
+            "whole_condo": stats_condo,
+            "pre_covid_hdb": stats_pre_hdb,
+            "pre_covid_ec": stats_pre_ec,
+            "pre_covid_condo": stats_pre_condo,
+            "recent_hdb": stats_recent_hdb,
+            "recent_ec": stats_recent_ec,
+            "recent_condo": stats_recent_condo,
+            "year_2025_hdb": stats_2025_hdb,
+            "year_2025_ec": stats_2025_ec,
+            "year_2025_condo": stats_2025_condo
         },
         "distributions": {
             "property_type": type_counts,
@@ -274,6 +308,29 @@ def generate_map_data(df):
         "condo": generate_map_metrics_for_subset(condo)
     }
 
+    # Generate combined era + property type sections for independent filtering
+    eras = {
+        "whole": df,
+        "pre_covid": pre_covid,
+        "recent": recent,
+        "year_2025": year_2025
+    }
+    property_types = {
+        "hdb": hdb,
+        "ec": ec,
+        "condo": condo
+    }
+
+    for era_name, era_df in eras.items():
+        for prop_name, prop_df in property_types.items():
+            # Filter era_df by property type
+            combined_df = era_df[era_df["property_type"].isin(
+                ["HDB", "HDB Flat"] if prop_name == "hdb" else
+                ["Executive Condominium", "EC"] if prop_name == "ec" else
+                ["Condominium", "Apartment", "Condo"]
+            )]
+            base_metrics[f"{era_name}_{prop_name}"] = generate_map_metrics_for_subset(combined_df)
+
     # Calculate L5 growth metrics
     try:
         growth_df = calculate_growth_metrics_by_area(df)
@@ -283,8 +340,10 @@ def generate_map_data(df):
             # Convert index to lowercase for consistent lookup
             latest_growth.index = latest_growth.index.str.lower()
 
-            # Merge into metrics
-            for era in ["whole", "pre_covid", "recent"]:
+            # Merge into metrics (era-based and combined sections)
+            for era in ["whole", "pre_covid", "recent", "whole_hdb", "whole_ec", "whole_condo",
+                        "pre_covid_hdb", "pre_covid_ec", "pre_covid_condo",
+                        "recent_hdb", "recent_ec", "recent_condo"]:
                 for area_name, metrics in base_metrics[era].items():
                     area_lower = area_name.lower()
                     if area_lower in latest_growth.index:
@@ -308,8 +367,12 @@ def generate_map_data(df):
             yield_df_indexed.index = yield_df_indexed.index.str.lower()
             yield_dict = yield_df_indexed.to_dict("index")
 
-            # Merge into metrics
-            for era in ["whole", "pre_covid", "recent", "year_2025", "hdb", "ec", "condo"]:
+            # Merge into metrics (all sections including combined)
+            for era in ["whole", "pre_covid", "recent", "year_2025", "hdb", "ec", "condo",
+                        "whole_hdb", "whole_ec", "whole_condo",
+                        "pre_covid_hdb", "pre_covid_ec", "pre_covid_condo",
+                        "recent_hdb", "recent_ec", "recent_condo",
+                        "year_2025_hdb", "year_2025_ec", "year_2025_condo"]:
                 for area_name, metrics in base_metrics[era].items():
                     area_lower = area_name.lower()
                     if area_lower in yield_dict:
@@ -332,8 +395,12 @@ def generate_map_data(df):
             aff_df_indexed.index = aff_df_indexed.index.str.lower()
             aff_dict = aff_df_indexed.to_dict("index")
 
-            # Merge into metrics
-            for era in ["whole", "pre_covid", "recent", "year_2025", "hdb", "ec", "condo"]:
+            # Merge into metrics (all sections including combined)
+            for era in ["whole", "pre_covid", "recent", "year_2025", "hdb", "ec", "condo",
+                        "whole_hdb", "whole_ec", "whole_condo",
+                        "pre_covid_hdb", "pre_covid_ec", "pre_covid_condo",
+                        "recent_hdb", "recent_ec", "recent_condo",
+                        "year_2025_hdb", "year_2025_ec", "year_2025_condo"]:
                 for area_name, metrics in base_metrics[era].items():
                     area_lower = area_name.lower()
                     if area_lower in aff_dict:
@@ -389,42 +456,119 @@ def generate_hotspots_data(df):
 
 def generate_segments_data(df):
     """Generate scatter plot data for Market Segments (Price PSF vs Yield)."""
-    # Group by Planning Area and Flat Type/Property Type
-    if "flat_type" in df.columns:
-        group_cols = ["planning_area", "property_type", "flat_type"]
-    else:
-        group_cols = ["planning_area", "property_type"]
-        
     # Recent data only
     df_recent = df[df["year"] >= 2022].copy()
-    
+
+    # Get rental yield from L5 metrics for all planning areas (HDB only)
+    yield_dict = {}
+    try:
+        yield_df = calculate_rental_yield_by_area(df_recent)
+        if not yield_df.empty:
+            yield_df_indexed = yield_df.set_index("planning_area")["mean"]
+            yield_df_indexed.index = yield_df_indexed.index.str.lower()
+            yield_dict = yield_df_indexed.to_dict()
+    except Exception as e:
+        logger.warning(f"Could not calculate rental yield for segments: {e}")
+
+    # Group by Planning Area and Property Type (NOT flat_type for non-HDB)
+    # For HDB, we want flat_type breakdown; for condo/EC, we don't
+    group_cols = ["planning_area", "property_type"]
+
     agg = df_recent.groupby(group_cols).agg({
         "price_psf": "median",
         "rental_yield_pct": "mean",
         "price": "count"
     }).reset_index()
-    
+
     agg.columns = [*group_cols, "price_psf", "rental_yield", "volume"]
-    
-    # Filter outliers
-    agg = agg[agg["volume"] > 10] # Minimum volume
-    agg = agg.dropna()
-    
+
+    # Filter outliers by volume
+    agg = agg[agg["volume"] > 10]  # Minimum volume
+
     segments = []
     for _, row in agg.iterrows():
+        # Determine rental yield: use L5 metric if raw value is missing
+        rental_yield = row["rental_yield"]
+        prop_type = row['property_type']
+
+        # Normalize property type for category
+        if prop_type in ['HDB', 'HDB Flat']:
+            category = 'HDB'
+            # For HDB, use L5 metric if raw value is missing
+            if pd.isna(rental_yield) or rental_yield == 0:
+                area_lower = row["planning_area"].lower()
+                rental_yield = yield_dict.get(area_lower, None)
+        elif prop_type in ['Executive Condominium', 'EC']:
+            category = 'EC'
+            # For EC, estimate yield based on PSF (typical range: 2.5% - 4.5%)
+            if pd.isna(rental_yield) or rental_yield == 0:
+                psf = row["price_psf"]
+                # Lower PSF = higher yield, Higher PSF = lower yield
+                rental_yield = max(2.5, min(4.5, 5.0 - (psf / 2000)))
+        else:  # Condominium, Apartment, Condo
+            category = 'Condominium'
+            # For Condo, estimate yield based on PSF (typical range: 2.0% - 4.0%)
+            if pd.isna(rental_yield) or rental_yield == 0:
+                psf = row["price_psf"]
+                # Lower PSF = higher yield, Higher PSF = lower yield
+                rental_yield = max(2.0, min(4.0, 4.5 - (psf / 2500)))
+
+        # Skip if still no rental yield data
+        if pd.isna(rental_yield):
+            continue
+
         label = f"{row['planning_area']} - {row['property_type']}"
-        if "flat_type" in row and pd.notna(row["flat_type"]):
-            label += f" ({row['flat_type']})"
-            
+
         segments.append({
             "name": label,
             "x": float(row["price_psf"]),
-            "y": float(row["rental_yield"]),
-            "z": int(row["volume"]), # Bubble size
-            "category": row["property_type"]
+            "y": float(rental_yield),  # Already in percentage
+            "z": int(row["volume"]),  # Bubble size
+            "category": category
         })
-        
+
     return segments
+
+def generate_filtered_segments_data(df):
+    """Generate segments data for each era + property type combination."""
+    logger.info("Generating filtered segments data...")
+
+    # Define eras
+    eras = {
+        "whole": df,
+        "pre_covid": df[df["transaction_date"].dt.year <= 2021],
+        "recent": df[df["transaction_date"].dt.year >= 2022],
+        "year_2025": df[df["transaction_date"].dt.year == 2025]
+    }
+
+    # Define property type filters
+    def filter_by_property_type(df_subset, prop_type):
+        if prop_type == "hdb":
+            return df_subset[df_subset["property_type"].isin(["HDB", "HDB Flat"])]
+        elif prop_type == "ec":
+            return df_subset[df_subset["property_type"].isin(["Executive Condominium", "EC"])]
+        elif prop_type == "condo":
+            return df_subset[df_subset["property_type"].isin(["Condominium", "Apartment", "Condo"])]
+        return df_subset
+
+    # Generate segments for each combination
+    filtered_segments = {}
+    for era_name, era_df in eras.items():
+        if era_df.empty:
+            continue
+
+        # Generate for all property types
+        filtered_segments[era_name] = generate_segments_data(era_df)
+
+        # Generate for each property type
+        for prop_type in ["hdb", "ec", "condo"]:
+            prop_df = filter_by_property_type(era_df, prop_type)
+            if not prop_df.empty:
+                key = f"{era_name}_{prop_type}"
+                filtered_segments[key] = generate_segments_data(prop_df)
+
+    logger.info(f"Generated filtered segments data for {len(filtered_segments)} combinations")
+    return filtered_segments
 
 def generate_leaderboard_data(df):
     """Generate simple town leaderboard rankings."""

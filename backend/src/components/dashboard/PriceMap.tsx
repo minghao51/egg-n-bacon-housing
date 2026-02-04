@@ -22,13 +22,28 @@ interface MapMetrics {
 }
 
 interface MapData {
+  // Temporal periods
   whole: MapMetrics;
   pre_covid: MapMetrics;
   recent: MapMetrics;
   year_2025: MapMetrics;
+  // Property types (all time)
   hdb: MapMetrics;
   ec: MapMetrics;
   condo: MapMetrics;
+  // Combined era + property type
+  whole_hdb: MapMetrics;
+  whole_ec: MapMetrics;
+  whole_condo: MapMetrics;
+  pre_covid_hdb: MapMetrics;
+  pre_covid_ec: MapMetrics;
+  pre_covid_condo: MapMetrics;
+  recent_hdb: MapMetrics;
+  recent_ec: MapMetrics;
+  recent_condo: MapMetrics;
+  year_2025_hdb: MapMetrics;
+  year_2025_ec: MapMetrics;
+  year_2025_condo: MapMetrics;
 }
 
 interface PriceMapProps {
@@ -39,7 +54,9 @@ interface PriceMapProps {
 export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [allMetrics, setAllMetrics] = useState<MapData | null>(null);
-  const [era, setEra] = useState<keyof MapData>('whole');
+  // Independent temporal and property type filters
+  const [temporalFilter, setTemporalFilter] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState<'all' | 'hdb' | 'ec' | 'condo'>('all');
   const [metric, setMetric] = useState<'median_price' | 'median_psf' | 'volume' | 'rental_yield_median' | 'yoy_change_pct' | 'affordability_ratio'>('median_price');
 
   useEffect(() => {
@@ -68,7 +85,11 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
     return <div className="h-[500px] flex items-center justify-center bg-muted/20">Loading Map Data...</div>;
   }
 
-  const currentMetrics = allMetrics[era];
+  // Determine data key based on temporal and property type filters
+  const dataKey = propertyTypeFilter === 'all'
+    ? temporalFilter
+    : `${temporalFilter}_${propertyTypeFilter}` as keyof MapData;
+  const currentMetrics = allMetrics[dataKey];
 
   // Dynamic Color Scale
   const getValues = () => {
@@ -235,24 +256,48 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
           </select>
         </div>
 
-        {/* Era Selector */}
-        <div className="flex space-x-1 bg-muted p-1 rounded-md overflow-x-auto">
-          {(['whole', 'pre_covid', 'recent', 'year_2025', 'hdb', 'ec', 'condo'] as const).map((key) => (
-            <button
-              key={key}
-              onClick={() => setEra(key)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all whitespace-nowrap ${era === key
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-                }`}
-            >
-              {key === 'whole' ? 'All Time' :
-                key === 'pre_covid' ? 'Pre-COVID' :
-                  key === 'recent' ? 'Recent' :
-                    key === 'year_2025' ? '2025' :
-                      key.toUpperCase()}
-            </button>
-          ))}
+        {/* Temporal & Property Type Filters */}
+        <div className="flex flex-wrap gap-2">
+          {/* Temporal Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Period:</span>
+            <div className="flex space-x-1 bg-muted p-1 rounded-md">
+              {(['whole', 'pre_covid', 'recent', 'year_2025'] as const).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setTemporalFilter(key)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all whitespace-nowrap ${temporalFilter === key
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  {key === 'whole' ? 'All Time' :
+                    key === 'pre_covid' ? 'Pre-COVID' :
+                      key === 'recent' ? 'Recent' :
+                        key === 'year_2025' ? '2025' : key}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Property Type Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Type:</span>
+            <div className="flex space-x-1 bg-muted p-1 rounded-md">
+              {(['all', 'hdb', 'ec', 'condo'] as const).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setPropertyTypeFilter(key)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all whitespace-nowrap ${propertyTypeFilter === key
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  {key === 'all' ? 'All' : key.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -268,7 +313,7 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
             url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           />
           <GeoJSON
-            key={`${era}-${metric}`} // Force re-render when data changes
+            key={`${dataKey}-${metric}`} // Force re-render when data changes
             data={geoJsonData}
             style={style}
             onEachFeature={onEachFeature}

@@ -6,12 +6,14 @@ import fs from 'fs';
 import path from 'path';
 
 const dataPath = path.resolve('public/data/dashboard_segments.json');
-let segmentsData = [];
+let segmentsData: Record<string, any[]> = {};
 
 try {
   if (fs.existsSync(dataPath)) {
     const rawData = fs.readFileSync(dataPath, 'utf-8');
-    segmentsData = JSON.parse(rawData);
+    const parsed = JSON.parse(rawData);
+    // Handle both old (array) and new (object with keys) formats
+    segmentsData = Array.isArray(parsed) ? { whole: parsed } : parsed;
   }
 } catch (error) {
   console.error("Failed to load segments data:", error);
@@ -30,7 +32,7 @@ try {
         </p>
       </header>
 
-      {segmentsData.length > 0 ? (
+      {Object.keys(segmentsData).length > 0 ? (
         <SegmentsAnalysis client:load data={segmentsData} />
       ) : (
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">

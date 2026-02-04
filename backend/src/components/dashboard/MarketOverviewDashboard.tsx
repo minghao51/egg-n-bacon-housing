@@ -20,10 +20,24 @@ interface OverviewData {
     date_range: { start: string; end: string };
   };
   stats: {
+    // Temporal periods
     whole: StatBlock;
     pre_covid: StatBlock;
     recent: StatBlock;
     year_2025: StatBlock;
+    // Combined era + property type
+    whole_hdb: StatBlock;
+    whole_ec: StatBlock;
+    whole_condo: StatBlock;
+    pre_covid_hdb: StatBlock;
+    pre_covid_ec: StatBlock;
+    pre_covid_condo: StatBlock;
+    recent_hdb: StatBlock;
+    recent_ec: StatBlock;
+    recent_condo: StatBlock;
+    year_2025_hdb: StatBlock;
+    year_2025_ec: StatBlock;
+    year_2025_condo: StatBlock;
   };
   distributions: {
     property_type: Record<string, number>;
@@ -41,9 +55,14 @@ interface StatBlock {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function MarketOverviewDashboard({ data }: { data: OverviewData }) {
-  const [era, setEra] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
+  const [temporalFilter, setTemporalFilter] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState<'all' | 'hdb' | 'ec' | 'condo'>('all');
 
-  const currentStats = data.stats[era];
+  // Determine data key based on temporal and property type filters
+  const dataKey = propertyTypeFilter === 'all'
+    ? temporalFilter
+    : `${temporalFilter}_${propertyTypeFilter}` as keyof typeof data.stats;
+  const currentStats = data.stats[dataKey];
 
   // Prepare chart data
   const propertyTypeData = Object.entries(data.distributions.property_type).map(
@@ -58,27 +77,52 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
   return (
     <div className="space-y-8">
       {/* Filters */}
-      <div className="flex justify-between items-center bg-card p-4 rounded-lg border border-border">
+      <div className="flex flex-wrap justify-between items-center gap-4 bg-card p-4 rounded-lg border border-border">
         <h2 className="text-xl font-bold text-foreground">Market Snapshot</h2>
-        <div className="flex space-x-2 bg-muted p-1 rounded-md">
-          {(['whole', 'pre_covid', 'recent', 'year_2025'] as const).map((key) => (
-            <button
-              key={key}
-              onClick={() => setEra(key)}
-              className={`px-4 py-2 text-sm font-medium rounded-sm transition-all ${era === key
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-                }`}
-            >
-              {key === 'whole'
-                ? 'All Time'
-                : key === 'pre_covid'
-                  ? 'Pre-COVID'
-                  : key === 'recent'
-                    ? 'Recent'
-                    : '2025'}
-            </button>
-          ))}
+        <div className="flex flex-wrap gap-2">
+          {/* Temporal Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Period:</span>
+            <div className="flex space-x-1 bg-muted p-1 rounded-md">
+              {(['whole', 'pre_covid', 'recent', 'year_2025'] as const).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setTemporalFilter(key)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${temporalFilter === key
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  {key === 'whole'
+                    ? 'All Time'
+                    : key === 'pre_covid'
+                      ? 'Pre-COVID'
+                      : key === 'recent'
+                        ? 'Recent'
+                        : '2025'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Property Type Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Type:</span>
+            <div className="flex space-x-1 bg-muted p-1 rounded-md">
+              {(['all', 'hdb', 'ec', 'condo'] as const).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setPropertyTypeFilter(key)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${propertyTypeFilter === key
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  {key === 'all' ? 'All' : key.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -87,7 +131,7 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
         <KpiCard
           title="Total Transactions"
           value={currentStats.count.toLocaleString()}
-          subtext={era === 'whole' ? 'All records' : 'In selected period'}
+          subtext={temporalFilter === 'whole' && propertyTypeFilter === 'all' ? 'All records' : 'In selected period'}
         />
         <KpiCard
           title="Median Price"
