@@ -26,6 +26,8 @@
     "clsx": "^2.1.1",
     "katex": "^0.16.28",
     "leaflet": "^1.9.4",
+    "rehype-katex": "^7.0.0",
+    "remark-math": "^6.0.0",
     "lucide-react": "^0.563.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
