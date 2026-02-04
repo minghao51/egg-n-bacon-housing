@@ -70,7 +70,7 @@ const referenceDocs = docs.filter(d => d.category === 'reference');
             <div class="grid grid-cols-1 gap-3">
               {coreDocs.map((doc) => (
                 <a
-                  href={`/analytics/${doc.slug}`}
+                  href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
                   class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
                 >
                   <div class="flex items-center justify-between">
@@ -111,7 +111,7 @@ const referenceDocs = docs.filter(d => d.category === 'reference');
             <div class="grid grid-cols-1 gap-3">
               {marketDocs.map((doc) => (
                 <a
-                  href={`/analytics/${doc.slug}`}
+                  href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
                   class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
                 >
                   <div class="flex items-center justify-between">
@@ -152,7 +152,7 @@ const referenceDocs = docs.filter(d => d.category === 'reference');
             <div class="grid grid-cols-1 gap-3">
               {advancedDocs.map((doc) => (
                 <a
-                  href={`/analytics/${doc.slug}`}
+                  href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
                   class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
                 >
                   <div class="flex items-center justify-between">
@@ -193,7 +193,7 @@ const referenceDocs = docs.filter(d => d.category === 'reference');
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               {reportsDocs.map((doc) => (
                 <a
-                  href={`/analytics/${doc.slug}`}
+                  href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
                   class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
                 >
                   <div class="flex items-center justify-between">
@@ -234,7 +234,7 @@ const referenceDocs = docs.filter(d => d.category === 'reference');
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               {referenceDocs.map((doc) => (
                 <a
-                  href={`/analytics/${doc.slug}`}
+                  href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
                   class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
                 >
                   <div class="flex items-center justify-between">
