@@ -6,6 +6,8 @@ import tailwind from '@astrojs/tailwind';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
+const isProduction = process.env.CI === 'true';
+
 export default defineConfig({
   integrations: [
     react(),
@@ -17,8 +19,10 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
   ],
-  site: 'https://minghao51.github.io/egg-n-bacon-housing',
-  base: '/egg-n-bacon-housing/',
+  site: isProduction
+    ? 'https://minghao51.github.io/egg-n-bacon-housing'
+    : 'http://localhost:4321',
+  base: isProduction ? '/egg-n-bacon-housing/' : '/',
   trailingSlash: 'ignore',
   build: {
     format: 'file',
