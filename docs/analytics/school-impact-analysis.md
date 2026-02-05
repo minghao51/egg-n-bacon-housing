@@ -138,6 +138,115 @@ uv run python scripts/analytics/analysis/school/analyze_school_temporal_evolutio
 uv run python scripts/analytics/analysis/school/analyze_school_heterogeneous.py
 ```
 
+## Enhanced Analysis Modules
+
+### 5. Spatial Cross-Validation (`analyze_school_spatial_cv.py`)
+
+**Purpose:** Test whether school impact models generalize to new geographic areas, guarding against spatial autocorrelation bias.
+
+**Key Features:**
+- Compares standard KFold vs GroupKFold (spatial) cross-validation
+- Calculates spatial generalization gap (R² drop when testing on new areas)
+- Identifies which planning areas generalize well vs poorly
+- Tests for spatial autocorrelation in residuals using Moran's I
+
+**Research Questions:**
+- Do school impact models overfit to specific neighborhoods?
+- Which planning areas are hardest to predict?
+- How much does spatial autocorrelation inflate performance metrics?
+
+**Outputs:**
+- `spatial_cv_performance.csv`: Performance comparison (OLS/RF/XGBoost)
+- `planning_area_generalization.csv`: Area-by-area diagnostics
+- `spatial_autocorrelation_test.csv`: Moran's I test results
+
+**Usage:**
+```bash
+uv run python scripts/analytics/analysis/school/analyze_school_spatial_cv.py
+```
+
+**Interpretation:**
+- **Generalization gap >10%**: Significant spatial autocorrelation, model needs spatial regularization
+- **High gap area**: Model fails to generalize, may need area-specific features
+- **Moran's I >0**: Residuals clustered spatially (violates independence assumption)
+
+### 6. Causal Inference with RDD (`analyze_school_rdd.py`)
+
+**Purpose:** Establish causal effect of school proximity using Regression Discontinuity Design at 1km admission boundary.
+
+**Key Features:**
+- Exploits Singapore's primary school 1km admission priority as natural experiment
+- Compares properties just inside vs just outside 1km radius
+- Bandwidth sensitivity testing (100m-300m)
+- Placebo tests at fake cutoffs (800m, 1200m)
+- Covariate balance validation
+
+**Research Questions:**
+- What is the **causal** effect of being within 1km of a top school?
+- Do OLS coefficients suffer from selection bias?
+- How robust is the causal estimate to bandwidth changes?
+
+**Outputs:**
+- `rdd_main_effect.csv`: Causal estimate (τ) with robust standard errors
+- `rdd_bandwidth_sensitivity.csv`: Results across bandwidths
+- `rdd_covariate_balance.csv`: Balance statistics for controls
+- `rdd_placebo_tests.csv`: Fake cutoff results (should be null)
+- `rdd_visualization.png`: Price discontinuity plot
+
+**Usage:**
+```bash
+uv run python scripts/analytics/analysis/school/analyze_school_rdd.py
+```
+
+**Interpretation:**
+- **τ = $25 PSF (p<0.05)**: Being within 1km causes $25 PSF premium
+- **Covariates balanced**: No significant differences at cutoff (validation passed)
+- **Placebo tests null**: No effect at fake cutoffs (RDD specification valid)
+- **Bandwidth stable**: τ similar across 100-300m (robust estimate)
+
+**Limitations:**
+- Only estimates **local** effect (for properties near 1km boundary)
+- Requires sufficient sample near boundary (may need to aggregate schools)
+- Does not account for fuzzy eligibility (not all within 1km qualify)
+
+### 7. Segmentation & Interaction Analysis (`analyze_school_segmentation.py`)
+
+**Purpose:** Reveal how school premium varies across market segments and property characteristics.
+
+**Key Features:**
+- 9 market segments: property_type (HDB/Condo/EC) × region (CCR/RCR/OCR)
+- Separate OLS models per segment
+- Pooled interaction model with explicit interaction terms
+- Tests for heterogeneous treatment effects
+
+**Research Questions:**
+- Do Condo buyers value schools more than HDB buyers?
+- Does school premium vanish in CCR (international schools compete)?
+- Do large luxury units discount school proximity?
+- Is there synergy between school and MRT accessibility?
+
+**Outputs:**
+- `segment_coefficients.csv`: School premium by 9 market segments
+- `interaction_model_results.csv`: All interaction coefficients
+- `segment_r2_comparison.csv`: Model performance across segments
+
+**Usage:**
+```bash
+uv run python scripts/analytics/analysis/school/analyze_school_segmentation.py
+```
+
+**Interpretation:**
+- **Higher coefficient in OCR**: School premium larger outside central region
+- **school_x_mrt negative**: School and MRT proximity substitute (not complement)
+- **school_x_area negative**: Luxury buyers (large units) value schools less
+- **Segment R² varies**: School features explain more variance in some segments
+
+**Interaction Effects to Examine:**
+- `school × Condominium`: Do private buyers value schools more?
+- `school × CCR`: Does central location reduce school premium?
+- `school × floor_area`: Do larger units discount school access?
+- `school × MRT_distance`: Accessibility synergy or substitute?
+
 ## Data Requirements
 
 All scripts require:
@@ -247,3 +356,9 @@ Properties near schools have lower prices (unusual, may indicate confounding fac
   - Property type comparison
   - Temporal evolution (2017-2026)
   - Heterogeneous effects within HDB
+
+- **2025-02-05:** Enhanced analysis modules
+  - Spatial cross-validation framework
+  - Causal inference with RDD at 1km boundary
+  - Segmentation and interaction effects analysis
+  - Robustness validation suite
