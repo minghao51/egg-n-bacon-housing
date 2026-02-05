@@ -2,5 +2,6 @@
 
 from .spatial_validation import SpatialValidator
 from .rdd_estimators import RDDEstimator
+from .interaction_models import SegmentationAnalyzer
 
-__all__ = ['SpatialValidator', 'RDDEstimator']
+__all__ = ['SpatialValidator', 'RDDEstimator', 'SegmentationAnalyzer']
