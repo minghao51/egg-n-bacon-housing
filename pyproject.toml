@@ -36,6 +36,7 @@ dependencies = [
     "esda>=1.5.0",
     "lifelines>=0.27.0",
     "marimo>=0.19.6",
+    "scipy>=1.17.0",
 ]
 
 [tool.uv]
