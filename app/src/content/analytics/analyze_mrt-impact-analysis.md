@@ -101,6 +101,8 @@ This analysis examines how MRT proximity affects HDB resale prices and appreciat
 
 ### 1. MRT Premium on HDB Prices
 
+![MRT Impact by Property Type](../../data/analysis/mrt_impact/property_type_comparison.png)
+
 HDB properties show a modest overall MRT premium of **$1.28 per 100m** closer to stations, but this varies dramatically by location.
 
 | Metric | Value | Interpretation |
@@ -125,6 +127,8 @@ Properties within 500m of MRT show the **highest appreciation rates (13.36% YoY)
 
 **Interpretation**: Properties within 500m of MRT show 35% higher appreciation than those >2km away. The counter-intuitive peak at 1-1.5km may reflect affordability trade-offs.
 
+![Distance Band Premiums by Property Type](../../data/analysis/mrt_impact/distance_band_premiums.png)
+
 ![Appreciation Analysis Overview](../../data/analysis/appreciation_patterns/appreciation_analysis_overview.png)
 
 **Appreciation Patterns Visualization:**
@@ -133,6 +137,8 @@ Properties within 500m of MRT show the **highest appreciation rates (13.36% YoY)
 - Cluster analysis showing price hotspots and high-appreciation areas
 
 ### 3. Town-Level Heterogeneity
+
+![Town-Level MRT Premiums](../../data/analysis/mrt_impact/town_mrt_premiums_ranked.png)
 
 MRT premium varies **100x across towns** - from +$59/100m in Central Area to -$39/100m in Marine Parade.
 
@@ -180,6 +186,8 @@ Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting 
 
 ### 5. Feature Importance Ranking
 
+![Feature Importance Analysis](../../data/analysis/mrt_impact/feature_importance_price_psf.png)
+
 **Hawker centers are 5x more important than MRT** for predicting HDB prices.
 
 | Rank | Feature | Importance | Interpretation |
@@ -200,6 +208,8 @@ Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting 
 ---
 
 ## Enhanced Analysis: Station Characteristics & Connectivity
+
+![Regional Effects Comparison](../../data/analysis/cbd_mrt_decomposition/regional_effects_comparison.png)
 
 ### Beyond Simple Distance: Station Type Matters
 
@@ -332,6 +342,8 @@ The Moran's I statistic of 0.67 indicates **strong positive spatial autocorrelat
 ---
 
 ## Model Performance
+
+![Model Performance Comparison](../../data/analysis/mrt_impact/model_performance_comparison.png)
 
 ### Price Prediction (PSF)
 
