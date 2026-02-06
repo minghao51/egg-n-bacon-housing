@@ -197,9 +197,9 @@ This analysis examines spatial autocorrelation patterns in Singapore housing pri
 | 4 | 8a284a9a87fffff | Marine Parade | 10.4% | $845 | 567 |
 | 5 | 8a284a9a83fffff | Geylang | 9.7% | $689 | 1,892 |
 
-![Appreciation Hotspots Map - Central Singapore](../../data/analysis/spatial_autocorrelation/appreciation_hotspots_central.png)
+![Singapore LISA Cluster Map - HH/LL Distribution](../../data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
 
-![Condo HH Clusters - Orchid/Marina/Bukit Timah](../../data/analysis/spatial_autocorrelation/hotspots_condo_map.png)
+![Singapore LISA Cluster Overview - All Regions](../../data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
 
 ### 4. Top Appreciation Coldspots (LL Clusters)
 
@@ -223,9 +223,9 @@ This analysis examines spatial autocorrelation patterns in Singapore housing pri
 | 4 | 8a284a9a2ffffff | Punggol | 5.3% | $512 | 5,123 |
 | 5 | 8a284a9a267ffff | Sengkang | 5.6% | $498 | 4,567 |
 
-![Appreciation Coldspots Map - Northern Singapore](../../data/analysis/spatial_autocorrelation/appreciation_coldspots_north.png)
+![LISA Cluster Distribution by Property Type](../../data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
 
-![HDB LL Clusters - Woodlands/Yishun/Punggol/Sengkang](../../data/analysis/spatial_autocorrelation/coldspots_hdb_map.png)
+![LISA Cluster Distribution Overview](../../data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
 
 ### 5. Spatial Lag Analysis
 
@@ -882,9 +882,7 @@ Outputs:
 - `morans_i_by_property_type.png` - Bar chart of Moran's I
 - `moran_scatter_condo.png` / `moran_scatter_hdb.png` / `moran_scatter_ec.png` - Moran scatter plots
 - `lisa_cluster_distribution_bars.png` - Stacked bar chart of cluster counts
-- `lisa_cluster_map_singapore.png` - Singapore-wide cluster map
-- `appreciation_hotspots_central.png` - Zoomed central region map
-- `appreciation_coldspots_north.png` - Zoomed northern region map
+- `lisa_cluster_map_singapore.png` - Singapore-wide LISA cluster map
 - `comprehensive_cluster_distribution.png` - Multi-dimensional cluster chart
 - `appreciation_by_cluster.png` - Appreciation by cluster type
 - `cluster_risk_return.png` - Risk vs return scatter
