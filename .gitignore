@@ -89,3 +89,4 @@ data/exports/
 # Backup files
 *.bak
 data/metadata.json.bak
+backend/dist/

@@ -1,0 +1,14 @@
+feature,weight,description,calculation_method
+ip_track,3.0,Integrated Programme school,Binary (1=IP, 0=non-IP) * 3.0
+sap_status,2.0,Special Assistance Plan school,Binary (1=SAP, 0=non-SAP) * 2.0
+gep_programme,2.5,Gifted Education Programme,Binary (1=GEP, 0=non-GEP) * 2.5
+autonomous_status,1.5,Autonomous school status,Binary (1=Autonomous, 0=non-Autonomous) * 1.5
+tier_1,3.0,Tier 1 elite school,Binary (1=Tier 1, 0=other) * 3.0
+tier_2,2.0,Tier 2 competitive school,Binary (1=Tier 2, 0=other) * 2.0
+tier_3,1.0,Tier 3 good school,Binary (1=Tier 3, 0=other) * 1.0
+psle_cutoff_inverse,1.0,Inverse of PSLE cutoff,(20 - cutoff) / 20
+popularity_score,0.5,Phase 2B popularity ratio,applicants_per_vacancy / 3
+academic_awards,0.5,School awards and achievements,Award count * 0.1
+distance_weight,2.0,Distance decay factor,max(0, 1 - distance_m/2000)
+bilingual_bonus,1.0,Strong bilingual program,Binary * 1.0
+ip_cutoff_quality,1.5,IP cutoff quality score,(10 - cutoff) / 6 * 1.5

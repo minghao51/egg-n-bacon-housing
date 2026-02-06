@@ -1,0 +1,5 @@
+Feature,VIF,Interpretation
+dist_to_nearest_mrt,3.2823213454949274,Low
+dist_to_cbd_m,10.092502705409343,Severe
+floor_area_sqm,14.224584419442888,Severe
+remaining_lease_months,15.41072282371235,Severe

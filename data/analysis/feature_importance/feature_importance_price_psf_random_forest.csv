@@ -1,0 +1,122 @@
+feature,importance,target,model
+property_type_HDB,0.3066650577031419,price_psf,random_forest
+flat_type_None,0.25824293468788845,price_psf,random_forest
+storey_range_None,0.2420871309459541,price_psf,random_forest
+psf_tier_High PSF,0.12194338524160606,price_psf,random_forest
+psf_tier_Medium PSF,0.01756081467592041,price_psf,random_forest
+property_type_Condominium,0.012658555797763505,price_psf,random_forest
+psf_tier_Low PSF,0.010993861093532111,price_psf,random_forest
+property_type_EC,0.010586983442808113,price_psf,random_forest
+floor_area_sqm,0.0060057833737356525,price_psf,random_forest
+stratified_median_price,0.003989694834060545,price_psf,random_forest
+remaining_lease_months,0.002168825639951827,price_psf,random_forest
+market_tier_Mass Market,0.001703342304205858,price_psf,random_forest
+hawker_within_2km,0.0016277690456712188,price_psf,random_forest
+market_tier_Luxury,0.0012717948775218476,price_psf,random_forest
+market_tier_Mid-Tier,0.0004566823452582267,price_psf,random_forest
+town_QUEENSTOWN,0.00024381143055157695,price_psf,random_forest
+flat_model_Model A,0.000128197146114463,price_psf,random_forest
+volume_12m_avg,0.00012682089445255373,price_psf,random_forest
+flat_model_STANDARD,0.0001246334533158614,price_psf,random_forest
+flat_model_New Generation,0.00012284238588208617,price_psf,random_forest
+flat_model_Improved,0.00012118881508390444,price_psf,random_forest
+dist_to_nearest_mrt,8.511301705919818e-05,price_psf,random_forest
+storey_range_01 TO 03,6.749322053725726e-05,price_psf,random_forest
+flat_model_Simplified,6.555619361317388e-05,price_psf,random_forest
+preschool_within_2km,5.145886048084706e-05,price_psf,random_forest
+park_within_2km,4.7757276157384385e-05,price_psf,random_forest
+dist_to_nearest_hawker,3.773629390012657e-05,price_psf,random_forest
+flat_model_Standard,3.6557297453346584e-05,price_psf,random_forest
+supermarket_within_1km,3.547810448107758e-05,price_psf,random_forest
+volume_3m_avg,3.4226493124695565e-05,price_psf,random_forest
+mrt_within_2km,3.302044993106583e-05,price_psf,random_forest
+storey_range_04 TO 06,2.919198026091735e-05,price_psf,random_forest
+hawker_within_1km,2.738591632835463e-05,price_psf,random_forest
+transaction_count,2.6677785034270885e-05,price_psf,random_forest
+town_PASIR RIS,2.5572672480583543e-05,price_psf,random_forest
+preschool_within_500m,2.4616070222248067e-05,price_psf,random_forest
+supermarket_within_2km,2.4288406771387585e-05,price_psf,random_forest
+childcare_within_1km,2.3559002216321005e-05,price_psf,random_forest
+dist_to_nearest_park,2.305934906750517e-05,price_psf,random_forest
+supermarket_within_500m,2.210743529451268e-05,price_psf,random_forest
+dist_to_nearest_preschool,2.1087314963155986e-05,price_psf,random_forest
+flat_model_Other,1.9870966970945892e-05,price_psf,random_forest
+park_within_1km,1.866682756501214e-05,price_psf,random_forest
+dist_to_nearest_supermarket,1.811768804959641e-05,price_psf,random_forest
+childcare_within_2km,1.7586894201586987e-05,price_psf,random_forest
+flat_model_SIMPLIFIED,1.7280940746856897e-05,price_psf,random_forest
+flat_model_Model A2,1.715303442813034e-05,price_psf,random_forest
+flat_model_DBSS,1.6681186145277237e-05,price_psf,random_forest
+dist_to_nearest_childcare,1.6608678313069644e-05,price_psf,random_forest
+flat_model_MODEL A,1.531328194302423e-05,price_psf,random_forest
+flat_model_Premium Apartment,1.4441822417569492e-05,price_psf,random_forest
+childcare_within_500m,1.3973979265215097e-05,price_psf,random_forest
+flat_type_EXECUTIVE,1.380724793191819e-05,price_psf,random_forest
+mrt_within_1km,1.2872926911858394e-05,price_psf,random_forest
+hawker_within_500m,1.1997531546543857e-05,price_psf,random_forest
+flat_type_3 ROOM,1.140044251170759e-05,price_psf,random_forest
+town_WOODLANDS,1.0794629524679061e-05,price_psf,random_forest
+preschool_within_1km,1.0370892827755201e-05,price_psf,random_forest
+momentum_signal_missing,1.0138925056092621e-05,price_psf,random_forest
+town_YISHUN,9.638042433687e-06,price_psf,random_forest
+park_within_500m,9.185497233142587e-06,price_psf,random_forest
+flat_model_IMPROVED,8.523785603286642e-06,price_psf,random_forest
+town_ANG MO KIO,7.730387211122285e-06,price_psf,random_forest
+storey_range_07 TO 09,7.144052395019203e-06,price_psf,random_forest
+flat_type_4 ROOM,7.035112791813199e-06,price_psf,random_forest
+mrt_within_500m,6.961403923698499e-06,price_psf,random_forest
+town_BISHAN,6.0664067864602395e-06,price_psf,random_forest
+storey_range_13 TO 15,5.7299960571707065e-06,price_psf,random_forest
+storey_range_19 TO 21,5.669339530048574e-06,price_psf,random_forest
+storey_range_10 TO 12,5.528174527550108e-06,price_psf,random_forest
+flat_model_NEW GENERATION,5.356659484190499e-06,price_psf,random_forest
+town_PUNGGOL,4.689801602364468e-06,price_psf,random_forest
+town_JURONG WEST,4.350295442974985e-06,price_psf,random_forest
+town_TAMPINES,3.969583817569865e-06,price_psf,random_forest
+town_BUKIT MERAH,3.783661272762527e-06,price_psf,random_forest
+town_HOUGANG,3.7690860243299737e-06,price_psf,random_forest
+flat_model_Maisonette,3.219834979893673e-06,price_psf,random_forest
+town_KALLANG/WHAMPOA,3.181159275193626e-06,price_psf,random_forest
+storey_range_01 TO 05,3.1031710632433123e-06,price_psf,random_forest
+storey_range_16 TO 18,3.0389297356760888e-06,price_psf,random_forest
+storey_range_22 TO 24,2.8804727472548863e-06,price_psf,random_forest
+flat_model_MAISONETTE,2.7350414623949612e-06,price_psf,random_forest
+flat_type_5 ROOM,2.4725970243782934e-06,price_psf,random_forest
+flat_type_2 ROOM,2.2766804280451302e-06,price_psf,random_forest
+town_Other,2.1467811643178163e-06,price_psf,random_forest
+storey_range_28 TO 30,2.125522145099664e-06,price_psf,random_forest
+town_BEDOK,2.011360544019491e-06,price_psf,random_forest
+storey_range_06 TO 10,1.9678760686905045e-06,price_psf,random_forest
+storey_range_25 TO 27,1.950794985214582e-06,price_psf,random_forest
+momentum_signal_strong_deceleration,1.7069078229993495e-06,price_psf,random_forest
+momentum_signal_stable,1.6860892471715645e-06,price_psf,random_forest
+momentum_signal_moderate_deceleration,1.6428307835300956e-06,price_psf,random_forest
+flat_type_1 ROOM,1.6193831333033005e-06,price_psf,random_forest
+flat_model_Adjoined flat,1.5714465596129028e-06,price_psf,random_forest
+flat_model_APARTMENT,1.4686151745368831e-06,price_psf,random_forest
+momentum_signal_strong_acceleration,1.3137171296083753e-06,price_psf,random_forest
+town_JURONG EAST,1.172424144163225e-06,price_psf,random_forest
+storey_range_37 TO 39,1.1467242690365878e-06,price_psf,random_forest
+momentum_signal_moderate_acceleration,9.150895240797085e-07,price_psf,random_forest
+town_CHOA CHU KANG,8.572750065814925e-07,price_psf,random_forest
+storey_range_46 TO 48,8.242893689370643e-07,price_psf,random_forest
+town_TOA PAYOH,7.471258179908849e-07,price_psf,random_forest
+storey_range_31 TO 33,6.659339407156015e-07,price_psf,random_forest
+storey_range_40 TO 42,5.875903238927296e-07,price_psf,random_forest
+storey_range_43 TO 45,5.773910261686042e-07,price_psf,random_forest
+flat_model_Apartment,5.559434377990653e-07,price_psf,random_forest
+town_GEYLANG,5.480479981564489e-07,price_psf,random_forest
+town_SENGKANG,5.106772054450783e-07,price_psf,random_forest
+town_CLEMENTI,4.3396853894599695e-07,price_psf,random_forest
+flat_type_MULTI GENERATION,4.2417149874976027e-07,price_psf,random_forest
+storey_range_34 TO 36,3.851808684998072e-07,price_psf,random_forest
+flat_model_Model A-Maisonette,3.531250280805244e-07,price_psf,random_forest
+storey_range_11 TO 15,3.0779879644898455e-07,price_psf,random_forest
+town_SERANGOON,1.7717126576590556e-07,price_psf,random_forest
+storey_range_49 TO 51,1.0381063212348945e-07,price_psf,random_forest
+storey_range_21 TO 25,9.994287290457372e-08,price_psf,random_forest
+storey_range_16 TO 20,6.97239339497917e-08,price_psf,random_forest
+flat_type_MULTI-GENERATION,6.19379645111469e-08,price_psf,random_forest
+flat_model_MODEL A-MAISONETTE,5.527203738415797e-08,price_psf,random_forest
+storey_range_26 TO 30,3.375753451656018e-08,price_psf,random_forest
+storey_range_36 TO 40,3.95919940762645e-09,price_psf,random_forest

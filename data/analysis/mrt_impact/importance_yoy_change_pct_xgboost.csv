@@ -1,0 +1,14 @@
+feature,importance,target,model
+year,0.31944898,yoy_change_pct,xgboost
+remaining_lease_months,0.08587121,yoy_change_pct,xgboost
+mrt_within_1km,0.07458685,yoy_change_pct,xgboost
+hawker_within_500m,0.06959496,yoy_change_pct,xgboost
+mrt_within_500m,0.068012126,yoy_change_pct,xgboost
+hawker_within_1km,0.062331934,yoy_change_pct,xgboost
+park_within_1km,0.0540505,yoy_change_pct,xgboost
+mrt_within_2km,0.050823804,yoy_change_pct,xgboost
+floor_area_sqm,0.048830297,yoy_change_pct,xgboost
+dist_to_nearest_mrt,0.043777756,yoy_change_pct,xgboost
+park_within_500m,0.04345161,yoy_change_pct,xgboost
+supermarket_within_1km,0.040000487,yoy_change_pct,xgboost
+supermarket_within_500m,0.039219424,yoy_change_pct,xgboost
