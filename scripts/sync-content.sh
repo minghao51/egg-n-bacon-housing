@@ -16,6 +16,10 @@ echo "Syncing analytics markdown files..."
 # Create app content directory if it doesn't exist
 mkdir -p "$APP_CONTENT_DIR"
 
+# Clean up old .md files first (ensures deleted files are removed)
+rm -f "$APP_CONTENT_DIR"/*.md 2>/dev/null || true
+echo "🧹 Cleaned up old markdown files from $APP_CONTENT_DIR/"
+
 # Copy all .md files from docs/analytics to app content
 cp -r "$DOCS_DIR"/*.md "$APP_CONTENT_DIR/" 2>/dev/null || true
 
