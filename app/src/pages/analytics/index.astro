@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 
 const allDocs = await getCollection('analytics');
 const docs = allDocs
-  .filter(doc => doc.data.status === 'published')
+  .filter(doc => doc.data.status !== 'draft')
   .map(doc => ({
     slug: doc.slug,
     title: doc.data.title || doc.slug,
