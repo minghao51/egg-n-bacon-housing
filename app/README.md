@@ -50,11 +50,16 @@ bun run dev
 ## 🏗️ Build
 
 ```bash
-# Build for production
+# Sync markdown files from docs/analytics to app content (run from project root)
+bash ../scripts/sync-content.sh
+
+# Build for production (run from app directory)
 bun run build
 
 # Output will be in /dist directory
 ```
+
+**Important**: Always run the sync script before building to ensure your markdown changes are reflected in the app. The GitHub Actions workflow does this automatically.
 
 ## 📁 Preview Production Build
 
@@ -119,7 +124,15 @@ Deploy `/dist` folder to any static host (Netlify, Vercel, GitHub Pages, etc.)
 
 ## 🤝 Integration with Python Pipeline
 
-This site is **read-only** and automatically reads markdown files from `docs/analytics/`. No changes needed to Python scripts.
+This site displays markdown files from `docs/analytics/`. The sync process:
+
+1. **Edit markdown files** in `docs/analytics/` (project root)
+2. **Run sync script**: `bash scripts/sync-content.sh` (copies files to `app/src/content/analytics/`)
+3. **Build**: `cd app && bun run build`
+
+The sync script also creates a symlink for image paths to work correctly.
+
+**Automated in CI**: The GitHub Actions workflow (`.github/workflows/deploy-app.yml`) automatically runs the sync script before building, so deployments always have the latest content.
 
 ---
 
