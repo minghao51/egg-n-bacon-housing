@@ -473,6 +473,204 @@ def h3_aggregate_analysis(df):
     return h3_stats
 
 
+def create_feature_importance_chart(all_importance, target_col='price_psf'):
+    """Create horizontal bar chart of feature importance."""
+    print(f"\nCreating feature importance chart for {target_col}...")
+
+    # Get importance for target
+    imp_df = [imp for imp in all_importance if imp['target'].iloc[0] == target_col][0]
+
+    # Sort and get top 15
+    imp_df = imp_df.nlargest(15, 'importance').sort_values('importance')
+
+    # Create color mapping based on feature type
+    def get_feature_color(feature):
+        feature_lower = feature.lower()
+        if 'mrt' in feature_lower:
+            return '#1f77b4'  # Blue for MRT
+        elif 'hawker' in feature_lower:
+            return '#ff7f0e'  # Orange for food
+        elif 'park' in feature_lower:
+            return '#2ca02c'  # Green for parks
+        elif 'supermarket' in feature_lower:
+            return '#9467bd'  # Purple for shopping
+        elif any(x in feature_lower for x in ['year', 'month']):
+            return '#d62728'  # Red for temporal
+        elif any(x in feature_lower for x in ['lease', 'area', 'floor']):
+            return '#8c564b'  # Brown for property attributes
+        else:
+            return '#7f7f7f'  # Gray for other
+
+    colors = [get_feature_color(f) for f in imp_df['feature']]
+
+    # Create chart
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    bars = ax.barh(range(len(imp_df)), imp_df['importance'], color=colors)
+
+    # Customize
+    ax.set_yticks(range(len(imp_df)))
+    ax.set_yticklabels(imp_df['feature'])
+    ax.set_xlabel('Feature Importance (Gain)', fontsize=12, fontweight='bold')
+    ax.set_title(f'XGBoost Feature Importance for {target_col.replace("_", " ").title()}',
+                 fontsize=14, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='x')
+
+    # Add legend
+    from matplotlib.patches import Patch
+    legend_elements = [
+        Patch(facecolor='#1f77b4', label='MRT Access'),
+        Patch(facecolor='#ff7f0e', label='Food Access'),
+        Patch(facecolor='#2ca02c', label='Parks'),
+        Patch(facecolor='#9467bd', label='Shopping'),
+        Patch(facecolor='#d62728', label='Temporal'),
+        Patch(facecolor='#8c564b', label='Property Attributes')
+    ]
+    ax.legend(handles=legend_elements, loc='lower right', fontsize=9)
+
+    plt.tight_layout()
+    fig_path = OUTPUT_DIR / f"feature_importance_{target_col}.png"
+    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    print(f"  Saved: {fig_path}")
+    plt.close()
+
+
+def create_model_performance_chart(summary_df):
+    """Create grouped bar chart comparing OLS vs XGBoost performance."""
+    print("\nCreating model performance comparison chart...")
+
+    # Prepare data
+    models = summary_df['target_name'].tolist()
+    ols_r2 = summary_df['ols_r2'].tolist()
+    xgb_r2 = summary_df['xgboost_r2'].tolist()
+
+    x = np.arange(len(models))
+    width = 0.35
+
+    # Create chart
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+    # R² comparison
+    bars1 = ax1.bar(x - width/2, ols_r2, width, label='OLS', color='#7f7f7f', alpha=0.8)
+    bars2 = ax1.bar(x + width/2, xgb_r2, width, label='XGBoost', color='#1f77b4', alpha=0.8)
+
+    ax1.set_xlabel('Target Variable', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('R² Score', fontsize=12, fontweight='bold')
+    ax1.set_title('Model Performance Comparison (R²)', fontsize=14, fontweight='bold')
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(models, rotation=15, ha='right')
+    ax1.legend()
+    ax1.grid(True, alpha=0.3, axis='y')
+
+    # Add value labels
+    for bar in bars1:
+        height = bar.get_height()
+        ax1.annotate(f'{height:.2f}',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3),
+                    textcoords="offset points",
+                    ha='center', va='bottom', fontsize=9)
+    for bar in bars2:
+        height = bar.get_height()
+        ax1.annotate(f'{height:.2f}',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3),
+                    textcoords="offset points",
+                    ha='center', va='bottom', fontsize=9)
+
+    # MAE comparison
+    ols_mae = summary_df['ols_mae'].tolist()
+    xgb_mae = summary_df['xgboost_mae'].tolist()
+
+    bars3 = ax2.bar(x - width/2, ols_mae, width, label='OLS', color='#7f7f7f', alpha=0.8)
+    bars4 = ax2.bar(x + width/2, xgb_mae, width, label='XGBoost', color='#1f77b4', alpha=0.8)
+
+    ax2.set_xlabel('Target Variable', fontsize=12, fontweight='bold')
+    ax2.set_ylabel('Mean Absolute Error', fontsize=12, fontweight='bold')
+    ax2.set_title('Model Performance Comparison (MAE)', fontsize=14, fontweight='bold')
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(models, rotation=15, ha='right')
+    ax2.legend()
+    ax2.grid(True, alpha=0.3, axis='y')
+
+    # Add value labels
+    for bar in bars3:
+        height = bar.get_height()
+        ax2.annotate(f'{height:.1f}',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3),
+                    textcoords="offset points",
+                    ha='center', va='bottom', fontsize=9)
+    for bar in bars4:
+        height = bar.get_height()
+        ax2.annotate(f'{height:.1f}',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3),
+                    textcoords="offset points",
+                    ha='center', va='bottom', fontsize=9)
+
+    plt.tight_layout()
+    fig_path = OUTPUT_DIR / "model_performance_comparison.png"
+    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    print(f"  Saved: {fig_path}")
+    plt.close()
+
+
+def create_distance_band_premiums_chart(df):
+    """Create line chart showing price premiums by distance band and property type."""
+    print("\nCreating distance band premiums chart...")
+
+    # Create distance bands if not exists
+    if 'dist_band' not in df.columns:
+        df['dist_band'] = pd.cut(
+            df['dist_to_nearest_mrt'],
+            bins=[0, 200, 500, 1000, 2000, 10000],
+            labels=['0-200m', '200-500m', '500m-1km', '1-2km', '>2km']
+        )
+
+    # Calculate mean price by band and property type
+    band_prices = df.groupby(['dist_band', 'property_type'], observed=True)['price_psf'].mean().reset_index()
+    band_prices = band_prices.pivot(index='dist_band', columns='property_type', values='price_psf')
+
+    # Define band order and midpoints for x-axis
+    band_order = ['0-200m', '200-500m', '500m-1km', '1-2km', '>2km']
+    band_midpoints = [100, 350, 750, 1500, 3000]  # Approximate midpoint of each band
+
+    # Reindex to ensure correct order
+    band_prices = band_prices.reindex(band_order)
+
+    # Create chart
+    fig, ax = plt.subplots(figsize=(12, 7))
+
+    # Plot each property type
+    colors = {'HDB': '#1f77b4', 'Condominium': '#ff7f0e', 'Executive Condominium': '#2ca02c'}
+    markers = {'HDB': 'o', 'Condominium': 's', 'Executive Condominium': '^'}
+
+    for prop_type in band_prices.columns:
+        if prop_type in colors:
+            ax.plot(band_midpoints, band_prices[prop_type],
+                   marker=markers[prop_type], markersize=8, linewidth=2,
+                   label=prop_type, color=colors[prop_type])
+
+    ax.set_xlabel('Distance to MRT (m)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Average Price PSF ($)', fontsize=12, fontweight='bold')
+    ax.set_title('Price Premium by MRT Distance Band and Property Type',
+                 fontsize=14, fontweight='bold')
+    ax.legend(fontsize=11, loc='upper right')
+    ax.grid(True, alpha=0.3)
+
+    # Add reference band labels at the bottom
+    band_labels = ['0-200m', '', '500m-1km', '', '>2km']
+    ax.set_xticks(band_midpoints)
+    ax.set_xticklabels(band_labels)
+
+    plt.tight_layout()
+    fig_path = OUTPUT_DIR / "distance_band_premiums.png"
+    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    print(f"  Saved: {fig_path}")
+    plt.close()
+
+
 def main():
     """Main analysis pipeline."""
 
@@ -567,6 +765,21 @@ def main():
     print("\nModel Performance Summary:")
     print(summary_df.to_string(index=False))
     print(f"\n  Saved: {summary_path}")
+
+    # Create additional visualizations
+    print(f"\n{'='*80}")
+    print("CREATING ADDITIONAL VISUALIZATIONS")
+    print(f"{'='*80}")
+
+    # Feature importance chart for price_psf
+    if all_importance:
+        create_feature_importance_chart(all_importance, 'price_psf')
+
+    # Model performance comparison
+    create_model_performance_chart(summary_df)
+
+    # Distance band premiums
+    create_distance_band_premiums_chart(df)
 
     print(f"\n{'='*80}")
     print("ANALYSIS COMPLETE")

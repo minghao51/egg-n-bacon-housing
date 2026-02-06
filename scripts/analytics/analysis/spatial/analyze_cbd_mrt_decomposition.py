@@ -91,10 +91,15 @@ def load_data(min_year=2021, property_type='HDB'):
     df = df[df['property_type'] == property_type].copy()
     df = df[df['year'] >= min_year].copy()
 
+    # Ensure lat/lon are numeric
+    df['lat'] = pd.to_numeric(df['lat'], errors='coerce')
+    df['lon'] = pd.to_numeric(df['lon'], errors='coerce')
+    df = df.dropna(subset=['lat', 'lon'])
+
     # Calculate CBD distance for each property
     logger.info("Calculating CBD distances...")
     df['dist_to_cbd_km'] = df.apply(
-        lambda row: haversine_distance(row['lat'], row['lon'], CBD_LAT, CBD_LON),
+        lambda row: haversine_distance(float(row['lat']), float(row['lon']), CBD_LAT, CBD_LON),
         axis=1
     )
     df['dist_to_cbd_m'] = df['dist_to_cbd_km'] * 1000  # Convert to meters
@@ -390,6 +395,78 @@ def compare_regional_effects(df):
     return results_df
 
 
+def create_regional_effects_comparison_chart(regional_df):
+    """Create grouped bar chart comparing MRT and CBD effects by region."""
+    logger.info("\nCreating regional effects comparison chart...")
+
+    # Prepare data
+    regions = regional_df['Region'].tolist()
+    mrt_premiums = regional_df['MRT Premium $/100m'].tolist()
+    cbd_premiums = regional_df['CBD Premium $/km'].tolist()
+
+    x = np.arange(len(regions))
+    width = 0.35
+
+    # Create chart
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+    # MRT Premiums by Region
+    colors_mrt = ['green' if x > 0 else 'red' for x in mrt_premiums]
+    bars1 = ax1.bar(x - width/2, mrt_premiums, width, label='MRT Premium',
+                    color=colors_mrt, alpha=0.8, edgecolor='black', linewidth=1)
+
+    ax1.set_xlabel('Region', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('Premium per 100m Closer to MRT ($ PSF)', fontsize=11, fontweight='bold')
+    ax1.set_title('MRT Premium by Region', fontsize=13, fontweight='bold')
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([r.replace(' (', '\n(') for r in regions], fontsize=10)
+    ax1.axhline(y=0, color='black', linestyle='--', linewidth=1)
+    ax1.grid(True, alpha=0.3, axis='y')
+
+    # Add value labels
+    for bar, val in zip(bars1, mrt_premiums):
+        height = bar.get_height()
+        ax1.annotate(f'${val:.1f}',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 5 if val >= 0 else -5),
+                    textcoords="offset points",
+                    ha='center', va='bottom' if val >= 0 else 'top',
+                    fontsize=10, fontweight='bold')
+
+    # CBD Premiums by Region
+    colors_cbd = ['green' if x > 0 else 'red' for x in cbd_premiums]
+    bars2 = ax2.bar(x + width/2, cbd_premiums, width, label='CBD Premium',
+                    color=colors_cbd, alpha=0.8, edgecolor='black', linewidth=1)
+
+    ax2.set_xlabel('Region', fontsize=12, fontweight='bold')
+    ax2.set_ylabel('Premium per km Closer to CBD ($ PSF)', fontsize=11, fontweight='bold')
+    ax2.set_title('CBD Premium by Region', fontsize=13, fontweight='bold')
+    ax2.set_xticks(x)
+    ax2.set_xticklabels([r.replace(' (', '\n(') for r in regions], fontsize=10)
+    ax2.axhline(y=0, color='black', linestyle='--', linewidth=1)
+    ax2.grid(True, alpha=0.3, axis='y')
+
+    # Add value labels
+    for bar, val in zip(bars2, cbd_premiums):
+        height = bar.get_height()
+        ax2.annotate(f'${val:.1f}',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 5 if val >= 0 else -5),
+                    textcoords="offset points",
+                    ha='center', va='bottom' if val >= 0 else 'top',
+                    fontsize=10, fontweight='bold')
+
+    # Add overall title
+    fig.suptitle('Regional Effects Comparison: MRT vs CBD Accessibility',
+                 fontsize=15, fontweight='bold', y=1.0)
+
+    plt.tight_layout()
+    fig_path = OUTPUT_DIR / "regional_effects_comparison.png"
+    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    logger.info(f"  Saved: {fig_path}")
+    plt.close()
+
+
 def create_visualization_summary(df, corr, vif_df, hierarchical_df, pca, regional_df):
     """Create comprehensive visualization summary."""
     logger.info("\nCreating visualization summary...")
@@ -500,6 +577,7 @@ def main():
 
     # Create visualizations
     create_visualization_summary(df, corr, vif_df, hierarchical_df, pca, regional_df)
+    create_regional_effects_comparison_chart(regional_df)
 
     # Final summary
     duration = (datetime.now() - start_time).total_seconds()

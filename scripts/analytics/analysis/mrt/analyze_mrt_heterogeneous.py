@@ -223,6 +223,70 @@ def analyze_by_price_tier(hdb):
     return results_df
 
 
+def create_town_premiums_ranked_chart(town_results):
+    """Create horizontal bar chart of all towns ranked by MRT premium."""
+    print("\nCreating town-level MRT premiums chart...")
+
+    # Sort by premium (descending order)
+    town_sorted = town_results.sort_values('mrt_coef_100m', ascending=True)
+
+    # Create color gradient from red (negative) to green (positive)
+    premiums = town_sorted['mrt_coef_100m'].values
+    max_val = max(abs(premiums.min()), abs(premiums.max()))
+    colors = []
+    for val in premiums:
+        if val < 0:
+            # Red for negative
+            intensity = abs(val) / max_val
+            colors.append((1, 1 - intensity * 0.7, 1 - intensity * 0.7))  # Red gradient
+        else:
+            # Green for positive
+            intensity = val / max_val
+            colors.append((1 - intensity * 0.7, 1, 1 - intensity * 0.7))  # Green gradient
+
+    # Create chart
+    fig, ax = plt.subplots(figsize=(12, 10))
+
+    bars = ax.barh(range(len(town_sorted)), premiums, color=colors, edgecolor='black', linewidth=0.5)
+
+    # Add vertical line at x=0
+    ax.axvline(x=0, color='black', linestyle='--', linewidth=1)
+
+    # Customize
+    ax.set_yticks(range(len(town_sorted)))
+    ax.set_yticklabels(town_sorted['town'])
+    ax.set_xlabel('MRT Premium per 100m Closer ($ PSF)', fontsize=12, fontweight='bold')
+    ax.set_title('MRT Premium by Town (HDB Properties, 2021+)',
+                 fontsize=14, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='x')
+
+    # Add value labels on bars
+    for i, (bar, val) in enumerate(zip(bars, premiums)):
+        offset = 5 if val >= 0 else -5
+        ax.text(val + offset, i, f'${val:.1f}',
+                va='center', ha='left' if val >= 0 else 'right',
+                fontsize=8, fontweight='bold')
+
+    # Add annotations for extremes
+    max_idx = premiums.argmax()
+    min_idx = premiums.argmin()
+    max_town = town_sorted.iloc[max_idx]['town']
+    min_town = town_sorted.iloc[min_idx]['town']
+    max_val = premiums[max_idx]
+    min_val = premiums[min_idx]
+
+    ax.text(0.98, 0.02, f'Highest: {max_town} (+${max_val:.1f}/100m)\nLowest: {min_town} (${min_val:.1f}/100m)',
+            transform=ax.transAxes, va='bottom', ha='right',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.7),
+            fontsize=10)
+
+    plt.tight_layout()
+    fig_path = OUTPUT_DIR / "town_mrt_premiums_ranked.png"
+    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    print(f"  Saved: {fig_path}")
+    plt.close()
+
+
 def visualize_heterogeneous_effects(flat_type_results, town_results, price_tier_results):
     """Create visualizations of heterogeneous effects."""
 
@@ -307,6 +371,9 @@ def main():
 
     # Visualizations
     visualize_heterogeneous_effects(flat_type_results, town_results, price_tier_results)
+
+    # Create additional town premiums chart
+    create_town_premiums_ranked_chart(town_results)
 
     # Summary statistics
     print(f"\n{'='*80}")
