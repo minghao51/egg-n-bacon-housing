@@ -33,7 +33,8 @@ bun.lockb
 /data/*.parquet
 
 # Analytics outputs (REMOVE from git - pipeline generated)
-/data/analysis/
+# EXCEPTION: Track PNG visualization files for GitHub rendering
+!/data/analysis/**/*.png
 
 # Forecasts (REMOVE from git - pipeline generated)
 data/forecasts/

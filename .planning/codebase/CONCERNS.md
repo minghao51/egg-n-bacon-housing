@@ -1,219 +1,436 @@
-# Codebase Concerns
+# Egg-n-Bacon-Housing: Technical Concerns & Areas for Improvement
 
-**Analysis Date:** 2026-02-02
-**Last Updated:** 2026-02-03
+## Overview
 
-## Tech Debt
+This document catalogs technical debt, known issues, security concerns, performance bottlenecks, and areas for improvement in the egg-n-bacon-housing project.
 
-### ✅ RESOLVED: Hardcoded Configuration and Data Paths
-- **Status**: Resolved (2026-02-03)
-- **Issue**: Extensive hardcoded paths and file names throughout the codebase
-- **Files**: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/config.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/L0_collect.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py`
-- **Impact**: Difficult to maintain, deploy, and test; requires manual updates for different environments
-- **Fix approach**: Centralized all configuration in Config class with path constants
-- **Implementation**:
-  - Added pipeline stage subdirectory constants (L0_DIR, L1_DIR, L2_DIR, L3_DIR)
-  - Added manual data subdirectory constants (CSV_DIR, GEOJSON_DIR, CROSSWALK_DIR, URA_DIR, HDB_RESALE_DIR)
-  - Added dataset file name constants (DATASET_HDB_TRANSACTION, DATASET_CONDO_TRANSACTION, DATASET_EC_TRANSACTION)
-  - Updated Config.validate() to create all subdirectories
-
-### ✅ RESOLVED: Duplicate Code in Data Loading
-- **Status**: Resolved (2026-02-03)
-- **Issue**: Similar data loading logic repeated across multiple files with slight variations
-- **Files**: Multiple L-stage pipeline files and processing scripts
-- **Impact**: Code duplication increases maintenance burden and risk of inconsistencies
-- **Fix approach**: Created unified data loader factory pattern with common interfaces
-- **Implementation**:
-  - Created TransactionLoader class for loading transaction data from L1 parquet files
-  - Created CSVLoader class for loading manual CSV data sources
-  - Migrated L3_export.py to use TransactionLoader
-  - Migrated geocoding.py to use CSVLoader
-  - Migrated L0_collect.py to use CSVLoader
-
-### ✅ RESOLVED: Import Path Fragility
-- **Status**: Resolved (2026-02-03)
-- **Issue**: Complex import patterns with multiple fallbacks (e.g., scripts/core/config.py lines 18-38)
-- **Files**: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/cache.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py`, `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/data_helpers.py`
-- **Impact**: Breaks easily with directory structure changes, makes refactoring difficult
-- **Fix approach**: Implemented proper package structure with consistent absolute imports
-- **Implementation**:
-  - Removed all triple/dual fallback import patterns
-  - Standardized on absolute imports from scripts.core
-  - Created verify_imports.py script to validate imports work correctly
-  - Verified package structure with proper __init__.py files
-  - All existing tests pass with new import structure
-
-## Known Bugs
-
-**Date Format Inconsistency:**
-- Issue: Different date formats causing parsing errors (e.g., 'Dec-22' vs '2022-12')
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/L3_export.py` lines 342-346, 645-653
-- Symptoms: Date parsing failures, incorrect period calculations
-- Trigger: When processing Condo vs HDB data with different date formats
-- Workaround: Multiple format handling with error coercion, but not robust
-
-**MRT Line Mapping Inconsistency:**
-- Issue: Station names with 'BUGIS' appear in hardcoded lists but may not match actual API responses
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/mrt_line_mapping.py` lines 98, 142
-- Symptoms: Incomplete station matches, missing line assignments
-- Trigger: When OneMap API returns slightly different station naming
-- Workaround: Fuzzy matching helps but isn't foolproof
-
-**Memory Management in Large Data Processing:**
-- Issue: Multiple large DataFrames loaded simultaneously without proper cleanup
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/L3_export.py` lines 435-443
-- Symptoms: High memory usage, potential crashes with large datasets
-- Trigger: Processing full transaction datasets with multiple merges
-- Workaround: Batch processing implemented but not consistently applied
-
-## Security Considerations
-
-**API Key Exposure in Code:**
-- Risk: API keys stored in environment variables but with fallback authentication methods that could expose credentials
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py` lines 55-106
-- Current mitigation: Basic JWT token expiration checking
-- Recommendations: Implement proper secret management, use credential rotation, add audit logging
-
-**File Path Tr Vulnerabilities:**
-- Risk: Direct file path construction without validation could allow directory traversal
-- Files: Multiple data loading scripts
-- Current mitigation: Limited validation in some modules
-- Recommendations: Implement path validation, sanitize all file inputs, use pathlib.Path safely
-
-**Data Privacy Concerns:**
-- Risk: Property transaction data contains sensitive pricing and location information
-- Files: All transaction processing modules
-- Current mitigation: Basic data masking in some exports
-- Recommendations: Implement data anonymization, access controls, audit trails for sensitive data
-
-## Performance Bottlenecks
-
-**Sequential API Calls:**
-- Problem: Slow geocoding due to sequential API calls despite parallel implementation
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py` lines 311-363
-- Cause: OneMap API rate limiting and artificial delays
-- Improvement path: Implement exponential backoff, better error handling, alternative geocoding services
-
-**Large Memory Footprint:**
-- Problem: Multiple large DataFrames loaded simultaneously in memory
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/L3_export.py`
-- Cause: Loading all transaction types, geocoding, and features before processing
-- Improvement path: Implement streaming processing, chunked operations, and memory-efficient data types
-
-**Inefficient String Operations:**
-- Problem: Multiple string manipulations in data processing loops
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/L1_process.py`
-- Cause: Repeated string operations on large datasets without vectorization
-- Improvement path: Use pandas string methods, vectorized operations, minimize intermediate columns
-
-## Fragile Areas
-
-**Pipeline Dependencies:**
-- Component: Multi-stage data pipeline (L0-L5)
-- Files: All `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/stages/` modules
-- Why fragile: Each stage depends on specific outputs from previous stages, no error recovery
-- Safe modification: Add input validation, implement checkpoint/recovery, add dependency graphs
-- Test coverage: Limited integration testing between stages
-
-**Configuration System:**
-- Component: Centralized Config class
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/config.py`
-- Why fragile: Global validation on import, complex path resolution, many dependencies
-- Safe modification: Add configuration schema validation, implement gradual migration
-- Test coverage: Configuration testing needs improvement
-
-**External API Integration:**
-- Component: OneMap API integration
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/scripts/core/geocoding.py`
-- Why fragile: API rate limits, authentication changes, service availability
-- Safe modification: Add circuit breakers, implement fallback services, better error handling
-- Test coverage: Limited API failure scenario testing
-
-## Scaling Limits
-
-**Dataset Size Limits:**
-- Current capacity: ~100K transaction records processing
-- Limit: Memory constraints during DataFrame operations, slow processing times
-- Scaling path: Implement distributed processing, use database backend, optimize memory usage
-
-**API Rate Limiting:**
-- Current capacity: ~5 parallel workers with 1.2s delays
-- Limit: OneMap API constraints (unknown but likely ~60-100 requests/minute)
-- Scaling path: Implement request queuing, use multiple API keys, implement caching
-
-**Concurrent Processing:**
-- Current capacity: Single-threaded pandas operations
-- Limit: CPU-bound operations not parallelized
-- Scaling path: Implement Dask or PySpark for distributed processing, optimize pandas operations
-
-## Dependencies at Risk
-
-**Python Package Ecosystem:**
-- Package: pandas
-- Risk: Core dependency, frequent breaking changes between versions
-- Impact: Data processing functionality
-- Migration plan: Pin specific version, implement compatibility layer, monitor deprecation warnings
-
-**External APIs:**
-- Package: OneMap API service
-- Risk: Service availability, rate limiting changes, API breaking changes
-- Impact: Geocoding functionality
-- Migration plan: Implement alternative geocoding services (Google Maps, OpenStreetMap), add service abstraction layer
-
-**File Format Dependencies:**
-- Package: parquet file format
-- Risk: Library updates, format compatibility issues
-- Impact: Data storage and retrieval
-- Migration plan: Maintain backward compatibility, implement format versioning, add validation
-
-## Missing Critical Features
-
-**Data Quality Monitoring:**
-- Problem: No comprehensive data quality checks or alerts
-- Blocks: Early detection of data corruption, missing values, anomalies
-- Priority: High
-
-**Automated Testing:**
-- Problem: Limited test coverage, especially for integration scenarios
-- Blocks: Refactoring confidence, CI/CD pipeline reliability
-- Priority: High
-
-**Error Recovery Mechanisms:**
-- Problem: Pipeline failures require manual intervention
-- Blocks: Automated workflows, production reliability
-- Priority: Medium
-
-**Documentation and Knowledge Base:**
-- Problem: Limited technical documentation, code comments outdated
-- Blocks: Onboarding, maintenance, knowledge transfer
-- Priority: Medium
-
-## Test Coverage Gaps
-
-**Geocoding Integration Testing:**
-- What's not tested: API failure scenarios, rate limiting, edge cases
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/tests/test_geocoding.py`
-- Risk: Real-world API failures not handled gracefully
-- Priority: High
-
-**Pipeline Integration Testing:**
-- What's not tested: End-to-end pipeline execution, stage interactions
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/tests/test_pipeline.py`
-- Risk: Integration issues between pipeline stages
-- Priority: High
-
-**Configuration Validation Testing:**
-- What's not tested: Configuration scenarios, error conditions
-- Files: `/Users/minghao/Desktop/personal/egg-n-bacon-housing/tests/test_config.py`
-- Risk: Configuration errors not caught early
-- Priority: Medium
-
-**Performance Testing:**
-- What's not tested: Large dataset handling, memory usage, execution time
-- Files: Limited performance tests exist
-- Risk: Performance degradation not detected
-- Priority: Medium
+**Last Updated**: 2026-02-05
+**Status**: Active tracking
 
 ---
 
-*Concerns audit: 2026-02-02*
+## Technical Debt
+
+### 1. Large File Complexity
+
+**Files Over 1000 Lines**:
+
+| File | Lines | Concern |
+|------|-------|---------|
+| `scripts/core/stages/L3_export.py` | 1632 | Should be split into smaller functions |
+| `scripts/dashboard/create_l3_unified_dataset.py` | 1443 | Duplicate logic with L3_export.py |
+| `scripts/core/metrics.py` | 914 | Complex statistical calculations |
+| `scripts/core/school_features.py` | 726 | Complex feature engineering |
+| `scripts/core/mrt_line_mapping.py` | 534 | Hardcoded station data |
+
+**Impact**: Difficult to test, maintain, and understand
+
+**Recommendation**:
+- Break L3_export.py into modules by function (export, validation, JSON generation)
+- Consolidate duplicate logic between L3_export.py and create_l3_unified_dataset.py
+- Extract hardcoded data to CSV/JSON files (MRT stations, schools)
+
+### 2. Hardcoded Data
+
+**MRT Station Mapping** (`scripts/core/mrt_line_mapping.py`):
+- 534 lines of hardcoded station-to-line mappings
+- Should be in a CSV/JSON file for easy updates
+
+**School Tiers** (`scripts/core/school_features.py`):
+- Hardcoded school tier assignments
+- Should be data-driven from a configuration file
+
+**Planning Area Crosswalk**:
+- Manual crosswalk file exists but needs validation
+
+**Impact**: Maintenance burden, error-prone updates
+
+### 3. Duplicate Code
+
+**L3 Export Logic**:
+- `L3_export.py` (1632 lines)
+- `create_l3_unified_dataset.py` (1443 lines)
+- Significant overlap in data processing and export logic
+
+**Recommendation**: Consolidate into shared module
+
+**Data Loading**:
+- Multiple patterns for loading transaction data
+- Partially addressed with `TransactionLoader` but not fully migrated
+
+### 4. Import Path Fragility
+
+**Status**: Partially resolved (2026-02-03)
+
+**Remaining Issues**:
+- Some scripts still use relative imports
+- Notebook imports may fail if run from different directory
+
+**Example**:
+```python
+# Fragile
+from ..core.config import Config
+
+# Better
+from scripts.core.config import Config
+```
+
+---
+
+## Known Issues
+
+### 1. Test Coverage Gaps
+
+**Current Coverage**: Limited to `scripts/core`
+
+**Missing Coverage**:
+- `scripts/analytics/` - No tests
+- `scripts/data/` - No tests
+- `scripts/utils/` - No tests
+- Frontend (app/, backend/) - No tests
+
+**Impact**: Risk of regressions in untested code
+
+**Recommendation**: Add tests for critical analytics paths
+
+### 2. Geocoding Fallback Handling
+
+**Issue**: When both OneMap and Google Maps fail, address is skipped
+
+**Current Behavior**:
+- Logs error
+- Continues without geocoding
+- Manual intervention required to retry
+
+**Better Approach**:
+- Queue failed addresses for retry
+- Save checkpoint for recovery
+- Alert when failure rate exceeds threshold
+
+### 3. Token Expiry Management
+
+**Issue**: OneMap token expires after ~3 days
+
+**Current Handling**:
+- Auto-refresh on 401/403
+- But may lose in-flight requests
+
+**Better Approach**:
+- Proactive refresh before expiry
+- Background refresh thread
+- Token pre-validation before batch jobs
+
+### 4. Memory Usage for Large Datasets
+
+**Issue**: Full datasets loaded into memory
+
+**Files Affected**:
+- L3_export.py (1632 lines) - Processes all data at once
+- Large parquet files (>500MB)
+
+**Impact**: High memory usage, potential OOM on smaller machines
+
+**Recommendation**: Implement chunked processing for large datasets
+
+---
+
+## Security Concerns
+
+### 1. API Key Exposure Risk
+
+**Environment Variables**:
+- `.env` file (not in git) - Good
+- But accidentally committing `.env` is a risk
+
+**Recommendation**:
+- Add `.env` to `.gitignore` (already done)
+- Add pre-commit hook to check for API keys in commits
+- Use secret scanning in CI/CD
+
+### 2. Dependency Vulnerabilities
+
+**Outdated Dependencies**:
+- Langchain packages pinned to specific versions
+- Some packages in beta (e.g., `h3==4.1.0b2`)
+
+**Impact**: Potential security vulnerabilities
+
+**Recommendation**: Regular dependency updates via `uv sync --upgrade`
+
+### 3. Data Validation
+
+**Issue**: Limited input validation on user-provided data
+
+**Areas**:
+- Manual CSV uploads not validated
+- API responses assumed correct
+
+**Recommendation**: Add schema validation (pydantic/marshmallow)
+
+---
+
+## Performance Bottlenecks
+
+### 1. Geocoding Throughput
+
+**Current**: Sequential API calls with 1 second delay
+
+**Impact**:
+- 10,000 addresses = ~2.8 hours
+- Not practical for large datasets
+
+**Better Approach**:
+- Parallel workers (already implemented but with low concurrency)
+- Dynamic rate limiting based on API response time
+- Batch geocoding API (if available)
+
+### 2. MRT Distance Calculation
+
+**Issue**: Computed on-the-fly for each analysis
+
+**Files**: `scripts/core/mrt_distance.py`
+
+**Recommendation**:
+- Pre-compute and cache MRT distances
+- Use spatial indexing (H3) for faster queries
+
+### 3. Feature Engineering
+
+**Issue**: Re-computed for each analysis run
+
+**Example**: School features, CBD distances
+
+**Recommendation**:
+- Store computed features in parquet files
+- Check for existing features before re-computing
+
+### 4. Dashboard JSON Generation
+
+**Issue**: `prepare_webapp_data.py` can be slow
+
+**Impact**: Delayed dashboard updates
+
+**Recommendation**:
+- Incremental updates (only changed data)
+- Cache previous results
+- Parallel generation for independent files
+
+---
+
+## Fragile Areas
+
+### 1. Pipeline State Management
+
+**Issue**: No explicit state management
+
+**Current Behavior**:
+- Stages run based on file existence
+- No validation of intermediate results
+
+**Impact**: Hard to recover from failures
+
+**Recommendation**:
+- Add checkpoint file tracking stage completion
+- Validate stage outputs before proceeding
+- Add `--resume` flag to skip completed stages
+
+### 2. Error Recovery
+
+**Issue**: Limited retry logic for external APIs
+
+**Current**: Only geocoding has retry (via tenacity)
+
+**Impact**: Single API failure can break pipeline
+
+**Recommendation**: Add retry logic to all external API calls
+
+### 3. Data Lineage Tracking
+
+**Issue**: Limited metadata tracking
+
+**Current**: Only tracks file creation, not transformations
+
+**Recommendation**:
+- Track all transformations applied to data
+- Store transformation history in metadata.json
+- Enable data reproducibility
+
+---
+
+## Code Quality Issues
+
+### 1. Inconsistent Docstring Coverage
+
+**Status**: Good for core modules, spotty for analytics
+
+**Files Missing Docstrings**:
+- Some utility scripts
+- Legacy notebook code
+- Some analysis scripts
+
+**Recommendation**: Enforce docstring coverage in CI
+
+### 2. Type Hint Coverage
+
+**Status**: Partial
+
+**Coverage**:
+- Core services: Good
+- Analytics scripts: Spotty
+- Tests: Minimal
+
+**Recommendation**: Add type hints to all public functions
+
+### 3. Logging Inconsistency
+
+**Issue**: Mix of print() and logger
+
+**Files Using print()**:
+- Some scripts still use `print()` instead of `logger`
+
+**Recommendation**: Replace all `print()` with `logger`
+
+---
+
+## Configuration Issues
+
+### 1. Environment Variable Validation
+
+**Issue**: Some optional vars not validated when used
+
+**Example**:
+```python
+# AWS credentials validated only when S3 is used
+# But no clear error if AWS vars are missing
+```
+
+**Recommendation**: Lazy validation with clear error messages
+
+### 2. Hardcoded Constants
+
+**Examples**:
+- Cache duration (24 hours)
+- API delays (1 second)
+- Retry attempts (3)
+
+**Recommendation**: Move to Config class
+
+---
+
+## Deployment Concerns
+
+### 1. GitHub Pages Deployment
+
+**Issue**: No automated testing of deployed site
+
+**Current**: Deploy on push to main
+
+**Risk**: Broken site deployed if tests fail
+
+**Recommendation**: Add deployment gate (tests must pass)
+
+### 2. Data File Size
+
+**Issue**: Large JSON files in `app/public/data/`
+
+**Impact**:
+- Slow page loads
+- High bandwidth usage
+
+**Recommendation**:
+- Implement data pagination
+- Compress JSON files (gzip)
+- Use incremental loading
+
+### 3. No Rollback Strategy
+
+**Issue**: No easy way to rollback bad deployments
+
+**Recommendation**: Tag releases, use GitHub Pages branches
+
+---
+
+## Documentation Gaps
+
+### 1. Architecture Documentation
+
+**Status**: This document (CONCERNS.md) exists but...
+
+**Missing**:
+- Sequence diagrams for complex flows
+- Data flow diagrams
+- Deployment guide
+
+### 2. Onboarding Documentation
+
+**Issue**: steep learning curve for new developers
+
+**Missing**:
+- Setup troubleshooting guide
+- Common workflows
+- Debugging guide
+
+### 3. API Documentation
+
+**Issue**: No docstrings for internal APIs
+
+**Impact**: Hard to reuse code
+
+**Recommendation**: Add docstrings to all public functions
+
+---
+
+## Prioritized Action Items
+
+### High Priority
+
+1. **Consolidate L3 Export Logic** - Eliminate duplicate code
+2. **Add Analytics Tests** - Cover critical paths
+3. **Extract Hardcoded Data** - MRT stations, schools to CSV/JSON
+4. **Improve Geocoding Performance** - Parallel workers, batch API
+
+### Medium Priority
+
+5. **Add Pipeline Checkpoints** - Enable resume from failures
+6. **Implement Data Pagination** - Reduce dashboard load time
+7. **Add Deployment Gates** - Tests must pass before deploy
+8. **Consolidate Data Loading** - Migrate all to DataLoader pattern
+
+### Low Priority
+
+9. **Add Type Hints** - Complete coverage
+10. **Replace print() with logger** - Consistent logging
+11. **Add Onboarding Guide** - Developer documentation
+12. **Implement Chunked Processing** - Reduce memory usage
+
+---
+
+## Related Documents
+
+- `20260203-tech-debt-mitigation.md` - Previous tech debt work
+- `20260203-school-features-optimization.md` - School features optimization
+- `docs/analytics/findings.md` - Analysis findings (uses this data)
+
+---
+
+## Summary
+
+**Critical Areas**:
+- Large file complexity (L3_export.py: 1632 lines)
+- Duplicate export logic (L3_export.py vs create_l3_unified_dataset.py)
+- Test coverage gaps (analytics, data processing)
+- Geocoding performance bottleneck
+
+**Quick Wins**:
+- Extract hardcoded data to CSV/JSON
+- Add deployment gates (tests before deploy)
+- Replace remaining print() with logger
+- Add type hints to analytics scripts
+
+**Long-term Improvements**:
+- Pipeline checkpoint system
+- Chunked processing for large datasets
+- Comprehensive test suite
+- Performance optimization (MRT distances, feature caching)
+
+Overall, the codebase is well-structured with good separation of concerns. The main areas for improvement are reducing file complexity, consolidating duplicate code, and improving test coverage.
