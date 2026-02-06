@@ -1,10 +1,3 @@
----
-title: Spatial Analytics Overview
-category: advanced
-description: Spatial analytics overview and methodology
-status: published
----
-
 # Spatial Analytics Overview
 
 **Date:** 2026-01-24

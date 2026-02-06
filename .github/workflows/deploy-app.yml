@@ -30,6 +30,11 @@ jobs:
         working-directory: ./app
         run: bun install
 
+      - name: Sync content files
+        run: |
+          chmod +x scripts/sync-content.sh
+          bash scripts/sync-content.sh
+
       - name: Build with Astro
         working-directory: ./app
         run: bun run build

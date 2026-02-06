@@ -1,10 +1,3 @@
----
-title: Spatial Autocorrelation Analysis
-category: advanced
-description: Moran's I and spatial autocorrelation analysis
-status: published
----
-
 # Spatial Autocorrelation Analysis Script
 
 **Script:** `scripts/analysis/analyze_spatial_autocorrelation.py`

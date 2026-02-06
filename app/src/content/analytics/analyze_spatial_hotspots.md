@@ -1,10 +1,3 @@
----
-title: Spatial Hotspots Analysis
-category: advanced
-description: Spatial clustering and hotspot identification
-status: published
----
-
 # Spatial Analytics Script
 
 **Script:** `scripts/analysis/analyze_spatial_hotspots.py`

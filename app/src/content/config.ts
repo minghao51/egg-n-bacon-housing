@@ -5,8 +5,8 @@ const analyticsCollection = defineCollection({
     schema: z.object({
         title: z.string().optional(),
         date: z.coerce.date().optional(),
-        status: z.enum(['draft', 'published']).default('published'),
-        category: z.enum(['core', 'market', 'advanced', 'reports', 'reference']).default('reports'),
+        status: z.string().optional(), // Allow any status value (Complete, draft, published, etc.)
+        category: z.string().optional(), // Allow any category value
         description: z.string().optional(),
     }),
 });
