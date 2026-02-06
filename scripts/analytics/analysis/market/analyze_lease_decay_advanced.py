@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
 import statsmodels.api as sm
+import patsy
 
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
@@ -508,6 +509,123 @@ def visualize_advanced_analysis(
     plt.close()
 
 
+def analyze_spline_arbitrage(df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+    """
+    Spline-based arbitrage analysis: Compare empirical market curve to Bala's theoretical.
+
+    Uses restricted cubic splines to model actual market depreciation,
+    then calculates "arbitrage gaps" where market prices deviate from theory.
+
+    Returns:
+        Tuple of (arbitrage opportunities DataFrame, summary statistics dict)
+    """
+    logger.info("=" * 70)
+    logger.info("SPLINE-BASED ARBITRAGE ANALYSIS")
+    logger.info("=" * 70)
+
+    df = df.copy()
+    df['lease_rounded'] = df['remaining_lease_years'].round(0).astype(int)
+
+    # Group by lease year and calculate empirical median
+    empirical = df.groupby('lease_rounded').agg({
+        'price_psm': ['median', 'count']
+    }).reset_index()
+    empirical.columns = ['lease_years', 'empirical_median_psm', 'n']
+
+    # Filter to sufficient sample size
+    empirical = empirical[empirical['n'] >= 100]
+
+    if len(empirical) < 10:
+        logger.warning("Insufficient data for spline analysis")
+        return pd.DataFrame(), {}
+
+    logger.info(f"Fitting splines to {len(empirical)} lease-year points")
+
+    # Create restricted cubic spline basis with 4 degrees of freedom
+    # Using patsy for spline basis functions
+    try:
+        # Create B-spline basis (4 knots = 5 degrees of freedom - 1)
+        from scipy.interpolate import BSpline, make_smoothing_spline
+
+        # Fit smoothing spline to empirical data
+        lease_range = empirical['lease_years'].values
+        price_range = empirical['empirical_median_psm'].values
+
+        # Use scipy's smoothing spline
+        spline = make_smoothing_spline(lease_range, price_range, w=empirical['n'].values)
+
+        # Generate predictions across full range
+        lease_full_range = np.linspace(30, 99, 70)
+        spline_predictions = spline(lease_full_range)
+
+        # Normalize to 99-year baseline
+        baseline_idx = np.where(lease_full_range >= 98)[0]
+        if len(baseline_idx) > 0:
+            baseline_value = spline_predictions[baseline_idx].mean()
+            spline_normalized = (spline_predictions / baseline_value) * 100
+        else:
+            baseline_value = price_range.max()
+            spline_normalized = (spline_predictions / baseline_value) * 100
+
+        # Calculate theoretical Bala's curve for comparison
+        theoretical = balas_curve_theoretical(lease_full_range)
+
+        # Calculate arbitrage gap
+        arbitrage_gap = spline_normalized - theoretical
+
+        # Identify opportunities
+        # Overvalued: Market > Theoretical + 5% (SELL signal)
+        # Undervalued: Market < Theoretical - 5% (BUY signal)
+        overvalued_mask = arbitrage_gap > 5
+        undervalued_mask = arbitrage_gap < -5
+
+        opportunities = pd.DataFrame({
+            'lease_years': lease_full_range,
+            'market_value_pct': spline_normalized,
+            'theoretical_value_pct': theoretical,
+            'arbitrage_gap_pct': arbitrage_gap,
+            'signal': np.where(overvalued_mask, 'SELL',
+                      np.where(undervalued_mask, 'BUY', 'HOLD'))
+        })
+
+        logger.info(f"\nArbitrage Opportunities Identified:")
+        logger.info(f"  Overvalued (SELL): {overvalued_mask.sum()} lease years")
+        logger.info(f"  Undervalued (BUY): {undervalued_mask.sum()} lease years")
+        logger.info(f"  Fair value (HOLD): {(~overvalued_mask & ~undervalued_mask).sum()} lease years")
+
+        # Top opportunities
+        top_sell = opportunities[opportunities['signal'] == 'SELL'].nlargest(5, 'arbitrage_gap_pct')
+        top_buy = opportunities[opportunities['signal'] == 'BUY'].nsmallest(5, 'arbitrage_gap_pct')
+
+        if not top_sell.empty:
+            logger.info(f"\nTop 5 OVERVALUED (Sell Opportunities):")
+            for _, row in top_sell.iterrows():
+                logger.info(f"  {int(row['lease_years'])} years: +{row['arbitrage_gap_pct']:.1f}% "
+                          f"(Market {row['market_value_pct']:.1f}% vs Theory {row['theoretical_value_pct']:.1f}%)")
+
+        if not top_buy.empty:
+            logger.info(f"\nTop 5 UNDERVALUED (Buy Opportunities):")
+            for _, row in top_buy.iterrows():
+                logger.info(f"  {int(row['lease_years'])} years: {row['arbitrage_gap_pct']:.1f}% "
+                          f"(Market {row['market_value_pct']:.1f}% vs Theory {row['theoretical_value_pct']:.1f}%)")
+
+        # Summary statistics
+        stats_dict = {
+            'max_arbitrage_gap': arbitrage_gap.max(),
+            'min_arbitrage_gap': arbitrage_gap.min(),
+            'mean_arbitrage_gap': arbitrage_gap.mean(),
+            'n_overvalued': overvalued_mask.sum(),
+            'n_undervalued': undervalued_mask.sum(),
+            'n_analyzed': len(opportunities)
+        }
+
+        return opportunities, stats_dict
+
+    except Exception as e:
+        logger.error(f"Spline fitting failed: {e}")
+        return pd.DataFrame(), {}
+
+
 def save_advanced_results(
     policy_thresholds: pd.DataFrame,
     liquidity_tax: pd.DataFrame,
@@ -516,7 +634,9 @@ def save_advanced_results(
     hedonic_results: pd.DataFrame,
     town_results: pd.DataFrame,
     cliff_analysis: pd.DataFrame,
-    output_dir: Path
+    output_dir: Path,
+    arbitrage_df: pd.DataFrame = None,
+    arbitrage_stats: dict = None
 ):
     """Save all advanced analysis results."""
     logger.info("Saving advanced analysis results...")
@@ -552,6 +672,22 @@ def save_advanced_results(
     if not cliff_analysis.empty:
         cliff_analysis.to_csv(output_dir / 'maturity_cliff_analysis.csv', index=False)
         logger.info(f"Saved: {output_dir / 'maturity_cliff_analysis.csv'}")
+
+    if arbitrage_df is not None and not arbitrage_df.empty:
+        arbitrage_df.to_csv(output_dir / 'lease_arbitrage_opportunities.csv', index=False)
+        logger.info(f"Saved: {output_dir / 'lease_arbitrage_opportunities.csv'}")
+
+    if arbitrage_stats:
+        # Convert numpy types to native Python types for JSON serialization
+        arbitrage_stats_json = {
+            k: int(v) if isinstance(v, (np.integer, np.int64, np.int32)) else
+               float(v) if isinstance(v, (np.floating, np.float64, np.float32)) else v
+            for k, v in arbitrage_stats.items()
+        }
+        with open(output_dir / 'arbitrage_stats.json', 'w') as f:
+            import json
+            json.dump(arbitrage_stats_json, f, indent=2)
+            logger.info(f"Saved: {output_dir / 'arbitrage_stats.json'}")
 
 
 def main():
@@ -598,6 +734,11 @@ def main():
     cliff_analysis = analyze_maturity_cliff(hdb_df)
 
     logger.info("\n" + "=" * 70)
+    logger.info("7. SPLINE-BASED ARBITRAGE ANALYSIS")
+    logger.info("=" * 70)
+    arbitrage_df, arbitrage_stats = analyze_spline_arbitrage(hdb_df)
+
+    logger.info("\n" + "=" * 70)
     logger.info("VISUALIZATIONS")
     logger.info("=" * 70)
     visualize_advanced_analysis(hdb_df, balas_df, hedonic_results, town_results, output_dir)
@@ -613,7 +754,9 @@ def main():
         hedonic_results,
         town_results,
         cliff_analysis,
-        output_dir
+        output_dir,
+        arbitrage_df,
+        arbitrage_stats
     )
 
     logger.info("\n" + "=" * 70)

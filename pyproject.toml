@@ -37,6 +37,8 @@ dependencies = [
     "lifelines>=0.27.0",
     "marimo>=0.19.6",
     "scipy>=1.17.0",
+    "kaleido>=1.2.0",
+    "patsy>=1.0.2",
 ]
 
 [tool.uv]
@@ -50,6 +52,11 @@ dev-dependencies = [
     "pytest-asyncio>=0.21.0",
     "coverage[toml]>=7.0.0",
     "ruff>=0.1.0",
+    "libpysal>=4.14.1",
+    "esda>=2.8.1",
+    "geopandas>=1.1.2",
+    "shapely>=2.1.2",
+    "kaleido>=1.2.0",
 ]
 
 [tool.ruff]

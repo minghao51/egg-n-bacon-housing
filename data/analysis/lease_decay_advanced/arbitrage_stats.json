@@ -1,0 +1,8 @@
+{
+  "max_arbitrage_gap": 1705.2844047149822,
+  "min_arbitrage_gap": -31.499031611507164,
+  "mean_arbitrage_gap": 103.71467045727454,
+  "n_overvalued": 52,
+  "n_undervalued": 10,
+  "n_analyzed": 70
+}
