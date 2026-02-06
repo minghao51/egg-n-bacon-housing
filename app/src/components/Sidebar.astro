@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 // Get all analytics docs dynamically
 const allDocs = await getCollection('analytics');
 const analyticsDocs = allDocs
-  .filter(doc => doc.data.status === 'published')
+  .filter(doc => doc.data.status !== 'draft')
   .map(doc => ({
     title: doc.data.title || doc.slug,
     slug: doc.slug,
