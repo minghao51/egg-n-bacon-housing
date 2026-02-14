@@ -1,6 +1,6 @@
 ---
 title: MRT Impact Analysis - Singapore Housing Market
-category: reports
+category: "market-analysis"
 description: Comprehensive analysis of MRT proximity impact on HDB prices and appreciation (2021+)
 status: published
 ---
