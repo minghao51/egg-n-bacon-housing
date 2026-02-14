@@ -11,6 +11,37 @@ APP_CONTENT_DIR="$PROJECT_ROOT/app/src/content/analytics"
 DATA_ANALYSIS_DIR="$PROJECT_ROOT/data/analysis"
 APP_SRC_DIR="$PROJECT_ROOT/app/src"
 
+# Valid categories (space-separated list for bash 3.2 compatibility)
+VALID_CATEGORIES="investment-guides market-analysis technical-reports quick-reference"
+
+extract_category() {
+  local file="$1"
+  grep -m1 '^category:' "$file" | sed 's/^category: *//' | tr -d '"'"'"
+}
+
+validate_category() {
+  local file="$1"
+  local category=$(extract_category "$file")
+
+  if [ -z "$category" ]; then
+    echo "⚠️  Missing category in: $(basename "$file")"
+    echo "   Valid categories: $VALID_CATEGORIES"
+    return 1
+  fi
+
+  # Check if category is in the valid list (space-separated matching)
+  local valid_cat
+  for valid_cat in $VALID_CATEGORIES; do
+    if [ "$category" = "$valid_cat" ]; then
+      return 0
+    fi
+  done
+
+  echo "⚠️  Invalid category '$category' in: $(basename "$file")"
+  echo "   Valid categories: $VALID_CATEGORIES"
+  return 1
+}
+
 echo "Syncing analytics markdown files..."
 
 # Create app content directory if it doesn't exist
@@ -23,6 +54,28 @@ echo "🧹 Cleaned up old markdown files from $APP_CONTENT_DIR/"
 # Copy all .md files from docs/analytics to app content
 cp -r "$DOCS_DIR"/*.md "$APP_CONTENT_DIR/" 2>/dev/null || true
 
+# Skip validation if no files copied
+if ! ls "$APP_CONTENT_DIR"/*.md 2>/dev/null | grep -q .; then
+  echo "⚠️  No markdown files found in $APP_CONTENT_DIR/"
+  exit 1
+fi
+
+# Validate categories in copied files
+echo "🔍 Validating categories..."
+invalid_count=0
+for file in "$APP_CONTENT_DIR"/*.md; do
+  if ! validate_category "$file"; then
+    invalid_count=$((invalid_count + 1))
+  fi
+done
+
+if [ $invalid_count -gt 0 ]; then
+  echo "⚠️  Found $invalid_count file(s) with invalid/missing categories"
+  exit 1
+fi
+
+echo "✅ All categories validated successfully"
+
 # Create symlink in app/src/data -> ../../data so relative paths work
 # This makes ../../data/analysis in markdown files resolve correctly
 if [ ! -L "$APP_SRC_DIR/data" ]; then
@@ -30,4 +83,5 @@ if [ ! -L "$APP_SRC_DIR/data" ]; then
     echo "✅ Created symlink: app/src/data -> ../../data"
 fi
 
-echo "✅ Synced $(ls -1 "$APP_CONTENT_DIR"/*.md 2>/dev/null | wc -l | tr -d ' ') markdown files to app/src/content/analytics/"
+file_count=$(ls -1 "$APP_CONTENT_DIR"/*.md 2>/dev/null | wc -l | tr -d ' ')
+echo "✅ Synced $file_count markdown files to app/src/content/analytics/"
