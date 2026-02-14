@@ -1,3 +1,11 @@
+---
+title: "Singapore Housing Market - Key Investment Findings"
+category: "investment-guides"
+description: "Actionable insights for property buyers and investors from comprehensive market analysis (2021-2026)"
+status: "published"
+date: "2026-02-06"
+---
+
 # Analytics Findings Summary
 
 **Last Updated**: 2026-02-01
