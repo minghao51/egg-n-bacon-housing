@@ -1,6 +1,6 @@
 ---
 title: Causal Inference Analysis - Singapore Housing Market
-category: reports
+category: technical-reports
 description: Causal effects of policies, lease decay, and property characteristics on housing outcomes (Enhanced with Advanced Methods)
 status: published
 ---

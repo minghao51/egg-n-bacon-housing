@@ -1,3 +1,10 @@
+---
+title: Spatial Analytics Overview
+category: technical-reports
+description: Spatial analytics methods for identifying patterns in geographic housing data
+status: published
+---
+
 # Spatial Analytics Overview
 
 **Date:** 2026-01-24
