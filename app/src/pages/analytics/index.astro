@@ -4,12 +4,55 @@ import Sidebar from '@/components/Sidebar.astro';
 import { getCollection } from 'astro:content';
 
 const allDocs = await getCollection('analytics');
-const docs = allDocs.map(doc => ({
-  slug: doc.slug,
-  title: doc.data.title || doc.slug,
-  description: doc.data.description || '',
-  category: doc.data.category,
-})).sort((a, b) => a.slug.localeCompare(b.slug));
+
+// Category configuration
+const categoryConfig = {
+  'investment-guides': {
+    label: 'Investment Guides',
+    icon: '💼',
+    description: 'Actionable insights for investors and buyers',
+  },
+  'market-analysis': {
+    label: 'Market Analysis',
+    icon: '📊',
+    description: 'Trends and patterns in housing market',
+  },
+  'technical-reports': {
+    label: 'Technical Reports',
+    icon: '🔬',
+    description: 'Methodology and statistical models',
+  },
+  'quick-reference': {
+    label: 'Quick Reference',
+    icon: '📋',
+    description: 'Tables and condensed summaries',
+  },
+};
+
+// Group documents by category
+const docsByCategory = allDocs.reduce((acc, doc) => {
+  const category = doc.data.category || 'technical-reports'; // Default fallback
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push({
+    slug: doc.slug,
+    title: doc.data.title || doc.slug,
+    description: doc.data.description || '',
+    category: doc.data.category,
+  });
+  return acc;
+}, {} as Record<string, Array<{
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+}>>);
+
+// Sort categories by display order
+const sortedCategories = Object.keys(categoryConfig).filter(
+  cat => docsByCategory[cat]?.length > 0
+);
 ---
 
 <Layout title="Analytics - Singapore Housing Market">
@@ -34,7 +77,7 @@ const docs = allDocs.map(doc => ({
           <div class="text-sm font-medium text-muted-foreground mb-1">
             Total Reports
           </div>
-          <div class="text-3xl font-bold text-foreground">{docs.length}</div>
+          <div class="text-3xl font-bold text-foreground">{allDocs.length}</div>
         </div>
         <div class="bg-card border border-border rounded-lg p-6">
           <div class="text-sm font-medium text-muted-foreground mb-1">
@@ -46,33 +89,33 @@ const docs = allDocs.map(doc => ({
           <div class="text-sm font-medium text-muted-foreground mb-1">
             Categories
           </div>
-          <div class="text-3xl font-bold text-foreground">5</div>
+          <div class="text-3xl font-bold text-foreground">{sortedCategories.length}</div>
         </div>
       </div>
 
-      <!-- All Analytics Documents -->
+      <!-- Category Sections -->
       <div class="space-y-8">
-        <section>
-          <h2 class="text-2xl font-semibold text-foreground mb-4">
-            All Analytics Documents
-          </h2>
-          <div class="grid grid-cols-1 gap-3">
-            {docs.map((doc) => (
-              <a
-                href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
-                class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
-              >
-                <div class="flex items-center justify-between">
+        {sortedCategories.map((category) => (
+          <section class="border border-border rounded-lg overflow-hidden">
+            <details class="group" open>
+              <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-accent transition-colors">
+                <div class="flex items-center gap-3">
+                  <span class="text-2xl">{categoryConfig[category].icon}</span>
                   <div>
-                    <h3 class="font-semibold text-foreground">
-                      {doc.title}
-                    </h3>
-                    <p class="text-sm text-muted-foreground mt-1">
-                      {doc.description}
+                    <h2 class="text-xl font-semibold text-foreground">
+                      {categoryConfig[category].label}
+                    </h2>
+                    <p class="text-sm text-muted-foreground">
+                      {categoryConfig[category].description}
                     </p>
                   </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-medium text-muted-foreground">
+                    {docsByCategory[category].length} {docsByCategory[category].length === 1 ? 'report' : 'reports'}
+                  </span>
                   <svg
-                    class="w-5 h-5 text-muted-foreground"
+                    class="w-5 h-5 text-muted-foreground transition-transform group-open:rotate-90"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -85,10 +128,45 @@ const docs = allDocs.map(doc => ({
                     />
                   </svg>
                 </div>
-              </a>
-            ))}
-          </div>
-        </section>
+              </summary>
+
+              <div class="p-6 pt-0 border-t border-border">
+                <div class="grid grid-cols-1 gap-3 mt-6">
+                  {docsByCategory[category].sort((a, b) => a.slug.localeCompare(b.slug)).map((doc) => (
+                    <a
+                      href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
+                      class="block p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
+                    >
+                      <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                          <h3 class="font-semibold text-foreground">
+                            {doc.title}
+                          </h3>
+                          <p class="text-sm text-muted-foreground mt-1">
+                            {doc.description}
+                          </p>
+                        </div>
+                        <svg
+                          class="w-5 h-5 text-muted-foreground ml-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </details>
+          </section>
+        ))}
       </div>
     </div>
   </main>
