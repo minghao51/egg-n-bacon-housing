@@ -6,7 +6,12 @@ const analyticsCollection = defineCollection({
         title: z.string().optional(),
         date: z.coerce.date().optional(),
         status: z.string().optional(), // Allow any status value (Complete, draft, published, etc.)
-        category: z.string().optional(), // Allow any category value
+        category: z.enum([
+            'investment-guides',
+            'market-analysis',
+            'technical-reports',
+            'quick-reference'
+        ]).optional(),
         description: z.string().optional(),
     }),
 });
