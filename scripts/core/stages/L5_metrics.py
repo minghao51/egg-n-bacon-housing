@@ -14,8 +14,8 @@ import logging
 
 import pandas as pd
 
-from scripts.core.config import Config
 from scripts.core import metrics as metrics_module
+from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet, save_parquet
 
 logger = logging.getLogger(__name__)
