@@ -1,3 +1,10 @@
+---
+title: H3 Clusters Analysis Script
+category: technical-reports
+description: Discover natural property clusters using DBSCAN on H3 hex grid with spatial and attribute features
+status: published
+---
+
 # H3 Clusters Analysis Script
 
 **Script:** `scripts/analysis/analyze_h3_clusters.py`

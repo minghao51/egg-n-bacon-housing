@@ -99,7 +99,107 @@
       "source": "data.gov.sg CSV (all files)",
       "mode": "overwrite",
       "compression": "snappy"
+    },
+    "L5_price_metrics_by_area": {
+      "path": "L5_price_metrics_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_metrics_by_area.parquet",
+      "version": "2026-02-15",
+      "rows": 14472,
+      "created": "2026-02-15T07:22:35.897375",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_volume_metrics_by_area": {
+      "path": "L5_volume_metrics_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_volume_metrics_by_area.parquet",
+      "version": "2026-02-15",
+      "rows": 11991,
+      "created": "2026-02-15T07:22:35.951684",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_growth_metrics_by_area": {
+      "path": "L5_growth_metrics_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_growth_metrics_by_area.parquet",
+      "version": "2026-02-15",
+      "rows": 11991,
+      "created": "2026-02-15T07:22:36.029011",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_temporal_features": {
+      "path": "L5_temporal_features.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_temporal_features.parquet",
+      "version": "2026-02-15",
+      "rows": 11991,
+      "created": "2026-02-15T07:22:36.046790",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_rental_yield_by_area": {
+      "path": "L5_rental_yield_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_rental_yield_by_area.parquet",
+      "version": "2026-02-15",
+      "rows": 28,
+      "created": "2026-02-15T07:22:36.123584",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_appreciation_hotspots": {
+      "path": "L5_appreciation_hotspots.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_appreciation_hotspots.parquet",
+      "version": "2026-02-15",
+      "rows": 40,
+      "created": "2026-02-15T07:22:36.127872",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_prepared": {
+      "path": "L5_price_appreciation_prepared.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_prepared.parquet",
+      "version": "2026-02-15",
+      "rows": 452059,
+      "created": "2026-02-15T07:18:40.570030",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_train": {
+      "path": "L5_price_appreciation_train.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_train.parquet",
+      "version": "2026-02-15",
+      "rows": 295367,
+      "created": "2026-02-15T07:18:40.840226",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_test": {
+      "path": "L5_price_appreciation_test.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_test.parquet",
+      "version": "2026-02-15",
+      "rows": 156692,
+      "created": "2026-02-15T07:18:40.982964",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_split": {
+      "path": "L5_price_appreciation_split.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_split.parquet",
+      "version": "2026-02-15",
+      "rows": 452059,
+      "created": "2026-02-15T07:18:41.002053",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-04T18:53:41.011235"
+  "last_updated": "2026-02-15T07:22:36.127874"
 }

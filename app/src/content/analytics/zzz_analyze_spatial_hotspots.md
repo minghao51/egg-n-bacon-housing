@@ -1,3 +1,10 @@
+---
+title: Spatial Analytics Script
+category: technical-reports
+description: Identify statistically significant high/low rental price clusters using Getis-Ord Gi* statistic
+status: published
+---
+
 # Spatial Analytics Script
 
 **Script:** `scripts/analysis/analyze_spatial_hotspots.py`

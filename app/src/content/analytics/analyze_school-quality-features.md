@@ -1,3 +1,11 @@
+---
+title: School Quality Features Analysis
+category: "market-analysis"
+description: Analysis of school proximity impact on Singapore housing prices with quality-weighted features and spatial validation (2021+)
+status: "Complete"
+date: "2026-02-03"
+---
+
 # School Quality Features Analysis Findings
 
 **Analysis Date:** 2026-02-03 (Updated: 2026-02-06 with enhanced analysis)

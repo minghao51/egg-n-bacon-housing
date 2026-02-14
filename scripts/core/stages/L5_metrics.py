@@ -14,6 +14,7 @@ import logging
 
 import pandas as pd
 
+from scripts.core.config import Config
 from scripts.core import metrics as metrics_module
 from scripts.core.data_helpers import load_parquet, save_parquet
 
@@ -28,9 +29,13 @@ def load_unified_data() -> pd.DataFrame:
     """
     logger.info("Loading L3 unified dataset...")
 
-    df = load_parquet("L3_unified")
+    # Load directly from known path (not in metadata yet)
+    unified_path = Config.DATA_DIR / "pipeline" / "L3" / "housing_unified.parquet"
+    if not unified_path.exists():
+        logger.warning(f"  L3 unified dataset not found at {unified_path}")
+        return pd.DataFrame()
 
-    logger.info(f"  Loaded {len(df):,} transactions")
+    df = pd.read_parquet(unified_path)
 
     # Ensure datetime columns
     if "transaction_date" in df.columns:
@@ -224,6 +229,66 @@ def calculate_growth_metrics_by_area(
     logger.info(f"  Created growth metrics with {len(monthly_prices):,} records")
 
     return monthly_prices
+
+
+def calculate_temporal_features(
+    growth_df: pd.DataFrame, value_col: str = "yoy_change_pct", group_col: str = "planning_area"
+) -> pd.DataFrame:
+    """Calculate temporal features for predictive modeling.
+
+    Adds lagged features, acceleration, and trend consistency metrics.
+
+    Args:
+        growth_df: DataFrame with growth metrics by area and month
+        value_col: Column to create lags for (default: yoy_change_pct)
+        group_col: Grouping column for lag calculations (default: planning_area)
+
+    Returns:
+        DataFrame with temporal features added
+    """
+    logger.info("Calculating temporal features for predictive modeling...")
+
+    if value_col not in growth_df.columns:
+        logger.warning(f"Column '{value_col}' not found for temporal features")
+        return growth_df
+
+    if group_col not in growth_df.columns or "month" not in growth_df.columns:
+        logger.warning(f"Required columns '{group_col}' or 'month' not found")
+        return growth_df
+
+    df = growth_df.copy()
+    df = df.sort_values([group_col, "month"])
+
+    # Lagged appreciation (auto-regressive features)
+    logger.info("  Creating lagged features...")
+    df[f"{value_col}_lag1"] = df.groupby(group_col)[value_col].shift(1)
+    df[f"{value_col}_lag2"] = df.groupby(group_col)[value_col].shift(2)
+    df[f"{value_col}_lag3"] = df.groupby(group_col)[value_col].shift(3)
+
+    # Acceleration (change in growth rates)
+    logger.info("  Calculating acceleration...")
+    df["acceleration_2y"] = df.groupby(group_col)[value_col].diff(2)
+
+    # Trend consistency (how stable is the growth?)
+    logger.info("  Calculating trend consistency...")
+    # Rolling standard deviation of growth (lower = more stable)
+    df["trend_stability"] = df.groupby(group_col)[value_col].transform(
+        lambda x: x.rolling(12, min_periods=3).std()
+    )
+
+    # Positive momentum (count of positive months in last 12)
+    if "mom_change_pct" in df.columns:
+        df["positive_months_pct"] = df.groupby(group_col)["mom_change_pct"].transform(
+            lambda x: (x > 0).rolling(12, min_periods=3).mean() * 100
+        )
+
+    # Forward momentum indicator (3m - 12m)
+    if "growth_3m" in df.columns and "growth_12m" in df.columns:
+        df["forward_momentum"] = df["growth_3m"] - df["growth_12m"]
+
+    logger.info(f"  Added temporal features to {len(df):,} records")
+
+    return df
 
 
 def calculate_rental_yield_by_area(
@@ -472,6 +537,12 @@ def run_metrics_pipeline(
     if not growth_metrics.empty:
         save_parquet(growth_metrics, "L5_growth_metrics_by_area", source="L5 metrics pipeline")
         results["growth_metrics"] = len(growth_metrics)
+
+        # 3.5. Calculate temporal features for predictive modeling
+        temporal_features = calculate_temporal_features(growth_metrics)
+        if not temporal_features.empty:
+            save_parquet(temporal_features, "L5_temporal_features", source="L5 metrics pipeline")
+            results["temporal_features"] = len(temporal_features)
 
     # 4. Calculate rental yield
     rental_yield = calculate_rental_yield_by_area(df)

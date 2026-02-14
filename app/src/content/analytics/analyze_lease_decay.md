@@ -1,6 +1,6 @@
 ---
 title: "Lease Decay Impact on Singapore HDB Resale Prices (Post-2022)"
-category: "analytics"
+category: "market-analysis"
 description: "Analysis of how remaining lease duration affects HDB resale prices for transactions from January 2022 onwards"
 status: "Complete"
 date: "2026-02-04"

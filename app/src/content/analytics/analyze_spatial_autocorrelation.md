@@ -1,6 +1,6 @@
 ---
 title: Spatial Autocorrelation & Cluster Analysis for Price Appreciation
-category: reports
+category: "market-analysis"
 description: Comprehensive analysis of spatial clustering patterns in Singapore housing price appreciation (2021+), with H3-based neighbor definitions and multi-dimensional cluster classification
 status: published
 ---
