@@ -316,7 +316,8 @@ def merge_macro_data(
     # Merge GDP (quarterly - convert to monthly)
     if 'gdp' in macro_data:
         gdp = macro_data['gdp'].copy()
-        gdp['month'] = gdp['quarter']
+        # Convert quarter to month (start of quarter)
+        gdp['month'] = pd.to_datetime(gdp['quarter']).dt.to_period('M').dt.to_timestamp()
 
         regional_data = regional_data.merge(
             gdp[['month', 'gdp_growth']],
@@ -326,6 +327,9 @@ def merge_macro_data(
 
         # Forward-fill quarterly data to monthly
         regional_data['gdp_growth'] = regional_data['gdp_growth'].ffill()
+
+        # Fill any remaining NaN with mean
+        regional_data['gdp_growth'] = regional_data['gdp_growth'].fillna(regional_data['gdp_growth'].mean())
 
     logger.info("Macroeconomic data merged")
 

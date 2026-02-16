@@ -1,0 +1,28 @@
+2026-02-17 07:51:27,280 - __main__ - INFO - ================================================================================
+2026-02-17 07:51:27,280 - __main__ - INFO - VAR Housing Appreciation - Backtesting & Validation
+2026-02-17 07:51:27,280 - __main__ - INFO - ================================================================================
+2026-02-17 07:51:27,280 - __main__ - INFO - 
+================================================================================
+2026-02-17 07:51:27,280 - __main__ - INFO - STEP 1: Preparing Time Series Data
+2026-02-17 07:51:27,280 - __main__ - INFO - ================================================================================
+2026-02-17 07:51:27,280 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - ============================================================
+2026-02-17 07:51:27,280 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Time Series Data Preparation Pipeline
+2026-02-17 07:51:27,280 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - ============================================================
+2026-02-17 07:51:27,280 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Loading L3 unified dataset...
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Loaded 166,163 transactions from L3
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Loading L5 growth metrics...
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - WARNING - L5 growth metrics not found
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Loading macroeconomic data...
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - WARNING - SORA rates not found: /Users/minghao/Desktop/personal/egg-n-bacon-housing-var/data/raw_data/macro/sora_rates_monthly.parquet
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - WARNING - CPI not found: /Users/minghao/Desktop/personal/egg-n-bacon-housing-var/data/raw_data/macro/singapore_cpi_monthly.parquet
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - WARNING - GDP not found: /Users/minghao/Desktop/personal/egg-n-bacon-housing-var/data/raw_data/macro/sgdp_quarterly.parquet
+2026-02-17 07:51:27,331 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Aggregating to regional time series...
+2026-02-17 07:51:27,346 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Dropped 0 without coordinates
+2026-02-17 07:51:27,381 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Created regional timeseries: 0 records, 0 regions
+2026-02-17 07:51:27,382 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Creating planning area time series...
+2026-02-17 07:51:27,412 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Selected top 20 areas by volume
+2026-02-17 07:51:27,435 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Created area timeseries: 1220 records, 20 areas
+2026-02-17 07:51:27,437 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Merging macroeconomic data...
+2026-02-17 07:51:27,437 - scripts.analytics.pipelines.prepare_timeseries_data - INFO - Macroeconomic data merged
+2026-02-17 07:51:27,437 - scripts.analytics.pipelines.prepare_timeseries_data - WARNING - Capped 139 outliers in area_appreciation at [-50, 50]
+2026-02-17 07:51:27,438 - __main__ - ERROR - Time series preparation failed: Cannot save empty DataFrame for L5_regional_timeseries

@@ -77,7 +77,53 @@ PLANNING_AREA_TO_REGION = {
     'Khatib': 'OCR North',
     'Yio Chu Kang': 'OCR North',
     'Loyang': 'OCR East',
+    'Changi Bay': 'OCR East',
+    'Expo': 'OCR East',
     'Pasir Ris': 'OCR East',
+
+    # Additional areas from L3 dataset (uppercase versions)
+    'DOWNTOWN CORE': 'CCR',
+    'NEWTON': 'CCR',
+    'ORCHARD': 'CCR',
+    'MARINA BAY': 'CCR',
+    'TANGLIN': 'CCR',
+    'RIVER VALLEY': 'CCR',
+    'BUKIT MERAH': 'CCR',
+    'QUEENSTOWN': 'RCR',
+    'GEYLANG': 'RCR',
+    'KALLANG': 'RCR',
+    'BISHAN': 'RCR',
+    'TOA PAYOH': 'RCR',
+    'BEDOK': 'OCR East',
+    'PASIR RIS': 'OCR East',
+    'TAMPINES': 'OCR East',
+    'CHANGI': 'OCR East',
+    'ANG MO KIO': 'OCR North-East',
+    'SERANGOON': 'OCR North-East',
+    'HOUGANG': 'OCR North-East',
+    'SENGKANG': 'OCR North-East',
+    'PUNGGOL': 'OCR North-East',
+    'WOODLANDS': 'OCR North',
+    'YISHUN': 'OCR North',
+    'SEMBAWANG': 'OCR North',
+    'JURONG EAST': 'OCR West',
+    'JURONG WEST': 'OCR West',
+    'BUKIT BATOK': 'OCR West',
+    'BUKIT PANJANG': 'OCR West',
+    'CHOA CHU KANG': 'OCR West',
+    'CLEMENTI': 'OCR West',
+    'MANDAI': 'OCR North',
+    'SEMBAWANG': 'OCR North',
+    'TAMPINES': 'OCR East',
+    'MARINA SOUTH': 'RCR',
+    'MARINE PARADE': 'RCR',
+    'ROCHOR': 'RCR',
+    'OUTRAM': 'RCR',
+    'ALEXANDRA': 'RCR',
+    'BUKIT TIMAH': 'RCR',
+    'MUSEUM': 'CCR',
+    'SINGAPORE RIVER': 'RCR',
+    'STRAITS VIEW': 'RCR',
     'Changi Bay': 'OCR East',
     'Expo': 'OCR East',
 
@@ -95,7 +141,7 @@ def get_region_for_planning_area(planning_area: str) -> Optional[str]:
     Get region for a given planning area.
 
     Args:
-        planning_area: Planning area name (e.g., 'Downtown')
+        planning_area: Planning area name (e.g., 'Downtown', 'ANG MO KIO')
 
     Returns:
         Region name ('CCR', 'RCR', 'OCR East', etc.) or None if not found
@@ -103,10 +149,27 @@ def get_region_for_planning_area(planning_area: str) -> Optional[str]:
     Example:
         >>> get_region_for_planning_area('Downtown')
         'CCR'
+        >>> get_region_for_planning_area('ANG MO KIO')
+        'OCR North-East'
         >>> get_region_for_planning_area('Unknown')
         None
     """
-    return PLANNING_AREA_TO_REGION.get(planning_area)
+    # Try exact match first
+    region = PLANNING_AREA_TO_REGION.get(planning_area)
+    if region is not None:
+        return region
+
+    # Try uppercase version
+    region = PLANNING_AREA_TO_REGION.get(planning_area.upper())
+    if region is not None:
+        return region
+
+    # Try title case version
+    region = PLANNING_AREA_TO_REGION.get(planning_area.title())
+    if region is not None:
+        return region
+
+    return None
 
 
 def get_all_regional_mappings() -> Dict[str, str]:

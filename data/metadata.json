@@ -199,7 +199,37 @@
       "source": "data preparation",
       "mode": "overwrite",
       "compression": "snappy"
+    },
+    "L3_housing_unified": {
+      "path": "L3/housing_unified.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing-var/data/pipeline/L3/housing_unified.parquet",
+      "version": "2026-02-17",
+      "rows": 166163,
+      "created": "2026-02-17T07:49:07.026769",
+      "source": "create_l3_unified_dataset",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_regional_timeseries": {
+      "path": "L5_regional_timeseries.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing-var/data/pipeline/L5_regional_timeseries.parquet",
+      "version": "2026-02-17",
+      "rows": 427,
+      "created": "2026-02-17T07:52:26.792255",
+      "source": "prepare_timeseries_pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_area_timeseries": {
+      "path": "L5_area_timeseries.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing-var/data/pipeline/L5_area_timeseries.parquet",
+      "version": "2026-02-17",
+      "rows": 1220,
+      "created": "2026-02-17T07:52:26.794120",
+      "source": "prepare_timeseries_pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-16T09:00:10.574021"
+  "last_updated": "2026-02-17T07:52:26.794124"
 }
