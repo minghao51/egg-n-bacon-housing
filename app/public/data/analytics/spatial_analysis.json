@@ -1,0 +1,8 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-16T09:39:29.276339",
+    "data_version": "L3_unified_dataset",
+    "methodology": "Getis-Ord Gi* hotspot analysis, LISA clustering, Moran's I"
+  },
+  "planning_areas": {}
+}

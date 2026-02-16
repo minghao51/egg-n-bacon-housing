@@ -57,6 +57,7 @@ dev-dependencies = [
     "geopandas>=1.1.2",
     "shapely>=2.1.2",
     "kaleido>=1.2.0",
+    "playwright>=1.58.0",
 ]
 
 [tool.ruff]

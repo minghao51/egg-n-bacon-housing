@@ -2,6 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, GeoJSON, Tooltip as LeafletTooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// Import analytics components
+import LayerControl from './map/LayerControl';
+import SpatialAnalysisOverlay from './map/overlays/SpatialAnalysisOverlay';
+import FeatureImpactOverlay from './map/overlays/FeatureImpactOverlay';
+import PredictiveAnalyticsOverlay from './map/overlays/PredictiveAnalyticsOverlay';
+
+// Import analytics hooks and types
+import { useSpatialAnalytics, useFeatureImpact, usePredictiveAnalytics } from '../../hooks/useAnalyticsData';
+import { LayerId, LAYER_METADATA } from '../../types/analytics';
+
 interface MapMetrics {
   [areaName: string]: {
     median_price: number;
@@ -51,13 +61,91 @@ interface PriceMapProps {
   metricsUrl: string;
 }
 
+const MAX_ACTIVE_LAYERS = 5;
+
 export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [allMetrics, setAllMetrics] = useState<MapData | null>(null);
-  // Independent temporal and property type filters
+
+  // Existing filters
   const [temporalFilter, setTemporalFilter] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
   const [propertyTypeFilter, setPropertyTypeFilter] = useState<'all' | 'hdb' | 'ec' | 'condo'>('all');
   const [metric, setMetric] = useState<'median_price' | 'median_psf' | 'volume' | 'rental_yield_median' | 'yoy_change_pct' | 'affordability_ratio'>('median_price');
+
+  // NEW: Analytics layers state
+  const [activeLayers, setActiveLayers] = useState<Record<LayerId, boolean>>(() => {
+    // Initialize from URL params using native URL API
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const layersParam = urlParams.get('layers');
+      const initialLayers: Record<LayerId, boolean> = {} as Record<LayerId, boolean>;
+
+      // Initialize all layers to false
+      Object.keys(LAYER_METADATA).forEach((layerId) => {
+        initialLayers[layerId as LayerId] = false;
+      });
+
+      if (layersParam) {
+        const requestedLayers = layersParam.split(',');
+        requestedLayers.forEach((layerId) => {
+          if (layerId in LAYER_METADATA) {
+            initialLayers[layerId as LayerId] = true;
+          }
+        });
+      }
+
+      return initialLayers;
+    }
+
+    // Default state for SSR
+    const initialLayers: Record<LayerId, boolean> = {} as Record<LayerId, boolean>;
+    Object.keys(LAYER_METADATA).forEach((layerId) => {
+      initialLayers[layerId as LayerId] = false;
+    });
+    return initialLayers;
+  });
+
+  // Load analytics data (lazy loading with caching)
+  const spatialData = useSpatialAnalytics();
+  const featureData = useFeatureImpact();
+  const predictiveData = usePredictiveAnalytics();
+
+  // Track which layers are currently loading
+  const loadingLayers = new Set<LayerId>();
+  if (spatialData.loading) {
+    loadingLayers.add('spatial.hotspot');
+    loadingLayers.add('spatial.lisa');
+    loadingLayers.add('spatial.neighborhood');
+  }
+  if (featureData.loading) {
+    loadingLayers.add('feature.mrt');
+    loadingLayers.add('feature.school');
+    loadingLayers.add('feature.amenity');
+  }
+  if (predictiveData.loading) {
+    loadingLayers.add('predictive.policy');
+    loadingLayers.add('predictive.lease');
+    loadingLayers.add('predictive.forecast');
+  }
+
+  // Sync active layers to URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const activeLayerIds = Object.entries(activeLayers)
+      .filter(([_, active]) => active)
+      .map(([layerId, _]) => layerId);
+
+    const url = new URL(window.location.href);
+    if (activeLayerIds.length > 0) {
+      url.searchParams.set('layers', activeLayerIds.join(','));
+    } else {
+      url.searchParams.delete('layers');
+    }
+
+    // Update URL without page reload
+    window.history.replaceState({}, '', url.toString());
+  }, [activeLayers]);
 
   useEffect(() => {
     async function loadData() {
@@ -80,6 +168,27 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
     }
     loadData();
   }, [geoJsonUrl, metricsUrl]);
+
+  // Handle layer toggle
+  const handleToggleLayer = (layerId: LayerId) => {
+    // Check if we're activating a new layer
+    if (!activeLayers[layerId]) {
+      // Count currently active layers
+      const activeCount = Object.values(activeLayers).filter(Boolean).length;
+
+      // Limit to MAX_ACTIVE_LAYERS
+      if (activeCount >= MAX_ACTIVE_LAYERS) {
+        alert(`Maximum ${MAX_ACTIVE_LAYERS} layers allowed. Please disable a layer first.`);
+        return;
+      }
+    }
+
+    // Toggle the layer
+    setActiveLayers((prev) => ({
+      ...prev,
+      [layerId]: !prev[layerId],
+    }));
+  };
 
   if (!geoJsonData || !allMetrics) {
     return <div className="h-[500px] flex items-center justify-center bg-muted/20">Loading Map Data...</div>;
@@ -105,9 +214,6 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
 
   const getColor = (val: number | undefined) => {
     if (val === undefined || val === null || (metric !== 'yoy_change_pct' && val === 0)) return '#FFEDA0';
-
-    // Special handling for Affordability (Lower is better usually, but sticking to High Value = Hot Color for consistency)
-    // Or Growth (Negative is cold, Positive is hot)
 
     // Simple normalization for now
     const normalized = (val - min) / (max - min);
@@ -171,10 +277,10 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
           <div class="grid grid-cols-2 gap-x-4 gap-y-1">
             <span class="text-muted-foreground">Price:</span>
             <span class="font-medium text-right">$${data.median_price.toLocaleString()}</span>
-            
+
             <span class="text-muted-foreground">PSF:</span>
             <span class="font-medium text-right">$${data.median_psf.toLocaleString()}</span>
-            
+
             <span class="text-muted-foreground">Volume:</span>
             <span class="font-medium text-right">${data.volume.toLocaleString()}</span>
 
@@ -183,11 +289,11 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
 
             <span class="text-muted-foreground">YoY Growth:</span>
             <span class="font-medium text-right ${growthColor}">${data.yoy_change_pct ? data.yoy_change_pct + '%' : '-'}</span>
-            
+
             <span class="text-muted-foreground">Affordability:</span>
             <span class="font-medium text-right">${data.affordability_ratio ? data.affordability_ratio + 'x' : '-'}</span>
           </div>
-          
+
           ${data.momentum_signal ? `
           <div class="mt-2 text-xs bg-muted/50 p-1 rounded flex justify-between items-center">
              <span>Momentum:</span>
@@ -196,7 +302,7 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
              </span>
           </div>
           ` : ''}
-          
+
           <div class="mt-2 pt-2 border-t text-xs text-muted-foreground text-center">
              ${metricLabel} Rank: ${getColor(data[metric]) === '#800026' ? 'Top Tier' : 'Standard'}
           </div>
@@ -301,6 +407,13 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
         </div>
       </div>
 
+      {/* NEW: Analytics Layer Control */}
+      <LayerControl
+        activeLayers={activeLayers}
+        onToggleLayer={handleToggleLayer}
+        loadingLayers={loadingLayers}
+      />
+
       <div className="h-[600px] border border-border rounded-lg overflow-hidden relative z-0 bg-slate-50 dark:bg-slate-900">
         <MapContainer
           center={[1.3521, 103.8198]}
@@ -317,6 +430,74 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
             data={geoJsonData}
             style={style}
             onEachFeature={onEachFeature}
+          />
+
+          {/* NEW: Analytics Overlays */}
+          <SpatialAnalysisOverlay
+            active={activeLayers['spatial.hotspot']}
+            data={spatialData.data}
+            loading={spatialData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="spatial.hotspot"
+          />
+          <SpatialAnalysisOverlay
+            active={activeLayers['spatial.lisa']}
+            data={spatialData.data}
+            loading={spatialData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="spatial.lisa"
+          />
+          <SpatialAnalysisOverlay
+            active={activeLayers['spatial.neighborhood']}
+            data={spatialData.data}
+            loading={spatialData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="spatial.neighborhood"
+          />
+
+          <FeatureImpactOverlay
+            active={activeLayers['feature.mrt']}
+            data={featureData.data}
+            loading={featureData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="feature.mrt"
+            propertyType={propertyTypeFilter === 'all' ? 'hdb' : propertyTypeFilter}
+          />
+          <FeatureImpactOverlay
+            active={activeLayers['feature.school']}
+            data={featureData.data}
+            loading={featureData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="feature.school"
+          />
+          <FeatureImpactOverlay
+            active={activeLayers['feature.amenity']}
+            data={featureData.data}
+            loading={featureData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="feature.amenity"
+          />
+
+          <PredictiveAnalyticsOverlay
+            active={activeLayers['predictive.forecast']}
+            data={predictiveData.data}
+            loading={predictiveData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="predictive.forecast"
+          />
+          <PredictiveAnalyticsOverlay
+            active={activeLayers['predictive.policy']}
+            data={predictiveData.data}
+            loading={predictiveData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="predictive.policy"
+          />
+          <PredictiveAnalyticsOverlay
+            active={activeLayers['predictive.lease']}
+            data={predictiveData.data}
+            loading={predictiveData.loading}
+            planningAreasGeoJSON={geoJsonData}
+            layerId="predictive.lease"
           />
         </MapContainer>
 

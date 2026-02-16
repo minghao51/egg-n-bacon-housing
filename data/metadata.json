@@ -163,9 +163,9 @@
     "L5_price_appreciation_prepared": {
       "path": "L5_price_appreciation_prepared.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_prepared.parquet",
-      "version": "2026-02-15",
-      "rows": 452059,
-      "created": "2026-02-15T07:18:40.570030",
+      "version": "2026-02-16",
+      "rows": 1116323,
+      "created": "2026-02-16T09:00:09.587439",
       "source": "data preparation",
       "mode": "overwrite",
       "compression": "snappy"
@@ -173,9 +173,9 @@
     "L5_price_appreciation_train": {
       "path": "L5_price_appreciation_train.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_train.parquet",
-      "version": "2026-02-15",
-      "rows": 295367,
-      "created": "2026-02-15T07:18:40.840226",
+      "version": "2026-02-16",
+      "rows": 959201,
+      "created": "2026-02-16T09:00:10.428779",
       "source": "data preparation",
       "mode": "overwrite",
       "compression": "snappy"
@@ -183,9 +183,9 @@
     "L5_price_appreciation_test": {
       "path": "L5_price_appreciation_test.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_test.parquet",
-      "version": "2026-02-15",
-      "rows": 156692,
-      "created": "2026-02-15T07:18:40.982964",
+      "version": "2026-02-16",
+      "rows": 157122,
+      "created": "2026-02-16T09:00:10.574017",
       "source": "data preparation",
       "mode": "overwrite",
       "compression": "snappy"
@@ -201,5 +201,5 @@
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-15T07:22:36.127874"
+  "last_updated": "2026-02-16T09:00:10.574021"
 }
