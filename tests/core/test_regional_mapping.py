@@ -1,6 +1,6 @@
 # tests/core/test_regional_mapping.py
 import pytest
-from scripts.core.config.regional_mapping import get_region_for_planning_area
+from scripts.core.regional_mapping import get_region_for_planning_area
 
 def test_ccr_planning_areas():
     """Test CCR planning areas mapped correctly."""
@@ -20,7 +20,7 @@ def test_unknown_area_returns_none():
 
 def test_all_planning_areas_have_regions():
     """Test all common planning areas are mapped."""
-    from scripts.core.config.regional_mapping import get_all_regional_mappings
+    from scripts.core.regional_mapping import get_all_regional_mappings
 
     mappings = get_all_regional_mappings()
     assert len(mappings) > 50  # Should cover most planning areas
