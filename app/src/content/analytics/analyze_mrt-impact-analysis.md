@@ -257,6 +257,33 @@ Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting 
 1. **Flat Type Variation:** MRT coefficients across 2-room, 3-room, 4-room, 5-room, and Executive flats showing 4x sensitivity difference
 2. **Town-level Heterogeneity:** MRT premiums across 26 HDB towns (Central Area +$59 to Marine Parade -$39)
 
+<ImplicationBox persona="investor">
+**For Investors:** The <strong>15x difference</strong> in MRT sensitivity between condos and HDBs is critical for investment strategy.
+
+- ✅ **Opportunity**: Condos near MRT stations show strong price premiums ($2.30/100m vs $0.15/100m for HDBs)
+- ⚠️ **Risk**: HDB "MRT premium" marketing is often misleading - the real driver is CBD proximity
+- **Action**: When evaluating condos, prioritize MRT access; for HDBs, focus on lease remaining and floor area instead
+- **Strategy**: Target condos within 500m of future MRT lines for potential appreciation, but verify the premium isn't already priced in
+</ImplicationBox>
+
+<ImplicationBox persona="first-time-buyer">
+**For First-Time Buyers:** Don't overpay for "MRT proximity" when buying HDB flats.
+
+- HDB prices are relatively stable regardless of MRT distance (only $1.28/100m premium)
+- The $1.28 average masks wild variation: Central Area +$59/100m, but Marine Parade shows -$39/100m
+- **What to prioritize instead**: Hawker center proximity (27% importance), remaining lease (14.1%), and park access (7.2%)
+- **Budget tip**: If you're budget-constrained, consider HDBs 500m-1km from MRT - you'll save money without sacrificing much appreciation
+</ImplicationBox>
+
+<ImplicationBox persona="upgrader">
+**For Upsizers:** When selling your current HDB to upgrade, <strong>location matters more than property type</strong>.
+
+- **When selling**: CBD proximity drives 22.6% of price variation - highlight this if your flat is centrally located
+- **When buying**: The "MRT premium" varies 100x across towns - research your target area's specific premium
+- **Upgrade strategy**: If upgrading from HDB to condo, prioritize condos near MRT stations (15x more sensitive than HDBs)
+- **Timing leverage**: Properties within 500m of MRT appreciate 35% faster - use this for your upgrade timeline planning
+</ImplicationBox>
+
 ### 5. Feature Importance Ranking
 
 ![Feature Importance Analysis](../../data/analysis/mrt_impact/feature_importance_price_psf.png)
