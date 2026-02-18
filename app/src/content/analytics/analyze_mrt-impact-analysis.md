@@ -3,7 +3,17 @@ title: MRT Impact Analysis - Singapore Housing Market
 category: "market-analysis"
 description: Comprehensive analysis of MRT proximity impact on HDB prices and appreciation (2021+)
 status: published
+date: 2026-02-04
+# New accessibility fields
+personas:
+  - first-time-buyer
+  - investor
+  - upgrader
+readingTime: "12 min read"
+technicalLevel: intermediate
 ---
+
+import StatCallout from '@/components/analytics/StatCallout.astro';
 
 # MRT Impact Analysis on HDB Housing Prices
 
@@ -11,6 +21,65 @@ status: published
 **Data Period**: 2021-2026 (Post-COVID recovery)
 **Property Type**: HDB only (Public Housing)
 **Status**: Complete
+
+---
+
+## 📋 Key Takeaways
+
+### 💡 The One Big Insight
+
+**The "MRT premium" you've heard about is actually a "CBD premium"** - proximity to the city center drives property prices far more than access to train stations.
+
+### 🎯 What This Means For You
+
+- **For HDB buyers**: Don't overpay for "MRT proximity" marketing - HDB prices are relatively stable regardless of distance to trains
+- **For condo investors**: MRT access matters 15x more for condos than HDBs - prioritize transit access when evaluating investments
+- **For location selection**: CBD distance explains 22.6% of price variation, making it the single most important location factor
+
+### ✅ Action Steps
+
+1. **Check if MRT premium is already priced in** - Compare similar properties at different MRT distances
+2. **Verify CBD proximity is the real driver** - Many "MRT premiums" are actually "city center" effects
+3. **Consider property type** - Condos near MRT stations show strong premiums; HDBs show minimal effects
+4. **Evaluate neighborhood context** - Central areas command +$59/100m premiums while some suburbs show negative correlations
+5. **Look beyond MRT** - Hawker center proximity (27% importance) matters 5x more than MRT access (5.5%)
+
+### 📊 By The Numbers
+
+<StatCallout
+  value="$1.28"
+  label="premium per 100m closer to MRT for HDB properties"
+  trend="neutral"
+  context="Average masks dramatic variation: Central Area +$59/100m, Marine Parade -$39/100m"
+/>
+
+<StatCallout
+  value="15x"
+  label="more MRT-sensitive condos are vs HDB flats"
+  trend="high"
+  context="Condo prices change $2.30/100m vs HDB's $0.15/100m"
+/>
+
+<StatCallout
+  value="22.6%"
+  label="of price variation explained by CBD distance alone"
+  trend="high"
+  context="More than floor area, lease remaining, or unit type combined"
+/>
+
+<StatCallout
+  value="27.4%"
+  label="of price prediction from hawker center proximity"
+  trend="high"
+  context="Food access is the #1 factor, 5x more important than MRT access"
+/>
+
+<StatCallout
+  value="35%"
+  label="higher appreciation for properties within 500m of MRT"
+  trend="high"
+  context="Properties near trains appreciate 13.36% YoY vs 9.90% for those >2km away"
+/>
 
 ---
 
