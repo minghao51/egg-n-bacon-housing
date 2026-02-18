@@ -1,0 +1,95 @@
+{
+  "first-time-buyer": {
+    "title": "First-Time Home Buyer",
+    "icon": "🏠",
+    "description": "Buying your first HDB or condo for owner-occupation",
+    "keyConcerns": [
+      "Affordability and budgeting",
+      "Lease decay and long-term value",
+      "Location convenience for daily life",
+      "Government grants and eligibility"
+    ],
+    "recommendedDocs": [
+      {
+        "slug": "analyze_lease_decay",
+        "reason": "Understand how remaining lease affects your property's future value"
+      },
+      {
+        "slug": "analyze_price_appreciation_predictions",
+        "reason": "See which areas offer the best price growth for first homes"
+      },
+      {
+        "slug": "analyze_mrt-impact-analysis",
+        "reason": "Learn if paying extra for MRT proximity is worth it for HDBs"
+      }
+    ],
+    "color": {
+      "bg": "bg-green-50 dark:bg-green-950",
+      "border": "border-green-200 dark:border-green-800",
+      "text": "text-green-700 dark:text-green-300",
+      "accent": "text-green-600 dark:text-green-400"
+    }
+  },
+  "investor": {
+    "title": "Property Investor",
+    "icon": "💼",
+    "description": "Building an investment portfolio for rental income or capital appreciation",
+    "keyConcerns": [
+      "Price appreciation and capital gains",
+      "Rental yields and occupancy rates",
+      "Market timing and entry/exit strategies",
+      "Policy impacts and regulatory risks"
+    ],
+    "recommendedDocs": [
+      {
+        "slug": "analyze_price_appreciation_predictions",
+        "reason": "6-month price forecasts with up to 79% expected gains for investment planning"
+      },
+      {
+        "slug": "analyze_mrt-impact-analysis",
+        "reason": "MRT proximity drives condo prices 15x more than HDBs - critical for investment decisions"
+      },
+      {
+        "slug": "findings",
+        "reason": "Master summary of all investment insights and actionable recommendations"
+      }
+    ],
+    "color": {
+      "bg": "bg-blue-50 dark:bg-blue-950",
+      "border": "border-blue-200 dark:border-blue-800",
+      "text": "text-blue-700 dark:text-blue-300",
+      "accent": "text-blue-600 dark:text-blue-400"
+    }
+  },
+  "upgrader": {
+    "title": "Upsizer / Upgrader",
+    "icon": "⬆️",
+    "description": "Moving from a smaller to larger property (HDB→condo or larger HDB)",
+    "keyConcerns": [
+      "Maximizing sale price of current property",
+      "Finding the best value upgrade location",
+      "Timing the market for optimal transitions",
+      "Balancing upgrade dreams with financial reality"
+    ],
+    "recommendedDocs": [
+      {
+        "slug": "analyze_price_appreciation_predictions",
+        "reason": "Identify areas with highest appreciation to maximize your upgrade gains"
+      },
+      {
+        "slug": "analyze_mrt-impact-analysis",
+        "reason": "Location matters more than property type - CBD proximity is key"
+      },
+      {
+        "slug": "analyze_lease_decay",
+        "reason": "Understand lease decay impact when selling your current HDB"
+      }
+    ],
+    "color": {
+      "bg": "bg-orange-50 dark:bg-orange-950",
+      "border": "border-orange-200 dark:border-orange-800",
+      "text": "text-orange-700 dark:text-orange-300",
+      "accent": "text-orange-600 dark:text-orange-400"
+    }
+  }
+}

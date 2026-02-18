@@ -1,0 +1,167 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import { getCollection } from 'astro:content';
+import personaContent from '@/data/persona-content.json';
+
+// Generate static paths for each persona
+export async function getStaticPaths() {
+  const personas = ['first-time-buyer', 'investor', 'upgrader'] as const;
+  return personas.map((persona) => ({
+    params: { persona },
+    props: { persona },
+  }));
+}
+
+const { persona } = Astro.props;
+const personaData = personaContent[persona];
+
+// Get all analytics docs
+const allDocs = await getCollection('analytics');
+
+// Filter docs that match this persona (if they have personas field)
+const recommendedDocs = allDocs.filter(doc =>
+  doc.data.personas?.includes(persona as any)
+);
+
+// If no docs have personas field, show all docs (fallback)
+const docsToShow = recommendedDocs.length > 0 ? recommendedDocs : allDocs;
+---
+
+<Layout title={`${personaData.title} - Singapore Housing Analytics`}>
+  <Sidebar />
+
+  <main class="flex-1 ml-0 lg:ml-64">
+    <div class="max-w-4xl mx-auto px-4 sm:px-8 py-12">
+      <!-- Breadcrumb -->
+      <nav class="mb-4">
+        <ol class="flex items-center space-x-2 text-sm">
+          <li>
+            <a
+              href={`${import.meta.env.BASE_URL}analytics/`}
+              class="text-muted-foreground hover:text-foreground"
+            >
+              Analytics
+            </a>
+          </li>
+          <li class="text-muted-foreground">/</li>
+          <li>
+            <a
+              href={`${import.meta.env.BASE_URL}analytics/`}
+              class="text-muted-foreground hover:text-foreground"
+            >
+              Personas
+            </a>
+          </li>
+          <li class="text-muted-foreground">/</li>
+          <li class="text-foreground font-medium">{personaData.title}</li>
+        </ol>
+      </nav>
+
+      <!-- Header -->
+      <header class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="text-5xl">{personaData.icon}</span>
+          <div>
+            <h1 class="text-4xl font-bold text-foreground mb-2">
+              {personaData.title}
+            </h1>
+            <p class="text-lg text-muted-foreground">
+              {personaData.description}
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Key Concerns -->
+      <section class={`${personaData.color.bg} ${personaData.color.border} border rounded-lg p-6 mb-8`}>
+        <h2 class={`text-xl font-semibold ${personaData.color.text} mb-4`}>
+          What You Care About
+        </h2>
+        <ul class="space-y-2">
+          {personaData.keyConcerns.map(concern => (
+            <li class="flex items-start gap-2">
+              <span class="text-primary mt-1">•</span>
+              <span class="text-card-foreground">{concern}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- Recommended Analytics -->
+      <section>
+        <h2 class="text-2xl font-bold text-foreground mb-4">
+          Analytics for You
+        </h2>
+        <div class="space-y-4">
+          {docsToShow.map((doc) => {
+            // Find the reason from persona content if available
+            const recommendation = personaData.recommendedDocs.find(r => r.slug === doc.slug);
+            const reason = recommendation?.reason || '';
+
+            return (
+              <a
+                href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
+                class="block bg-card border border-border rounded-lg p-6 hover:bg-accent transition-colors"
+              >
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-foreground mb-2">
+                      {doc.data.title || doc.slug}
+                    </h3>
+                    {doc.data.description && (
+                      <p class="text-sm text-muted-foreground mb-2">
+                        {doc.data.description}
+                      </p>
+                    )}
+                    {reason && (
+                      <p class={`text-sm ${personaData.color.accent} mt-2`}>
+                        💡 {reason}
+                      </p>
+                    )}
+                  </div>
+                  <svg
+                    class="w-5 h-5 text-muted-foreground ml-4 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+
+      <!-- Back to Analytics -->
+      <nav class="mt-12 pt-8 border-t border-border">
+        <a
+          href={`${import.meta.env.BASE_URL}analytics/`}
+          class="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <svg
+            class="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Back to All Analytics
+        </a>
+      </nav>
+    </div>
+  </main>
+</Layout>

@@ -3,7 +3,21 @@ title: MRT Impact Analysis - Singapore Housing Market
 category: "market-analysis"
 description: Comprehensive analysis of MRT proximity impact on HDB prices and appreciation (2021+)
 status: published
+date: 2026-02-04
+# New accessibility fields
+personas:
+  - first-time-buyer
+  - investor
+  - upgrader
+readingTime: "12 min read"
+technicalLevel: intermediate
 ---
+
+import Tooltip from '@/components/analytics/Tooltip.astro';
+import StatCallout from '@/components/analytics/StatCallout.astro';
+import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
+import Scenario from '@/components/analytics/Scenario.astro';
+import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
 
 # MRT Impact Analysis on HDB Housing Prices
 
@@ -11,6 +25,65 @@ status: published
 **Data Period**: 2021-2026 (Post-COVID recovery)
 **Property Type**: HDB only (Public Housing)
 **Status**: Complete
+
+---
+
+## 📋 Key Takeaways
+
+### 💡 The One Big Insight
+
+**The "MRT premium" you've heard about is actually a "CBD premium"** - proximity to the city center drives property prices far more than access to train stations.
+
+### 🎯 What This Means For You
+
+- **For HDB buyers**: Don't overpay for "MRT proximity" marketing - HDB prices are relatively stable regardless of distance to trains
+- **For condo investors**: MRT access matters 15x more for condos than HDBs - prioritize transit access when evaluating investments
+- **For location selection**: CBD distance explains 22.6% of price variation, making it the single most important location factor
+
+### ✅ Action Steps
+
+1. **Check if MRT premium is already priced in** - Compare similar properties at different MRT distances
+2. **Verify CBD proximity is the real driver** - Many "MRT premiums" are actually "city center" effects
+3. **Consider property type** - Condos near MRT stations show strong premiums; HDBs show minimal effects
+4. **Evaluate neighborhood context** - Central areas command +$59/100m premiums while some suburbs show negative correlations
+5. **Look beyond MRT** - Hawker center proximity (27% importance) matters 5x more than MRT access (5.5%)
+
+### 📊 By The Numbers
+
+<StatCallout
+  value="$1.28"
+  label="premium per 100m closer to MRT for HDB properties"
+  trend="neutral"
+  context="Average masks dramatic variation: Central Area +$59/100m, Marine Parade -$39/100m"
+/>
+
+<StatCallout
+  value="15x"
+  label="more MRT-sensitive condos are vs HDB flats"
+  trend="high"
+  context="Condo prices change $2.30/100m vs HDB's $0.15/100m"
+/>
+
+<StatCallout
+  value="22.6%"
+  label="of price variation explained by CBD distance alone"
+  trend="high"
+  context="More than floor area, lease remaining, or unit type combined"
+/>
+
+<StatCallout
+  value="27.4%"
+  label="of price prediction from hawker center proximity"
+  trend="high"
+  context="Food access is the #1 factor, 5x more important than MRT access"
+/>
+
+<StatCallout
+  value="35%"
+  label="higher appreciation for properties within 500m of MRT"
+  trend="high"
+  context="Properties near trains appreciate 13.36% YoY vs 9.90% for those >2km away"
+/>
 
 ---
 
@@ -45,7 +118,7 @@ This analysis examines how MRT proximity affects HDB resale prices and appreciat
 ### Data Quality Summary
 
 - **Total HDB transactions (2021+)**: 97,133
-- **Spatial resolution**: H3 hexagonal grid (H8, ~0.5km² cells)
+- **Spatial resolution**: <Tooltip term="H3 hexagons">H3 hexagonal grid</Tooltip> (H8, ~0.5km² cells)
 - **Amenity locations**: 5,569 (MRT, hawker, supermarket, park, preschool, childcare)
 - **Distance calculations**: 758,412 amenity-property computations
 - **Mean MRT distance**: 500m (median: 465m)
@@ -59,19 +132,19 @@ This analysis examines how MRT proximity affects HDB resale prices and appreciat
 
 ### Statistical Models
 
-**1. OLS Regression (Linear Baseline)**
+**1. <Tooltip term="OLS Regression">OLS Regression</Tooltip> (Linear Baseline)**
 - Three distance specifications tested:
   - Linear: `price = β₀ + β₁ × distance`
   - Log: `price = β₀ + β₁ × log(distance)`
   - Inverse: `price = β₀ + β₁ × (1/distance)`
 - Base features: MRT distance, floor area, remaining lease, year, month, amenity counts
 - Train-test split: 80/20
-- Validation: 5-fold cross-validation
+- Validation: 5-fold <Tooltip term="cross-validation">cross-validation</Tooltip>
 
-**2. XGBoost (Non-linear Machine Learning)**
+**2. <Tooltip term="XGBoost">XGBoost</Tooltip> (Non-linear Machine Learning)**
 - Hyperparameters: 100 estimators, max_depth=6, learning_rate=0.1
 - Feature importance: Gain-based importance scores
-- Performance: R² = 0.91 for price prediction (outstanding)
+- Performance: <Tooltip term="R²">R²</Tooltip> = 0.91 for price prediction (outstanding)
 
 **3. Heterogeneity Analysis**
 - By flat type: 1 ROOM to EXECUTIVE (minimum 100 transactions per group)
@@ -136,6 +209,45 @@ Properties within 500m of MRT show the **highest appreciation rates (13.36% YoY)
 - Property type comparison (HDB vs Condo vs EC)
 - Cluster analysis showing price hotspots and high-appreciation areas
 
+<Scenario title="Evaluating a Condo Near Future MRT Line">
+**Situation:** You're considering a \$1.2M condo 500m from a future MRT station opening in 2028.
+
+**Our Analysis Says:**
+- Condos show **15x higher MRT sensitivity** than HDBs ($2.30/100m vs $0.15/100m)
+- Properties within 500m of MRT appreciate **35% faster** (13.36% YoY vs 9.90% for >2km)
+- Future MRT lines typically boost nearby prices by **5-10%** once operational
+
+**Your Decision Framework:**
+1. **Check if premium is already priced in**: Compare this condo to similar ones 1km away. If the price difference is >5-10%, the MRT premium is already factored in.
+2. **Verify holding timeline**: Can you hold until 2028+? If you need to sell before the station opens, you won't capture the full premium.
+3. **Assess CBD distance**: Is this condo also close to the city center? Remember: CBD proximity explains 22.6% of price variation.
+4. **Check station type**: Is it an interchange station? Interchange commands additional premiums beyond standard stations.
+5. **Calculate break-even**: If the condo costs 5% more than comparable units, ensure the appreciation upside exceeds this premium.
+
+**Bottom Line**: If the MRT premium isn't fully priced in AND you can hold until 2028+, this could be a good investment. Otherwise, consider locations near existing MRT stations.
+</Scenario>
+
+<Scenario title="First-Time HDB Buyer - Is MRT Proximity Worth the Premium?">
+**Situation:** You're a first-time buyer choosing between two similar 4-room HDB flats:
+- Option A: \$550,000, 300m from MRT (Bishan)
+- Option B: \$520,000, 800m from MRT (same town)
+
+**Our Analysis Says:**
+- HDB MRT premium is only **\$1.28/100m** on average
+- For 500m difference: 500m / 100m × \$1.28 = **\$6.40 PSF premium**
+- For a 1,000 sqft flat: \$6.40 × 1,000 = **\$6,400 premium justified by MRT proximity**
+- **But**: This varies wildly by town - Bishan shows +\$5.88/100m, while Marine Parade shows -\$39/100m
+
+**Your Decision Framework:**
+1. **Calculate actual premium**: Option A costs \$30K more = \$30 PSF for 1,000 sqft
+2. **Compare to justified premium**: \$30 PSF actual vs \$29.40 PSF justified (500m × \$5.88/100m for Bishan)
+3. **Check what else matters**: Hawker center proximity matters 5x more than MRT (27% vs 5.5% importance)
+4. **Consider trade-offs**: Could the \$30K savings (Option B) be better spent on renovation or a longer lease?
+5. **Think long-term**: Properties within 500m of MRT appreciate 35% faster, but this varies by town
+
+**Bottom Line**: In Bishan, the \$30K premium is roughly justified by MRT proximity. However, if Option B is closer to hawker centers or has a longer remaining lease, it might be the better value. **Don't pay just for "MRT proximity" marketing** - evaluate the full picture.
+</Scenario>
+
 ### 3. Town-Level Heterogeneity
 
 ![Town-Level MRT Premiums](../../data/analysis/mrt_impact/town_mrt_premiums_ranked.png)
@@ -183,6 +295,33 @@ Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting 
 **Sub-group Analysis:**
 1. **Flat Type Variation:** MRT coefficients across 2-room, 3-room, 4-room, 5-room, and Executive flats showing 4x sensitivity difference
 2. **Town-level Heterogeneity:** MRT premiums across 26 HDB towns (Central Area +$59 to Marine Parade -$39)
+
+<ImplicationBox persona="investor">
+**For Investors:** The <strong>15x difference</strong> in MRT sensitivity between condos and HDBs is critical for investment strategy.
+
+- ✅ **Opportunity**: Condos near MRT stations show strong price premiums ($2.30/100m vs $0.15/100m for HDBs)
+- ⚠️ **Risk**: HDB "MRT premium" marketing is often misleading - the real driver is CBD proximity
+- **Action**: When evaluating condos, prioritize MRT access; for HDBs, focus on lease remaining and floor area instead
+- **Strategy**: Target condos within 500m of future MRT lines for potential appreciation, but verify the premium isn't already priced in
+</ImplicationBox>
+
+<ImplicationBox persona="first-time-buyer">
+**For First-Time Buyers:** Don't overpay for "MRT proximity" when buying HDB flats.
+
+- HDB prices are relatively stable regardless of MRT distance (only $1.28/100m premium)
+- The $1.28 average masks wild variation: Central Area +$59/100m, but Marine Parade shows -$39/100m
+- **What to prioritize instead**: Hawker center proximity (27% importance), remaining lease (14.1%), and park access (7.2%)
+- **Budget tip**: If you're budget-constrained, consider HDBs 500m-1km from MRT - you'll save money without sacrificing much appreciation
+</ImplicationBox>
+
+<ImplicationBox persona="upgrader">
+**For Upsizers:** When selling your current HDB to upgrade, <strong>location matters more than property type</strong>.
+
+- **When selling**: CBD proximity drives 22.6% of price variation - highlight this if your flat is centrally located
+- **When buying**: The "MRT premium" varies 100x across towns - research your target area's specific premium
+- **Upgrade strategy**: If upgrading from HDB to condo, prioritize condos near MRT stations (15x more sensitive than HDBs)
+- **Timing leverage**: Properties within 500m of MRT appreciate 35% faster - use this for your upgrade timeline planning
+</ImplicationBox>
 
 ### 5. Feature Importance Ranking
 
@@ -656,6 +795,36 @@ This analysis demonstrates that **MRT proximity is a significant but highly cont
 ---
 
 **End of Report**
+
+---
+
+## 🎯 Decision Checklist: Evaluating MRT Proximity Premium
+
+<DecisionChecklist
+  title="Use this checklist when evaluating any property"
+  storageKey="mrt-premium-checklist"
+>
+
+- [ ] **Property type?** (Condo = MRT matters 15x more; HDB = minimal impact)
+- [ ] **Distance to nearest MRT?** (< 500m = premium zone; 500m-1km = moderate; >1km = minimal)
+- [ ] **Is CBD distance the REAL driver?** (Check if property is actually close to city center)
+- [ ] **What's the town-specific MRT premium?** (Central Area +$59/100m vs Marine Parade -$39/100m)
+- [ ] **Is the MRT premium already priced in?** (Compare similar properties at different distances)
+- [ ] **Any future MRT lines planned?** (Check URA master plan for upcoming stations)
+- [ ] **Is it an interchange station?** (Interchanges command additional premiums)
+- [ ] **How's hawker center access?** (27% importance vs 5.5% for MRT - matters 5x more)
+- [ ] **What's the remaining lease?** (14.1% importance - critical for HDBs)
+- [ ] **Can you hold long enough?** (Properties < 500m appreciate 35% faster - time horizon matters)
+
+</DecisionChecklist>
+
+---
+
+## 🔗 Related Analytics
+
+- **[Price Appreciation Predictions](../../price_appreciation_predictions)** - 6-month forecasts with MRT/CBD impact modeling
+- **[Lease Decay Analysis](../../lease_decay)** - How remaining lease affects long-term value
+- **[Master Findings Summary](../../findings)** - All investment insights in one place
 
 ---
 

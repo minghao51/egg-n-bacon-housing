@@ -13,6 +13,10 @@ const analyticsCollection = defineCollection({
             'quick-reference'
         ]).optional(),
         description: z.string().optional(),
+        // New fields for accessibility improvements
+        personas: z.array(z.enum(['first-time-buyer', 'investor', 'upgrader'])).optional(),
+        readingTime: z.string().optional(), // e.g., "8 min read"
+        technicalLevel: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
     }),
 });
 

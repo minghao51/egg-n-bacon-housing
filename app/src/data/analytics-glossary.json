@@ -1,0 +1,86 @@
+{
+  "H3 hexagons": {
+    "explanation": "A grid system that divides Singapore into hexagonal areas, like a honeycomb pattern",
+    "whyItMatters": "Lets us compare property values across neighborhoods consistently"
+  },
+  "VAR model": {
+    "explanation": "Vector Autoregression - a statistical method that predicts how multiple factors influence each other over time",
+    "whyItMatters": "We can forecast how MRT development, CBD changes, and prices affect each other"
+  },
+  "OLS Regression": {
+    "explanation": "Ordinary Least Squares - a basic statistical method that finds the best-fit line through data points",
+    "whyItMatters": "Our baseline model for understanding how MRT distance affects property prices"
+  },
+  "XGBoost": {
+    "explanation": "Extreme Gradient Boosting - a machine learning algorithm that captures complex non-linear patterns",
+    "whyItMatters": "Achieves 91% accuracy in predicting property prices by finding patterns simple models miss"
+  },
+  "R²": {
+    "explanation": "R-squared - a measure from 0-100% of how well the model explains price variations",
+    "whyItMatters": "R² of 0.91 means our model captures 91% of what drives property prices"
+  },
+  "coefficient": {
+    "explanation": "A number that shows how much one factor changes when another factor changes by one unit",
+    "whyItMatters": "An MRT coefficient of $1.28 means prices increase by $1.28 per sqft for every 100m closer to MRT"
+  },
+  "p-value": {
+    "explanation": "A statistical measure that tells us if a result is real or just random chance",
+    "whyItMatters": "Low p-values (< 0.05) mean we can trust the findings aren't due to luck"
+  },
+  "DiD": {
+    "explanation": "Difference-in-Differences - compares changes between two groups before and after an event",
+    "whyItMatters": "Measures the true effect of policy changes (like cooling measures) on prices"
+  },
+  "RDiT": {
+    "explanation": "Regression Discontinuity in Time - analyzes sharp changes around a specific date",
+    "whyItMatters": "Isolates the impact of events like COVID or policy announcements"
+  },
+  "standard error": {
+    "explanation": "A measure of how precise our estimate is - smaller means more confident",
+    "whyItMatters": "Tells us the range where the true value likely falls"
+  },
+  "95% confidence interval": {
+    "explanation": "A range where we're 95% confident the true value lies",
+    "whyItMatters": "If the interval is $1-2, we're 95% sure the real effect is between $1 and $2"
+  },
+  "spatial autocorrelation": {
+    "explanation": "A measure of whether nearby locations have similar values",
+    "whyItMatters": "Confirms that property prices cluster geographically (rich neighborhoods, poor neighborhoods)"
+  },
+  "cross-validation": {
+    "explanation": "Testing a model on held-out data to verify it works on new data",
+    "whyItMatters": "Ensures our findings aren't just memorizing the training data"
+  },
+  "feature importance": {
+    "explanation": "A ranking of which factors most influence predictions",
+    "whyItMatters": "Hawker centers rank #1 (27% importance) while MRT ranks #5 (5.5%)"
+  },
+  "YoY": {
+    "explanation": "Year-over-Year - comparing values to the same time last year",
+    "whyItMatters": "Shows annual appreciation rates, not seasonal fluctuations"
+  },
+  "PSF": {
+    "explanation": "Per Square Foot - the price per square foot of property",
+    "whyItMatters": "Standardizes prices so we can compare properties of different sizes"
+  },
+  "amenity agglomeration": {
+    "explanation": "When multiple amenities cluster together creating more value than the sum of parts",
+    "whyItMatters": "Properties near 2+ MRT stations show compound premiums beyond individual effects"
+  },
+  "lease decay": {
+    "explanation": "How property value decreases as the remaining lease shortens",
+    "whyItMatters": "HDB leases expire after 99 years - properties lose value as time passes"
+  },
+  "appreciation rate": {
+    "explanation": "The percentage increase in property value over time",
+    "whyItMatters": "Properties within 500m of MRT appreciate 35% faster than those >2km away"
+  },
+  "heterogeneous effects": {
+    "explanation": "When the same factor affects different groups differently",
+    "whyItMatters": "MRT proximity matters 4x more for 2-room flats than Executive flats"
+  },
+  "CBD": {
+    "explanation": "Central Business District - Singapore's downtown core (Raffles Place, Marina Bay)",
+    "whyItMatters": "Distance to CBD explains 22.6% of price variation - more than MRT proximity"
+  }
+}
