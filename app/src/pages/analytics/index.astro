@@ -71,6 +71,59 @@ const sortedCategories = Object.keys(categoryConfig).filter(
         </p>
       </header>
 
+      <!-- Persona Selection -->
+      <section class="mb-12">
+        <h2 class="text-xl font-semibold text-foreground mb-4">
+          Find Insights For Your Situation
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <a
+            href={`${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`}
+            class="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-6 hover:bg-green-100 dark:hover:bg-green-900 transition-colors"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">🏠</span>
+              <h3 class="font-semibold text-green-700 dark:text-green-300">
+                First-Time Buyer
+              </h3>
+            </div>
+            <p class="text-sm text-green-600 dark:text-green-400">
+              Affordability, lease decay, location value
+            </p>
+          </a>
+
+          <a
+            href={`${import.meta.env.BASE_URL}analytics/personas/investor`}
+            class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">💼</span>
+              <h3 class="font-semibold text-blue-700 dark:text-blue-300">
+                Property Investor
+              </h3>
+            </div>
+            <p class="text-sm text-blue-600 dark:text-blue-400">
+              Price appreciation, rental yields, market timing
+            </p>
+          </a>
+
+          <a
+            href={`${import.meta.env.BASE_URL}analytics/personas/upgrader`}
+            class="bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 rounded-lg p-6 hover:bg-orange-100 dark:hover:bg-orange-900 transition-colors"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">⬆️</span>
+              <h3 class="font-semibold text-orange-700 dark:text-orange-300">
+                Upsizer / Upgrader
+              </h3>
+            </div>
+            <p class="text-sm text-orange-600 dark:text-orange-400">
+              Maximizing sale price, finding upgrade value
+            </p>
+          </a>
+        </div>
+      </section>
+
       <!-- Quick Stats -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
         <div class="bg-card border border-border rounded-lg p-6">
