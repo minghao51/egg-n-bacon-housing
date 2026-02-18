@@ -76,6 +76,21 @@ fi
 
 echo "✅ All categories validated successfully"
 
+# Fix image paths: ../../data/ -> ../../../../data/
+# Documents are now in app/src/content/analytics/, need 4 levels up to reach project root
+echo "🔧 Fixing image paths in analytics documents..."
+fixed_count=0
+for file in "$APP_CONTENT_DIR"/*.md; do
+    if grep -q "../../data/" "$file"; then
+        sed -i '' 's|](../../data/|](../../../../data/|g' "$file"
+        fixed_count=$((fixed_count + 1))
+    fi
+done
+
+if [ $fixed_count -gt 0 ]; then
+    echo "✅ Fixed image paths in $fixed_count document(s)"
+fi
+
 # Create symlink in app/src/data -> ../../data so relative paths work
 # This makes ../../data/analysis in markdown files resolve correctly
 if [ ! -L "$APP_SRC_DIR/data" ]; then
