@@ -1,0 +1,42 @@
+---
+/**
+ * Scenario example showing how to apply insights in real situations
+ *
+ * @param title - The scenario name/situation (required)
+ */
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="scenario-box rounded-lg border-2 border-primary/20 bg-primary/5 p-6 my-6">
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-4 pb-3 border-b border-primary/20">
+    <span class="text-2xl">🎯</span>
+    <h3 class="text-lg font-semibold text-primary">
+      {title}
+    </h3>
+  </div>
+
+  <!-- Content -->
+  <div class="prose prose-sm max-w-none dark:prose-invert space-y-4">
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* Style scenario sections */
+  .scenario-box :global(strong) {
+    @apply text-foreground font-semibold;
+  }
+
+  .scenario-box :global(ul) {
+    @apply space-y-2 my-3;
+  }
+
+  .scenario-box :global(li) {
+    @apply text-card-foreground;
+  }
+</style>
