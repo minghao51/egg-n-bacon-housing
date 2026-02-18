@@ -798,6 +798,36 @@ This analysis demonstrates that **MRT proximity is a significant but highly cont
 
 ---
 
+## 🎯 Decision Checklist: Evaluating MRT Proximity Premium
+
+<DecisionChecklist
+  title="Use this checklist when evaluating any property"
+  storageKey="mrt-premium-checklist"
+>
+
+- [ ] **Property type?** (Condo = MRT matters 15x more; HDB = minimal impact)
+- [ ] **Distance to nearest MRT?** (< 500m = premium zone; 500m-1km = moderate; >1km = minimal)
+- [ ] **Is CBD distance the REAL driver?** (Check if property is actually close to city center)
+- [ ] **What's the town-specific MRT premium?** (Central Area +$59/100m vs Marine Parade -$39/100m)
+- [ ] **Is the MRT premium already priced in?** (Compare similar properties at different distances)
+- [ ] **Any future MRT lines planned?** (Check URA master plan for upcoming stations)
+- [ ] **Is it an interchange station?** (Interchanges command additional premiums)
+- [ ] **How's hawker center access?** (27% importance vs 5.5% for MRT - matters 5x more)
+- [ ] **What's the remaining lease?** (14.1% importance - critical for HDBs)
+- [ ] **Can you hold long enough?** (Properties < 500m appreciate 35% faster - time horizon matters)
+
+</DecisionChecklist>
+
+---
+
+## 🔗 Related Analytics
+
+- **[Price Appreciation Predictions](../../price_appreciation_predictions)** - 6-month forecasts with MRT/CBD impact modeling
+- **[Lease Decay Analysis](../../lease_decay)** - How remaining lease affects long-term value
+- **[Master Findings Summary](../../findings)** - All investment insights in one place
+
+---
+
 ## Document History
 
 - **2026-02-05 (v2.0)**: Added robustness checks and advanced analysis
