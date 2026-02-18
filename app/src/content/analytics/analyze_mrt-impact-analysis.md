@@ -209,6 +209,45 @@ Properties within 500m of MRT show the **highest appreciation rates (13.36% YoY)
 - Property type comparison (HDB vs Condo vs EC)
 - Cluster analysis showing price hotspots and high-appreciation areas
 
+<Scenario title="Evaluating a Condo Near Future MRT Line">
+**Situation:** You're considering a \$1.2M condo 500m from a future MRT station opening in 2028.
+
+**Our Analysis Says:**
+- Condos show **15x higher MRT sensitivity** than HDBs ($2.30/100m vs $0.15/100m)
+- Properties within 500m of MRT appreciate **35% faster** (13.36% YoY vs 9.90% for >2km)
+- Future MRT lines typically boost nearby prices by **5-10%** once operational
+
+**Your Decision Framework:**
+1. **Check if premium is already priced in**: Compare this condo to similar ones 1km away. If the price difference is >5-10%, the MRT premium is already factored in.
+2. **Verify holding timeline**: Can you hold until 2028+? If you need to sell before the station opens, you won't capture the full premium.
+3. **Assess CBD distance**: Is this condo also close to the city center? Remember: CBD proximity explains 22.6% of price variation.
+4. **Check station type**: Is it an interchange station? Interchange commands additional premiums beyond standard stations.
+5. **Calculate break-even**: If the condo costs 5% more than comparable units, ensure the appreciation upside exceeds this premium.
+
+**Bottom Line**: If the MRT premium isn't fully priced in AND you can hold until 2028+, this could be a good investment. Otherwise, consider locations near existing MRT stations.
+</Scenario>
+
+<Scenario title="First-Time HDB Buyer - Is MRT Proximity Worth the Premium?">
+**Situation:** You're a first-time buyer choosing between two similar 4-room HDB flats:
+- Option A: \$550,000, 300m from MRT (Bishan)
+- Option B: \$520,000, 800m from MRT (same town)
+
+**Our Analysis Says:**
+- HDB MRT premium is only **\$1.28/100m** on average
+- For 500m difference: 500m / 100m × \$1.28 = **\$6.40 PSF premium**
+- For a 1,000 sqft flat: \$6.40 × 1,000 = **\$6,400 premium justified by MRT proximity**
+- **But**: This varies wildly by town - Bishan shows +\$5.88/100m, while Marine Parade shows -\$39/100m
+
+**Your Decision Framework:**
+1. **Calculate actual premium**: Option A costs \$30K more = \$30 PSF for 1,000 sqft
+2. **Compare to justified premium**: \$30 PSF actual vs \$29.40 PSF justified (500m × \$5.88/100m for Bishan)
+3. **Check what else matters**: Hawker center proximity matters 5x more than MRT (27% vs 5.5% importance)
+4. **Consider trade-offs**: Could the \$30K savings (Option B) be better spent on renovation or a longer lease?
+5. **Think long-term**: Properties within 500m of MRT appreciate 35% faster, but this varies by town
+
+**Bottom Line**: In Bishan, the \$30K premium is roughly justified by MRT proximity. However, if Option B is closer to hawker centers or has a longer remaining lease, it might be the better value. **Don't pay just for "MRT proximity" marketing** - evaluate the full picture.
+</Scenario>
+
 ### 3. Town-Level Heterogeneity
 
 ![Town-Level MRT Premiums](../../data/analysis/mrt_impact/town_mrt_premiums_ranked.png)
