@@ -13,7 +13,11 @@ readingTime: "12 min read"
 technicalLevel: intermediate
 ---
 
+import Tooltip from '@/components/analytics/Tooltip.astro';
 import StatCallout from '@/components/analytics/StatCallout.astro';
+import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
+import Scenario from '@/components/analytics/Scenario.astro';
+import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
 
 # MRT Impact Analysis on HDB Housing Prices
 
@@ -114,7 +118,7 @@ This analysis examines how MRT proximity affects HDB resale prices and appreciat
 ### Data Quality Summary
 
 - **Total HDB transactions (2021+)**: 97,133
-- **Spatial resolution**: H3 hexagonal grid (H8, ~0.5km² cells)
+- **Spatial resolution**: <Tooltip term="H3 hexagons">H3 hexagonal grid</Tooltip> (H8, ~0.5km² cells)
 - **Amenity locations**: 5,569 (MRT, hawker, supermarket, park, preschool, childcare)
 - **Distance calculations**: 758,412 amenity-property computations
 - **Mean MRT distance**: 500m (median: 465m)
@@ -128,19 +132,19 @@ This analysis examines how MRT proximity affects HDB resale prices and appreciat
 
 ### Statistical Models
 
-**1. OLS Regression (Linear Baseline)**
+**1. <Tooltip term="OLS Regression">OLS Regression</Tooltip> (Linear Baseline)**
 - Three distance specifications tested:
   - Linear: `price = β₀ + β₁ × distance`
   - Log: `price = β₀ + β₁ × log(distance)`
   - Inverse: `price = β₀ + β₁ × (1/distance)`
 - Base features: MRT distance, floor area, remaining lease, year, month, amenity counts
 - Train-test split: 80/20
-- Validation: 5-fold cross-validation
+- Validation: 5-fold <Tooltip term="cross-validation">cross-validation</Tooltip>
 
-**2. XGBoost (Non-linear Machine Learning)**
+**2. <Tooltip term="XGBoost">XGBoost</Tooltip> (Non-linear Machine Learning)**
 - Hyperparameters: 100 estimators, max_depth=6, learning_rate=0.1
 - Feature importance: Gain-based importance scores
-- Performance: R² = 0.91 for price prediction (outstanding)
+- Performance: <Tooltip term="R²">R²</Tooltip> = 0.91 for price prediction (outstanding)
 
 **3. Heterogeneity Analysis**
 - By flat type: 1 ROOM to EXECUTIVE (minimum 100 transactions per group)
