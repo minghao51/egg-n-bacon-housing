@@ -1,0 +1,44 @@
+---
+/**
+ * Callout box showing what findings mean for different user personas
+ *
+ * @param persona - Target persona: "first-time-buyer", "investor", "upgrader" (required)
+ * @param title - Optional custom title (defaults to "For {Persona}")
+ */
+import personaContent from '@/data/persona-content.json';
+
+interface Props {
+  persona: 'first-time-buyer' | 'investor' | 'upgrader';
+  title?: string;
+}
+
+const { persona, title } = Astro.props;
+
+const personaData = personaContent[persona];
+const defaultTitle = `For ${personaData.title}s`;
+const displayTitle = title || defaultTitle;
+
+const colors = personaData.color;
+---
+
+<div class="{colors.bg} {colors.border} border rounded-lg p-6 my-6">
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-4">
+    <span class="text-2xl">{personaData.icon}</span>
+    <h3 class="text-lg font-semibold {colors.text}">
+      {displayTitle}
+    </h3>
+  </div>
+
+  <!-- Content -->
+  <div class="prose prose-sm max-w-none dark:prose-invert">
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* Ensure links inside implication boxes are styled correctly */
+  :global(.prose a) {
+    @apply text-primary underline hover:text-primary/80;
+  }
+</style>
