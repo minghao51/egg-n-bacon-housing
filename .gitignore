@@ -89,3 +89,6 @@ data/exports/
 # Backup files
 *.bak
 data/metadata.json.bak
+
+# Git worktrees (isolated development workspaces)
+.worktrees/
