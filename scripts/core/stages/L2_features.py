@@ -733,6 +733,21 @@ def run_l2_features_pipeline(
 
     logger.info(f"  Merged {len(amenity_metrics.columns) - 1} amenity metric columns")
 
+    # Also export amenity metrics separately for L3 pipeline
+    logger.info("Exporting amenity metrics for L3 pipeline...")
+    amenity_for_l3 = unique_df[["POSTAL", "SEARCHVAL"]].copy()
+    amenity_for_l3["SEARCHVAL"] = amenity_for_l3["SEARCHVAL"].str.lower()
+    amenity_for_l3 = amenity_for_l3.merge(
+        amenity_metrics, left_on="SEARCHVAL", right_on="property_id", how="left"
+    )
+    amenity_for_l3 = amenity_for_l3.drop(columns=["SEARCHVAL", "property_id"])
+    save_parquet(
+        amenity_for_l3,
+        "L2_housing_per_type_amenity_features",
+        source="L2 per-type amenity metrics",
+    )
+    logger.info(f"  Saved amenity features for L3: {len(amenity_for_l3)} properties")
+
     private_facilities = create_private_facilities(property_df)
     nearby_df = create_nearby_facilities(unique_joined)
 

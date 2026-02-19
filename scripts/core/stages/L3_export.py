@@ -149,11 +149,20 @@ def load_amenity_features() -> pd.DataFrame:
     """
     logger.info("Loading amenity features from L2...")
 
-    # Use multi-amenity features (has all distance and count columns)
-    path = Config.PARQUETS_DIR / "L2" / "housing_multi_amenity_features.parquet"
+    # Try new per-type amenity features first (Phase 2 enhancement)
+    path_new = Config.PARQUETS_DIR / "L2_housing_per_type_amenity_features.parquet"
+    # Fall back to old multi-amenity features
+    path_old = Config.PARQUETS_DIR / "L2" / "housing_multi_amenity_features.parquet"
 
-    if not path.exists():
-        logger.warning(f"Amenity features not found: {path}")
+    # Determine which file to use
+    if path_new.exists():
+        path = path_new
+        logger.info(f"  Using new per-type amenity features: {path.name}")
+    elif path_old.exists():
+        path = path_old
+        logger.info(f"  Using legacy amenity features: {path.name}")
+    else:
+        logger.warning(f"Amenity features not found: tried {path_new.name} and {path_old.name}")
         return pd.DataFrame()
 
     df = pd.read_parquet(path)
@@ -557,6 +566,9 @@ def add_planning_area(
 def add_amenity_features(transactions_df: pd.DataFrame, amenity_df: pd.DataFrame) -> pd.DataFrame:
     """Merge amenity distance and count features.
 
+    Supports both new schema (dist_nearest_*, count_*_m) and
+    legacy schema (*_within_500m, *_within_1km, *_within_2km).
+
     Args:
         transactions_df: Transactions with geocoding
         amenity_df: Amenity features from L2
@@ -573,6 +585,8 @@ def add_amenity_features(transactions_df: pd.DataFrame, amenity_df: pd.DataFrame
     # Try to merge on postal code if available
     if "POSTAL" in transactions_df.columns and "POSTAL" in amenity_df.columns:
         # Select ALL amenity columns to merge (distances AND counts)
+        # Supports new schema: dist_nearest_*, count_*_*m
+        # Supports legacy schema: *_within_500m, *_within_1km, *_within_2km
         amenity_cols = [
             col
             for col in amenity_df.columns
@@ -589,7 +603,19 @@ def add_amenity_features(transactions_df: pd.DataFrame, amenity_df: pd.DataFrame
 
         # Log what was added
         added_cols = [col for col in amenity_cols if col in result.columns]
-        logger.info(f"Merged {len(added_cols)} amenity columns on postal code")
+        logger.info(f"  Merged {len(added_cols)} amenity columns on postal code")
+
+        # Log amenity column types
+        dist_cols = [c for c in added_cols if c.startswith("dist_")]
+        count_cols = [c for c in added_cols if c.startswith("count_")]
+        within_cols = [c for c in added_cols if "_within_" in c]
+
+        if dist_cols:
+            logger.info(f"    Distance columns: {len(dist_cols)} (e.g., {dist_cols[0]})")
+        if count_cols:
+            logger.info(f"    Count columns: {len(count_cols)} (e.g., {count_cols[0]})")
+        if within_cols:
+            logger.info(f"    Within-radius columns: {len(within_cols)} (legacy schema)")
     elif "address" in transactions_df.columns and "address" in amenity_df.columns:
         result = pd.merge(transactions_df, amenity_df, on="address", how="left")
         logger.info("Merged amenity features on address")
@@ -805,12 +831,19 @@ def filter_final_columns(df: pd.DataFrame) -> pd.DataFrame:
         "hawker_within_500m",
         "hawker_within_1km",
         "hawker_within_2km",
-        "mrt_within_500m",
-        "mrt_within_1km",
-        "mrt_within_2km",
+        "mrt_station_within_500m",
+        "mrt_station_within_1km",
+        "mrt_station_within_2km",
+        "mrt_exit_within_500m",
+        "mrt_exit_within_1km",
+        "mrt_exit_within_2km",
         "childcare_within_500m",
         "childcare_within_1km",
         "childcare_within_2km",
+        # Mall amenity features
+        "mall_within_500m",
+        "mall_within_1km",
+        "mall_within_2km",
         # Rental yield
         "rental_yield_pct",  # NEW
         # Precomputed metrics
