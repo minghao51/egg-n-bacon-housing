@@ -192,10 +192,10 @@ class TestAnalyticsDataExport:
         # Run export with custom output directory
         export_all_analytics(output_dir=output_dir)
 
-        # Verify files were created
-        assert (output_dir / "spatial_analysis.json").exists()
-        assert (output_dir / "feature_impact.json").exists()
-        assert (output_dir / "predictive_analytics.json").exists()
+        # Verify files were created (now compressed as .gz)
+        assert (output_dir / "spatial_analysis.json.gz").exists()
+        assert (output_dir / "feature_impact.json.gz").exists()
+        assert (output_dir / "predictive_analytics.json.gz").exists()
 
     def test_json_files_are_valid_json(self, tmp_path):
         """Test that exported JSON files are valid JSON."""
