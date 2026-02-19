@@ -17,7 +17,8 @@ Usage:
     uv run python scripts/data/download/download_datagov_datasets.py --phase all
 
     # Download specific datasets
-    uv run python scripts/data/download/download_datagov_datasets.py --datasets MRTStations.geojson,ChildCareServices.geojson
+    uv run python scripts/data/download/download_datagov_datasets.py \
+        --datasets MRTStations.geojson,ChildCareServices.geojson
 """
 
 import argparse
@@ -33,76 +34,75 @@ from tqdm import tqdm
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.core.config import Config
-from scripts.core.network_check import check_local_file_exists, require_network
+from scripts.core.config import Config  # noqa: E402
+from scripts.core.network_check import check_local_file_exists, require_network  # noqa: E402
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Dataset definitions
 PHASE1_DATASETS = {
-    'PreSchoolsLocation.geojson': {
-        'dataset_id': 'd_61eefab99958fd70e6aab17320a71f1c',
-        'description': 'Pre-school locations'
+    "PreSchoolsLocation.geojson": {
+        "dataset_id": "d_61eefab99958fd70e6aab17320a71f1c",
+        "description": "Pre-school locations",
     },
-    'NParksParksandNatureReserves.geojson': {
-        'dataset_id': 'd_77d7ec97be83d44f61b85454f844382f',
-        'description': 'NParks parks and nature reserves'
+    "NParksParksandNatureReserves.geojson": {
+        "dataset_id": "d_77d7ec97be83d44f61b85454f844382f",
+        "description": "NParks parks and nature reserves",
     },
-    'MasterPlan2019SDCPParkConnectorLinelayerGEOJSON.geojson': {
-        'dataset_id': 'd_3e902a9be74243ad68998e66b7dd4970',
-        'description': 'Park connector network'
+    "MasterPlan2019SDCPParkConnectorLinelayerGEOJSON.geojson": {
+        "dataset_id": "d_3e902a9be74243ad68998e66b7dd4970",
+        "description": "Park connector network",
     },
-    'MasterPlan2019SDCPWaterbodylayerKML.kml': {
-        'dataset_id': 'd_40d896d7-18c1-4b7f-843f-347c3ffde4f3',
-        'description': 'Water bodies'
+    "MasterPlan2019SDCPWaterbodylayerKML.kml": {
+        "dataset_id": "d_40d896d7-18c1-4b7f-843f-347c3ffde4f3",
+        "description": "Water bodies",
     },
-    'Kindergartens.geojson': {
-        'dataset_id': 'd_253a7e348279bf0a87666a71f7ea2e67',
-        'description': 'Kindergarten locations'
+    "Kindergartens.geojson": {
+        "dataset_id": "d_253a7e348279bf0a87666a71f7ea2e67",
+        "description": "Kindergarten locations",
     },
-    'GymsSGGEOJSON.geojson': {
-        'dataset_id': 'd_81a33939-f94b-4e52-8915-3253bb38f72e',
-        'description': 'Gym locations'
+    "GymsSGGEOJSON.geojson": {
+        "dataset_id": "d_81a33939-f94b-4e52-8915-3253bb38f72e",
+        "description": "Gym locations",
     },
-    'HawkerCentresGEOJSON.geojson': {
-        'dataset_id': 'd_4a086da0a5553be1d89383cd90d07ecd',
-        'description': 'Hawker centre locations'
+    "HawkerCentresGEOJSON.geojson": {
+        "dataset_id": "d_4a086da0a5553be1d89383cd90d07ecd",
+        "description": "Hawker centre locations",
     },
-    'SupermarketsGEOJSON.geojson': {
-        'dataset_id': 'd_cac2c32f01960a3ad7202a99c27268a0',
-        'description': 'Supermarket locations'
+    "SupermarketsGEOJSON.geojson": {
+        "dataset_id": "d_cac2c32f01960a3ad7202a99c27268a0",
+        "description": "Supermarket locations",
     },
-    'WaterActivitiesSG.geojson': {
-        'dataset_id': 'd_2c062bf1-040a-406e-bcd0-31304363e4e4',
-        'description': 'Water activities locations'
-    }
+    "WaterActivitiesSG.geojson": {
+        "dataset_id": "d_2c062bf1-040a-406e-bcd0-31304363e4e4",
+        "description": "Water activities locations",
+    },
 }
 
 PHASE2_DATASETS = {
-    'MRTStations.geojson': {
-        'dataset_id': 'd_8d886e3a83934d7447acdf5bc6959999',
-        'description': 'MRT and LRT stations'
+    "MRTStations.geojson": {
+        "dataset_id": "d_8d886e3a83934d7447acdf5bc6959999",
+        "description": "MRT and LRT stations",
     },
-    'ChildCareServices.geojson': {
-        'dataset_id': 'd_5d668e3f544335f8028f546827b773b4',
-        'description': 'Child care services'
+    "ChildCareServices.geojson": {
+        "dataset_id": "d_5d668e3f544335f8028f546827b773b4",
+        "description": "Child care services",
     },
-    'MRTStationExits.geojson': {
-        'dataset_id': 'd_b39d3a0871985372d7e1637193335da5',
-        'description': 'MRT station exits'
-    }
+    "MRTStationExits.geojson": {
+        "dataset_id": "d_b39d3a0871985372d7e1637193335da5",
+        "description": "MRT station exits",
+    },
 }
 
 # Combined datasets
 ALL_DATASETS = {**PHASE1_DATASETS, **PHASE2_DATASETS}
 
 
-def download_file(dataset_id: str, destination: pathlib.Path, description: str, max_retries: int = 3) -> bool:
+def download_file(
+    dataset_id: str, destination: pathlib.Path, description: str, max_retries: int = 3
+) -> bool:
     """
     Download a file from data.gov.sg using the API with exponential backoff retry.
 
@@ -121,12 +121,14 @@ def download_file(dataset_id: str, destination: pathlib.Path, description: str, 
         try:
             # Calculate wait time for exponential backoff (2^attempt seconds)
             if attempt > 0:
-                wait_time = 2 ** attempt
+                wait_time = 2**attempt
                 logger.info(f"Retry attempt {attempt + 1}/{max_retries} after {wait_time}s wait...")
                 time.sleep(wait_time)
 
             # Step 1: Get download URL from poll-download API
-            poll_url = f"https://api-open.data.gov.sg/v1/public/api/datasets/{dataset_id}/poll-download"
+            poll_url = (
+                f"https://api-open.data.gov.sg/v1/public/api/datasets/{dataset_id}/poll-download"
+            )
             logger.debug(f"Poll URL: {poll_url}")
 
             poll_response = requests.get(poll_url, timeout=30)
@@ -145,12 +147,12 @@ def download_file(dataset_id: str, destination: pathlib.Path, description: str, 
             poll_response.raise_for_status()
 
             json_data = poll_response.json()
-            if json_data.get('code') != 0:
+            if json_data.get("code") != 0:
                 logger.error(f"API error: {json_data.get('errMsg', 'Unknown error')}")
                 return False
 
             # Extract download URL
-            download_url = json_data['data']['url']
+            download_url = json_data["data"]["url"]
             logger.debug(f"Download URL: {download_url}")
 
             # Step 2: Download from the actual URL
@@ -160,7 +162,9 @@ def download_file(dataset_id: str, destination: pathlib.Path, description: str, 
             if response.status_code == 429:
                 if attempt < max_retries - 1:
                     wait_time = 2 ** (attempt + 1)
-                    logger.warning(f"Download rate limited (429), waiting {wait_time}s before retry...")
+                    logger.warning(
+                        f"Download rate limited (429), waiting {wait_time}s before retry..."
+                    )
                     time.sleep(wait_time)
                     continue
                 else:
@@ -170,19 +174,15 @@ def download_file(dataset_id: str, destination: pathlib.Path, description: str, 
             response.raise_for_status()
 
             # Get file size for progress bar
-            total_size = int(response.headers.get('content-length', 0))
+            total_size = int(response.headers.get("content-length", 0))
 
             # Create parent directories if needed
             destination.parent.mkdir(parents=True, exist_ok=True)
 
             # Download with progress bar
-            with open(destination, 'wb') as f:
+            with open(destination, "wb") as f:
                 with tqdm(
-                    total=total_size,
-                    unit='B',
-                    unit_scale=True,
-                    desc=destination.name,
-                    ncols=80
+                    total=total_size, unit="B", unit_scale=True, desc=destination.name, ncols=80
                 ) as pbar:
                     for chunk in response.iter_content(chunk_size=8192):
                         if chunk:
@@ -199,7 +199,9 @@ def download_file(dataset_id: str, destination: pathlib.Path, description: str, 
                 logger.warning(f"Request failed: {e}, retrying in {wait_time}s...")
                 time.sleep(wait_time)
             else:
-                logger.error(f"❌ Failed to download {description} after {max_retries} attempts: {e}")
+                logger.error(
+                    f"❌ Failed to download {description} after {max_retries} attempts: {e}"
+                )
                 return False
         except Exception as e:
             logger.error(f"❌ Error saving {description}: {e}")
@@ -212,37 +214,33 @@ def main():
     """Download datasets based on phase or specific files."""
     parser = argparse.ArgumentParser(
         description="Download amenity datasets from data.gov.sg",
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        '--phase',
-        choices=['1', '2', 'all'],
-        default='1',
-        help='Which phase to download (default: 1)'
+        "--phase",
+        choices=["1", "2", "all"],
+        default="1",
+        help="Which phase to download (default: 1)",
     )
     parser.add_argument(
-        '--datasets',
+        "--datasets",
         type=str,
-        help='Comma-separated list of specific dataset filenames to download'
+        help="Comma-separated list of specific dataset filenames to download",
     )
-    parser.add_argument(
-        '--force',
-        action='store_true',
-        help='Re-download files even if they exist'
-    )
+    parser.add_argument("--force", action="store_true", help="Re-download files even if they exist")
 
     args = parser.parse_args()
 
     # Determine which datasets to download
     if args.datasets:
         # Parse specific datasets
-        dataset_names = [d.strip() for d in args.datasets.split(',')]
+        dataset_names = [d.strip() for d in args.datasets.split(",")]
         datasets_to_download = {k: v for k, v in ALL_DATASETS.items() if k in dataset_names}
         phase_desc = f"specific datasets ({len(datasets_to_download)})"
-    elif args.phase == '1':
+    elif args.phase == "1":
         datasets_to_download = PHASE1_DATASETS
         phase_desc = "Phase 1 datasets"
-    elif args.phase == '2':
+    elif args.phase == "2":
         datasets_to_download = PHASE2_DATASETS
         phase_desc = "Phase 2 datasets"
     else:  # all
@@ -254,7 +252,7 @@ def main():
     logger.info(f"Target directory: {Config.DATA_DIR / 'raw_data' / 'csv' / 'datagov'}")
     logger.info("")
 
-    target_dir = Config.DATA_DIR / 'raw_data' / 'csv' / 'datagov'
+    target_dir = Config.DATA_DIR / "raw_data" / "csv" / "datagov"
     target_dir.mkdir(parents=True, exist_ok=True)
 
     # Check if files already exist
@@ -291,9 +289,7 @@ def main():
 
         # Download file
         success = download_file(
-            dataset_id=info['dataset_id'],
-            destination=destination,
-            description=info['description']
+            dataset_id=info["dataset_id"], destination=destination, description=info["description"]
         )
 
         if success:
