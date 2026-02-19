@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Enhanced MRT Impact Analysis - Robustness Checks and Advanced Features
+MRT Spatial Econometrics Analysis
 
-This script extends the baseline MRT analysis with:
+Advanced MRT impact analysis focusing on spatial dependencies and clustering:
 1. Spatial econometrics (Moran's I, SEM/SLM models)
 2. Alternative ML models (LightGBM, Random Forest)
 3. Granular MRT features (interchange, walkability, CBD direction)
 4. Amenity cluster analysis using DBSCAN
 
 Usage:
-    uv run python scripts/analytics/enhanced_mrt_analysis.py
+    uv run python scripts/analytics/analysis/mrt/analyze_mrt_spatial_econometrics.py
 """
 
 import logging
@@ -705,7 +705,7 @@ def main():
         moran_results, cluster_results, station_type_results
     )
     
-    report_path = OUTPUT_DIR / "enhanced_mrt_analysis_report.md"
+    report_path = OUTPUT_DIR / "spatial_econometrics_analysis_report.md"
     with open(report_path, 'w') as f:
         f.write(report)
     logger.info(f"Saved report: {report_path}")
