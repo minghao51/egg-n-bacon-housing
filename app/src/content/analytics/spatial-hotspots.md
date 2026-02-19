@@ -233,6 +233,6 @@ uv run python scripts/analysis/analyze_spatial_hotspots.py --resolution 7
 
 ## See Also
 
-- `docs/analytics/spatial-analytics-overview.md` - Method background
+- `docs/plans/plan_spatial-analytics-overview.md` - Method background
 - `scripts/analysis/analyze_spatial_autocorrelation.py` - Complementary analysis
 - `scripts/analysis/analyze_h3_clusters.py` - Cluster discovery

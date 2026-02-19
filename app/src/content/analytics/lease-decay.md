@@ -959,8 +959,8 @@ The lease decay analysis can be enhanced with L5 pipeline outputs:
 **Analytics documentation:**
 * `docs/analytics/findings.md` - Market findings including lease decay overview
 * `docs/analytics/causal-inference-overview.md` - Survival analysis and causal inference methods
-* `docs/analytics/mrt-impact-analysis.md` - MRT proximity impact (for comparison)
-* `docs/analytics/analyze_school-quality-features.md` - School quality analysis (similar methodology)
+* `docs/analytics/mrt-impact.md` - MRT proximity impact (for comparison)
+* `docs/analytics/school-quality.md` - School quality analysis (similar methodology)
 
 **Pipeline documentation:**
 * `scripts/core/stages/L5_metrics.py` - Growth metrics calculation (MoM, YoY, momentum)

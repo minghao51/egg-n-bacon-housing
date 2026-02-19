@@ -461,7 +461,7 @@ data/analysis/school_segmentation/
 - **Integration Script:** `scripts/analytics/analysis/school/run_enhanced_analysis.sh`
 
 **Documentation:**
-- **Pipeline Overview:** `docs/analytics/school-impact-analysis.md`
+- **Pipeline Overview:** `docs/plans/plan_school-impact-analysis.md`
 - **Implementation Plan:** `docs/plans/20260205-enhanced-school-impact-analysis.md`
 - **Design Spec:** `docs/plans/20260205-enhanced-school-impact-analysis-design.md`
 
