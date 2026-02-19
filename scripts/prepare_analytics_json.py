@@ -323,27 +323,21 @@ def export_all_analytics(output_dir: Optional[Path] = None):
     logger.info("1/3: Exporting Spatial Analysis")
     logger.info("=" * 60)
     spatial_data = generate_spatial_analysis_json()
-    with open(output_dir / "spatial_analysis.json", "w") as f:
-        json.dump(sanitize_for_json(spatial_data), f, indent=2)
-    logger.info(f"✅ Saved spatial_analysis.json")
+    write_json_gzip(sanitize_for_json(spatial_data), output_dir / "spatial_analysis.json.gz")
 
     # 2. Export Feature Impact
     logger.info("=" * 60)
     logger.info("2/3: Exporting Feature Impact")
     logger.info("=" * 60)
     feature_data = generate_feature_impact_json()
-    with open(output_dir / "feature_impact.json", "w") as f:
-        json.dump(sanitize_for_json(feature_data), f, indent=2)
-    logger.info(f"✅ Saved feature_impact.json")
+    write_json_gzip(sanitize_for_json(feature_data), output_dir / "feature_impact.json.gz")
 
     # 3. Export Predictive Analytics
     logger.info("=" * 60)
     logger.info("3/3: Exporting Predictive Analytics")
     logger.info("=" * 60)
     predictive_data = generate_predictive_analytics_json()
-    with open(output_dir / "predictive_analytics.json", "w") as f:
-        json.dump(sanitize_for_json(predictive_data), f, indent=2)
-    logger.info(f"✅ Saved predictive_analytics.json")
+    write_json_gzip(sanitize_for_json(predictive_data), output_dir / "predictive_analytics.json.gz")
 
     logger.info("=" * 60)
     logger.info(f"Export complete! Files saved to {output_dir}")

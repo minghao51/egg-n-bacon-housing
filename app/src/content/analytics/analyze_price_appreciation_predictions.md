@@ -3,7 +3,7 @@ title: Price Appreciation Forecasts - Singapore Housing Market
 category: "market-analysis"
 description: 24-month VAR-based price appreciation forecasts with scenario planning
 status: published
-date: 2026-02-XX
+date: 2026-02-17
 # New accessibility fields
 personas:
   - first-time-buyer
