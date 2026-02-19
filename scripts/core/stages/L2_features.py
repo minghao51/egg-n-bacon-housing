@@ -516,6 +516,10 @@ def create_property_table(unique_gdf: gpd.GeoDataFrame) -> pd.DataFrame:
     property_df.columns = property_df.columns.str.lower()
     property_df = property_df.rename({"nameaddress": "property_id"}, axis=1)
 
+    # Store postal code for later merge with amenity metrics
+    if "postal" in property_df.columns:
+        property_df["_postal_code"] = property_df["postal"]
+
     str_cast_list = ["property_id", "blk_no", "road_name", "building", "address"]
     for col in str_cast_list:
         if col in property_df.columns:
@@ -719,28 +723,29 @@ def run_l2_features_pipeline(
 
     # Merge amenity metrics into property table
     logger.info("Merging amenity metrics into property table...")
-    # Ensure consistent key column names for merge
-    property_df["_merge_key"] = property_df["property_id"].astype(str).str.lower()
-    amenity_metrics["_merge_key"] = amenity_metrics["property_id"].astype(str).str.lower()
 
-    # Merge on property_id
-    property_df = property_df.merge(
-        amenity_metrics.drop(columns=["property_id"]),
-        on="_merge_key",
-        how="left",
-    )
-    property_df = property_df.drop(columns=["_merge_key"])
+    # Use postal code as merge key since amenity_metrics is keyed by POSTAL
+    if "_postal_code" in property_df.columns:
+        # Merge on postal code
+        amenity_metrics_renamed = amenity_metrics.add_prefix("amty_")
+        amenity_metrics_renamed["postal"] = amenity_metrics["POSTAL"]
 
-    logger.info(f"  Merged {len(amenity_metrics.columns) - 1} amenity metric columns")
+        property_df = property_df.merge(
+            amenity_metrics_renamed,
+            left_on="_postal_code",
+            right_on="postal",
+            how="left",
+        ).drop(columns=["_postal_code", "postal"])
+
+        # Count merged columns
+        amenity_cols = [col for col in property_df.columns if col.startswith("amty_")]
+        logger.info(f"  Merged {len(amenity_cols)} amenity metric columns")
+    else:
+        logger.warning("No postal code column found, skipping amenity merge")
 
     # Also export amenity metrics separately for L3 pipeline
     logger.info("Exporting amenity metrics for L3 pipeline...")
-    amenity_for_l3 = unique_df[["POSTAL", "SEARCHVAL"]].copy()
-    amenity_for_l3["SEARCHVAL"] = amenity_for_l3["SEARCHVAL"].str.lower()
-    amenity_for_l3 = amenity_for_l3.merge(
-        amenity_metrics, left_on="SEARCHVAL", right_on="property_id", how="left"
-    )
-    amenity_for_l3 = amenity_for_l3.drop(columns=["SEARCHVAL", "property_id"])
+    amenity_for_l3 = amenity_metrics.copy()
     save_parquet(
         amenity_for_l3,
         "L2_housing_per_type_amenity_features",
