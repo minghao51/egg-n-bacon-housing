@@ -178,6 +178,102 @@ def compute_amenity_distances(
     return unique_joined
 
 
+def compute_amenity_distances_by_type(
+    unique_gdf: gpd.GeoDataFrame,
+    amenity_gdf: gpd.GeoDataFrame,
+    distance_thresholds: list[int] | None = None,
+) -> pd.DataFrame:
+    """Compute per-type amenity distances and counts for each property.
+
+    Calculates distance to nearest amenity and count of amenities within
+    specified radius for each amenity type (hawker, supermarket, mrt_station,
+    mrt_exit, childcare, park, mall).
+
+    Args:
+        unique_gdf: GeoDataFrame with property polygons
+        amenity_gdf: GeoDataFrame with amenity points (has 'type' column)
+        distance_thresholds: List of radius sizes in meters for counting amenities
+            (default: [500, 1000])
+
+    Returns:
+        DataFrame with property indices and per-type amenity metrics.
+        Columns: property_id, dist_nearest_{type}, count_{type}_{radius}m
+    """
+    if distance_thresholds is None:
+        distance_thresholds = [500, 1000]
+
+    logger.info(
+        f"Computing per-type amenity distances for {len(distance_thresholds)} "
+        f"radius thresholds: {distance_thresholds}m"
+    )
+
+    # Get unique amenity types
+    amenity_types = sorted(amenity_gdf["type"].unique())
+    logger.info(f"  Found {len(amenity_types)} amenity types: {amenity_types}")
+
+    # Project to metric CRS for accurate distance calculations
+    unique_gdf_proj = unique_gdf.to_crs(crs=3857)
+    amenity_gdf_proj = amenity_gdf.to_crs(crs=3857).copy()
+
+    results = []
+
+    for idx, property_row in unique_gdf_proj.iterrows():
+        # Get property identifier
+        property_id = (
+            property_row.get("project_id")
+            or property_row.get("property_index")
+            or property_row.get("SEARCHVAL")
+            or idx
+        )
+
+        row_result = {"property_id": property_id}
+        property_geom = property_row.geometry
+
+        # Process each amenity type
+        for amenity_type in amenity_types:
+            # Filter amenities by type
+            type_amenities = amenity_gdf_proj[
+                amenity_gdf_proj["type"] == amenity_type
+            ]
+
+            if len(type_amenities) == 0:
+                # Add default values if no amenities of this type
+                row_result[f"dist_nearest_{amenity_type}"] = None
+                for dist_threshold in distance_thresholds:
+                    row_result[f"count_{amenity_type}_{dist_threshold}m"] = 0
+                continue
+
+            # Calculate distances to all amenities of this type (in meters)
+            distances = property_geom.distance(type_amenities.geometry)
+
+            # Nearest distance
+            nearest_dist = distances.min()
+            row_result[f"dist_nearest_{amenity_type}"] = round(nearest_dist, 2)
+
+            # Count within each radius
+            for dist_threshold in distance_thresholds:
+                count = (distances <= dist_threshold).sum()
+                row_result[f"count_{amenity_type}_{dist_threshold}m"] = count
+
+        results.append(row_result)
+
+    df = pd.DataFrame(results)
+
+    # Log summary statistics
+    logger.info(f"✅ Computed amenity metrics for {len(df)} properties")
+    logger.info(f"  Columns: {len(df.columns)}")
+
+    # Log non-null ratios for distance columns
+    dist_cols = [c for c in df.columns if c.startswith("dist_nearest_")]
+    if dist_cols:
+        logger.info("  Distance column coverage:")
+        for col in dist_cols:
+            non_null_ratio = df[col].notna().sum() / len(df) * 100
+            logger.info(f"    {col}: {non_null_ratio:.1f}%")
+
+    return df
+
+
 def compute_planning_area(
     unique_gdf: gpd.GeoDataFrame, planning_area_gpd: gpd.GeoDataFrame | None
 ) -> gpd.GeoDataFrame:
@@ -604,7 +700,11 @@ def run_l2_features_pipeline(
     unique_gdf = create_property_geodataframe(unique_df)
     amenity_gdf = create_amenity_geodataframe(amenity_df)
 
+    # Compute amenity distances for nearby facilities table (spatial join)
     unique_joined = compute_amenity_distances(unique_gdf, amenity_gdf)
+
+    # Compute per-type amenity metrics for property features
+    amenity_metrics = compute_amenity_distances_by_type(unique_gdf, amenity_gdf)
 
     planning_area_gpd = None
     if include_planning_area:
@@ -616,6 +716,23 @@ def run_l2_features_pipeline(
     hdb_df = process_hdb_transactions(hdb_df)
 
     property_df = create_property_table(unique_gdf)
+
+    # Merge amenity metrics into property table
+    logger.info("Merging amenity metrics into property table...")
+    # Ensure consistent key column names for merge
+    property_df["_merge_key"] = property_df["property_id"].astype(str).str.lower()
+    amenity_metrics["_merge_key"] = amenity_metrics["property_id"].astype(str).str.lower()
+
+    # Merge on property_id
+    property_df = property_df.merge(
+        amenity_metrics.drop(columns=["property_id"]),
+        on="_merge_key",
+        how="left",
+    )
+    property_df = property_df.drop(columns=["_merge_key"])
+
+    logger.info(f"  Merged {len(amenity_metrics.columns) - 1} amenity metric columns")
+
     private_facilities = create_private_facilities(property_df)
     nearby_df = create_nearby_facilities(unique_joined)
 
