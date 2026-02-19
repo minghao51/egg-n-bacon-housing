@@ -205,7 +205,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/housing_unified.parquet",
       "version": "2026-02-19",
       "rows": 1116323,
-      "created": "2026-02-19T14:23:04.872094",
+      "created": "2026-02-19T17:30:28.121073",
       "source": "Rental yield imputation",
       "mode": "overwrite",
       "compression": "snappy"
@@ -385,7 +385,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L4_price_predictions.parquet",
       "version": "2026-02-19",
       "rows": 57675,
-      "created": "2026-02-19T14:11:19.198358",
+      "created": "2026-02-19T17:32:23.183456",
       "source": "XGBoost model",
       "mode": "overwrite",
       "compression": "snappy"
@@ -395,7 +395,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L4_market_segments.parquet",
       "version": "2026-02-19",
       "rows": 288374,
-      "created": "2026-02-19T14:11:27.918673",
+      "created": "2026-02-19T17:32:46.104741",
       "source": "K-means clustering",
       "mode": "overwrite",
       "compression": "snappy"
@@ -405,7 +405,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L4_price_forecasts.parquet",
       "version": "2026-02-19",
       "rows": 20,
-      "created": "2026-02-19T14:27:42.908216",
+      "created": "2026-02-19T17:32:55.018154",
       "source": "ARIMA models",
       "mode": "overwrite",
       "compression": "snappy"
@@ -421,5 +421,5 @@
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-19T17:13:27.466096"
+  "last_updated": "2026-02-19T17:32:55.018157"
 }

@@ -27,7 +27,7 @@ def main():
     feature_cols = [
         "price",
         "floor_area_sqft",
-        "dist_to_nearest_mall",
+        "dist_nearest_mall",
         "remaining_lease_months",
     ]
 
@@ -43,7 +43,7 @@ def main():
     segment_stats = df_cluster.groupby("segment").agg({
         "price": ["mean", "count"],
         "floor_area_sqft": "mean",
-        "dist_to_nearest_mall": "mean",
+        "dist_nearest_mall": "mean",
     }).round(2)
 
     logger.info("\nSegment Profiles:")
@@ -55,7 +55,7 @@ def main():
             f"{stats[('floor_area_sqft', 'mean')]:.0f} sqft"
         )
 
-    output_df = df_cluster[["address", "price", "floor_area_sqft", "dist_to_nearest_mall", "segment"]].copy()
+    output_df = df_cluster[["address", "price", "floor_area_sqft", "dist_nearest_mall", "segment"]].copy()
     save_parquet(output_df, "L4_market_segments", source="K-means clustering")
     logger.info("✅ Saved segments to L4_market_segments.parquet")
 

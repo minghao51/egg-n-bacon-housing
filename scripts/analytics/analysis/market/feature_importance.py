@@ -30,12 +30,12 @@ def main():
     feature_cols = [
         "floor_area_sqft",
         "remaining_lease_months",
-        "dist_to_nearest_mall",
-        "dist_to_nearest_mrt_station",
-        "dist_to_nearest_supermarket",
-        "mall_within_1km",
-        "mrt_station_within_1km",
-        "supermarket_within_1km",
+        "dist_nearest_mall",
+        "dist_nearest_mrt_station",
+        "dist_nearest_supermarket",
+        "count_mall_1000m",
+        "count_mrt_station_1000m",
+        "count_supermarket_1000m",
     ]
 
     df_model = df.dropna(subset=feature_cols + ["price"]).copy()
