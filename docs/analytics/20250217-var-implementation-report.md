@@ -5,6 +5,10 @@
 **Branch:** `feature/var-housing-forecast`
 
 ---
+category: "technical-reports"
+description: Implementation report for VAR-based housing appreciation forecasting system
+status: published
+---
 
 ## Overview
 

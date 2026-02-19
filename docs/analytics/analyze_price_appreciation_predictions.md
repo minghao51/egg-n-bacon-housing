@@ -1,6 +1,6 @@
 ---
 title: Price Appreciation Prediction System - Singapore Housing Market
-category: "predictive-modeling"
+category: "investment-guides"
 description: Comprehensive guide to predicting property price appreciation using ML models (2021+ data)
 status: published
 ---
