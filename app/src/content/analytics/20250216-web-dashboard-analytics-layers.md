@@ -2,7 +2,7 @@
 title: "Web Dashboard Analytics Layers - Implementation & User Guide"
 category: "technical-reports"
 description: "Interactive analytics layers for the price map dashboard with spatial analysis, feature impact, and predictive analytics"
-status: "published"
+status: "draft"
 date: "2025-02-16"
 ---
 

@@ -2,7 +2,7 @@
 title: School Features Impact Analysis
 category: technical-reports
 description: Investigation of school proximity and quality impact on Singapore housing prices and yields
-status: published
+status: draft
 ---
 
 # School Features Impact Analysis

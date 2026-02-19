@@ -2,7 +2,7 @@
 title: Spatial Analytics Overview
 category: technical-reports
 description: Spatial analytics methods for identifying patterns in geographic housing data
-status: published
+status: draft
 ---
 
 # Spatial Analytics Overview
@@ -712,4 +712,3 @@ fig = px.choropleth_mapbox(
 ## See Also
 
 - `docs/analytics/causal-inference-overview.md` - Complementary causal analysis methods
-- `docs/analytics/script-reference.md` - Quick reference for all scripts

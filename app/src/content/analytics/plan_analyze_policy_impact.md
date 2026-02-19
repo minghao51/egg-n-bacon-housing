@@ -2,7 +2,7 @@
 title: Post-2022 Housing Policy Impact Investigation
 category: technical-reports
 description: Analysis of Singapore housing policy effects on HDB market (2022-2026)
-status: published
+status: draft
 ---
 
 # Post-2022 Housing Policy Impact Investigation
@@ -686,7 +686,7 @@ Where:
 ### Related Documents
 - `docs/analytics/causal-inference-overview.md` - DiD methodology background
 - `app/src/content/analytics/findings.md` - General market findings
-- `docs/analytics/analyze_spatial_hotspots.md` - Spatial analysis methods
+- `docs/analytics/spatial-hotspots.md` - Spatial analysis methods
 
 ---
 

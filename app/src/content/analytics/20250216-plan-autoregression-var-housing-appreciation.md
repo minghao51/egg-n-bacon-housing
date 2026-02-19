@@ -1,6 +1,6 @@
 ---
 title: "Autoregression & VAR Models for Housing Appreciation Prediction"
-status: "implemented"
+status: "draft"
 created: "2025-02-16"
 updated: "2025-02-17"
 category: "market-analysis"
@@ -814,7 +814,7 @@ def fit_model_with_retry(area, data):
 
 ## References
 
-- Existing analysis: `docs/analytics/analyze_mrt-impact-analysis.md`
+- Existing analysis: `docs/analytics/mrt-impact.md`
 - Architecture: `.planning/codebase/ARCHITECTURE.md`
 - L5 metrics: `scripts/core/stages/L5_metrics.py`
 - L3 export: `scripts/core/stages/L3_export.py`

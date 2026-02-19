@@ -7,7 +7,7 @@
 ---
 category: "technical-reports"
 description: Implementation report for VAR-based housing appreciation forecasting system
-status: published
+status: draft
 ---
 
 ## Overview
@@ -318,7 +318,7 @@ Open `htmlcov/index.html` in browser
 
 ## References
 
-**Design Document:** `docs/analytics/20250216-plan-autoregression-var-housing-appreciation.md`
+**Design Document:** `docs/plans/20250216-plan-autoregression-var-housing-appreciation.md`
 **Implementation Plan:** `docs/plans/2025-02-16-var-housing-appreciation-implementation.md`
 
 ---

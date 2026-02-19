@@ -2,7 +2,7 @@
 title: H3 Clusters Analysis Script
 category: technical-reports
 description: Discover natural property clusters using DBSCAN on H3 hex grid with spatial and attribute features
-status: published
+status: draft
 ---
 
 # H3 Clusters Analysis Script
@@ -289,6 +289,6 @@ uv run python scripts/analysis/analyze_h3_clusters.py --eps 0.3 --min-samples 5
 
 ## See Also
 
-- `docs/analytics/spatial-analytics-overview.md` - Method background
+- `docs/plans/plan_spatial-analytics-overview.md` - Method background
 - `scripts/analysis/analyze_spatial_hotspots.py` - Hotspot analysis
 - `scripts/market_segmentation_advanced.py` - K-means alternative

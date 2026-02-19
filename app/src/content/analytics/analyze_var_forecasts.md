@@ -1098,7 +1098,7 @@ To view: Right-click any image → Open in new tab
 **Related Documents**:
 - Design: `docs/plans/2026-02-19-price-appreciation-forecasting-report-design.md`
 - Implementation: `docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md`
-- VAR Technical: `docs/analytics/20250217-var-implementation-report.md`
+- VAR Technical: `docs/plans/20250217-var-implementation-report.md`
 
 ---
 
