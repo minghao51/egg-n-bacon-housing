@@ -11,7 +11,6 @@ This module provides functions for:
 """  # noqa: N999
 
 import logging
-from pathlib import Path
 
 import pandas as pd
 

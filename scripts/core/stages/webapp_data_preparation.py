@@ -1,10 +1,11 @@
 """
 Web Export Pipeline (L3)
 
-Exports processed analytics data to lightweight JSON files for the
+Exports processed analytics data to lightweight JSON.gz files for the
 static web dashboard (Astro/React).
 """
 
+import gzip
 import json
 import logging
 import shutil
@@ -30,6 +31,13 @@ from scripts.core.stages.L5_metrics import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def write_json_gzip(data, filepath: Path):
+    """Write data to a gzipped JSON file."""
+    with gzip.open(filepath, "wt", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    logger.info(f"Saved: {filepath}")
 
 
 def sanitize_for_json(obj):
@@ -85,20 +93,17 @@ def export_dashboard_data():
     # 1. Export Overview Data
     logger.info("Exporting overview data...")
     overview_data = generate_overview_data(df)
-    with open(output_dir / "dashboard_overview.json", "w") as f:
-        json.dump(sanitize_for_json(overview_data), f, indent=2)
+    write_json_gzip(sanitize_for_json(overview_data), output_dir / "dashboard_overview.json.gz")
 
     # 2. Export Trends Data
     logger.info("Exporting trends data...")
     trends_data = generate_trends_data(df)
-    with open(output_dir / "dashboard_trends.json", "w") as f:
-        json.dump(sanitize_for_json(trends_data), f, indent=2)
+    write_json_gzip(sanitize_for_json(trends_data), output_dir / "dashboard_trends.json.gz")
 
     # 3. Export Map Data
     logger.info("Exporting map data...")
     map_data = generate_map_data(df)
-    with open(output_dir / "map_metrics.json", "w") as f:
-        json.dump(sanitize_for_json(map_data), f, indent=2)
+    write_json_gzip(sanitize_for_json(map_data), output_dir / "map_metrics.json.gz")
 
     # Copy GeoJSON
     geojson_src = Path("data/manual/geojsons/onemap_planning_area_polygon.geojson")
@@ -111,26 +116,22 @@ def export_dashboard_data():
     # 4. Export Segments Data
     logger.info("Exporting segments data...")
     segments_data = generate_filtered_segments_data(df)
-    with open(output_dir / "dashboard_segments.json", "w") as f:
-        json.dump(sanitize_for_json(segments_data), f, indent=2)
+    write_json_gzip(sanitize_for_json(segments_data), output_dir / "dashboard_segments.json.gz")
 
     # 5. Export Town Leaderboard
     logger.info("Exporting leaderboard data...")
     leaderboard_data = generate_leaderboard_data(df)
-    with open(output_dir / "dashboard_leaderboard.json", "w") as f:
-        json.dump(sanitize_for_json(leaderboard_data), f, indent=2)
+    write_json_gzip(sanitize_for_json(leaderboard_data), output_dir / "dashboard_leaderboard.json.gz")
 
     # 6. Export Appreciation Hotspots (NEW)
     logger.info("Exporting hotspots data...")
     hotspots_data = generate_hotspots_data(df)
-    with open(output_dir / "hotspots.json", "w") as f:
-        json.dump(sanitize_for_json(hotspots_data), f, indent=2)
+    write_json_gzip(sanitize_for_json(hotspots_data), output_dir / "hotspots.json.gz")
 
     # 7. Export Amenity Summary (NEW - Phase 2)
     logger.info("Exporting amenity summary data...")
     amenity_summary_data = generate_amenity_summary_data(df)
-    with open(output_dir / "amenity_summary.json", "w") as f:
-        json.dump(sanitize_for_json(amenity_summary_data), f, indent=2)
+    write_json_gzip(sanitize_for_json(amenity_summary_data), output_dir / "amenity_summary.json.gz")
 
     logger.info(f"Export complete! Files saved to {output_dir}")
 

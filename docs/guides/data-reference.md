@@ -20,6 +20,29 @@ This document provides a quick reference for the housing data available in the p
 | `raw_onemap_*` | OneMap API | ~50 |
 | `raw_wiki_shopping_mall` | Wikipedia | ~200 |
 
+### L0_macro: Macro Economic Data
+
+Located in `data/raw_data/macro/`:
+
+| Dataset | Source | Frequency | Description |
+|---------|--------|-----------|-------------|
+| `sora_rates_monthly.parquet` | MAS (mock) | Monthly | Singapore Overnight Rate Average |
+| `singapore_cpi_monthly.parquet` | SingStat API | Monthly | Consumer Price Index |
+| `sgdp_quarterly.parquet` | SingStat API | Quarterly | GDP at current prices |
+| `unemployment_rate_monthly.parquet` | SingStat API | Monthly | Unemployment rate |
+| `property_price_index_quarterly.parquet` | SingStat API | Quarterly | Property Price Index |
+| `housing_policy_dates.parquet` | Manual | Event-based | Housing policy changes |
+
+**Usage**:
+```python
+from scripts.core.stages.L5_metrics import load_macro_data
+
+macro = load_macro_data()
+sora = macro['sora']       # SORA rates
+cpi = macro['cpi']         # CPI data
+gdp = macro['gdp']         # GDP data
+```
+
 ### L1: Processed
 
 | Dataset | Description | Records |

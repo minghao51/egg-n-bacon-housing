@@ -130,6 +130,7 @@ Config.validate()
 This is a **stage-based ETL pipeline** (L0-L5) for processing Singapore housing data:
 
 - **L0 (Collection)**: Fetch HDB/URA transactions from data.gov.sg
+- **L0_macro (Macro Data)**: Fetch CPI, GDP, SORA, unemployment, PPI from SingStat API
 - **L1 (Processing)**: Clean data, geocode addresses (OneMap → Google fallback)
 - **L2 (Features)**: Add MRT distances, CBD distance, school tiers, amenities
 - **L3 (Export)**: Create unified dataset, export JSONs for webapp

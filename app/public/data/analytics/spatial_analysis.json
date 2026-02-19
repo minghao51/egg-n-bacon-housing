@@ -1,8 +1,952 @@
 {
   "metadata": {
-    "generated_at": "2026-02-16T09:39:29.276339",
+    "generated_at": "2026-02-19T17:23:01.143214",
     "data_version": "L3_unified_dataset",
     "methodology": "Getis-Ord Gi* hotspot analysis, LISA clustering, Moran's I"
   },
-  "planning_areas": {}
+  "planning_areas": {
+    "ANG MO KIO": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.0,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 295000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "BEDOK": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.4,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 420338.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "BISHAN": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.2,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 466500.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "BUKIT MERAH": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.7,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 435000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "BUKIT PANJANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.8,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1448000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "BUKIT TIMAH": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.8,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1830000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "ROCHOR": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.5,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 660000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "OUTRAM": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.4,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1254000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "CHOA CHU KANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.6,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 369000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "CLEMENTI": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.2,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 365000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "GEYLANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.1,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 418000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "HOUGANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.9,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 353000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "JURONG EAST": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.0,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 305000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "JURONG WEST": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.8,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 295000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "NOVENA": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.5,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1500000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "KALLANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.4,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 390000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "MARINE PARADE": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.5,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1578000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "CHANGI": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.7,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 179000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "PASIR RIS": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.7,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 470000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "PUNGGOL": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.3,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 540000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "QUEENSTOWN": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.4,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 300000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "SEMBAWANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.5,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 485000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "SENGKANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.6,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 548000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "SERANGOON": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.2,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 421000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "TAMPINES": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.7,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 366500.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "TOA PAYOH": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.6,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 413000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "WOODLANDS": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.6,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 330000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "YISHUN": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.7,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 270500.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "DOWNTOWN CORE": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.4,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1680000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "TANGLIN": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 3.4,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 2480000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "LIM CHU KANG": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 5.6,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 61750.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "NEWTON": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 7.9,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 3700000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "SINGAPORE RIVER": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.9,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 2376000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "RIVER VALLEY": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 4.0,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 2377050.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "BUKIT BATOK": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 4.3,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1450000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "MUSEUM": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 1.0,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1799500.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "ORCHARD": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 3.7,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 2667600.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "SOUTHERN ISLANDS": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.5,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 3620200.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "MANDAI": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 2.3,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1250000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "MARINA SOUTH": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.0,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1942891.0,
+        "neighborhood_multiplier": 1.0
+      }
+    },
+    "TENGAH": {
+      "hotspot": {
+        "z_score": 0.0,
+        "p_value": 1.0,
+        "confidence": "NOT_SIGNIFICANT",
+        "classification": "NOT_SIGNIFICANT"
+      },
+      "lisa_cluster": {
+        "type": "STABLE",
+        "yoy_appreciation": 0.1,
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_hotspot": 0.2,
+          "to_stable": 0.6,
+          "to_coldspot": 0.2
+        }
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "spatial_lag": 1574000.0,
+        "neighborhood_multiplier": 1.0
+      }
+    }
+  }
 }

@@ -2,12 +2,13 @@
 Analytics Data Export for Web Dashboard
 
 Exports advanced analytics (spatial analysis, feature impact, predictive analytics)
-to JSON files for the price map dashboard.
+to JSON.gz files for the price map dashboard.
 
 Usage:
     uv run python scripts/prepare_analytics_json.py
 """
 
+import gzip
 import json
 import logging
 import sys
@@ -25,8 +26,16 @@ if __name__ == "__main__" and __file__:
         sys.path.insert(0, str(project_root))
 
 from scripts.core.data_helpers import load_parquet
+from scripts.core.config import Config
 
 logger = logging.getLogger(__name__)
+
+
+def write_json_gzip(data, filepath: Path):
+    """Write data to a gzipped JSON file."""
+    with gzip.open(filepath, "wt", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    logger.info(f"Saved: {filepath}")
 
 
 def sanitize_for_json(obj):
@@ -281,13 +290,13 @@ def generate_predictive_analytics_json():
 def load_unified_data():
     """Load unified dataset for analysis."""
     try:
-        return load_parquet("L3_unified_dataset")
+        return load_parquet("L3_housing_unified")
     except Exception as e:
-        logger.warning(f"Could not load L3_unified_dataset: {e}")
+        logger.warning(f"Could not load L3_housing_unified: {e}")
         try:
-            return load_parquet("L2_hdb_with_features")
+            return pd.read_parquet(Config.PARQUETS_DIR / "L3" / "housing_unified.parquet")
         except Exception as e2:
-            logger.error(f"Could not load L2 data either: {e2}")
+            logger.error(f"Could not load L3 housing_unified: {e2}")
             return pd.DataFrame()
 
 

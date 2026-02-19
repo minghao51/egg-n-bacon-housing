@@ -150,7 +150,7 @@ def load_amenity_features() -> pd.DataFrame:
     logger.info("Loading amenity features from L2...")
 
     # Try new per-type amenity features first (Phase 2 enhancement)
-    path_new = Config.PARQUETS_DIR / "L2_housing_per_type_amenity_features.parquet"
+    path_new = Config.PARQUETS_DIR / "L2" / "housing_per_type_amenity_features.parquet"
     # Fall back to old multi-amenity features
     path_old = Config.PARQUETS_DIR / "L2" / "housing_multi_amenity_features.parquet"
 

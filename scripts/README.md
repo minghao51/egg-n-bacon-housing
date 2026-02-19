@@ -23,12 +23,12 @@ scripts/
  │
  ├── data/                  # Data operations
  │   ├── download/          # External data downloads
- │   └── process/           # Data processing & transformation
- │       ├── geocode/       # Geocoding operations
- │       ├── amenities/     # Amenity data processing
- │       └── planning_area/ # Geographic processing
- │
- │   └── create_l3_unified_dataset.py  # L3 unified dataset implementation
+ │   ├── process/           # Data processing & transformation
+ │   │   ├── geocode/       # Geocoding operations
+ │   │   ├── amenities/     # Amenity data processing
+ │   │   └── planning_area/ # Geographic processing
+ │   │
+ │   └── fetch_macro_data.py  # Macro economic data (CPI, GDP, SORA, unemployment, PPI)
  │
  └── utils/                 # Utility scripts
     ├── Validation

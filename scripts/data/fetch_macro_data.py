@@ -16,11 +16,8 @@ Or run as script:
     uv run python scripts/data/fetch_macro_data.py
 """
 
-import json
 import logging
-from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -40,7 +37,7 @@ PROPERTY_PPI_TABLE_ID = "M200131"  # Property Price Index
 INTEREST_RATE_TABLE_ID = "M200131"  # Interest rates (may vary)
 
 
-def search_singstat_table(keyword: str) -> Optional[dict]:
+def search_singstat_table(keyword: str) -> dict | None:
     """
     Search for a table ID in SingStat Table Builder.
 
@@ -290,7 +287,7 @@ def fetch_gdp_data(
             "quarter_str": df_raw["date"].tolist(),
             "gdp_value": df_raw["value"].tolist()
         })
-        
+
         gdp_data["quarter"] = pd.to_datetime(gdp_data["quarter_str"], format="%Y %b")
         gdp_data = gdp_data.sort_values("quarter")
 

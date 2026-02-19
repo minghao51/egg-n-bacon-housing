@@ -53,6 +53,24 @@ Collects raw data from external sources:
 
 **Output**: Raw parquet files (`raw_*`)
 
+### L0_macro: Macro Economic Data
+
+Collects macroeconomic indicators for VAR modeling and market analysis:
+- **SingStat Table Builder API**: CPI, GDP, unemployment, property price index
+- **MAS (Monetary Authority of Singapore)**: SORA rates (mock for MVP)
+- **Manual**: Housing policy dates (ABSD, TDSR changes)
+
+**Output**: `data/raw_data/macro/*.parquet`
+
+| File | Description | Frequency |
+|------|-------------|-----------|
+| `sora_rates_monthly.parquet` | Singapore Overnight Rate Average | Monthly |
+| `singapore_cpi_monthly.parquet` | Consumer Price Index | Monthly |
+| `sgdp_quarterly.parquet` | GDP at current prices | Quarterly |
+| `unemployment_rate_monthly.parquet` | Unemployment rate | Monthly |
+| `property_price_index_quarterly.parquet` | Property Price Index | Quarterly |
+| `housing_policy_dates.parquet` | Policy changes (ABSD, TDSR) | Event-based |
+
 ### L1: Data Processing
 
 Cleans and transforms data:
