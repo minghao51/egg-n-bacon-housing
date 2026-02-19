@@ -6,9 +6,10 @@ for the web dashboard.
 """
 
 import json
-import pytest
-from pathlib import Path
 
+import pytest
+
+from scripts.core.data_helpers import load_parquet
 from scripts.prepare_analytics_json import (
     export_all_analytics,
     generate_feature_impact_json,
@@ -16,7 +17,6 @@ from scripts.prepare_analytics_json import (
     generate_spatial_analysis_json,
     sanitize_for_json,
 )
-from scripts.core.data_helpers import load_parquet
 
 
 class TestAnalyticsDataExport:
@@ -25,7 +25,6 @@ class TestAnalyticsDataExport:
     def test_sanitize_for_json_handles_nan(self):
         """Test that NaN and Inf values are converted to None."""
         import numpy as np
-        import pandas as pd
 
         # Test NaN
         assert sanitize_for_json(float('nan')) is None
@@ -185,7 +184,6 @@ class TestAnalyticsDataExport:
     @pytest.mark.integration
     def test_export_all_analytics_creates_files(self, tmp_path):
         """Test that export_all_analytics creates JSON files."""
-        from scripts.core.config import Config
 
         # Create output directory in temp path
         output_dir = tmp_path / "data" / "analytics"
@@ -213,7 +211,6 @@ class TestAnalyticsDataExport:
         predictive = generate_predictive_analytics_json()
 
         # Verify they can be serialized to JSON
-        import json
 
         # Should not raise exceptions
         json.dumps(spatial)

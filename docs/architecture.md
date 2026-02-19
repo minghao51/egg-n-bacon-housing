@@ -81,6 +81,18 @@ Optimized summary tables:
 | `planning_area_metrics.parquet` | Metrics by planning area |
 | `rental_yield_top_combos.parquet` | Top rental yield combinations |
 
+### L4: Analysis Pipeline
+
+Exploratory data analysis and deep-dive analysis scripts:
+
+- **Phase 1**: EDA (investment analysis, appreciation, yields)
+- **Phase 2**: Analysis scripts (market, amenity, spatial, causal)
+- **Phase 3**: Report generation
+
+**Output**: `data/analysis/results/` (unified parquet storage) + `L4_summary_report.md`
+
+See **[L4 Analysis Pipeline](./guides/l4-analysis-pipeline.md)** for details.
+
 ---
 
 ## Core Components

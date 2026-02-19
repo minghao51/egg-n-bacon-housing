@@ -4,7 +4,7 @@
 
 This document catalogs technical debt, known issues, security concerns, performance bottlenecks, and areas for improvement in the egg-n-bacon-housing project.
 
-**Last Updated**: 2026-02-05
+**Last Updated**: 2026-02-19
 **Status**: Active tracking
 
 ---
@@ -17,9 +17,12 @@ This document catalogs technical debt, known issues, security concerns, performa
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `scripts/core/stages/L3_export.py` | 1632 | Should be split into smaller functions |
+| `scripts/core/stages/L3_export.py` | 1639 | Should be split into smaller functions |
 | `scripts/dashboard/create_l3_unified_dataset.py` | 1443 | Duplicate logic with L3_export.py |
 | `scripts/core/metrics.py` | 914 | Complex statistical calculations |
+| `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` | 797 | Large analysis file |
+| `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` | 768 | Complex lease decay modeling |
+| `scripts/analytics/enhanced_mrt_analysis.py` | 756 | Duplicate MRT analysis |
 | `scripts/core/school_features.py` | 726 | Complex feature engineering |
 | `scripts/core/mrt_line_mapping.py` | 534 | Hardcoded station data |
 
@@ -78,6 +81,23 @@ from scripts.core.config import Config
 ---
 
 ## Known Issues
+
+### 0. TODO/FIXME Comments
+
+**Active TODOs Found**:
+
+| File | Line | Description | Status |
+|------|------|-------------|--------|
+| `scripts/data/fetch_macro_data.py` | 50 | Replace with actual MAS API call | TODO |
+| `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py` | 12 | Affordability index needs income data | TODO |
+| `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py` | 13 | ROI potential score needs rental data | TODO |
+
+**Resolved**:
+- `scripts/data/fetch_macro_data.py` - SingStat API integration implemented (CPI falls back to mock, GDP works)
+
+**Impact**: Incomplete functionality, missing data integrations
+
+**Recommendation**: Implement API integrations or mark as known limitations
 
 ### 1. Test Coverage Gaps
 
@@ -140,7 +160,15 @@ from scripts.core.config import Config
 
 **Environment Variables**:
 - `.env` file (not in git) - Good
-- But accidentally committing `.env` is a risk
+- All API keys loaded from environment (ONEMAP_TOKEN, GOOGLE_API_KEY)
+- No hardcoded secrets found in scripts (only test fixtures)
+
+**Current Pattern** (Good):
+```python
+# scripts/core/config.py
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+ONEMAP_TOKEN = os.getenv("ONEMAP_TOKEN")
+```
 
 **Recommendation**:
 - Add `.env` to `.gitignore` (already done)
@@ -416,10 +444,11 @@ from scripts.core.config import Config
 ## Summary
 
 **Critical Areas**:
-- Large file complexity (L3_export.py: 1632 lines)
+- Large file complexity (L3_export.py: 1639 lines)
 - Duplicate export logic (L3_export.py vs create_l3_unified_dataset.py)
 - Test coverage gaps (analytics, data processing)
 - Geocoding performance bottleneck
+- 3 active TODO comments requiring attention (MAS SORA API, affordability index, ROI score)
 
 **Quick Wins**:
 - Extract hardcoded data to CSV/JSON

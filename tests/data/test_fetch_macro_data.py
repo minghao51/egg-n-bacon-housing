@@ -1,8 +1,8 @@
 # tests/data/test_fetch_macro_data.py
-import pytest
 import pandas as pd
-from pathlib import Path
-from scripts.data.fetch_macro_data import fetch_sora_rates, fetch_cpi_data
+
+from scripts.data.fetch_macro_data import fetch_cpi_data, fetch_sora_rates
+
 
 def test_fetch_sora_rates_returns_dataframe():
     """Test SORA rate fetching returns DataFrame with correct columns."""

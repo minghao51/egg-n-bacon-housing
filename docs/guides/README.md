@@ -38,7 +38,21 @@ uv run python scripts/pipeline/run_pipeline.py --stage L0
 uv run python scripts/pipeline/run_pipeline.py --stage L1
 uv run python scripts/pipeline/run_pipeline.py --stage L2
 uv run python scripts/pipeline/run_pipeline.py --stage L3
+uv run python scripts/pipeline/run_pipeline.py --stage L4
+uv run python scripts/pipeline/run_pipeline.py --stage L5
 ```
+
+### L4 Analysis Pipeline
+
+```bash
+# Run full L4 (EDA + analysis scripts)
+uv run python scripts/core/stages/L4_analysis.py
+
+# Run EDA only
+uv run python scripts/analytics/analysis/market/analyze_investment_eda.py
+```
+
+See **[L4 Analysis Pipeline](./l4-analysis-pipeline.md)** for details.
 
 ### Data Refresh
 

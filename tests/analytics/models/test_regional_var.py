@@ -1,12 +1,13 @@
 # tests/analytics/models/test_regional_var.py
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from scripts.analytics.models.regional_var import (
     RegionalVARModel,
     check_stationarity,
-    select_lag_order
+    select_lag_order,
 )
+
 
 def test_regional_var_model_initialization():
     """Test VAR model can be initialized."""

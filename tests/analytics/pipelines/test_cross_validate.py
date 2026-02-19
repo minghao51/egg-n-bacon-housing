@@ -1,10 +1,11 @@
 # tests/analytics/pipelines/test_cross_validate.py
-import pytest
 import pandas as pd
+
 from scripts.analytics.pipelines.cross_validate_timeseries import (
+    evaluate_model_performance,
     run_rolling_validation,
-    evaluate_model_performance
 )
+
 
 def test_rolling_validation_returns_metrics():
     """Test rolling validation returns performance metrics."""

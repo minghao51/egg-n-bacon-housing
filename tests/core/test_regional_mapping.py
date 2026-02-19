@@ -1,6 +1,6 @@
 # tests/core/test_regional_mapping.py
-import pytest
 from scripts.core.regional_mapping import get_region_for_planning_area
+
 
 def test_ccr_planning_areas():
     """Test CCR planning areas mapped correctly."""

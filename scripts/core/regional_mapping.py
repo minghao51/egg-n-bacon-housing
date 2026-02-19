@@ -8,7 +8,6 @@ Groups 50+ planning areas into 7 regions for VAR modeling:
 - OCR East, North-East, North, West, Central
 """
 
-from typing import Dict, Optional
 
 # Regional mapping dictionary
 PLANNING_AREA_TO_REGION = {
@@ -136,7 +135,7 @@ PLANNING_AREA_TO_REGION = {
 }
 
 
-def get_region_for_planning_area(planning_area: str) -> Optional[str]:
+def get_region_for_planning_area(planning_area: str) -> str | None:
     """
     Get region for a given planning area.
 
@@ -172,7 +171,7 @@ def get_region_for_planning_area(planning_area: str) -> Optional[str]:
     return None
 
 
-def get_all_regional_mappings() -> Dict[str, str]:
+def get_all_regional_mappings() -> dict[str, str]:
     """
     Get all planning area to region mappings.
 

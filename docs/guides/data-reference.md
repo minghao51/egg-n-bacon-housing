@@ -44,6 +44,37 @@ This document provides a quick reference for the housing data available in the p
 
 ---
 
+## Analysis Results (Unified Storage)
+
+Results from L4 analysis pipeline are stored in `data/analysis/results/`:
+
+| Category | Description |
+|----------|-------------|
+| `eda/` | EDA outputs (appreciation, yields, scores) |
+| `market/` | Market analysis (rental trends) |
+| `amenity/` | Amenity impact analysis |
+| `spatial/` | Spatial analysis results |
+
+### Using Results
+
+```python
+from scripts.core.stages.helpers.analysis_helpers import (
+    save_analysis_result,
+    load_analysis_result,
+    list_analysis_results,
+)
+
+# Load a result
+df = load_analysis_result("eda", "investment_scores")
+
+# List all available results
+results = list_analysis_results()
+```
+
+See **[L4 Analysis Pipeline](./l4-analysis-pipeline.md)** for details.
+
+---
+
 ## Loading Data
 
 ```python

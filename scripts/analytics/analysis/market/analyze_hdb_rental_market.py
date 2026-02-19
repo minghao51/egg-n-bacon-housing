@@ -19,15 +19,14 @@ import seaborn as sns
 
 # Add project root to Python path
 from scripts.core.utils import add_project_to_path
+
 add_project_to_path(Path(__file__))
 
 from scripts.core.config import Config
+from scripts.core.stages.helpers.analysis_helpers import save_analysis_result
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -48,9 +47,9 @@ def load_rental_data() -> pd.DataFrame:
     df = pd.read_parquet(path)
 
     # Convert date
-    df['rent_approval_date'] = pd.to_datetime(df['rent_approval_date'], errors='coerce')
-    df['year'] = df['rent_approval_date'].dt.year
-    df['month'] = df['rent_approval_date'].dt.to_period('M').astype(str)
+    df["rent_approval_date"] = pd.to_datetime(df["rent_approval_date"], errors="coerce")
+    df["year"] = df["rent_approval_date"].dt.year
+    df["month"] = df["rent_approval_date"].dt.to_period("M").astype(str)
 
     logger.info(f"Loaded {len(df):,} rental records")
     logger.info(f"Date range: {df['rent_approval_date'].min()} to {df['rent_approval_date'].max()}")
@@ -75,8 +74,8 @@ def load_resale_data() -> pd.DataFrame:
     df = pd.read_parquet(path)
 
     # Convert date
-    df['month'] = pd.to_datetime(df['month'], errors='coerce').dt.to_period('M').astype(str)
-    df['year'] = pd.to_datetime(df['month']).dt.year
+    df["month"] = pd.to_datetime(df["month"], errors="coerce").dt.to_period("M").astype(str)
+    df["year"] = pd.to_datetime(df["month"]).dt.year
 
     logger.info(f"Loaded {len(df):,} resale records")
 
@@ -89,33 +88,71 @@ def analyze_rental_trends(rental_df: pd.DataFrame):
     Args:
         rental_df: HDB rental data
     """
-    logger.info("\n" + "="*60)
+    logger.info("\n" + "=" * 60)
     logger.info("RENTAL MARKET ANALYSIS")
-    logger.info("="*60)
+    logger.info("=" * 60)
 
     # Monthly rental trends
-    monthly_rent = rental_df.groupby(['year', 'town'])['monthly_rent'].median().reset_index()
-    monthly_rent = monthly_rent.groupby('year')['monthly_rent'].median()
+    monthly_rent = rental_df.groupby(["year", "town"])["monthly_rent"].median().reset_index()
+    monthly_rent_by_year = monthly_rent.groupby("year")["monthly_rent"].median()
 
     logger.info("\nMedian Monthly Rent by Year:")
-    for year, rent in monthly_rent.items():
+    for year, rent in monthly_rent_by_year.items():
         if year >= 2015:  # Show recent years
             logger.info(f"  {year}: ${rent:,.0f}")
 
+    # Save monthly trends
+    monthly_trend_df = monthly_rent_by_year.reset_index()
+    monthly_trend_df.columns = ["year", "median_monthly_rent"]
+    save_analysis_result(
+        df=monthly_trend_df,
+        category="market",
+        name="rental_trends_by_year",
+        description="Median monthly rent trends by year",
+    )
+
     # Rental by town
     logger.info("\nTop 10 Towns by Median Rent (Recent):")
-    recent_rental = rental_df[rental_df['year'] >= 2024]
-    town_rental = recent_rental.groupby('town')['monthly_rent'].agg(['median', 'count'])
-    town_rental = town_rental.sort_values('median', ascending=False).head(10)
+    recent_rental = rental_df[rental_df["year"] >= 2024]
+    town_rental = recent_rental.groupby("town")["monthly_rent"].agg(["median", "count"])
+    town_rental = town_rental.sort_values("median", ascending=False).head(10)
     for town, row in town_rental.iterrows():
         logger.info(f"  {town}: ${row['median']:,.0f} ({row['count']:,} rentals)")
 
+    # Save town rental
+    town_rental_df = (
+        recent_rental.groupby("town")["monthly_rent"]
+        .agg(["median", "count", "mean", "std"])
+        .reset_index()
+    )
+    town_rental_df.columns = ["town", "median_rent", "count", "mean_rent", "std_rent"]
+    save_analysis_result(
+        df=town_rental_df,
+        category="market",
+        name="rental_by_town",
+        description="Rental statistics by town (2024+)",
+    )
+
     # Rental by flat type
     logger.info("\nMedian Rent by Flat Type (Recent):")
-    flat_rental = recent_rental.groupby('flat_type')['monthly_rent'].agg(['median', 'count'])
-    flat_rental = flat_rental.sort_values('median', ascending=False)
+    flat_rental = recent_rental.groupby("flat_type")["monthly_rent"].agg(["median", "count"])
+    flat_rental = flat_rental.sort_values("median", ascending=False)
     for flat_type, row in flat_rental.iterrows():
         logger.info(f"  {flat_type}: ${row['median']:,.0f} ({row['count']:,} rentals)")
+
+    # Save flat type rental
+    flat_rental_df = (
+        recent_rental.groupby("flat_type")["monthly_rent"]
+        .agg(["median", "count", "mean", "std"])
+        .reset_index()
+    )
+    flat_rental_df.columns = ["flat_type", "median_rent", "count", "mean_rent", "std_rent"]
+    save_analysis_result(
+        df=flat_rental_df,
+        category="market",
+        name="rental_by_flat_type",
+        description="Rental statistics by flat type (2024+)",
+    )
 
 
 def compare_rental_vs_resale(rental_df: pd.DataFrame, resale_df: pd.DataFrame):
@@ -125,39 +162,36 @@ def compare_rental_vs_resale(rental_df: pd.DataFrame, resale_df: pd.DataFrame):
         rental_df: HDB rental data
         resale_df: HDB resale data
     """
-    logger.info("\n" + "="*60)
+    logger.info("\n" + "=" * 60)
     logger.info("RENTAL VS RESALE COMPARISON")
-    logger.info("="*60)
+    logger.info("=" * 60)
 
     # Merge rental and resale by town and flat type
     # Use recent data (2024 onwards)
-    recent_rental = rental_df[rental_df['year'] >= 2024].copy()
-    recent_resale = resale_df[resale_df['year'] >= 2024].copy()
+    recent_rental = rental_df[rental_df["year"] >= 2024].copy()
+    recent_resale = resale_df[resale_df["year"] >= 2024].copy()
 
     # Aggregate by town and flat type
-    rental_agg = recent_rental.groupby(['town', 'flat_type'])['monthly_rent'].median().reset_index()
-    resale_agg = recent_resale.groupby(['town', 'flat_type'])['resale_price'].median().reset_index()
+    rental_agg = recent_rental.groupby(["town", "flat_type"])["monthly_rent"].median().reset_index()
+    resale_agg = recent_resale.groupby(["town", "flat_type"])["resale_price"].median().reset_index()
 
     # Merge
-    comparison = pd.merge(
-        rental_agg,
-        resale_agg,
-        on=['town', 'flat_type'],
-        how='inner'
-    )
+    comparison = pd.merge(rental_agg, resale_agg, on=["town", "flat_type"], how="inner")
 
     # Calculate annualized rent
-    comparison['annual_rent'] = comparison['monthly_rent'] * 12
+    comparison["annual_rent"] = comparison["monthly_rent"] * 12
 
     # Calculate gross rental yield
-    comparison['rental_yield_pct'] = (comparison['annual_rent'] / comparison['resale_price']) * 100
+    comparison["rental_yield_pct"] = (comparison["annual_rent"] / comparison["resale_price"]) * 100
 
     logger.info("\nTop 15 Highest Rental Yields (by town + flat type):")
-    top_yields = comparison.sort_values('rental_yield_pct', ascending=False).head(15)
+    top_yields = comparison.sort_values("rental_yield_pct", ascending=False).head(15)
     for _, row in top_yields.iterrows():
-        logger.info(f"  {row['town']} - {row['flat_type']}: "
-                   f"${row['monthly_rent']:,.0f}/mo vs ${row['resale_price']:,.0f} = "
-                   f"{row['rental_yield_pct']:.2f}% yield")
+        logger.info(
+            f"  {row['town']} - {row['flat_type']}: "
+            f"${row['monthly_rent']:,.0f}/mo vs ${row['resale_price']:,.0f} = "
+            f"{row['rental_yield_pct']:.2f}% yield"
+        )
 
     # Summary statistics
     logger.info(f"\nRental Yield Summary:")
@@ -167,7 +201,7 @@ def compare_rental_vs_resale(rental_df: pd.DataFrame, resale_df: pd.DataFrame):
     logger.info(f"  Max yield: {comparison['rental_yield_pct'].max():.2f}%")
 
     # Count high-yield opportunities (>5%)
-    high_yield = comparison[comparison['rental_yield_pct'] > 5.0]
+    high_yield = comparison[comparison["rental_yield_pct"] > 5.0]
     logger.info(f"\nHigh-yield opportunities (>5%): {len(high_yield)} town/flat_type combos")
 
     return comparison
@@ -179,16 +213,16 @@ def analyze_rental_affordability(rental_df: pd.DataFrame):
     Args:
         rental_df: HDB rental data
     """
-    logger.info("\n" + "="*60)
+    logger.info("\n" + "=" * 60)
     logger.info("RENTAL AFFORDABILITY ANALYSIS")
-    logger.info("="*60)
+    logger.info("=" * 60)
 
-    recent_rental = rental_df[rental_df['year'] >= 2024]
+    recent_rental = rental_df[rental_df["year"] >= 2024]
 
     # Analyze rent distribution by flat type
-    for flat_type in ['1-Room', '2-Room', '3-Room', '4-Room', '5-Room']:
-        if flat_type in recent_rental['flat_type'].values:
-            flat_data = recent_rental[recent_rental['flat_type'] == flat_type]['monthly_rent']
+    for flat_type in ["1-Room", "2-Room", "3-Room", "4-Room", "5-Room"]:
+        if flat_type in recent_rental["flat_type"].values:
+            flat_data = recent_rental[recent_rental["flat_type"] == flat_type]["monthly_rent"]
 
             logger.info(f"\n{flat_type} Rent Distribution:")
             logger.info(f"  Min: ${flat_data.min():,.0f}")
@@ -213,31 +247,33 @@ def visualize_rental_market(rental_df: pd.DataFrame, resale_df: pd.DataFrame, ou
 
     # Set style
     sns.set_style("whitegrid")
-    plt.rcParams['figure.figsize'] = (14, 8)
+    plt.rcParams["figure.figsize"] = (14, 8)
 
     # 1. Monthly rent trend over time
     fig, ax = plt.subplots(figsize=(14, 6))
-    monthly_trend = rental_df.groupby('year')['monthly_rent'].median()
-    monthly_trend.plot(kind='line', marker='o', ax=ax)
-    ax.set_title('HDB Median Monthly Rent Trend (2015-2025)', fontsize=14, fontweight='bold')
-    ax.set_xlabel('Year', fontsize=12)
-    ax.set_ylabel('Median Monthly Rent (SGD)', fontsize=12)
+    monthly_trend = rental_df.groupby("year")["monthly_rent"].median()
+    monthly_trend.plot(kind="line", marker="o", ax=ax)
+    ax.set_title("HDB Median Monthly Rent Trend (2015-2025)", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Year", fontsize=12)
+    ax.set_ylabel("Median Monthly Rent (SGD)", fontsize=12)
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig(output_dir / 'rental_trend_over_time.png', dpi=150)
+    plt.savefig(output_dir / "rental_trend_over_time.png", dpi=150)
     logger.info(f"Saved: {output_dir / 'rental_trend_over_time.png'}")
     plt.close()
 
     # 2. Rent distribution by flat type
     fig, ax = plt.subplots(figsize=(14, 6))
-    recent_rental = rental_df[rental_df['year'] >= 2024]
-    sns.boxplot(data=recent_rental, x='flat_type', y='monthly_rent', ax=ax)
-    ax.set_title('HDB Monthly Rent Distribution by Flat Type (2024+)', fontsize=14, fontweight='bold')
-    ax.set_xlabel('Flat Type', fontsize=12)
-    ax.set_ylabel('Monthly Rent (SGD)', fontsize=12)
-    plt.xticks(rotation=45, ha='right')
+    recent_rental = rental_df[rental_df["year"] >= 2024]
+    sns.boxplot(data=recent_rental, x="flat_type", y="monthly_rent", ax=ax)
+    ax.set_title(
+        "HDB Monthly Rent Distribution by Flat Type (2024+)", fontsize=14, fontweight="bold"
+    )
+    ax.set_xlabel("Flat Type", fontsize=12)
+    ax.set_ylabel("Monthly Rent (SGD)", fontsize=12)
+    plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
-    plt.savefig(output_dir / 'rental_by_flat_type.png', dpi=150)
+    plt.savefig(output_dir / "rental_by_flat_type.png", dpi=150)
     logger.info(f"Saved: {output_dir / 'rental_by_flat_type.png'}")
     plt.close()
 
@@ -245,21 +281,20 @@ def visualize_rental_market(rental_df: pd.DataFrame, resale_df: pd.DataFrame, ou
 
 
 def save_rental_analysis(comparison: pd.DataFrame, output_dir: Path):
-    """Save rental analysis results.
+    """Save rental analysis results to unified storage.
 
     Args:
         comparison: Rental vs resale comparison
-        output_dir: Directory to save results
+        output_dir: Directory to save results (kept for backward compat)
     """
     logger.info("\nSaving rental analysis results...")
 
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Save comparison
-    comparison_path = output_dir / 'rental_vs_resale_comparison.csv'
-    comparison.to_csv(comparison_path, index=False)
-    logger.info(f"Saved rental vs resale comparison to {comparison_path}")
+    save_analysis_result(
+        df=comparison,
+        category="market",
+        name="rental_vs_resale_comparison",
+        description="Rental yield comparison by town and flat type",
+    )
 
 
 def main():
@@ -297,13 +332,19 @@ def main():
     # Save results
     if not comparison.empty:
         # Re-run comparison to get the dataframe
-        recent_rental = rental_df[rental_df['year'] >= 2024].copy()
-        recent_resale = resale_df[resale_df['year'] >= 2024].copy()
-        rental_agg = recent_rental.groupby(['town', 'flat_type'])['monthly_rent'].median().reset_index()
-        resale_agg = recent_resale.groupby(['town', 'flat_type'])['resale_price'].median().reset_index()
-        comparison = pd.merge(rental_agg, resale_agg, on=['town', 'flat_type'], how='inner')
-        comparison['annual_rent'] = comparison['monthly_rent'] * 12
-        comparison['rental_yield_pct'] = (comparison['annual_rent'] / comparison['resale_price']) * 100
+        recent_rental = rental_df[rental_df["year"] >= 2024].copy()
+        recent_resale = resale_df[resale_df["year"] >= 2024].copy()
+        rental_agg = (
+            recent_rental.groupby(["town", "flat_type"])["monthly_rent"].median().reset_index()
+        )
+        resale_agg = (
+            recent_resale.groupby(["town", "flat_type"])["resale_price"].median().reset_index()
+        )
+        comparison = pd.merge(rental_agg, resale_agg, on=["town", "flat_type"], how="inner")
+        comparison["annual_rent"] = comparison["monthly_rent"] * 12
+        comparison["rental_yield_pct"] = (
+            comparison["annual_rent"] / comparison["resale_price"]
+        ) * 100
 
         save_rental_analysis(comparison, output_dir)
 

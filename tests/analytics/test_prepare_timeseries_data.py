@@ -1,11 +1,12 @@
 # tests/analytics/test_prepare_timeseries_data.py
-import pytest
 import pandas as pd
+
 from scripts.analytics.pipelines.prepare_timeseries_data import (
     aggregate_to_regional_timeseries,
     create_area_timeseries,
-    handle_missing_months
+    handle_missing_months,
 )
+
 
 def test_aggregate_to_regional_creates_correct_columns():
     """Test regional aggregation creates required columns."""
@@ -39,7 +40,6 @@ def test_handle_missing_months_interpolates():
 
 def test_create_area_timeseries_filters_low_volume_areas():
     """Test low-volume areas are filtered out."""
-    from scripts.analytics.pipelines.prepare_timeseries_data import MIN_MONTHS_REQUIRED
 
     # Create area with only 10 months (below MIN_MONTHS_REQUIRED=24)
     # Need to include transaction_date column for the function

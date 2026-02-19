@@ -4,6 +4,11 @@ L4 Analysis Pipeline
 
 Orchestrates execution of all analysis scripts in scripts/analysis/ and generates a summary report.
 
+Pipeline phases:
+1. EDA Phase: Quick investment analysis summaries (data quality, appreciation, yields, scoring)
+2. Analysis Phase: Deep-dive analysis scripts (spatial, market, amenity, etc.)
+3. Report Generation: Summary markdown report
+
 Usage:
     uv run python core/pipeline/L4_analysis.py
 """  # noqa: N999
@@ -33,6 +38,23 @@ SCRIPT_ORDER = [
     "analyze_feature_importance",
     "market_segmentation_advanced",
 ]
+
+
+def run_eda_phase() -> dict:
+    """Run EDA phase before analysis scripts."""
+    logger.info("=" * 60)
+    logger.info("PHASE 1: EXPLORATORY DATA ANALYSIS")
+    logger.info("=" * 60)
+
+    try:
+        from scripts.analytics.analysis.market.analyze_investment_eda import run_eda
+
+        run_eda()
+        logger.info("✅ EDA Phase Complete")
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"❌ EDA Phase Failed: {e}")
+        return {"status": "failed", "error": str(e)}
 
 
 def discover_scripts() -> list:
@@ -216,6 +238,11 @@ def main():
     logger.info("=" * 60)
     logger.info("L4 ANALYSIS PIPELINE")
     logger.info("=" * 60)
+
+    # Phase 1: Run EDA
+    logger.info("-" * 60)
+    run_eda_phase()
+    logger.info("-" * 60)
 
     Config.ANALYSIS_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 

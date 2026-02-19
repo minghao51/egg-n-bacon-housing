@@ -1,10 +1,11 @@
 # tests/analytics/pipelines/test_forecast_appreciation.py
-import pytest
 import pandas as pd
+
 from scripts.analytics.pipelines.forecast_appreciation import (
+    generate_regional_forecasts,
     run_forecasting_pipeline,
-    generate_regional_forecasts
 )
+
 
 def test_generate_regional_forecasts():
     """Test regional forecast generation."""
@@ -34,7 +35,7 @@ def test_generate_regional_forecasts():
 def test_run_forecasting_pipeline():
     """Test complete forecasting pipeline."""
     # This test uses mock data since we don't have the actual L5 datasets yet
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import patch
 
     # Mock the load_parquet function to return sample data
     mock_regional_data = pd.DataFrame({

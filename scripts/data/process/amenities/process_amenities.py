@@ -194,24 +194,13 @@ def main():
     else:
         logger.warning(f"⚠️  Park data not found at {park_path}")
 
-    # 9. Shopping malls (from Wikipedia)
+    # 9. Shopping malls (geocoded)
     try:
-        mall_df = load_parquet("raw_wiki_shopping_mall")
-        # The column is 'shopping_mall', rename it to 'name'
-        if "shopping_mall" in mall_df.columns:
-            mall_df = mall_df.rename(columns={"shopping_mall": "name"})
-        elif "Name" in mall_df.columns:
-            mall_df = mall_df.rename(columns={"Name": "name"})
-        elif "name" not in mall_df.columns:
-            logger.warning(f"⚠️  Mall data has unexpected columns: {list(mall_df.columns)}")
-            raise ValueError("Unexpected column structure")
-
-        mall_df["type"] = "mall"
-        mall_df["name"] = mall_df["name"].str.lower()
+        mall_df = load_parquet("L1_amenity_mall")
         mall_df = mall_df[["name", "type", "lat", "lon"]]
         mall_df["lat"] = mall_df["lat"].astype(float)
         mall_df["lon"] = mall_df["lon"].astype(float)
-        logger.info(f"✅ Loaded {len(mall_df)} mall locations from Wikipedia")
+        logger.info(f"✅ Loaded {len(mall_df)} mall locations from geocoded data")
         amenity_dfs.append(mall_df)
     except Exception as e:
         logger.warning(f"⚠️  Mall data error: {e}")

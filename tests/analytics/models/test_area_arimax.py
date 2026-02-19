@@ -1,11 +1,9 @@
 # tests/analytics/models/test_area_arimax.py
-import pytest
-import pandas as pd
 import numpy as np
-from scripts.analytics.models.area_arimax import (
-    AreaARIMAXModel,
-    select_arima_order
-)
+import pandas as pd
+
+from scripts.analytics.models.area_arimax import AreaARIMAXModel, select_arima_order
+
 
 def test_area_arimax_initialization():
     """Test ARIMAX model can be initialized."""
