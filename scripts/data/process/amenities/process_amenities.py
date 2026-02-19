@@ -186,7 +186,15 @@ def main():
     else:
         logger.warning(f"⚠️  Childcare data not found at {childcare_path}")
 
-    # 8. Shopping malls (from Wikipedia)
+    # 8. Parks (from NParks)
+    park_path = datagov_path / "NParksParksandNatureReserves.geojson"
+    if park_path.exists():
+        park_df = parse_datagov_geojson(park_path, "park", "NAME")
+        amenity_dfs.append(park_df)
+    else:
+        logger.warning(f"⚠️  Park data not found at {park_path}")
+
+    # 9. Shopping malls (from Wikipedia)
     try:
         mall_df = load_parquet("raw_wiki_shopping_mall")
         # The column is 'shopping_mall', rename it to 'name'
@@ -240,19 +248,12 @@ def main():
     if park_path.exists():
         park_gdf = gpd.read_file(park_path)
         park_gdf = park_gdf.to_crs("EPSG:4326")
-        # Extract centroid coordinates for parks (non-point geometries)
+        # Extract centroid coordinates for parks (Polygon/MultiPolygon geometries)
         park_gdf["lon"] = park_gdf.geometry.centroid.x
         park_gdf["lat"] = park_gdf.geometry.centroid.y
         park_gdf["type"] = "park"
-        # Extract name from Description if it exists, otherwise use Name column
-        if "Description" in park_gdf.columns:
-            park_gdf["name"] = [
-                extract_html_name(str(desc), "NAME") for desc in park_gdf["Description"]
-            ]
-        elif "Name" in park_gdf.columns:
-            park_gdf["name"] = park_gdf["Name"].str.lower()
-        else:
-            park_gdf["name"] = ""
+        # Use NAME column directly
+        park_gdf["name"] = park_gdf["NAME"].str.lower()
         park_gdf = park_gdf[["name", "type", "lon", "lat", "geometry"]]
         park_gdf.to_file(l1_data_path / "park.geojson", driver="GeoJSON")
         logger.info("✅ Saved park.geojson")
