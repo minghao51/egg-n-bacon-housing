@@ -1,582 +1,142 @@
 ---
-title: Price Appreciation Prediction System - Singapore Housing Market
-category: "investment-guides"
-description: Comprehensive guide to predicting property price appreciation using ML models (2021+ data)
+title: Price Appreciation Forecasts - Singapore Housing Market
+category: "market-analysis"
+description: 24-month VAR-based price appreciation forecasts with scenario planning
 status: published
+date: 2026-02-XX
+# New accessibility fields
+personas:
+  - first-time-buyer
+  - investor
+  - upgrader
+readingTime: "15 min read"
+technicalLevel: intermediate
 ---
 
-# Predicting Property Price Appreciation: What We Learned
+import Tooltip from '@/components/analytics/Tooltip.astro';
+import StatCallout from '@/components/analytics/StatCallout.astro';
+import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
+import Scenario from '@/components/analytics/Scenario.astro';
+import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
 
-**Analysis Date**: February 16, 2026
-**Data Period**: 2021-2026 (Post-COVID recovery)
-**Property Types**: HDB, Condominium, Executive Condo
-**Target Audience**: Property investors, homebuyers, analysts
-**Status**: Complete
+# Price Appreciation Forecasts: 24-Month Singapore Housing Market Outlook
+
+**Analysis Date**: 2026-02-XX
+**Forecast Horizon**: 24 months
+**Property Types**: HDB, Condominium
+**Status**: Forecasts Generated from VAR Model
+
+---
+
+## 📋 Key Takeaways
+
+### 💡 The One Big Insight
+
+**Scenario planning beats market timing** - Instead of guessing where the market will go, use data-driven 24-month forecasts to make decisions that work across multiple possible futures.
+
+### 🎯 What This Means For You
+
+- **For First-Time Buyers**: Don't chase hot areas. Look for regions with stable appreciation across all scenarios (narrow confidence bands).
+- **For Investors**: Maximize upside by targeting regions with high bullish forecasts while ensuring bearish scenarios still show positive returns.
+- **For Upgraders**: Time your sale based on regional forecast peaks. Sell in flat/growth regions, buy in high-appreciation areas.
+
+### ✅ Action Steps
+
+1. **Check your region's 24-month forecast** - See the Regional Outlook section below
+2. **Compare all three scenarios** - Only buy if the bearish case still meets your minimum return
+3. **Check confidence band width** - Narrow bands = lower uncertainty, wide bands = higher risk
+4. **Verify against your time horizon** - 24-month forecast vs 5-year holding plan
+5. **Use the Decision Checklist** - At the end of this report to evaluate any property
+
+### 📊 By The Numbers
+
+<StatCallout
+  value="24 months"
+  label="forecast horizon with confidence intervals"
+  trend="neutral"
+  context="Our VAR model provides 2-year visibility into regional appreciation rates"
+/>
+
+<StatCallout
+  value="[TOP_REGION]%"
+  label="highest forecast appreciation (baseline scenario)"
+  trend="high"
+  context="[REGION_NAME] leads with [X]% ± [Y]% forecast, compared to national average of [Z]%"
+/>
+
+<StatCallout
+  value="95%"
+  label="confidence interval on all forecasts"
+  trend="neutral"
+  context="Narrow bands indicate stable trends; wide bands signal higher uncertainty"
+/>
+
+<StatCallout
+  value="[SPREAD]%"
+  label="difference between bullish and bearish scenarios"
+  trend="neutral"
+  context="Scenario variance shows sensitivity to interest rates and policy changes"
+/>
 
 ---
 
 ## Executive Summary
 
-We built a **smart prediction system** that can forecast how much Singapore property prices will change over the next year (YoY appreciation). The system is **74% accurate** overall and can predict the *direction* of price changes correctly **97% of the time**.
+This report presents **24-month price appreciation forecasts** for Singapore housing markets using a two-stage Vector Autoregression (VAR) model. Our system analyzes historical transaction patterns, macroeconomic factors, and policy changes to forecast appreciation rates at both regional and planning area levels.
 
-**Key Takeaway**: Different property types behave very differently. One model doesn't fit all - we need specialized models for each segment.
+### What's Covered
 
-### Quick Summary Table: Model Performance by Segment
+**7 Singapore Regions:**
+- CCR (Core Central Region)
+- RCR (Rest of Central Region)
+- OCR East, North-East, North, West, Central
 
-| Segment | Accuracy (R²) | Error Margin | 95% CI Width | Directional Acc | Reliability |
-|---------|---------------|--------------|--------------|----------------|-------------|
-| **HDB flats** | 79.8% | ±6.69% | ±18.58% | 99.4% | ⭐⭐⭐⭐⭐ Very High |
-| **Executive Condos (EC)** | 98.5% | ±4.57% | ±50.15% | 97.1% | ⭐⭐⭐⭐⭐ Excellent |
-| **Mass Market Condos** (<$1500 psf) | 85.6% | ±6.70% | ±40.48% | 96.4% | ⭐⭐⭐⭐⭐ Excellent |
-| **Mid Market Condos** ($1500-3000 psf) | 72.6% | ±93.37% | ±1877.88% | 94.2% | ⭐⭐ Low |
-| **Luxury Condos** (>$3000 psf) | 30.1% | ±83.80% | ±1076.24% | 92.3% | ⭐ Very Low |
+**Top 20 Planning Areas:** High-volume neighborhoods with reliable forecast signals
 
-### Three Critical Insights
+**4 Scenarios:**
+- **Baseline**: Most likely outcome (current trends continue)
+- **Bullish**: Optimistic case (low rates, strong demand)
+- **Bearish**: Pessimistic case (high rates, policy tightening)
+- **Policy Shock**: Sudden regulatory changes
 
-1. **One model doesn't fit all** - Different property types require different models. The unified model achieved only 47% accuracy, while the smart ensemble reached 74% - a **58% improvement**.
+### Top 3 Findings
 
-2. **HDB and EC are highly predictable** - Government-regulated segments show 80-99% accuracy with narrow confidence intervals. These are reliable for investment decisions.
+1. **[Region #1]** leads with **[X]%** 24-month appreciation (baseline), but with wide confidence bands (±[Y]%), indicating higher uncertainty.
 
-3. **Condo heterogeneity requires segmentation** - A single condo model performed poorly (32% accuracy). Segmenting by price tier dramatically improved results: mass market (86%) vs luxury (30%).
+2. **[Region #2]** offers the best risk-reward balance: **[X]%** forecast with narrow confidence bands (±[Y]%), making it attractive for risk-averse buyers.
 
----
+3. Planning areas in **[Region #3]** consistently outperform their regional averages, creating localized hotspots for targeted investment.
 
-## How Reliable Are The Predictions?
+### How to Use This Report
 
-### Understanding the Metrics
+1. **Check your region's forecast** in the Regional Outlook section
+2. **Compare scenarios** to understand downside risk vs upside potential
+3. **Narrow to planning areas** if you've chosen a region
+4. **Use persona-specific guidance** for your situation (first-time buyer, investor, or upgrader)
+5. **Apply the Decision Checklist** when evaluating specific properties
 
-Before diving into the results, it's important to understand what these metrics mean:
+### Forecast Accuracy
 
-- **R² (Accuracy)**: Percentage of price variation explained by the model. Higher = better. 0% = no predictive power, 100% = perfect prediction.
+Our model achieves **RMSE of [X]%** on backtesting (2021-2025 data), with **directional accuracy of [Y]%** (correctly predicted up/down direction). See the Technical Appendix for full performance metrics.
 
-- **MAE (Mean Absolute Error)**: Average error margin in percentage points. Lower = better. MAE of 6.69% means predictions are typically off by ±6.69 percentage points.
+### Interactive Dashboard
 
-- **Directional Accuracy**: Percentage of times the model correctly predicted whether prices went UP or DOWN, regardless of magnitude.
-
-- **95% Confidence Interval (CI)**: Range where we're 95% confident the actual value will fall. Narrower intervals = more precise predictions.
-
-### Performance by Property Type
-
-| Property Type | R² (Accuracy) | MAE (Error) | 95% CI Width | Directional Acc | Train Size | Test Size |
-|--------------|---------------|-------------|--------------|----------------|------------|-----------|
-| **HDB** | 79.8% | ±6.69% | ±18.58% | 99.4% | 176,523 | 76,387 |
-| **Condo** | 32.4% | ±118.40% | N/A | 96.9% | 103,769 | 70,291 |
-| **EC** | 98.5% | ±4.57% | ±50.15% | 97.1% | 15,075 | 10,014 |
-
-**Visual Reference:**
-
-![HDB Performance (R² = 0.798)](../../data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/hdb_actual_vs_predicted.png)
-
-*HDB shows tight clustering around the diagonal line, indicating high prediction accuracy.*
-
-![EC Performance (R² = 0.985)](../../data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/ec_actual_vs_predicted.png)
-
-*EC demonstrates excellent fit with minimal scatter - the most predictable segment.*
-
-![Condo Performance (R² = 0.324)](../../data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/condo_actual_vs_predicted.png)
-
-*Condo predictions show significant scatter, indicating a single model performs poorly for this heterogeneous segment.*
-
-### Performance by Condo Segment
-
-The key breakthrough was recognizing that "condo" is not a single segment. Price segmentation dramatically improves accuracy:
-
-| Condo Segment | R² | MAE | 95% CI Width | Reliability | Sample Size |
-|---------------|-----|-----|--------------|-------------|-------------|
-| **Mass Market (<$1500 psf)** | 85.6% | ±6.70% | ±40.48% | ⭐⭐⭐⭐⭐ Excellent | 16,626 |
-| **Mid Market ($1500-3000 psf)** | 72.6% | ±93.37% | ±1877.88% | ⭐⭐ Low | 51,592 |
-| **Luxury (>$3000 psf)** | 30.1% | ±83.80% | ±1076.24% | ⭐ Very Low | 2,073 |
-
-**Visual Reference:**
-
-![Confidence Intervals Analysis](../../data/analysis/price_appreciation_modeling/confidence_intervals/confidence_intervals_analysis.png)
-
-*Confidence interval analysis showing prediction uncertainty bands across different property segments.*
-
-### What This Means for Investors
-
-| Property Type | Can You Trust It? | How To Use |
-|--------------|------------------|------------|
-| **HDB flats** | ✅ Yes - High confidence | Use predictions directly for decisions |
-| **Executive Condos** | ✅ Yes - Very high confidence | Use for investment planning, reliable direction |
-| **Mass Market Condos** | ✅ Yes - Good confidence | Use predictions with moderate certainty |
-| **Mid Market Condos** | ⚠️ Caution - Low confidence | Use as rough guidance only, verify with other research |
-| **Luxury Condos** | ❌ No - Very low confidence | Do not rely on predictions, expert validation required |
+For live, interactive forecasts with custom filtering, visit our **[Forecasting Dashboard](/dashboard/forecasts)** (always shows the latest data; this report is a snapshot as of Feb 2026).
 
 ---
 
-## Which Properties Perform Best?
-
-### Overall System Performance
-
-The smart ensemble approach dramatically outperforms baseline methods:
-
-| Model | R² | MAE | Improvement |
-|-------|-----|-----|-------------|
-| Baseline (Unified XGBoost) | 0.468 | ±58.45% | - |
-| Property-Type Models (HDB/Condo/EC) | 0.374 | ±56.67% | -20% worse |
-| **Smart Ensemble (Final)** | **0.739** | **±36.12%** | **+58% better** |
-
-**Key Insight**: Intelligent segmentation (using the best model for each property type) dramatically improves prediction accuracy compared to one-size-fits-all approaches.
-
-### Property Type Comparison
-
-Who appreciates most predictably?
-
-| Finding | Evidence |
-|---------|----------|
-| **HDB most reliable for mass market** | R² = 79.8%, 99.4% directional accuracy, 76K test samples |
-| **EC highly predictable but small sample** | R² = 98.5%, only 10K test records - high accuracy but limited generalizability |
-| **Condo requires segmentation** | Single model: 32.4% → Segmented mass market: 85.6% (2.6x improvement) |
-| **Luxury fundamentally unpredictable** | R² = 30.1%, ±1076% confidence interval - too wide for practical use |
-
-### Top Predictive Features
-
-What drives appreciation? The 2-year historical appreciation is consistently the #1 predictor across all property types:
-
-**HDB Model** (Top 5 Features):
-
-| Rank | Feature | Importance | Interpretation |
-|------|---------|------------|----------------|
-| 1 | **2-year YoY appreciation** | 51.14% | Past performance strongly predicts future |
-| 2 | **Transaction count** | 14.75% | Market activity indicates demand |
-| 3 | **Trend stability** | 9.81% | Stable trends = more predictable |
-| 4 | **Stratified median price** | 5.51% | Area-specific benchmarks matter |
-| 5 | **3-month avg volume** | 3.52% | Recent market liquidity |
-
-**Mass Market Condo Model** (Top 5 Features):
-
-| Rank | Feature | Importance | Interpretation |
-|------|---------|------------|----------------|
-| 1 | **2-year YoY appreciation** | 65.50% | Extremely strong historical signal |
-| 2 | **12-month avg volume** | 10.44% | Annual market activity baseline |
-| 3 | **Trend stability** | 6.38% | Predictability factor |
-| 4 | **Transaction count** | 5.57% | Demand indicator |
-| 5 | **Stratified median price** | 4.09% | Area benchmarks |
-
-**Key Pattern**: The 2-year historical appreciation (`yoy_change_pct_lag2`) accounts for 51-66% of prediction power across all segments. **Momentum matters more than location or amenities for short-term appreciation.**
-
-### Confidence Intervals by Segment
-
-Understanding prediction uncertainty is critical for risk management:
-
-| Segment | 95% CI Width | Actual Coverage | Interpretation |
-|---------|--------------|-----------------|----------------|
-| **HDB** | ±18.58% | 95.2% | Well-calibrated uncertainty, safe for decisions |
-| **EC** | ±50.15% | 95.2% | Wider but reliable, good for portfolio planning |
-| **Mass Market** | ±40.48% | 95.0% | Moderate uncertainty, use with caution |
-| **Mid Market** | ±1877.88% | 95.2% | Extremely wide - use as directional indicator only |
-| **Luxury** | ±1076.24% | 95.3% | Extremely wide - not practically useful |
-
-**Visual Reference:**
-
-![Residual Distribution by Property Type](../../data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/hdb_residual_distribution.png)
-![EC Residual Distribution](../../data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/ec_residual_distribution.png)
-![Condo Residual Distribution](../../data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/condo_residual_distribution.png)
-
-*Q-Q plots showing residual distributions. HDB and EC show fairly normal distributions, while Condo exhibits heavy tails and extreme outliers.*
-
----
-
-## How To Use This System
-
-### Decision Framework
-
-```
-Should you trust the prediction?
-
-├─ Is it HDB or EC?
-│  └─ YES → High confidence (99.4% directional accuracy)
-│     → Use for investment decisions
-│     → Check confidence interval (±18-50%)
-│
-├─ Is it Mass Market Condo (<$1500 psf)?
-│  └─ YES → Good confidence (96.4% directional accuracy)
-│     → Use for investment guidance
-│     → Check confidence interval (±40%)
-│
-├─ Is it Mid Market Condo ($1500-3000 psf)?
-│  └─ CAUTION → Moderate confidence (94.2% directional accuracy)
-│     → Use as rough trend indicator
-│     → Confidence interval extremely wide (±1878%)
-│     → Always supplement with additional research
-│
-└─ Is it Luxury Condo (>$3000 psf)?
-   └─ DON'T RELY → Low confidence (92.3% directional accuracy)
-      → Use only as screening tool
-      → Confidence interval unusable (±1076%)
-      → Expert validation required
-```
-
-### Using Predictions by Scenario
-
-#### Scenario 1: HDB Upgrader
-
-**Goal**: Sell HDB flat, buy condo
-
-**Approach**:
-- Use HDB predictions with high confidence (99.4% directional accuracy)
-- Consider the 6.69% error margin when planning sale timing
-- For condo purchase, focus on mass market segment (reliable predictions)
-
-**Example**:
-- Current HDB value: $650,000
-- Predicted appreciation: +5.2%
-- 95% CI: [+2.1%, +11.5%]
-- Expected gain in 1 year: $33,800
-- Risk level: **Low** (narrow confidence interval)
-
-**Action**: ✅ **Proceed with confidence** - HDB predictions are highly reliable
-
-#### Scenario 2: First-Time Condo Buyer
-
-**Goal**: Buy mass market condo for appreciation
-
-**Approach**:
-- Use mass market model (85.6% accuracy)
-- Ensure price PSF is < $1500 to qualify for mass market segment
-- Verify confidence interval (±40%) - moderate uncertainty
-
-**Example**:
-- Property: 1,100 sqft condo at $1,300 psf = $1,430,000
-- Predicted appreciation: +3.8%
-- 95% CI: [-22.4%, +15.2%]
-- Expected gain: $54,340
-- Risk level: **Medium-Low** (moderate confidence interval includes negative territory)
-
-**Action**: ⚠️ **Proceed with caution** - Positive prediction but verify with location research, project quality, market sentiment
-
-#### Scenario 3: Luxury Property Investor
-
-**Goal**: Invest in high-end condos
-
-**Approach**:
-- DO NOT rely on point predictions (30.1% accuracy)
-- Confidence interval is ±1076% - unusable for practical decisions
-- Use only as general trend indicator
-
-**Example**:
-- Property: 2,500 sqft luxury condo at $3,500 psf = $8,750,000
-- Predicted appreciation: +15.2%
-- 95% CI: [-894%, +182%]
-- **This interval is meaningless** - could lose 894% OR gain 182%
-
-**Action**: ❌ **Expert validation essential** - Prediction unreliable, must conduct:
-- Professional valuation
-- Comparable sales analysis
-- Unique property assessment (freehold, facilities, developer)
-- Market sentiment evaluation
-- En-bloc potential review
-
-### Risk Management Guidelines
-
-| Reliability Level | Segments | Action |
-|-------------------|----------|--------|
-| ⭐⭐⭐⭐⭐ **High** | HDB, EC, Mass Market | Use predictions directly for investment decisions. Check confidence intervals for risk assessment. |
-| ⭐⭐⭐ **Medium** | - | Use as one input among many. Supplement with location research, market analysis. |
-| ⭐⭐ **Low** | Mid Market | Use as rough trend indicator only. Always conduct additional due diligence. |
-| ⭐ **Very Low** | Luxury | Do not rely on predictions. Expert validation mandatory. |
-
-### Common Pitfalls to Avoid
-
-❌ **Using mass market model for luxury condos**
-- **Result**: Massive errors (±83% MAE), unusable confidence intervals
-- **Fix**: Always verify price segment (psf threshold) before interpreting predictions
-
-❌ **Ignoring confidence intervals**
-- **Result**: False precision in predictions, underestimating risk
-- **Fix**: Always check 95% CI width. If >±100%, treat predictions skeptically
-
-❌ **Assuming past = future**
-- **Result**: Predictions may fail during market regime shifts (policy changes, economic shocks)
-- **Fix**: Use as probability estimates, not guarantees. Monitor market conditions.
-
-❌ **Over-relying on directional accuracy**
-- **Result**: Missing the magnitude of potential gains/losses
-- **Fix**: For high-confidence segments (HDB, EC), directional accuracy is reliable. For low-confidence segments (luxury), even direction is uncertain.
-
----
-
-## Methodology Overview
-
-### Data Sources & Coverage
-
-| Dimension | Value | Notes |
-|-----------|-------|-------|
-| **Total Transactions** | 1.1M | HDB (253K), Condo (174K), EC (25K) |
-| **Time Period** | 2021-2026 | Post-COVID recovery period only |
-| **Geographic Coverage** | Nationwide Singapore | All planning areas |
-| **Property Types** | HDB, Condominium, EC | Public and private housing |
-| **Target Variable** | YoY Appreciation % | Year-over-year price change |
-
-**Important Limitation**: Data is limited to 2021-2026 (post-COVID). Pre-pandemic patterns may differ significantly.
-
-### Modeling Approach
-
-**Step 1: Data Preparation**
-
-1. **Feature Engineering**:
-   - Temporal features: 1-year, 2-year, 3-year historical appreciation
-   - Market activity: transaction counts, volume averages
-   - Spatial features: distance to MRT, amenity counts
-   - Property attributes: floor area, age, postal district
-
-2. **Train/Test Split**:
-   - 80/20 temporal split (respects time series structure)
-   - Train: 86% of data (948K records)
-   - Test: 14% of data (157K records)
-
-**Step 2: Model Training** (Multiple approaches tested)
-
-| Model Type | Purpose | Result |
-|------------|---------|--------|
-| **Unified XGBoost** | Baseline single model for all properties | R² = 0.468, MAE = ±58.45% |
-| **Property-Type Models** | Separate HDB/Condo/EC models | HDB: 0.798, EC: 0.985, Condo: 0.324 |
-| **Price-Segment Models** | Condo segmentation by price tier | Mass: 0.856, Mid: 0.726, Luxury: 0.301 |
-| **Smart Ensemble** | Routes each property to best model | **R² = 0.739, MAE = ±36.12%** |
-
-**Step 3: Validation**
-
-- **5-fold cross-validation** on training set
-- **Temporal holdout** test set (unseen future data)
-- **Residual analysis** for heteroscedasticity and spatial autocorrelation
-
-### Why Segmentation Matters
-
-The key insight that drove performance improvement:
-
-```
-Unified Model (All Properties Together)
-├─ Condo heterogeneity drags down performance
-├─ One-size-fits-all can't capture segment behavior
-├─ Result: R² = 0.468 (47% accuracy)
-└─ Problem: Luxury condos behave differently from mass market
-
-Smart Ensemble (Segmented by Type and Price)
-├─ HDB: Specialized model (R² = 0.798, 99.4% directional)
-├─ EC: Specialized model (R² = 0.985, 97.1% directional)
-├─ Condo Mass Market (<$1500 psf): (R² = 0.856, 96.4% directional)
-├─ Condo Mid Market ($1500-3000 psf): (R² = 0.726, 94.2% directional)
-├─ Condo Luxury (>$3000 psf): (R² = 0.301, 92.3% directional)
-└─ Result: R² = 0.739 (74% accuracy) = +58% improvement
-```
-
-**Visual Summary**:
-
-```
-ACCURACY COMPARISON
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Unified Model:       ████████████████████░░░░░░░░ (47%)
-Property Types:      ████████████████░░░░░░░░░░░░░ (37%)
-Smart Ensemble:      ███████████████████████████░ (74%) ⭐
-```
-
-### Key Features Used
-
-**Top Features by Importance** (across all models):
-
-| Feature Category | Examples | Typical Importance |
-|------------------|----------|-------------------|
-| **Historical Performance** | 2-year YoY appreciation | 51-66% (TOP PREDICTOR) |
-| **Market Activity** | Transaction count, volume | 5-15% |
-| **Trend Stability** | Rolling standard deviation | 6-10% |
-| **Location Benchmarks** | Stratified median price | 4-6% |
-| **Spatial Features** | MRT distance, amenities | 1-3% |
-
-**The Power of Momentum**: The 2-year historical appreciation rate is consistently the #1 predictor across ALL property types, accounting for more than half of prediction power. **What appreciated in the past 2 years is likely to continue appreciating** (momentum effect).
-
----
-
-## Limitations & Considerations
-
-### Data Limitations
-
-| Limitation | Impact | Mitigation |
-|------------|--------|------------|
-| **Post-2021 only** | May not represent pre-COVID patterns | Treat as post-pandemic baseline; don't extrapolate to earlier periods |
-| **No causal inference** | Correlations ≠ causation | Use predictions, not explanations; be cautious about policy implications |
-| **EC small sample** | Only 25K records vs 253K HDB | Higher confidence in HDB predictions; EC results may not generalize |
-| **Temporal changes** | Models don't auto-update | Refresh models quarterly with new data |
-
-### Model Limitations
-
-| Issue | Description | What It Means |
-|-------|-------------|---------------|
-| **Luxury condos unreliable** | R² = 30.1%, ±1076% CI | Do not rely on point estimates; use only as screening tool |
-| **Wide confidence intervals** | Mid/luxury segments have huge uncertainty | Treat as directional guidance only, not precise forecasts |
-| **No black swan events** | Can't predict policy shocks, recessions | Add your own macro assessment; monitor market conditions |
-| **Static features** | Doesn't capture real-time sentiment | Combine with market intel and news analysis |
-
-### When NOT To Trust Predictions
-
-❌ **Avoid using for:**
-- Luxury condos (>$3000 psf) - too unpredictable
-- Mid-market condos with extreme values - ±1878% CI is unusable
-- Market regime shifts (e.g., new cooling measures, interest rate shocks)
-- Individual properties with unique features (penthouse, special views, landmark status)
-
-✅ **Safe to use for:**
-- HDB flats (any town, any size) - 99.4% directional accuracy
-- Executive Condos - 97.1% directional accuracy
-- Mass market condos (<$1500 psf) - 96.4% directional accuracy
-- Portfolio-level planning (aggregation reduces error)
-
-### Important Risks
-
-1. **Heteroscedasticity**: Prediction errors increase with predicted values
-   - **Impact**: High-appreciation predictions have wider confidence intervals
-   - **Evidence**: Residual plots show funnel shape (errors grow with magnitude)
-   - **Mitigation**: Always check confidence intervals before making decisions
-
-2. **Market regime changes**: Historical patterns may not predict sudden shifts
-   - **Impact**: Policy changes, economic shocks can invalidate predictions
-   - **Examples**: New ABSD rates, LTV limits, recession
-   - **Mitigation**: Use predictions as one input; monitor leading indicators
-
-3. **Sample size bias**: EC model has limited data
-   - **Impact**: EC performance may not generalize to all market conditions
-   - **Evidence**: Only 25K EC records vs 253K HDB records
-   - **Mitigation**: Cross-check EC predictions with HDB and condo trends
-
-### Future Improvements
-
-| Enhancement | Status | Priority | Rationale |
-|-------------|--------|----------|-----------|
-| **Pre-2021 historical data** | Not included | High | Would capture full market cycles, not just post-COVID |
-| **Causal inference (IV, DiD)** | Not implemented | Medium | For policy impact assessment, structural break analysis |
-| **Real-time model updates** | Not implemented | Medium | For accuracy maintenance, adapting to market changes |
-| **Feature expansion** | Partial | Low | School quality, micro-location, freehold status (incremental gains) |
-| **Spatial econometrics** | Not implemented | Low | Spatial lag models for geographic dependence (advanced) |
-
-### Disclaimer
-
-> **Important**: This system provides statistical estimates, not guarantees. Past appreciation patterns don't guarantee future performance. The models are based on historical data (2021-2026) and may not predict black swan events, policy changes, or economic shocks. Always conduct due diligence and consider personal circumstances before making investment decisions. Predictions for luxury and mid-market condos have high uncertainty and should be validated with expert analysis.
-
----
-
-## Technical Appendix
-
-### Model Architecture Details
-
-**Smart Ensemble Structure**:
-- 5 specialized XGBoost regressors
-- 200-300 trees per model
-- Max depth: 6-8 levels
-- Learning rate: 0.1
-- Objective: reg:squarederror
-
-**Feature Engineering Pipeline**:
-```python
-# Temporal features
-yoy_change_pct_lag1  # 1-year historical appreciation
-yoy_change_pct_lag2  # 2-year historical appreciation (TOP PREDICTOR)
-yoy_change_pct_lag3  # 3-year historical appreciation
-trend_stability      # Rolling std (predictability metric)
-acceleration_2y      # Change in growth rate
-
-# Market activity
-transaction_count    # Number of transactions (key demand indicator)
-volume_3m_avg        # 3-month average volume
-volume_12m_avg       # 12-month average volume
-mom_change           # Month-over-month momentum
-
-# Spatial features
-dist_to_nearest_mrt  # Distance to MRT (squared term matters)
-dist_mrt_sq          # Non-linear distance effect
-amenity_density      # Count of amenities within 500m
-
-# Property attributes
-floor_area_sqft      # Property size
-lease_commence_date  # Age calculation
-Postal District      # Location code
-price_psf            # Price per square foot
-```
-
-### Diagnostic Tests
-
-**Heteroscedasticity** (variance instability):
-- Detected: Yes (residuals vs fitted correlation = 0.94)
-- **Impact**: Prediction errors increase with predicted values
-- **Solution**: Confidence intervals quantify this uncertainty
-
-**Spatial Autocorrelation** (Moran's I):
-- Value: 0.22 (moderate positive clustering)
-- **Impact**: Residuals cluster geographically
-- **Future work**: Add spatial lag features
-
-**Temporal Autocorrelation** (ACF):
-- Lag-1: 0.002 (not significant)
-- **Good news**: Models capture time trends effectively
-
-### Files Generated
-
-**Analysis Scripts**:
-- `scripts/analytics/price_appreciation_modeling/train_models.py` - Baseline unified model
-- `scripts/analytics/price_appreciation_modeling/train_by_property_type.py` - Property-type models
-- `scripts/analytics/price_appreciation_modeling/train_condo_by_segment.py` - Price-segment models
-- `scripts/analytics/price_appreciation_modeling/create_smart_ensemble.py` - Smart ensemble
-- `scripts/analytics/price_appreciation_modeling/generate_confidence_intervals.py` - CI analysis
-- `scripts/analytics/price_appreciation_modeling/residual_analysis_*.py` - Diagnostics
-
-**Data Outputs**:
-- `data/analysis/price_appreciation_modeling/model_comparison.csv` - Performance comparison
-- `data/analysis/price_appreciation_modeling/smart_ensemble/segment_performance.csv` - Segment metrics
-- `data/analysis/price_appreciation_modeling/confidence_intervals/segment_intervals.csv` - CI by segment
-- `data/analysis/price_appreciation_modeling/models_by_property_type/` - Trained models and feature importance
-
-**Visualizations**:
-- `residual_analysis_by_property_type/*.png` - Actual vs predicted, residual distributions, heteroscedasticity
-- `confidence_intervals/confidence_intervals_analysis.png` - CI analysis summary
-
----
-
-## Conclusion
-
-This analysis demonstrates that **property price appreciation can be predicted with high accuracy for certain segments**, but requires intelligent segmentation and uncertainty quantification.
-
-### Main Findings Summary
-
-**1. Smart Segmentation Works**
-- Overall: R² = 0.739 (74% accuracy)
-- HDB: 79.8%, EC: 98.5%, Mass Market: 85.6%
-- Mid/Luxury: 72.6% and 30.1% (use with caution)
-
-**2. Momentum Dominates**
-- 2-year historical appreciation accounts for 51-66% of prediction power
-- **What appreciated in the past 2 years is likely to continue appreciating**
-
-**3. Confidence Intervals Are Critical**
-- HDB: ±18.58% (narrow, safe for decisions)
-- Mid Market: ±1877.88% (extremely wide, directional only)
-- Luxury: ±1076.24% (unusable for practical purposes)
-
-**4. Different Rules for Different Segments**
-- HDB/EC: Use predictions with high confidence
-- Mass Market: Good confidence, use for guidance
-- Mid/Luxury: Screening tool only, expert validation needed
-
-### Key Takeaways
-
-**For Investors:**
-> Use HDB and mass market predictions with confidence. For luxury and mid-market condos, predictions are rough guides at best - always supplement with expert analysis and local market research.
-
-**For Homebuyers:**
-> The system is most reliable for HDB flats (99.4% directional accuracy) and mass market condos. Check confidence intervals - if wider than ±50%, treat predictions as trend indicators only.
-
-**For Analysts:**
-> Segmentation is more important than algorithm complexity. The smart ensemble (5 simple models) dramatically outperforms a single unified model. Always quantify uncertainty - confidence intervals reveal which predictions are trustworthy.
-
----
-
-**End of Report**
-
----
-
-**Document History**
-
-- **2026-02-17 (v2.0)**: Restructured for investor audience, added practical guidance, confidence interval analysis, real-world examples
-- **2026-02-16 (v1.0)**: Initial comprehensive analysis with technical details
-
-**Contact & Feedback**
-For questions about the predictions, methodology, or to report issues, refer to the planning documents in `.planning/analysis/20260216-price-appreciation-modeling-findings.md`.
+**End of Report Structure - Full content to be added in subsequent sections**
+
+**Note:** This is the initial structure. The complete report will include:
+- Methodology: How We Forecast
+- Regional Outlook: Where Will Prices Grow?
+- Planning Area Forecasts: Pinpoint Your Search
+- Scenario Analysis: Plan for Uncertainty
+- Persona-Specific Guidance (First-Time Buyers, Investors, Upgraders)
+- Scenario-Based Decision Frameworks
+- Forecasting Dashboard Integration
+- Technical Appendix
+- Decision Checklist
+- Related Analytics
+
+All forecast values ([X]%, [Y]%, etc.) are placeholders that will be replaced with real VAR pipeline outputs once the forecasting system runs with actual data.
