@@ -126,6 +126,12 @@ def export_dashboard_data():
     with open(output_dir / "hotspots.json", "w") as f:
         json.dump(sanitize_for_json(hotspots_data), f, indent=2)
 
+    # 7. Export Amenity Summary (NEW - Phase 2)
+    logger.info("Exporting amenity summary data...")
+    amenity_summary_data = generate_amenity_summary_data(df)
+    with open(output_dir / "amenity_summary.json", "w") as f:
+        json.dump(sanitize_for_json(amenity_summary_data), f, indent=2)
+
     logger.info(f"Export complete! Files saved to {output_dir}")
 
 
@@ -671,6 +677,79 @@ def generate_leaderboard_data(df):
             }
         )
 
+    return result
+
+
+def generate_amenity_summary_data(df):
+    """Generate amenity coverage statistics by planning area.
+
+    Calculates mean distances and counts for each amenity type
+    (hawker, supermarket, mrt_station, mrt_exit, childcare, park, mall).
+
+    Args:
+        df: Unified dataset with amenity columns
+
+    Returns:
+        List of dicts with amenity stats by planning area
+    """
+    logger.info("Generating amenity summary data...")
+
+    # Amenity columns to aggregate
+    distance_cols = [
+        "dist_nearest_hawker",
+        "dist_nearest_supermarket",
+        "dist_nearest_mrt_station",
+        "dist_nearest_mrt_exit",
+        "dist_nearest_childcare",
+        "dist_nearest_park",
+        "dist_nearest_mall",
+    ]
+
+    count_cols_500m = [
+        "count_hawker_500m",
+        "count_supermarket_500m",
+        "count_mrt_station_500m",
+        "count_mrt_exit_500m",
+        "count_childcare_500m",
+        "count_park_500m",
+        "count_mall_500m",
+    ]
+
+    # Check if amenity columns exist
+    available_distance_cols = [col for col in distance_cols if col in df.columns]
+    available_count_cols = [col for col in count_cols_500m if col in df.columns]
+
+    if not available_distance_cols and not available_count_cols:
+        logger.warning("No amenity columns found in dataset")
+        return []
+
+    # Aggregate by planning area
+    agg_dict = {}
+    for col in available_distance_cols:
+        agg_dict[col] = "mean"
+    for col in available_count_cols:
+        agg_dict[col] = "mean"
+
+    amenity_stats = df.groupby("planning_area").agg(agg_dict).reset_index()
+
+    # Convert to list of dicts for JSON export
+    result = []
+    for _, row in amenity_stats.iterrows():
+        area_data = {"planning_area": row["planning_area"]}
+
+        # Add distance stats (in meters, rounded)
+        for col in available_distance_cols:
+            amenity_type = col.replace("dist_nearest_", "")
+            area_data[f"avg_dist_to_{amenity_type}"] = safe_float(row[col])
+
+        # Add count stats (average within 500m)
+        for col in available_count_cols:
+            amenity_type = col.replace("count_", "").replace("_500m", "")
+            area_data[f"avg_count_{amenity_type}_500m"] = safe_float(row[col])
+
+        result.append(area_data)
+
+    logger.info(f"Generated amenity summary for {len(result)} planning areas")
     return result
 
 
