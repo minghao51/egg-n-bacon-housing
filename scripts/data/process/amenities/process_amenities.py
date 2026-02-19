@@ -75,9 +75,14 @@ def parse_datagov_geojson(filepath, amenity_type, name_field='Name'):
     if gdf.crs != 'EPSG:4326':
         gdf = gpd.to_crs('EPSG:4326')
 
-    # Extract coordinates
-    gdf['lon'] = gdf.geometry.x
-    gdf['lat'] = gdf.geometry.y
+    # Extract coordinates - use centroid for non-point geometries
+    if gdf.geometry.geom_type.iloc[0] == 'Point':
+        gdf['lon'] = gdf.geometry.x
+        gdf['lat'] = gdf.geometry.y
+    else:
+        # For Polygon/MultiPolygon, use centroid
+        gdf['lon'] = gdf.geometry.centroid.x
+        gdf['lat'] = gdf.geometry.centroid.y
 
     # Extract name based on field type
     if name_field in gdf.columns:
@@ -152,7 +157,31 @@ def main():
     else:
         logger.warning(f"⚠️  Supermarket data not found at {supermarket_path}")
 
-    # 5. Shopping malls (from Wikipedia)
+    # 5. MRT Stations
+    mrt_path = datagov_path / 'MRTStations.geojson'
+    if mrt_path.exists():
+        mrt_df = parse_datagov_geojson(mrt_path, 'mrt_station', 'NAME')
+        amenity_dfs.append(mrt_df)
+    else:
+        logger.warning(f"⚠️  MRT station data not found at {mrt_path}")
+
+    # 6. MRT Exits
+    mrt_exit_path = datagov_path / 'MRTStationExits.geojson'
+    if mrt_exit_path.exists():
+        mrt_exit_df = parse_datagov_geojson(mrt_exit_path, 'mrt_exit', 'STATION_NA')
+        amenity_dfs.append(mrt_exit_df)
+    else:
+        logger.warning(f"⚠️  MRT exit data not found at {mrt_exit_path}")
+
+    # 7. Childcare Services
+    childcare_path = datagov_path / 'ChildCareServices.geojson'
+    if childcare_path.exists():
+        childcare_df = parse_datagov_geojson(childcare_path, 'childcare', 'NAME')
+        amenity_dfs.append(childcare_df)
+    else:
+        logger.warning(f"⚠️  Childcare data not found at {childcare_path}")
+
+    # 8. Shopping malls (from Wikipedia)
     try:
         mall_df = load_parquet("raw_wiki_shopping_mall")
         # The column is 'shopping_mall', rename it to 'name'
@@ -206,10 +235,17 @@ def main():
     if park_path.exists():
         park_gdf = gpd.read_file(park_path)
         park_gdf = park_gdf.to_crs('EPSG:4326')
-        park_gdf['lon'] = park_gdf.geometry.x
-        park_gdf['lat'] = park_gdf.geometry.y
+        # Extract centroid coordinates for parks (non-point geometries)
+        park_gdf['lon'] = park_gdf.geometry.centroid.x
+        park_gdf['lat'] = park_gdf.geometry.centroid.y
         park_gdf['type'] = 'park'
-        park_gdf['name'] = [extract_html_name(str(desc), 'NAME') for desc in park_gdf.get('Description', '')]
+        # Extract name from Description if it exists, otherwise use Name column
+        if 'Description' in park_gdf.columns:
+            park_gdf['name'] = [extract_html_name(str(desc), 'NAME') for desc in park_gdf['Description']]
+        elif 'Name' in park_gdf.columns:
+            park_gdf['name'] = park_gdf['Name'].str.lower()
+        else:
+            park_gdf['name'] = ''
         park_gdf = park_gdf[['name', 'type', 'lon', 'lat', 'geometry']]
         park_gdf.to_file(data_L1_path / 'park.geojson', driver='GeoJSON')
         logger.info(f"✅ Saved park.geojson")

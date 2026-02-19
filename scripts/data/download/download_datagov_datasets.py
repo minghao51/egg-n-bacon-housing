@@ -29,12 +29,12 @@ import time
 import requests
 from tqdm import tqdm
 
-# Add project root to path
-PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent
-sys.path.append(str(PROJECT_ROOT / 'src'))
+# Add project root to path (script is in scripts/data/download/, go up 3 levels)
+PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
-from config import Config
-from network_check import check_local_file_exists, require_network
+from scripts.core.config import Config
+from scripts.core.network_check import check_local_file_exists, require_network
 
 # Setup logging
 logging.basicConfig(
@@ -102,71 +102,110 @@ PHASE2_DATASETS = {
 ALL_DATASETS = {**PHASE1_DATASETS, **PHASE2_DATASETS}
 
 
-def download_file(dataset_id: str, destination: pathlib.Path, description: str) -> bool:
+def download_file(dataset_id: str, destination: pathlib.Path, description: str, max_retries: int = 3) -> bool:
     """
-    Download a file from data.gov.sg using the API.
+    Download a file from data.gov.sg using the API with exponential backoff retry.
 
     Args:
         dataset_id: data.gov.sg dataset ID
         destination: Destination file path
         description: Description of the file being downloaded
+        max_retries: Maximum number of retry attempts (default: 3)
 
     Returns:
         True if successful, False otherwise
     """
     logger.info(f"Downloading {description}...")
 
-    try:
-        # Step 1: Get download URL from poll-download API
-        poll_url = f"https://api-open.data.gov.sg/v1/public/api/datasets/{dataset_id}/poll-download"
-        logger.debug(f"Poll URL: {poll_url}")
+    for attempt in range(max_retries):
+        try:
+            # Calculate wait time for exponential backoff (2^attempt seconds)
+            if attempt > 0:
+                wait_time = 2 ** attempt
+                logger.info(f"Retry attempt {attempt + 1}/{max_retries} after {wait_time}s wait...")
+                time.sleep(wait_time)
 
-        poll_response = requests.get(poll_url, timeout=30)
-        poll_response.raise_for_status()
+            # Step 1: Get download URL from poll-download API
+            poll_url = f"https://api-open.data.gov.sg/v1/public/api/datasets/{dataset_id}/poll-download"
+            logger.debug(f"Poll URL: {poll_url}")
 
-        json_data = poll_response.json()
-        if json_data.get('code') != 0:
-            logger.error(f"API error: {json_data.get('errMsg', 'Unknown error')}")
+            poll_response = requests.get(poll_url, timeout=30)
+
+            # Handle rate limiting specifically
+            if poll_response.status_code == 429:
+                if attempt < max_retries - 1:
+                    wait_time = 2 ** (attempt + 1)  # Exponential backoff
+                    logger.warning(f"Rate limited (429), waiting {wait_time}s before retry...")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    logger.error(f"Rate limited after {max_retries} attempts")
+                    return False
+
+            poll_response.raise_for_status()
+
+            json_data = poll_response.json()
+            if json_data.get('code') != 0:
+                logger.error(f"API error: {json_data.get('errMsg', 'Unknown error')}")
+                return False
+
+            # Extract download URL
+            download_url = json_data['data']['url']
+            logger.debug(f"Download URL: {download_url}")
+
+            # Step 2: Download from the actual URL
+            response = requests.get(download_url, stream=True, timeout=30)
+
+            # Handle rate limiting on download URL
+            if response.status_code == 429:
+                if attempt < max_retries - 1:
+                    wait_time = 2 ** (attempt + 1)
+                    logger.warning(f"Download rate limited (429), waiting {wait_time}s before retry...")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    logger.error(f"Download rate limited after {max_retries} attempts")
+                    return False
+
+            response.raise_for_status()
+
+            # Get file size for progress bar
+            total_size = int(response.headers.get('content-length', 0))
+
+            # Create parent directories if needed
+            destination.parent.mkdir(parents=True, exist_ok=True)
+
+            # Download with progress bar
+            with open(destination, 'wb') as f:
+                with tqdm(
+                    total=total_size,
+                    unit='B',
+                    unit_scale=True,
+                    desc=destination.name,
+                    ncols=80
+                ) as pbar:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        if chunk:
+                            f.write(chunk)
+                            pbar.update(len(chunk))
+
+            file_size_mb = destination.stat().st_size / (1024 * 1024)
+            logger.info(f"✅ Downloaded {description} ({file_size_mb:.2f} MB)")
+            return True
+
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                wait_time = 2 ** (attempt + 1)
+                logger.warning(f"Request failed: {e}, retrying in {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                logger.error(f"❌ Failed to download {description} after {max_retries} attempts: {e}")
+                return False
+        except Exception as e:
+            logger.error(f"❌ Error saving {description}: {e}")
             return False
 
-        # Extract download URL
-        download_url = json_data['data']['url']
-        logger.debug(f"Download URL: {download_url}")
-
-        # Step 2: Download from the actual URL
-        response = requests.get(download_url, stream=True, timeout=30)
-        response.raise_for_status()
-
-        # Get file size for progress bar
-        total_size = int(response.headers.get('content-length', 0))
-
-        # Create parent directories if needed
-        destination.parent.mkdir(parents=True, exist_ok=True)
-
-        # Download with progress bar
-        with open(destination, 'wb') as f:
-            with tqdm(
-                total=total_size,
-                unit='B',
-                unit_scale=True,
-                desc=destination.name,
-                ncols=80
-            ) as pbar:
-                for chunk in response.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-                        pbar.update(len(chunk))
-
-        file_size_mb = destination.stat().st_size / (1024 * 1024)
-        logger.info(f"✅ Downloaded {description} ({file_size_mb:.2f} MB)")
-        return True
-
-    except requests.exceptions.RequestException as e:
-        logger.error(f"❌ Failed to download {description}: {e}")
-        return False
-    except Exception as e:
-        logger.error(f"❌ Error saving {description}: {e}")
-        return False
+    return False
 
 
 def main():
