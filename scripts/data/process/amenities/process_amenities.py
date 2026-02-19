@@ -22,12 +22,12 @@ import geopandas as gpd
 import pandas as pd
 from bs4 import BeautifulSoup
 
-# Add project root to path
-PROJECT_ROOT = pathlib.Path(__file__).parent.parent
-sys.path.append(str(PROJECT_ROOT / 'src'))
+# Add project root to path (script is in scripts/data/process/amenities/, go up 5 levels)
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent.parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
-from config import Config
-from data_helpers import load_parquet, save_parquet
+from scripts.core.config import Config
+from scripts.core.data_helpers import load_parquet, save_parquet
 
 # Setup logging
 logging.basicConfig(
@@ -38,12 +38,30 @@ logger = logging.getLogger(__name__)
 
 
 def extract_html_name(html_string, tag_name):
-    """Extract text from HTML tag."""
+    """Extract text from HTML table row where tag_name is in <th> and value is in <td>.
+
+    Args:
+        html_string: HTML string containing a table structure
+        tag_name: The label to find in the <th> tag (e.g., 'LIC_NAME', 'CENTRE_NAME')
+
+    Returns:
+        The text content from the <td> tag following the matching <th>, or empty string if not found
+    """
     try:
         soup = BeautifulSoup(html_string, 'html.parser')
-        tag = soup.find(tag_name)
-        return tag.text if tag else ''
-    except:
+        # Find all table rows
+        rows = soup.find_all('tr')
+        for row in rows:
+            # Find the <th> tag with matching tag_name
+            th = row.find('th')
+            if th and tag_name in str(th):
+                # Get the next sibling which should be <td>
+                td = th.find_next_sibling('td')
+                if td:
+                    return td.text.strip()
+        return ''
+    except Exception as e:
+        logger.debug(f"Failed to extract {tag_name} from HTML: {e}")
         return ''
 
 
@@ -87,7 +105,16 @@ def parse_datagov_geojson(filepath, amenity_type, name_field='Name'):
 
     # Drop rows with missing coordinates or empty names
     df = df.dropna(subset=['lat', 'lon'])
-    df = df[df['name'] != '']
+
+    # Track extraction success for HTML-based fields
+    if 'Description' in gdf.columns and name_field not in gdf.columns:
+        before_count = len(df)
+        df = df[df['name'] != '']
+        after_count = len(df)
+        extraction_rate = (after_count / before_count * 100) if before_count > 0 else 0
+        logger.info(f"  HTML parsing: {after_count}/{before_count} names extracted ({extraction_rate:.1f}%)")
+    else:
+        df = df[df['name'] != '']
 
     logger.info(f"✅ Loaded {len(df)} {amenity_type} locations")
     return df
