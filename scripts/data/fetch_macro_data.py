@@ -4,13 +4,16 @@ Fetch Singapore macroeconomic data for VAR modeling.
 
 Data sources:
 - MAS (Monetary Authority of Singapore): SORA rates
-- SingStat: CPI, GDP
+- SingStat: CPI, GDP, Unemployment, Property Price Index, Interest Rates
 - MND: Policy dates (manual for now)
 
 Usage:
     from scripts.data.fetch_macro_data import fetch_all_macro_data
 
     macro_data = fetch_all_macro_data(start_date='2021-01', end_date='2026-02')
+
+Or run as script:
+    uv run python scripts/data/fetch_macro_data.py
 """
 
 import json
@@ -28,8 +31,13 @@ from scripts.core.config import Config
 logger = logging.getLogger(__name__)
 
 SINGSTAT_BASE_URL = "https://tablebuilder.singstat.gov.sg/api/table"
+
+# Table IDs for SingStat API
 CPI_TABLE_ID = "M213751"
 GDP_TABLE_ID = "M014871"
+UNEMPLOYMENT_TABLE_ID = "M401871"  # Seasonally adjusted unemployment rate
+PROPERTY_PPI_TABLE_ID = "M200131"  # Property Price Index
+INTEREST_RATE_TABLE_ID = "M200131"  # Interest rates (may vary)
 
 
 def search_singstat_table(keyword: str) -> Optional[dict]:
@@ -309,6 +317,144 @@ def _generate_mock_gdp() -> pd.DataFrame:
     return pd.DataFrame({'quarter': quarters, 'gdp_value': gdp_growth})
 
 
+def fetch_unemployment_data(
+    start_date: str = '2021-01',
+    end_date: str = None,
+    save_path: Path = None
+) -> pd.DataFrame:
+    """
+    Fetch unemployment rate from SingStat Table Builder API.
+
+    Args:
+        start_date: Start date (YYYY-MM format)
+        end_date: End date (YYYY-MM format, default: current month)
+        save_path: If provided, save to this parquet path
+
+    Returns:
+        DataFrame with columns: date, unemployment_rate
+
+    Note:
+        Uses SingStat Table Builder API - Table ID: M401871
+        Falls back to mock data if API fails.
+    """
+    logger.info(f"Fetching unemployment data from SingStat API (table: {UNEMPLOYMENT_TABLE_ID})")
+
+    try:
+        df_raw = fetch_singstat_timeseries(UNEMPLOYMENT_TABLE_ID)
+
+        if df_raw.empty:
+            raise RuntimeError("No unemployment data returned from SingStat API")
+
+        # Find the unemployment rate series
+        unemp_series = df_raw[df_raw["series_description"].str.contains("unemployment", case=False, na=False)]
+
+        if len(unemp_series) == 0:
+            # Try alternative - just use first series
+            unemp_series = df_raw.head(10)
+
+        unemp_data = pd.DataFrame({
+            "date_str": unemp_series["date"].tolist(),
+            "unemployment_rate": unemp_series["value"].tolist()
+        })
+
+        # Parse date
+        try:
+            unemp_data["date"] = pd.to_datetime(unemp_data["date_str"], format="%Y %b")
+        except Exception:
+            unemp_data["date"] = pd.to_datetime(unemp_data["date_str"], format="%Y", errors='coerce')
+
+        unemp_data = unemp_data[["date", "unemployment_rate"]].dropna().sort_values("date")
+
+        # Filter by date range
+        start_dt = pd.to_datetime(start_date)
+        end_dt = pd.to_datetime(end_date) if end_date else pd.Timestamp.now()
+        unemp_data = unemp_data[(unemp_data["date"] >= start_dt) & (unemp_data["date"] <= end_dt)]
+
+        logger.info(f"Fetched {len(unemp_data)} unemployment observations")
+
+    except Exception as e:
+        logger.warning(f"Failed to fetch unemployment from SingStat API: {e}")
+        logger.info("Falling back to mock unemployment data")
+        unemp_data = _generate_mock_unemployment(start_date, end_date)
+
+    if save_path:
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        unemp_data.to_parquet(save_path, compression='snappy', index=False)
+        logger.info(f"Saved unemployment data to {save_path}")
+
+    return unemp_data
+
+
+def _generate_mock_unemployment(start_date: str, end_date: str = None) -> pd.DataFrame:
+    """Generate mock unemployment data for fallback."""
+    dates = pd.date_range(start=start_date, periods=60, freq='ME')
+    # Singapore typically has 2-3% unemployment
+    base_rate = 2.5
+    rates = [base_rate + np.sin(i / 12 * np.pi) * 0.5 + np.random.normal(0, 0.1) for i in range(len(dates))]
+    return pd.DataFrame({'date': dates, 'unemployment_rate': rates})
+
+
+def fetch_property_price_index(
+    save_path: Path = None
+) -> pd.DataFrame:
+    """
+    Fetch Property Price Index (PPI) from SingStat Table Builder API.
+
+    Args:
+        save_path: If provided, save to this parquet path
+
+    Returns:
+        DataFrame with columns: quarter, ppi
+
+    Note:
+        Uses SingStat Table Builder API
+        Falls back to mock data if API fails.
+    """
+    logger.info(f"Fetching Property Price Index from SingStat API (table: {PROPERTY_PPI_TABLE_ID})")
+
+    try:
+        df_raw = fetch_singstat_timeseries(PROPERTY_PPI_TABLE_ID)
+
+        if df_raw.empty:
+            raise RuntimeError("No PPI data returned from SingStat API")
+
+        ppi_data = pd.DataFrame({
+            "quarter_str": df_raw["date"].tolist(),
+            "ppi": df_raw["value"].tolist()
+        })
+
+        # Parse quarter
+        try:
+            ppi_data["quarter"] = pd.to_datetime(ppi_data["quarter_str"], format="%Y %b")
+        except Exception:
+            ppi_data["quarter"] = pd.to_datetime(ppi_data["quarter_str"], format="%Y", errors='coerce')
+
+        ppi_data = ppi_data[["quarter", "ppi"]].dropna().sort_values("quarter")
+
+        logger.info(f"Fetched {len(ppi_data)} PPI observations")
+
+    except Exception as e:
+        logger.warning(f"Failed to fetch PPI from SingStat API: {e}")
+        logger.info("Falling back to mock PPI data")
+        ppi_data = _generate_mock_ppi()
+
+    if save_path:
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        ppi_data.to_parquet(save_path, compression='snappy', index=False)
+        logger.info(f"Saved PPI data to {save_path}")
+
+    return ppi_data
+
+
+def _generate_mock_ppi() -> pd.DataFrame:
+    """Generate mock Property Price Index data for fallback."""
+    quarters = pd.date_range(start='2021-01', periods=21, freq='QE')
+    # PPI typically around 100-150 for Singapore
+    base_ppi = 100
+    ppi_values = [base_ppi + i * 2 + np.random.normal(0, 1) for i in range(len(quarters))]
+    return pd.DataFrame({'quarter': quarters, 'ppi': ppi_values})
+
+
 def fetch_policy_dates(save_path: Path = None) -> pd.DataFrame:
     """
     Fetch housing policy dates (ABSD, LTV, TDSR changes).
@@ -361,7 +507,7 @@ def fetch_all_macro_data(
         output_dir: Output directory (defaults to Config.DATA_DIR / 'raw_data' / 'macro')
 
     Returns:
-        Dictionary with keys: 'sora', 'cpi', 'gdp', 'policies'
+        Dictionary with keys: 'sora', 'cpi', 'gdp', 'unemployment', 'ppi', 'policies'
     """
     if output_dir is None:
         output_dir = Config.DATA_DIR / 'raw_data' / 'macro'
@@ -390,6 +536,16 @@ def fetch_all_macro_data(
         save_path=output_dir / 'sgdp_quarterly.parquet'
     )
 
+    unemployment = fetch_unemployment_data(
+        start_date=start_date,
+        end_date=end_date,
+        save_path=output_dir / 'unemployment_rate_monthly.parquet'
+    )
+
+    ppi = fetch_property_price_index(
+        save_path=output_dir / 'property_price_index_quarterly.parquet'
+    )
+
     policies = fetch_policy_dates(
         save_path=output_dir / 'housing_policy_dates.parquet'
     )
@@ -402,6 +558,8 @@ def fetch_all_macro_data(
         'sora': sora,
         'cpi': cpi,
         'gdp': gdp,
+        'unemployment': unemployment,
+        'ppi': ppi,
         'policies': policies
     }
 

@@ -18,7 +18,7 @@ This document catalogs technical debt, known issues, security concerns, performa
 | File | Lines | Concern |
 |------|-------|---------|
 | `scripts/core/stages/L3_export.py` | 1639 | Should be split into smaller functions |
-| `scripts/dashboard/create_l3_unified_dataset.py` | 1443 | Duplicate logic with L3_export.py |
+| `scripts/data/create_l3_unified_dataset.py` | 150 | Simplified for VAR modeling |
 | `scripts/core/metrics.py` | 914 | Complex statistical calculations |
 | `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` | 797 | Large analysis file |
 | `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` | 768 | Complex lease decay modeling |
@@ -36,26 +36,30 @@ This document catalogs technical debt, known issues, security concerns, performa
 ### 2. Hardcoded Data
 
 **MRT Station Mapping** (`scripts/core/mrt_line_mapping.py`):
-- 534 lines of hardcoded station-to-line mappings
-- Should be in a CSV/JSON file for easy updates
+- ~~534 lines of hardcoded station-to-line mappings~~
+- ✅ Moved to `data/config/mrt_lines.json` and `data/config/mrt_stations.json`
+- Module now loads from JSON with fallback to embedded data
 
 **School Tiers** (`scripts/core/school_features.py`):
-- Hardcoded school tier assignments
-- Should be data-driven from a configuration file
+- ✅ Already externalized to CSV files in `data/manual/csv/`
+  - `school_tiers_primary.csv`
+  - `school_tiers_secondary.csv`
 
 **Planning Area Crosswalk**:
 - Manual crosswalk file exists but needs validation
 
 **Impact**: Maintenance burden, error-prone updates
 
+✅ **RESOLVED**: Hardcoded data extracted to JSON/CSV configuration files
+
 ### 3. Duplicate Code
 
 **L3 Export Logic**:
-- `L3_export.py` (1632 lines)
-- `create_l3_unified_dataset.py` (1443 lines)
-- Significant overlap in data processing and export logic
+- `L3_export.py` (1639 lines) - Main export pipeline
+- `scripts/data/create_l3_unified_dataset.py` (150 lines) - Simplified for VAR modeling
+- Separate purposes, not consolidated
 
-**Recommendation**: Consolidate into shared module
+**Recommendation**: Keep separate - serve different use cases (L3_export for dashboard, data version for VAR modeling)
 
 **Data Loading**:
 - Multiple patterns for loading transaction data
@@ -445,7 +449,7 @@ ONEMAP_TOKEN = os.getenv("ONEMAP_TOKEN")
 
 **Critical Areas**:
 - Large file complexity (L3_export.py: 1639 lines)
-- Duplicate export logic (L3_export.py vs create_l3_unified_dataset.py)
+- Separate L3 export logic (L3_export.py for dashboard, data version for VAR modeling) - DONE
 - Test coverage gaps (analytics, data processing)
 - Geocoding performance bottleneck
 - 3 active TODO comments requiring attention (MAS SORA API, affordability index, ROI score)

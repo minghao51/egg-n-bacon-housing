@@ -11,7 +11,10 @@ Collects, processes, and analyzes Singapore housing data from government APIs.
 
 **Pipeline Stages**:
 ```
-L0: Data Collection → L1: Processing → L2: Features → L3: Export
+L0: Data Collection (data.gov.sg)
+L0_macro: Macro Economic Data (CPI, GDP, SORA, unemployment, PPI)
+L1: Processing → L2: Features → L3: Export
+L5: Metrics → Webapp: Dashboard
 ```
 
 **Features**:
@@ -61,8 +64,13 @@ GOOGLE_API_KEY=your_google_api_key
 uv run python scripts/run_pipeline.py --stage all --parallel
 
 # Run specific stage
-uv run python scripts/run_pipeline.py --stage L0  # Data collection
-uv run python scripts/run_pipeline.py --stage L1  # Processing with geocoding
+uv run python scripts/run_pipeline.py --stage L0           # Data collection (data.gov.sg)
+uv run python scripts/run_pipeline.py --stage L0_macro     # Macro data (CPI, GDP, SORA, unemployment, PPI)
+uv run python scripts/run_pipeline.py --stage L1           # Processing with geocoding
+uv run python scripts/run_pipeline.py --stage L2           # Rental yields & features
+uv run python scripts/run_pipeline.py --stage L3           # Unified dataset export
+uv run python scripts/run_pipeline.py --stage L5           # Metrics calculation
+uv run python scripts/run_pipeline.py --stage webapp       # Dashboard JSON export
 ```
 
 ### Python API

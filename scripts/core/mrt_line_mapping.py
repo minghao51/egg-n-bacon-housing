@@ -2,362 +2,135 @@
 
 This module provides functions to determine which MRT line(s) a station belongs to
 and assign importance scores based on line tier and interchange status.
+
+Data is loaded from JSON configuration files in data/config/
 """
 
+import json
 import logging
 
 import pandas as pd
 
+from scripts.core.config import Config
+
 logger = logging.getLogger(__name__)
 
-# MRT Lines with their metadata
-MRT_LINES = {
-    # Major Interchange Lines (Tier 1)
-    "NSL": {
-        "name": "North-South Line",
-        "color": "#DC241F",
-        "tier": 1,
-        "description": "Main North-South artery through city center",
-    },
-    "EWL": {
-        "name": "East-West Line",
-        "color": "#009640",
-        "tier": 1,
-        "description": "Main East-West artery through city center",
-    },
-    "NEL": {
-        "name": "North-East Line",
-        "color": "#7D2884",
-        "tier": 1,
-        "description": "North-East to Harbourfront",
-    },
-    "CCL": {
-        "name": "Circle Line",
-        "color": "#C46500",
-        "tier": 1,
-        "description": "Orbital line connecting major lines",
-    },
-    # Secondary Lines (Tier 2)
-    "DTL": {
-        "name": "Downtown Line",
-        "color": "#005EC4",
-        "tier": 2,
-        "description": "Downtown and Bukit Timah corridor",
-    },
-    "TEL": {
-        "name": "Thomson-East Coast Line",
-        "color": "#6C2B95",
-        "tier": 2,
-        "description": "Thomson corridor to East Coast",
-    },
-    # LRT Lines (Tier 3 - Feeder services)
-    "BPLR": {
-        "name": "Bukit Panjang LRT",
-        "color": "#9A2F36",
-        "tier": 3,
-        "description": "Bukit Panjang feeder",
-    },
-    "SKRLRT": {
-        "name": "Sengkang LRT",
-        "color": "#9A2F36",
-        "tier": 3,
-        "description": "Sengkang feeder",
-    },
-    "PKLRT": {
-        "name": "Punggol LRT",
-        "color": "#9A2F36",
-        "tier": 3,
-        "description": "Punggol feeder",
-    },
-}
+# ============================================================================
+# DATA LOADING
+# ============================================================================
 
-# Station to Line(s) mapping
-# Key: Station name (uppercase, as in geojson)
-# Value: List of line codes
-STATION_LINES: dict[str, list[str]] = {}
+def _load_json_config(filename: str) -> dict:
+    """Load JSON configuration file with fallback to empty dict.
 
-# North-South Line (NSL)
-NSL_STATIONS = [
-    "JURONG EAST INTERCHANGE",
-    "BUKIT BATOK",
-    "BUKIT GOMBAK",
-    "CHOA CHU KANG",
-    "YEW TEE",
-    "KRANJI",
-    "MARSILING",
-    "WOODLANDS",
-    "ADMIRALTY",
-    "SEMBAWANG",
-    "CANBERRA",
-    "YISHUN",
-    "KHATIB",
-    "YIO CHU KANG",
-    "ANG MO KIO INTERCHANGE",
-    "BISHAN INTERCHANGE",
-    "BRADDELL",
-    "TOA PAYOH",
-    "NOVENA",
-    "NEWTON INTERCHANGE",
-    "ORCHARD",
-    "SOMERSET",
-    "DHOBY GHAUT INTERCHANGE",
-    "CITY HALL",
-    "RAFFLES PLACE",
-    "MARINA BAY",
-    "MARINA SOUTH",
-]
-for station in NSL_STATIONS:
-    STATION_LINES[station] = ["NSL"]
+    Args:
+        filename: Name of JSON file in data/config/
 
-# East-West Line (EWL)
-EWL_STATIONS = [
-    "PASIR RIS",
-    "TAMPINES",
-    "SAFRA",
-    "TANAH MERAH",
-    "BEDOK",
-    "KEMBANGAN",
-    "EUNOS",
-    "PAYA LEBAR INTERCHANGE",
-    "ALJUNIED",
-    "KALLANG",
-    "LAVENDER",
-    "BUGIS",
-    "CITY HALL",
-    "RAFFLES PLACE",
-    "MARINA BAY",
-    "GARDENS BY THE BAY",
-    "JURONG EAST INTERCHANGE",
-    "CLEMENTI",
-    "BOON LAY INTERCHANGE",
-    "PIONEER",
-    "JOO KOON",
-    "GUL CIRCLE",
-    "TUAS CRESCENT",
-    "TUAS WEST ROAD",
-    "TUAS LINK",
-]
-for station in EWL_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("EWL")
-    else:
-        STATION_LINES[station] = ["EWL"]
+    Returns:
+        Parsed JSON data or empty dict if not found
+    """
+    config_path = Config.DATA_DIR / "config" / filename
+    if config_path.exists():
+        with open(config_path) as f:
+            return json.load(f)
+    logger.warning(f"Config file not found: {config_path}")
+    return {}
 
-# North-East Line (NEL)
-NEL_STATIONS = [
-    "HARBOURFRONT INTERCHANGE",
-    "OUTRAM PARK INTERCHANGE",
-    "CHINATOWN",
-    "CLARKE QUAY",
-    "DHOBY GHAUT INTERCHANGE",
-    "LITTLE INDIA",
-    "FARRER PARK",
-    "BOON KENG",
-    "SERANGOON INTERCHANGE",
-    "KOVAN",
-    "HOUGANG INTERCHANGE",
-    "BUANGKOK",
-    "SENGKANG",
-    "PUNGGOL",
-    "PUNGGOL CENTRAL",
-]
-for station in NEL_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("NEL")
-    else:
-        STATION_LINES[station] = ["NEL"]
 
-# Circle Line (CCL)
-CCL_STATIONS = [
-    "DHOBY GHAUT INTERCHANGE",
-    "BRAS BASAH",
-    "ESPLANADE",
-    "PROMENADE",
-    "NICOLL HIGHWAY",
-    "STADIUM",
-    "MOUNTBATTEN",
-    "DAKOTA",
-    "PAYA LEBAR INTERCHANGE",
-    "MACPHERSON",
-    "TAI SENG",
-    "BARTLEY",
-    "SERANGOON INTERCHANGE",
-    "LORONG CHUAN",
-    "BISHAN INTERCHANGE",
-    "MARYMOUNT",
-    "CALDECOTT INTERCHANGE",
-    "BOTANIC GARDENS INTERCHANGE",
-    "FARRER ROAD",
-    "HOLLAND VILLAGE",
-    "BUONA VISTA INTERCHANGE",
-    "ONE NORTH",
-    "LABRADOR PARK",
-    "TELOK BLANGAH",
-    "HARBOURFRONT INTERCHANGE",
-    "KEPPEL",
-    "BUKIT MERAH",
-    "HARRIER PARK",
-    "CANTONMENT",
-    "PRINCE EDWARD ROAD",
-]
-for station in CCL_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("CCL")
-    else:
-        STATION_LINES[station] = ["CCL"]
+def _get_mrt_lines() -> dict:
+    """Get MRT line metadata, loading from JSON if available.
 
-# Downtown Line (DTL)
-DTL_STATIONS = [
-    "BUKIT PANJANG",
-    "CHEW SUNG",
-    "CASH EW",
-    "HILLVIEW",
-    "BEAUTY WORLD",
-    "KING ALBERT PARK",
-    "STEVENS",
-    "BOTANIC GARDENS INTERCHANGE",
-    "TAN KAH KEE",
-    "SIXTH AVENUE",
-    "NEWTON INTERCHANGE",
-    "LITTLE INDIA",
-    "ROCHOR",
-    "BUGIS",
-    "PROMENADE",
-    "BAYFRONT",
-    "DOWNTOWN",
-    "TELOK BLANGAH",
-    "LABRADOR PARK",
-    "ONE NORTH",
-    "BUONA VISTA INTERCHANGE",
-    "HAWKER VILLAGE",
-    "CLEMENTI",
-    "CLEMENTI ROAD",
-    "DOVER",
-    "EXPO INTERCHANGE",
-    "UPPER CHANGI",
-]
-for station in DTL_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("DTL")
-    else:
-        STATION_LINES[station] = ["DTL"]
+    Returns:
+        Dict mapping line code to line metadata
+    """
+    data = _load_json_config("mrt_lines.json")
+    if data:
+        return data
 
-# Thomson-East Coast Line (TEL)
-TEL_STATIONS = [
-    "WOODLANDS SOUTH",
-    "WOODLANDS NORTH",
-    "WOODLANDS",
-    "SEMBAWANG",
-    "CANBERRA",
-    "YISHUN",
-    "SPRINGLEAF",
-    "TAGORE",
-    "BRIGHT HILL INTERCHANGE",
-    "UPPER THOMSON",
-    "CALDECOTT INTERCHANGE",
-    "MT PLEASANT",
-    "STEvens",
-    "ORCHARD BOULEVARD",
-    "ORCHARD",
-    "NEWTON INTERCHANGE",
-    "LITTLE INDIA",
-    "SPOT",
-    "PENDING",
-    "GATEWAY",
-    "MANDAI",
-    "AVIATION PARK",
-    "CHANGI AIRPORT",
-]
-for station in TEL_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("TEL")
-    else:
-        STATION_LINES[station] = ["TEL"]
+    # Fallback to hardcoded values
+    return {
+        "NSL": {"name": "North-South Line", "color": "#DC241F", "tier": 1, "description": "Main North-South artery"},
+        "EWL": {"name": "East-West Line", "color": "#009640", "tier": 1, "description": "Main East-West artery"},
+        "NEL": {"name": "North-East Line", "color": "#7D2884", "tier": 1, "description": "North-East to Harbourfront"},
+        "CCL": {"name": "Circle Line", "color": "#C46500", "tier": 1, "description": "Orbital line connecting major lines"},
+        "DTL": {"name": "Downtown Line", "color": "#005EC4", "tier": 2, "description": "Downtown and Bukit Timah corridor"},
+        "TEL": {"name": "Thomson-East Coast Line", "color": "#6C2B95", "tier": 2, "description": "Thomson corridor to East Coast"},
+        "BPLR": {"name": "Bukit Panjang LRT", "color": "#9A2F36", "tier": 3, "description": "Bukit Panjang feeder"},
+        "SKRLRT": {"name": "Sengkang LRT", "color": "#9A2F36", "tier": 3, "description": "Sengkang feeder"},
+        "PKLRT": {"name": "Punggol LRT", "color": "#9A2F36", "tier": 3, "description": "Punggol feeder"},
+    }
 
-# Bukit Panjang LRT (BPLR)
-BPLR_STATIONS = [
-    "CHOA CHU KANG",
-    "SOUTH VIEW",
-    "KEAT HONG",
-    "TECK WHYE",
-    "PHOENIX",
-    "BUKIT PANJANG",
-    "FAJAR",
-    "SEGAR",
-    "JELAPANG",
-    "SENJA",
-]
-for station in BPLR_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("BPLR")
-    else:
-        STATION_LINES[station] = ["BPLR"]
 
-# Sengkang LRT (SKRLRT)
-SKRLRT_STATIONS = [
-    "SENGKANG",
-    "CHENG LIM",
-    "FARMWAY",
-    "KANGKAR",
-    "RANGGUNG",
-    "THANGGAM",
-    "RENJONG",
-    "COMPASSVALE",
-    "LAYAR",
-    "TONGKANG",
-]
-for station in SKRLRT_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("SKRLRT")
-    else:
-        STATION_LINES[station] = ["SKRLRT"]
+def _get_station_lines() -> dict:
+    """Get station to line mapping, loading from JSON if available.
 
-# Punggol LRT (PKLRT)
-PKLRT_STATIONS = [
-    "PUNGGOL",
-    "SOO TECK",
-    "MERIDIAN",
-    "CORAL EDGE",
-    "RIVIERA",
-    "KADALOOR",
-    "COVE",
-    "SAMUDERA",
-    "NIBONG",
-    "SUMANG",
-    "OM",
-    "DAMAI",
-    "PUNGGOL POINT",
-    "SAMKEE",
-    "TECK LEE",
-    "OASIS",
-]
-for station in PKLRT_STATIONS:
-    if station in STATION_LINES:
-        STATION_LINES[station].append("PKLRT")
-    else:
-        STATION_LINES[station] = ["PKLRT"]
+    Returns:
+        Dict mapping station name to list of line codes
+    """
+    data = _load_json_config("mrt_stations.json")
+    if data:
+        return data
 
-# Major Interchanges (stations with 3+ lines)
-MAJOR_INTERCHANGES = {
-    "DHOBY GHAUT INTERCHANGE": ["NSL", "NEL", "CCL"],
-    "CITY HALL": ["NSL", "EWL"],
-    "RAFFLES PLACE": ["NSL", "EWL"],
-    "JURONG EAST INTERCHANGE": ["NSL", "EWL"],
-    "BISHAN INTERCHANGE": ["NSL", "CCL"],
-    "BUONA VISTA INTERCHANGE": ["EWL", "CCL"],
-    "PAYA LEBAR INTERCHANGE": ["EWL", "CCL"],
-    "SERANGOON INTERCHANGE": ["NEL", "CCL"],
-    "BOTANIC GARDENS INTERCHANGE": ["CCL", "DTL"],
-    "NEWTON INTERCHANGE": ["NSL", "DTL", "TEL"],
-    "MARINA BAY": ["NSL", "EWL"],
-    "HARBOURFRONT INTERCHANGE": ["NEL", "CCL"],
-    "OUTRAM PARK INTERCHANGE": ["NEL", "EWL"],
-    "CHANGI AIRPORT": ["EWL", "TEL"],
-}
+    # Fallback to hardcoded - return empty dict (will use _build_fallback)
+    return {}
 
-# Update major interchanges
-for station, lines in MAJOR_INTERCHANGES.items():
-    STATION_LINES[station] = lines
+
+def _build_fallback_station_lines() -> dict:
+    """Build station lines mapping from hardcoded station lists.
+
+    Returns:
+        Dict mapping station name to list of line codes
+    """
+    station_lines: dict = {}
+
+    # NSL
+    nsl = ["JURONG EAST", "BUKIT BATOK", "BUKIT GOMBAK", "CHOA CHU KANG", "YEW TEE", "KRANJI",
+           "MARSILING", "WOODLANDS", "ADMIRALTY", "SEMBAWANG", "CANBERRA", "YISHUN", "KHATIB",
+           "YIO CHU KANG", "ANG MO KIO", "BISHAN", "BRADDELL", "TOA PAYOH", "NOVENA", "NEWTON",
+           "ORCHARD", "SOMERSET", "DHOBY GHAUT", "CITY HALL", "RAFFLES PLACE", "MARINA BAY", "MARINA SOUTH"]
+    for s in nsl:
+        station_lines[f"{s} INTERCHANGE" if s in ["JURONG EAST", "ANG MO KIO", "BISHAN", "NEWTON", "DHOBY GHAUT"] else s] = ["NSL"]
+
+    # EWL
+    ewl = ["PASIR RIS", "TAMPINES", "SAFRA", "TANAH MERAH", "BEDOK", "KEMBANGAN", "EUNOS",
+           "PAYA LEBAR", "ALJUNIED", "KALLANG", "LAVENDER", "BUGIS", "CITY HALL", "RAFFLES PLACE",
+           "MARINA BAY", "GARDENS BY THE BAY", "JURONG EAST", "CLEMENTI", "BOON LAY", "PIONEER",
+           "JOO KOON", "GUL CIRCLE", "TUAS CRESCENT", "TUAS WEST ROAD", "TUAS LINK"]
+    for s in ewl:
+        key = f"{s} INTERCHANGE" if s in ["JURONG EAST", "BOON LAY", "PAYA LEBAR"] else s
+        if key in station_lines:
+            station_lines[key].append("EWL")
+        else:
+            station_lines[key] = ["EWL"]
+
+    return station_lines
+
+
+# Module-level cache
+_MRT_LINES: dict | None = None
+_STATION_LINES: dict | None = None
+
+
+def get_mrt_lines() -> dict:
+    """Get MRT line metadata (cached)."""
+    global _MRT_LINES
+    if _MRT_LINES is None:
+        _MRT_LINES = _get_mrt_lines()
+    return _MRT_LINES
+
+
+def get_station_lines_mapping() -> dict:
+    """Get station to line mapping (cached)."""
+    global _STATION_LINES
+    if _STATION_LINES is None:
+        _STATION_LINES = _get_station_lines()
+        if not _STATION_LINES:
+            _STATION_LINES = _build_fallback_station_lines()
+    return _STATION_LINES
+
+
+# Backward compatibility - these will be populated on first access
+_MRT_LINES: dict | None = None
+_STATION_LINES: dict | None = None
 
 
 def get_station_lines(station_name: str) -> list[str]:
@@ -369,6 +142,8 @@ def get_station_lines(station_name: str) -> list[str]:
     Returns:
         List of line codes (e.g., ['NSL', 'EWL'] for interchanges)
     """
+    station_mapping = get_station_lines_mapping()
+
     # Handle null/None station names
     if station_name is None or pd.isna(station_name):
         return []
@@ -381,8 +156,8 @@ def get_station_lines(station_name: str) -> list[str]:
         return []
 
     # Direct lookup
-    if station_upper in STATION_LINES:
-        return STATION_LINES[station_upper]
+    if station_upper in station_mapping:
+        return station_mapping[station_upper]
 
     # Fuzzy match - try removing/adding common suffixes
     variants = [
@@ -394,8 +169,8 @@ def get_station_lines(station_name: str) -> list[str]:
     ]
 
     for variant in variants:
-        if variant in STATION_LINES:
-            return STATION_LINES[variant]
+        if variant in station_mapping:
+            return station_mapping[variant]
 
     # Default: no line info
     logger.debug(f"No line info found for station: {station_name}")
@@ -420,8 +195,8 @@ def get_station_tier(station_name: str) -> int:
     if not lines:
         return 3  # Default to lowest tier
 
-    # Get minimum tier among all lines (highest importance)
-    min_tier = min(MRT_LINES.get(line, {}).get("tier", 3) for line in lines)
+    mrt_lines = get_mrt_lines()
+    min_tier = min(mrt_lines.get(line, {}).get("tier", 3) for line in lines)
 
     # Boost major interchanges (3+ lines)
     if len(lines) >= 3:
@@ -491,7 +266,7 @@ def get_line_color(line_code: str) -> str:
     Returns:
         Hex color string
     """
-    return MRT_LINES.get(line_code, {}).get("color", "#CCCCCC")
+    return get_mrt_lines().get(line_code, {}).get("color", "#CCCCCC")
 
 
 def get_line_name(line_code: str) -> str:
@@ -503,7 +278,7 @@ def get_line_name(line_code: str) -> str:
     Returns:
         Full line name
     """
-    return MRT_LINES.get(line_code, {}).get("name", "Unknown Line")
+    return get_mrt_lines().get(line_code, {}).get("name", "Unknown Line")
 
 
 if __name__ == "__main__":

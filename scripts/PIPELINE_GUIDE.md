@@ -99,15 +99,15 @@ uv run python scripts/analytics/pipelines/cluster_profiles_pipeline.py
 - Outputs to `data/analysis/market_segmentation_2.0/`
 
 ### `create_l3_unified_dataset.py` (located at `scripts/`)
-Creates the comprehensive L3 unified housing dataset.
+Creates the L3 unified housing dataset for analytics.
 
-**Note:** This script is now located at `scripts/create_l3_unified_dataset.py` for convenient access from the project root. It imports the implementation from `scripts/dashboard/create_l3_unified_dataset.py`.
+**Note:** This script is a convenience wrapper at `scripts/create_l3_unified_dataset.py` that imports from `scripts/data/create_l3_unified_dataset.py`.
 
 **Features:**
-- Combines HDB, Condo, and EC transactions
-- Adds geocoding and amenity features
-- Includes planning areas and rental yields
-- Generates precomputed summary tables
+- Loads data from preprocessed source
+- Filters by date range
+- Selects columns for VAR/ARIMAX modeling
+- Saves to unified parquet
 
 **Usage:**
 ```bash
@@ -117,11 +117,6 @@ uv run python scripts/create_l3_unified_dataset.py
 
 **Output:**
 - `data/pipeline/L3/housing_unified.parquet` - Main unified dataset
-- `data/pipeline/L3/market_summary.parquet` - Aggregated market statistics
-- `data/pipeline/L3/tier_thresholds_evolution.parquet` - Tier thresholds over time
-- `data/pipeline/L3/planning_area_metrics.parquet` - Planning area metrics
-- `data/pipeline/L3/lease_decay_stats.parquet` - Lease decay statistics
-- `data/pipeline/L3/rental_yield_top_combos.parquet` - Top rental yield combinations
 
 ## Pipeline Stages
 

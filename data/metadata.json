@@ -304,8 +304,8 @@
       "path": "L3/property.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property.parquet",
       "version": "2026-02-19",
-      "rows": 17722,
-      "created": "2026-02-19T15:59:45.552004",
+      "rows": 41338,
+      "created": "2026-02-19T17:13:26.557114",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -314,8 +314,8 @@
       "path": "L3/private_property_facilities.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/private_property_facilities.parquet",
       "version": "2026-02-19",
-      "rows": 43560,
-      "created": "2026-02-19T15:59:45.557618",
+      "rows": 172555,
+      "created": "2026-02-19T17:13:26.574783",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -325,7 +325,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_nearby_facilities.parquet",
       "version": "2026-02-19",
       "rows": 3637378,
-      "created": "2026-02-19T15:59:45.975981",
+      "created": "2026-02-19T17:13:27.016031",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -335,7 +335,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_transactions_sales.parquet",
       "version": "2026-02-19",
       "rows": 1096756,
-      "created": "2026-02-19T15:59:46.394127",
+      "created": "2026-02-19T17:13:27.458016",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -345,7 +345,7 @@
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_listing_sales.parquet",
       "version": "2026-02-19",
       "rows": 9929,
-      "created": "2026-02-19T15:59:46.401439",
+      "created": "2026-02-19T17:13:27.466090",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -414,12 +414,12 @@
       "path": "L2/housing_per_type_amenity_features.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_per_type_amenity_features.parquet",
       "version": "2026-02-19",
-      "rows": 17746,
-      "created": "2026-02-19T15:59:44.473605",
+      "rows": 17722,
+      "created": "2026-02-19T17:13:25.363511",
       "source": "L2 per-type amenity metrics",
       "mode": "overwrite",
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-19T15:59:46.401443"
+  "last_updated": "2026-02-19T17:13:27.466096"
 }

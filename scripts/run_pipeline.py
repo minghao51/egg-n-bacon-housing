@@ -3,7 +3,8 @@
 Pipeline runner script.
 
 This script orchestrates all data pipeline stages:
-- L0: Data collection from external APIs
+- L0: Data collection from external APIs (data.gov.sg)
+- L0_macro: Macro economic data (CPI, GDP, SORA, unemployment, PPI)
 - L1: Data processing and geocoding
 - L2: Feature engineering (rental yields and property features)
 - L3: Export and final output
@@ -12,6 +13,7 @@ This script orchestrates all data pipeline stages:
 
 Usage:
     uv run python scripts/run_pipeline.py --stage L0
+    uv run python scripts/run_pipeline.py --stage L0_macro
     uv run python scripts/run_pipeline.py --stage L1
     uv run python scripts/run_pipeline.py --stage L2
     uv run python scripts/run_pipeline.py --stage L2_rental
@@ -24,6 +26,9 @@ Usage:
 Examples:
     # Run L0 data collection
     python scripts/run_pipeline.py --stage L0
+
+    # Run L0 macro data collection
+    python scripts/run_pipeline.py --stage L0_macro
 
     # Run L1 processing with parallel geocoding
     python scripts/run_pipeline.py --stage L1 --parallel
@@ -53,6 +58,7 @@ from scripts.core.stages.L3_export import run_l3_pipeline
 from scripts.core.stages.L5_metrics import run_metrics_pipeline
 from scripts.core.stages.webapp_data_preparation import export_dashboard_data
 from scripts.core.data_helpers import list_datasets
+from scripts.data.fetch_macro_data import fetch_all_macro_data
 
 # Setup logging
 logging.basicConfig(
@@ -69,6 +75,16 @@ def run_L0_collection():
     results = collect_all_datagovsg()
 
     logger.info(f"✅ L0 Complete: Collected {len(results)} datasets")
+    return results
+
+
+def run_L0_macro(start_date: str = '2021-01', end_date: str = '2026-02'):
+    """Run L0: Macro economic data collection."""
+    logger.info("🚀 Starting L0: Macro Economic Data Collection")
+
+    results = fetch_all_macro_data(start_date=start_date, end_date=end_date)
+
+    logger.info("✅ L0 Macro Complete")
     return results
 
 
@@ -191,6 +207,10 @@ def run_pipeline(
         logger.info("=" * 80)
         run_L0_collection()
 
+    if stages == "L0_macro":
+        logger.info("=" * 80)
+        run_L0_macro()
+
     if stages in ["L1", "all"]:
         logger.info("=" * 80)
         run_L1_processing(use_parallel=use_parallel)
@@ -235,9 +255,10 @@ def main():
     parser = argparse.ArgumentParser(description="Run the Egg-n-Bacon Housing data pipeline")
     parser.add_argument(
         "--stage",
-        choices=["L0", "L1", "L2", "L2_rental", "L2_features", "L3", "L5", "webapp", "all"],
+        type=str,
         default="all",
-        help="Which pipeline stage to run (default: all)",
+        choices=["L0", "L0_macro", "L1", "L2", "L2_rental", "L2_features", "L3", "L5", "webapp", "all"],
+        help="Pipeline stage to run",
     )
     parser.add_argument(
         "--parallel", action="store_true", help="Use parallel processing for geocoding (faster)"

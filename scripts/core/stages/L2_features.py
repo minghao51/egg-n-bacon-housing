@@ -197,7 +197,7 @@ def compute_amenity_distances_by_type(
 
     Returns:
         DataFrame with property indices and per-type amenity metrics.
-        Columns: property_id, dist_nearest_{type}, count_{type}_{radius}m
+        Columns: property_id, POSTAL, dist_nearest_{type}, count_{type}_{radius}m
     """
     if distance_thresholds is None:
         distance_thresholds = [500, 1000]
@@ -226,7 +226,10 @@ def compute_amenity_distances_by_type(
             or idx
         )
 
-        row_result = {"property_id": property_id}
+        # Get postal code for merging (from original CRS projection)
+        postal_code = property_row.get("POSTAL") or property_row.get("postal") or None
+
+        row_result = {"property_id": property_id, "POSTAL": postal_code}
         property_geom = property_row.geometry
 
         # Process each amenity type
@@ -536,6 +539,7 @@ def create_property_table(unique_gdf: gpd.GeoDataFrame) -> pd.DataFrame:
         "building",
         "address",
         "postal",
+        "_postal_code",  # Keep postal code for amenity merge
         "planning_area",
         "property_type",
     ]
@@ -727,15 +731,18 @@ def run_l2_features_pipeline(
     # Use postal code as merge key since amenity_metrics is keyed by POSTAL
     if "_postal_code" in property_df.columns:
         # Merge on postal code
+        # Add merge_key column BEFORE adding prefix to avoid it getting prefixed
+        amenity_metrics = amenity_metrics.copy()
+        amenity_metrics["merge_key"] = amenity_metrics["POSTAL"]
         amenity_metrics_renamed = amenity_metrics.add_prefix("amty_")
-        amenity_metrics_renamed["postal"] = amenity_metrics["POSTAL"]
+        # The merge_key column is now amty_merge_key
 
         property_df = property_df.merge(
             amenity_metrics_renamed,
             left_on="_postal_code",
-            right_on="postal",
+            right_on="amty_merge_key",
             how="left",
-        ).drop(columns=["_postal_code", "postal"])
+        ).drop(columns=["_postal_code", "amty_merge_key", "amty_POSTAL"], errors="ignore")
 
         # Count merged columns
         amenity_cols = [col for col in property_df.columns if col.startswith("amty_")]

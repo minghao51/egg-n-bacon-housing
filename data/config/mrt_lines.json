@@ -1,0 +1,56 @@
+{
+  "NSL": {
+    "name": "North-South Line",
+    "color": "#DC241F",
+    "tier": 1,
+    "description": "Main North-South artery through city center"
+  },
+  "EWL": {
+    "name": "East-West Line",
+    "color": "#009640",
+    "tier": 1,
+    "description": "Main East-West artery through city center"
+  },
+  "NEL": {
+    "name": "North-East Line",
+    "color": "#7D2884",
+    "tier": 1,
+    "description": "North-East to Harbourfront"
+  },
+  "CCL": {
+    "name": "Circle Line",
+    "color": "#C46500",
+    "tier": 1,
+    "description": "Orbital line connecting major lines"
+  },
+  "DTL": {
+    "name": "Downtown Line",
+    "color": "#005EC4",
+    "tier": 2,
+    "description": "Downtown and Bukit Timah corridor"
+  },
+  "TEL": {
+    "name": "Thomson-East Coast Line",
+    "color": "#6C2B95",
+    "tier": 2,
+    "description": "Thomson corridor to East Coast"
+  },
+  "BPLR": {
+    "name": "Bukit Panjang LRT",
+    "color": "#9A2F36",
+    "tier": 3,
+    "description": "Bukit Panjang feeder"
+  },
+  "SKRLRT": {
+    "name": "Sengkang LRT",
+    "color": "#9A2F36",
+    "tier": 3,
+    "description": "Sengkang feeder"
+  },
+  "PKLRT": {
+    "name": "Punggol LRT",
+    "color": "#9A2F36",
+    "tier": 3,
+    "description": "Punggol feeder"
+  }
+}

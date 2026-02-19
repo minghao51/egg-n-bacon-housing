@@ -7,31 +7,30 @@ Comprehensive collection of Python scripts for Singapore housing market analysis
 ```
 scripts/
 ├── create_l3_unified_dataset.py  # L3 unified dataset creation (convenience wrapper)
-│
+ │
 ├── analytics/              # Analytics and modeling scripts
-│   ├── calculate/         # Metrics calculation
-│   ├── forecast/          # Time-series forecasting
-│   ├── segmentation/      # Market segmentation
-│   └── analysis/          # In-depth analysis (organized by topic)
-│       ├── spatial/       # Geospatial analysis
-│       ├── amenity/       # Amenity impact
-│       ├── market/        # Market trends
-│       └── mrt/           # MRT proximity analysis
-│
-├── pipeline/              # Pipeline orchestration
-│   └── run_pipeline.py
-│
-├── data/                  # Data operations
-│   ├── download/          # External data downloads
-│   └── process/           # Data processing & transformation
-│       ├── geocode/       # Geocoding operations
-│       ├── amenities/     # Amenity data processing
-│       └── planning_area/ # Geographic processing
-│
-├── dashboard/             # Dashboard-specific scripts
-│   └── create_l3_unified_dataset.py  # Full implementation
-│
-└── utils/                 # Utility scripts
+ │   ├── calculate/         # Metrics calculation
+ │   ├── forecast/          # Time-series forecasting
+ │   ├── segmentation/      # Market segmentation
+ │   └── analysis/          # In-depth analysis (organized by topic)
+ │       ├── spatial/       # Geospatial analysis
+ │       ├── amenity/       # Amenity impact
+ │       ├── market/        # Market trends
+ │       └── mrt/           # MRT proximity analysis
+ │
+ ├── pipeline/              # Pipeline orchestration
+ │   └── run_pipeline.py
+ │
+ ├── data/                  # Data operations
+ │   ├── download/          # External data downloads
+ │   └── process/           # Data processing & transformation
+ │       ├── geocode/       # Geocoding operations
+ │       ├── amenities/     # Amenity data processing
+ │       └── planning_area/ # Geographic processing
+ │
+ │   └── create_l3_unified_dataset.py  # L3 unified dataset implementation
+ │
+ └── utils/                 # Utility scripts
     ├── Validation
     ├── Progress monitoring
     └── Quality checks
@@ -100,7 +99,7 @@ uv run python scripts/analytics/forecast/forecast_yields.py
 - MRT (3): Impact, heterogeneous effects, by property type
 
 ### L3 Unified Dataset (1 script)
-- `create_l3_unified_dataset.py` - Comprehensive dataset creation (wrapper at scripts root, implementation in dashboard/)
+- `create_l3_unified_dataset.py` - Dataset creation (wrapper at scripts root, implementation in data/)
 
 ### Pipeline (1 script)
 - `run_pipeline.py` - Main pipeline orchestration

@@ -132,18 +132,20 @@ def save_l3_unified_dataset(df: pd.DataFrame, output_path: str = None):
     logger.info(f"✅ Saved L3 unified dataset to {output_path}")
 
 
-if __name__ == '__main__':
+def main():
+    """Main entry point for CLI execution."""
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
-    # Create dataset
     l3_df = create_l3_unified_dataset()
-
-    # Save dataset
     save_l3_unified_dataset(l3_df)
 
     logger.info("=" * 60)
     logger.info("L3 Unified Dataset Creation Complete!")
     logger.info("=" * 60)
+
+
+if __name__ == '__main__':
+    main()

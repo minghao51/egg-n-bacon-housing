@@ -11,6 +11,7 @@ This module provides functions for:
 """  # noqa: N999
 
 import logging
+from pathlib import Path
 
 import pandas as pd
 
@@ -19,6 +20,121 @@ from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet, save_parquet
 
 logger = logging.getLogger(__name__)
+
+
+def load_macro_data() -> dict:
+    """Load macro economic data from parquet files.
+
+    Returns:
+        Dictionary with keys: 'sora', 'cpi', 'gdp', 'unemployment', 'ppi', 'policies'
+    """
+    macro_dir = Config.DATA_DIR / "raw_data" / "macro"
+    macro_data = {}
+
+    files = {
+        'sora': 'sora_rates_monthly.parquet',
+        'cpi': 'singapore_cpi_monthly.parquet',
+        'gdp': 'sgdp_quarterly.parquet',
+        'unemployment': 'unemployment_rate_monthly.parquet',
+        'ppi': 'property_price_index_quarterly.parquet',
+        'policies': 'housing_policy_dates.parquet',
+    }
+
+    for key, filename in files.items():
+        path = macro_dir / filename
+        if path.exists():
+            macro_data[key] = pd.read_parquet(path)
+            logger.info(f"Loaded {key}: {len(macro_data[key])} records")
+        else:
+            logger.warning(f"Macro data file not found: {path}")
+            macro_data[key] = pd.DataFrame()
+
+    return macro_data
+
+
+def merge_macro_with_metrics(
+    metrics_df: pd.DataFrame,
+    macro_data: dict,
+    freq: str = 'month'
+) -> pd.DataFrame:
+    """Merge macro economic data with price metrics.
+
+    Args:
+        metrics_df: Price metrics DataFrame
+        macro_data: Dictionary of macro data DataFrames
+        freq: Frequency of metrics ('month' or 'quarter')
+
+    Returns:
+        DataFrame with macro data merged
+    """
+    if metrics_df.empty:
+        return metrics_df
+
+    df = metrics_df.copy()
+
+    # Determine time column
+    if 'month' in df.columns:
+        time_col = 'month'
+        df[time_col] = pd.to_datetime(df[time_col], format='%Y-%m', errors='coerce')
+    elif 'quarter' in df.columns:
+        time_col = 'quarter'
+        df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+    else:
+        logger.warning("No time column found for macro data merge")
+        return df
+
+    # Merge SORA (monthly)
+    if not macro_data.get('sora', pd.DataFrame()).empty:
+        sora = macro_data['sora'].copy()
+        sora['date'] = pd.to_datetime(sora['date'])
+        sora = sora.rename(columns={'sora_rate': 'macro_sora'})
+        df = df.merge(
+            sora[['date', 'macro_sora']],
+            left_on=time_col,
+            right_on='date',
+            how='left'
+        )
+        df = df.drop(columns=['date'], errors='ignore')
+
+    # Merge CPI (monthly)
+    if not macro_data.get('cpi', pd.DataFrame()).empty:
+        cpi = macro_data['cpi'].copy()
+        cpi = cpi.rename(columns={'cpi': 'macro_cpi'})
+        df = df.merge(
+            cpi,
+            left_on=time_col,
+            right_on='date',
+            how='left'
+        )
+        df = df.drop(columns=['date'], errors='ignore')
+
+    # Merge GDP (quarterly) - only if quarterly
+    if freq == 'quarter' and not macro_data.get('gdp', pd.DataFrame()).empty:
+        gdp = macro_data['gdp'].copy()
+        gdp = gdp.rename(columns={'gdp_value': 'macro_gdp'})
+        df = df.merge(
+            gdp,
+            left_on=time_col,
+            right_on='quarter',
+            how='left'
+        )
+        df = df.drop(columns=['quarter'], errors='ignore')
+
+    # Merge unemployment (monthly)
+    if not macro_data.get('unemployment', pd.DataFrame()).empty:
+        unemp = macro_data['unemployment'].copy()
+        unemp = unemp.rename(columns={'unemployment_rate': 'macro_unemployment'})
+        df = df.merge(
+            unemp,
+            left_on=time_col,
+            right_on='date',
+            how='left'
+        )
+        df = df.drop(columns=['date'], errors='ignore')
+
+    logger.info(f"Merged macro data with metrics: {len(df.columns)} total columns")
+
+    return df
 
 
 def load_unified_data() -> pd.DataFrame:
