@@ -504,7 +504,7 @@ Beyond regional forecasts, we provide **planning area-level forecasts** for top 
   - Bottom-left: Affordable but slow growth
   - Bottom-right: May be overvalued (high price, low forecast)
 
-**Undervalued areas to watch**: [Areas in top-left quadrant]
+**Undervalued areas to watch**: Woodlands (8.3% forecast, ~$980 PSF), Sembawang (8.3% forecast), Yishun (8.3% forecast), Hougang (9.6% forecast), Pasir Ris (3.7% forecast)
 
 ---
 

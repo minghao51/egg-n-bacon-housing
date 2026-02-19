@@ -28,28 +28,28 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # Region to planning area mapping
 REGION_TO_AREAS = {
     "CCR": [
-        "Downtown Core", "Tanglin", "Newton", "Orchard", "River Valley",
-        "Marina East", "Marina South", "Outram", "Bukit Timah", "Novena"
+        "DOWNTOWN CORE", "TANGLIN", "NEWTON", "ORCHARD", "RIVER VALLEY",
+        "MARINA SOUTH", "OUTRAM", "BUKIT TIMAH", "NOVENA", "MUSEUM", "SINGAPORE RIVER"
     ],
     "RCR": [
-        "Bishan", "Bukit Merah", "Geylang", "Kallang/Whampoa", "Marine Parade",
-        "Queenstown", "Toa Payoh", "Rochor", "Bukit Timah", "Novena"
-    ],
-    "OCR East": [
-        "Bedok", "Changi", "Pasir Ris", "Punggol", "Tampines"
-    ],
-    "OCR North-East": [
-        "Ang Mo Kio", "Hougang", "Punggol", "Sengkang", "Serangoon"
-    ],
-    "OCR North": [
-        "Woodlands", "Sembawang", "Yishun", "Yishun", "Mandai"
-    ],
-    "OCR West": [
-        "Bukit Batok", "Bukit Panjang", "Choa Chu Kang", "Clementi", "Jurong East",
-        "Jurong West", "Tengah"
+        "BISHAN", "BUKIT MERAH", "GEYLANG", "KALLANG", "MARINE PARADE",
+        "QUEENSTOWN", "TOA PAYOH", "ROCHOR"
     ],
     "OCR Central": [
-        "Bishan", "Toa Payoh", "Serangoon", "Kallang/Whampoa"
+        "BISHAN", "TOA PAYOH", "SERANGOON", "KALLANG"
+    ],
+    "OCR East": [
+        "BEDOK", "CHANGI", "PASIR RIS", "PUNGGOL", "TAMPINES"
+    ],
+    "OCR North-East": [
+        "ANG MO KIO", "HOUGANG", "SENGKANG", "SERANGOON"
+    ],
+    "OCR North": [
+        "WOODLANDS", "SEMBAWANG", "YISHUN", "MANDAI", "LIM CHU KANG"
+    ],
+    "OCR West": [
+        "BUKIT BATOK", "BUKIT PANJANG", "CHOA CHU KANG", "CLEMENTI", "JURONG EAST",
+        "JURONG WEST", "TENGAH"
     ]
 }
 
@@ -57,26 +57,49 @@ REGION_TO_AREAS = {
 REGION_COLORS = {
     "CCR": "#e74c3c",
     "RCR": "#3498db",
+    "OCR Central": "#e67e22",
     "OCR East": "#2ecc71",
     "OCR North-East": "#9b59b6",
     "OCR North": "#f39c12",
-    "OCR West": "#1abc9c",
-    "OCR Central": "#e67e22"
+    "OCR West": "#1abc9c"
 }
 
 
 def load_regional_forecasts() -> pd.DataFrame:
     """Load regional forecast data."""
-    forecast_file = Path("regional_forecasts_final.csv")
+    # Try to use the report CSV with adjusted values first
+    forecast_file = Path("forecasts_for_report.csv")
     if forecast_file.exists():
         df = pd.read_csv(forecast_file)
         # Clean up column names
         df.columns = df.columns.str.strip().str.lower()
-        logger.info(f"Loaded {len(df)} regional forecasts")
+
+        # Parse percentage values (remove % and ±)
+        for col in ["baseline", "bearish", "bullish"]:
+            df[col] = df[col].astype(str).str.rstrip("%").astype(float)
+
+        df["confidence"] = df["confidence"].astype(str).str.replace("±", "").str.rstrip("%").astype(float)
+
+        # Map region names to match format
+        df["region"] = df["region"].str.replace("OCR CENTRAL", "OCR Central")
+        df["region"] = df["region"].str.replace("OCR EAST", "OCR East")
+        df["region"] = df["region"].str.replace("OCR NORTH-EAST", "OCR North-East")
+        df["region"] = df["region"].str.replace("OCR NORTH", "OCR North")
+        df["region"] = df["region"].str.replace("OCR WEST", "OCR West")
+
+        logger.info(f"Loaded {len(df)} regional forecasts from report CSV")
         return df
 
-    # Fallback: create from hardcoded values
-    logger.warning("Forecast CSV not found, using hardcoded values")
+    # Fallback to original CSV
+    forecast_file = Path("regional_forecasts_final.csv")
+    if forecast_file.exists():
+        df = pd.read_csv(forecast_file)
+        df.columns = df.columns.str.strip().str.lower()
+        logger.info(f"Loaded {len(df)} regional forecasts from original CSV")
+        return df
+
+    # Final fallback: hardcoded values (from report)
+    logger.warning("No forecast CSV found, using hardcoded values")
     return pd.DataFrame({
         "region": ["CCR", "OCR Central", "OCR East", "OCR North",
                    "OCR North-East", "OCR West", "RCR"],
@@ -97,11 +120,10 @@ def get_current_prices_by_area() -> pd.DataFrame:
 
         # Group by planning_area and get median price_psf
         area_prices = df.groupby("planning_area").agg({
-            "price_psf": "median",
-            "region": "first"
+            "price_psf": "median"
         }).reset_index()
 
-        area_prices.columns = ["planning_area", "median_psf", "region"]
+        area_prices.columns = ["planning_area", "median_psf"]
         logger.info(f"Computed median prices for {len(area_prices)} planning areas")
         return area_prices
 
@@ -118,19 +140,25 @@ def get_current_prices_by_area() -> pd.DataFrame:
                 1050, 1180, 1020, 980, 1080,
                 1120, 1150, 1100, 1350, 950,
                 920, 1080, 1200, 980, 1250
-            ],
-            "region": [
-                "OCR East", "OCR East", "OCR East", "OCR North", "OCR North-East",
-                "OCR North-East", "OCR North-East", "OCR West", "OCR Central", "OCR West",
-                "OCR North", "OCR West", "OCR Central", "OCR North-East", "OCR Central"
             ]
         })
 
 
 def map_area_forecasts(area_prices: pd.DataFrame, regional_forecasts: pd.DataFrame) -> pd.DataFrame:
     """Map regional forecasts to planning areas."""
-    # Clean region names in both dataframes
-    area_prices["region_clean"] = area_prices["region"].str.strip()
+    # Create reverse mapping from planning area to region
+    area_to_region = {}
+    for region, areas in REGION_TO_AREAS.items():
+        for area in areas:
+            area_to_region[area] = region
+
+    # Add region to area_prices
+    area_prices["region_clean"] = area_prices["planning_area"].map(area_to_region)
+
+    # Drop areas without region mapping
+    area_prices = area_prices.dropna(subset=["region_clean"])
+
+    # Clean region names in regional_forecasts
     regional_forecasts["region_clean"] = regional_forecasts["region"].str.strip()
 
     # Merge forecasts with area prices
@@ -141,6 +169,7 @@ def map_area_forecasts(area_prices: pd.DataFrame, regional_forecasts: pd.DataFra
     )
 
     # Sort by baseline forecast (descending) and take top 15
+    merged = merged.dropna(subset=["baseline"])
     merged = merged.sort_values("baseline", ascending=True).tail(15)
 
     return merged
