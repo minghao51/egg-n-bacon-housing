@@ -14,32 +14,29 @@ Usage:
 """
 
 import logging
-import sys
+import warnings
 from pathlib import Path
 
-import pandas as pd
 import numpy as np
-import warnings
-warnings.filterwarnings('ignore')
-
-from sklearn.preprocessing import StandardScaler
+import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import Ridge
 from sklearn.model_selection import train_test_split
-import plotly.express as px
-import plotly.graph_objects as go
+from sklearn.preprocessing import StandardScaler
 
 # Add project root to Python path
-from scripts.core.utils import add_project_to_path
-add_project_to_path(Path(__file__))
-
 from scripts.core.config import Config
+from scripts.core.utils import add_project_to_path
+
+warnings.filterwarnings('ignore')
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Setup project path
+add_project_to_path(Path(__file__))
 
 OUTPUT_DIR = Config.DATA_DIR / "analysis" / "amenity_impact"
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
@@ -144,7 +141,7 @@ def run_temporal_analysis(df):
         importance_df['test_r2'] = rf.score(X_test, y_test)
 
         logger.info(f"  Test R2: {rf.score(X_test, y_test):.4f}")
-        logger.info(f"  Top 5 features:")
+        logger.info("  Top 5 features:")
         for _, row in importance_df.head(5).iterrows():
             logger.info(f"    {row['feature']}: {row['importance']:.4f}")
 
@@ -308,8 +305,6 @@ def run_mrt_distance_stratification(df):
     logger.info("MRT DISTANCE STRATIFICATION")
     logger.info("="*60)
 
-    amenity_features = get_amenity_features()['mrt_distance']
-
     df = df.dropna(subset=['price_psm', 'dist_to_nearest_mrt'])
 
     dist_bands = [0, 200, 400, 600, 800, 1000, 1500, 2000, 3000]
@@ -416,7 +411,7 @@ def main():
     grid_df = run_grid_analysis(df)
     dist_strat_df = run_mrt_distance_stratification(df)
 
-    summary_df = generate_summary_stats(
+    generate_summary_stats(
         temporal_df, within_town_df, grid_df, dist_strat_df
     )
 

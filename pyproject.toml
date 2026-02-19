@@ -71,6 +71,7 @@ ignore = ["E501"]  # Line length handled by formatter
 [tool.ruff.lint.per-file-ignores]
 "notebooks/*.py" = ["E402"]  # Allow imports anywhere in notebooks
 "scripts/core/stages/*.py" = ["N999"]  # Allow stage file names like L0_collect.py
+"scripts/analytics/analysis/amenity/analyze_amenity_impact.py" = ["N806"]  # Allow uppercase variables for sklearn conventions (X, X_train, etc.)
 
 
 [tool.pytest.ini_options]
