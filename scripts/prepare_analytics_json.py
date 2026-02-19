@@ -13,6 +13,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -290,8 +291,12 @@ def load_unified_data():
             return pd.DataFrame()
 
 
-def export_all_analytics():
-    """Main entry point to export all analytics JSON files."""
+def export_all_analytics(output_dir: Optional[Path] = None):
+    """Main entry point to export all analytics JSON files.
+
+    Args:
+        output_dir: Optional output directory. Defaults to app/public/data/analytics
+    """
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s'
@@ -300,7 +305,8 @@ def export_all_analytics():
     logger.info("Starting analytics JSON export...")
 
     # Ensure output directory exists
-    output_dir = Path("app/public/data/analytics")
+    if output_dir is None:
+        output_dir = Path("app/public/data/analytics")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Export Spatial Analysis

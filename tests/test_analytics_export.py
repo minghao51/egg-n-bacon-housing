@@ -187,37 +187,17 @@ class TestAnalyticsDataExport:
         """Test that export_all_analytics creates JSON files."""
         from scripts.core.config import Config
 
-        # Use temp directory instead of actual output
-        import tempfile
-        with tempfile.TemporaryDirectory() as temp_dir:
-            temp_path = Path(temp_dir)
-            output_dir = temp_path / "data" / "analytics"
-            output_dir.mkdir(parents=True, exist_ok=True)
+        # Create output directory in temp path
+        output_dir = tmp_path / "data" / "analytics"
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-            # Temporarily override Config path
-            original_output_dir = None
-            try:
-                # Mock the function to use temp directory
-                import scripts.prepare_analytics_json as exporter
+        # Run export with custom output directory
+        export_all_analytics(output_dir=output_dir)
 
-                # Save original
-                original_output = exporter.Path
-
-                # Patch to use temp directory
-                exporter.Path = temp_path
-
-                # Run export
-                export_all_analytics()
-
-                # Verify files were created
-                assert (output_dir / "spatial_analysis.json").exists()
-                assert (output_dir / "feature_impact.json").exists()
-                assert (output_dir / "predictive_analytics.json").exists()
-
-            finally:
-                # Restore original
-                if original_output is not None:
-                    exporter.Path = original_output
+        # Verify files were created
+        assert (output_dir / "spatial_analysis.json").exists()
+        assert (output_dir / "feature_impact.json").exists()
+        assert (output_dir / "predictive_analytics.json").exists()
 
     def test_json_files_are_valid_json(self, tmp_path):
         """Test that exported JSON files are valid JSON."""
@@ -313,9 +293,10 @@ class TestCompressionScript:
         """Test that compression script creates .gz files."""
         from scripts.compress_json_files import compress_file
 
-        # Create a test JSON file
+        # Create a larger test JSON file (small files may not compress well due to gzip overhead)
         test_file = tmp_path / "test.json"
-        test_file.write_text('{"test": "data"}')
+        test_data = '{"test": "' + 'data' * 100 + '"}'  # Larger file that will compress
+        test_file.write_text(test_data)
 
         # Compress it
         original_size, compressed_size = compress_file(test_file)
@@ -323,15 +304,15 @@ class TestCompressionScript:
         # Verify .gz file was created
         gz_file = tmp_path / "test.json.gz"
         assert gz_file.exists()
-        assert compressed_size < original_size  # Should be smaller
+        assert compressed_size < original_size  # Should be smaller (for files large enough)
 
     def test_compress_file_returns_size_reduction(self, tmp_path):
         """Test that compress_file returns correct size information."""
         from scripts.compress_json_files import compress_file
 
-        # Create a test JSON file
+        # Create a test JSON file (large enough to compress well)
         test_file = tmp_path / "test.json"
-        test_data = '{"test": "data " * 100}'  # Make it larger
+        test_data = '{"test": "' + 'data' * 200 + '"}'  # Larger file for better compression
         test_file.write_text(test_data)
 
         # Compress it
@@ -342,6 +323,6 @@ class TestCompressionScript:
         assert compressed_size > 0
         assert compressed_size < original_size
 
-        # Check compression ratio
+        # Check compression ratio (should have significant reduction for this size)
         reduction = (1 - compressed_size / original_size) * 100
-        assert reduction > 0  # Should have some compression
+        assert reduction > 10  # Should have at least 10% compression
