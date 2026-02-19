@@ -160,7 +160,7 @@ This analysis examines how MRT proximity affects HDB resale prices and appreciat
 
 ### Exploratory Data Visualization
 
-![Exploratory Analysis](../../../../data/analysis/mrt_impact/exploratory_analysis.png)
+![Exploratory Analysis](../../data/analysis/mrt_impact/exploratory_analysis.png)
 
 **Four-Panel Analysis:**
 1. **Top Left:** Price vs MRT Distance (scatter plot with trend line showing negative correlation)
@@ -174,7 +174,7 @@ This analysis examines how MRT proximity affects HDB resale prices and appreciat
 
 ### 1. MRT Premium on HDB Prices
 
-![MRT Impact by Property Type](../../../../data/analysis/mrt_impact/property_type_comparison.png)
+![MRT Impact by Property Type](../../data/analysis/mrt_impact/property_type_comparison.png)
 
 HDB properties show a modest overall MRT premium of **$1.28 per 100m** closer to stations, but this varies dramatically by location.
 
@@ -200,9 +200,9 @@ Properties within 500m of MRT show the **highest appreciation rates (13.36% YoY)
 
 **Interpretation**: Properties within 500m of MRT show 35% higher appreciation than those >2km away. The counter-intuitive peak at 1-1.5km may reflect affordability trade-offs.
 
-![Distance Band Premiums by Property Type](../../../../data/analysis/mrt_impact/distance_band_premiums.png)
+![Distance Band Premiums by Property Type](../../data/analysis/mrt_impact/distance_band_premiums.png)
 
-![Appreciation Analysis Overview](../../../../data/analysis/appreciation_patterns/appreciation_analysis_overview.png)
+![Appreciation Analysis Overview](../../data/analysis/appreciation_patterns/appreciation_analysis_overview.png)
 
 **Appreciation Patterns Visualization:**
 - Year-over-year appreciation rates by MRT distance bands
@@ -250,7 +250,7 @@ Properties within 500m of MRT show the **highest appreciation rates (13.36% YoY)
 
 ### 3. Town-Level Heterogeneity
 
-![Town-Level MRT Premiums](../../../../data/analysis/mrt_impact/town_mrt_premiums_ranked.png)
+![Town-Level MRT Premiums](../../data/analysis/mrt_impact/town_mrt_premiums_ranked.png)
 
 MRT premium varies **100x across towns** - from +$59/100m in Central Area to -$39/100m in Marine Parade.
 
@@ -290,7 +290,7 @@ Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting 
 
 **Interpretation**: 2-room flat buyers pay **4x more** for MRT proximity than Executive flat buyers. Economic intuition: smaller households are more transit-dependent and budget-constrained.
 
-![Heterogeneous Effects by Flat Type and Town](../../../../data/analysis/mrt_impact/heterogeneous_effects.png)
+![Heterogeneous Effects by Flat Type and Town](../../data/analysis/mrt_impact/heterogeneous_effects.png)
 
 **Sub-group Analysis:**
 1. **Flat Type Variation:** MRT coefficients across 2-room, 3-room, 4-room, 5-room, and Executive flats showing 4x sensitivity difference
@@ -325,7 +325,7 @@ Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting 
 
 ### 5. Feature Importance Ranking
 
-![Feature Importance Analysis](../../../../data/analysis/mrt_impact/feature_importance_price_psf.png)
+![Feature Importance Analysis](../../data/analysis/mrt_impact/feature_importance_price_psf.png)
 
 **Hawker centers are 5x more important than MRT** for predicting HDB prices.
 
@@ -348,7 +348,7 @@ Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting 
 
 ## Enhanced Analysis: Station Characteristics & Connectivity
 
-![Regional Effects Comparison](../../../../data/analysis/cbd_mrt_decomposition/regional_effects_comparison.png)
+![Regional Effects Comparison](../../data/analysis/cbd_mrt_decomposition/regional_effects_comparison.png)
 
 ### Beyond Simple Distance: Station Type Matters
 
@@ -381,14 +381,14 @@ Properties were classified by their bearing to CBD (Raffles Place):
 
 **Key Insight**: Properties near interchange stations on direct CBD routes show **compound premiums** - connectivity and directionality multiply rather than add.
 
-![CBD MRT Decomposition Summary](../../../../data/analysis/cbd_mrt_decomposition/cbd_mrt_decomposition_summary.png)
+![CBD MRT Decomposition Summary](../../data/analysis/cbd_mrt_decomposition/cbd_mrt_decomposition_summary.png)
 
 **CBD vs MRT Decomposition Analysis:**
 - Shows independent effects of MRT proximity and CBD distance
 - Reveals interaction effects where properties benefit from both
 - Hierarchical regression comparing models with MRT only, CBD only, and combined effects
 
-![MRT CBD Scatter Plot](../../../../data/analysis/cbd_mrt_decomposition/mrt_cbd_scatter.png)
+![MRT CBD Scatter Plot](../../data/analysis/cbd_mrt_decomposition/mrt_cbd_scatter.png)
 
 **Scatter Plot Analysis:**
 - MRT distance vs CBD distance colored by price PSF
@@ -482,7 +482,7 @@ The Moran's I statistic of 0.67 indicates **strong positive spatial autocorrelat
 
 ## Model Performance
 
-![Model Performance Comparison](../../../../data/analysis/mrt_impact/model_performance_comparison.png)
+![Model Performance Comparison](../../data/analysis/mrt_impact/model_performance_comparison.png)
 
 ### Price Prediction (PSF)
 
@@ -630,20 +630,20 @@ The Moran's I statistic of 0.67 indicates **strong positive spatial autocorrelat
 3. **School quality interaction** - How MRT + school proximity jointly affect prices
 4. **Full Spatial Econometrics** - Implement SEM/SLM with pysal for causal estimates
 
-![Temporal Evolution Overview (2017-2026)](../../../../data/analysis/mrt_temporal_evolution/temporal_evolution_overview.png)
+![Temporal Evolution Overview (2017-2026)](../../data/analysis/mrt_temporal_evolution/temporal_evolution_overview.png)
 
 **Temporal Evolution Analysis:**
 - Year-by-year MRT coefficient evolution (2017-2026)
 - COVID-19 impact assessment (2020-2022)
 - Post-pandemic recovery patterns
 
-![Top Areas HDB Evolution](../../../../data/analysis/mrt_temporal_evolution/top_areas_evolution_hdb.png)
+![Top Areas HDB Evolution](../../data/analysis/mrt_temporal_evolution/top_areas_evolution_hdb.png)
 
 **HDB Top Areas Evolution:**
 - MRT premium trends by planning area for HDB properties
 - Identifies areas with consistently positive or negative premiums
 
-![Top Areas Condominium Evolution](../../../../data/analysis/mrt_temporal_evolution/top_areas_evolution_condominium.png)
+![Top Areas Condominium Evolution](../../data/analysis/mrt_temporal_evolution/top_areas_evolution_condominium.png)
 
 **Condominium Top Areas Evolution:**
 - MRT premium trends by planning area for Condominium properties
