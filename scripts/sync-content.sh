@@ -82,7 +82,9 @@ echo "🔧 Fixing image paths in analytics documents..."
 fixed_count=0
 for file in "$APP_CONTENT_DIR"/*.md; do
     if grep -q "../../data/" "$file"; then
-        sed -i '' 's|](../../data/|](../../../../data/|g' "$file"
+        # Use cross-platform sed with backup file
+        sed -i.bak 's|](../../data/|](../../../../data/|g' "$file"
+        rm -f "${file}.bak"
         fixed_count=$((fixed_count + 1))
     fi
 done
