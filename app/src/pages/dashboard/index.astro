@@ -4,14 +4,20 @@ import Sidebar from '@/components/Sidebar.astro';
 import MarketOverviewDashboard from '@/components/dashboard/MarketOverviewDashboard';
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
 
 // Read data at build time
-const dataPath = path.resolve('public/data/dashboard_overview.json');
+function gunzip(data) {
+  return zlib.inflateSync(Buffer.from(data, 'base64')).toString('utf-8');
+}
+
+const dataPath = path.resolve('public/data/dashboard_overview.json.gz');
 let dashboardData;
 
 try {
-  const rawData = fs.readFileSync(dataPath, 'utf-8');
-  dashboardData = JSON.parse(rawData);
+  const rawData = fs.readFileSync(dataPath);
+  const decompressed = gunzip(rawData);
+  dashboardData = JSON.parse(decompressed);
 } catch (error) {
   console.error("Failed to load dashboard data:", error);
 }

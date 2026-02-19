@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
+import zlib from 'zlib';
 import {
   SpatialAnalyticsData,
   FeatureImpactData,
@@ -65,7 +66,7 @@ export function useAnalyticsData<T>(
             ? 'predictive_analytics'
             : `${type}_analysis`;
 
-        const response = await fetch(`/data/analytics/${filename}.json`, {
+        const response = await fetch(`/data/analytics/${filename}.json.gz`, {
           signal,
         });
 
@@ -73,7 +74,10 @@ export function useAnalyticsData<T>(
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const json = await response.json();
+        // Handle gzipped response
+        const buffer = await response.arrayBuffer();
+        const decompressed = zlib.inflateSync(Buffer.from(buffer)).toString('utf-8');
+        const json = JSON.parse(decompressed);
 
         // Cache the response
         analyticsCache.set(cacheKey, json);

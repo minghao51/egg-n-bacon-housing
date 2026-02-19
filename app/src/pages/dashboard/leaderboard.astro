@@ -4,14 +4,20 @@ import Sidebar from '@/components/Sidebar.astro';
 import TownLeaderboard from '@/components/dashboard/TownLeaderboard';
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
 
-const dataPath = path.resolve('public/data/dashboard_leaderboard.json');
+function gunzip(data) {
+  return zlib.inflateSync(Buffer.from(data, 'base64')).toString('utf-8');
+}
+
+const dataPath = path.resolve('public/data/dashboard_leaderboard.json.gz');
 let leaderboardData = [];
 
 try {
   if (fs.existsSync(dataPath)) {
-    const rawData = fs.readFileSync(dataPath, 'utf-8');
-    leaderboardData = JSON.parse(rawData);
+    const rawData = fs.readFileSync(dataPath);
+    const decompressed = gunzip(rawData);
+    leaderboardData = JSON.parse(decompressed);
   }
 } catch (error) {
   console.error("Failed to load leaderboard data:", error);
