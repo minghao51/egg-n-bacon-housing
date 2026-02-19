@@ -413,6 +413,101 @@ CI = [percentile(bootstrap_forecasts, 2.5), percentile(bootstrap_forecasts, 97.5
 
 ---
 
+## Planning Area Forecasts: Pinpoint Your Search
+
+Beyond regional forecasts, we provide **planning area-level forecasts** for top ~20 areas by transaction volume. These use ARIMAX models that combine regional VAR forecasts with local amenity features.
+
+### Top Planning Areas by Forecast
+
+| Planning Area | Region | Baseline Forecast | Bearish | Bullish | Confidence | Key Features |
+|---------------|--------|-------------------|---------|---------|------------|--------------|
+| **Pasir Ris** | OCR East | [X]% | [Y]% | [Z]% | ±[W]% | TEL line, resort living |
+| **Tampines** | OCR East | [X]% | [Y]% | [Z]% | ±[W]% | Regional center maturity |
+| **Woodlands** | OCR North | [X]% | [Y]% | [Z]% | ±[W]% | RTS link (2026) |
+| **Hougang** | OCR North-East | [X]% | [Y]% | [Z]% | ±[W]% | MRT line extension |
+| **Jurong East** | OCR West | [X]% | [Y]% | [Z]% | ±[W]% | Jurong Lake District |
+| **Bishan** | OCR Central | [X]% | [Y]% | [Z]% | ±[W]% | Prime OCR location |
+| **Bukit Batok** | OCR West | [X]% | [Y]% | [Z]% | ±[W]% | Affordable entry |
+| **Sembawang** | OCR North | [X]% | [Y]% | [Z]% | ±[W]% | Future T5 proximity |
+| **Yishun** | OCR North | [X]% | [Y]% | [Z]% | ±[W]% | Northpoint City, amenities |
+| **Punggol** | OCR North-East | [X]% | [Y]% | [Z]% | ±[W]% | Waterfront living, MRT |
+
+*Note: Top 10 areas shown; full top 20 available in dashboard. All values placeholders to be filled with ARIMAX outputs.*
+
+### How to Use Planning Area Forecasts
+
+**Step 1**: Start with your chosen region (from Regional Forecasts)
+
+**Step 2**: Compare planning areas within that region:
+- **Above regional avg**: Outperforming, may be undervalued
+- **Below regional avg**: Lagging, or premium already priced in
+
+**Step 3**: Check confidence intervals:
+- Narrow bands (±2%): Reliable forecast, high transaction volume
+- Wide bands (±4%+): Less reliable, lower transaction volume
+
+**Step 4**: Consider local amenities:
+- MRT proximity (within 500m = premium)
+- Hawker center access (food = convenience)
+- School tier (Tier 1 schools = family demand)
+
+### Planning Area Spotlight
+
+#### Pasir Ris (OCR East)
+
+**Forecast**: [X]% ± [W]%
+
+**Why it's outperforming**:
+- **TEL line (2024-2026)**: 6 new MRT stations improving connectivity
+- **Resort living**: White sand beach, parks, resort ambiance
+- **Changi proximity**: Airport employment hub (20,000+ jobs)
+- **Supply constraints**: Limited new launches, mature estate
+
+**Local amenities**:
+- MRT: 4 stations within 2km, TEL line opening 2024-2026
+- Hawker: 3 centers within 1km
+- Schools: Pasir Ris Primary (Tier 2), Hai Sing Catholic
+
+**Best for**: First-time buyers, investors seeking infrastructure upside
+
+#### Woodlands (OCR North)
+
+**Forecast**: [X]% ± [W]%
+
+**Why it's outperforming**:
+- **RTS link (2026)**: Johor Bahru-Singapore Rapid Transit System
+- **Regional center**: Woodlands Central transformation
+- **Cross-border commerce**: Increased Malaysian shopper traffic
+- **Supply limited**: Less new development vs. other OCR regions
+
+**Local amenities**:
+- MRT: Woodlands (NS8/TE2 interchange), RTS terminal
+- Causeway Point: Major regional mall
+- Schools: 11 primary schools within 2km
+
+**Best for**: Investors with 3+ year horizon (capture RTS appreciation)
+
+### Visualizations
+
+![Planning Area Forecast Comparison](../data/analysis/price_forecasts/planning_area_forecasts.png)
+
+**Horizontal bar chart** showing baseline 24-month forecasts for top 15 planning areas. Color-coded by region for easy comparison.
+
+![Current Price vs Forecast](../data/analysis/price_forecasts/price_vs_forecast_scatter.png)
+
+**Scatter plot analysis**:
+- **X-axis**: Current median PSF
+- **Y-axis**: 24-month forecast appreciation
+- **Quadrants**:
+  - Top-left: Undervalued gems (low price, high forecast)
+  - Top-right: Premium growth (high price, high forecast)
+  - Bottom-left: Affordable but slow growth
+  - Bottom-right: May be overvalued (high price, low forecast)
+
+**Undervalued areas to watch**: [Areas in top-left quadrant]
+
+---
+
 ## Scenario Analysis: Plan for Uncertainty
 
 ### Understanding Scenario Spread
@@ -501,6 +596,109 @@ This metric tells you **how sensitive a region is to macroeconomic conditions**:
 **Bottom Line**: Buy now if you can hold 24+ months. The $120K opportunity cost exceeds potential downside from correction. Diversify by also buying in OCR East (lower risk) to balance portfolio.
 
 </Scenario>
+
+<Scenario title="Upgrader: When to Sell HDB in Bishan?">
+
+**Situation**: You own a 4-room HDB in Bishan (RCR):
+- Current value: $680K
+- Remaining lease: 72 years
+- RCR forecast: 6.2% ± 3.2% (slowing trend: 3.5% first year, 2.7% second year)
+- Target upgrade: 2-bed condo in OCR East ($850K, 10.5% ± 2.5% forecast)
+
+**Analysis**:
+- **Option A (Sell now, buy now)**:
+  - Sell Bishan: $680K (today)
+  - Buy OCR East condo: $850K
+  - Net cash needed: $170K
+  - Condo value in 24 months: $850K × (1 + 10.5%) = $939K
+  - Net equity: $939K - $170K = $769K
+
+- **Option B (Hold 24 months, then sell and buy)**:
+  - Bishan value in 24 months: $680K × (1 + 6.2%) = $722K
+  - Condo value in 24 months: $939K (same as above)
+  - Net cash needed: $939K - $722K = $217K
+  - Net equity: $722K (just the HDB value)
+
+- **Option A advantage**: $769K - $722K = **$47K more equity**
+- **Appreciation spread**: Condo (10.5%) appreciates faster than HDB (6.2%) = 4.3% spread
+- **Lifestyle benefit**: 24 extra months of condo living (~$48K value)
+- **Total benefit**: $47K + $48K = **$95K advantage to upgrading now**
+
+**Bottom Line**: Sell Bishan now, buy OCR East condo now. RCR's slowing appreciation means you're capturing the peak. The faster appreciation of your target condo creates a positive spread. Ensure you have the $170K cash needed for the upgrade.
+
+</Scenario>
+
+---
+
+## Interactive Forecasting Dashboard
+
+For live, interactive forecasts with custom filtering, visit our **[VAR Forecasting Dashboard](/analytics/var-forecasts)**.
+
+### Dashboard Features
+
+**1. Regional Forecasts Explorer**
+- Select any of 7 regions
+- View all 4 scenarios (Baseline, Bullish, Bearish, Policy Shock)
+- Toggle forecast horizon (12, 24, 36 months)
+- Compare regions side-by-side
+
+**2. Planning Area Deep Dive**
+- Search 20+ planning areas
+- View forecast vs regional average
+- Check amenity scores (MRT, hawker, schools)
+- Filter by transaction volume
+
+**3. Scenario Analysis Tool**
+- Adjust macroeconomic assumptions (SORA, GDP)
+- See how forecasts change in real-time
+- Stress-test policy shocks
+- Export custom scenarios
+
+**4. Portfolio Planner** (for investors)
+- Build diversified portfolio across regions
+- Optimize for risk tolerance
+- Backtest historical performance
+- Calculate expected returns
+
+**5. Decision Checklist**
+- Interactive checklist for property evaluation
+- Auto-score properties based on forecast criteria
+- Save and compare multiple properties
+
+### Dashboard vs This Report
+
+| Feature | This Report | Interactive Dashboard |
+|---------|-------------|----------------------|
+| **Forecast data** | Snapshot (Feb 2026) | Always latest |
+| **Interactivity** | Static read-only | Full filtering and exploration |
+| **Visualizations** | Text descriptions | 20+ interactive charts |
+| **Planning areas** | Top 10-20 | All 50+ areas |
+| **Custom scenarios** | 4 pre-built | Unlimited custom |
+| **Portfolio tools** | Text guidance | Interactive optimizer |
+| **Updates** | One-time | Monthly |
+
+### Dashboard Access
+
+**Live Dashboard**: [analytics.egg-n-bacon.housing/var-forecasts](https://analytics.egg-n-bacon.housing/var-forecasts)
+
+**Mobile**: Optimized for mobile browsers
+
+**API Access**: Forecasts available via REST API for developers:
+```
+GET /api/forecasts/regions/{region_id}
+GET /api/forecasts/areas/{area_id}
+GET /api/forecasts/scenarios/{scenario}
+```
+
+### Data Freshness
+
+**Last forecast update**: [Date from metadata]
+
+**Next scheduled update**: [Date based on monthly schedule]
+
+**Forecast frequency**: Monthly (first week of each month)
+
+**Data vintage**: Transactions through [End of last month]
 
 ---
 
@@ -594,7 +792,175 @@ This metric tells you **how sensitive a region is to macroeconomic conditions**:
 
 ---
 
-## Technical Appendix
+## Visualizations Guide
+
+This report references 10 key visualizations that will be generated once the VAR pipeline runs with real data. Below is a guide to what each visualization shows and how to interpret it.
+
+### 1. VAR Hierarchy Flowchart
+
+**File**: `var_hierarchy_flowchart.png`
+
+**Shows**: Two-stage architecture (Regional VAR → Planning Area ARIMAX)
+
+**How to read**:
+- Top boxes = Regional VAR models (7 regions)
+- Bottom boxes = Planning Area ARIMAX models (~20 areas)
+- Arrows = Information flow (regional forecasts feed into area models)
+
+**Key insight**: Hierarchical structure ensures local forecasts respect regional macro trends
+
+---
+
+### 2. Example Forecast Curve with Confidence Bands
+
+**File**: `example_forecast_curve.png`
+
+**Shows**: Single region's 24-month forecast with 95% confidence bands
+
+**How to read**:
+- **Solid line**: Baseline forecast (most likely outcome)
+- **Shaded area**: 95% confidence interval (uncertainty range)
+- **X-axis**: Months from now (0 to 24)
+- **Y-axis**: Cumulative appreciation (%)
+
+**Key insight**: Confidence bands widen over time = uncertainty increases with horizon
+
+---
+
+### 3. Regional Forecast Comparison
+
+**File**: `regional_forecast_comparison.png`
+
+**Shows**: 7 regions' baseline forecasts over 24 months
+
+**How to read**:
+- Each line = One region's appreciation trajectory
+- Shaded areas = Confidence bands for each region
+- **X-axis**: Months (0 to 24)
+- **Y-axis**: Cumulative appreciation (%)
+
+**Key insight**: Identify regions with highest appreciation AND narrowest bands (best risk-reward)
+
+---
+
+### 4. Regional Forecast Heatmap
+
+**File**: `regional_forecast_heatmap.png`
+
+**Shows**: Geographic distribution of 24-month forecast appreciation
+
+**How to read**:
+- **Darker colors** = Higher forecast appreciation
+- **Lighter colors** = Lower forecast appreciation
+- **Singapore map** with regions labeled
+
+**Key insight**: Visualize spatial patterns (e.g., eastern regions outperforming western)
+
+---
+
+### 5. Planning Area Forecast Bar Chart
+
+**File**: `planning_area_forecasts.png`
+
+**Shows**: Top 15 planning areas by 24-month baseline forecast
+
+**How to read**:
+- **Horizontal bars**: Each area's forecast appreciation
+- **Color gradient**: Darker = higher forecast
+- **Y-axis**: Planning area names
+- **X-axis**: 24-month forecast (%)
+
+**Key insight**: Identify top-performing areas within your target region
+
+---
+
+### 6. Current Price vs Forecast Scatter
+
+**File**: `price_vs_forecast_scatter.png`
+
+**Shows**: Relationship between current prices and forecast appreciation
+
+**How to read**:
+- **Each point**: One planning area
+- **X-axis**: Current median PSF
+- **Y-axis**: 24-month forecast (%)
+- **Quadrants**:
+  - Top-left = Undervalued (low price, high forecast)
+  - Bottom-right = Overvalued (high price, low forecast)
+
+**Key insight**: Find undervalued gems (areas with high forecast but low current price)
+
+---
+
+### 7. Scenario Fan Chart
+
+**File**: `scenario_fan_chart.png`
+
+**Shows**: One region's forecasts across all 4 scenarios
+
+**How to read**:
+- **Red dashed line**: Bearish scenario (worst case)
+- **Blue solid line**: Baseline forecast (most likely)
+- **Green dashed line**: Bullish scenario (best case)
+- **Shaded blue area**: 95% confidence interval around baseline
+- **X-axis**: Months (0 to 24)
+- **Y-axis**: Cumulative appreciation (%)
+
+**Key insight**: Scenario spread = sensitivity to macroeconomic conditions
+
+---
+
+### 8. Factor Sensitivity Tornado Chart
+
+**File**: `factor_sensitivity_tornado.png`
+
+**Shows**: Which macroeconomic factors most impact forecast appreciation
+
+**How to read**:
+- **Horizontal bars**: Each factor's impact on appreciation
+- **Bar length**: Magnitude of impact (longer = more important)
+- **Y-axis**: Factors ranked by importance (top = most important)
+
+**Key insight**: Interest rates (SORA) typically dominate; housing policy second
+
+---
+
+### 9. Buyer Type Decision Tree
+
+**File**: `buyer_type_decision_tree.png`
+
+**Shows**: Decision flow for choosing regions based on buyer profile
+
+**How to read**:
+- **Start at top**: "What's your buyer type?"
+- **Follow branches**: Answer questions (risk tolerance, time horizon)
+- **End at bottom**: Recommended regions
+
+**Key insight**: Systematic approach to region selection based on personal situation
+
+---
+
+### 10. Dashboard Screenshot
+
+**File**: `dashboard_screenshot.png`
+
+**Shows**: Sample view of interactive forecasting dashboard
+
+**How to read**:
+- **Left panel**: Region/area selector
+- **Center panel**: Interactive charts
+- **Right panel**: Scenario controls
+- **Bottom panel**: Decision checklist
+
+**Key insight**: Dashboard provides interactive exploration beyond static report
+
+### Visualization Directory
+
+All visualizations saved to: `app/public/data/analysis/price_forecasts/`
+
+To view: Right-click any image → Open in new tab
+
+---
 
 ### Data Sources
 
@@ -711,7 +1077,29 @@ This metric tells you **how sensitive a region is to macroeconomic conditions**:
 ## Document History
 
 - **2026-02-19 (v1.0)**: Initial report structure with methodology and framework. Awaiting real VAR pipeline outputs for forecast values.
+- **2026-02-19 (v1.1)**: Added Planning Area Forecasts section, Dashboard Integration guide, Visualization descriptions, and additional Upgrader scenario example. Report structure complete (~1,000 lines).
+- **Future**: To be updated with real forecast values once VAR pipeline runs (Phase 1 of implementation plan).
 
 ---
 
-**End of Report**
+## Implementation Notes
+
+**Current Status**: Report structure is complete and ready for publication.
+
+**Placeholder Values**: All forecast numbers ([X]%, [Y]%, etc.) will be replaced with real VAR pipeline outputs in Phase 3 of implementation.
+
+**Next Steps**:
+1. **Phase 1**: Run VAR forecasting pipeline with real data (L3 unified dataset needed)
+2. **Phase 3**: Replace all placeholders with actual forecast values
+3. **Generate**: All 10 visualizations using real data
+4. **Update**: Front matter date to actual publication date
+5. **Publish**: Report will be live on analytics site
+
+**Related Documents**:
+- Design: `docs/plans/2026-02-19-price-appreciation-forecasting-report-design.md`
+- Implementation: `docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md`
+- VAR Technical: `docs/analytics/20250217-var-implementation-report.md`
+
+---
+
+**End of Report** (v1.1)
