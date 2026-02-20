@@ -76,15 +76,15 @@ fi
 
 echo "✅ All categories validated successfully"
 
-# Fix image paths: ../../data/ -> /data/
-# Images are now in app/public/data/analysis/ and served from root by Astro
+# Fix image paths: ../../data/ -> /egg-n-bacon-housing/data/
+# Images are now in app/public/data/analysis/ and served from base path by Astro
 echo "🔧 Fixing image paths in analytics documents..."
 fixed_count=0
 for file in "$APP_CONTENT_DIR"/*.md; do
     if grep -q "../../data/" "$file"; then
         # Use cross-platform sed with backup file
-        # Change relative paths to absolute paths (from app root)
-        sed -i.bak 's|](../../data/|](/data/|g' "$file"
+        # Change relative paths to absolute paths (from production base path)
+        sed -i.bak 's|](../../data/|](/egg-n-bacon-housing/data/|g' "$file"
         rm -f "${file}.bak"
         fixed_count=$((fixed_count + 1))
     fi

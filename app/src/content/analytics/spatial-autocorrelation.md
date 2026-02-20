@@ -175,13 +175,13 @@ This analysis examines spatial autocorrelation patterns in Singapore housing pri
 
 **So What?** This means you cannot treat properties as independent investments. A property in an HH cluster benefits from a "neighborhood multiplier effect" - surrounding appreciation lifts your property's performance. Conversely, LH areas face a "neighborhood drag" even if the property itself is attractive.
 
-![Moran's I by Property Type](/data/analysis/spatial_autocorrelation/morans_i_by_property_type.png)
+![Moran's I by Property Type](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/morans_i_by_property_type.png)
 
 **Moran Scatter Plots by Property Type:**
 
-![Moran Scatter Plot - Condo](/data/analysis/spatial_autocorrelation/moran_scatter_condo.png)
-![Moran Scatter Plot - HDB](/data/analysis/spatial_autocorrelation/moran_scatter_hdb.png)
-![Moran Scatter Plot - EC](/data/analysis/spatial_autocorrelation/moran_scatter_ec.png)
+![Moran Scatter Plot - Condo](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/moran_scatter_condo.png)
+![Moran Scatter Plot - HDB](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/moran_scatter_hdb.png)
+![Moran Scatter Plot - EC](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/moran_scatter_ec.png)
 
 **Interpretation**: Moran scatter plots show appreciation rate (x-axis) vs. spatial lag (y-axis). Upper-right (HH) and lower-left (LL) quadrants indicate positive spatial autocorrelation.
 
@@ -222,9 +222,9 @@ This analysis examines spatial autocorrelation patterns in Singapore housing pri
 - LH cluster (11.3% YoY): **$56,500 appreciation in Year 1**
 - **Performance gap: $7,000/year** - compounds to **$38,000 over 5 years**
 
-![LISA Cluster Distribution by Property Type](/data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
+![LISA Cluster Distribution by Property Type](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
 
-![LISA Cluster Map - Singapore Overview](/data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
+![LISA Cluster Map - Singapore Overview](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
 
 ### 3. Top Appreciation Hotspots (HH Clusters)
 
@@ -251,9 +251,9 @@ This analysis examines spatial autocorrelation patterns in Singapore housing pri
 | 4 | 8a284a9a87fffff | Marine Parade | 10.4% | $845 | 567 |
 | 5 | 8a284a9a83fffff | Geylang | 9.7% | $689 | 1,892 |
 
-![Singapore LISA Cluster Map - HH/LL Distribution](/data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
+![Singapore LISA Cluster Map - HH/LL Distribution](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
 
-![Singapore LISA Cluster Overview - All Regions](/data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
+![Singapore LISA Cluster Overview - All Regions](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png)
 
 ### 4. Top Appreciation Coldspots (LL Clusters)
 
@@ -277,9 +277,9 @@ This analysis examines spatial autocorrelation patterns in Singapore housing pri
 | 4 | 8a284a9a2ffffff | Punggol | 5.3% | $512 | 5,123 |
 | 5 | 8a284a9a267ffff | Sengkang | 5.6% | $498 | 4,567 |
 
-![LISA Cluster Distribution by Property Type](/data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
+![LISA Cluster Distribution by Property Type](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
 
-![LISA Cluster Distribution Overview](/data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
+![LISA Cluster Distribution Overview](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png)
 
 ### 5. Spatial Lag Analysis
 
@@ -603,11 +603,11 @@ CLUSTER_CLASSIFICATION_RULES = {
 
 **Performance gap**: MATURE_HOTSPOT vs VALUE_OPPORTUNITY = **$57,000 over 5 years**
 
-![Comprehensive Cluster Distribution by Property Type](/data/analysis/spatial_autocorrelation/comprehensive_cluster_distribution.png)
+![Comprehensive Cluster Distribution by Property Type](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/comprehensive_cluster_distribution.png)
 
-![Average Appreciation by Cluster Type](/data/analysis/spatial_autocorrelation/appreciation_by_cluster.png)
+![Average Appreciation by Cluster Type](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/appreciation_by_cluster.png)
 
-![Cluster Risk-Return Profile](/data/analysis/spatial_autocorrelation/cluster_risk_return.png)
+![Cluster Risk-Return Profile](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/cluster_risk_return.png)
 
 ---
 
@@ -677,11 +677,11 @@ def track_cluster_evolution(df_historical, window_size=12):
 - **Value → Hotspot**: 18-36 months if fundamentals support
 - **Declining → Recovery**: 36+ months, often requires external catalyst (infrastructure, policy)
 
-![Cluster Transition Sankey Diagram (12-month)](/data/analysis/spatial_autocorrelation/cluster_transition_sankey.png)
+![Cluster Transition Sankey Diagram (12-month)](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/cluster_transition_sankey.png)
 
-![Cluster Evolution Timeline - HH/LL Counts Over Time](/data/analysis/spatial_autocorrelation/cluster_evolution_timeline.png)
+![Cluster Evolution Timeline - HH/LL Counts Over Time](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/cluster_evolution_timeline.png)
 
-![Cluster Transition Heatmap Matrix](/data/analysis/spatial_autocorrelation/transition_heatmap.png)
+![Cluster Transition Heatmap Matrix](/egg-n-bacon-housing/data/analysis/spatial_autocorrelation/transition_heatmap.png)
 
 ---
 
@@ -907,20 +907,25 @@ H3_CONFIG = {
 - **Purpose**: Global Moran's I and LISA cluster analysis
 - **Outputs**: `moran_results.csv`, `lisa_clusters.csv`, `lisa_clusters.geojson`, `moran_scatter.png`
 
-**Multi-Dimensional Clustering**
-- **Script**: `scripts/analytics/analysis/spatial/analyze_cluster_creation.py`
-- **Purpose**: Hierarchical spatial-temporal-fundamental clustering
-- **Outputs**: `comprehensive_clusters.csv`, `cluster_evolution.csv`
+**H3 Clustering Analysis**
+- **Script**: `scripts/analytics/analysis/spatial/analyze_h3_clusters.py`
+- **Purpose**: H3 hex grid clustering analysis with spatial aggregation
+- **Outputs**: `h3_cluster_results.csv`, cluster statistics by hex cell
 
-**Cluster Evolution Tracking**
-- **Script**: `scripts/analytics/analysis/spatial/analyze_cluster_evolution.py`
-- **Purpose**: Track cluster transitions over time
+**Cluster Evolution Visualization**
+- **Script**: `scripts/analytics/viz/visualize_cluster_evolution.py`
+- **Purpose**: Track and visualize cluster transitions over time
 - **Outputs**: `cluster_transition_matrix.csv`, `evolution_patterns.png`
 
-**Visualization**
-- **Script**: `scripts/analytics/viz/visualize_clusters.py`
+**Spatial Cluster Visualization**
+- **Script**: `scripts/analytics/viz/visualize_spatial_clusters.py`
 - **Purpose**: Interactive cluster maps and dashboards
 - **Outputs**: `cluster_map.html`, `moran_scatter.html`
+
+**Cluster Profile Visualization**
+- **Script**: `scripts/analytics/viz/visualize_cluster_profiles.py`
+- **Purpose**: Generate radar charts and feature importance plots
+- **Outputs**: `cluster_radar_profiles.png`, `feature_importance.png`
 
 ### Data Pipeline Scripts
 
