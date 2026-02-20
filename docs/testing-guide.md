@@ -1,12 +1,34 @@
 # Testing Guide
 
+**Last Updated**: 2026-02-20 | **Status**: Active
+
+---
+
+## 📋 Overview
+
 This guide covers testing practices for the egg-n-bacon-housing project.
 
-## Overview
+**Testing Framework**: pytest with comprehensive test coverage for core modules
 
-The project uses **pytest** as the testing framework with comprehensive test coverage for core modules. Tests are organized by module and categorized by type (unit, integration, slow, API).
+**Test Organization**:
+- Tests organized by module (mirrors `/scripts` structure)
+- Categorized by type (unit, integration, slow, API)
+- Fast feedback loop for development
 
-## Running Tests
+### Quick Reference
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `uv run pytest` | Run all tests | Before committing changes |
+| `uv run pytest -v` | Verbose output | Debugging test failures |
+| `uv run pytest -m unit` | Unit tests only | Fast feedback during development |
+| `uv run pytest -m "not slow"` | Skip slow tests | Normal development workflow |
+| `uv run pytest --cov` | With coverage | Checking coverage goals |
+| `uv run pytest -x` | Stop on first failure | Quick debugging |
+| `uv run pytest --lf` | Rerun failed tests | Fixing test failures |
+| `uv run pytest -k "name"` | Filter by name | Running specific tests |
+
+## 🚀 Running Tests
 
 ### Run All Tests
 
@@ -19,7 +41,25 @@ uv run pytest -v
 
 # Run with coverage report
 uv run pytest --cov=scripts/core --cov-report=html
+
+# Run with coverage for multiple modules
+uv run pytest --cov=scripts/core --cov=scripts/analytics --cov-report=html
 ```
+
+**Expected Output**:
+```
+========================= test session starts ==========================
+collected 150 items
+
+tests/core/test_config.py ....                               [ 2%]
+tests/core/test_data_helpers.py ....................         [ 18%]
+tests/core/test_cache.py ........                            [ 24%]
+...
+
+========================= 150 passed in 5.23s ==========================
+```
+
+---
 
 ### Run Specific Test Categories
 
@@ -33,9 +73,17 @@ uv run pytest -m integration
 # Run slow tests (infrequent)
 uv run pytest -m slow
 
-# Skip slow tests
+# Skip slow tests (recommended for normal development)
 uv run pytest -m "not slow"
 ```
+
+**Why use categories?**
+- **Unit tests**: Fast feedback during development (< 1 second each)
+- **Integration tests**: Verify module interactions (< 10 seconds each)
+- **Slow tests**: Large dataset processing (run infrequently)
+- **API tests**: External API calls (usually mocked in CI)
+
+---
 
 ### Run Specific Test Files
 
@@ -48,12 +96,17 @@ uv run pytest tests/core/test_config.py::TestConfigPaths
 
 # Test specific function
 uv run pytest tests/core/test_config.py::TestConfigPaths::test_base_dir_exists
+
+# Test multiple modules
+uv run pytest tests/core/ tests/analytics/
 ```
+
+---
 
 ### Run with Different Verbosity
 
 ```bash
-# Verbose output
+# Verbose output (shows test names)
 uv run pytest -v
 
 # Very verbose (show print statements)
@@ -64,23 +117,172 @@ uv run pytest --tb=short
 
 # No traceback (just summary)
 uv run pytest --tb=no
+
+# Show local variables on failure
+uv run pytest -l
 ```
 
-## Test Structure
+---
+
+### Debugging Failed Tests
+
+```bash
+# Stop on first failure
+uv run pytest -x
+
+# Drop into debugger on failure
+uv run pytest --pdb
+
+# Drop into debugger on failure with ipdb
+uv run pytest --pdb --pdbcls=IPython.terminal.debugger:TerminalPdb
+
+# Rerun only failed tests
+uv run pytest --lf
+
+# Rerun failed tests first, then others
+uv run pytest --ff
+
+# Show print statements
+uv run pytest -v -s
+```
+
+## 📂 Test Structure
 
 ### Directory Layout
 
 ```
 tests/
-├── conftest.py              # Shared fixtures and configuration
-├── core/
-│   ├── test_config.py       # Configuration tests
-│   ├── test_data_helpers.py # Data helper tests
-│   ├── test_cache.py        # Caching tests
-│   └── test_geocoding.py    # Geocoding tests (to be added)
-└── analytics/
-    ├── test_calculations.py # Calculation tests (to be added)
-    └── test_forecasts.py    # Forecast tests (to be added)
+├── conftest.py                    # Shared fixtures and configuration
+├── core/                          # Core module tests
+│   ├── test_config.py             # Configuration tests
+│   ├── test_data_helpers.py       # Data helper tests
+│   ├── test_cache.py              # Caching tests
+│   └── test_geocoding.py          # Geocoding tests
+└── analytics/                     # Analytics module tests (to be added)
+    ├── test_calculations.py       # Calculation tests
+    ├── test_forecasts.py          # Forecast tests
+    └── test_models.py             # ML model tests
+```
+
+**Key Principle**: Test directory structure mirrors source code structure
+- `tests/core/test_config.py` tests `scripts/core/config.py`
+- `tests/analytics/` tests `scripts/analytics/`
+
+---
+
+### Test Categories
+
+#### 🟢 Unit Tests (`@pytest.mark.unit`)
+
+**Characteristics**:
+- ✅ Fast (< 1 second each)
+- ✅ Run in isolation
+- ✅ No external dependencies (API calls, databases)
+- ✅ Mock external resources
+- ✅ Test single function/class
+
+**When to Use**: Testing pure functions, logic, calculations
+
+**Example**:
+```python
+@pytest.mark.unit
+def test_config_base_dir():
+    """Test that BASE_DIR is correctly set."""
+    assert Config.BASE_DIR is not None
+    assert Config.BASE_DIR.exists()
+
+@pytest.mark.unit
+def test_calculate_roi_score():
+    """Test ROI score calculation."""
+    result = calculate_roi_score(features, yields)
+    assert 0 <= result <= 100
+```
+
+---
+
+#### 🟡 Integration Tests (`@pytest.mark.integration`)
+
+**Characteristics**:
+- ⏱️ Slower (< 10 seconds each)
+- ✅ Test module interactions
+- ✅ May use real filesystem
+- ⚠️ May use real data (not external APIs)
+- ✅ Verify end-to-end workflows
+
+**When to Use**: Testing data pipelines, file I/O, module interactions
+
+**Example**:
+```python
+@pytest.mark.integration
+def test_full_config_validation(mock_env_vars):
+    """Test that config validation works end-to-end."""
+    Config.validate()
+    assert Config.is_valid()
+
+@pytest.mark.integration
+def test_save_and_load_parquet(temp_data_dir):
+    """Test parquet roundtrip."""
+    df = create_test_dataframe()
+    save_parquet(df, "test")
+    loaded = load_parquet("test")
+    pd.testing.assert_frame_equal(loaded, df)
+```
+
+---
+
+#### 🔴 Slow Tests (`@pytest.mark.slow`)
+
+**Characteristics**:
+- ⏱️ Take a long time (> 10 seconds)
+- ⏱️ Large dataset processing
+- ⏱️ Complex computations
+- ❌ Not run in normal CI workflow
+
+**When to Use**: Full pipeline runs, large dataset tests, complex ML models
+
+**Example**:
+```python
+@pytest.mark.slow
+def test_large_dataset_processing():
+    """Test processing of full HDB dataset."""
+    df = load_parquet("L2_hdb_with_features")
+    result = analyze_appreciation(df)
+    assert len(result) > 1000
+
+@pytest.mark.slow
+def test_full_pipeline_run():
+    """Test complete L0→L1→L2 pipeline."""
+    run_pipeline(stages=["L0", "L1", "L2"])
+    assert load_parquet("L2_hdb_with_features") is not None
+```
+
+---
+
+#### 🔵 API Tests (`@pytest.mark.api`)
+
+**Characteristics**:
+- 🌐 Make external API calls
+- ⚠️ Usually mocked in CI/CD
+- 🔑 May require real API keys in local testing
+- ⚠️ Subject to rate limits
+
+**When to Use**: Testing API integrations, geocoding, data fetching
+
+**Example**:
+```python
+@pytest.mark.api
+def test_onemap_api_call():
+    """Test OneMap API integration (requires real API key)."""
+    response = fetch_onemap_data("123 Ang Mo Kio")
+    assert response.status_code == 200
+    assert "latitude" in response.json()
+
+@pytest.mark.api
+@pytest.mark.skipif(os.getenv("CI") == "true", reason="Skip in CI")
+def test_google_geocoding():
+    """Test Google geocoding fallback (local only)."""
+    result = geocode_with_google("Orchard Road, Singapore")
+    assert result["lat"] is not None
 ```
 
 ### Test Categories
@@ -347,32 +549,88 @@ def test_api_call_with_mock(mock_onemap_response):
         assert result["found"] == 1
 ```
 
-## Coverage Goals
+## 🎯 Coverage Goals
 
-Current targets:
-- **Core modules**: 70-80% coverage
-- **Pipeline stages**: 60-70% coverage
-- **Analytics**: 50-60% coverage (more complex)
+**Current Targets**:
 
-View coverage report:
+| Module Type | Coverage Target | Rationale |
+|-------------|-----------------|-----------|
+| **Core modules** | 70-80% | Critical infrastructure, stable codebase |
+| **Pipeline stages** | 60-70% | Data processing logic, some external deps |
+| **Analytics** | 50-60% | Complex ML models, harder to test |
+
+**View Coverage Report**:
 ```bash
+# Generate HTML coverage report
 uv run pytest --cov=scripts/core --cov-report=html
+
+# Open report in browser
 open htmlcov/index.html
+
+# View coverage in terminal
+uv run pytest --cov=scripts/core --cov-report=term-missing
 ```
 
-## CI/CD Integration
+**Interpreting Coverage**:
+- ✅ **Green**: 100% coverage (ideal)
+- 🟡 **Yellow**: 80-99% coverage (good)
+- 🟠 **Orange**: 60-79% coverage (acceptable)
+- 🔴 **Red**: < 60% coverage (needs improvement)
 
-Tests run automatically on:
-- Every push to `main` or `develop` branches
-- Every pull request
+---
 
-CI workflow:
+## 🔄 CI/CD Integration
+
+**When Tests Run Automatically**:
+- ✅ Every push to `main` or `develop` branches
+- ✅ Every pull request
+- ✅ On manual trigger
+
+**CI Workflow**:
+```
 1. Checkout code
-2. Install dependencies with `uv`
-3. Run unit tests
+2. Install dependencies with uv
+3. Run unit tests (fast feedback)
 4. Run all tests with coverage
 5. Upload coverage to Codecov
-6. Run linting (ruff)
+6. Run linting (ruff check)
+7. Run formatting check (ruff format --check)
+```
+
+**CI Test Commands**:
+```bash
+# CI runs this (you can too):
+uv run pytest -m "not slow" --cov=scripts/core --cov-report=xml
+uv run ruff check .
+uv run ruff format --check .
+```
+
+---
+
+## 🆘 Troubleshooting
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| **ImportError** | Wrong directory or PYTHONPATH | Run from project root with `uv run pytest` |
+| **Fixture not found** | Fixture defined in wrong place | Check fixture is in `conftest.py` or imported |
+| **Tests hang** | Waiting for API or slow operation | Use `pytest -x` to stop early, add timeout |
+| **Mock not working** | Wrong patch path | Use full import path: `patch('scripts.core.config.load')` |
+| **Coverage low** | Missing tests | Add tests for uncovered lines |
+| **Tests pass locally, fail in CI** | Environment differences | Check `.env` file, Python version, dependencies |
+
+---
+
+## 📚 Resources
+
+**Official Documentation**:
+- [pytest documentation](https://docs.pytest.org/)
+- [pytest fixtures](https://docs.pytest.org/en/stable/fixture.html)
+- [pytest marks](https://docs.pytest.org/en/stable/mark.html)
+- [pytest-cov](https://pytest-cov.readthedocs.io/)
+
+**Related Guides**:
+- [Architecture Guide](./architecture.md) - System design overview
+- [Usage Guide](./usage-guide.md) - Getting started
 
 ## Debugging Tests
 
