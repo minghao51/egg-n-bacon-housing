@@ -6,8 +6,8 @@ import pytest
 
 from scripts.core.metrics import (
     AffordabilityResult,
-    calculate_affordability_ratio,
     calculate_affordability_metrics,
+    calculate_affordability_ratio,
     calculate_mortgage_payment,
     classify_affordability,
     compute_monthly_metrics,
@@ -52,12 +52,14 @@ class TestAffordabilityRatio:
         """Test affordability ratio with zero income returns nan."""
         ratio = calculate_affordability_ratio(500000, 0)
         import numpy as np
+
         assert np.isnan(ratio)
 
     def test_affordability_ratio_negative_income(self):
         """Test affordability ratio with negative income."""
         ratio = calculate_affordability_ratio(500000, -10000)
         import numpy as np
+
         assert np.isnan(ratio)
 
 
@@ -87,9 +89,7 @@ class TestAffordabilityMetrics:
     def test_calculate_affordability_metrics_returns_result(self):
         """Test that affordability metrics returns proper result."""
         result = calculate_affordability_metrics(
-            property_price=500000,
-            annual_household_income=100000,
-            planning_area="Bedok"
+            property_price=500000, annual_household_income=100000, planning_area="Bedok"
         )
         assert isinstance(result, AffordabilityResult)
         assert result.planning_area == "Bedok"
@@ -98,8 +98,7 @@ class TestAffordabilityMetrics:
     def test_calculate_affordability_metrics_all_fields(self):
         """Test all fields are populated."""
         result = calculate_affordability_metrics(
-            property_price=400000,
-            annual_household_income=100000
+            property_price=400000, annual_household_income=100000
         )
         assert result.median_price == 400000
         assert result.estimated_annual_income == 100000
@@ -117,14 +116,16 @@ class TestMonthlyMetrics:
     def sample_unified_df(self):
         """Create sample unified transaction DataFrame."""
         dates = pd.date_range("2023-01", periods=12, freq="ME")
-        return pd.DataFrame({
-            "month": dates,
-            "property_type": ["HDB"] * 12,
-            "planning_area": ["Bedok"] * 12,
-            "price": [400000 + i * 5000 for i in range(12)],
-            "floor_area_sqft": [900] * 12,
-            "transaction_date": dates,
-        })
+        return pd.DataFrame(
+            {
+                "month": dates,
+                "property_type": ["HDB"] * 12,
+                "planning_area": ["Bedok"] * 12,
+                "price": [400000 + i * 5000 for i in range(12)],
+                "floor_area_sqft": [900] * 12,
+                "transaction_date": dates,
+            }
+        )
 
     def test_compute_monthly_metrics_returns_dataframe(self, sample_unified_df):
         """Test monthly metrics computation returns DataFrame."""
@@ -145,14 +146,16 @@ class TestValidateMetrics:
 
     def test_validate_metrics_returns_dict(self):
         """Test validation returns proper dict structure."""
-        df = pd.DataFrame({
-            "month": pd.date_range("2023-01", periods=3, freq="ME"),
-            "property_type": ["HDB"] * 3,
-            "planning_area": ["Bedok"] * 3,
-            "stratified_median_price": [400000, 410000, 420000],
-            "growth_rate": [0.02, 0.025, 0.03],
-            "transaction_count": [100, 110, 120],
-        })
+        df = pd.DataFrame(
+            {
+                "month": pd.date_range("2023-01", periods=3, freq="ME"),
+                "property_type": ["HDB"] * 3,
+                "planning_area": ["Bedok"] * 3,
+                "stratified_median_price": [400000, 410000, 420000],
+                "growth_rate": [0.02, 0.025, 0.03],
+                "transaction_count": [100, 110, 120],
+            }
+        )
         result = validate_metrics(df)
         assert isinstance(result, dict)
         assert "total_records" in result
@@ -161,14 +164,16 @@ class TestValidateMetrics:
 
     def test_validate_metrics_detects_issues(self):
         """Test validation detects issues."""
-        df = pd.DataFrame({
-            "month": pd.date_range("2023-01", periods=3, freq="ME"),
-            "property_type": ["HDB"] * 3,
-            "planning_area": ["Bedok"] * 3,
-            "stratified_median_price": [400000, None, 420000],
-            "growth_rate": [0.02, 0.025, 0.03],
-            "transaction_count": [100, 110, 120],
-        })
+        df = pd.DataFrame(
+            {
+                "month": pd.date_range("2023-01", periods=3, freq="ME"),
+                "property_type": ["HDB"] * 3,
+                "planning_area": ["Bedok"] * 3,
+                "stratified_median_price": [400000, None, 420000],
+                "growth_rate": [0.02, 0.025, 0.03],
+                "transaction_count": [100, 110, 120],
+            }
+        )
         result = validate_metrics(df)
         # Check missing values are detected
         assert result["missing_values"]["stratified_median_price"] > 0

@@ -27,15 +27,15 @@ class TestAnalyticsDataExport:
         import numpy as np
 
         # Test NaN
-        assert sanitize_for_json(float('nan')) is None
+        assert sanitize_for_json(float("nan")) is None
         assert sanitize_for_json(np.nan) is None
 
         # Test Inf
-        assert sanitize_for_json(float('inf')) is None
+        assert sanitize_for_json(float("inf")) is None
         assert sanitize_for_json(np.inf) is None
 
         # Test -Inf
-        assert sanitize_for_json(float('-inf')) is None
+        assert sanitize_for_json(float("-inf")) is None
         assert sanitize_for_json(-np.inf) is None
 
         # Test normal values
@@ -292,7 +292,7 @@ class TestCompressionScript:
 
         # Create a larger test JSON file (small files may not compress well due to gzip overhead)
         test_file = tmp_path / "test.json"
-        test_data = '{"test": "' + 'data' * 100 + '"}'  # Larger file that will compress
+        test_data = '{"test": "' + "data" * 100 + '"}'  # Larger file that will compress
         test_file.write_text(test_data)
 
         # Compress it
@@ -309,7 +309,7 @@ class TestCompressionScript:
 
         # Create a test JSON file (large enough to compress well)
         test_file = tmp_path / "test.json"
-        test_data = '{"test": "' + 'data' * 200 + '"}'  # Larger file for better compression
+        test_data = '{"test": "' + "data" * 200 + '"}'  # Larger file for better compression
         test_file.write_text(test_data)
 
         # Compress it

@@ -235,9 +235,7 @@ def compute_amenity_distances_by_type(
         # Process each amenity type
         for amenity_type in amenity_types:
             # Filter amenities by type
-            type_amenities = amenity_gdf_proj[
-                amenity_gdf_proj["type"] == amenity_type
-            ]
+            type_amenities = amenity_gdf_proj[amenity_gdf_proj["type"] == amenity_type]
 
             if len(type_amenities) == 0:
                 # Add default values if no amenities of this type

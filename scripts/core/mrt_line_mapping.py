@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 # DATA LOADING
 # ============================================================================
 
+
 def _load_json_config(filename: str) -> dict:
     """Load JSON configuration file with fallback to empty dict.
 
@@ -48,15 +49,60 @@ def _get_mrt_lines() -> dict:
 
     # Fallback to hardcoded values
     return {
-        "NSL": {"name": "North-South Line", "color": "#DC241F", "tier": 1, "description": "Main North-South artery"},
-        "EWL": {"name": "East-West Line", "color": "#009640", "tier": 1, "description": "Main East-West artery"},
-        "NEL": {"name": "North-East Line", "color": "#7D2884", "tier": 1, "description": "North-East to Harbourfront"},
-        "CCL": {"name": "Circle Line", "color": "#C46500", "tier": 1, "description": "Orbital line connecting major lines"},
-        "DTL": {"name": "Downtown Line", "color": "#005EC4", "tier": 2, "description": "Downtown and Bukit Timah corridor"},
-        "TEL": {"name": "Thomson-East Coast Line", "color": "#6C2B95", "tier": 2, "description": "Thomson corridor to East Coast"},
-        "BPLR": {"name": "Bukit Panjang LRT", "color": "#9A2F36", "tier": 3, "description": "Bukit Panjang feeder"},
-        "SKRLRT": {"name": "Sengkang LRT", "color": "#9A2F36", "tier": 3, "description": "Sengkang feeder"},
-        "PKLRT": {"name": "Punggol LRT", "color": "#9A2F36", "tier": 3, "description": "Punggol feeder"},
+        "NSL": {
+            "name": "North-South Line",
+            "color": "#DC241F",
+            "tier": 1,
+            "description": "Main North-South artery",
+        },
+        "EWL": {
+            "name": "East-West Line",
+            "color": "#009640",
+            "tier": 1,
+            "description": "Main East-West artery",
+        },
+        "NEL": {
+            "name": "North-East Line",
+            "color": "#7D2884",
+            "tier": 1,
+            "description": "North-East to Harbourfront",
+        },
+        "CCL": {
+            "name": "Circle Line",
+            "color": "#C46500",
+            "tier": 1,
+            "description": "Orbital line connecting major lines",
+        },
+        "DTL": {
+            "name": "Downtown Line",
+            "color": "#005EC4",
+            "tier": 2,
+            "description": "Downtown and Bukit Timah corridor",
+        },
+        "TEL": {
+            "name": "Thomson-East Coast Line",
+            "color": "#6C2B95",
+            "tier": 2,
+            "description": "Thomson corridor to East Coast",
+        },
+        "BPLR": {
+            "name": "Bukit Panjang LRT",
+            "color": "#9A2F36",
+            "tier": 3,
+            "description": "Bukit Panjang feeder",
+        },
+        "SKRLRT": {
+            "name": "Sengkang LRT",
+            "color": "#9A2F36",
+            "tier": 3,
+            "description": "Sengkang feeder",
+        },
+        "PKLRT": {
+            "name": "Punggol LRT",
+            "color": "#9A2F36",
+            "tier": 3,
+            "description": "Punggol feeder",
+        },
     }
 
 
@@ -83,18 +129,70 @@ def _build_fallback_station_lines() -> dict:
     station_lines: dict = {}
 
     # NSL
-    nsl = ["JURONG EAST", "BUKIT BATOK", "BUKIT GOMBAK", "CHOA CHU KANG", "YEW TEE", "KRANJI",
-           "MARSILING", "WOODLANDS", "ADMIRALTY", "SEMBAWANG", "CANBERRA", "YISHUN", "KHATIB",
-           "YIO CHU KANG", "ANG MO KIO", "BISHAN", "BRADDELL", "TOA PAYOH", "NOVENA", "NEWTON",
-           "ORCHARD", "SOMERSET", "DHOBY GHAUT", "CITY HALL", "RAFFLES PLACE", "MARINA BAY", "MARINA SOUTH"]
+    nsl = [
+        "JURONG EAST",
+        "BUKIT BATOK",
+        "BUKIT GOMBAK",
+        "CHOA CHU KANG",
+        "YEW TEE",
+        "KRANJI",
+        "MARSILING",
+        "WOODLANDS",
+        "ADMIRALTY",
+        "SEMBAWANG",
+        "CANBERRA",
+        "YISHUN",
+        "KHATIB",
+        "YIO CHU KANG",
+        "ANG MO KIO",
+        "BISHAN",
+        "BRADDELL",
+        "TOA PAYOH",
+        "NOVENA",
+        "NEWTON",
+        "ORCHARD",
+        "SOMERSET",
+        "DHOBY GHAUT",
+        "CITY HALL",
+        "RAFFLES PLACE",
+        "MARINA BAY",
+        "MARINA SOUTH",
+    ]
     for s in nsl:
-        station_lines[f"{s} INTERCHANGE" if s in ["JURONG EAST", "ANG MO KIO", "BISHAN", "NEWTON", "DHOBY GHAUT"] else s] = ["NSL"]
+        station_lines[
+            f"{s} INTERCHANGE"
+            if s in ["JURONG EAST", "ANG MO KIO", "BISHAN", "NEWTON", "DHOBY GHAUT"]
+            else s
+        ] = ["NSL"]
 
     # EWL
-    ewl = ["PASIR RIS", "TAMPINES", "SAFRA", "TANAH MERAH", "BEDOK", "KEMBANGAN", "EUNOS",
-           "PAYA LEBAR", "ALJUNIED", "KALLANG", "LAVENDER", "BUGIS", "CITY HALL", "RAFFLES PLACE",
-           "MARINA BAY", "GARDENS BY THE BAY", "JURONG EAST", "CLEMENTI", "BOON LAY", "PIONEER",
-           "JOO KOON", "GUL CIRCLE", "TUAS CRESCENT", "TUAS WEST ROAD", "TUAS LINK"]
+    ewl = [
+        "PASIR RIS",
+        "TAMPINES",
+        "SAFRA",
+        "TANAH MERAH",
+        "BEDOK",
+        "KEMBANGAN",
+        "EUNOS",
+        "PAYA LEBAR",
+        "ALJUNIED",
+        "KALLANG",
+        "LAVENDER",
+        "BUGIS",
+        "CITY HALL",
+        "RAFFLES PLACE",
+        "MARINA BAY",
+        "GARDENS BY THE BAY",
+        "JURONG EAST",
+        "CLEMENTI",
+        "BOON LAY",
+        "PIONEER",
+        "JOO KOON",
+        "GUL CIRCLE",
+        "TUAS CRESCENT",
+        "TUAS WEST ROAD",
+        "TUAS LINK",
+    ]
     for s in ewl:
         key = f"{s} INTERCHANGE" if s in ["JURONG EAST", "BOON LAY", "PAYA LEBAR"] else s
         if key in station_lines:

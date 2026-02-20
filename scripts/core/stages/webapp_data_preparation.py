@@ -121,7 +121,9 @@ def export_dashboard_data():
     # 5. Export Town Leaderboard
     logger.info("Exporting leaderboard data...")
     leaderboard_data = generate_leaderboard_data(df)
-    write_json_gzip(sanitize_for_json(leaderboard_data), output_dir / "dashboard_leaderboard.json.gz")
+    write_json_gzip(
+        sanitize_for_json(leaderboard_data), output_dir / "dashboard_leaderboard.json.gz"
+    )
 
     # 6. Export Appreciation Hotspots (NEW)
     logger.info("Exporting hotspots data...")
