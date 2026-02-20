@@ -489,11 +489,11 @@ Beyond regional forecasts, we provide **planning area-level forecasts** for top 
 
 ### Visualizations
 
-![Planning Area Forecast Comparison](../data/analysis/price_forecasts/planning_area_forecasts.png)
+![Planning Area Forecast Comparison](/data/analysis/price_forecasts/planning_area_forecasts.png)
 
 **Horizontal bar chart** showing baseline 24-month forecasts for top 15 planning areas. Color-coded by region for easy comparison.
 
-![Current Price vs Forecast](../data/analysis/price_forecasts/price_vs_forecast_scatter.png)
+![Current Price vs Forecast](/data/analysis/price_forecasts/price_vs_forecast_scatter.png)
 
 **Scatter plot analysis**:
 - **X-axis**: Current median PSF

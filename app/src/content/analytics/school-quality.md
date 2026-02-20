@@ -77,7 +77,7 @@ Implemented school tier scoring system based on:
 
 ### Exploratory Data Visualization
 
-![School Impact Exploratory Analysis](../../../../data/analysis/school_impact/exploratory_analysis.png)
+![School Impact Exploratory Analysis](/data/analysis/school_impact/exploratory_analysis.png)
 
 **Four-Panel Analysis:**
 1. **Top Left:** Price vs School Accessibility Score (scatter plot with trend line)
@@ -186,7 +186,7 @@ The negative causal effect (-$79 PSF) is counterintuitive but consistent with ma
 
 **RDD Price Discontinuity Visualization:**
 
-![RDD Price Discontinuity at 1km Boundary](../../../../data/analysis/school_rdd/rdd_visualization.png)
+![RDD Price Discontinuity at 1km Boundary](/data/analysis/school_rdd/rdd_visualization.png)
 
 The visualization shows:
 - **Control group (>1km):** Coral colored points, prices generally higher
