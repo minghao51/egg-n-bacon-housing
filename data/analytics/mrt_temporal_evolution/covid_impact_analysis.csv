@@ -1,0 +1,4 @@
+,HDB,Condominium,EC
+Pre-COVID,"{'mrt_premium_100m': np.float64(-5.649527838656791), 'mean_price': np.float64(416.6643260796042), 'n_transactions': 48262}",,
+COVID,"{'mrt_premium_100m': np.float64(-5.128401952828804), 'mean_price': np.float64(479.9839491147544), 'n_transactions': 57257}","{'mrt_premium_100m': np.float64(-35.83145945665798), 'mean_price': np.float64(1725.0751199279384), 'n_transactions': 47737}","{'mrt_premium_100m': np.float64(-0.7838404049648449), 'mean_price': np.float64(1116.053726169844), 'n_transactions': 7501}"
+Post-COVID,"{'mrt_premium_100m': np.float64(-5.7287743212989355), 'mean_price': np.float64(588.8418902889385), 'n_transactions': 56406}","{'mrt_premium_100m': np.float64(-32.694829366021594), 'mean_price': np.float64(2043.0000161710248), 'n_transactions': 61839}","{'mrt_premium_100m': np.float64(-17.66387768089812), 'mean_price': np.float64(1415.327399463807), 'n_transactions': 9325}"

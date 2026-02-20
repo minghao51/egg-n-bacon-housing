@@ -1,0 +1,2 @@
+variable,morans_i,expected_i,variance,z_score,p_value,permutations,n_cells,k_neighbors
+appreciation_mean,0.7657268333565492,-0.024390243902439025,0.00633068438074462,9.907501921003403,0.001,999,42,6

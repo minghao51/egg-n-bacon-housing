@@ -1,0 +1,20 @@
+feature,importance
+yoy_change_pct_lag2,0.5570097
+transaction_count,0.26827148
+volume_3m_avg,0.068009734
+mom_change_pct,0.04498897
+stratified_median_price,0.04135297
+volume_12m_avg,0.010475567
+Postal District,0.0057476014
+trend_stability,0.003387038
+acceleration_2y,0.0004535
+price_psm,0.00024756408
+price_psf,3.4045555e-05
+price,1.3313212e-05
+floor_area_sqft,8.492325e-06
+amenity_density_500m,0.0
+amenity_density_1km,0.0
+is_hdb,0.0
+is_condo,0.0
+is_ec,0.0
+log_price_psf,0.0

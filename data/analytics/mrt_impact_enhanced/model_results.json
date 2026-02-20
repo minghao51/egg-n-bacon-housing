@@ -1,0 +1,86 @@
+{
+  "ols": {
+    "r2_train": 0.44002065057836504,
+    "r2_test": 0.4448357370830378,
+    "mae": 80.3246008491437,
+    "coefficients": {
+      "dist_to_nearest_mrt": -0.0019917835204814253,
+      "mrt_within_500m": 1.1340571781960653,
+      "mrt_within_1km": 4.898918812207241,
+      "mrt_within_2km": -3.5546437396655066,
+      "hawker_within_500m": -6.737115130798421,
+      "hawker_within_1km": 3.2875302275354126,
+      "hawker_within_2km": 17.92325263392919,
+      "park_within_500m": 5.308983622361327,
+      "park_within_1km": 8.147257704022033,
+      "supermarket_within_500m": 1.3001336083732513,
+      "supermarket_within_1km": 2.666094404634622,
+      "remaining_lease_months": 0.4452162034002403,
+      "floor_area_sqft": -0.05339949941210427
+    },
+    "intercept": 123.89377494017776
+  },
+  "xgboost": {
+    "r2_train": 0.8451977936229369,
+    "r2_test": 0.8432499864375899,
+    "mae": 42.659732469312615,
+    "feature_importance": {
+      "dist_to_nearest_mrt": 0.022708415985107422,
+      "mrt_within_500m": 0.014665242284536362,
+      "mrt_within_1km": 0.06608215719461441,
+      "mrt_within_2km": 0.03252395987510681,
+      "hawker_within_500m": 0.015451214276254177,
+      "hawker_within_1km": 0.03044125810265541,
+      "hawker_within_2km": 0.5705152153968811,
+      "park_within_500m": 0.01638857088983059,
+      "park_within_1km": 0.05980866774916649,
+      "supermarket_within_500m": 0.021112289279699326,
+      "supermarket_within_1km": 0.031649041920900345,
+      "remaining_lease_months": 0.09493150562047958,
+      "floor_area_sqft": 0.02372254990041256
+    }
+  },
+  "random_forest": {
+    "r2_train": 0.832564103975582,
+    "r2_test": 0.8306668846349994,
+    "mae": 44.409267023264796,
+    "feature_importance": {
+      "dist_to_nearest_mrt": 0.027075302404567136,
+      "mrt_within_500m": 0.0013503404474883678,
+      "mrt_within_1km": 0.016023836809614094,
+      "mrt_within_2km": 0.02517413785682523,
+      "hawker_within_500m": 0.0030478171480913217,
+      "hawker_within_1km": 0.007242821364607268,
+      "hawker_within_2km": 0.4001980898201375,
+      "park_within_500m": 0.00248026981525123,
+      "park_within_1km": 0.029439742914109092,
+      "supermarket_within_500m": 0.0081009335291718,
+      "supermarket_within_1km": 0.01497072776960234,
+      "remaining_lease_months": 0.4202111511343873,
+      "floor_area_sqft": 0.04468482898614743
+    }
+  },
+  "morans_i": {
+    "moran_i": 0.6676394790899152,
+    "expected": -0.00010001000100010001,
+    "z_score": 0.6678062697175531,
+    "p_value": 0.5042572639149783,
+    "significant": "False",
+    "interpretation": "Clustered",
+    "sample_size": 10000
+  },
+  "spatial_error": {
+    "note": "Requires pysal/esda for full implementation"
+  },
+  "spatial_lag": {
+    "note": "Requires pysal/esda for full implementation"
+  },
+  "clusters": {
+    "n_clusters": 109,
+    "noise_points": 4828.0,
+    "baseline_price_psf": 569.3339428262206,
+    "avg_cluster_premium": -11.293449583166117,
+    "sum_individual_effects": -8.089130519592345,
+    "cluster_premium_exceeds_sum": "False",
+    "cluster_stats": {
+      

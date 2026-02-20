@@ -1,0 +1,2 @@
+threshold,above_median_psm,below_median_psm,price_gap_pct,above_n,below_n,t_statistic,p_value
+60,5192.307692307692,5273.972602739726,-1.5728056823947296,182039,41595,3792794850.5,0.2824096219686985

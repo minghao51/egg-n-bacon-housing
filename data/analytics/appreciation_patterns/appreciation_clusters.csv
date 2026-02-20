@@ -1,0 +1,27 @@
+planning_area,cluster,cluster_name,yoy_change_pct_mean,yoy_change_pct_std,price_psf_median
+ANG MO KIO,0,Moderate Growth Cluster 1,11.14,49.64,479.87
+BEDOK,0,Moderate Growth Cluster 1,9.71,54.72,477.5
+BISHAN,0,Moderate Growth Cluster 1,9.33,36.09,580.03
+BUKIT MERAH,4,Moderate Growth Cluster 5,7.57,23.37,618.67
+BUKIT TIMAH,2,High Growth Cluster 3,51.29,80.29,626.31
+CHOA CHU KANG,4,Moderate Growth Cluster 5,7.82,29.57,417.07
+CLEMENTI,0,Moderate Growth Cluster 1,14.49,48.27,515.82
+GEYLANG,4,Moderate Growth Cluster 5,9.31,30.94,515.69
+HOUGANG,0,Moderate Growth Cluster 1,16.83,59.64,448.06
+JURONG EAST,4,Moderate Growth Cluster 5,9.89,32.39,434.56
+JURONG WEST,0,Moderate Growth Cluster 1,9.03,40.46,390.48
+KALLANG,4,Moderate Growth Cluster 5,11.06,32.1,573.81
+MARINE PARADE,2,High Growth Cluster 3,31.18,59.77,589.86
+NOVENA,1,Moderate Growth Cluster 2,10.48,29.24,429.32
+OUTRAM,3,Moderate Growth Cluster 4,14.13,39.23,955.57
+PASIR RIS,0,Moderate Growth Cluster 1,17.08,56.58,442.24
+PUNGGOL,4,Moderate Growth Cluster 5,17.57,47.28,526.91
+QUEENSTOWN,4,Moderate Growth Cluster 5,11.52,36.85,551.12
+ROCHOR,4,Moderate Growth Cluster 5,15.71,39.88,579.53
+SEMBAWANG,1,Moderate Growth Cluster 2,19.39,34.61,414.56
+SENGKANG,0,Moderate Growth Cluster 1,15.53,61.95,492.48
+SERANGOON,0,Moderate Growth Cluster 1,8.77,42.59,503.94
+TAMPINES,0,Moderate Growth Cluster 1,11.67,43.59,456.7
+TOA PAYOH,5,High Growth Cluster 6,25.44,72.65,487.36
+WOODLANDS,0,Moderate Growth Cluster 1,12.86,47.26,414.42
+YISHUN,1,Moderate Growth Cluster 2,13.33,33.94,413.71

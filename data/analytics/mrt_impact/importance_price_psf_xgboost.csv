@@ -1,0 +1,14 @@
+feature,importance,target,model
+hawker_within_1km,0.2851219,price_psf,xgboost
+year,0.1762769,price_psf,xgboost
+remaining_lease_months,0.14313447,price_psf,xgboost
+park_within_1km,0.07376494,price_psf,xgboost
+supermarket_within_1km,0.053364083,price_psf,xgboost
+mrt_within_1km,0.05308681,price_psf,xgboost
+mrt_within_2km,0.0400516,price_psf,xgboost
+hawker_within_500m,0.03721147,price_psf,xgboost
+dist_to_nearest_mrt,0.033425555,price_psf,xgboost
+floor_area_sqm,0.028549066,price_psf,xgboost
+park_within_500m,0.027686115,price_psf,xgboost
+mrt_within_500m,0.024841508,price_psf,xgboost
+supermarket_within_500m,0.023485499,price_psf,xgboost

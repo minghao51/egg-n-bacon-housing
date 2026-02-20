@@ -1,0 +1,23 @@
+RESIDUAL ANALYSIS RECOMMENDATIONS BY PROPERTY TYPE
+============================================================
+
+HDB:
+  • Moderate skewness detected - consider separating resale vs BTO
+  • Heavy tails - investigate outliers (possibly unusual transactions)
+  • Add town-level features (mature vs non-mature estates)
+  • Add proximity to specific amenities (premium malls, top schools)
+  • Separate models for different room types (2-room, 3-room, 4-room, 5-room, multi-gen)
+
+Condo:
+  • High skewness - separate luxury/mass-market models needed
+  • Extreme outliers - handle luxury properties separately
+  • Add freehold vs leasehold indicator
+  • Add project quality indicators (developer reputation, facilities)
+  • Separate models by price segment (mass, mid, luxury)
+  • Add strata-titled shophouse detection (different dynamics)
+
+EC:
+  • Add proximity to HDB towns (EC buyers often HDB upgraders)
+  • Add timing features ( privatisation milestones)
+  • Monitor market segment (HDB upgraders vs private condo downgraders)
+

@@ -1,0 +1,17 @@
+feature,importance,target,model
+year,0.17000267,price_psf,xgboost
+school_accessibility_score,0.11479007,price_psf,xgboost
+school_primary_dist_score,0.10711331,price_psf,xgboost
+school_density_score,0.091511264,price_psf,xgboost
+remaining_lease_months,0.08874877,price_psf,xgboost
+school_within_2km,0.082331836,price_psf,xgboost
+school_primary_quality_score,0.07588071,price_psf,xgboost
+dist_to_nearest_hawker,0.060281154,price_psf,xgboost
+dist_to_nearest_park,0.04511512,price_psf,xgboost
+school_within_1km,0.042922117,price_psf,xgboost
+dist_to_nearest_mrt,0.037484612,price_psf,xgboost
+floor_area_sqm,0.023701478,price_psf,xgboost
+dist_to_nearest_supermarket,0.018735446,price_psf,xgboost
+school_within_500m,0.015774729,price_psf,xgboost
+school_secondary_dist_score,0.013813966,price_psf,xgboost
+school_secondary_quality_score,0.011792717,price_psf,xgboost

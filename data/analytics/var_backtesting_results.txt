@@ -1,0 +1,8 @@
+VAR Housing Appreciation - Backtesting Results
+============================================================
+
+Regional Models: 7 regions
+Average RMSE: nan%
+Average Directional Accuracy: nan%
+
+Criteria Passed: 0/2
