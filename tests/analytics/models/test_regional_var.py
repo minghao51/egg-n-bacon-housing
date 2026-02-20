@@ -31,12 +31,12 @@ def test_select_lag_order_returns_valid_lag():
     """Test lag order selection returns valid lag (1-6)."""
     # Generate VAR(1) data
     np.random.seed(42)
-    T = 100
-    Y = np.zeros((T, 2))
-    for t in range(1, T):
-        Y[t] = 0.5 * Y[t-1] + np.random.normal(0, 0.1, 2)
+    n_periods = 100
+    data_matrix = np.zeros((n_periods, 2))
+    for t in range(1, n_periods):
+        data_matrix[t] = 0.5 * data_matrix[t-1] + np.random.normal(0, 0.1, 2)
 
-    data = pd.DataFrame(Y, columns=['appreciation', 'volume'])
+    data = pd.DataFrame(data_matrix, columns=['appreciation', 'volume'])
 
     lag = select_lag_order(data, max_lag=6)
 

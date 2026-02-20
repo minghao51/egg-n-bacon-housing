@@ -78,7 +78,6 @@ PLANNING_AREA_TO_REGION = {
     'Loyang': 'OCR East',
     'Changi Bay': 'OCR East',
     'Expo': 'OCR East',
-    'Pasir Ris': 'OCR East',
 
     # Additional areas from L3 dataset (uppercase versions)
     'DOWNTOWN CORE': 'CCR',
@@ -112,8 +111,6 @@ PLANNING_AREA_TO_REGION = {
     'CHOA CHU KANG': 'OCR West',
     'CLEMENTI': 'OCR West',
     'MANDAI': 'OCR North',
-    'SEMBAWANG': 'OCR North',
-    'TAMPINES': 'OCR East',
     'MARINA SOUTH': 'RCR',
     'MARINE PARADE': 'RCR',
     'ROCHOR': 'RCR',
@@ -123,8 +120,6 @@ PLANNING_AREA_TO_REGION = {
     'MUSEUM': 'CCR',
     'SINGAPORE RIVER': 'RCR',
     'STRAITS VIEW': 'RCR',
-    'Changi Bay': 'OCR East',
-    'Expo': 'OCR East',
 
     # More planning areas
     'Lavender': 'RCR',

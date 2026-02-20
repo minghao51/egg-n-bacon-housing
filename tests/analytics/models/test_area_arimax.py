@@ -17,9 +17,9 @@ def test_select_arima_order():
     """Test ARIMA order selection."""
     # Generate AR(2) series
     np.random.seed(42)
-    T = 100
-    series = np.zeros(T)
-    for t in range(2, T):
+    n_periods = 100
+    series = np.zeros(n_periods)
+    for t in range(2, n_periods):
         series[t] = 0.5 * series[t-1] + 0.3 * series[t-2] + np.random.normal(0, 0.1)
 
     order = select_arima_order(series, max_p=6)
