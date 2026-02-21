@@ -219,6 +219,71 @@ def generate_lease_decay_analysis() -> Dict[str, Any]:
     }
 
 
+def generate_affordability_metrics() -> Dict[str, Any]:
+    """
+    Generate affordability metrics by town and property type.
+
+    Returns:
+        Dictionary with town-level prices, affordability ratios, and income estimates.
+    """
+    logger.info("Generating affordability metrics...")
+
+    df = load_parquet("L3_housing_unified")
+
+    # Median annual household income for Singapore (approximate)
+    MEDIAN_HOUSEHOLD_INCOME = 120000  # $120k/year
+
+    # Calculate town-level metrics
+    affordability_data = []
+
+    for town in df["town"].unique():
+        town_df = df[df["town"] == town]
+
+        for prop_type in ["HDB", "Condominium", "EC"]:
+            prop_df = town_df[town_df["property_type"] == prop_type]
+
+            if len(prop_df) < 100:  # Skip insufficient data
+                continue
+
+            median_price = prop_df["price"].median()
+            affordability_ratio = median_price / MEDIAN_HOUSEHOLD_INCOME
+
+            # Categorize
+            if affordability_ratio <= 2.5:
+                category = "affordable"
+            elif affordability_ratio <= 3.5:
+                category = "moderate"
+            elif affordability_ratio <= 5.0:
+                category = "stretched"
+            else:
+                category = "severe"
+
+            affordability_data.append({
+                "town": town,
+                "property_type": prop_type,
+                "median_price": round(median_price),
+                "affordability_ratio": round(affordability_ratio, 2),
+                "category": category,
+                "estimated_monthly_mortgage": round(median_price * 0.0043)  # Approx 25yr at 2.5%
+            })
+
+    # Sort by ratio
+    affordability_data.sort(key=lambda x: x["affordability_ratio"])
+
+    return {
+        "median_household_income": MEDIAN_HOUSEHOLD_INCOME,
+        "town_metrics": affordability_data,
+        "summary": {
+            "most_affordable_hdb": [x for x in affordability_data if x["property_type"] == "HDB"][:5],
+            "least_affordable_hdb": [x for x in affordability_data if x["property_type"] == "HDB"][-5:],
+            "national_median_ratio": round(
+                df[df["property_type"] == "HDB"]["price"].median() / MEDIAN_HOUSEHOLD_INCOME,
+                2
+            )
+        }
+    }
+
+
 def main():
     """Generate all interactive tools data files."""
     logger.info("Starting interactive tools data preparation")
