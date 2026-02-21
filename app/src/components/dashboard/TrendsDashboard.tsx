@@ -11,13 +11,28 @@ import {
   BarChart,
   Bar,
 } from 'recharts';
+import InteractiveToolsPanel from './InteractiveToolsPanel';
 
 interface TrendRecord {
   date: string;
   [key: string]: number | string;
 }
 
-export default function TrendsDashboard({ data }: { data: TrendRecord[] }) {
+interface TrendsDashboardProps {
+  data: TrendRecord[];
+  mrtCbdData: any;
+  leaseDecayData: any;
+  affordabilityData: any;
+  hotspotsData: any;
+}
+
+export default function TrendsDashboard({
+  data,
+  mrtCbdData,
+  leaseDecayData,
+  affordabilityData,
+  hotspotsData
+}: TrendsDashboardProps) {
   // data is array of objects: { date: '2020-01', 'Overall Price': 100, 'HDB Price': 50, ... }
   
   return (
@@ -83,14 +98,14 @@ export default function TrendsDashboard({ data }: { data: TrendRecord[] }) {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis 
-                dataKey="date" 
-                className="text-xs" 
+              <XAxis
+                dataKey="date"
+                className="text-xs"
                 tick={{ fill: 'hsl(var(--foreground))' }}
                 minTickGap={30}
               />
-              <YAxis 
-                className="text-xs" 
+              <YAxis
+                className="text-xs"
                 tick={{ fill: 'hsl(var(--foreground))' }}
               />
               <Tooltip
@@ -106,6 +121,14 @@ export default function TrendsDashboard({ data }: { data: TrendRecord[] }) {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Interactive Tools Panel */}
+      <InteractiveToolsPanel
+        mrtCbdData={mrtCbdData}
+        leaseDecayData={leaseDecayData}
+        affordabilityData={affordabilityData}
+        hotspotsData={hotspotsData}
+      />
     </div>
   );
 }
