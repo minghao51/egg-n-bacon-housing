@@ -49,12 +49,6 @@ jobs:
           ONEMAP_EMAIL: ${{ secrets.ONEMAP_EMAIL }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
-      - name: Generate interactive tools data
-        run: PYTHONPATH=. uv run python scripts/prepare_interactive_tools_data.py
-        env:
-          ONEMAP_EMAIL: ${{ secrets.ONEMAP_EMAIL }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-
       - name: Verify dashboard data files
         working-directory: ./app
         run: |

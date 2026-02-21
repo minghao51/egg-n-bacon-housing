@@ -25,10 +25,7 @@ class Config:
     MANUAL_DIR = DATA_DIR / "manual"
 
     # Analytics outputs (segmentation, feature importance, etc.)
-    ANALYSIS_DIR = DATA_DIR / "analysis"
-
-    # Archive for old/unused data
-    ARCHIVE_DIR = DATA_DIR / "archive"
+    ANALYTICS_DIR = DATA_DIR / "analytics"
 
     # Other directories
     METADATA_FILE = DATA_DIR / "metadata.json"
@@ -36,8 +33,8 @@ class Config:
     CORE_DIR = BASE_DIR / "scripts" / "core"  # Updated: core is now inside scripts
     SCRIPTS_DIR = BASE_DIR / "scripts"
     ANALYSIS_SCRIPTS_DIR = SCRIPTS_DIR / "analytics"  # Updated: analytics not analysis
-    ANALYSIS_OUTPUT_DIR = ANALYSIS_DIR
-    L4_REPORT_PATH = ANALYSIS_DIR / "L4_summary_report.md"
+    ANALYTICS_OUTPUT_DIR = ANALYTICS_DIR
+    L4_REPORT_PATH = ANALYTICS_DIR / "L4_summary_report.md"
 
     # ============== PIPELINE STAGE SUBDIRECTORIES ==============
     L0_DIR = PARQUETS_DIR / "L0"
@@ -130,10 +127,7 @@ class Config:
         cls.HDB_RESALE_DIR.mkdir(parents=True, exist_ok=True)
 
         # Create analytics directory
-        cls.ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
-
-        # Create archive directory
-        cls.ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+        cls.ANALYTICS_DIR.mkdir(parents=True, exist_ok=True)
 
         # Create cache directory
         if not cls.CACHE_DIR.exists():
@@ -146,12 +140,10 @@ class Config:
         print(f"DATA_DIR: {cls.DATA_DIR}")
         print(f"PIPELINE_DIR: {cls.PIPELINE_DIR}")
         print(f"MANUAL_DIR: {cls.MANUAL_DIR}")
-        print(f"ANALYSIS_DIR: {cls.ANALYSIS_DIR}")
+        print(f"ANALYTICS_DIR: {cls.ANALYTICS_DIR}")
         print(f"USE_CACHING: {cls.USE_CACHING}")
         print(
-            f"API Keys configured: {
-                sum([bool(cls.ONEMAP_EMAIL), bool(cls.GOOGLE_API_KEY), bool(cls.SUPABASE_URL)])
-            }/3"
+            f"API Keys configured: {sum([bool(cls.ONEMAP_EMAIL), bool(cls.GOOGLE_API_KEY), bool(cls.SUPABASE_URL)])}/3"
         )
 
 
