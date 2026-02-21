@@ -12,6 +12,13 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+import PriceTrendsChart from './PriceTrendsChart';
+import TransactionVolumeChart from './TransactionVolumeChart';
+
+interface TrendRecord {
+  date: string;
+  [key: string]: number | string;
+}
 
 interface OverviewData {
   metadata: {
@@ -54,7 +61,13 @@ interface StatBlock {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
-export default function MarketOverviewDashboard({ data }: { data: OverviewData }) {
+export default function MarketOverviewDashboard({
+  data,
+  trendsData
+}: {
+  data: OverviewData;
+  trendsData?: TrendRecord[];
+}) {
   const [temporalFilter, setTemporalFilter] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
   const [propertyTypeFilter, setPropertyTypeFilter] = useState<'all' | 'hdb' | 'ec' | 'condo'>('all');
 
@@ -218,6 +231,14 @@ export default function MarketOverviewDashboard({ data }: { data: OverviewData }
           </div>
         </div>
       </div>
+
+      {/* Charts Row 2 - Price Trends and Transaction Volume */}
+      {trendsData && (
+        <div className="space-y-8">
+          <PriceTrendsChart data={trendsData} />
+          <TransactionVolumeChart data={trendsData} />
+        </div>
+      )}
     </div>
   );
 }

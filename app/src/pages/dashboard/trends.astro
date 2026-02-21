@@ -11,18 +11,7 @@ function gunzip(data) {
   return zlib.gunzipSync(data).toString('utf-8');
 }
 
-const dataPath = path.resolve('public/data/dashboard_trends.json.gz');
-let trendsData;
-
-try {
-  const rawData = fs.readFileSync(dataPath);
-  const decompressed = gunzip(rawData);
-  trendsData = JSON.parse(decompressed);
-} catch (error) {
-  console.error("Failed to load trends data:", error);
-}
-
-// NEW: Load interactive tools data
+// Load interactive tools data
 const mrtCbdPath = path.resolve('public/data/interactive_tools/mrt_cbd_impact.json.gz');
 let mrtCbdData;
 
@@ -82,16 +71,13 @@ try {
       </header>
 
       {/* Dashboard Content */}
-      {trendsData ? (
-        <TrendsDashboard
-          client:load
-          data={trendsData}
-          mrtCbdData={mrtCbdData}
-          leaseDecayData={leaseDecayData}
-          affordabilityData={affordabilityData}
-          hotspotsData={hotspotsData}
-        />
-      ) : (
+      <TrendsDashboard
+        client:load
+        mrtCbdData={mrtCbdData}
+        leaseDecayData={leaseDecayData}
+        affordabilityData={affordabilityData}
+        hotspotsData={hotspotsData}
+      />
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
           Data not available. Please run the export script.
         </div>

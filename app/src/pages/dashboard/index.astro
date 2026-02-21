@@ -21,6 +21,18 @@ try {
 } catch (error) {
   console.error("Failed to load dashboard data:", error);
 }
+
+// Load trends data
+const trendsPath = path.resolve('public/data/dashboard_trends.json.gz');
+let trendsData;
+
+try {
+  const rawData = fs.readFileSync(trendsPath);
+  const decompressed = gunzip(rawData);
+  trendsData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load trends data:", error);
+}
 ---
 
 <Layout title="Market Overview - Dashboard">
@@ -38,7 +50,7 @@ try {
 
       {/* Dashboard Content */}
       {dashboardData ? (
-        <MarketOverviewDashboard client:load data={dashboardData} />
+        <MarketOverviewDashboard client:load data={dashboardData} trendsData={trendsData} />
       ) : (
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
           Data not available. Please run the export script.
