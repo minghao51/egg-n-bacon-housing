@@ -51,8 +51,14 @@ mkdir -p "$APP_CONTENT_DIR"
 rm -f "$APP_CONTENT_DIR"/*.mdx 2>/dev/null || true
 echo "🧹 Cleaned up old markdown files from $APP_CONTENT_DIR/"
 
-# Copy all .mdx files from docs/analytics to app content
-cp -r "$DOCS_DIR"/*.mdx "$APP_CONTENT_DIR/" 2>/dev/null || true
+# Copy .md files from docs/analytics and rename to .mdx for Astro
+# We keep source as .md for compatibility and convert to .mdx during sync
+for md_file in "$DOCS_DIR"/*.md; do
+    if [ -f "$md_file" ]; then
+        filename=$(basename "$md_file" .md)
+        cp "$md_file" "$APP_CONTENT_DIR/${filename}.mdx"
+    fi
+done
 
 # Skip validation if no files copied
 if ! ls "$APP_CONTENT_DIR"/*.mdx 2>/dev/null | grep -q .; then
@@ -79,16 +85,20 @@ echo "✅ All categories validated successfully"
 # Fix image paths: ../../data/ -> /egg-n-bacon-housing/data/
 # Images are now in app/public/data/analysis/ and served from base path by Astro
 echo "🔧 Fixing image paths in analytics documents..."
-fixed_count=0
+path_count=0
 for file in "$APP_CONTENT_DIR"/*.mdx; do
     if grep -q "../../data/" "$file"; then
         # Use cross-platform sed with backup file
         # Change relative paths to absolute paths (from production base path)
         sed -i.bak 's|](../../data/|](/egg-n-bacon-housing/data/|g' "$file"
         rm -f "${file}.bak"
-        fixed_count=$((fixed_count + 1))
+        path_count=$((path_count + 1))
     fi
 done
+
+if [ $path_count -gt 0 ]; then
+    echo "✅ Fixed image paths in $path_count document(s)"
+fi
 
 # Remove Astro component import statements from MDX files
 # Astro MDX doesn't support importing .astro components, so these just show as text
@@ -132,23 +142,21 @@ fi
 # Escape < symbols that break MDX parsing (e.g., <60, <$1500)
 # MDX interprets < as JSX syntax, so we need to escape these in certain contexts
 echo "🔧 Escaping MDX-incompatible angle brackets..."
-fixed_count=0
+bracket_count=0
 for file in "$APP_CONTENT_DIR"/*.mdx; do
-    # Use sed with proper escaping - safer than perl for special chars
-    # First handle patterns like " (<$1500" - escape the <
-    sed -i.bak -E 's/\(\(<[[:space:]]*\)?[$]?[0-9,]+/\(\&lt;/g' "$file"
-    # Then handle remaining patterns like <60, <$1500 not preceded by valid HTML tag chars
-    sed -i.bak -E 's/(^|[^a-zA-Z/:&])<([[:space:]]*\$?[0-9,]+)/\1\&lt;\2/g' "$file"
-    rm -f "${file}.bak"
-    fixed_count=$((fixed_count + 1))
+    if grep -qE '<[0-9$]+|[(<][[:space:]]*<\$' "$file"; then
+        # Use sed with proper escaping - safer than perl for special chars
+        # First handle patterns like " (<$1500" - escape the <
+        sed -i.bak -E 's/\([[:space:]]*<[[:space:]]*\$?/\(\&lt;/g' "$file"
+        # Then handle remaining patterns like <60, <$1500 not preceded by valid HTML tag chars
+        sed -i.bak -E 's/(^|[^a-zA-Z/:&])<([[:space:]]*\$?[0-9,]+)/\1\&lt;\2/g' "$file"
+        rm -f "${file}.bak"
+        bracket_count=$((bracket_count + 1))
+    fi
 done
 
-if [ $fixed_count -gt 0 ]; then
-    echo "✅ Fixed angle brackets in MDX files"
-fi
-
-if [ $fixed_count -gt 0 ]; then
-    echo "✅ Fixed image paths in $fixed_count document(s)"
+if [ $bracket_count -gt 0 ]; then
+    echo "✅ Fixed angle brackets in $bracket_count MDX file(s)"
 fi
 
 # Create symlink in app/src/data -> ../../data so relative paths work
