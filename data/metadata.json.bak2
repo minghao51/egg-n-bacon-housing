@@ -1,0 +1,425 @@
+{
+  "datasets": {
+    "test_dataset": {
+      "path": "test_dataset.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/test_dataset.parquet",
+      "version": "2026-02-04",
+      "rows": 100,
+      "created": "2026-02-04T18:53:40.971736",
+      "source": "test",
+      "mode": "overwrite",
+      "compression": "gzip"
+    },
+    "L1_test_dataset": {
+      "path": "L1/test_dataset.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/test_dataset.parquet",
+      "version": "2026-02-04",
+      "rows": 100,
+      "created": "2026-02-04T18:53:40.966084",
+      "source": "test",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "roundtrip_test": {
+      "path": "roundtrip_test.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/roundtrip_test.parquet",
+      "version": "2026-02-04",
+      "rows": 100,
+      "created": "2026-02-04T18:53:41.004912",
+      "source": "test",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "versioned_test": {
+      "path": "versioned_test.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/versioned_test.parquet",
+      "version": "v2.0",
+      "rows": 100,
+      "created": "2026-02-04T18:53:41.011233",
+      "source": "test",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_general_sale": {
+      "path": "raw_datagov_general_sale.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_general_sale.parquet",
+      "version": "2026-02-19",
+      "rows": 352,
+      "created": "2026-02-19T11:22:05.306313",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_rental_index": {
+      "path": "raw_datagov_rental_index.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_rental_index.parquet",
+      "version": "2026-02-19",
+      "rows": 300,
+      "created": "2026-02-19T11:22:05.307984",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_median_price_via_property_type": {
+      "path": "raw_datagov_median_price_via_property_type.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_median_price_via_property_type.parquet",
+      "version": "2026-02-19",
+      "rows": 30,
+      "created": "2026-02-19T11:22:05.309762",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_private_transactions_property_type": {
+      "path": "raw_datagov_private_transactions_property_type.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_private_transactions_property_type.parquet",
+      "version": "2026-02-19",
+      "rows": 420,
+      "created": "2026-02-19T11:22:05.311641",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_school_directory": {
+      "path": "raw_datagov_school_directory.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_school_directory.parquet",
+      "version": "2026-02-19",
+      "rows": 200,
+      "created": "2026-02-19T11:22:05.315736",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_datagov_resale_flat_all": {
+      "path": "raw_datagov_resale_flat_all.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_resale_flat_all.parquet",
+      "version": "2026-02-19",
+      "rows": 969748,
+      "created": "2026-02-19T11:22:06.285467",
+      "source": "data.gov.sg CSV (all files)",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_metrics_by_area": {
+      "path": "L5_price_metrics_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_metrics_by_area.parquet",
+      "version": "2026-02-19",
+      "rows": 14472,
+      "created": "2026-02-19T11:22:45.423791",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_volume_metrics_by_area": {
+      "path": "L5_volume_metrics_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_volume_metrics_by_area.parquet",
+      "version": "2026-02-19",
+      "rows": 11991,
+      "created": "2026-02-19T11:22:45.479169",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_growth_metrics_by_area": {
+      "path": "L5_growth_metrics_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_growth_metrics_by_area.parquet",
+      "version": "2026-02-19",
+      "rows": 11991,
+      "created": "2026-02-19T11:22:45.558598",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_temporal_features": {
+      "path": "L5_temporal_features.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_temporal_features.parquet",
+      "version": "2026-02-19",
+      "rows": 11991,
+      "created": "2026-02-19T11:22:45.577481",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_rental_yield_by_area": {
+      "path": "L5_rental_yield_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_rental_yield_by_area.parquet",
+      "version": "2026-02-19",
+      "rows": 28,
+      "created": "2026-02-19T11:22:45.640580",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_appreciation_hotspots": {
+      "path": "L5_appreciation_hotspots.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_appreciation_hotspots.parquet",
+      "version": "2026-02-19",
+      "rows": 40,
+      "created": "2026-02-19T11:22:45.675742",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_prepared": {
+      "path": "L5_price_appreciation_prepared.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_prepared.parquet",
+      "version": "2026-02-16",
+      "rows": 1116323,
+      "created": "2026-02-16T09:00:09.587439",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_train": {
+      "path": "L5_price_appreciation_train.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_train.parquet",
+      "version": "2026-02-16",
+      "rows": 959201,
+      "created": "2026-02-16T09:00:10.428779",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_test": {
+      "path": "L5_price_appreciation_test.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_test.parquet",
+      "version": "2026-02-16",
+      "rows": 157122,
+      "created": "2026-02-16T09:00:10.574017",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_price_appreciation_split": {
+      "path": "L5_price_appreciation_split.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_appreciation_split.parquet",
+      "version": "2026-02-15",
+      "rows": 452059,
+      "created": "2026-02-15T07:18:41.002053",
+      "source": "data preparation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L3_housing_unified": {
+      "path": "L3/housing_unified.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/housing_unified.parquet",
+      "version": "2026-02-19",
+      "rows": 1116323,
+      "created": "2026-02-19T17:30:28.121073",
+      "source": "Rental yield imputation",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_regional_timeseries": {
+      "path": "L5_regional_timeseries.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_regional_timeseries.parquet",
+      "version": "2026-02-19",
+      "rows": 3030,
+      "created": "2026-02-19T15:46:24.823459",
+      "source": "prepare_timeseries_pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_area_timeseries": {
+      "path": "L5_area_timeseries.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_area_timeseries.parquet",
+      "version": "2026-02-19",
+      "rows": 8192,
+      "created": "2026-02-19T15:46:24.825976",
+      "source": "prepare_timeseries_pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L1_housing_ec_transaction": {
+      "path": "L1/housing_ec_transaction.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/housing_ec_transaction.parquet",
+      "version": "2026-02-19",
+      "rows": 17051,
+      "created": "2026-02-19T11:22:07.114352",
+      "source": "URA CSV data",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L1_housing_condo_transaction": {
+      "path": "L1/housing_condo_transaction.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/housing_condo_transaction.parquet",
+      "version": "2026-02-19",
+      "rows": 110089,
+      "created": "2026-02-19T11:22:07.170764",
+      "source": "URA CSV data",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L1_housing_hdb_transaction": {
+      "path": "L1/housing_hdb_transaction.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/housing_hdb_transaction.parquet",
+      "version": "2026-02-19",
+      "rows": 969748,
+      "created": "2026-02-19T11:22:07.398465",
+      "source": "data.gov.sg CSV data",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L2_housing_unique_full_searched": {
+      "path": "L2/housing_unique_full_searched.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_unique_full_searched.parquet",
+      "version": "2026-02-19",
+      "rows": 17722,
+      "created": "2026-02-19T11:22:08.051656",
+      "source": "L1 transaction data",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L2_housing_unique_searched": {
+      "path": "L2/housing_unique_searched.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_unique_searched.parquet",
+      "version": "2026-02-19",
+      "rows": 17722,
+      "created": "2026-02-19T11:22:08.074580",
+      "source": "L2 housing data",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "raw_wiki_shopping_mall": {
+      "path": "raw_wiki_shopping_mall.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_wiki_shopping_mall.parquet",
+      "version": "2026-02-19",
+      "rows": 112,
+      "created": "2026-02-19T11:20:44.686229",
+      "source": "wikipedia.org",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L1_amenity": {
+      "path": "L1/amenity.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/amenity.parquet",
+      "version": "2026-02-19",
+      "rows": 3991,
+      "created": "2026-02-19T13:50:24.596500",
+      "source": "L1 utilities processing",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L3_property": {
+      "path": "L3/property.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property.parquet",
+      "version": "2026-02-19",
+      "rows": 41338,
+      "created": "2026-02-19T17:13:26.557114",
+      "source": "L2 features pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L3_private_property_facilities": {
+      "path": "L3/private_property_facilities.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/private_property_facilities.parquet",
+      "version": "2026-02-19",
+      "rows": 172555,
+      "created": "2026-02-19T17:13:26.574783",
+      "source": "L2 features pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L3_property_nearby_facilities": {
+      "path": "L3/property_nearby_facilities.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_nearby_facilities.parquet",
+      "version": "2026-02-19",
+      "rows": 3637378,
+      "created": "2026-02-19T17:13:27.016031",
+      "source": "L2 features pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L3_property_transactions_sales": {
+      "path": "L3/property_transactions_sales.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_transactions_sales.parquet",
+      "version": "2026-02-19",
+      "rows": 1096756,
+      "created": "2026-02-19T17:13:27.458016",
+      "source": "L2 features pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L3_property_listing_sales": {
+      "path": "L3/property_listing_sales.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_listing_sales.parquet",
+      "version": "2026-02-19",
+      "rows": 9929,
+      "created": "2026-02-19T17:13:27.466090",
+      "source": "L2 features pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L5_affordability_by_area": {
+      "path": "L5_affordability_by_area.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_affordability_by_area.parquet",
+      "version": "2026-02-19",
+      "rows": 41,
+      "created": "2026-02-19T11:22:45.670047",
+      "source": "L5 metrics pipeline",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L1_amenity_mall": {
+      "path": "L1/amenity_mall.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/amenity_mall.parquet",
+      "version": "2026-02-19",
+      "rows": 107,
+      "created": "2026-02-19T13:49:46.928934",
+      "source": "geocoded malls",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L2_housing_multi_amenity_features": {
+      "path": "L2/housing_multi_amenity_features.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_multi_amenity_features.parquet",
+      "version": "2026-02-19",
+      "rows": 17722,
+      "created": "2026-02-19T14:04:53.320938",
+      "source": "Regenerated with mall data",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L4_price_predictions": {
+      "path": "L4_price_predictions.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L4_price_predictions.parquet",
+      "version": "2026-02-19",
+      "rows": 57675,
+      "created": "2026-02-19T17:32:23.183456",
+      "source": "XGBoost model",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L4_market_segments": {
+      "path": "L4_market_segments.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L4_market_segments.parquet",
+      "version": "2026-02-19",
+      "rows": 288374,
+      "created": "2026-02-19T17:32:46.104741",
+      "source": "K-means clustering",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L4_price_forecasts": {
+      "path": "L4_price_forecasts.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L4_price_forecasts.parquet",
+      "version": "2026-02-19",
+      "rows": 20,
+      "created": "2026-02-19T17:32:55.018154",
+      "source": "ARIMA models",
+      "mode": "overwrite",
+      "compression": "snappy"
+    },
+    "L2_housing_per_type_amenity_features": {
+      "path": "L2/housing_per_type_amenity_features.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_per_type_amenity_features.parquet",
+      "version": "2026-02-19",
+      "rows": 17722,
+      "created": "2026-02-19T17:13:25.363511",
+      "source": "L2 per-type amenity metrics",
+      "mode": "overwrite",
+      "compression": "snappy"
+    }
+  },
+  "last_updated": "2026-02-19T17:32:55.018157"
+}
