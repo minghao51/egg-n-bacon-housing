@@ -394,13 +394,12 @@ app/src/
 - Predictive: `analysis_price_forecasts.parquet`
 
 **Output**: JSON files in `app/public/data/analytics/`
-- `spatial_analysis.json` (~200-400KB)
-- `feature_impact.json` (~300-500KB)
-- `predictive_analytics.json` (~250-400KB)
+- `spatial_analysis.json.gz` (~200-400KB)
+- `feature_impact.json.gz` (~300-500KB)
+- `predictive_analytics.json.gz` (~250-400KB)
 
-**Compression**: `scripts/compress_json_files.py`
-- Gzip compression level 9
-- Automatic compression of all JSON/GeoJSON files
+**Compression**: Built-in gzip compression (level 9)
+- Each export script creates .gz files directly using `gzip.open()`
 - Achieves 70-80% size reduction
 
 ### Data Schema
@@ -514,7 +513,6 @@ uv run python scripts/analytics/price_appreciation_modeling/create_smart_ensembl
 3. Re-export:
 ```bash
 uv run python scripts/prepare_analytics_json.py
-uv run python scripts/compress_json_files.py
 ```
 
 4. Refresh dashboard - real analytics will appear!
@@ -537,8 +535,7 @@ uv run python scripts/compress_json_files.py
 - [x] Tooltips with analytics data
 
 ### Backend (Python)
-- [x] Analytics JSON export script
-- [x] Gzip compression script
+- [x] Analytics JSON export script (with built-in gzip compression)
 - [x] Data sanitization utilities
 - [ ] Integration with main pipeline
 - [ ] Load from actual analysis parquets
