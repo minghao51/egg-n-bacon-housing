@@ -10,13 +10,14 @@
 import React, { useRef } from 'react';
 import { LayerGroup, GeoJSON } from 'react-leaflet';
 import { FeatureImpactData, LayerId } from '../../../../types/analytics';
+import { GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
 import { sequentialScale } from '../../../../utils/colorScales';
 
 interface FeatureImpactOverlayProps {
   active: boolean;
   data: FeatureImpactData | null;
   loading: boolean;
-  planningAreasGeoJSON: any;
+  planningAreasGeoJSON: GeoJSONFeatureCollection | null;
   layerId: LayerId;
   propertyType?: 'hdb' | 'condo' | 'all';
 }
@@ -24,7 +25,7 @@ interface FeatureImpactOverlayProps {
 /**
  * Get MRT sensitivity style function
  */
-function getMRTStyle(feature: any, data: FeatureImpactData, propertyType: 'hdb' | 'condo' = 'hdb') {
+function getMRTStyle(feature: GeoJSONFeature, data: FeatureImpactData, propertyType: 'hdb' | 'condo' = 'hdb') {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -60,7 +61,7 @@ function getMRTStyle(feature: any, data: FeatureImpactData, propertyType: 'hdb' 
 /**
  * Get school quality style function
  */
-function getSchoolStyle(feature: any, data: FeatureImpactData) {
+function getSchoolStyle(feature: GeoJSONFeature, data: FeatureImpactData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -92,7 +93,7 @@ function getSchoolStyle(feature: any, data: FeatureImpactData) {
 /**
  * Get amenity score style function
  */
-function getAmenityStyle(feature: any, data: FeatureImpactData) {
+function getAmenityStyle(feature: GeoJSONFeature, data: FeatureImpactData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -124,7 +125,7 @@ function getAmenityStyle(feature: any, data: FeatureImpactData) {
 /**
  * Create tooltip content for MRT layer
  */
-function createMRTTooltip(feature: any, data: FeatureImpactData, propertyType: 'hdb' | 'condo' = 'hdb'): string {
+function createMRTTooltip(feature: GeoJSONFeature, data: FeatureImpactData, propertyType: 'hdb' | 'condo' = 'hdb'): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -152,7 +153,7 @@ function createMRTTooltip(feature: any, data: FeatureImpactData, propertyType: '
 /**
  * Create tooltip content for school quality layer
  */
-function createSchoolTooltip(feature: any, data: FeatureImpactData): string {
+function createSchoolTooltip(feature: GeoJSONFeature, data: FeatureImpactData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -178,7 +179,7 @@ function createSchoolTooltip(feature: any, data: FeatureImpactData): string {
 /**
  * Create tooltip content for amenity score layer
  */
-function createAmenityTooltip(feature: any, data: FeatureImpactData): string {
+function createAmenityTooltip(feature: GeoJSONFeature, data: FeatureImpactData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -232,11 +233,11 @@ export default function FeatureImpactOverlay({
   const getStyleFunction = () => {
     switch (layerId) {
       case 'feature.mrt':
-        return (feature: any) => getMRTStyle(feature, data!, propertyType);
+        return (feature: GeoJSONFeature) => getMRTStyle(feature, data!, propertyType);
       case 'feature.school':
-        return (feature: any) => getSchoolStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getSchoolStyle(feature, data!);
       case 'feature.amenity':
-        return (feature: any) => getAmenityStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getAmenityStyle(feature, data!);
       default:
         return () => ({});
     }
@@ -245,11 +246,11 @@ export default function FeatureImpactOverlay({
   const getTooltipFunction = () => {
     switch (layerId) {
       case 'feature.mrt':
-        return (feature: any) => createMRTTooltip(feature, data!, propertyType);
+        return (feature: GeoJSONFeature) => createMRTTooltip(feature, data!, propertyType);
       case 'feature.school':
-        return (feature: any) => createSchoolTooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createSchoolTooltip(feature, data!);
       case 'feature.amenity':
-        return (feature: any) => createAmenityTooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createAmenityTooltip(feature, data!);
       default:
         return () => '';
     }

@@ -11,50 +11,23 @@ import PredictiveAnalyticsOverlay from './map/overlays/PredictiveAnalyticsOverla
 
 // Import analytics hooks and types
 import { useSpatialAnalytics, useFeatureImpact, usePredictiveAnalytics } from '../../hooks/useAnalyticsData';
-import { LayerId, LAYER_METADATA } from '../../types/analytics';
+import {
+  LayerId,
+  LAYER_METADATA,
+  GeoJSONFeatureCollection,
+  GeoJSONFeature,
+  MapData,
+  MetricType,
+  PropertyTypeFilter,
+  TemporalFilter
+} from '../../types/analytics';
 
-interface MapMetrics {
-  [areaName: string]: {
-    median_price: number;
-    median_psf: number;
-    volume: number;
-    // New metrics (optional as they might be missing for some eras/areas)
-    mom_change_pct?: number;
-    yoy_change_pct?: number;
-    momentum?: number;
-    momentum_signal?: string;
-    rental_yield_mean?: number;
-    rental_yield_median?: number;
-    rental_yield_std?: number;
-    affordability_ratio?: number;
-    affordability_class?: string;
-    mortgage_to_income_pct?: number;
+// Type for Leaflet layer events
+interface LeafletLayerEvent {
+  target: {
+    setStyle: (style: unknown) => void;
+    bringToFront: () => void;
   };
-}
-
-interface MapData {
-  // Temporal periods
-  whole: MapMetrics;
-  pre_covid: MapMetrics;
-  recent: MapMetrics;
-  year_2025: MapMetrics;
-  // Property types (all time)
-  hdb: MapMetrics;
-  ec: MapMetrics;
-  condo: MapMetrics;
-  // Combined era + property type
-  whole_hdb: MapMetrics;
-  whole_ec: MapMetrics;
-  whole_condo: MapMetrics;
-  pre_covid_hdb: MapMetrics;
-  pre_covid_ec: MapMetrics;
-  pre_covid_condo: MapMetrics;
-  recent_hdb: MapMetrics;
-  recent_ec: MapMetrics;
-  recent_condo: MapMetrics;
-  year_2025_hdb: MapMetrics;
-  year_2025_ec: MapMetrics;
-  year_2025_condo: MapMetrics;
 }
 
 interface PriceMapProps {
@@ -65,13 +38,13 @@ interface PriceMapProps {
 const MAX_ACTIVE_LAYERS = 5;
 
 export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
-  const [geoJsonData, setGeoJsonData] = useState<any>(null);
+  const [geoJsonData, setGeoJsonData] = useState<GeoJSONFeatureCollection | null>(null);
   const [allMetrics, setAllMetrics] = useState<MapData | null>(null);
 
   // Existing filters
-  const [temporalFilter, setTemporalFilter] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
-  const [propertyTypeFilter, setPropertyTypeFilter] = useState<'all' | 'hdb' | 'ec' | 'condo'>('all');
-  const [metric, setMetric] = useState<'median_price' | 'median_psf' | 'volume' | 'rental_yield_median' | 'yoy_change_pct' | 'affordability_ratio'>('median_price');
+  const [temporalFilter, setTemporalFilter] = useState<TemporalFilter>('whole');
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState<PropertyTypeFilter>('all');
+  const [metric, setMetric] = useState<MetricType>('median_price');
 
   // NEW: Analytics layers state
   const [activeLayers, setActiveLayers] = useState<Record<LayerId, boolean>>(() => {
@@ -157,7 +130,7 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
             // Check if response is gzipped
             const contentEncoding = res.headers.get('content-encoding');
             let text: string;
-            
+
             if (contentEncoding === 'gzip' || metricsUrl.endsWith('.gz')) {
               // Handle gzipped response
               const buffer = await res.arrayBuffer();
@@ -166,7 +139,7 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
             } else {
               text = await res.text();
             }
-            
+
             // JSON spec doesn't allow NaN, but Python's json.dump might output it if not careful.
             // We sanitize it here just in case.
             const sanitized = text.replace(/:\s*NaN/g, ': null');
@@ -242,11 +215,11 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
                 '#FFEDA0';
   };
 
-  const style = (feature: any) => {
+  const style = (feature: GeoJSONFeature) => {
     // FIX: GeoJSON uses 'pln_area_n' (lowercase) but we were looking for 'PLN_AREA_N'
     // Also normalize to uppercase for the metrics lookup just in case
     const rawName = feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
-    const name = rawName ? rawName.toUpperCase() : '';
+    const name = rawName ? String(rawName).toUpperCase() : '';
 
     const data = currentMetrics[name];
     const value = data ? data[metric] : 0;
@@ -261,9 +234,9 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
     };
   };
 
-  const onEachFeature = (feature: any, layer: any) => {
+  const onEachFeature = (feature: GeoJSONFeature, layer: unknown) => {
     const rawName = feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
-    const name = rawName ? rawName.toUpperCase() : 'Unknown Area';
+    const name = rawName ? String(rawName).toUpperCase() : 'Unknown Area';
     const data = currentMetrics[name];
 
     // Format label for metric selector
@@ -321,18 +294,25 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
           </div>
         </div>
       `;
-      layer.bindTooltip(content, {
+
+      // Type assertion for Leaflet layer
+      const leafletLayer = layer as { bindTooltip: (content: string, options: unknown) => void };
+      leafletLayer.bindTooltip(content, {
         sticky: true,
         direction: 'top',
         className: 'custom-leaflet-tooltip'
       });
     } else {
-      layer.bindTooltip(`<div class="font-bold">${name}</div><div class="text-xs text-muted-foreground">No transaction data available</div>`, { sticky: true });
+      const leafletLayer = layer as { bindTooltip: (content: string, options: unknown) => void };
+      leafletLayer.bindTooltip(`<div class="font-bold">${name}</div><div class="text-xs text-muted-foreground">No transaction data available</div>`, { sticky: true });
     }
 
     // Highlight on hover
-    layer.on({
-      mouseover: (e: any) => {
+    const typedLayer = layer as {
+      on: (events: { mouseover: (e: LeafletLayerEvent) => void; mouseout: (e: LeafletLayerEvent) => void }) => void;
+    };
+    typedLayer.on({
+      mouseover: (e: LeafletLayerEvent) => {
         const layer = e.target;
         layer.setStyle({
           weight: 3,
@@ -342,7 +322,7 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
         });
         layer.bringToFront();
       },
-      mouseout: (e: any) => {
+      mouseout: (e: LeafletLayerEvent) => {
         const layer = e.target;
         // Reset style
         layer.setStyle({
@@ -363,7 +343,7 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
           <span className="text-sm font-medium text-muted-foreground">Metric:</span>
           <select
             value={metric}
-            onChange={(e) => setMetric(e.target.value as any)}
+            onChange={(e) => setMetric(e.target.value as MetricType)}
             className="p-2 border border-border rounded bg-background text-foreground text-sm focus:ring-2 focus:ring-primary"
           >
             <option value="median_price">Median Price</option>

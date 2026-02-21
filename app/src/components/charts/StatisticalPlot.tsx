@@ -20,7 +20,7 @@ export default function StatisticalPlot({
   height = 400,
 }: StatisticalPlotProps) {
   // Transform data for scatter plot (distribution view)
-  const plotData: any[] = [];
+  const plotData: Record<string, string | number>[] = [];
 
   data.datasets.forEach((dataset, datasetIndex) => {
     const colors = [
@@ -45,7 +45,7 @@ export default function StatisticalPlot({
 
   // Group by dataset for better visualization
   const groupedData = data.labels.map((label, index) => {
-    const point: any = { name: label };
+    const point: Record<string, string | number> = { name: label };
     data.datasets.forEach((dataset) => {
       point[dataset.label] = dataset.data[index];
     });

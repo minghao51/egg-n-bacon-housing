@@ -26,7 +26,7 @@ export default function ComparisonChart({
 }: ComparisonChartProps) {
   // Transform data for Recharts
   const chartData = data.labels.map((label, index) => {
-    const point: any = { name: label };
+    const point: Record<string, string | number> = { name: label };
     data.datasets.forEach((dataset) => {
       point[dataset.label] = dataset.data[index];
     });

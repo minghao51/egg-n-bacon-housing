@@ -10,20 +10,21 @@
 import React, { useRef } from 'react';
 import { LayerGroup, GeoJSON } from 'react-leaflet';
 import { PredictiveAnalyticsData, LayerId } from '../../../../types/analytics';
+import { GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
 import { divergingScale, sequentialScale, getForecastSignalColor, getPolicyRiskColor } from '../../../../utils/colorScales';
 
 interface PredictiveAnalyticsOverlayProps {
   active: boolean;
   data: PredictiveAnalyticsData | null;
   loading: boolean;
-  planningAreasGeoJSON: any;
+  planningAreasGeoJSON: GeoJSONFeatureCollection | null;
   layerId: LayerId;
 }
 
 /**
  * Get price forecast style function
  */
-function getForecastStyle(feature: any, data: PredictiveAnalyticsData) {
+function getForecastStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -57,7 +58,7 @@ function getForecastStyle(feature: any, data: PredictiveAnalyticsData) {
 /**
  * Get policy risk style function
  */
-function getPolicyRiskStyle(feature: any, data: PredictiveAnalyticsData) {
+function getPolicyRiskStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -88,7 +89,7 @@ function getPolicyRiskStyle(feature: any, data: PredictiveAnalyticsData) {
 /**
  * Get lease arbitrage style function
  */
-function getLeaseArbitrageStyle(feature: any, data: PredictiveAnalyticsData) {
+function getLeaseArbitrageStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -122,7 +123,7 @@ function getLeaseArbitrageStyle(feature: any, data: PredictiveAnalyticsData) {
 /**
  * Create tooltip content for price forecast layer
  */
-function createForecastTooltip(feature: any, data: PredictiveAnalyticsData): string {
+function createForecastTooltip(feature: GeoJSONFeature, data: PredictiveAnalyticsData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -148,7 +149,7 @@ function createForecastTooltip(feature: any, data: PredictiveAnalyticsData): str
 /**
  * Create tooltip content for policy risk layer
  */
-function createPolicyRiskTooltip(feature: any, data: PredictiveAnalyticsData): string {
+function createPolicyRiskTooltip(feature: GeoJSONFeature, data: PredictiveAnalyticsData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -173,7 +174,7 @@ function createPolicyRiskTooltip(feature: any, data: PredictiveAnalyticsData): s
 /**
  * Create tooltip content for lease arbitrage layer
  */
-function createLeaseArbitrageTooltip(feature: any, data: PredictiveAnalyticsData): string {
+function createLeaseArbitrageTooltip(feature: GeoJSONFeature, data: PredictiveAnalyticsData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -225,11 +226,11 @@ export default function PredictiveAnalyticsOverlay({
   const getStyleFunction = () => {
     switch (layerId) {
       case 'predictive.forecast':
-        return (feature: any) => getForecastStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getForecastStyle(feature, data!);
       case 'predictive.policy':
-        return (feature: any) => getPolicyRiskStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getPolicyRiskStyle(feature, data!);
       case 'predictive.lease':
-        return (feature: any) => getLeaseArbitrageStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getLeaseArbitrageStyle(feature, data!);
       default:
         return () => ({});
     }
@@ -238,11 +239,11 @@ export default function PredictiveAnalyticsOverlay({
   const getTooltipFunction = () => {
     switch (layerId) {
       case 'predictive.forecast':
-        return (feature: any) => createForecastTooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createForecastTooltip(feature, data!);
       case 'predictive.policy':
-        return (feature: any) => createPolicyRiskTooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createPolicyRiskTooltip(feature, data!);
       case 'predictive.lease':
-        return (feature: any) => createLeaseArbitrageTooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createLeaseArbitrageTooltip(feature, data!);
       default:
         return () => '';
     }

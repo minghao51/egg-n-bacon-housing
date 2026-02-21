@@ -19,7 +19,7 @@ interface UseAnalyticsDataResult<T> {
 }
 
 // Cache for loaded analytics data
-const analyticsCache = new Map<string, any>();
+const analyticsCache = new Map<string, unknown>();
 
 /**
  * Load analytics data with caching
@@ -38,8 +38,9 @@ export function useAnalyticsData<T>(
   useEffect(() => {
     // Return cached data if available
     const cacheKey = type;
-    if (analyticsCache.has(cacheKey)) {
-      setData(analyticsCache.get(cacheKey));
+    const cached = analyticsCache.get(cacheKey);
+    if (cached) {
+      setData(cached as T);
       setLoading(false);
       setError(null);
       return;

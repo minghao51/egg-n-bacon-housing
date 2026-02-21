@@ -261,3 +261,86 @@ export interface LayerMetadata {
 }
 
 export type ColorScaleType = 'diverging' | 'sequential' | 'categorical';
+
+// ==================== GeoJSON Types ====================
+
+/**
+ * GeoJSON types for map data
+ */
+export interface GeoJSONProperties {
+  [key: string]: string | number | boolean | null | undefined;
+}
+
+export interface GeoJSONFeature {
+  type: 'Feature';
+  id?: string | number;
+  geometry: GeoJSONGeometry;
+  properties: GeoJSONProperties;
+}
+
+export interface GeoJSONFeatureCollection {
+  type: 'FeatureCollection';
+  features: GeoJSONFeature[];
+}
+
+export type GeoJSONGeometry =
+  | { type: 'Point'; coordinates: [number, number] }
+  | { type: 'MultiPoint'; coordinates: [number, number][] }
+  | { type: 'LineString'; coordinates: [number, number][] }
+  | { type: 'MultiLineString'; coordinates: [number, number][][] }
+  | { type: 'Polygon'; coordinates: [number, number][][] }
+  | { type: 'MultiPolygon'; coordinates: [number, number][][][] };
+
+// ==================== Map Metrics Types ====================
+
+export interface MapMetrics {
+  [areaName: string]: MetricValues;
+}
+
+export interface MetricValues {
+  median_price: number;
+  median_psf: number;
+  volume: number;
+  mom_change_pct?: number;
+  yoy_change_pct?: number;
+  momentum?: number;
+  momentum_signal?: string;
+  rental_yield_mean?: number;
+  rental_yield_median?: number;
+  rental_yield_std?: number;
+  affordability_ratio?: number;
+  affordability_class?: string;
+  mortgage_to_income_pct?: number;
+}
+
+export interface MapData {
+  whole: MapMetrics;
+  pre_covid: MapMetrics;
+  recent: MapMetrics;
+  year_2025: MapMetrics;
+  hdb: MapMetrics;
+  ec: MapMetrics;
+  condo: MapMetrics;
+  whole_hdb: MapMetrics;
+  whole_ec: MapMetrics;
+  whole_condo: MapMetrics;
+  pre_covid_hdb: MapMetrics;
+  pre_covid_ec: MapMetrics;
+  pre_covid_condo: MapMetrics;
+  recent_hdb: MapMetrics;
+  recent_ec: MapMetrics;
+  recent_condo: MapMetrics;
+  year_2025_hdb: MapMetrics;
+  year_2025_ec: MapMetrics;
+  year_2025_condo: MapMetrics;
+}
+
+export type TemporalFilter = 'whole' | 'pre_covid' | 'recent' | 'year_2025';
+export type PropertyTypeFilter = 'all' | 'hdb' | 'ec' | 'condo';
+export type MetricType =
+  | 'median_price'
+  | 'median_psf'
+  | 'volume'
+  | 'rental_yield_median'
+  | 'yoy_change_pct'
+  | 'affordability_ratio';

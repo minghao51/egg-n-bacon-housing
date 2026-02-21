@@ -9,21 +9,21 @@
 
 import React, { useRef } from 'react';
 import { LayerGroup, GeoJSON } from 'react-leaflet';
-import { SpatialAnalyticsData, LayerId } from '../../../../types/analytics';
+import { SpatialAnalyticsData, LayerId, GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
 import { getHotspotColor, LISA_CLUSTER_COLORS } from '../../../../utils/colorScales';
 
 interface SpatialAnalysisOverlayProps {
   active: boolean;
   data: SpatialAnalyticsData | null;
   loading: boolean;
-  planningAreasGeoJSON: any;
+  planningAreasGeoJSON: GeoJSONFeatureCollection | null;
   layerId: LayerId;
 }
 
 /**
  * Get hotspot style function
  */
-function getHotspotStyle(feature: any, data: SpatialAnalyticsData) {
+function getHotspotStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -54,7 +54,7 @@ function getHotspotStyle(feature: any, data: SpatialAnalyticsData) {
 /**
  * Get LISA cluster style function
  */
-function getLISAClusterStyle(feature: any, data: SpatialAnalyticsData) {
+function getLISAClusterStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -85,7 +85,7 @@ function getLISAClusterStyle(feature: any, data: SpatialAnalyticsData) {
 /**
  * Get neighborhood effect style function
  */
-function getNeighborhoodStyle(feature: any, data: SpatialAnalyticsData) {
+function getNeighborhoodStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -120,7 +120,7 @@ function getNeighborhoodStyle(feature: any, data: SpatialAnalyticsData) {
 /**
  * Create tooltip content for hotspot layer
  */
-function createHotspotTooltip(feature: any, data: SpatialAnalyticsData): string {
+function createHotspotTooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -145,7 +145,7 @@ function createHotspotTooltip(feature: any, data: SpatialAnalyticsData): string 
 /**
  * Create tooltip content for LISA cluster layer
  */
-function createLISATooltip(feature: any, data: SpatialAnalyticsData): string {
+function createLISATooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -170,7 +170,7 @@ function createLISATooltip(feature: any, data: SpatialAnalyticsData): string {
 /**
  * Create tooltip content for neighborhood effect layer
  */
-function createNeighborhoodTooltip(feature: any, data: SpatialAnalyticsData): string {
+function createNeighborhoodTooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -221,11 +221,11 @@ export default function SpatialAnalysisOverlay({
   const getStyleFunction = () => {
     switch (layerId) {
       case 'spatial.hotspot':
-        return (feature: any) => getHotspotStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getHotspotStyle(feature, data!);
       case 'spatial.lisa':
-        return (feature: any) => getLISAClusterStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getLISAClusterStyle(feature, data!);
       case 'spatial.neighborhood':
-        return (feature: any) => getNeighborhoodStyle(feature, data!);
+        return (feature: GeoJSONFeature) => getNeighborhoodStyle(feature, data!);
       default:
         return () => ({});
     }
@@ -234,11 +234,11 @@ export default function SpatialAnalysisOverlay({
   const getTooltipFunction = () => {
     switch (layerId) {
       case 'spatial.hotspot':
-        return (feature: any) => createHotspotTooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createHotspotTooltip(feature, data!);
       case 'spatial.lisa':
-        return (feature: any) => createLISATooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createLISATooltip(feature, data!);
       case 'spatial.neighborhood':
-        return (feature: any) => createNeighborhoodTooltip(feature, data!);
+        return (feature: GeoJSONFeature) => createNeighborhoodTooltip(feature, data!);
       default:
         return () => '';
     }
