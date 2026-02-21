@@ -13,19 +13,19 @@ Research Questions:
 4. Should investment strategies vary by property type?
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score, mean_absolute_error
-from scipy import stats
-
 import xgboost as xgb
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import train_test_split
+
 try:
     import shap
     SHAP_AVAILABLE = True
@@ -41,7 +41,7 @@ sns.set_palette("husl")
 
 # Paths
 DATA_DIR = Path("data/pipeline/L3")
-OUTPUT_DIR = Path("data/analysis/school_impact")
+OUTPUT_DIR = Path("data/analytics/school_impact")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -146,7 +146,7 @@ def analyze_by_property_type(df, target_col='price_psf'):
         )
 
         # === OLS Regression ===
-        print(f"\n  Running OLS Regression...")
+        print("\n  Running OLS Regression...")
         ols_model = LinearRegression()
         ols_model.fit(X_train, y_train)
 
@@ -167,7 +167,7 @@ def analyze_by_property_type(df, target_col='price_psf'):
         print(f"    MAE: {ols_mae:.2f}")
 
         # === XGBoost ===
-        print(f"\n  Training XGBoost...")
+        print("\n  Training XGBoost...")
         xgb_model = xgb.XGBRegressor(
             n_estimators=100,
             max_depth=6,
@@ -193,7 +193,7 @@ def analyze_by_property_type(df, target_col='price_psf'):
             'importance': xgb_model.feature_importances_
         }).sort_values('importance', ascending=False)
 
-        print(f"\n    Top 5 Features:")
+        print("\n    Top 5 Features:")
         print(importance.head(5).to_string(index=False))
 
         # Store results

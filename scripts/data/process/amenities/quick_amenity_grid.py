@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Quick grid analysis and distance stratification for amenity impact."""
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
 import sys
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from scripts.core.config import Config
 
@@ -76,9 +79,9 @@ amenity_features = [
 property_features = ['floor_area_sqm', 'remaining_lease_months']
 all_features = amenity_features + property_features
 
-from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 grid_results = []
 grids = df_grid['grid_id'].unique()
@@ -130,7 +133,7 @@ for i, grid_id in enumerate(grids):
 results_df = pd.DataFrame(grid_results)
 print(f"\nCompleted analysis for {len(results_df):,} grids")
 
-print(f"\nGrid-level MRT impact statistics:")
+print("\nGrid-level MRT impact statistics:")
 print(f"  Mean mrt_distance importance: {results_df['mrt_distance_importance'].mean():.4f}")
 print(f"  Median mrt_distance importance: {results_df['mrt_distance_importance'].median():.4f}")
 

@@ -243,15 +243,18 @@ def load_school_features() -> pd.DataFrame:
 
 
 def load_planning_areas() -> gpd.GeoDataFrame:
-    """Load planning area geojson.
+    """Load planning area geojson with region information.
+
+    Prioritizes URA boundary file which includes region data.
 
     Returns:
-        GeoDataFrame with planning area polygons
+        GeoDataFrame with planning area polygons and region info
     """
     logger.info("Loading planning areas from geojson...")
 
-    # Try common paths
+    # Priority: URA boundary file (has region) > onemap file
     possible_paths = [
+        Config.MANUAL_DIR / "geojsons" / "ura_planning_area_boundary.geojson",
         Config.DATA_DIR / "raw_data" / "onemap_planning_area_polygon.geojson",
         Config.DATA_DIR / "raw_data" / "onemap" / "planning-area.geojson",
         Config.MANUAL_DIR / "geojsons" / "onemap_planning_area_polygon.geojson",
@@ -272,7 +275,17 @@ def load_planning_areas() -> gpd.GeoDataFrame:
     if gdf.crs != "EPSG:4326":
         gdf = gdf.to_crs("EPSG:4326")
 
-    logger.info(f"Loaded {len(gdf)} planning areas")
+    # Standardize column names (URA uses PLN_AREA_N, onemap uses pln_area_n)
+    column_mapping = {
+        "PLN_AREA_N": "pln_area_n",
+        "PLN_AREA_C": "pln_area_c",
+        "REGION_N": "region",
+        "REGION_C": "region_c",
+        "CA_IND": "ca_ind",
+    }
+    gdf = gdf.rename(columns=column_mapping)
+
+    logger.info(f"Loaded {len(gdf)} planning areas (columns: {list(gdf.columns)})")
 
     return gdf
 
@@ -520,21 +533,28 @@ def merge_with_geocoding(transactions_df: pd.DataFrame, geo_df: pd.DataFrame) ->
 def add_planning_area(
     transactions_df: pd.DataFrame, planning_areas_gdf: gpd.GeoDataFrame
 ) -> pd.DataFrame:
-    """Add planning area by spatial join with coordinates.
+    """Add planning area and region by spatial join with coordinates.
 
     Args:
         transactions_df: Transactions with lat/lon
-        planning_areas_gdf: Planning area polygons
+        planning_areas_gdf: Planning area polygons (may include region)
 
     Returns:
-        Transactions with planning_area column added
+        Transactions with planning_area and region columns added
     """
-    logger.info("Adding planning areas...")
+    logger.info("Adding planning areas and regions...")
 
     if planning_areas_gdf.empty:
         logger.warning("No planning area data available, skipping")
         transactions_df["planning_area"] = None
+        transactions_df["region"] = None
         return transactions_df
+
+    # Determine which columns to join
+    join_cols = ["pln_area_n", "geometry"]
+    if "region" in planning_areas_gdf.columns:
+        join_cols.append("region")
+        logger.info("Region data available in planning area file")
 
     # Create GeoDataFrame from transactions
     gdf = gpd.GeoDataFrame(
@@ -546,19 +566,29 @@ def add_planning_area(
     )
 
     # Spatial join with planning areas
-    result = gpd.sjoin(
-        gdf, planning_areas_gdf[["pln_area_n", "geometry"]], how="left", predicate="within"
-    )
+    result = gpd.sjoin(gdf, planning_areas_gdf[join_cols], how="left", predicate="within")
 
     # Extract planning area name
     transactions_df["planning_area"] = result["pln_area_n"]
 
+    # Extract region if available
+    if "region" in result.columns:
+        transactions_df["region"] = result["region"]
+    else:
+        transactions_df["region"] = None
+
     # Report coverage
-    coverage = transactions_df["planning_area"].notna().sum()
+    pa_coverage = transactions_df["planning_area"].notna().sum()
     total = len(transactions_df)
     logger.info(
-        f"Added planning area to {coverage:,} of {total:,} properties ({coverage / total * 100:.1f}%)"
+        f"Added planning area to {pa_coverage:,} of {total:,} properties ({pa_coverage / total * 100:.1f}%)"
     )
+
+    if "region" in transactions_df.columns:
+        reg_coverage = transactions_df["region"].notna().sum()
+        logger.info(
+            f"Added region to {reg_coverage:,} of {total:,} properties ({reg_coverage / total * 100:.1f}%)"
+        )
 
     return transactions_df
 
@@ -782,6 +812,7 @@ def filter_final_columns(df: pd.DataFrame) -> pd.DataFrame:
         "transaction_date",
         "town",
         "planning_area",  # NEW
+        "region",  # NEW - Central/West/North/North-East/East
         "address",
         "price",
         "floor_area_sqm",

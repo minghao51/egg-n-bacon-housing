@@ -267,6 +267,60 @@ def fetch_school_directory(use_cache: bool = True) -> pd.DataFrame | None:
     )
 
 
+def fetch_planning_area_boundary(use_cache: bool = True) -> dict | None:
+    """
+    Fetch URA Master Plan 2019 Planning Area Boundary GeoJSON from data.gov.sg.
+
+    This GeoJSON includes planning area names, abbreviations, and region information
+    which can be used to standardize town/area names across all property types.
+
+    Args:
+        use_cache: Whether to use caching (default: True)
+
+    Returns:
+        Dictionary with path and feature count, or None if failed
+    """
+    import json
+
+    def _fetch():
+        dataset_id = "d_4765db0e87b9c86336792efe8a1f7a66"
+        url = f"https://api-open.data.gov.sg/v1/public/api/datasets/{dataset_id}/poll-download"
+
+        try:
+            response = requests.get(url, timeout=60)
+            json_data = response.json()
+
+            if json_data.get("code") != 0:
+                logger.error(
+                    f"Failed to download planning area boundary: {json_data.get('errMsg')}"
+                )
+                return None
+
+            download_url = json_data["data"]["url"]
+            geojson_response = requests.get(download_url, timeout=60)
+
+            output_path = Config.MANUAL_DIR / "geojsons" / "ura_planning_area_boundary.geojson"
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(output_path, "w") as f:
+                f.write(geojson_response.text)
+
+            geojson = json.loads(geojson_response.text)
+            feature_count = len(geojson.get("features", []))
+
+            logger.info(f"✅ Saved planning area boundary to {output_path} ({feature_count} areas)")
+            return {"path": str(output_path), "features": feature_count}
+
+        except Exception as e:
+            logger.error(f"Error fetching planning area boundary: {e}")
+            return None
+
+    if use_cache and Config.USE_CACHING:
+        return cached_call("datagovsg:planning_area_boundary", _fetch, duration_hours=24 * 7)
+    else:
+        return _fetch()
+
+
 def collect_all_datagovsg() -> dict:
     """
     Run all data.gov.sg data collection tasks.
@@ -289,6 +343,9 @@ def collect_all_datagovsg() -> dict:
     results["median_tax"] = fetch_median_property_tax()
     results["private_whole"] = fetch_private_transactions_whole()
     results["school_directory"] = fetch_school_directory()
+
+    # Fetch GeoJSON boundary files
+    results["planning_area_boundary"] = fetch_planning_area_boundary()
 
     # Load resale flat prices from CSV
     resale_df = load_resale_flat_prices()

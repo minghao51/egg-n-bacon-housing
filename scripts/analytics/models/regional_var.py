@@ -17,8 +17,6 @@ Usage:
 """
 
 import logging
-from pathlib import Path
-from typing import Dict, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -28,7 +26,7 @@ from statsmodels.tsa.stattools import adfuller, grangercausalitytests
 logger = logging.getLogger(__name__)
 
 
-def check_stationarity(series, significance_level: float = 0.05) -> Tuple[bool, float]:
+def check_stationarity(series, significance_level: float = 0.05) -> tuple[bool, float]:
     """
     Check if time series is stationary using Augmented Dickey-Fuller test.
 
@@ -103,17 +101,17 @@ class RegionalVARModel:
             region: Region name (e.g., 'CCR', 'RCR')
         """
         self.region = region
-        self.model: Optional[VAR] = None
-        self.lag_order: Optional[int] = None
+        self.model: VAR | None = None
+        self.lag_order: int | None = None
         self.endog_vars: list = []
         self.exog_vars: list = []
         self.is_fitted = False
 
         # Data splits
-        self.Y_train: Optional[pd.DataFrame] = None
-        self.X_train: Optional[pd.DataFrame] = None
-        self.Y_test: Optional[pd.DataFrame] = None
-        self.X_test: Optional[pd.DataFrame] = None
+        self.Y_train: pd.DataFrame | None = None
+        self.X_train: pd.DataFrame | None = None
+        self.Y_test: pd.DataFrame | None = None
+        self.X_test: pd.DataFrame | None = None
 
     def fit(
         self,
@@ -262,7 +260,7 @@ class RegionalVARModel:
             logger.error(f"Forecasting failed for {self.region}: {e}")
             raise
 
-    def granger_causality_tests(self, variable: str = 'regional_appreciation') -> Dict[str, float]:
+    def granger_causality_tests(self, variable: str = 'regional_appreciation') -> dict[str, float]:
         """
         Perform Granger causality tests for appreciation.
 
@@ -305,7 +303,7 @@ class RegionalVARModel:
 
         return results
 
-    def evaluate(self) -> Dict[str, float]:
+    def evaluate(self) -> dict[str, float]:
         """
         Evaluate model on test set.
 

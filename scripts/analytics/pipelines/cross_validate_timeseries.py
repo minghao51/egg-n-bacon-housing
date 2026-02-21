@@ -15,18 +15,17 @@ Usage:
 """
 
 import logging
-from typing import Dict, List
 
 import numpy as np
 import pandas as pd
 
-from scripts.analytics.models.regional_var import RegionalVARModel
 from scripts.analytics.models.area_arimax import AreaARIMAXModel
+from scripts.analytics.models.regional_var import RegionalVARModel
 
 logger = logging.getLogger(__name__)
 
 
-def evaluate_model_performance(actual: pd.Series, forecast: pd.Series) -> Dict[str, float]:
+def evaluate_model_performance(actual: pd.Series, forecast: pd.Series) -> dict[str, float]:
     """
     Calculate performance metrics.
 
@@ -73,7 +72,7 @@ def run_rolling_validation(
     region: str,
     n_folds: int = 5,
     forecast_horizon: int = 12
-) -> Dict:
+) -> dict:
     """
     Run expanding window cross-validation for regional VAR.
 
@@ -153,7 +152,7 @@ def run_cross_validation(
     regional_data: pd.DataFrame,
     area_data: pd.DataFrame,
     n_folds: int = 5
-) -> Dict:
+) -> dict:
     """
     Run complete cross-validation for all models.
 

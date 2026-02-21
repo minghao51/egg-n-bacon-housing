@@ -4,10 +4,9 @@ Run backtesting validation for VAR/ARIMAX forecasting system.
 """
 
 import logging
-from pathlib import Path
 
-from scripts.analytics.pipelines.prepare_timeseries_data import run_preparation_pipeline
 from scripts.analytics.pipelines.cross_validate_timeseries import run_cross_validation
+from scripts.analytics.pipelines.prepare_timeseries_data import run_preparation_pipeline
 from scripts.core.config import Config
 
 logger = logging.getLogger(__name__)
@@ -30,7 +29,7 @@ def main():
             end_date='2026-02'
         )
 
-        logger.info(f"\nTime series preparation complete!")
+        logger.info("\nTime series preparation complete!")
         logger.info(f"   Regional: {len(regional_data)} records, {len(regional_data['region'].unique())} regions")
         logger.info(f"   Area: {len(area_data)} records, {len(area_data['area'].unique())} areas")
 
@@ -64,9 +63,9 @@ def main():
 
                 # Check if meets success criteria
                 if results['mean_directional_accuracy'] >= 70:
-                    logger.info(f"  PASS: Meets 70% directional accuracy threshold")
+                    logger.info("  PASS: Meets 70% directional accuracy threshold")
                 else:
-                    logger.warning(f"  WARNING: Below 70% directional accuracy threshold")
+                    logger.warning("  WARNING: Below 70% directional accuracy threshold")
 
         # Calculate overall statistics
         logger.info("\n" + "=" * 80)

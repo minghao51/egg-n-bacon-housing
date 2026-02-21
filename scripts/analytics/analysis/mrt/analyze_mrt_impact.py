@@ -12,20 +12,19 @@ Targets:
 - yoy_change_pct: Year-over-year appreciation rate
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-from scipy import stats
-
 import xgboost as xgb
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+
 try:
     import shap
     SHAP_AVAILABLE = True
@@ -50,7 +49,7 @@ sns.set_palette("husl")
 
 # Paths
 DATA_DIR = Path("data/pipeline/L3")
-OUTPUT_DIR = Path("data/analysis/mrt_impact")
+OUTPUT_DIR = Path("data/analytics/mrt_impact")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -252,7 +251,7 @@ def run_ols_regression(df, target_col='price_psf'):
         'features': X_linear.columns.tolist()
     })
 
-    print(f"\nLinear Distance:")
+    print("\nLinear Distance:")
     print(f"  R²: {r2:.4f}")
     print(f"  MAE: {mae:.2f}")
 
@@ -289,7 +288,7 @@ def run_ols_regression(df, target_col='price_psf'):
         'features': X_log.columns.tolist()
     })
 
-    print(f"\nLog Distance:")
+    print("\nLog Distance:")
     print(f"  R²: {r2:.4f}")
     print(f"  MAE: {mae:.2f}")
 
@@ -316,7 +315,7 @@ def run_ols_regression(df, target_col='price_psf'):
         'features': X_inv.columns.tolist()
     })
 
-    print(f"\nInverse Distance:")
+    print("\nInverse Distance:")
     print(f"  R²: {r2:.4f}")
     print(f"  MAE: {mae:.2f}")
 
@@ -397,14 +396,14 @@ def run_advanced_models(df, target_col='price_psf'):
     importance['target'] = target_col
     importance['model'] = 'xgboost'
 
-    print(f"\n  Top 10 Features:")
+    print("\n  Top 10 Features:")
     print(importance.head(10)[['feature', 'importance']].to_string(index=False))
 
     # SHAP analysis
     shap_values = None
     if SHAP_AVAILABLE:
         try:
-            print(f"\n  Calculating SHAP values...")
+            print("\n  Calculating SHAP values...")
             explainer = shap.TreeExplainer(xgb_model)
             shap_values = explainer.shap_values(X_test)
 
@@ -415,7 +414,7 @@ def run_advanced_models(df, target_col='price_psf'):
 
             shap_importance['target'] = target_col
 
-            print(f"\n  Top 10 Features by SHAP:")
+            print("\n  Top 10 Features by SHAP:")
             print(shap_importance.head(10)[['feature', 'shap_value']].to_string(index=False))
 
             results['shap'] = shap_importance
@@ -465,7 +464,7 @@ def h3_aggregate_analysis(df):
     model = LinearRegression()
     model.fit(X, y)
 
-    print(f"\n  Cell-level Regression:")
+    print("\n  Cell-level Regression:")
     print(f"    R²: {model.score(X, y):.4f}")
     print(f"    Coefficient: {model.coef_[0]:.4f}")
     print(f"    Interpretation: Every 100m closer to MRT = ${model.coef_[0] * 100:.2f} PSF")

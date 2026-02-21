@@ -5,7 +5,6 @@ import logging
 import sys
 from pathlib import Path
 
-import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 

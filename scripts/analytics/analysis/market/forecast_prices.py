@@ -72,7 +72,7 @@ def main():
             "key_findings": [
                 f"Forecasted prices for {len(forecast_df)} planning areas",
                 f"Top growth area: {top_growth.iloc[0]['planning_area']} (+{top_growth.iloc[0]['projected_growth_pct']:.1f}%)",
-                f"Used ARIMA(1,1,1) model with 6-month horizon"
+                "Used ARIMA(1,1,1) model with 6-month horizon"
             ],
             "outputs": ["L4_price_forecasts.parquet"],
         })

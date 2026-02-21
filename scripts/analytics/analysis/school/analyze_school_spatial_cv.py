@@ -15,10 +15,10 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-import pandas as pd
-import numpy as np
 import logging
 import warnings
+
+import pandas as pd
 
 warnings.filterwarnings("ignore")
 
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 # Paths
 DATA_DIR = Path("data/pipeline/L3")
-OUTPUT_DIR = Path("data/analysis/school_spatial_cv")
+OUTPUT_DIR = Path("data/analytics/school_spatial_cv")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -58,7 +58,7 @@ def load_data():
         raise ValueError(f"Missing required columns: {missing}")
 
     print(f"  Planning areas: {df['planning_area'].nunique()}")
-    print(f"  School data available: Yes")
+    print("  School data available: Yes")
 
     return df
 

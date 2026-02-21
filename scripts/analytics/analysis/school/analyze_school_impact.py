@@ -19,20 +19,19 @@ School Features:
 - Density: school_density_score
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-from scipy import stats
-
 import xgboost as xgb
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+
 try:
     import shap
     SHAP_AVAILABLE = True
@@ -49,7 +48,7 @@ sns.set_palette("husl")
 
 # Paths
 DATA_DIR = Path("data/pipeline/L3")
-OUTPUT_DIR = Path("data/analysis/school_impact")
+OUTPUT_DIR = Path("data/analytics/school_impact")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -296,7 +295,7 @@ def run_ols_regression(df, target_col='price_psf'):
         'features': X_all.columns.tolist()
     })
 
-    print(f"\nAll Features:")
+    print("\nAll Features:")
     print(f"  R²: {r2:.4f}")
     print(f"  MAE: {mae:.2f}")
 
@@ -335,7 +334,7 @@ def run_ols_regression(df, target_col='price_psf'):
             'features': X_quality.columns.tolist()
         })
 
-        print(f"\nQuality Scores Only:")
+        print("\nQuality Scores Only:")
         print(f"  R²: {r2:.4f}")
         print(f"  MAE: {mae:.2f}")
 
@@ -416,14 +415,14 @@ def run_advanced_models(df, target_col='price_psf'):
     importance['target'] = target_col
     importance['model'] = 'xgboost'
 
-    print(f"\n  Top 10 Features:")
+    print("\n  Top 10 Features:")
     print(importance.head(10)[['feature', 'importance']].to_string(index=False))
 
     # SHAP analysis
     shap_values = None
     if SHAP_AVAILABLE:
         try:
-            print(f"\n  Calculating SHAP values...")
+            print("\n  Calculating SHAP values...")
             explainer = shap.TreeExplainer(xgb_model)
             shap_values = explainer.shap_values(X_test)
 
@@ -434,7 +433,7 @@ def run_advanced_models(df, target_col='price_psf'):
 
             shap_importance['target'] = target_col
 
-            print(f"\n  Top 10 Features by SHAP:")
+            print("\n  Top 10 Features by SHAP:")
             print(shap_importance.head(10)[['feature', 'shap_value']].to_string(index=False))
 
             results['shap'] = shap_importance

@@ -5,8 +5,6 @@ It calculates DiD statistics, YoY growth rates, and volume changes by region.
 """
 
 import logging
-from pathlib import Path
-from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -143,7 +141,7 @@ def calculate_regional_aggregates(df: pd.DataFrame) -> pd.DataFrame:
     return monthly
 
 
-def analyze_policy_events(monthly: pd.DataFrame) -> Dict:
+def analyze_policy_events(monthly: pd.DataFrame) -> dict:
     """Analyze price and volume changes around policy events."""
     logger.info("=" * 60)
     logger.info("Analyzing Policy Events")
@@ -218,7 +216,7 @@ def analyze_policy_events(monthly: pd.DataFrame) -> Dict:
     return results
 
 
-def analyze_yoy_trends(df: pd.DataFrame, growth_df: pd.DataFrame) -> Dict:
+def analyze_yoy_trends(df: pd.DataFrame, growth_df: pd.DataFrame) -> dict:
     """Analyze YoY growth trends by region."""
     logger.info("=" * 60)
     logger.info("Analyzing YoY Growth Trends")

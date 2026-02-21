@@ -8,16 +8,13 @@ Usage:
 """
 
 import logging
+import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-import sys
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
@@ -96,7 +93,7 @@ def prepare_rd_data(
     return df
 
 
-def run_rd_jump(df: pd.DataFrame) -> Dict:
+def run_rd_jump(df: pd.DataFrame) -> dict:
     """Test for level change ("jump") at policy cutoff.
 
     Model: price = α + β*post + ε
@@ -125,7 +122,7 @@ def run_rd_jump(df: pd.DataFrame) -> Dict:
     post_mean = df[df['post'] == 1]['price'].mean()
     observed_jump = post_mean - pre_mean
 
-    logger.info(f"\nJump Test Results:")
+    logger.info("\nJump Test Results:")
     logger.info(f"  Pre-policy mean: ${pre_mean:,.0f}")
     logger.info(f"  Post-policy mean: ${post_mean:,.0f}")
     logger.info(f"  Observed jump: ${observed_jump:,.0f}")
@@ -135,9 +132,9 @@ def run_rd_jump(df: pd.DataFrame) -> Dict:
     logger.info(f"  P-value: {jump_pval:.4f}")
 
     if jump_pval < 0.05:
-        logger.info(f"  ** SIGNIFICANT JUMP DETECTED **")
+        logger.info("  ** SIGNIFICANT JUMP DETECTED **")
     else:
-        logger.info(f"  No significant jump (p >= 0.05)")
+        logger.info("  No significant jump (p >= 0.05)")
 
     logger.info(f"  R-squared: {model.rsquared:.4f}")
 
@@ -156,7 +153,7 @@ def run_rd_jump(df: pd.DataFrame) -> Dict:
     }
 
 
-def run_rd_kink(df: pd.DataFrame) -> Dict:
+def run_rd_kink(df: pd.DataFrame) -> dict:
     """Test for slope change ("kink") at policy cutoff.
 
     Model: price = α + β1*time + β2*post + β3*(post*time) + ε
@@ -191,7 +188,7 @@ def run_rd_kink(df: pd.DataFrame) -> Dict:
         post_slope = pre_slope + kink_coef
         slope_change_pct = (kink_coef / abs(pre_slope)) * 100 if pre_slope != 0 else np.nan
 
-        logger.info(f"\nKink Test Results:")
+        logger.info("\nKink Test Results:")
         logger.info(f"  Pre-policy slope: ${pre_slope:,.0f}/month")
         logger.info(f"  Post-policy slope: ${post_slope:,.0f}/month")
         logger.info(f"  Slope change: ${kink_coef:,.0f}/month ({slope_change_pct:+.2f}%)")
@@ -200,9 +197,9 @@ def run_rd_kink(df: pd.DataFrame) -> Dict:
         logger.info(f"  P-value: {kink_pval:.4f}")
 
         if kink_pval < 0.05:
-            logger.info(f"  ** SIGNIFICANT KINK DETECTED **")
+            logger.info("  ** SIGNIFICANT KINK DETECTED **")
         else:
-            logger.info(f"  No significant kink (p >= 0.05)")
+            logger.info("  No significant kink (p >= 0.05)")
 
         logger.info(f"  R-squared: {model.rsquared:.4f}")
 
@@ -226,7 +223,7 @@ def run_rd_kink(df: pd.DataFrame) -> Dict:
 
 def run_rd_robustness(
     df: pd.DataFrame,
-    bandwidths: List[int] = [3, 6, 9, 12]
+    bandwidths: list[int] = [3, 6, 9, 12]
 ) -> pd.DataFrame:
     """Test robustness across different bandwidths.
 
@@ -271,7 +268,7 @@ def run_rd_robustness(
 
     results_df = pd.DataFrame(results)
 
-    logger.info(f"\nRobustness Summary:")
+    logger.info("\nRobustness Summary:")
     logger.info(f"{'Bandwidth':<12} {'N':<10} {'Jump':<15} {'Jump p':<10} {'Kink':<15} {'Kink p':<10}")
     logger.info("-" * 75)
     for _, row in results_df.iterrows():
@@ -288,7 +285,7 @@ def run_rd_robustness(
 
 
 def save_results(
-    hdb_results: Dict,
+    hdb_results: dict,
     robustness_df: pd.DataFrame,
     output_dir: Path
 ):

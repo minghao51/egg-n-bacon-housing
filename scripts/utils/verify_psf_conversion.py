@@ -4,7 +4,7 @@
 import pandas as pd
 
 # Load the newly created dataset
-df = pd.read_parquet('data/parquets/L3/housing_unified.parquet')
+df = pd.read_parquet('data/pipeline/L3/housing_unified.parquet')
 
 print('=' * 80)
 print('PSF CONVERSION VERIFICATION')

@@ -9,7 +9,6 @@ Usage:
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,7 +17,7 @@ import seaborn as sns
 
 logger = logging.getLogger(__name__)
 
-OUTPUT_DIR = Path("data/analysis/spatial_autocorrelation")
+OUTPUT_DIR = Path("data/analytics/spatial_autocorrelation")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 

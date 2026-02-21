@@ -7,14 +7,13 @@ from pathlib import Path
 
 import pandas as pd
 import xgboost as xgb
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.core.data_helpers import load_parquet, save_parquet
-from scripts.core.config import Config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -84,7 +83,7 @@ def main():
     results["price_error"] = results["price_predicted"] - results["price_actual"]
 
     save_parquet(results, "L4_price_predictions", source="XGBoost model")
-    logger.info(f"✅ Saved predictions to L4_price_predictions.parquet")
+    logger.info("✅ Saved predictions to L4_price_predictions.parquet")
 
     print({
         "key_findings": [

@@ -14,12 +14,11 @@ Usage:
 
 import logging
 import pathlib
-import sys
 import re
+import sys
 
 import geopandas as gpd
 import pandas as pd
-from bs4 import BeautifulSoup
 
 # Add project root to path
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent
@@ -190,7 +189,7 @@ def main():
         if not supermarket_df.empty:
             amenity_dfs.append(supermarket_df)
     else:
-        logger.warning(f"⚠️  Supermarket data not found")
+        logger.warning("⚠️  Supermarket data not found")
 
     # 2. Preschools
     preschool_path = datagov_path / 'PreSchoolsLocation.geojson'
@@ -199,7 +198,7 @@ def main():
         if not preschool_df.empty:
             amenity_dfs.append(preschool_df)
     else:
-        logger.warning(f"⚠️  Preschool data not found")
+        logger.warning("⚠️  Preschool data not found")
 
     # 3. Parks (with centroid extraction)
     park_path = datagov_path / 'NParksParksandNatureReserves.geojson'
@@ -208,7 +207,7 @@ def main():
         if not park_df.empty:
             amenity_dfs.append(park_df)
     else:
-        logger.warning(f"⚠️  Park data not found")
+        logger.warning("⚠️  Park data not found")
 
     # 4. Shopping Malls
     mall_df = process_shopping_malls()
@@ -222,7 +221,7 @@ def main():
         if not hawker_df.empty:
             amenity_dfs.append(hawker_df)
     else:
-        logger.warning(f"⚠️  Hawker centre data not found")
+        logger.warning("⚠️  Hawker centre data not found")
 
     # 6. MRT/LRT Stations (Phase 2)
     mrt_path = datagov_path / 'MRTStations.geojson'
@@ -231,7 +230,7 @@ def main():
         if not mrt_df.empty:
             amenity_dfs.append(mrt_df)
     else:
-        logger.warning(f"⚠️  MRT station data not found")
+        logger.warning("⚠️  MRT station data not found")
 
     # 7. Child Care Services (Phase 2)
     childcare_path = datagov_path / 'ChildCareServices.geojson'
@@ -240,7 +239,7 @@ def main():
         if not childcare_df.empty:
             amenity_dfs.append(childcare_df)
     else:
-        logger.warning(f"⚠️  Child care data not found")
+        logger.warning("⚠️  Child care data not found")
 
     # 8. MRT Station Exits (Phase 2 - optional, more granular)
     mrt_exits_path = datagov_path / 'MRTStationExits.geojson'
@@ -249,7 +248,7 @@ def main():
         if not mrt_exits_df.empty:
             amenity_dfs.append(mrt_exits_df)
     else:
-        logger.warning(f"⚠️  MRT exit data not found")
+        logger.warning("⚠️  MRT exit data not found")
 
     # Check if we have any data
     if not amenity_dfs:
@@ -285,7 +284,7 @@ def main():
             park_gdf = gpd.read_file(park_path)
             park_gdf = park_gdf.to_crs('EPSG:4326')
             park_gdf.to_file(data_L1_path / 'park.geojson', driver='GeoJSON')
-            logger.info(f"✅ Saved park.geojson for spatial analysis")
+            logger.info("✅ Saved park.geojson for spatial analysis")
         except Exception as e:
             logger.warning(f"⚠️  Could not save park.geojson: {e}")
 
@@ -295,7 +294,7 @@ def main():
         try:
             pc_gdf = gpd.read_file(pc_path)
             pc_gdf.to_file(data_L1_path / 'park_connector.geojson', driver='GeoJSON')
-            logger.info(f"✅ Saved park_connector.geojson for spatial analysis")
+            logger.info("✅ Saved park_connector.geojson for spatial analysis")
         except Exception as e:
             logger.warning(f"⚠️  Could not save park_connector.geojson: {e}")
 

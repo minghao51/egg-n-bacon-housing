@@ -77,7 +77,7 @@ def verify_as_module():
         return False
 
     try:
-        from scripts.core.data_loader import TransactionLoader, CSVLoader
+        from scripts.core.data_loader import CSVLoader, TransactionLoader
         print("  ✓ from scripts.core.data_loader import TransactionLoader, CSVLoader")
     except ImportError as e:
         print(f"  ✗ from scripts.core.data_loader import TransactionLoader, CSVLoader: {e}")

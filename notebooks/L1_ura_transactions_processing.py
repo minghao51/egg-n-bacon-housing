@@ -16,10 +16,10 @@
 # # procesing all housing with additional latlon and discard extra info
 
 # %%
-import sys
-import pandas as pd
 import pathlib
-import os
+import sys
+
+import pandas as pd
 from dotenv import load_dotenv
 
 # Add src directory to path for imports
@@ -28,7 +28,7 @@ sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
 load_dotenv()
 
 from data_helpers import save_parquet
-from geocoding import load_ura_files, extract_unique_addresses, setup_onemap_headers, fetch_data
+from geocoding import extract_unique_addresses, fetch_data, load_ura_files, setup_onemap_headers
 
 # %%
 # Load all URA and HDB transaction files using shared function
@@ -65,7 +65,6 @@ headers = setup_onemap_headers()
 # - with exponential backoff and limit to failure
 
 # %%
-import pandas as pd
 import requests
 
 df_list = []

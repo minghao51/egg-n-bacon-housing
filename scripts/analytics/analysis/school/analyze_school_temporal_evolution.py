@@ -15,21 +15,22 @@ Usage:
 
 import logging
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
-import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Add project root to Python path FIRST
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from scripts.core.utils import add_project_to_path
+
 add_project_to_path(Path(__file__))
 
 from scripts.core.config import Config
@@ -273,7 +274,7 @@ def identify_covid_impact(df, feature='school_accessibility_score'):
     # Calculate changes
     results_df = pd.DataFrame(results).T
 
-    logger.info(f"\nSchool Premium Evolution ($/0.1 score increase):")
+    logger.info("\nSchool Premium Evolution ($/0.1 score increase):")
     logger.info(f"\n{results_df.to_string()}")
 
     # Save results
@@ -428,7 +429,7 @@ def generate_summary_statistics(yearly_results):
 
     summary_df = pd.DataFrame(summary)
 
-    logger.info(f"\nSchool Premium Summary ($/0.1 score increase):")
+    logger.info("\nSchool Premium Summary ($/0.1 score increase):")
     logger.info(f"\n{summary_df.to_string()}")
 
     # Save
@@ -515,11 +516,11 @@ def main():
     logger.info("\n" + "="*80)
     logger.info("ANALYSIS COMPLETE")
     logger.info("="*80)
-    logger.info(f"\nKey Findings:")
+    logger.info("\nKey Findings:")
     logger.info(f"  • Analyzed {len(df):,} transactions from 2017-2026")
-    logger.info(f"  • Tracked school premium evolution for 3 property types")
-    logger.info(f"  • Assessed COVID-19 impact (2020-2022)")
-    logger.info(f"  • Generated area-level evolution plots")
+    logger.info("  • Tracked school premium evolution for 3 property types")
+    logger.info("  • Assessed COVID-19 impact (2020-2022)")
+    logger.info("  • Generated area-level evolution plots")
     logger.info(f"\nOutputs saved to: {OUTPUT_DIR}")
     logger.info(f"\nDuration: {duration:.1f} seconds")
     logger.info("="*80)

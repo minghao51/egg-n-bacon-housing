@@ -40,9 +40,9 @@ Examples:
     python scripts/run_pipeline.py --stage all --parallel
 """
 
+import argparse
 import logging
 import sys
-import argparse
 from pathlib import Path
 
 # Add project root to path
@@ -50,14 +50,14 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from scripts.core.config import Config
+from scripts.core.data_helpers import list_datasets
 from scripts.core.stages.L0_collect import collect_all_datagovsg
-from scripts.core.stages.L1_process import run_processing_pipeline, save_failed_addresses
-from scripts.core.stages.L2_rental import run_rental_pipeline
+from scripts.core.stages.L1_process import run_processing_pipeline
 from scripts.core.stages.L2_features import run_l2_features_pipeline
+from scripts.core.stages.L2_rental import run_rental_pipeline
 from scripts.core.stages.L3_export import run_l3_pipeline
 from scripts.core.stages.L5_metrics import run_metrics_pipeline
 from scripts.core.stages.webapp_data_preparation import export_dashboard_data
-from scripts.core.data_helpers import list_datasets
 from scripts.data.fetch_macro_data import fetch_all_macro_data
 
 # Setup logging

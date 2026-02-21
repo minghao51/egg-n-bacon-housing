@@ -31,7 +31,6 @@ import pathlib
 import signal
 import sys
 from datetime import datetime
-from typing import List, Tuple
 
 import pandas as pd
 
@@ -39,8 +38,8 @@ import pandas as pd
 sys.path.append(str(pathlib.Path(__file__).parent.parent.parent / 'src'))
 
 # Import from src
-import geocoding
 import data_helpers
+import geocoding
 from config import Config
 
 # Configuration
@@ -137,7 +136,7 @@ def calculate_eta(start_time, current_count, total_count):
 
 def geocode_addresses_sequential(addresses_df: pd.DataFrame,
                                  headers: dict,
-                                 processed_addresses: set = None) -> Tuple[List[pd.DataFrame], List[str]]:
+                                 processed_addresses: set = None) -> tuple[list[pd.DataFrame], list[str]]:
     """
     Geocode addresses sequentially using OneMap API.
 
@@ -222,7 +221,7 @@ def geocode_addresses_sequential(addresses_df: pd.DataFrame,
 def geocode_addresses_parallel(addresses_df: pd.DataFrame,
                                headers: dict,
                                processed_addresses: set = None,
-                               max_workers: int = None) -> Tuple[List[pd.DataFrame], List[str]]:
+                               max_workers: int = None) -> tuple[list[pd.DataFrame], list[str]]:
     """
     Geocode addresses using parallel processing with ThreadPoolExecutor.
 
@@ -318,7 +317,7 @@ def geocode_addresses_parallel(addresses_df: pd.DataFrame,
     return all_results, all_failed
 
 
-def save_checkpoint(df_list: List[pd.DataFrame], batch_number: int):
+def save_checkpoint(df_list: list[pd.DataFrame], batch_number: int):
     """
     Save intermediate results as checkpoint.
 
@@ -348,7 +347,7 @@ def save_checkpoint(df_list: List[pd.DataFrame], batch_number: int):
         logger.error(f"❌ Error saving checkpoint: {e}")
 
 
-def save_final_results(df_list: List[pd.DataFrame], housing_df: pd.DataFrame):
+def save_final_results(df_list: list[pd.DataFrame], housing_df: pd.DataFrame):
     """
     Save final geocoding results to parquet files.
 

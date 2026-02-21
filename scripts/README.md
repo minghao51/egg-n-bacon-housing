@@ -157,7 +157,7 @@ External APIs
     ↓
 scripts/data/download/
     ↓
-data/manual/, data/raw_data/
+data/raw/
     ↓
 scripts/data/process/
     ↓
@@ -165,7 +165,7 @@ data/pipeline/L0/, L1/, L2/
     ↓
 scripts/analytics/
     ↓
-data/analysis/, data/forecasts/
+data/analytics/, data/exports/
 ```
 
 ## 📚 Detailed Documentation

@@ -16,7 +16,6 @@ This script:
 
 import logging
 import sys
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -24,8 +23,6 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from scripts.core.config import Config
 from scripts.core.metrics import (
-    calculate_affordability,
-    calculate_roi_score,
     compute_monthly_metrics,
     validate_metrics,
 )

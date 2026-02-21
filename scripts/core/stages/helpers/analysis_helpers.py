@@ -32,7 +32,7 @@ from scripts.core.config import Config
 
 logger = logging.getLogger(__name__)
 
-RESULTS_DIR = Config.ANALYSIS_DIR / "results"
+RESULTS_DIR = Config.ANALYTICS_DIR / "results"
 INDEX_FILE = RESULTS_DIR / "index.json"
 
 

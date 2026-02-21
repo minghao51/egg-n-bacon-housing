@@ -11,10 +11,11 @@ Analyzes and ranks Singapore housing towns across multiple dimensions:
 Creates actionable insights for investors and policymakers.
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
 import matplotlib.pyplot as plt
@@ -26,8 +27,8 @@ sns.set_palette("husl")
 plt.rcParams['figure.figsize'] = (14, 8)
 
 # Paths
-DATA_DIR = Path("data/analysis/market_segmentation")
-OUTPUT_DIR = Path("data/analysis/town_leaderboard")
+DATA_DIR = Path("data/analytics/market_segmentation")
+OUTPUT_DIR = Path("data/analytics/town_leaderboard")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 print("="*80)
@@ -401,13 +402,13 @@ leaderboard_summary.to_csv(
     OUTPUT_DIR / 'town_leaderboard_summary.csv',
     index=False
 )
-print(f"  Saved: town_leaderboard_summary.csv")
+print("  Saved: town_leaderboard_summary.csv")
 
 print("\n" + "="*80)
 print("TOWN LEADERBOARD ANALYSIS COMPLETE")
 print("="*80)
 print(f"\nResults saved to: {OUTPUT_DIR}")
-print(f"\nKey Insights:")
+print("\nKey Insights:")
 print(f"  • {len(town_metrics)} towns analyzed")
 print(f"  • Top investor town: {town_metrics.loc[town_metrics['investor_score'].idxmax(), 'town']}")
 print(f"  • Top value town: {town_metrics.loc[town_metrics['value_score'].idxmax(), 'town']}")

@@ -14,7 +14,6 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -25,8 +24,8 @@ if __name__ == "__main__" and __file__:
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
 
-from scripts.core.data_helpers import load_parquet
 from scripts.core.config import Config
+from scripts.core.data_helpers import load_parquet
 
 logger = logging.getLogger(__name__)
 
@@ -300,7 +299,7 @@ def load_unified_data():
             return pd.DataFrame()
 
 
-def export_all_analytics(output_dir: Optional[Path] = None):
+def export_all_analytics(output_dir: Path | None = None):
     """Main entry point to export all analytics JSON files.
 
     Args:

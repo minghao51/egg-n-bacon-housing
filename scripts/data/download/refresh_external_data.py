@@ -31,7 +31,6 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import List, Dict
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
@@ -78,7 +77,7 @@ class DataRefreshManager:
             self.missing_files.append((path, category))
             return False
 
-    def check_amenity_datasets(self, phase: str = 'all') -> Dict[str, Path]:
+    def check_amenity_datasets(self, phase: str = 'all') -> dict[str, Path]:
         """Check amenity datasets.
 
         Args:
@@ -141,7 +140,7 @@ class DataRefreshManager:
         self.check_file(path, "HDB Rental Data")
         return path
 
-    def check_ura_transactions(self) -> List[Path]:
+    def check_ura_transactions(self) -> list[Path]:
         """Check URA private property transaction files.
 
         Returns:
@@ -204,7 +203,7 @@ class DataRefreshManager:
         return len(self.missing_files) > 0 or self.force_all
 
 
-def run_download_script(script_path: Path, args: List[str] = None) -> bool:
+def run_download_script(script_path: Path, args: list[str] = None) -> bool:
     """Run a download script.
 
     Args:

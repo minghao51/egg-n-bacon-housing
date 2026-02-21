@@ -22,20 +22,16 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
-
 import xgboost as xgb
-from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
 from sklearn.ensemble import StackingRegressor
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-from sklearn.model_selection import cross_val_score, TimeSeriesSplit
 from sklearn.inspection import permutation_importance
-from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import Lasso, LinearRegression, Ridge
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from scripts.core.config import Config
-from scripts.core.data_helpers import load_parquet, save_parquet
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -146,7 +142,7 @@ def train_ols(
     rmse_test = np.sqrt(mean_squared_error(y_test, y_pred_test))
 
     # Directional accuracy
-    direction_test = np.mean((np.sign(y_pred_test) == np.sign(y_test))) * 100
+    direction_test = np.mean(np.sign(y_pred_test) == np.sign(y_test)) * 100
 
     logger.info(f"  Train R²: {r2_train:.4f}")
     logger.info(f"  Test R²: {r2_test:.4f}")
@@ -271,7 +267,7 @@ def train_xgboost(
     r2_test = r2_score(y_test, y_pred_test)
     mae_test = mean_absolute_error(y_test, y_pred_test)
     rmse_test = np.sqrt(mean_squared_error(y_test, y_pred_test))
-    direction_test = np.mean((np.sign(y_pred_test) == np.sign(y_test))) * 100
+    direction_test = np.mean(np.sign(y_pred_test) == np.sign(y_test)) * 100
 
     logger.info(f"  Test R²: {r2_test:.4f}")
     logger.info(f"  Test MAE: {mae_test:.2f}")
@@ -327,7 +323,7 @@ def train_stacking_ensemble(
     r2_test = r2_score(y_test, y_pred_test)
     mae_test = mean_absolute_error(y_test, y_pred_test)
     rmse_test = np.sqrt(mean_squared_error(y_test, y_pred_test))
-    direction_test = np.mean((np.sign(y_pred_test) == np.sign(y_test))) * 100
+    direction_test = np.mean(np.sign(y_pred_test) == np.sign(y_test)) * 100
 
     logger.info(f"  Test R²: {r2_test:.4f}")
     logger.info(f"  Test MAE: {mae_test:.2f}")

@@ -1,15 +1,12 @@
 """Segmentation and interaction effects analysis utilities."""
 
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
-import xgboost as xgb
-from pathlib import Path
 import logging
-import matplotlib.pyplot as plt
-import seaborn as sns
+from pathlib import Path
+
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger(__name__)
 
@@ -233,7 +230,7 @@ class SegmentationAnalyzer:
         interaction_df = pd.DataFrame(interaction_coefs).sort_values('abs_coef', ascending=False)
 
         logger.info(f"  R²: {r2:.4f}")
-        logger.info(f"  Top interactions:")
+        logger.info("  Top interactions:")
         for _, row in interaction_df.head(5).iterrows():
             logger.info(f"    {row['feature']}: {row['coefficient']:.4f}")
 

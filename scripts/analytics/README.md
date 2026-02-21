@@ -86,7 +86,7 @@ All analytics functions follow these conventions:
    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
    ```
 
-3. **Output**: Save results to `data/analysis/` or `data/forecasts/`
+3. **Output**: Save results to `data/analytics/` or `data/exports/`
 
 ## Dependencies
 
@@ -98,9 +98,9 @@ All analytics functions follow these conventions:
 
 ## Output Locations
 
-- **Analysis results**: `data/analysis/`
-- **Forecasts**: `data/forecasts/`
-- **Segmentations**: `data/analysis/market_segmentation/`
+- **Analysis results**: `data/analytics/`
+- **Forecasts**: `data/exports/`
+- **Segmentations**: `data/analytics/market_segmentation/`
 
 ## Related Documentation
 

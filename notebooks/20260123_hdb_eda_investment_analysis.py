@@ -17,12 +17,13 @@ Date: 2026-01-23
 """
 
 # %%
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
 warnings.filterwarnings('ignore')
 
 # Set style
@@ -299,9 +300,9 @@ for idx, row in final_recommendations.head(20).iterrows():
 print("\n" + "=" * 80)
 print("ANALYSIS COMPLETE")
 print("=" * 80)
-print(f"\nSummary:")
+print("\nSummary:")
 print(f"- Analyzed {len(hdb):,} HDB transactions")
 print(f"- Covered {hdb['planning_area'].nunique()} planning areas")
 print(f"- Date range: {hdb['transaction_date'].min().strftime('%Y')} to {hdb['transaction_date'].max().strftime('%Y')}")
-print(f"- Investment score based on: 50% price appreciation (CAGR) + 50% rental yield")
-print(f"\nVisualization saved to: analysis_output/hdb_investment_analysis.png")
+print("- Investment score based on: 50% price appreciation (CAGR) + 50% rental yield")
+print("\nVisualization saved to: analysis_output/hdb_investment_analysis.png")

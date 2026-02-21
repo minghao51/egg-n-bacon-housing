@@ -227,7 +227,7 @@ def main():
     condo_coverage = unified_updated[unified_updated['property_type'] == 'Condominium']['dist_to_nearest_mrt'].notna().sum()
     ec_coverage = unified_updated[unified_updated['property_type'] == 'EC']['dist_to_nearest_mrt'].notna().sum()
 
-    logger.info(f"\nAmenity coverage after update:")
+    logger.info("\nAmenity coverage after update:")
     logger.info(f"  HDB: {hdb_coverage:,}")
     logger.info(f"  Condominium: {condo_coverage:,}")
     logger.info(f"  EC: {ec_coverage:,}")

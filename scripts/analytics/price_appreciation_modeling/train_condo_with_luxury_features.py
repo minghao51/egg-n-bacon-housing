@@ -7,15 +7,15 @@ Usage:
 """
 
 import logging
+
+# Add project root to path for imports
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-
-# Add project root to path for imports
-import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 

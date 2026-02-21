@@ -20,10 +20,8 @@ Options:
 
 import json
 import logging
-import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -42,8 +40,8 @@ except ImportError:
     logger.warning("h3 not available")
 
 try:
-    from libpysal.weights import KNN, Queen
     from esda.moran import Moran, Moran_Local
+    from libpysal.weights import KNN, Queen
     SPATIAL_AVAILABLE = True
 except ImportError:
     SPATIAL_AVAILABLE = False
@@ -418,18 +416,18 @@ def save_results(
 
     moran_df = pd.DataFrame([moran_results])
     moran_df.to_csv(output_dir / "moran_results.csv", index=False)
-    logger.info(f"  Saved: moran_results.csv")
+    logger.info("  Saved: moran_results.csv")
 
     lisa_output = lisa_df[['h3_index', 'lisa_cluster', 'lisa_I', 'lisa_z', 'lisa_p',
                            'appreciation_mean', 'lat', 'lon', 'dominant_type']]
     lisa_output.to_csv(output_dir / "lisa_clusters.csv", index=False)
-    logger.info(f"  Saved: lisa_clusters.csv")
+    logger.info("  Saved: lisa_clusters.csv")
 
     comprehensive_output = comprehensive_df[['h3_index', 'comprehensive_cluster', 'lisa_cluster',
                                             'appreciation_mean', 'appreciation_std', 'n_transactions',
                                             'lat', 'lon', 'dominant_type']]
     comprehensive_output.to_csv(output_dir / "comprehensive_clusters.csv", index=False)
-    logger.info(f"  Saved: comprehensive_clusters.csv")
+    logger.info("  Saved: comprehensive_clusters.csv")
 
     cluster_summary = comprehensive_df.groupby('comprehensive_cluster').agg({
         'appreciation_mean': ['mean', 'std', 'count'],
@@ -437,7 +435,7 @@ def save_results(
         'price_psf': 'mean'
     }).round(2)
     cluster_summary.to_csv(output_dir / "cluster_summary.csv")
-    logger.info(f"  Saved: cluster_summary.csv")
+    logger.info("  Saved: cluster_summary.csv")
 
 
 def save_geojson(lisa_df: pd.DataFrame, output_dir: Path):
@@ -464,7 +462,7 @@ def save_geojson(lisa_df: pd.DataFrame, output_dir: Path):
         gdf = gpd.GeoDataFrame(polygons)
         gdf.set_crs(epsg=4326, inplace=True)
         gdf.to_file(output_dir / "lisa_clusters.geojson", driver="GeoJSON")
-        logger.info(f"  Saved: lisa_clusters.geojson")
+        logger.info("  Saved: lisa_clusters.geojson")
 
     except Exception as e:
         logger.warning(f"Could not create GeoJSON: {e}")
@@ -561,7 +559,7 @@ def main():
 
     comprehensive_df = create_comprehensive_clusters(lisa_df, temporal_clusters, fundamental_clusters)
 
-    output_dir = Path(args.output_dir) if args.output_dir else Path("data/analysis/spatial_autocorrelation")
+    output_dir = Path(args.output_dir) if args.output_dir else Path("data/analytics/spatial_autocorrelation")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     save_results(moran_result, lisa_df, comprehensive_df, output_dir)

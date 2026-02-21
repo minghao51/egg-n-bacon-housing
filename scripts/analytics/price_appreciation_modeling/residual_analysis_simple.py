@@ -11,11 +11,11 @@ import sys
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use('Agg')  # Non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from scipy import stats
 
 # Add project root to path for imports

@@ -16,21 +16,21 @@ Usage:
 
 import logging
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
+import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Add project root to Python path FIRST
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from scripts.core.utils import add_project_to_path
+
 add_project_to_path(Path(__file__))
 
 from scripts.core.config import Config
@@ -205,7 +205,7 @@ def identify_covid_impact(df):
     # Calculate changes
     results_df = pd.DataFrame(results).T
 
-    logger.info(f"\nMRT Premium Evolution ($/100m):")
+    logger.info("\nMRT Premium Evolution ($/100m):")
     logger.info(f"\n{results_df.to_string()}")
 
     # Save results
@@ -352,7 +352,7 @@ def generate_summary_statistics(yearly_results):
 
     summary_df = pd.DataFrame(summary)
 
-    logger.info(f"\nMRT Premium Summary ($/100m):")
+    logger.info("\nMRT Premium Summary ($/100m):")
     logger.info(f"\n{summary_df.to_string()}")
 
     # Save
@@ -421,12 +421,12 @@ def main():
     logger.info("\n" + "="*80)
     logger.info("ANALYSIS COMPLETE")
     logger.info("="*80)
-    logger.info(f"\nKey Findings:")
+    logger.info("\nKey Findings:")
     logger.info(f"  • Analyzed {len(df):,} transactions from 2017-2026")
-    logger.info(f"  • Tracked MRT premium evolution for 3 property types")
-    logger.info(f"  • Assessed COVID-19 impact (2020-2022)")
+    logger.info("  • Tracked MRT premium evolution for 3 property types")
+    logger.info("  • Assessed COVID-19 impact (2020-2022)")
     logger.info(f"  • Generated {len(yearly_results)} yearly coefficient files")
-    logger.info(f"  • Created area-level evolution plots")
+    logger.info("  • Created area-level evolution plots")
     logger.info(f"\nOutputs saved to: {OUTPUT_DIR}")
     logger.info(f"\nDuration: {duration:.1f} seconds")
     logger.info("="*80)

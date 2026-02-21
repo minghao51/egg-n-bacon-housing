@@ -40,8 +40,8 @@ class TestConfigPaths:
         assert Config.MANUAL_DIR == Config.DATA_DIR / "manual"
 
     def test_analysis_dir_relative_to_data(self):
-        """Test that ANALYSIS_DIR is relative to DATA_DIR."""
-        assert Config.ANALYSIS_DIR == Config.DATA_DIR / "analysis"
+        """Test that ANALYTICS_DIR is relative to DATA_DIR."""
+        assert Config.ANALYTICS_DIR == Config.DATA_DIR / "analytics"
 
 
 @pytest.mark.unit
@@ -83,16 +83,15 @@ class TestConfigValidation:
         with patch.object(Config, "DATA_DIR", temp_data_dir):
             with patch.object(Config, "PIPELINE_DIR", temp_data_dir / "pipeline"):
                 with patch.object(Config, "MANUAL_DIR", temp_data_dir / "manual"):
-                    with patch.object(Config, "ANALYSIS_DIR", temp_data_dir / "analysis"):
-                        with patch.object(Config, "ARCHIVE_DIR", temp_data_dir.parent / "archive"):
-                            with patch.object(Config, "CACHE_DIR", temp_data_dir / "cache"):
-                                Config.validate()
+                    with patch.object(Config, "ANALYTICS_DIR", temp_data_dir / "analytics"):
+                        with patch.object(Config, "CACHE_DIR", temp_data_dir / "cache"):
+                            Config.validate()
 
-                                # Check that directories were created
-                                for stage in ["L0", "L1", "L2", "L3"]:
-                                    stage_dir = temp_data_dir / "pipeline" / stage
-                                    assert stage_dir.exists()
-                                    assert stage_dir.is_dir()
+                            # Check that directories were created
+                            for stage in ["L0", "L1", "L2", "L3"]:
+                                stage_dir = temp_data_dir / "pipeline" / stage
+                                assert stage_dir.exists()
+                                assert stage_dir.is_dir()
 
 
 @pytest.mark.unit

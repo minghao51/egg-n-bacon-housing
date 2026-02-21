@@ -17,7 +17,6 @@ Options:
 import argparse
 import logging
 import sys
-
 from pathlib import Path
 
 logging.basicConfig(
@@ -27,46 +26,46 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 try:
+    from visualize_spatial_clusters import OUTPUT_DIR as SPATIAL_DIR
+    from visualize_spatial_clusters import generate_all_visualizations as gen_spatial
     from visualize_spatial_clusters import (
-        generate_all_visualizations as gen_spatial,
-        plot_morans_i_bars,
-        plot_moran_scatter,
-        plot_lisa_cluster_distribution,
+        plot_appreciation_by_cluster,
         plot_appreciation_hotspots_map,
         plot_cluster_hex_map,
-        plot_comprehensive_cluster_distribution,
-        plot_appreciation_by_cluster,
         plot_cluster_risk_return,
-        OUTPUT_DIR as SPATIAL_DIR
+        plot_comprehensive_cluster_distribution,
+        plot_lisa_cluster_distribution,
+        plot_moran_scatter,
+        plot_morans_i_bars,
     )
 except ImportError as e:
     logger.warning(f"Could not import spatial visualizations: {e}")
     gen_spatial = None
 
 try:
+    from visualize_cluster_evolution import OUTPUT_DIR as EVOLUTION_DIR
+    from visualize_cluster_evolution import generate_all_evolution_visualizations as gen_evolution
     from visualize_cluster_evolution import (
-        generate_all_evolution_visualizations as gen_evolution,
-        plot_transition_heatmap,
-        plot_evolution_timeline,
         plot_cluster_counts_stacked,
         plot_cluster_stability_scores,
+        plot_evolution_timeline,
         plot_transition_flow_summary,
-        OUTPUT_DIR as EVOLUTION_DIR
+        plot_transition_heatmap,
     )
 except ImportError as e:
     logger.warning(f"Could not import evolution visualizations: {e}")
     gen_evolution = None
 
 try:
+    from visualize_cluster_profiles import OUTPUT_DIR as PROFILES_DIR
+    from visualize_cluster_profiles import generate_all_profile_visualizations as gen_profiles
     from visualize_cluster_profiles import (
-        generate_all_profile_visualizations as gen_profiles,
-        plot_feature_importance,
-        plot_combined_importance,
-        plot_cluster_radar_chart,
         plot_cluster_comparison_matrix,
+        plot_cluster_radar_chart,
+        plot_combined_importance,
+        plot_feature_importance,
         plot_property_type_comparison,
         plot_summary_dashboard,
-        OUTPUT_DIR as PROFILES_DIR
     )
 except ImportError as e:
     logger.warning(f"Could not import profile visualizations: {e}")
@@ -76,8 +75,8 @@ except ImportError as e:
 def ensure_output_dirs():
     """Ensure all output directories exist."""
     for dir_path in [
-        Path("data/analysis/spatial_autocorrelation"),
-        Path("data/analysis/spatial_autocorrelation/geojson")
+        Path("data/analytics/spatial_autocorrelation"),
+        Path("data/analytics/spatial_autocorrelation/geojson")
     ]:
         dir_path.mkdir(parents=True, exist_ok=True)
         logger.info(f"Ensured directory exists: {dir_path}")
@@ -197,9 +196,9 @@ def main():
     logger.info("=" * 60)
     logger.info("VISUALIZATION GENERATION COMPLETE")
     logger.info("=" * 60)
-    logger.info(f"Output directory: {Path('data/analysis/spatial_autocorrelation')}")
+    logger.info(f"Output directory: {Path('data/analytics/spatial_autocorrelation')}")
     logger.info("Generated files:")
-    for f in Path("data/analysis/spatial_autocorrelation").glob("*.png"):
+    for f in Path("data/analytics/spatial_autocorrelation").glob("*.png"):
         logger.info(f"  - {f.name}")
 
 

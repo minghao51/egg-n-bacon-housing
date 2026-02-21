@@ -16,6 +16,8 @@
 # # procesing all utilities with additional latlon and discard extra info
 
 # %%
+# Add src directory to path for imports
+import pathlib
 import sys
 
 # import polars as pl
@@ -23,14 +25,13 @@ import geopandas as gpd
 import pandas as pd
 from bs4 import BeautifulSoup
 
-# Add src directory to path for imports
-import pathlib
 sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
 
 import json
 import os
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # %% [markdown]
@@ -39,7 +40,6 @@ load_dotenv()
 # Create one map header
 # %%
 import requests
-
 from data_helpers import load_parquet, save_parquet
 
 # Try to use existing token from .env
@@ -59,7 +59,7 @@ if access_token:
 
             current_time = time.time()
             if token_data.get('exp', 0) > current_time:
-                print(f"✅ Using existing OneMap token from .env")
+                print("✅ Using existing OneMap token from .env")
                 print(f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours")
                 headers = {"Authorization": f"{access_token}"}
             else:

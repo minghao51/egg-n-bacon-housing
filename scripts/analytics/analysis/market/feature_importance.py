@@ -5,17 +5,18 @@ import logging
 import sys
 from pathlib import Path
 
+import matplotlib
 import pandas as pd
 import xgboost as xgb
-import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.core.data_helpers import load_parquet
 from scripts.core.config import Config
+from scripts.core.data_helpers import load_parquet
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)

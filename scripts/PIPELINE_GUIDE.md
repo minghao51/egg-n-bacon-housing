@@ -59,7 +59,7 @@ uv run python scripts/analytics/pipelines/forecast_yields_pipeline.py
 uv run python scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py
 ```
 - Computes price growth, PSF, transaction volume, momentum
-- Outputs to `data/parquets/L3/metrics_monthly.parquet`
+- Outputs to `data/pipeline/L3/metrics_monthly.parquet`
 
 **`calculate_affordability_pipeline.py`** - Affordability index calculation
 ```bash
@@ -67,7 +67,7 @@ uv run python scripts/analytics/pipelines/calculate_affordability_pipeline.py
 ```
 - Calculates affordability ratios by planning area
 - Mortgage payment analysis
-- Outputs to `data/parquets/L3/affordability_by_pa.parquet`
+- Outputs to `data/pipeline/L3/affordability_by_pa.parquet`
 
 **`calculate_income_estimates_pipeline.py`** - Household income estimation
 ```bash
@@ -96,7 +96,7 @@ uv run python scripts/analytics/pipelines/cluster_profiles_pipeline.py
 ```
 - Generates K-means cluster profiles for market segments
 - Creates investment strategies per segment
-- Outputs to `data/analysis/market_segmentation_2.0/`
+- Outputs to `data/analytics/market_segmentation_2.0/`
 
 ### `create_l3_unified_dataset.py` (located at `scripts/`)
 Creates the L3 unified housing dataset for analytics.

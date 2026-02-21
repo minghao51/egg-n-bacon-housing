@@ -11,14 +11,15 @@ Author: Automated Pipeline
 Date: 2026-01-24
 """
 
-import pandas as pd
-import numpy as np
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 
 def load_data() -> tuple:
     """Load required data files."""
-    
+
     # Load HDB transactions with planning area
     hdb_path = Path('data/pipeline/L1/housing_hdb_transaction.parquet')
     hdb = pd.read_parquet(hdb_path)
@@ -33,7 +34,7 @@ def load_data() -> tuple:
         rental = pd.read_parquet(rental_path)
     else:
         rental = None
-    
+
     return hdb, income, rental
 
 
@@ -58,11 +59,11 @@ def calculate_mortgage_payment(
     - 80% loan-to-value
     - 25-year loan term (maximum for HDB)
     """
-    
+
     loan_amount = price * (1 - down_payment_pct)
     monthly_rate = interest_rate / 12
     num_payments = loan_term_years * 12
-    
+
     if monthly_rate > 0:
         monthly_payment = loan_amount * (
             (monthly_rate * (1 + monthly_rate) ** num_payments) /
@@ -70,7 +71,7 @@ def calculate_mortgage_payment(
         )
     else:
         monthly_payment = loan_amount / num_payments
-    
+
     return monthly_payment
 
 
@@ -80,16 +81,16 @@ def calculate_affordability_metrics(
     rental: pd.DataFrame = None
 ) -> pd.DataFrame:
     """Calculate affordability metrics for each planning area."""
-    
+
     print("Calculating affordability metrics...")
     print("=" * 60)
-    
+
     # Create income lookup dictionary
     income_lookup = dict(zip(
         income['planning_area'],
         income['estimated_median_annual_income']
     ))
-    
+
     # Calculate median price per town
     price_by_pa = hdb.groupby('town')['resale_price'].agg(['median', 'count']).reset_index()
     price_by_pa.columns = ['town', 'median_price', 'transaction_count']
@@ -100,27 +101,27 @@ def calculate_affordability_metrics(
         on='town',
         how='left'
     )
-    
+
     # Calculate affordability ratio
     affordability['affordability_ratio'] = (
         affordability['median_price'] / affordability['estimated_median_annual_income']
     )
-    
+
     # Calculate mortgage payment (20% down, 3.5% rate, 25 years)
     affordability['monthly_mortgage'] = affordability['median_price'].apply(
         lambda p: calculate_mortgage_payment(p)
     )
-    
+
     # Calculate mortgage as % of income
     affordability['mortgage_to_income_pct'] = (
         affordability['monthly_mortgage'] * 12 / affordability['estimated_median_annual_income'] * 100
     )
-    
+
     # Calculate months of income to buy (median price / monthly income)
     affordability['months_of_income'] = (
         affordability['median_price'] / affordability['estimated_median_monthly_income']
     )
-    
+
     # Add affordability classification
     def classify_affordability(ratio):
         if ratio < 3.0:
@@ -131,9 +132,9 @@ def calculate_affordability_metrics(
             return 'Expensive'
         else:
             return 'Severely Unaffordable'
-    
+
     affordability['affordability_class'] = affordability['affordability_ratio'].apply(classify_affordability)
-    
+
     # Add average rental yield if available
     if rental is not None:
         # Map rental yields to planning areas
@@ -141,38 +142,38 @@ def calculate_affordability_metrics(
         rental_by_pa.columns = ['town', 'avg_rental_yield']
 
         affordability = affordability.merge(rental_by_pa, on='town', how='left')
-        
+
         # Calculate gross rental yield
         affordability['gross_yield_pct'] = (
             (affordability['avg_rental_yield'] * 12 / affordability['median_price']) * 100
         )
-    
+
     # Sort by affordability ratio (best first)
     affordability = affordability.sort_values('affordability_ratio')
-    
+
     print(f"Calculated affordability for {len(affordability)} planning areas")
-    
+
     return affordability
 
 
 def generate_summary(affordability: pd.DataFrame) -> None:
     """Generate summary statistics and insights."""
-    
+
     print("\n" + "=" * 60)
     print("Affordability Summary")
     print("=" * 60)
-    
+
     # Overall statistics
     print(f"\nMedian Affordability Ratio: {affordability['affordability_ratio'].median():.2f}")
     print(f"Mean Affordability Ratio: {affordability['affordability_ratio'].mean():.2f}")
     print(f"Range: {affordability['affordability_ratio'].min():.2f} - {affordability['affordability_ratio'].max():.2f}")
-    
+
     # Classification breakdown
     print("\nClassification Breakdown:")
     class_counts = affordability['affordability_class'].value_counts()
     for cls, count in class_counts.items():
         print(f"  {cls}: {count} planning areas")
-    
+
     # Most affordable areas
     print("\n" + "-" * 40)
     print("Most Affordable Planning Areas:")
@@ -200,9 +201,9 @@ def generate_summary(affordability: pd.DataFrame) -> None:
 
 def create_affordability_by_month(affordability: pd.DataFrame, hdb: pd.DataFrame) -> pd.DataFrame:
     """Create monthly affordability time series."""
-    
+
     print("\nCreating monthly affordability time series...")
-    
+
     # Calculate monthly median prices
     hdb['month'] = pd.to_datetime(hdb['month'])
     monthly_prices = hdb.groupby(['town', 'month'])['resale_price'].median().reset_index()
@@ -217,23 +218,23 @@ def create_affordability_by_month(affordability: pd.DataFrame, hdb: pd.DataFrame
 
     # Add income data
     monthly_prices['estimated_annual_income'] = monthly_prices['town'].map(income_lookup)
-    
+
     # Calculate monthly affordability ratio
     monthly_prices['affordability_ratio'] = (
         monthly_prices['median_price'] / monthly_prices['estimated_annual_income']
     )
-    
+
     print(f"Generated {len(monthly_prices)} monthly affordability records")
-    
+
     return monthly_prices
 
 
 def main():
     """Main execution function."""
-    
+
     output_dir = Path('data/pipeline/L3')
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Load data
     print("Loading data...")
     hdb, income, rental = load_data()
@@ -241,34 +242,34 @@ def main():
     print(f"  Loaded {len(income)} income estimates")
     if rental is not None:
         print(f"  Loaded {len(rental)} rental yield records")
-    
+
     # Calculate affordability metrics
     affordability = calculate_affordability_metrics(hdb, income, rental)
-    
+
     # Generate summary
     generate_summary(affordability)
-    
+
     # Create monthly time series
     monthly_affordability = create_affordability_by_month(affordability, hdb)
-    
+
     # Save outputs
     print("\n" + "=" * 60)
     print("Saving outputs...")
-    
+
     # Save affordability by planning area
     pa_output = output_dir / 'affordability_by_pa.parquet'
     affordability.to_parquet(pa_output, index=False)
     print(f"  Saved: {pa_output}")
-    
+
     # Save monthly affordability
     monthly_output = output_dir / 'affordability_monthly.parquet'
     monthly_affordability.to_parquet(monthly_output, index=False)
     print(f"  Saved: {monthly_output}")
-    
+
     print("\n" + "=" * 60)
     print("Affordability calculation complete!")
     print("=" * 60)
-    
+
     return affordability, monthly_affordability
 
 

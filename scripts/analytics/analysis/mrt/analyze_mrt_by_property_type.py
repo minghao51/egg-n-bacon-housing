@@ -13,19 +13,20 @@ Research Questions:
 4. Should investment strategies vary by property type?
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score, mean_absolute_error
-from scipy import stats
-
 import xgboost as xgb
+from scipy import stats
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import train_test_split
+
 try:
     import shap
     SHAP_AVAILABLE = True
@@ -41,7 +42,7 @@ sns.set_palette("husl")
 
 # Paths
 DATA_DIR = Path("data/pipeline/L3")
-OUTPUT_DIR = Path("data/analysis/mrt_impact")
+OUTPUT_DIR = Path("data/analytics/mrt_impact")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -134,7 +135,7 @@ def analyze_by_property_type(df, target_col='price_psf'):
         )
 
         # === OLS Regression ===
-        print(f"\n  Running OLS Regression...")
+        print("\n  Running OLS Regression...")
         ols_model = LinearRegression()
         ols_model.fit(X_train, y_train)
 
@@ -153,7 +154,7 @@ def analyze_by_property_type(df, target_col='price_psf'):
         print(f"    MRT Premium: ${mrt_coef_100m:.2f} per 100m")
 
         # === XGBoost ===
-        print(f"\n  Training XGBoost...")
+        print("\n  Training XGBoost...")
         xgb_model = xgb.XGBRegressor(
             n_estimators=100,
             max_depth=6,
@@ -179,7 +180,7 @@ def analyze_by_property_type(df, target_col='price_psf'):
             'importance': xgb_model.feature_importances_
         }).sort_values('importance', ascending=False)
 
-        print(f"\n    Top 5 Features:")
+        print("\n    Top 5 Features:")
         print(importance.head(5).to_string(index=False))
 
         # Store results
@@ -239,9 +240,9 @@ def compare_property_types(results):
         print(f"\n  Difference (HDB vs Condo): ${diff:.2f} per 100m")
 
         if diff > 1.0:
-            print(f"  → ECONOMICALLY SIGNIFICANT (>$1/100m difference)")
+            print("  → ECONOMICALLY SIGNIFICANT (>$1/100m difference)")
         else:
-            print(f"  → Minimal practical difference")
+            print("  → Minimal practical difference")
 
     return comparison_df
 
@@ -406,7 +407,6 @@ def create_interaction_model(df, target_col='price_psf'):
         print(f"    (baseline + interaction = ${baseline:.4f} + ${ec_interaction:.4f})")
 
     # Statistical significance
-    from scipy import stats
     n = len(X_test)
     p = len(X_test.columns)
     dof = n - p - 1
@@ -423,14 +423,14 @@ def create_interaction_model(df, target_col='price_psf'):
         t_condo = condo_interaction / se_condo
         p_value_condo = 2 * (1 - stats.t.cdf(abs(t_condo), dof))
 
-        print(f"\n  Statistical Test (Condo interaction):")
+        print("\n  Statistical Test (Condo interaction):")
         print(f"    t-statistic: {t_condo:.4f}")
         print(f"    p-value: {p_value_condo:.4f}")
 
         if p_value_condo < 0.05:
-            print(f"    → SIGNIFICANT at 5% level (p < 0.05)")
+            print("    → SIGNIFICANT at 5% level (p < 0.05)")
         else:
-            print(f"    → NOT significant at 5% level")
+            print("    → NOT significant at 5% level")
 
     return coefs
 

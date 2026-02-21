@@ -14,7 +14,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 
@@ -24,7 +24,6 @@ if __name__ == "__main__" and __file__:
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
 
-from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet
 
 logger = logging.getLogger(__name__)
@@ -37,12 +36,12 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 def compress_json(data: Any, filepath: Path) -> None:
     """Save data as gzip-compressed JSON."""
     filepath.parent.mkdir(parents=True, exist_ok=True)
-    with gzip.open(filepath, 'wt', encoding='utf-8') as f:
+    with gzip.open(filepath, "wt", encoding="utf-8") as f:
         json.dump(data, f)
     logger.info(f"✅ Saved {filepath} ({filepath.stat().st_size / 1024:.1f} KB)")
 
 
-def generate_mrt_cbd_impact() -> Dict[str, Any]:
+def generate_mrt_cbd_impact() -> dict[str, Any]:
     """
     Generate MRT and CBD distance impact data.
 
@@ -63,35 +62,41 @@ def generate_mrt_cbd_impact() -> Dict[str, Any]:
     property_type_multipliers = {
         "HDB": {"premium_per_100m": 5, "cbd_per_km": 15000},
         "Condominium": {"premium_per_100m": 35, "cbd_per_km": 35000},
-        "EC": {"premium_per_100m": 20, "cbd_per_km": 25000}
+        "EC": {"premium_per_100m": 20, "cbd_per_km": 25000},
     }
 
-    # Calculate town-level MRT premiums (HDB only)
+    # Calculate planning_area-level MRT premiums (HDB only)
     hdb_df = df[df["property_type"] == "HDB"].copy()
 
-    # Group by town, calculate median price and MRT distance
-    hdb_prices = hdb_df.groupby("town").agg({
-        "price_psf": "median",
-        "dist_nearest_mrt_station": "median"
-    }).reset_index()
+    # Use planning_area if available, fall back to town
+    area_col = "planning_area" if "planning_area" in hdb_df.columns else "town"
+
+    # Group by planning_area, calculate median price and MRT distance
+    hdb_prices = (
+        hdb_df.groupby(area_col)
+        .agg({"price_psf": "median", "dist_nearest_mrt_station": "median"})
+        .reset_index()
+    )
 
     # Normalize premiums relative to mean
     mean_psf = hdb_df["price_psf"].median()
     hdb_prices["premium_multiplier"] = hdb_prices["price_psf"] / mean_psf
 
-    # Town multipliers (simplified - in production would use regression coefficients)
+    # Planning area multipliers (simplified - in production would use regression coefficients)
     town_multipliers = {}
     for _, row in hdb_prices.iterrows():
-        town_multipliers[row["town"]] = round(row["premium_multiplier"], 2)
+        town_multipliers[row[area_col]] = round(row["premium_multiplier"], 2)
 
-    # Known adjustments from analytics
-    town_multipliers.update({
-        "Central Area": 2.5,  # +$59/100m
-        "Marine Parade": 0.6,  # -$39/100m
-        "Bishan": 1.8,
-        "Toa Payoh": 1.5,
-        "Pasir Ris": 0.8
-    })
+    # Known adjustments from analytics (using planning area names)
+    town_multipliers.update(
+        {
+            "ANG MO KIO": 1.5,
+            "BISHAN": 1.8,
+            "TOA PAYOH": 1.5,
+            "PASIR RIS": 0.8,
+            "CENTRAL AREA": 2.5,
+        }
+    )
 
     return {
         "property_type_multipliers": property_type_multipliers,
@@ -99,21 +104,23 @@ def generate_mrt_cbd_impact() -> Dict[str, Any]:
         "cbd_coefficients": {
             "HDB": {"discount_per_km": 15000, "explanation": "22.6% of price variation"},
             "Condominium": {"discount_per_km": 35000, "explanation": "Higher CBD sensitivity"},
-            "EC": {"discount_per_km": 25000, "explanation": "Moderate CBD sensitivity"}
+            "EC": {"discount_per_km": 25000, "explanation": "Moderate CBD sensitivity"},
         },
         "town_premiums": [
             {
                 "town": town,
                 "multiplier": multiplier,
                 "hdb_premium_per_100m": round(5 * multiplier, 2),
-                "condo_premium_per_100m": round(35 * multiplier, 2)
+                "condo_premium_per_100m": round(35 * multiplier, 2),
             }
-            for town, multiplier in sorted(town_multipliers.items(), key=lambda x: x[1], reverse=True)
-        ]
+            for town, multiplier in sorted(
+                town_multipliers.items(), key=lambda x: x[1], reverse=True
+            )
+        ],
     }
 
 
-def generate_lease_decay_analysis() -> Dict[str, Any]:
+def generate_lease_decay_analysis() -> dict[str, Any]:
     """
     Generate lease decay analysis data.
 
@@ -142,10 +149,7 @@ def generate_lease_decay_analysis() -> Dict[str, Any]:
     bands = []
     for start in range(0, 95, 5):
         end = start + 5
-        band_data = hdb_df[
-            (hdb_df["lease_age"] >= start) &
-            (hdb_df["lease_age"] < end)
-        ]
+        band_data = hdb_df[(hdb_df["lease_age"] >= start) & (hdb_df["lease_age"] < end)]
 
         if len(band_data) == 0:
             continue
@@ -180,16 +184,18 @@ def generate_lease_decay_analysis() -> Dict[str, Any]:
         else:
             risk_zone = "cliff"
 
-        bands.append({
-            "lease_age_band": f"{start}-{end}",
-            "min_lease_years": 99 - end,
-            "max_lease_years": 99 - start,
-            "discount_percent": round(discount, 2),
-            "annual_decay_rate": round(annual_rate, 3),
-            "volume_category": volume_cat,
-            "risk_zone": risk_zone,
-            "transaction_count": len(band_data)
-        })
+        bands.append(
+            {
+                "lease_age_band": f"{start}-{end}",
+                "min_lease_years": 99 - end,
+                "max_lease_years": 99 - start,
+                "discount_percent": round(discount, 2),
+                "annual_decay_rate": round(annual_rate, 3),
+                "volume_category": volume_cat,
+                "risk_zone": risk_zone,
+                "transaction_count": len(band_data),
+            }
+        )
 
     # Key insights from analytics
     insights = {
@@ -197,56 +203,62 @@ def generate_lease_decay_analysis() -> Dict[str, Any]:
             "band": "70-80 years remaining",
             "discount": 21.9,
             "annual_rate": 0.93,
-            "description": "Peak decay period - avoid entry"
+            "description": "Peak decay period - avoid entry",
         },
         "best_value": {
             "band": "60-70 years remaining",
             "discount": 23.8,
             "annual_rate": 0.79,
-            "description": "Highest discount with good liquidity"
+            "description": "Highest discount with good liquidity",
         },
         "safe_zone": {
             "band": "90+ years remaining",
             "discount": 5.2,
             "annual_rate": 0.52,
-            "description": "Minimal decay, optimal for long-term holds"
-        }
+            "description": "Minimal decay, optimal for long-term holds",
+        },
     }
 
-    return {
-        "bands": bands,
-        "insights": insights
-    }
+    return {"bands": bands, "insights": insights}
 
 
-def generate_affordability_metrics() -> Dict[str, Any]:
+def generate_affordability_metrics() -> dict[str, Any]:
     """
-    Generate affordability metrics by town and property type.
+    Generate affordability metrics by planning area and property type.
+
+    Uses planning_area instead of town for consistent aggregation across all
+    property types (HDB, Condo, EC).
 
     Returns:
-        Dictionary with town-level prices, affordability ratios, and income estimates.
+        Dictionary with planning_area-level prices, affordability ratios, and income estimates.
     """
     logger.info("Generating affordability metrics...")
 
     df = load_parquet("L3_housing_unified")
 
-    # Median annual household income for Singapore (approximate)
-    MEDIAN_HOUSEHOLD_INCOME = 120000  # $120k/year
+    # Fallback to town if planning_area not available
+    area_col = "planning_area" if "planning_area" in df.columns else "town"
+    logger.info(f"Using '{area_col}' for affordability metrics")
 
-    # Calculate town-level metrics
+    # Median annual household income for Singapore (approximate)
+    median_household_income = 120000  # $120k/year
+
+    # Calculate planning_area-level metrics
     affordability_data = []
 
-    for town in df["town"].unique():
-        town_df = df[df["town"] == town]
+    for area in df[area_col].unique():
+        if pd.isna(area):
+            continue
+        area_df = df[df[area_col] == area]
 
         for prop_type in ["HDB", "Condominium", "EC"]:
-            prop_df = town_df[town_df["property_type"] == prop_type]
+            prop_df = area_df[area_df["property_type"] == prop_type]
 
             if len(prop_df) < 100:  # Skip insufficient data
                 continue
 
             median_price = prop_df["price"].median()
-            affordability_ratio = median_price / MEDIAN_HOUSEHOLD_INCOME
+            affordability_ratio = median_price / median_household_income
 
             # Categorize
             if affordability_ratio <= 2.5:
@@ -258,33 +270,68 @@ def generate_affordability_metrics() -> Dict[str, Any]:
             else:
                 category = "severe"
 
-            affordability_data.append({
-                "town": town,
-                "property_type": prop_type,
-                "median_price": round(median_price),
-                "affordability_ratio": round(affordability_ratio, 2),
-                "category": category,
-                "estimated_monthly_mortgage": round(median_price * 0.0043)  # Approx 25yr at 2.5%
-            })
+            affordability_data.append(
+                {
+                    "town": area,  # Using planning_area as town for dashboard compatibility
+                    "property_type": prop_type,
+                    "median_price": round(median_price),
+                    "affordability_ratio": round(affordability_ratio, 2),
+                    "category": category,
+                    "estimated_monthly_mortgage": round(
+                        median_price * 0.0043
+                    ),  # Approx 25yr at 2.5%
+                }
+            )
 
     # Sort by ratio
     affordability_data.sort(key=lambda x: x["affordability_ratio"])
 
+    # Also generate region-level aggregations if region is available
+    region_data = []
+    if "region" in df.columns:
+        for region in df["region"].unique():
+            if pd.isna(region):
+                continue
+            region_df = df[df["region"] == region]
+
+            for prop_type in ["HDB", "Condominium", "EC"]:
+                prop_df = region_df[region_df["property_type"] == prop_type]
+
+                if len(prop_df) < 100:
+                    continue
+
+                median_price = prop_df["price"].median()
+                affordability_ratio = median_price / median_household_income
+
+                region_data.append(
+                    {
+                        "region": region,
+                        "property_type": prop_type,
+                        "median_price": round(median_price),
+                        "affordability_ratio": round(affordability_ratio, 2),
+                        "transaction_count": len(prop_df),
+                    }
+                )
+
     return {
-        "median_household_income": MEDIAN_HOUSEHOLD_INCOME,
+        "median_household_income": median_household_income,
         "town_metrics": affordability_data,
+        "region_metrics": region_data,
         "summary": {
-            "most_affordable_hdb": [x for x in affordability_data if x["property_type"] == "HDB"][:5],
-            "least_affordable_hdb": [x for x in affordability_data if x["property_type"] == "HDB"][-5:],
+            "most_affordable_hdb": [x for x in affordability_data if x["property_type"] == "HDB"][
+                :5
+            ],
+            "least_affordable_hdb": [x for x in affordability_data if x["property_type"] == "HDB"][
+                -5:
+            ],
             "national_median_ratio": round(
-                df[df["property_type"] == "HDB"]["price"].median() / MEDIAN_HOUSEHOLD_INCOME,
-                2
-            )
-        }
+                df[df["property_type"] == "HDB"]["price"].median() / median_household_income, 2
+            ),
+        },
     }
 
 
-def generate_spatial_hotspots() -> Dict[str, Any]:
+def generate_spatial_hotspots() -> dict[str, Any]:
     """
     Generate spatial hotspots cluster data.
 
@@ -299,16 +346,18 @@ def generate_spatial_hotspots() -> Dict[str, Any]:
         # If we have the actual analysis parquet, process it
         towns = []
         for _, row in hotspot_df.iterrows():
-            towns.append({
-                "town": row.get("town", ""),
-                "median_price": row.get("median_price"),
-                "appreciation_rate": row.get("appreciation_rate", 0),
-                "cluster": row.get("cluster", "LH"),
-                "cluster_description": row.get("cluster_description", ""),
-                "persistence_probability": row.get("persistence_probability", 0.60),
-                "risk_level": row.get("risk_level", "medium")
-            })
-    except:
+            towns.append(
+                {
+                    "town": row.get("town", ""),
+                    "median_price": row.get("median_price"),
+                    "appreciation_rate": row.get("appreciation_rate", 0),
+                    "cluster": row.get("cluster", "LH"),
+                    "cluster_description": row.get("cluster_description", ""),
+                    "persistence_probability": row.get("persistence_probability", 0.60),
+                    "risk_level": row.get("risk_level", "medium"),
+                }
+            )
+    except Exception:
         # Fallback: Create from L3 data with appreciation rates
         logger.warning("analysis_spatial_hotspots not found, using simplified version")
         df = load_parquet("L3_housing_unified")
@@ -337,11 +386,13 @@ def generate_spatial_hotspots() -> Dict[str, Any]:
             # Clamp to reasonable range
             appreciation_rate = max(-5, min(15, appreciation_rate))
 
-            area_stats.append({
-                "town": area,  # Using planning_area as town
-                "median_price": round(area_df["price"].median()),
-                "appreciation_rate": round(appreciation_rate, 2)
-            })
+            area_stats.append(
+                {
+                    "town": area,  # Using planning_area as town
+                    "median_price": round(area_df["price"].median()),
+                    "appreciation_rate": round(appreciation_rate, 2),
+                }
+            )
 
         # Classify into clusters based on appreciation
         towns = []
@@ -361,19 +412,19 @@ def generate_spatial_hotspots() -> Dict[str, Any]:
                 desc = "❄️ Coldspot - Low appreciation, high risk"
 
             # Persistence probabilities (from analytics)
-            persistence = {
-                "HH": 0.62, "LH": 0.58, "HL": 0.60, "LL": 0.58
-            }
+            persistence = {"HH": 0.62, "LH": 0.58, "HL": 0.60, "LL": 0.58}
 
-            towns.append({
-                "town": area["town"],
-                "median_price": area["median_price"],
-                "appreciation_rate": area["appreciation_rate"],
-                "cluster": cluster,
-                "cluster_description": desc,
-                "persistence_probability": persistence[cluster],
-                "risk_level": "low" if cluster in ["HH", "LH"] else "high"
-            })
+            towns.append(
+                {
+                    "town": area["town"],
+                    "median_price": area["median_price"],
+                    "appreciation_rate": area["appreciation_rate"],
+                    "cluster": cluster,
+                    "cluster_description": desc,
+                    "persistence_probability": persistence[cluster],
+                    "risk_level": "low" if cluster in ["HH", "LH"] else "high",
+                }
+            )
 
     return {
         "towns": towns,
@@ -381,13 +432,13 @@ def generate_spatial_hotspots() -> Dict[str, Any]:
             "HH": "🔥 Mature Hotspot - High appreciation (12.7% YoY), low risk",
             "LH": "🌱 Emerging Hotspot - Growth potential (9.2% YoY), moderate risk",
             "HL": "⚠️ Cooling Area - Declining appreciation (3.5% YoY), elevated risk",
-            "LL": "❄️ Coldspot - Low appreciation (-0.3% YoY), high risk"
+            "LL": "❄️ Coldspot - Low appreciation (-0.3% YoY), high risk",
         },
         "portfolio_allocation": {
             "investor": {"HH": 60, "LH": 30, "LL": 10, "HL": 0},
             "first-time-buyer": {"HH": 70, "LH": 20, "LL": 5, "HL": 5},
-            "upgrader": {"HH": 50, "LH": 40, "LL": 5, "HL": 5}
-        }
+            "upgrader": {"HH": 50, "LH": 40, "LL": 5, "HL": 5},
+        },
     }
 
 

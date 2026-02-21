@@ -57,7 +57,7 @@ uv run python scripts/utils/detect_anomalies.py
 ```
 
 **Output:**
-- Anomaly report in `data/analysis/`
+- Anomaly report in `data/analytics/`
 - Flagged records for review
 
 ### `town_leaderboard.py`
@@ -75,7 +75,7 @@ uv run python scripts/utils/town_leaderboard.py
 ```
 
 **Output:**
-- Leaderboard tables in `data/analysis/`
+- Leaderboard tables in `data/analytics/`
 - CSV exports for reporting
 
 ## Common Patterns
@@ -197,7 +197,7 @@ Recommended utility script schedules:
 ## Output Locations
 
 Utility scripts save outputs to:
-- **Reports**: `data/analysis/`
+- **Reports**: `data/analytics/`
 - **Logs**: `data/logs/`
 - **Validation results**: `data/validation/`
 

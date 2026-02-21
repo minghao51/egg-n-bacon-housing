@@ -12,15 +12,15 @@ Usage:
 """
 
 import logging
+
+# Add project root to path for imports
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-
-# Add project root to path for imports
-import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
@@ -300,7 +300,7 @@ def main():
         hdb_mae = mean_absolute_error(hdb_actual, hdb_pred)
         hdb_dir = ((hdb_actual > 0) == (hdb_pred > 0)).sum() / len(hdb_actual) * 100
 
-        logger.info(f"\n  HDB:")
+        logger.info("\n  HDB:")
         logger.info(f"    R²: {hdb_r2:.4f}")
         logger.info(f"    MAE: {hdb_mae:.2f}%")
         logger.info(f"    Directional Accuracy: {hdb_dir:.1f}%")
@@ -349,7 +349,7 @@ def main():
         ec_mae = mean_absolute_error(ec_actual, ec_pred)
         ec_dir = ((ec_actual > 0) == (ec_pred > 0)).sum() / len(ec_actual) * 100
 
-        logger.info(f"\n  EC:")
+        logger.info("\n  EC:")
         logger.info(f"    R²: {ec_r2:.4f}")
         logger.info(f"    MAE: {ec_mae:.2f}%")
         logger.info(f"    Directional Accuracy: {ec_dir:.1f}%")

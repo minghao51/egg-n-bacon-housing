@@ -15,15 +15,13 @@ Usage:
 import logging
 import sys
 from pathlib import Path
-from typing import Optional, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy import stats
 import statsmodels.api as sm
-import patsy
+from scipy import stats
 
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
@@ -164,7 +162,7 @@ def analyze_liquidity_tax(df: pd.DataFrame) -> pd.DataFrame:
         median_59 = year_59.median()
         liquidity_tax = ((median_61 - median_59) / median_61) * 100
 
-        logger.info(f"\nLiquidity Tax Analysis (61 vs 59 years):")
+        logger.info("\nLiquidity Tax Analysis (61 vs 59 years):")
         logger.info(f"  61-year lease median: ${median_61:,.0f}/PSM (n={len(year_61)})")
         logger.info(f"  59-year lease median: ${median_59:,.0f}/PSM (n={len(year_59)})")
         logger.info(f"  Liquidity Tax: {liquidity_tax:.2f}%")
@@ -216,7 +214,7 @@ def balas_curve_theoretical(lease_years: np.ndarray) -> np.ndarray:
     return value_pct
 
 
-def analyze_balas_curve(df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def analyze_balas_curve(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     """
     Validate empirical data against theoretical Bala's Curve.
 
@@ -250,18 +248,18 @@ def analyze_balas_curve(df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     overvalued = empirical[empirical['deviation_pct'] > 5]
     undervalued = empirical[empirical['deviation_pct'] < -5]
 
-    logger.info(f"\nBala's Curve Validation Results:")
+    logger.info("\nBala's Curve Validation Results:")
     logger.info(f"  Average Deviation: {avg_deviation:+.2f}%")
     logger.info(f"  Max Deviation: {max_deviation:.2f}%")
     logger.info(f"  Deviation Std Dev: {deviation_std:.2f}%")
 
     if len(overvalued) > 0:
-        logger.info(f"\nOvervalued lease years (>5% premium):")
+        logger.info("\nOvervalued lease years (>5% premium):")
         for _, row in overvalued.iterrows():
             logger.info(f"  {int(row['lease_years'])} yrs: +{row['deviation_pct']:.1f}% (n={row['n']})")
 
     if len(undervalued) > 0:
-        logger.info(f"\nUndervalued lease years (>5% discount):")
+        logger.info("\nUndervalued lease years (>5% discount):")
         for _, row in undervalued.iterrows():
             logger.info(f"  {int(row['lease_years'])} yrs: {row['deviation_pct']:.1f}% (n={row['n']})")
 
@@ -326,7 +324,7 @@ def run_hedonic_regression(df: pd.DataFrame) -> pd.DataFrame:
         logger.info("\nHedonic Regression Results:")
         logger.info(f"R-squared: {model.rsquared:.4f}")
         logger.info(f"Adjusted R-squared: {model.rsquared_adj:.4f}")
-        logger.info(f"\nLease Coefficient:")
+        logger.info("\nLease Coefficient:")
         if 'remaining_lease_years' in model.params.index:
             lease_coef = model.params['remaining_lease_years']
             lease_pval = model.pvalues['remaining_lease_years']
@@ -391,7 +389,7 @@ def analyze_town_normalized_lease(df: pd.DataFrame) -> pd.DataFrame:
     results_df = pd.DataFrame(town_results)
     results_df = results_df.sort_values('discount_pct', ascending=False)
 
-    logger.info(f"\nTown-Normalized Lease Discounts:")
+    logger.info("\nTown-Normalized Lease Discounts:")
     for _, row in results_df.iterrows():
         logger.info(f"  {row['town']}: {row['discount_pct']:.1f}% (short: {row['short_lease_n']}, fresh: {row['fresh_lease_n']})")
 
@@ -430,12 +428,12 @@ def analyze_maturity_cliff(df: pd.DataFrame) -> pd.DataFrame:
 
     flat_type_diff = cliff_prevalence.subtract(other_prevalence).dropna()
 
-    logger.info(f"\n70-80 Year Band (Maturity Cliff) Analysis:")
+    logger.info("\n70-80 Year Band (Maturity Cliff) Analysis:")
     logger.info(f"  Transactions: {len(decade_70_80):,}")
     logger.info(f"  Median PSM: ${decade_70_80['price_psm'].median():,.0f}")
     logger.info(f"  Avg Completion Year: {decade_70_80['year_of_completion'].mean():.0f}")
 
-    logger.info(f"\nFlat Type Distribution (vs other bands):")
+    logger.info("\nFlat Type Distribution (vs other bands):")
     for flat_type, diff in flat_type_diff.sort_values().items():
         logger.info(f"  {flat_type}: {diff*100:+.1f}%")
 
@@ -500,7 +498,7 @@ def visualize_advanced_analysis(
             ci_upper = lease_coef['CI_Upper'].values[0]
             ax4.bar(['Lease Effect'], [coef], yerr=[[coef - ci_lower], [ci_upper - coef]], capsize=10, color='steelblue')
             ax4.set_ylabel('Coefficient (SGD/PSM per year)')
-            ax4.set_title(f'Hedonic Regression: Isolated Lease Effect\n(Controlled for floor, MRT, town)')
+            ax4.set_title('Hedonic Regression: Isolated Lease Effect\n(Controlled for floor, MRT, town)')
             ax4.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
 
     plt.tight_layout()
@@ -509,7 +507,7 @@ def visualize_advanced_analysis(
     plt.close()
 
 
-def analyze_spline_arbitrage(df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def analyze_spline_arbitrage(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     """
     Spline-based arbitrage analysis: Compare empirical market curve to Bala's theoretical.
 
@@ -545,7 +543,7 @@ def analyze_spline_arbitrage(df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     # Using patsy for spline basis functions
     try:
         # Create B-spline basis (4 knots = 5 degrees of freedom - 1)
-        from scipy.interpolate import BSpline, make_smoothing_spline
+        from scipy.interpolate import make_smoothing_spline
 
         # Fit smoothing spline to empirical data
         lease_range = empirical['lease_years'].values
@@ -588,7 +586,7 @@ def analyze_spline_arbitrage(df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
                       np.where(undervalued_mask, 'BUY', 'HOLD'))
         })
 
-        logger.info(f"\nArbitrage Opportunities Identified:")
+        logger.info("\nArbitrage Opportunities Identified:")
         logger.info(f"  Overvalued (SELL): {overvalued_mask.sum()} lease years")
         logger.info(f"  Undervalued (BUY): {undervalued_mask.sum()} lease years")
         logger.info(f"  Fair value (HOLD): {(~overvalued_mask & ~undervalued_mask).sum()} lease years")
@@ -598,13 +596,13 @@ def analyze_spline_arbitrage(df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         top_buy = opportunities[opportunities['signal'] == 'BUY'].nsmallest(5, 'arbitrage_gap_pct')
 
         if not top_sell.empty:
-            logger.info(f"\nTop 5 OVERVALUED (Sell Opportunities):")
+            logger.info("\nTop 5 OVERVALUED (Sell Opportunities):")
             for _, row in top_sell.iterrows():
                 logger.info(f"  {int(row['lease_years'])} years: +{row['arbitrage_gap_pct']:.1f}% "
                           f"(Market {row['market_value_pct']:.1f}% vs Theory {row['theoretical_value_pct']:.1f}%)")
 
         if not top_buy.empty:
-            logger.info(f"\nTop 5 UNDERVALUED (Buy Opportunities):")
+            logger.info("\nTop 5 UNDERVALUED (Buy Opportunities):")
             for _, row in top_buy.iterrows():
                 logger.info(f"  {int(row['lease_years'])} years: {row['arbitrage_gap_pct']:.1f}% "
                           f"(Market {row['market_value_pct']:.1f}% vs Theory {row['theoretical_value_pct']:.1f}%)")

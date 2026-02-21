@@ -15,22 +15,23 @@ Outputs:
 - Visualizations
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
-warnings.filterwarnings('ignore')
+from pathlib import Path
 
-from sklearn.ensemble import IsolationForest, RandomForestRegressor
-from sklearn.neighbors import LocalOutlierFactor
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
+import numpy as np
+import pandas as pd
+
+warnings.filterwarnings('ignore')
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import IsolationForest, RandomForestRegressor
+from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 # Set style
 plt.style.use('seaborn-v0_8-whitegrid')
@@ -38,8 +39,8 @@ sns.set_palette("husl")
 plt.rcParams['figure.figsize'] = (14, 8)
 
 # Paths
-DATA_DIR = Path("data/analysis/market_segmentation")
-OUTPUT_DIR = Path("data/analysis/anomaly_detection")
+DATA_DIR = Path("data/analytics/market_segmentation")
+OUTPUT_DIR = Path("data/analytics/anomaly_detection")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 print("="*80)
@@ -196,7 +197,7 @@ df_recent['predicted_price_psm'] = rf_pipeline.predict(X)
 df_recent['residual'] = df_recent['price_psm'] - df_recent['predicted_price_psm']
 df_recent['residual_pct'] = (df_recent['residual'] / df_recent['predicted_price_psm']) * 100
 
-print(f"\nResidual Statistics:")
+print("\nResidual Statistics:")
 print(f"  Mean: ${df_recent['residual'].mean():.2f}/psm")
 print(f"  Std: ${df_recent['residual'].std():.2f}/psm")
 print(f"  Min: ${df_recent['residual'].min():.2f}/psm ({df_recent['residual_pct'].min():.1f}%)")
@@ -206,7 +207,7 @@ print(f"  Max: ${df_recent['residual'].max():.2f}/psm ({df_recent['residual_pct'
 threshold = -2 * df_recent['residual'].std()
 undervalued_pred = df_recent[df_recent['residual'] < threshold].copy()
 
-print(f"\nUndervalued Properties (Prediction-based):")
+print("\nUndervalued Properties (Prediction-based):")
 print(f"  Threshold: < ${threshold:.2f}/psm")
 print(f"  Count: {len(undervalued_pred)} properties")
 print(f"  Percentage: {len(undervalued_pred)/len(df_recent)*100:.2f}%")
@@ -218,7 +219,7 @@ df_recent['potential_savings_pct'] = df_recent['residual_pct']
 undervalued_pred['potential_savings'] = undervalued_pred['residual'] * undervalued_pred['floor_area_sqm']
 undervalued_pred['potential_savings_pct'] = undervalued_pred['residual_pct']
 
-print(f"\nPotential Savings:")
+print("\nPotential Savings:")
 print(f"  Mean: ${undervalued_pred['potential_savings'].mean():,.0f}")
 print(f"  Median: ${undervalued_pred['potential_savings'].median():,.0f}")
 print(f"  Total: ${undervalued_pred['potential_savings'].sum():,.0f}")
@@ -300,12 +301,12 @@ top_opportunities = df_recent[
     (df_recent['anomaly_methods'] >= 2)
 ].copy()
 
-print(f"\nTop Investment Opportunities (Multiple Methods):")
+print("\nTop Investment Opportunities (Multiple Methods):")
 print(f"  Count: {len(top_opportunities)} properties")
-print(f"  Criteria: Undervalued by prediction AND detected by 2+ methods")
+print("  Criteria: Undervalued by prediction AND detected by 2+ methods")
 
 if len(top_opportunities) > 0:
-    print(f"\nTop 20 Opportunities:")
+    print("\nTop 20 Opportunities:")
 
     # Select relevant columns for display
     display_cols = [
@@ -464,7 +465,7 @@ summary_stats = {
 
 summary_df = pd.DataFrame([summary_stats])
 summary_df.to_csv(OUTPUT_DIR / 'anomaly_summary.csv', index=False)
-print(f"  Saved: anomaly_summary.csv")
+print("  Saved: anomaly_summary.csv")
 
 print(f"\n{summary_stats}")
 

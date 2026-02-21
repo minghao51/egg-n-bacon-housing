@@ -15,10 +15,9 @@ Usage:
 import logging
 import sys
 from pathlib import Path
-from typing import Tuple
 
 import pandas as pd
-from rapidfuzz import process, fuzz
+from rapidfuzz import fuzz, process
 
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -37,7 +36,7 @@ logger = logging.getLogger(__name__)
 # DATA LOADING
 # ============================================================================
 
-def load_transaction_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
+def load_transaction_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load HDB and Condo transaction data.
 
     Returns:

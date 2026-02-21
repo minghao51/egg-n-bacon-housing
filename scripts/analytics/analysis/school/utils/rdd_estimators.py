@@ -1,12 +1,13 @@
 """Regression Discontinuity Design utilities for causal inference."""
 
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from scipy import stats
-from pathlib import Path
 import logging
+from pathlib import Path
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy import stats
+from sklearn.linear_model import LinearRegression
 
 logger = logging.getLogger(__name__)
 
@@ -237,7 +238,7 @@ class RDDEstimator:
             rdd_df = self.create_rdd_dataset(df, bandwidth=bw)
 
             if len(rdd_df) < 100:
-                logger.warning(f"    Insufficient data, skipping")
+                logger.warning("    Insufficient data, skipping")
                 continue
 
             # Estimate effect
@@ -309,7 +310,7 @@ class RDDEstimator:
 
         placebo_df = pd.DataFrame(placebo_results)
 
-        logger.info(f"  Placebo effects should be null (insignificant)")
+        logger.info("  Placebo effects should be null (insignificant)")
 
         # Save
         output_path = self.output_dir / "rdd_placebo_tests.csv"

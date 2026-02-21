@@ -16,8 +16,8 @@ import logging
 import sys
 from pathlib import Path
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
@@ -269,8 +269,8 @@ def main():
 
     logger.info(f"\nTrain set: {len(train_df):,} records × {len(train_df.columns)} total columns")
     logger.info(f"Test set: {len(test_df):,} records × {len(test_df.columns)} total columns")
-    logger.info(f"\n✅ Datasets ready for model training!")
-    logger.info(f"   Next step: uv run python -m scripts.analytics.price_appreciation_modeling.train_models")
+    logger.info("\n✅ Datasets ready for model training!")
+    logger.info("   Next step: uv run python -m scripts.analytics.price_appreciation_modeling.train_models")
 
 
 if __name__ == "__main__":

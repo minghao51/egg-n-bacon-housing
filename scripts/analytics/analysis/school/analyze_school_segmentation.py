@@ -20,10 +20,10 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-import pandas as pd
-import numpy as np
 import logging
 import warnings
+
+import pandas as pd
 
 warnings.filterwarnings("ignore")
 
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 # Paths
 DATA_DIR = Path("data/pipeline/L3")
-OUTPUT_DIR = Path("data/analysis/school_segmentation")
+OUTPUT_DIR = Path("data/analytics/school_segmentation")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -180,9 +180,9 @@ def main():
     print("ANALYSIS COMPLETE")
     print("=" * 80)
     print(f"\nResults saved to: {OUTPUT_DIR}")
-    print(f"  - segment_coefficients.csv: School effects by market segment")
-    print(f"  - segment_r2_comparison.csv: Model performance by segment")
-    print(f"  - interaction_model_results.csv: Interaction term coefficients")
+    print("  - segment_coefficients.csv: School effects by market segment")
+    print("  - segment_r2_comparison.csv: Model performance by segment")
+    print("  - interaction_model_results.csv: Interaction term coefficients")
 
     # Key findings
     if coef_df is not None and not coef_df.empty:

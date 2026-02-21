@@ -32,22 +32,20 @@ Usage:
 
 import logging
 import sys
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Tuple, Optional
+from pathlib import Path
 
-import pandas as pd
-import numpy as np
-from sklearn.cluster import KMeans, DBSCAN
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
-import xgboost as xgb
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
-from scipy import stats
+import xgboost as xgb
+from sklearn.cluster import KMeans
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 # Add project root to Python path
 project_root = Path(__file__).parent.parent.parent.parent.parent
@@ -257,10 +255,10 @@ def run_appreciation_regression(df):
     X = df_clean[feature_cols].values
     y = df_clean['yoy_change_pct'].values
 
-    logger.info(f"\nDataset for regression:")
+    logger.info("\nDataset for regression:")
     logger.info(f"  Samples: {len(X):,}")
     logger.info(f"  Features: {len(feature_cols)}")
-    logger.info(f"  Target: YoY appreciation %")
+    logger.info("  Target: YoY appreciation %")
 
     # Split data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -316,7 +314,7 @@ def run_appreciation_regression(df):
         'importance': rf.feature_importances_
     }).sort_values('importance', ascending=False)
 
-    logger.info(f"\n  Top 10 Features:")
+    logger.info("\n  Top 10 Features:")
     for _, row in importance_df.head(10).iterrows():
         logger.info(f"    {row['feature']}: {row['importance']:.4f}")
 
@@ -345,7 +343,7 @@ def run_appreciation_regression(df):
 
     # Model comparison
     results_df = pd.DataFrame(results)
-    logger.info(f"\nModel Comparison:")
+    logger.info("\nModel Comparison:")
     logger.info(f"\n{results_df.to_string()}")
 
     # Save
@@ -677,13 +675,13 @@ def main():
     logger.info("ANALYSIS COMPLETE")
     logger.info("="*80)
 
-    logger.info(f"\nKey Findings:")
+    logger.info("\nKey Findings:")
     logger.info(f"  • Analyzed {len(df):,} transactions with YoY data")
     logger.info(f"  • Identified {len(area_features)} planning area clusters")
     logger.info(f"  • Best model R²: {results_df['r2'].max():.4f} ({results_df.loc[results_df['r2'].idxmax(), 'model']})")
     logger.info(f"  • Top appreciation driver: {importance_df.iloc[0]['feature']}")
 
-    logger.info(f"\nInvestment Insights:")
+    logger.info("\nInvestment Insights:")
     for insight in insights[:5]:
         logger.info(f"  {insight}")
 

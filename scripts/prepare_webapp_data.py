@@ -28,13 +28,10 @@ if __name__ == "__main__":
     setup_script_environment()
     setup_logging_from_env()
 
-    # Validate configuration
-    try:
-        Config.validate()
-    except ValueError as e:
-        logger = get_logger(__name__)
-        logger.error(f"Configuration error: {e}")
-        sys.exit(1)
+    # Skip Config.validate() - webapp data generation doesn't need API keys
+    # (data is already geocoded in parquet files, we just read and export)
+    logger = get_logger(__name__)
+    logger.info("Skipping Config.validate() - webapp data uses pre-processed parquet files")
 
     # Run main function
     main()

@@ -32,6 +32,9 @@ load_dotenv()
 
 # %%
 import json
+
+# Add src directory to path for imports
+import pathlib
 import sys
 
 import geopandas as gpd
@@ -39,8 +42,6 @@ import pandas as pd
 import requests
 from shapely.geometry import shape
 
-# Add src directory to path for imports
-import pathlib
 sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
 
 from data_helpers import save_parquet
@@ -68,7 +69,7 @@ if access_token:
 
             current_time = time.time()
             if token_data.get('exp', 0) > current_time:
-                print(f"✅ Using existing OneMap token from .env")
+                print("✅ Using existing OneMap token from .env")
                 print(f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours")
                 headers = {"Authorization": f"{access_token}"}
             else:

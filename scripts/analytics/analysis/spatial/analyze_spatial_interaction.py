@@ -24,12 +24,11 @@ Usage:
 
 import logging
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
@@ -59,16 +58,16 @@ OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 # Check for spatial packages
 try:
     import libpysal
-    from libpysal.weights import KNN
     from esda.moran import Moran
+    from libpysal.weights import KNN
     SPATIAL_AVAILABLE = True
 except ImportError:
     SPATIAL_AVAILABLE = False
     logger.warning("libpysal/esda not available - spatial lag models disabled")
 
 try:
-    from mgwr.sel_bw import Sel_BW
     from mgwr.gwr import GWR
+    from mgwr.sel_bw import Sel_BW
     GWR_AVAILABLE = True
 except ImportError:
     GWR_AVAILABLE = False
@@ -440,7 +439,7 @@ def main():
     logger.info("\n" + "="*80)
     logger.info("ANALYSIS COMPLETE")
     logger.info("="*80)
-    logger.info(f"\nKey Findings:")
+    logger.info("\nKey Findings:")
     logger.info(f"  • Analyzed {len(df):,} HDB transactions (2021+)")
     logger.info(f"  • Global OLS R²: {ols_results['r2']:.4f}")
 

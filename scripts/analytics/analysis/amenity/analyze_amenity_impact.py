@@ -25,8 +25,8 @@ from sklearn.preprocessing import StandardScaler
 
 # Add project root to Python path
 from scripts.core.config import Config
-from scripts.core.utils import add_project_to_path
 from scripts.core.stages.helpers.analysis_helpers import save_analysis_result
+from scripts.core.utils import add_project_to_path
 
 warnings.filterwarnings("ignore")
 

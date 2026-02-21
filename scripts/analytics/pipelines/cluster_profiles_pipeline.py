@@ -1,16 +1,18 @@
 """Quick cluster profile generation - streamlined version for dashboard data."""
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
-from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import MiniBatchKMeans
+from sklearn.preprocessing import StandardScaler
 
-DATA_DIR = Path("data/analysis/market_segmentation")
-OUTPUT_DIR = Path("data/analysis/market_segmentation_2.0")
+DATA_DIR = Path("data/analytics/market_segmentation")
+OUTPUT_DIR = Path("data/analytics/market_segmentation_2.0")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 print("="*60)
@@ -132,4 +134,4 @@ print("\n" + "="*60)
 print("CLUSTER PROFILE GENERATION COMPLETE")
 print("="*60)
 print(f"\nOutput: {OUTPUT_DIR}")
-print(f"Segments: 6")
+print("Segments: 6")

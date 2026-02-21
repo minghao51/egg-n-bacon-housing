@@ -48,8 +48,8 @@ uv run python scripts/data/download/refresh_external_data.py
 - HDB (Housing & Development Board) rental data
 
 **Output:**
-- Downloaded files saved to `data/manual/csv/datagov/` (amenities)
-- Processed data saved to `data/parquets/L1/` and `data/parquets/L2/`
+- Downloaded files saved to `data/raw/external/` 
+- Processed data saved to `data/pipeline/L1/` and `data/pipeline/L2/`
 
 ### `process/`
 Scripts for processing and transforming raw data into analysis-ready formats.
@@ -160,7 +160,7 @@ External APIs
     ↓
 download/
     ↓
-data/manual/, data/raw_data/
+data/raw/
     ↓
 process/
     ↓

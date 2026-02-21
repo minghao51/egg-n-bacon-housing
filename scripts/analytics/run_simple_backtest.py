@@ -12,10 +12,9 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from scripts.analytics.pipelines.prepare_timeseries_data import run_preparation_pipeline
 from scripts.core.config import Config
 
 logger = logging.getLogger(__name__)

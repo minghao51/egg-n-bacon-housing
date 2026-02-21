@@ -8,14 +8,13 @@ Usage:
 """
 
 import logging
+import sys
 from pathlib import Path
-from typing import Dict, Tuple, Optional
 
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
 
-import sys
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
@@ -62,7 +61,7 @@ def classify_region(planning_area: str) -> str:
         return 'OCR'
 
 
-def load_and_prepare_data(property_type: Optional[str] = None, min_year: int = 2017) -> pd.DataFrame:
+def load_and_prepare_data(property_type: str | None = None, min_year: int = 2017) -> pd.DataFrame:
     """Load L3 unified data and filter by property type and date range.
 
     Args:
@@ -122,7 +121,7 @@ def run_did_regression(
     treatment_region: str = 'CCR',
     control_region: str = 'OCR',
     policy_date: str = '2020-07-01'
-) -> Dict:
+) -> dict:
     """Run Difference-in-Differences regression analysis.
 
     Args:
@@ -165,7 +164,7 @@ def run_did_regression(
         (df_filtered['treatment'] == 0) & (df_filtered['post'] == 1)
     ])
 
-    logger.info(f"\nSample Sizes:")
+    logger.info("\nSample Sizes:")
     logger.info(f"  Treatment ({treatment_region}) Pre: {n_treatment_pre:,}")
     logger.info(f"  Treatment ({treatment_region}) Post: {n_treatment_post:,}")
     logger.info(f"  Control ({control_region}) Pre: {n_control_pre:,}")
@@ -210,7 +209,7 @@ def run_did_regression(
     control_change = control_post - control_pre
     did_manual = treatment_change - control_change
 
-    logger.info(f"\nDiD Regression Results:")
+    logger.info("\nDiD Regression Results:")
     logger.info(f"  Treatment ({treatment_region}) Pre: ${treatment_pre:,.0f}")
     logger.info(f"  Treatment ({treatment_region}) Post: ${treatment_post:,.0f}")
     logger.info(f"  Treatment Change: ${treatment_change:,.0f} ({treatment_change/treatment_pre*100:+.2f}%)")
@@ -267,7 +266,7 @@ def run_did_regression(
 def run_hdb_temporal_analysis(
     df: pd.DataFrame,
     policy_date: str = '2023-12-01'
-) -> Dict:
+) -> dict:
     """Run temporal analysis for HDB (all in OCR, so CCR vs OCR DiD not applicable).
 
     Args:
@@ -288,7 +287,7 @@ def run_hdb_temporal_analysis(
     n_pre = len(df[df['post'] == 0])
     n_post = len(df[df['post'] == 1])
 
-    logger.info(f"\nSample Sizes:")
+    logger.info("\nSample Sizes:")
     logger.info(f"  Pre-policy: {n_pre:,}")
     logger.info(f"  Post-policy: {n_post:,}")
 
@@ -307,17 +306,17 @@ def run_hdb_temporal_analysis(
     yearly = df.groupby('year')['price'].median()
     yoy_growth = yearly.pct_change() * 100
 
-    logger.info(f"\nPrice Analysis:")
+    logger.info("\nPrice Analysis:")
     logger.info(f"  Pre-policy median: ${pre_price:,.0f}")
     logger.info(f"  Post-policy median: ${post_price:,.0f}")
     logger.info(f"  Price change: ${price_change:,.0f} ({price_change_pct:+.2f}%)")
 
-    logger.info(f"\nVolume Analysis:")
+    logger.info("\nVolume Analysis:")
     logger.info(f"  Pre-policy volume: {pre_volume:,}")
     logger.info(f"  Post-policy volume: {post_volume:,}")
     logger.info(f"  Volume change: {volume_change_pct:+.2f}%")
 
-    logger.info(f"\nYoY Growth Rates:")
+    logger.info("\nYoY Growth Rates:")
     for year, growth in yoy_growth.items():
         if not pd.isna(growth) and year >= 2022:
             logger.info(f"  {int(year)}: {growth:+.2f}% (median: ${yearly[year]:,.0f})")
@@ -336,8 +335,8 @@ def run_hdb_temporal_analysis(
 
 
 def save_results(
-    condo_results: Dict,
-    hdb_results: Dict,
+    condo_results: dict,
+    hdb_results: dict,
     output_dir: Path
 ):
     """Save DiD results to CSV files.

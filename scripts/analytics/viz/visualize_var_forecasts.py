@@ -13,16 +13,13 @@ import logging
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import seaborn as sns
 
-from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet
 
 logger = logging.getLogger(__name__)
 
-OUTPUT_DIR = Path("data/analysis/price_forecasts")
+OUTPUT_DIR = Path("data/analytics/price_forecasts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Region to planning area mapping
@@ -361,8 +358,8 @@ def main():
     print("VAR FORECAST VISUALIZATIONS GENERATED")
     print("="*60)
     print(f"\nOutput directory: {OUTPUT_DIR}")
-    print(f"  - planning_area_forecasts.png")
-    print(f"  - price_vs_forecast_scatter.png")
+    print("  - planning_area_forecasts.png")
+    print("  - price_vs_forecast_scatter.png")
     print(f"\nAreas analyzed: {len(forecast_data)}")
     print(f"Highest forecast: {forecast_data['baseline'].max():.1f}%")
     print(f"Lowest forecast: {forecast_data['baseline'].min():.1f}%")

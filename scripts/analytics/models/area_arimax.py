@@ -17,7 +17,6 @@ Usage:
 """
 
 import logging
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -90,16 +89,16 @@ class AreaARIMAXModel:
         """
         self.area = area
         self.region = region
-        self.model: Optional[ARIMA] = None
-        self.order: Optional[tuple] = None
+        self.model: ARIMA | None = None
+        self.order: tuple | None = None
         self.exog_vars: list = []
         self.is_fitted = False
 
         # Training data
-        self.y_train: Optional[pd.Series] = None
-        self.X_train: Optional[pd.DataFrame] = None
-        self.y_test: Optional[pd.Series] = None
-        self.X_test: Optional[pd.DataFrame] = None
+        self.y_train: pd.Series | None = None
+        self.X_train: pd.DataFrame | None = None
+        self.y_test: pd.Series | None = None
+        self.X_test: pd.DataFrame | None = None
 
     def fit(
         self,

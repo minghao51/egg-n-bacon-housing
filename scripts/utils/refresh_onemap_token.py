@@ -11,8 +11,8 @@ from pathlib import Path
 
 import requests
 
+from scripts.core.logging_config import get_logger, setup_logging_from_env
 from scripts.core.script_base import setup_script_environment
-from scripts.core.logging_config import setup_logging_from_env, get_logger
 
 
 def refresh_onemap_token() -> bool:
@@ -90,7 +90,7 @@ def refresh_onemap_token() -> bool:
             logger.info(f"Current email in .env: {email}")
             return False
         else:
-            logger.error(f"Unexpected Error")
+            logger.error("Unexpected Error")
             logger.error(f"Status: {response.status_code}")
             logger.error(f"Response: {response.text}")
             return False

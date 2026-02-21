@@ -10,9 +10,10 @@ Author: Automated Pipeline
 Date: 2026-01-24
 """
 
-import pandas as pd
 import json
 from pathlib import Path
+
+import pandas as pd
 
 
 def create_hdb_town_to_planning_area() -> pd.DataFrame:
@@ -22,7 +23,7 @@ def create_hdb_town_to_planning_area() -> pd.DataFrame:
     Singapore has 26 HDB towns that map to 31 planning areas.
     Some HDB towns span multiple planning areas.
     """
-    
+
     # Official URA planning areas and their corresponding HDB towns
     # Source: URA Master Plan planning area boundaries
     hdb_to_pa_mapping = {
@@ -56,7 +57,7 @@ def create_hdb_town_to_planning_area() -> pd.DataFrame:
         'WOODLANDS': ['WOODLANDS'],
         'YISHUN': ['YISHUN'],
     }
-    
+
     rows = []
     for town, planning_areas in hdb_to_pa_mapping.items():
         for pa in planning_areas:
@@ -67,7 +68,7 @@ def create_hdb_town_to_planning_area() -> pd.DataFrame:
                 'mapping_type': 'direct' if len(planning_areas) == 1 else 'composite',
                 'validation_status': 'verified'
             })
-    
+
     return pd.DataFrame(rows)
 
 
@@ -78,7 +79,7 @@ def create_postal_district_to_planning_area() -> pd.DataFrame:
     Singapore has 28 postal districts that map to planning areas.
     District 1 is the CBD (Downtown Core, Marina South).
     """
-    
+
     # Postal district to planning area mapping
     # Based on URA planning areas and common postal district conventions
     district_to_pa_mapping = {
@@ -94,7 +95,7 @@ def create_postal_district_to_planning_area() -> pd.DataFrame:
         9: ['RIVER VALLEY', 'OUTRAM', 'SINGAPORE RIVER'],
         10: ['BUKIT TIMAH', 'RIVER VALLEY', 'NOVENA'],
         11: ['NOVENA', 'BUKIT TIMAH'],
-        
+
         # Rest of Central Region (RCR) - Districts 12-15, 19-20
         12: ['TOA PAYOH', 'SERANGOON'],
         13: ['BISHAN', 'SERANGOON'],
@@ -102,7 +103,7 @@ def create_postal_district_to_planning_area() -> pd.DataFrame:
         15: ['MARINE PARADE', 'GEYLANG'],
         19: ['HOUGANG', 'SERANGOON'],
         20: ['BISHAN', 'ANG MO KIO'],
-        
+
         # Outside Central Region (OCR) - Districts 16-18, 21-28
         16: ['PASIR RIS', 'TAMPINES'],
         17: ['CHANGI', 'PASIR RIS'],
@@ -116,7 +117,7 @@ def create_postal_district_to_planning_area() -> pd.DataFrame:
         27: ['YISHUN', 'SEMBAWANG'],
         28: ['PUNGGOL', 'SENGKANG', 'HOUGANG'],
     }
-    
+
     rows = []
     for district, planning_areas in district_to_pa_mapping.items():
         for pa in planning_areas:
@@ -127,7 +128,7 @@ def create_postal_district_to_planning_area() -> pd.DataFrame:
                 'mapping_type': 'direct' if len(planning_areas) == 1 else 'composite',
                 'validation_status': 'verified'
             })
-    
+
     return pd.DataFrame(rows)
 
 
@@ -151,7 +152,7 @@ def get_all_planning_areas() -> list:
 
 def create_planning_area_reference() -> pd.DataFrame:
     """Create reference table for all planning areas with metadata."""
-    
+
     pa_data = {
         'ANG MO KIO': {'region': 'NORTH-EAST', 'area_sqkm': 13.0, 'planning_class': 'ESTATE'},
         'BEDOK': {'region': 'EAST', 'area_sqkm': 21.7, 'planning_class': 'ESTATE'},
@@ -188,7 +189,7 @@ def create_planning_area_reference() -> pd.DataFrame:
         'NOVENA': {'region': 'CENTRAL', 'area_sqkm': 5.9, 'planning_class': 'RESIDENTIAL'},
         'TANGLIN': {'region': 'CENTRAL', 'area_sqkm': 4.9, 'planning_class': 'RESIDENTIAL'},
     }
-    
+
     rows = []
     for pa, metadata in pa_data.items():
         rows.append({
@@ -197,13 +198,13 @@ def create_planning_area_reference() -> pd.DataFrame:
             'area_sqkm': metadata['area_sqkm'],
             'planning_class': metadata['planning_class']
         })
-    
+
     return pd.DataFrame(rows)
 
 
 def validate_crosswalk(hdb_df: pd.DataFrame, condo_df: pd.DataFrame) -> dict:
     """Validate the crosswalk mappings."""
-    
+
     validation_results = {
         'total_hdb_mappings': len(hdb_df),
         'total_condo_mappings': len(condo_df),
@@ -214,85 +215,85 @@ def validate_crosswalk(hdb_df: pd.DataFrame, condo_df: pd.DataFrame) -> dict:
         'verified_mappings': len(hdb_df[hdb_df['validation_status'] == 'verified']) + len(condo_df[condo_df['validation_status'] == 'verified']),
         'status': 'PASS'
     }
-    
+
     # Check for any unmapped or invalid entries
     if validation_results['composite_mappings'] > 0:
         validation_results['warnings'] = f"{validation_results['composite_mappings']} composite mappings require aggregation"
-    
+
     return validation_results
 
 
 def main():
     """Main execution function."""
-    
+
     # Output directory
     output_dir = Path('data/auxiliary')
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     print("Creating Planning Area Crosswalk...")
     print("=" * 50)
-    
+
     # Create mappings
     print("\n1. Creating HDB town → planning area mapping...")
     hdb_crosswalk = create_hdb_town_to_planning_area()
     print(f"   Created {len(hdb_crosswalk)} mappings for {hdb_crosswalk['source_value'].nunique()} HDB towns")
-    
+
     print("\n2. Creating postal district → planning area mapping...")
     condo_crosswalk = create_postal_district_to_planning_area()
     print(f"   Created {len(condo_crosswalk)} mappings for {condo_crosswalk['source_value'].nunique()} postal districts")
-    
+
     print("\n3. Creating planning area reference...")
     pa_reference = create_planning_area_reference()
     print(f"   Created reference for {len(pa_reference)} planning areas")
-    
+
     # Combine crosswalks
     print("\n4. Combining crosswalks...")
     combined_crosswalk = pd.concat([hdb_crosswalk, condo_crosswalk], ignore_index=True)
-    
+
     # Validate
     print("\n5. Validating crosswalk...")
     validation = validate_crosswalk(hdb_crosswalk, condo_crosswalk)
     for key, value in validation.items():
         print(f"   {key}: {value}")
-    
+
     # Save outputs
     print("\n6. Saving outputs...")
-    
+
     # Save combined crosswalk
     crosswalk_path = output_dir / 'planning_area_crosswalk.csv'
     combined_crosswalk.to_csv(crosswalk_path, index=False)
     print(f"   Saved: {crosswalk_path}")
-    
+
     # Save HDB-only crosswalk
     hdb_path = output_dir / 'hdb_town_to_planning_area.csv'
     hdb_crosswalk.to_csv(hdb_path, index=False)
     print(f"   Saved: {hdb_path}")
-    
+
     # Save condo-only crosswalk
     condo_path = output_dir / 'postal_district_to_planning_area.csv'
     condo_crosswalk.to_csv(condo_path, index=False)
     print(f"   Saved: {condo_path}")
-    
+
     # Save planning area reference
     pa_ref_path = output_dir / 'planning_area_reference.csv'
     pa_reference.to_csv(pa_ref_path, index=False)
     print(f"   Saved: {pa_ref_path}")
-    
+
     # Save validation report
     validation_path = output_dir / 'crosswalk_validation.json'
     with open(validation_path, 'w') as f:
         json.dump(validation, f, indent=2)
     print(f"   Saved: {validation_path}")
-    
+
     print("\n" + "=" * 50)
     print("Crosswalk creation complete!")
-    print(f"\nFiles generated:")
+    print("\nFiles generated:")
     print(f"  - {crosswalk_path}")
     print(f"  - {hdb_path}")
     print(f"  - {condo_path}")
     print(f"  - {pa_ref_path}")
     print(f"  - {validation_path}")
-    
+
     return combined_crosswalk, pa_reference
 
 

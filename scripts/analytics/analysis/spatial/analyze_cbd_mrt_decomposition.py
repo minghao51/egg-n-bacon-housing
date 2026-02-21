@@ -25,19 +25,17 @@ Usage:
 
 import logging
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
+from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from scipy import stats
-import h3
 
 # Add project root to Python path
 project_root = Path(__file__).parent.parent.parent.parent.parent
@@ -67,7 +65,7 @@ CBD_LON = 103.8513
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     """Calculate great-circle distance between two points in kilometers."""
-    from math import radians, cos, sin, asin, sqrt
+    from math import asin, cos, radians, sin, sqrt
 
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
@@ -120,7 +118,7 @@ def analyze_correlation(df):
     # Overall correlation
     corr = df[['dist_to_nearest_mrt', 'dist_to_cbd_m', 'price_psf']].corr()
 
-    logger.info(f"\nCorrelation Matrix:")
+    logger.info("\nCorrelation Matrix:")
     logger.info(f"\n{corr.to_string()}")
 
     # Scatter plot
@@ -177,7 +175,7 @@ def calculate_vif(df):
 
     vif_df = pd.DataFrame(vif_data)
 
-    logger.info(f"\nVIF Results:")
+    logger.info("\nVIF Results:")
     logger.info(f"\n{vif_df.to_string()}")
 
     # Save
@@ -214,7 +212,7 @@ def run_hierarchical_regression(df):
         'MRT Coef': None
     })
 
-    logger.info(f"\nModel 1: CBD only")
+    logger.info("\nModel 1: CBD only")
     logger.info(f"  R²: {r2_1:.4f}")
     logger.info(f"  CBD Coefficient: {model1.coef_[0]:.6f}")
 
@@ -235,7 +233,7 @@ def run_hierarchical_regression(df):
         'ΔR²': delta_r2
     })
 
-    logger.info(f"\nModel 2: CBD + MRT")
+    logger.info("\nModel 2: CBD + MRT")
     logger.info(f"  R²: {r2_2:.4f} (ΔR²: {delta_r2:+.4f})")
     logger.info(f"  CBD Coefficient: {model2.coef_[0]:.6f}")
     logger.info(f"  MRT Coefficient: {model2.coef_[1]:.6f}")
@@ -257,7 +255,7 @@ def run_hierarchical_regression(df):
         'ΔR²': delta_r2_3
     })
 
-    logger.info(f"\nModel 3: Full (CBD + MRT + Area + Lease)")
+    logger.info("\nModel 3: Full (CBD + MRT + Area + Lease)")
     logger.info(f"  R²: {r2_3:.4f} (ΔR²: {delta_r2_3:+.4f})")
     logger.info(f"  CBD Coefficient: {model3.coef_[0]:.6f}")
     logger.info(f"  MRT Coefficient: {model3.coef_[1]:.6f}")
@@ -294,11 +292,11 @@ def run_pca_analysis(df):
     # Get loadings
     loadings = pca.components_.T * np.sqrt(pca.explained_variance_)
 
-    logger.info(f"\nExplained Variance Ratio:")
+    logger.info("\nExplained Variance Ratio:")
     for i, var in enumerate(pca.explained_variance_ratio_):
         logger.info(f"  PC{i+1}: {var:.4f} ({var*100:.2f}%)")
 
-    logger.info(f"\nComponent Loadings:")
+    logger.info("\nComponent Loadings:")
     loadings_df = pd.DataFrame(
         loadings,
         columns=['PC1', 'PC2'],
@@ -307,23 +305,23 @@ def run_pca_analysis(df):
     logger.info(f"\n{loadings_df.to_string()}")
 
     # Interpret components
-    logger.info(f"\nInterpretation:")
+    logger.info("\nInterpretation:")
     if abs(loadings[0, 0]) > abs(loadings[1, 0]):
         logger.info(f"  PC1: Primarily {'MRT Distance' if loadings[0, 0] > 0 else 'CBD Distance'}")
     else:
-        logger.info(f"  PC1: Mixed MRT/CBD factor")
+        logger.info("  PC1: Mixed MRT/CBD factor")
 
     if abs(loadings[0, 1]) > abs(loadings[1, 1]):
         logger.info(f"  PC2: Primarily {'MRT Distance' if loadings[0, 1] > 0 else 'CBD Distance'}")
     else:
-        logger.info(f"  PC2: Mixed MRT/CBD factor")
+        logger.info("  PC2: Mixed MRT/CBD factor")
 
     # Regress price on PCs
     model_pcs = LinearRegression()
     model_pcs.fit(X_pca, y)
     r2_pcs = r2_score(y, model_pcs.predict(X_pca))
 
-    logger.info(f"\nRegression on PCs:")
+    logger.info("\nRegression on PCs:")
     logger.info(f"  R²: {r2_pcs:.4f}")
     logger.info(f"  PC1 Coef: {model_pcs.coef_[0]:.4f}")
     logger.info(f"  PC2 Coef: {model_pcs.coef_[1]:.4f}")
@@ -384,7 +382,7 @@ def compare_regional_effects(df):
 
     results_df = pd.DataFrame(results)
 
-    logger.info(f"\nResults by Region:")
+    logger.info("\nResults by Region:")
     logger.info(f"\n{results_df.to_string()}")
 
     # Save
@@ -586,7 +584,7 @@ def main():
     logger.info("ANALYSIS COMPLETE")
     logger.info("="*80)
 
-    logger.info(f"\nKey Findings:")
+    logger.info("\nKey Findings:")
     logger.info(f"  • Analyzed {len(df):,} HDB transactions (2021+)")
     logger.info(f"  • MRT-CBD Correlation: {corr.loc['dist_to_nearest_mrt', 'dist_to_cbd_m']:.3f}")
     logger.info(f"  • VIF - MRT: {vif_df[vif_df['Feature'] == 'dist_to_nearest_mrt']['VIF'].values[0]:.2f}")
@@ -596,13 +594,13 @@ def main():
     logger.info(f"  • Adding MRT (Model 2): ΔR² = {hierarchical_df.iloc[1]['ΔR²']:.4f}")
     logger.info(f"  • MRT Premium in OCR: ${regional_df[regional_df['Region'] == 'OCR (Outside Central)']['MRT Premium $/100m'].values[0]:.2f}/100m")
 
-    logger.info(f"\nInterpretation:")
+    logger.info("\nInterpretation:")
     if vif_df[vif_df['Feature'] == 'dist_to_nearest_mrt']['VIF'].values[0] > 5:
-        logger.info(f"  ⚠️  Moderate-to-high multicollinearity detected")
-        logger.info(f"  → MRT and CBD distance are measuring similar things")
-        logger.info(f"  → 'MRT premium' partially captures CBD access")
+        logger.info("  ⚠️  Moderate-to-high multicollinearity detected")
+        logger.info("  → MRT and CBD distance are measuring similar things")
+        logger.info("  → 'MRT premium' partially captures CBD access")
     else:
-        logger.info(f"  ✓ Low multicollinearity - MRT and CBD are distinct factors")
+        logger.info("  ✓ Low multicollinearity - MRT and CBD are distinct factors")
 
     logger.info(f"\nOutputs saved to: {OUTPUT_DIR}")
     logger.info(f"\nDuration: {duration:.1f} seconds")

@@ -28,17 +28,18 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-import pandas as pd
-import numpy as np
 import logging
 import warnings
+
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
 from scripts.analytics.analysis.school.utils.rdd_estimators import RDDEstimator
 
 # Setup paths
 DATA_PATH = Path("data/pipeline/L3/housing_unified.parquet")
-OUTPUT_DIR = Path("data/analysis/school_rdd")
+OUTPUT_DIR = Path("data/analytics/school_rdd")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 # Setup logging
@@ -203,7 +204,7 @@ def main():
     print(f"  P-value: {inference['p_value']:.4f}" if inference['p_value'] else "  P-value: N/A")
     print(f"  Statistically Significant: {'✓ YES' if inference.get('significant') else '✗ NO'}")
 
-    print(f"\n📈 MODEL FIT")
+    print("\n📈 MODEL FIT")
     print(f"  R²: {results['r2']:.4f}")
     print(f"  Sample Size: {results['n']:,}")
     print(f"  Treated (≤1km): {results['n_treated']:,}")
@@ -221,16 +222,16 @@ def main():
 
     print("\n💡 INTERPRETATION")
     if inference.get('significant'):
-        print(f"  Properties within 1km of primary schools command a")
+        print("  Properties within 1km of primary schools command a")
         print(f"  premium of ${inference['tau']:.2f} PSF compared to similar")
         print(f"  properties just outside 1km (p={inference['p_value']:.4f}).")
-        print(f"\n  This effect is CAUSAL, not just correlation, because:")
-        print(f"  - RDD exploits sharp admission priority cutoff at 1km")
-        print(f"  - Properties just inside/outside cutoff are similar")
-        print(f"  - Only difference is school admission priority")
+        print("\n  This effect is CAUSAL, not just correlation, because:")
+        print("  - RDD exploits sharp admission priority cutoff at 1km")
+        print("  - Properties just inside/outside cutoff are similar")
+        print("  - Only difference is school admission priority")
     else:
-        print(f"  No statistically significant discontinuity detected at 1km.")
-        print(f"  School proximity may not directly drive price differences.")
+        print("  No statistically significant discontinuity detected at 1km.")
+        print("  School proximity may not directly drive price differences.")
 
     print("\n📁 OUTPUT FILES")
     print(f"  Main results: {OUTPUT_DIR / 'rdd_main_effect.csv'}")

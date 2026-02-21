@@ -12,22 +12,24 @@ Uses multiple modeling approaches:
 - Panel regression (time-series appreciation)
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 warnings.filterwarnings('ignore')
 
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-from sklearn.impute import SimpleImputer
-
 import xgboost as xgb
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, Ridge
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
 try:
     import shap
     SHAP_AVAILABLE = True
@@ -43,8 +45,8 @@ plt.style.use('seaborn-v0_8-whitegrid')
 sns.set_palette("husl")
 
 # Paths
-DATA_DIR = Path("data/analysis/market_segmentation")
-OUTPUT_DIR = Path("data/analysis/feature_importance")
+DATA_DIR = Path("data/analytics/market_segmentation")
+OUTPUT_DIR = Path("data/analytics/feature_importance")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -302,7 +304,7 @@ def analyze_shap_values(pipeline, X_train, feature_names, model_name='XGBoost'):
         'shap_value': mean_shap
     }).sort_values('shap_value', ascending=False)
 
-    print(f"  Top 10 features by SHAP value:")
+    print("  Top 10 features by SHAP value:")
     print(shap_df.head(10).to_string(index=False))
 
     return shap_df, explainer, shap_values, X_train_processed, all_feature_names
@@ -319,7 +321,7 @@ def main():
     USE_TEMPORAL_SPLIT = False  # Set True for temporal split (pre-2020 vs 2020+), False for random 80/20 split
     EXTRACT_FEATURE_IMPORTANCE = True  # Extract and save feature importance from best model
 
-    print(f"\nConfiguration:")
+    print("\nConfiguration:")
     print(f"  Split Method: {'Temporal (pre-2020 vs 2020+)' if USE_TEMPORAL_SPLIT else 'Random (80/20)'}")
     print(f"  Extract Feature Importance: {EXTRACT_FEATURE_IMPORTANCE}")
 
@@ -434,11 +436,11 @@ def main():
             except Exception as e:
                 print(f"  SHAP ERROR: {e}")
         elif 'xgboost' in target_results and not SHAP_AVAILABLE:
-            print(f"  Skipping SHAP analysis (SHAP not installed)")
+            print("  Skipping SHAP analysis (SHAP not installed)")
 
         # Feature importance extraction
         if EXTRACT_FEATURE_IMPORTANCE:
-            print(f"\nExtracting feature importance...")
+            print("\nExtracting feature importance...")
 
             # Extract from Random Forest
             if 'random_forest' in target_results:
@@ -472,7 +474,7 @@ def main():
                     importance_df['model'] = 'random_forest'
                     importance_path = OUTPUT_DIR / f"feature_importance_{target_col}_random_forest.csv"
                     importance_df.to_csv(importance_path, index=False)
-                    print(f"  Random Forest - Top 10 features:")
+                    print("  Random Forest - Top 10 features:")
                     print(importance_df.head(10)[['feature', 'importance']].to_string(index=False))
 
                 except Exception as e:
@@ -510,7 +512,7 @@ def main():
                     importance_df['model'] = 'xgboost'
                     importance_path = OUTPUT_DIR / f"feature_importance_{target_col}_xgboost.csv"
                     importance_df.to_csv(importance_path, index=False)
-                    print(f"\n  XGBoost - Top 10 features:")
+                    print("\n  XGBoost - Top 10 features:")
                     print(importance_df.head(10)[['feature', 'importance']].to_string(index=False))
 
                 except Exception as e:

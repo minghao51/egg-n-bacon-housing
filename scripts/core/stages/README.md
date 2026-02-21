@@ -160,7 +160,7 @@ L0 (Collection) → L1 (Processing) → L2 (Features) → L3 (Export) → L4 (An
 **Inputs:**
 - All analysis scripts in `scripts/analytics/analysis/` (auto-discovered)
 
-**Outputs:** `data/analysis/`
+**Outputs:** `data/analytics/`
 - `L4_analysis_report.md` - Summary report of all analysis results
 
 **Analysis Scripts (executed in order):**
@@ -319,7 +319,7 @@ All paths and settings are centralized in `scripts/core/config.py`:
 - `Config.PIPELINE_DIR` - Base directory for pipeline outputs (`data/pipeline/`)
 - `Config.MANUAL_DIR` - Manual data files (`data/manual/`)
 - `Config.ANALYSIS_SCRIPTS_DIR` - Analysis scripts (`scripts/analytics/analysis/`)
-- `Config.L4_REPORT_PATH` - L4 report output (`data/analysis/L4_analysis_report.md`)
+- `Config.L4_REPORT_PATH` - L4 report output (`data/analytics/L4_analysis_report.md`)
 
 ---
 

@@ -12,13 +12,11 @@ Usage:
 """
 
 import logging
-from typing import Dict, List
 
-import numpy as np
 import pandas as pd
 
-from scripts.analytics.models.regional_var import RegionalVARModel
 from scripts.analytics.models.area_arimax import AreaARIMAXModel
+from scripts.analytics.models.regional_var import RegionalVARModel
 from scripts.core.data_helpers import load_parquet
 from scripts.core.regional_mapping import get_region_for_planning_area
 
@@ -29,7 +27,7 @@ def generate_regional_forecasts(
     regional_data: pd.DataFrame,
     horizon_months: int = 36,
     scenario: str = 'baseline'
-) -> List[Dict]:
+) -> list[dict]:
     """
     Generate forecasts for all regions.
 
@@ -89,9 +87,9 @@ def generate_regional_forecasts(
 
 def generate_area_forecasts(
     area_data: pd.DataFrame,
-    regional_forecasts: List[pd.DataFrame],
+    regional_forecasts: list[pd.DataFrame],
     horizon_months: int = 24
-) -> List[pd.DataFrame]:
+) -> list[pd.DataFrame]:
     """
     Generate forecasts for planning areas using regional forecasts as inputs.
 
@@ -175,7 +173,7 @@ def generate_area_forecasts(
 def run_forecasting_pipeline(
     scenario: str = 'baseline',
     horizon_months: int = 36
-) -> Dict:
+) -> dict:
     """
     Run complete forecasting pipeline.
 

@@ -19,14 +19,14 @@
 # via beautiful soup
 
 # %%
+# Add src directory to path for imports
+import pathlib
 import sys
 
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-# Add src directory to path for imports
-import pathlib
 sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
 
 from data_helpers import save_parquet

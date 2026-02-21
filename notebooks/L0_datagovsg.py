@@ -16,17 +16,16 @@
 # %%
 # import polars as pl
 import json
+
+# Test comment for jupytext sync verification
+# Add src directory to path for imports
+import pathlib
 import re
 import sys
 
 import pandas as pd
 import requests
 
-# Test comment for jupytext sync verification
-
-# Add src directory to path for imports
-import os
-import pathlib
 sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
 
 from data_helpers import save_parquet

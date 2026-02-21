@@ -20,11 +20,11 @@ from pathlib import Path
 
 import joblib
 import matplotlib
+
 matplotlib.use('Agg')  # Non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from scipy import stats
 
 # Add project root to path for imports
@@ -80,7 +80,7 @@ def load_data():
     test_df = pd.read_parquet(test_path)
 
     logger.info(f"  Loaded {len(predictions_df)} predictions")
-    logger.info(f"  Loaded XGBoost model")
+    logger.info("  Loaded XGBoost model")
 
     return predictions_df, test_df, model, predictions_df
 

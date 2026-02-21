@@ -11,14 +11,14 @@ import logging
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")  # Non-interactive backend
+# Add project root to path for imports
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-
-# Add project root to path for imports
-import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
@@ -267,7 +267,7 @@ def plot_coverage(predictions_df: pd.DataFrame, output_dir: Path):
     plt.savefig(output_dir / "confidence_intervals_analysis.png", dpi=150, bbox_inches="tight")
     plt.close()
 
-    logger.info(f"  Saved: confidence_intervals_analysis.png")
+    logger.info("  Saved: confidence_intervals_analysis.png")
 
 
 def main():

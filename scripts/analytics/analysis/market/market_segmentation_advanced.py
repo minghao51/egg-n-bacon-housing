@@ -11,20 +11,21 @@ Goes beyond basic "market_tier" to discover natural market segments using:
 Identifies distinct market behaviors like "High-Growth HDBs", "Premium Condos with Low Yields", etc.
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
-warnings.filterwarnings('ignore')
+from pathlib import Path
 
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import MiniBatchKMeans, AgglomerativeClustering
-from sklearn.decomposition import PCA
-from sklearn.metrics import silhouette_score
+import numpy as np
+import pandas as pd
+
+warnings.filterwarnings('ignore')
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.cluster import AgglomerativeClustering, MiniBatchKMeans
+from sklearn.decomposition import PCA
+from sklearn.metrics import silhouette_score
+from sklearn.preprocessing import StandardScaler
 
 # Set style
 plt.style.use('seaborn-v0_8-whitegrid')
@@ -32,8 +33,8 @@ sns.set_palette("husl")
 plt.rcParams['figure.figsize'] = (14, 8)
 
 # Paths
-DATA_DIR = Path("data/analysis/market_segmentation")
-OUTPUT_DIR = Path("data/analysis/market_segmentation_2.0")
+DATA_DIR = Path("data/analytics/market_segmentation")
+OUTPUT_DIR = Path("data/analytics/market_segmentation_2.0")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 print("="*80)
@@ -156,7 +157,7 @@ print(f"\nPerforming K-Means clustering with K={optimal_k}...")
 kmeans = MiniBatchKMeans(n_clusters=optimal_k, random_state=42, batch_size=1000, n_init=10)
 df_cluster['cluster_kmeans'] = kmeans.fit_predict(X_scaled)
 
-print(f"  Cluster sizes:")
+print("  Cluster sizes:")
 print(df_cluster['cluster_kmeans'].value_counts().sort_index())
 
 # ============================================================================
@@ -167,7 +168,7 @@ print("\nPerforming Hierarchical clustering...")
 hierarchical = AgglomerativeClustering(n_clusters=optimal_k, linkage='ward')
 df_cluster['cluster_hierarchical'] = hierarchical.fit_predict(X_scaled)
 
-print(f"  Cluster sizes:")
+print("  Cluster sizes:")
 print(df_cluster['cluster_hierarchical'].value_counts().sort_index())
 
 # ============================================================================
@@ -254,7 +255,7 @@ for cluster_id in sorted(df_cluster['cluster_kmeans'].unique()):
 
     print(f"  Size: {len(cluster_data):,} properties ({len(cluster_data)/len(df_cluster)*100:.1f}%)")
 
-    print(f"\n  Key Characteristics:")
+    print("\n  Key Characteristics:")
     print(f"    • Average Price: ${cluster_data['price_psm'].mean():,.0f}/psm (±${cluster_data['price_psm'].std():.0f})")
     print(f"    • Average Size: {cluster_data['floor_area_sqm'].mean():.0f} sqm (±{cluster_data['floor_area_sqm'].std():.0f})")
 
@@ -271,14 +272,14 @@ for cluster_id in sorted(df_cluster['cluster_kmeans'].unique()):
 
     # Top property types
     if 'property_type' in cluster_data.columns:
-        print(f"\n  Property Type Distribution:")
+        print("\n  Property Type Distribution:")
         prop_type_dist = cluster_data['property_type'].value_counts(normalize=True) * 100
         for prop_type, pct in prop_type_dist.head(3).items():
             print(f"    • {prop_type}: {pct:.1f}%")
 
     # Top towns
     if 'town' in cluster_data.columns:
-        print(f"\n  Top 5 Towns:")
+        print("\n  Top 5 Towns:")
         town_dist = cluster_data['town'].value_counts().head(5)
         for town, count in town_dist.items():
             print(f"    • {town}: {count} properties")
@@ -399,14 +400,14 @@ strategies_df.to_csv(
     OUTPUT_DIR / 'investment_strategies.csv',
     index=False
 )
-print(f"  Saved: investment_strategies.csv")
+print("  Saved: investment_strategies.csv")
 
 print("\n" + "="*80)
 print("MARKET SEGMENTATION 2.0 COMPLETE")
 print("="*80)
 print(f"\nResults saved to: {OUTPUT_DIR}")
-print(f"\nKey Findings:")
+print("\nKey Findings:")
 print(f"  • Optimal segments: {optimal_k}")
 print(f"  • Largest segment: {cluster_sizes.idxmax()} ({cluster_sizes.max():,} properties)")
 print(f"  • Smallest segment: {cluster_sizes.idxmin()} ({cluster_sizes.min():,} properties)")
-print(f"\nInvestment Strategy: See investment_strategies.csv for details")
+print("\nInvestment Strategy: See investment_strategies.csv for details")

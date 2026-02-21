@@ -16,10 +16,9 @@ Author: Automated Pipeline
 Date: 2026-01-24
 """
 
-import pandas as pd
-import numpy as np
 from pathlib import Path
 
+import pandas as pd
 
 # HDB loan eligibility bands (2024-2025)
 # These represent maximum monthly household incomes for various grant categories
@@ -40,27 +39,27 @@ def get_mrt_proximity_factor(planning_area: str) -> float:
     
     Returns a factor between 0.8 and 1.2.
     """
-    
+
     # High MRT accessibility areas (CBD, prime residential)
     high_access = [
         'DOWNTOWN CORE', 'MARINA SOUTH', 'RIVER VALLEY', 'ORCHARD',
         'BUKIT TIMAH', 'NOVENA', 'TANGLIN', 'OUTRAM', 'KALLANG'
     ]
-    
+
     # Medium accessibility areas
     medium_access = [
         'ANG MO KIO', 'BEDOK', 'BISHAN', 'CLEMENTI', 'GEYLANG',
         'HOUGANG', 'JURONG EAST', 'MARINE PARADE', 'PASIR RIS',
         'QUEENSTOWN', 'SERANGOON', 'TAMPINES', 'TOA PAYOH', 'WOODLANDS'
     ]
-    
+
     # Lower accessibility areas (suburban, rural)
     low_access = [
         'BUKIT BATOK', 'BUKIT PANJANG', 'CHOA CHU KANG', 'CHANGI',
         'LIM CHU KANG', 'PUNGGOL', 'SEMBAWANG', 'SENGKANG', 'YISHUN',
         'JURONG WEST', 'SUNGEI KADUT', 'WESTERN WATER CATCHMENT'
     ]
-    
+
     if planning_area in high_access:
         return 1.15
     elif planning_area in medium_access:
@@ -78,10 +77,10 @@ def get_price_level_factor(planning_area: str, hdb_prices: dict) -> float:
     
     Returns a factor between 0.8 and 1.3.
     """
-    
+
     # Get median price for planning area
     median_price = hdb_prices.get(planning_area, 400000)  # Default $400K
-    
+
     # Calculate price tier factor
     if median_price >= 600000:
         return 1.25  # Premium areas
@@ -102,10 +101,10 @@ def get_flat_type_factor(planning_area: str, flat_type_dist: dict) -> float:
     
     Returns a factor between 0.9 and 1.1.
     """
-    
+
     # Percentage of larger flats (5-room + Executive)
     large_flat_pct = flat_type_dist.get('large_flat_pct', 0.30)
-    
+
     if large_flat_pct >= 0.45:
         return 1.10  # Many large flats = higher income
     elif large_flat_pct >= 0.35:
@@ -129,12 +128,12 @@ def calculate_estimated_income(
     Returns:
         dict with income estimates and factors
     """
-    
+
     # Get adjustment factors
     mrt_factor = get_mrt_proximity_factor(planning_area)
     price_factor = get_price_level_factor(planning_area, hdb_prices)
     flat_type_factor = get_flat_type_factor(planning_area, flat_type_dist)
-    
+
     # Calculate combined factor (weighted average)
     # Price level is most indicative (50%), MRT access (30%), flat type (20%)
     combined_factor = (
@@ -142,17 +141,17 @@ def calculate_estimated_income(
         0.30 * mrt_factor +
         0.20 * flat_type_factor
     )
-    
+
     # Calculate estimated income
     estimated_annual_income = BASE_MEDIAN_INCOME * combined_factor
     estimated_monthly_income = estimated_annual_income / 12
-    
+
     # Calculate income quintiles (approximate)
     quintile_20 = estimated_annual_income * 0.6
     quintile_40 = estimated_annual_income * 0.8
     quintile_60 = estimated_annual_income * 1.0
     quintile_80 = estimated_annual_income * 1.3
-    
+
     return {
         'planning_area': planning_area,
         'estimated_median_annual_income': round(estimated_annual_income, -3),  # Round to nearest $1000
@@ -172,17 +171,17 @@ def calculate_estimated_income(
 
 def get_hdb_prices_by_planning_area() -> dict:
     """Get median HDB prices by planning area from existing data."""
-    
+
     try:
         hdb = pd.read_parquet('data/pipeline/L1/housing_hdb_transaction.parquet')
-        
+
         if 'planning_area' not in hdb.columns:
             print("⚠️  Planning area column not found. Using default prices.")
             return {}
-        
+
         prices = hdb.groupby('planning_area')['resale_price'].median()
         return prices.to_dict()
-    
+
     except Exception as e:
         print(f"⚠️  Error loading HDB prices: {e}")
         return {}
@@ -190,24 +189,24 @@ def get_hdb_prices_by_planning_area() -> dict:
 
 def get_flat_type_distribution() -> dict:
     """Get flat type distribution by planning area."""
-    
+
     try:
         hdb = pd.read_parquet('data/pipeline/L1/housing_hdb_transaction.parquet')
-        
+
         if 'planning_area' not in hdb.columns:
             return {}
-        
+
         # Count flat types
         large_flats = ['5-ROOM', 'EXECUTIVE', 'MULTI-GENERATION']
-        
+
         def calc_large_pct(group):
             total = len(group)
             large = group['flat_type'].isin(large_flats).sum()
             return large / total if total > 0 else 0
-        
+
         dist = hdb.groupby('planning_area').apply(calc_large_pct)
         return dist.to_dict()
-    
+
     except Exception as e:
         print(f"⚠️  Error loading flat type distribution: {e}")
         return {}
@@ -215,71 +214,71 @@ def get_flat_type_distribution() -> dict:
 
 def generate_all_estimates() -> pd.DataFrame:
     """Generate income estimates for all planning areas."""
-    
+
     print("Calculating household income estimates...")
     print("=" * 60)
-    
+
     # Load data
     hdb_prices = get_hdb_prices_by_planning_area()
     flat_type_dist = get_flat_type_distribution()
-    
+
     # Get list of planning areas from crosswalk
     crosswalk = pd.read_csv('data/manual/crosswalks/hdb_town_to_planning_area.csv')
     planning_areas = crosswalk['planning_area'].unique().tolist()
-    
+
     # Calculate estimates for each planning area
     results = []
     for pa in planning_areas:
         flat_dist = {
             'large_flat_pct': flat_type_dist.get(pa, 0.30)
         }
-        
+
         estimate = calculate_estimated_income(pa, hdb_prices, flat_dist)
         results.append(estimate)
-        
+
         print(f"  {pa:20s}: ${estimate['estimated_median_annual_income']:,.0f}/year "
               f"(factor: {estimate['combined_factor']:.3f})")
-    
+
     df = pd.DataFrame(results)
-    
+
     # Sort by income
     df = df.sort_values('estimated_median_annual_income', ascending=False)
-    
+
     print("\n" + "=" * 60)
     print(f"Generated estimates for {len(df)} planning areas")
-    
+
     return df
 
 
 def main():
     """Main execution function."""
-    
+
     output_dir = Path('data/pipeline/L1')
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Generate estimates
     df = generate_all_estimates()
-    
+
     # Save to parquet
     output_path = output_dir / 'household_income_estimates.parquet'
     df.to_parquet(output_path, index=False)
-    
+
     print(f"\nSaved to: {output_path}")
     print(f"Total records: {len(df)}")
-    
+
     # Summary statistics
     print("\n" + "=" * 60)
     print("Income Estimate Summary")
     print("=" * 60)
     print(f"Median across planning areas: ${df['estimated_median_annual_income'].median():,.0f}/year")
     print(f"Range: ${df['estimated_median_annual_income'].min():,.0f} - ${df['estimated_median_annual_income'].max():,.0f}")
-    
+
     print("\nTop 5 highest income areas:")
     print(df.head()[['planning_area', 'estimated_median_annual_income']].to_string(index=False))
-    
+
     print("\nTop 5 lowest income areas:")
     print(df.tail()[['planning_area', 'estimated_median_annual_income']].to_string(index=False))
-    
+
     return df
 
 

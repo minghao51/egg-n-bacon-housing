@@ -10,11 +10,10 @@ Usage:
 """
 
 import logging
-import sys
 from pathlib import Path
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 
 # Add project root to Python path
@@ -194,7 +193,7 @@ def compare_rental_vs_resale(rental_df: pd.DataFrame, resale_df: pd.DataFrame):
         )
 
     # Summary statistics
-    logger.info(f"\nRental Yield Summary:")
+    logger.info("\nRental Yield Summary:")
     logger.info(f"  Median yield: {comparison['rental_yield_pct'].median():.2f}%")
     logger.info(f"  Mean yield: {comparison['rental_yield_pct'].mean():.2f}%")
     logger.info(f"  Min yield: {comparison['rental_yield_pct'].min():.2f}%")

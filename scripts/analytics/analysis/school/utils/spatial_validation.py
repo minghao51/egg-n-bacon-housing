@@ -1,14 +1,15 @@
 """Spatial cross-validation utilities for school impact analysis."""
 
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import GroupKFold, cross_val_score
-from sklearn.metrics import r2_score, mean_absolute_error
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-import xgboost as xgb
-from pathlib import Path
 import logging
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import xgboost as xgb
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import GroupKFold, cross_val_score
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,6 @@ class SpatialValidator:
 
         # Standard 5-fold CV
         logger.info("  Running standard 5-fold CV...")
-        from sklearn.model_selection import KFold
         standard_scores = cross_val_score(
             model, X, y, cv=5, scoring='r2', n_jobs=-1
         )
@@ -170,7 +170,6 @@ class SpatialValidator:
             # Calculate Moran's I approximation
             # Positive I = residuals clustered spatially (bad)
             # I ≈ 0 = no spatial autocorrelation (good)
-            from scipy.stats import pearsonr
 
             areas = area_residuals.index.tolist()
             n = len(areas)

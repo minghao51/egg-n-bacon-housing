@@ -13,8 +13,8 @@ import logging
 import sys
 from pathlib import Path
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 
 # Add project root to path (5 levels up from this file)

@@ -10,26 +10,25 @@ Analyzes whether school impact varies by:
 Focus: HDB-only analysis to understand subgroup heterogeneity
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import warnings
-warnings.filterwarnings('ignore')
+from pathlib import Path
 
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_absolute_error
-from scipy import stats
+import numpy as np
+import pandas as pd
+
+warnings.filterwarnings('ignore')
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
 
 plt.style.use('seaborn-v0_8-whitegrid')
 sns.set_palette("husl")
 
 # Paths
 DATA_DIR = Path("data/pipeline/L3")
-OUTPUT_DIR = Path("data/analysis/school_impact")
+OUTPUT_DIR = Path("data/analytics/school_impact")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 
@@ -45,7 +44,7 @@ def load_data():
     # Filter to HDB only
     hdb = df[df['property_type'] == 'HDB'].copy()
 
-    print(f"\nDataset:")
+    print("\nDataset:")
     print(f"  Total records (2021+): {len(df):,}")
     print(f"  HDB records: {len(hdb):,}")
 
@@ -179,10 +178,10 @@ def analyze_by_town(hdb, feature='school_accessibility_score', min_n=500):
     results_df = pd.DataFrame(results).sort_values('school_premium_10pt', ascending=False)
 
     if not results_df.empty:
-        print(f"\nTop 10 Towns by School Impact (Premium per 0.1 score increase):")
+        print("\nTop 10 Towns by School Impact (Premium per 0.1 score increase):")
         print(results_df.head(10)[['town', 'n', 'mean_price', 'school_premium_10pt']].to_string(index=False))
 
-        print(f"\nBottom 10 Towns by School Impact (or negative impact):")
+        print("\nBottom 10 Towns by School Impact (or negative impact):")
         print(results_df.tail(10)[['town', 'n', 'mean_price', 'school_premium_10pt']].to_string(index=False))
     else:
         print("\n  No towns had sufficient data")

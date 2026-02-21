@@ -26,12 +26,14 @@
 
 # %%
 # Import libraries
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from pathlib import Path
 import warnings
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
 warnings.filterwarnings('ignore')
 
 # Set style
@@ -66,7 +68,7 @@ for target, name in targets.items():
         rf_df = pd.read_csv(rf_path)
         feature_importance[f"{target}_rf"] = rf_df
         print(f"Loaded {name} - RF: {len(rf_df)} features")
-    
+
     # XGBoost
     xgb_path = DATA_DIR / f"feature_importance_{target}_xgboost.csv"
     if xgb_path.exists():
@@ -97,28 +99,28 @@ def plot_top_features(target_key, target_name, model='rf', top_n=15):
     if key not in feature_importance:
         print(f"No data for {key}")
         return
-    
+
     df = feature_importance[key].copy()
     df = df.head(top_n).sort_values('importance', ascending=True)
-    
+
     fig, ax = plt.subplots(figsize=(12, 8))
-    
+
     bars = ax.barh(df['feature'], df['importance'], color='steelblue')
     ax.set_xlabel('Feature Importance', fontsize=12, fontweight='bold')
     ax.set_ylabel('Feature', fontsize=12, fontweight='bold')
-    ax.set_title(f'Top {top_n} Features - {target_name}\n({model.upper()})', 
+    ax.set_title(f'Top {top_n} Features - {target_name}\n({model.upper()})',
                  fontsize=14, fontweight='bold')
-    
+
     # Add value labels
     for i, (idx, row) in enumerate(df.iterrows()):
-        ax.text(row['importance'], i, f" {row['importance']:.3f}", 
+        ax.text(row['importance'], i, f" {row['importance']:.3f}",
                 va='center', fontsize=9)
-    
+
     plt.tight_layout()
     filename = f"top_features_{target_key}_{model}.png"
     plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches='tight')
     plt.show()
-    
+
     print(f"\nTop {top_n} features for {target_name} ({model.upper()}):")
     print(df[['feature', 'importance']].to_string(index=False))
 
@@ -144,18 +146,18 @@ def compare_model_rankings(target_key, target_name, top_n=20):
     """Compare feature rankings between Random Forest and XGBoost."""
     rf_key = f"{target_key}_rf"
     xgb_key = f"{target_key}_xgb"
-    
+
     if rf_key not in feature_importance or xgb_key not in feature_importance:
         print(f"Missing data for {target_key}")
         return
-    
+
     rf_df = feature_importance[rf_key].head(top_n).copy()
     xgb_df = feature_importance[xgb_key].head(top_n).copy()
-    
+
     # Merge rankings
     rf_df['rf_rank'] = range(1, len(rf_df) + 1)
     xgb_df['xgb_rank'] = range(1, len(xgb_df) + 1)
-    
+
     merged = pd.merge(
         rf_df[['feature', 'importance', 'rf_rank']],
         xgb_df[['feature', 'importance', 'xgb_rank']],
@@ -163,22 +165,22 @@ def compare_model_rankings(target_key, target_name, top_n=20):
         how='outer',
         suffixes=('_rf', '_xgb')
     ).fillna(999)  # Features not in top N get rank 999
-    
+
     # Calculate rank difference
     merged['rank_diff'] = merged['rf_rank'] - merged['xgb_rank']
     merged = merged.sort_values('rf_rank')
-    
+
     # Plot comparison
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 10))
-    
+
     # Left plot: Side-by-side bars
     features = merged['feature'].head(15)
     x = np.arange(len(features))
     width = 0.35
-    
+
     rf_importance = merged[merged['feature'].isin(features)]['importance_rf'].values
     xgb_importance = merged[merged['feature'].isin(features)]['importance_xgb'].values
-    
+
     ax1.bar(x - width/2, rf_importance, width, label='Random Forest', color='steelblue')
     ax1.bar(x + width/2, xgb_importance, width, label='XGBoost', color='coral')
     ax1.set_xlabel('Feature Importance', fontsize=12, fontweight='bold')
@@ -186,7 +188,7 @@ def compare_model_rankings(target_key, target_name, top_n=20):
     ax1.set_xticks(x)
     ax1.set_xticklabels(features, rotation=45, ha='right')
     ax1.legend()
-    
+
     # Right plot: Rank difference
     top_features = merged.head(15)
     colors = ['green' if x < 0 else 'red' for x in top_features['rank_diff']]
@@ -194,15 +196,15 @@ def compare_model_rankings(target_key, target_name, top_n=20):
     ax2.set_yticks(range(len(top_features)))
     ax2.set_yticklabels(top_features['feature'])
     ax2.set_xlabel('Rank Difference (RF - XGBoost)', fontsize=12, fontweight='bold')
-    ax2.set_title(f'Ranking Difference\n(Green = Higher in RF, Red = Higher in XGBoost)', 
+    ax2.set_title('Ranking Difference\n(Green = Higher in RF, Red = Higher in XGBoost)',
                  fontsize=13, fontweight='bold')
     ax2.axvline(x=0, color='black', linestyle='--', linewidth=0.8)
-    
+
     plt.tight_layout()
     filename = f"model_comparison_{target_key}.png"
     plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches='tight')
     plt.show()
-    
+
     print(f"\n{target_name} - Top {top_n} Features Comparison:")
     print(merged[['feature', 'rf_rank', 'xgb_rank', 'rank_diff']].head(15).to_string(index=False))
 
@@ -248,14 +250,14 @@ def analyze_category_importance(target_key, model='rf'):
     key = f"{target_key}_{model}"
     if key not in feature_importance:
         return None
-    
+
     df = feature_importance[key].copy()
     df['category'] = df['feature'].apply(categorize_feature)
-    
+
     category_importance = df.groupby('category')['importance'].agg(['sum', 'mean', 'count'])
     category_importance = category_importance.sort_values('sum', ascending=False)
     category_importance.columns = ['Total Importance', 'Mean Importance', 'Feature Count']
-    
+
     return category_importance
 
 def plot_category_importance(target_key, target_name, model='rf'):
@@ -263,28 +265,28 @@ def plot_category_importance(target_key, target_name, model='rf'):
     cat_imp = analyze_category_importance(target_key, model)
     if cat_imp is None:
         return
-    
+
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-    
+
     # Total importance by category
     cat_imp['Total Importance'].plot(kind='bar', ax=ax1, color='steelblue')
     ax1.set_title(f'{target_name}\nTotal Importance by Category', fontsize=13, fontweight='bold')
     ax1.set_ylabel('Total Feature Importance', fontsize=12, fontweight='bold')
     ax1.set_xlabel('Feature Category', fontsize=12, fontweight='bold')
     ax1.tick_params(axis='x', rotation=45)
-    
+
     # Feature count by category
     cat_imp['Feature Count'].plot(kind='bar', ax=ax2, color='coral')
     ax2.set_title('Feature Count by Category', fontsize=13, fontweight='bold')
     ax2.set_ylabel('Number of Features', fontsize=12, fontweight='bold')
     ax2.set_xlabel('Feature Category', fontsize=12, fontweight='bold')
     ax2.tick_params(axis='x', rotation=45)
-    
+
     plt.tight_layout()
     filename = f"category_importance_{target_key}_{model}.png"
     plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches='tight')
     plt.show()
-    
+
     print(f"\n{target_name} - Category Analysis ({model.upper()}):")
     print(cat_imp.to_string())
 
@@ -309,15 +311,15 @@ plot_category_importance('yoy_change_pct', 'YoY Appreciation (%)', model='rf')
 def generate_insights_summary():
     """Generate comprehensive insights summary."""
     insights = {}
-    
+
     for target_key, target_name in targets.items():
         rf_key = f"{target_key}_rf"
         if rf_key not in feature_importance:
             continue
-        
+
         df = feature_importance[rf_key].head(10)
         category_imp = analyze_category_importance(target_key, 'rf')
-        
+
         insights[target_name] = {
             'top_feature': df.iloc[0]['feature'],
             'top_importance': df.iloc[0]['importance'],
@@ -325,14 +327,14 @@ def generate_insights_summary():
             'dominant_category': category_imp.index[0] if category_imp is not None else 'N/A',
             'dominant_category_importance': category_imp.iloc[0]['Total Importance'] if category_imp is not None else 0
         }
-    
+
     # Create summary DataFrame
     summary_df = pd.DataFrame(insights).T
     print("\n" + "="*80)
     print("KEY INSIGHTS SUMMARY")
     print("="*80)
     print(summary_df.to_string())
-    
+
     return insights
 
 insights = generate_insights_summary()
@@ -405,7 +407,7 @@ with pd.ExcelWriter(OUTPUT_DIR / 'feature_importance_summary.xlsx') as writer:
                 df = feature_importance[key]
                 sheet_name = f"{target_key[:8]}_{model}"  # Truncate for Excel sheet name
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
-    
+
     # Add summary sheet
     model_comparison.to_excel(writer, sheet_name='model_comparison', index=False)
 

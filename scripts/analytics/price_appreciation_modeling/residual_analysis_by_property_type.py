@@ -11,15 +11,15 @@ import logging
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")  # Non-interactive backend
+# Add project root to path for imports
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from scipy import stats
-
-# Add project root to path for imports
-import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 

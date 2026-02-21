@@ -12,7 +12,6 @@ This script displays:
 - Recent errors or failures
 """
 
-import sys
 import pathlib
 import re
 from datetime import datetime
@@ -35,7 +34,7 @@ def parse_log_for_progress(log_file):
     error_lines = []
     start_time = None
 
-    with open(log_file, 'r') as f:
+    with open(log_file) as f:
         for line in f:
             # Look for progress lines
             if 'Progress:' in line and 'addresses' in line:
@@ -132,7 +131,7 @@ def main():
         return
 
     # Display progress
-    print(f"📍 Latest Progress:")
+    print("📍 Latest Progress:")
     print(f"   Processed: {latest_progress['processed']:,} / {latest_progress['total']:,} addresses")
     print(f"   Complete: {latest_progress['percentage']:.1f}%")
     print()
@@ -147,7 +146,7 @@ def main():
             eta_seconds = remaining / rate
             eta_str = format_duration(eta_seconds)
 
-            print(f"⏱️  Timing:")
+            print("⏱️  Timing:")
             print(f"   Elapsed: {format_duration(elapsed)}")
             print(f"   Rate: {rate:.2f} addresses/second")
             print(f"   ETA: {eta_str}")
@@ -156,7 +155,7 @@ def main():
     # Display checkpoint info
     checkpoint_info = get_checkpoint_info()
     if checkpoint_info:
-        print(f"💾 Latest Checkpoint:")
+        print("💾 Latest Checkpoint:")
         print(f"   File: {checkpoint_info['file']}")
         print(f"   Addresses: {checkpoint_info['count']:,}" if isinstance(checkpoint_info['count'], int) else f"   Addresses: {checkpoint_info['count']}")
         print(f"   Modified: {checkpoint_info['modified'].strftime('%Y-%m-%d %H:%M:%S')}")
@@ -164,7 +163,7 @@ def main():
 
     # Display recent errors
     if error_lines:
-        print(f"⚠️  Recent Errors (last 5):")
+        print("⚠️  Recent Errors (last 5):")
         for error in error_lines[-5:]:
             print(f"   {error}")
         print()

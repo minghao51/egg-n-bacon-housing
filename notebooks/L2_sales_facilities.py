@@ -44,7 +44,7 @@ results = run_l2_features_pipeline()
 
 # %%
 # Display results summary
-print(f"\n✅ Pipeline completed successfully!")
+print("\n✅ Pipeline completed successfully!")
 print(f"Property records: {len(results['property_df']):,}")
 print(f"Facility records: {len(results['private_facilities']):,}")
 print(f"Nearby records: {len(results['nearby_df']):,}")
