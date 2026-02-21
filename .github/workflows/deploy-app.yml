@@ -49,6 +49,12 @@ jobs:
           ONEMAP_EMAIL: ${{ secrets.ONEMAP_EMAIL }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
+      - name: Generate interactive tools data
+        run: PYTHONPATH=. uv run python scripts/prepare_interactive_tools_data.py
+        env:
+          ONEMAP_EMAIL: ${{ secrets.ONEMAP_EMAIL }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+
       - name: Verify dashboard data files
         working-directory: ./app
         run: |
@@ -60,6 +66,10 @@ jobs:
             "public/data/map_metrics.json.gz"
             "public/data/hotspots.json.gz"
             "public/data/amenity_summary.json.gz"
+            "public/data/interactive_tools/mrt_cbd_impact.json.gz"
+            "public/data/interactive_tools/lease_decay_analysis.json.gz"
+            "public/data/interactive_tools/affordability_metrics.json.gz"
+            "public/data/interactive_tools/spatial_hotspots.json.gz"
           )
 
           for file in "${required_files[@]}"; do
