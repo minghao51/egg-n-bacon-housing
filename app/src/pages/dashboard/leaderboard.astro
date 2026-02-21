@@ -7,7 +7,7 @@ import path from 'path';
 import zlib from 'zlib';
 
 function gunzip(data) {
-  return zlib.inflateSync(Buffer.from(data, 'base64')).toString('utf-8');
+  return zlib.gunzipSync(data).toString('utf-8');
 }
 
 const dataPath = path.resolve('public/data/dashboard_leaderboard.json.gz');

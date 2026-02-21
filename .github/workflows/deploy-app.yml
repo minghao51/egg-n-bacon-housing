@@ -26,6 +26,14 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
       - name: Install dependencies
         working-directory: ./app
         run: bun install
@@ -34,6 +42,34 @@ jobs:
         run: |
           chmod +x scripts/sync-content.sh
           bash scripts/sync-content.sh
+
+      - name: Generate dashboard data
+        run: PYTHONPATH=. uv run python scripts/prepare_webapp_data.py
+        env:
+          ONEMAP_EMAIL: ${{ secrets.ONEMAP_EMAIL }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+
+      - name: Verify dashboard data files
+        working-directory: ./app
+        run: |
+          required_files=(
+            "public/data/dashboard_overview.json.gz"
+            "public/data/dashboard_trends.json.gz"
+            "public/data/dashboard_segments.json.gz"
+            "public/data/dashboard_leaderboard.json.gz"
+            "public/data/map_metrics.json.gz"
+            "public/data/hotspots.json.gz"
+            "public/data/amenity_summary.json.gz"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing required data file: $file"
+              exit 1
+            fi
+          done
+
+          echo "✅ All dashboard data files verified"
 
       - name: Build with Astro
         working-directory: ./app

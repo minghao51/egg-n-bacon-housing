@@ -4,11 +4,10 @@ Runner script to export data for the Web Dashboard.
 """
 
 import sys
-from pathlib import Path
 
-from scripts.core.script_base import setup_script_environment, simple_script_wrapper
-from scripts.core.logging_config import get_logger, setup_logging_from_env
 from scripts.core.config import Config
+from scripts.core.logging_config import get_logger, setup_logging_from_env
+from scripts.core.script_base import setup_script_environment
 
 
 def main():
