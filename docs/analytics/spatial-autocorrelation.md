@@ -12,13 +12,7 @@ readingTime: "14 min read"
 technicalLevel: intermediate
 ---
 
-import StatCallout from '@/components/analytics/StatCallout.astro';
-import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
-import Scenario from '@/components/analytics/Scenario.astro';
-import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
-import Tooltip from '@/components/analytics/Tooltip.astro';
-
-# Spatial Autocorrelation & Neighborhood Clusters for Property Appreciation
+# Spatial Autocorrelation
 
 **Analysis Date**: February 6, 2026
 **Data Period**: 2021-2026 (Post-COVID recovery)

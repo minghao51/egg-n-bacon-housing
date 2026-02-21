@@ -12,13 +12,7 @@ readingTime: "12 min read"
 technicalLevel: intermediate
 ---
 
-import StatCallout from '@/components/analytics/StatCallout.astro';
-import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
-import Scenario from '@/components/analytics/Scenario.astro';
-import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
-import Tooltip from '@/components/analytics/Tooltip.astro';
-
-# Singapore Housing Market - Key Investment Findings
+# Key Investment Findings
 
 **Last Updated**: 2026-02-06
 **Data Coverage**: 911,797 transactions (2017-2026)

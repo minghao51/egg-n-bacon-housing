@@ -12,13 +12,7 @@ readingTime: "12 min read"
 technicalLevel: intermediate
 ---
 
-import StatCallout from '@/components/analytics/StatCallout.astro';
-import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
-import Scenario from '@/components/analytics/Scenario.astro';
-import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
-import Tooltip from '@/components/analytics/Tooltip.astro';
-
-# School Quality Impact on Singapore Property Prices
+# School Quality Impact
 
 **Analysis Date**: February 6, 2026
 **Dataset**: Singapore Housing Market (2021+)

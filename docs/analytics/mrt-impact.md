@@ -13,13 +13,7 @@ readingTime: "12 min read"
 technicalLevel: intermediate
 ---
 
-import Tooltip from '@/components/analytics/Tooltip.astro';
-import StatCallout from '@/components/analytics/StatCallout.astro';
-import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
-import Scenario from '@/components/analytics/Scenario.astro';
-import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
-
-# MRT Impact Analysis on HDB Housing Prices
+# MRT Impact Analysis
 
 **Analysis Date**: 2026-02-04
 **Data Period**: 2021-2026 (Post-COVID recovery)

@@ -12,13 +12,7 @@ readingTime: "10 min read"
 technicalLevel: intermediate
 ---
 
-import StatCallout from '@/components/analytics/StatCallout.astro';
-import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
-import Scenario from '@/components/analytics/Scenario.astro';
-import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
-import Tooltip from '@/components/analytics/Tooltip.astro';
-
-# Policy Impact & Market Dynamics: What Really Drives Property Values
+# Policy Impact & Market Dynamics
 
 **Analysis Date**: 2026-02-06
 **Data Period**: 2017-2026 (Full policy cycle)

@@ -12,13 +12,7 @@ readingTime: "8 min read"
 technicalLevel: intermediate
 ---
 
-import StatCallout from '@/components/analytics/StatCallout.astro';
-import ImplicationBox from '@/components/analytics/ImplicationBox.astro';
-import Scenario from '@/components/analytics/Scenario.astro';
-import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
-import Tooltip from '@/components/analytics/Tooltip.astro';
-
-# Singapore Rental Hotspots - Where Premiums Cluster
+# Singapore Rental Hotspots
 
 **Analysis Date**: 2026-02-20
 **Data Period**: 2024-01 to 2025-01
