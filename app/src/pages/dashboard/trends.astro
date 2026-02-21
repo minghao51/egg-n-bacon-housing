@@ -21,6 +21,51 @@ try {
 } catch (error) {
   console.error("Failed to load trends data:", error);
 }
+
+// NEW: Load interactive tools data
+const mrtCbdPath = path.resolve('public/data/interactive_tools/mrt_cbd_impact.json.gz');
+let mrtCbdData;
+
+try {
+  const rawData = fs.readFileSync(mrtCbdPath);
+  const decompressed = gunzip(rawData);
+  mrtCbdData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load MRT/CBD impact data:", error);
+}
+
+const leaseDecayPath = path.resolve('public/data/interactive_tools/lease_decay_analysis.json.gz');
+let leaseDecayData;
+
+try {
+  const rawData = fs.readFileSync(leaseDecayPath);
+  const decompressed = gunzip(rawData);
+  leaseDecayData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load lease decay data:", error);
+}
+
+const affordabilityPath = path.resolve('public/data/interactive_tools/affordability_metrics.json.gz');
+let affordabilityData;
+
+try {
+  const rawData = fs.readFileSync(affordabilityPath);
+  const decompressed = gunzip(rawData);
+  affordabilityData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load affordability data:", error);
+}
+
+const hotspotsPath = path.resolve('public/data/interactive_tools/spatial_hotspots.json.gz');
+let hotspotsData;
+
+try {
+  const rawData = fs.readFileSync(hotspotsPath);
+  const decompressed = gunzip(rawData);
+  hotspotsData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load hotspots data:", error);
+}
 ---
 
 <Layout title="Trends Explorer - Dashboard">
@@ -38,7 +83,14 @@ try {
 
       {/* Dashboard Content */}
       {trendsData ? (
-        <TrendsDashboard client:load data={trendsData} />
+        <TrendsDashboard
+          client:load
+          data={trendsData}
+          mrtCbdData={mrtCbdData}
+          leaseDecayData={leaseDecayData}
+          affordabilityData={affordabilityData}
+          hotspotsData={hotspotsData}
+        />
       ) : (
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
           Data not available. Please run the export script.
