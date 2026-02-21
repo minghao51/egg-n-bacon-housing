@@ -47,15 +47,15 @@ echo "Syncing analytics markdown files..."
 # Create app content directory if it doesn't exist
 mkdir -p "$APP_CONTENT_DIR"
 
-# Clean up old .md files first (ensures deleted files are removed)
-rm -f "$APP_CONTENT_DIR"/*.md 2>/dev/null || true
+# Clean up old .mdx files first (ensures deleted files are removed)
+rm -f "$APP_CONTENT_DIR"/*.mdx 2>/dev/null || true
 echo "🧹 Cleaned up old markdown files from $APP_CONTENT_DIR/"
 
-# Copy all .md files from docs/analytics to app content
-cp -r "$DOCS_DIR"/*.md "$APP_CONTENT_DIR/" 2>/dev/null || true
+# Copy all .mdx files from docs/analytics to app content
+cp -r "$DOCS_DIR"/*.mdx "$APP_CONTENT_DIR/" 2>/dev/null || true
 
 # Skip validation if no files copied
-if ! ls "$APP_CONTENT_DIR"/*.md 2>/dev/null | grep -q .; then
+if ! ls "$APP_CONTENT_DIR"/*.mdx 2>/dev/null | grep -q .; then
   echo "⚠️  No markdown files found in $APP_CONTENT_DIR/"
   exit 1
 fi
@@ -63,7 +63,7 @@ fi
 # Validate categories in copied files
 echo "🔍 Validating categories..."
 invalid_count=0
-for file in "$APP_CONTENT_DIR"/*.md; do
+for file in "$APP_CONTENT_DIR"/*.mdx; do
   if ! validate_category "$file"; then
     invalid_count=$((invalid_count + 1))
   fi
@@ -80,7 +80,7 @@ echo "✅ All categories validated successfully"
 # Images are now in app/public/data/analysis/ and served from base path by Astro
 echo "🔧 Fixing image paths in analytics documents..."
 fixed_count=0
-for file in "$APP_CONTENT_DIR"/*.md; do
+for file in "$APP_CONTENT_DIR"/*.mdx; do
     if grep -q "../../data/" "$file"; then
         # Use cross-platform sed with backup file
         # Change relative paths to absolute paths (from production base path)
@@ -89,6 +89,63 @@ for file in "$APP_CONTENT_DIR"/*.md; do
         fixed_count=$((fixed_count + 1))
     fi
 done
+
+# Remove Astro component import statements from MDX files
+# Astro MDX doesn't support importing .astro components, so these just show as text
+echo "🔧 Removing Astro component imports from MDX files..."
+import_count=0
+for file in "$APP_CONTENT_DIR"/*.mdx; do
+    if grep -q "^import.*from '@/components/analytics/" "$file"; then
+        # Remove lines that import from @/components/analytics/
+        sed -i.bak "/^import.*from '@\/components\/analytics\//d" "$file"
+        rm -f "${file}.bak"
+        import_count=$((import_count + 1))
+    fi
+done
+
+if [ $import_count -gt 0 ]; then
+    echo "✅ Removed component imports from $import_count MDX file(s)"
+fi
+
+# Remove unused Astro component tags from MDX files
+# Since we removed the imports, we need to remove the component tags too
+echo "🔧 Removing unused Astro component tags from MDX files..."
+component_count=0
+for file in "$APP_CONTENT_DIR"/*.mdx; do
+    # Remove inline and multi-line component tags using perl
+    # Handle: <StatCallout ... /> (multi-line), <ImplicationBox>...</ImplicationBox>, etc.
+    perl -i.bak -0777 -pe '
+        s/<StatCallout\s.*?\/>//gs;
+        s/<ImplicationBox\s.*?<\/ImplicationBox>//gs;
+        s/<Scenario\s.*?<\/Scenario>//gs;
+        s/<DecisionChecklist\s.*?<\/DecisionChecklist>//gs;
+        s/<Tooltip[^>]*>.*?<\/Tooltip>//gs;
+    ' "$file"
+    rm -f "${file}.bak"
+    component_count=$((component_count + 1))
+done
+
+if [ $component_count -gt 0 ]; then
+    echo "✅ Removed component tags from $component_count MDX file(s)"
+fi
+
+# Escape < symbols that break MDX parsing (e.g., <60, <$1500)
+# MDX interprets < as JSX syntax, so we need to escape these in certain contexts
+echo "🔧 Escaping MDX-incompatible angle brackets..."
+fixed_count=0
+for file in "$APP_CONTENT_DIR"/*.mdx; do
+    # Use sed with proper escaping - safer than perl for special chars
+    # First handle patterns like " (<$1500" - escape the <
+    sed -i.bak -E 's/\(\(<[[:space:]]*\)?[$]?[0-9,]+/\(\&lt;/g' "$file"
+    # Then handle remaining patterns like <60, <$1500 not preceded by valid HTML tag chars
+    sed -i.bak -E 's/(^|[^a-zA-Z/:&])<([[:space:]]*\$?[0-9,]+)/\1\&lt;\2/g' "$file"
+    rm -f "${file}.bak"
+    fixed_count=$((fixed_count + 1))
+done
+
+if [ $fixed_count -gt 0 ]; then
+    echo "✅ Fixed angle brackets in MDX files"
+fi
 
 if [ $fixed_count -gt 0 ]; then
     echo "✅ Fixed image paths in $fixed_count document(s)"
@@ -129,5 +186,5 @@ if [ -d "$DATA_ANALYTICS_SRC" ]; then
     echo "✅ Synced $img_count analytics images"
 fi
 
-file_count=$(ls -1 "$APP_CONTENT_DIR"/*.md 2>/dev/null | wc -l | tr -d ' ')
+file_count=$(ls -1 "$APP_CONTENT_DIR"/*.mdx 2>/dev/null | wc -l | tr -d ' ')
 echo "✅ Synced $file_count markdown files to app/src/content/analytics/"
