@@ -79,21 +79,21 @@ Our analysis identified **12 statistically significant hotspots** (at 99% confid
 
 | Area | Gi* Statistic | P-Value | Median Monthly Rent |
 |------|---------------|---------|---------------------|
-| Orchard | 4.21 | &lt; 0.001 | $3,200 |
-| Marina South | 3.89 | &lt; 0.001 | $3,450 |
-| Bukit Timah | 3.45 | &lt; 0.001 | $3,100 |
-| River Valley | 3.12 | &lt; 0.01 | $3,050 |
-| Newton | 2.87 | &lt; 0.01 | $2,950 |
+| Orchard | 4.21 | < 0.001 | $3,200 |
+| Marina South | 3.89 | < 0.001 | $3,450 |
+| Bukit Timah | 3.45 | < 0.001 | $3,100 |
+| River Valley | 3.12 | < 0.01 | $3,050 |
+| Newton | 2.87 | < 0.01 | $2,950 |
 
 **Top 5 Coldspots (Lowest Rents):**
 
 | Area | Gi* Statistic | P-Value | Median Monthly Rent |
 |------|---------------|---------|---------------------|
-| Woodlands | -3.21 | &lt; 0.01 | $2,100 |
-| Yishun | -2.98 | &lt; 0.01 | $2,050 |
-| Sembawang | -2.67 | &lt; 0.01 | $2,000 |
-| Choa Chu Kang | -2.34 | &lt; 0.05 | $2,150 |
-| Jurong West | -2.12 | &lt; 0.05 | $2,200 |
+| Woodlands | -3.21 | < 0.01 | $2,100 |
+| Yishun | -2.98 | < 0.01 | $2,050 |
+| Sembawang | -2.67 | < 0.01 | $2,000 |
+| Choa Chu Kang | -2.34 | < 0.05 | $2,150 |
+| Jurong West | -2.12 | < 0.05 | $2,200 |
 
 **What This Means:**
 
@@ -228,10 +228,10 @@ Z(Gi*) = (Gi* - E[Gi*]) / √(Var(Gi*))
 
 **Interpretation:**
 
-- **Gi* > 2.58, p &lt; 0.01**: Hotspot at 99% confidence (statistically significant high cluster)
-- **Gi* > 1.96, p &lt; 0.05**: Weak hotspot at 95% confidence
-- **Gi* < -2.58, p &lt; 0.01**: Coldspot at 99% confidence (statistically significant low cluster)
-- **Gi* < -1.96, p &lt; 0.05**: Weak coldspot at 95% confidence
+- **Gi* > 2.58, p < 0.01**: Hotspot at 99% confidence (statistically significant high cluster)
+- **Gi* > 1.96, p < 0.05**: Weak hotspot at 95% confidence
+- **Gi* < -2.58, p < 0.01**: Coldspot at 99% confidence (statistically significant low cluster)
+- **Gi* < -1.96, p < 0.05**: Weak coldspot at 95% confidence
 - **Otherwise**: Not statistically significant
 
 ### H3 Grid Configuration
@@ -251,7 +251,7 @@ Z(Gi*) = (Gi* - E[Gi*]) / √(Var(Gi*))
 
 ### Statistical Significance
 
-Our analysis uses a 95% confidence level (p &lt; 0.05) as the threshold for identifying weak hotspots/coldspots, and 99% confidence (p &lt; 0.01) for strong hotspots/coldspots. This ensures we only highlight clusters that are statistically unlikely to occur by random chance.
+Our analysis uses a 95% confidence level (p < 0.05) as the threshold for identifying weak hotspots/coldspots, and 99% confidence (p < 0.01) for strong hotspots/coldspots. This ensures we only highlight clusters that are statistically unlikely to occur by random chance.
 
 ---
 
