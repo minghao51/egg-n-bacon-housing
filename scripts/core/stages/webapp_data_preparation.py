@@ -105,11 +105,13 @@ def export_dashboard_data():
     map_data = generate_map_data(df)
     write_json_gzip(sanitize_for_json(map_data), output_dir / "map_metrics.json.gz")
 
-    # Copy GeoJSON
-    geojson_src = Path("data/manual/geojsons/onemap_planning_area_polygon.geojson")
+    # Copy GeoJSON (prefer URA file with region data)
+    geojson_src = Path("data/manual/geojsons/ura_planning_area_boundary.geojson")
+    if not geojson_src.exists():
+        geojson_src = Path("data/manual/geojsons/onemap_planning_area_polygon.geojson")
     if geojson_src.exists():
         shutil.copy(geojson_src, output_dir / "planning_areas.geojson")
-        logger.info("Copied planning_areas.geojson")
+        logger.info(f"Copied planning_areas.geojson from {geojson_src.name}")
     else:
         logger.warning("GeoJSON source not found!")
 
@@ -629,12 +631,16 @@ def generate_filtered_segments_data(df):
 
 
 def generate_leaderboard_data(df):
-    """Generate simple town leaderboard rankings."""
+    """Generate town leaderboard rankings using standardized planning_area."""
     df_recent = df[df["year"] >= 2023].copy()
 
-    # Calculate metrics by Town
-    town_metrics = (
-        df_recent.groupby("town")
+    # Use planning_area for consistent aggregation (instead of messy town column)
+    area_col = "planning_area" if "planning_area" in df.columns else "town"
+    logger.info(f"Generating leaderboard using '{area_col}'")
+
+    # Calculate metrics by planning area
+    area_metrics = (
+        df_recent.groupby(area_col)
         .agg(
             {
                 "price": "median",
@@ -646,20 +652,20 @@ def generate_leaderboard_data(df):
         .reset_index()
     )
 
-    town_metrics.columns = ["town", "median_price", "median_psf", "yield", "volume"]
+    area_metrics.columns = ["area", "median_price", "median_psf", "yield", "volume"]
 
     # Calculate Growth (Year over Year for last year)
     current_year = df["year"].max()
     prev_year = current_year - 1
 
-    price_curr = df[df["year"] == current_year].groupby("town")["price"].median()
-    price_prev = df[df["year"] == prev_year].groupby("town")["price"].median()
+    price_curr = df[df["year"] == current_year].groupby(area_col)["price"].median()
+    price_prev = df[df["year"] == prev_year].groupby(area_col)["price"].median()
 
     growth = ((price_curr - price_prev) / price_prev * 100).reset_index()
-    growth.columns = ["town", "growth"]
+    growth.columns = ["area", "growth"]
 
     # Merge
-    leaderboard = pd.merge(town_metrics, growth, on="town", how="left").fillna(0)
+    leaderboard = pd.merge(area_metrics, growth, on="area", how="left").fillna(0)
 
     # Simple Ranking Score (just an example: Growth + Yield)
     leaderboard["score"] = leaderboard["growth"] + leaderboard["yield"]
@@ -671,7 +677,7 @@ def generate_leaderboard_data(df):
         result.append(
             {
                 "rank": rank,
-                "town": row["town"],
+                "town": row["area"],  # Using planning_area as town for dashboard compatibility
                 "median_price": int(row["median_price"]),
                 "median_psf": int(row["median_psf"]),
                 "yield": round(float(row["yield"]), 2) if row["yield"] else 0,
