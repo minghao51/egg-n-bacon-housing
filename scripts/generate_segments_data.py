@@ -23,9 +23,151 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def load_investment_clusters() -> list[dict[str, Any]]:
-    """Load investment cluster data from findings analysis."""
-    # TODO: Implement in next task
-    return []
+    """
+    Load investment cluster data from findings analysis.
+
+    Based on findings.md cluster analysis:
+    - Large Size Stable (12.6%): High PSF ($570), stable yields (5.54%)
+    - High Growth Recent (33.0%): Moderate PSF ($509), +24.4% YoY
+    - Speculator Hotspots (5.7%): Premium PSF ($550), +83.9% YoY
+    - Declining Areas (12.4%): Moderate PSF ($564), -3.6% YoY
+    - Mid-Tier Value (25.3%): Affordable PSF ($463), 6.36% yields
+    - Premium New Units (11.0%): High PSF ($826), 12.3% YoY
+    """
+    return [
+        {
+            "id": "large_size_stable",
+            "name": "Large Size Stable",
+            "description": "High PSF properties with stable rental yields for buy-and-hold investors",
+            "investmentType": "yield",
+            "clusterClassification": "HH",
+            "metrics": {
+                "avgPricePsf": 570,
+                "avgYield": 5.54,
+                "yoyGrowth": 12.0,
+                "transactionCount": 114700,  # 12.6% of ~910K
+                "marketShare": 0.126,
+            },
+            "characteristics": {
+                "priceTier": "premium",
+                "riskLevel": "low",
+                "volatility": "low",
+                "appreciationPotential": "moderate",
+            },
+            "propertyTypes": ["HDB", "Condominium"],
+            "regions": ["CCR", "RCR"],
+        },
+        {
+            "id": "high_growth_recent",
+            "name": "High Growth Recent",
+            "description": "Moderate PSF with exceptional YoY growth for growth-oriented investors",
+            "investmentType": "growth",
+            "clusterClassification": "HH",
+            "metrics": {
+                "avgPricePsf": 509,
+                "avgYield": 5.2,
+                "yoyGrowth": 24.4,
+                "transactionCount": 300872,  # 33.0%
+                "marketShare": 0.330,
+            },
+            "characteristics": {
+                "priceTier": "moderate",
+                "riskLevel": "medium",
+                "volatility": "high",
+                "appreciationPotential": "exceptional",
+            },
+            "propertyTypes": ["HDB", "Condominium"],
+            "regions": ["RCR", "OCR"],
+        },
+        {
+            "id": "speculator_hotspots",
+            "name": "Speculator Hotspots",
+            "description": "Premium PSF with massive YoY growth for short-term flips",
+            "investmentType": "speculative",
+            "clusterClassification": "HH",
+            "metrics": {
+                "avgPricePsf": 550,
+                "avgYield": 4.8,
+                "yoyGrowth": 83.9,
+                "transactionCount": 51957,  # 5.7%
+                "marketShare": 0.057,
+            },
+            "characteristics": {
+                "priceTier": "premium",
+                "riskLevel": "very_high",
+                "volatility": "high",
+                "appreciationPotential": "high",
+            },
+            "propertyTypes": ["Condominium", "HDB"],
+            "regions": ["CCR", "RCR"],
+        },
+        {
+            "id": "declining_areas",
+            "name": "Declining Areas",
+            "description": "Moderate PSF with negative growth - avoid or contrarian plays",
+            "investmentType": "value",
+            "clusterClassification": "LH",
+            "metrics": {
+                "avgPricePsf": 564,
+                "avgYield": 5.0,
+                "yoyGrowth": -3.6,
+                "transactionCount": 112943,  # 12.4%
+                "marketShare": 0.124,
+            },
+            "characteristics": {
+                "priceTier": "moderate",
+                "riskLevel": "high",
+                "volatility": "low",
+                "appreciationPotential": "low",
+            },
+            "propertyTypes": ["HDB", "Condominium"],
+            "regions": ["OCR", "RCR"],
+        },
+        {
+            "id": "mid_tier_value",
+            "name": "Mid-Tier Value",
+            "description": "Affordable PSF with highest yields for rental income focus",
+            "investmentType": "yield",
+            "clusterClassification": "LL",
+            "metrics": {
+                "avgPricePsf": 463,
+                "avgYield": 6.36,
+                "yoyGrowth": 8.5,
+                "transactionCount": 230685,  # 25.3%
+                "marketShare": 0.253,
+            },
+            "characteristics": {
+                "priceTier": "affordable",
+                "riskLevel": "low",
+                "volatility": "low",
+                "appreciationPotential": "moderate",
+            },
+            "propertyTypes": ["HDB"],
+            "regions": ["OCR"],
+        },
+        {
+            "id": "premium_new_units",
+            "name": "Premium New Units",
+            "description": "High PSF luxury segment with moderate growth",
+            "investmentType": "luxury",
+            "clusterClassification": "HH",
+            "metrics": {
+                "avgPricePsf": 826,
+                "avgYield": 3.8,
+                "yoyGrowth": 12.3,
+                "transactionCount": 100297,  # 11.0%
+                "marketShare": 0.110,
+            },
+            "characteristics": {
+                "priceTier": "luxury",
+                "riskLevel": "medium",
+                "volatility": "moderate",
+                "appreciationPotential": "moderate",
+            },
+            "propertyTypes": ["Condominium", "EC"],
+            "regions": ["CCR", "RCR"],
+        },
+    ]
 
 
 def load_spatial_clusters() -> dict[str, Any]:
