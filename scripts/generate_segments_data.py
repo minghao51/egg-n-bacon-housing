@@ -10,51 +10,49 @@ Integrates outputs from:
 - School quality (school-quality.md)
 """
 
-import json
 import gzip
-from pathlib import Path
-from datetime import datetime
-from typing import Dict, List, Any, Optional
-import pandas as pd
+import json
 
 # Add project root to path
 import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Any
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from scripts.core.config import Config
 
-
-def load_investment_clusters() -> List[Dict[str, Any]]:
+def load_investment_clusters() -> list[dict[str, Any]]:
     """Load investment cluster data from findings analysis."""
     # TODO: Implement in next task
     return []
 
 
-def load_spatial_clusters() -> Dict[str, Any]:
+def load_spatial_clusters() -> dict[str, Any]:
     """Load spatial cluster data from LISA analysis."""
     # TODO: Implement in next task
     return {}
 
 
-def load_hotspot_data() -> Dict[str, Any]:
+def load_hotspot_data() -> dict[str, Any]:
     """Load hotspot data from Getis-Ord Gi* analysis."""
     # TODO: Implement in next task
     return {}
 
 
-def load_mrt_analysis() -> Dict[str, Any]:
+def load_mrt_analysis() -> dict[str, Any]:
     """Load MRT impact analysis by property type and region."""
     # TODO: Implement in next task
     return {}
 
 
-def load_school_impact() -> Dict[str, Any]:
+def load_school_impact() -> dict[str, Any]:
     """Load school quality impact analysis by region."""
     # TODO: Implement in next task
     return {}
 
 
-def map_to_spatial_cluster(segment: Dict[str, Any], spatial_data: Dict[str, Any]) -> str:
+def map_to_spatial_cluster(segment: dict[str, Any], spatial_data: dict[str, Any]) -> str:
     """Map segment to spatial cluster classification."""
     # TODO: Implement
     return "HH"
@@ -70,25 +68,25 @@ def get_persistence(classification: str) -> float:
     return persistence_map.get(classification, 0.50)
 
 
-def determine_mrt_sensitivity(segment: Dict[str, Any], mrt_data: Dict[str, Any]) -> str:
+def determine_mrt_sensitivity(segment: dict[str, Any], mrt_data: dict[str, Any]) -> str:
     """Determine MRT sensitivity based on segment property types."""
     # TODO: Implement based on property types
     return "moderate"
 
 
-def determine_school_quality(segment: Dict[str, Any], school_data: Dict[str, Any]) -> str:
+def determine_school_quality(segment: dict[str, Any], school_data: dict[str, Any]) -> str:
     """Determine school quality profile for segment."""
     # TODO: Implement based on planning areas
     return "mixed"
 
 
-def get_areas_in_segment(segment: Dict[str, Any], spatial_data: Dict[str, Any]) -> List[str]:
+def get_areas_in_segment(segment: dict[str, Any], spatial_data: dict[str, Any]) -> list[str]:
     """Get list of planning areas in this segment."""
     # TODO: Implement based on spatial clustering
     return []
 
 
-def generate_implications(segment: Dict[str, Any]) -> Dict[str, str]:
+def generate_implications(segment: dict[str, Any]) -> dict[str, str]:
     """Generate persona-specific implications for segment."""
     # TODO: Implement based on segment characteristics
     return {
@@ -99,26 +97,26 @@ def generate_implications(segment: Dict[str, Any]) -> Dict[str, str]:
 
 
 def generate_insight_cards(
-    spatial_data: Dict[str, Any],
-    mrt_data: Dict[str, Any],
-    school_data: Dict[str, Any],
-) -> List[Dict[str, Any]]:
+    spatial_data: dict[str, Any],
+    mrt_data: dict[str, Any],
+    school_data: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate insight cards from analytics."""
     # TODO: Implement with actual insights from analytics docs
     return []
 
 
 def enrich_planning_areas(
-    spatial_data: Dict[str, Any],
-    mrt_data: Dict[str, Any],
-    school_data: Dict[str, Any],
-) -> Dict[str, Any]:
+    spatial_data: dict[str, Any],
+    mrt_data: dict[str, Any],
+    school_data: dict[str, Any],
+) -> dict[str, Any]:
     """Enrich planning areas with spatial/MRT/school data."""
     # TODO: Implement
     return {}
 
 
-def save_gzipped_json(data: Dict[str, Any], output_path: Path) -> None:
+def save_gzipped_json(data: dict[str, Any], output_path: Path) -> None:
     """Save data as gzipped JSON."""
     json_str = json.dumps(data, indent=2)
     compressed = gzip.compress(json_str.encode('utf-8'))
@@ -126,7 +124,7 @@ def save_gzipped_json(data: Dict[str, Any], output_path: Path) -> None:
     print(f"✅ Saved to {output_path}")
 
 
-def generate_segments_data() -> Dict[str, Any]:
+def generate_segments_data() -> dict[str, Any]:
     """Generate comprehensive segments data."""
     print("Generating enhanced segments data...")
 
@@ -134,7 +132,7 @@ def generate_segments_data() -> Dict[str, Any]:
     print("  Loading analytics outputs...")
     segments = load_investment_clusters()
     spatial_data = load_spatial_clusters()
-    hotspot_data = load_hotspot_data()
+    hotspot_data = load_hotspot_data()  # TODO: Will be used in future for hotspot integration  # noqa: F841
     mrt_data = load_mrt_analysis()
     school_data = load_school_impact()
 
@@ -169,7 +167,7 @@ def generate_segments_data() -> Dict[str, Any]:
     output_path = Path('app/public/data/segments_enhanced.json.gz')
     save_gzipped_json(output, output_path)
 
-    print(f"\n✅ Segments data generated successfully!")
+    print("\n✅ Segments data generated successfully!")
     print(f"   - {len(segments)} segments")
     print(f"   - {len(planning_areas)} planning areas")
     print(f"   - {len(insights)} insight cards")
