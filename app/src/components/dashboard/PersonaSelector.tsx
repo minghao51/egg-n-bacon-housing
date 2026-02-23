@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export type Persona = 'investor' | 'first-time-buyer' | 'upgrader';
+export type Persona = 'all' | 'investor' | 'first-time-buyer' | 'upgrader';
 
 interface PersonaConfig {
   id: Persona;
@@ -10,6 +10,12 @@ interface PersonaConfig {
 }
 
 const PERSONAS: PersonaConfig[] = [
+  {
+    id: 'all',
+    name: 'All Personas',
+    icon: '👥',
+    description: 'Explore freely without preset filters'
+  },
   {
     id: 'investor',
     name: 'Investor',
