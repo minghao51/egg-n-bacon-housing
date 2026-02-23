@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { Persona } from '../PersonaSelector';
-import TrendsMap from '../TrendsMap';
+
+// Lazy load TrendsMap to avoid Leaflet import during SSR
+const TrendsMap = lazy(() => import('../TrendsMap'));
 
 interface LeaseBand {
   lease_age_band: string;
@@ -83,12 +85,14 @@ export default function LeaseDecayAnalyzer({ data, persona }: LeaseDecayAnalyzer
             Average Annual Decay Rate by Town
           </h4>
           <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
-            <TrendsMap
-              metricData={data.town_decay_rates}
-              metricLabel="Annual Decay Rate"
-              colorScale="sequential"
-              showLegend={true}
-            />
+            <Suspense fallback={<div className="h-full flex items-center justify-center bg-muted/20">Loading Map...</div>}>
+              <TrendsMap
+                metricData={data.town_decay_rates}
+                metricLabel="Annual Decay Rate"
+                colorScale="sequential"
+                showLegend={true}
+              />
+            </Suspense>
           </div>
         </div>
       )}

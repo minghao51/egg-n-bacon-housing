@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, lazy, Suspense } from 'react';
 import {
   BarChart,
   Bar,
@@ -10,7 +10,9 @@ import {
   ReferenceLine,
 } from 'recharts';
 import type { Persona } from '../PersonaSelector';
-import TrendsMap from '../TrendsMap';
+
+// Lazy load TrendsMap to avoid Leaflet import during SSR
+const TrendsMap = lazy(() => import('../TrendsMap'));
 
 interface TownMetric {
   town: string;
@@ -159,12 +161,14 @@ export default function AffordabilityCalculator({
           Affordability Ratio by Town ({propertyType})
         </h4>
         <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
-          <TrendsMap
-            metricData={data.town_affordability || {}}
-            metricLabel="Affordability Ratio"
-            colorScale="sequential"
-            showLegend={true}
-          />
+          <Suspense fallback={<div className="h-full flex items-center justify-center bg-muted/20">Loading Map...</div>}>
+            <TrendsMap
+              metricData={data.town_affordability || {}}
+              metricLabel="Affordability Ratio"
+              colorScale="sequential"
+              showLegend={true}
+            />
+          </Suspense>
         </div>
       </div>
 

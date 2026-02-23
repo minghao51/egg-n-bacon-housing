@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import type { Persona } from '../PersonaSelector';
-import TrendsMap from '../TrendsMap';
+
+// Lazy load TrendsMap to avoid Leaflet import during SSR
+const TrendsMap = lazy(() => import('../TrendsMap'));
 
 interface MrtCbdData {
   property_type_multipliers: {
@@ -71,12 +73,14 @@ export default function MrtCbdCalculator({ data, persona }: MrtCbdCalculatorProp
             MRT Premium by Town ({propertyType})
           </h4>
           <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
-            <TrendsMap
-              metricData={data.town_impacts}
-              metricLabel="HDB Premium per 100m"
-              colorScale="sequential"
-              showLegend={true}
-            />
+            <Suspense fallback={<div className="h-full flex items-center justify-center bg-muted/20">Loading Map...</div>}>
+              <TrendsMap
+                metricData={data.town_impacts}
+                metricLabel="HDB Premium per 100m"
+                colorScale="sequential"
+                showLegend={true}
+              />
+            </Suspense>
           </div>
         </div>
       )}
