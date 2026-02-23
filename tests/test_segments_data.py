@@ -5,7 +5,6 @@ Tests the generate_segments_data.py module which generates enhanced
 segments data for the interactive dashboard.
 """
 
-
 from scripts.generate_segments_data import (
     determine_mrt_sensitivity,
     determine_school_quality,
