@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PersonaSelector, { type Persona } from './PersonaSelector';
+import PersonaHeader from './PersonaHeader';
 import ToolTabs, { type ToolTab } from './ToolTabs';
 import MrtCbdCalculator from './tools/MrtCbdCalculator';
 import LeaseDecayAnalyzer from './tools/LeaseDecayAnalyzer';
@@ -66,6 +67,7 @@ interface InteractiveToolsPanelProps {
   leaseDecayData: LeaseDecayData;
   affordabilityData: AffordabilityData;
   hotspotsData: SpatialData;
+  segmentsData: { segments: Array<{ id: string; name: string; description: string; implications: any }> } | null;
 }
 
 export default function InteractiveToolsPanel({
@@ -73,6 +75,7 @@ export default function InteractiveToolsPanel({
   leaseDecayData,
   affordabilityData,
   hotspotsData,
+  segmentsData,
 }: InteractiveToolsPanelProps) {
   const [selectedPersona, setSelectedPersona] = useState<Persona>('first-time-buyer');
   const [activeTab, setActiveTab] = useState<ToolTab>('mrt-cbd');
@@ -103,6 +106,9 @@ export default function InteractiveToolsPanel({
           Explore property dynamics with personalized analytics based on your investment profile
         </p>
       </div>
+
+      {/* Persona Header */}
+      <PersonaHeader persona={selectedPersona} segments={segmentsData?.segments || []} />
 
       {/* Persona Selector */}
       <PersonaSelector selected={selectedPersona} onChange={setSelectedPersona} />

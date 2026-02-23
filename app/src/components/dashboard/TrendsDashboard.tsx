@@ -6,13 +6,15 @@ interface TrendsDashboardProps {
   leaseDecayData: any;
   affordabilityData: any;
   hotspotsData: any;
+  segmentsData: { segments: any[] } | null;
 }
 
 export default function TrendsDashboard({
   mrtCbdData,
   leaseDecayData,
   affordabilityData,
-  hotspotsData
+  hotspotsData,
+  segmentsData,
 }: TrendsDashboardProps) {
   return (
     <div className="space-y-8">
@@ -22,6 +24,7 @@ export default function TrendsDashboard({
         leaseDecayData={leaseDecayData}
         affordabilityData={affordabilityData}
         hotspotsData={hotspotsData}
+        segmentsData={segmentsData}
       />
     </div>
   );

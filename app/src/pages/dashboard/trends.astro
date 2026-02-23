@@ -55,6 +55,17 @@ try {
 } catch (error) {
   console.error("Failed to load hotspots data:", error);
 }
+
+const segmentsPath = path.resolve('public/data/segments_enhanced.json.gz');
+let segmentsData;
+
+try {
+  const rawData = fs.readFileSync(segmentsPath);
+  const decompressed = gunzip(rawData);
+  segmentsData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load segments data:", error);
+}
 ---
 
 <Layout title="Trends Explorer - Dashboard">
@@ -77,6 +88,7 @@ try {
         leaseDecayData={leaseDecayData}
         affordabilityData={affordabilityData}
         hotspotsData={hotspotsData}
+        segmentsData={segmentsData}
       />
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
           Data not available. Please run the export script.
