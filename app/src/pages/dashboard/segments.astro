@@ -1,28 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/Sidebar.astro';
-import SegmentsAnalysis from '@/components/dashboard/SegmentsAnalysis';
-import fs from 'fs';
-import path from 'path';
-import zlib from 'zlib';
-
-function gunzip(data) {
-  return zlib.gunzipSync(data).toString('utf-8');
-}
-
-const dataPath = path.resolve('public/data/dashboard_segments.json.gz');
-let segmentsData: Record<string, any[]> = {};
-
-try {
-  if (fs.existsSync(dataPath)) {
-    const rawData = fs.readFileSync(dataPath);
-    const decompressed = gunzip(rawData);
-    const parsed = JSON.parse(decompressed);
-    segmentsData = Array.isArray(parsed) ? { whole: parsed } : parsed;
-  }
-} catch (error) {
-  console.error("Failed to load segments data:", error);
-}
+import SegmentsDashboard from '@/components/dashboard/segments/SegmentsDashboard';
 ---
 
 <Layout title="Market Segments - Dashboard">
@@ -30,20 +9,7 @@ try {
 
   <main class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold text-foreground">Market Segmentation</h1>
-        <p class="text-muted-foreground mt-2">
-          Clustering analysis of property types based on Price PSF and Rental Yield.
-        </p>
-      </header>
-
-      {Object.keys(segmentsData).length > 0 ? (
-        <SegmentsAnalysis client:load data={segmentsData} />
-      ) : (
-        <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
-          Data not available. Please run the export script.
-        </div>
-      )}
+      <SegmentsDashboard client:load />
     </div>
   </main>
 </Layout>
