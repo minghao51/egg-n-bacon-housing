@@ -21,6 +21,9 @@ export default function SegmentsDashboard() {
   const [selectedSegment, setSelectedSegment] = useState<Segment | null>(null);
   const [comparisonSet, setComparisonSet] = useState<Set<string>>(new Set());
 
+  // Get matched segments - MUST be called before early returns (React Hooks Rule)
+  const { matchedSegments } = useSegmentMatching(data?.segments ?? [], filters);
+
   // Handle loading state
   if (loading) {
     return (
@@ -55,9 +58,6 @@ export default function SegmentsDashboard() {
   if (!data) {
     return null;
   }
-
-  // Get matched segments
-  const { matchedSegments } = useSegmentMatching(data.segments, filters);
 
   // Handlers
   const handleViewDetails = (segment: Segment) => {

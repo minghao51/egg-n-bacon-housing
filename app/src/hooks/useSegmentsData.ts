@@ -25,15 +25,8 @@ export function useSegmentsData(): UseSegmentsDataResult {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const compressed = await response.arrayBuffer();
-      const decompressed = new Uint8Array(compressed);
-
-      // Decompress using gzip
-      const text = new Response(
-        new Blob([decompressed], { type: 'application/gzip' })
-      ).text();
-
-      const textStr = await text;
+      // Browser will automatically decompress gzip-encoded responses
+      const textStr = await response.text();
       const parsed = JSON.parse(textStr);
 
       setData(parsed);
