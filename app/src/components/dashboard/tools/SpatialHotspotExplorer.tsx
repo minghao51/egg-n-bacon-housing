@@ -1,8 +1,6 @@
-import { useState, useMemo, lazy, Suspense } from 'react';
+import { useState, useMemo } from 'react';
 import type { Persona } from '../PersonaSelector';
-
-// Lazy load TrendsMap to avoid Leaflet import during SSR
-const TrendsMap = lazy(() => import('../TrendsMap'));
+import TrendsMap from '../TrendsMap';
 
 interface Cluster {
   cluster_type: 'HH' | 'LH' | 'HL' | 'LL';
@@ -177,14 +175,12 @@ export default function SpatialHotspotExplorer({
           Spatial Clusters by Town
         </h4>
         <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
-          <Suspense fallback={<div className="h-full flex items-center justify-center bg-muted/20">Loading Map...</div>}>
-            <TrendsMap
-              metricData={data.town_clusters || {}}
-              metricLabel="Cluster Type"
-              colorScale="diverging"
-              showLegend={true}
-            />
-          </Suspense>
+          <TrendsMap
+            metricData={data.town_clusters || {}}
+            metricLabel="Cluster Type"
+            colorScale="diverging"
+            showLegend={true}
+          />
         </div>
       </div>
 

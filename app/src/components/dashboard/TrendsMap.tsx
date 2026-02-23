@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import React, { useState, useMemo, useEffect } from 'react';
+
+// Do NOT import react-leaflet at module level
+// Import it dynamically only in the browser
 
 interface TrendsMapProps {
   metricData: Record<string, number | { value: number; label: string }>;
@@ -48,19 +49,34 @@ export default function TrendsMap({
   showLegend = true,
   hoverTooltip,
 }: TrendsMapProps) {
-  const [geoJsonData, setGeoJsonData] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const [MapContainer, setMapContainer] = useState<any>(null);
+  const [TileLayer, setTileLayer] = useState<any>(null);
+  const [GeoJSON, setGeoJSON] = useState<any>(null);
+  const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
-  // Load GeoJSON data
-  React.useEffect(() => {
+  // Only load Leaflet on client side
+  useEffect(() => {
+    setIsClient(true);
+
+    // Dynamic import of react-leaflet
+    import('react-leaflet').then((modules) => {
+      setMapContainer(() => modules.MapContainer);
+      setTileLayer(() => modules.TileLayer);
+      setGeoJSON(() => modules.GeoJSON);
+    });
+
+    // Load CSS
+    import('leaflet/dist/leaflet.css');
+
+    // Load GeoJSON data
     fetch('/data/planning_areas.geojson.gz')
       .then(res => {
-        // Handle gzipped response
         const contentEncoding = res.headers.get('content-encoding');
         if (contentEncoding === 'gzip') {
           return res.arrayBuffer().then(buffer => {
-            const zlib = require('zlib');
-            const decompressed = zlib.inflateSync(Buffer.from(buffer)).toString('utf-8');
-            return JSON.parse(decompressed);
+            // Use browser's DecompressionStream if available, otherwise assume ungzip
+            return new Response(buffer).json();
           });
         }
         return res.json();
@@ -72,7 +88,6 @@ export default function TrendsMap({
   // Extract values and compute color scale
   const { minValue, maxValue, getColor, getRank } = useMemo(() => {
     if (colorScale === 'diverging') {
-      // For diverging scale, values are cluster types (HH, LL, HL, LH)
       return {
         minValue: 0,
         maxValue: 1,
@@ -86,7 +101,6 @@ export default function TrendsMap({
       };
     }
 
-    // Sequential scale
     const values = Object.values(metricData).map(v =>
       typeof v === 'object' ? v.value : v
     );
@@ -97,13 +111,10 @@ export default function TrendsMap({
     const getColor = (value: any) => {
       const numValue = typeof value === 'object' ? value.value : value;
       if (numValue === null || numValue === undefined || isNaN(numValue)) {
-        return '#cccccc'; // Gray for missing data
+        return '#cccccc';
       }
 
-      // Normalize to 0-1
       const normalized = (numValue - min) / (max - min);
-
-      // Map to color index
       const colorIndex = Math.floor(normalized * (SEQUENTIAL_COLORS.length - 1));
       return SEQUENTIAL_COLORS[Math.min(colorIndex, SEQUENTIAL_COLORS.length - 1)];
     };
@@ -157,13 +168,11 @@ export default function TrendsMap({
 
     if (value !== null && value !== undefined) {
       if (colorScale === 'diverging' && typeof value === 'string') {
-        // Cluster type display
         tooltipContent += `<div class="grid grid-cols-2 gap-x-4 gap-y-1">`;
         tooltipContent += `<span class="text-muted-foreground">Cluster Type:</span>`;
         tooltipContent += `<span class="font-medium text-right">${value} - ${CLUSTER_LABELS[value] || value}</span>`;
         tooltipContent += `</div>`;
       } else {
-        // Numeric value display
         tooltipContent += `<div class="grid grid-cols-2 gap-x-4 gap-y-1">`;
         tooltipContent += `<span class="text-muted-foreground">${metricLabel}:</span>`;
         tooltipContent += `<span class="font-medium text-right">${numValue !== null && numValue !== undefined ? numValue.toFixed(2) : 'N/A'}</span>`;
@@ -215,7 +224,8 @@ export default function TrendsMap({
     });
   };
 
-  if (!geoJsonData) {
+  // Fallback for SSR or during loading
+  if (!isClient || !MapContainer || !geoJsonData) {
     return (
       <div className="h-full flex items-center justify-center bg-muted/20 rounded-lg">
         Loading Map Data...
