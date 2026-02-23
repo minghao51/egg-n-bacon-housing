@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { Persona } from '../PersonaSelector';
+import TrendsMap from '../TrendsMap';
 
 interface Cluster {
   cluster_type: 'HH' | 'LH' | 'HL' | 'LL';
@@ -14,6 +15,7 @@ interface SpatialData {
   clusters: Cluster[];
   analysis_date: string;
   methodology: string;
+  town_clusters?: Record<string, string>;  // town -> cluster type (HH, LH, HL, LL)
 }
 
 interface SpatialHotspotExplorerProps {
@@ -166,8 +168,25 @@ export default function SpatialHotspotExplorer({
   }, [filteredClusters, horizon, riskTolerance]);
 
   return (
-    <div className="space-y-6">
-      {/* Quick Summary */}
+    <div className="flex flex-col gap-6">
+      {/* Map Section */}
+      <div className="h-[60vh] min-h-[400px] max-h-[600px] w-full">
+        <h4 className="font-medium mb-3">
+          Spatial Clusters by Town
+        </h4>
+        <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
+          <TrendsMap
+            metricData={data.town_clusters || {}}
+            metricLabel="Cluster Type"
+            colorScale="diverging"
+            showLegend={true}
+          />
+        </div>
+      </div>
+
+      {/* Details Section */}
+      <div className="space-y-6">
+        {/* Quick Summary */}
       <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
         <h3 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
           🗺️ Spatial Clustering Insights
@@ -445,6 +464,7 @@ export default function SpatialHotspotExplorer({
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
           Analysis date: {data.analysis_date}
         </p>
+      </div>
       </div>
     </div>
   );

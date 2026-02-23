@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import type { Persona } from '../PersonaSelector';
+import TrendsMap from '../TrendsMap';
 
 interface MrtCbdData {
   property_type_multipliers: {
     [key: string]: { premium_per_100m: number; cbd_per_km: number };
   };
   town_multipliers: { [key: string]: number };
+  town_impacts?: Record<string, { value: number; label: string }>;
   town_premiums: Array<{
     town: string;
     multiplier: number;
@@ -61,8 +63,27 @@ export default function MrtCbdCalculator({ data, persona }: MrtCbdCalculatorProp
   };
 
   return (
-    <div className="space-y-6">
-      {/* Quick Summary */}
+    <div className="flex flex-col gap-6">
+      {/* Map Section */}
+      {data.town_impacts && Object.keys(data.town_impacts).length > 0 && (
+        <div className="h-[60vh] min-h-[400px] max-h-[600px] w-full">
+          <h4 className="font-medium mb-3">
+            MRT Premium by Town ({propertyType})
+          </h4>
+          <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
+            <TrendsMap
+              metricData={data.town_impacts}
+              metricLabel="HDB Premium per 100m"
+              colorScale="sequential"
+              showLegend={true}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Details Section */}
+      <div className="space-y-6">
+        {/* Quick Summary */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">💡 Key Insight</h3>
         <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
@@ -188,6 +209,7 @@ export default function MrtCbdCalculator({ data, persona }: MrtCbdCalculatorProp
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
       </div>
     </div>
   );

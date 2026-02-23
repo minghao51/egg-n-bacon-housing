@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { Persona } from '../PersonaSelector';
+import TrendsMap from '../TrendsMap';
 
 interface LeaseBand {
   lease_age_band: string;
@@ -14,6 +15,7 @@ interface LeaseBand {
 
 interface LeaseDecayData {
   bands: LeaseBand[];
+  town_decay_rates?: Record<string, { value: number; label: string }>;
   insights: {
     maturity_cliff: { band: string; discount: number; annual_rate: number; description: string };
     best_value: { band: string; discount: number; annual_rate: number; description: string };
@@ -73,8 +75,27 @@ export default function LeaseDecayAnalyzer({ data, persona }: LeaseDecayAnalyzer
   };
 
   return (
-    <div className="space-y-6">
-      {/* Quick Summary */}
+    <div className="flex flex-col gap-6">
+      {/* Map Section */}
+      {data.town_decay_rates && Object.keys(data.town_decay_rates).length > 0 && (
+        <div className="h-[60vh] min-h-[400px] max-h-[600px] w-full">
+          <h4 className="font-medium mb-3">
+            Average Annual Decay Rate by Town
+          </h4>
+          <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
+            <TrendsMap
+              metricData={data.town_decay_rates}
+              metricLabel="Annual Decay Rate"
+              colorScale="sequential"
+              showLegend={true}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Details Section */}
+      <div className="space-y-6">
+        {/* Quick Summary */}
       <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
         <h3 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">⚠️ The Maturity Cliff</h3>
         <ul className="text-sm text-orange-800 dark:text-orange-200 space-y-1">
@@ -146,6 +167,7 @@ export default function LeaseDecayAnalyzer({ data, persona }: LeaseDecayAnalyzer
             <ReferenceLine x={remainingLease} stroke="#3b82f6" strokeDasharray="5 5" label="Your Position" />
           </LineChart>
         </ResponsiveContainer>
+      </div>
       </div>
     </div>
   );

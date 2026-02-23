@@ -10,6 +10,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import type { Persona } from '../PersonaSelector';
+import TrendsMap from '../TrendsMap';
 
 interface TownMetric {
   town: string;
@@ -23,6 +24,7 @@ interface TownMetric {
 interface AffordabilityData {
   median_household_income: number;
   town_metrics: TownMetric[];
+  town_affordability?: Record<string, { value: number; label: string }>;
 }
 
 interface AffordabilityCalculatorProps {
@@ -150,8 +152,25 @@ export default function AffordabilityCalculator({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Quick Summary */}
+    <div className="flex flex-col gap-6">
+      {/* Map Section */}
+      <div className="h-[60vh] min-h-[400px] max-h-[600px] w-full">
+        <h4 className="font-medium mb-3">
+          Affordability Ratio by Town ({propertyType})
+        </h4>
+        <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
+          <TrendsMap
+            metricData={data.town_affordability || {}}
+            metricLabel="Affordability Ratio"
+            colorScale="sequential"
+            showLegend={true}
+          />
+        </div>
+      </div>
+
+      {/* Details Section */}
+      <div className="space-y-6">
+        {/* Quick Summary */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
           💡 Affordability Insights
@@ -321,6 +340,7 @@ export default function AffordabilityCalculator({
             <span>3.0x = Target for loan approval</span>
           </span>
         </div>
+      </div>
       </div>
     </div>
   );

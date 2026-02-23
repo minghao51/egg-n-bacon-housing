@@ -98,6 +98,14 @@ def generate_mrt_cbd_impact() -> dict[str, Any]:
         }
     )
 
+    # Create town-level impact mapping for map component
+    town_impacts = {}
+    for town, multiplier in town_multipliers.items():
+        town_impacts[town.upper()] = {
+            "value": round(5 * multiplier, 2),  # HDB premium per 100m
+            "label": "HDB Premium",
+        }
+
     return {
         "property_type_multipliers": property_type_multipliers,
         "town_multipliers": town_multipliers,
@@ -117,6 +125,7 @@ def generate_mrt_cbd_impact() -> dict[str, Any]:
                 town_multipliers.items(), key=lambda x: x[1], reverse=True
             )
         ],
+        "town_impacts": town_impacts,  # For map component
     }
 
 
@@ -219,7 +228,35 @@ def generate_lease_decay_analysis() -> dict[str, Any]:
         },
     }
 
-    return {"bands": bands, "insights": insights}
+    # Calculate town-level average decay rates for map visualization
+    # Use planning_area from the original dataframe
+    town_decay_rates = {}
+    if "planning_area" in hdb_df.columns:
+        for area in hdb_df["planning_area"].unique():
+            if pd.isna(area):
+                continue
+            area_df = hdb_df[hdb_df["planning_area"] == area]
+            if len(area_df) < 50:
+                continue
+
+            # Calculate average annual decay rate for this planning area
+            # Estimate from price vs lease age relationship
+            avg_lease_age = area_df["lease_age"].mean()
+            avg_price_psf = area_df["price_psf"].median()
+            baseline_psf = hdb_df[hdb_df["lease_age"] <= 5]["price_psf"].median()
+
+            # Estimate decay rate
+            if avg_lease_age > 0 and baseline_psf > 0:
+                total_discount = ((baseline_psf - avg_price_psf) / baseline_psf) * 100
+                avg_remaining = 99 - avg_lease_age
+                annual_decay_rate = total_discount / avg_remaining if avg_remaining > 0 else 0
+
+                town_decay_rates[area.upper()] = {
+                    "value": round(annual_decay_rate, 3),
+                    "label": f"Avg Decay (Lease: {avg_remaining:.0f}y)",
+                }
+
+    return {"bands": bands, "insights": insights, "town_decay_rates": town_decay_rates}
 
 
 def generate_affordability_metrics() -> dict[str, Any]:
@@ -272,7 +309,7 @@ def generate_affordability_metrics() -> dict[str, Any]:
 
             affordability_data.append(
                 {
-                    "town": area,  # Using planning_area as town for dashboard compatibility
+                    "town": area.upper(),  # Uppercase for map matching
                     "property_type": prop_type,
                     "median_price": round(median_price),
                     "affordability_ratio": round(affordability_ratio, 2),
@@ -285,6 +322,16 @@ def generate_affordability_metrics() -> dict[str, Any]:
 
     # Sort by ratio
     affordability_data.sort(key=lambda x: x["affordability_ratio"])
+
+    # Create town-level affordability mapping for map component (HDB only for simplicity)
+    town_affordability = {}
+    for item in affordability_data:
+        if item["property_type"] == "HDB":
+            town_name = item["town"].upper()
+            town_affordability[town_name] = {
+                "value": item["affordability_ratio"],
+                "label": f"${item['median_price']:,}",
+            }
 
     # Also generate region-level aggregations if region is available
     region_data = []
@@ -316,6 +363,7 @@ def generate_affordability_metrics() -> dict[str, Any]:
     return {
         "median_household_income": median_household_income,
         "town_metrics": affordability_data,
+        "town_affordability": town_affordability,  # For map component
         "region_metrics": region_data,
         "summary": {
             "most_affordable_hdb": [x for x in affordability_data if x["property_type"] == "HDB"][
@@ -426,8 +474,15 @@ def generate_spatial_hotspots() -> dict[str, Any]:
                 }
             )
 
+    # Create town_clusters mapping for map component
+    town_clusters = {}
+    for town_data in towns:
+        town_name = town_data["town"].upper()
+        town_clusters[town_name] = town_data["cluster"]  # Just the cluster type (HH, LH, HL, LL)
+
     return {
         "towns": towns,
+        "town_clusters": town_clusters,  # For map component
         "cluster_descriptions": {
             "HH": "🔥 Mature Hotspot - High appreciation (12.7% YoY), low risk",
             "LH": "🌱 Emerging Hotspot - Growth potential (9.2% YoY), moderate risk",

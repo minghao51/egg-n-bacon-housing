@@ -138,3 +138,28 @@
 .prose em {
   @apply italic;
 }
+
+/* Custom Leaflet Tooltip Styles */
+.custom-leaflet-tooltip {
+  background: white !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  color: hsl(var(--foreground)) !important;
+  font-size: 0.875rem !important;
+  padding: 0.75rem !important;
+}
+
+.dark .custom-leaflet-tooltip {
+  background: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+
+/* Trends Dashboard Layout */
+@media (max-width: 1024px) {
+  .trends-map-section {
+    height: 50vh !important;
+    min-height: 350px !important;
+  }
+}
