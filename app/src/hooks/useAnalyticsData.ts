@@ -5,12 +5,44 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import zlib from 'zlib';
 import {
   SpatialAnalyticsData,
   FeatureImpactData,
   PredictiveAnalyticsData,
 } from '../types/analytics';
+
+async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
+  // Use DecompressionStream if available (modern browsers)
+  if ('DecompressionStream' in window) {
+    const stream = new Response(buffer).body;
+    if (!stream) throw new Error('No stream available');
+
+    const decompressedStream = stream.pipeThrough(
+      new DecompressionStream('gzip')
+    );
+
+    const reader = decompressedStream.getReader();
+    const chunks: Uint8Array[] = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+
+    const decompressed = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+    let offset = 0;
+    for (const chunk of chunks) {
+      decompressed.set(chunk, offset);
+      offset += chunk.length;
+    }
+
+    return new TextDecoder().decode(decompressed);
+  }
+
+  // Fallback: assume response was already decompressed by browser
+  return new TextDecoder().decode(buffer);
+}
 
 interface UseAnalyticsDataResult<T> {
   data: T | null;
@@ -67,7 +99,7 @@ export function useAnalyticsData<T>(
             ? 'predictive_analytics'
             : `${type}_analysis`;
 
-        const response = await fetch(`/data/analytics/${filename}.json.gz`, {
+        const response = await fetch(`${import.meta.env.BASE_URL}data/analytics/${filename}.json.gz`, {
           signal,
         });
 
@@ -77,7 +109,7 @@ export function useAnalyticsData<T>(
 
         // Handle gzipped response
         const buffer = await response.arrayBuffer();
-        const decompressed = zlib.inflateSync(Buffer.from(buffer)).toString('utf-8');
+        const decompressed = await decompressGzip(buffer);
         const json = JSON.parse(decompressed);
 
         // Cache the response

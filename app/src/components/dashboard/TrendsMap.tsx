@@ -3,6 +3,39 @@ import React, { useState, useMemo, useEffect } from 'react';
 // Do NOT import react-leaflet at module level
 // Import it dynamically only in the browser
 
+async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
+  // Use DecompressionStream if available (modern browsers)
+  if ('DecompressionStream' in window) {
+    const stream = new Response(buffer).body;
+    if (!stream) throw new Error('No stream available');
+
+    const decompressedStream = stream.pipeThrough(
+      new DecompressionStream('gzip')
+    );
+
+    const reader = decompressedStream.getReader();
+    const chunks: Uint8Array[] = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+
+    const decompressed = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+    let offset = 0;
+    for (const chunk of chunks) {
+      decompressed.set(chunk, offset);
+      offset += chunk.length;
+    }
+
+    return new TextDecoder().decode(decompressed);
+  }
+
+  // Fallback: assume response was already decompressed by browser
+  return new TextDecoder().decode(buffer);
+}
+
 interface TrendsMapProps {
   metricData: Record<string, number | { value: number; label: string }>;
   metricLabel: string;
@@ -72,14 +105,12 @@ export default function TrendsMap({
     // Load GeoJSON data
     fetch(`${import.meta.env.BASE_URL}data/planning_areas.geojson.gz`)
       .then(res => {
-        const contentEncoding = res.headers.get('content-encoding');
-        if (contentEncoding === 'gzip') {
-          return res.arrayBuffer().then(buffer => {
-            // Use browser's DecompressionStream if available, otherwise assume ungzip
-            return new Response(buffer).json();
-          });
-        }
-        return res.json();
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        return res.arrayBuffer();
+      })
+      .then(async buffer => {
+        const textStr = await decompressGzip(buffer);
+        return JSON.parse(textStr);
       })
       .then(data => setGeoJsonData(data))
       .catch(err => console.error('Failed to load GeoJSON:', err));
