@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/FilterPanel.tsx
-import { FilterState, InvestmentGoal, PropertyType, Region, TimeHorizon } from '@/types/segments';
+import { FilterState, InvestmentGoal, PropertyType, Region, TimeHorizon, SpatialCluster } from '@/types/segments';
 
 interface FilterPanelProps {
   filters: FilterState;
@@ -31,6 +31,14 @@ const TIME_HORIZONS: { value: TimeHorizon; label: string; description: string }[
   { value: 'short', label: 'Short-term', description: '1-3 years' },
   { value: 'medium', label: 'Medium-term', description: '3-7 years' },
   { value: 'long', label: 'Long-term', description: '7+ years' },
+];
+
+const HOTSPOT_OPTIONS: { value: SpatialCluster | 'all'; label: string; icon: string; description: string }[] = [
+  { value: 'all', label: 'All Areas', icon: '🌐', description: 'Show all segments' },
+  { value: 'HH', label: 'Hotspots Only', icon: '🔥', description: 'High-price clusters (58-62% persistence)' },
+  { value: 'LL', label: 'Coldspots Only', icon: '❄️', description: 'Low-price clusters (value opportunities)' },
+  { value: 'HL', label: 'Pioneers', icon: '⚡', description: 'High prices in low-price areas' },
+  { value: 'LH', label: 'Transitions', icon: '🔄', description: 'Low prices near high-price areas' },
 ];
 
 export default function FilterPanel({ filters, onFilterChange, onReset, activeFilterCount }: FilterPanelProps) {
@@ -196,6 +204,40 @@ export default function FilterPanel({ filters, onFilterChange, onReset, activeFi
               <div>
                 <div className="font-medium text-sm">{horizon.label}</div>
                 <div className="text-xs text-muted-foreground">{horizon.description}</div>
+              </div>
+            </label>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Hotspot Filter */}
+      <FilterSection title="Spatial Hotspot">
+        <div className="space-y-2">
+          {HOTSPOT_OPTIONS.map((option) => (
+            <label
+              key={option.value}
+              className={`
+                flex items-start p-3 rounded-lg border cursor-pointer transition-all
+                ${filters.hotspotFilter === option.value
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border hover:border-primary/50'
+                }
+              `}
+            >
+              <input
+                type="radio"
+                name="hotspotFilter"
+                value={option.value}
+                checked={filters.hotspotFilter === option.value}
+                onChange={(e) => onFilterChange('hotspotFilter', e.target.value as SpatialCluster | 'all')}
+                className="mt-1 mr-3"
+              />
+              <div>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm">{option.icon}</span>
+                  <div className="font-medium text-sm">{option.label}</div>
+                </div>
+                <div className="text-xs text-muted-foreground">{option.description}</div>
               </div>
             </label>
           ))}

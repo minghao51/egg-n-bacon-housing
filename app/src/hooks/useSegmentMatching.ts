@@ -24,6 +24,11 @@ function calculateMatchScore(segment: Segment, filters: FilterState): number {
   let score = 0;
   let maxScore = 0;
 
+  // Hotspot filter - hard filter (must match to pass)
+  if (filters.hotspotFilter !== 'all' && segment.spatialClassification !== filters.hotspotFilter) {
+    return 0;
+  }
+
   // Investment goal (30% weight)
   if (filters.investmentGoal) {
     if (

@@ -26,6 +26,13 @@ const RISK_COLORS = {
   very_high: 'text-red-600 bg-red-50 dark:bg-red-900/20',
 };
 
+const HOTSPOT_BADGES: Record<string, { icon: string; label: string; className: string }> = {
+  HH: { icon: '🔥', label: 'Hotspot', className: 'text-red-700 bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800' },
+  LL: { icon: '❄️', label: 'Coldspot', className: 'text-blue-700 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800' },
+  HL: { icon: '⚡', label: 'Pioneer', className: 'text-orange-700 bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800' },
+  LH: { icon: '🔄', label: 'Transition', className: 'text-purple-700 bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800' },
+};
+
 export default function SegmentCard({
   segment,
   matchScore,
@@ -60,11 +67,16 @@ export default function SegmentCard({
         )}
       </div>
 
-      {/* Risk Badge */}
-      <div className="mb-3">
+      {/* Risk and Hotspot Badges */}
+      <div className="mb-3 flex items-center gap-2 flex-wrap">
         <span className={clsx('inline-block px-2 py-1 text-xs font-medium rounded-full', riskColor)}>
           {segment.characteristics.riskLevel.replace('_', ' ').toUpperCase()} RISK
         </span>
+        {segment.spatialClassification && HOTSPOT_BADGES[segment.spatialClassification] && (
+          <span className={clsx('inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border', HOTSPOT_BADGES[segment.spatialClassification].className)}>
+            {HOTSPOT_BADGES[segment.spatialClassification].icon} {HOTSPOT_BADGES[segment.spatialClassification].label}
+          </span>
+        )}
       </div>
 
       {/* Metrics */}

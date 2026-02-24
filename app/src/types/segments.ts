@@ -1,7 +1,7 @@
 // Segment types for the enhanced dashboard
 
 export type InvestmentType = 'yield' | 'growth' | 'value' | 'balanced' | 'luxury' | 'speculative';
-export type SpatialCluster = 'HH' | 'LH' | 'LL';
+export type SpatialCluster = 'HH' | 'HL' | 'LH' | 'LL';
 export type PriceTier = 'affordable' | 'moderate' | 'premium' | 'luxury';
 export type RiskLevel = 'low' | 'medium' | 'high' | 'very_high';
 export type Volatility = 'low' | 'moderate' | 'high';
@@ -100,6 +100,7 @@ export interface FilterState {
   propertyTypes: PropertyType[];
   locations: Region[];
   timeHorizon: TimeHorizon | null;
+  hotspotFilter: SpatialCluster | 'all';
 }
 
 export interface PersonaPreset {

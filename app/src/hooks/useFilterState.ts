@@ -16,6 +16,7 @@ const INITIAL_FILTERS: FilterState = {
   propertyTypes: ['HDB', 'Condominium', 'EC'],
   locations: ['CCR', 'RCR', 'OCR'],
   timeHorizon: null,
+  hotspotFilter: 'all',
 };
 
 const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
@@ -26,6 +27,7 @@ const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
       propertyTypes: ['HDB', 'Condominium', 'EC'],
       locations: ['CCR', 'RCR', 'OCR'],
       timeHorizon: null,
+      hotspotFilter: 'all',
     },
     priorityMetrics: [],
     defaultInsights: [],
@@ -37,6 +39,7 @@ const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
       propertyTypes: ['Condominium', 'HDB'],
       locations: ['CCR', 'RCR', 'OCR'],
       timeHorizon: 'medium',
+      hotspotFilter: 'HH',
     },
     priorityMetrics: ['rental_yield', 'mrt_proximity', 'appreciation'],
     defaultInsights: ['condo_mrt_sensitivity', 'hotspot_persistence'],
@@ -48,6 +51,7 @@ const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
       propertyTypes: ['HDB'],
       locations: ['OCR', 'RCR'],
       timeHorizon: 'long',
+      hotspotFilter: 'all',
     },
     priorityMetrics: ['affordability', 'school_quality', 'lease_remaining'],
     defaultInsights: ['school_premiums_by_region', 'cbd_vs_mrt'],
@@ -59,6 +63,7 @@ const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
       propertyTypes: ['HDB', 'Condominium'],
       locations: ['RCR', 'OCR'],
       timeHorizon: 'long',
+      hotspotFilter: 'all',
     },
     priorityMetrics: ['space_value', 'neighborhood', 'amenities'],
     defaultInsights: ['cbd_vs_mrt', 'school_premiums_by_region'],
@@ -107,6 +112,7 @@ export function useFilterState(initialPersona: Persona = 'all'): UseFilterStateR
     if (filters.propertyTypes.length < 3) count++;
     if (filters.locations.length < 3) count++;
     if (filters.timeHorizon) count++;
+    if (filters.hotspotFilter !== 'all') count++;
     return count;
   }, [filters]);
 

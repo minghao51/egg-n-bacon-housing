@@ -19,7 +19,7 @@ export function useSegmentsData(): UseSegmentsDataResult {
     setError(null);
 
     try {
-      const response = await fetch('/data/segments_enhanced.json.gz');
+      const response = await fetch(`${import.meta.env.BASE_URL}data/segments_enhanced.json.gz`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

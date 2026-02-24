@@ -70,7 +70,7 @@ export default function TrendsMap({
     import('leaflet/dist/leaflet.css');
 
     // Load GeoJSON data
-    fetch('/data/planning_areas.geojson.gz')
+    fetch(`${import.meta.env.BASE_URL}data/planning_areas.geojson.gz`)
       .then(res => {
         const contentEncoding = res.headers.get('content-encoding');
         if (contentEncoding === 'gzip') {
