@@ -20,14 +20,16 @@ const analyticsDocs = allDocs
 
 function isActive(path: string, href: string): boolean {
   if (!path) return false;
-  // Exact match for dashboard pages
-  if (href.includes('/dashboard/')) {
+  // Strip BASE_URL from href for comparison (path doesn't include it)
+  const baseHref = href.replace(import.meta.env.BASE_URL, '/');
+
+  if (baseHref.includes('/dashboard/')) {
     const normalizedPath = path.replace(/\/$/, '') || '/dashboard';
-    const normalizedHref = href.replace(/\/$/, '') || '/dashboard';
+    const normalizedHref = baseHref.replace(/\/$/, '') || '/dashboard';
     return normalizedPath === normalizedHref;
   }
   // Prefix match for analytics
-  return path.startsWith(href);
+  return path.startsWith(baseHref);
 }
 ---
 
