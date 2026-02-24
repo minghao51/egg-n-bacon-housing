@@ -45,128 +45,104 @@ function isActive(path: string, href: string): boolean {
     </div>
 
     <!-- Dashboard Section -->
-    <div class="mb-6">
-      <div class="flex items-center gap-2 px-3 mb-2">
+    <div>
+      <div class="px-3 mb-3 mt-6 flex items-center gap-2">
         <div class="h-4 w-0.5 bg-primary rounded-full"></div>
         <div class="text-xs font-bold text-foreground uppercase tracking-wider">
           Dashboard
         </div>
       </div>
-      <div class="border-t border-border mb-2"></div>
+      <div class="border-t border-border my-3"></div>
       <ul class="space-y-1">
         <li>
           <a
             href={`${import.meta.env.BASE_URL}dashboard`}
             class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}dashboard`) }
+              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard`) }
-            ]}></span>
-            <span class="pl-1">Market Overview</span>
+            Market Overview
           </a>
         </li>
         <li>
           <a
             href={`${import.meta.env.BASE_URL}dashboard/map`}
             class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/map`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/map`) }
+              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/map`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/map`) }
-            ]}></span>
-            <span class="pl-1">Interactive Map</span>
+            Interactive Map
           </a>
         </li>
         <li>
           <a
             href={`${import.meta.env.BASE_URL}dashboard/trends`}
             class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/trends`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/trends`) }
+              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/trends`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/trends`) }
-            ]}></span>
-            <span class="pl-1">Analysis Tools</span>
+            Analysis Tools
           </a>
         </li>
         <li>
           <a
             href={`${import.meta.env.BASE_URL}dashboard/segments`}
             class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/segments`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/segments`) }
+              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/segments`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/segments`) }
-            ]}></span>
-            <span class="pl-1">Market Segments</span>
+            Market Segments
           </a>
         </li>
         <li>
           <a
             href={`${import.meta.env.BASE_URL}dashboard/leaderboard`}
             class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/leaderboard`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/leaderboard`) }
+              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/leaderboard`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/leaderboard`) }
-            ]}></span>
-            <span class="pl-1">Area Rankings</span>
+            Area Rankings
           </a>
         </li>
       </ul>
     </div>
 
     <!-- Personas Section -->
-    <div class="mb-6">
-      <div class="flex items-center gap-2 px-3 mb-2">
+    <div class="mt-6">
+      <div class="px-3 mb-3 flex items-center gap-2">
         <div class="h-4 w-0.5 bg-primary rounded-full"></div>
         <div class="text-xs font-bold text-foreground uppercase tracking-wider">
           Personas
         </div>
       </div>
-      <div class="border-t border-border mb-2"></div>
+      <div class="border-t border-border my-3"></div>
       <ul class="space-y-1">
         <li>
           <a
             href={`${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`}
             class:list={[
-              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`) }
+              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`) }
-            ]}></span>
-            <span class="pl-1">🏠</span>
+            🏠
             <span>First-Time Buyer</span>
           </a>
         </li>
@@ -174,17 +150,13 @@ function isActive(path: string, href: string): boolean {
           <a
             href={`${import.meta.env.BASE_URL}analytics/personas/investor`}
             class:list={[
-              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`) }
+              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`) }
-            ]}></span>
-            <span class="pl-1">💼</span>
+            💼
             <span>Investor</span>
           </a>
         </li>
@@ -192,17 +164,13 @@ function isActive(path: string, href: string): boolean {
           <a
             href={`${import.meta.env.BASE_URL}analytics/personas/upgrader`}
             class:list={[
-              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`) }
+              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`) }
-            ]}></span>
-            <span class="pl-1">⬆️</span>
+            ⬆️
             <span>Upgrader</span>
           </a>
         </li>
@@ -210,30 +178,26 @@ function isActive(path: string, href: string): boolean {
     </div>
 
     <!-- Analytics Section -->
-    <div class="mb-6">
-      <div class="flex items-center gap-2 px-3 mb-2">
+    <div class="mt-6">
+      <div class="px-3 mb-3 flex items-center gap-2">
         <div class="h-4 w-0.5 bg-primary rounded-full"></div>
         <div class="text-xs font-bold text-foreground uppercase tracking-wider">
           Analytics
         </div>
       </div>
-      <div class="border-t border-border mb-2"></div>
+      <div class="border-t border-border my-3"></div>
       <ul class="space-y-1">
         <li>
           <a
             href={`${import.meta.env.BASE_URL}analytics/`}
             class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-              "hover:bg-accent hover:text-accent-foreground",
-              { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/`) },
-              { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}analytics/`) }
+              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/`)
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             ]}
           >
-            <span class:list={[
-              "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-              { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/`) }
-            ]}></span>
-            <span class="pl-1">Analytics Index</span>
+            Analytics Index
           </a>
         </li>
         {
@@ -242,17 +206,13 @@ function isActive(path: string, href: string): boolean {
               <a
                 href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
                 class:list={[
-                  "block px-3 py-2 rounded-md text-sm font-medium transition-colors relative",
-                  "hover:bg-accent hover:text-accent-foreground",
-                  { "text-foreground bg-accent/50": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`) },
-                  { "text-muted-foreground": !isActive(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`) }
+                  "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                  isActive(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`)
+                    ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 ]}
               >
-                <span class:list={[
-                  "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full",
-                  { "bg-primary": isActive(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`) }
-                ]}></span>
-                <span class="pl-1">{doc.title}</span>
+                {doc.title}
               </a>
             </li>
           ))
