@@ -272,7 +272,9 @@ def run_processing_pipeline(
         addresses_list, use_parallel=use_parallel_geocoding, show_progress=True
     )
 
-    results["geocoded_count"] = len(geocoded_df)  # Row count (can include multiple matches per address)
+    results["geocoded_count"] = len(
+        geocoded_df
+    )  # Row count (can include multiple matches per address)
     results["geocoded_unique_count"] = (
         geocoded_df["NameAddress"].nunique() if "NameAddress" in geocoded_df.columns else 0
     )
@@ -303,7 +305,9 @@ def run_processing_pipeline(
         f"{results['geocoded_unique_count']} "
         f"({results['geocoded_unique_count'] / results['total_addresses'] * 100:.1f}%)"
     )
-    logger.info(f"   Geocoded rows (cache+new, may include multiple matches): {results['geocoded_count']}")
+    logger.info(
+        f"   Geocoded rows (cache+new, may include multiple matches): {results['geocoded_count']}"
+    )
     logger.info(f"   Failed new geocoding requests: {results['failed_count']}")
     logger.info(
         "   Final filtered addresses (best match): "

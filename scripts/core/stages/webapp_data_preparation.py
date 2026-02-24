@@ -729,12 +729,12 @@ def generate_filtered_segments_data(df):
 
         # Generate for each property type
         for prop_type in ["hdb", "ec", "condo"]:
-                prop_df = filter_by_property_type(era_df, prop_type)
-                if not prop_df.empty:
-                    key = f"{era_name}_{prop_type}"
-                    filtered_segments[key] = generate_segments_data(
-                        prop_df, yield_lookup=segment_yield_lookups.get(key)
-                    )
+            prop_df = filter_by_property_type(era_df, prop_type)
+            if not prop_df.empty:
+                key = f"{era_name}_{prop_type}"
+                filtered_segments[key] = generate_segments_data(
+                    prop_df, yield_lookup=segment_yield_lookups.get(key)
+                )
 
     logger.info(f"Generated filtered segments data for {len(filtered_segments)} combinations")
     return filtered_segments
@@ -903,9 +903,7 @@ def generate_leaderboard_data(df, l5_cache: dict | None = None):
     # Get affordability metrics
     aff_lookup = (l5_cache or {}).get("affordability_by_area")
     if aff_lookup:
-        aff_dict = {
-            area: values.get("affordability_ratio") for area, values in aff_lookup.items()
-        }
+        aff_dict = {area: values.get("affordability_ratio") for area, values in aff_lookup.items()}
     else:
         try:
             aff_df = calculate_affordability_by_area(df)
