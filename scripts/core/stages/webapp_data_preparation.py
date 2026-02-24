@@ -630,62 +630,289 @@ def generate_filtered_segments_data(df):
     return filtered_segments
 
 
+def get_planning_area_metadata():
+    """
+    Load planning area metadata from GeoJSON (region, coordinates).
+
+    Returns:
+        dict: Mapping of lowercase area name to metadata dict with 'region' and 'coordinates'
+    """
+    geojson_path = Path("data/manual/geojsons/ura_planning_area_boundary.geojson")
+    if not geojson_path.exists():
+        geojson_path = Path("data/manual/geojsons/onemap_planning_area_polygon.geojson")
+
+    metadata = {}
+    if geojson_path.exists():
+        with open(geojson_path, "r") as f:
+            geojson = json.load(f)
+
+        for feature in geojson.get("features", []):
+            props = feature.get("properties", {})
+            area_name = props.get("PLN_AREA_N") or props.get("planning_area_n", "")
+            region_name = props.get("REGION_N") or props.get("region_n", "Unknown")
+
+            # Calculate centroid from coordinates
+            centroid = _calculate_centroid_from_geometry(feature.get("geometry", {}))
+
+            metadata[area_name.lower()] = {
+                "region": region_name,
+                "coordinates": centroid,
+            }
+
+    return metadata
+
+
+def _calculate_centroid_from_geometry(geometry: dict) -> list[float] | None:
+    """
+    Calculate centroid from GeoJSON geometry.
+
+    Args:
+        geometry: GeoJSON geometry dict with 'type' and 'coordinates'
+
+    Returns:
+        [longitude, latitude] or None if no coordinates
+    """
+    coordinates = geometry.get("coordinates", [])
+
+    if not coordinates or len(coordinates) == 0:
+        return None
+
+    # Extract coordinate array based on geometry type
+    if geometry.get("type") == "Polygon":
+        all_coords = coordinates[0]  # First ring of polygon
+    elif geometry.get("type") == "MultiPolygon":
+        all_coords = coordinates[0][0]  # First ring of first polygon
+    else:
+        # Fallback for other types
+        all_coords = coordinates[0] if isinstance(coordinates[0], list) else coordinates
+
+    # Calculate centroid as average of all coordinates
+    lons = [c[0] for c in all_coords]
+    lats = [c[1] for c in all_coords]
+    return [round(sum(lons) / len(lons), 6), round(sum(lats) / len(lats), 6)]
+
+
+def _calculate_property_type_breakdown(
+    df_full: pd.DataFrame,
+    area_col: str,
+    area_name: str
+) -> dict[str, dict[str, int | None]]:
+    """
+    Calculate property type breakdown for a specific planning area.
+
+    Args:
+        df_full: Full transaction dataframe
+        area_col: Column name for planning area
+        area_name: Planning area name to filter by
+
+    Returns:
+        Dict with keys 'hdb', 'ec', 'condo' containing median_price and volume
+    """
+    property_filters = {
+        "hdb": df_full["property_type"].isin(["HDB", "HDB Flat"]),
+        "ec": df_full["property_type"].isin(["Executive Condominium", "EC"]),
+        "condo": df_full["property_type"].isin(["Condominium", "Apartment", "Condo"]),
+    }
+
+    breakdown = {}
+    for prop_name, mask in property_filters.items():
+        prop_area_data = df_full[mask & (df_full[area_col] == area_name)]
+
+        if prop_area_data.empty:
+            breakdown[prop_name] = {"median_price": None, "volume": 0}
+        else:
+            breakdown[prop_name] = {
+                "median_price": int(prop_area_data["price"].median()),
+                "volume": int(len(prop_area_data)),
+            }
+
+    return breakdown
+
+
+def _calculate_time_period_breakdown(
+    time_periods: dict[str, pd.DataFrame],
+    area_col: str,
+    area_name: str
+) -> dict[str, dict[str, int | float | None]]:
+    """
+    Calculate time period breakdown for a specific planning area.
+
+    Args:
+        time_periods: Dict of period name to filtered dataframe
+        area_col: Column name for planning area
+        area_name: Planning area name to filter by
+
+    Returns:
+        Dict with period names containing median_price and yoy_growth
+    """
+    breakdown = {}
+
+    for period_name, period_df in time_periods.items():
+        period_area_data = period_df[period_df[area_col] == area_name]
+
+        if period_area_data.empty:
+            breakdown[period_name] = {"median_price": None, "yoy_growth": None}
+            continue
+
+        median_price = int(period_area_data["price"].median())
+
+        # Calculate YoY growth for this period
+        period_year = period_area_data["year"].max()
+        period_prev_year = period_year - 1
+
+        price_curr = period_area_data[period_area_data["year"] == period_year]["price"].median()
+        price_prev = period_area_data[period_area_data["year"] == period_prev_year]["price"].median()
+
+        if pd.notna(price_curr) and pd.notna(price_prev) and price_prev > 0:
+            yoy = round(((price_curr - price_prev) / price_prev) * 100, 2)
+        else:
+            yoy = None
+
+        breakdown[period_name] = {"median_price": median_price, "yoy_growth": yoy}
+
+    return breakdown
+
+
 def generate_leaderboard_data(df):
-    """Generate town leaderboard rankings using standardized planning_area."""
-    df_recent = df[df["year"] >= 2023].copy()
+    """
+    Generate enhanced town leaderboard with filterable breakdowns.
 
-    # Use planning_area for consistent aggregation (instead of messy town column)
+    Args:
+        df: Unified transaction dataframe with planning_area column
+
+    Returns:
+        List of leaderboard entry dicts with planning area metrics
+    """
+    logger.info("Generating enhanced leaderboard data...")
+
+    # Load planning area metadata (region, coordinates)
+    area_metadata = get_planning_area_metadata()
+    logger.info(f"Loaded metadata for {len(area_metadata)} planning areas")
+
+    # Get hotspot data
+    hotspots = generate_hotspots_data(df)
+
+    # Get affordability metrics
+    try:
+        aff_df = calculate_affordability_by_area(df)
+        aff_dict = aff_df.set_index("planning_area")["affordability_ratio"].to_dict()
+    except Exception as e:
+        logger.warning(f"Could not load affordability metrics: {e}")
+        aff_dict = {}
+
+    # Get growth metrics (for mom_change and momentum)
+    try:
+        growth_df = calculate_growth_metrics_by_area(df)
+        latest_growth = growth_df.sort_values("month").groupby("planning_area").last()
+        growth_dict = latest_growth[
+            ["mom_change_pct", "yoy_change_pct", "momentum"]
+        ].to_dict("index")
+    except Exception as e:
+        logger.warning(f"Could not load growth metrics: {e}")
+        growth_dict = {}
+
+    # Use planning_area for consistent aggregation
     area_col = "planning_area" if "planning_area" in df.columns else "town"
-    logger.info(f"Generating leaderboard using '{area_col}'")
 
-    # Calculate metrics by planning area
+    # Define time periods
+    time_periods = {
+        "whole": df,
+        "pre_covid": df[df["transaction_date"].dt.year <= 2021],
+        "recent": df[df["transaction_date"].dt.year >= 2022],
+        "year_2025": df[df["transaction_date"].dt.year == 2025],
+    }
+
+    # Calculate overall metrics (recent data for default display)
+    df_recent = time_periods["recent"].copy()
+
     area_metrics = (
         df_recent.groupby(area_col)
-        .agg(
-            {
-                "price": "median",
-                "price_psf": "median",
-                "rental_yield_pct": "mean",
-                "transaction_date": "count",
-            }
-        )
+        .agg({
+            "price": "median",
+            "price_psf": "median",
+            "rental_yield_pct": "mean",
+            "transaction_date": "count",
+        })
         .reset_index()
     )
 
-    area_metrics.columns = ["area", "median_price", "median_psf", "yield", "volume"]
+    area_metrics.columns = ["area", "median_price", "median_psf", "rental_yield_mean", "volume"]
 
-    # Calculate Growth (Year over Year for last year)
-    current_year = df["year"].max()
+    # Get rental yield median from L5 metrics
+    try:
+        yield_df = calculate_rental_yield_by_area(df_recent)
+        yield_median = yield_df.set_index("planning_area")["median"].to_dict()
+        area_metrics["rental_yield_median"] = area_metrics["area"].map(
+            lambda x: safe_float(yield_median.get(x.lower()))
+        )
+    except Exception as e:
+        logger.warning(f"Could not add rental yield median: {e}")
+        area_metrics["rental_yield_median"] = None
+
+    # Calculate YoY growth
+    current_year = df_recent["year"].max()
     prev_year = current_year - 1
 
-    price_curr = df[df["year"] == current_year].groupby(area_col)["price"].median()
-    price_prev = df[df["year"] == prev_year].groupby(area_col)["price"].median()
+    price_curr = df_recent[df_recent["year"] == current_year].groupby(area_col)["price"].median()
+    price_prev = df_recent[df_recent["year"] == prev_year].groupby(area_col)["price"].median()
 
-    growth = ((price_curr - price_prev) / price_prev * 100).reset_index()
-    growth.columns = ["area", "growth"]
+    yoy_growth = ((price_curr - price_prev) / price_prev * 100).reset_index()
+    yoy_growth.columns = ["area", "yoy_growth_pct"]
 
-    # Merge
-    leaderboard = pd.merge(area_metrics, growth, on="area", how="left").fillna(0)
+    # Merge growth metrics
+    area_metrics = pd.merge(area_metrics, yoy_growth, on="area", how="left")
 
-    # Simple Ranking Score (just an example: Growth + Yield)
-    leaderboard["score"] = leaderboard["growth"] + leaderboard["yield"]
-    leaderboard = leaderboard.sort_values("score", ascending=False)
-
-    # Convert to list of dicts
+    # Build enhanced leaderboard entries
     result = []
-    for rank, (_, row) in enumerate(leaderboard.iterrows(), 1):
-        result.append(
-            {
-                "rank": rank,
-                "town": row["area"],  # Using planning_area as town for dashboard compatibility
-                "median_price": int(row["median_price"]),
-                "median_psf": int(row["median_psf"]),
-                "yield": round(float(row["yield"]), 2) if row["yield"] else 0,
-                "growth": round(float(row["growth"]), 2),
-                "volume": int(row["volume"]),
-            }
-        )
+    for _, row in area_metrics.iterrows():
+        area_name = row["area"]
+        area_lower = area_name.lower()
 
+        # Get metadata
+        meta = area_metadata.get(area_lower, {})
+        region = meta.get("region", "Unknown")
+        coordinates = meta.get("coordinates")
+
+        # Get hotspot category
+        hotspot = hotspots.get(area_name.upper(), {}).get("category", "Unknown")
+
+        # Get additional metrics
+        mom_change = safe_float(growth_dict.get(area_lower, {}).get("mom_change_pct"))
+        momentum = safe_float(growth_dict.get(area_lower, {}).get("momentum"))
+        affordability = safe_float(aff_dict.get(area_lower))
+
+        # Calculate breakdowns using helper functions
+        by_property_type = _calculate_property_type_breakdown(df, area_col, area_name)
+        by_time_period = _calculate_time_period_breakdown(time_periods, area_col, area_name)
+
+        # Build entry
+        entry = {
+            "planning_area": area_name,
+            "region": region,
+            "coordinates": coordinates,
+            "spatial_hotspot": hotspot,
+            "rank_overall": 0,  # Will be assigned after sorting
+            "median_price": int(row["median_price"]),
+            "median_psf": int(row["median_psf"]),
+            "rental_yield_mean": round(float(row["rental_yield_mean"]), 2) if row["rental_yield_mean"] else 0,
+            "rental_yield_median": row["rental_yield_median"],
+            "yoy_growth_pct": round(float(row["yoy_growth_pct"]), 2) if pd.notna(row["yoy_growth_pct"]) else 0,
+            "mom_change_pct": mom_change if mom_change else 0,
+            "momentum": momentum if momentum else 0,
+            "volume": int(row["volume"]),
+            "affordability_ratio": affordability if affordability else 0,
+            "by_property_type": by_property_type,
+            "by_time_period": by_time_period,
+        }
+
+        result.append(entry)
+
+    # Rank by growth + yield (default)
+    result.sort(key=lambda x: x["yoy_growth_pct"] + x["rental_yield_mean"], reverse=True)
+    for rank, entry in enumerate(result, 1):
+        entry["rank_overall"] = rank
+
+    logger.info(f"Generated enhanced leaderboard for {len(result)} planning areas")
     return result
 
 

@@ -75,6 +75,19 @@ This document catalogs all external services, APIs, databases, and third-party i
 
 **Cost**: Free tier with daily quota; pay-per-use beyond
 
+#### Jina AI
+
+**Purpose**: Web scraping - reading URLs to markdown
+
+**Endpoint**: `https://r.jina.ai/`
+
+**Authentication**:
+- API key via environment variable: `JINA_AI`
+
+**Usage in Code**:
+- `notebooks/L0_webscrap_jina.py` - Web content extraction
+- Scrapes URLs for data collection
+
 ---
 
 ## Third-Party Libraries
@@ -270,6 +283,7 @@ AWS_SECRET_ACCESS_KEY=xxx
 AWS_REGION=us-east-1
 SUPABASE_URL=xxx
 SUPABASE_KEY=xxx
+JINA_AI=your-jina-ai-key
 ```
 
 **Configuration**:
@@ -315,7 +329,7 @@ SUPABASE_KEY=xxx
 
 ## Summary
 
-**Primary Data Sources**: data.gov.sg (HDB/URA), OneMap (geocoding)
+**Primary Data Sources**: data.gov.sg (HDB/URA), OneMap (geocoding), Jina AI (web scraping)
 **Fallback Services**: Google Maps Geocoding API
 **ML Libraries**: scikit-learn, XGBoost, Prophet
 **Spatial Libraries**: H3, GeoPandas, PySAL

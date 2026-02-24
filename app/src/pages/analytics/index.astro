@@ -31,13 +31,13 @@ const categoryConfig = {
 
 // Group documents by category
 const docsByCategory = allDocs.reduce((acc, doc) => {
-  const category = doc.data.category || 'technical-reports'; // Default fallback
+  const category = doc.data.category || 'technical-reports';
   if (!acc[category]) {
     acc[category] = [];
   }
   acc[category].push({
-    slug: doc.slug,
-    title: doc.data.title || doc.slug,
+    slug: doc.id,
+    title: doc.data.title || doc.id,
     description: doc.data.description || '',
     category: doc.data.category,
   });

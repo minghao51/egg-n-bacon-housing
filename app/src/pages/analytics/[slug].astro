@@ -9,7 +9,7 @@ import { getCollection, render } from 'astro:content';
 export async function getStaticPaths() {
   const docs = await getCollection('analytics');
   return docs.map((doc) => ({
-    params: { slug: doc.slug },
+    params: { slug: doc.id },
     props: { doc },
   }));
 }

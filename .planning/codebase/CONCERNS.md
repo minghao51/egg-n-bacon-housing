@@ -4,7 +4,7 @@
 
 This document catalogs technical debt, known issues, security concerns, performance bottlenecks, and areas for improvement in the egg-n-bacon-housing project.
 
-**Last Updated**: 2026-02-19
+**Last Updated**: 2026-02-22
 **Status**: Active tracking
 
 ---
@@ -17,14 +17,16 @@ This document catalogs technical debt, known issues, security concerns, performa
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `scripts/core/stages/L3_export.py` | 1639 | Should be split into smaller functions |
-| `scripts/data/create_l3_unified_dataset.py` | 150 | Simplified for VAR modeling |
+| `scripts/core/stages/L3_export.py` | 1696 | Should be split into smaller functions |
 | `scripts/core/metrics.py` | 914 | Complex statistical calculations |
-| `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` | 797 | Large analysis file |
-| `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` | 768 | Complex lease decay modeling |
-| `scripts/analytics/enhanced_mrt_analysis.py` | 756 | Duplicate MRT analysis |
+| `scripts/core/stages/L2_features.py` | 808 | Complex feature engineering |
+| `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` | 796 | Large analysis file |
+| `scripts/core/stages/webapp_data_preparation.py` | 767 | Dashboard data prep |
+| `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` | 766 | Complex lease decay modeling |
+| `scripts/analytics/analysis/mrt/analyze_mrt_spatial_econometrics.py` | 755 | MRT spatial analysis |
 | `scripts/core/school_features.py` | 726 | Complex feature engineering |
-| `scripts/core/mrt_line_mapping.py` | 534 | Hardcoded station data |
+| `scripts/analytics/analysis/appreciation/analyze_appreciation_patterns.py` | 694 | Appreciation analysis |
+| `scripts/core/stages/L5_metrics.py` | 692 | Metrics calculation |
 
 **Impact**: Difficult to test, maintain, and understand
 
@@ -55,9 +57,8 @@ This document catalogs technical debt, known issues, security concerns, performa
 ### 3. Duplicate Code
 
 **L3 Export Logic**:
-- `L3_export.py` (1639 lines) - Main export pipeline
-- `scripts/data/create_l3_unified_dataset.py` (150 lines) - Simplified for VAR modeling
-- Separate purposes, not consolidated
+- `L3_export.py` (1696 lines) - Main export pipeline
+- `scripts/data/create_l3_unified_dataset.py` - Simplified for VAR modeling (now removed?)
 
 **Recommendation**: Keep separate - serve different use cases (L3_export for dashboard, data version for VAR modeling)
 
@@ -67,20 +68,16 @@ This document catalogs technical debt, known issues, security concerns, performa
 
 ### 4. Import Path Fragility
 
-**Status**: Partially resolved (2026-02-03)
+**Status**: ✅ Resolved (2026-02-03)
 
-**Remaining Issues**:
-- Some scripts still use relative imports
-- Notebook imports may fail if run from different directory
-
-**Example**:
+All Python scripts now use absolute imports from project root:
 ```python
-# Fragile
-from ..core.config import Config
-
-# Better
+# Good - Absolute from project root
 from scripts.core.config import Config
+from scripts.core.data_helpers import load_parquet
 ```
+
+No circular dependencies detected - codebase uses absolute imports correctly.
 
 ---
 
@@ -88,16 +85,13 @@ from scripts.core.config import Config
 
 ### 0. TODO/FIXME Comments
 
-**Active TODOs Found**:
+**Active TODOs Found** (3 total):
 
 | File | Line | Description | Status |
 |------|------|-------------|--------|
-| `scripts/data/fetch_macro_data.py` | 50 | Replace with actual MAS API call | TODO |
+| `scripts/data/fetch_macro_data.py` | 154 | Replace with actual MAS API call | TODO |
 | `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py` | 12 | Affordability index needs income data | TODO |
 | `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py` | 13 | ROI potential score needs rental data | TODO |
-
-**Resolved**:
-- `scripts/data/fetch_macro_data.py` - SingStat API integration implemented (CPI falls back to mock, GDP works)
 
 **Impact**: Incomplete functionality, missing data integrations
 
@@ -149,7 +143,7 @@ from scripts.core.config import Config
 **Issue**: Full datasets loaded into memory
 
 **Files Affected**:
-- L3_export.py (1632 lines) - Processes all data at once
+- L3_export.py (1696 lines) - Processes all data at once
 - Large parquet files (>500MB)
 
 **Impact**: High memory usage, potential OOM on smaller machines
@@ -162,28 +156,38 @@ from scripts.core.config import Config
 
 ### 1. API Key Exposure Risk
 
+**Status**: ✅ Good
+
 **Environment Variables**:
 - `.env` file (not in git) - Good
 - All API keys loaded from environment (ONEMAP_TOKEN, GOOGLE_API_KEY)
-- No hardcoded secrets found in scripts (only test fixtures)
+- No hardcoded secrets found in scripts
 
-**Current Pattern** (Good):
+**Verified Patterns** (Good):
 ```python
 # scripts/core/config.py
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 ONEMAP_TOKEN = os.getenv("ONEMAP_TOKEN")
+
+# scripts/core/geocoding.py
+password = os.environ.get('ONEMAP_EMAIL_PASSWORD')
 ```
+
+**Notes**:
+- Test fixtures in `tests/` use placeholder values (acceptable)
+- Password handling in refresh_onemap_token.py uses environment variables correctly
+- No hardcoded API keys or secrets in production code
 
 **Recommendation**:
 - Add `.env` to `.gitignore` (already done)
-- Add pre-commit hook to check for API keys in commits
-- Use secret scanning in CI/CD
+- Add pre-commit hook to check for API keys in commits (not implemented)
+- Use secret scanning in CI/CD (not implemented)
 
 ### 2. Dependency Vulnerabilities
 
 **Outdated Dependencies**:
 - Langchain packages pinned to specific versions
-- Some packages in beta (e.g., `h3==4.1.0b2`)
+- Some packages in beta (e.g., `h3`)
 
 **Impact**: Potential security vulnerabilities
 
@@ -395,7 +399,7 @@ ONEMAP_TOKEN = os.getenv("ONEMAP_TOKEN")
 
 ### 2. Onboarding Documentation
 
-**Issue**: steep learning curve for new developers
+**Issue**: Steep learning curve for new developers
 
 **Missing**:
 - Setup troubleshooting guide
@@ -418,7 +422,7 @@ ONEMAP_TOKEN = os.getenv("ONEMAP_TOKEN")
 
 1. **Consolidate L3 Export Logic** - Eliminate duplicate code
 2. **Add Analytics Tests** - Cover critical paths
-3. **Extract Hardcoded Data** - MRT stations, schools to CSV/JSON
+3. **Extract Hardcoded Data** - MRT stations, schools to CSV/JSON (done)
 4. **Improve Geocoding Performance** - Parallel workers, batch API
 
 ### Medium Priority
@@ -439,23 +443,34 @@ ONEMAP_TOKEN = os.getenv("ONEMAP_TOKEN")
 
 ## Related Documents
 
-- `20260203-tech-debt-mitigation.md` - Previous tech debt work
-- `20260203-school-features-optimization.md` - School features optimization
-- `docs/analytics/findings.md` - Analysis findings (uses this data)
+- `.planning/codebase/ARCHITECTURE.md` - System architecture
+- `.planning/codebase/CONVENTIONS.md` - Coding patterns
+- `.planning/codebase/TESTING.md` - Testing strategy
+- `.planning/codebase/INTEGRATIONS.md` - External services
+- `.planning/codebase/STACK.md` - Technology stack
 
 ---
 
 ## Summary
 
 **Critical Areas**:
-- Large file complexity (L3_export.py: 1639 lines)
-- Separate L3 export logic (L3_export.py for dashboard, data version for VAR modeling) - DONE
+- Large file complexity (L3_export.py: 1696 lines)
 - Test coverage gaps (analytics, data processing)
 - Geocoding performance bottleneck
 - 3 active TODO comments requiring attention (MAS SORA API, affordability index, ROI score)
 
+**Security Status**:
+- ✅ No hardcoded secrets
+- ✅ Environment variable pattern correct
+- ⚠️ No pre-commit secret scanning
+- ⚠️ No CI/CD secret scanning
+
+**Dependencies Status**:
+- ✅ No circular imports detected
+- ✅ Absolute imports used throughout
+- ⚠️ Some beta packages in use
+
 **Quick Wins**:
-- Extract hardcoded data to CSV/JSON
 - Add deployment gates (tests before deploy)
 - Replace remaining print() with logger
 - Add type hints to analytics scripts

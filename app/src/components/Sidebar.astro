@@ -7,8 +7,8 @@ const allDocs = await getCollection('analytics');
 const analyticsDocs = allDocs
   .filter(doc => doc.data.status !== 'draft')
   .map(doc => ({
-    title: doc.data.title || doc.slug,
-    slug: doc.slug,
+    title: doc.data.title || doc.id,
+    slug: doc.id,
   }))
   .sort((a, b) => a.title.localeCompare(b.title));
 ---

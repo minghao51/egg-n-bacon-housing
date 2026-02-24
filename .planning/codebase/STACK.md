@@ -37,6 +37,10 @@ This document outlines the complete technology stack used in the egg-n-bacon-hou
 
 ### Frontend (TypeScript/React)
 
+**Project Structure**:
+- Root `package.json`: Minimal (rehype-katex, remark-math for docs)
+- `app/package.json`: Full Astro/React application
+
 **Framework**:
 - Astro 5.16.16 (static site generator)
 - React 19.2.4 (UI components)
@@ -69,7 +73,11 @@ This document outlines the complete technology stack used in the egg-n-bacon-hou
 - Ruff (linting + formatting)
   - Line length: 100 characters
   - Target: Python 3.11
-  - Rules: E, F, W, I, N, UP (ignore E501)
+  - Rules: E, F, W, I, UP (ignore E501)
+
+**Frontend**:
+- ESLint (via Astro)
+- TypeScript strict mode
 
 **Testing**:
 - pytest 7.0+ (test framework)
@@ -77,6 +85,7 @@ This document outlines the complete technology stack used in the egg-n-bacon-hou
 - pytest-mock 3.10+ (mocking)
 - pytest-asyncio 0.21.0+ (async tests)
 - coverage[toml] 7.0+ (coverage reporting)
+- playwright 1.58+ (browser testing)
 
 **Type Checking**:
 - Python type hints (not enforced by mypy/pyright yet)
@@ -196,7 +205,7 @@ data/
 
 **Backend Stack**: Python 3.11+, pandas, geopandas, scikit-learn, xgboost, plotly
 **Frontend Stack**: Astro, React 19, TypeScript, Tailwind CSS, Leaflet, Recharts
-**Development**: uv, pytest, ruff, jupyter/jupytext
+**Development**: uv, pytest, playwright, ruff, jupyter/jupytext
 **Deployment**: GitHub Pages (static hosting)
 
 This stack prioritizes:
