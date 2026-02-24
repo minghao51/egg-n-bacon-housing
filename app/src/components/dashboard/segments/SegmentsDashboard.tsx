@@ -15,14 +15,14 @@ type TabId = 'discover' | 'compare' | 'details';
 
 export default function SegmentsDashboard() {
   const { data, loading, error } = useSegmentsData();
-  const { filters, persona, setPersona, updateFilter, resetFilters, activeFilterCount } =
+  const { filters, debouncedFilters, persona, setPersona, updateFilter, resetFilters, activeFilterCount } =
     useFilterState();
   const [activeTab, setActiveTab] = useState<TabId>('discover');
   const [selectedSegment, setSelectedSegment] = useState<Segment | null>(null);
   const [comparisonSet, setComparisonSet] = useState<Set<string>>(new Set());
 
-  // Get matched segments - MUST be called before early returns (React Hooks Rule)
-  const { matchedSegments } = useSegmentMatching(data?.segments ?? [], filters);
+  // Get matched segments using debounced filters for smooth performance
+  const { matchedSegments } = useSegmentMatching(data?.segments ?? [], debouncedFilters);
 
   // Handle loading state
   if (loading) {

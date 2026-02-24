@@ -1,5 +1,5 @@
 // app/src/components/dashboard/leaderboard/LeaderboardMap.tsx
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { LeaderboardEntry, LeaderboardMetric, MetricMeta } from '@/types/leaderboard';
 
 // Define types locally to avoid circular dependencies
@@ -210,6 +210,16 @@ export default function LeaderboardMap({
       .catch(err => console.error('Failed to load GeoJSON:', err));
   }, []);
 
+  // Memoize area hover handler to prevent re-renders
+  const handleAreaHover = useCallback((area: string | null) => {
+    onAreaHover(area);
+  }, [onAreaHover]);
+
+  // Memoize area click handler to prevent re-renders
+  const handleAreaClick = useCallback((area: string) => {
+    onAreaClick(area);
+  }, [onAreaClick]);
+
   // Build metric data dictionary and compute color scale
   const { metricData, minValue, maxValue, getColor } = useMemo(() => {
     const dataDict: Record<string, number> = {};
@@ -336,20 +346,20 @@ export default function LeaderboardMap({
           fillOpacity: 0.9,
         });
         layer.bringToFront();
-        onAreaHover(name);
+        handleAreaHover(name);
       },
       mouseout: (e: LeafletLayerEvent) => {
         if (highlightedArea !== name) {
           const layer = e.target;
           layer.setStyle(style(feature));
         }
-        onAreaHover(null);
+        handleAreaHover(null);
       },
       click: (e: LeafletLayerEvent) => {
-        onAreaClick(name);
+        handleAreaClick(name);
       },
     });
-  }, [metricData, data, metricMeta, highlightedArea, style, onAreaHover, onAreaClick]);
+  }, [metricData, data, metricMeta, highlightedArea, style, handleAreaHover, handleAreaClick]);
 
   // Fallback for SSR or during loading
   if (!isClient || !MapContainer || !geoJsonData) {
