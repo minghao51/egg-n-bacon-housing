@@ -643,7 +643,7 @@ def get_planning_area_metadata():
 
     metadata = {}
     if geojson_path.exists():
-        with open(geojson_path, "r") as f:
+        with open(geojson_path) as f:
             geojson = json.load(f)
 
         for feature in geojson.get("features", []):
@@ -693,9 +693,7 @@ def _calculate_centroid_from_geometry(geometry: dict) -> list[float] | None:
 
 
 def _calculate_property_type_breakdown(
-    df_full: pd.DataFrame,
-    area_col: str,
-    area_name: str
+    df_full: pd.DataFrame, area_col: str, area_name: str
 ) -> dict[str, dict[str, int | None]]:
     """
     Calculate property type breakdown for a specific planning area.
@@ -730,9 +728,7 @@ def _calculate_property_type_breakdown(
 
 
 def _calculate_time_period_breakdown(
-    time_periods: dict[str, pd.DataFrame],
-    area_col: str,
-    area_name: str
+    time_periods: dict[str, pd.DataFrame], area_col: str, area_name: str
 ) -> dict[str, dict[str, int | float | None]]:
     """
     Calculate time period breakdown for a specific planning area.
@@ -761,7 +757,9 @@ def _calculate_time_period_breakdown(
         period_prev_year = period_year - 1
 
         price_curr = period_area_data[period_area_data["year"] == period_year]["price"].median()
-        price_prev = period_area_data[period_area_data["year"] == period_prev_year]["price"].median()
+        price_prev = period_area_data[period_area_data["year"] == period_prev_year][
+            "price"
+        ].median()
 
         if pd.notna(price_curr) and pd.notna(price_prev) and price_prev > 0:
             yoy = round(((price_curr - price_prev) / price_prev) * 100, 2)
@@ -804,9 +802,9 @@ def generate_leaderboard_data(df):
     try:
         growth_df = calculate_growth_metrics_by_area(df)
         latest_growth = growth_df.sort_values("month").groupby("planning_area").last()
-        growth_dict = latest_growth[
-            ["mom_change_pct", "yoy_change_pct", "momentum"]
-        ].to_dict("index")
+        growth_dict = latest_growth[["mom_change_pct", "yoy_change_pct", "momentum"]].to_dict(
+            "index"
+        )
     except Exception as e:
         logger.warning(f"Could not load growth metrics: {e}")
         growth_dict = {}
@@ -827,12 +825,14 @@ def generate_leaderboard_data(df):
 
     area_metrics = (
         df_recent.groupby(area_col)
-        .agg({
-            "price": "median",
-            "price_psf": "median",
-            "rental_yield_pct": "mean",
-            "transaction_date": "count",
-        })
+        .agg(
+            {
+                "price": "median",
+                "price_psf": "median",
+                "rental_yield_pct": "mean",
+                "transaction_date": "count",
+            }
+        )
         .reset_index()
     )
 
@@ -894,9 +894,13 @@ def generate_leaderboard_data(df):
             "rank_overall": 0,  # Will be assigned after sorting
             "median_price": int(row["median_price"]),
             "median_psf": int(row["median_psf"]),
-            "rental_yield_mean": round(float(row["rental_yield_mean"]), 2) if row["rental_yield_mean"] else 0,
+            "rental_yield_mean": round(float(row["rental_yield_mean"]), 2)
+            if row["rental_yield_mean"]
+            else 0,
             "rental_yield_median": row["rental_yield_median"],
-            "yoy_growth_pct": round(float(row["yoy_growth_pct"]), 2) if pd.notna(row["yoy_growth_pct"]) else 0,
+            "yoy_growth_pct": round(float(row["yoy_growth_pct"]), 2)
+            if pd.notna(row["yoy_growth_pct"])
+            else 0,
             "mom_change_pct": mom_change if mom_change else 0,
             "momentum": momentum if momentum else 0,
             "volume": int(row["volume"]),
