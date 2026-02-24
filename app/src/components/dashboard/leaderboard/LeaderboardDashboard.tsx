@@ -101,7 +101,7 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Market Leaderboard</h1>
+              <h1 className="text-3xl font-bold">Area Rankings</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Explore Singapore planning areas by performance metrics
               </p>
