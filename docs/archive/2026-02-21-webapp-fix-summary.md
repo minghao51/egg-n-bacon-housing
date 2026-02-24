@@ -55,7 +55,7 @@ function gunzip(data) {
 
 ### 3. Documentation
 
-**Created**: `docs/GITHUB_SETSUP.md`
+**Created**: `docs/guides/github-secrets-setup.md`
 - Instructions for adding required GitHub secrets
 - Troubleshooting guide
 - Security best practices
@@ -84,7 +84,7 @@ Before this will work in CI/CD, add these repository secrets:
 1. **ONEMAP_EMAIL**: Your email address for Singapore OneMap API
 2. **GOOGLE_API_KEY**: Google Maps Geocoding API key
 
-See `docs/GITHUB_SETSUP.md` for detailed instructions.
+See `docs/guides/github-secrets-setup.md` for detailed instructions.
 
 ## Files Changed
 
@@ -95,7 +95,7 @@ See `docs/GITHUB_SETSUP.md` for detailed instructions.
 | `app/src/pages/dashboard/trends.astro` | Fixed gunzip function |
 | `app/src/pages/dashboard/segments.astro` | Fixed gunzip function |
 | `app/src/pages/dashboard/leaderboard.astro` | Fixed gunzip function |
-| `docs/GITHUB_SETSUP.md` | New documentation file |
+| `docs/guides/github-secrets-setup.md` | New documentation file |
 
 ## Testing Checklist
 

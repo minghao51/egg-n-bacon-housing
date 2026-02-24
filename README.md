@@ -118,18 +118,18 @@ egg-n-bacon-housing/
 ## Documentation
 
 **Core**:
-- [Documentation Index](docs/guides/README.md) - Complete documentation hub
+- [Documentation Index](docs/README.md) - Complete documentation hub
 - [Architecture](docs/architecture.md) - System design
 - [Development Workflow](CLAUDE.md) - Guidelines & principles
 
 **Analytics**:
 - [Analytics Findings](docs/analytics/findings.md) - ML analysis
-- [Comprehensive Summary](docs/analytics/COMPREHENSIVE_SUMMARY.md) - Revolutionary discoveries
-- [Metrics Design](docs/analytics/metrics-design.md) - Market metrics
-- [Rental Yield](docs/analytics/rental-yield.md) - Rental analysis
+- [MRT Impact](docs/analytics/mrt-impact.md) - MRT proximity analysis
+- [School Quality](docs/analytics/school-quality.md) - School feature analysis
+- [Spatial Hotspots](docs/analytics/spatial-hotspots.md) - Spatial market clustering
 
 **Implementation**:
-- [Usage Guide](docs/usage-guide.md) - Quick start & operations
+- [Usage Guide](docs/guides/usage-guide.md) - Quick start & operations
 
 ## Contributing
 
