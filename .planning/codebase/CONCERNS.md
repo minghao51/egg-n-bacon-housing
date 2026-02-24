@@ -1,484 +1,435 @@
-# Egg-n-Bacon-Housing: Technical Concerns & Areas for Improvement
+# Technical Debt & Concerns
 
-## Overview
+## Active TODO Comments
 
-This document catalogs technical debt, known issues, security concerns, performance bottlenecks, and areas for improvement in the egg-n-bacon-housing project.
+**6 TODOs requiring attention:**
 
-**Last Updated**: 2026-02-22
-**Status**: Active tracking
+| File | Line | Description | Priority |
+|------|------|-------------|----------|
+| `scripts/generate_segments_data.py` | 247 | Implement in next task | Medium |
+| `scripts/generate_segments_data.py` | 586 | Add from forecast data | Low |
+| `scripts/generate_segments_data.py` | 588 | Calculate from data | Low |
+| `scripts/generate_segments_data.py` | 611 | Will be used in future for hotspot integration | Low |
+| `scripts/data/fetch_macro_data.py` | 154 | Replace with actual MAS API call | Medium |
+| `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py` | 12-13 | Affordability index needs income data, ROI potential score needs rental data | Medium |
 
 ---
 
-## Technical Debt
+## Large Files Requiring Refactoring
 
-### 1. Large File Complexity
+**Critical (> 1000 lines):**
 
-**Files Over 1000 Lines**:
+| File | Lines | Issues | Recommendation |
+|------|-------|--------|----------------|
+| `scripts/core/stages/L3_export.py` | 1,696 | Too large, hard to maintain | Split into smaller modules by function |
+| `scripts/core/stages/webapp_data_preparation.py` | 998 | Complex dashboard data prep | Extract dashboard-specific functions |
 
-| File | Lines | Concern |
-|------|-------|---------|
-| `scripts/core/stages/L3_export.py` | 1696 | Should be split into smaller functions |
-| `scripts/core/metrics.py` | 914 | Complex statistical calculations |
-| `scripts/core/stages/L2_features.py` | 808 | Complex feature engineering |
-| `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` | 796 | Large analysis file |
-| `scripts/core/stages/webapp_data_preparation.py` | 767 | Dashboard data prep |
-| `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` | 766 | Complex lease decay modeling |
-| `scripts/analytics/analysis/mrt/analyze_mrt_spatial_econometrics.py` | 755 | MRT spatial analysis |
-| `scripts/core/school_features.py` | 726 | Complex feature engineering |
-| `scripts/analytics/analysis/appreciation/analyze_appreciation_patterns.py` | 694 | Appreciation analysis |
-| `scripts/core/stages/L5_metrics.py` | 692 | Metrics calculation |
+**High Priority (> 700 lines):**
 
-**Impact**: Difficult to test, maintain, and understand
+| File | Lines | Issues | Recommendation |
+|------|-------|--------|----------------|
+| `scripts/core/metrics.py` | 914 | Complex statistical calculations | Extract metric calculation functions |
+| `scripts/core/stages/L2_features.py` | 808 | Complex feature engineering | Split by feature type |
+| `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` | 796 | Large analysis file | Extract helper functions |
+| `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` | 766 | Complex lease decay modeling | Extract model functions |
+| `scripts/core/school_features.py` | 726 | School feature engineering | Extract by school tier |
+| `scripts/generate_segments_data.py` | 664 | Segment generation with TODOs | Complete TODOs, then refactor |
 
-**Recommendation**:
-- Break L3_export.py into modules by function (export, validation, JSON generation)
-- Consolidate duplicate logic between L3_export.py and create_l3_unified_dataset.py
-- Extract hardcoded data to CSV/JSON files (MRT stations, schools)
+---
 
-### 2. Hardcoded Data
+## Performance Issues
 
-**MRT Station Mapping** (`scripts/core/mrt_line_mapping.py`):
-- ~~534 lines of hardcoded station-to-line mappings~~
-- ✅ Moved to `data/config/mrt_lines.json` and `data/config/mrt_stations.json`
-- Module now loads from JSON with fallback to embedded data
+### Inefficient DataFrame Operations
 
-**School Tiers** (`scripts/core/school_features.py`):
-- ✅ Already externalized to CSV files in `data/manual/csv/`
-  - `school_tiers_primary.csv`
-  - `school_tiers_secondary.csv`
+**Anti-Pattern: Using `iterrows()`**
 
-**Planning Area Crosswalk**:
-- Manual crosswalk file exists but needs validation
+Found in multiple files (anti-pattern for performance):
+- `scripts/core/mrt_distance.py:76`
+- `scripts/core/school_features.py:262, 376, 385, 583`
 
-**Impact**: Maintenance burden, error-prone updates
+**Issue:** `iterrows()` is extremely slow for large DataFrames
 
-✅ **RESOLVED**: Hardcoded data extracted to JSON/CSV configuration files
-
-### 3. Duplicate Code
-
-**L3 Export Logic**:
-- `L3_export.py` (1696 lines) - Main export pipeline
-- `scripts/data/create_l3_unified_dataset.py` - Simplified for VAR modeling (now removed?)
-
-**Recommendation**: Keep separate - serve different use cases (L3_export for dashboard, data version for VAR modeling)
-
-**Data Loading**:
-- Multiple patterns for loading transaction data
-- Partially addressed with `TransactionLoader` but not fully migrated
-
-### 4. Import Path Fragility
-
-**Status**: ✅ Resolved (2026-02-03)
-
-All Python scripts now use absolute imports from project root:
+**Solution:** Use vectorized operations
 ```python
-# Good - Absolute from project root
-from scripts.core.config import Config
-from scripts.core.data_helpers import load_parquet
+# ✗ Bad
+for idx, row in df.iterrows():
+    df.loc[idx, 'result'] = row['a'] + row['b']
+
+# ✓ Good
+df['result'] = df['a'] + df['b']
 ```
 
-No circular dependencies detected - codebase uses absolute imports correctly.
+### Geocoding Performance
 
----
+**Issue:** Sequential API calls with 1.2 second delays
 
-## Known Issues
+**Location:** `scripts/core/geocoding.py`
 
-### 0. TODO/FIXME Comments
+**Impact:** Geocoding 10,000 addresses takes ~3.3 hours
 
-**Active TODOs Found** (3 total):
+**Solutions:**
+1. Increase parallel workers (currently underutilized)
+2. Implement batch geocoding API calls
+3. Cache results more aggressively
+4. Consider dedicated geocoding service
 
-| File | Line | Description | Status |
-|------|------|-------------|--------|
-| `scripts/data/fetch_macro_data.py` | 154 | Replace with actual MAS API call | TODO |
-| `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py` | 12 | Affordability index needs income data | TODO |
-| `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py` | 13 | ROI potential score needs rental data | TODO |
+### Memory Usage
 
-**Impact**: Incomplete functionality, missing data integrations
+**Issue:** Large datasets loaded entirely into memory
 
-**Recommendation**: Implement API integrations or mark as known limitations
+**Impact:** High memory usage for large parquet files
 
-### 1. Test Coverage Gaps
+**Solutions:**
+1. Implement chunked processing for large files
+2. Use PyArrow memory mapping for large datasets
+3. Process data in batches
+4. Add memory profiling to identify bottlenecks
 
-**Current Coverage**: Limited to `scripts/core`
+### String Formatting in Loops
 
-**Missing Coverage**:
-- `scripts/analytics/` - No tests
-- `scripts/data/` - No tests
-- `scripts/utils/` - No tests
-- Frontend (app/, backend/) - No tests
+**Found in multiple files:**
+```python
+# ✗ Bad - Repeated string formatting in loop
+df['column'] = df['column'].apply(lambda x: f"${x:,.0f}")
 
-**Impact**: Risk of regressions in untested code
+# ✓ Good - Vectorized formatting
+df['column'] = df['column'].map("${:,.0f}".format)
+```
 
-**Recommendation**: Add tests for critical analytics paths
-
-### 2. Geocoding Fallback Handling
-
-**Issue**: When both OneMap and Google Maps fail, address is skipped
-
-**Current Behavior**:
-- Logs error
-- Continues without geocoding
-- Manual intervention required to retry
-
-**Better Approach**:
-- Queue failed addresses for retry
-- Save checkpoint for recovery
-- Alert when failure rate exceeds threshold
-
-### 3. Token Expiry Management
-
-**Issue**: OneMap token expires after ~3 days
-
-**Current Handling**:
-- Auto-refresh on 401/403
-- But may lose in-flight requests
-
-**Better Approach**:
-- Proactive refresh before expiry
-- Background refresh thread
-- Token pre-validation before batch jobs
-
-### 4. Memory Usage for Large Datasets
-
-**Issue**: Full datasets loaded into memory
-
-**Files Affected**:
-- L3_export.py (1696 lines) - Processes all data at once
-- Large parquet files (>500MB)
-
-**Impact**: High memory usage, potential OOM on smaller machines
-
-**Recommendation**: Implement chunked processing for large datasets
+**Impact:** Performance degradation on large datasets
 
 ---
 
 ## Security Concerns
 
-### 1. API Key Exposure Risk
+### Status: Generally Good
 
-**Status**: ✅ Good
+**Strengths:**
+- ✅ All API keys loaded from environment variables
+- ✅ No hardcoded secrets found
+- ✅ `.env` file not in git
+- ✅ `.env.example` provides template
 
-**Environment Variables**:
-- `.env` file (not in git) - Good
-- All API keys loaded from environment (ONEMAP_TOKEN, GOOGLE_API_KEY)
-- No hardcoded secrets found in scripts
+**Minor Concerns:**
+- ⚠️ No pre-commit secret scanning (recommended)
+- ⚠️ Some beta packages in dependencies could have vulnerabilities
+- ⚠️ Password logged potentially in `geocoding.py:79`
 
-**Verified Patterns** (Good):
+**Recommendations:**
+1. Add pre-commit secret scanning (e.g., truffleHog)
+2. Audit dependencies for vulnerabilities
+3. Review logging to ensure no sensitive data in logs
+
+---
+
+## Code Smells
+
+### Excessive Lambda Functions
+
+**Issue:** Overuse of `apply(lambda x: ...)` for simple operations
+
+**Example:**
 ```python
-# scripts/core/config.py
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-ONEMAP_TOKEN = os.getenv("ONEMAP_TOKEN")
+# ✗ Bad - Lambda for simple operation
+df['price_per_sqft'] = df.apply(lambda x: x['price'] / x['area'], axis=1)
 
-# scripts/core/geocoding.py
-password = os.environ.get('ONEMAP_EMAIL_PASSWORD')
+# ✓ Good - Vectorized operation
+df['price_per_sqft'] = df['price'] / df['area']
 ```
 
-**Notes**:
-- Test fixtures in `tests/` use placeholder values (acceptable)
-- Password handling in refresh_onemap_token.py uses environment variables correctly
-- No hardcoded API keys or secrets in production code
+**Found in:** Multiple feature engineering files
 
-**Recommendation**:
-- Add `.env` to `.gitignore` (already done)
-- Add pre-commit hook to check for API keys in commits (not implemented)
-- Use secret scanning in CI/CD (not implemented)
+### Nested Loops
 
-### 2. Dependency Vulnerabilities
+**Issue:** Nested loops for data processing
 
-**Outdated Dependencies**:
-- Langchain packages pinned to specific versions
-- Some packages in beta (e.g., `h3`)
+**Found in:**
+- School features calculation
+- MRT distance calculation (with iterrows)
 
-**Impact**: Potential security vulnerabilities
+**Impact:** O(n²) or worse complexity
 
-**Recommendation**: Regular dependency updates via `uv sync --upgrade`
+**Solution:** Use spatial indexes (e.g., H3, KD-tree) for distance calculations
 
-### 3. Data Validation
+### Magic Numbers
 
-**Issue**: Limited input validation on user-provided data
+**Found in:** Various analysis scripts
 
-**Areas**:
-- Manual CSV uploads not validated
-- API responses assumed correct
-
-**Recommendation**: Add schema validation (pydantic/marshmallow)
-
----
-
-## Performance Bottlenecks
-
-### 1. Geocoding Throughput
-
-**Current**: Sequential API calls with 1 second delay
-
-**Impact**:
-- 10,000 addresses = ~2.8 hours
-- Not practical for large datasets
-
-**Better Approach**:
-- Parallel workers (already implemented but with low concurrency)
-- Dynamic rate limiting based on API response time
-- Batch geocoding API (if available)
-
-### 2. MRT Distance Calculation
-
-**Issue**: Computed on-the-fly for each analysis
-
-**Files**: `scripts/core/mrt_distance.py`
-
-**Recommendation**:
-- Pre-compute and cache MRT distances
-- Use spatial indexing (H3) for faster queries
-
-### 3. Feature Engineering
-
-**Issue**: Re-computed for each analysis run
-
-**Example**: School features, CBD distances
-
-**Recommendation**:
-- Store computed features in parquet files
-- Check for existing features before re-computing
-
-### 4. Dashboard JSON Generation
-
-**Issue**: `prepare_webapp_data.py` can be slow
-
-**Impact**: Delayed dashboard updates
-
-**Recommendation**:
-- Incremental updates (only changed data)
-- Cache previous results
-- Parallel generation for independent files
-
----
-
-## Fragile Areas
-
-### 1. Pipeline State Management
-
-**Issue**: No explicit state management
-
-**Current Behavior**:
-- Stages run based on file existence
-- No validation of intermediate results
-
-**Impact**: Hard to recover from failures
-
-**Recommendation**:
-- Add checkpoint file tracking stage completion
-- Validate stage outputs before proceeding
-- Add `--resume` flag to skip completed stages
-
-### 2. Error Recovery
-
-**Issue**: Limited retry logic for external APIs
-
-**Current**: Only geocoding has retry (via tenacity)
-
-**Impact**: Single API failure can break pipeline
-
-**Recommendation**: Add retry logic to all external API calls
-
-### 3. Data Lineage Tracking
-
-**Issue**: Limited metadata tracking
-
-**Current**: Only tracks file creation, not transformations
-
-**Recommendation**:
-- Track all transformations applied to data
-- Store transformation history in metadata.json
-- Enable data reproducibility
-
----
-
-## Code Quality Issues
-
-### 1. Inconsistent Docstring Coverage
-
-**Status**: Good for core modules, spotty for analytics
-
-**Files Missing Docstrings**:
-- Some utility scripts
-- Legacy notebook code
-- Some analysis scripts
-
-**Recommendation**: Enforce docstring coverage in CI
-
-### 2. Type Hint Coverage
-
-**Status**: Partial
-
-**Coverage**:
-- Core services: Good
-- Analytics scripts: Spotty
-- Tests: Minimal
-
-**Recommendation**: Add type hints to all public functions
-
-### 3. Logging Inconsistency
-
-**Issue**: Mix of print() and logger
-
-**Files Using print()**:
-- Some scripts still use `print()` instead of `logger`
-
-**Recommendation**: Replace all `print()` with `logger`
-
----
-
-## Configuration Issues
-
-### 1. Environment Variable Validation
-
-**Issue**: Some optional vars not validated when used
-
-**Example**:
+**Example:**
 ```python
-# AWS credentials validated only when S3 is used
-# But no clear error if AWS vars are missing
+# ✗ Bad - Magic number
+if distance < 1000:
+    pass
+
+# ✓ Good - Named constant
+MRT_NEARBY_THRESHOLD_METERS = 1000
+if distance < MRT_NEARBY_THRESHOLD_METERS:
+    pass
 ```
 
-**Recommendation**: Lazy validation with clear error messages
+---
 
-### 2. Hardcoded Constants
+## Missing Error Handling
 
-**Examples**:
-- Cache duration (24 hours)
-- API delays (1 second)
-- Retry attempts (3)
+### Limited Retry Logic
 
-**Recommendation**: Move to Config class
+**Issue:** Only geocoding has retry logic (tenacity)
+
+**Missing in:**
+- API calls to data.gov.sg (no retry)
+- SingStat API calls (no retry)
+- File operations (no retry)
+
+**Solution:** Add @retry decorator to all external API calls
+
+### API Response Validation
+
+**Issue:** Limited validation of API responses
+
+**Risk:** Unexpected API responses could crash pipeline
+
+**Solution:** Add schema validation for API responses
+
+### Data Validation
+
+**Issue:** Manual CSV uploads not validated
+
+**Risk:** Invalid data could corrupt pipeline
+
+**Solution:** Add schema validation for manual uploads
 
 ---
 
-## Deployment Concerns
+## Testing Gaps
 
-### 1. GitHub Pages Deployment
+### Missing Test Coverage
 
-**Issue**: No automated testing of deployed site
+**No tests for:**
+- `scripts/analytics/` - Large module with no test coverage
+- `scripts/data/` - Data processing scripts
+- `scripts/generate_segments_data.py` - Segment generation
 
-**Current**: Deploy on push to main
+**Coverage Goals:**
+- Current: Core modules (~70%)
+- Target: All modules ≥ 80%
 
-**Risk**: Broken site deployed if tests fail
+**Recommendations:**
+1. Prioritize test coverage for analytics modules
+2. Add integration tests for data processing
+3. Add property-based tests for feature engineering
 
-**Recommendation**: Add deployment gate (tests must pass)
+### Test Data Management
 
-### 2. Data File Size
+**Issue:** Test data scattered across test files
 
-**Issue**: Large JSON files in `app/public/data/`
-
-**Impact**:
-- Slow page loads
-- High bandwidth usage
-
-**Recommendation**:
-- Implement data pagination
-- Compress JSON files (gzip)
-- Use incremental loading
-
-### 3. No Rollback Strategy
-
-**Issue**: No easy way to rollback bad deployments
-
-**Recommendation**: Tag releases, use GitHub Pages branches
+**Solution:** Centralize test data in `tests/fixtures/`
 
 ---
 
-## Documentation Gaps
+## Documentation Issues
 
-### 1. Architecture Documentation
+### Outdated Documentation
 
-**Status**: This document (CONCERNS.md) exists but...
+**Potential issues:**
+- Architecture docs may not reflect recent changes
+- Some README sections may be outdated
+- API documentation may be incomplete
 
-**Missing**:
-- Sequence diagrams for complex flows
-- Data flow diagrams
-- Deployment guide
+**Recommendations:**
+1. Regularly review and update docs
+2. Add docstrings to all public functions
+3. Create API documentation with Sphinx/MkDocs
 
-### 2. Onboarding Documentation
+### Missing Documentation
 
-**Issue**: Steep learning curve for new developers
-
-**Missing**:
-- Setup troubleshooting guide
-- Common workflows
-- Debugging guide
-
-### 3. API Documentation
-
-**Issue**: No docstrings for internal APIs
-
-**Impact**: Hard to reuse code
-
-**Recommendation**: Add docstrings to all public functions
+**Not documented:**
+- Recent changes to hooks (`useAnalyticsData`, `useLeaderboardData`, `useSegmentsData`)
+- New constants directory (`app/src/constants/`)
+- New gzip utility (`app/src/utils/gzip.ts`)
+- New hook (`app/src/hooks/useGzipJson.ts`)
 
 ---
 
-## Prioritized Action Items
+## Dependency Concerns
 
-### High Priority
+### Beta Packages
 
-1. **Consolidate L3 Export Logic** - Eliminate duplicate code
-2. **Add Analytics Tests** - Cover critical paths
-3. **Extract Hardcoded Data** - MRT stations, schools to CSV/JSON (done)
-4. **Improve Geocoding Performance** - Parallel workers, batch API
+**Found in dependencies:**
+- `h3==4.1.0b2` - Beta version
 
-### Medium Priority
+**Risk:** Potential bugs or API changes
 
-5. **Add Pipeline Checkpoints** - Enable resume from failures
-6. **Implement Data Pagination** - Reduce dashboard load time
-7. **Add Deployment Gates** - Tests must pass before deploy
-8. **Consolidate Data Loading** - Migrate all to DataLoader pattern
+**Recommendation:** Monitor for stable release, update when available
 
-### Low Priority
+### Unused Dependencies
 
-9. **Add Type Hints** - Complete coverage
-10. **Replace print() with logger** - Consistent logging
-11. **Add Onboarding Guide** - Developer documentation
-12. **Implement Chunked Processing** - Reduce memory usage
+**Configured but not actively used:**
+- Supabase client
+- Langchain components
+- Google AI SDK
+- Jina AI
+
+**Recommendation:** Remove if not needed, or document future use cases
 
 ---
 
-## Related Documents
+## Scalability Concerns
 
-- `.planning/codebase/ARCHITECTURE.md` - System architecture
-- `.planning/codebase/CONVENTIONS.md` - Coding patterns
-- `.planning/codebase/TESTING.md` - Testing strategy
-- `.planning/codebase/INTEGRATIONS.md` - External services
-- `.planning/codebase/STACK.md` - Technology stack
+### Current Limitations
+
+1. **Single-Machine Processing:**
+   - No distributed processing
+   - Limited by single machine memory
+
+2. **No Checkpoint System:**
+   - Pipeline failures require full re-run
+   - No incremental updates
+
+3. **No Database:**
+   - All data in Parquet files
+   - No query optimization
+   - No concurrent access
+
+### Future Scalability Options
+
+1. **Chunked Processing:**
+   - Process large files in batches
+   - Reduce memory usage
+
+2. **Distributed Computing:**
+   - Use Dask or Ray for parallel processing
+   - Scale horizontally
+
+3. **Database Migration:**
+   - PostGIS for spatial queries
+   - Enable concurrent access
+   - Optimize queries
+
+---
+
+## Recent Changes (Unreviewed)
+
+**Modified files not yet reviewed:**
+- `app/src/hooks/useAnalyticsData.ts`
+- `app/src/hooks/useLeaderboardData.ts`
+- `app/src/hooks/useSegmentsData.ts`
+- `app/src/utils/gzip.ts`
+
+**New files not documented:**
+- `app/src/constants/` (new directory)
+- `app/src/hooks/useGzipJson.ts` (new hook)
+
+**Recommendation:** Review and document these changes
+
+---
+
+## Priority Action Items
+
+### Immediate (This Sprint)
+
+1. ✅ **Address 6 active TODO comments**
+   - Complete incomplete functionality
+   - Remove or defer if not needed
+
+2. ✅ **Replace `iterrows()` with vectorized operations**
+   - `scripts/core/mrt_distance.py:76`
+   - `scripts/core/school_features.py:262, 376, 385, 583`
+
+3. ✅ **Add pre-commit secret scanning**
+   - Install truffleHog or similar
+   - Add to pre-commit hooks
+
+### Short-Term (1-2 Months)
+
+4. ✅ **Refactor `L3_export.py` (1,696 lines)**
+   - Split into smaller modules
+   - Extract common patterns
+
+5. ✅ **Implement chunked processing**
+   - Process large files in batches
+   - Reduce memory usage
+
+6. ✅ **Add retry logic to all API calls**
+   - Use tenacity decorator
+   - Handle rate limiting
+
+7. ✅ **Create pipeline checkpoint system**
+   - Save intermediate state
+   - Enable incremental updates
+
+8. ✅ **Add test coverage for analytics modules**
+   - Prioritize high-impact modules
+   - Target ≥ 80% coverage
+
+### Long-Term (3-6 Months)
+
+9. ✅ **Performance optimization**
+   - Geocoding (parallel workers)
+   - MRT/school distance calculations (spatial indexes)
+   - Memory profiling and optimization
+
+10. ✅ **Data validation schema**
+    - API response validation
+    - Manual upload validation
+    - Parquet schema validation
+
+11. ✅ **Documentation improvements**
+    - Complete missing docs
+    - Update outdated sections
+    - Add API documentation
+
+12. ✅ **Evaluate distributed processing**
+    - Assess Dask/Ray for pipeline
+    - Implement if needed
+
+---
+
+## Debt Metrics
+
+| Metric | Current | Target | Status |
+|--------|---------|--------|--------|
+| **TODO Count** | 6 | 0 | ⚠️ Needs attention |
+| **Large Files (>1000 lines)** | 1 | 0 | ⚠️ Refactor needed |
+| **Large Files (>700 lines)** | 6 | 2 | ⚠️ Refactor needed |
+| **Test Coverage (core)** | ~70% | ≥80% | ⚠️ Improve coverage |
+| **Test Coverage (analytics)** | ~0% | ≥60% | ❌ Critical |
+| **iterrows() usage** | 5 locations | 0 | ❌ Must fix |
+| **API retry logic** | 1/5 services | 5/5 | ⚠️ Add retry |
+| **Secret scanning** | No | Yes | ⚠️ Add to CI/CD |
 
 ---
 
 ## Summary
 
-**Critical Areas**:
-- Large file complexity (L3_export.py: 1696 lines)
-- Test coverage gaps (analytics, data processing)
-- Geocoding performance bottleneck
-- 3 active TODO comments requiring attention (MAS SORA API, affordability index, ROI score)
+### Overall Health: ⚠️ Moderate Concern
 
-**Security Status**:
-- ✅ No hardcoded secrets
-- ✅ Environment variable pattern correct
-- ⚠️ No pre-commit secret scanning
-- ⚠️ No CI/CD secret scanning
+**Strengths:**
+- Good code organization and structure
+- Comprehensive error handling in core modules
+- Security best practices (environment variables)
+- Clear separation of concerns
 
-**Dependencies Status**:
-- ✅ No circular imports detected
-- ✅ Absolute imports used throughout
-- ⚠️ Some beta packages in use
+**Areas for Improvement:**
+- Complete TODO comments (6 outstanding)
+- Refactor large files (1 critical, 6 high priority)
+- Replace `iterrows()` with vectorized operations (5 locations)
+- Add test coverage for analytics modules (currently 0%)
+- Implement retry logic for all API calls
+- Add pre-commit secret scanning
 
-**Quick Wins**:
-- Add deployment gates (tests before deploy)
-- Replace remaining print() with logger
-- Add type hints to analytics scripts
+**Risk Level:** Medium
+- Performance issues will worsen with data growth
+- Missing test coverage increases bug risk
+- Large files are maintenance liabilities
 
-**Long-term Improvements**:
-- Pipeline checkpoint system
-- Chunked processing for large datasets
-- Comprehensive test suite
-- Performance optimization (MRT distances, feature caching)
+**Recommended Approach:**
+1. Address immediate concerns (TODOs, iterrows)
+2. Refactor large files incrementally
+3. Improve test coverage
+4. Add performance optimizations
+5. Implement scalability improvements
 
-Overall, the codebase is well-structured with good separation of concerns. The main areas for improvement are reducing file complexity, consolidating duplicate code, and improving test coverage.
+---
+
+*Last Updated: 2025-02-24*
+*Next Review: 2025-03-24*

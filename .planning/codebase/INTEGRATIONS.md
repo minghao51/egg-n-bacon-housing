@@ -1,344 +1,362 @@
-# Egg-n-Bacon-Housing: External Integrations
-
-## Overview
-
-This document catalogs all external services, APIs, databases, and third-party integrations used in the egg-n-bacon-housing project.
-
----
+# External Integrations
 
 ## Data Sources
 
-### Government APIs
+### data.gov.sg API
+**Purpose:** Primary source for Singapore property transaction data
 
-#### data.gov.sg (Open Data)
-
-**Purpose**: Primary source for Singapore housing transaction data
-
-**Endpoints Used**:
-- HDB resale flat prices (CSV downloads)
+**Endpoints Used:**
+- HDB resale price transactions
 - URA private property transactions
-- Rental index data
 
-**Authentication**: None required (public API)
+**Authentication:** None required (public API)
 
-**Rate Limits**: Documented in API response headers
+**Rate Limiting:** No explicit limit, implements pagination
 
-**Usage in Code**:
-- `scripts/core/stages/L0_collect.py` - `fetch_datagovsg_dataset()`
-- `scripts/data/download/download_datagov_datasets.py`
+**Usage Location:** `scripts/core/stages/L0_collect.py`
 
-**Data Retrieved**:
-- HDB resale transactions (2017-present)
-- Private property transactions (condo, EC)
-- Rental market indices
-
-#### OneMap API (Singapore Land Authority)
-
-**Purpose**: Geocoding addresses to coordinates, reverse geocoding
-
-**Endpoints**:
-- Search: `https://www.onemap.gov.sg/api/common/elastic/search`
-- Reverse geocode: `https://www.onemap.gov.sg/api/public/revgeocode`
-
-**Authentication**:
-- Email-based token system
-- Environment variables: `ONEMAP_EMAIL`, `ONEMAP_TOKEN`
-
-**Rate Limits**:
-- Configurable delay (default: 1 second between calls)
-- Token expiry: ~3 days (auto-refresh)
-
-**Usage in Code**:
-- `scripts/core/geocoding.py` - `fetch_data()` with caching
-- `scripts/utils/refresh_onemap_token.py` - Token refresh utility
-
-**Error Handling**:
-- Automatic token refresh on 401/403
-- Fallback to Google Maps API
-
-#### Google Maps Geocoding API
-
-**Purpose**: Fallback geocoding when OneMap fails
-
-**Endpoint**: `https://maps.googleapis.com/maps/api/geocode/json`
-
-**Authentication**:
-- API key via environment variable: `GOOGLE_API_KEY`
-
-**Rate Limits**:
-- Quota-based (Google Cloud Platform)
-- Configurable timeout
-
-**Usage in Code**:
-- `scripts/core/geocoding.py` - Fallback in `fetch_data()`
-- `scripts/data/process/geocode/enhance_geocoding.py`
-
-**Cost**: Free tier with daily quota; pay-per-use beyond
-
-#### Jina AI
-
-**Purpose**: Web scraping - reading URLs to markdown
-
-**Endpoint**: `https://r.jina.ai/`
-
-**Authentication**:
-- API key via environment variable: `JINA_AI`
-
-**Usage in Code**:
-- `notebooks/L0_webscrap_jina.py` - Web content extraction
-- Scrapes URLs for data collection
+**Response Format:** JSON with pagination support
 
 ---
 
-## Third-Party Libraries
+### SingStat API
+**Purpose:** Singapore macroeconomic data
 
-### Geospatial
+**Data Retrieved:**
+- Consumer Price Index (CPI)
+- GDP
+- SORA (Singapore Overnight Rate Average)
+- Unemployment rate
+- Producer Price Index (PPI)
 
-#### H3 (Uber)
+**Usage Location:** `scripts/data/fetch_macro_data.py`
 
-**Version**: 4.1.0b2 (beta)
-
-**Purpose**: Hexagonal hierarchical spatial indexing
-
-**Usage**:
-- `scripts/core/stages/spatial_h3.py` - H3 grid generation
-- `scripts/analytics/analysis/spatial/analyze_h3_clusters.py`
-
-**Capabilities**:
-- Convert lat/lon to H3 indexes
-- Spatial aggregation
-- Neighbor finding
-
-#### GeoPandas + PyProj
-
-**Purpose**: Geospatial data operations, coordinate transformations
-
-**Usage**:
-- CRS transformations (EPSG:4326 to EPSG:3414)
-- Spatial joins
-- Distance calculations
-
-**Coordinate Reference Systems**:
-- EPSG:4326 (WGS84 - GPS coordinates)
-- EPSG:3414 (Singapore SVY21)
-
-### Machine Learning
-
-#### scikit-learn
-
-**Purpose**: General ML algorithms
-
-**Usage**:
-- Clustering (KMeans, DBSCAN)
-- Dimensionality reduction (PCA)
-- Preprocessing (StandardScaler)
-
-#### XGBoost
-
-**Version**: >=3.1.3
-
-**Purpose**: Gradient boosting for price prediction
-
-**Usage**:
-- `scripts/analytics/pipelines/forecast_prices_pipeline.py`
-- Feature importance analysis
-
-#### Prophet (Meta)
-
-**Version**: >=1.2.1
-
-**Purpose**: Time series forecasting
-
-**Usage**:
-- `scripts/analytics/pipelines/forecast_prices_pipeline.py`
-- Price trend forecasting
-
-### Spatial Statistics
-
-#### PySAL (Python Spatial Analysis Library)
-
-**Components**:
-- `libpysal>=4.6.0` - Core spatial weights
-- `esda>=1.5.0` - Exploratory spatial data analysis
-
-**Purpose**: Spatial autocorrelation analysis
-
-**Usage**:
-- `scripts/analytics/analysis/spatial/analyze_spatial_autocorrelation.py`
-- Moran's I, Local Indicators of Spatial Association (LISA)
+**Note:** One TODO comment mentions replacing with actual MAS API call
 
 ---
 
-## AI/LLM Integration
+## Geocoding Services
 
-### Google Gemini (via LangChain)
+### OneMap Singapore API (Primary)
+**Purpose:** Singapore-specific address geocoding
 
-**Version**: langchain-google-genai==2.0.0
+**Authentication:**
+- Email: `ONEMAP_EMAIL` (required)
+- Token: `ONEMAP_TOKEN` (auto-generated from email)
+- Password: `ONEMAP_PASSWORD` (optional, for token refresh)
 
-**Purpose**: AI-powered analysis (optional feature)
+**Rate Limiting:**
+- 1.2 second delay between calls (configurable)
+- Token expiry: ~3 days (auto-refresh on 401/403)
 
-**Authentication**:
-- API key via `GOOGLE_API_KEY`
+**Fallback:** Google Maps API
 
-**Usage**:
-- Document analysis (langchain)
-- Experimental features (langchain-experimental)
+**Usage Location:** `scripts/core/geocoding.py`
 
-**Note**: Core pipeline does NOT require LLM access
+**Features:**
+- Address to coordinates conversion
+- Singapore-specific address formats
+- Batch geocoding support
+
+**Error Handling:**
+- Automatic token refresh on expiry
+- Retry logic with tenacity
+- Fallback to Google Maps on failure
+
+---
+
+### Google Maps Geocoding API (Fallback)
+**Purpose:** Fallback geocoding when OneMap fails
+
+**Authentication:**
+- API Key: `GOOGLE_API_KEY` (required)
+
+**Usage Location:** `scripts/core/geocoding.py`
+
+**Rate Limiting:**
+- Implements delay between calls
+- Used only when OneMap fails
+
+**Cost:** Free tier limited, paid tier beyond quotas
 
 ---
 
 ## Cloud Services
 
-### AWS S3 (via Boto3)
+### AWS S3 (Optional)
+**Purpose:** Cloud storage for data exports
 
-**Purpose**: Optional cloud storage for parquet files
+**Library:** boto3==1.0.0
 
-**Authentication**:
-- AWS credentials via environment variables or `~/.aws/credentials`
-- Environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`
+**Configuration:**
+- Environment: AWS credentials
+- Feature flag: `upload_s3=False` (default disabled)
 
-**Usage**:
-- Uploading processed data
-- Cross-region data sharing
+**Usage Location:** Not actively used in current codebase
 
-**Buckets**:
-- Not hardcoded (configurable via environment)
+**Note:** Configured but no active implementation found
+
+---
+
+## AI/LLM Services
+
+### Google Generative AI (Gemini)
+**Purpose:** LLM integration via Langchain
+
+**Library:** langchain-google-genai==2.0.0
+
+**Authentication:**
+- API Key: Configured in environment
+
+**Status:** Configured but no active usage found in codebase
+
+**Note:** Available for future features
+
+---
+
+### Jina AI
+**Purpose:** Semantic search/encoding (unclear)
+
+**Authentication:**
+- API Token: `JINA_AI` in .env.example
+
+**Status:** Available but no active usage found
+
+**Note:** Purpose unclear, may be experimental
+
+---
+
+## Database
 
 ### Supabase
+**Purpose:** Backend-as-a-Service (database, auth, storage)
 
-**Purpose**: Optional database backend
+**Authentication:**
+- URL: `SUPABASE_URL`
+- Key: `SUPABASE_KEY`
 
-**Authentication**:
-- Environment variables: `SUPABASE_URL`, `SUPABASE_KEY`
+**Status:** Client configured but no active database operations found
 
-**Usage**:
-- Alternative to parquet files for data storage
-- Real-time data updates (experimental)
+**Usage Location:** Referenced in test fixtures only
 
-**Note**: Currently unused; parquet files are primary storage
-
----
-
-## Web Application Integrations
-
-### GitHub Pages
-
-**Purpose**: Static site hosting
-
-**Configuration**:
-- Base URL: Set in `app/astro.config.mjs`
-- Build command: `npm run build`
-- Output directory: `app/dist/`
-
-**Deployment**:
-- GitHub Actions workflow: `.github/workflows/deploy-app.yml`
-
-### Map Tiles
-
-**Source**: OpenStreetMap (via Leaflet)
-
-**Purpose**: Base layer for interactive maps
-
-**Usage**:
-- `app/src/components/dashboard/PriceMap.tsx`
-- No API key required
+**Note:** Available for future user management or data storage
 
 ---
 
-## Development Tools
+## Data Processing Pipeline
 
-### Jupytext
+### Stage-Based ETL Architecture
+**Pattern:** L0 → L1 → L2 → L3 → L4 → L5
 
-**Purpose**: Notebook ↔ script pairing for version control
+**Stages:**
+- **L0 (Collection):** Fetch from external APIs
+- **L1 (Processing):** Clean and geocode
+- **L2 (Features):** Add features (distances, amenities)
+- **L3 (Export):** Create unified dataset
+- **L4 (Analysis):** ML models, spatial analysis
+- **L5 (Metrics):** Dashboard metrics
 
-**Configuration**: `jupytext.toml`
+**Integration Points:**
+- Each stage reads from previous stage's Parquet files
+- Metadata tracking in `data/metadata.json`
+- Checkpoint-based recovery (partial)
 
-**Benefits**:
-- Clean git diffs on `.py` files
-- IDE support in VS Code
-- Interactive execution in Jupyter
+---
 
-**Usage**:
-- All notebooks have paired `.py` files
-- Sync command: `uv run jupytext --sync notebook.ipynb`
+## Frontend Data Strategy
+
+### Static JSON Files
+**Pattern:** Python scripts export JSON, frontend consumes
+
+**Data Location:** `app/public/data/`
+
+**Generation:** `scripts/prepare_webapp_data.py`
+
+**Features:**
+- Gzip compression for transfer size
+- No runtime API calls
+- Pre-computed aggregations
+
+**Caching:**
+- Browser cache headers
+- Service worker support (potential)
+- Versioned filenames (cache busting)
+
+---
+
+## Development & Testing
+
+### pytest Markers
+**Test Categories:**
+- `@pytest.mark.unit` - Fast, isolated tests
+- `@pytest.mark.integration` - Component interaction tests
+- `@pytest.mark.slow` - Full pipeline tests
+- `@pytest.mark.api` - Tests making API calls
+
+**Mock Strategy:**
+- Extensive use of `@patch` for external dependencies
+- Mock API responses in unit tests
+- Fixture-based test data
 
 ---
 
 ## Authentication & Security
 
-### Environment Variables
+### API Key Management
+**Storage:** Environment variables via `.env` file
 
-**Required** (for full pipeline):
-```bash
-ONEMAP_EMAIL=your@email.com
-ONEMAP_TOKEN=auto-generated
-GOOGLE_API_KEY=your-google-api-key
-```
+**Required Keys:**
+- `ONEMAP_EMAIL` - OneMap geocoding
+- `ONEMAP_PASSWORD` - Token refresh (optional)
+- `GOOGLE_API_KEY` - Geocoding fallback
+- `SUPABASE_URL` - Database (optional)
+- `SUPABASE_KEY` - Database (optional)
+- `JINA_AI` - AI features (optional)
+- `GOOGLE_API_KEY` - Gemini (optional)
 
-**Optional**:
-```bash
-AWS_ACCESS_KEY_ID=xxx
-AWS_SECRET_ACCESS_KEY=xxx
-AWS_REGION=us-east-1
-SUPABASE_URL=xxx
-SUPABASE_KEY=xxx
-JINA_AI=your-jina-ai-key
-```
-
-**Configuration**:
-- Managed via `.env` file (not in git)
-- Loaded via `python-dotenv` in `scripts/core/config.py`
-
-### Token Management
-
-**OneMap Token**:
-- Auto-generated from email
-- Validity: ~3 days
-- Auto-refresh on expiry
-- Cached in `data/logs/`
+**Security Practices:**
+- `.env` not in git
+- `.env.example` provides template
+- No hardcoded secrets
+- Pre-commit hooks for secret scanning (recommended)
 
 ---
 
-## Error Handling & Resilience
+## Monitoring & Logging
 
-### API Failures
+### Structured Logging
+**Format:** Python logging with timestamps
 
-**OneMap**:
-- Automatic retry with exponential backoff
-- Fallback to Google Maps
-- Failed addresses logged to `data/logs/geocoding_failed.csv`
+**Output:** `data/logs/` directory
 
-**Google Maps**:
-- Timeout handling (configurable)
-- Quota management (stop before hitting limit)
+**Log Levels:**
+- `logger.debug()` - Detailed debug information
+- `logger.info()` - General information (most common)
+- `logger.warning()` - Warnings (non-critical)
+- `logger.error()` - Errors (exceptions)
 
-### Data Validation
-
-**Crosswalk Files**:
-- Planning area mapping validated
-- Town names checked against known list
-- Manual override capability
-
-**Geocoding Results**:
-- Confidence threshold filtering
-- Singapore bounds checking
-- Duplicate detection and removal
+**Visual Indicators:**
+- ✅ Success/completion
+- ⚠️ Warnings
+- ❌ Errors
+- 🔄 Progress/processing
+- 📦 Batch processing
 
 ---
 
-## Summary
+## Caching Strategy
 
-**Primary Data Sources**: data.gov.sg (HDB/URA), OneMap (geocoding), Jina AI (web scraping)
-**Fallback Services**: Google Maps Geocoding API
-**ML Libraries**: scikit-learn, XGBoost, Prophet
-**Spatial Libraries**: H3, GeoPandas, PySAL
-**Cloud**: AWS S3 (optional), Supabase (optional)
-**Deployment**: GitHub Pages
-**Authentication**: Environment variables via .env
+### API Response Caching
+**TTL:** 24 hours (default, configurable)
 
-All integrations are designed with:
-- Fallback mechanisms (OneMap → Google)
-- Rate limiting and caching
-- Comprehensive error handling
-- No hard dependencies on paid services (free tier sufficient)
+**Implementation:** Python decorators
+
+**Cache Location:** File-based or in-memory (based on configuration)
+
+**Cache Invalidation:**
+- Time-based (TTL)
+- Manual flush available
+
+---
+
+## Error Handling
+
+### Exception Hierarchy
+- `ValueError` - Invalid input, configuration issues
+- `FileNotFoundError` - Missing files
+- `RuntimeError` - API failures, general errors
+
+**Pattern:** Try-Except-Log-Raise
+```python
+try:
+    # Operation
+except Exception as e:
+    logger.error(f"Operation failed: {e}")
+    raise RuntimeError(f"Operation failed: {e}") from e
+```
+
+**Retry Logic:**
+- Tenacity for geocoding (automatic retries)
+- No retry for other API calls (TODO)
+
+---
+
+## Known Integrations (Not Currently Used)
+
+### Available but Inactive
+- **Langchain components** - Installed but no active implementation
+- **Supabase client** - Configured but no database operations
+- **Google AI (Gemini)** - SDK available but no direct API calls
+- **Jina AI** - Token available but purpose unclear
+- **AWS S3** - boto3 installed but upload disabled
+
+### Potential Future Use
+- User authentication (Supabase Auth)
+- Real-time data updates (Supabase Realtime)
+- AI-powered features (Gemini, Langchain)
+- Cloud data export (S3)
+- Semantic search (Jina AI)
+
+---
+
+## Integration Risks & Mitigations
+
+### Rate Limiting
+**Risk:** API rate limits exceeded
+
+**Mitigation:**
+- Delays between calls (1.2s for OneMap)
+- Token refresh on expiry
+- Fallback services (Google Maps)
+
+### API Key Exposure
+**Risk:** Keys committed to git
+
+**Mitigation:**
+- `.env` in `.gitignore`
+- No hardcoded keys
+- Pre-commit secret scanning (recommended)
+
+### Token Expiry
+**Risk:** OneMap token expires (~3 days)
+
+**Mitigation:**
+- Auto-refresh on 401/403
+- Email-based re-authentication
+- Graceful degradation to Google Maps
+
+### Service Downtime
+**Risk:** External APIs unavailable
+
+**Mitigation:**
+- Caching reduces dependency
+- Fallback services available
+- Pipeline can run with cached data
+
+---
+
+## Data Flow Summary
+
+```
+External APIs (data.gov.sg, SingStat)
+    ↓
+L0 Collection (cached)
+    ↓
+L1 Processing + Geocoding (OneMap → Google fallback)
+    ↓
+L2 Feature Engineering
+    ↓
+L3 Unified Dataset → Export to Parquet
+    ↓
+L4 Analysis (ML, spatial)
+    ↓
+L5 Metrics
+    ↓
+JSON Export (prepare_webapp_data.py)
+    ↓
+Static JSON Files (app/public/data/)
+    ↓
+Frontend (Astro/React)
+```
+
+**Key Principle:** Python scripts process data and export JSON; frontend only reads JSON files (no backend API).

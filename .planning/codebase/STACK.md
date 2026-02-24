@@ -1,216 +1,136 @@
-# Egg-n-Bacon-Housing: Technology Stack
+# Tech Stack
 
-## Overview
+## Languages & Runtime
 
-This document outlines the complete technology stack used in the egg-n-bacon-housing project - a Singapore housing data pipeline with ML analysis and interactive web visualization.
+- **Python 3.11+** - Main language for data processing pipeline
+- **TypeScript 5.9.3** - Frontend development with strict mode
+- **JavaScript** - Frontend React components
 
-**Project Type**: Data Science + Web Application
-**Primary Languages**: Python, TypeScript
-**Deployment**: GitHub Pages (static site)
+## Frontend Stack (app/)
 
----
+### Framework & Meta-Framework
+- **Astro 5.16.16** - Static site generator with islands architecture
+- **React 19.2.4** - UI framework for interactive components
+- **React-DOM 19.2.4** - React DOM bindings
 
-## Core Technologies
+### UI Libraries
+- **Tailwind CSS 3** - Utility-first CSS framework
+- **@astrojs/react 4.4.2** - React integration for Astro
+- **@astrojs/tailwind 6.0.2** - Tailwind CSS integration
+- **@astrojs/mdx 4.3.13** - MDX support for markdown content
+- **Lucide React 0.575.0** - Icon library
+- **@tanstack/react-table 8.21.3** - Headless UI tables
 
-### Backend/Data Pipeline (Python)
+### Visualization & Maps
+- **Recharts 3.7.0** - Data visualization library
+- **Leaflet 1.9.4 + React-Leaflet 5.0.0** - Interactive maps
+- **KaTeX 0.16.28 + Rehype-Katex 7.0.0** - Math rendering
+- **React-Markdown 10.1.0** - Markdown rendering
 
-**Runtime**:
-- Python 3.11+ (specified in pyproject.toml)
-- uv package manager for fast dependency management
+## Python Data Stack
 
-**Key Libraries**:
+### Core Data Processing
+- **pandas >= 2.0.0** - Data manipulation and analysis
+- **numpy >= 1.24.0** - Numerical computing
+- **geopandas** - Geospatial data processing
+- **pyarrow >= 15.0.0** - Parquet file format support
+- **h3 == 4.1.0b2** - Hexagonal hierarchical geospatial indexing
 
-| Category | Libraries | Purpose |
-|----------|-----------|---------|
-| **Data Processing** | pandas>=2.0.0, pyarrow>=15.0.0, numpy>=1.24.0 | DataFrame operations, parquet I/O |
-| **Geospatial** | geopandas, h3==4.1.0b2, pyproj | Spatial analysis, hexagon grids |
-| **ML/Analytics** | scikit-learn, xgboost>=3.1.3, prophet>=1.2.1 | Modeling, forecasting |
-| **Statistics** | statsmodels>=0.14.0, libpysal>=4.6.0, esda>=1.5.0, lifelines>=0.27.0 | Statistical analysis, spatial stats, survival analysis |
-| **Visualization** | plotly>=6.5.2, seaborn, pygwalker | Interactive charts |
-| **API/Network** | requests, beautifulsoup4, boto3 | HTTP requests, web scraping, AWS S3 |
-| **Caching** | cachetools>=6.2.4 | API response caching |
-| **Fuzzy Matching** | rapidfuzz>=3.14.3 | String matching |
-| **AI/LLM** | langchain>=0.3.0, langchain-google-genai==2.0.0, langgraph==0.2.32 | LLM integration |
-| **Database** | supabase | Database client |
-| **Notebooks** | marimo>=0.19.6, jupyter>=1.0.0, ipykernel>=6.0.0 | Interactive analysis |
-| **Utilities** | python-dotenv, ipywidgets, tabulate==0.9.0 | Config, widgets, formatting |
+### Machine Learning & Statistics
+- **scikit-learn** - Machine learning models
+- **xgboost >= 3.1.3** - Gradient boosting
+- **statsmodels >= 0.14.0** - Statistical modeling
+- **shap >= 0.49.1** - Model explainability
+- **prophet >= 1.2.1** - Time series forecasting
+- **lifelines >= 0.27.0** - Survival analysis
 
-### Frontend (TypeScript/React)
+### Spatial Analysis
+- **libpysal >= 4.6.0** - Spatial statistics library
+- **esda >= 1.5.0** - Exploratory spatial data analysis
+- **scipy >= 1.17.0** - Scientific computing
 
-**Project Structure**:
-- Root `package.json`: Minimal (rehype-katex, remark-math for docs)
-- `app/package.json`: Full Astro/React application
+### Web & APIs
+- **requests** - HTTP client
+- **supabase** - Database client (configured but not actively used)
+- **python-dotenv** - Environment variable management
 
-**Framework**:
-- Astro 5.16.16 (static site generator)
-- React 19.2.4 (UI components)
-- TypeScript 5 (type safety)
+### AI/LLM Integration
+- **langchain >= 0.3.0** - LLM framework
+- **langchain-google-genai == 2.0.0** - Google Generative AI integration
+- **langchain-experimental == 0.3.0** - Experimental features
+- **langchain-community** - Community integrations
 
-**UI Libraries**:
-- Tailwind CSS 3 (styling)
-- @tailwindcss/postcss 4.1.18 (PostCSS integration)
-- clsx, tailwind-merge (className utilities)
-
-**Visualization**:
-- Leaflet 1.9.4 (maps)
-- react-leaflet 5.0.0 (React Leaflet integration)
-- Recharts 3.7.0 (charts)
-- KaTeX 0.16.28 (math rendering)
-
-**Other**:
-- lucide-react 0.563.0 (icons)
-- @tanstack/react-table 8.21.3 (tables)
-- shiki 3.21.0 (syntax highlighting)
-- remark-math, rehype-katex (math in markdown)
-
----
+### Visualization & Reporting
+- **plotly >= 6.5.2** - Interactive charts
+- **marimo >= 0.19.6** - Reactive notebooks
+- **kaleido >= 1.2.0** - Static image export
+- **pygwalker** - Interactive data exploration
 
 ## Development Tools
 
-### Code Quality
+### Python Development
+- **uv** - Fast Python package manager
+- **pytest 7.0.0+** - Testing framework
+- **ruff 0.1.0** - Linter and formatter (line length: 100)
+- **jupyter** - Interactive notebooks
+- **ipykernel** - Jupyter kernel
+- **jupytext** - Notebook pairing (.ipynb ↔ .py)
 
-**Python**:
-- Ruff (linting + formatting)
+### Frontend Development
+- **Node.js** - JavaScript runtime
+- **npm** - Package manager (via package.json)
+- **TypeScript 5.9.3** - Static type checking
+- **Playwright 1.58.0** - End-to-end testing
+
+## Configuration Files
+
+### Python Configuration
+- **pyproject.toml** - Project configuration, dependencies, tool settings
+- **jupytext.toml** - Jupytext notebook pairing configuration
+- **.env** - Environment variables (not in git)
+
+### Frontend Configuration
+- **astro.config.mjs** - Astro framework configuration
+- **tsconfig.json** - TypeScript configuration (extends astro strict)
+- **package.json** - Node.js dependencies
+- **tailwind.config.mjs** - Tailwind CSS configuration
+
+## Code Quality Tools
+
+### Python
+- **Ruff** - Linting and formatting
   - Line length: 100 characters
-  - Target: Python 3.11
-  - Rules: E, F, W, I, UP (ignore E501)
+  - Target version: Python 3.11
+  - Comprehensive rule set (E, F, W, I, N, UP)
 
-**Frontend**:
-- ESLint (via Astro)
-- TypeScript strict mode
+### Testing
+- **pytest** - Testing framework with:
+  - Unit tests (@pytest.mark.unit)
+  - Integration tests (@pytest.mark.integration)
+  - Slow tests (@pytest.mark.slow)
+  - API tests (@pytest.mark.api)
+  - Coverage reporting (term, html, xml)
 
-**Testing**:
-- pytest 7.0+ (test framework)
-- pytest-cov 4.0+ (coverage)
-- pytest-mock 3.10+ (mocking)
-- pytest-asyncio 0.21.0+ (async tests)
-- coverage[toml] 7.0+ (coverage reporting)
-- playwright 1.58+ (browser testing)
+## Documentation Standards
 
-**Type Checking**:
-- Python type hints (not enforced by mypy/pyright yet)
-- TypeScript 5 for frontend
-
-### Documentation
-
-- Jupytext 1.16.0+ (notebook ↔ script pairing)
-- Markdown with math support (KaTeX)
-
----
-
-## Configuration
-
-### Python Project Structure (pyproject.toml)
-
-**Project Metadata**:
-```toml
-[project]
-name = "egg-n-bacon-housing"
-version = "0.1.0"
-requires-python = ">=3.11"
-```
-
-**Dev Dependencies** (managed via uv):
-- jupyter, ipykernel, jupytext
-- pytest, pytest-cov, pytest-mock, pytest-asyncio
-- coverage, ruff
-
-### Linting/Formatting Configuration
-
-**Ruff** (`.py`):
-- Line length: 100
-- Target: py311
-- Notebook imports: E402 allowed
-- Stage file names: N999 allowed (e.g., `L0_collect.py`)
-
-### Test Configuration
-
-**Pytest** (`pyproject.toml`):
-- Test paths: `tests/`
-- Verbose output
-- Short tracebacks
-- Coverage on `scripts/core`
-- HTML coverage in `htmlcov/`
-- Markers: unit, integration, slow, api
-
----
-
-## Data Storage
-
-### File Formats
-
-- **Parquet**: Primary data storage (compressed with snappy)
-- **CSV**: Manual data input, export
-- **JSON**: Metadata, webapp data, configuration
-
-### Directory Structure
-
-```
-data/
-├── manual/           # Manually downloaded data
-│   └── csv/         # CSV input files
-├── parquets/        # Processed parquet datasets
-├── logs/            # Pipeline logs
-└── metadata.json    # Dataset lineage tracking
-```
-
----
-
-## Deployment
-
-### Frontend (GitHub Pages)
-
-- **Static Site**: Built with Astro
-- **Base URL**: Configured for GitHub Pages
-- **Build Output**: `app/dist/` and `backend/dist/`
-
-### Python Scripts
-
-- **Local Execution**: Run with `uv run`
-- **Notebooks**: Jupyter with Jupytext pairing
-
----
-
-## Infrastructure
-
-### External Services
-
-| Service | Purpose | Environment Variable |
-|---------|---------|---------------------|
-| **OneMap API** | Singapore geocoding | `ONEMAP_EMAIL`, `ONEMAP_TOKEN` |
-| **Google Maps** | Geocoding fallback | `GOOGLE_API_KEY` |
-| **data.gov.sg** | HDB/URA transactions | None (public API) |
-| **AWS S3** | Data storage (optional) | AWS credentials via boto3 |
-| **Supabase** | Database (optional) | `SUPABASE_URL`, `SUPABASE_KEY` |
-
-### API Rate Limiting
-
-- OneMap: Configurable delay (default: 1 second)
-- Google Maps: Timeout and retry handling
-- Caching: TTL-based (24 hours default)
-
----
+- **Google-style docstrings** for all public functions
+- **Type hints** required for all public APIs
+- **Absolute imports** from project root (no relative imports)
+- **Structured logging** with emojis for visual cues
 
 ## Version Control
 
-**Git Repository**:
-- Main branch: `main`
-- CI/CD: GitHub Actions
-  - Test workflow: `pytest` with coverage
-  - Deploy workflow: Build and deploy to GitHub Pages
+- **Git** - Version control
+- **GitHub** - Remote repository
+- **Conventional Commits** - Commit message format
+- **.gitignore** - Excludes: .venv, .env, __pycache__, node_modules, .astro
 
----
+## Key Technical Decisions
 
-## Summary
-
-**Backend Stack**: Python 3.11+, pandas, geopandas, scikit-learn, xgboost, plotly
-**Frontend Stack**: Astro, React 19, TypeScript, Tailwind CSS, Leaflet, Recharts
-**Development**: uv, pytest, playwright, ruff, jupyter/jupytext
-**Deployment**: GitHub Pages (static hosting)
-
-This stack prioritizes:
-- **Data processing speed** (pandas, pyarrow, uv)
-- **Geospatial analysis** (geopandas, h3)
-- **ML/AI capabilities** (scikit-learn, xgboost, langchain)
-- **Interactive visualization** (plotly, react-leaflet, recharts)
-- **Developer experience** (ruff, pytest, jupytext)
+1. **Astro over Next.js** - Better performance for static sites with content-focused pages
+2. **Parquet over CSV** - Efficient columnar storage for large datasets
+3. **Stage-based pipeline** - Clear separation of concerns (L0-L5)
+4. **Metadata-driven** - All datasets tracked in metadata.json
+5. **No backend API** - Frontend consumes pre-generated JSON files
+6. **Absolute imports** - Prevents import issues when running from different directories
+7. **uv over pip/poetry** - Faster dependency management

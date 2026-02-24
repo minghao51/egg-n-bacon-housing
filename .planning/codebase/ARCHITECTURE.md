@@ -1,97 +1,478 @@
-# Architecture
+# System Architecture
 
 ## Overview
 
-This is a **stage-based ETL pipeline** for processing Singapore housing data, with a separate **Astro/React dashboard frontend**.
+This project uses a **dual-track architecture** with clear separation between:
 
-## Pattern
+1. **Python ETL Pipeline** - Data processing, analytics, and ML models
+2. **Astro/React Webapp** - Frontend dashboard and visualization
 
-**Pipeline Pattern (L0-L5 Stages)**
+**Key Principle:** Frontend consumes pre-generated static JSON files; no runtime API calls or backend database.
 
-| Stage | Purpose |
-|-------|---------|
-| **L0 (Collection)** | Fetch HDB/URA transactions from data.gov.sg |
-| **L1 (Processing)** | Clean data, geocode addresses (OneMap → Google fallback) |
-| **L2 (Features)** | Add MRT distances, CBD distance, school tiers, amenities |
-| **L3 (Export)** | Create unified dataset, export JSONs for webapp |
-| **L4 (Analysis)** | Run ML models, spatial analysis, forecasting |
-| **L5 (Metrics)** | Calculate dashboard metrics |
+---
 
-## Layers
+## Data Pipeline Architecture
 
-### 1. Data Layer (`scripts/core/data_helpers.py`)
-- Parquet file I/O with metadata tracking
-- `load_parquet(dataset_name)` / `save_parquet(df, dataset_name)`
-- Metadata stored in `data/metadata.json`
+### Stage-Based ETL Pattern
 
-### 2. Configuration Layer (`scripts/core/config.py`)
-- Centralized Config class with all paths and settings
-- Environment variables loaded from `.env`
-- Feature flags (USE_CACHING, VERBOSE_LOGGING)
-
-### 3. Processing Layer (`scripts/core/stages/`)
-- L0_collect.py - Data collection from APIs
-- L1_process.py - Data cleaning, geocoding
-- L2_features.py / L2_rental.py - Feature engineering
-- L3_export.py - Data export (largest file: 1632 lines)
-- L4_analysis.py - ML/analytics
-- L5_metrics.py - Dashboard metrics
-
-### 4. External Services Layer
-- OneMap API - Singapore geocoding (primary)
-- Google Maps API - Geocoding fallback
-- data.gov.sg - HDB/URA transaction data
-
-### 5. Frontend Layer (`app/`)
-- Astro static site generator
-- React components for interactive dashboards
-- Data read from JSON files only (no API)
-
-## Data Flow
+The pipeline follows a **stage-based architecture** (L0-L5) where each stage has a single responsibility:
 
 ```
-data.gov.sg → L0 (collect) → L1 (process/geocode) → L2 (features)
-                                                              ↓
-                                            L3 (unified export) → JSONs
-                                                              ↓
-                                            L5 (metrics) → dashboard metrics
-                                                              ↓
-                                            L4 (analysis) → ML models
-                                                              ↓
-                                            app/public/data/ → Dashboard reads JSONs
+L0 (Collection) → L1 (Processing) → L2 (Features) → L3 (Export) → L4 (Analysis) → L5 (Metrics)
 ```
 
-## Entry Points
+#### Stage Descriptions
 
-| Component | Entry Point | Purpose |
-|-----------|-------------|---------|
-| **Pipeline** | `scripts/run_pipeline.py` | Main CLI orchestrator |
-| **Webapp** | `app/astro.config.mjs` | Astro configuration |
-| **Config** | `scripts/core/config.py` | Centralized settings |
+**L0 - Data Collection**
+- **Purpose:** Fetch raw data from external APIs
+- **Sources:** data.gov.sg (HDB/URA transactions), SingStat (macro data)
+- **Output:** Raw Parquet files
+- **Location:** `scripts/core/stages/L0_collect.py`
 
-## Routing/Initialization
+**L1 - Data Processing**
+- **Purpose:** Clean data, standardize formats, geocode addresses
+- **Process:** OneMap geocoding → Google Maps fallback
+- **Output:** Geocoded transaction data
+- **Location:** `scripts/core/stages/L1_process.py`
 
-**Python Pipeline** (`scripts/run_pipeline.py:47-50`):
+**L2 - Feature Engineering**
+- **Purpose:** Add features (MRT distances, CBD distance, school tiers, amenities)
+- **Features:** Spatial distances, rental yields, property features
+- **Output:** Feature-enriched datasets
+- **Location:** `scripts/core/stages/L2_features.py`
+
+**L3 - Export & Unification**
+- **Purpose:** Create unified dataset combining all property types
+- **Output:** Single Parquet with HDB + Condo + Landed
+- **Location:** `scripts/core/stages/L3_export.py`
+
+**L4 - Analysis**
+- **Purpose:** ML models, spatial analysis, forecasting
+- **Models:** XGBoost, ARIMA, spatial regression
+- **Output:** Analysis results (Parquet)
+- **Location:** `scripts/analytics/`
+
+**L5 - Metrics**
+- **Purpose:** Calculate dashboard metrics at planning area level
+- **Output:** Aggregated metrics for frontend
+- **Location:** `scripts/core/metrics.py`
+
+---
+
+### Pipeline Orchestration
+
+**Entry Point:** `scripts/run_pipeline.py`
+
+**Features:**
+- Sequential stage execution with dependencies
+- Checkpoint-based recovery (skip completed stages)
+- Progress logging and error reporting
+- Configurable stage execution (run specific stages)
+
+**Usage:**
+```bash
+uv run python scripts/run_pipeline.py --stages L0 L1 L2
+```
+
+---
+
+## Frontend Architecture
+
+### Framework Choice: Astro
+
+**Why Astro?**
+- Static site generation (optimal performance)
+- Islands architecture for interactive components
+- Zero JS by default (minimal bundle size)
+- Built-in MDX support for analytics reports
+
+### Component Architecture
+
+**Pattern:** Component-based with React islands
+
+**Entry Points:**
+- `app/src/pages/index.astro` - Landing page
+- `app/src/pages/dashboard/index.astro` - Dashboard
+- `app/src/pages/analytics/[slug].astro` - Dynamic analytics (MDX)
+
+**Component Hierarchy:**
+```
+Layouts (BaseLayout.astro)
+  ↓
+Pages (index.astro, dashboard/*)
+  ↓
+Components (charts/, dashboard/, analytics/)
+  ↓
+Utilities (hooks/, utils/)
+```
+
+---
+
+### Data Loading Strategy
+
+**Pattern:** Custom hook-based data fetching
+
+**Primary Hook:** `useGzipJson<T>(url, key, enabled)`
+
+**Features:**
+- Cached data fetching (localStorage)
+- Gzip decompression
+- Type-safe with TypeScript generics
+- Error handling with retry
+
+**Usage:**
+```typescript
+const { data, isLoading, error } = useGzipJson<AnalyticsData>(
+  '/data/spatial-analytics.json.gz',
+  'spatial-analytics',
+  true
+);
+```
+
+**Specialized Hooks:**
+- `useAnalyticsData<T>()` - Analytics data
+- `useLeaderboardData()` - Leaderboard rankings
+- `useSegmentsData()` - Market segments
+
+---
+
+### State Management
+
+**Approach:** Hook-based state (no Redux/Zustand)
+
+**Patterns:**
+- Custom hooks for domain-specific state
+- React useState for local component state
+- URL params for shared state (filters, selections)
+
+**Example:**
+```typescript
+const [filteredData, setFilteredData] = useState<Data>([]);
+const [filters, setFilters] = useState<Filters>({});
+```
+
+---
+
+## Data Flow Architecture
+
+### Processing Pipeline Flow
+
+```
+External APIs (data.gov.sg, SingStat)
+    ↓
+L0: Fetch + Cache
+    ↓
+L1: Clean + Geocode (OneMap → Google)
+    ↓
+L2: Add Features (MRT, CBD, Schools)
+    ↓
+L3: Merge + Export Unified Dataset
+    ↓
+L4: Run Analysis (ML, Spatial)
+    ↓
+L5: Calculate Metrics
+    ↓
+JSON Export (prepare_webapp_data.py)
+    ↓
+Static Files (app/public/data/*.json.gz)
+```
+
+### Frontend Data Flow
+
+```
+User Request
+    ↓
+useGzipJson Hook
+    ↓
+Fetch JSON.gz
+    ↓
+Decompress + Parse
+    ↓
+Type-Safe Data
+    ↓
+React Components
+    ↓
+Visualizations (Recharts, Leaflet)
+```
+
+**Key Benefits:**
+- No backend API latency
+- Perfect caching (static files)
+- CDN-friendly
+- Simplified deployment
+
+---
+
+## Abstractions & Patterns
+
+### Python Side
+
+#### Configuration Abstraction
+**File:** `scripts/core/config.py`
+
+**Pattern:** Centralized Config class with class-level properties
+
+**Benefits:**
+- Single source of truth
+- Type-safe access
+- Validation on initialization
+- Environment variable management
+
+**Usage:**
 ```python
-from scripts.core.stages.L0_collect import collect_all_datagovsg
-from scripts.core.stages.L1_process import run_processing_pipeline
-from scripts.core.stages.L2_rental import run_rental_pipeline
+from scripts.core.config import Config
+
+data_dir = Config.DATA_DIR
+api_key = Config.ONEMAP_EMAIL
 ```
 
-**Frontend** (`app/astro.config.mjs`):
-- Astro + React + MDX + Tailwind integrations
-- Vite alias: `@` → `app/src/`
-- Pages in `app/src/pages/` (dashboard/, analytics/, index.astro)
+#### Data Abstraction
+**File:** `scripts/core/data_helpers.py`
 
-## Key Abstractions
+**Pattern:** Metadata-driven Parquet I/O
 
-- **DataHelpers**: Load/save parquets with metadata lineage
-- **Config**: Singleton-style config class
-- **Geocoder**: OneMap→Google fallback chain
-- **Stages**: Modular pipeline stages (L0-L5)
+**Features:**
+- Load/save by dataset name (not path)
+- Automatic metadata tracking
+- Version control support
+- Checksum verification
 
-## Frontend/Backend Separation
+**Usage:**
+```python
+from scripts.core.data_helpers import load_parquet, save_parquet
 
-- **Data Processing** (Python): `scripts/` → Parquet files → `data/parquets/`
-- **Dashboard** (Astro/React): `app/` → Reads JSONs from `app/public/data/`
-- **Key Principle**: Python exports JSONs; frontend only reads (no backend API)
+df = load_parquet("L1_hdb_transactions")
+save_parquet(df, "L2_hdb_with_features")
+```
+
+#### API Abstraction
+**Pattern:** Decorator-based caching
+
+**Features:**
+- TTL-based caching (24h default)
+- Retry logic with tenacity
+- Rate limiting (delays)
+- Error handling
+
+**Usage:**
+```python
+@cached_call(ttl=86400)
+def fetch_api_data(url):
+    # API call
+    pass
+```
+
+---
+
+### Frontend Side
+
+#### Data Loading Abstraction
+**Pattern:** Generic useGzipJson hook
+
+**Features:**
+- Type-safe with generics
+- Automatic decompression
+- Local storage caching
+- Error handling
+
+**Usage:**
+```typescript
+const { data } = useGzipJson<MyDataType>('/data/file.json.gz', 'cache-key');
+```
+
+#### Component Abstraction
+**Pattern:** Composable components with TypeScript interfaces
+
+**Example:**
+```typescript
+interface ChartProps {
+  data: TrendRecord[];
+  title: string;
+  metric: string;
+}
+
+export function TrendChart({ data, title, metric }: ChartProps) {
+  // Component logic
+}
+```
+
+---
+
+## Design Decisions & Rationale
+
+### 1. Why Stage-Based Pipeline?
+**Benefit:** Clear separation of concerns, easy debugging, checkpoint recovery
+
+### 2. Why Parquet Files?
+**Benefit:** Columnar storage, efficient compression, fast queries, schema preservation
+
+### 3. Why Static JSON for Frontend?
+**Benefit:** No backend latency, perfect caching, CDN-friendly, simplified deployment
+
+### 4. Why Astro Over Next.js?
+**Benefit:** Better performance for content-focused sites, zero JS by default
+
+### 5. Why Absolute Imports?
+**Benefit:** Prevents import issues when running from different directories
+
+### 6. Why Custom Hooks Over Redux?
+**Benefit:** Simpler for this use case, no boilerplate, better TypeScript support
+
+### 7. Why Metadata-Driven Data?
+**Benefit:** Reproducibility, versioning, automatic tracking, easier debugging
+
+---
+
+## Error Handling Architecture
+
+### Python Side
+
+**Hierarchy:**
+- `ValueError` - Invalid input, configuration issues
+- `FileNotFoundError` - Missing files
+- `RuntimeError` - API failures, general errors
+
+**Pattern:** Try-Except-Log-Raise
+```python
+try:
+    df = pd.read_parquet(path)
+except Exception as e:
+    logger.error(f"Failed to load {path}: {e}")
+    raise RuntimeError(f"Load failed: {e}") from e
+```
+
+### Frontend Side
+
+**Pattern:** Error boundaries + hook-based error handling
+
+**Example:**
+```typescript
+const { data, error, isLoading } = useGzipJson(url);
+
+if (error) return <ErrorDisplay error={error} />;
+if (isLoading) return <LoadingSpinner />;
+```
+
+---
+
+## Performance Optimizations
+
+### Python Side
+- **Vectorized Operations:** Pandas/Numpy (avoid loops)
+- **Parallel Processing:** Thread pools for geocoding
+- **Caching:** API response caching (24h TTL)
+- **Incremental Processing:** Checkpoint-based recovery
+
+### Frontend Side
+- **Code Splitting:** Astro islands architecture
+- **Lazy Loading:** Components loaded on demand
+- **Gzip Compression:** JSON files compressed
+- **Client-Side Caching:** localStorage for data
+- **CDN Delivery:** Static assets via CDN
+
+---
+
+## Scalability Considerations
+
+### Current Limitations
+- Full datasets loaded into memory
+- Sequential geocoding (with parallel workers)
+- Single-machine processing
+
+### Future Scalability Options
+- **Chunked Processing:** Process large files in batches
+- **Distributed Computing:** Dask or Ray for parallel processing
+- **Database Migration:** PostGIS for spatial queries
+- **API Backend:** FastAPI for dynamic data loading
+
+---
+
+## Security Architecture
+
+### API Key Management
+- Environment variables via `.env`
+- No hardcoded secrets
+- `.env.example` template
+- Pre-commit secret scanning (recommended)
+
+### Data Validation
+- Input validation at API boundaries
+- Parquet schema validation
+- Type hints for all public functions
+
+### Error Messages
+- No sensitive data in logs
+- Sanitized error messages
+- Structured logging
+
+---
+
+## Monitoring & Observability
+
+### Logging
+- **Location:** `data/logs/`
+- **Format:** Timestamped, structured
+- **Levels:** DEBUG, INFO, WARNING, ERROR
+- **Visual Cues:** Emojis for quick scanning
+
+### Pipeline Tracking
+- **Metadata:** `data/metadata.json`
+- **Checksums:** Data integrity verification
+- **Versions:** Dataset versioning
+- **Timestamps:** Processing time tracking
+
+---
+
+## Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      DATA SOURCES                            │
+│  data.gov.sg API    SingStat API    OneMap API              │
+└──────────────────────┬──────────────────────────────────────┘
+                       ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  PYTHON ETL PIPELINE                         │
+│  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐    │
+│  │ L0  │→│ L1  │→│ L2  │→│ L3  │→│ L4  │→│ L5  │    │
+│  │Collect│Process│Features│Export│Analysis│Metrics│    │
+│  └─────┘  └─────┘  └─────┘  └─────┘  └─────┘  └─────┘    │
+│                                                           │
+│  Core Utilities: Config, DataHelpers, Geocoding          │
+└──────────────────────┬──────────────────────────────────────┘
+                       ↓
+┌─────────────────────────────────────────────────────────────┐
+│              JSON EXPORT (prepare_webapp_data.py)           │
+│         app/public/data/*.json.gz                           │
+└──────────────────────┬──────────────────────────────────────┘
+                       ↓
+┌─────────────────────────────────────────────────────────────┐
+│                   ASTRO/REACT WEBAPP                        │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │                   PAGES                              │   │
+│  │  Landing  Dashboard  Analytics (MDX)                 │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                        ↓                                    │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │                 COMPONENTS                           │   │
+│  │  Charts  Tables  Maps  Filters                       │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                        ↓                                    │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │                  HOOKS                               │   │
+│  │  useGzipJson  useAnalyticsData  useLeaderboardData   │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Key Architectural Principles
+
+1. **Separation of Concerns:** Clear boundary between data processing and presentation
+2. **Single Responsibility:** Each stage/module has one purpose
+3. **Metadata-Driven:** All datasets tracked and versioned
+4. **Type Safety:** TypeScript (frontend), Python type hints (backend)
+5. **Error Resilience:** Comprehensive error handling and retry logic
+6. **Performance-First:** Caching, compression, vectorized operations
+7. **Developer Experience:** Absolute imports, centralized config, clear patterns
