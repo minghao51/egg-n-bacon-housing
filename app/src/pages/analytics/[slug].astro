@@ -30,7 +30,7 @@ const tocHeadings = headings.map((h) => ({
 ---
 
 <Layout title={`${title} - Analytics`}>
-  <Sidebar />
+  <Sidebar currentPath={Astro.url.pathname} />
   <TableOfContents headings={tocHeadings} />
 
   <main class="flex-1 ml-0 lg:ml-64 mr-0 xl:mr-64">

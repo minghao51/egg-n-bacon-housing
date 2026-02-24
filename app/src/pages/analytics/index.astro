@@ -56,7 +56,7 @@ const sortedCategories = Object.keys(categoryConfig).filter(
 ---
 
 <Layout title="Analytics - Singapore Housing Market">
-  <Sidebar />
+  <Sidebar currentPath={Astro.url.pathname} />
 
   <main class="flex-1 ml-64">
     <div class="max-w-4xl mx-auto px-8 py-12">

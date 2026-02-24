@@ -29,7 +29,7 @@ const docsToShow = recommendedDocs.length > 0 ? recommendedDocs : allDocs;
 ---
 
 <Layout title={`${personaData.title} - Singapore Housing Analytics`}>
-  <Sidebar />
+  <Sidebar currentPath={Astro.url.pathname} />
 
   <main class="flex-1 ml-0 lg:ml-64">
     <div class="max-w-4xl mx-auto px-4 sm:px-8 py-12">
