@@ -1,27 +1,12 @@
 // app/src/hooks/useLeaderboardData.ts
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { LeaderboardEntry, LeaderboardMetric } from '@/types/leaderboard';
-import { fetchGzipJson } from '@/utils/gzip';
+import { PropertyType, Region, TimeHorizon, FilterState as BaseFilterState } from '@/types/segments';
+import { useGzipJson } from './useGzipJson';
+import { DATA_URLS } from '@/constants/data-urls';
 
-// Define types locally to avoid circular dependencies
-type PropertyType = 'HDB' | 'Condominium' | 'EC';
-type TimeHorizon = 'short' | 'medium' | 'long';
-type Region = 'CCR' | 'RCR' | 'OCR';
-
-interface FilterState {
-  investmentGoal: string | null;
-  budgetRange: [number, number];
-  propertyTypes: PropertyType[];
-  locations: Region[];
-  timeHorizon: TimeHorizon | null;
+interface FilterState extends BaseFilterState {
   hotspotFilter: string;
-}
-
-interface UseLeaderboardDataResult {
-  data: LeaderboardEntry[];
-  loading: boolean;
-  error: string | null;
-  reload: () => void;
 }
 
 /**
@@ -183,45 +168,21 @@ function sortAndRank(
 export function useLeaderboardData(
   filters: FilterState,
   sortBy: LeaderboardMetric = 'yoy_growth_pct'
-): UseLeaderboardDataResult {
-  const [rawData, setRawData] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const dataUrl = `${import.meta.env.BASE_URL}data/dashboard_leaderboard.json.gz`;
-      const parsed = await fetchGzipJson<LeaderboardEntry[]>(dataUrl);
-      setRawData(parsed);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      setError(message);
-      console.error('Failed to load leaderboard data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
+): { data: LeaderboardEntry[]; loading: boolean; error: string | null; reload: () => void } {
+  const { data: rawData, loading, error, reload } = useGzipJson<LeaderboardEntry[]>(
+    DATA_URLS.leaderboard,
+    'leaderboard'
+  );
 
   // Apply filters and sorting
   const data = useMemo(() => {
+    if (!rawData) return [];
     let result = applyFilters(rawData, filters);
     result = sortAndRank(result, sortBy, filters);
     return result;
   }, [rawData, filters, sortBy]);
 
-  return {
-    data,
-    loading,
-    error,
-    reload: loadData,
-  };
+  return { data, loading, error, reload };
 }
 
 /**

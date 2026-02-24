@@ -70,11 +70,12 @@ export async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
  * Fetch and decompress a gzip-compressed JSON file.
  *
  * @param url - The URL to fetch (should point to a .gz file)
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise resolving to parsed JSON object
  * @throws Error if fetch fails or JSON parsing fails
  */
-export async function fetchGzipJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+export async function fetchGzipJson<T>(url: string, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(url, { signal });
 
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
