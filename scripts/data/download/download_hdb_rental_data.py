@@ -16,6 +16,8 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 import logging
+import random
+import time
 
 import pandas as pd
 import requests
@@ -26,6 +28,57 @@ from scripts.core.network_check import check_local_file_exists, require_network
 logger = logging.getLogger(__name__)
 
 OUTPUT_PATH = Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet"
+
+
+def _get_with_retry(
+    session: requests.Session,
+    url: str,
+    params: dict,
+    *,
+    max_retries: int = 5,
+    timeout: int = 30,
+) -> requests.Response:
+    """GET with retry/backoff for rate limiting and transient network errors."""
+    for attempt in range(max_retries + 1):
+        try:
+            response = session.get(url, params=params, timeout=timeout)
+            status = response.status_code
+
+            if status == 429 or 500 <= status < 600:
+                if attempt >= max_retries:
+                    response.raise_for_status()
+                retry_after = response.headers.get("Retry-After")
+                if retry_after and retry_after.isdigit():
+                    sleep_seconds = float(retry_after)
+                else:
+                    sleep_seconds = min(60.0, (2**attempt) + random.uniform(0, 1))
+                logger.warning(
+                    "Request failed with HTTP %s (attempt %s/%s). Retrying in %.1fs...",
+                    status,
+                    attempt + 1,
+                    max_retries + 1,
+                    sleep_seconds,
+                )
+                time.sleep(sleep_seconds)
+                continue
+
+            response.raise_for_status()
+            return response
+
+        except requests.RequestException as e:
+            if attempt >= max_retries:
+                raise
+            sleep_seconds = min(60.0, (2**attempt) + random.uniform(0, 1))
+            logger.warning(
+                "Network request error (%s) on attempt %s/%s. Retrying in %.1fs...",
+                e.__class__.__name__,
+                attempt + 1,
+                max_retries + 1,
+                sleep_seconds,
+            )
+            time.sleep(sleep_seconds)
+
+    raise RuntimeError("Unreachable retry loop exit")
 
 
 def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe651", batch_size: int = 10000) -> pd.DataFrame:
@@ -43,7 +96,9 @@ def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe6
     url = "https://data.gov.sg/api/action/datastore_search"
 
     params = {"resource_id": dataset_id, "limit": 1}
-    response = requests.get(url, params=params)
+    session = requests.Session()
+
+    response = _get_with_retry(session, url, params)
     response.raise_for_status()
     data = response.json()
 
@@ -60,7 +115,7 @@ def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe6
             "offset": offset
         }
         logger.info(f"Downloading records {offset:,} to {min(offset + batch_size, total):,}...")
-        response = requests.get(url, params=params)
+        response = _get_with_retry(session, url, params)
         response.raise_for_status()
         data = response.json()
         records = data['result']['records']

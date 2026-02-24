@@ -33,6 +33,92 @@ from scripts.core.stages.L5_metrics import (
 logger = logging.getLogger(__name__)
 
 
+def _to_lower_indexed_records(
+    df: pd.DataFrame, index_col: str, value_cols: list[str]
+) -> dict[str, dict]:
+    """Convert a DataFrame to a lowercased-index dict for fast lookups."""
+    if df.empty or index_col not in df.columns:
+        return {}
+    indexed = df.set_index(index_col)[value_cols].copy()
+    indexed.index = indexed.index.astype(str).str.lower()
+    return indexed.to_dict("index")
+
+
+def build_l5_metric_cache(df: pd.DataFrame) -> dict:
+    """Compute reusable L5-derived metrics once per web export run."""
+    cache: dict = {
+        "latest_growth_by_area": {},
+        "yield_by_area": {},
+        "recent_yield_by_area": {},
+        "affordability_by_area": {},
+        "hotspots": {},
+    }
+
+    # Growth metrics + latest snapshot
+    growth_df = pd.DataFrame()
+    try:
+        growth_df = calculate_growth_metrics_by_area(df)
+        if not growth_df.empty:
+            latest_growth = growth_df.sort_values("month").groupby("planning_area").last()
+            latest_growth.index = latest_growth.index.astype(str).str.lower()
+            cache["latest_growth_by_area"] = latest_growth[
+                ["mom_change_pct", "yoy_change_pct", "momentum", "momentum_signal"]
+            ].to_dict("index")
+    except Exception as e:
+        logger.warning(f"Could not precompute growth metrics cache: {e}")
+
+    # Rental yield metrics (whole dataset)
+    try:
+        yield_df = calculate_rental_yield_by_area(df)
+        cache["yield_by_area"] = _to_lower_indexed_records(
+            yield_df, "planning_area", ["mean", "median", "std"]
+        )
+    except Exception as e:
+        logger.warning(f"Could not precompute rental yield cache: {e}")
+
+    # Rental yield metrics (recent subset used by leaderboard)
+    try:
+        recent_df = df[df["transaction_date"].dt.year >= 2022]
+        recent_yield_df = calculate_rental_yield_by_area(recent_df)
+        cache["recent_yield_by_area"] = _to_lower_indexed_records(
+            recent_yield_df, "planning_area", ["mean", "median", "std"]
+        )
+    except Exception as e:
+        logger.warning(f"Could not precompute recent rental yield cache: {e}")
+
+    # Affordability metrics
+    try:
+        aff_df = calculate_affordability_by_area(df)
+        cache["affordability_by_area"] = _to_lower_indexed_records(
+            aff_df,
+            "planning_area",
+            ["affordability_ratio", "affordability_class", "mortgage_to_income_pct"],
+        )
+    except Exception as e:
+        logger.warning(f"Could not precompute affordability cache: {e}")
+
+    # Hotspots derived from growth metrics
+    try:
+        if not growth_df.empty:
+            hotspots_df = identify_appreciation_hotspots(growth_df)
+            hotspots = {}
+            for _, row in hotspots_df.iterrows():
+                area_name = str(row["planning_area"]).upper()
+                hotspots[area_name] = {
+                    "category": str(row["category"]),
+                    "mean_yoy_growth": safe_float(row.get("mean_yoy"), 0),
+                    "median_yoy_growth": safe_float(row.get("median_yoy"), 0),
+                    "std_yoy_growth": safe_float(row.get("std_yoy"), 0),
+                    "consistency": safe_float(row.get("consistency"), 0),
+                    "years": int(row.get("years", 0)),
+                }
+            cache["hotspots"] = hotspots
+    except Exception as e:
+        logger.warning(f"Could not precompute hotspots cache: {e}")
+
+    return cache
+
+
 def write_json_gzip(data, filepath: Path):
     """Write data to a gzipped JSON file."""
     with gzip.open(filepath, "wt", encoding="utf-8") as f:
@@ -90,6 +176,9 @@ def export_dashboard_data():
         df["month"] = df["transaction_date"].dt.to_period("M").astype(str)
         df["year"] = df["transaction_date"].dt.year
 
+    # Precompute reusable L5-derived metrics once for all web exports
+    l5_cache = build_l5_metric_cache(df)
+
     # 1. Export Overview Data
     logger.info("Exporting overview data...")
     overview_data = generate_overview_data(df)
@@ -102,7 +191,7 @@ def export_dashboard_data():
 
     # 3. Export Map Data
     logger.info("Exporting map data...")
-    map_data = generate_map_data(df)
+    map_data = generate_map_data(df, l5_cache=l5_cache)
     write_json_gzip(sanitize_for_json(map_data), output_dir / "map_metrics.json.gz")
 
     # Copy GeoJSON (prefer URA file with region data)
@@ -122,14 +211,14 @@ def export_dashboard_data():
 
     # 5. Export Town Leaderboard
     logger.info("Exporting leaderboard data...")
-    leaderboard_data = generate_leaderboard_data(df)
+    leaderboard_data = generate_leaderboard_data(df, l5_cache=l5_cache)
     write_json_gzip(
         sanitize_for_json(leaderboard_data), output_dir / "dashboard_leaderboard.json.gz"
     )
 
     # 6. Export Appreciation Hotspots (NEW)
     logger.info("Exporting hotspots data...")
-    hotspots_data = generate_hotspots_data(df)
+    hotspots_data = generate_hotspots_data(df, l5_cache=l5_cache)
     write_json_gzip(sanitize_for_json(hotspots_data), output_dir / "hotspots.json.gz")
 
     # 7. Export Amenity Summary (NEW - Phase 2)
@@ -293,7 +382,7 @@ def generate_map_metrics_for_subset(sub_df):
     return map_metrics
 
 
-def generate_map_data(df):
+def generate_map_data(df, l5_cache: dict | None = None):
     """Aggregates metrics by Planning Area for different eras, including L5 metrics."""
     logger.info("Generating enhanced map data with L5 metrics...")
 
@@ -340,14 +429,8 @@ def generate_map_data(df):
 
     # Calculate L5 growth metrics
     try:
-        growth_df = calculate_growth_metrics_by_area(df)
-        if not growth_df.empty:
-            # Get latest growth metrics per planning area
-            latest_growth = growth_df.sort_values("month").groupby("planning_area").last()
-            # Convert index to lowercase for consistent lookup
-            latest_growth.index = latest_growth.index.str.lower()
-
-            # Merge into metrics (era-based and combined sections)
+        growth_lookup = (l5_cache or {}).get("latest_growth_by_area", {})
+        if growth_lookup:
             for era in [
                 "whole",
                 "pre_covid",
@@ -363,9 +446,8 @@ def generate_map_data(df):
                 "recent_condo",
             ]:
                 for area_name, metrics in base_metrics[era].items():
-                    area_lower = area_name.lower()
-                    if area_lower in latest_growth.index:
-                        row = latest_growth.loc[area_lower]
+                    row = growth_lookup.get(area_name.lower())
+                    if row:
                         metrics["mom_change_pct"] = safe_float(row.get("mom_change_pct"), 0)
                         metrics["yoy_change_pct"] = safe_float(row.get("yoy_change_pct"), 0)
                         metrics["momentum"] = safe_float(row.get("momentum"), 0)
@@ -375,15 +457,8 @@ def generate_map_data(df):
 
     # Calculate rental yield metrics
     try:
-        yield_df = calculate_rental_yield_by_area(df)
-        if not yield_df.empty:
-            # Convert to dict for easy lookup with lowercase keys
-            yield_df_indexed = yield_df.set_index("planning_area")[["mean", "median", "std"]]
-            # Convert index to lowercase
-            yield_df_indexed.index = yield_df_indexed.index.str.lower()
-            yield_dict = yield_df_indexed.to_dict("index")
-
-            # Merge into metrics (all sections including combined)
+        yield_dict = (l5_cache or {}).get("yield_by_area", {})
+        if yield_dict:
             for era in [
                 "whole",
                 "pre_covid",
@@ -406,9 +481,8 @@ def generate_map_data(df):
                 "year_2025_condo",
             ]:
                 for area_name, metrics in base_metrics[era].items():
-                    area_lower = area_name.lower()
-                    if area_lower in yield_dict:
-                        y_data = yield_dict[area_lower]
+                    y_data = yield_dict.get(area_name.lower())
+                    if y_data:
                         metrics["rental_yield_mean"] = safe_float(y_data.get("mean"))
                         metrics["rental_yield_median"] = safe_float(y_data.get("median"))
                         metrics["rental_yield_std"] = safe_float(y_data.get("std"))
@@ -417,17 +491,8 @@ def generate_map_data(df):
 
     # Calculate affordability metrics
     try:
-        aff_df = calculate_affordability_by_area(df)
-        if not aff_df.empty:
-            # Convert to dict for easy lookup with lowercase keys
-            aff_df_indexed = aff_df.set_index("planning_area")[
-                ["affordability_ratio", "affordability_class", "mortgage_to_income_pct"]
-            ]
-            # Convert index to lowercase
-            aff_df_indexed.index = aff_df_indexed.index.str.lower()
-            aff_dict = aff_df_indexed.to_dict("index")
-
-            # Merge into metrics (all sections including combined)
+        aff_dict = (l5_cache or {}).get("affordability_by_area", {})
+        if aff_dict:
             for era in [
                 "whole",
                 "pre_covid",
@@ -450,9 +515,8 @@ def generate_map_data(df):
                 "year_2025_condo",
             ]:
                 for area_name, metrics in base_metrics[era].items():
-                    area_lower = area_name.lower()
-                    if area_lower in aff_dict:
-                        a_data = aff_dict[area_lower]
+                    a_data = aff_dict.get(area_name.lower())
+                    if a_data:
                         metrics["affordability_ratio"] = safe_float(
                             a_data.get("affordability_ratio")
                         )
@@ -469,9 +533,13 @@ def generate_map_data(df):
     return base_metrics
 
 
-def generate_hotspots_data(df):
+def generate_hotspots_data(df, l5_cache: dict | None = None):
     """Generate appreciation hotspots classification by planning area."""
     logger.info("Generating hotspots data...")
+
+    cache_hotspots = (l5_cache or {}).get("hotspots")
+    if cache_hotspots:
+        return cache_hotspots
 
     # Calculate growth metrics first (needed for hotspot identification)
     try:
@@ -510,21 +578,24 @@ def generate_hotspots_data(df):
     return hotspots
 
 
-def generate_segments_data(df):
+def generate_segments_data(df, yield_lookup: dict[str, float] | None = None):
     """Generate scatter plot data for Market Segments (Price PSF vs Yield)."""
     # Recent data only
     df_recent = df[df["year"] >= 2022].copy()
 
     # Get rental yield from L5 metrics for all planning areas (HDB only)
-    yield_dict = {}
-    try:
-        yield_df = calculate_rental_yield_by_area(df_recent)
-        if not yield_df.empty:
-            yield_df_indexed = yield_df.set_index("planning_area")["mean"]
-            yield_df_indexed.index = yield_df_indexed.index.str.lower()
-            yield_dict = yield_df_indexed.to_dict()
-    except Exception as e:
-        logger.warning(f"Could not calculate rental yield for segments: {e}")
+    yield_dict = yield_lookup or {}
+    if not yield_dict and not df_recent.empty:
+        has_hdb = df_recent["property_type"].isin(["HDB", "HDB Flat"]).any()
+        if has_hdb:
+            try:
+                yield_df = calculate_rental_yield_by_area(df_recent)
+                if not yield_df.empty:
+                    yield_df_indexed = yield_df.set_index("planning_area")["mean"]
+                    yield_df_indexed.index = yield_df_indexed.index.str.lower()
+                    yield_dict = yield_df_indexed.to_dict()
+            except Exception as e:
+                logger.warning(f"Could not calculate rental yield for segments: {e}")
 
     # Group by Planning Area and Property Type (NOT flat_type for non-HDB)
     # For HDB, we want flat_type breakdown; for condo/EC, we don't
@@ -588,6 +659,30 @@ def generate_segments_data(df):
     return segments
 
 
+def _build_segment_yield_lookup(df_subset: pd.DataFrame) -> dict[str, float]:
+    """Build cached rental yield lookup for segment generation when HDB fallback is needed."""
+    if df_subset.empty:
+        return {}
+
+    if not df_subset["property_type"].isin(["HDB", "HDB Flat"]).any():
+        return {}
+
+    recent_subset = df_subset[df_subset["year"] >= 2022]
+    if recent_subset.empty:
+        return {}
+
+    try:
+        yield_df = calculate_rental_yield_by_area(recent_subset)
+        if yield_df.empty:
+            return {}
+        yield_series = yield_df.set_index("planning_area")["mean"]
+        yield_series.index = yield_series.index.astype(str).str.lower()
+        return yield_series.to_dict()
+    except Exception as e:
+        logger.warning(f"Could not calculate rental yield for segments subset: {e}")
+        return {}
+
+
 def generate_filtered_segments_data(df):
     """Generate segments data for each era + property type combination."""
     logger.info("Generating filtered segments data...")
@@ -610,6 +705,17 @@ def generate_filtered_segments_data(df):
             return df_subset[df_subset["property_type"].isin(["Condominium", "Apartment", "Condo"])]
         return df_subset
 
+    # Build cached yield lookups only for combinations that may need HDB fallback values
+    segment_yield_lookups: dict[str, dict[str, float]] = {}
+
+    def cache_lookup(key: str, df_subset: pd.DataFrame):
+        segment_yield_lookups[key] = _build_segment_yield_lookup(df_subset)
+
+    for era_name, era_df in eras.items():
+        cache_lookup(era_name, era_df)
+        hdb_df = filter_by_property_type(era_df, "hdb")
+        cache_lookup(f"{era_name}_hdb", hdb_df)
+
     # Generate segments for each combination
     filtered_segments = {}
     for era_name, era_df in eras.items():
@@ -617,14 +723,18 @@ def generate_filtered_segments_data(df):
             continue
 
         # Generate for all property types
-        filtered_segments[era_name] = generate_segments_data(era_df)
+        filtered_segments[era_name] = generate_segments_data(
+            era_df, yield_lookup=segment_yield_lookups.get(era_name)
+        )
 
         # Generate for each property type
         for prop_type in ["hdb", "ec", "condo"]:
-            prop_df = filter_by_property_type(era_df, prop_type)
-            if not prop_df.empty:
-                key = f"{era_name}_{prop_type}"
-                filtered_segments[key] = generate_segments_data(prop_df)
+                prop_df = filter_by_property_type(era_df, prop_type)
+                if not prop_df.empty:
+                    key = f"{era_name}_{prop_type}"
+                    filtered_segments[key] = generate_segments_data(
+                        prop_df, yield_lookup=segment_yield_lookups.get(key)
+                    )
 
     logger.info(f"Generated filtered segments data for {len(filtered_segments)} combinations")
     return filtered_segments
@@ -771,7 +881,7 @@ def _calculate_time_period_breakdown(
     return breakdown
 
 
-def generate_leaderboard_data(df):
+def generate_leaderboard_data(df, l5_cache: dict | None = None):
     """
     Generate enhanced town leaderboard with filterable breakdowns.
 
@@ -788,26 +898,39 @@ def generate_leaderboard_data(df):
     logger.info(f"Loaded metadata for {len(area_metadata)} planning areas")
 
     # Get hotspot data
-    hotspots = generate_hotspots_data(df)
+    hotspots = generate_hotspots_data(df, l5_cache=l5_cache)
 
     # Get affordability metrics
-    try:
-        aff_df = calculate_affordability_by_area(df)
-        aff_dict = aff_df.set_index("planning_area")["affordability_ratio"].to_dict()
-    except Exception as e:
-        logger.warning(f"Could not load affordability metrics: {e}")
-        aff_dict = {}
+    aff_lookup = (l5_cache or {}).get("affordability_by_area")
+    if aff_lookup:
+        aff_dict = {
+            area: values.get("affordability_ratio") for area, values in aff_lookup.items()
+        }
+    else:
+        try:
+            aff_df = calculate_affordability_by_area(df)
+            aff_series = aff_df.set_index("planning_area")["affordability_ratio"]
+            aff_series.index = aff_series.index.astype(str).str.lower()
+            aff_dict = aff_series.to_dict()
+        except Exception as e:
+            logger.warning(f"Could not load affordability metrics: {e}")
+            aff_dict = {}
 
     # Get growth metrics (for mom_change and momentum)
-    try:
-        growth_df = calculate_growth_metrics_by_area(df)
-        latest_growth = growth_df.sort_values("month").groupby("planning_area").last()
-        growth_dict = latest_growth[["mom_change_pct", "yoy_change_pct", "momentum"]].to_dict(
-            "index"
-        )
-    except Exception as e:
-        logger.warning(f"Could not load growth metrics: {e}")
-        growth_dict = {}
+    growth_lookup = (l5_cache or {}).get("latest_growth_by_area")
+    if growth_lookup:
+        growth_dict = growth_lookup
+    else:
+        try:
+            growth_df = calculate_growth_metrics_by_area(df)
+            latest_growth = growth_df.sort_values("month").groupby("planning_area").last()
+            latest_growth.index = latest_growth.index.astype(str).str.lower()
+            growth_dict = latest_growth[["mom_change_pct", "yoy_change_pct", "momentum"]].to_dict(
+                "index"
+            )
+        except Exception as e:
+            logger.warning(f"Could not load growth metrics: {e}")
+            growth_dict = {}
 
     # Use planning_area for consistent aggregation
     area_col = "planning_area" if "planning_area" in df.columns else "town"
@@ -839,15 +962,22 @@ def generate_leaderboard_data(df):
     area_metrics.columns = ["area", "median_price", "median_psf", "rental_yield_mean", "volume"]
 
     # Get rental yield median from L5 metrics
-    try:
-        yield_df = calculate_rental_yield_by_area(df_recent)
-        yield_median = yield_df.set_index("planning_area")["median"].to_dict()
+    recent_yield_lookup = (l5_cache or {}).get("recent_yield_by_area")
+    if recent_yield_lookup:
         area_metrics["rental_yield_median"] = area_metrics["area"].map(
-            lambda x: safe_float(yield_median.get(x.lower()))
+            lambda x: safe_float((recent_yield_lookup.get(x.lower()) or {}).get("median"))
         )
-    except Exception as e:
-        logger.warning(f"Could not add rental yield median: {e}")
-        area_metrics["rental_yield_median"] = None
+    else:
+        try:
+            yield_df = calculate_rental_yield_by_area(df_recent)
+            yield_median = yield_df.set_index("planning_area")["median"]
+            yield_median.index = yield_median.index.astype(str).str.lower()
+            area_metrics["rental_yield_median"] = area_metrics["area"].map(
+                lambda x: safe_float(yield_median.get(x.lower()))
+            )
+        except Exception as e:
+            logger.warning(f"Could not add rental yield median: {e}")
+            area_metrics["rental_yield_median"] = None
 
     # Calculate YoY growth
     current_year = df_recent["year"].max()

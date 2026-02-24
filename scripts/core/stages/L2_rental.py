@@ -56,9 +56,11 @@ def download_hdb_rental_data(force: bool = False) -> bool:
         return True
 
     try:
-        from scripts.download_hdb_rental_data import download_hdb_rental_data
+        from scripts.data.download.download_hdb_rental_data import (
+            download_hdb_rental_data as fetch_hdb_rental_data,
+        )
 
-        df = download_hdb_rental_data()
+        df = fetch_hdb_rental_data()
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_parquet(output_path, compression="snappy", index=False)
@@ -92,9 +94,11 @@ def download_ura_rental_index(force: bool = False) -> bool:
         return True
 
     try:
-        from scripts.download_ura_rental_index import download_ura_rental_index
+        from scripts.data.download.download_ura_rental_index import (
+            download_ura_rental_index as fetch_ura_rental_index,
+        )
 
-        df = download_ura_rental_index()
+        df = fetch_ura_rental_index()
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_parquet(output_path, compression="snappy", index=False)

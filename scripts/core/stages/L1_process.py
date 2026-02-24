@@ -272,7 +272,10 @@ def run_processing_pipeline(
         addresses_list, use_parallel=use_parallel_geocoding, show_progress=True
     )
 
-    results["geocoded_count"] = len(geocoded_df)
+    results["geocoded_count"] = len(geocoded_df)  # Row count (can include multiple matches per address)
+    results["geocoded_unique_count"] = (
+        geocoded_df["NameAddress"].nunique() if "NameAddress" in geocoded_df.columns else 0
+    )
     results["failed_count"] = len(failed_addresses)
     results["failed_addresses"] = failed_addresses[:10]  # Store first 10
 
@@ -286,6 +289,9 @@ def run_processing_pipeline(
     logger.info(f"Step 4 Complete: Filtered to {len(filtered_df)} addresses.")
 
     results["filtered_count"] = len(filtered_df)
+    results["filtered_unique_count"] = (
+        filtered_df["NameAddress"].nunique() if "NameAddress" in filtered_df.columns else 0
+    )
 
     # Summary
     logger.info("=" * 80)
@@ -293,10 +299,16 @@ def run_processing_pipeline(
     logger.info(f"   Transactions loaded: {sum(results['transaction_counts'].values())}")
     logger.info(f"   Unique addresses: {results['total_addresses']}")
     logger.info(
-        f"   Successfully geocoded: {results['geocoded_count']} ({results['geocoded_count'] / results['total_addresses'] * 100:.1f}%)"
+        "   Geocoded unique addresses (cache+new): "
+        f"{results['geocoded_unique_count']} "
+        f"({results['geocoded_unique_count'] / results['total_addresses'] * 100:.1f}%)"
     )
-    logger.info(f"   Failed: {results['failed_count']}")
-    logger.info(f"   Final filtered results: {results['filtered_count']}")
+    logger.info(f"   Geocoded rows (cache+new, may include multiple matches): {results['geocoded_count']}")
+    logger.info(f"   Failed new geocoding requests: {results['failed_count']}")
+    logger.info(
+        "   Final filtered addresses (best match): "
+        f"{results['filtered_unique_count']} unique / {results['filtered_count']} rows"
+    )
     logger.info("=" * 80)
 
     return results

@@ -163,9 +163,7 @@ def compute_amenity_distances(
         .drop("index_right", axis=1)
     )
 
-    unique_joined = unique_joined.to_crs(crs="EPSG:4326")
-    amenity_gdf_proj = amenity_gdf_proj.to_crs(crs="EPSG:4326")
-
+    # Keep geometries in projected CRS (meters) for centroid/distance calculations.
     unique_joined["polygon_centroid"] = unique_joined["geometry"].centroid
     unique_joined["distance"] = unique_joined["polygon_centroid"].distance(
         unique_joined["amenity_centroid"]

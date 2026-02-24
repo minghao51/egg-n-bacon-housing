@@ -67,6 +67,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def _ensure_rental_stage_success(results: dict, best_effort: bool = False) -> None:
+    """Raise if any L2 rental substep failed, unless best_effort is enabled."""
+    failed_steps = [step for step, ok in results.items() if not ok]
+    if failed_steps:
+        message = f"L2_rental failed substeps: {', '.join(failed_steps)}"
+        if best_effort:
+            logger.warning("⚠️ Best-effort mode enabled; continuing despite: %s", message)
+            return
+        raise RuntimeError(message)
+
+
 def run_L0_collection():
     """Run L0: Data collection from external APIs."""
     logger.info("🚀 Starting L0: Data Collection")
@@ -107,11 +118,12 @@ def run_L1_processing(use_parallel: bool = True):
     return results
 
 
-def run_L2_rental(force: bool = False):
+def run_L2_rental(force: bool = False, best_effort: bool = False):
     """Run L2: Rental yield calculations."""
     logger.info("🚀 Starting L2: Rental Yield Pipeline")
 
     results = run_rental_pipeline(force=force)
+    _ensure_rental_stage_success(results, best_effort=best_effort)
 
     logger.info("✅ L2 Rental Complete")
     return results
@@ -127,13 +139,14 @@ def run_L2_features():
     return results
 
 
-def run_L2(force: bool = False):
+def run_L2(force: bool = False, best_effort: bool = False):
     """Run L2: All L2 pipelines (rental + features)."""
     logger.info("🚀 Starting L2: Full L2 Pipeline")
 
     results = {}
 
     results["rental"] = run_rental_pipeline(force=force)
+    _ensure_rental_stage_success(results["rental"], best_effort=best_effort)
     results["features"] = run_l2_features_pipeline()
 
     logger.info("✅ L2 Complete")
@@ -177,6 +190,7 @@ def run_pipeline(
     upload_s3: bool = False,
     export_csv: bool = False,
     skip_affordability: bool = False,
+    best_effort: bool = False,
 ):
     """
     Run the data pipeline.
@@ -188,9 +202,15 @@ def run_pipeline(
         upload_s3: Upload outputs to S3 (L3 only)
         export_csv: Export outputs to CSV (L3 only)
         skip_affordability: Skip affordability calculations in L5 (requires income data)
+        best_effort: Continue on non-fatal stage failures (currently L2_rental substeps)
     """
     logger.info("🥓🥚 Egg-n-Bacon Housing Pipeline Starting")
-    logger.info(f"Configuration: stages={stages}, parallel={use_parallel}")
+    logger.info(
+        "Configuration: stages=%s, parallel=%s, best_effort=%s",
+        stages,
+        use_parallel,
+        best_effort,
+    )
 
     # Validate configuration
     try:
@@ -217,11 +237,11 @@ def run_pipeline(
 
     if stages in ["L2", "all"]:
         logger.info("=" * 80)
-        run_L2(force=force)
+        run_L2(force=force, best_effort=best_effort)
 
     if stages == "L2_rental":
         logger.info("=" * 80)
-        run_L2_rental(force=force)
+        run_L2_rental(force=force, best_effort=best_effort)
 
     if stages == "L2_features":
         logger.info("=" * 80)
@@ -278,6 +298,11 @@ def main():
         action="store_true",
         help="Skip affordability calculations in L5 (no income data required)"
     )
+    parser.add_argument(
+        "--best-effort",
+        action="store_true",
+        help="Continue past recoverable stage failures (e.g., L2_rental download rate limits)",
+    )
 
     args = parser.parse_args()
 
@@ -293,6 +318,7 @@ def main():
             upload_s3=args.upload_s3,
             export_csv=args.export_csv,
             skip_affordability=args.skip_affordability,
+            best_effort=args.best_effort,
         )
     except Exception as e:
         logger.exception(f"❌ Pipeline failed: {e}")

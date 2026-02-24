@@ -354,8 +354,20 @@ def collect_all_datagovsg() -> dict:
         results["resale_flat_prices"] = resale_df
         logger.info(f"✅ Saved resale flat prices: {len(resale_df)} records")
 
-    # Count successful collections
-    successful = sum(1 for v in results.values() if v is not None and not v.empty)
+    # Count successful collections across mixed result types (DataFrames + metadata dicts)
+    successful = 0
+    for value in results.values():
+        if value is None:
+            continue
+        if hasattr(value, "empty"):
+            if not value.empty:
+                successful += 1
+            continue
+        if isinstance(value, dict):
+            if value:
+                successful += 1
+            continue
+        successful += 1
     logger.info(
         f"✅ Data.gov.sg collection complete: {successful}/{len(results)} datasets collected"
     )
