@@ -86,31 +86,61 @@ export default function FilterPanel({ filters, onFilterChange, onReset, activeFi
         </div>
       </FilterSection>
 
-      {/* Budget Range */}
+      {/* Budget Range - Price PSF */}
       <FilterSection title="Budget Range (Price PSF)">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">${filters.budgetRange[0]}</span>
-            <span className="text-foreground font-medium">${filters.budgetRange[1]}+</span>
+        <div className="space-y-3">
+          {/* Min Price Slider */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Min PSF</span>
+              <span className="text-foreground font-medium">${filters.budgetRange[0]}</span>
+            </div>
+            <input
+              type="range"
+              min="300"
+              max="1500"
+              step="50"
+              value={filters.budgetRange[0]}
+              onChange={(e) => {
+                const newMin = parseInt(e.target.value);
+                if (newMin < filters.budgetRange[1]) {
+                  onFilterChange('budgetRange', [newMin, filters.budgetRange[1]]);
+                }
+              }}
+              className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+            />
           </div>
-          <input
-            type="range"
-            min="300"
-            max="1500"
-            step="50"
-            value={filters.budgetRange[0]}
-            onChange={(e) => onFilterChange('budgetRange', [parseInt(e.target.value), filters.budgetRange[1]])}
-            className="w-full"
-          />
-          <input
-            type="range"
-            min="300"
-            max="1500"
-            step="50"
-            value={filters.budgetRange[1]}
-            onChange={(e) => onFilterChange('budgetRange', [filters.budgetRange[0], parseInt(e.target.value)])}
-            className="w-full"
-          />
+          
+          {/* Max Price Slider */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Max PSF</span>
+              <span className="text-foreground font-medium">
+                {filters.budgetRange[1] >= 1500 ? '$1500+' : `$${filters.budgetRange[1]}`}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="300"
+              max="1500"
+              step="50"
+              value={filters.budgetRange[1]}
+              onChange={(e) => {
+                const newMax = parseInt(e.target.value);
+                if (newMax > filters.budgetRange[0]) {
+                  onFilterChange('budgetRange', [filters.budgetRange[0], newMax]);
+                }
+              }}
+              className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+            />
+          </div>
+          
+          {/* Current Range Display */}
+          <div className="pt-2 border-t border-border mt-2">
+            <div className="text-xs text-center text-muted-foreground">
+              Current range: <span className="text-foreground font-medium">${filters.budgetRange[0]} - ${filters.budgetRange[1]}+ PSF</span>
+            </div>
+          </div>
         </div>
       </FilterSection>
 

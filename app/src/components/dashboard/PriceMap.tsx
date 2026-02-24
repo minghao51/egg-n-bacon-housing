@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, GeoJSON, Tooltip as LeafletTooltip } from 'react-leaflet';
-import zlib from 'zlib';
+import { decompressGzip } from '@/utils/gzip';
 import 'leaflet/dist/leaflet.css';
 
 // Import analytics components
@@ -127,18 +127,8 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
         const [geo, met] = await Promise.all([
           fetch(geoJsonUrl).then(res => res.json()),
           fetch(metricsUrl).then(async res => {
-            // Check if response is gzipped
-            const contentEncoding = res.headers.get('content-encoding');
-            let text: string;
-
-            if (contentEncoding === 'gzip' || metricsUrl.endsWith('.gz')) {
-              // Handle gzipped response
-              const buffer = await res.arrayBuffer();
-              const decompressed = zlib.inflateSync(Buffer.from(buffer)).toString('utf-8');
-              text = decompressed;
-            } else {
-              text = await res.text();
-            }
+            const buffer = await res.arrayBuffer();
+            const text = await decompressGzip(buffer);
 
             // JSON spec doesn't allow NaN, but Python's json.dump might output it if not careful.
             // We sanitize it here just in case.

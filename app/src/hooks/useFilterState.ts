@@ -1,5 +1,5 @@
 // app/src/hooks/useFilterState.ts
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   FilterState,
   Persona,
@@ -72,6 +72,7 @@ const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
 
 interface UseFilterStateResult {
   filters: FilterState;
+  debouncedFilters: FilterState;
   persona: Persona;
   setPersona: (persona: Persona) => void;
   updateFilter: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void;
@@ -85,6 +86,26 @@ export function useFilterState(initialPersona: Persona = 'all'): UseFilterStateR
     const preset = PERSONA_PRESETS[initialPersona];
     return { ...INITIAL_FILTERS, ...preset.filters };
   });
+
+  // Debounced filters for expensive operations (map rendering)
+  const [debouncedFilters, setDebouncedFilters] = useState<FilterState>(filters);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounce filter updates - wait 300ms after last change before updating expensive operations
+  useEffect(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    debounceTimeoutRef.current = setTimeout(() => {
+      setDebouncedFilters(filters);
+    }, 300);
+
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [filters]);
 
   const updateFilter = useCallback(<K extends keyof FilterState>(
     key: K,
@@ -118,6 +139,7 @@ export function useFilterState(initialPersona: Persona = 'all'): UseFilterStateR
 
   return {
     filters,
+    debouncedFilters,
     persona,
     setPersona: handleSetPersona,
     updateFilter,

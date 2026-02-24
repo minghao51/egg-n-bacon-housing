@@ -16,8 +16,8 @@ interface LeaderboardDashboardProps {
 const DEFAULT_METRIC: LeaderboardMetric = 'yoy_growth_pct';
 
 export default function LeaderboardDashboard({ initialData }: LeaderboardDashboardProps) {
-  // Filter state management
-  const { filters, persona, setPersona, updateFilter, resetFilters, activeFilterCount } =
+  // Filter state management - use debounced filters for expensive operations
+  const { filters, debouncedFilters, persona, setPersona, updateFilter, resetFilters, activeFilterCount } =
     useFilterState('all');
 
   // Metric selection state
@@ -29,8 +29,8 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
   // Highlight state for map/table sync
   const [highlightedArea, setHighlightedArea] = useState<string | null>(null);
 
-  // Load and filter leaderboard data
-  const { data, loading, error, reload } = useLeaderboardData(filters, selectedMetric);
+  // Load and filter leaderboard data using debounced filters for smooth performance
+  const { data, loading, error, reload } = useLeaderboardData(debouncedFilters, selectedMetric);
 
   // Get metric metadata
   const metricMeta = METRICS.find(m => m.key === selectedMetric) || METRICS[0];
@@ -211,7 +211,7 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
                     data={data}
                     selectedMetric={selectedMetric}
                     metricMeta={metricMeta}
-                    filters={filters}
+                    filters={debouncedFilters}
                     highlightedArea={highlightedArea}
                     onAreaHover={handleAreaHover}
                     onAreaClick={handleAreaClick}
