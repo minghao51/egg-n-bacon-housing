@@ -1,5 +1,5 @@
 // app/src/components/dashboard/leaderboard/LeaderboardTable.tsx
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -30,14 +30,6 @@ export default function LeaderboardTable({
 }: LeaderboardTableProps) {
   const [sorting, setSorting] = useState<SortingState>([{ id: sortBy, desc: true }]);
   const [globalFilter, setGlobalFilter] = useState('');
-  const highlightedRowRef = useRef<HTMLTableRowElement>(null);
-
-  // Scroll highlighted row into view
-  useEffect(() => {
-    if (highlightedArea && highlightedRowRef.current) {
-      highlightedRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [highlightedArea]);
 
   const columnHelper = createColumnHelper<LeaderboardEntry>();
 
@@ -251,7 +243,6 @@ export default function LeaderboardTable({
                   return (
                     <tr
                       key={row.id}
-                      ref={isHighlighted ? highlightedRowRef : null}
                       className={`hover:bg-muted/50 transition-colors cursor-pointer ${
                         isHighlighted ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
                       }`}

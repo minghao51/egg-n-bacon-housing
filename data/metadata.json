@@ -43,9 +43,9 @@
     "raw_datagov_general_sale": {
       "path": "raw_datagov_general_sale.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_general_sale.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 352,
-      "created": "2026-02-19T11:22:05.306313",
+      "created": "2026-02-24T22:42:00.220248",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -53,9 +53,9 @@
     "raw_datagov_rental_index": {
       "path": "raw_datagov_rental_index.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_rental_index.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 300,
-      "created": "2026-02-19T11:22:05.307984",
+      "created": "2026-02-24T22:42:00.222059",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -63,9 +63,9 @@
     "raw_datagov_median_price_via_property_type": {
       "path": "raw_datagov_median_price_via_property_type.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_median_price_via_property_type.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 30,
-      "created": "2026-02-19T11:22:05.309762",
+      "created": "2026-02-24T22:42:00.223831",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -73,9 +73,9 @@
     "raw_datagov_private_transactions_property_type": {
       "path": "raw_datagov_private_transactions_property_type.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_private_transactions_property_type.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 420,
-      "created": "2026-02-19T11:22:05.311641",
+      "created": "2026-02-24T22:42:00.226897",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -83,9 +83,9 @@
     "raw_datagov_school_directory": {
       "path": "raw_datagov_school_directory.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_school_directory.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 200,
-      "created": "2026-02-19T11:22:05.315736",
+      "created": "2026-02-24T22:42:00.231115",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -93,9 +93,9 @@
     "raw_datagov_resale_flat_all": {
       "path": "raw_datagov_resale_flat_all.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_resale_flat_all.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 969748,
-      "created": "2026-02-19T11:22:06.285467",
+      "created": "2026-02-24T22:42:01.156672",
       "source": "data.gov.sg CSV (all files)",
       "mode": "overwrite",
       "compression": "snappy"
@@ -103,9 +103,9 @@
     "L5_price_metrics_by_area": {
       "path": "L5_price_metrics_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_metrics_by_area.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 14472,
-      "created": "2026-02-19T11:22:45.423791",
+      "created": "2026-02-24T22:47:09.845308",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -113,9 +113,9 @@
     "L5_volume_metrics_by_area": {
       "path": "L5_volume_metrics_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_volume_metrics_by_area.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 11991,
-      "created": "2026-02-19T11:22:45.479169",
+      "created": "2026-02-24T22:47:09.898303",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -123,9 +123,9 @@
     "L5_growth_metrics_by_area": {
       "path": "L5_growth_metrics_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_growth_metrics_by_area.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 11991,
-      "created": "2026-02-19T11:22:45.558598",
+      "created": "2026-02-24T22:47:09.976234",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -133,9 +133,9 @@
     "L5_temporal_features": {
       "path": "L5_temporal_features.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_temporal_features.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 11991,
-      "created": "2026-02-19T11:22:45.577481",
+      "created": "2026-02-24T22:47:09.993158",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -143,9 +143,9 @@
     "L5_rental_yield_by_area": {
       "path": "L5_rental_yield_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_rental_yield_by_area.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 28,
-      "created": "2026-02-19T11:22:45.640580",
+      "created": "2026-02-24T22:47:10.054113",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -153,9 +153,9 @@
     "L5_appreciation_hotspots": {
       "path": "L5_appreciation_hotspots.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_appreciation_hotspots.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 40,
-      "created": "2026-02-19T11:22:45.675742",
+      "created": "2026-02-24T22:47:10.086324",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -233,9 +233,9 @@
     "L1_housing_ec_transaction": {
       "path": "L1/housing_ec_transaction.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/housing_ec_transaction.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 17051,
-      "created": "2026-02-19T11:22:07.114352",
+      "created": "2026-02-24T22:42:01.936874",
       "source": "URA CSV data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -243,9 +243,9 @@
     "L1_housing_condo_transaction": {
       "path": "L1/housing_condo_transaction.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/housing_condo_transaction.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 110089,
-      "created": "2026-02-19T11:22:07.170764",
+      "created": "2026-02-24T22:42:01.988943",
       "source": "URA CSV data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -253,9 +253,9 @@
     "L1_housing_hdb_transaction": {
       "path": "L1/housing_hdb_transaction.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L1/housing_hdb_transaction.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 969748,
-      "created": "2026-02-19T11:22:07.398465",
+      "created": "2026-02-24T22:42:02.209322",
       "source": "data.gov.sg CSV data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -263,9 +263,9 @@
     "L2_housing_unique_full_searched": {
       "path": "L2/housing_unique_full_searched.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_unique_full_searched.parquet",
-      "version": "2026-02-19",
-      "rows": 17722,
-      "created": "2026-02-19T11:22:08.051656",
+      "version": "2026-02-24",
+      "rows": 17724,
+      "created": "2026-02-24T22:43:13.577717",
       "source": "L1 transaction data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -273,9 +273,9 @@
     "L2_housing_unique_searched": {
       "path": "L2/housing_unique_searched.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_unique_searched.parquet",
-      "version": "2026-02-19",
-      "rows": 17722,
-      "created": "2026-02-19T11:22:08.074580",
+      "version": "2026-02-24",
+      "rows": 17724,
+      "created": "2026-02-24T22:43:13.602871",
       "source": "L2 housing data",
       "mode": "overwrite",
       "compression": "snappy"
@@ -303,9 +303,9 @@
     "L3_property": {
       "path": "L3/property.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property.parquet",
-      "version": "2026-02-19",
-      "rows": 41338,
-      "created": "2026-02-19T17:13:26.557114",
+      "version": "2026-02-24",
+      "rows": 41340,
+      "created": "2026-02-24T22:46:37.435620",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -313,9 +313,9 @@
     "L3_private_property_facilities": {
       "path": "L3/private_property_facilities.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/private_property_facilities.parquet",
-      "version": "2026-02-19",
-      "rows": 172555,
-      "created": "2026-02-19T17:13:26.574783",
+      "version": "2026-02-24",
+      "rows": 172510,
+      "created": "2026-02-24T22:46:37.452343",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -323,9 +323,9 @@
     "L3_property_nearby_facilities": {
       "path": "L3/property_nearby_facilities.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_nearby_facilities.parquet",
-      "version": "2026-02-19",
-      "rows": 3637378,
-      "created": "2026-02-19T17:13:27.016031",
+      "version": "2026-02-24",
+      "rows": 3638104,
+      "created": "2026-02-24T22:46:37.867025",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -333,9 +333,9 @@
     "L3_property_transactions_sales": {
       "path": "L3/property_transactions_sales.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_transactions_sales.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 1096756,
-      "created": "2026-02-19T17:13:27.458016",
+      "created": "2026-02-24T22:46:38.284432",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -343,9 +343,9 @@
     "L3_property_listing_sales": {
       "path": "L3/property_listing_sales.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L3/property_listing_sales.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 9929,
-      "created": "2026-02-19T17:13:27.466090",
+      "created": "2026-02-24T22:46:38.291354",
       "source": "L2 features pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -353,9 +353,9 @@
     "L5_affordability_by_area": {
       "path": "L5_affordability_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_affordability_by_area.parquet",
-      "version": "2026-02-19",
+      "version": "2026-02-24",
       "rows": 41,
-      "created": "2026-02-19T11:22:45.670047",
+      "created": "2026-02-24T22:47:10.082076",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -413,13 +413,13 @@
     "L2_housing_per_type_amenity_features": {
       "path": "L2/housing_per_type_amenity_features.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L2/housing_per_type_amenity_features.parquet",
-      "version": "2026-02-19",
-      "rows": 17722,
-      "created": "2026-02-19T17:13:25.363511",
+      "version": "2026-02-24",
+      "rows": 17724,
+      "created": "2026-02-24T22:46:36.295310",
       "source": "L2 per-type amenity metrics",
       "mode": "overwrite",
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-19T17:32:55.018157"
+  "last_updated": "2026-02-24T22:47:10.086327"
 }
