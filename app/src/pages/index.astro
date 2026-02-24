@@ -1,54 +1,204 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import fs from 'fs';
+import path from 'path';
+import zlib from 'zlib';
+
+function gunzip(data: Buffer) {
+  return zlib.gunzipSync(data).toString('utf-8');
+}
+
+const dataPath = path.resolve('public/data/dashboard_overview.json.gz');
+let overviewData = null;
+
+try {
+  const rawData = fs.readFileSync(dataPath);
+  const decompressed = gunzip(rawData);
+  overviewData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load overview data:", error);
+}
+
+const insights = [
+  {
+    title: "Lease Decay Myth Busted",
+    description: "Prices don't decline linearly—70-80 year leases show steepest drop (21.9% discount)",
+    icon: "📉",
+    link: "analytics/lease-decay"
+  },
+  {
+    title: "CBD > MRT",
+    description: "City center proximity drives prices 4x more than train station access",
+    icon: "🚇",
+    link: "analytics/mrt-impact"
+  }
+];
+
+const milestones = [
+  { year: "1990", event: "$43K" },
+  { year: "1995", event: "$200K" },
+  { year: "2007", event: "$300K" },
+  { year: "2018", event: "$500K" },
+  { year: "2024", event: "$1M+" },
+];
+
+const formatPrice = (price: number) => {
+  if (price >= 1000000) return '$' + (price / 1000000).toFixed(1) + 'M';
+  return '$' + (price / 1000).toFixed(0) + 'K';
+};
 ---
 
-<Layout title="Egg n Bacon Housing">
-  <div class="min-h-screen flex items-center justify-center bg-background">
-    <div class="max-w-4xl w-full px-8 text-center">
-      <h1 class="text-6xl font-bold text-foreground mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-        Egg n Bacon Housing
-      </h1>
-      <p class="text-xl text-muted-foreground mb-12">
-        Comprehensive Singapore Housing Market Intelligence
-      </p>
+<Layout title="Egg n Bacon Housing - Singapore Market Intelligence">
+  <div class="min-h-screen bg-background">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
+      </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Dashboard Card */}
+      <div class="relative max-w-4xl mx-auto px-6 py-12 md:py-16">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <h1 class="text-3xl md:text-5xl font-bold text-white mb-3">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">
+              Egg n Bacon
+            </span>
+            <span class="text-white">Housing</span>
+          </h1>
+          <p class="text-base md:text-lg text-slate-300">
+            Singapore Housing Market Intelligence
+          </p>
+        </div>
+
+        <!-- Compact Stats -->
+        {overviewData && (
+          <div class="flex flex-wrap justify-center gap-6 mb-8">
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-white counter" data-target={overviewData.metadata.total_records}>0</div>
+              <div class="text-xs text-slate-400">transactions</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-white">36 yrs</div>
+              <div class="text-xs text-slate-400">of data</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-emerald-400">+18%</div>
+              <div class="text-xs text-slate-400">2025 growth</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-amber-400">{formatPrice(overviewData.stats.year_2025_hdb.median_price)}</div>
+              <div class="text-xs text-slate-400">HDB median</div>
+            </div>
+          </div>
+        )}
+
+        <!-- Compact Timeline -->
+        <div class="flex items-center justify-center gap-3 md:gap-4">
+          {milestones.map((milestone, i) => (
+            <div class="flex items-center">
+              <div class="text-center">
+                <div class="w-2 h-2 bg-amber-500 rounded-full mx-auto mb-1"></div>
+                <div class="text-xs text-slate-400">{milestone.year}</div>
+                <div class="text-sm font-medium text-white">{milestone.event}</div>
+              </div>
+              {i < milestones.length - 1 && <div class="w-6 md:w-8 h-px bg-slate-600 mx-1"></div>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-6 py-8">
+      <!-- Key Insights - Compact -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        {insights.map((insight) => (
+          <a
+            href={`${import.meta.env.BASE_URL}${insight.link}`}
+            class="group flex items-center gap-4 p-4 bg-card border border-border rounded-xl hover:border-primary/50 transition-all"
+          >
+            <div class="text-2xl shrink-0">{insight.icon}</div>
+            <div>
+              <h3 class="font-semibold text-foreground group-hover:text-primary transition-colors">
+                {insight.title}
+              </h3>
+              <p class="text-xs text-muted-foreground">{insight.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Navigation Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <a
           href={`${import.meta.env.BASE_URL}dashboard`}
-          class="group block p-8 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all text-left"
+          class="group block p-6 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all"
         >
-          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                Live Dashboard
+              </h2>
+              <p class="text-sm text-muted-foreground">
+                Trends, maps & visualizations
+              </p>
+            </div>
           </div>
-          <h2 class="text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-            Live Dashboard
-          </h2>
-          <p class="text-muted-foreground">
-            Explore interactive market trends, price indices, and visualization of housing data across different eras.
-          </p>
         </a>
 
-        {/* Analytics Card */}
         <a
           href={`${import.meta.env.BASE_URL}analytics/`}
-          class="group block p-8 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all text-left"
+          class="group block p-6 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all"
         >
-          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                Analytics Reports
+              </h2>
+              <p class="text-sm text-muted-foreground">
+                Deep-dive research & insights
+              </p>
+            </div>
           </div>
-          <h2 class="text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-            Analytics Reports
-          </h2>
-          <p class="text-muted-foreground">
-            Deep-dive research papers, methodology documentation, and causal inference analysis findings.
-          </p>
         </a>
+      </div>
+
+      <div class="mt-6 text-center text-xs text-muted-foreground">
+        Data refreshed daily from HDB & URA
       </div>
     </div>
   </div>
+
+  <script>
+    function animateCounters() {
+      const counters = document.querySelectorAll('.counter');
+      counters.forEach((counter) => {
+        const target = parseInt(counter.getAttribute('data-target') || '0');
+        const duration = 1500;
+        const step = target / (duration / 16);
+        let current = 0;
+        const updateCounter = () => {
+          current += step;
+          if (current < target) {
+            counter.textContent = Math.floor(current).toLocaleString();
+            requestAnimationFrame(updateCounter);
+          } else {
+            counter.textContent = target.toLocaleString();
+          }
+        };
+        updateCounter();
+      });
+    }
+    animateCounters();
+  </script>
 </Layout>

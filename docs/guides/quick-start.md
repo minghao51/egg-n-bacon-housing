@@ -9,13 +9,13 @@
 ### Step 1: Update L2 Data (Rental Yields)
 ```bash
 # Download rental data and calculate yields
-PYTHONPATH=. uv run python scripts/run_l2_pipeline.py
+uv run python scripts/run_pipeline.py --stage L2_rental
 ```
 
 ### Step 2: Run L3 Metrics Pipeline
 ```bash
 # Calculate market metrics
-PYTHONPATH=. uv run python scripts/calculate_l3_metrics.py
+uv run python scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py
 ```
 
 ### Step 3: Load Results
@@ -133,16 +133,16 @@ data/parquets/L3/metrics_summary.csv              # Summary by area
 
 ### Documentation
 ```
-docs/20260122-L2-data-reference.md                # Data catalog
-docs/20260122-growth-calculation-methodology.md   # How metrics work
-docs/20260122-metrics-calculation-design.md       # Technical specs
-docs/20260122-L3-metrics-implementation-summary.md # Project summary
+docs/guides/data-reference.md                     # Current data catalog
+docs/archive/20260122-L2-data-reference.md        # Historical L2 reference
+docs/architecture.md                              # System overview
+docs/guides/l4-analysis-pipeline.md               # Current analytics pipeline guide
 ```
 
 ### Code
 ```
 core/metrics.py                                    # Calculation functions
-scripts/calculate_l3_metrics.py                   # Main pipeline
+scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py  # Main pipeline
 ```
 
 ---
@@ -150,7 +150,7 @@ scripts/calculate_l3_metrics.py                   # Main pipeline
 ## ⚙️ Configuration
 
 ### Change Date Range
-Edit `scripts/calculate_l3_metrics.py`:
+Edit `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py`:
 ```python
 metrics_df = compute_monthly_metrics(
     hdf_df=hdb_df,
@@ -245,7 +245,7 @@ plt.savefig('yishun_analysis.png')
 ### 1. Planning Area Mapping (Priority)
 - Currently using town/district
 - Map to planning areas for unified analysis
-- See: `docs/20260122-L3-metrics-implementation-summary.md`
+- See: `docs/guides/l4-analysis-pipeline.md`
 
 ### 2. Visualization Dashboard
 - Build Streamlit app for interactive exploration
@@ -267,13 +267,13 @@ plt.savefig('yishun_analysis.png')
 ## 📞 Support
 
 ### Documentation
-- L2 Data Reference: `docs/20260122-L2-data-reference.md`
-- Methodology: `docs/20260122-growth-calculation-methodology.md`
-- Implementation: `docs/20260122-L3-metrics-implementation-summary.md`
+- L2 Data Reference (historical): `docs/archive/20260122-L2-data-reference.md`
+- Current Data Reference: `docs/guides/data-reference.md`
+- Pipeline Overview: `docs/guides/l4-analysis-pipeline.md`
 
 ### Code
 - Metrics functions: `core/metrics.py` (well-documented)
-- Pipeline script: `scripts/calculate_l3_metrics.py`
+- Pipeline script: `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py`
 - Type hints and docstrings throughout
 
 ### Validation

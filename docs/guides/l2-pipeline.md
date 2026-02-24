@@ -42,14 +42,14 @@ The L2 Data Pipeline automates the download and processing of rental data from S
 
 ```bash
 # Run pipeline (skips downloads if data is fresh)
-PYTHONPATH=. uv run python scripts/run_l2_pipeline.py
+uv run python scripts/run_pipeline.py --stage L2_rental
 ```
 
 ### Force Re-download
 
 ```bash
 # Force re-download even if data is fresh
-PYTHONPATH=. uv run python scripts/run_l2_pipeline.py --force
+uv run python scripts/run_pipeline.py --stage L2_rental --force
 ```
 
 ### Expected Output
@@ -201,7 +201,7 @@ roi_scores = calculate_roi_score(
 **Solution:**
 ```bash
 # Make sure to include PYTHONPATH
-PYTHONPATH=. uv run python scripts/run_l2_pipeline.py
+uv run python scripts/run_pipeline.py --stage L2_rental
 ```
 
 ### Issue: Downloads take too long
@@ -214,7 +214,7 @@ The HDB download processes 184,915 records in batches of 10,000. This takes ~30-
 **Solution:**
 ```bash
 # Force re-download to update data
-PYTHONPATH=. uv run python scripts/run_l2_pipeline.py --force
+uv run python scripts/run_pipeline.py --stage L2_rental --force
 ```
 
 ### Issue: Rental yield calculation returns 0 records
@@ -240,20 +240,20 @@ logging.basicConfig(level=logging.DEBUG)
 **Weekly:**
 ```bash
 # Check for HDB rental updates (monthly dataset)
-PYTHONPATH=. uv run python scripts/run_l2_pipeline.py
+uv run python scripts/run_pipeline.py --stage L2_rental
 ```
 
 **Quarterly:**
 ```bash
 # Force refresh all data after URA quarterly release
-PYTHONPATH=. uv run python scripts/run_l2_pipeline.py --force
+uv run python scripts/run_pipeline.py --stage L2_rental --force
 ```
 
 ### Cron Job Example
 
 ```bash
 # Run weekly on Sundays at 2 AM
-0 2 * * 0 cd /path/to/egg-n-bacon-housing && PYTHONPATH=. uv run python scripts/run_l2_pipeline.py >> logs/l2_pipeline.log 2>&1
+0 2 * * 0 cd /path/to/egg-n-bacon-housing && uv run python scripts/run_pipeline.py --stage L2_rental >> logs/l2_pipeline.log 2>&1
 ```
 
 ---
@@ -265,7 +265,7 @@ The pipeline orchestrates three scripts that can also be run independently:
 ### Download HDB Rental Data
 
 ```bash
-PYTHONPATH=. uv run python scripts/download_hdb_rental_data.py
+uv run python scripts/data/download/download_hdb_rental_data.py
 ```
 
 **Function:** Downloads 184,915 HDB rental transactions in batches
@@ -275,7 +275,7 @@ PYTHONPATH=. uv run python scripts/download_hdb_rental_data.py
 ### Download URA Rental Index
 
 ```bash
-PYTHONPATH=. uv run python scripts/download_ura_rental_index.py
+uv run python scripts/data/download/download_ura_rental_index.py
 ```
 
 **Function:** Downloads 505 URA rental index values
@@ -285,7 +285,7 @@ PYTHONPATH=. uv run python scripts/download_ura_rental_index.py
 ### Calculate Rental Yields
 
 ```bash
-PYTHONPATH=. uv run python scripts/calculate_rental_yield.py
+uv run python scripts/core/stages/L2_rental.py
 ```
 
 **Function:** Calculates rental yields from downloaded data
@@ -298,7 +298,7 @@ PYTHONPATH=. uv run python scripts/calculate_rental_yield.py
 
 ### Pipeline Script
 
-**File:** `scripts/run_l2_pipeline.py`
+**File:** `scripts/core/stages/L2_rental.py`
 
 **Main Function:**
 ```python
@@ -318,19 +318,19 @@ def main(force: bool = False):
 
 ### Individual Download Scripts
 
-**HDB:** `scripts/download_hdb_rental_data.py`
+**HDB:** `scripts/data/download/download_hdb_rental_data.py`
 - `download_hdb_rental_data()` - Main download function
 - Batch processing: 10,000 records per batch
 - API: data.gov.sg datastore_search
 
-**URA:** `scripts/download_ura_rental_index.py`
+**URA:** `scripts/data/download/download_ura_rental_index.py`
 - `download_ura_rental_index()` - Main download function
 - Batch processing: 10,000 records per batch
 - API: data.gov.sg datastore_search
 
 ### Yield Calculation Script
 
-**File:** `scripts/calculate_rental_yield.py`
+**File:** `scripts/core/stages/L2_rental.py` (`calculate_rental_yields`)
 
 **Functions:**
 - `calculate_hdb_rental_yield()` - Direct calculation from transactions
@@ -419,11 +419,11 @@ def main(force: bool = False):
 
 | Command | Description |
 |---------|-------------|
-| `PYTHONPATH=. uv run python scripts/run_l2_pipeline.py` | Run pipeline (use cached data if fresh) |
-| `PYTHONPATH=. uv run python scripts/run_l2_pipeline.py --force` | Force re-download all data |
-| `PYTHONPATH=. uv run python scripts/download_hdb_rental_data.py` | Download only HDB rentals |
-| `PYTHONPATH=. uv run python scripts/download_ura_rental_index.py` | Download only URA index |
-| `PYTHONPATH=. uv run python scripts/calculate_rental_yield.py` | Calculate only yields |
+| `uv run python scripts/run_pipeline.py --stage L2_rental` | Run pipeline (use cached data if fresh) |
+| `uv run python scripts/run_pipeline.py --stage L2_rental --force` | Force re-download all data |
+| `uv run python scripts/data/download/download_hdb_rental_data.py` | Download only HDB rentals |
+| `uv run python scripts/data/download/download_ura_rental_index.py` | Download only URA index |
+| `uv run python scripts/core/stages/L2_rental.py` | Run L2 rental stage module directly |
 
 ---
 

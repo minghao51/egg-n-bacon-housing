@@ -5,7 +5,7 @@ This script downloads the "Renting Out of Flats from Jan 2021" dataset
 from data.gov.sg and saves it as a parquet file.
 
 Usage:
-    uv run python scripts/download_hdb_rental_data.py
+    uv run python scripts/data/download/download_hdb_rental_data.py
 """
 
 import sys

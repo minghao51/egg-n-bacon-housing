@@ -6,7 +6,7 @@ Downloads the URA rental index data from data.gov.sg and processes it
 for calculating condo rental yield.
 
 Usage:
-    uv run python scripts/download_ura_rental_index.py
+    uv run python scripts/data/download/download_ura_rental_index.py
 """
 
 import sys
