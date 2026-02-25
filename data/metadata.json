@@ -43,9 +43,9 @@
     "raw_datagov_general_sale": {
       "path": "raw_datagov_general_sale.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_general_sale.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 352,
-      "created": "2026-02-24T22:42:00.220248",
+      "created": "2026-02-25T21:46:18.316615",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -53,9 +53,9 @@
     "raw_datagov_rental_index": {
       "path": "raw_datagov_rental_index.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_rental_index.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 300,
-      "created": "2026-02-24T22:42:00.222059",
+      "created": "2026-02-25T21:46:18.318546",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -63,9 +63,9 @@
     "raw_datagov_median_price_via_property_type": {
       "path": "raw_datagov_median_price_via_property_type.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_median_price_via_property_type.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 30,
-      "created": "2026-02-24T22:42:00.223831",
+      "created": "2026-02-25T21:46:18.320566",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -73,9 +73,9 @@
     "raw_datagov_private_transactions_property_type": {
       "path": "raw_datagov_private_transactions_property_type.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_private_transactions_property_type.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 420,
-      "created": "2026-02-24T22:42:00.226897",
+      "created": "2026-02-25T21:46:18.322309",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -83,9 +83,9 @@
     "raw_datagov_school_directory": {
       "path": "raw_datagov_school_directory.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_school_directory.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 200,
-      "created": "2026-02-24T22:42:00.231115",
+      "created": "2026-02-25T21:46:18.326356",
       "source": "data.gov.sg API",
       "mode": "overwrite",
       "compression": "snappy"
@@ -93,9 +93,9 @@
     "raw_datagov_resale_flat_all": {
       "path": "raw_datagov_resale_flat_all.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_resale_flat_all.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 969748,
-      "created": "2026-02-24T22:42:01.156672",
+      "created": "2026-02-25T21:46:20.741994",
       "source": "data.gov.sg CSV (all files)",
       "mode": "overwrite",
       "compression": "snappy"
@@ -103,9 +103,9 @@
     "L5_price_metrics_by_area": {
       "path": "L5_price_metrics_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_price_metrics_by_area.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 14472,
-      "created": "2026-02-24T22:47:09.845308",
+      "created": "2026-02-25T21:57:19.403478",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -113,9 +113,9 @@
     "L5_volume_metrics_by_area": {
       "path": "L5_volume_metrics_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_volume_metrics_by_area.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 11991,
-      "created": "2026-02-24T22:47:09.898303",
+      "created": "2026-02-25T21:57:19.449920",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -123,9 +123,9 @@
     "L5_growth_metrics_by_area": {
       "path": "L5_growth_metrics_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_growth_metrics_by_area.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 11991,
-      "created": "2026-02-24T22:47:09.976234",
+      "created": "2026-02-25T21:57:19.519002",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -133,9 +133,9 @@
     "L5_temporal_features": {
       "path": "L5_temporal_features.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_temporal_features.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 11991,
-      "created": "2026-02-24T22:47:09.993158",
+      "created": "2026-02-25T21:57:19.535677",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -143,9 +143,9 @@
     "L5_rental_yield_by_area": {
       "path": "L5_rental_yield_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_rental_yield_by_area.parquet",
-      "version": "2026-02-24",
-      "rows": 28,
-      "created": "2026-02-24T22:47:10.054113",
+      "version": "2026-02-25",
+      "rows": 40,
+      "created": "2026-02-25T21:57:19.718382",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -153,9 +153,9 @@
     "L5_appreciation_hotspots": {
       "path": "L5_appreciation_hotspots.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_appreciation_hotspots.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 40,
-      "created": "2026-02-24T22:47:10.086324",
+      "created": "2026-02-25T21:57:19.748636",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -353,9 +353,9 @@
     "L5_affordability_by_area": {
       "path": "L5_affordability_by_area.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/L5_affordability_by_area.parquet",
-      "version": "2026-02-24",
+      "version": "2026-02-25",
       "rows": 41,
-      "created": "2026-02-24T22:47:10.082076",
+      "created": "2026-02-25T21:57:19.742936",
       "source": "L5 metrics pipeline",
       "mode": "overwrite",
       "compression": "snappy"
@@ -419,7 +419,17 @@
       "source": "L2 per-type amenity metrics",
       "mode": "overwrite",
       "compression": "snappy"
+    },
+    "raw_datagov_hdb_rental": {
+      "path": "raw_datagov_hdb_rental.parquet",
+      "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/raw_datagov_hdb_rental.parquet",
+      "version": "2026-02-25",
+      "rows": 3271,
+      "created": "2026-02-25T21:46:19.756914",
+      "source": "data.gov.sg API",
+      "mode": "overwrite",
+      "compression": "snappy"
     }
   },
-  "last_updated": "2026-02-24T22:47:10.086327"
+  "last_updated": "2026-02-25T21:57:19.748639"
 }
