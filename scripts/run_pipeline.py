@@ -264,7 +264,7 @@ def run_pipeline(
     logger.info("🎉 Pipeline complete!")
 
     # List all datasets
-    datasets = list_datasets()
+    datasets = list_datasets(refresh_rows=True)
     logger.info(f"📊 Total datasets: {len(datasets)}")
     for name, info in datasets.items():
         logger.info(f"  - {name}: {info['rows']} rows")

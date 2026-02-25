@@ -215,15 +215,36 @@ def save_parquet(
     _save_metadata(metadata)
 
 
-def list_datasets() -> dict:
+def list_datasets(refresh_rows: bool = False) -> dict:
     """
     Return all datasets from metadata.
+
+    Args:
+        refresh_rows: If True, recalculate row counts from parquet files on disk
+            for more accurate runtime summaries (does not rewrite metadata).
 
     Returns:
         Dictionary of dataset information
     """
     metadata = _load_metadata()
-    return metadata["datasets"]
+    datasets = metadata["datasets"]
+
+    if not refresh_rows:
+        return datasets
+
+    refreshed: dict = {}
+    for name, info in datasets.items():
+        updated = dict(info)
+        rel_path = info.get("path")
+        if rel_path:
+            parquet_path = PARQUETS_DIR / rel_path
+            if parquet_path.exists():
+                try:
+                    updated["rows"] = len(pd.read_parquet(parquet_path))
+                except Exception as e:
+                    logger.debug("Could not refresh row count for %s: %s", name, e)
+        refreshed[name] = updated
+    return refreshed
 
 
 def verify_metadata() -> bool:

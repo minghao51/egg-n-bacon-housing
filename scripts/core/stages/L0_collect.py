@@ -6,6 +6,7 @@ including private property transactions, rental indices, price indices, and HDB 
 
 import logging
 import re
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -18,6 +19,8 @@ from scripts.core.data_loader import CSVLoader
 from scripts.core.stages.helpers import collect_helpers
 
 logger = logging.getLogger(__name__)
+MIN_HDB_RENTAL_ROWS = 50_000
+MIN_HDB_RENTAL_MONTHS = 12
 
 
 def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -> pd.DataFrame:
@@ -43,16 +46,24 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         response_agg = []
         offset_value = 0
         total_records = 0
-        current_url = url
+        request_url = f"{url}{dataset_id}"
+        if "datastore_search" in request_url and "limit=" not in request_url:
+            request_url = f"{request_url}&limit=10000"
+        retry_attempts = 0
+        max_retry_attempts = 5
 
         while True:
             try:
-                response = requests.get(f"{current_url}{dataset_id}")
+                response = requests.get(request_url, timeout=60)
+                response.raise_for_status()
                 response_text = response.json()
+                retry_attempts = 0
 
                 # Extract records from response
                 if "result" not in response_text or "records" not in response_text["result"]:
-                    logger.warning(f"No records found in dataset {dataset_id}")
+                    logger.warning(
+                        "No records found in dataset %s (url=%s)", dataset_id, request_url
+                    )
                     break
 
                 records = response_text["result"]["records"]
@@ -64,10 +75,13 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
 
                 # Get next URL
                 next_url = response_text["result"]["_links"]["next"]
-                current_url = "https://data.gov.sg" + next_url
+                if next_url.startswith("http"):
+                    request_url = next_url
+                else:
+                    request_url = "https://data.gov.sg" + next_url
 
                 # Update offset for pagination
-                match = re.search(r"offset=(\d+)", current_url)
+                match = re.search(r"offset=(\d+)", request_url)
                 if match:
                     offset_value = int(match.group(1))
                     total_records = response_text["result"]["total"]
@@ -75,8 +89,38 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
                     if offset_value > total_records:
                         break
 
+            except requests.HTTPError as e:
+                status = e.response.status_code if e.response is not None else None
+                if status == 429 and retry_attempts < max_retry_attempts:
+                    retry_after = 0
+                    if e.response is not None:
+                        retry_after = int(e.response.headers.get("Retry-After", "0") or 0)
+                    retry_attempts += 1
+                    sleep_seconds = retry_after or min(2**retry_attempts, 30)
+                    logger.warning(
+                        "Rate limited fetching dataset %s (attempt %s/%s, sleeping %ss, url=%s)",
+                        dataset_id,
+                        retry_attempts,
+                        max_retry_attempts,
+                        sleep_seconds,
+                        request_url,
+                    )
+                    time.sleep(sleep_seconds)
+                    continue
+                logger.error("Error fetching dataset %s (url=%s): %s", dataset_id, request_url, e)
+                if response_agg and total_records and offset_value < total_records:
+                    raise RuntimeError(
+                        f"Incomplete paginated fetch for {dataset_id}: retrieved {sum(len(df) for df in response_agg):,} "
+                        f"of expected {total_records:,} rows before error at offset {offset_value}"
+                    ) from e
+                break
             except Exception as e:
-                logger.error(f"Error fetching dataset {dataset_id}: {e}")
+                logger.error("Error fetching dataset %s (url=%s): %s", dataset_id, request_url, e)
+                if response_agg and total_records and offset_value < total_records:
+                    raise RuntimeError(
+                        f"Incomplete paginated fetch for {dataset_id}: retrieved {sum(len(df) for df in response_agg):,} "
+                        f"of expected {total_records:,} rows before error at offset {offset_value}"
+                    ) from e
                 break
 
         if not response_agg:
@@ -267,6 +311,98 @@ def fetch_school_directory(use_cache: bool = True) -> pd.DataFrame | None:
     )
 
 
+def fetch_hdb_rental_data(use_cache: bool = True) -> pd.DataFrame | None:
+    """Fetch HDB renting-out-of-flats records (historical monthly rental approvals)."""
+
+    def _hdb_rental_coverage_signature(df: pd.DataFrame) -> tuple[int, int, str | None, str | None]:
+        if df.empty or "rent_approval_date" not in df.columns:
+            return len(df), 0, None, None
+        months = pd.to_datetime(df["rent_approval_date"], errors="coerce").dropna().dt.to_period("M")
+        if months.empty:
+            return len(df), 0, None, None
+        return len(df), int(months.nunique()), str(months.min()), str(months.max())
+
+    def _fetch():
+        from scripts.data.download.download_hdb_rental_data import (
+            download_hdb_rental_data as fetch_hdb_rental_data_full,
+        )
+        try:
+            logger.info("L0 HDB rental: trying dataset download API as primary source")
+            full_df = fetch_hdb_rental_data_full()
+            full_rows, full_months, full_min, full_max = _hdb_rental_coverage_signature(full_df)
+            logger.info(
+                "L0 HDB rental download API returned %s rows, %s month(s) (%s to %s)",
+                full_rows,
+                full_months,
+                full_min,
+                full_max,
+            )
+            if full_rows >= MIN_HDB_RENTAL_ROWS and full_months >= MIN_HDB_RENTAL_MONTHS:
+                return full_df
+            logger.warning(
+                "L0 HDB rental download API payload looks truncated; checking datastore_search for broader coverage"
+            )
+        except Exception as e:
+            logger.warning("L0 HDB rental download API failed: %s", e)
+
+        df = fetch_datagovsg_dataset(
+            url="https://data.gov.sg/api/action/datastore_search?resource_id=",
+            dataset_id="d_c9f57187485a850908655db0e8cfe651",
+        )
+        row_count, month_count, month_min, month_max = _hdb_rental_coverage_signature(df)
+        logger.info(
+            "L0 HDB rental datastore_search returned %s rows, %s month(s) (%s to %s)",
+            row_count,
+            month_count,
+            month_min,
+            month_max,
+        )
+        if row_count > 0:
+            return df
+        return pd.DataFrame()
+
+    return collect_helpers.fetch_and_save_datagovsg_dataset(
+        "raw_datagov_hdb_rental", "d_c9f57187485a850908655db0e8cfe651", _fetch, use_cache
+    )
+
+
+def fetch_ura_rental_statistics(use_cache: bool = True) -> pd.DataFrame | None:
+    """
+    Fetch URA private residential rental statistics by project from e-service.
+
+    This scrapes quarterly rental statistics for non-landed private residential
+    properties from URA's e-service, including median rent psf and number of contracts.
+
+    Args:
+        use_cache: Whether to use caching (default: True)
+
+    Returns:
+        DataFrame with rental statistics or None if failed
+    """
+    # TODO: Re-enable when scraper is fixed
+    logger.warning("URA rental statistics scraper is temporarily disabled")
+    return None
+
+
+def fetch_ura_rental_contracts(use_cache: bool = True) -> pd.DataFrame | None:
+    """
+    Fetch URA private residential rental contracts from e-service.
+
+    This scrapes individual rental contract details for private residential
+    properties from URA's e-service.
+
+    Args:
+        use_cache: Whether to use caching (default: True)
+
+    Returns:
+        DataFrame with rental contracts or None if failed
+    """
+
+    # TODO: Re-enable when scraper is fixed
+    logger.warning("URA rental contracts scraper is temporarily disabled")
+    return None
+
+
 def fetch_planning_area_boundary(use_cache: bool = True) -> dict | None:
     """
     Fetch URA Master Plan 2019 Planning Area Boundary GeoJSON from data.gov.sg.
@@ -343,6 +479,7 @@ def collect_all_datagovsg() -> dict:
     results["median_tax"] = fetch_median_property_tax()
     results["private_whole"] = fetch_private_transactions_whole()
     results["school_directory"] = fetch_school_directory()
+    results["hdb_rental"] = fetch_hdb_rental_data()
 
     # Fetch GeoJSON boundary files
     results["planning_area_boundary"] = fetch_planning_area_boundary()

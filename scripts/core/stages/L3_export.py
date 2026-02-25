@@ -35,6 +35,12 @@ from scripts.core.stages.helpers import export_helpers
 # Configure logging
 logger = logging.getLogger(__name__)
 
+DISTRICT_TO_URA_LOCALITY = {
+    **{str(i): "Core Central Region" for i in range(1, 12)},
+    **{str(i): "Rest of Central Region" for i in [12, 13, 14, 15, 19, 20]},
+    **{str(i): "Outside Central Region" for i in [16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28]},
+}
+
 
 # ============================================================================
 # DATA LOADING
@@ -453,6 +459,26 @@ def merge_with_geocoding(transactions_df: pd.DataFrame, geo_df: pd.DataFrame) ->
 
     merged_dfs = []
 
+    def _dedupe_geocoding(df: pd.DataFrame, key_cols: list[str]) -> pd.DataFrame:
+        """Keep the best geocoding row per key (prefer existing, then higher score)."""
+        if df.empty:
+            return df
+        ranked = df.copy()
+        if "match_type" in ranked.columns:
+            ranked["_geo_match_rank"] = (ranked["match_type"].astype(str) == "existing").astype(int)
+        else:
+            ranked["_geo_match_rank"] = 0
+        if "match_score" in ranked.columns:
+            ranked["_geo_score_rank"] = pd.to_numeric(ranked["match_score"], errors="coerce").fillna(-1)
+        else:
+            ranked["_geo_score_rank"] = -1
+        ranked = ranked.sort_values(
+            key_cols + ["_geo_match_rank", "_geo_score_rank"],
+            ascending=[True] * len(key_cols) + [False, False],
+        )
+        ranked = ranked.drop_duplicates(subset=key_cols, keep="first")
+        return ranked.drop(columns=["_geo_match_rank", "_geo_score_rank"])
+
     # Merge HDB transactions
     if hdb_mask.any():
         hdb_df = transactions_df[hdb_mask].copy()
@@ -464,6 +490,7 @@ def merge_with_geocoding(transactions_df: pd.DataFrame, geo_df: pd.DataFrame) ->
             geo_hdb = geo_df.copy()
 
         if not geo_hdb.empty:
+            geo_hdb = _dedupe_geocoding(geo_hdb, ["BLK_NO", "ROAD_NAME"])
             hdb_merged = pd.merge(
                 hdb_df,
                 geo_hdb[["BLK_NO", "ROAD_NAME", "POSTAL", "LATITUDE", "LONGITUDE"]],
@@ -492,8 +519,8 @@ def merge_with_geocoding(transactions_df: pd.DataFrame, geo_df: pd.DataFrame) ->
             geo_condo = geo_df.copy()
 
         if not geo_condo.empty:
-            # Drop duplicates on street name (use first occurrence)
-            geo_condo_unique = geo_condo.drop_duplicates(subset=["ROAD_NAME"], keep="first").copy()
+            # Keep best candidate per street before street-level merge.
+            geo_condo_unique = _dedupe_geocoding(geo_condo, ["ROAD_NAME"]).copy()
             geo_condo_unique["street_name_upper"] = geo_condo_unique["ROAD_NAME"].str.upper()
 
             private_df = private_df.copy()
@@ -628,8 +655,34 @@ def add_amenity_features(transactions_df: pd.DataFrame, amenity_df: pd.DataFrame
         ]
 
         merge_cols = ["POSTAL"] + amenity_cols
+        amenity_merge_df = amenity_df[merge_cols].copy()
 
-        result = pd.merge(transactions_df, amenity_df[merge_cols], on="POSTAL", how="left")
+        # L2 per-type amenity exports can contain repeated postal rows; collapse to one row per postal
+        # before joining to transactions to avoid one-to-many row inflation in L3.
+        dup_mask = amenity_merge_df.duplicated(subset=["POSTAL"], keep=False)
+        if dup_mask.any():
+            dup_rows = int(dup_mask.sum())
+            dup_postals = int(amenity_merge_df.loc[dup_mask, ["POSTAL"]].drop_duplicates().shape[0])
+            logger.warning(
+                "Amenity features contain duplicate POSTAL rows; collapsing %s rows across %s postals",
+                dup_rows,
+                dup_postals,
+            )
+            agg_spec = {col: "median" for col in amenity_cols}
+            amenity_merge_df = (
+                amenity_merge_df.groupby("POSTAL", as_index=False)
+                .agg(agg_spec)
+                .sort_values("POSTAL", kind="stable")
+            )
+
+        result = pd.merge(transactions_df, amenity_merge_df, on="POSTAL", how="left")
+
+        if len(result) != len(transactions_df):
+            logger.error(
+                "Amenity merge changed row count unexpectedly: %s -> %s",
+                len(transactions_df),
+                len(result),
+            )
 
         # Log what was added
         added_cols = [col for col in amenity_cols if col in result.columns]
@@ -677,29 +730,152 @@ def merge_rental_yield(
     # Make copies to avoid modifying originals
     transactions_df = transactions_df.copy()
     rental_yield_df = rental_yield_df.copy()
+    transactions_df["_merge_row_id"] = range(len(transactions_df))
+
+    def _collapse_duplicate_yield_keys(
+        df: pd.DataFrame, key_cols: list[str], label: str
+    ) -> pd.DataFrame:
+        if df.empty:
+            return df
+        dup_mask = df.duplicated(subset=key_cols, keep=False)
+        dup_rows = int(dup_mask.sum())
+        dup_keys = int(df.loc[dup_mask, key_cols].drop_duplicates().shape[0]) if dup_rows else 0
+        if not dup_rows:
+            return df
+        logger.warning(
+            "Duplicate rental yield rows detected for %s keys; collapsing %s rows across %s keys",
+            label,
+            dup_rows,
+            dup_keys,
+        )
+        collapsed = (
+            df.groupby(key_cols, as_index=False)["rental_yield_pct"]
+            .median()
+            .sort_values(key_cols, kind="stable")
+        )
+        return collapsed
 
     # Ensure month columns are both datetime
-    # Convert transactions_df month if it's a string
     if transactions_df["month"].dtype == "object":
         transactions_df["month"] = pd.to_datetime(
             transactions_df["month"], format="%Y-%m", errors="coerce"
         )
 
-    # Convert rental_yield_df month if it's a string
-    if rental_yield_df["month"].dtype == "object":
-        rental_yield_df["month"] = pd.to_datetime(
-            rental_yield_df["month"], format="%Y-%m", errors="coerce"
+    # Backward compatibility for older rental_yield outputs (HDB-only / no property_type).
+    if "property_type" not in rental_yield_df.columns:
+        logger.warning("rental_yield.parquet missing property_type; using legacy town+month merge")
+        if rental_yield_df["month"].dtype == "object":
+            rental_yield_df["month"] = pd.to_datetime(
+                rental_yield_df["month"], format="%Y-%m", errors="coerce"
+            )
+        else:
+            rental_yield_df["month"] = pd.to_datetime(rental_yield_df["month"], errors="coerce")
+        rental_yield_df["month"] = rental_yield_df["month"].dt.normalize()
+        rental_yield_df = _collapse_duplicate_yield_keys(
+            rental_yield_df, ["town", "month"], "legacy town+month"
         )
-    else:
-        rental_yield_df["month"] = pd.to_datetime(rental_yield_df["month"])
 
-    # Merge on town and month
-    result = pd.merge(
-        transactions_df,
-        rental_yield_df[["town", "month", "rental_yield_pct"]],
-        on=["town", "month"],
+        result = pd.merge(
+            transactions_df,
+            rental_yield_df[["town", "month", "rental_yield_pct"]],
+            on=["town", "month"],
+            how="left",
+        )
+        result = result.drop(columns=["_merge_row_id"])
+        coverage = result["rental_yield_pct"].notna().sum()
+        total = len(result)
+        logger.info(
+            f"Added rental yield to {coverage:,} of {total:,} records ({coverage / total * 100:.1f}%)"
+        )
+        return result
+
+    if rental_yield_df["month"].dtype == "object":
+        month_str = rental_yield_df["month"].astype(str).str.strip()
+        rental_yield_df["month"] = pd.to_datetime(month_str, format="%Y-%m", errors="coerce")
+        quarter_mask = rental_yield_df["month"].isna() & month_str.str.match(r"^\d{4}Q[1-4]$")
+        if quarter_mask.any():
+            rental_yield_df.loc[quarter_mask, "month"] = (
+                pd.PeriodIndex(month_str[quarter_mask], freq="Q")
+                .to_timestamp(how="start")
+            )
+    else:
+        rental_yield_df["month"] = pd.to_datetime(rental_yield_df["month"], errors="coerce")
+
+    rental_yield_df["month"] = rental_yield_df["month"].dt.normalize()
+
+    if "property_type" in transactions_df.columns:
+        tx_type = transactions_df["property_type"].astype(str)
+        transactions_df["_ry_property_type"] = tx_type.replace({"Condominium": "Condo"})
+    else:
+        transactions_df["_ry_property_type"] = None
+
+    rental_yield_df["_ry_property_type"] = rental_yield_df["property_type"].astype(str)
+
+    # HDB: exact month + town join, keyed by property_type for safety.
+    hdb_tx = transactions_df[transactions_df["_ry_property_type"] == "HDB"].copy()
+    private_tx = transactions_df[transactions_df["_ry_property_type"].isin(["Condo", "EC"])].copy()
+    other_tx = transactions_df[
+        ~transactions_df["_ry_property_type"].isin(["HDB", "Condo", "EC"])
+    ].copy()
+
+    hdb_ry = rental_yield_df[rental_yield_df["_ry_property_type"] == "HDB"].copy()
+    private_ry = rental_yield_df[rental_yield_df["_ry_property_type"].isin(["Condo", "EC"])].copy()
+
+    hdb_ry = _collapse_duplicate_yield_keys(
+        hdb_ry, ["_ry_property_type", "town", "month"], "HDB"
+    )
+    private_ry = _collapse_duplicate_yield_keys(
+        private_ry, ["_ry_property_type", "town", "month"], "private"
+    )
+
+    hdb_result = pd.merge(
+        hdb_tx,
+        hdb_ry[["town", "month", "_ry_property_type", "rental_yield_pct"]],
+        on=["town", "month", "_ry_property_type"],
         how="left",
     )
+
+    if not private_tx.empty:
+        postal = private_tx["Postal District"] if "Postal District" in private_tx.columns else pd.Series(index=private_tx.index)
+        private_tx["_postal_district_key"] = pd.to_numeric(postal, errors="coerce").astype("Int64").astype(str)
+        private_tx["_ura_locality"] = private_tx["_postal_district_key"].map(DISTRICT_TO_URA_LOCALITY)
+        private_tx["_quarter_start_month"] = (
+            private_tx["month"].dt.to_period("Q").dt.to_timestamp(how="start").dt.normalize()
+        )
+
+        private_result = pd.merge(
+            private_tx,
+            private_ry.rename(columns={"town": "_ura_locality"})[
+                ["_ura_locality", "month", "_ry_property_type", "rental_yield_pct"]
+            ].rename(columns={"month": "_quarter_start_month"}),
+            on=["_ura_locality", "_quarter_start_month", "_ry_property_type"],
+            how="left",
+        )
+    else:
+        private_result = private_tx
+        private_result["rental_yield_pct"] = pd.Series(dtype="float64")
+
+    if not other_tx.empty and "rental_yield_pct" not in other_tx.columns:
+        other_tx["rental_yield_pct"] = pd.NA
+
+    result = pd.concat([hdb_result, private_result, other_tx], ignore_index=True, sort=False)
+    result = result.sort_values("_merge_row_id").reset_index(drop=True)
+
+    if len(result) != len(transactions_df):
+        logger.error(
+            "Rental yield merge changed row count unexpectedly: %s -> %s",
+            len(transactions_df),
+            len(result),
+        )
+
+    drop_cols = [
+        "_merge_row_id",
+        "_ry_property_type",
+        "_postal_district_key",
+        "_ura_locality",
+        "_quarter_start_month",
+    ]
+    result = result.drop(columns=[c for c in drop_cols if c in result.columns])
 
     # Report coverage
     coverage = result["rental_yield_pct"].notna().sum()

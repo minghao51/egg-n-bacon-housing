@@ -28,6 +28,7 @@ from scripts.core.network_check import check_local_file_exists, require_network
 logger = logging.getLogger(__name__)
 
 OUTPUT_PATH = Config.PARQUETS_DIR / "L1" / "housing_hdb_rental.parquet"
+DATASET_DOWNLOAD_BASE = "https://api-open.data.gov.sg/v1/public/api/datasets"
 
 
 def _get_with_retry(
@@ -81,6 +82,65 @@ def _get_with_retry(
     raise RuntimeError("Unreachable retry loop exit")
 
 
+def _parse_download_api_payload(response: requests.Response) -> dict:
+    """Parse JSON payload from data.gov.sg dataset download APIs."""
+    response.raise_for_status()
+    payload = response.json()
+    if not isinstance(payload, dict):
+        raise RuntimeError("Unexpected download API response format")
+    return payload
+
+
+def _download_via_dataset_download_api(
+    session: requests.Session, dataset_id: str, poll_attempts: int = 10
+) -> pd.DataFrame:
+    """Download full dataset via initiate-download + poll-download endpoints."""
+    initiate_url = f"{DATASET_DOWNLOAD_BASE}/{dataset_id}/initiate-download"
+    poll_url = f"{DATASET_DOWNLOAD_BASE}/{dataset_id}/poll-download"
+
+    logger.info("Trying dataset download API for full HDB rental export...")
+    init_resp = _get_with_retry(session, initiate_url, params={})
+    init_payload = _parse_download_api_payload(init_resp)
+    init_data = init_payload.get("data", {}) if isinstance(init_payload.get("data"), dict) else {}
+    logger.debug("initiate-download response keys: %s", list(init_payload.keys()))
+    if "message" in init_data:
+        logger.info("initiate-download: %s", init_data["message"])
+
+    download_url = None
+    for attempt in range(1, poll_attempts + 1):
+        poll_resp = _get_with_retry(session, poll_url, params={})
+        poll_payload = _parse_download_api_payload(poll_resp)
+        poll_data = poll_payload.get("data", {}) if isinstance(poll_payload.get("data"), dict) else {}
+        status = str(poll_data.get("status", "")).upper()
+        if poll_data.get("url"):
+            download_url = poll_data["url"]
+            logger.info("Dataset download API ready (status=%s)", status or "unknown")
+            break
+        if status in {"FAILED", "ERROR"}:
+            raise RuntimeError(f"Dataset download API failed (status={status})")
+        sleep_seconds = min(10, attempt)
+        logger.info(
+            "Waiting for dataset export (poll %s/%s, status=%s)...",
+            attempt,
+            poll_attempts,
+            status or "pending",
+        )
+        time.sleep(sleep_seconds)
+
+    if not download_url:
+        raise RuntimeError("Dataset download API did not return a download URL in time")
+
+    file_resp = _get_with_retry(session, download_url, params={})
+    file_resp.raise_for_status()
+    content_type = file_resp.headers.get("Content-Type", "")
+    logger.info("Downloaded dataset file (%s bytes, content-type=%s)", len(file_resp.content), content_type)
+
+    # Let pandas infer the delimiter/encoding from the CSV bytes.
+    from io import BytesIO
+
+    return pd.read_csv(BytesIO(file_resp.content))
+
+
 def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe651", batch_size: int = 10000) -> pd.DataFrame:
     """Download HDB rental data from data.gov.sg API.
 
@@ -93,40 +153,50 @@ def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe6
     """
     logger.info(f"Downloading HDB rental data (dataset: {dataset_id})...")
 
-    url = "https://data.gov.sg/api/action/datastore_search"
-
-    params = {"resource_id": dataset_id, "limit": 1}
     session = requests.Session()
+    df = pd.DataFrame()
 
-    response = _get_with_retry(session, url, params)
-    response.raise_for_status()
-    data = response.json()
+    # Preferred path for complete dataset exports per current data.gov.sg docs.
+    try:
+        df = _download_via_dataset_download_api(session, dataset_id)
+        logger.info("Dataset download API returned %s records", len(df))
+    except Exception as e:
+        logger.warning("Dataset download API failed, falling back to datastore_search pagination: %s", e)
 
-    total = data['result']['total']
-    logger.info(f"Total records in dataset: {total:,}")
+    # Fallback path: legacy datastore_search pagination.
+    if df.empty:
+        url = "https://data.gov.sg/api/action/datastore_search"
+        params = {"resource_id": dataset_id, "limit": 1}
 
-    all_records = []
-    offset = 0
-
-    while offset < total:
-        params = {
-            "resource_id": dataset_id,
-            "limit": batch_size,
-            "offset": offset
-        }
-        logger.info(f"Downloading records {offset:,} to {min(offset + batch_size, total):,}...")
         response = _get_with_retry(session, url, params)
         response.raise_for_status()
         data = response.json()
-        records = data['result']['records']
-        all_records.extend(records)
-        offset += batch_size
-        if len(records) < batch_size:
-            break
 
-    logger.info(f"Downloaded {len(all_records):,} records")
+        total = data['result']['total']
+        logger.info(f"Total records in dataset: {total:,}")
 
-    df = pd.DataFrame(all_records)
+        all_records = []
+        offset = 0
+
+        while offset < total:
+            params = {
+                "resource_id": dataset_id,
+                "limit": batch_size,
+                "offset": offset
+            }
+            logger.info(f"Downloading records {offset:,} to {min(offset + batch_size, total):,}...")
+            response = _get_with_retry(session, url, params)
+            response.raise_for_status()
+            data = response.json()
+            records = data['result']['records']
+            all_records.extend(records)
+            offset += batch_size
+            if len(records) < batch_size:
+                break
+
+        logger.info(f"Downloaded {len(all_records):,} records via datastore_search")
+        df = pd.DataFrame(all_records)
+
     df.columns = df.columns.str.lower().str.replace(' ', '_')
 
     if '_id' in df.columns:
