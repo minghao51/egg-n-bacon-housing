@@ -469,7 +469,9 @@ def merge_with_geocoding(transactions_df: pd.DataFrame, geo_df: pd.DataFrame) ->
         else:
             ranked["_geo_match_rank"] = 0
         if "match_score" in ranked.columns:
-            ranked["_geo_score_rank"] = pd.to_numeric(ranked["match_score"], errors="coerce").fillna(-1)
+            ranked["_geo_score_rank"] = pd.to_numeric(
+                ranked["match_score"], errors="coerce"
+            ).fillna(-1)
         else:
             ranked["_geo_score_rank"] = -1
         ranked = ranked.sort_values(
@@ -794,10 +796,9 @@ def merge_rental_yield(
         rental_yield_df["month"] = pd.to_datetime(month_str, format="%Y-%m", errors="coerce")
         quarter_mask = rental_yield_df["month"].isna() & month_str.str.match(r"^\d{4}Q[1-4]$")
         if quarter_mask.any():
-            rental_yield_df.loc[quarter_mask, "month"] = (
-                pd.PeriodIndex(month_str[quarter_mask], freq="Q")
-                .to_timestamp(how="start")
-            )
+            rental_yield_df.loc[quarter_mask, "month"] = pd.PeriodIndex(
+                month_str[quarter_mask], freq="Q"
+            ).to_timestamp(how="start")
     else:
         rental_yield_df["month"] = pd.to_datetime(rental_yield_df["month"], errors="coerce")
 
@@ -821,9 +822,7 @@ def merge_rental_yield(
     hdb_ry = rental_yield_df[rental_yield_df["_ry_property_type"] == "HDB"].copy()
     private_ry = rental_yield_df[rental_yield_df["_ry_property_type"].isin(["Condo", "EC"])].copy()
 
-    hdb_ry = _collapse_duplicate_yield_keys(
-        hdb_ry, ["_ry_property_type", "town", "month"], "HDB"
-    )
+    hdb_ry = _collapse_duplicate_yield_keys(hdb_ry, ["_ry_property_type", "town", "month"], "HDB")
     private_ry = _collapse_duplicate_yield_keys(
         private_ry, ["_ry_property_type", "town", "month"], "private"
     )
@@ -836,9 +835,17 @@ def merge_rental_yield(
     )
 
     if not private_tx.empty:
-        postal = private_tx["Postal District"] if "Postal District" in private_tx.columns else pd.Series(index=private_tx.index)
-        private_tx["_postal_district_key"] = pd.to_numeric(postal, errors="coerce").astype("Int64").astype(str)
-        private_tx["_ura_locality"] = private_tx["_postal_district_key"].map(DISTRICT_TO_URA_LOCALITY)
+        postal = (
+            private_tx["Postal District"]
+            if "Postal District" in private_tx.columns
+            else pd.Series(index=private_tx.index)
+        )
+        private_tx["_postal_district_key"] = (
+            pd.to_numeric(postal, errors="coerce").astype("Int64").astype(str)
+        )
+        private_tx["_ura_locality"] = private_tx["_postal_district_key"].map(
+            DISTRICT_TO_URA_LOCALITY
+        )
         private_tx["_quarter_start_month"] = (
             private_tx["month"].dt.to_period("Q").dt.to_timestamp(how="start").dt.normalize()
         )

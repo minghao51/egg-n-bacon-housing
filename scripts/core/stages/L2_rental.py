@@ -49,7 +49,9 @@ def _normalize_hdb_rental_df(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def _hdb_rental_coverage_signature(df: pd.DataFrame) -> tuple[int, pd.Period | None, pd.Period | None]:
+def _hdb_rental_coverage_signature(
+    df: pd.DataFrame,
+) -> tuple[int, pd.Period | None, pd.Period | None]:
     """Return (month_count, min_month, max_month) for HDB rental records."""
     if "rent_approval_date" not in df.columns:
         return 0, None, None
@@ -121,7 +123,9 @@ def _load_hdb_median_rent_by_town_flat_type(force: bool = False) -> pd.DataFrame
     return df
 
 
-def calculate_hdb_rental_yield_from_median_rent_fallback(force_download: bool = False) -> pd.DataFrame:
+def calculate_hdb_rental_yield_from_median_rent_fallback(
+    force_download: bool = False,
+) -> pd.DataFrame:
     """Estimate HDB rental yields using quarterly median rent by town+flat_type as fallback."""
     logger.warning(
         "Using aggregate HDB fallback: quarterly median rent by town/flat_type (data.gov.sg) "
@@ -146,32 +150,31 @@ def calculate_hdb_rental_yield_from_median_rent_fallback(force_download: bool = 
 
     trans_df["town"] = trans_df["town"].astype(str).str.upper().str.strip()
     trans_df["flat_type_key"] = _canonical_hdb_flat_type(trans_df["flat_type"])
-    trans_df["month"] = pd.to_datetime(trans_df["month"], format="%Y-%m", errors="coerce").dt.to_period("M")
+    trans_df["month"] = pd.to_datetime(
+        trans_df["month"], format="%Y-%m", errors="coerce"
+    ).dt.to_period("M")
     trans_df["quarter"] = trans_df["month"].dt.asfreq("Q")
     trans_df["resale_price"] = pd.to_numeric(trans_df["resale_price"], errors="coerce")
     trans_df = trans_df.dropna(subset=["quarter", "town", "flat_type_key", "resale_price"])
 
-    rental_q = (
-        rental_df.groupby(["town", "quarter", "flat_type_key"], as_index=False)["median_rent"]
-        .median()
-    )
-    trans_q = (
-        trans_df.groupby(["town", "quarter", "flat_type_key"], as_index=False)
-        .agg(resale_price=("resale_price", "median"), txn_count=("resale_price", "size"))
+    rental_q = rental_df.groupby(["town", "quarter", "flat_type_key"], as_index=False)[
+        "median_rent"
+    ].median()
+    trans_q = trans_df.groupby(["town", "quarter", "flat_type_key"], as_index=False).agg(
+        resale_price=("resale_price", "median"), txn_count=("resale_price", "size")
     )
 
     merged_q = rental_q.merge(trans_q, on=["town", "quarter", "flat_type_key"], how="inner")
     if merged_q.empty:
         raise ValueError("HDB median-rent fallback produced no town+quarter+flat_type matches")
 
-    merged_q["rental_yield_pct_combo"] = (merged_q["median_rent"] * 12 / merged_q["resale_price"]) * 100
+    merged_q["rental_yield_pct_combo"] = (
+        merged_q["median_rent"] * 12 / merged_q["resale_price"]
+    ) * 100
     merged_q["_weighted_yield"] = merged_q["rental_yield_pct_combo"] * merged_q["txn_count"]
-    town_q = (
-        merged_q.groupby(["town", "quarter"], as_index=False)
-        .agg(
-            weighted_yield_sum=("_weighted_yield", "sum"),
-            txn_count=("txn_count", "sum"),
-        )
+    town_q = merged_q.groupby(["town", "quarter"], as_index=False).agg(
+        weighted_yield_sum=("_weighted_yield", "sum"),
+        txn_count=("txn_count", "sum"),
     )
     town_q["rental_yield_pct"] = town_q["weighted_yield_sum"] / town_q["txn_count"]
     town_q = town_q[["town", "quarter", "rental_yield_pct"]]
@@ -227,7 +230,9 @@ def download_hdb_rental_data(force: bool = False) -> bool:
             should_write_from_l0 = force or not output_path.exists()
             if output_path.exists() and not should_write_from_l0:
                 existing_df = _normalize_hdb_rental_df(pd.read_parquet(output_path))
-                existing_months, existing_min, existing_max = _hdb_rental_coverage_signature(existing_df)
+                existing_months, existing_min, existing_max = _hdb_rental_coverage_signature(
+                    existing_df
+                )
                 logger.info(
                     "Existing L1 HDB rental data: %s rows, %s month(s) (%s to %s)",
                     len(existing_df),
@@ -235,9 +240,8 @@ def download_hdb_rental_data(force: bool = False) -> bool:
                     existing_min,
                     existing_max,
                 )
-                should_write_from_l0 = (
-                    raw_months > existing_months
-                    or (raw_months == existing_months and len(raw_df) > len(existing_df))
+                should_write_from_l0 = raw_months > existing_months or (
+                    raw_months == existing_months and len(raw_df) > len(existing_df)
                 )
 
             if should_write_from_l0:
@@ -256,6 +260,7 @@ def download_hdb_rental_data(force: bool = False) -> bool:
         from scripts.data.download.download_hdb_rental_data import (
             download_hdb_rental_data as fetch_hdb_rental_data,
         )
+
         df = fetch_hdb_rental_data()
         df = _normalize_hdb_rental_df(df)
         _assert_hdb_rental_completeness(df, "direct HDB rental download")
@@ -280,6 +285,7 @@ def download_ura_rental_index(force: bool = False) -> bool:
         from scripts.data.download.download_ura_rental_index import (
             download_ura_rental_index as fetch_ura_rental_index,
         )
+
         df = fetch_ura_rental_index()
         output_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_parquet(output_path, compression="snappy", index=False)
@@ -359,15 +365,9 @@ def calculate_condo_ec_yield(property_type: str, is_ec: bool = False) -> pd.Data
         trans_df["Sale Date"], format="%b-%y", errors="coerce"
     ).dt.to_period("Q")
     trans_df["region"] = trans_df["Postal District"].astype(str).map(DISTRICT_TO_REGION)
-    trans_agg = (
-        trans_df[["region", "quarter"]]
-        .dropna()
-        .drop_duplicates()
-    )
+    trans_agg = trans_df[["region", "quarter"]].dropna().drop_duplicates()
 
-    rental_filtered = rental_df[
-        rental_df["locality"].isin(PRIVATE_LOCALITIES)
-    ]
+    rental_filtered = rental_df[rental_df["locality"].isin(PRIVATE_LOCALITIES)]
     merged = rental_filtered.merge(
         trans_agg, left_on=["locality", "quarter"], right_on=["region", "quarter"], how="inner"
     )
@@ -390,7 +390,9 @@ def calculate_rental_yields() -> bool:
     ura_path = Config.PIPELINE_DIR / "L1" / "housing_ura_rental_index.parquet"
 
     if not hdb_path.exists():
-        logger.warning("⚠️ HDB rental transaction dataset not found; HDB aggregate fallback may be used")
+        logger.warning(
+            "⚠️ HDB rental transaction dataset not found; HDB aggregate fallback may be used"
+        )
 
     hdb_yields = pd.DataFrame(columns=["town", "month", "property_type", "rental_yield_pct"])
     condo_yields = pd.DataFrame(columns=["town", "quarter", "rental_yield_pct"])
@@ -405,6 +407,7 @@ def calculate_rental_yields() -> bool:
     except Exception as e:
         logger.error("❌ HDB rental yield calculation failed: %s", e)
         import traceback
+
         traceback.print_exc()
 
     # Private yield path depends on URA rental index but should not block HDB.
@@ -418,7 +421,9 @@ def calculate_rental_yields() -> bool:
 
             for df in [condo_yields, ec_yields]:
                 private_df = df.rename(columns={"quarter": "month"}).copy()
-                private_df["month"] = private_df["month"].dt.to_timestamp(how="start").dt.to_period("M")
+                private_df["month"] = (
+                    private_df["month"].dt.to_timestamp(how="start").dt.to_period("M")
+                )
                 output_frames.append(
                     private_df[["town", "month", "property_type", "rental_yield_pct"]]
                 )
@@ -427,6 +432,7 @@ def calculate_rental_yields() -> bool:
     except Exception as e:
         logger.error("❌ Condo/EC rental yield calculation failed: %s", e)
         import traceback
+
         traceback.print_exc()
 
     if not output_frames:
@@ -465,7 +471,9 @@ def run_rental_pipeline(force: bool = False) -> dict:
     if results["hdb_rental"] or results["ura_rental"]:
         results["rental_yields"] = calculate_rental_yields()
     else:
-        logger.warning("⚠️ Skipping rental yield calculation (no HDB or URA rental inputs available)")
+        logger.warning(
+            "⚠️ Skipping rental yield calculation (no HDB or URA rental inputs available)"
+        )
         results["rental_yields"] = False
 
     # If transactional HDB rental failed but rental yields were produced via aggregate fallback,
@@ -484,6 +492,7 @@ def run_rental_pipeline(force: bool = False) -> dict:
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Run L2 rental pipeline")
     parser.add_argument("--force", action="store_true", help="Force re-download")
     args = parser.parse_args()

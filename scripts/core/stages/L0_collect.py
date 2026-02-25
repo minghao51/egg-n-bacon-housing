@@ -317,7 +317,9 @@ def fetch_hdb_rental_data(use_cache: bool = True) -> pd.DataFrame | None:
     def _hdb_rental_coverage_signature(df: pd.DataFrame) -> tuple[int, int, str | None, str | None]:
         if df.empty or "rent_approval_date" not in df.columns:
             return len(df), 0, None, None
-        months = pd.to_datetime(df["rent_approval_date"], errors="coerce").dropna().dt.to_period("M")
+        months = (
+            pd.to_datetime(df["rent_approval_date"], errors="coerce").dropna().dt.to_period("M")
+        )
         if months.empty:
             return len(df), 0, None, None
         return len(df), int(months.nunique()), str(months.min()), str(months.max())
@@ -326,6 +328,7 @@ def fetch_hdb_rental_data(use_cache: bool = True) -> pd.DataFrame | None:
         from scripts.data.download.download_hdb_rental_data import (
             download_hdb_rental_data as fetch_hdb_rental_data_full,
         )
+
         try:
             logger.info("L0 HDB rental: trying dataset download API as primary source")
             full_df = fetch_hdb_rental_data_full()
