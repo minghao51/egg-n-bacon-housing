@@ -17,6 +17,8 @@ htmlcov/
 .nox/
 *.cover
 .hypothesis/
+playwright-report/
+test-results/
 
 # Type checking
 .mypy_cache/
@@ -78,6 +80,8 @@ marimo/
 app/node_modules/
 app/dist/
 app/.astro/
+app/playwright-report/
+app/test-results/
 
 # Generated data files (EXCEPTION: we track dashboard JSON files)
 # app/public/data/*.json  # COMMENTED OUT - we track these
