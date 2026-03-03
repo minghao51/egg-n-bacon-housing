@@ -105,3 +105,34 @@ class DataQualityCollector:
         conn.close()
 
         logger.info(f"Data quality database initialized: {self.db_path}")
+
+    def record_snapshot(self, snapshot: QualitySnapshot) -> None:
+        """Save snapshot to database and update baseline."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        # Insert snapshot
+        cursor.execute(
+            """
+            INSERT INTO run_snapshots
+            (timestamp, dataset_name, stage, input_rows, output_rows,
+             duplicate_count, null_percentage, column_count, source)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                snapshot.timestamp,
+                snapshot.dataset_name,
+                snapshot.stage,
+                snapshot.input_rows,
+                snapshot.output_rows,
+                snapshot.duplicate_count,
+                snapshot.null_percentage,
+                len(snapshot.columns),
+                snapshot.source,
+            ),
+        )
+
+        conn.commit()
+        conn.close()
+
+        logger.debug(f"Recorded quality snapshot for {snapshot.dataset_name}")
