@@ -243,3 +243,43 @@ class DataQualityCollector:
             sample_count=row[6],
             last_updated=row[7],
         )
+
+    def check_anomaly(self, snapshot: QualitySnapshot) -> list[str]:
+        """Check if metrics deviate >3σ from historical baseline."""
+        baseline = self.get_baseline(snapshot.dataset_name, snapshot.stage)
+
+        if baseline is None:
+            return []  # First run, no baseline
+
+        anomalies = []
+
+        # Check row count
+        if baseline.std_rows > 0.01:
+            # Use z-score when we have variance
+            z_score = abs(snapshot.output_rows - baseline.mean_rows) / baseline.std_rows
+            if z_score > 3:
+                anomalies.append(
+                    f"Row count: {snapshot.output_rows} "
+                    f"(baseline: {baseline.mean_rows:.0f}±{baseline.std_rows:.0f})"
+                )
+        else:
+            # No variance: check for large percentage changes (>50%)
+            if baseline.mean_rows > 0:
+                pct_change = abs(snapshot.output_rows - baseline.mean_rows) / baseline.mean_rows
+                if pct_change > 0.5:  # 50% change
+                    anomalies.append(
+                        f"Row count: {snapshot.output_rows} "
+                        f"(baseline: {baseline.mean_rows:.0f}, change: {pct_change*100:.0f}%)"
+                    )
+
+        # Check null percentage
+        if baseline.std_null_pct > 0.01:
+            # Use z-score when we have variance
+            z_score = abs(snapshot.null_percentage - baseline.mean_null_pct) / baseline.std_null_pct
+            if z_score > 3:
+                anomalies.append(
+                    f"Null %: {snapshot.null_percentage:.2f}% "
+                    f"(baseline: {baseline.mean_null_pct:.2f}±{baseline.std_null_pct:.2f})"
+                )
+
+        return anomalies

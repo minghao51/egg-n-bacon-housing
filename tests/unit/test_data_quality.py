@@ -172,3 +172,67 @@ def test_update_baseline_updates_existing():
         baseline = collector.get_baseline("test_dataset", "L1")
         assert baseline.mean_rows == 1050.0  # (1000 + 1100) / 2
         assert baseline.sample_count == 2
+
+
+def test_check_anomaly_no_baseline():
+    """Test that no anomalies detected when no baseline exists."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = Path(tmpdir) / "test.db"
+        collector = DataQualityCollector(db_path)
+
+        snapshot = QualitySnapshot(
+            timestamp="2026-03-03 12:00:00",
+            dataset_name="new_dataset",
+            input_rows=1000,
+            output_rows=100,
+            duplicate_count=0,
+            null_percentage=50.0,  # Extreme values
+            columns=["col1"],
+            data_types={"col1": "int64"},
+            source="test",
+            stage="L1",
+        )
+
+        anomalies = collector.check_anomaly(snapshot)
+        assert anomalies == []  # No baseline = no anomalies
+
+
+def test_check_anomaly_detects_spike():
+    """Test that anomalies are detected when values deviate >3σ."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = Path(tmpdir) / "test.db"
+        collector = DataQualityCollector(db_path)
+
+        # Create baseline with 1000 rows, 2% nulls
+        for i in range(10):
+            snapshot = QualitySnapshot(
+                timestamp=f"2026-03-03 12:0{i}:00",
+                dataset_name="test_dataset",
+                input_rows=1000,
+                output_rows=1000,
+                duplicate_count=0,
+                null_percentage=2.0,
+                columns=["col1"],
+                data_types={"col1": "int64"},
+                source="test",
+                stage="L1",
+            )
+            collector.record_snapshot(snapshot)
+
+        # Anomalous snapshot: 5000 rows (5x normal)
+        anomalous_snapshot = QualitySnapshot(
+            timestamp="2026-03-03 12:10:00",
+            dataset_name="test_dataset",
+            input_rows=5000,
+            output_rows=5000,
+            duplicate_count=0,
+            null_percentage=2.0,
+            columns=["col1"],
+            data_types={"col1": "int64"},
+            source="test",
+            stage="L1",
+        )
+
+        anomalies = collector.check_anomaly(anomalous_snapshot)
+        assert len(anomalies) > 0
+        assert any("Row count" in a for a in anomalies)
