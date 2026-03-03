@@ -8,7 +8,6 @@ Usage:
 
 import argparse
 import sqlite3
-from datetime import datetime, timedelta
 from pathlib import Path
 
 
@@ -67,11 +66,7 @@ def format_summary_report(report: list[dict]) -> str:
     lines.append("-" * 80)
 
     for row in report:
-        # Calculate change
-        input_rows = row["input_rows"]
         output_rows = row["output_rows"]
-        change = output_rows - input_rows
-        change_pct = (change / input_rows * 100) if input_rows > 0 else 0
 
         # Status
         if row["duplicate_count"] > 0:
