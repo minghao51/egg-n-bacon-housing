@@ -5,6 +5,7 @@ SQLite storage for historical baselines, and adaptive anomaly detection.
 """
 
 import logging
+import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -53,5 +54,54 @@ class DataQualityCollector:
 
     def _init_db(self) -> None:
         """Initialize SQLite database schema."""
-        # Implementation in next task
-        pass
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        # Create run_snapshots table
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS run_snapshots (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT NOT NULL,
+                dataset_name TEXT NOT NULL,
+                stage TEXT NOT NULL,
+                input_rows INTEGER NOT NULL,
+                output_rows INTEGER NOT NULL,
+                duplicate_count INTEGER NOT NULL,
+                null_percentage REAL NOT NULL,
+                column_count INTEGER NOT NULL,
+                source TEXT
+            )
+        """
+        )
+
+        # Create indexes
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_dataset_stage ON run_snapshots(dataset_name, stage)"
+        )
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON run_snapshots(timestamp)")
+
+        # Create historical_baselines table
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS historical_baselines (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                dataset_name TEXT NOT NULL,
+                stage TEXT NOT NULL,
+                mean_rows REAL NOT NULL,
+                std_rows REAL NOT NULL,
+                mean_null_pct REAL NOT NULL,
+                std_null_pct REAL NOT NULL,
+                sample_count INTEGER NOT NULL,
+                last_updated TEXT NOT NULL,
+                UNIQUE(dataset_name, stage)
+            )
+        """
+        )
+
+        conn.commit()
+        conn.close()
+
+        logger.info(f"Data quality database initialized: {self.db_path}")
