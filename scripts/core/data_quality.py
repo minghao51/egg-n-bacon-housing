@@ -7,11 +7,18 @@ SQLite storage for historical baselines, and adaptive anomaly detection.
 import logging
 import sqlite3
 from dataclasses import dataclass
+from datetime import datetime
+from functools import wraps
 from pathlib import Path
+
+import pandas as pd
 
 from scripts.core.config import Config
 
 logger = logging.getLogger(__name__)
+
+# Global collector instance
+_collector = None
 
 
 @dataclass
@@ -42,6 +49,93 @@ class QualityBaseline:
     std_null_pct: float
     sample_count: int
     last_updated: str
+
+
+def get_collector() -> "DataQualityCollector":
+    """Get or create global collector instance."""
+    global _collector
+    if _collector is None:
+        _collector = DataQualityCollector()
+    return _collector
+
+
+def monitor_data_quality(func):
+    """Decorator for save_parquet to capture quality metrics."""
+
+    @wraps(func)
+    def wrapper(df: pd.DataFrame, dataset_name: str, *args, **kwargs):
+        # Capture input state
+        input_rows = len(df)
+        stage = dataset_name.split("_")[0]  # L0, L1, L2...
+
+        # Get source from kwargs
+        source = kwargs.get("source", "unknown")
+
+        # Run original save_parquet
+        result = func(df, dataset_name, *args, **kwargs)
+
+        # Calculate metrics
+        duplicate_count = int(df.duplicated().sum())
+        null_pct = round((df.isnull().sum().sum() / df.size) * 100, 2)
+
+        # Create snapshot
+        snapshot = QualitySnapshot(
+            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            dataset_name=dataset_name,
+            input_rows=input_rows,
+            output_rows=len(df),
+            duplicate_count=duplicate_count,
+            null_percentage=null_pct,
+            columns=df.columns.tolist(),
+            data_types={col: str(dtype) for col, dtype in df.dtypes.items()},
+            source=source,
+            stage=stage,
+        )
+
+        # Save snapshot
+        collector = get_collector()
+        collector.record_snapshot(snapshot)
+
+        # Check anomalies and log
+        anomalies = collector.check_anomaly(snapshot)
+        _log_quality_summary(snapshot, anomalies)
+
+        return result
+
+    return wrapper
+
+
+def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> None:
+    """Log quality summary to terminal."""
+
+    # Calculate data change
+    row_change = snapshot.output_rows - snapshot.input_rows
+    row_change_pct = (
+        (row_change / snapshot.input_rows * 100) if snapshot.input_rows > 0 else 0
+    )
+
+    # Base log message
+    if anomalies:
+        status = "⚠️  ANOMALIES DETECTED"
+        level = logger.warning
+    else:
+        status = "✅ OK"
+        level = logger.info
+
+    message = (
+        f"Data Quality: {snapshot.dataset_name} | "
+        f"{snapshot.output_rows:,} rows "
+        f"({row_change:+,} ({row_change_pct:+.1f}%)) | "
+        f"{snapshot.duplicate_count} duplicates | "
+        f"{snapshot.null_percentage:.2f}% nulls | "
+        f"{status}"
+    )
+
+    level(message)
+
+    # Log anomalies separately
+    for anomaly in anomalies:
+        logger.warning(f"  ⚠️  {anomaly}")
 
 
 class DataQualityCollector:

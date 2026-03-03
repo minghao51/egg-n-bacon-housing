@@ -1,10 +1,16 @@
 import tempfile
 from pathlib import Path
 
+import pandas as pd
 import pytest
 import sqlite3
 
-from scripts.core.data_quality import DataQualityCollector, QualityBaseline, QualitySnapshot
+from scripts.core.data_quality import (
+    DataQualityCollector,
+    QualityBaseline,
+    QualitySnapshot,
+    monitor_data_quality,
+)
 
 
 def test_database_initialization():
@@ -236,3 +242,42 @@ def test_check_anomaly_detects_spike():
         anomalies = collector.check_anomaly(anomalous_snapshot)
         assert len(anomalies) > 0
         assert any("Row count" in a for a in anomalies)
+
+
+def test_monitor_data_quality_decorator():
+    """Test that decorator captures metrics and saves to DB."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = Path(tmpdir) / "test.db"
+
+        # Create a simple function to decorate
+        def dummy_save(df, dataset_name, source=None):
+            """Dummy save function."""
+            return True
+
+        # Patch the collector's db_path
+        import scripts.core.data_quality as dq_module
+
+        original_collector = dq_module._collector
+        dq_module._collector = DataQualityCollector(db_path)
+
+        try:
+            decorated_save = monitor_data_quality(dummy_save)
+
+            # Call with test data
+            df = pd.DataFrame({"a": [1, 2, 2], "b": [1, 1, 1]})
+            result = decorated_save(df, "test_dataset", source="test")
+
+            assert result is True
+
+            # Verify snapshot was saved
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM run_snapshots WHERE dataset_name = 'test_dataset'")
+            row = cursor.fetchone()
+            conn.close()
+
+            assert row is not None
+            assert row[4] == 3  # input_rows
+            assert row[6] == 1  # duplicate_count
+        finally:
+            dq_module._collector = original_collector
