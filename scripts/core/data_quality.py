@@ -132,10 +132,85 @@ class DataQualityCollector:
             ),
         )
 
+        # Update baseline using Welford's online algorithm
+        self._update_baseline(cursor, snapshot)
+
         conn.commit()
         conn.close()
 
         logger.debug(f"Recorded quality snapshot for {snapshot.dataset_name}")
+
+    def _update_baseline(
+        self, cursor: sqlite3.Cursor, snapshot: QualitySnapshot
+    ) -> None:
+        """Update baseline using incremental algorithm (Welford's method)."""
+        # Check if baseline exists
+        cursor.execute(
+            "SELECT mean_rows, std_rows, mean_null_pct, std_null_pct, sample_count "
+            "FROM historical_baselines "
+            "WHERE dataset_name = ? AND stage = ?",
+            (snapshot.dataset_name, snapshot.stage),
+        )
+
+        row = cursor.fetchone()
+
+        if row is None:
+            # Create new baseline
+            cursor.execute(
+                """
+                INSERT INTO historical_baselines
+                (dataset_name, stage, mean_rows, std_rows, mean_null_pct,
+                 std_null_pct, sample_count, last_updated)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+                (
+                    snapshot.dataset_name,
+                    snapshot.stage,
+                    float(snapshot.output_rows),
+                    0.0,  # No variance yet
+                    snapshot.null_percentage,
+                    0.0,  # No variance yet
+                    1,
+                    snapshot.timestamp,
+                ),
+            )
+        else:
+            # Update using Welford's online algorithm
+            mean_rows, std_rows, mean_null_pct, std_null_pct, n = row
+
+            # Update mean and std for rows
+            n_new = n + 1
+            delta = snapshot.output_rows - mean_rows
+            mean_rows_new = mean_rows + delta / n_new
+            std_rows_new = std_rows * (n - 1) / n + (delta * (snapshot.output_rows - mean_rows_new)) / n
+
+            # Update mean and std for null percentage
+            delta_null = snapshot.null_percentage - mean_null_pct
+            mean_null_pct_new = mean_null_pct + delta_null / n_new
+            std_null_pct_new = (
+                std_null_pct * (n - 1) / n
+                + (delta_null * (snapshot.null_percentage - mean_null_pct_new)) / n
+            )
+
+            # Update database
+            cursor.execute(
+                """
+                UPDATE historical_baselines
+                SET mean_rows = ?, std_rows = ?, mean_null_pct = ?,
+                    std_null_pct = ?, sample_count = ?, last_updated = ?
+                WHERE dataset_name = ? AND stage = ?
+            """,
+                (
+                    mean_rows_new,
+                    std_rows_new,
+                    mean_null_pct_new,
+                    std_null_pct_new,
+                    n_new,
+                    snapshot.timestamp,
+                    snapshot.dataset_name,
+                    snapshot.stage,
+                ),
+            )
 
     def get_baseline(self, dataset_name: str, stage: str) -> QualityBaseline | None:
         """Get historical baseline for comparison."""

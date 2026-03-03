@@ -101,3 +101,74 @@ def test_get_baseline_returns_existing_baseline():
         assert baseline.dataset_name == "test_dataset"
         assert baseline.mean_rows == 1000.0
         assert baseline.std_rows == 50.0
+
+
+def test_update_baseline_creates_new_baseline():
+    """Test that first snapshot creates a new baseline."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = Path(tmpdir) / "test.db"
+        collector = DataQualityCollector(db_path)
+
+        snapshot = QualitySnapshot(
+            timestamp="2026-03-03 12:00:00",
+            dataset_name="test_dataset",
+            input_rows=1000,
+            output_rows=950,
+            duplicate_count=5,
+            null_percentage=2.5,
+            columns=["col1"],
+            data_types={"col1": "int64"},
+            source="test",
+            stage="L1",
+        )
+
+        collector.record_snapshot(snapshot)
+
+        # Verify baseline was created
+        baseline = collector.get_baseline("test_dataset", "L1")
+        assert baseline is not None
+        assert baseline.mean_rows == 950.0
+        assert baseline.std_rows == 0.0  # No variance yet
+        assert baseline.sample_count == 1
+
+
+def test_update_baseline_updates_existing():
+    """Test that subsequent snapshots update baseline."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = Path(tmpdir) / "test.db"
+        collector = DataQualityCollector(db_path)
+
+        # Record first snapshot
+        snapshot1 = QualitySnapshot(
+            timestamp="2026-03-03 12:00:00",
+            dataset_name="test_dataset",
+            input_rows=1000,
+            output_rows=1000,
+            duplicate_count=0,
+            null_percentage=2.0,
+            columns=["col1"],
+            data_types={"col1": "int64"},
+            source="test",
+            stage="L1",
+        )
+        collector.record_snapshot(snapshot1)
+
+        # Record second snapshot
+        snapshot2 = QualitySnapshot(
+            timestamp="2026-03-03 12:01:00",
+            dataset_name="test_dataset",
+            input_rows=1000,
+            output_rows=1100,
+            duplicate_count=0,
+            null_percentage=3.0,
+            columns=["col1"],
+            data_types={"col1": "int64"},
+            source="test",
+            stage="L1",
+        )
+        collector.record_snapshot(snapshot2)
+
+        # Verify baseline was updated
+        baseline = collector.get_baseline("test_dataset", "L1")
+        assert baseline.mean_rows == 1050.0  # (1000 + 1100) / 2
+        assert baseline.sample_count == 2
