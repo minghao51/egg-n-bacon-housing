@@ -7,7 +7,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:e2e": "playwright test",
+    "test:e2e:prod": "npm run build && PLAYWRIGHT_SERVER_COMMAND='npm run preview -- --host 127.0.0.1' PLAYWRIGHT_BASE_URL='http://127.0.0.1:4321' playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"

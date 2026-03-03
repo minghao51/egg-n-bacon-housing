@@ -25,12 +25,7 @@ from statsmodels.tsa.arima.model import ARIMA
 logger = logging.getLogger(__name__)
 
 
-def select_arima_order(
-    series: pd.Series,
-    max_p: int = 6,
-    max_d: int = 1,
-    max_q: int = 1
-) -> tuple:
+def select_arima_order(series: pd.Series, max_p: int = 6, max_d: int = 1, max_q: int = 1) -> tuple:
     """
     Select optimal ARIMA order using grid search with AIC.
 
@@ -43,7 +38,7 @@ def select_arima_order(
     Returns:
         Tuple of (p, d, q) order
     """
-    best_aic = float('inf')
+    best_aic = float("inf")
     best_order = (1, 0, 0)  # Default fallback
 
     # Convert to Series if needed
@@ -103,9 +98,9 @@ class AreaARIMAXModel:
     def fit(
         self,
         data: pd.DataFrame,
-        endog_var: str = 'area_appreciation',
+        endog_var: str = "area_appreciation",
         exog_vars: list = None,
-        test_size: int = 12
+        test_size: int = 12,
     ):
         """
         Fit ARIMAX model for planning area.
@@ -120,7 +115,7 @@ class AreaARIMAXModel:
 
         # Default exogenous variables
         if exog_vars is None:
-            exog_vars = ['regional_appreciation', 'mrt_within_1km_mean', 'hawker_within_1km_mean']
+            exog_vars = ["regional_appreciation", "mrt_within_1km_mean", "hawker_within_1km_mean"]
 
         # Filter to available variables
         available_exog = [v for v in exog_vars if v in data.columns]
@@ -129,7 +124,7 @@ class AreaARIMAXModel:
         logger.info(f"Endogenous: {endog_var}, Exogenous: {available_exog}")
 
         # Prepare data
-        data = data.sort_values('month').reset_index(drop=True)
+        data = data.sort_values("month").reset_index(drop=True)
 
         y = data[endog_var].copy()
         X = data[available_exog].copy() if available_exog else None
@@ -147,7 +142,9 @@ class AreaARIMAXModel:
             self.y_test = None
             self.X_test = None
 
-        logger.info(f"Train size: {len(self.y_train)}, Test size: {len(self.y_test) if self.y_test is not None else 0}")
+        logger.info(
+            f"Train size: {len(self.y_train)}, Test size: {len(self.y_test) if self.y_test is not None else 0}"
+        )
 
         # Check stationarity
         from scripts.analytics.models.regional_var import check_stationarity
@@ -171,16 +168,9 @@ class AreaARIMAXModel:
         # Fit model
         try:
             if self.X_train is not None and not self.X_train.empty:
-                self.model = ARIMA(
-                    endog=self.y_train,
-                    exog=self.X_train,
-                    order=self.order
-                ).fit()
+                self.model = ARIMA(endog=self.y_train, exog=self.X_train, order=self.order).fit()
             else:
-                self.model = ARIMA(
-                    endog=self.y_train,
-                    order=self.order
-                ).fit()
+                self.model = ARIMA(endog=self.y_train, order=self.order).fit()
 
             self.is_fitted = True
             logger.info(f"ARIMAX{self.order} fitted successfully for {self.area}")
@@ -191,11 +181,7 @@ class AreaARIMAXModel:
 
         return self
 
-    def forecast(
-        self,
-        horizon: int = 12,
-        exog_future: pd.DataFrame = None
-    ) -> pd.DataFrame:
+    def forecast(self, horizon: int = 12, exog_future: pd.DataFrame = None) -> pd.DataFrame:
         """
         Generate forecasts with confidence intervals.
 
@@ -221,10 +207,7 @@ class AreaARIMAXModel:
                     logger.warning(f"exog_future has {len(X_future)} rows but horizon is {horizon}")
 
             # Generate forecast
-            forecast_result = self.model.get_forecast(
-                steps=horizon,
-                exog=X_future
-            )
+            forecast_result = self.model.get_forecast(steps=horizon, exog=X_future)
 
             # Extract forecast and confidence intervals
             forecast_mean = forecast_result.predicted_mean
@@ -232,14 +215,16 @@ class AreaARIMAXModel:
 
             # Create forecast DataFrame
             last_date = self.y_train.index[-1]
-            forecast_months = pd.date_range(start=last_date, periods=horizon + 1, freq='ME')[1:]
+            forecast_months = pd.date_range(start=last_date, periods=horizon + 1, freq="ME")[1:]
 
-            forecast_df = pd.DataFrame({
-                'month': forecast_months,
-                'forecast_mean': forecast_mean.values,
-                'ci_lower_95': conf_int.iloc[:, 0].values,
-                'ci_upper_95': conf_int.iloc[:, 1].values
-            })
+            forecast_df = pd.DataFrame(
+                {
+                    "month": forecast_months,
+                    "forecast_mean": forecast_mean.values,
+                    "ci_lower_95": conf_int.iloc[:, 0].values,
+                    "ci_upper_95": conf_int.iloc[:, 1].values,
+                }
+            )
 
             return forecast_df
 
@@ -272,14 +257,11 @@ class AreaARIMAXModel:
 
         try:
             # Generate forecast for same period as actual
-            forecast = self.forecast(
-                horizon=len(actual),
-                exog_future=self.X_test
-            )
+            forecast = self.forecast(horizon=len(actual), exog_future=self.X_test)
 
             # Compare to actual
             actual_values = actual.values
-            predicted_values = forecast['forecast_mean'].values
+            predicted_values = forecast["forecast_mean"].values
 
             # Calculate metrics
             rmse = np.sqrt(np.mean((actual_values - predicted_values) ** 2))
@@ -288,15 +270,16 @@ class AreaARIMAXModel:
             # MAPE (handle zeros)
             mask = actual_values != 0
             if mask.sum() > 0:
-                mape = np.mean(np.abs((actual_values[mask] - predicted_values[mask]) / actual_values[mask])) * 100
+                mape = (
+                    np.mean(
+                        np.abs((actual_values[mask] - predicted_values[mask]) / actual_values[mask])
+                    )
+                    * 100
+                )
             else:
                 mape = np.nan
 
-            metrics = {
-                'rmse': rmse,
-                'mae': mae,
-                'mape': mape
-            }
+            metrics = {"rmse": rmse, "mae": mae, "mape": mape}
 
             logger.info(f"  RMSE: {rmse:.2f}, MAE: {mae:.2f}, MAPE: {mape:.2f}%")
 

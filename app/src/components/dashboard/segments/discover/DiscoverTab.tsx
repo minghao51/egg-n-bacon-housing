@@ -1,6 +1,6 @@
 // app/src/components/dashboard/segments/discover/DiscoverTab.tsx
 import { useState } from 'react';
-import { Segment, Insight, Persona } from '@/types/segments';
+import type { Segment, Insight, Persona } from '@/types/segments';
 import { SegmentGrid } from './SegmentGrid';
 import { InsightCard } from './InsightCard';
 

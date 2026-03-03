@@ -110,7 +110,9 @@ def _download_via_dataset_download_api(
     for attempt in range(1, poll_attempts + 1):
         poll_resp = _get_with_retry(session, poll_url, params={})
         poll_payload = _parse_download_api_payload(poll_resp)
-        poll_data = poll_payload.get("data", {}) if isinstance(poll_payload.get("data"), dict) else {}
+        poll_data = (
+            poll_payload.get("data", {}) if isinstance(poll_payload.get("data"), dict) else {}
+        )
         status = str(poll_data.get("status", "")).upper()
         if poll_data.get("url"):
             download_url = poll_data["url"]
@@ -133,7 +135,9 @@ def _download_via_dataset_download_api(
     file_resp = _get_with_retry(session, download_url, params={})
     file_resp.raise_for_status()
     content_type = file_resp.headers.get("Content-Type", "")
-    logger.info("Downloaded dataset file (%s bytes, content-type=%s)", len(file_resp.content), content_type)
+    logger.info(
+        "Downloaded dataset file (%s bytes, content-type=%s)", len(file_resp.content), content_type
+    )
 
     # Let pandas infer the delimiter/encoding from the CSV bytes.
     from io import BytesIO
@@ -141,7 +145,9 @@ def _download_via_dataset_download_api(
     return pd.read_csv(BytesIO(file_resp.content))
 
 
-def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe651", batch_size: int = 10000) -> pd.DataFrame:
+def download_hdb_rental_data(
+    dataset_id: str = "d_c9f57187485a850908655db0e8cfe651", batch_size: int = 10000
+) -> pd.DataFrame:
     """Download HDB rental data from data.gov.sg API.
 
     Args:
@@ -161,7 +167,9 @@ def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe6
         df = _download_via_dataset_download_api(session, dataset_id)
         logger.info("Dataset download API returned %s records", len(df))
     except Exception as e:
-        logger.warning("Dataset download API failed, falling back to datastore_search pagination: %s", e)
+        logger.warning(
+            "Dataset download API failed, falling back to datastore_search pagination: %s", e
+        )
 
     # Fallback path: legacy datastore_search pagination.
     if df.empty:
@@ -172,23 +180,19 @@ def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe6
         response.raise_for_status()
         data = response.json()
 
-        total = data['result']['total']
+        total = data["result"]["total"]
         logger.info(f"Total records in dataset: {total:,}")
 
         all_records = []
         offset = 0
 
         while offset < total:
-            params = {
-                "resource_id": dataset_id,
-                "limit": batch_size,
-                "offset": offset
-            }
+            params = {"resource_id": dataset_id, "limit": batch_size, "offset": offset}
             logger.info(f"Downloading records {offset:,} to {min(offset + batch_size, total):,}...")
             response = _get_with_retry(session, url, params)
             response.raise_for_status()
             data = response.json()
-            records = data['result']['records']
+            records = data["result"]["records"]
             all_records.extend(records)
             offset += batch_size
             if len(records) < batch_size:
@@ -197,15 +201,15 @@ def download_hdb_rental_data(dataset_id: str = "d_c9f57187485a850908655db0e8cfe6
         logger.info(f"Downloaded {len(all_records):,} records via datastore_search")
         df = pd.DataFrame(all_records)
 
-    df.columns = df.columns.str.lower().str.replace(' ', '_')
+    df.columns = df.columns.str.lower().str.replace(" ", "_")
 
-    if '_id' in df.columns:
-        df = df.drop(columns=['_id'])
+    if "_id" in df.columns:
+        df = df.drop(columns=["_id"])
 
-    if 'monthly_rent' in df.columns:
-        df['monthly_rent'] = pd.to_numeric(df['monthly_rent'], errors='coerce')
-    if 'rent_approval_date' in df.columns:
-        df['rent_approval_date'] = pd.to_datetime(df['rent_approval_date'])
+    if "monthly_rent" in df.columns:
+        df["monthly_rent"] = pd.to_numeric(df["monthly_rent"], errors="coerce")
+    if "rent_approval_date" in df.columns:
+        df["rent_approval_date"] = pd.to_datetime(df["rent_approval_date"])
 
     logger.info(f"DataFrame shape: {df.shape}")
     logger.info(f"Columns: {list(df.columns)}")
@@ -230,7 +234,7 @@ def main():
     df = download_hdb_rental_data()
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(OUTPUT_PATH, compression='snappy', index=False)
+    df.to_parquet(OUTPUT_PATH, compression="snappy", index=False)
     logger.info(f"Saved to {OUTPUT_PATH}")
 
     logger.info("\nSummary Statistics:")

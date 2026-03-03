@@ -42,7 +42,7 @@ import pandas as pd
 import requests
 from shapely.geometry import shape
 
-sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
+sys.path.append(str(pathlib.Path(__file__).parent.parent / "src"))
 
 from data_helpers import save_parquet
 
@@ -53,24 +53,27 @@ from data_helpers import save_parquet
 # %%
 
 # Try to use existing token from .env
-access_token = os.environ.get('ONEMAP_TOKEN')
+access_token = os.environ.get("ONEMAP_TOKEN")
 
 if access_token:
     # Decode JWT to check expiration
     try:
         import base64
         import time
-        parts = access_token.split('.')
+
+        parts = access_token.split(".")
         if len(parts) == 3:
             payload = parts[1]
-            payload += '=' * (4 - len(payload) % 4)
+            payload += "=" * (4 - len(payload) % 4)
             decoded = base64.b64decode(payload)
             token_data = json.loads(decoded)
 
             current_time = time.time()
-            if token_data.get('exp', 0) > current_time:
+            if token_data.get("exp", 0) > current_time:
                 print("✅ Using existing OneMap token from .env")
-                print(f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours")
+                print(
+                    f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours"
+                )
                 headers = {"Authorization": f"{access_token}"}
             else:
                 print("⚠️  Token in .env has expired")
@@ -88,8 +91,8 @@ if not access_token:
     url = "https://www.onemap.gov.sg/api/auth/post/getToken"
 
     payload = {
-        "email": os.environ.get('ONEMAP_EMAIL'),
-        "password": os.environ.get('ONEMAP_EMAIL_PASSWORD')
+        "email": os.environ.get("ONEMAP_EMAIL"),
+        "password": os.environ.get("ONEMAP_EMAIL_PASSWORD"),
     }
 
     response = requests.request("POST", url, json=payload)
@@ -97,7 +100,7 @@ if not access_token:
 
     if response.status_code == 200:
         response_data = json.loads(response.text)
-        access_token = response_data.get('access_token')
+        access_token = response_data.get("access_token")
         if access_token:
             print("✅ Successfully obtained new OneMap token")
             headers = {"Authorization": f"{access_token}"}
@@ -121,21 +124,21 @@ response = requests.request("GET", url, headers=headers)
 print(response.text)
 
 
-df = pd.DataFrame(json.loads(response.text)['SearchResults'])
-df['geojson'] = [json.loads(i) for i in df['geojson']]
-df['geometry'] = df['geojson'].apply(shape)
-df = gpd.GeoDataFrame(df).set_geometry('geometry')
-df = df.drop('geojson', axis=1)
+df = pd.DataFrame(json.loads(response.text)["SearchResults"])
+df["geojson"] = [json.loads(i) for i in df["geojson"]]
+df["geometry"] = df["geojson"].apply(shape)
+df = gpd.GeoDataFrame(df).set_geometry("geometry")
+df = df.drop("geojson", axis=1)
 
 # Save planning area polygon data
-data_base_path = pathlib.Path(__file__).parent.parent / 'data' / 'raw_data'
+data_base_path = pathlib.Path(__file__).parent.parent / "data" / "raw_data"
 data_base_path.mkdir(parents=True, exist_ok=True)
 
-df.to_file(data_base_path / 'onemap_planning_area_polygon.shp')
-df.to_file(data_base_path / 'onemap_planning_area_polygon.geojson', driver='GeoJSON')
+df.to_file(data_base_path / "onemap_planning_area_polygon.shp")
+df.to_file(data_base_path / "onemap_planning_area_polygon.geojson", driver="GeoJSON")
 
 # %%
-df = df.drop('geojson', axis=1)
+df = df.drop("geojson", axis=1)
 
 # %% [markdown]
 # # Names of planning area
@@ -149,7 +152,7 @@ df = pd.DataFrame(json.loads(response.text))
 save_parquet(df, "raw_onemap_planning_area_names", source="onemap API")
 
 # %%
-planning_area_name_list = df['pln_area_n'].unique()
+planning_area_name_list = df["pln_area_n"].unique()
 
 # %% [markdown]
 # ## Work Income for household (monthly)
@@ -170,7 +173,7 @@ for i in planning_area_name_list:
         # Append the DataFrame to the list
         df_list.append(df)
     except:
-        print(f'failed to get for {i}')
+        print(f"failed to get for {i}")
 
 
 # Concatenate the DataFrames in the list
@@ -224,10 +227,10 @@ response = requests.request("GET", url, headers=headers)
 print(response.text)
 
 # %%
-val='31, punggol field'
+val = "31, punggol field"
 url = f"https://www.onemap.gov.sg/api/common/elastic/search?searchVal={val}&returnGeom=Y&getAddrDetails=Y&pageNum=1"
 
-response = requests.request("GET", url, headers=headers) #headers=headers
+response = requests.request("GET", url, headers=headers)  # headers=headers
 
 print(json.loads(response.text))
 # print(response.text)

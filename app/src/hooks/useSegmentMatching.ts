@@ -1,6 +1,6 @@
 // app/src/hooks/useSegmentMatching.ts
 import { useMemo } from 'react';
-import { Segment, FilterState } from '@/types/segments';
+import type { Segment, FilterState } from '@/types/segments';
 
 export function useSegmentMatching(
   segments: Segment[],

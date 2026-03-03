@@ -1,6 +1,6 @@
 // app/src/components/dashboard/segments/discover/SegmentGrid.tsx
 import { useMemo } from 'react';
-import { Segment } from '@/types/segments';
+import type { Segment } from '@/types/segments';
 import SegmentCard from '../SegmentCard';
 
 interface SegmentGridProps {

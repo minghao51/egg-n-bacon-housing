@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def generate_regional_forecasts(
-    regional_data: pd.DataFrame,
-    horizon_months: int = 36,
-    scenario: str = 'baseline'
+    regional_data: pd.DataFrame, horizon_months: int = 36, scenario: str = "baseline"
 ) -> list[dict]:
     """
     Generate forecasts for all regions.
@@ -43,8 +41,8 @@ def generate_regional_forecasts(
 
     forecasts = []
 
-    for region in regional_data['region'].unique():
-        region_data = regional_data[regional_data['region'] == region].copy()
+    for region in regional_data["region"].unique():
+        region_data = regional_data[regional_data["region"] == region].copy()
 
         try:
             # Fit model
@@ -52,25 +50,25 @@ def generate_regional_forecasts(
             model.fit(region_data, test_size=0)
 
             # Apply scenario adjustments
-            if scenario == 'bullish':
+            if scenario == "bullish":
                 # Lower interest rates
-                if 'sora_rate' in region_data.columns:
-                    region_data['sora_rate'] = region_data['sora_rate'] - 0.01
-            elif scenario == 'bearish':
+                if "sora_rate" in region_data.columns:
+                    region_data["sora_rate"] = region_data["sora_rate"] - 0.01
+            elif scenario == "bearish":
                 # Higher interest rates
-                if 'sora_rate' in region_data.columns:
-                    region_data['sora_rate'] = region_data['sora_rate'] + 0.01
-            elif scenario == 'policy_shock':
+                if "sora_rate" in region_data.columns:
+                    region_data["sora_rate"] = region_data["sora_rate"] + 0.01
+            elif scenario == "policy_shock":
                 # Additional ABSD (reduce appreciation)
-                region_data['regional_appreciation'] = region_data['regional_appreciation'] - 2.0
+                region_data["regional_appreciation"] = region_data["regional_appreciation"] - 2.0
 
             # Re-fit with scenario adjustments
             model.fit(region_data, test_size=0)
 
             # Generate forecast
             forecast = model.forecast(horizon=horizon_months)
-            forecast['region'] = region
-            forecast['scenario'] = scenario
+            forecast["region"] = region
+            forecast["scenario"] = scenario
 
             forecasts.append(forecast)
 
@@ -86,9 +84,7 @@ def generate_regional_forecasts(
 
 
 def generate_area_forecasts(
-    area_data: pd.DataFrame,
-    regional_forecasts: list[pd.DataFrame],
-    horizon_months: int = 24
+    area_data: pd.DataFrame, regional_forecasts: list[pd.DataFrame], horizon_months: int = 24
 ) -> list[pd.DataFrame]:
     """
     Generate forecasts for planning areas using regional forecasts as inputs.
@@ -108,12 +104,12 @@ def generate_area_forecasts(
     # Create region -> forecast mapping
     regional_fc_dict = {}
     for fc in regional_forecasts:
-        if fc is not None and 'region' in fc.columns:
-            region = fc['region'].iloc[0]
+        if fc is not None and "region" in fc.columns:
+            region = fc["region"].iloc[0]
             regional_fc_dict[region] = fc
 
-    for area in area_data['area'].unique()[:20]:  # Top 20 areas
-        area_subset = area_data[area_data['area'] == area].copy()
+    for area in area_data["area"].unique()[:20]:  # Top 20 areas
+        area_subset = area_data[area_data["area"] == area].copy()
 
         if len(area_subset) < 24:
             logger.warning(f"Skipping {area}: insufficient data")
@@ -133,7 +129,11 @@ def generate_area_forecasts(
             model = AreaARIMAXModel(area=area, region=region)
 
             # Check if required exog vars exist
-            required_vars = ['regional_appreciation', 'mrt_within_1km_mean', 'hawker_within_1km_mean']
+            required_vars = [
+                "regional_appreciation",
+                "mrt_within_1km_mean",
+                "hawker_within_1km_mean",
+            ]
             available_vars = [v for v in required_vars if v in area_subset.columns]
 
             if len(available_vars) < 1:
@@ -143,19 +143,21 @@ def generate_area_forecasts(
             model.fit(area_subset, exog_vars=available_vars, test_size=0)
 
             # Prepare regional forecast as exog
-            exog_future = pd.DataFrame({
-                'month': regional_fc['month'].values[:horizon_months],
-                'regional_appreciation': regional_fc['forecast_mean'].values[:horizon_months]
-            })
+            exog_future = pd.DataFrame(
+                {
+                    "month": regional_fc["month"].values[:horizon_months],
+                    "regional_appreciation": regional_fc["forecast_mean"].values[:horizon_months],
+                }
+            )
 
             # Add amenity constants (use last observed value)
             for var in available_vars:
-                if var != 'regional_appreciation' and var in area_subset.columns:
+                if var != "regional_appreciation" and var in area_subset.columns:
                     exog_future[var] = area_subset[var].iloc[-1]
 
             # Generate forecast
             forecast = model.forecast(horizon=horizon_months, exog_future=exog_future)
-            forecast['area'] = area
+            forecast["area"] = area
 
             forecasts.append(forecast)
 
@@ -170,10 +172,7 @@ def generate_area_forecasts(
     return forecasts
 
 
-def run_forecasting_pipeline(
-    scenario: str = 'baseline',
-    horizon_months: int = 36
-) -> dict:
+def run_forecasting_pipeline(scenario: str = "baseline", horizon_months: int = 36) -> dict:
     """
     Run complete forecasting pipeline.
 
@@ -196,40 +195,38 @@ def run_forecasting_pipeline(
     except Exception as e:
         logger.error(f"Failed to load time series data: {e}")
         return {
-            'regional_forecasts': [],
-            'area_forecasts': [],
-            'metadata': {
-                'scenario': scenario,
-                'horizon_months': horizon_months,
-                'n_regions': 0,
-                'n_areas': 0,
-                'error': str(e)
-            }
+            "regional_forecasts": [],
+            "area_forecasts": [],
+            "metadata": {
+                "scenario": scenario,
+                "horizon_months": horizon_months,
+                "n_regions": 0,
+                "n_areas": 0,
+                "error": str(e),
+            },
         }
 
     # Generate regional forecasts
     regional_forecasts = generate_regional_forecasts(
-        regional_data=regional_data,
-        horizon_months=horizon_months,
-        scenario=scenario
+        regional_data=regional_data, horizon_months=horizon_months, scenario=scenario
     )
 
     # Generate area forecasts
     area_forecasts = generate_area_forecasts(
         area_data=area_data,
         regional_forecasts=regional_forecasts,
-        horizon_months=min(horizon_months, 24)  # Cap areas at 24 months
+        horizon_months=min(horizon_months, 24),  # Cap areas at 24 months
     )
 
     results = {
-        'regional_forecasts': regional_forecasts,
-        'area_forecasts': area_forecasts,
-        'metadata': {
-            'scenario': scenario,
-            'horizon_months': horizon_months,
-            'n_regions': len([f for f in regional_forecasts if f is not None]),
-            'n_areas': len(area_forecasts)
-        }
+        "regional_forecasts": regional_forecasts,
+        "area_forecasts": area_forecasts,
+        "metadata": {
+            "scenario": scenario,
+            "horizon_months": horizon_months,
+            "n_regions": len([f for f in regional_forecasts if f is not None]),
+            "n_areas": len(area_forecasts),
+        },
     }
 
     logger.info("=" * 60)
@@ -241,10 +238,9 @@ def run_forecasting_pipeline(
     return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     run_forecasting_pipeline()

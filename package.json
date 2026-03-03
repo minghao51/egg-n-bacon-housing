@@ -1,5 +1,8 @@
 {
-  "dependencies": {},
+  "name": "egg-n-bacon-housing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Singapore Housing Market Analytics",
   "devDependencies": {
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"

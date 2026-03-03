@@ -12,14 +12,16 @@ import PredictiveAnalyticsOverlay from './map/overlays/PredictiveAnalyticsOverla
 // Import analytics hooks and types
 import { useSpatialAnalytics, useFeatureImpact, usePredictiveAnalytics } from '../../hooks/useAnalyticsData';
 import {
-  LayerId,
   LAYER_METADATA,
+} from '../../types/analytics';
+import type {
   GeoJSONFeatureCollection,
   GeoJSONFeature,
+  LayerId,
   MapData,
   MetricType,
   PropertyTypeFilter,
-  TemporalFilter
+  TemporalFilter,
 } from '../../types/analytics';
 
 // Type for Leaflet layer events

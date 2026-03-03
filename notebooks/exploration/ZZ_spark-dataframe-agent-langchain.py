@@ -43,7 +43,9 @@ dbutils.library.restartPython()
 # from langchain.agents import create_spark_dataframe_agent
 from langchain_experimental.agents import create_spark_dataframe_agent
 
-df = spark.read.csv("/databricks-datasets/COVID/coronavirusdataset/Region.csv", header=True, inferSchema=True)
+df = spark.read.csv(
+    "/databricks-datasets/COVID/coronavirusdataset/Region.csv", header=True, inferSchema=True
+)
 display(df)
 
 # COMMAND ----------

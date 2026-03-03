@@ -9,7 +9,7 @@ import {
   createColumnHelper,
   type SortingState,
 } from '@tanstack/react-table';
-import { LeaderboardEntry, LeaderboardMetric } from '@/types/leaderboard';
+import type { LeaderboardEntry, LeaderboardMetric } from '@/types/leaderboard';
 
 interface LeaderboardTableProps {
   data: LeaderboardEntry[];

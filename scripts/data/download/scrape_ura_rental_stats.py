@@ -26,16 +26,44 @@ logger = logging.getLogger(__name__)
 OUTPUT_PATH = Config.PIPELINE_DIR / "L1" / "ura_rental_stats_by_project.parquet"
 
 QUARTERS = [
-    "2025Q4", "2025Q3", "2025Q2", "2025Q1",
-    "2024Q4", "2024Q3", "2024Q2", "2024Q1",
-    "2023Q4", "2023Q3", "2023Q2", "2023Q1",
-    "2022Q4", "2022Q3", "2022Q2", "2022Q1",
-    "2021Q4", "2021Q3", "2021Q2", "2021Q1",
-    "2020Q4", "2020Q3", "2020Q2", "2020Q1",
-    "2019Q4", "2019Q3", "2019Q2", "2019Q1",
-    "2018Q4", "2018Q3", "2018Q2", "2018Q1",
-    "2017Q4", "2017Q3", "2017Q2", "2017Q1",
-    "2016Q4", "2016Q3",
+    "2025Q4",
+    "2025Q3",
+    "2025Q2",
+    "2025Q1",
+    "2024Q4",
+    "2024Q3",
+    "2024Q2",
+    "2024Q1",
+    "2023Q4",
+    "2023Q3",
+    "2023Q2",
+    "2023Q1",
+    "2022Q4",
+    "2022Q3",
+    "2022Q2",
+    "2022Q1",
+    "2021Q4",
+    "2021Q3",
+    "2021Q2",
+    "2021Q1",
+    "2020Q4",
+    "2020Q3",
+    "2020Q2",
+    "2020Q1",
+    "2019Q4",
+    "2019Q3",
+    "2019Q2",
+    "2019Q1",
+    "2018Q4",
+    "2018Q3",
+    "2018Q2",
+    "2018Q1",
+    "2017Q4",
+    "2017Q3",
+    "2017Q2",
+    "2017Q1",
+    "2016Q4",
+    "2016Q3",
 ]
 
 
@@ -99,15 +127,19 @@ def scrape_quarter(page, quarter: str) -> pd.DataFrame:
                     contracts = cols[3].inner_text().strip()
 
                     if project_name and project_name != "":
-                        data.append({
-                            "project_name": project_name,
-                            "postal_district": int(district) if district.isdigit() else None,
-                            "quarter": quarter,
-                            "property_type": "Non-Landed",
-                            "median_rent_psf": float(median_rent.replace(",", "")) if median_rent.replace(",", "").replace(".", "").isdigit() else None,
-                            "no_of_contracts": int(contracts) if contracts.isdigit() else 0,
-                            "created_at": datetime.now()
-                        })
+                        data.append(
+                            {
+                                "project_name": project_name,
+                                "postal_district": int(district) if district.isdigit() else None,
+                                "quarter": quarter,
+                                "property_type": "Non-Landed",
+                                "median_rent_psf": float(median_rent.replace(",", ""))
+                                if median_rent.replace(",", "").replace(".", "").isdigit()
+                                else None,
+                                "no_of_contracts": int(contracts) if contracts.isdigit() else 0,
+                                "created_at": datetime.now(),
+                            }
+                        )
                 except (ValueError, IndexError) as e:
                     logger.debug(f"Error parsing row: {e}")
                     continue
@@ -132,7 +164,7 @@ def scrape_all_quarters(max_quarters: int = None) -> pd.DataFrame:
 
     try:
         for i, quarter in enumerate(quarters_to_scrape):
-            logger.info(f"Scraping {quarter} ({i+1}/{len(quarters_to_scrape)})...")
+            logger.info(f"Scraping {quarter} ({i + 1}/{len(quarters_to_scrape)})...")
 
             df = scrape_quarter(page, quarter)
             if not df.empty:
@@ -140,6 +172,7 @@ def scrape_all_quarters(max_quarters: int = None) -> pd.DataFrame:
 
             if i < len(quarters_to_scrape) - 1:
                 import time
+
                 time.sleep(2)
 
     except Exception as e:
@@ -167,11 +200,11 @@ def save_results(df: pd.DataFrame) -> bool:
 def main():
     """Main execution."""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Scrape URA rental statistics")
     parser.add_argument("--quarters", type=int, help="Limit number of quarters to scrape")
     args = parser.parse_args()
-    
+
     logger.info("=" * 60)
     logger.info("URA Rental Statistics Scraper")
     logger.info("=" * 60)
@@ -202,8 +235,5 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     main()

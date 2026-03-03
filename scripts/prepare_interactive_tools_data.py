@@ -10,7 +10,6 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.webapp.prepare_interactive_tools_data import *  # noqa: F401,F403
 
-
 if __name__ == "__main__":
     import logging
 

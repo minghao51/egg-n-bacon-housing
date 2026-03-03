@@ -21,17 +21,17 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 load_dotenv()
 
 # %%
-llm = ChatGoogleGenerativeAI(model = 'gemini-1.5-flash-latest')
-df = pd.read_csv('../data/listing_search_result.csv')
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest")
+df = pd.read_csv("../data/listing_search_result.csv")
 
 # %%
 agent = create_pandas_dataframe_agent(llm, df, verbose=True, allow_dangerous_code=True)
 
 # %%
-agent.invoke('how many rows are there?')
+agent.invoke("how many rows are there?")
 
 # %%
-agent.invoke('what is this dataset about?')
+agent.invoke("what is this dataset about?")
 
 # %%
-agent.invoke('what is the median number of bedrooms available at watertown?')
+agent.invoke("what is the median number of bedrooms available at watertown?")

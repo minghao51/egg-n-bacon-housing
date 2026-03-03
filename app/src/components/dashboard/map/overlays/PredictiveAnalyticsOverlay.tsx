@@ -9,8 +9,12 @@
 
 import React, { useRef } from 'react';
 import { LayerGroup, GeoJSON } from 'react-leaflet';
-import { PredictiveAnalyticsData, LayerId } from '../../../../types/analytics';
-import { GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
+import type {
+  PredictiveAnalyticsData,
+  LayerId,
+  GeoJSONFeature,
+  GeoJSONFeatureCollection,
+} from '../../../../types/analytics';
 import { divergingScale, sequentialScale, getForecastSignalColor, getPolicyRiskColor } from '../../../../utils/colorScales';
 
 interface PredictiveAnalyticsOverlayProps {

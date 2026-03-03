@@ -50,6 +50,7 @@ data/cache/
 # Runtime data (EXCEPTION: we track these)
 # data/logs/               # COMMENTED OUT - we track logs
 # data/checkpoints/        # COMMENTED OUT - we track checkpoints
+data/quality_metrics.db
 data/failed_addresses/
 
 # Manual downloads (EXCEPTION: we track these - 85MB of external data)

@@ -35,7 +35,7 @@ from datetime import datetime
 import pandas as pd
 
 # Add src directory to path
-sys.path.append(str(pathlib.Path(__file__).parent.parent.parent / 'src'))
+sys.path.append(str(pathlib.Path(__file__).parent.parent.parent / "src"))
 
 # Import from src
 import data_helpers
@@ -43,15 +43,15 @@ import geocoding
 from config import Config
 
 # Configuration
-BATCH_SIZE = 1000              # Process addresses in batches of this size
-CHECKPOINT_INTERVAL = 500      # Save checkpoint every N addresses
-HEARTBEAT_INTERVAL = 60        # Log heartbeat every N seconds
+BATCH_SIZE = 1000  # Process addresses in batches of this size
+CHECKPOINT_INTERVAL = 500  # Save checkpoint every N addresses
+HEARTBEAT_INTERVAL = 60  # Log heartbeat every N seconds
 
 # Paths
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent
-CHECKPOINT_DIR = PROJECT_ROOT / 'data' / 'checkpoints'
-LOG_DIR = PROJECT_ROOT / 'data' / 'logs'
-FAILED_DIR = PROJECT_ROOT / 'data' / 'failed_addresses'
+CHECKPOINT_DIR = PROJECT_ROOT / "data" / "checkpoints"
+LOG_DIR = PROJECT_ROOT / "data" / "logs"
+FAILED_DIR = PROJECT_ROOT / "data" / "failed_addresses"
 
 # Create directories
 CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
@@ -72,7 +72,7 @@ def signal_handler(signum, frame):
 
 def setup_signal_handlers():
     """Setup signal handlers for graceful shutdown."""
-    signal.signal(signal.SIGINT, signal_handler)   # Ctrl+C
+    signal.signal(signal.SIGINT, signal_handler)  # Ctrl+C
     signal.signal(signal.SIGTERM, signal_handler)  # kill command
     logger.info("✅ Signal handlers registered (SIGINT, SIGTERM)")
 
@@ -84,7 +84,7 @@ def get_last_checkpoint() -> pathlib.Path | None:
     Returns:
         Path to checkpoint file, or None if no checkpoint exists
     """
-    checkpoints = list(CHECKPOINT_DIR.glob('L2_housing_unique_searched_checkpoint_*.parquet'))
+    checkpoints = list(CHECKPOINT_DIR.glob("L2_housing_unique_searched_checkpoint_*.parquet"))
     if not checkpoints:
         return None
     return max(checkpoints, key=lambda p: p.stat().st_mtime)
@@ -103,7 +103,7 @@ def load_checkpoint(checkpoint_path: pathlib.Path) -> set:
     logger.info(f"📂 Loading checkpoint: {checkpoint_path}")
     try:
         df = pd.read_parquet(checkpoint_path)
-        processed_addresses = set(df['NameAddress'].unique())
+        processed_addresses = set(df["NameAddress"].unique())
         logger.info(f"✅ Checkpoint loaded: {len(processed_addresses)} addresses already processed")
         return processed_addresses
     except Exception as e:
@@ -134,9 +134,9 @@ def calculate_eta(start_time, current_count, total_count):
         return f"~{minutes}m"
 
 
-def geocode_addresses_sequential(addresses_df: pd.DataFrame,
-                                 headers: dict,
-                                 processed_addresses: set = None) -> tuple[list[pd.DataFrame], list[str]]:
+def geocode_addresses_sequential(
+    addresses_df: pd.DataFrame, headers: dict, processed_addresses: set = None
+) -> tuple[list[pd.DataFrame], list[str]]:
     """
     Geocode addresses sequentially using OneMap API.
 
@@ -155,15 +155,19 @@ def geocode_addresses_sequential(addresses_df: pd.DataFrame,
 
     # Filter out already-processed addresses
     if len(processed_addresses) > 0:
-        total_to_process = addresses_df[~addresses_df['NameAddress'].isin(processed_addresses)]
-        logger.info(f"🔄 Resuming from checkpoint: {len(processed_addresses)} addresses already done")
+        total_to_process = addresses_df[~addresses_df["NameAddress"].isin(processed_addresses)]
+        logger.info(
+            f"🔄 Resuming from checkpoint: {len(processed_addresses)} addresses already done"
+        )
         logger.info(f"📊 Remaining to process: {len(total_to_process)} addresses")
     else:
         total_to_process = addresses_df
 
     total_addresses = len(total_to_process)
     logger.info(f"🚀 Starting sequential geocoding for {total_addresses} unique addresses...")
-    logger.info(f"⏱️  Estimated time: {total_addresses * Config.GEOCODING_API_DELAY / 60:.0f}-{total_addresses * Config.GEOCODING_API_DELAY * 2 / 60:.0f} minutes")
+    logger.info(
+        f"⏱️  Estimated time: {total_addresses * Config.GEOCODING_API_DELAY / 60:.0f}-{total_addresses * Config.GEOCODING_API_DELAY * 2 / 60:.0f} minutes"
+    )
 
     df_list = []
     failed_searches = []
@@ -176,11 +180,11 @@ def geocode_addresses_sequential(addresses_df: pd.DataFrame,
             logger.warning("🛑 Shutdown requested, stopping geocoding...")
             break
 
-        search_string = row['NameAddress']
+        search_string = row["NameAddress"]
 
         try:
             _df = geocoding.fetch_data(search_string, headers)
-            _df['NameAddress'] = search_string
+            _df["NameAddress"] = search_string
             df_list.append(_df)
             processed_count += 1
 
@@ -188,7 +192,9 @@ def geocode_addresses_sequential(addresses_df: pd.DataFrame,
             if processed_count % 200 == 0:
                 progress_pct = processed_count / len(addresses_df) * 100
                 eta = calculate_eta(start_time, processed_count, len(addresses_df))
-                logger.info(f"📊 Progress: {processed_count}/{len(addresses_df)} addresses ({progress_pct:.1f}%) | ETA: {eta}")
+                logger.info(
+                    f"📊 Progress: {processed_count}/{len(addresses_df)} addresses ({progress_pct:.1f}%) | ETA: {eta}"
+                )
                 last_heartbeat = datetime.now()
 
             # Save checkpoint every N addresses
@@ -202,12 +208,15 @@ def geocode_addresses_sequential(addresses_df: pd.DataFrame,
         # Log heartbeat periodically
         if (datetime.now() - last_heartbeat).total_seconds() > HEARTBEAT_INTERVAL:
             elapsed = datetime.now() - start_time
-            logger.info(f"💓 Heartbeat: {processed_count}/{len(addresses_df)} addresses | Elapsed: {elapsed}")
+            logger.info(
+                f"💓 Heartbeat: {processed_count}/{len(addresses_df)} addresses | Elapsed: {elapsed}"
+            )
             last_heartbeat = datetime.now()
 
         # Respect API rate limits
         if i < total_addresses:
             import time
+
             time.sleep(Config.GEOCODING_API_DELAY)
 
     logger.info(f"✅ Completed: {len(df_list)}/{total_addresses} successful")
@@ -218,10 +227,12 @@ def geocode_addresses_sequential(addresses_df: pd.DataFrame,
     return df_list, failed_searches
 
 
-def geocode_addresses_parallel(addresses_df: pd.DataFrame,
-                               headers: dict,
-                               processed_addresses: set = None,
-                               max_workers: int = None) -> tuple[list[pd.DataFrame], list[str]]:
+def geocode_addresses_parallel(
+    addresses_df: pd.DataFrame,
+    headers: dict,
+    processed_addresses: set = None,
+    max_workers: int = None,
+) -> tuple[list[pd.DataFrame], list[str]]:
     """
     Geocode addresses using parallel processing with ThreadPoolExecutor.
 
@@ -244,18 +255,24 @@ def geocode_addresses_parallel(addresses_df: pd.DataFrame,
 
     # Filter out already-processed addresses
     if len(processed_addresses) > 0:
-        addresses_to_process = addresses_df[~addresses_df['NameAddress'].isin(processed_addresses)]['NameAddress'].tolist()
+        addresses_to_process = addresses_df[~addresses_df["NameAddress"].isin(processed_addresses)][
+            "NameAddress"
+        ].tolist()
         total_addresses = len(addresses_df)
-        logger.info(f"🔄 Resuming from checkpoint: {len(processed_addresses)} addresses already done")
+        logger.info(
+            f"🔄 Resuming from checkpoint: {len(processed_addresses)} addresses already done"
+        )
         logger.info(f"📊 Remaining to process: {len(addresses_to_process)} addresses")
     else:
-        addresses_to_process = addresses_df['NameAddress'].tolist()
+        addresses_to_process = addresses_df["NameAddress"].tolist()
         total_addresses = len(addresses_df)
 
     logger.info(f"🚀 Starting parallel geocoding for {len(addresses_to_process)} addresses...")
     logger.info(f"⚙️  Batch size: {BATCH_SIZE}")
     logger.info(f"⚙️  Parallel workers: {max_workers}")
-    logger.info(f"⏱️  Estimated time: {len(addresses_to_process) / max_workers * Config.GEOCODING_API_DELAY / 60:.1f} minutes")
+    logger.info(
+        f"⏱️  Estimated time: {len(addresses_to_process) / max_workers * Config.GEOCODING_API_DELAY / 60:.1f} minutes"
+    )
 
     all_results = []
     all_failed = []
@@ -274,14 +291,13 @@ def geocode_addresses_parallel(addresses_df: pd.DataFrame,
         batch_addresses = addresses_to_process[i:batch_end]
         batch_number += 1
 
-        logger.info(f"📦 Processing batch {batch_number} ({i+1}-{batch_end} of {len(addresses_to_process)})")
+        logger.info(
+            f"📦 Processing batch {batch_number} ({i + 1}-{batch_end} of {len(addresses_to_process)})"
+        )
 
         # Process batch in parallel
         batch_results, batch_failed = geocoding.fetch_data_parallel(
-            batch_addresses,
-            headers,
-            max_workers=max_workers,
-            show_progress=True
+            batch_addresses, headers, max_workers=max_workers, show_progress=True
         )
 
         all_results.extend(batch_results)
@@ -292,8 +308,12 @@ def geocode_addresses_parallel(addresses_df: pd.DataFrame,
         progress_pct = processed_count / total_addresses * 100
         eta = calculate_eta(start_time, processed_count, total_addresses)
 
-        logger.info(f"✅ Batch {batch_number} complete: {len(batch_results)} successful, {len(batch_failed)} failed")
-        logger.info(f"📊 Overall progress: {processed_count}/{total_addresses} ({progress_pct:.1f}%) | ETA: {eta}")
+        logger.info(
+            f"✅ Batch {batch_number} complete: {len(batch_results)} successful, {len(batch_failed)} failed"
+        )
+        logger.info(
+            f"📊 Overall progress: {processed_count}/{total_addresses} ({progress_pct:.1f}%) | ETA: {eta}"
+        )
 
         # Save checkpoint periodically
         if processed_count % CHECKPOINT_INTERVAL == 0:
@@ -302,7 +322,9 @@ def geocode_addresses_parallel(addresses_df: pd.DataFrame,
         # Log heartbeat periodically
         if (datetime.now() - last_heartbeat).total_seconds() > HEARTBEAT_INTERVAL:
             elapsed = datetime.now() - start_time
-            logger.info(f"💓 Heartbeat: {processed_count}/{total_addresses} addresses | Elapsed: {elapsed}")
+            logger.info(
+                f"💓 Heartbeat: {processed_count}/{total_addresses} addresses | Elapsed: {elapsed}"
+            )
             last_heartbeat = datetime.now()
 
     # Final summary
@@ -334,10 +356,12 @@ def save_checkpoint(df_list: list[pd.DataFrame], batch_number: int):
         df_combined = pd.concat(df_list, ignore_index=True)
 
         # Filter for best result (search_result == 0)
-        df_filtered = df_combined[df_combined['search_result'] == 0].reset_index(drop=True)
+        df_filtered = df_combined[df_combined["search_result"] == 0].reset_index(drop=True)
 
         # Save checkpoint
-        checkpoint_file = CHECKPOINT_DIR / f'L2_housing_unique_searched_checkpoint_{batch_number}.parquet'
+        checkpoint_file = (
+            CHECKPOINT_DIR / f"L2_housing_unique_searched_checkpoint_{batch_number}.parquet"
+        )
         df_filtered.to_parquet(checkpoint_file, index=False)
 
         logger.info(f"💾 Checkpoint saved: {checkpoint_file}")
@@ -361,60 +385,65 @@ def save_final_results(df_list: list[pd.DataFrame], housing_df: pd.DataFrame):
     df_housing_searched = pd.concat(df_list, ignore_index=True)
 
     # Save full dataset
-    data_helpers.save_parquet(df_housing_searched, "L2_housing_unique_full_searched", source="L1 transaction data")
-    logger.info(f"✅ Saved L2_housing_unique_full_searched.parquet ({len(df_housing_searched)} rows)")
+    data_helpers.save_parquet(
+        df_housing_searched, "L2_housing_unique_full_searched", source="L1 transaction data"
+    )
+    logger.info(
+        f"✅ Saved L2_housing_unique_full_searched.parquet ({len(df_housing_searched)} rows)"
+    )
 
     # Filter for best result and add property type
-    df_housing_searched_selected = df_housing_searched[df_housing_searched['search_result'] == 0].reset_index(drop=True)
+    df_housing_searched_selected = df_housing_searched[
+        df_housing_searched["search_result"] == 0
+    ].reset_index(drop=True)
 
     # Merge property type from original housing_df
     df_housing_searched_selected = df_housing_searched_selected.merge(
-        housing_df[['NameAddress', 'property_type']],
-        on='NameAddress',
-        how='left'
+        housing_df[["NameAddress", "property_type"]], on="NameAddress", how="left"
     )
 
     # Save filtered dataset
-    data_helpers.save_parquet(df_housing_searched_selected, "L2_housing_unique_searched", source="L2 housing data")
-    logger.info(f"✅ Saved L2_housing_unique_searched.parquet ({len(df_housing_searched_selected)} rows)")
+    data_helpers.save_parquet(
+        df_housing_searched_selected, "L2_housing_unique_searched", source="L2 housing data"
+    )
+    logger.info(
+        f"✅ Saved L2_housing_unique_searched.parquet ({len(df_housing_searched_selected)} rows)"
+    )
 
 
 def main():
     """Main execution function."""
     parser = argparse.ArgumentParser(
         description="Geocode property addresses using OneMap API",
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        '--parallel',
-        action='store_true',
-        help='Use parallel processing (faster, ~3-5x speed improvement)'
+        "--parallel",
+        action="store_true",
+        help="Use parallel processing (faster, ~3-5x speed improvement)",
     )
     parser.add_argument(
-        '--workers',
+        "--workers",
         type=int,
         default=Config.GEOCODING_MAX_WORKERS,
-        help=f'Number of parallel workers (default: {Config.GEOCODING_MAX_WORKERS})'
+        help=f"Number of parallel workers (default: {Config.GEOCODING_MAX_WORKERS})",
     )
     parser.add_argument(
-        '--batch-size',
+        "--batch-size",
         type=int,
         default=BATCH_SIZE,
-        help=f'Batch size for processing (default: {BATCH_SIZE})'
+        help=f"Batch size for processing (default: {BATCH_SIZE})",
     )
 
     args = parser.parse_args()
 
     # Setup logging
     log_mode = "parallel" if args.parallel else "sequential"
-    log_file = LOG_DIR / f'geocoding_{log_mode}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log'
+    log_file = LOG_DIR / f"geocoding_{log_mode}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler(log_file),
-            logging.StreamHandler(sys.stdout)
-        ]
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler(log_file), logging.StreamHandler(sys.stdout)],
     )
     global logger
     logger = logging.getLogger(__name__)
@@ -434,15 +463,19 @@ def main():
 
         # Load URA files
         logger.info("📂 Loading URA transaction files...")
-        csv_base_path = PROJECT_ROOT / 'data' / 'raw_data' / 'csv'
+        csv_base_path = PROJECT_ROOT / "data" / "raw_data" / "csv"
         ec_df, condo_df, residential_df, hdb_df = geocoding.load_ura_files(csv_base_path)
 
         # Save individual transaction datasets
         logger.info("💾 Saving transaction datasets...")
         data_helpers.save_parquet(ec_df, "L1_housing_ec_transaction", source="URA CSV data")
         data_helpers.save_parquet(condo_df, "L1_housing_condo_transaction", source="URA CSV data")
-        data_helpers.save_parquet(residential_df, "L1_housing_residential_transaction", source="URA CSV data")
-        data_helpers.save_parquet(hdb_df, "L1_housing_hdb_transaction", source="data.gov.sg CSV data")
+        data_helpers.save_parquet(
+            residential_df, "L1_housing_residential_transaction", source="URA CSV data"
+        )
+        data_helpers.save_parquet(
+            hdb_df, "L1_housing_hdb_transaction", source="data.gov.sg CSV data"
+        )
 
         # Extract unique addresses
         logger.info("🔍 Extracting unique addresses...")
@@ -463,9 +496,9 @@ def main():
                 response = input("Do you want to resume from checkpoint? (y/n): ").strip().lower()
             else:
                 logger.info("🔄 Auto-resuming from checkpoint (background mode)...")
-                response = 'y'
+                response = "y"
 
-            if response == 'y':
+            if response == "y":
                 processed_addresses = load_checkpoint(checkpoint_path)
             else:
                 logger.info("Starting from beginning...")
@@ -478,9 +511,7 @@ def main():
                 housing_df, headers, processed_addresses, max_workers=args.workers
             )
         else:
-            df_list, failed = geocode_addresses_sequential(
-                housing_df, headers, processed_addresses
-            )
+            df_list, failed = geocode_addresses_sequential(housing_df, headers, processed_addresses)
 
         # Save checkpoint if shutdown was requested
         if shutdown_requested and df_list:

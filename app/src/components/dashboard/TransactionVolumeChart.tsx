@@ -9,6 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import ClientChart from '@/components/charts/ClientChart';
 
 interface TrendRecord {
   date: string;
@@ -25,7 +26,7 @@ export default function TransactionVolumeChart({ data }: TransactionVolumeChartP
       <h3 className="text-lg font-semibold mb-6 text-foreground">
         Transaction Volume
       </h3>
-      <div className="h-[300px]">
+      <ClientChart className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -50,7 +51,7 @@ export default function TransactionVolumeChart({ data }: TransactionVolumeChartP
             <Bar dataKey="EC Volume" stackId="a" fill="#f59e0b" />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </ClientChart>
     </div>
   );
 }

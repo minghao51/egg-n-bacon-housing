@@ -1,6 +1,6 @@
 // app/src/components/dashboard/leaderboard/MetricHelpModal.tsx
 import React, { useEffect } from 'react';
-import { LeaderboardMetric, MetricMeta } from '@/types/leaderboard';
+import type { LeaderboardMetric, MetricMeta } from '@/types/leaderboard';
 
 interface MetricHelpModalProps {
   isOpen: boolean;

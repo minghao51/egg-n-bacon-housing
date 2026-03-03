@@ -25,16 +25,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from scripts.core.config import Config
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
 # ============================================================================
 # DATA LOADING
 # ============================================================================
+
 
 def load_transaction_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load HDB and Condo transaction data.
@@ -81,6 +79,7 @@ def load_geocoded_data() -> pd.DataFrame:
 # ADDRESS STANDARDIZATION
 # ============================================================================
 
+
 def standardize_address(text: str) -> str:
     """Standardize address string for matching.
 
@@ -98,29 +97,29 @@ def standardize_address(text: str) -> str:
 
     # Replace common abbreviations
     replacements = {
-        'AVENUE': 'AVE',
-        'ROAD': 'RD',
-        'STREET': 'ST',
-        'DRIVE': 'DR',
-        'PLACE': 'PL',
-        'CLOSE': 'CL',
-        'LANE': 'LN',
-        'CRESCENT': 'CRES',
-        'HEIGHTS': 'HTS',
-        'POINT': 'PT',
-        'WALK': 'WK',
-        'NORTH': 'N',
-        'SOUTH': 'S',
-        'EAST': 'E',
-        'WEST': 'W',
-        'CENTRAL': 'CTR',
+        "AVENUE": "AVE",
+        "ROAD": "RD",
+        "STREET": "ST",
+        "DRIVE": "DR",
+        "PLACE": "PL",
+        "CLOSE": "CL",
+        "LANE": "LN",
+        "CRESCENT": "CRES",
+        "HEIGHTS": "HTS",
+        "POINT": "PT",
+        "WALK": "WK",
+        "NORTH": "N",
+        "SOUTH": "S",
+        "EAST": "E",
+        "WEST": "W",
+        "CENTRAL": "CTR",
     }
 
     for old, new in replacements.items():
         text = text.replace(old, new)
 
     # Remove extra spaces
-    text = ' '.join(text.split())
+    text = " ".join(text.split())
 
     return text.strip()
 
@@ -137,16 +136,16 @@ def prepare_hdb_for_geocoding(hdb_df: pd.DataFrame) -> pd.DataFrame:
     logger.info("Preparing HDB data for geocoding...")
 
     # Get unique properties
-    unique_props = hdb_df[['block', 'street_name']].drop_duplicates().copy()
+    unique_props = hdb_df[["block", "street_name"]].drop_duplicates().copy()
 
     # Create full address
-    unique_props['full_address'] = unique_props['block'] + ' ' + unique_props['street_name']
+    unique_props["full_address"] = unique_props["block"] + " " + unique_props["street_name"]
 
     # Standardize addresses
-    unique_props['address_std'] = unique_props['full_address'].apply(standardize_address)
+    unique_props["address_std"] = unique_props["full_address"].apply(standardize_address)
 
     # Add property type
-    unique_props['property_type'] = 'HDB'
+    unique_props["property_type"] = "HDB"
 
     logger.info(f"Prepared {len(unique_props):,} unique HDB properties")
 
@@ -165,16 +164,16 @@ def prepare_condo_for_geocoding(condo_df: pd.DataFrame) -> pd.DataFrame:
     logger.info("Preparing Condo data for geocoding...")
 
     # Get unique properties
-    unique_props = condo_df[['Project Name', 'Street Name']].drop_duplicates().copy()
+    unique_props = condo_df[["Project Name", "Street Name"]].drop_duplicates().copy()
 
     # Create full address
-    unique_props['full_address'] = unique_props['Project Name'] + ', ' + unique_props['Street Name']
+    unique_props["full_address"] = unique_props["Project Name"] + ", " + unique_props["Street Name"]
 
     # Standardize addresses
-    unique_props['address_std'] = unique_props['Street Name'].apply(standardize_address)
+    unique_props["address_std"] = unique_props["Street Name"].apply(standardize_address)
 
     # Add property type
-    unique_props['property_type'] = 'Condominium'
+    unique_props["property_type"] = "Condominium"
 
     logger.info(f"Prepared {len(unique_props):,} unique Condo properties")
 
@@ -193,7 +192,7 @@ def prepare_geo_data(geo_df: pd.DataFrame) -> pd.DataFrame:
     logger.info("Preparing geocoded data...")
 
     # Standardize addresses
-    geo_df['address_std'] = geo_df['ROAD_NAME'].apply(standardize_address)
+    geo_df["address_std"] = geo_df["ROAD_NAME"].apply(standardize_address)
 
     logger.info(f"Prepared {len(geo_df):,} geocoded properties")
 
@@ -204,10 +203,9 @@ def prepare_geo_data(geo_df: pd.DataFrame) -> pd.DataFrame:
 # FUZZY MATCHING
 # ============================================================================
 
+
 def fuzzy_match_hdb(
-    hdb_props: pd.DataFrame,
-    geo_hdb: pd.DataFrame,
-    score_threshold: int = 85
+    hdb_props: pd.DataFrame, geo_hdb: pd.DataFrame, score_threshold: int = 85
 ) -> pd.DataFrame:
     """Fuzzy match HDB properties to geocoded data.
 
@@ -224,13 +222,13 @@ def fuzzy_match_hdb(
     # Create lookup dict from geocoded data
     geo_dict = {}
     for _, row in geo_hdb.iterrows():
-        key = row['address_std']
+        key = row["address_std"]
         geo_dict[key] = {
-            'BLK_NO': row['BLK_NO'],
-            'ROAD_NAME': row['ROAD_NAME'],
-            'POSTAL': row.get('POSTAL', None),
-            'LATITUDE': row['LATITUDE'],
-            'LONGITUDE': row['LONGITUDE']
+            "BLK_NO": row["BLK_NO"],
+            "ROAD_NAME": row["ROAD_NAME"],
+            "POSTAL": row.get("POSTAL", None),
+            "LATITUDE": row["LATITUDE"],
+            "LONGITUDE": row["LONGITUDE"],
         }
 
     # Match each HDB property
@@ -242,9 +240,7 @@ def fuzzy_match_hdb(
     for idx, prop in hdb_props.iterrows():
         # Find best match
         result = process.extractOne(
-            prop['address_std'],
-            geo_addresses,
-            scorer=fuzz.token_sort_ratio
+            prop["address_std"], geo_addresses, scorer=fuzz.token_sort_ratio
         )
 
         if result and result[1] >= score_threshold:
@@ -252,40 +248,44 @@ def fuzzy_match_hdb(
             match_key, score, _ = result
             geo_data = geo_dict[match_key]
 
-            matched.append({
-                'block': prop['block'],
-                'street_name': prop['street_name'],
-                'full_address': prop['full_address'],
-                'address_std': prop['address_std'],
-                'matched_address': match_key,
-                'match_score': score,
-                'POSTAL': geo_data['POSTAL'],
-                'LATITUDE': geo_data['LATITUDE'],
-                'LONGITUDE': geo_data['LONGITUDE'],
-                'match_type': 'fuzzy'
-            })
+            matched.append(
+                {
+                    "block": prop["block"],
+                    "street_name": prop["street_name"],
+                    "full_address": prop["full_address"],
+                    "address_std": prop["address_std"],
+                    "matched_address": match_key,
+                    "match_score": score,
+                    "POSTAL": geo_data["POSTAL"],
+                    "LATITUDE": geo_data["LATITUDE"],
+                    "LONGITUDE": geo_data["LONGITUDE"],
+                    "match_type": "fuzzy",
+                }
+            )
         else:
             # No match
-            unmatched.append({
-                'block': prop['block'],
-                'street_name': prop['street_name'],
-                'full_address': prop['full_address'],
-                'address_std': prop['address_std']
-            })
+            unmatched.append(
+                {
+                    "block": prop["block"],
+                    "street_name": prop["street_name"],
+                    "full_address": prop["full_address"],
+                    "address_std": prop["address_std"],
+                }
+            )
 
     matched_df = pd.DataFrame(matched)
     unmatched_df = pd.DataFrame(unmatched)
 
-    logger.info(f"Fuzzy matched {len(matched_df):,} of {len(hdb_props):,} HDB properties ({len(matched_df)/len(hdb_props)*100:.1f}%)")
+    logger.info(
+        f"Fuzzy matched {len(matched_df):,} of {len(hdb_props):,} HDB properties ({len(matched_df) / len(hdb_props) * 100:.1f}%)"
+    )
     logger.info(f"Unmatched: {len(unmatched_df):,} properties")
 
     return matched_df, unmatched_df
 
 
 def fuzzy_match_condo(
-    condo_props: pd.DataFrame,
-    geo_condo: pd.DataFrame,
-    score_threshold: int = 85
+    condo_props: pd.DataFrame, geo_condo: pd.DataFrame, score_threshold: int = 85
 ) -> pd.DataFrame:
     """Fuzzy match Condo properties to geocoded data.
 
@@ -302,13 +302,13 @@ def fuzzy_match_condo(
     # Create lookup dict from geocoded data
     geo_dict = {}
     for _, row in geo_condo.iterrows():
-        key = row['address_std']
+        key = row["address_std"]
         if key not in geo_dict:  # Take first occurrence
             geo_dict[key] = {
-                'ROAD_NAME': row['ROAD_NAME'],
-                'POSTAL': row.get('POSTAL', None),
-                'LATITUDE': row['LATITUDE'],
-                'LONGITUDE': row['LONGITUDE']
+                "ROAD_NAME": row["ROAD_NAME"],
+                "POSTAL": row.get("POSTAL", None),
+                "LATITUDE": row["LATITUDE"],
+                "LONGITUDE": row["LONGITUDE"],
             }
 
     # Match each Condo property
@@ -320,9 +320,7 @@ def fuzzy_match_condo(
     for idx, prop in condo_props.iterrows():
         # Find best match
         result = process.extractOne(
-            prop['address_std'],
-            geo_addresses,
-            scorer=fuzz.token_sort_ratio
+            prop["address_std"], geo_addresses, scorer=fuzz.token_sort_ratio
         )
 
         if result and result[1] >= score_threshold:
@@ -330,31 +328,37 @@ def fuzzy_match_condo(
             match_key, score, _ = result
             geo_data = geo_dict[match_key]
 
-            matched.append({
-                'Project Name': prop['Project Name'],
-                'Street Name': prop['Street Name'],
-                'full_address': prop['full_address'],
-                'address_std': prop['address_std'],
-                'matched_address': match_key,
-                'match_score': score,
-                'POSTAL': geo_data['POSTAL'],
-                'LATITUDE': geo_data['LATITUDE'],
-                'LONGITUDE': geo_data['LONGITUDE'],
-                'match_type': 'fuzzy'
-            })
+            matched.append(
+                {
+                    "Project Name": prop["Project Name"],
+                    "Street Name": prop["Street Name"],
+                    "full_address": prop["full_address"],
+                    "address_std": prop["address_std"],
+                    "matched_address": match_key,
+                    "match_score": score,
+                    "POSTAL": geo_data["POSTAL"],
+                    "LATITUDE": geo_data["LATITUDE"],
+                    "LONGITUDE": geo_data["LONGITUDE"],
+                    "match_type": "fuzzy",
+                }
+            )
         else:
             # No match
-            unmatched.append({
-                'Project Name': prop['Project Name'],
-                'Street Name': prop['Street Name'],
-                'full_address': prop['full_address'],
-                'address_std': prop['address_std']
-            })
+            unmatched.append(
+                {
+                    "Project Name": prop["Project Name"],
+                    "Street Name": prop["Street Name"],
+                    "full_address": prop["full_address"],
+                    "address_std": prop["address_std"],
+                }
+            )
 
     matched_df = pd.DataFrame(matched)
     unmatched_df = pd.DataFrame(unmatched)
 
-    logger.info(f"Fuzzy matched {len(matched_df):,} of {len(condo_props):,} Condo properties ({len(matched_df)/len(condo_props)*100:.1f}%)")
+    logger.info(
+        f"Fuzzy matched {len(matched_df):,} of {len(condo_props):,} Condo properties ({len(matched_df) / len(condo_props) * 100:.1f}%)"
+    )
     logger.info(f"Unmatched: {len(unmatched_df):,} properties")
 
     return matched_df, unmatched_df
@@ -364,12 +368,13 @@ def fuzzy_match_condo(
 # RESULTS MERGING
 # ============================================================================
 
+
 def merge_results_with_existing(
     hdb_matched: pd.DataFrame,
     hdb_unmatched: pd.DataFrame,
     condo_matched: pd.DataFrame,
     condo_unmatched: pd.DataFrame,
-    existing_geo: pd.DataFrame
+    existing_geo: pd.DataFrame,
 ) -> pd.DataFrame:
     """Merge new geocoding results with existing geocoded data.
 
@@ -389,46 +394,52 @@ def merge_results_with_existing(
     new_hdb_geo = []
     if not hdb_matched.empty:
         for _, row in hdb_matched.iterrows():
-            new_hdb_geo.append({
-                'BLK_NO': row['block'],
-                'ROAD_NAME': row['street_name'],
-                'POSTAL': row.get('POSTAL', None),
-                'LATITUDE': row['LATITUDE'],
-                'LONGITUDE': row['LONGITUDE'],
-                'property_type': 'hdb',
-                'match_type': row['match_type'],
-                'match_score': row['match_score']
-            })
+            new_hdb_geo.append(
+                {
+                    "BLK_NO": row["block"],
+                    "ROAD_NAME": row["street_name"],
+                    "POSTAL": row.get("POSTAL", None),
+                    "LATITUDE": row["LATITUDE"],
+                    "LONGITUDE": row["LONGITUDE"],
+                    "property_type": "hdb",
+                    "match_type": row["match_type"],
+                    "match_score": row["match_score"],
+                }
+            )
 
     new_condo_geo = []
     if not condo_matched.empty:
         for _, row in condo_matched.iterrows():
-            new_condo_geo.append({
-                'BLK_NO': row.get('Project Name', ''),
-                'ROAD_NAME': row['Street Name'],
-                'POSTAL': row.get('POSTAL', None),
-                'LATITUDE': row['LATITUDE'],
-                'LONGITUDE': row['LONGITUDE'],
-                'property_type': 'private',
-                'match_type': row['match_type'],
-                'match_score': row['match_score']
-            })
+            new_condo_geo.append(
+                {
+                    "BLK_NO": row.get("Project Name", ""),
+                    "ROAD_NAME": row["Street Name"],
+                    "POSTAL": row.get("POSTAL", None),
+                    "LATITUDE": row["LATITUDE"],
+                    "LONGITUDE": row["LONGITUDE"],
+                    "property_type": "private",
+                    "match_type": row["match_type"],
+                    "match_score": row["match_score"],
+                }
+            )
 
     # Combine
     combined = []
 
     # Add existing geocoded data
     for _, row in existing_geo.iterrows():
-        combined.append({
-            'BLK_NO': row.get('BLK_NO', ''),
-            'ROAD_NAME': row.get('ROAD_NAME', ''),
-            'POSTAL': row.get('POSTAL', None),
-            'LATITUDE': row['LATITUDE'],
-            'LONGITUDE': row['LONGITUDE'],
-            'property_type': row.get('property_type', 'unknown'),
-            'match_type': 'existing',
-            'match_score': 100
-        })
+        combined.append(
+            {
+                "BLK_NO": row.get("BLK_NO", ""),
+                "ROAD_NAME": row.get("ROAD_NAME", ""),
+                "POSTAL": row.get("POSTAL", None),
+                "LATITUDE": row["LATITUDE"],
+                "LONGITUDE": row["LONGITUDE"],
+                "property_type": row.get("property_type", "unknown"),
+                "match_type": "existing",
+                "match_score": 100,
+            }
+        )
 
     # Add new HDB matches
     combined.extend(new_hdb_geo)
@@ -447,10 +458,9 @@ def merge_results_with_existing(
 # SAVE RESULTS
 # ============================================================================
 
+
 def save_enhanced_geocoding(
-    geo_df: pd.DataFrame,
-    hdb_unmatched: pd.DataFrame,
-    condo_unmatched: pd.DataFrame
+    geo_df: pd.DataFrame, hdb_unmatched: pd.DataFrame, condo_unmatched: pd.DataFrame
 ):
     """Save enhanced geocoding results.
 
@@ -467,7 +477,7 @@ def save_enhanced_geocoding(
 
     # Save enhanced geocoded data
     output_path = l2_dir / "housing_unique_searched_enhanced.parquet"
-    geo_df.to_parquet(output_path, compression='snappy', index=False)
+    geo_df.to_parquet(output_path, compression="snappy", index=False)
     logger.info(f"Saved enhanced geocoding to {output_path}")
 
     # Save unmatched for review
@@ -479,12 +489,15 @@ def save_enhanced_geocoding(
     if not condo_unmatched.empty:
         condo_unmatched_path = l2_dir / "condo_unmatched.csv"
         condo_unmatched.to_csv(condo_unmatched_path, index=False)
-        logger.info(f"Saved {len(condo_unmatched)} unmatched Condo properties to {condo_unmatched_path}")
+        logger.info(
+            f"Saved {len(condo_unmatched)} unmatched Condo properties to {condo_unmatched_path}"
+        )
 
 
 # ============================================================================
 # MAIN PIPELINE
 # ============================================================================
+
 
 def main():
     """Main enhanced geocoding pipeline."""
@@ -519,9 +532,9 @@ def main():
     geo_df = prepare_geo_data(geo_df)
 
     # Filter geocoded data by property type
-    if 'property_type' in geo_df.columns:
-        geo_hdb = geo_df[geo_df['property_type'] == 'hdb'].copy()
-        geo_condo = geo_df[geo_df['property_type'] == 'private'].copy()
+    if "property_type" in geo_df.columns:
+        geo_hdb = geo_df[geo_df["property_type"] == "hdb"].copy()
+        geo_condo = geo_df[geo_df["property_type"] == "private"].copy()
     else:
         geo_hdb = geo_df.copy()
         geo_condo = pd.DataFrame()
@@ -538,15 +551,13 @@ def main():
     condo_unmatched = pd.DataFrame()
 
     if not condo_props.empty and not geo_condo.empty:
-        condo_matched, condo_unmatched = fuzzy_match_condo(condo_props, geo_condo, score_threshold=85)
+        condo_matched, condo_unmatched = fuzzy_match_condo(
+            condo_props, geo_condo, score_threshold=85
+        )
 
     # Merge results with existing
     enhanced_geo = merge_results_with_existing(
-        hdb_matched,
-        hdb_unmatched,
-        condo_matched,
-        condo_unmatched,
-        geo_df
+        hdb_matched, hdb_unmatched, condo_matched, condo_unmatched, geo_df
     )
 
     # Save results
@@ -558,15 +569,19 @@ def main():
     logger.info("=" * 60)
     logger.info(f"Total geocoded properties: {len(enhanced_geo):,}")
 
-    if 'property_type' in enhanced_geo.columns:
-        for ptype, count in enhanced_geo['property_type'].value_counts().items():
+    if "property_type" in enhanced_geo.columns:
+        for ptype, count in enhanced_geo["property_type"].value_counts().items():
             logger.info(f"  {ptype}: {count:,} properties")
 
     if not hdb_unmatched.empty:
-        logger.info(f"HDB unmatched: {len(hdb_unmatched):,} ({len(hdb_unmatched)/len(hdb_props)*100:.1f}%)")
+        logger.info(
+            f"HDB unmatched: {len(hdb_unmatched):,} ({len(hdb_unmatched) / len(hdb_props) * 100:.1f}%)"
+        )
 
     if not condo_unmatched.empty:
-        logger.info(f"Condo unmatched: {len(condo_unmatched):,} ({len(condo_unmatched)/len(condo_props)*100:.1f}%)")
+        logger.info(
+            f"Condo unmatched: {len(condo_unmatched):,} ({len(condo_unmatched) / len(condo_props) * 100:.1f}%)"
+        )
 
     logger.info("=" * 60)
     logger.info("Pipeline completed successfully!")

@@ -20,12 +20,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 DATA_DIR = Path("data/analytics/mrt_impact_enhanced")
@@ -39,14 +36,14 @@ def load_hdb_data() -> pd.DataFrame:
 
     df = pd.read_parquet("data/pipeline/L3/housing_unified.parquet")
 
-    hdb = df[df['property_type'] == 'HDB'].copy()
+    hdb = df[df["property_type"] == "HDB"].copy()
 
-    hdb = hdb[hdb['transaction_date'] >= '2021-01-01'].copy()
+    hdb = hdb[hdb["transaction_date"] >= "2021-01-01"].copy()
 
-    hdb = hdb[hdb['price_psf'].notna()]
-    hdb = hdb[hdb['dist_to_nearest_mrt'].notna()]
-    hdb = hdb[hdb['lat'].notna()]
-    hdb = hdb[hdb['lon'].notna()]
+    hdb = hdb[hdb["price_psf"].notna()]
+    hdb = hdb[hdb["dist_to_nearest_mrt"].notna()]
+    hdb = hdb[hdb["lat"].notna()]
+    hdb = hdb[hdb["lon"].notna()]
 
     logger.info(f"Loaded {len(hdb):,} HDB transactions (2021+)")
 
@@ -56,7 +53,7 @@ def load_hdb_data() -> pd.DataFrame:
 def create_granular_mrt_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     Engineer granular MRT features beyond simple distance.
-    
+
     Features created:
     - Station type (interchange, terminal, standard)
     - Connectivity score (number of lines)
@@ -67,48 +64,57 @@ def create_granular_mrt_features(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.copy()
 
-    df['lat'] = pd.to_numeric(df['lat'], errors='coerce')
-    df['lon'] = pd.to_numeric(df['lon'], errors='coerce')
-    df['dist_to_nearest_mrt'] = pd.to_numeric(df['dist_to_nearest_mrt'], errors='coerce')
+    df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
+    df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
+    df["dist_to_nearest_mrt"] = pd.to_numeric(df["dist_to_nearest_mrt"], errors="coerce")
 
-    df = df.dropna(subset=['lat', 'lon', 'dist_to_nearest_mrt'])
+    df = df.dropna(subset=["lat", "lon", "dist_to_nearest_mrt"])
 
     interchange_stations = [
-        'dhoby ghaut', 'raffles place', 'marina bay', 'jurong east',
-        'paya lebar', 'bukit panjang', 'harbourfront', 'serangoon',
-        'woodlands', 'ang mo kio', 'clementi', 'outram park',
-        'one north', 'kent ridge', 'holland village', 'buona vista'
+        "dhoby ghaut",
+        "raffles place",
+        "marina bay",
+        "jurong east",
+        "paya lebar",
+        "bukit panjang",
+        "harbourfront",
+        "serangoon",
+        "woodlands",
+        "ang mo kio",
+        "clementi",
+        "outram park",
+        "one north",
+        "kent ridge",
+        "holland village",
+        "buona vista",
     ]
 
-    df['mrt_is_interchange'] = df['dist_to_nearest_mrt'].apply(
-        lambda x: True if x < 300 else False
-    )
+    df["mrt_is_interchange"] = df["dist_to_nearest_mrt"].apply(lambda x: True if x < 300 else False)
 
-    df['mrt_connectivity_score'] = df['mrt_within_500m'] * 1.5 + df['mrt_within_1km'] * 1.0 + df['mrt_within_2km'] * 0.5
+    df["mrt_connectivity_score"] = (
+        df["mrt_within_500m"] * 1.5 + df["mrt_within_1km"] * 1.0 + df["mrt_within_2km"] * 0.5
+    )
 
     cbd_lat, cbd_lon = 1.2840, 103.8517
 
-    df['mrt_bearing_to_cbd'] = np.arctan2(
-        cbd_lat - df['lat'],
-        cbd_lon - df['lon']
-    ) * 180 / np.pi
+    df["mrt_bearing_to_cbd"] = np.arctan2(cbd_lat - df["lat"], cbd_lon - df["lon"]) * 180 / np.pi
 
-    df['mrt_on_direct_cbd_route'] = (
-        (df['mrt_bearing_to_cbd'] > -30) & (df['mrt_bearing_to_cbd'] < 30)
+    df["mrt_on_direct_cbd_route"] = (
+        (df["mrt_bearing_to_cbd"] > -30) & (df["mrt_bearing_to_cbd"] < 30)
     ).astype(int)
 
-    df['mrt_walkability_proxy'] = df['dist_to_nearest_mrt'] * 1.3
+    df["mrt_walkability_proxy"] = df["dist_to_nearest_mrt"] * 1.3
 
-    df['mrt_premium_zone'] = pd.cut(
-        df['dist_to_nearest_mrt'].astype(float),
+    df["mrt_premium_zone"] = pd.cut(
+        df["dist_to_nearest_mrt"].astype(float),
         bins=[0, 300, 500, 800, 1200, 5000],
-        labels=['immediate', 'walking', 'close', 'moderate', 'far']
+        labels=["immediate", "walking", "close", "moderate", "far"],
     )
 
-    df['mrt_accessibility_tier'] = pd.cut(
-        df['mrt_within_500m'].astype(float),
+    df["mrt_accessibility_tier"] = pd.cut(
+        df["mrt_within_500m"].astype(float),
         bins=[-1, 0, 1, 2, 10],
-        labels=['low', 'medium', 'high', 'very_high']
+        labels=["low", "medium", "high", "very_high"],
     )
 
     logger.info(f"Created granular MRT features ({len(df)} records)")
@@ -125,19 +131,25 @@ def run_ols_baseline(df: pd.DataFrame) -> dict:
     from sklearn.model_selection import train_test_split
 
     features = [
-        'dist_to_nearest_mrt',
-        'mrt_within_500m', 'mrt_within_1km', 'mrt_within_2km',
-        'hawker_within_500m', 'hawker_within_1km', 'hawker_within_2km',
-        'park_within_500m', 'park_within_1km',
-        'supermarket_within_500m', 'supermarket_within_1km',
-        'remaining_lease_months',
-        'floor_area_sqft'
+        "dist_to_nearest_mrt",
+        "mrt_within_500m",
+        "mrt_within_1km",
+        "mrt_within_2km",
+        "hawker_within_500m",
+        "hawker_within_1km",
+        "hawker_within_2km",
+        "park_within_500m",
+        "park_within_1km",
+        "supermarket_within_500m",
+        "supermarket_within_1km",
+        "remaining_lease_months",
+        "floor_area_sqft",
     ]
 
     available_features = [f for f in features if f in df.columns]
 
     X = df[available_features].fillna(0)
-    y = df['price_psf']
+    y = df["price_psf"]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -147,12 +159,12 @@ def run_ols_baseline(df: pd.DataFrame) -> dict:
     y_pred = model.predict(X_test)
 
     result = {
-        'model': 'OLS',
-        'r2_train': model.score(X_train, y_train),
-        'r2_test': r2_score(y_test, y_pred),
-        'mae': mean_absolute_error(y_test, y_pred),
-        'coefficients': dict(zip(available_features, model.coef_)),
-        'intercept': model.intercept_
+        "model": "OLS",
+        "r2_train": model.score(X_train, y_train),
+        "r2_test": r2_score(y_test, y_pred),
+        "mae": mean_absolute_error(y_test, y_pred),
+        "coefficients": dict(zip(available_features, model.coef_)),
+        "intercept": model.intercept_,
     }
 
     logger.info(f"OLS R² (test): {result['r2_test']:.4f}")
@@ -174,38 +186,39 @@ def run_xgboost(df: pd.DataFrame) -> dict:
     from sklearn.model_selection import train_test_split
 
     features = [
-        'dist_to_nearest_mrt',
-        'mrt_within_500m', 'mrt_within_1km', 'mrt_within_2km',
-        'hawker_within_500m', 'hawker_within_1km', 'hawker_within_2km',
-        'park_within_500m', 'park_within_1km',
-        'supermarket_within_500m', 'supermarket_within_1km',
-        'remaining_lease_months',
-        'floor_area_sqft'
+        "dist_to_nearest_mrt",
+        "mrt_within_500m",
+        "mrt_within_1km",
+        "mrt_within_2km",
+        "hawker_within_500m",
+        "hawker_within_1km",
+        "hawker_within_2km",
+        "park_within_500m",
+        "park_within_1km",
+        "supermarket_within_500m",
+        "supermarket_within_1km",
+        "remaining_lease_months",
+        "floor_area_sqft",
     ]
 
     available_features = [f for f in features if f in df.columns]
 
     X = df[available_features].fillna(0)
-    y = df['price_psf']
+    y = df["price_psf"]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model = xgb.XGBRegressor(
-        n_estimators=100,
-        max_depth=6,
-        learning_rate=0.1,
-        random_state=42
-    )
+    model = xgb.XGBRegressor(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42)
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
 
     result = {
-        'model': 'XGBoost',
-        'r2_train': model.score(X_train, y_train),
-        'r2_test': r2_score(y_test, y_pred),
-        'mae': mean_absolute_error(y_test, y_pred),
-        'feature_importance': dict(zip(available_features, model.feature_importances_))
+        "model": "XGBoost",
+        "r2_train": model.score(X_train, y_train),
+        "r2_test": r2_score(y_test, y_pred),
+        "mae": mean_absolute_error(y_test, y_pred),
+        "feature_importance": dict(zip(available_features, model.feature_importances_)),
     }
 
     logger.info(f"XGBoost R² (test): {result['r2_test']:.4f}")
@@ -227,39 +240,41 @@ def run_lightgbm(df: pd.DataFrame) -> dict:
     from sklearn.model_selection import train_test_split
 
     features = [
-        'dist_to_nearest_mrt',
-        'mrt_within_500m', 'mrt_within_1km', 'mrt_within_2km',
-        'hawker_within_500m', 'hawker_within_1km', 'hawker_within_2km',
-        'park_within_500m', 'park_within_1km',
-        'supermarket_within_500m', 'supermarket_within_1km',
-        'remaining_lease_months',
-        'floor_area_sqft'
+        "dist_to_nearest_mrt",
+        "mrt_within_500m",
+        "mrt_within_1km",
+        "mrt_within_2km",
+        "hawker_within_500m",
+        "hawker_within_1km",
+        "hawker_within_2km",
+        "park_within_500m",
+        "park_within_1km",
+        "supermarket_within_500m",
+        "supermarket_within_1km",
+        "remaining_lease_months",
+        "floor_area_sqft",
     ]
 
     available_features = [f for f in features if f in df.columns]
 
     X = df[available_features].fillna(0)
-    y = df['price_psf']
+    y = df["price_psf"]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     model = lgb.LGBMRegressor(
-        n_estimators=100,
-        max_depth=6,
-        learning_rate=0.1,
-        random_state=42,
-        verbose=-1
+        n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42, verbose=-1
     )
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
 
     result = {
-        'model': 'LightGBM',
-        'r2_train': model.score(X_train, y_train),
-        'r2_test': r2_score(y_test, y_pred),
-        'mae': mean_absolute_error(y_test, y_pred),
-        'feature_importance': dict(zip(available_features, model.feature_importances_))
+        "model": "LightGBM",
+        "r2_train": model.score(X_train, y_train),
+        "r2_test": r2_score(y_test, y_pred),
+        "mae": mean_absolute_error(y_test, y_pred),
+        "feature_importance": dict(zip(available_features, model.feature_importances_)),
     }
 
     logger.info(f"LightGBM R² (test): {result['r2_test']:.4f}")
@@ -276,38 +291,39 @@ def run_random_forest(df: pd.DataFrame) -> dict:
     from sklearn.model_selection import train_test_split
 
     features = [
-        'dist_to_nearest_mrt',
-        'mrt_within_500m', 'mrt_within_1km', 'mrt_within_2km',
-        'hawker_within_500m', 'hawker_within_1km', 'hawker_within_2km',
-        'park_within_500m', 'park_within_1km',
-        'supermarket_within_500m', 'supermarket_within_1km',
-        'remaining_lease_months',
-        'floor_area_sqft'
+        "dist_to_nearest_mrt",
+        "mrt_within_500m",
+        "mrt_within_1km",
+        "mrt_within_2km",
+        "hawker_within_500m",
+        "hawker_within_1km",
+        "hawker_within_2km",
+        "park_within_500m",
+        "park_within_1km",
+        "supermarket_within_500m",
+        "supermarket_within_1km",
+        "remaining_lease_months",
+        "floor_area_sqft",
     ]
 
     available_features = [f for f in features if f in df.columns]
 
     X = df[available_features].fillna(0)
-    y = df['price_psf']
+    y = df["price_psf"]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model = RandomForestRegressor(
-        n_estimators=100,
-        max_depth=10,
-        random_state=42,
-        n_jobs=-1
-    )
+    model = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42, n_jobs=-1)
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
 
     result = {
-        'model': 'Random Forest',
-        'r2_train': model.score(X_train, y_train),
-        'r2_test': r2_score(y_test, y_pred),
-        'mae': mean_absolute_error(y_test, y_pred),
-        'feature_importance': dict(zip(available_features, model.feature_importances_))
+        "model": "Random Forest",
+        "r2_train": model.score(X_train, y_train),
+        "r2_test": r2_score(y_test, y_pred),
+        "mae": mean_absolute_error(y_test, y_pred),
+        "feature_importance": dict(zip(available_features, model.feature_importances_)),
     }
 
     logger.info(f"Random Forest R² (test): {result['r2_test']:.4f}")
@@ -318,7 +334,7 @@ def run_random_forest(df: pd.DataFrame) -> dict:
 def calculate_morans_i(df: pd.DataFrame) -> dict:
     """
     Calculate Moran's I for spatial autocorrelation.
-    
+
     Tests if nearby properties have similar prices (spatial clustering).
     """
     logger.info("Calculating Moran's I for spatial autocorrelation...")
@@ -331,10 +347,10 @@ def calculate_morans_i(df: pd.DataFrame) -> dict:
     sample_size = min(10000, len(df))
     df_sample = df.sample(n=sample_size, random_state=42) if len(df) > sample_size else df
 
-    coords = df_sample[['lat', 'lon']].values.astype(float)
-    prices = df_sample['price_psf'].values.astype(float)
+    coords = df_sample[["lat", "lon"]].values.astype(float)
+    prices = df_sample["price_psf"].values.astype(float)
 
-    kdtree = __import__('scipy.spatial').spatial.cKDTree(coords)
+    kdtree = __import__("scipy.spatial").spatial.cKDTree(coords)
     distances, indices = kdtree.query(coords, k=8)
 
     weights = np.zeros((len(df_sample), len(df_sample)))
@@ -358,19 +374,20 @@ def calculate_morans_i(df: pd.DataFrame) -> dict:
 
     moran_i = (n / S0) * (numerator / denominator)
 
-    z_score = (moran_i - (-1/(n-1))) / np.sqrt((n**2 - 3*n + 3)/(n**2 - n))
+    z_score = (moran_i - (-1 / (n - 1))) / np.sqrt((n**2 - 3 * n + 3) / (n**2 - n))
 
     from scipy import stats
+
     p_value = 2 * (1 - stats.norm.cdf(abs(z_score)))
 
     result = {
-        'moran_i': moran_i,
-        'expected': -1/(n-1),
-        'z_score': z_score,
-        'p_value': p_value,
-        'significant': p_value < 0.05,
-        'interpretation': 'Clustered' if moran_i > 0 else 'Dispersed',
-        'sample_size': sample_size
+        "moran_i": moran_i,
+        "expected": -1 / (n - 1),
+        "z_score": z_score,
+        "p_value": p_value,
+        "significant": p_value < 0.05,
+        "interpretation": "Clustered" if moran_i > 0 else "Dispersed",
+        "sample_size": sample_size,
     }
 
     logger.info(f"Moran's I: {moran_i:.4f} (p: {p_value:.6f}) [n={sample_size}]")
@@ -381,16 +398,16 @@ def calculate_morans_i(df: pd.DataFrame) -> dict:
 def run_spatial_error_model(df: pd.DataFrame) -> dict:
     """
     Estimate Spatial Error Model (SEM).
-    
+
     Accounts for spatial autocorrelation in the error term.
     """
     logger.info("Running Spatial Error Model...")
 
     result = {
-        'model': 'SEM (Spatial Error Model)',
-        'lambda_coefficient': None,
-        'spatial_rho': None,
-        'note': 'Requires pysal/esda for full implementation'
+        "model": "SEM (Spatial Error Model)",
+        "lambda_coefficient": None,
+        "spatial_rho": None,
+        "note": "Requires pysal/esda for full implementation",
     }
 
     return result
@@ -399,16 +416,16 @@ def run_spatial_error_model(df: pd.DataFrame) -> dict:
 def run_spatial_lag_model(df: pd.DataFrame) -> dict:
     """
     Estimate Spatial Lag Model (SLM).
-    
+
     Accounts for spatial spillover effects (neighboring prices affect target).
     """
     logger.info("Running Spatial Lag Model...")
 
     result = {
-        'model': 'SLM (Spatial Lag Model)',
-        'rho_coefficient': None,
-        'spatial_effects': None,
-        'note': 'Requires pysal/esda for full implementation'
+        "model": "SLM (Spatial Lag Model)",
+        "rho_coefficient": None,
+        "spatial_effects": None,
+        "note": "Requires pysal/esda for full implementation",
     }
 
     return result
@@ -417,7 +434,7 @@ def run_spatial_lag_model(df: pd.DataFrame) -> dict:
 def run_amenity_cluster_analysis(df: pd.DataFrame) -> dict:
     """
     Use DBSCAN to identify amenity-rich clusters.
-    
+
     Tests if premium for amenity clusters exceeds sum of individual effects.
     """
     logger.info("Running amenity cluster analysis with DBSCAN...")
@@ -429,12 +446,12 @@ def run_amenity_cluster_analysis(df: pd.DataFrame) -> dict:
     df_sample = df.sample(n=sample_size, random_state=42) if len(df) > sample_size else df.copy()
 
     amenity_features = [
-        'mrt_within_500m',
-        'hawker_within_500m',
-        'park_within_500m',
-        'supermarket_within_500m',
-        'childcare_within_500m',
-        'school_within_500m'
+        "mrt_within_500m",
+        "hawker_within_500m",
+        "park_within_500m",
+        "supermarket_within_500m",
+        "childcare_within_500m",
+        "school_within_500m",
     ]
 
     available_features = [f for f in amenity_features if f in df_sample.columns]
@@ -448,41 +465,56 @@ def run_amenity_cluster_analysis(df: pd.DataFrame) -> dict:
     min_samples = 50
 
     dbscan = DBSCAN(eps=eps, min_samples=min_samples, n_jobs=-1)
-    df_sample['amenity_cluster'] = dbscan.fit_predict(X_scaled)
+    df_sample["amenity_cluster"] = dbscan.fit_predict(X_scaled)
 
-    n_clusters = len(set(df_sample['amenity_cluster'])) - (1 if -1 in df_sample['amenity_cluster'].values else 0)
-    noise_points = (df_sample['amenity_cluster'] == -1).sum()
+    n_clusters = len(set(df_sample["amenity_cluster"])) - (
+        1 if -1 in df_sample["amenity_cluster"].values else 0
+    )
+    noise_points = (df_sample["amenity_cluster"] == -1).sum()
 
     logger.info(f"Found {n_clusters} amenity clusters ({noise_points} noise points)")
 
-    cluster_stats = df_sample[df_sample['amenity_cluster'] != -1].groupby('amenity_cluster').agg({
-        'price_psf': ['mean', 'std', 'count'],
-        'mrt_within_500m': 'mean',
-        'hawker_within_500m': 'mean',
-        'park_within_500m': 'mean'
-    }).reset_index()
+    cluster_stats = (
+        df_sample[df_sample["amenity_cluster"] != -1]
+        .groupby("amenity_cluster")
+        .agg(
+            {
+                "price_psf": ["mean", "std", "count"],
+                "mrt_within_500m": "mean",
+                "hawker_within_500m": "mean",
+                "park_within_500m": "mean",
+            }
+        )
+        .reset_index()
+    )
 
-    baseline_price = df_sample[df_sample['amenity_cluster'] == -1]['price_psf'].mean()
+    baseline_price = df_sample[df_sample["amenity_cluster"] == -1]["price_psf"].mean()
 
     if not cluster_stats.empty:
-        cluster_stats['premium_over_baseline'] = cluster_stats[('price_psf', 'mean')] - baseline_price
+        cluster_stats["premium_over_baseline"] = (
+            cluster_stats[("price_psf", "mean")] - baseline_price
+        )
 
     sum_individual_effects = 0
     for feature in available_features:
-        if 'mrt' in feature:
-            sum_individual_effects += df_sample[df_sample[feature] > 0]['price_psf'].mean() - baseline_price
+        if "mrt" in feature:
+            sum_individual_effects += (
+                df_sample[df_sample[feature] > 0]["price_psf"].mean() - baseline_price
+            )
 
-    cluster_effect = cluster_stats['premium_over_baseline'].mean() if not cluster_stats.empty else 0
+    cluster_effect = cluster_stats["premium_over_baseline"].mean() if not cluster_stats.empty else 0
 
     result = {
-        'n_clusters': n_clusters,
-        'noise_points': noise_points,
-        'baseline_price_psf': baseline_price,
-        'avg_cluster_premium': cluster_effect,
-        'sum_individual_effects': sum_individual_effects,
-        'cluster_premium_exceeds_sum': cluster_effect > sum_individual_effects if sum_individual_effects else None,
-        'cluster_stats': cluster_stats.to_dict() if not cluster_stats.empty else {},
-        'sample_size': sample_size
+        "n_clusters": n_clusters,
+        "noise_points": noise_points,
+        "baseline_price_psf": baseline_price,
+        "avg_cluster_premium": cluster_effect,
+        "sum_individual_effects": sum_individual_effects,
+        "cluster_premium_exceeds_sum": cluster_effect > sum_individual_effects
+        if sum_individual_effects
+        else None,
+        "cluster_stats": cluster_stats.to_dict() if not cluster_stats.empty else {},
+        "sample_size": sample_size,
     }
 
     logger.info(f"Average cluster premium: ${cluster_effect:.2f} PSF")
@@ -497,22 +529,23 @@ def analyze_mrt_by_station_type(df: pd.DataFrame) -> dict:
 
     df = df.copy()
 
-    df['station_type'] = 'Standard'
-    df.loc[df['dist_to_nearest_mrt'] < 300, 'station_type'] = 'Interchange Proximity'
-    df.loc[df['mrt_within_500m'] > 1, 'station_type'] = 'Multi-Station Area'
+    df["station_type"] = "Standard"
+    df.loc[df["dist_to_nearest_mrt"] < 300, "station_type"] = "Interchange Proximity"
+    df.loc[df["mrt_within_500m"] > 1, "station_type"] = "Multi-Station Area"
 
-    results = df.groupby('station_type').agg({
-        'price_psf': ['mean', 'median', 'count'],
-        'dist_to_nearest_mrt': 'mean'
-    }).reset_index()
+    results = (
+        df.groupby("station_type")
+        .agg({"price_psf": ["mean", "median", "count"], "dist_to_nearest_mrt": "mean"})
+        .reset_index()
+    )
 
-    baseline = df[df['station_type'] == 'Standard']['price_psf'].mean()
+    baseline = df[df["station_type"] == "Standard"]["price_psf"].mean()
 
-    results['premium_over_baseline'] = results[('price_psf', 'mean')] - baseline
+    results["premium_over_baseline"] = results[("price_psf", "mean")] - baseline
 
     return {
-        'baseline_price_psf': baseline,
-        'results': results.to_dict() if not results.empty else {}
+        "baseline_price_psf": baseline,
+        "results": results.to_dict() if not results.empty else {},
     }
 
 
@@ -523,7 +556,7 @@ def generate_summary_report(
     rf_results: dict | None,
     moran_results: dict,
     cluster_results: dict,
-    station_type_results: dict
+    station_type_results: dict,
 ) -> str:
     """Generate markdown summary report."""
 
@@ -639,37 +672,51 @@ The XGBoost feature importance rankings show:
 
 *Analysis completed: {date}*
 """.format(
-        date=datetime.now().strftime('%Y-%m-%d'),
-        ols_train=ols_results.get('r2_train', 0),
-        ols_test=ols_results.get('r2_test', 0),
-        ols_mae=ols_results.get('mae', 0),
-        xgb_train=xgb_results.get('r2_train', 0) if xgb_results else 0,
-        xgb_test=xgb_results.get('r2_test', 0) if xgb_results else 0,
-        xgb_mae=xgb_results.get('mae', 0) if xgb_results else 0,
-        lgb_train=lgb_results.get('r2_train', 0) if lgb_results else 0,
-        lgb_test=lgb_results.get('r2_test', 0) if lgb_results else 0,
-        lgb_mae=lgb_results.get('mae', 0) if lgb_results else 0,
-        rf_train=rf_results.get('r2_train', 0) if rf_results else 0,
-        rf_test=rf_results.get('r2_test', 0) if rf_results else 0,
-        rf_mae=rf_results.get('mae', 0) if rf_results else 0,
-        moran=moran_results.get('moran_i', 0),
-        moran_p=moran_results.get('p_value', 0),
-        moran_interp=moran_results.get('interpretation', 'Unknown'),
-        std_price=station_type_results.get('results', {}).get(('price_psf', 'mean'), {}).get('Standard', 0),
-        int_price=station_type_results.get('results', {}).get(('price_psf', 'mean'), {}).get('Interchange Proximity', 0),
-        int_prem=station_type_results.get('results', {}).get('premium_over_baseline', {}).get('Interchange Proximity', 0),
-        multi_price=station_type_results.get('results', {}).get(('price_psf', 'mean'), {}).get('Multi-Station Area', 0),
-        multi_prem=station_type_results.get('results', {}).get('premium_over_baseline', {}).get('Multi-Station Area', 0),
-        n_clusters=cluster_results.get('n_clusters', 0),
-        noise_pts=cluster_results.get('noise_points', 0),
-        baseline=cluster_results.get('baseline_price_psf', 0),
-        cluster_prem=cluster_results.get('avg_cluster_premium', 0),
-        individual=cluster_results.get('sum_individual_effects', 0),
-        synergy='Positive (cluster premium > sum)' if cluster_results.get('cluster_premium_exceeds_sum') else 'Negative',
-        conclusion='Amenity clusters add value beyond individual amenities' if cluster_results.get('cluster_premium_exceeds_sum') else 'No significant synergy effect',
-        mrt_coef=ols_results.get('coefficients', {}).get('dist_to_nearest_mrt', 0),
-        hawker_coef=ols_results.get('coefficients', {}).get('hawker_within_500m', 0),
-        park_coef=ols_results.get('coefficients', {}).get('park_within_500m', 0)
+        date=datetime.now().strftime("%Y-%m-%d"),
+        ols_train=ols_results.get("r2_train", 0),
+        ols_test=ols_results.get("r2_test", 0),
+        ols_mae=ols_results.get("mae", 0),
+        xgb_train=xgb_results.get("r2_train", 0) if xgb_results else 0,
+        xgb_test=xgb_results.get("r2_test", 0) if xgb_results else 0,
+        xgb_mae=xgb_results.get("mae", 0) if xgb_results else 0,
+        lgb_train=lgb_results.get("r2_train", 0) if lgb_results else 0,
+        lgb_test=lgb_results.get("r2_test", 0) if lgb_results else 0,
+        lgb_mae=lgb_results.get("mae", 0) if lgb_results else 0,
+        rf_train=rf_results.get("r2_train", 0) if rf_results else 0,
+        rf_test=rf_results.get("r2_test", 0) if rf_results else 0,
+        rf_mae=rf_results.get("mae", 0) if rf_results else 0,
+        moran=moran_results.get("moran_i", 0),
+        moran_p=moran_results.get("p_value", 0),
+        moran_interp=moran_results.get("interpretation", "Unknown"),
+        std_price=station_type_results.get("results", {})
+        .get(("price_psf", "mean"), {})
+        .get("Standard", 0),
+        int_price=station_type_results.get("results", {})
+        .get(("price_psf", "mean"), {})
+        .get("Interchange Proximity", 0),
+        int_prem=station_type_results.get("results", {})
+        .get("premium_over_baseline", {})
+        .get("Interchange Proximity", 0),
+        multi_price=station_type_results.get("results", {})
+        .get(("price_psf", "mean"), {})
+        .get("Multi-Station Area", 0),
+        multi_prem=station_type_results.get("results", {})
+        .get("premium_over_baseline", {})
+        .get("Multi-Station Area", 0),
+        n_clusters=cluster_results.get("n_clusters", 0),
+        noise_pts=cluster_results.get("noise_points", 0),
+        baseline=cluster_results.get("baseline_price_psf", 0),
+        cluster_prem=cluster_results.get("avg_cluster_premium", 0),
+        individual=cluster_results.get("sum_individual_effects", 0),
+        synergy="Positive (cluster premium > sum)"
+        if cluster_results.get("cluster_premium_exceeds_sum")
+        else "Negative",
+        conclusion="Amenity clusters add value beyond individual amenities"
+        if cluster_results.get("cluster_premium_exceeds_sum")
+        else "No significant synergy effect",
+        mrt_coef=ols_results.get("coefficients", {}).get("dist_to_nearest_mrt", 0),
+        hawker_coef=ols_results.get("coefficients", {}).get("hawker_within_500m", 0),
+        park_coef=ols_results.get("coefficients", {}).get("park_within_500m", 0),
     )
 
     return report
@@ -700,25 +747,30 @@ def main():
     station_type_results = analyze_mrt_by_station_type(df)
 
     report = generate_summary_report(
-        ols_results, xgb_results, lgb_results, rf_results,
-        moran_results, cluster_results, station_type_results
+        ols_results,
+        xgb_results,
+        lgb_results,
+        rf_results,
+        moran_results,
+        cluster_results,
+        station_type_results,
     )
 
     report_path = OUTPUT_DIR / "spatial_econometrics_analysis_report.md"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(report)
     logger.info(f"Saved report: {report_path}")
 
     results = {
-        'ols': ols_results,
-        'xgboost': xgb_results,
-        'lightgbm': lgb_results,
-        'random_forest': rf_results,
-        'morans_i': moran_results,
-        'spatial_error': sem_results,
-        'spatial_lag': slm_results,
-        'clusters': cluster_results,
-        'station_types': station_type_results
+        "ols": ols_results,
+        "xgboost": xgb_results,
+        "lightgbm": lgb_results,
+        "random_forest": rf_results,
+        "morans_i": moran_results,
+        "spatial_error": sem_results,
+        "spatial_lag": slm_results,
+        "clusters": cluster_results,
+        "station_types": station_type_results,
     }
 
     results_path = OUTPUT_DIR / "model_results.json"
@@ -728,7 +780,11 @@ def main():
         if obj is None:
             return None
         if isinstance(obj, dict):
-            return {k: clean_for_json(v) for k, v in obj.items() if v is not None and 'model' not in str(k)}
+            return {
+                k: clean_for_json(v)
+                for k, v in obj.items()
+                if v is not None and "model" not in str(k)
+            }
         if isinstance(obj, (list, tuple)):
             return [clean_for_json(i) for i in obj if i is not None]
         if isinstance(obj, (np.floating, np.integer)):
@@ -737,7 +793,7 @@ def main():
             return obj.tolist()
         return obj
 
-    with open(results_path, 'w') as f:
+    with open(results_path, "w") as f:
         json.dump(clean_for_json(results), f, indent=2, default=str)
     logger.info(f"Saved results: {results_path}")
 
@@ -746,9 +802,15 @@ def main():
     print("=" * 60)
     print(f"\nReport: {report_path}")
     print(f"Results: {results_path}")
-    print(f"\nMoran's I: {moran_results.get('moran_i', 'N/A'):.4f} (p: {moran_results.get('p_value', 0):.6f})")
+    print(
+        f"\nMoran's I: {moran_results.get('moran_i', 'N/A'):.4f} (p: {moran_results.get('p_value', 0):.6f})"
+    )
     print(f"Clusters found: {cluster_results.get('n_clusters', 0)}")
-    print(f"Model R² (XGBoost): {xgb_results.get('r2_test', 0):.4f}" if xgb_results else "XGBoost not available")
+    print(
+        f"Model R² (XGBoost): {xgb_results.get('r2_test', 0):.4f}"
+        if xgb_results
+        else "XGBoost not available"
+    )
 
 
 if __name__ == "__main__":

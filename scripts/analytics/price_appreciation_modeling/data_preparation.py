@@ -195,8 +195,10 @@ def create_train_test_split(
     train_df = df_complete[train_mask].copy()
     test_df = df_complete[test_mask].copy()
 
-    logger.info(f"  Train: {len(train_df):,} records ({len(train_df)/len(df_complete)*100:.1f}%)")
-    logger.info(f"  Test: {len(test_df):,} records ({len(test_df)/len(df_complete)*100:.1f}%)")
+    logger.info(
+        f"  Train: {len(train_df):,} records ({len(train_df) / len(df_complete) * 100:.1f}%)"
+    )
+    logger.info(f"  Test: {len(test_df):,} records ({len(test_df) / len(df_complete) * 100:.1f}%)")
 
     return train_df, test_df
 
@@ -251,15 +253,35 @@ def main():
     logger.info("Data Preparation Complete!")
     logger.info("=" * 60)
     logger.info(f"Total records: {len(prepared_df):,}")
-    logger.info(f"Records with temporal features: {prepared_df['yoy_change_pct_lag1'].notna().sum():,}")
+    logger.info(
+        f"Records with temporal features: {prepared_df['yoy_change_pct_lag1'].notna().sum():,}"
+    )
     logger.info(f"Total features: {len(prepared_df.columns)}")
 
     feature_breakdown = {
-        "Core/Target": [col for col in prepared_df.columns if col in ["year", "month", "yoy_change_pct", "price_psf", "lat", "lon"]],
-        "Temporal": [col for col in prepared_df.columns if "lag" in col or "acceleration" in col or "trend_stability" in col],
-        "Location/Amenity": [col for col in prepared_df.columns if col.startswith("dist_to_nearest_")],
-        "Property": [col for col in prepared_df.columns if col in ["is_hdb", "is_condo", "is_ec", "log_price_psf", "lease_decay_factor"]],
-        "Spatial Interaction": [col for col in prepared_df.columns if col in ["dist_mrt_sq", "mrt_x_hawker", "school_x_park", "amenity_density"]],
+        "Core/Target": [
+            col
+            for col in prepared_df.columns
+            if col in ["year", "month", "yoy_change_pct", "price_psf", "lat", "lon"]
+        ],
+        "Temporal": [
+            col
+            for col in prepared_df.columns
+            if "lag" in col or "acceleration" in col or "trend_stability" in col
+        ],
+        "Location/Amenity": [
+            col for col in prepared_df.columns if col.startswith("dist_to_nearest_")
+        ],
+        "Property": [
+            col
+            for col in prepared_df.columns
+            if col in ["is_hdb", "is_condo", "is_ec", "log_price_psf", "lease_decay_factor"]
+        ],
+        "Spatial Interaction": [
+            col
+            for col in prepared_df.columns
+            if col in ["dist_mrt_sq", "mrt_x_hawker", "school_x_park", "amenity_density"]
+        ],
     }
 
     for ftype, cols in feature_breakdown.items():
@@ -270,7 +292,9 @@ def main():
     logger.info(f"\nTrain set: {len(train_df):,} records × {len(train_df.columns)} total columns")
     logger.info(f"Test set: {len(test_df):,} records × {len(test_df.columns)} total columns")
     logger.info("\n✅ Datasets ready for model training!")
-    logger.info("   Next step: uv run python -m scripts.analytics.price_appreciation_modeling.train_models")
+    logger.info(
+        "   Next step: uv run python -m scripts.analytics.price_appreciation_modeling.train_models"
+    )
 
 
 if __name__ == "__main__":

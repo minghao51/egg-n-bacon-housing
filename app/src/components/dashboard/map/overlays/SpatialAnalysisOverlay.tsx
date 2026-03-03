@@ -9,7 +9,7 @@
 
 import React, { useRef } from 'react';
 import { LayerGroup, GeoJSON } from 'react-leaflet';
-import { SpatialAnalyticsData, LayerId, GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
+import type { SpatialAnalyticsData, LayerId, GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
 import { getHotspotColor, LISA_CLUSTER_COLORS } from '../../../../utils/colorScales';
 
 interface SpatialAnalysisOverlayProps {

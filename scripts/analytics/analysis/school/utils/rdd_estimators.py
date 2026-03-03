@@ -28,7 +28,7 @@ class RDDEstimator:
         self,
         df: pd.DataFrame,
         bandwidth: int = 200,
-        distance_col: str = 'nearest_schoolPRIMARY_dist'
+        distance_col: str = "nearest_schoolPRIMARY_dist",
     ):
         """
         Create RDD dataset focusing on properties around 1km boundary.
@@ -45,31 +45,27 @@ class RDDEstimator:
 
         # Calculate running variable (distance - cutoff)
         df = df.copy()
-        df['running_var'] = df[distance_col] - self.cutoff
+        df["running_var"] = df[distance_col] - self.cutoff
 
         # Treatment: within 1km
-        df['treated'] = (df[distance_col] <= self.cutoff).astype(int)
+        df["treated"] = (df[distance_col] <= self.cutoff).astype(int)
 
         # Filter to optimal bandwidth (around cutoff)
         lower_bound = -bandwidth
         upper_bound = bandwidth
 
         rdd_sample = df[
-            (df['running_var'] >= lower_bound) &
-            (df['running_var'] <= upper_bound)
+            (df["running_var"] >= lower_bound) & (df["running_var"] <= upper_bound)
         ].copy()
 
         logger.info(f"  RDD sample size: {len(rdd_sample):,}")
-        logger.info(f"  Treated (≤1km): {(rdd_sample['treated']==1).sum():,}")
-        logger.info(f"  Control (>1km): {(rdd_sample['treated']==0).sum():,}")
+        logger.info(f"  Treated (≤1km): {(rdd_sample['treated'] == 1).sum():,}")
+        logger.info(f"  Control (>1km): {(rdd_sample['treated'] == 0).sum():,}")
 
         return rdd_sample
 
     def estimate_rdd(
-        self,
-        rdd_df: pd.DataFrame,
-        target_col: str = 'price_psf',
-        control_cols: list = None
+        self, rdd_df: pd.DataFrame, target_col: str = "price_psf", control_cols: list = None
     ):
         """
         Estimate RDD treatment effect.
@@ -87,12 +83,12 @@ class RDDEstimator:
         logger.info("Estimating RDD treatment effect...")
 
         # Prepare features
-        feature_cols = ['treated', 'running_var']
+        feature_cols = ["treated", "running_var"]
 
         # Add interaction term
         rdd_df = rdd_df.copy()
-        rdd_df['treated_x_running'] = rdd_df['treated'] * rdd_df['running_var']
-        feature_cols.append('treated_x_running')
+        rdd_df["treated_x_running"] = rdd_df["treated"] * rdd_df["running_var"]
+        feature_cols.append("treated_x_running")
 
         # Add controls if provided
         if control_cols:
@@ -109,35 +105,34 @@ class RDDEstimator:
         model.fit(X, y)
 
         # Extract coefficients
-        coef_df = pd.DataFrame({
-            'feature': feature_cols,
-            'coefficient': model.coef_,
-            'abs_coef': np.abs(model.coef_)
-        }).sort_values('abs_coef', ascending=False)
+        coef_df = pd.DataFrame(
+            {"feature": feature_cols, "coefficient": model.coef_, "abs_coef": np.abs(model.coef_)}
+        ).sort_values("abs_coef", ascending=False)
 
         # Treatment effect (tau) is coefficient on 'treated'
-        tau_idx = feature_cols.index('treated')
+        tau_idx = feature_cols.index("treated")
         tau = model.coef_[tau_idx]
 
         # Calculate standard errors using statsmodels for inference
         try:
             import statsmodels.api as sm
-            X_sm = sm.add_constant(X)
-            model_sm = sm.OLS(y, X_sm).fit(cov_type='HC3')  # Robust SE
 
-            tau_sm = model_sm.params['treated']
-            tau_se = model_sm.bse['treated']
-            tau_pval = model_sm.pvalues['treated']
-            tau_ci_lower = model_sm.conf_int().loc['treated', 0]
-            tau_ci_upper = model_sm.conf_int().loc['treated', 1]
+            X_sm = sm.add_constant(X)
+            model_sm = sm.OLS(y, X_sm).fit(cov_type="HC3")  # Robust SE
+
+            tau_sm = model_sm.params["treated"]
+            tau_se = model_sm.bse["treated"]
+            tau_pval = model_sm.pvalues["treated"]
+            tau_ci_lower = model_sm.conf_int().loc["treated", 0]
+            tau_ci_upper = model_sm.conf_int().loc["treated", 1]
 
             inference = {
-                'tau': tau_sm,
-                'se': tau_se,
-                'p_value': tau_pval,
-                'ci_lower': tau_ci_lower,
-                'ci_upper': tau_ci_upper,
-                'significant': tau_pval < 0.05
+                "tau": tau_sm,
+                "se": tau_se,
+                "p_value": tau_pval,
+                "ci_lower": tau_ci_lower,
+                "ci_upper": tau_ci_upper,
+                "significant": tau_pval < 0.05,
             }
 
             logger.info(f"  Treatment Effect (τ): ${tau_sm:.2f} PSF")
@@ -148,30 +143,26 @@ class RDDEstimator:
 
         except ImportError:
             logger.warning("  statsmodels not available - skipping inference")
-            inference = {'tau': tau, 'se': None, 'p_value': None}
+            inference = {"tau": tau, "se": None, "p_value": None}
 
         # R²
         y_pred = model.predict(X)
-        r2 = 1 - np.sum((y - y_pred)**2) / np.sum((y - y.mean())**2)
+        r2 = 1 - np.sum((y - y_pred) ** 2) / np.sum((y - y.mean()) ** 2)
 
         results = {
-            'tau': tau,
-            'r2': r2,
-            'n': len(rdd_df),
-            'n_treated': (rdd_df['treated'] == 1).sum(),
-            'n_control': (rdd_df['treated'] == 0).sum(),
-            'inference': inference,
-            'coefficients': coef_df,
-            'model': model
+            "tau": tau,
+            "r2": r2,
+            "n": len(rdd_df),
+            "n_treated": (rdd_df["treated"] == 1).sum(),
+            "n_control": (rdd_df["treated"] == 0).sum(),
+            "inference": inference,
+            "coefficients": coef_df,
+            "model": model,
         }
 
         return results
 
-    def test_covariate_balance(
-        self,
-        rdd_df: pd.DataFrame,
-        covariate_cols: list
-    ):
+    def test_covariate_balance(self, rdd_df: pd.DataFrame, covariate_cols: list):
         """
         Test if covariates are balanced at the cutoff.
 
@@ -186,25 +177,29 @@ class RDDEstimator:
                 continue
 
             # Compare means of treated vs control
-            treated_mean = rdd_df[rdd_df['treated'] == 1][col].mean()
-            control_mean = rdd_df[rdd_df['treated'] == 0][col].mean()
+            treated_mean = rdd_df[rdd_df["treated"] == 1][col].mean()
+            control_mean = rdd_df[rdd_df["treated"] == 0][col].mean()
 
             # T-test for difference
-            treated_vals = rdd_df[rdd_df['treated'] == 1][col].dropna()
-            control_vals = rdd_df[rdd_df['treated'] == 0][col].dropna()
+            treated_vals = rdd_df[rdd_df["treated"] == 1][col].dropna()
+            control_vals = rdd_df[rdd_df["treated"] == 0][col].dropna()
 
             t_stat, p_val = stats.ttest_ind(treated_vals, control_vals)
 
-            balance_results.append({
-                'covariate': col,
-                'treated_mean': treated_mean,
-                'control_mean': control_mean,
-                'diff': treated_mean - control_mean,
-                'diff_pct': (treated_mean - control_mean) / control_mean * 100 if control_mean != 0 else np.nan,
-                't_stat': t_stat,
-                'p_value': p_val,
-                'balanced': p_val > 0.05  # Not significantly different
-            })
+            balance_results.append(
+                {
+                    "covariate": col,
+                    "treated_mean": treated_mean,
+                    "control_mean": control_mean,
+                    "diff": treated_mean - control_mean,
+                    "diff_pct": (treated_mean - control_mean) / control_mean * 100
+                    if control_mean != 0
+                    else np.nan,
+                    "t_stat": t_stat,
+                    "p_value": p_val,
+                    "balanced": p_val > 0.05,  # Not significantly different
+                }
+            )
 
         balance_df = pd.DataFrame(balance_results)
 
@@ -221,8 +216,8 @@ class RDDEstimator:
         self,
         df: pd.DataFrame,
         bandwidths: list = [100, 150, 200, 250, 300],
-        target_col: str = 'price_psf',
-        control_cols: list = None
+        target_col: str = "price_psf",
+        control_cols: list = None,
     ):
         """
         Test RDD across multiple bandwidths to check robustness.
@@ -244,18 +239,22 @@ class RDDEstimator:
             # Estimate effect
             results = self.estimate_rdd(rdd_df, target_col, control_cols)
 
-            sensitivity_results.append({
-                'bandwidth': bw,
-                'n': results['n'],
-                'tau': results['tau'],
-                'r2': results['r2'],
-                'p_value': results['inference'].get('p_value'),
-                'significant': results['inference'].get('significant', False)
-            })
+            sensitivity_results.append(
+                {
+                    "bandwidth": bw,
+                    "n": results["n"],
+                    "tau": results["tau"],
+                    "r2": results["r2"],
+                    "p_value": results["inference"].get("p_value"),
+                    "significant": results["inference"].get("significant", False),
+                }
+            )
 
         sensitivity_df = pd.DataFrame(sensitivity_results)
 
-        logger.info(f"  Tau range: ${sensitivity_df['tau'].min():.2f} - ${sensitivity_df['tau'].max():.2f} PSF")
+        logger.info(
+            f"  Tau range: ${sensitivity_df['tau'].min():.2f} - ${sensitivity_df['tau'].max():.2f} PSF"
+        )
 
         # Save
         output_path = self.output_dir / "rdd_bandwidth_sensitivity.csv"
@@ -268,8 +267,8 @@ class RDDEstimator:
         self,
         df: pd.DataFrame,
         placebo_cutoffs: list = [800, 1200],
-        target_col: str = 'price_psf',
-        control_cols: list = None
+        target_col: str = "price_psf",
+        control_cols: list = None,
     ):
         """
         Run placebo tests at fake cutoffs (should show no effect).
@@ -297,13 +296,15 @@ class RDDEstimator:
             # Estimate effect
             results = self.estimate_rdd(rdd_df, target_col, control_cols)
 
-            placebo_results.append({
-                'cutoff': fake_cutoff,
-                'n': results['n'],
-                'tau': results['tau'],
-                'p_value': results['inference'].get('p_value'),
-                'significant': results['inference'].get('significant', False)
-            })
+            placebo_results.append(
+                {
+                    "cutoff": fake_cutoff,
+                    "n": results["n"],
+                    "tau": results["tau"],
+                    "p_value": results["inference"].get("p_value"),
+                    "significant": results["inference"].get("significant", False),
+                }
+            )
 
             # Reset cutoff
             self.cutoff = original_cutoff
@@ -320,10 +321,7 @@ class RDDEstimator:
         return placebo_df
 
     def visualize_discontinuity(
-        self,
-        rdd_df: pd.DataFrame,
-        target_col: str = 'price_psf',
-        bandwidth: int = 200
+        self, rdd_df: pd.DataFrame, target_col: str = "price_psf", bandwidth: int = 200
     ):
         """
         Create visualization of price discontinuity at 1km boundary.
@@ -334,63 +332,90 @@ class RDDEstimator:
 
         # Bin the data for cleaner visualization
         bin_width = 20  # 20m bins
-        rdd_df['distance_bin'] = (rdd_df['running_var'] // bin_width) * bin_width
+        rdd_df["distance_bin"] = (rdd_df["running_var"] // bin_width) * bin_width
 
-        binned = rdd_df.groupby('distance_bin').agg({
-            target_col: 'mean',
-            'treated': 'first'
-        }).reset_index()
+        binned = (
+            rdd_df.groupby("distance_bin")
+            .agg({target_col: "mean", "treated": "first"})
+            .reset_index()
+        )
 
         # Plot control and treated separately
-        control = binned[binned['treated'] == 0]
-        treated = binned[binned['treated'] == 1]
+        control = binned[binned["treated"] == 0]
+        treated = binned[binned["treated"] == 1]
 
-        ax.scatter(control['distance_bin'] + self.cutoff, control[target_col],
-                   alpha=0.6, s=30, label='Control (>1km)', color='coral')
-        ax.scatter(treated['distance_bin'] + self.cutoff, treated[target_col],
-                   alpha=0.6, s=30, label='Treated (≤1km)', color='steelblue')
+        ax.scatter(
+            control["distance_bin"] + self.cutoff,
+            control[target_col],
+            alpha=0.6,
+            s=30,
+            label="Control (>1km)",
+            color="coral",
+        )
+        ax.scatter(
+            treated["distance_bin"] + self.cutoff,
+            treated[target_col],
+            alpha=0.6,
+            s=30,
+            label="Treated (≤1km)",
+            color="steelblue",
+        )
 
         # Add vertical line at cutoff
-        ax.axvline(x=self.cutoff, color='red', linestyle='--', linewidth=2, label='1km Cutoff')
+        ax.axvline(x=self.cutoff, color="red", linestyle="--", linewidth=2, label="1km Cutoff")
 
         # Add loess smoothing lines
-        for data, label, color in [(control, 'Control', 'coral'), (treated, 'Treated', 'steelblue')]:
+        for data, label, color in [
+            (control, "Control", "coral"),
+            (treated, "Treated", "steelblue"),
+        ]:
             if len(data) > 3:
                 # Simple moving average
                 window = max(3, len(data) // 5)
                 smoothed = data[target_col].rolling(window, center=True, min_periods=1).mean()
-                ax.plot(data['distance_bin'] + self.cutoff, smoothed,
-                       color=color, linewidth=2, alpha=0.7)
+                ax.plot(
+                    data["distance_bin"] + self.cutoff,
+                    smoothed,
+                    color=color,
+                    linewidth=2,
+                    alpha=0.7,
+                )
 
-        ax.set_xlabel('Distance to Primary School (m)', fontsize=12)
-        ax.set_ylabel('Price PSF ($)', fontsize=12)
-        ax.set_title('RDD: Price Discontinuity at 1km School Boundary', fontsize=14, fontweight='bold')
+        ax.set_xlabel("Distance to Primary School (m)", fontsize=12)
+        ax.set_ylabel("Price PSF ($)", fontsize=12)
+        ax.set_title(
+            "RDD: Price Discontinuity at 1km School Boundary", fontsize=14, fontweight="bold"
+        )
         ax.legend(fontsize=10)
         ax.grid(True, alpha=0.3)
 
         plt.tight_layout()
         output_path = self.output_dir / "rdd_visualization.png"
-        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        plt.savefig(output_path, dpi=150, bbox_inches="tight")
         logger.info(f"  Saved: {output_path}")
         plt.close()
 
     def save_main_results(self, results: dict):
         """Save main RDD effect estimate to CSV."""
-        inference = results['inference']
+        inference = results["inference"]
 
-        result_df = pd.DataFrame([{
-            'metric': 'treatment_effect',
-            'value': results['tau'],
-            'std_error': inference.get('se'),
-            'p_value': inference.get('p_value'),
-            'ci_lower': inference.get('ci_lower'),
-            'ci_upper': inference.get('ci_upper'),
-            'significant': inference.get('significant', False),
-            'r2': results['r2'],
-            'n': results['n'],
-            'n_treated': results['n_treated'],
-            'n_control': results['n_control']
-        }])
+        result_df = pd.DataFrame(
+            [
+                {
+                    "metric": "treatment_effect",
+                    "value": results["tau"],
+                    "std_error": inference.get("se"),
+                    "p_value": inference.get("p_value"),
+                    "ci_lower": inference.get("ci_lower"),
+                    "ci_upper": inference.get("ci_upper"),
+                    "significant": inference.get("significant", False),
+                    "r2": results["r2"],
+                    "n": results["n"],
+                    "n_treated": results["n_treated"],
+                    "n_control": results["n_control"],
+                }
+            ]
+        )
 
         output_path = self.output_dir / "rdd_main_effect.csv"
         result_df.to_csv(output_path, index=False)

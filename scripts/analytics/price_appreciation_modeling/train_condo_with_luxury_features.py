@@ -32,9 +32,7 @@ def add_luxury_features(df: pd.DataFrame) -> pd.DataFrame:
     # Luxury segment indicators (by price PSF)
     df["is_luxury"] = (df["price_psf"] > 3000).astype(int)
     df["is_mass_market"] = (df["price_psf"] < 1500).astype(int)
-    df["is_mid_market"] = (
-        (df["price_psf"] >= 1500) & (df["price_psf"] <= 3000)
-    ).astype(int)
+    df["is_mid_market"] = ((df["price_psf"] >= 1500) & (df["price_psf"] <= 3000)).astype(int)
 
     # Size categories
     df["is_shoebox"] = (df["floor_area_sqft"] < 500).astype(int)
@@ -71,7 +69,9 @@ def add_luxury_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def prepare_features(df: pd.DataFrame, target_col: str = "yoy_change_pct", max_missing_pct: float = 0.3):
+def prepare_features(
+    df: pd.DataFrame, target_col: str = "yoy_change_pct", max_missing_pct: float = 0.3
+):
     """Select and prepare features for modeling."""
     # Select ONLY numeric columns
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
@@ -89,7 +89,9 @@ def prepare_features(df: pd.DataFrame, target_col: str = "yoy_change_pct", max_m
     missing_pct = feature_df.isna().sum() / len(feature_df)
     valid_features = missing_pct[missing_pct <= max_missing_pct].index.tolist()
 
-    logger.info(f"    Selected {len(valid_features)}/{len(numeric_cols)} features (missing < {max_missing_pct*100:.0f}%)")
+    logger.info(
+        f"    Selected {len(valid_features)}/{len(numeric_cols)} features (missing < {max_missing_pct * 100:.0f}%)"
+    )
 
     # Keep only valid features
     feature_df = feature_df[valid_features]
@@ -112,7 +114,9 @@ def train_improved_condo_model():
     logger.info("=" * 60)
 
     # Setup output directory
-    output_dir = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "improved_condo_model"
+    output_dir = (
+        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "improved_condo_model"
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load data
@@ -151,8 +155,12 @@ def train_improved_condo_model():
     extreme_outlier_mask = train_condo["yoy_change_pct"].abs() > 500
     moderate_outlier_mask = train_condo["yoy_change_pct"].abs() > 200
 
-    logger.info(f"  Extreme outliers (>500%): {extreme_outlier_mask.sum():,} ({extreme_outlier_mask.sum()/len(train_condo)*100:.2f}%)")
-    logger.info(f"  Moderate outliers (>200%): {moderate_outlier_mask.sum():,} ({moderate_outlier_mask.sum()/len(train_condo)*100:.2f}%)")
+    logger.info(
+        f"  Extreme outliers (>500%): {extreme_outlier_mask.sum():,} ({extreme_outlier_mask.sum() / len(train_condo) * 100:.2f}%)"
+    )
+    logger.info(
+        f"  Moderate outliers (>200%): {moderate_outlier_mask.sum():,} ({moderate_outlier_mask.sum() / len(train_condo) * 100:.2f}%)"
+    )
 
     # Train on cleaned data (remove extreme outliers)
     train_clean = train_condo[~extreme_outlier_mask].copy()
@@ -248,7 +256,7 @@ def train_improved_condo_model():
             "residual": y_test.values - y_pred_test,
             "abs_residual": np.abs(y_test.values - y_pred_test),
         },
-        index=y_test.index
+        index=y_test.index,
     )
     predictions_path = output_dir / "predictions.parquet"
     pred_df.to_parquet(predictions_path, index=False)

@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/compare/InvestmentImplications.tsx
-import { Segment, Persona } from '@/types/segments';
+import type { Segment, Persona } from '@/types/segments';
 
 interface InvestmentImplicationsProps {
   segments: Segment[];

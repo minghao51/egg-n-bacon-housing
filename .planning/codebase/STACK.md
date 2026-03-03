@@ -1,136 +1,180 @@
-# Tech Stack
+# Technology Stack
 
-## Languages & Runtime
+**Generated**: 2026-02-28
 
-- **Python 3.11+** - Main language for data processing pipeline
-- **TypeScript 5.9.3** - Frontend development with strict mode
-- **JavaScript** - Frontend React components
+## Core Languages
 
-## Frontend Stack (app/)
+### Python
+- **Version**: 3.11+ (minimum requirement)
+- **Package Manager**: uv (fast Python package manager)
+- **Virtual Environment**: `.venv/` (managed by uv)
 
-### Framework & Meta-Framework
-- **Astro 5.16.16** - Static site generator with islands architecture
-- **React 19.2.4** - UI framework for interactive components
-- **React-DOM 19.2.4** - React DOM bindings
+### TypeScript
+- **Version**: Latest (managed by Astro)
+- **Runtime**: Node.js (for frontend build process)
 
-### UI Libraries
-- **Tailwind CSS 3** - Utility-first CSS framework
-- **@astrojs/react 4.4.2** - React integration for Astro
-- **@astrojs/tailwind 6.0.2** - Tailwind CSS integration
-- **@astrojs/mdx 4.3.13** - MDX support for markdown content
-- **Lucide React 0.575.0** - Icon library
-- **@tanstack/react-table 8.21.3** - Headless UI tables
+## Python Packages
 
-### Visualization & Maps
-- **Recharts 3.7.0** - Data visualization library
-- **Leaflet 1.9.4 + React-Leaflet 5.0.0** - Interactive maps
-- **KaTeX 0.16.28 + Rehype-Katex 7.0.0** - Math rendering
-- **React-Markdown 10.1.0** - Markdown rendering
+### Data Processing
+- **pandas** - DataFrame manipulation and analysis
+- **numpy** - Numerical computing
+- **geopandas** - Spatial data operations
+- **pyarrow** - Parquet file format support
 
-## Python Data Stack
-
-### Core Data Processing
-- **pandas >= 2.0.0** - Data manipulation and analysis
-- **numpy >= 1.24.0** - Numerical computing
-- **geopandas** - Geospatial data processing
-- **pyarrow >= 15.0.0** - Parquet file format support
-- **h3 == 4.1.0b2** - Hexagonal hierarchical geospatial indexing
-
-### Machine Learning & Statistics
-- **scikit-learn** - Machine learning models
-- **xgboost >= 3.1.3** - Gradient boosting
-- **statsmodels >= 0.14.0** - Statistical modeling
-- **shap >= 0.49.1** - Model explainability
-- **prophet >= 1.2.1** - Time series forecasting
-- **lifelines >= 0.27.0** - Survival analysis
+### Machine Learning & Analytics
+- **scikit-learn** - Machine learning algorithms
+- **xgboost** - Gradient boosting models
+- **statsmodels** - Statistical analysis
+- **scipy** - Scientific computing
+- **langchain** - LLM integration for analytics agents
 
 ### Spatial Analysis
-- **libpysal >= 4.6.0** - Spatial statistics library
-- **esda >= 1.5.0** - Exploratory spatial data analysis
-- **scipy >= 1.17.0** - Scientific computing
+- **h3** - Uber's hexagonal spatial indexing
+- **shapely** - Geometric operations
+- **libpysal** - Spatial econometrics
+- **spreg** - Spatial regression models
+- **esda** - Spatial autocorrelation statistics
 
-### Web & APIs
+### Data Visualization
+- **matplotlib** - Plotting and charts
+- **seaborn** - Statistical visualizations
+- **plotly** - Interactive plots
+
+### API & Cloud
+- **boto3** - AWS SDK for Python
+- **supabase** - Database and authentication client
 - **requests** - HTTP client
-- **supabase** - Database client (configured but not actively used)
-- **python-dotenv** - Environment variable management
+- **httpx** - Async HTTP client
 
-### AI/LLM Integration
-- **langchain >= 0.3.0** - LLM framework
-- **langchain-google-genai == 2.0.0** - Google Generative AI integration
-- **langchain-experimental == 0.3.0** - Experimental features
-- **langchain-community** - Community integrations
+### Web Scraping
+- **beautifulsoup4** - HTML parsing
+- **jina-reader** - AI-powered web scraping
 
-### Visualization & Reporting
-- **plotly >= 6.5.2** - Interactive charts
-- **marimo >= 0.19.6** - Reactive notebooks
-- **kaleido >= 1.2.0** - Static image export
-- **pygwalker** - Interactive data exploration
+### Development Tools
+- **pytest** - Testing framework
+- **pytest-cov** - Coverage reporting
+- **ruff** - Linting and formatting (configured in pyproject.toml)
+- **ipykernel** - Jupyter notebook support
+- **jupytext** - Notebook ↔ Python script pairing
+
+## Frontend Stack
+
+### Framework
+- **Astro** 5.16.16 - Modern static site generator
+  - File-based routing
+  - Content collections
+  - Build optimization
+
+### UI Library
+- **React** 19.2.4 - Component framework
+- **React DOM** 19.2.4 - DOM rendering
+- **TypeScript** - Type-safe React components
+
+### Styling
+- **Tailwind CSS** - Utility-first CSS framework
+- **Leaflet** - Interactive maps
+- **Recharts** - Chart library for data visualization
+
+### Development
+- **Playwright** - E2E testing framework
+- **Vite** - Build tool (via Astro)
+- **TypeScript ESLint** - Linting for TypeScript
+
+## Data Formats
+
+### Primary Storage
+- **Parquet** (.parquet) - Columnar storage format
+  - Efficient compression
+  - Fast query performance
+  - Schema preservation
+  - Used for all processed datasets
+
+### Metadata
+- **JSON** (.json) - Configuration, metadata, API responses
+- **TOML** (pyproject.toml) - Python project configuration
+
+### Frontend Data
+- **JSON** - Export format for webapp consumption
 
 ## Development Tools
 
-### Python Development
-- **uv** - Fast Python package manager
-- **pytest 7.0.0+** - Testing framework
-- **ruff 0.1.0** - Linter and formatter (line length: 100)
-- **jupyter** - Interactive notebooks
-- **ipykernel** - Jupyter kernel
-- **jupytext** - Notebook pairing (.ipynb ↔ .py)
-
-### Frontend Development
-- **Node.js** - JavaScript runtime
-- **npm** - Package manager (via package.json)
-- **TypeScript 5.9.3** - Static type checking
-- **Playwright 1.58.0** - End-to-end testing
-
-## Configuration Files
-
-### Python Configuration
-- **pyproject.toml** - Project configuration, dependencies, tool settings
-- **jupytext.toml** - Jupytext notebook pairing configuration
-- **.env** - Environment variables (not in git)
-
-### Frontend Configuration
-- **astro.config.mjs** - Astro framework configuration
-- **tsconfig.json** - TypeScript configuration (extends astro strict)
-- **package.json** - Node.js dependencies
-- **tailwind.config.mjs** - Tailwind CSS configuration
-
-## Code Quality Tools
-
-### Python
-- **Ruff** - Linting and formatting
+### Code Quality
+- **Ruff** (Python)
+  - Linter: `uv run ruff check .`
+  - Formatter: `uv run ruff format .`
+  - Configuration: `pyproject.toml`
   - Line length: 100 characters
-  - Target version: Python 3.11
-  - Comprehensive rule set (E, F, W, I, N, UP)
+
+- **Biome/ESLint** (TypeScript)
+  - Located in `app/`
+  - Configuration for TypeScript/React
+
+### Version Control
+- **Git** - Source code control
+- **GitHub** - Hosting, CI/CD, issue tracking
 
 ### Testing
-- **pytest** - Testing framework with:
-  - Unit tests (@pytest.mark.unit)
-  - Integration tests (@pytest.mark.integration)
-  - Slow tests (@pytest.mark.slow)
-  - API tests (@pytest.mark.api)
-  - Coverage reporting (term, html, xml)
+- **pytest** - Python unit/integration tests
+- **Playwright** - Frontend E2E tests
+- **Coverage** - `pytest-cov` for test coverage reports
 
-## Documentation Standards
+## Deployment
 
-- **Google-style docstrings** for all public functions
-- **Type hints** required for all public APIs
-- **Absolute imports** from project root (no relative imports)
-- **Structured logging** with emojis for visual cues
+### Frontend
+- **GitHub Pages** - Static site hosting
+- **Build Output**: `app/dist/`
+- **Deployment**: GitHub Actions workflow
 
-## Version Control
+### Backend
+- **None** - Python scripts run locally or in CI
+- **Data**: Generated locally, committed to repo or stored in data/
 
-- **Git** - Version control
-- **GitHub** - Remote repository
-- **Conventional Commits** - Commit message format
-- **.gitignore** - Excludes: .venv, .env, __pycache__, node_modules, .astro
+## Environment Configuration
 
-## Key Technical Decisions
+### Environment Variables
+- **File**: `.env` (from `.env.example`)
+- **Loading**: `python-dotenv` in `scripts/core/config.py`
+- **Required Keys**:
+  - `ONEMAP_EMAIL` - Singapore geocoding API
+  - `GOOGLE_API_KEY` - Google Maps geocoding fallback
+  - `AWS_*` - Optional AWS credentials
+  - `SUPABASE_*` - Optional Supabase credentials
 
-1. **Astro over Next.js** - Better performance for static sites with content-focused pages
-2. **Parquet over CSV** - Efficient columnar storage for large datasets
-3. **Stage-based pipeline** - Clear separation of concerns (L0-L5)
-4. **Metadata-driven** - All datasets tracked in metadata.json
-5. **No backend API** - Frontend consumes pre-generated JSON files
-6. **Absolute imports** - Prevents import issues when running from different directories
-7. **uv over pip/poetry** - Faster dependency management
+### Configuration Management
+- **Central Config**: `scripts/core/config.py`
+- **Validation**: `Config.validate()` method
+- **Feature Flags**: `USE_CACHING`, `VERBOSE_LOGGING`
+
+## Jupyter Stack
+
+### Notebooks
+- **Jupyter** - Interactive notebook environment
+- **Jupytext** - Notebook ↔ Python script pairing
+  - Format: `.ipynb` + `.py` (paired)
+  - Cell markers: `#%%`
+  - Sync: `jupytext --sync notebook.ipynb`
+
+### Notebook Organization
+- **Location**: `notebooks/`
+- **Levels**:
+  - `L0_*` - Data collection notebooks
+  - `L1_*` - Data processing notebooks
+  - `L2_*` - Feature engineering notebooks
+  - `exploration/` - Experimental analysis
+
+## CI/CD
+
+### GitHub Actions
+- **Python Tests**: `pytest` with coverage
+- **Linting**: `ruff check`
+- **E2E Tests**: Playwright
+- **Deployment**: Auto-deploy to GitHub Pages
+
+## Summary
+
+**Primary Language**: Python 3.11+
+**Frontend**: Astro + React + TypeScript
+**Data**: Parquet + JSON
+**Testing**: pytest + Playwright
+**Package Manager**: uv (Python), npm (Node)
+**Deployment**: GitHub Pages

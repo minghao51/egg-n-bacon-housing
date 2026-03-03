@@ -41,14 +41,11 @@ sys.path.insert(0, str(project_root))
 from scripts.core.config import Config
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Set style
-plt.style.use('seaborn-v0_8-whitegrid')
+plt.style.use("seaborn-v0_8-whitegrid")
 sns.set_palette("husl")
 
 # Output directory
@@ -60,6 +57,7 @@ try:
     import libpysal
     from esda.moran import Moran
     from libpysal.weights import KNN
+
     SPATIAL_AVAILABLE = True
 except ImportError:
     SPATIAL_AVAILABLE = False
@@ -68,13 +66,14 @@ except ImportError:
 try:
     from mgwr.gwr import GWR
     from mgwr.sel_bw import Sel_BW
+
     GWR_AVAILABLE = True
 except ImportError:
     GWR_AVAILABLE = False
     logger.warning("mgwr not available - GWR models disabled (install with: uv add mgwr)")
 
 
-def load_recent_data(min_year=2021, property_type='HDB'):
+def load_recent_data(min_year=2021, property_type="HDB"):
     """Load recent transaction data for spatial analysis."""
     logger.info(f"Loading {property_type} data from {min_year}+...")
 
@@ -82,13 +81,18 @@ def load_recent_data(min_year=2021, property_type='HDB'):
     df = pd.read_parquet(path)
 
     # Filter by property type and year
-    df = df[df['property_type'] == property_type].copy()
-    df = df[df['year'] >= min_year].copy()
+    df = df[df["property_type"] == property_type].copy()
+    df = df[df["year"] >= min_year].copy()
 
     # Select features
     feature_cols = [
-        'price_psf', 'dist_to_nearest_mrt', 'floor_area_sqm',
-        'remaining_lease_months', 'lat', 'lon', 'planning_area'
+        "price_psf",
+        "dist_to_nearest_mrt",
+        "floor_area_sqm",
+        "remaining_lease_months",
+        "lat",
+        "lon",
+        "planning_area",
     ]
 
     df = df[feature_cols].dropna()
@@ -104,8 +108,8 @@ def run_global_ols(df):
     """Run global OLS model (baseline)."""
     logger.info("\nRunning Global OLS Model...")
 
-    X = df[['dist_to_nearest_mrt', 'floor_area_sqm', 'remaining_lease_months']].values
-    y = df['price_psf'].values
+    X = df[["dist_to_nearest_mrt", "floor_area_sqm", "remaining_lease_months"]].values
+    y = df["price_psf"].values
 
     model = LinearRegression()
     model.fit(X, y)
@@ -117,17 +121,17 @@ def run_global_ols(df):
     logger.info(f"  MRT Premium: ${model.coef_[0] * 100:.2f}/100m")
 
     results = {
-        'model': 'OLS',
-        'r2': r2,
-        'mrt_coef': model.coef_[0],
-        'mrt_premium_100m': model.coef_[0] * 100,
-        'predictions': y_pred
+        "model": "OLS",
+        "r2": r2,
+        "mrt_coef": model.coef_[0],
+        "mrt_premium_100m": model.coef_[0] * 100,
+        "predictions": y_pred,
     }
 
     return results, X, y
 
 
-def run_gwr_model(df, bw=None, fixed=False, kernel='gaussian'):
+def run_gwr_model(df, bw=None, fixed=False, kernel="gaussian"):
     """Run Geographically Weighted Regression.
 
     Args:
@@ -146,9 +150,9 @@ def run_gwr_model(df, bw=None, fixed=False, kernel='gaussian'):
     logger.info("\nRunning GWR Model...")
 
     # Prepare data
-    coords = list(zip(df['lat'], df['lon']))
-    X = df[['dist_to_nearest_mrt', 'floor_area_sqm', 'remaining_lease_months']].values
-    y = df['price_psf'].values
+    coords = list(zip(df["lat"], df["lon"]))
+    X = df[["dist_to_nearest_mrt", "floor_area_sqm", "remaining_lease_months"]].values
+    y = df["price_psf"].values
 
     # Standardize features for GWR
     scaler = StandardScaler()
@@ -183,19 +187,23 @@ def run_gwr_model(df, bw=None, fixed=False, kernel='gaussian'):
         logger.info(f"  R²: {r2:.4f}")
         logger.info(f"  AIC: {aic:.2f}")
         logger.info(f"  Local R² range: {local_r2.min():.4f} - {local_r2.max():.4f}")
-        logger.info(f"  Local MRT coefficient range: ${local_mrt_coefs.min():.2f} to ${local_mrt_coefs.max():.2f} per meter")
-        logger.info(f"  Local MRT premium range: ${local_mrt_coefs.min()*100:.2f} to ${local_mrt_coefs.max()*100:.2f} per 100m")
+        logger.info(
+            f"  Local MRT coefficient range: ${local_mrt_coefs.min():.2f} to ${local_mrt_coefs.max():.2f} per meter"
+        )
+        logger.info(
+            f"  Local MRT premium range: ${local_mrt_coefs.min() * 100:.2f} to ${local_mrt_coefs.max() * 100:.2f} per 100m"
+        )
 
         results = {
-            'model': 'GWR',
-            'r2': r2,
-            'aic': aic,
-            'bw': bw,
-            'local_r2': local_r2,
-            'local_mrt_coefs': local_mrt_coefs,
-            'local_mrt_premiums': local_mrt_coefs * 100,
-            'predictions': gwr_results.predy,
-            'coords': coords
+            "model": "GWR",
+            "r2": r2,
+            "aic": aic,
+            "bw": bw,
+            "local_r2": local_r2,
+            "local_mrt_coefs": local_mrt_coefs,
+            "local_mrt_premiums": local_mrt_coefs * 100,
+            "predictions": gwr_results.predy,
+            "coords": coords,
         }
 
         return results
@@ -217,28 +225,28 @@ def run_spatial_lag_model(df):
         import spreg
 
         # Prepare data
-        X = df[['dist_to_nearest_mrt', 'floor_area_sqm', 'remaining_lease_months']].values
-        y = df['price_psf'].values.reshape(-1, 1)
-        coords = list(zip(df['lat'], df['lon']))
+        X = df[["dist_to_nearest_mrt", "floor_area_sqm", "remaining_lease_months"]].values
+        y = df["price_psf"].values.reshape(-1, 1)
+        coords = list(zip(df["lat"], df["lon"]))
 
         # Create spatial weights (KNN)
         logger.info("  Creating spatial weights (K=8)...")
         w = KNN(coords, k=8)
-        w.transform = 'r'
+        w.transform = "r"
 
         # Run spatial lag model
         logger.info("  Fitting spatial lag model...")
-        model = spreg.GM_Lag(y, X, w=w, name_y='price', name_x=['MRT', 'Area', 'Lease'])
+        model = spreg.GM_Lag(y, X, w=w, name_y="price", name_x=["MRT", "Area", "Lease"])
 
         logger.info(f"  R²: {model.pr2:.4f}")
         logger.info(f"  Spatial lag coefficient (rho): {model.betas[0][0]:.4f}")
 
         results = {
-            'model': 'Spatial Lag',
-            'r2': model.pr2,
-            'rho': model.betas[0][0],
-            'mrt_coef': model.betas[1][0],
-            'predictions': model.predy
+            "model": "Spatial Lag",
+            "r2": model.pr2,
+            "rho": model.betas[0][0],
+            "mrt_coef": model.betas[1][0],
+            "predictions": model.predy,
         }
 
         return results
@@ -261,10 +269,10 @@ def create_gwr_coefficient_map(df, gwr_results):
     # Create GeoDataFrame
     gdf = gpd.GeoDataFrame(
         {
-            'local_mrt_premium': gwr_results['local_mrt_premiums'],
-            'local_r2': gwr_results['local_r2']
+            "local_mrt_premium": gwr_results["local_mrt_premiums"],
+            "local_r2": gwr_results["local_r2"],
         },
-        geometry=[Point(lon, lat) for lat, lon in gwr_results['coords']]
+        geometry=[Point(lon, lat) for lat, lon in gwr_results["coords"]],
     )
 
     # Create plot
@@ -272,23 +280,30 @@ def create_gwr_coefficient_map(df, gwr_results):
 
     # Plot 1: Local MRT Premium
     ax = axes[0]
-    gdf.plot(column='local_mrt_premium', cmap='RdBu_r', legend=True,
-             markersize=10, alpha=0.6, ax=ax, vmin=-10, vmax=10)
-    ax.set_title('GWR: Local MRT Premium ($/100m)', fontsize=14, fontweight='bold')
-    ax.set_xlabel('Longitude')
-    ax.set_ylabel('Latitude')
+    gdf.plot(
+        column="local_mrt_premium",
+        cmap="RdBu_r",
+        legend=True,
+        markersize=10,
+        alpha=0.6,
+        ax=ax,
+        vmin=-10,
+        vmax=10,
+    )
+    ax.set_title("GWR: Local MRT Premium ($/100m)", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Longitude")
+    ax.set_ylabel("Latitude")
 
     # Plot 2: Local R²
     ax = axes[1]
-    gdf.plot(column='local_r2', cmap='viridis', legend=True,
-             markersize=10, alpha=0.6, ax=ax)
-    ax.set_title('GWR: Local R² (Model Fit)', fontsize=14, fontweight='bold')
-    ax.set_xlabel('Longitude')
-    ax.set_ylabel('Latitude')
+    gdf.plot(column="local_r2", cmap="viridis", legend=True, markersize=10, alpha=0.6, ax=ax)
+    ax.set_title("GWR: Local R² (Model Fit)", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Longitude")
+    ax.set_ylabel("Latitude")
 
     plt.tight_layout()
     fig_path = OUTPUT_DIR / "gwr_coefficient_maps.png"
-    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    plt.savefig(fig_path, dpi=150, bbox_inches="tight")
     logger.info(f"Saved: {fig_path}")
     plt.close()
 
@@ -304,31 +319,30 @@ def plot_spatial_heterogeneity(df, gwr_results):
 
     # Plot 1: Distribution of local MRT premiums
     ax = axes[0, 0]
-    ax.hist(gwr_results['local_mrt_premiums'], bins=50, edgecolor='black', alpha=0.7)
-    ax.axvline(x=0, color='red', linestyle='--', linewidth=2, label='No effect')
-    ax.set_xlabel('Local MRT Premium ($/100m)', fontsize=12)
-    ax.set_ylabel('Frequency', fontsize=12)
-    ax.set_title('Distribution of Local MRT Effects', fontsize=14, fontweight='bold')
+    ax.hist(gwr_results["local_mrt_premiums"], bins=50, edgecolor="black", alpha=0.7)
+    ax.axvline(x=0, color="red", linestyle="--", linewidth=2, label="No effect")
+    ax.set_xlabel("Local MRT Premium ($/100m)", fontsize=12)
+    ax.set_ylabel("Frequency", fontsize=12)
+    ax.set_title("Distribution of Local MRT Effects", fontsize=14, fontweight="bold")
     ax.legend()
-    ax.grid(True, alpha=0.3, axis='y')
+    ax.grid(True, alpha=0.3, axis="y")
 
     # Plot 2: Local R² distribution
     ax = axes[0, 1]
-    ax.hist(gwr_results['local_r2'], bins=50, edgecolor='black', alpha=0.7, color='green')
-    ax.set_xlabel('Local R²', fontsize=12)
-    ax.set_ylabel('Frequency', fontsize=12)
-    ax.set_title('Distribution of Local Model Fit', fontsize=14, fontweight='bold')
-    ax.grid(True, alpha=0.3, axis='y')
+    ax.hist(gwr_results["local_r2"], bins=50, edgecolor="black", alpha=0.7, color="green")
+    ax.set_xlabel("Local R²", fontsize=12)
+    ax.set_ylabel("Frequency", fontsize=12)
+    ax.set_title("Distribution of Local Model Fit", fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3, axis="y")
 
     # Plot 3: MRT Premium vs Local R²
     ax = axes[1, 0]
-    ax.scatter(gwr_results['local_mrt_premiums'], gwr_results['local_r2'],
-               alpha=0.3, s=10)
-    ax.set_xlabel('Local MRT Premium ($/100m)', fontsize=12)
-    ax.set_ylabel('Local R²', fontsize=12)
-    ax.set_title('MRT Effect vs Model Fit', fontsize=14, fontweight='bold')
-    ax.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
-    ax.axvline(x=0, color='black', linestyle='--', linewidth=0.5)
+    ax.scatter(gwr_results["local_mrt_premiums"], gwr_results["local_r2"], alpha=0.3, s=10)
+    ax.set_xlabel("Local MRT Premium ($/100m)", fontsize=12)
+    ax.set_ylabel("Local R²", fontsize=12)
+    ax.set_title("MRT Effect vs Model Fit", fontsize=14, fontweight="bold")
+    ax.axhline(y=0, color="black", linestyle="--", linewidth=0.5)
+    ax.axvline(x=0, color="black", linestyle="--", linewidth=0.5)
     ax.grid(True, alpha=0.3)
 
     # Plot 4: MRT Premium by planning area
@@ -336,52 +350,62 @@ def plot_spatial_heterogeneity(df, gwr_results):
 
     # Add planning area to results
     df_with_mrt = df.copy()
-    df_with_mrt['local_mrt_premium'] = gwr_results['local_mrt_premiums']
+    df_with_mrt["local_mrt_premium"] = gwr_results["local_mrt_premiums"]
 
-    area_mrt = df_with_mrt.groupby('planning_area')['local_mrt_premium'].mean().sort_values(ascending=False)
+    area_mrt = (
+        df_with_mrt.groupby("planning_area")["local_mrt_premium"]
+        .mean()
+        .sort_values(ascending=False)
+    )
 
-    area_mrt.head(15).plot(kind='barh', ax=ax, color='steelblue')
-    ax.set_xlabel('Mean Local MRT Premium ($/100m)', fontsize=12)
-    ax.set_title('Top 15 Planning Areas by MRT Sensitivity', fontsize=14, fontweight='bold')
-    ax.grid(True, alpha=0.3, axis='x')
+    area_mrt.head(15).plot(kind="barh", ax=ax, color="steelblue")
+    ax.set_xlabel("Mean Local MRT Premium ($/100m)", fontsize=12)
+    ax.set_title("Top 15 Planning Areas by MRT Sensitivity", fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3, axis="x")
 
     plt.tight_layout()
     fig_path = OUTPUT_DIR / "spatial_heterogeneity_analysis.png"
-    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    plt.savefig(fig_path, dpi=150, bbox_inches="tight")
     logger.info(f"Saved: {fig_path}")
     plt.close()
 
 
 def compare_models(ols_results, gwr_results, spatial_lag_results):
     """Compare performance across different models."""
-    logger.info("\n" + "="*80)
+    logger.info("\n" + "=" * 80)
     logger.info("MODEL COMPARISON")
-    logger.info("="*80)
+    logger.info("=" * 80)
 
     comparison = []
 
     # OLS
-    comparison.append({
-        'Model': 'OLS (Global)',
-        'R²': ols_results['r2'],
-        'MRT Premium ($/100m)': ols_results['mrt_premium_100m']
-    })
+    comparison.append(
+        {
+            "Model": "OLS (Global)",
+            "R²": ols_results["r2"],
+            "MRT Premium ($/100m)": ols_results["mrt_premium_100m"],
+        }
+    )
 
     # GWR
     if gwr_results is not None:
-        comparison.append({
-            'Model': 'GWR (Local)',
-            'R²': gwr_results['r2'],
-            'MRT Premium ($/100m)': f"{gwr_results['local_mrt_premiums'].mean():.2f} (local)"
-        })
+        comparison.append(
+            {
+                "Model": "GWR (Local)",
+                "R²": gwr_results["r2"],
+                "MRT Premium ($/100m)": f"{gwr_results['local_mrt_premiums'].mean():.2f} (local)",
+            }
+        )
 
     # Spatial Lag
     if spatial_lag_results is not None:
-        comparison.append({
-            'Model': 'Spatial Lag',
-            'R²': spatial_lag_results['r2'],
-            'MRT Premium ($/100m)': spatial_lag_results['mrt_coef'] * 100
-        })
+        comparison.append(
+            {
+                "Model": "Spatial Lag",
+                "R²": spatial_lag_results["r2"],
+                "MRT Premium ($/100m)": spatial_lag_results["mrt_coef"] * 100,
+            }
+        )
 
     comp_df = pd.DataFrame(comparison)
     logger.info(f"\n{comp_df.to_string()}")
@@ -398,12 +422,12 @@ def main():
     """Main execution."""
     start_time = datetime.now()
 
-    logger.info("="*80)
+    logger.info("=" * 80)
     logger.info("SPATIAL INTERACTION ANALYSIS")
-    logger.info("="*80)
+    logger.info("=" * 80)
 
     # Load data
-    df = load_recent_data(min_year=2021, property_type='HDB')
+    df = load_recent_data(min_year=2021, property_type="HDB")
 
     if len(df) < 100:
         logger.error("Insufficient data for spatial analysis")
@@ -436,16 +460,20 @@ def main():
     # Final summary
     duration = (datetime.now() - start_time).total_seconds()
 
-    logger.info("\n" + "="*80)
+    logger.info("\n" + "=" * 80)
     logger.info("ANALYSIS COMPLETE")
-    logger.info("="*80)
+    logger.info("=" * 80)
     logger.info("\nKey Findings:")
     logger.info(f"  • Analyzed {len(df):,} HDB transactions (2021+)")
     logger.info(f"  • Global OLS R²: {ols_results['r2']:.4f}")
 
     if gwr_results is not None:
-        logger.info(f"  • GWR R²: {gwr_results['r2']:.4f} ({(gwr_results['r2'] - ols_results['r2'])*100:+.2f}% improvement)")
-        logger.info(f"  • MRT premium varies spatially: ${gwr_results['local_mrt_premiums'].min():.2f} to ${gwr_results['local_mrt_premiums'].max():.2f}/100m")
+        logger.info(
+            f"  • GWR R²: {gwr_results['r2']:.4f} ({(gwr_results['r2'] - ols_results['r2']) * 100:+.2f}% improvement)"
+        )
+        logger.info(
+            f"  • MRT premium varies spatially: ${gwr_results['local_mrt_premiums'].min():.2f} to ${gwr_results['local_mrt_premiums'].max():.2f}/100m"
+        )
 
     if spatial_lag_results is not None:
         logger.info(f"  • Spatial lag R²: {spatial_lag_results['r2']:.4f}")
@@ -453,7 +481,7 @@ def main():
 
     logger.info(f"\nOutputs saved to: {OUTPUT_DIR}")
     logger.info(f"\nDuration: {duration:.1f} seconds")
-    logger.info("="*80)
+    logger.info("=" * 80)
 
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@ def check_stationarity(series, significance_level: float = 0.05) -> tuple[bool, 
             return False, 1.0
 
         # Run ADF test
-        result = adfuller(series_clean, autolag='AIC')
+        result = adfuller(series_clean, autolag="AIC")
 
         p_value = result[1]
         is_stationary = p_value < significance_level
@@ -118,7 +118,7 @@ class RegionalVARModel:
         data: pd.DataFrame,
         endog_vars: list = None,
         exog_vars: list = None,
-        test_size: int = 12
+        test_size: int = 12,
     ):
         """
         Fit regional VAR model.
@@ -133,15 +133,15 @@ class RegionalVARModel:
 
         # Default variables
         if endog_vars is None:
-            endog_vars = ['regional_appreciation', 'regional_volume', 'regional_price_psf']
+            endog_vars = ["regional_appreciation", "regional_volume", "regional_price_psf"]
         if exog_vars is None:
-            exog_vars = ['sora_rate', 'cpi', 'gdp_growth']
+            exog_vars = ["sora_rate", "cpi", "gdp_growth"]
 
         self.endog_vars = endog_vars
         self.exog_vars = exog_vars
 
         # Prepare data
-        data = data.sort_values('month').reset_index(drop=True)
+        data = data.sort_values("month").reset_index(drop=True)
 
         # Check stationarity and apply differencing if needed
         Y = data[endog_vars].copy()
@@ -151,7 +151,9 @@ class RegionalVARModel:
                 is_stationary, p_value = check_stationarity(Y[var])
 
                 if not is_stationary:
-                    logger.info(f"{var} is non-stationary (p={p_value:.3f}), applying first difference")
+                    logger.info(
+                        f"{var} is non-stationary (p={p_value:.3f}), applying first difference"
+                    )
                     Y[var] = Y[var].diff()
 
         # Drop NaN from differencing
@@ -176,7 +178,9 @@ class RegionalVARModel:
             self.Y_test = None
             self.X_test = None
 
-        logger.info(f"Train size: {len(self.Y_train)}, Test size: {len(self.Y_test) if self.Y_test is not None else 0}")
+        logger.info(
+            f"Train size: {len(self.Y_train)}, Test size: {len(self.Y_test) if self.Y_test is not None else 0}"
+        )
 
         # Select lag order
         self.lag_order = select_lag_order(self.Y_train, max_lag=6)
@@ -198,11 +202,7 @@ class RegionalVARModel:
 
         return self
 
-    def forecast(
-        self,
-        horizon: int = 12,
-        exog_future: pd.DataFrame = None
-    ) -> pd.DataFrame:
+    def forecast(self, horizon: int = 12, exog_future: pd.DataFrame = None) -> pd.DataFrame:
         """
         Generate forecasts with confidence intervals.
 
@@ -223,7 +223,7 @@ class RegionalVARModel:
             forecast_result = self.model.forecast(
                 y=self.Y_train.values,
                 steps=horizon,
-                exog_future=exog_future.values if exog_future is not None else None
+                exog_future=exog_future.values if exog_future is not None else None,
             )
 
             # Get confidence intervals
@@ -245,14 +245,16 @@ class RegionalVARModel:
 
             # Create forecast DataFrame
             last_month = self.Y_train.index[-1]
-            forecast_months = pd.date_range(start=last_month, periods=horizon + 1, freq='ME')[1:]
+            forecast_months = pd.date_range(start=last_month, periods=horizon + 1, freq="ME")[1:]
 
-            forecast_df = pd.DataFrame({
-                'month': forecast_months,
-                'forecast_mean': forecast_mean,
-                'ci_lower_95': ci_lower,
-                'ci_upper_95': ci_upper
-            })
+            forecast_df = pd.DataFrame(
+                {
+                    "month": forecast_months,
+                    "forecast_mean": forecast_mean,
+                    "ci_lower_95": ci_lower,
+                    "ci_upper_95": ci_upper,
+                }
+            )
 
             return forecast_df
 
@@ -260,7 +262,7 @@ class RegionalVARModel:
             logger.error(f"Forecasting failed for {self.region}: {e}")
             raise
 
-    def granger_causality_tests(self, variable: str = 'regional_appreciation') -> dict[str, float]:
+    def granger_causality_tests(self, variable: str = "regional_appreciation") -> dict[str, float]:
         """
         Perform Granger causality tests for appreciation.
 
@@ -291,7 +293,7 @@ class RegionalVARModel:
                 gc_result = grangercausalitytests(test_data, maxlag=2, verbose=False)
 
                 # Extract p-value from F-test (lag=1)
-                p_value = gc_result[1][0]['ssr_ftest'][1]
+                p_value = gc_result[1][0]["ssr_ftest"][1]
 
                 results[test_var] = p_value
 
@@ -318,25 +320,18 @@ class RegionalVARModel:
 
         # Generate forecast for test period
         try:
-            forecast = self.forecast(
-                horizon=len(self.Y_test),
-                exog_future=self.X_test
-            )
+            forecast = self.forecast(horizon=len(self.Y_test), exog_future=self.X_test)
 
             # Compare to actual (first variable = appreciation)
-            actual = self.Y_test['regional_appreciation'].values
-            predicted = forecast['forecast_mean'].values
+            actual = self.Y_test["regional_appreciation"].values
+            predicted = forecast["forecast_mean"].values
 
             # Calculate metrics
             rmse = np.sqrt(np.mean((actual - predicted) ** 2))
             mae = np.mean(np.abs(actual - predicted))
             mape = np.mean(np.abs((actual - predicted) / actual)) * 100
 
-            metrics = {
-                'rmse': rmse,
-                'mae': mae,
-                'mape': mape
-            }
+            metrics = {"rmse": rmse, "mae": mae, "mape": mape}
 
             logger.info(f"  RMSE: {rmse:.2f}, MAE: {mae:.2f}, MAPE: {mape:.2f}%")
 

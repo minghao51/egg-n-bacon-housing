@@ -28,7 +28,9 @@ from scripts.core.config import Config
 logger = logging.getLogger(__name__)
 
 
-def bootstrap_predictions(predictions: np.ndarray, n_bootstraps: int = 1000, random_state: int = 42):
+def bootstrap_predictions(
+    predictions: np.ndarray, n_bootstraps: int = 1000, random_state: int = 42
+):
     """Generate bootstrap samples for confidence intervals.
 
     Args:
@@ -52,7 +54,9 @@ def bootstrap_predictions(predictions: np.ndarray, n_bootstraps: int = 1000, ran
     return np.array(bootstrap_samples)
 
 
-def calculate_quantile_intervals(residuals: np.ndarray, confidence_levels: list = [0.68, 0.95, 0.99]):
+def calculate_quantile_intervals(
+    residuals: np.ndarray, confidence_levels: list = [0.68, 0.95, 0.99]
+):
     """Calculate prediction intervals based on residual quantiles.
 
     Args:
@@ -93,10 +97,7 @@ def generate_adaptive_intervals(predictions_df: pd.DataFrame, n_bins: int = 10):
     # Create bins based on predicted values
     predictions_df = predictions_df.copy()
     predictions_df["pred_bin"] = pd.cut(
-        predictions_df["predicted"],
-        bins=n_bins,
-        labels=False,
-        duplicates="drop"
+        predictions_df["predicted"], bins=n_bins, labels=False, duplicates="drop"
     )
 
     # Calculate intervals for each bin
@@ -113,17 +114,19 @@ def generate_adaptive_intervals(predictions_df: pd.DataFrame, n_bins: int = 10):
         # Calculate intervals
         intervals = calculate_quantile_intervals(bin_residuals)
 
-        bin_stats.append({
-            "bin": bin_id,
-            "pred_mean": bin_pred_mean,
-            "n_samples": len(bin_data),
-            "ci_68_lower": intervals[0.68]["lower"],
-            "ci_68_upper": intervals[0.68]["upper"],
-            "ci_95_lower": intervals[0.95]["lower"],
-            "ci_95_upper": intervals[0.95]["upper"],
-            "ci_99_lower": intervals[0.99]["lower"],
-            "ci_99_upper": intervals[0.99]["upper"],
-        })
+        bin_stats.append(
+            {
+                "bin": bin_id,
+                "pred_mean": bin_pred_mean,
+                "n_samples": len(bin_data),
+                "ci_68_lower": intervals[0.68]["lower"],
+                "ci_68_upper": intervals[0.68]["upper"],
+                "ci_95_lower": intervals[0.95]["lower"],
+                "ci_95_upper": intervals[0.95]["upper"],
+                "ci_99_lower": intervals[0.99]["lower"],
+                "ci_99_upper": intervals[0.99]["upper"],
+            }
+        )
 
     return pd.DataFrame(bin_stats)
 
@@ -155,7 +158,7 @@ def plot_coverage(predictions_df: pd.DataFrame, output_dir: Path):
         sample_df["predicted"] + yerr,
         alpha=0.2,
         color="red",
-        label="95% CI Band"
+        label="95% CI Band",
     )
 
     # Perfect prediction line
@@ -187,19 +190,25 @@ def plot_coverage(predictions_df: pd.DataFrame, output_dir: Path):
     ax.axvline(intervals[0.68]["lower"], color="orange", linestyle="-", linewidth=2, alpha=0.7)
     ax.axvline(intervals[0.68]["upper"], color="orange", linestyle="-", linewidth=2, alpha=0.7)
     ax.text(intervals[0.68]["lower"], y_max * 0.9, "68%", ha="right", color="orange", fontsize=9)
-    ax.fill_betweenx([0, y_max], intervals[0.68]["lower"], intervals[0.68]["upper"], alpha=0.1, color="orange")
+    ax.fill_betweenx(
+        [0, y_max], intervals[0.68]["lower"], intervals[0.68]["upper"], alpha=0.1, color="orange"
+    )
 
     # 95% CI
     ax.axvline(intervals[0.95]["lower"], color="green", linestyle="-", linewidth=2, alpha=0.7)
     ax.axvline(intervals[0.95]["upper"], color="green", linestyle="-", linewidth=2, alpha=0.7)
     ax.text(intervals[0.95]["lower"], y_max * 0.85, "95%", ha="right", color="green", fontsize=9)
-    ax.fill_betweenx([0, y_max], intervals[0.95]["lower"], intervals[0.95]["upper"], alpha=0.05, color="green")
+    ax.fill_betweenx(
+        [0, y_max], intervals[0.95]["lower"], intervals[0.95]["upper"], alpha=0.05, color="green"
+    )
 
     # 99% CI
     ax.axvline(intervals[0.99]["lower"], color="purple", linestyle="-", linewidth=2, alpha=0.7)
     ax.axvline(intervals[0.99]["upper"], color="purple", linestyle="-", linewidth=2, alpha=0.7)
     ax.text(intervals[0.99]["lower"], y_max * 0.8, "99%", ha="right", color="purple", fontsize=9)
-    ax.fill_betweenx([0, y_max], intervals[0.99]["lower"], intervals[0.99]["upper"], alpha=0.03, color="purple")
+    ax.fill_betweenx(
+        [0, y_max], intervals[0.99]["lower"], intervals[0.99]["upper"], alpha=0.03, color="purple"
+    )
 
     ax.set_xlabel("Residuals (Actual - Predicted)")
     ax.set_ylabel("Density")
@@ -212,8 +221,15 @@ def plot_coverage(predictions_df: pd.DataFrame, output_dir: Path):
 
     bin_intervals = generate_adaptive_intervals(predictions_df, n_bins=10)
 
-    ax.plot(bin_intervals["pred_mean"], bin_intervals["ci_95_upper"] - bin_intervals["ci_95_lower"],
-            marker="o", linewidth=2, markersize=8, color="steelblue", label="95% CI Width")
+    ax.plot(
+        bin_intervals["pred_mean"],
+        bin_intervals["ci_95_upper"] - bin_intervals["ci_95_lower"],
+        marker="o",
+        linewidth=2,
+        markersize=8,
+        color="steelblue",
+        label="95% CI Width",
+    )
 
     ax.set_xlabel("Predicted YoY Change (%)")
     ax.set_ylabel("Interval Width (%)")
@@ -235,25 +251,41 @@ def plot_coverage(predictions_df: pd.DataFrame, output_dir: Path):
             intervals = calculate_quantile_intervals(segment_residuals, [0.95])
 
             # Calculate actual coverage
-            within_ci = ((segment_residuals >= intervals[0.95]["lower"]) &
-                        (segment_residuals <= intervals[0.95]["upper"])).sum()
+            within_ci = (
+                (segment_residuals >= intervals[0.95]["lower"])
+                & (segment_residuals <= intervals[0.95]["upper"])
+            ).sum()
             actual_coverage = within_ci / len(segment_residuals) * 100
 
-            coverage_data.append({
-                "segment": segment,
-                "expected_coverage": 95,
-                "actual_coverage": actual_coverage,
-            })
+            coverage_data.append(
+                {
+                    "segment": segment,
+                    "expected_coverage": 95,
+                    "actual_coverage": actual_coverage,
+                }
+            )
 
         coverage_df = pd.DataFrame(coverage_data)
 
         x = np.arange(len(coverage_df))
         width = 0.35
 
-        ax.bar(x - width/2, coverage_df["expected_coverage"], width,
-               label="Expected", alpha=0.7, color="steelblue")
-        ax.bar(x + width/2, coverage_df["actual_coverage"], width,
-               label="Actual", alpha=0.7, color="orange")
+        ax.bar(
+            x - width / 2,
+            coverage_df["expected_coverage"],
+            width,
+            label="Expected",
+            alpha=0.7,
+            color="steelblue",
+        )
+        ax.bar(
+            x + width / 2,
+            coverage_df["actual_coverage"],
+            width,
+            label="Actual",
+            alpha=0.7,
+            color="orange",
+        )
 
         ax.set_xlabel("Segment")
         ax.set_ylabel("Coverage (%)")
@@ -279,13 +311,19 @@ def main():
     logger.info("=" * 60)
 
     # Setup output directory
-    output_dir = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "confidence_intervals"
+    output_dir = (
+        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "confidence_intervals"
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load ensemble predictions
     logger.info("\nLoading ensemble predictions...")
     predictions_path = (
-        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "smart_ensemble" / "ensemble_predictions.parquet"
+        Config.DATA_DIR
+        / "analysis"
+        / "price_appreciation_modeling"
+        / "smart_ensemble"
+        / "ensemble_predictions.parquet"
     )
 
     predictions_df = pd.read_parquet(predictions_path)
@@ -293,7 +331,11 @@ def main():
 
     # Add segment information
     segment_path = (
-        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "smart_ensemble" / "segment_performance.csv"
+        Config.DATA_DIR
+        / "analysis"
+        / "price_appreciation_modeling"
+        / "smart_ensemble"
+        / "segment_performance.csv"
     )
     segment_df = pd.read_csv(segment_path)
 
@@ -306,7 +348,7 @@ def main():
     intervals = calculate_quantile_intervals(residuals, [0.68, 0.95, 0.99])
 
     for level, interval in intervals.items():
-        logger.info(f"\n  {int(level*100)}% Confidence Interval:")
+        logger.info(f"\n  {int(level * 100)}% Confidence Interval:")
         logger.info(f"    Lower: {interval['lower']:.2f}%")
         logger.info(f"    Upper: {interval['upper']:.2f}%")
         logger.info(f"    Width: {interval['width']:.2f}%")
@@ -319,7 +361,9 @@ def main():
         within_ci = ((residuals >= interval["lower"]) & (residuals <= interval["upper"])).sum()
         actual_coverage = within_ci / len(residuals) * 100
 
-        logger.info(f"    {int(level*100)}% CI: {actual_coverage:.1f}% (expected {int(level*100)}%)")
+        logger.info(
+            f"    {int(level * 100)}% CI: {actual_coverage:.1f}% (expected {int(level * 100)}%)"
+        )
 
     # Calculate intervals by segment
     logger.info("\n" + "=" * 60)
@@ -332,10 +376,10 @@ def main():
 
     # Merge predictions with test data to get segment info
     predictions_with_segments = predictions_df.copy()
-    predictions_with_segments["is_hdb"] = test_df["is_hdb"].values[:len(predictions_df)]
-    predictions_with_segments["is_condo"] = test_df["is_condo"].values[:len(predictions_df)]
-    predictions_with_segments["is_ec"] = test_df["is_ec"].values[:len(predictions_df)]
-    predictions_with_segments["price_psf"] = test_df["price_psf"].values[:len(predictions_df)]
+    predictions_with_segments["is_hdb"] = test_df["is_hdb"].values[: len(predictions_df)]
+    predictions_with_segments["is_condo"] = test_df["is_condo"].values[: len(predictions_df)]
+    predictions_with_segments["is_ec"] = test_df["is_ec"].values[: len(predictions_df)]
+    predictions_with_segments["price_psf"] = test_df["price_psf"].values[: len(predictions_df)]
 
     # Assign segments
     predictions_with_segments["segment"] = "Unknown"
@@ -347,7 +391,10 @@ def main():
         condo_mask & (predictions_with_segments["price_psf"] < 1500), "segment"
     ] = "Mass Market"
     predictions_with_segments.loc[
-        condo_mask & (predictions_with_segments["price_psf"] >= 1500) & (predictions_with_segments["price_psf"] <= 3000), "segment"
+        condo_mask
+        & (predictions_with_segments["price_psf"] >= 1500)
+        & (predictions_with_segments["price_psf"] <= 3000),
+        "segment",
     ] = "Mid Market"
     predictions_with_segments.loc[
         condo_mask & (predictions_with_segments["price_psf"] > 3000), "segment"
@@ -365,23 +412,29 @@ def main():
         segment_intervals_calc = calculate_quantile_intervals(segment_residuals, [0.95])
 
         # Calculate coverage
-        within_ci = ((segment_residuals >= segment_intervals_calc[0.95]["lower"]) &
-                    (segment_residuals <= segment_intervals_calc[0.95]["upper"])).sum()
+        within_ci = (
+            (segment_residuals >= segment_intervals_calc[0.95]["lower"])
+            & (segment_residuals <= segment_intervals_calc[0.95]["upper"])
+        ).sum()
         actual_coverage = within_ci / len(segment_residuals) * 100
 
         logger.info(f"\n  {segment}:")
-        logger.info(f"    95% CI: [{segment_intervals_calc[0.95]['lower']:.2f}%, {segment_intervals_calc[0.95]['upper']:.2f}%]")
+        logger.info(
+            f"    95% CI: [{segment_intervals_calc[0.95]['lower']:.2f}%, {segment_intervals_calc[0.95]['upper']:.2f}%]"
+        )
         logger.info(f"    Width: {segment_intervals_calc[0.95]['width']:.2f}%")
         logger.info(f"    Coverage: {actual_coverage:.1f}% (n={len(segment_data):,})")
 
-        segment_intervals.append({
-            "segment": segment,
-            "n_samples": len(segment_data),
-            "ci_95_lower": segment_intervals_calc[0.95]["lower"],
-            "ci_95_upper": segment_intervals_calc[0.95]["upper"],
-            "ci_95_width": segment_intervals_calc[0.95]["width"],
-            "actual_coverage": actual_coverage,
-        })
+        segment_intervals.append(
+            {
+                "segment": segment,
+                "n_samples": len(segment_data),
+                "ci_95_lower": segment_intervals_calc[0.95]["lower"],
+                "ci_95_upper": segment_intervals_calc[0.95]["upper"],
+                "ci_95_width": segment_intervals_calc[0.95]["width"],
+                "actual_coverage": actual_coverage,
+            }
+        )
 
     # Save segment intervals
     segment_intervals_df = pd.DataFrame(segment_intervals)
@@ -396,12 +449,24 @@ def main():
 
     # Add interval columns to predictions
     predictions_with_intervals = predictions_df.copy()
-    predictions_with_intervals["ci_68_lower"] = predictions_df["predicted"] + intervals[0.68]["lower"]
-    predictions_with_intervals["ci_68_upper"] = predictions_df["predicted"] + intervals[0.68]["upper"]
-    predictions_with_intervals["ci_95_lower"] = predictions_df["predicted"] + intervals[0.95]["lower"]
-    predictions_with_intervals["ci_95_upper"] = predictions_df["predicted"] + intervals[0.95]["upper"]
-    predictions_with_intervals["ci_99_lower"] = predictions_df["predicted"] + intervals[0.99]["lower"]
-    predictions_with_intervals["ci_99_upper"] = predictions_df["predicted"] + intervals[0.99]["upper"]
+    predictions_with_intervals["ci_68_lower"] = (
+        predictions_df["predicted"] + intervals[0.68]["lower"]
+    )
+    predictions_with_intervals["ci_68_upper"] = (
+        predictions_df["predicted"] + intervals[0.68]["upper"]
+    )
+    predictions_with_intervals["ci_95_lower"] = (
+        predictions_df["predicted"] + intervals[0.95]["lower"]
+    )
+    predictions_with_intervals["ci_95_upper"] = (
+        predictions_df["predicted"] + intervals[0.95]["upper"]
+    )
+    predictions_with_intervals["ci_99_lower"] = (
+        predictions_df["predicted"] + intervals[0.99]["lower"]
+    )
+    predictions_with_intervals["ci_99_upper"] = (
+        predictions_df["predicted"] + intervals[0.99]["upper"]
+    )
 
     # Save predictions with intervals
     predictions_with_intervals_path = output_dir / "predictions_with_intervals.parquet"

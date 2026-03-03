@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/compare/CompareTab.tsx
-import { Segment, Persona } from '@/types/segments';
+import type { Segment, Persona } from '@/types/segments';
 import { ComparisonTable } from './ComparisonTable';
 import { ComparisonCharts } from './ComparisonCharts';
 import { InvestmentImplications } from './InvestmentImplications';

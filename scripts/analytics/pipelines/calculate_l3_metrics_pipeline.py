@@ -28,10 +28,7 @@ from scripts.core.metrics import (
 )
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -55,7 +52,7 @@ def load_data() -> pd.DataFrame:
     logger.info(f"  Condominium: {len(df[df['property_type'] == 'Condominium']):,}")
 
     # Standardize date column
-    df['month'] = pd.to_datetime(df['month']).dt.to_period('M')
+    df["month"] = pd.to_datetime(df["month"]).dt.to_period("M")
 
     return df
 
@@ -73,8 +70,8 @@ def main():
     logger.info("Computing monthly metrics...")
     metrics_df = compute_monthly_metrics(
         unified_df=df,
-        start_date='2015-01',  # Focus on recent data
-        end_date=None
+        start_date="2015-01",  # Focus on recent data
+        end_date=None,
     )
 
     logger.info(f"Computed {len(metrics_df):,} metric records")
@@ -90,16 +87,16 @@ def main():
 
     # Save monthly metrics
     output_path = l3_dir / "metrics_monthly.parquet"
-    metrics_df.to_parquet(output_path, compression='snappy', index=False)
+    metrics_df.to_parquet(output_path, compression="snappy", index=False)
     logger.info(f"Saved monthly metrics to {output_path}")
 
     # Save summary
     summary_path = l3_dir / "metrics_summary.csv"
-    summary = metrics_df.groupby(['property_type', 'planning_area']).agg({
-        'stratified_median_price': 'last',
-        'growth_rate': 'last',
-        'transaction_count': 'sum'
-    }).reset_index()
+    summary = (
+        metrics_df.groupby(["property_type", "planning_area"])
+        .agg({"stratified_median_price": "last", "growth_rate": "last", "transaction_count": "sum"})
+        .reset_index()
+    )
     summary.to_csv(summary_path, index=False)
     logger.info(f"Saved summary to {summary_path}")
 

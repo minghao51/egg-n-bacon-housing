@@ -365,7 +365,7 @@ def load_school_impact() -> dict[str, Any]:
 def map_to_spatial_cluster(segment: dict[str, Any], spatial_data: dict[str, Any]) -> str:
     """Map segment to spatial cluster classification."""
     # Use the predefined clusterClassification from segment
-    return segment.get('clusterClassification', 'HH')
+    return segment.get("clusterClassification", "HH")
 
 
 def get_persistence(classification: str) -> float:
@@ -380,47 +380,47 @@ def get_persistence(classification: str) -> float:
 
 def determine_mrt_sensitivity(segment: dict[str, Any], mrt_data: dict[str, Any]) -> str:
     """Determine MRT sensitivity based on segment property types."""
-    prop_types = segment.get('propertyTypes', [])
+    prop_types = segment.get("propertyTypes", [])
 
-    if 'Condominium' in prop_types:
-        return 'high'
-    elif 'EC' in prop_types:
-        return 'moderate'  # Volatile, but moderate on average
+    if "Condominium" in prop_types:
+        return "high"
+    elif "EC" in prop_types:
+        return "moderate"  # Volatile, but moderate on average
     else:
-        return 'low'  # HDB
+        return "low"  # HDB
 
 
 def determine_school_quality(segment: dict[str, Any], school_data: dict[str, Any]) -> str:
     """Determine school quality profile for segment."""
     # Based on regions where segment operates
-    regions = segment.get('regions', [])
+    regions = segment.get("regions", [])
 
-    if 'CCR' in regions:
-        return 'tier_1'  # International schools, top local schools
-    elif 'OCR' in regions and segment['investmentType'] == 'value':
-        return 'tier_2'  # Family-friendly suburban areas
+    if "CCR" in regions:
+        return "tier_1"  # International schools, top local schools
+    elif "OCR" in regions and segment["investmentType"] == "value":
+        return "tier_2"  # Family-friendly suburban areas
     else:
-        return 'mixed'
+        return "mixed"
 
 
 def get_areas_in_segment(segment: dict[str, Any], spatial_data: dict[str, Any]) -> list[str]:
     """Get list of planning areas in this segment."""
     # Map segments to planning areas based on region and cluster
-    segment_regions = segment.get('regions', [])
-    segment_cluster = segment.get('clusterClassification', 'HH')
+    segment_regions = segment.get("regions", [])
+    segment_cluster = segment.get("clusterClassification", "HH")
 
     matching_areas = []
-    for area in spatial_data['planning_areas']:
-        if area['region'] in segment_regions and area['cluster'] == segment_cluster:
-            matching_areas.append(area['name'])
+    for area in spatial_data["planning_areas"]:
+        if area["region"] in segment_regions and area["cluster"] == segment_cluster:
+            matching_areas.append(area["name"])
 
     return matching_areas[:10]  # Return top 10
 
 
 def generate_implications(segment: dict[str, Any]) -> dict[str, str]:
     """Generate persona-specific implications for segment."""
-    inv_type = segment['investmentType']
-    metrics = segment['metrics']
+    inv_type = segment["investmentType"]
+    metrics = segment["metrics"]
 
     implications = {
         "investor": "",
@@ -429,34 +429,54 @@ def generate_implications(segment: dict[str, Any]) -> dict[str, str]:
     }
 
     if inv_type == "yield":
-        implications["investor"] = f"Buy and hold for steady income. Target {metrics['avgYield']:.1f}% yield."
+        implications["investor"] = (
+            f"Buy and hold for steady income. Target {metrics['avgYield']:.1f}% yield."
+        )
         implications["firstTimeBuyer"] = "Suitable for long-term holds if yield covers mortgage."
         implications["upgrader"] = "Consider for rental income from current unit."
 
     elif inv_type == "growth":
-        implications["investor"] = f"Growth investing for capital appreciation. {metrics['yoyGrowth']:.1f}% YoY growth."
-        implications["firstTimeBuyer"] = "Risky for first-time buyers. Consider if holding 10+ years."
-        implications["upgrader"] = "Good for upgrading to high-appreciation areas if timing is right."
+        implications["investor"] = (
+            f"Growth investing for capital appreciation. {metrics['yoyGrowth']:.1f}% YoY growth."
+        )
+        implications["firstTimeBuyer"] = (
+            "Risky for first-time buyers. Consider if holding 10+ years."
+        )
+        implications["upgrader"] = (
+            "Good for upgrading to high-appreciation areas if timing is right."
+        )
 
     elif inv_type == "value":
-        implications["investor"] = "Value play with potential upside. Monitor for turnaround signals."
-        implications["firstTimeBuyer"] = "Affordable option with long-term potential if area improves."
+        implications["investor"] = (
+            "Value play with potential upside. Monitor for turnaround signals."
+        )
+        implications["firstTimeBuyer"] = (
+            "Affordable option with long-term potential if area improves."
+        )
         implications["upgrader"] = "Get more space for budget, but verify growth catalysts."
 
     elif inv_type == "luxury":
-        implications["investor"] = "Luxury segment for high-net-worth investors. Capital preservation focus."
-        implications["firstTimeBuyer"] = "Generally not suitable for first-time buyers due to high entry."
+        implications["investor"] = (
+            "Luxury segment for high-net-worth investors. Capital preservation focus."
+        )
+        implications["firstTimeBuyer"] = (
+            "Generally not suitable for first-time buyers due to high entry."
+        )
         implications["upgrader"] = "Consider for lifestyle upgrade if budget permits."
 
     elif inv_type == "speculative":
-        implications["investor"] = "Short-term flips only. High risk, high reward. Market timing critical."
+        implications["investor"] = (
+            "Short-term flips only. High risk, high reward. Market timing critical."
+        )
         implications["firstTimeBuyer"] = "Avoid - too volatile for first-time buyers."
         implications["upgrader"] = "Not recommended - timing mismatch with upgrade needs."
 
     else:  # balanced/default
         implications["investor"] = "Balanced approach with moderate growth and yield."
         implications["firstTimeBuyer"] = "Good balance of affordability and potential."
-        implications["upgrader"] = "Solid choice for steady appreciation with reasonable entry cost."
+        implications["upgrader"] = (
+            "Solid choice for steady appreciation with reasonable entry cost."
+        )
 
     return implications
 
@@ -549,13 +569,13 @@ def enrich_planning_areas(
     """Enrich planning areas with spatial/MRT/school data."""
     enriched = {}
 
-    for area in spatial_data['planning_areas']:
-        name = area['name']
-        region = area['region']
-        cluster = area['cluster']
+    for area in spatial_data["planning_areas"]:
+        name = area["name"]
+        region = area["region"]
+        cluster = area["cluster"]
 
         # Get MRT premium for this town (if available)
-        mrt_premium = mrt_data['by_town'].get(name, {}).get('premium', 0)
+        mrt_premium = mrt_data["by_town"].get(name, {}).get("premium", 0)
 
         # Determine MRT sensitivity
         mrt_sensitivity = "moderate"
@@ -565,7 +585,7 @@ def enrich_planning_areas(
             mrt_sensitivity = "low"
 
         # Get school premium for region
-        school_premium = school_data['by_region'][region]['premium']
+        school_premium = school_data["by_region"][region]["premium"]
 
         # Determine school tier based on region and cluster
         school_tier = "mixed"
@@ -578,15 +598,19 @@ def enrich_planning_areas(
             "name": name,
             "region": region,
             "spatialCluster": cluster,
-            "hotspotConfidence": "99%" if cluster == "HH" else "95%" if cluster == "LH" else "not_significant",
-            "persistenceProbability": spatial_data['clusters'][cluster]['persistence'],
+            "hotspotConfidence": "99%"
+            if cluster == "HH"
+            else "95%"
+            if cluster == "LH"
+            else "not_significant",
+            "persistenceProbability": spatial_data["clusters"][cluster]["persistence"],
             "mrtPremium": mrt_premium,
             "mrtSensitivity": mrt_sensitivity,
-            "cbdDistance": area['cbd_distance'],
+            "cbdDistance": area["cbd_distance"],
             "schoolTier": school_tier,
             "schoolPremium": school_premium,
             "forecast6m": 0.0,  # TODO: Add from forecast data
-            "avgPricePsf": mrt_data['by_town'].get(name, {}).get('mean_price', 500),
+            "avgPricePsf": mrt_data["by_town"].get(name, {}).get("mean_price", 500),
             "avgYield": 5.0,  # TODO: Calculate from data
             "segments": [],  # Will be filled later
         }
@@ -597,7 +621,7 @@ def enrich_planning_areas(
 def save_gzipped_json(data: dict[str, Any], output_path: Path) -> None:
     """Save data as gzipped JSON."""
     json_str = json.dumps(data, indent=2)
-    compressed = gzip.compress(json_str.encode('utf-8'))
+    compressed = gzip.compress(json_str.encode("utf-8"))
     output_path.write_bytes(compressed)
     print(f"✅ Saved to {output_path}")
 
@@ -610,19 +634,21 @@ def generate_segments_data() -> dict[str, Any]:
     print("  Loading analytics outputs...")
     segments = load_investment_clusters()
     spatial_data = load_spatial_clusters()
-    hotspot_data = load_hotspot_data()  # TODO: Will be used in future for hotspot integration  # noqa: F841
+    hotspot_data = (
+        load_hotspot_data()
+    )  # TODO: Will be used in future for hotspot integration  # noqa: F841
     mrt_data = load_mrt_analysis()
     school_data = load_school_impact()
 
     # 2. Enrich segments
     print("  Enriching segments with spatial/MRT/school data...")
     for segment in segments:
-        segment['spatialClassification'] = map_to_spatial_cluster(segment, spatial_data)
-        segment['persistenceProbability'] = get_persistence(segment['clusterClassification'])
-        segment['mrtSensitivity'] = determine_mrt_sensitivity(segment, mrt_data)
-        segment['schoolQuality'] = determine_school_quality(segment, school_data)
-        segment['planningAreas'] = get_areas_in_segment(segment, spatial_data)
-        segment['implications'] = generate_implications(segment)
+        segment["spatialClassification"] = map_to_spatial_cluster(segment, spatial_data)
+        segment["persistenceProbability"] = get_persistence(segment["clusterClassification"])
+        segment["mrtSensitivity"] = determine_mrt_sensitivity(segment, mrt_data)
+        segment["schoolQuality"] = determine_school_quality(segment, school_data)
+        segment["planningAreas"] = get_areas_in_segment(segment, spatial_data)
+        segment["implications"] = generate_implications(segment)
 
     # 3. Enrich planning areas
     print("  Enriching planning areas...")
@@ -631,10 +657,10 @@ def generate_segments_data() -> dict[str, Any]:
     # Link segments to planning areas (reverse mapping)
     print("  Linking segments to planning areas...")
     for segment in segments:
-        for area_name in segment['planningAreas']:
+        for area_name in segment["planningAreas"]:
             if area_name in planning_areas:
-                if segment['id'] not in planning_areas[area_name]['segments']:
-                    planning_areas[area_name]['segments'].append(segment['id'])
+                if segment["id"] not in planning_areas[area_name]["segments"]:
+                    planning_areas[area_name]["segments"].append(segment["id"])
 
     # 4. Generate insight cards
     print("  Generating insight cards...")
@@ -642,15 +668,15 @@ def generate_segments_data() -> dict[str, Any]:
 
     # 5. Compile output
     output = {
-        'segments': segments,
-        'planningAreas': planning_areas,
-        'insights': insights,
-        'lastUpdated': datetime.now().isoformat(),
-        'version': '1.0.0'
+        "segments": segments,
+        "planningAreas": planning_areas,
+        "insights": insights,
+        "lastUpdated": datetime.now().isoformat(),
+        "version": "1.0.0",
     }
 
     # 6. Save to file
-    output_path = Path('app/public/data/segments_enhanced.json.gz')
+    output_path = Path("app/public/data/segments_enhanced.json.gz")
     save_gzipped_json(output, output_path)
 
     print("\n✅ Segments data generated successfully!")
@@ -662,5 +688,5 @@ def generate_segments_data() -> dict[str, Any]:
     return output
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     generate_segments_data()

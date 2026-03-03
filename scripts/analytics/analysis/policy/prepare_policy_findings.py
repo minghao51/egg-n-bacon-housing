@@ -12,20 +12,37 @@ import pandas as pd
 from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet
 
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
 # Regional classification for DiD analysis
 CCR_REGIONS = [
-    'Bukit Timah', 'Downtown Core', 'Marine Parade', 'Newton',
-    'Orchard', 'Outram', 'River Valley', 'Rochor', 'Singapore River', 'Straits View'
+    "Bukit Timah",
+    "Downtown Core",
+    "Marine Parade",
+    "Newton",
+    "Orchard",
+    "Outram",
+    "River Valley",
+    "Rochor",
+    "Singapore River",
+    "Straits View",
 ]
 
 RCR_REGIONS = [
-    'Bishan', 'Bukit Merah', 'Geylang', 'Kallang', 'Lavender',
-    'Marina East', 'Marina South', 'Novena', 'Queenstown',
-    'Southern Islands', 'Tanglin', 'Toa Payoh'
+    "Bishan",
+    "Bukit Merah",
+    "Geylang",
+    "Kallang",
+    "Lavender",
+    "Marina East",
+    "Marina South",
+    "Novena",
+    "Queenstown",
+    "Southern Islands",
+    "Tanglin",
+    "Toa Payoh",
 ]
 
 # All other areas are OCR
@@ -34,13 +51,13 @@ RCR_REGIONS = [
 def classify_region(planning_area: str) -> str:
     """Classify planning area into CCR/RCR/OCR."""
     if pd.isna(planning_area):
-        return 'Unknown'
+        return "Unknown"
     if planning_area in CCR_REGIONS:
-        return 'CCR'
+        return "CCR"
     elif planning_area in RCR_REGIONS:
-        return 'RCR'
+        return "RCR"
     else:
-        return 'OCR'
+        return "OCR"
 
 
 def load_hdb_post2022_data() -> pd.DataFrame:
@@ -65,17 +82,17 @@ def load_hdb_post2022_data() -> pd.DataFrame:
     logger.info(f"Loaded {len(df):,} total transactions")
 
     # Filter to HDB
-    df_hdb = df[df['property_type'] == 'HDB'].copy()
-    logger.info(f"HDB transactions: {len(df_hdb):,} ({len(df_hdb)/len(df)*100:.1f}%)")
+    df_hdb = df[df["property_type"] == "HDB"].copy()
+    logger.info(f"HDB transactions: {len(df_hdb):,} ({len(df_hdb) / len(df) * 100:.1f}%)")
 
     # Filter to post-2022
-    df_hdb['transaction_date'] = pd.to_datetime(df_hdb['transaction_date'])
-    df_post2022 = df_hdb[df_hdb['transaction_date'] >= '2022-01-01'].copy()
+    df_hdb["transaction_date"] = pd.to_datetime(df_hdb["transaction_date"])
+    df_post2022 = df_hdb[df_hdb["transaction_date"] >= "2022-01-01"].copy()
     logger.info(f"Post-2022 HDB transactions: {len(df_post2022):,}")
 
     # Add temporal columns
-    df_post2022['year'] = df_post2022['transaction_date'].dt.year
-    df_post2022['month'] = df_post2022['transaction_date'].dt.to_period('M').astype(str)
+    df_post2022["year"] = df_post2022["transaction_date"].dt.year
+    df_post2022["month"] = df_post2022["transaction_date"].dt.to_period("M").astype(str)
 
     return df_post2022
 
@@ -100,8 +117,8 @@ def load_growth_metrics() -> pd.DataFrame:
         return pd.DataFrame()
 
     # Filter to post-2022 (month format is 'YYYY-MM')
-    if not growth_df.empty and 'month' in growth_df.columns:
-        growth_post2022 = growth_df[growth_df['month'] >= '2022-01'].copy()
+    if not growth_df.empty and "month" in growth_df.columns:
+        growth_post2022 = growth_df[growth_df["month"] >= "2022-01"].copy()
         logger.info(f"Post-2022 growth metrics: {len(growth_post2022):,} records")
         return growth_post2022
 
@@ -115,26 +132,32 @@ def calculate_regional_aggregates(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("=" * 60)
 
     # Classify regions
-    df['region'] = df['planning_area'].apply(classify_region)
+    df["region"] = df["planning_area"].apply(classify_region)
 
     # Count by region
-    region_counts = df['region'].value_counts()
+    region_counts = df["region"].value_counts()
     logger.info("\nTransaction Counts by Region:")
-    for region in ['CCR', 'RCR', 'OCR', 'Unknown']:
+    for region in ["CCR", "RCR", "OCR", "Unknown"]:
         count = region_counts.get(region, 0)
         logger.info(f"  {region}: {count:,} transactions")
 
     # Calculate monthly aggregates
-    monthly = df.groupby(['region', 'month']).agg({
-        'price': ['median', 'mean', 'count'],
-        'price_psf': ['median', 'mean'] if 'price_psf' in df.columns else 'count'
-    }).reset_index()
+    monthly = (
+        df.groupby(["region", "month"])
+        .agg(
+            {
+                "price": ["median", "mean", "count"],
+                "price_psf": ["median", "mean"] if "price_psf" in df.columns else "count",
+            }
+        )
+        .reset_index()
+    )
 
-    monthly.columns = ['_'.join(col).strip('_') for col in monthly.columns]
-    monthly = monthly.rename(columns={'region_': 'region', 'month_': 'month'})
+    monthly.columns = ["_".join(col).strip("_") for col in monthly.columns]
+    monthly = monthly.rename(columns={"region_": "region", "month_": "month"})
 
     # Sort for time series
-    monthly = monthly.sort_values(['region', 'month'])
+    monthly = monthly.sort_values(["region", "month"])
 
     logger.info(f"\nCalculated aggregates for {len(monthly)} region-month combinations")
 
@@ -147,11 +170,7 @@ def analyze_policy_events(monthly: pd.DataFrame) -> dict:
     logger.info("Analyzing Policy Events")
     logger.info("=" * 60)
 
-    policy_events = {
-        'apr_2023': '2023-04',
-        'sep_2023': '2023-09',
-        'dec_2023': '2023-12'
-    }
+    policy_events = {"apr_2023": "2023-04", "sep_2023": "2023-09", "dec_2023": "2023-12"}
 
     results = {}
 
@@ -161,21 +180,27 @@ def analyze_policy_events(monthly: pd.DataFrame) -> dict:
         # Get pre and post periods (3 months each)
         event_date = pd.to_datetime(event_month)
 
-        pre_months = pd.date_range(end=event_date - pd.DateOffset(months=1), periods=3, freq='M').strftime('%Y-%m').tolist()
-        post_months = pd.date_range(start=event_date, periods=6, freq='M').strftime('%Y-%m').tolist()
+        pre_months = (
+            pd.date_range(end=event_date - pd.DateOffset(months=1), periods=3, freq="M")
+            .strftime("%Y-%m")
+            .tolist()
+        )
+        post_months = (
+            pd.date_range(start=event_date, periods=6, freq="M").strftime("%Y-%m").tolist()
+        )
 
         event_results = {}
 
-        for region in ['CCR', 'OCR']:
-            region_data = monthly[monthly['region'] == region]
+        for region in ["CCR", "OCR"]:
+            region_data = monthly[monthly["region"] == region]
 
             # Pre period
-            pre_data = region_data[region_data['month'].isin(pre_months)]
-            pre_price = pre_data['price_median'].mean() if not pre_data.empty else np.nan
+            pre_data = region_data[region_data["month"].isin(pre_months)]
+            pre_price = pre_data["price_median"].mean() if not pre_data.empty else np.nan
 
             # Post period
-            post_data = region_data[region_data['month'].isin(post_months)]
-            post_price = post_data['price_median'].mean() if not post_data.empty else np.nan
+            post_data = region_data[region_data["month"].isin(post_months)]
+            post_price = post_data["price_median"].mean() if not post_data.empty else np.nan
 
             # Calculate change
             if not np.isnan(pre_price) and not np.isnan(post_price):
@@ -183,34 +208,36 @@ def analyze_policy_events(monthly: pd.DataFrame) -> dict:
                 price_change_abs = post_price - pre_price
 
                 event_results[region] = {
-                    'pre_price': pre_price,
-                    'post_price': post_price,
-                    'price_change_pct': price_change_pct,
-                    'price_change_abs': price_change_abs,
-                    'pre_volume': pre_data['price_count'].sum() if not pre_data.empty else 0,
-                    'post_volume': post_data['price_count'].sum() if not post_data.empty else 0
+                    "pre_price": pre_price,
+                    "post_price": post_price,
+                    "price_change_pct": price_change_pct,
+                    "price_change_abs": price_change_abs,
+                    "pre_volume": pre_data["price_count"].sum() if not pre_data.empty else 0,
+                    "post_volume": post_data["price_count"].sum() if not post_data.empty else 0,
                 }
 
                 logger.info(f"\n{region}:")
                 logger.info(f"  Pre-period median: ${pre_price:,.0f}")
                 logger.info(f"  Post-period median: ${post_price:,.0f}")
                 logger.info(f"  Price change: {price_change_pct:+.2f}% (${price_change_abs:,.0f})")
-                logger.info(f"  Volume: {event_results[region]['pre_volume']} → {event_results[region]['post_volume']}")
+                logger.info(
+                    f"  Volume: {event_results[region]['pre_volume']} → {event_results[region]['post_volume']}"
+                )
 
         # Calculate DiD
-        if 'CCR' in event_results and 'OCR' in event_results:
-            ccr_change = event_results['CCR']['price_change_pct']
-            ocr_change = event_results['OCR']['price_change_pct']
+        if "CCR" in event_results and "OCR" in event_results:
+            ccr_change = event_results["CCR"]["price_change_pct"]
+            ocr_change = event_results["OCR"]["price_change_pct"]
             did_estimate = ccr_change - ocr_change
 
             logger.info(f"\nDiD Estimate: {did_estimate:+.2f} percentage points")
             logger.info(f"  (CCR {ccr_change:+.2f}% - OCR {ocr_change:+.2f}%)")
 
             results[event_name] = {
-                'event_month': event_month,
-                'ccr': event_results.get('CCR', {}),
-                'ocr': event_results.get('OCR', {}),
-                'did_estimate_pct': did_estimate
+                "event_month": event_month,
+                "ccr": event_results.get("CCR", {}),
+                "ocr": event_results.get("OCR", {}),
+                "did_estimate_pct": did_estimate,
             }
 
     return results
@@ -223,39 +250,41 @@ def analyze_yoy_trends(df: pd.DataFrame, growth_df: pd.DataFrame) -> dict:
     logger.info("=" * 60)
 
     df = df.copy()
-    df['region'] = df['planning_area'].apply(classify_region)
+    df["region"] = df["planning_area"].apply(classify_region)
 
     # Calculate YoY growth by region and year
-    yearly = df.groupby(['region', 'year'])['price'].median().reset_index()
-    yearly['yoy_growth'] = yearly.groupby('region')['price'].pct_change() * 100
+    yearly = df.groupby(["region", "year"])["price"].median().reset_index()
+    yearly["yoy_growth"] = yearly.groupby("region")["price"].pct_change() * 100
 
     logger.info("\nYear-over-Year Price Growth by Region:")
-    for region in ['CCR', 'RCR', 'OCR']:
-        region_data = yearly[yearly['region'] == region].sort_values('year')
+    for region in ["CCR", "RCR", "OCR"]:
+        region_data = yearly[yearly["region"] == region].sort_values("year")
         logger.info(f"\n{region}:")
         for _, row in region_data.iterrows():
-            if not pd.isna(row['yoy_growth']):
-                logger.info(f"  {int(row['year'])}: {row['yoy_growth']:+.2f}% (median: ${row['price']:,.0f})")
+            if not pd.isna(row["yoy_growth"]):
+                logger.info(
+                    f"  {int(row['year'])}: {row['yoy_growth']:+.2f}% (median: ${row['price']:,.0f})"
+                )
 
     # Pre vs post policy comparison
-    pre_policy = yearly[yearly['year'].isin([2022, 2023])].groupby('region')['yoy_growth'].mean()
-    post_policy = yearly[yearly['year'].isin([2024, 2025])].groupby('region')['yoy_growth'].mean()
+    pre_policy = yearly[yearly["year"].isin([2022, 2023])].groupby("region")["yoy_growth"].mean()
+    post_policy = yearly[yearly["year"].isin([2024, 2025])].groupby("region")["yoy_growth"].mean()
 
     logger.info("\nAverage YoY Growth:")
     logger.info("Pre-Policy (2022-2023):")
-    for region in ['CCR', 'RCR', 'OCR']:
+    for region in ["CCR", "RCR", "OCR"]:
         if region in pre_policy.index:
             logger.info(f"  {region}: {pre_policy[region]:+.2f}%")
 
     logger.info("\nPost-Policy (2024-2025):")
-    for region in ['CCR', 'RCR', 'OCR']:
+    for region in ["CCR", "RCR", "OCR"]:
         if region in post_policy.index:
             logger.info(f"  {region}: {post_policy[region]:+.2f}%")
 
     return {
-        'yearly_by_region': yearly,
-        'pre_policy_avg': pre_policy.to_dict(),
-        'post_policy_avg': post_policy.to_dict()
+        "yearly_by_region": yearly,
+        "pre_policy_avg": pre_policy.to_dict(),
+        "post_policy_avg": post_policy.to_dict(),
     }
 
 
@@ -266,22 +295,28 @@ def calculate_appreciation_hotspots(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("=" * 60)
 
     # Calculate YoY growth by planning area
-    area_yearly = df.groupby(['planning_area', 'year'])['price'].median().reset_index()
-    area_yearly['yoy_growth'] = area_yearly.groupby('planning_area')['price'].pct_change() * 100
+    area_yearly = df.groupby(["planning_area", "year"])["price"].median().reset_index()
+    area_yearly["yoy_growth"] = area_yearly.groupby("planning_area")["price"].pct_change() * 100
 
     # Filter to 2023-2025 for post-policy analysis
-    recent = area_yearly[area_yearly['year'] >= 2023]
-    area_stats = recent.groupby('planning_area')['yoy_growth'].agg(['mean', 'median', 'count']).reset_index()
-    area_stats = area_stats[area_stats['count'] >= 2]  # At least 2 years of data
-    area_stats = area_stats.sort_values('mean', ascending=False)
+    recent = area_yearly[area_yearly["year"] >= 2023]
+    area_stats = (
+        recent.groupby("planning_area")["yoy_growth"].agg(["mean", "median", "count"]).reset_index()
+    )
+    area_stats = area_stats[area_stats["count"] >= 2]  # At least 2 years of data
+    area_stats = area_stats.sort_values("mean", ascending=False)
 
     logger.info("\nTop 5 Planning Areas (YoY Growth):")
     for _, row in area_stats.head(5).iterrows():
-        logger.info(f"  {row['planning_area']}: {row['mean']:+.2f}% (median: {row['median']:+.2f}%)")
+        logger.info(
+            f"  {row['planning_area']}: {row['mean']:+.2f}% (median: {row['median']:+.2f}%)"
+        )
 
     logger.info("\nBottom 5 Planning Areas (YoY Growth):")
     for _, row in area_stats.tail(5).iterrows():
-        logger.info(f"  {row['planning_area']}: {row['mean']:+.2f}% (median: {row['median']:+.2f}%)")
+        logger.info(
+            f"  {row['planning_area']}: {row['mean']:+.2f}% (median: {row['median']:+.2f}%)"
+        )
 
     return area_stats
 
@@ -317,17 +352,21 @@ def main():
     logger.info("ANALYSIS COMPLETE")
     logger.info("=" * 60)
     logger.info(f"\nTotal HDB transactions (post-2022): {len(df):,}")
-    logger.info(f"Date range: {df['transaction_date'].min().date()} to {df['transaction_date'].max().date()}")
+    logger.info(
+        f"Date range: {df['transaction_date'].min().date()} to {df['transaction_date'].max().date()}"
+    )
     logger.info(f"Planning areas: {df['planning_area'].nunique()}")
-    logger.info(f"Regions: CCR ({len(df[df['region']=='CCR']):,}), RCR ({len(df[df['region']=='RCR']):,}), OCR ({len(df[df['region']=='OCR']):,})")
+    logger.info(
+        f"Regions: CCR ({len(df[df['region'] == 'CCR']):,}), RCR ({len(df[df['region'] == 'RCR']):,}), OCR ({len(df[df['region'] == 'OCR']):,})"
+    )
 
     return {
-        'monthly': monthly,
-        'policy_results': policy_results,
-        'yoy_results': yoy_results,
-        'hotspots': hotspots
+        "monthly": monthly,
+        "policy_results": policy_results,
+        "yoy_results": yoy_results,
+        "hotspots": hotspots,
     }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

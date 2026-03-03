@@ -1,32 +1,16 @@
 # Code Conventions
 
-## Python Code Style
+**Generated**: 2026-02-28
 
-### Linting & Formatting
+## Code Style
 
-**Tool:** Ruff (fast Python linter and formatter)
+### Python Style
 
-**Configuration:** `pyproject.toml`
-```toml
-[tool.ruff]
-line-length = 100
-target-version = "py311"
+**Line Length**: 100 characters (enforced by Ruff)
 
-[tool.ruff.lint]
-select = ["E", "F", "W", "I", "N", "UP"]
-ignore = ["E501"]  # Line length handled by formatter
+**Python Version**: 3.11+ (minimum requirement)
 
-[tool.ruff.lint.per-file-ignores]
-"notebooks/*.py" = ["E402"]  # Allow imports anywhere in notebooks
-"scripts/core/stages/*.py" = ["N999"]  # Allow stage file names
-```
-
-**Line Length:** 100 characters (strictly enforced)
-
-**Python Version:** 3.11+
-
-### Formatting Commands
-
+**Formatter/Linter**: Ruff
 ```bash
 # Format code
 uv run ruff format .
@@ -38,45 +22,41 @@ uv run ruff check .
 uv run ruff check . --fix
 ```
 
----
+**Configuration**: `pyproject.toml`
 
-### Naming Conventions
+```toml
+[tool.ruff]
+line-length = 100
+target-version = "py311"
 
-**Files:** snake_case
-- `data_helpers.py`
-- `geocoding.py`
-- `fetch_macro_data.py`
-
-**Classes:** PascalCase
-- `Config`
-- `TestL0Collect`
-- `GeocodingService`
-
-**Functions:** snake_case
-- `load_parquet()`
-- `process_transactions()`
-- `calculate_metrics()`
-
-**Variables:** snake_case
-- `dataset_name`
-- `api_response`
-- `geo_coordinates`
-
-**Constants:** UPPER_SNAKE_CASE
-- `DATA_DIR`
-- `ONEMAP_EMAIL`
-- `DEFAULT_TIMEOUT`
-
-**Exceptions:** PascalCase with "Error" suffix
-- `ValueError`
-- `RuntimeError`
-- `FileNotFoundError`
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4"]
+ignore = ["E501"]  # Line length handled by formatter
+```
 
 ---
 
-### Import Conventions
+### TypeScript/React Style
 
-**ALWAYS use absolute imports from project root:**
+**Formatter**: Biome or ESLint (configured in `app/`)
+
+**Configuration**: `app/biome.json` or `app/.eslintrc.js`
+
+**Commands**:
+```bash
+cd app
+npm run lint        # Check linting
+npm run lint:fix    # Auto-fix issues
+npm run format      # Format code
+```
+
+---
+
+## Import Path Conventions
+
+### Absolute Imports Only
+
+**ALWAYS use absolute imports from project root**
 
 ```python
 # ✓ Correct - Absolute from project root
@@ -89,396 +69,406 @@ from ..core.config import Config
 from .stages.L1_process import process_transactions
 ```
 
-**Reason:** Relative imports break when scripts run from different directories.
+**Reason**: Relative imports break when scripts run from different directories
 
-**Import Order:** Standard library → Third-party → Local
+### Import Organization
+
+**Order**: Standard library → Third-party → Local imports
+
 ```python
+# 1. Standard library
 import logging
 from pathlib import Path
 
+# 2. Third-party
 import pandas as pd
-import requests
+from dotenv import load_dotenv
 
+# 3. Local imports
 from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet
 ```
 
----
+### Import Aliases
 
-### Type Hints
-
-**Required for all public functions:**
-
+**Standard aliases**:
 ```python
-def load_parquet(
-    dataset_name: str,
-    version: str | None = None,
-    columns: list[str] | None = None
-) -> pd.DataFrame:
-    """
-    Load a parquet file by dataset name.
-
-    Args:
-        dataset_name: Key from metadata.json
-        version: Optional version string
-        columns: Optional list of columns to load
-
-    Returns:
-        pandas DataFrame
-
-    Raises:
-        ValueError: If dataset not found
-        FileNotFoundError: If parquet file missing
-    """
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scripts.core import config as cfg
 ```
 
-**Type Hint Style:**
-- Use `X | Y` syntax (Python 3.10+) instead of `Optional[X]` or `Union[X, Y]`
-- Use `list[str]` instead of `List[str]` (from `typing` module)
-- Required for all public APIs
-- Optional for private functions (but recommended)
-
 ---
 
-### Documentation Style
+## Error Handling
 
-**Google-style docstrings:**
+### Exception Hierarchy
+
+**Use specific exceptions for different error types**:
+
+- `ValueError` - Invalid input, configuration issues
+- `FileNotFoundError` - Missing files
+- `RuntimeError` - API failures, general errors
+- `KeyError` - Missing data keys (with context)
+
+### Pattern: Try-Except-Log-Raise
+
+**Standard error handling pattern**:
 
 ```python
-def process_transactions(
-    ec_df: pd.DataFrame,
-    condo_df: pd.DataFrame,
-    hdb_df: pd.DataFrame
-) -> pd.DataFrame:
-    """
-    Process and combine transaction data from multiple sources.
+import logging
+logger = logging.getLogger(__name__)
 
-    This function standardizes column names, removes duplicates, and
-    merges EC, condo, and HDB transaction data into a unified dataset.
-
-    Args:
-        ec_df: Executive condo transactions DataFrame
-        condo_df: Private condo transactions DataFrame
-        hdb_df: HDB resale transactions DataFrame
-
-    Returns:
-        Unified DataFrame with standardized columns
-
-    Raises:
-        ValueError: If any input DataFrame is empty
-        RuntimeError: If merge fails due to column mismatch
-    """
+try:
+    df = pd.read_parquet(parquet_path)
+except Exception as e:
+    logger.error(f"Failed to load {parquet_path}: {e}")
+    raise RuntimeError(f"Parquet read failed: {e}") from e
 ```
 
-**Docstring Sections:**
-- Brief description (first line)
-- Extended description (if needed)
-- Args: (parameter descriptions)
-- Returns: (return value description)
-- Raises: (exceptions that may be raised)
+### Comprehensive Error Messages
 
----
+**Provide context and available options**:
 
-### Error Handling Patterns
-
-**Consistent error handling across codebase:**
-
-#### Input Validation
 ```python
-if df.empty:
-    raise ValueError(f"Cannot save empty DataFrame for {dataset_name}")
-
-if mode not in ["overwrite", "append"]:
-    raise ValueError(f"mode must be 'overwrite' or 'append', got '{mode}'")
-
 if dataset_name not in metadata["datasets"]:
     available = list(metadata["datasets"].keys())
-    raise ValueError(f"Dataset '{dataset_name}' not found. Available: {available}")
-```
-
-#### File Operations
-```python
-if not parquet_path.exists():
-    raise FileNotFoundError(
-        f"Parquet file not found: {parquet_path}\n"
-        f"Dataset may have been deleted. Run data pipeline to regenerate."
+    raise ValueError(
+        f"Dataset '{dataset_name}' not found. "
+        f"Available: {', '.join(available)}"
     )
 ```
 
-#### API Calls
-```python
-try:
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-    return response.json()
-except requests.HTTPError as e:
-    logger.error(f"API request failed: {e}")
-    raise RuntimeError(f"Failed to fetch data from {url}: {e}") from e
-except requests.Timeout as e:
-    logger.error(f"API request timed out: {e}")
-    raise RuntimeError(f"Timeout fetching data from {url}: {e}") from e
-```
+### Validation First
 
-#### Data Operations
+**Validate inputs before processing**:
+
 ```python
-try:
-    df = pd.read_parquet(parquet_path, columns=columns)
-    logger.info(f"Loaded {dataset_name}: {len(df)} rows from {parquet_path}")
+def process_transactions(df: pd.DataFrame) -> pd.DataFrame:
+    """Process transaction data."""
+    if df.empty:
+        raise ValueError("DataFrame is empty")
+
+    required_cols = ["address", "price", "date"]
+    missing = [col for col in required_cols if col not in df.columns]
+    if missing:
+        raise ValueError(f"Missing columns: {missing}")
+
+    # Process...
     return df
-except Exception as e:
-    raise RuntimeError(f"Failed to load parquet {parquet_path}: {e}") from e
 ```
-
-**Error Handling Principles:**
-1. Validate inputs early
-2. Use specific exception types
-3. Provide descriptive error messages
-4. Include context in error messages
-5. Chain exceptions with `raise ... from e`
-6. Log errors before re-raising
 
 ---
 
-### Logging Patterns
+## Logging
 
-**Setup (each module):**
+### Setup
+
+**Each module should set up logging**:
+
 ```python
 import logging
 
 logger = logging.getLogger(__name__)
 ```
 
-**Log Levels:**
+### Log Levels
+
+**When to use each level**:
+
 ```python
-logger.debug()     # Detailed debug information (rarely used)
-logger.info()      # General information (most common)
-logger.warning()   # Warnings (non-critical issues)
-logger.error()     # Errors (exceptions)
+logger.debug("Detailed debug information")  # Development only
+logger.info("General information")          # Most common
+logger.warning("Warning (non-critical)")    # Potential issues
+logger.error("Error (exception)")           # Failures
 ```
 
-**Structured Logging with Emojis:**
-```python
-# Success/completion
-logger.info(f"✅ Saved {len(df)} rows to {parquet_path}")
-logger.info(f"✅ Completed geocoding: {len(results)}/{total} successful")
+### Structured Logging
 
-# Progress
-logger.info(f"🔄 Processing batch {batch_num}/{total_batches}")
-logger.info(f"📦 Loaded {dataset_name}: {len(df)} rows")
+**Use descriptive messages with context**:
+
+```python
+# Success
+logger.info(f"Loading {dataset_name}")
+logger.info(f"✅ Saved {len(df)} rows to {parquet_path}")
 
 # Warnings
-logger.warning(f"⚠️  Failed to geocode '{address}': {e}")
-logger.warning(f"⚠️  No data found for {region}, using fallback")
+logger.warning(f"No geocoding results found for {address}")
+logger.warning(f"Missing coordinates for {count} addresses")
 
 # Errors
-logger.error(f"❌ API request failed: {status_code}")
-logger.error(f"❌ Unexpected error for '{address}': {e}")
+logger.error(f"API request failed: {status_code}")
+logger.error(f"Failed to geocode after 3 attempts: {address}")
 ```
 
-**Logging Best Practices:**
-1. Use structured messages (not print statements)
-2. Include context in messages (dataset name, row count, etc.)
-3. Use emojis for visual scanning
-4. Log at appropriate levels
-5. Log before raising exceptions
+### Output Location
+
+**Log files**: `data/logs/`
+
+**Format**: Timestamped log files
+- `pipeline_20260228.log`
+- `geocoding_20260228.log`
 
 ---
 
-### Code Patterns
+## Type Hints
 
-#### DataFrame Operations
+### Required for Public Functions
 
-**Vectorized Operations (preferred):**
+**All public functions must have type hints**:
+
 ```python
-# ✓ Good - Vectorized
-df['price_per_sqft'] = df['price'] / df['floor_area']
+def load_parquet(
+    dataset_name: str,
+    version: str | None = None
+) -> pd.DataFrame:
+    """Load a parquet file by dataset name."""
+    pass
 
-# ✗ Bad - iterrows (anti-pattern)
-for idx, row in df.iterrows():
-    df.loc[idx, 'price_per_sqft'] = row['price'] / row['floor_area']
+def save_parquet(
+    df: pd.DataFrame,
+    dataset_name: str,
+    source: str,
+    description: str | None = None,
+) -> None:
+    """Save DataFrame to parquet with metadata."""
+    pass
 ```
 
-**Method Chaining:**
+### Type Hints for Returns
+
+**Always specify return type**:
+
 ```python
-df = (df
-    .dropna(subset=['price', 'floor_area'])
-    .assign(price_per_sqft=lambda x: x['price'] / x['floor_area'])
-    .sort_values('date')
-    .reset_index(drop=True)
-)
+def process_address(address: str) -> tuple[str, str, int]:
+    """Process address into components.
+
+    Returns:
+        Tuple of (block, street, postal_code)
+    """
+    pass
 ```
 
-**Input Validation:**
-```python
-if df.empty:
-    raise ValueError(f"Cannot process empty DataFrame")
+### Union Types
 
-required_cols = ['price', 'date', 'town']
-missing = [col for col in required_cols if col not in df.columns]
-if missing:
-    raise ValueError(f"Missing required columns: {missing}")
+**Use modern syntax (Python 3.10+)**:
+
+```python
+# ✓ Modern syntax
+def process(data: str | None) -> pd.DataFrame | None:
+    pass
+
+# ✗ Old syntax (avoid)
+from typing import Union
+def process(data: Union[str, None]) -> Union[pd.DataFrame, None]:
+    pass
 ```
 
-#### API Calls
+### Type Aliases
 
-**Caching Pattern:**
+**For complex types**:
+
 ```python
-@cached_call(ttl=86400)  # 24 hours
-def fetch_api_data(url: str) -> dict:
-    """Fetch data from API with caching."""
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-    return response.json()
-```
+from typing import TypeAlias
 
-**Retry Pattern:**
-```python
-from tenacity import retry, stop_after_attempt, wait_exponential
+Coordinates: TypeAlias = tuple[float, float]
 
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=4, max=10)
-)
-def fetch_with_retry(url: str) -> dict:
-    """Fetch data with retry logic."""
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-    return response.json()
+def geocode(address: str) -> Coordinates | None:
+    """Geocode address to lat/lon."""
+    pass
 ```
 
 ---
 
-## Frontend Code Style
+## Docstrings
 
-### TypeScript Configuration
+### Google Style
 
-**Extends Astro strict mode:**
-```json
-{
-  "extends": "astro/tsconfigs/strict",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@types/*": ["./src/types/*"],
-      "@utils/*": ["./src/utils/*"]
-    }
-  }
-}
+**Use Google style docstrings**:
+
+```python
+def load_parquet(dataset_name: str) -> pd.DataFrame:
+    """Load a parquet file by dataset name with error handling.
+
+    Args:
+        dataset_name: Key from metadata.json
+
+    Returns:
+        pandas DataFrame with the requested data
+
+    Raises:
+        ValueError: If dataset not found
+        FileNotFoundError: If parquet file missing
+    """
+    pass
 ```
 
-### Component Patterns
+### Module Docstrings
 
-**Interface Definitions:**
+**Each module should have a docstring**:
+
+```python
+"""HDB resale transaction processing.
+
+This module handles the processing of HDB resale transaction data,
+including address cleaning, validation, and geocoding.
+
+ typical usage example:
+    df = load_parquet("L0_hdb_resale")
+    processed = process_hdb_transactions(df)
+    save_parquet(processed, "L1_hdb_transaction")
+"""
+```
+
+### Function Docstrings
+
+**Include**:
+- Brief description
+- Args (if parameters)
+- Returns (if returns value)
+- Raises (if exceptions)
+- Example (if complex)
+
+---
+
+## Code Organization
+
+### Function Length
+
+**Keep functions short and focused**:
+- **Target**: < 50 lines
+- **Maximum**: < 100 lines (with good reason)
+
+**Extract helper functions for complex logic**:
+
+```python
+# ✓ Good - Delegated to helpers
+def process_transactions(df: pd.DataFrame) -> pd.DataFrame:
+    df = clean_addresses(df)
+    df = geocode_addresses(df)
+    df = add_features(df)
+    return df
+
+# ✗ Bad - Too long, does too much
+def process_transactions(df: pd.DataFrame) -> pd.DataFrame:
+    # 200 lines of processing...
+    pass
+```
+
+### Module Organization
+
+**Order of elements**:
+1. Module docstring
+2. Imports (standard → third → local)
+3. Module-level constants
+4. Helper functions (private, prefixed with `_`)
+5. Public functions
+6. Classes (if any)
+7. `if __name__ == "__main__"` block
+
+**Example**:
+```python
+"""Module docstring."""
+
+import logging
+import pandas as pd
+
+from scripts.core.config import Config
+
+logger = logging.getLogger(__name__)
+CONSTANT_VALUE = "value"
+
+def _helper_function():
+    """Private helper."""
+    pass
+
+def public_function():
+    """Public function."""
+    pass
+
+if __name__ == "__main__":
+    # CLI logic
+    pass
+```
+
+### Class Organization
+
+**Use classes for stateful operations**:
+- Geocoding service
+- API client
+- Configuration manager
+
+**Prefer functions for stateless operations**:
+- Data transformations
+- Calculations
+- Pure functions
+
+---
+
+## Naming Conventions
+
+### Python
+
+**Variables and functions**: `snake_case`
+```python
+address_cleaner = AddressCleaner()
+def process_data():
+    pass
+```
+
+**Classes**: `PascalCase`
+```python
+class GeocodingService:
+    pass
+```
+
+**Constants**: `UPPER_SNAKE_CASE`
+```python
+MAX_RETRIES = 3
+DEFAULT_TIMEOUT = 30
+```
+
+**Private members**: Prefix with `_`
+```python
+def _internal_helper():
+    pass
+
+class MyClass:
+    def __init__(self):
+        self._private_var = None
+```
+
+### TypeScript/React
+
+**Components**: `PascalCase`
 ```typescript
-interface TrendRecord {
-  date: string;
-  [key: string]: number | string;
-}
-
-interface OverviewData {
-  metadata: {
-    generated_at: string;
-    total_records: number;
-    date_range: { start: string; end: string };
-  };
-  metrics: MetricData[];
+export function DashboardMap() {
+  return <div>...</div>
 }
 ```
 
-**Custom Hooks Pattern:**
+**Utilities**: `camelCase`
 ```typescript
-export function useAnalyticsData<T>(type: AnalyticsType): UseAnalyticsDataResult<T> {
-  const { data, isLoading, error } = useGzipJson<T>(
-    getAnalyticsUrl(type),
-    `analytics-${type}`,
-    true
-  );
-
-  return {
-    data,
-    isLoading,
-    error,
-    refetch: () => refetch()
-  };
+export function formatDate(date: Date): string {
+  return ...
 }
 ```
 
-**Error Handling:**
-```typescript
-const { data, error, isLoading } = useGzipJson(url);
-
-if (error) return <ErrorDisplay error={error} />;
-if (isLoading) return <LoadingSpinner />;
-return <Component data={data} />;
-```
+**Files**:
+- Components: `PascalCase.tsx`
+- Pages: `kebab-case.astro`
+- Utils: `camelCase.ts`
 
 ---
 
-## Testing Conventions
+## Configuration Management
 
-### Test Organization
+### Centralized Configuration
 
-**Mirrors production code structure:**
-```
-tests/
-├── core/test_config.py         # Tests for scripts/core/config.py
-├── core/test_data_helpers.py   # Tests for scripts/core/data_helpers.py
-└── analytics/
-    ├── models/test_area_arimax.py
-    └── pipelines/test_cross_validate.py
-```
+**All configuration in `scripts/core/config.py`**:
 
-### Test Structure
-
-**Class-based organization:**
-```python
-@pytest.mark.unit
-class TestL0Collect:
-    """Test L0 collection functions."""
-
-    @patch("scripts.core.stages.L0_collect.requests.get")
-    def test_fetch_datagovsg_dataset(self, mock_get):
-        """Test fetching data from data.gov.sg API."""
-        # Setup mock
-        mock_response = Mock()
-        mock_response.json.return_value = {"result": {"records": []}}
-        mock_get.return_value = mock_response
-
-        # Test function
-        result = fetch_datagovsg_dataset("https://api.test.com/", "test_id")
-
-        # Assertions
-        assert len(result) == 0
-        mock_get.assert_called_once()
-```
-
-### Test Markers
-
-**Use pytest markers:**
-```python
-@pytest.mark.unit              # Fast, isolated tests
-@pytest.mark.integration       # Component interaction tests
-@pytest.mark.slow             # Full pipeline tests (run infrequently)
-@pytest.mark.api              # Tests that make API calls
-```
-
-**Run by marker:**
-```bash
-uv run pytest -m unit            # Unit tests only
-uv run pytest -m integration     # Integration tests only
-uv run pytest -m "not slow"      # Skip slow tests
-```
-
----
-
-## Shared Utilities
-
-### Configuration
-
-**Centralized in `scripts/core/config.py`:**
 ```python
 from scripts.core.config import Config
 
@@ -487,108 +477,282 @@ data_dir = Config.DATA_DIR
 parquets_dir = Config.PARQUETS_DIR
 
 # Access API keys
-api_key = Config.ONEMAP_EMAIL
+api_key = Config.GOOGLE_API_KEY
 
 # Validate configuration
 Config.validate()
 ```
 
-### Data Management
+### Environment Variables
 
-**`scripts/core/data_helpers.py`:**
+**Use `.env` file (from `.env.example`)**:
+
+```bash
+# .env
+ONEMAP_EMAIL=your@email.com
+GOOGLE_API_KEY=your_api_key_here
+```
+
+**Never hardcode secrets**:
 ```python
-from scripts.core.data_helpers import load_parquet, save_parquet
+# ✗ Wrong - Hardcoded secret
+API_KEY = "abc123"
 
-# Load data
-df = load_parquet("L1_hdb_transactions")
+# ✓ Correct - From environment
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise ValueError("API_KEY not set")
+```
 
-# Save data
+---
+
+## Data Processing Patterns
+
+### Loading Data
+
+**Use metadata-based loading**:
+
+```python
+from scripts.core.data_helpers import load_parquet
+
+# Uses metadata.json
+df = load_parquet("L2_hdb_with_features")
+
+# Validate
+if df.empty:
+    raise ValueError("Dataset is empty")
+```
+
+### Saving Data
+
+**Use metadata-based saving**:
+
+```python
+from scripts.core.data_helpers import save_parquet
+
 save_parquet(
     df,
-    dataset_name="L2_hdb_with_features",
-    source="L1_hdb_transactions + features"
+    dataset_name="L3_unified_dataset",
+    source="L2_hdb_with_features + L2_ura_with_features"
+)
+# Automatically updates metadata.json
+```
+
+### DataFrame Operations
+
+**Validate non-empty**:
+```python
+def process(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        raise ValueError("Input DataFrame is empty")
+
+    # Process...
+    return df
+```
+
+**Use method chaining for readability**:
+```python
+df = (
+    df
+    .dropna(subset=["price"])
+    .assign(price_per_sqft=lambda x: x["price"] / x["floor_area"])
+    .sort_values("date")
 )
 ```
 
 ---
 
-## Code Quality Standards
+## Commenting Guidelines
 
-### Python
+### When to Comment
 
-1. **Type Hints:** Required for all public functions
-2. **Docstrings:** Google-style, required for all public APIs
-3. **Error Handling:** Specific exceptions with descriptive messages
-4. **Logging:** Structured with emojis for visual scanning
-5. **Imports:** Absolute only, no relative imports
-6. **Line Length:** 100 characters (strict)
+**Good comments explain WHY, not WHAT**:
 
-### Frontend
+```python
+# ✓ Good - Explains why
+# Delay 1.2s to respect OneMap rate limits
+time.sleep(1.2)
 
-1. **TypeScript:** Strict mode, no `any` types
-2. **Interfaces:** Define all data structures
-3. **Components:** Functional components with hooks
-4. **Error Boundaries:** Handle errors gracefully
-5. **Path Aliases:** Use `@/` prefix for all imports
+# ✗ Bad - Restates obvious
+# Sleep for 1.2 seconds
+time.sleep(1.2)
+```
 
----
+### When NOT to Comment
 
-## Anti-Patterns to Avoid
+**Don't comment obvious code**:
+```python
+# ✗ Useless comment
+# Increment counter
+count += 1
 
-### Python
+# ✓ Self-explanatory, no comment needed
+count += 1
+```
 
-1. **No iterrows():** Use vectorized operations
-2. **No print() for logging:** Use logger
-3. **No hardcoded paths:** Use Config class
-4. **No relative imports:** Use absolute imports
-5. **No bare except:** Catch specific exceptions
-6. **No mutable default arguments:** Use None and document
+### TODO Comments
 
-### Frontend
+**Format**: `TODO: description - @username (optional)`
 
-1. **No any types:** Use proper TypeScript types
-2. **No prop drilling:** Use context or hooks
-3. **No inline styles:** Use Tailwind classes
-4. **No missing error handling:** Always handle errors
-5. **No untyped data:** Define interfaces first
+```python
+# TODO: Implement caching for API responses
+# TODO: Refactor into smaller functions - @dev
+# FIXME: This breaks for edge case X
+```
 
 ---
 
-## Code Review Checklist
+## Testing Conventions
 
-### Python Code
+### Test Structure
 
-- [ ] Type hints present
-- [ ] Google-style docstring
-- [ ] Error handling with specific exceptions
-- [ ] Logging with appropriate level
-- [ ] Absolute imports from project root
-- [ ] Line length ≤ 100 characters
-- [ ] No use of `iterrows()`
-- [ ] Input validation
+**Follow the Arrange-Act-Assert pattern**:
 
-### Frontend Code
+```python
+def test_load_parquet():
+    # Arrange
+    dataset_name = "test_dataset"
+    expected_rows = 100
 
-- [ ] TypeScript interfaces defined
-- [ ] Error handling present
-- [ ] Loading states handled
-- [ ] Path aliases used (@/)
-- [ ] No `any` types
-- [ ] Component composition clean
+    # Act
+    df = load_parquet(dataset_name)
+
+    # Assert
+    assert len(df) == expected_rows
+    assert not df.empty
+```
+
+### Test Naming
+
+**Descriptive names that explain what is being tested**:
+
+```python
+# ✓ Good
+def test_geocode_address_returns_coordinates_for_valid_address():
+    pass
+
+def test_geocode_address_returns_none_for_invalid_address():
+    pass
+
+# ✗ Bad
+def test_geocode():
+    pass
+def test_geocode_fail():
+    pass
+```
+
+### Test Fixtures
+
+**Use fixtures for common test data**:
+
+```python
+import pytest
+
+@pytest.fixture
+def sample_dataframe():
+    """Return a sample DataFrame for testing."""
+    return pd.DataFrame({
+        "address": ["1 Orchard Road"],
+        "price": [1000000],
+    })
+
+def test_process(sample_dataframe):
+    result = process(sample_dataframe)
+    assert not result.empty
+```
 
 ---
 
-## Summary of Key Conventions
+## Jupyter Notebook Conventions
 
-| Aspect | Convention |
-|--------|-----------|
-| **Line Length** | 100 characters |
-| **Python Version** | 3.11+ |
-| **Type Hints** | Required for public APIs |
-| **Docstrings** | Google-style |
-| **Imports** | Absolute from project root |
-| **Logging** | Structured with emojis |
-| **Error Handling** | Specific exceptions, chain with `from e` |
-| **Testing** | Class-based, pytest markers |
-| **Frontend Types** | TypeScript strict mode |
-| **Path Aliases** | Use @/ prefix |
+### Jupytext Pairing
+
+**All notebooks have paired .py files**:
+- `notebooks/L0_datagovsg.ipynb` ↔ `notebooks/L0_datagovsg.py`
+
+### Editing Workflow
+
+**Edit .py files in VS Code** (better IDE support)
+**Use .ipynb files in Jupyter** (visualization and exploration)
+
+### Cell Markers
+
+**Use `#%%` format** for cell markers in .py files:
+
+```python
+# %%
+import pandas as pd
+
+# %%
+df = pd.read_csv("data.csv")
+df.head()
+```
+
+### Syncing
+
+**Manual sync** (if needed):
+```bash
+cd notebooks
+uv run jupytext --sync notebook_name.ipynb
+```
+
+---
+
+## Git Conventions
+
+### Commit Messages
+
+**Format**: `type(scope): description`
+
+**Types**:
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting)
+- `refactor`: Code refactoring
+- `test`: Test changes
+- `chore`: Maintenance tasks
+
+**Examples**:
+```bash
+git commit -m "feat(geocoding): add fallback to Google Maps"
+git commit -m "fix(pipeline): handle missing address field"
+git commit -m "docs: update README with setup instructions"
+```
+
+---
+
+## Summary
+
+**Code Style**:
+- Python: Ruff formatter, 100 char line length
+- Type hints required for public functions
+- Google style docstrings
+
+**Import Paths**:
+- Absolute imports only (from project root)
+
+**Error Handling**:
+- Try-Except-Log-Raise pattern
+- Comprehensive error messages
+- Validate inputs first
+
+**Logging**:
+- Structured messages with context
+- Appropriate log levels
+- Output to `data/logs/`
+
+**Data Processing**:
+- Use metadata-based load/save
+- Validate non-empty DataFrames
+- Method chaining for readability
+
+**Testing**:
+- Arrange-Act-Assert pattern
+- Descriptive test names
+- Use fixtures for common data
+
+**Notebooks**:
+- Paired .ipynb + .py files (Jupytext)
+- Edit .py in VS Code
+- Use .ipynb in Jupyter

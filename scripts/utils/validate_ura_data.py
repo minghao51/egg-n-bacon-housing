@@ -30,44 +30,43 @@ def validate_file(file_path: Path, expected_rows_min: int = 1000) -> dict:
     Returns:
         Dict with validation results
     """
-    result = {
-        'file': file_path.name,
-        'valid': False,
-        'rows': 0,
-        'columns': [],
-        'error': None
-    }
+    result = {"file": file_path.name, "valid": False, "rows": 0, "columns": [], "error": None}
 
     try:
         # Load file
-        df = pd.read_csv(file_path, encoding='latin1', nrows=5)
+        df = pd.read_csv(file_path, encoding="latin1", nrows=5)
 
-        result['rows'] = len(df)
-        result['columns'] = df.columns.tolist()
+        result["rows"] = len(df)
+        result["columns"] = df.columns.tolist()
 
         # Check expected columns
         expected_cols = [
-            'Project Name', 'Transacted Price ($)', 'Area (SQFT)',
-            'Unit Price ($ PSF)', 'Sale Date', 'Street Name', 'Property Type'
+            "Project Name",
+            "Transacted Price ($)",
+            "Area (SQFT)",
+            "Unit Price ($ PSF)",
+            "Sale Date",
+            "Street Name",
+            "Property Type",
         ]
 
         missing_cols = [col for col in expected_cols if col not in df.columns]
         if missing_cols:
-            result['error'] = f"Missing columns: {missing_cols}"
+            result["error"] = f"Missing columns: {missing_cols}"
             return result
 
         # Count actual rows
-        full_df = pd.read_csv(file_path, encoding='latin1')
-        result['rows'] = len(full_df)
+        full_df = pd.read_csv(file_path, encoding="latin1")
+        result["rows"] = len(full_df)
 
-        if result['rows'] < expected_rows_min:
-            result['error'] = f"Too few rows: {result['rows']} < {expected_rows_min}"
+        if result["rows"] < expected_rows_min:
+            result["error"] = f"Too few rows: {result['rows']} < {expected_rows_min}"
             return result
 
-        result['valid'] = True
+        result["valid"] = True
 
     except Exception as e:
-        result['error'] = str(e)
+        result["error"] = str(e)
 
     return result
 
@@ -78,14 +77,14 @@ def main():
     print("Validating URA Data Files")
     print("=" * 60)
 
-    ura_dir = Config.DATA_DIR / 'raw_data' / 'csv' / 'ura'
+    ura_dir = Config.DATA_DIR / "raw_data" / "csv" / "ura"
 
     if not ura_dir.exists():
         print(f"❌ URA directory not found: {ura_dir}")
         return False
 
     # Get all CSV files
-    csv_files = sorted(ura_dir.glob('*.csv'))
+    csv_files = sorted(ura_dir.glob("*.csv"))
 
     if not csv_files:
         print(f"❌ No CSV files found in {ura_dir}")
@@ -100,7 +99,7 @@ def main():
         result = validate_file(csv_file)
         results.append(result)
 
-        if result['valid']:
+        if result["valid"]:
             print(f"✅ {result['rows']:,} rows")
         else:
             print(f"❌ {result['error']}")
@@ -110,14 +109,14 @@ def main():
     print("Validation Summary")
     print("=" * 60)
 
-    valid_files = [r for r in results if r['valid']]
-    invalid_files = [r for r in results if not r['valid']]
+    valid_files = [r for r in results if r["valid"]]
+    invalid_files = [r for r in results if not r["valid"]]
 
     print(f"✅ Valid files: {len(valid_files)}/{len(results)}")
     print(f"❌ Invalid files: {len(invalid_files)}/{len(results)}")
 
     if valid_files:
-        total_rows = sum(r['rows'] for r in valid_files)
+        total_rows = sum(r["rows"] for r in valid_files)
         print(f"📊 Total rows: {total_rows:,}")
 
     if invalid_files:

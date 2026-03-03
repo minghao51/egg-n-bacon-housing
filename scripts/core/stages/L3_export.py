@@ -28,6 +28,8 @@ import geopandas as gpd
 import pandas as pd
 
 from scripts.core.config import Config
+from scripts.core.data_helpers import save_parquet
+from scripts.core.data_quality import record_dataframe_quality
 from scripts.core.data_loader import PropertyType, TransactionLoader
 from scripts.core.school_features import calculate_school_features, load_schools
 from scripts.core.stages.helpers import export_helpers
@@ -1547,17 +1549,22 @@ def save_precomputed_tables(
     logger.info("Saving precomputed tables...")
 
     tables = {
-        "market_summary": market_summary,
-        "tier_thresholds_evolution": tier_thresholds,
-        "planning_area_metrics": pa_metrics,
-        "lease_decay_stats": lease_decay,
-        "rental_yield_top_combos": rental_combos,
+        "market_summary": ("L3_market_summary", market_summary),
+        "tier_thresholds_evolution": ("L3_tier_thresholds_evolution", tier_thresholds),
+        "planning_area_metrics": ("L3_planning_area_metrics", pa_metrics),
+        "lease_decay_stats": ("L3_lease_decay_stats", lease_decay),
+        "rental_yield_top_combos": ("L3_rental_yield_top_combos", rental_combos),
     }
 
-    for name, table in tables.items():
+    for name, (dataset_name, table) in tables.items():
         if not table.empty:
             output_path = l3_dir / f"{name}.parquet"
             table.to_parquet(output_path, compression="snappy", index=False)
+            record_dataframe_quality(
+                table,
+                dataset_name,
+                source="L3 precomputed tables",
+            )
             logger.info(f"  Saved {name}: {len(table):,} rows -> {output_path}")
         else:
             logger.warning(f"  Skipping {name}: empty DataFrame")
@@ -1739,15 +1746,15 @@ def run_l3_pipeline(
     # Select final columns
     final_df = filter_final_columns(combined)
 
-    # Create L3 directory
-    l3_dir = Config.PARQUETS_DIR / "L3"
-    l3_dir.mkdir(exist_ok=True)
-
     # Save main unified dataset
-    output_path = l3_dir / "housing_unified.parquet"
-    final_df.to_parquet(output_path, compression="snappy", index=False)
+    output_path = Config.PARQUETS_DIR / "L3" / "housing_unified.parquet"
+    save_parquet(final_df, "L3_housing_unified", source="L3 export pipeline")
     logger.info(f"Saved unified dataset to {output_path}")
     results["unified"] = len(final_df)
+
+    # Create L3 directory for precomputed outputs
+    l3_dir = Config.PARQUETS_DIR / "L3"
+    l3_dir.mkdir(exist_ok=True)
 
     # Optional: Upload to S3
     if upload_s3:

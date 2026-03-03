@@ -21,20 +21,37 @@ sys.path.insert(0, str(project_root))
 from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet
 
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
 # Regional classification for DiD analysis
 CCR_REGIONS = [
-    'Bukit Timah', 'Downtown Core', 'Marine Parade', 'Newton',
-    'Orchard', 'Outram', 'River Valley', 'Rochor', 'Singapore River', 'Straits View'
+    "Bukit Timah",
+    "Downtown Core",
+    "Marine Parade",
+    "Newton",
+    "Orchard",
+    "Outram",
+    "River Valley",
+    "Rochor",
+    "Singapore River",
+    "Straits View",
 ]
 
 RCR_REGIONS = [
-    'Bishan', 'Bukit Merah', 'Geylang', 'Kallang', 'Lavender',
-    'Marina East', 'Marina South', 'Novena', 'Queenstown',
-    'Southern Islands', 'Tanglin', 'Toa Payoh'
+    "Bishan",
+    "Bukit Merah",
+    "Geylang",
+    "Kallang",
+    "Lavender",
+    "Marina East",
+    "Marina South",
+    "Novena",
+    "Queenstown",
+    "Southern Islands",
+    "Tanglin",
+    "Toa Payoh",
 ]
 
 
@@ -44,7 +61,7 @@ def classify_region(planning_area: str) -> str:
     Uses case-insensitive matching to handle both 'Bukit Timah' and 'BUKIT TIMAH'.
     """
     if pd.isna(planning_area):
-        return 'Unknown'
+        return "Unknown"
 
     # Normalize to title case for matching
     planning_area_norm = planning_area.title()
@@ -54,11 +71,11 @@ def classify_region(planning_area: str) -> str:
     rcr_normalized = [r.title() for r in RCR_REGIONS]
 
     if planning_area_norm in ccr_normalized:
-        return 'CCR'
+        return "CCR"
     elif planning_area_norm in rcr_normalized:
-        return 'RCR'
+        return "RCR"
     else:
-        return 'OCR'
+        return "OCR"
 
 
 def load_and_prepare_data(property_type: str | None = None, min_year: int = 2017) -> pd.DataFrame:
@@ -90,37 +107,37 @@ def load_and_prepare_data(property_type: str | None = None, min_year: int = 2017
 
     # Filter by property type if specified
     if property_type:
-        df = df[df['property_type'] == property_type].copy()
+        df = df[df["property_type"] == property_type].copy()
         logger.info(f"{property_type} transactions: {len(df):,}")
 
     # Filter by date
-    df['transaction_date'] = pd.to_datetime(df['transaction_date'])
-    df = df[df['transaction_date'] >= f'{min_year}-01-01'].copy()
+    df["transaction_date"] = pd.to_datetime(df["transaction_date"])
+    df = df[df["transaction_date"] >= f"{min_year}-01-01"].copy()
     logger.info(f"Post-{min_year} transactions: {len(df):,}")
 
     # Add region classification
-    df['region'] = df['planning_area'].apply(classify_region)
+    df["region"] = df["planning_area"].apply(classify_region)
 
     # Count by region
-    region_counts = df['region'].value_counts()
+    region_counts = df["region"].value_counts()
     logger.info("\nTransaction Counts by Region:")
-    for region in ['CCR', 'RCR', 'OCR', 'Unknown']:
+    for region in ["CCR", "RCR", "OCR", "Unknown"]:
         count = region_counts.get(region, 0)
         pct = count / len(df) * 100 if len(df) > 0 else 0
         logger.info(f"  {region}: {count:,} ({pct:.1f}%)")
 
     # Add temporal columns
-    df['year'] = df['transaction_date'].dt.year
-    df['month'] = df['transaction_date'].dt.to_period('M').astype(str)
+    df["year"] = df["transaction_date"].dt.year
+    df["month"] = df["transaction_date"].dt.to_period("M").astype(str)
 
     return df
 
 
 def run_did_regression(
     df: pd.DataFrame,
-    treatment_region: str = 'CCR',
-    control_region: str = 'OCR',
-    policy_date: str = '2020-07-01'
+    treatment_region: str = "CCR",
+    control_region: str = "OCR",
+    policy_date: str = "2020-07-01",
 ) -> dict:
     """Run Difference-in-Differences regression analysis.
 
@@ -139,30 +156,24 @@ def run_did_regression(
     logger.info("=" * 60)
 
     # Filter to treatment and control regions
-    df_filtered = df[df['region'].isin([treatment_region, control_region])].copy()
+    df_filtered = df[df["region"].isin([treatment_region, control_region])].copy()
 
     if df_filtered.empty:
         logger.error(f"No data for regions: {treatment_region}, {control_region}")
         return {}
 
     # Create treatment and post indicators
-    df_filtered['treatment'] = (df_filtered['region'] == treatment_region).astype(int)
-    df_filtered['post'] = (df_filtered['transaction_date'] >= policy_date).astype(int)
-    df_filtered['treatment_x_post'] = df_filtered['treatment'] * df_filtered['post']
+    df_filtered["treatment"] = (df_filtered["region"] == treatment_region).astype(int)
+    df_filtered["post"] = (df_filtered["transaction_date"] >= policy_date).astype(int)
+    df_filtered["treatment_x_post"] = df_filtered["treatment"] * df_filtered["post"]
 
     # Sample size check
-    n_treatment_pre = len(df_filtered[
-        (df_filtered['treatment'] == 1) & (df_filtered['post'] == 0)
-    ])
-    n_treatment_post = len(df_filtered[
-        (df_filtered['treatment'] == 1) & (df_filtered['post'] == 1)
-    ])
-    n_control_pre = len(df_filtered[
-        (df_filtered['treatment'] == 0) & (df_filtered['post'] == 0)
-    ])
-    n_control_post = len(df_filtered[
-        (df_filtered['treatment'] == 0) & (df_filtered['post'] == 1)
-    ])
+    n_treatment_pre = len(df_filtered[(df_filtered["treatment"] == 1) & (df_filtered["post"] == 0)])
+    n_treatment_post = len(
+        df_filtered[(df_filtered["treatment"] == 1) & (df_filtered["post"] == 1)]
+    )
+    n_control_pre = len(df_filtered[(df_filtered["treatment"] == 0) & (df_filtered["post"] == 0)])
+    n_control_post = len(df_filtered[(df_filtered["treatment"] == 0) & (df_filtered["post"] == 1)])
 
     logger.info("\nSample Sizes:")
     logger.info(f"  Treatment ({treatment_region}) Pre: {n_treatment_pre:,}")
@@ -177,32 +188,36 @@ def run_did_regression(
         return {}
 
     # Run DiD regression
-    formula = 'price ~ treatment + post + treatment_x_post'
+    formula = "price ~ treatment + post + treatment_x_post"
     model = smf.ols(formula, data=df_filtered).fit()
 
     # Extract results
-    did_coef = model.params.get('treatment_x_post', np.nan)
-    did_se = model.bse.get('treatment_x_post', np.nan)
-    did_pval = model.pvalues.get('treatment_x_post', np.nan)
+    did_coef = model.params.get("treatment_x_post", np.nan)
+    did_se = model.bse.get("treatment_x_post", np.nan)
+    did_pval = model.pvalues.get("treatment_x_post", np.nan)
 
     # Calculate confidence intervals
     conf_int = model.conf_int()
-    ci_lower = conf_int.loc['treatment_x_post', 0] if 'treatment_x_post' in conf_int.index else np.nan
-    ci_upper = conf_int.loc['treatment_x_post', 1] if 'treatment_x_post' in conf_int.index else np.nan
+    ci_lower = (
+        conf_int.loc["treatment_x_post", 0] if "treatment_x_post" in conf_int.index else np.nan
+    )
+    ci_upper = (
+        conf_int.loc["treatment_x_post", 1] if "treatment_x_post" in conf_int.index else np.nan
+    )
 
     # Calculate group means
-    treatment_pre = df_filtered[
-        (df_filtered['treatment'] == 1) & (df_filtered['post'] == 0)
-    ]['price'].median()
-    treatment_post = df_filtered[
-        (df_filtered['treatment'] == 1) & (df_filtered['post'] == 1)
-    ]['price'].median()
-    control_pre = df_filtered[
-        (df_filtered['treatment'] == 0) & (df_filtered['post'] == 0)
-    ]['price'].median()
-    control_post = df_filtered[
-        (df_filtered['treatment'] == 0) & (df_filtered['post'] == 1)
-    ]['price'].median()
+    treatment_pre = df_filtered[(df_filtered["treatment"] == 1) & (df_filtered["post"] == 0)][
+        "price"
+    ].median()
+    treatment_post = df_filtered[(df_filtered["treatment"] == 1) & (df_filtered["post"] == 1)][
+        "price"
+    ].median()
+    control_pre = df_filtered[(df_filtered["treatment"] == 0) & (df_filtered["post"] == 0)][
+        "price"
+    ].median()
+    control_post = df_filtered[(df_filtered["treatment"] == 0) & (df_filtered["post"] == 1)][
+        "price"
+    ].median()
 
     # Manual DiD calculation (for verification)
     treatment_change = treatment_post - treatment_pre
@@ -212,10 +227,14 @@ def run_did_regression(
     logger.info("\nDiD Regression Results:")
     logger.info(f"  Treatment ({treatment_region}) Pre: ${treatment_pre:,.0f}")
     logger.info(f"  Treatment ({treatment_region}) Post: ${treatment_post:,.0f}")
-    logger.info(f"  Treatment Change: ${treatment_change:,.0f} ({treatment_change/treatment_pre*100:+.2f}%)")
+    logger.info(
+        f"  Treatment Change: ${treatment_change:,.0f} ({treatment_change / treatment_pre * 100:+.2f}%)"
+    )
     logger.info(f"  Control ({control_region}) Pre: ${control_pre:,.0f}")
     logger.info(f"  Control ({control_region}) Post: ${control_post:,.0f}")
-    logger.info(f"  Control Change: ${control_change:,.0f} ({control_change/control_pre*100:+.2f}%)")
+    logger.info(
+        f"  Control Change: ${control_change:,.0f} ({control_change / control_pre * 100:+.2f}%)"
+    )
     logger.info(f"\n  DiD Estimate: ${did_coef:,.0f}")
     logger.info(f"  Manual DiD: ${did_manual:,.0f}")
     logger.info(f"  Standard Error: ${did_se:,.0f}")
@@ -224,13 +243,13 @@ def run_did_regression(
 
     # Statistical significance
     if did_pval < 0.01:
-        sig = '*** (p < 0.01)'
+        sig = "*** (p < 0.01)"
     elif did_pval < 0.05:
-        sig = '** (p < 0.05)'
+        sig = "** (p < 0.05)"
     elif did_pval < 0.10:
-        sig = '* (p < 0.10)'
+        sig = "* (p < 0.10)"
     else:
-        sig = 'ns (not significant)'
+        sig = "ns (not significant)"
     logger.info(f"  Significance: {sig}")
 
     # Model fit
@@ -238,35 +257,32 @@ def run_did_regression(
     logger.info(f"  N: {len(df_filtered):,}")
 
     return {
-        'treatment_region': treatment_region,
-        'control_region': control_region,
-        'policy_date': policy_date,
-        'n_treatment_pre': n_treatment_pre,
-        'n_treatment_post': n_treatment_post,
-        'n_control_pre': n_control_pre,
-        'n_control_post': n_control_post,
-        'treatment_pre_price': treatment_pre,
-        'treatment_post_price': treatment_post,
-        'control_pre_price': control_pre,
-        'control_post_price': control_post,
-        'treatment_change': treatment_change,
-        'control_change': control_change,
-        'did_estimate': did_coef,
-        'did_manual': did_manual,
-        'std_error': did_se,
-        'ci_lower': ci_lower,
-        'ci_upper': ci_upper,
-        'p_value': did_pval,
-        'significance': sig,
-        'r_squared': model.rsquared,
-        'n_total': len(df_filtered)
+        "treatment_region": treatment_region,
+        "control_region": control_region,
+        "policy_date": policy_date,
+        "n_treatment_pre": n_treatment_pre,
+        "n_treatment_post": n_treatment_post,
+        "n_control_pre": n_control_pre,
+        "n_control_post": n_control_post,
+        "treatment_pre_price": treatment_pre,
+        "treatment_post_price": treatment_post,
+        "control_pre_price": control_pre,
+        "control_post_price": control_post,
+        "treatment_change": treatment_change,
+        "control_change": control_change,
+        "did_estimate": did_coef,
+        "did_manual": did_manual,
+        "std_error": did_se,
+        "ci_lower": ci_lower,
+        "ci_upper": ci_upper,
+        "p_value": did_pval,
+        "significance": sig,
+        "r_squared": model.rsquared,
+        "n_total": len(df_filtered),
     }
 
 
-def run_hdb_temporal_analysis(
-    df: pd.DataFrame,
-    policy_date: str = '2023-12-01'
-) -> dict:
+def run_hdb_temporal_analysis(df: pd.DataFrame, policy_date: str = "2023-12-01") -> dict:
     """Run temporal analysis for HDB (all in OCR, so CCR vs OCR DiD not applicable).
 
     Args:
@@ -281,19 +297,19 @@ def run_hdb_temporal_analysis(
     logger.info("=" * 60)
 
     # Create post indicator
-    df['post'] = (df['transaction_date'] >= policy_date).astype(int)
+    df["post"] = (df["transaction_date"] >= policy_date).astype(int)
 
     # Sample sizes
-    n_pre = len(df[df['post'] == 0])
-    n_post = len(df[df['post'] == 1])
+    n_pre = len(df[df["post"] == 0])
+    n_post = len(df[df["post"] == 1])
 
     logger.info("\nSample Sizes:")
     logger.info(f"  Pre-policy: {n_pre:,}")
     logger.info(f"  Post-policy: {n_post:,}")
 
     # Calculate price changes
-    pre_price = df[df['post'] == 0]['price'].median()
-    post_price = df[df['post'] == 1]['price'].median()
+    pre_price = df[df["post"] == 0]["price"].median()
+    post_price = df[df["post"] == 1]["price"].median()
     price_change = post_price - pre_price
     price_change_pct = (price_change / pre_price) * 100
 
@@ -303,7 +319,7 @@ def run_hdb_temporal_analysis(
     volume_change_pct = ((post_volume - pre_volume) / pre_volume) * 100
 
     # YoY growth rates
-    yearly = df.groupby('year')['price'].median()
+    yearly = df.groupby("year")["price"].median()
     yoy_growth = yearly.pct_change() * 100
 
     logger.info("\nPrice Analysis:")
@@ -322,23 +338,19 @@ def run_hdb_temporal_analysis(
             logger.info(f"  {int(year)}: {growth:+.2f}% (median: ${yearly[year]:,.0f})")
 
     return {
-        'policy_date': policy_date,
-        'n_pre': n_pre,
-        'n_post': n_post,
-        'pre_price': pre_price,
-        'post_price': post_price,
-        'price_change': price_change,
-        'price_change_pct': price_change_pct,
-        'volume_change_pct': volume_change_pct,
-        'yoy_growth': yoy_growth.to_dict()
+        "policy_date": policy_date,
+        "n_pre": n_pre,
+        "n_post": n_post,
+        "pre_price": pre_price,
+        "post_price": post_price,
+        "price_change": price_change,
+        "price_change_pct": price_change_pct,
+        "volume_change_pct": volume_change_pct,
+        "yoy_growth": yoy_growth.to_dict(),
     }
 
 
-def save_results(
-    condo_results: dict,
-    hdb_results: dict,
-    output_dir: Path
-):
+def save_results(condo_results: dict, hdb_results: dict, output_dir: Path):
     """Save DiD results to CSV files.
 
     Args:
@@ -356,24 +368,24 @@ def save_results(
     # Save Condo DiD results
     if condo_results:
         condo_df = pd.DataFrame([condo_results])
-        condo_path = output_dir / 'causal_did_condo.csv'
+        condo_path = output_dir / "causal_did_condo.csv"
         condo_df.to_csv(condo_path, index=False)
         logger.info(f"Saved: {condo_path}")
 
     # Save HDB temporal results
     if hdb_results:
         hdb_flat = {
-            'policy_date': hdb_results['policy_date'],
-            'n_pre': hdb_results['n_pre'],
-            'n_post': hdb_results['n_post'],
-            'pre_price': hdb_results['pre_price'],
-            'post_price': hdb_results['post_price'],
-            'price_change': hdb_results['price_change'],
-            'price_change_pct': hdb_results['price_change_pct'],
-            'volume_change_pct': hdb_results['volume_change_pct']
+            "policy_date": hdb_results["policy_date"],
+            "n_pre": hdb_results["n_pre"],
+            "n_post": hdb_results["n_post"],
+            "pre_price": hdb_results["pre_price"],
+            "post_price": hdb_results["post_price"],
+            "price_change": hdb_results["price_change"],
+            "price_change_pct": hdb_results["price_change_pct"],
+            "volume_change_pct": hdb_results["volume_change_pct"],
         }
         hdb_df = pd.DataFrame([hdb_flat])
-        hdb_path = output_dir / 'causal_did_hdb.csv'
+        hdb_path = output_dir / "causal_did_hdb.csv"
         hdb_df.to_csv(hdb_path, index=False)
         logger.info(f"Saved: {hdb_path}")
 
@@ -390,14 +402,14 @@ def main():
     # Note: L3 condo data starts 2021-01-01, so July 2020 policy not applicable
     # Using Sep 2022 ABSD hike for foreigners as alternative policy event
     logger.info("\n### PART 1: CONDOMINIUM DiD ANALYSIS ###\n")
-    condo_df = load_and_prepare_data(property_type='Condominium', min_year=2021)
+    condo_df = load_and_prepare_data(property_type="Condominium", min_year=2021)
 
     if not condo_df.empty:
         condo_results = run_did_regression(
             condo_df,
-            treatment_region='CCR',
-            control_region='OCR',
-            policy_date='2022-09-01'  # Sep 2022 ABSD changes
+            treatment_region="CCR",
+            control_region="OCR",
+            policy_date="2022-09-01",  # Sep 2022 ABSD changes
         )
     else:
         logger.error("No condominium data available")
@@ -405,13 +417,10 @@ def main():
 
     # 2. HDB Temporal Analysis (pre/post Dec 2023 cooling measures)
     logger.info("\n### PART 2: HDB TEMPORAL ANALYSIS ###\n")
-    hdb_df = load_and_prepare_data(property_type='HDB', min_year=2022)
+    hdb_df = load_and_prepare_data(property_type="HDB", min_year=2022)
 
     if not hdb_df.empty:
-        hdb_results = run_hdb_temporal_analysis(
-            hdb_df,
-            policy_date='2023-12-01'
-        )
+        hdb_results = run_hdb_temporal_analysis(hdb_df, policy_date="2023-12-01")
     else:
         logger.error("No HDB data available")
         hdb_results = {}
@@ -423,11 +432,8 @@ def main():
     logger.info("ANALYSIS COMPLETE")
     logger.info("=" * 60)
 
-    return {
-        'condo': condo_results,
-        'hdb': hdb_results
-    }
+    return {"condo": condo_results, "hdb": hdb_results}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

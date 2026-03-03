@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useSegmentsData } from '@/hooks/useSegmentsData';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useSegmentMatching } from '@/hooks/useSegmentMatching';
-import { Segment, Persona } from '@/types/segments';
+import type { Segment, Persona } from '@/types/segments';
 import PersonaSelector from '@/components/dashboard/PersonaSelector';
 import FilterPanel from './FilterPanel';
 import TabNavigation from './TabNavigation';

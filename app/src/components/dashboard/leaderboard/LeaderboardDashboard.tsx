@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useLeaderboardData } from '@/hooks/useLeaderboardData';
-import { LeaderboardEntry, LeaderboardMetric, MetricMeta } from '@/types/leaderboard';
+import type { LeaderboardEntry, LeaderboardMetric, MetricMeta } from '@/types/leaderboard';
 import FilterPanel from '@/components/dashboard/segments/FilterPanel';
 import LeaderboardMap from './LeaderboardMap';
 import LeaderboardTable from './LeaderboardTable';

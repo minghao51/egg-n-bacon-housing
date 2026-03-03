@@ -136,9 +136,13 @@ def main():
 
         hdb_preds = load_model_and_predict(
             hdb_test,
-            Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "models_by_property_type" / "hdb_model.json",
+            Config.DATA_DIR
+            / "analysis"
+            / "price_appreciation_modeling"
+            / "models_by_property_type"
+            / "hdb_model.json",
             None,  # Not needed, will be loaded from model
-            "HDB"
+            "HDB",
         )
 
         all_predictions[hdb_mask] = hdb_preds
@@ -158,9 +162,13 @@ def main():
 
         ec_preds = load_model_and_predict(
             ec_test,
-            Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "models_by_property_type" / "ec_model.json",
+            Config.DATA_DIR
+            / "analysis"
+            / "price_appreciation_modeling"
+            / "models_by_property_type"
+            / "ec_model.json",
             None,  # Not needed, will be loaded from model
-            "EC"
+            "EC",
         )
 
         all_predictions[ec_mask] = ec_preds
@@ -188,9 +196,13 @@ def main():
 
             mass_market_preds = load_model_and_predict(
                 mass_market_test,
-                Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "condo_by_segment" / "mass_market_model.json",
+                Config.DATA_DIR
+                / "analysis"
+                / "price_appreciation_modeling"
+                / "condo_by_segment"
+                / "mass_market_model.json",
                 None,  # Not needed, will be loaded from model
-                "Mass Market"
+                "Mass Market",
             )
 
             # Map back to original indices
@@ -208,9 +220,13 @@ def main():
 
             mid_market_preds = load_model_and_predict(
                 mid_market_test,
-                Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "condo_by_segment" / "mid_market_model.json",
+                Config.DATA_DIR
+                / "analysis"
+                / "price_appreciation_modeling"
+                / "condo_by_segment"
+                / "mid_market_model.json",
                 None,  # Not needed, will be loaded from model
-                "Mid Market"
+                "Mid Market",
             )
 
             # Map back to original indices
@@ -228,9 +244,13 @@ def main():
 
             luxury_preds = load_model_and_predict(
                 luxury_test,
-                Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "condo_by_segment" / "luxury_model.json",
+                Config.DATA_DIR
+                / "analysis"
+                / "price_appreciation_modeling"
+                / "condo_by_segment"
+                / "luxury_model.json",
                 None,  # Not needed, will be loaded from model
-                "Luxury"
+                "Luxury",
             )
 
             # Map back to original indices
@@ -305,18 +325,25 @@ def main():
         logger.info(f"    MAE: {hdb_mae:.2f}%")
         logger.info(f"    Directional Accuracy: {hdb_dir:.1f}%")
 
-        results.append({
-            "segment": "HDB",
-            "n_samples": hdb_valid.sum(),
-            "r2": hdb_r2,
-            "mae": hdb_mae,
-            "directional_acc": hdb_dir,
-        })
+        results.append(
+            {
+                "segment": "HDB",
+                "n_samples": hdb_valid.sum(),
+                "r2": hdb_r2,
+                "mae": hdb_mae,
+                "directional_acc": hdb_dir,
+            }
+        )
 
     # Condo segments
     for segment_name, condition in [
         ("Mass Market", lambda df: (df["is_condo"] == 1) & (df["price_psf"] < 1500)),
-        ("Mid Market", lambda df: (df["is_condo"] == 1) & (df["price_psf"] >= 1500) & (df["price_psf"] <= 3000)),
+        (
+            "Mid Market",
+            lambda df: (df["is_condo"] == 1)
+            & (df["price_psf"] >= 1500)
+            & (df["price_psf"] <= 3000),
+        ),
         ("Luxury", lambda df: (df["is_condo"] == 1) & (df["price_psf"] > 3000)),
     ]:
         segment_mask = condition(test_valid)
@@ -332,13 +359,15 @@ def main():
             logger.info(f"    MAE: {seg_mae:.2f}%")
             logger.info(f"    Directional Accuracy: {seg_dir:.1f}%")
 
-            results.append({
-                "segment": segment_name,
-                "n_samples": segment_mask.sum(),
-                "r2": seg_r2,
-                "mae": seg_mae,
-                "directional_acc": seg_dir,
-            })
+            results.append(
+                {
+                    "segment": segment_name,
+                    "n_samples": segment_mask.sum(),
+                    "r2": seg_r2,
+                    "mae": seg_mae,
+                    "directional_acc": seg_dir,
+                }
+            )
 
     # EC
     ec_valid = test_valid["is_ec"] == 1
@@ -354,13 +383,15 @@ def main():
         logger.info(f"    MAE: {ec_mae:.2f}%")
         logger.info(f"    Directional Accuracy: {ec_dir:.1f}%")
 
-        results.append({
-            "segment": "EC",
-            "n_samples": ec_valid.sum(),
-            "r2": ec_r2,
-            "mae": ec_mae,
-            "directional_acc": ec_dir,
-        })
+        results.append(
+            {
+                "segment": "EC",
+                "n_samples": ec_valid.sum(),
+                "r2": ec_r2,
+                "mae": ec_mae,
+                "directional_acc": ec_dir,
+            }
+        )
 
     # Save segment results
     results_df = pd.DataFrame(results)
@@ -391,12 +422,20 @@ def main():
 
     # Calculate improvements
     logger.info("\n  Improvements over Unified XGBoost:")
-    logger.info(f"    R²: {(overall_r2/baselines['Unified XGBoost (all property types)']['r2']-1)*100:+.1f}%")
-    logger.info(f"    MAE: {(overall_mae/baselines['Unified XGBoost (all property types)']['mae']-1)*100:+.1f}%")
+    logger.info(
+        f"    R²: {(overall_r2 / baselines['Unified XGBoost (all property types)']['r2'] - 1) * 100:+.1f}%"
+    )
+    logger.info(
+        f"    MAE: {(overall_mae / baselines['Unified XGBoost (all property types)']['mae'] - 1) * 100:+.1f}%"
+    )
 
     logger.info("\n  Improvements over Property-Type Models:")
-    logger.info(f"    R²: {(overall_r2/baselines['Property-Type Models (HDB/Condo/EC)']['r2']-1)*100:+.1f}%")
-    logger.info(f"    MAE: {(overall_mae/baselines['Property-Type Models (HDB/Condo/EC)']['mae']-1)*100:+.1f}%")
+    logger.info(
+        f"    R²: {(overall_r2 / baselines['Property-Type Models (HDB/Condo/EC)']['r2'] - 1) * 100:+.1f}%"
+    )
+    logger.info(
+        f"    MAE: {(overall_mae / baselines['Property-Type Models (HDB/Condo/EC)']['mae'] - 1) * 100:+.1f}%"
+    )
 
     logger.info("\n" + "=" * 60)
     logger.info("Ensemble Creation Complete!")

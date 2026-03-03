@@ -39,36 +39,42 @@ def load_feature_importance() -> pd.DataFrame:
     return pd.DataFrame()
 
 
-def plot_feature_importance(
-    importance_data: pd.DataFrame = None,
-    save: bool = True
-) -> plt.Figure:
+def plot_feature_importance(importance_data: pd.DataFrame = None, save: bool = True) -> plt.Figure:
     """Create horizontal bar chart of feature importance."""
     fig, axes = plt.subplots(1, 2, figsize=(14, 8))
 
     if importance_data is None or importance_data.empty:
-        importance_data = pd.DataFrame({
-            "feature": [
-                "price_appreciation_yoy_pct", "price_psf_level", "transaction_volume",
-                "rent_yield_pct", "mrt_proximity_score", "price_to_income_ratio",
-                "new_supply_pct", "school_proximity_score"
-            ],
-            "lisa_importance": [1.00, 0.67, 0.45, 0.34, 0.28, 0.23, 0.19, 0.15],
-            "gmm_importance": [0.45, 0.78, 0.56, 0.67, 0.45, 0.61, 0.38, 0.34]
-        })
+        importance_data = pd.DataFrame(
+            {
+                "feature": [
+                    "price_appreciation_yoy_pct",
+                    "price_psf_level",
+                    "transaction_volume",
+                    "rent_yield_pct",
+                    "mrt_proximity_score",
+                    "price_to_income_ratio",
+                    "new_supply_pct",
+                    "school_proximity_score",
+                ],
+                "lisa_importance": [1.00, 0.67, 0.45, 0.34, 0.28, 0.23, 0.19, 0.15],
+                "gmm_importance": [0.45, 0.78, 0.56, 0.67, 0.45, 0.61, 0.38, 0.34],
+            }
+        )
 
     colors = ["#e74c3c", "#3498db"]
 
-    for i, (col, color, title) in enumerate([
-        ("lisa_importance", "#e74c3c", "LISA Spatial Clustering"),
-        ("gmm_importance", "#3498db", "GMM Fundamental Clustering")
-    ]):
+    for i, (col, color, title) in enumerate(
+        [
+            ("lisa_importance", "#e74c3c", "LISA Spatial Clustering"),
+            ("gmm_importance", "#3498db", "GMM Fundamental Clustering"),
+        ]
+    ):
         sorted_data = importance_data.sort_values(col, ascending=True)
         axes[i].barh(
             sorted_data["feature"].str.replace("_", " ").str.title(),
             sorted_data[col],
             color=color,
-            edgecolor="black"
+            edgecolor="black",
         )
         axes[i].set_xlabel("Importance Score", fontsize=12)
         axes[i].set_title(f"Feature Importance\n{title}", fontsize=13)
@@ -84,27 +90,30 @@ def plot_feature_importance(
     return fig
 
 
-def plot_combined_importance(
-    importance_data: pd.DataFrame = None,
-    save: bool = True
-) -> plt.Figure:
+def plot_combined_importance(importance_data: pd.DataFrame = None, save: bool = True) -> plt.Figure:
     """Create combined feature importance ranking chart."""
     fig, ax = plt.subplots(figsize=(12, 8))
 
     if importance_data is None or importance_data.empty:
-        importance_data = pd.DataFrame({
-            "feature": [
-                "price_appreciation_yoy_pct", "price_psf_level", "transaction_volume",
-                "rent_yield_pct", "mrt_proximity_score", "price_to_income_ratio",
-                "new_supply_pct", "school_proximity_score"
-            ],
-            "lisa_importance": [1.00, 0.67, 0.45, 0.34, 0.28, 0.23, 0.19, 0.15],
-            "gmm_importance": [0.45, 0.78, 0.56, 0.67, 0.45, 0.61, 0.38, 0.34]
-        })
+        importance_data = pd.DataFrame(
+            {
+                "feature": [
+                    "price_appreciation_yoy_pct",
+                    "price_psf_level",
+                    "transaction_volume",
+                    "rent_yield_pct",
+                    "mrt_proximity_score",
+                    "price_to_income_ratio",
+                    "new_supply_pct",
+                    "school_proximity_score",
+                ],
+                "lisa_importance": [1.00, 0.67, 0.45, 0.34, 0.28, 0.23, 0.19, 0.15],
+                "gmm_importance": [0.45, 0.78, 0.56, 0.67, 0.45, 0.61, 0.38, 0.34],
+            }
+        )
 
     importance_data["combined_score"] = (
-        importance_data["lisa_importance"] * 0.5 +
-        importance_data["gmm_importance"] * 0.5
+        importance_data["lisa_importance"] * 0.5 + importance_data["gmm_importance"] * 0.5
     )
     importance_data = importance_data.sort_values("combined_score", ascending=True)
 
@@ -117,7 +126,7 @@ def plot_combined_importance(
         width,
         label="LISA Importance (Spatial)",
         color="#e74c3c",
-        edgecolor="black"
+        edgecolor="black",
     )
     ax.barh(
         x + width / 2,
@@ -125,7 +134,7 @@ def plot_combined_importance(
         width,
         label="GMM Importance (Fundamental)",
         color="#3498db",
-        edgecolor="black"
+        edgecolor="black",
     )
     ax.barh(
         x,
@@ -134,15 +143,15 @@ def plot_combined_importance(
         label="Combined Score",
         color="#2ecc71",
         edgecolor="black",
-        alpha=0.8
+        alpha=0.8,
     )
 
     ax.set_yticks(x)
-    ax.set_yticklabels(
-        importance_data["feature"].str.replace("_", " ").str.title()
-    )
+    ax.set_yticklabels(importance_data["feature"].str.replace("_", " ").str.title())
     ax.set_xlabel("Importance Score", fontsize=12)
-    ax.set_title("Feature Importance for Cluster Membership\n(Combined LISA + GMM Rankings)", fontsize=14)
+    ax.set_title(
+        "Feature Importance for Cluster Membership\n(Combined LISA + GMM Rankings)", fontsize=14
+    )
     ax.legend(loc="lower right", fontsize=10)
     ax.grid(axis="x", alpha=0.3)
     ax.set_xlim(0, 1.4)
@@ -156,19 +165,59 @@ def plot_combined_importance(
     return fig
 
 
-def plot_cluster_radar_chart(
-    save: bool = True
-) -> plt.Figure:
+def plot_cluster_radar_chart(save: bool = True) -> plt.Figure:
     """Create radar chart for cluster profiles."""
     fig, axes = plt.subplots(2, 3, figsize=(16, 12), subplot_kw=dict(polar=True))
 
     cluster_metrics = {
-        "EMERGING_HOTSPOT": {"Appreciation": 0.9, "Momentum": 0.85, "Risk": 0.45, "Stability": 0.55, "Value": 0.40, "Liquidity": 0.75},
-        "MATURE_HOTSPOT": {"Appreciation": 0.75, "Momentum": 0.55, "Risk": 0.38, "Stability": 0.85, "Value": 0.35, "Liquidity": 0.70},
-        "VALUE_OPPORTUNITY": {"Appreciation": 0.40, "Momentum": 0.50, "Risk": 0.52, "Stability": 0.60, "Value": 0.90, "Liquidity": 0.55},
-        "STABLE_AREA": {"Appreciation": 0.50, "Momentum": 0.45, "Risk": 0.28, "Stability": 0.95, "Value": 0.65, "Liquidity": 0.60},
-        "RISK_AREA": {"Appreciation": 0.55, "Momentum": 0.60, "Risk": 0.72, "Stability": 0.35, "Value": 0.45, "Liquidity": 0.50},
-        "DECLINING_AREA": {"Appreciation": 0.20, "Momentum": 0.25, "Risk": 0.81, "Stability": 0.40, "Value": 0.70, "Liquidity": 0.35}
+        "EMERGING_HOTSPOT": {
+            "Appreciation": 0.9,
+            "Momentum": 0.85,
+            "Risk": 0.45,
+            "Stability": 0.55,
+            "Value": 0.40,
+            "Liquidity": 0.75,
+        },
+        "MATURE_HOTSPOT": {
+            "Appreciation": 0.75,
+            "Momentum": 0.55,
+            "Risk": 0.38,
+            "Stability": 0.85,
+            "Value": 0.35,
+            "Liquidity": 0.70,
+        },
+        "VALUE_OPPORTUNITY": {
+            "Appreciation": 0.40,
+            "Momentum": 0.50,
+            "Risk": 0.52,
+            "Stability": 0.60,
+            "Value": 0.90,
+            "Liquidity": 0.55,
+        },
+        "STABLE_AREA": {
+            "Appreciation": 0.50,
+            "Momentum": 0.45,
+            "Risk": 0.28,
+            "Stability": 0.95,
+            "Value": 0.65,
+            "Liquidity": 0.60,
+        },
+        "RISK_AREA": {
+            "Appreciation": 0.55,
+            "Momentum": 0.60,
+            "Risk": 0.72,
+            "Stability": 0.35,
+            "Value": 0.45,
+            "Liquidity": 0.50,
+        },
+        "DECLINING_AREA": {
+            "Appreciation": 0.20,
+            "Momentum": 0.25,
+            "Risk": 0.81,
+            "Stability": 0.40,
+            "Value": 0.70,
+            "Liquidity": 0.35,
+        },
     }
 
     colors = {
@@ -177,7 +226,7 @@ def plot_cluster_radar_chart(
         "VALUE_OPPORTUNITY": "#27ae60",
         "STABLE_AREA": "#3498db",
         "RISK_AREA": "#f39c12",
-        "DECLINING_AREA": "#95a5a6"
+        "DECLINING_AREA": "#95a5a6",
     }
 
     metrics = ["Appreciation", "Momentum", "Risk", "Stability", "Value", "Liquidity"]
@@ -197,7 +246,9 @@ def plot_cluster_radar_chart(
         ax.set_ylim(0, 1)
         ax.set_title(cluster.replace("_", "\n"), fontsize=11, pad=10)
 
-    plt.suptitle("Cluster Profile Radar Charts\n(Metric Scores by Cluster Type)", fontsize=14, y=1.02)
+    plt.suptitle(
+        "Cluster Profile Radar Charts\n(Metric Scores by Cluster Type)", fontsize=14, y=1.02
+    )
     plt.tight_layout()
     if save:
         filepath = OUTPUT_DIR / "cluster_radar_profiles.png"
@@ -207,22 +258,29 @@ def plot_cluster_radar_chart(
     return fig
 
 
-def plot_cluster_comparison_matrix(
-    save: bool = True
-) -> plt.Figure:
+def plot_cluster_comparison_matrix(save: bool = True) -> plt.Figure:
     """Create heatmap comparing clusters across metrics."""
     fig, ax = plt.subplots(figsize=(14, 10))
 
-    comparison_data = pd.DataFrame({
-        "Cluster": ["EMERGING_HOTSPOT", "MATURE_HOTSPOT", "VALUE_OPPORTUNITY", "STABLE_AREA", "RISK_AREA", "DECLINING_AREA"],
-        "Avg YoY %": [14.2, 11.6, 5.8, 7.2, 8.4, 2.1],
-        "5Y CAGR": [9.8, 8.2, 4.1, 5.6, 6.1, 1.8],
-        "Volatility": [0.18, 0.12, 0.22, 0.09, 0.35, 0.28],
-        "Risk Score": [0.45, 0.38, 0.52, 0.28, 0.72, 0.81],
-        "Stability": [0.72, 0.78, 0.58, 0.82, 0.52, 0.65],
-        "Liquidity": [0.75, 0.70, 0.55, 0.60, 0.50, 0.35],
-        "Momentum": [0.85, 0.55, 0.50, 0.45, 0.60, 0.25]
-    })
+    comparison_data = pd.DataFrame(
+        {
+            "Cluster": [
+                "EMERGING_HOTSPOT",
+                "MATURE_HOTSPOT",
+                "VALUE_OPPORTUNITY",
+                "STABLE_AREA",
+                "RISK_AREA",
+                "DECLINING_AREA",
+            ],
+            "Avg YoY %": [14.2, 11.6, 5.8, 7.2, 8.4, 2.1],
+            "5Y CAGR": [9.8, 8.2, 4.1, 5.6, 6.1, 1.8],
+            "Volatility": [0.18, 0.12, 0.22, 0.09, 0.35, 0.28],
+            "Risk Score": [0.45, 0.38, 0.52, 0.28, 0.72, 0.81],
+            "Stability": [0.72, 0.78, 0.58, 0.82, 0.52, 0.65],
+            "Liquidity": [0.75, 0.70, 0.55, 0.60, 0.50, 0.35],
+            "Momentum": [0.85, 0.55, 0.50, 0.45, 0.60, 0.25],
+        }
+    )
 
     comparison_data.set_index("Cluster", inplace=True)
 
@@ -233,7 +291,7 @@ def plot_cluster_comparison_matrix(
         cmap="RdYlGn",
         ax=ax,
         linewidths=0.5,
-        cbar_kws={"label": "Score"}
+        cbar_kws={"label": "Score"},
     )
 
     ax.set_title("Cluster Comparison Matrix\n(Key Metrics by Cluster Type)", fontsize=14)
@@ -248,9 +306,7 @@ def plot_cluster_comparison_matrix(
     return fig
 
 
-def plot_property_type_comparison(
-    save: bool = True
-) -> plt.Figure:
+def plot_property_type_comparison(save: bool = True) -> plt.Figure:
     """Create comparison charts by property type."""
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
 
@@ -259,7 +315,7 @@ def plot_property_type_comparison(
         "Moran's I": [0.456, 0.342, 0.287],
         "HH Clusters": [31, 23, 8],
         "LL Clusters": [24, 18, 6],
-        "Avg Appreciation": [11.2, 8.7, 9.4]
+        "Avg Appreciation": [11.2, 8.7, 9.4],
     }
 
     df = pd.DataFrame(property_data)
@@ -275,8 +331,22 @@ def plot_property_type_comparison(
 
     x = np.arange(len(df["Property Type"]))
     width = 0.35
-    axes[0, 1].bar(x - width / 2, df["HH Clusters"], width, label="HH Clusters", color="#e74c3c", edgecolor="black")
-    axes[0, 1].bar(x + width / 2, df["LL Clusters"], width, label="LL Clusters", color="#3498db", edgecolor="black")
+    axes[0, 1].bar(
+        x - width / 2,
+        df["HH Clusters"],
+        width,
+        label="HH Clusters",
+        color="#e74c3c",
+        edgecolor="black",
+    )
+    axes[0, 1].bar(
+        x + width / 2,
+        df["LL Clusters"],
+        width,
+        label="LL Clusters",
+        color="#3498db",
+        edgecolor="black",
+    )
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(df["Property Type"])
     axes[0, 1].set_title("Cluster Counts by Property Type", fontsize=13)
@@ -294,15 +364,24 @@ def plot_property_type_comparison(
     cluster_counts = {
         "Condo": [18, 21, 9, 14, 7, 5],
         "HDB": [12, 15, 8, 22, 5, 6],
-        "EC": [3, 5, 2, 4, 1, 2]
+        "EC": [3, 5, 2, 4, 1, 2],
     }
-    cluster_labels = ["Emerging\nHotspot", "Mature\nHotspot", "Value\nOpportunity", "Stable\nArea", "Risk\nArea", "Declining\nArea"]
+    cluster_labels = [
+        "Emerging\nHotspot",
+        "Mature\nHotspot",
+        "Value\nOpportunity",
+        "Stable\nArea",
+        "Risk\nArea",
+        "Declining\nArea",
+    ]
     cluster_colors = ["#c0392b", "#e74c3c", "#27ae60", "#3498db", "#f39c12", "#95a5a6"]
 
     bottom = np.zeros(3)
     for i, (label, color) in enumerate(zip(cluster_labels, cluster_colors)):
         values = [cluster_counts[pt][i] for pt in ["Condo", "HDB", "EC"]]
-        axes[1, 1].bar(df["Property Type"], values, bottom=bottom, label=label, color=color, edgecolor="black")
+        axes[1, 1].bar(
+            df["Property Type"], values, bottom=bottom, label=label, color=color, edgecolor="black"
+        )
         bottom += values
 
     axes[1, 1].set_title("Comprehensive Clusters by Property Type", fontsize=13)
@@ -310,7 +389,11 @@ def plot_property_type_comparison(
     axes[1, 1].set_ylabel("Number of H3 Cells")
     axes[1, 1].grid(axis="y", alpha=0.3)
 
-    plt.suptitle("Property Type Comparison Analysis\n(Spatial Autocorrelation & Clusters)", fontsize=15, y=1.02)
+    plt.suptitle(
+        "Property Type Comparison Analysis\n(Spatial Autocorrelation & Clusters)",
+        fontsize=15,
+        y=1.02,
+    )
     plt.tight_layout()
     if save:
         filepath = OUTPUT_DIR / "property_type_comparison.png"
@@ -320,9 +403,7 @@ def plot_property_type_comparison(
     return fig
 
 
-def plot_summary_dashboard(
-    save: bool = True
-) -> plt.Figure:
+def plot_summary_dashboard(save: bool = True) -> plt.Figure:
     """Create summary dashboard with key metrics."""
     fig = plt.figure(figsize=(18, 14))
 
@@ -352,7 +433,14 @@ def plot_summary_dashboard(
     ax2.pie(sizes, labels=cluster_labels, colors=cluster_colors, autopct="%1.1f%%", startangle=90)
     ax2.set_title("LISA Cluster Distribution", fontsize=12, fontweight="bold")
 
-    comp_clusters = ["Emerging\nHotspot", "Mature\nHotspot", "Value\nOpportunity", "Stable\nArea", "Risk\nArea", "Declining\nArea"]
+    comp_clusters = [
+        "Emerging\nHotspot",
+        "Mature\nHotspot",
+        "Value\nOpportunity",
+        "Stable\nArea",
+        "Risk\nArea",
+        "Declining\nArea",
+    ]
     comp_values = [33, 41, 19, 40, 13, 13]
     comp_colors = ["#c0392b", "#e74c3c", "#27ae60", "#3498db", "#f39c12", "#95a5a6"]
     ax3.bar(comp_clusters, comp_values, color=comp_colors, edgecolor="black")
@@ -360,7 +448,17 @@ def plot_summary_dashboard(
     ax3.set_ylabel("Count")
     ax3.tick_params(axis="x", rotation=45)
 
-    quarters = ["2021-Q1", "2021-Q3", "2022-Q1", "2022-Q3", "2023-Q1", "2023-Q3", "2024-Q1", "2024-Q3", "2025-Q1"]
+    quarters = [
+        "2021-Q1",
+        "2021-Q3",
+        "2022-Q1",
+        "2022-Q3",
+        "2023-Q1",
+        "2023-Q3",
+        "2024-Q1",
+        "2024-Q3",
+        "2025-Q1",
+    ]
     hh_trend = [45, 52, 42, 35, 52, 62, 68, 75, 82]
     ll_trend = [35, 42, 52, 58, 48, 42, 38, 32, 28]
     ax4.plot(quarters, hh_trend, "o-", color="#e74c3c", linewidth=2, label="HH Clusters")
@@ -379,7 +477,7 @@ def plot_summary_dashboard(
         "VALUE": (0.52, 5.8),
         "STABLE": (0.28, 7.2),
         "RISK": (0.72, 8.4),
-        "DECLINING": (0.81, 2.1)
+        "DECLINING": (0.81, 2.1),
     }
     colors_rr = ["#c0392b", "#e74c3c", "#27ae60", "#3498db", "#f39c12", "#95a5a6"]
     for cluster, (risk, ret) in risk_return.items():
@@ -409,13 +507,24 @@ def plot_summary_dashboard(
     • Avoid: DECLINING_AREA (2.1% YoY) & RISK_AREA (high volatility)
     • Monitor: VALUE_OPPORTUNITY (5.8% YoY) for recovery potential
     """
-    ax6.text(0.02, 0.95, summary_text, transform=ax6.transAxes, fontsize=10,
-             verticalalignment="top", fontfamily="monospace",
-             bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5))
+    ax6.text(
+        0.02,
+        0.95,
+        summary_text,
+        transform=ax6.transAxes,
+        fontsize=10,
+        verticalalignment="top",
+        fontfamily="monospace",
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
+    )
     ax6.axis("off")
 
-    plt.suptitle("Singapore Housing Price Appreciation - Spatial Autocorrelation Dashboard",
-                 fontsize=16, fontweight="bold", y=0.98)
+    plt.suptitle(
+        "Singapore Housing Price Appreciation - Spatial Autocorrelation Dashboard",
+        fontsize=16,
+        fontweight="bold",
+        y=0.98,
+    )
 
     if save:
         filepath = OUTPUT_DIR / "spatial_analysis_dashboard.png"

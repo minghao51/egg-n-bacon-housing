@@ -40,22 +40,24 @@ def load_transition_matrix() -> pd.DataFrame:
 
 
 def plot_cluster_transition_sankey(
-    transition_matrix: pd.DataFrame,
-    save: bool = True
+    transition_matrix: pd.DataFrame, save: bool = True
 ) -> plt.Figure:
     """Create Sankey diagram for cluster transitions."""
     try:
         import plotly.graph_objects as go
 
         if transition_matrix.empty:
-            transition_matrix = pd.DataFrame({
-                "EMERGING_HOT": [0.62, 0.18, 0.05, 0.03, 0.08, 0.04],
-                "MATURE_HOT": [0.12, 0.58, 0.08, 0.12, 0.06, 0.04],
-                "VALUE": [0.08, 0.15, 0.45, 0.18, 0.09, 0.05],
-                "STABLE": [0.03, 0.08, 0.12, 0.62, 0.08, 0.07],
-                "RISK": [0.05, 0.06, 0.10, 0.12, 0.48, 0.19],
-                "DECLINING": [0.02, 0.03, 0.08, 0.15, 0.22, 0.50]
-            }, index=["EMERGING_HOT", "MATURE_HOT", "VALUE", "STABLE", "RISK", "DECLINING"])
+            transition_matrix = pd.DataFrame(
+                {
+                    "EMERGING_HOT": [0.62, 0.18, 0.05, 0.03, 0.08, 0.04],
+                    "MATURE_HOT": [0.12, 0.58, 0.08, 0.12, 0.06, 0.04],
+                    "VALUE": [0.08, 0.15, 0.45, 0.18, 0.09, 0.05],
+                    "STABLE": [0.03, 0.08, 0.12, 0.62, 0.08, 0.07],
+                    "RISK": [0.05, 0.06, 0.10, 0.12, 0.48, 0.19],
+                    "DECLINING": [0.02, 0.03, 0.08, 0.15, 0.22, 0.50],
+                },
+                index=["EMERGING_HOT", "MATURE_HOT", "VALUE", "STABLE", "RISK", "DECLINING"],
+            )
 
         cluster_types = transition_matrix.index.tolist()
         labels = [ct.replace("_", " ") for ct in cluster_types] * 2
@@ -71,7 +73,7 @@ def plot_cluster_transition_sankey(
             "VALUE": "#27ae60",
             "STABLE": "#3498db",
             "RISK": "#f39c12",
-            "DECLINING": "#95a5a6"
+            "DECLINING": "#95a5a6",
         }
 
         for i, source in enumerate(cluster_types):
@@ -83,26 +85,27 @@ def plot_cluster_transition_sankey(
                     values.append(prob * 100)
                     colors.append(color_map[source])
 
-        fig = go.Figure(data=[go.Sankey(
-            node=dict(
-                pad=15,
-                thickness=20,
-                line=dict(color="black", width=0.5),
-                label=labels,
-                color=[color_map[ct] for ct in cluster_types] * 2
-            ),
-            link=dict(
-                source=source_indices,
-                target=target_indices,
-                value=values,
-                color=colors
-            )
-        )])
+        fig = go.Figure(
+            data=[
+                go.Sankey(
+                    node=dict(
+                        pad=15,
+                        thickness=20,
+                        line=dict(color="black", width=0.5),
+                        label=labels,
+                        color=[color_map[ct] for ct in cluster_types] * 2,
+                    ),
+                    link=dict(
+                        source=source_indices, target=target_indices, value=values, color=colors
+                    ),
+                )
+            ]
+        )
 
         fig.update_layout(
             title_text="Cluster Transition Probabilities (12-Month Window)",
             font_size=12,
-            height=600
+            height=600,
         )
 
         if save:
@@ -119,22 +122,22 @@ def plot_cluster_transition_sankey(
         return plot_transition_heatmap(transition_matrix, save=save)
 
 
-def plot_transition_heatmap(
-    transition_matrix: pd.DataFrame,
-    save: bool = True
-) -> plt.Figure:
+def plot_transition_heatmap(transition_matrix: pd.DataFrame, save: bool = True) -> plt.Figure:
     """Create heatmap of transition probabilities."""
     fig, ax = plt.subplots(figsize=(12, 10))
 
     if transition_matrix.empty:
-        transition_matrix = pd.DataFrame({
-            "EMERGING_HOT": [0.62, 0.18, 0.05, 0.03, 0.08, 0.04],
-            "MATURE_HOT": [0.12, 0.58, 0.08, 0.12, 0.06, 0.04],
-            "VALUE": [0.08, 0.15, 0.45, 0.18, 0.09, 0.05],
-            "STABLE": [0.03, 0.08, 0.12, 0.62, 0.08, 0.07],
-            "RISK": [0.05, 0.06, 0.10, 0.12, 0.48, 0.19],
-            "DECLINING": [0.02, 0.03, 0.08, 0.15, 0.22, 0.50]
-        }, index=["EMERGING_HOT", "MATURE_HOT", "VALUE", "STABLE", "RISK", "DECLINING"])
+        transition_matrix = pd.DataFrame(
+            {
+                "EMERGING_HOT": [0.62, 0.18, 0.05, 0.03, 0.08, 0.04],
+                "MATURE_HOT": [0.12, 0.58, 0.08, 0.12, 0.06, 0.04],
+                "VALUE": [0.08, 0.15, 0.45, 0.18, 0.09, 0.05],
+                "STABLE": [0.03, 0.08, 0.12, 0.62, 0.08, 0.07],
+                "RISK": [0.05, 0.06, 0.10, 0.12, 0.48, 0.19],
+                "DECLINING": [0.02, 0.03, 0.08, 0.15, 0.22, 0.50],
+            },
+            index=["EMERGING_HOT", "MATURE_HOT", "VALUE", "STABLE", "RISK", "DECLINING"],
+        )
 
     cluster_labels = [ct.replace("_", "\n") for ct in transition_matrix.index]
 
@@ -148,12 +151,15 @@ def plot_transition_heatmap(
         ax=ax,
         vmin=0,
         vmax=0.7,
-        cbar_kws={"label": "Transition Probability"}
+        cbar_kws={"label": "Transition Probability"},
     )
 
     ax.set_xlabel("To Cluster", fontsize=12)
     ax.set_ylabel("From Cluster", fontsize=12)
-    ax.set_title("Cluster Transition Probability Matrix (12-Month)\nProbability of transitioning from row cluster to column cluster", fontsize=14)
+    ax.set_title(
+        "Cluster Transition Probability Matrix (12-Month)\nProbability of transitioning from row cluster to column cluster",
+        fontsize=14,
+    )
 
     plt.tight_layout()
     if save:
@@ -164,17 +170,31 @@ def plot_transition_heatmap(
     return fig
 
 
-def plot_evolution_timeline(
-    evolution_data: pd.DataFrame = None,
-    save: bool = True
-) -> plt.Figure:
+def plot_evolution_timeline(evolution_data: pd.DataFrame = None, save: bool = True) -> plt.Figure:
     """Create timeline of HH/LL cluster counts over time."""
     fig, ax = plt.subplots(figsize=(14, 6))
 
     if evolution_data is None or evolution_data.empty:
-        quarters = ["2021-Q1", "2021-Q2", "2021-Q3", "2021-Q4", "2022-Q1", "2022-Q2",
-                    "2022-Q3", "2022-Q4", "2023-Q1", "2023-Q2", "2023-Q3", "2023-Q4",
-                    "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4", "2025-Q1", "2025-Q2"]
+        quarters = [
+            "2021-Q1",
+            "2021-Q2",
+            "2021-Q3",
+            "2021-Q4",
+            "2022-Q1",
+            "2022-Q2",
+            "2022-Q3",
+            "2022-Q4",
+            "2023-Q1",
+            "2023-Q2",
+            "2023-Q3",
+            "2023-Q4",
+            "2024-Q1",
+            "2024-Q2",
+            "2024-Q3",
+            "2024-Q4",
+            "2025-Q1",
+            "2025-Q2",
+        ]
 
         np.random.seed(42)
         hh_counts = [45, 48, 52, 55, 42, 38, 35, 40, 52, 58, 62, 65, 68, 72, 75, 78, 82, 85]
@@ -184,8 +204,24 @@ def plot_evolution_timeline(
         hh_counts = evolution_data["hh_count"].tolist()
         ll_counts = evolution_data["ll_count"].tolist()
 
-    ax.plot(quarters, hh_counts, "o-", color="#e74c3c", linewidth=2.5, markersize=6, label="HH Clusters (Hotspots)")
-    ax.plot(quarters, ll_counts, "s-", color="#3498db", linewidth=2.5, markersize=6, label="LL Clusters (Coldspots)")
+    ax.plot(
+        quarters,
+        hh_counts,
+        "o-",
+        color="#e74c3c",
+        linewidth=2.5,
+        markersize=6,
+        label="HH Clusters (Hotspots)",
+    )
+    ax.plot(
+        quarters,
+        ll_counts,
+        "s-",
+        color="#3498db",
+        linewidth=2.5,
+        markersize=6,
+        label="LL Clusters (Coldspots)",
+    )
 
     ax.fill_between(quarters, hh_counts, alpha=0.2, color="#e74c3c")
     ax.fill_between(quarters, ll_counts, alpha=0.2, color="#3498db")
@@ -196,7 +232,9 @@ def plot_evolution_timeline(
 
     ax.set_xlabel("Quarter", fontsize=12)
     ax.set_ylabel("Number of Clusters", fontsize=12)
-    ax.set_title("Cluster Evolution Timeline\nHH vs LL Cluster Counts Over Time (2021-2025)", fontsize=14)
+    ax.set_title(
+        "Cluster Evolution Timeline\nHH vs LL Cluster Counts Over Time (2021-2025)", fontsize=14
+    )
     ax.legend(loc="upper left", fontsize=10)
     ax.grid(alpha=0.3)
     plt.xticks(rotation=45, ha="right")
@@ -211,24 +249,59 @@ def plot_evolution_timeline(
 
 
 def plot_cluster_counts_stacked(
-    evolution_data: pd.DataFrame = None,
-    save: bool = True
+    evolution_data: pd.DataFrame = None, save: bool = True
 ) -> plt.Figure:
     """Create stacked area chart of cluster types over time."""
     fig, ax = plt.subplots(figsize=(14, 8))
 
     if evolution_data is None or evolution_data.empty:
-        quarters = ["2021-Q1", "2021-Q2", "2021-Q3", "2021-Q4", "2022-Q1", "2022-Q2",
-                    "2022-Q3", "2022-Q4", "2023-Q1", "2023-Q2", "2023-Q3", "2023-Q4",
-                    "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4", "2025-Q1", "2025-Q2"]
+        quarters = [
+            "2021-Q1",
+            "2021-Q2",
+            "2021-Q3",
+            "2021-Q4",
+            "2022-Q1",
+            "2022-Q2",
+            "2022-Q3",
+            "2022-Q4",
+            "2023-Q1",
+            "2023-Q2",
+            "2023-Q3",
+            "2023-Q4",
+            "2024-Q1",
+            "2024-Q2",
+            "2024-Q3",
+            "2024-Q4",
+            "2025-Q1",
+            "2025-Q2",
+        ]
 
         np.random.seed(42)
         data = {
-            "EMERGING_HOT": [20, 22, 25, 28, 18, 15, 14, 18, 25, 30, 35, 38, 42, 48, 52, 55, 58, 62],
+            "EMERGING_HOT": [
+                20,
+                22,
+                25,
+                28,
+                18,
+                15,
+                14,
+                18,
+                25,
+                30,
+                35,
+                38,
+                42,
+                48,
+                52,
+                55,
+                58,
+                62,
+            ],
             "MATURE_HOT": [25, 26, 27, 27, 24, 23, 21, 22, 27, 28, 27, 27, 28, 24, 23, 23, 22, 20],
             "STABLE": [30, 32, 34, 35, 38, 40, 42, 40, 38, 36, 34, 32, 30, 28, 26, 25, 24, 22],
             "VALUE": [15, 16, 17, 16, 18, 20, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 10, 9],
-            "DECLINING": [10, 9, 8, 8, 12, 14, 15, 14, 12, 10, 9, 8, 8, 7, 7, 6, 6, 5]
+            "DECLINING": [10, 9, 8, 8, 12, 14, 15, 14, 12, 10, 9, 8, 8, 7, 7, 6, 6, 5],
         }
     else:
         quarters = evolution_data["quarter"].tolist()
@@ -243,7 +316,7 @@ def plot_cluster_counts_stacked(
         "VALUE": "#27ae60",
         "STABLE": "#3498db",
         "RISK": "#f39c12",
-        "DECLINING": "#95a5a6"
+        "DECLINING": "#95a5a6",
     }
 
     ax.stackplot(
@@ -251,12 +324,15 @@ def plot_cluster_counts_stacked(
         [data[ct] for ct in data.keys() if ct in cluster_colors],
         labels=[ct.replace("_", " ") for ct in data.keys() if ct in cluster_colors],
         colors=[cluster_colors[ct] for ct in data.keys() if ct in cluster_colors],
-        alpha=0.8
+        alpha=0.8,
     )
 
     ax.set_xlabel("Quarter", fontsize=12)
     ax.set_ylabel("Number of H3 Cells", fontsize=12)
-    ax.set_title("Comprehensive Cluster Evolution Over Time\nStacked by Cluster Type (2021-2025)", fontsize=14)
+    ax.set_title(
+        "Comprehensive Cluster Evolution Over Time\nStacked by Cluster Type (2021-2025)",
+        fontsize=14,
+    )
     ax.legend(loc="upper left", fontsize=9, ncol=2)
     ax.grid(alpha=0.3)
     plt.xticks(rotation=45, ha="right")
@@ -270,9 +346,7 @@ def plot_cluster_counts_stacked(
     return fig
 
 
-def plot_cluster_stability_scores(
-    save: bool = True
-) -> plt.Figure:
+def plot_cluster_stability_scores(save: bool = True) -> plt.Figure:
     """Create bar chart of cluster stability scores."""
     fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -282,7 +356,7 @@ def plot_cluster_stability_scores(
         "VALUE": 0.58,
         "STABLE": 0.82,
         "RISK": 0.52,
-        "DECLINING": 0.65
+        "DECLINING": 0.65,
     }
 
     colors = ["#c0392b", "#e74c3c", "#27ae60", "#3498db", "#f39c12", "#95a5a6"]
@@ -292,15 +366,20 @@ def plot_cluster_stability_scores(
         stability_data.values(),
         color=colors,
         edgecolor="black",
-        height=0.6
+        height=0.6,
     )
 
     for bar, val in zip(bars, stability_data.values()):
-        ax.text(val + 0.02, bar.get_y() + bar.get_height() / 2, f"{val:.2f}", va="center", fontsize=11)
+        ax.text(
+            val + 0.02, bar.get_y() + bar.get_height() / 2, f"{val:.2f}", va="center", fontsize=11
+        )
 
     ax.set_xlabel("Stability Score", fontsize=12)
     ax.set_ylabel("Cluster Type", fontsize=12)
-    ax.set_title("Cluster Stability Scores\n(Probability of Remaining in Same Cluster After 12 Months)", fontsize=14)
+    ax.set_title(
+        "Cluster Stability Scores\n(Probability of Remaining in Same Cluster After 12 Months)",
+        fontsize=14,
+    )
     ax.set_xlim(0, 1)
     ax.grid(axis="x", alpha=0.3)
 
@@ -313,9 +392,7 @@ def plot_cluster_stability_scores(
     return fig
 
 
-def plot_transition_flow_summary(
-    save: bool = True
-) -> plt.Figure:
+def plot_transition_flow_summary(save: bool = True) -> plt.Figure:
     """Create summary flow diagram showing major cluster transitions."""
     fig, ax = plt.subplots(figsize=(14, 8))
 
@@ -339,7 +416,7 @@ def plot_transition_flow_summary(
         "STABLE": (5, 2),
         "VALUE": (3, 1),
         "RISK": (5, 4),
-        "DECLINING": (7, 3)
+        "DECLINING": (7, 3),
     }
 
     colors = {
@@ -348,13 +425,21 @@ def plot_transition_flow_summary(
         "VALUE": "#27ae60",
         "STABLE": "#3498db",
         "RISK": "#f39c12",
-        "DECLINING": "#95a5a6"
+        "DECLINING": "#95a5a6",
     }
 
     for cluster, (x, y) in positions.items():
         circle = plt.Circle((x, y), 0.4, color=colors[cluster], ec="black", linewidth=2)
         ax.add_patch(circle)
-        ax.text(x, y, cluster.replace("_", "\n"), ha="center", va="center", fontsize=8, fontweight="bold")
+        ax.text(
+            x,
+            y,
+            cluster.replace("_", "\n"),
+            ha="center",
+            va="center",
+            fontsize=8,
+            fontweight="bold",
+        )
 
     for source, target, prob in major_transitions:
         x1, y1 = positions[source]
@@ -365,14 +450,16 @@ def plot_transition_flow_summary(
             xycoords="data",
             xytext=(x1 + 0.4, y1),
             textcoords="data",
-            arrowprops=dict(arrowstyle="->", color="gray", lw=prob * 10, alpha=0.7)
+            arrowprops=dict(arrowstyle="->", color="gray", lw=prob * 10, alpha=0.7),
         )
 
     ax.set_xlim(0, 8)
     ax.set_ylim(0, 5)
     ax.set_aspect("equal")
     ax.axis("off")
-    ax.set_title("Major Cluster Transition Flows\n(Arrow thickness = transition probability)", fontsize=14)
+    ax.set_title(
+        "Major Cluster Transition Flows\n(Arrow thickness = transition probability)", fontsize=14
+    )
 
     plt.tight_layout()
     if save:

@@ -2,13 +2,15 @@
 """CLI reporter for data quality metrics.
 
 Usage:
-    python scripts/utils/data_quality_report.py --summary
-    python scripts/utils/data_quality_report.py --summary --limit 20
+    uv run python scripts/utils/data_quality_report.py --summary
+    uv run python scripts/utils/data_quality_report.py --summary --limit 20
 """
 
 import argparse
 import sqlite3
 from pathlib import Path
+
+from scripts.core.data_quality import get_duplicate_status
 
 
 def generate_summary_report(db_path: Path, limit: int = 10) -> list[dict]:
@@ -26,10 +28,10 @@ def generate_summary_report(db_path: Path, limit: int = 10) -> list[dict]:
 
     cursor.execute(
         """
-        SELECT timestamp, dataset_name, output_rows, duplicate_count,
+        SELECT id, timestamp, dataset_name, output_rows, duplicate_count,
                null_percentage, input_rows
         FROM run_snapshots
-        ORDER BY timestamp DESC
+        ORDER BY timestamp DESC, id DESC
         LIMIT ?
     """,
         (limit,),
@@ -40,12 +42,13 @@ def generate_summary_report(db_path: Path, limit: int = 10) -> list[dict]:
 
     return [
         {
-            "timestamp": row[0],
-            "dataset_name": row[1],
-            "output_rows": row[2],
-            "duplicate_count": row[3],
-            "null_percentage": row[4],
-            "input_rows": row[5],
+            "id": row[0],
+            "timestamp": row[1],
+            "dataset_name": row[2],
+            "output_rows": row[3],
+            "duplicate_count": row[4],
+            "null_percentage": row[5],
+            "input_rows": row[6],
         }
         for row in rows
     ]
@@ -69,10 +72,7 @@ def format_summary_report(report: list[dict]) -> str:
         output_rows = row["output_rows"]
 
         # Status
-        if row["duplicate_count"] > 0:
-            status = f"⚠️  {row['duplicate_count']} duplicates"
-        else:
-            status = "✅ OK"
+        status, _ = get_duplicate_status(row["dataset_name"], row["duplicate_count"])
 
         lines.append(
             f"{row['timestamp']:<19} | {row['dataset_name']:<25} | "

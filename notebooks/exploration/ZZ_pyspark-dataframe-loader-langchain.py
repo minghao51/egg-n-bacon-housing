@@ -49,7 +49,9 @@ dbutils.library.restartPython()
 
 number_of_articles = 20
 
-wikipedia_dataframe = spark.read.parquet("databricks-datasets/wikipedia-datasets/data-001/en_wikipedia/articles-only-parquet/*").limit(number_of_articles)
+wikipedia_dataframe = spark.read.parquet(
+    "databricks-datasets/wikipedia-datasets/data-001/en_wikipedia/articles-only-parquet/*"
+).limit(number_of_articles)
 display(wikipedia_dataframe)
 
 # COMMAND ----------
@@ -91,7 +93,9 @@ db = FAISS.from_documents(texts, embeddings)
 from langchain import OpenAI
 from langchain.chains import RetrievalQA
 
-retrieval_qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=db.as_retriever())
+retrieval_qa = RetrievalQA.from_chain_type(
+    llm=OpenAI(), chain_type="stuff", retriever=db.as_retriever()
+)
 
 # COMMAND ----------
 
@@ -114,19 +118,21 @@ import mlflow
 persist_directory = "langchain/faiss_index"
 db.save_local(persist_directory)
 
+
 def load_retriever(persist_directory):
-  embeddings = OpenAIEmbeddings()
-  db = FAISS.load_local(persist_directory, embeddings)
-  return db.as_retriever()
+    embeddings = OpenAIEmbeddings()
+    db = FAISS.load_local(persist_directory, embeddings)
+    return db.as_retriever()
+
 
 # Log the RetrievalQA chain
 with mlflow.start_run() as mlflow_run:
-  logged_model = mlflow.langchain.log_model(
-    retrieval_qa,
-    "retrieval_qa_chain",
-    loader_fn=load_retriever,
-    persist_dir=persist_directory,
-  )
+    logged_model = mlflow.langchain.log_model(
+        retrieval_qa,
+        "retrieval_qa_chain",
+        loader_fn=load_retriever,
+        persist_dir=persist_directory,
+    )
 
 # COMMAND ----------
 
@@ -136,7 +142,7 @@ with mlflow.start_run() as mlflow_run:
 
 # COMMAND ----------
 
-model_uri = f"runs:/{ mlflow_run.info.run_id }/retrieval_qa_chain"
+model_uri = f"runs:/{mlflow_run.info.run_id}/retrieval_qa_chain"
 
 loaded_pyfunc_model = mlflow.pyfunc.load_model(model_uri)
 langchain_input = {"query": "Who is Harrison Schmitt"}

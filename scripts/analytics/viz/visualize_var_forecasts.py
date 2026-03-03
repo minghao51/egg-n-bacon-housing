@@ -25,29 +25,41 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # Region to planning area mapping
 REGION_TO_AREAS = {
     "CCR": [
-        "DOWNTOWN CORE", "TANGLIN", "NEWTON", "ORCHARD", "RIVER VALLEY",
-        "MARINA SOUTH", "OUTRAM", "BUKIT TIMAH", "NOVENA", "MUSEUM", "SINGAPORE RIVER"
+        "DOWNTOWN CORE",
+        "TANGLIN",
+        "NEWTON",
+        "ORCHARD",
+        "RIVER VALLEY",
+        "MARINA SOUTH",
+        "OUTRAM",
+        "BUKIT TIMAH",
+        "NOVENA",
+        "MUSEUM",
+        "SINGAPORE RIVER",
     ],
     "RCR": [
-        "BISHAN", "BUKIT MERAH", "GEYLANG", "KALLANG", "MARINE PARADE",
-        "QUEENSTOWN", "TOA PAYOH", "ROCHOR"
+        "BISHAN",
+        "BUKIT MERAH",
+        "GEYLANG",
+        "KALLANG",
+        "MARINE PARADE",
+        "QUEENSTOWN",
+        "TOA PAYOH",
+        "ROCHOR",
     ],
-    "OCR Central": [
-        "BISHAN", "TOA PAYOH", "SERANGOON", "KALLANG"
-    ],
-    "OCR East": [
-        "BEDOK", "CHANGI", "PASIR RIS", "PUNGGOL", "TAMPINES"
-    ],
-    "OCR North-East": [
-        "ANG MO KIO", "HOUGANG", "SENGKANG", "SERANGOON"
-    ],
-    "OCR North": [
-        "WOODLANDS", "SEMBAWANG", "YISHUN", "MANDAI", "LIM CHU KANG"
-    ],
+    "OCR Central": ["BISHAN", "TOA PAYOH", "SERANGOON", "KALLANG"],
+    "OCR East": ["BEDOK", "CHANGI", "PASIR RIS", "PUNGGOL", "TAMPINES"],
+    "OCR North-East": ["ANG MO KIO", "HOUGANG", "SENGKANG", "SERANGOON"],
+    "OCR North": ["WOODLANDS", "SEMBAWANG", "YISHUN", "MANDAI", "LIM CHU KANG"],
     "OCR West": [
-        "BUKIT BATOK", "BUKIT PANJANG", "CHOA CHU KANG", "CLEMENTI", "JURONG EAST",
-        "JURONG WEST", "TENGAH"
-    ]
+        "BUKIT BATOK",
+        "BUKIT PANJANG",
+        "CHOA CHU KANG",
+        "CLEMENTI",
+        "JURONG EAST",
+        "JURONG WEST",
+        "TENGAH",
+    ],
 }
 
 # Region colors for plotting
@@ -58,7 +70,7 @@ REGION_COLORS = {
     "OCR East": "#2ecc71",
     "OCR North-East": "#9b59b6",
     "OCR North": "#f39c12",
-    "OCR West": "#1abc9c"
+    "OCR West": "#1abc9c",
 }
 
 
@@ -75,7 +87,9 @@ def load_regional_forecasts() -> pd.DataFrame:
         for col in ["baseline", "bearish", "bullish"]:
             df[col] = df[col].astype(str).str.rstrip("%").astype(float)
 
-        df["confidence"] = df["confidence"].astype(str).str.replace("±", "").str.rstrip("%").astype(float)
+        df["confidence"] = (
+            df["confidence"].astype(str).str.replace("±", "").str.rstrip("%").astype(float)
+        )
 
         # Map region names to match format
         df["region"] = df["region"].str.replace("OCR CENTRAL", "OCR Central")
@@ -97,14 +111,23 @@ def load_regional_forecasts() -> pd.DataFrame:
 
     # Final fallback: hardcoded values (from report)
     logger.warning("No forecast CSV found, using hardcoded values")
-    return pd.DataFrame({
-        "region": ["CCR", "OCR Central", "OCR East", "OCR North",
-                   "OCR North-East", "OCR West", "RCR"],
-        "baseline": [2.5, 5.5, 3.7, 8.3, 9.6, 9.4, 2.6],
-        "bearish": [0.0, 3.0, 1.2, 5.8, 7.1, 6.9, 0.1],
-        "bullish": [4.5, 7.5, 5.7, 10.3, 11.6, 11.4, 4.6],
-        "confidence": [28.2, 16.2, 35.7, 54.4, 67.8, 59.9, 55.5]
-    })
+    return pd.DataFrame(
+        {
+            "region": [
+                "CCR",
+                "OCR Central",
+                "OCR East",
+                "OCR North",
+                "OCR North-East",
+                "OCR West",
+                "RCR",
+            ],
+            "baseline": [2.5, 5.5, 3.7, 8.3, 9.6, 9.4, 2.6],
+            "bearish": [0.0, 3.0, 1.2, 5.8, 7.1, 6.9, 0.1],
+            "bullish": [4.5, 7.5, 5.7, 10.3, 11.6, 11.4, 4.6],
+            "confidence": [28.2, 16.2, 35.7, 54.4, 67.8, 59.9, 55.5],
+        }
+    )
 
 
 def get_current_prices_by_area() -> pd.DataFrame:
@@ -116,9 +139,7 @@ def get_current_prices_by_area() -> pd.DataFrame:
         df = df[pd.to_datetime(df["transaction_date"]).dt.year >= 2025]
 
         # Group by planning_area and get median price_psf
-        area_prices = df.groupby("planning_area").agg({
-            "price_psf": "median"
-        }).reset_index()
+        area_prices = df.groupby("planning_area").agg({"price_psf": "median"}).reset_index()
 
         area_prices.columns = ["planning_area", "median_psf"]
         logger.info(f"Computed median prices for {len(area_prices)} planning areas")
@@ -127,18 +148,44 @@ def get_current_prices_by_area() -> pd.DataFrame:
     except Exception as e:
         logger.error(f"Failed to load current prices: {e}")
         # Return fallback data for top areas
-        return pd.DataFrame({
-            "planning_area": [
-                "Pasir Ris", "Tampines", "Bedok", "Woodlands", "Hougang",
-                "Sengkang", "Punggol", "Jurong East", "Bishan", "Bukit Batok",
-                "Yishun", "Clementi", "Serangoon", "Ang Mo Kio", "Toa Payoh"
-            ],
-            "median_psf": [
-                1050, 1180, 1020, 980, 1080,
-                1120, 1150, 1100, 1350, 950,
-                920, 1080, 1200, 980, 1250
-            ]
-        })
+        return pd.DataFrame(
+            {
+                "planning_area": [
+                    "Pasir Ris",
+                    "Tampines",
+                    "Bedok",
+                    "Woodlands",
+                    "Hougang",
+                    "Sengkang",
+                    "Punggol",
+                    "Jurong East",
+                    "Bishan",
+                    "Bukit Batok",
+                    "Yishun",
+                    "Clementi",
+                    "Serangoon",
+                    "Ang Mo Kio",
+                    "Toa Payoh",
+                ],
+                "median_psf": [
+                    1050,
+                    1180,
+                    1020,
+                    980,
+                    1080,
+                    1120,
+                    1150,
+                    1100,
+                    1350,
+                    950,
+                    920,
+                    1080,
+                    1200,
+                    980,
+                    1250,
+                ],
+            }
+        )
 
 
 def map_area_forecasts(area_prices: pd.DataFrame, regional_forecasts: pd.DataFrame) -> pd.DataFrame:
@@ -162,7 +209,7 @@ def map_area_forecasts(area_prices: pd.DataFrame, regional_forecasts: pd.DataFra
     merged = area_prices.merge(
         regional_forecasts[["region_clean", "baseline", "bearish", "bullish", "confidence"]],
         on="region_clean",
-        how="left"
+        how="left",
     )
 
     # Sort by baseline forecast (descending) and take top 15
@@ -188,7 +235,7 @@ def plot_planning_area_forecasts(forecast_data: pd.DataFrame, save: bool = True)
         width=plot_data["baseline"],
         color=colors,
         edgecolor="black",
-        linewidth=1.5
+        linewidth=1.5,
     )
 
     # Add error bars for confidence intervals
@@ -200,13 +247,17 @@ def plot_planning_area_forecasts(forecast_data: pd.DataFrame, save: bool = True)
         ecolor="black",
         elinewidth=1.5,
         capsize=4,
-        alpha=0.7
+        alpha=0.7,
     )
 
     # Customize chart
     ax.set_xlabel("24-Month Forecast Appreciation (%)", fontsize=12, fontweight="bold")
-    ax.set_title("Planning Area Housing Price Forecasts (24-Month)\nTop 15 Areas by Expected Growth",
-                 fontsize=14, fontweight="bold", pad=20)
+    ax.set_title(
+        "Planning Area Housing Price Forecasts (24-Month)\nTop 15 Areas by Expected Growth",
+        fontsize=14,
+        fontweight="bold",
+        pad=20,
+    )
     ax.set_ylabel("Planning Area", fontsize=12, fontweight="bold")
 
     # Add grid
@@ -214,17 +265,22 @@ def plot_planning_area_forecasts(forecast_data: pd.DataFrame, save: bool = True)
     ax.set_axisbelow(True)
 
     # Add value labels on bars
-    for i, (bar, value, conf) in enumerate(zip(bars, plot_data["baseline"], plot_data["confidence"])):
-        ax.text(value + 0.3, i, f"{value:.1f}%",
-                va="center", fontsize=10, fontweight="bold")
-        ax.text(value, i - 0.35, f"±{conf:.1f}%",
-                va="center", fontsize=8, color="gray", ha="center")
+    for i, (bar, value, conf) in enumerate(
+        zip(bars, plot_data["baseline"], plot_data["confidence"])
+    ):
+        ax.text(value + 0.3, i, f"{value:.1f}%", va="center", fontsize=10, fontweight="bold")
+        ax.text(
+            value, i - 0.35, f"±{conf:.1f}%", va="center", fontsize=8, color="gray", ha="center"
+        )
 
     # Create legend for regions
     from matplotlib.patches import Patch
-    legend_elements = [Patch(facecolor=color, edgecolor="black", label=region)
-                      for region, color in REGION_COLORS.items()
-                      if region in plot_data["region_clean"].values]
+
+    legend_elements = [
+        Patch(facecolor=color, edgecolor="black", label=region)
+        for region, color in REGION_COLORS.items()
+        if region in plot_data["region_clean"].values
+    ]
     ax.legend(handles=legend_elements, loc="lower right", fontsize=10, title="Region")
 
     # Set xlim with padding
@@ -262,7 +318,7 @@ def plot_price_vs_forecast(forecast_data: pd.DataFrame, save: bool = True) -> pl
         s=200,
         alpha=0.7,
         edgecolors="black",
-        linewidth=1.5
+        linewidth=1.5,
     )
 
     # Add labels for each point
@@ -273,14 +329,18 @@ def plot_price_vs_forecast(forecast_data: pd.DataFrame, save: bool = True) -> pl
             xytext=(5, 5),
             textcoords="offset points",
             fontsize=8,
-            alpha=0.8
+            alpha=0.8,
         )
 
     # Customize chart
     ax.set_xlabel("Current Median PSF ($)", fontsize=12, fontweight="bold")
     ax.set_ylabel("24-Month Forecast Appreciation (%)", fontsize=12, fontweight="bold")
-    ax.set_title("Current Price vs Forecast Appreciation\nIdentifying Undervalued Opportunities",
-                 fontsize=14, fontweight="bold", pad=20)
+    ax.set_title(
+        "Current Price vs Forecast Appreciation\nIdentifying Undervalued Opportunities",
+        fontsize=14,
+        fontweight="bold",
+        pad=20,
+    )
 
     # Add grid
     ax.grid(True, alpha=0.3, linestyle="--")
@@ -291,29 +351,52 @@ def plot_price_vs_forecast(forecast_data: pd.DataFrame, save: bool = True) -> pl
     cbar.set_label("Forecast (%)", fontsize=11, fontweight="bold")
 
     # Add quadrant labels
-    ax.text(price_median * 0.7, forecast_median * 1.5,
-            "🔥 UNDERRATED GEMS\nLow Price, High Growth",
-            ha="center", va="center", fontsize=11, fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.5", facecolor="#d5f4e6", alpha=0.7))
+    ax.text(
+        price_median * 0.7,
+        forecast_median * 1.5,
+        "🔥 UNDERRATED GEMS\nLow Price, High Growth",
+        ha="center",
+        va="center",
+        fontsize=11,
+        fontweight="bold",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="#d5f4e6", alpha=0.7),
+    )
 
-    ax.text(price_median * 1.3, forecast_median * 1.5,
-            "💎 PREMIUM GROWTH\nHigh Price, High Growth",
-            ha="center", va="center", fontsize=11, fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.5", facecolor="#ffeaa7", alpha=0.7))
+    ax.text(
+        price_median * 1.3,
+        forecast_median * 1.5,
+        "💎 PREMIUM GROWTH\nHigh Price, High Growth",
+        ha="center",
+        va="center",
+        fontsize=11,
+        fontweight="bold",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="#ffeaa7", alpha=0.7),
+    )
 
-    ax.text(price_median * 0.7, forecast_median * 0.5,
-            "🏠 AFFORDABLE\nSlow Growth",
-            ha="center", va="center", fontsize=11, fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.5", facecolor="#dfe6e9", alpha=0.7))
+    ax.text(
+        price_median * 0.7,
+        forecast_median * 0.5,
+        "🏠 AFFORDABLE\nSlow Growth",
+        ha="center",
+        va="center",
+        fontsize=11,
+        fontweight="bold",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="#dfe6e9", alpha=0.7),
+    )
 
-    ax.text(price_median * 1.3, forecast_median * 0.5,
-            "⚠️  MAY BE OVERVALUED\nHigh Price, Low Growth",
-            ha="center", va="center", fontsize=11, fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.5", facecolor="#ffcccc", alpha=0.7))
+    ax.text(
+        price_median * 1.3,
+        forecast_median * 0.5,
+        "⚠️  MAY BE OVERVALUED\nHigh Price, Low Growth",
+        ha="center",
+        va="center",
+        fontsize=11,
+        fontweight="bold",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="#ffcccc", alpha=0.7),
+    )
 
     # Set axis limits with padding
-    ax.set_xlim(forecast_data["median_psf"].min() - 50,
-                forecast_data["median_psf"].max() + 50)
+    ax.set_xlim(forecast_data["median_psf"].min() - 50, forecast_data["median_psf"].max() + 50)
     ax.set_ylim(0, forecast_data["baseline"].max() + 2)
 
     plt.tight_layout()
@@ -329,8 +412,7 @@ def plot_price_vs_forecast(forecast_data: pd.DataFrame, save: bool = True) -> pl
 def main():
     """Generate all VAR forecast visualizations."""
     logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     logger.info("Starting VAR forecast visualization generation...")
@@ -354,16 +436,16 @@ def main():
     logger.info(f"All visualizations saved to {OUTPUT_DIR}")
 
     # Print summary
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("VAR FORECAST VISUALIZATIONS GENERATED")
-    print("="*60)
+    print("=" * 60)
     print(f"\nOutput directory: {OUTPUT_DIR}")
     print("  - planning_area_forecasts.png")
     print("  - price_vs_forecast_scatter.png")
     print(f"\nAreas analyzed: {len(forecast_data)}")
     print(f"Highest forecast: {forecast_data['baseline'].max():.1f}%")
     print(f"Lowest forecast: {forecast_data['baseline'].min():.1f}%")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
 
 
 if __name__ == "__main__":

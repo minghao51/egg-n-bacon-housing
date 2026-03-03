@@ -10,6 +10,5 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.data.create_l3_unified_dataset import *  # noqa: F401,F403
 
-
 if __name__ == "__main__":
     main()

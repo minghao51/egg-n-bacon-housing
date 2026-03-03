@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/SegmentCard.tsx
-import { Segment } from '@/types/segments';
+import type { Segment } from '@/types/segments';
 import clsx from 'clsx';
 
 interface SegmentCardProps {

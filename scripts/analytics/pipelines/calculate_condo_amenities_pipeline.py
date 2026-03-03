@@ -23,7 +23,7 @@ from scipy.spatial import cKDTree
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from scripts.core.config import Config
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -43,7 +43,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     # Haversine formula
     dlat = lat2 - lat1
     dlon = lon2 - lon1
-    a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
     c = 2 * np.arcsin(np.sqrt(a))
     r = 6371000  # Earth radius in meters
     return c * r
@@ -62,15 +62,15 @@ def load_amenity_locations():
     amenity_df = pd.read_parquet(amenity_path)
 
     # Ensure lat/lon are numeric
-    amenity_df['lat'] = pd.to_numeric(amenity_df['lat'], errors='coerce')
-    amenity_df['lon'] = pd.to_numeric(amenity_df['lon'], errors='coerce')
-    amenity_df = amenity_df.dropna(subset=['lat', 'lon'])
+    amenity_df["lat"] = pd.to_numeric(amenity_df["lat"], errors="coerce")
+    amenity_df["lon"] = pd.to_numeric(amenity_df["lon"], errors="coerce")
+    amenity_df = amenity_df.dropna(subset=["lat", "lon"])
 
     # Group by amenity type
     amenities = {}
-    for amenity_type in amenity_df['type'].unique():
-        subset = amenity_df[amenity_df['type'] == amenity_type]
-        amenities[amenity_type] = subset[['lat', 'lon', 'name']].reset_index(drop=True)
+    for amenity_type in amenity_df["type"].unique():
+        subset = amenity_df[amenity_df["type"] == amenity_type]
+        amenities[amenity_type] = subset[["lat", "lon", "name"]].reset_index(drop=True)
         logger.info(f"  {amenity_type}: {len(subset):,} locations")
 
     return amenities
@@ -94,8 +94,8 @@ def calculate_nearest_amenity_distances(properties_df, amenity_type, amenity_loc
 
     # Build KDTree for fast nearest-neighbor search
     # Convert lat/lon to radians for KDTree
-    amenity_coords = np.radians(amenity_locations[['lat', 'lon']].values)
-    property_coords = np.radians(properties_df[['lat', 'lon']].values)
+    amenity_coords = np.radians(amenity_locations[["lat", "lon"]].values)
+    property_coords = np.radians(properties_df[["lat", "lon"]].values)
 
     tree = cKDTree(amenity_coords)
 
@@ -112,24 +112,26 @@ def calculate_nearest_amenity_distances(properties_df, amenity_type, amenity_loc
     counts_2km = []
 
     # For accurate distance calculations, use haversine for amenities within 2km
-    for i, (prop_lat, prop_lon) in enumerate(zip(properties_df['lat'].values, properties_df['lon'].values)):
+    for i, (prop_lat, prop_lon) in enumerate(
+        zip(properties_df["lat"].values, properties_df["lon"].values)
+    ):
         # Calculate distances to all amenities using haversine
         dists = haversine_distance(
-            prop_lat, prop_lon,
-            amenity_locations['lat'].values,
-            amenity_locations['lon'].values
+            prop_lat, prop_lon, amenity_locations["lat"].values, amenity_locations["lon"].values
         )
 
         counts_500m.append((dists <= 500).sum())
         counts_1km.append((dists <= 1000).sum())
         counts_2km.append((dists <= 2000).sum())
 
-    result = pd.DataFrame({
-        f'dist_to_nearest_{amenity_type}': nearest_distances,
-        f'{amenity_type}_within_500m': counts_500m,
-        f'{amenity_type}_within_1km': counts_1km,
-        f'{amenity_type}_within_2km': counts_2km
-    })
+    result = pd.DataFrame(
+        {
+            f"dist_to_nearest_{amenity_type}": nearest_distances,
+            f"{amenity_type}_within_500m": counts_500m,
+            f"{amenity_type}_within_1km": counts_1km,
+            f"{amenity_type}_within_2km": counts_2km,
+        }
+    )
 
     return result
 
@@ -137,9 +139,9 @@ def calculate_nearest_amenity_distances(properties_df, amenity_type, amenity_loc
 def main():
     """Main calculation pipeline."""
 
-    logger.info("="*80)
+    logger.info("=" * 80)
     logger.info("CALCULATING AMENITY DISTANCES FOR CONDO/EC TRANSACTIONS")
-    logger.info("="*80)
+    logger.info("=" * 80)
 
     # Load unified dataset
     logger.info("\nLoading unified dataset...")
@@ -148,8 +150,8 @@ def main():
 
     # Filter to condos/ECs without amenity features
     condo_ec = unified[
-        (unified['property_type'].isin(['Condominium', 'EC'])) &
-        (unified['dist_to_nearest_mrt'].isna())
+        (unified["property_type"].isin(["Condominium", "EC"]))
+        & (unified["dist_to_nearest_mrt"].isna())
     ].copy()
 
     logger.info(f"  Condo/EC transactions missing amenity data: {len(condo_ec):,}")
@@ -159,10 +161,10 @@ def main():
         return
 
     # Check for coordinates and ensure they're numeric
-    condo_ec['lat'] = pd.to_numeric(condo_ec['lat'], errors='coerce')
-    condo_ec['lon'] = pd.to_numeric(condo_ec['lon'], errors='coerce')
+    condo_ec["lat"] = pd.to_numeric(condo_ec["lat"], errors="coerce")
+    condo_ec["lon"] = pd.to_numeric(condo_ec["lon"], errors="coerce")
 
-    has_coords = condo_ec['lat'].notna() & condo_ec['lon'].notna()
+    has_coords = condo_ec["lat"].notna() & condo_ec["lon"].notna()
     condo_ec_with_coords = condo_ec[has_coords].copy()
 
     logger.info(f"  With valid coordinates: {len(condo_ec_with_coords):,}")
@@ -175,7 +177,7 @@ def main():
     amenities = load_amenity_locations()
 
     # Calculate distances for each amenity type
-    amenity_types = ['mrt', 'hawker', 'supermarket', 'park', 'preschool', 'childcare']
+    amenity_types = ["mrt", "hawker", "supermarket", "park", "preschool", "childcare"]
 
     results = []
     for amenity_type in amenity_types:
@@ -184,7 +186,9 @@ def main():
             continue
 
         amenity_locations = amenities[amenity_type]
-        result = calculate_nearest_amenity_distances(condo_ec_with_coords, amenity_type, amenity_locations)
+        result = calculate_nearest_amenity_distances(
+            condo_ec_with_coords, amenity_type, amenity_locations
+        )
         results.append(result)
 
     # Combine results
@@ -198,11 +202,18 @@ def main():
     condo_ec_with_amenities = condo_ec_with_coords.copy()
 
     # Drop existing null amenity columns
-    amenity_cols_to_drop = [col for col in condo_ec_with_amenities.columns
-                           if col.startswith('dist_to_nearest_') or col.endswith('_within_500m')
-                           or col.endswith('_within_1km') or col.endswith('_within_2km')]
+    amenity_cols_to_drop = [
+        col
+        for col in condo_ec_with_amenities.columns
+        if col.startswith("dist_to_nearest_")
+        or col.endswith("_within_500m")
+        or col.endswith("_within_1km")
+        or col.endswith("_within_2km")
+    ]
 
-    condo_ec_with_amenities = condo_ec_with_amenities.drop(columns=amenity_cols_to_drop, errors='ignore')
+    condo_ec_with_amenities = condo_ec_with_amenities.drop(
+        columns=amenity_cols_to_drop, errors="ignore"
+    )
 
     # Add new amenity features
     condo_ec_final = pd.concat([condo_ec_with_amenities, amenity_features], axis=1)
@@ -210,8 +221,8 @@ def main():
     logger.info(f"  Added {len(amenity_features.columns)} amenity columns")
 
     # Ensure lat/lon are numeric BEFORE concat (fixes pyarrow save issue)
-    condo_ec_final['lat'] = pd.to_numeric(condo_ec_final['lat'], errors='coerce').astype('float64')
-    condo_ec_final['lon'] = pd.to_numeric(condo_ec_final['lon'], errors='coerce').astype('float64')
+    condo_ec_final["lat"] = pd.to_numeric(condo_ec_final["lat"], errors="coerce").astype("float64")
+    condo_ec_final["lon"] = pd.to_numeric(condo_ec_final["lon"], errors="coerce").astype("float64")
 
     # Update unified dataset
     logger.info("\nUpdating unified dataset...")
@@ -223,9 +234,21 @@ def main():
     unified_updated = pd.concat([unified_without_condo_ec, condo_ec_final], ignore_index=True)
 
     # Verify coverage
-    hdb_coverage = unified_updated[unified_updated['property_type'] == 'HDB']['dist_to_nearest_mrt'].notna().sum()
-    condo_coverage = unified_updated[unified_updated['property_type'] == 'Condominium']['dist_to_nearest_mrt'].notna().sum()
-    ec_coverage = unified_updated[unified_updated['property_type'] == 'EC']['dist_to_nearest_mrt'].notna().sum()
+    hdb_coverage = (
+        unified_updated[unified_updated["property_type"] == "HDB"]["dist_to_nearest_mrt"]
+        .notna()
+        .sum()
+    )
+    condo_coverage = (
+        unified_updated[unified_updated["property_type"] == "Condominium"]["dist_to_nearest_mrt"]
+        .notna()
+        .sum()
+    )
+    ec_coverage = (
+        unified_updated[unified_updated["property_type"] == "EC"]["dist_to_nearest_mrt"]
+        .notna()
+        .sum()
+    )
 
     logger.info("\nAmenity coverage after update:")
     logger.info(f"  HDB: {hdb_coverage:,}")
@@ -244,10 +267,12 @@ def main():
     logger.info(f"Saving updated unified dataset to {output_path}")
     unified_updated.to_parquet(output_path, index=False)
 
-    logger.info("\n" + "="*80)
+    logger.info("\n" + "=" * 80)
     logger.info("✅ AMENITY CALCULATION COMPLETE!")
-    logger.info("="*80)
-    logger.info(f"\nAdded amenity features for {len(condo_ec_with_amenities):,} condo/EC transactions")
+    logger.info("=" * 80)
+    logger.info(
+        f"\nAdded amenity features for {len(condo_ec_with_amenities):,} condo/EC transactions"
+    )
 
 
 if __name__ == "__main__":

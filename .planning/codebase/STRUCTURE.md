@@ -1,473 +1,505 @@
 # Directory Structure
 
-## Repository Layout
+**Generated**: 2026-02-28
+
+## Project Root Layout
 
 ```
 egg-n-bacon-housing/
-├── app/                          # Astro/React frontend
-│   ├── src/
-│   │   ├── components/           # React components
-│   │   ├── hooks/               # Custom React hooks
-│   │   ├── layouts/             # Astro layouts
-│   │   ├── pages/               # File-based routing
-│   │   ├── styles/              # CSS/styling
-│   │   ├── types/               # TypeScript definitions
-│   │   └── utils/               # Utility functions
-│   ├── public/                  # Static assets
-│   │   └── data/                # JSON data for webapp
-│   ├── astro.config.mjs         # Astro configuration
-│   ├── package.json             # Frontend dependencies
-│   └── tsconfig.json            # TypeScript configuration
-│
-├── scripts/                     # Python data pipeline
-│   ├── core/                    # Core utilities and config
-│   │   ├── stages/              # Pipeline stages (L0-L5)
-│   │   ├── config.py            # Central configuration
-│   │   ├── data_helpers.py      # Data I/O utilities
-│   │   ├── geocoding.py         # Geocoding utilities
-│   │   └── metrics.py           # Metrics calculation
-│   ├── analytics/              # Analysis scripts
-│   │   ├── analysis/            # Analysis modules
-│   │   ├── models/              # ML models
-│   │   └── pipelines/           # Analysis pipelines
-│   ├── data/                   # Data processing scripts
-│   ├── utils/                  # Utility scripts
-│   └── run_pipeline.py         # Main pipeline entry point
-│
-├── data/                       # Data storage
-│   ├── pipeline/               # Pipeline outputs (L0-L5)
-│   │   ├── L0/                 # Raw data
-│   │   ├── L1/                 # Processed data
-│   │   ├── L2/                 # Feature-enriched data
-│   │   └── L3/                 # Unified dataset
-│   ├── manual/                 # Manually uploaded data
-│   ├── analytics/              # Analysis outputs
-│   ├── logs/                   # Pipeline logs
-│   └── metadata.json          # Dataset metadata
-│
-├── notebooks/                  # Jupyter notebooks
-│   ├── L0_datagovsg.ipynb      # Data collection (paired .py)
-│   └── ...
-│
-├── tests/                      # Test suite
-│   ├── core/                   # Core functionality tests
-│   ├── analytics/              # Analytics tests
-│   ├── data/                   # Data processing tests
-│   └── conftest.py             # Shared fixtures
-│
-├── .planning/                  # Planning documentation
-│   └── codebase/               # Codebase documentation
-│       ├── ARCHITECTURE.md
-│       ├── CONCERNS.md
-│       ├── CONVENTIONS.md
-│       ├── INTEGRATIONS.md
-│       ├── STACK.md
-│       ├── STRUCTURE.md
-│       └── TESTING.md
-│
-├── .env                        # Environment variables (not in git)
-├── .env.example                # Environment template
-├── pyproject.toml              # Python project configuration
-├── jupytext.toml               # Notebook pairing configuration
-├── CLAUDE.md                   # Project instructions
-└── README.md                   # Project documentation
+├── app/                          # Astro/React dashboard (frontend)
+├── data/                         # Data storage
+├── docs/                         # Documentation
+├── notebooks/                    # Jupyter notebooks (exploration)
+├── scripts/                      # Python scripts (main logic)
+├── tests/                        # Python tests
+├── .planning/                    # Planning and codebase docs
+├── .venv/                        # Python virtual environment
+├── pyproject.toml                # Python project config
+├── package.json                  # Root package.json
+├── .env.example                  # Environment variables template
+├── CLAUDE.md                     # Project instructions
+└── README.md                     # Project overview
 ```
 
 ---
 
-## Frontend Structure (app/)
+## Top-Level Directories
 
-### src/components/
-**React components organized by domain**
+### `/app` - Frontend Dashboard
 
+**Purpose**: Astro + React dashboard for data visualization
+
+**Structure**:
 ```
-components/
-├── analytics/                  # Analytics-specific components
-│   ├── TableOfContents.astro   # MDX table of contents
-│   └── ...
-├── charts/                     # Recharts visualization components
-│   ├── TrendChart.tsx
-│   ├── ComparisonChart.tsx
-│   └── ...
-├── dashboard/                  # Dashboard-specific components
-│   ├── MetricCard.tsx
-│   ├── Filters.tsx
-│   └── ...
-├── layout/                     # Layout components
-│   ├── Header.astro
-│   ├── Footer.astro
-│   └── Sidebar.astro
-└── shared/                     # Shared components
-    ├── Button.tsx
-    ├── Card.tsx
-    └── ...
-```
-
-### src/hooks/
-**Custom React hooks for data fetching and state**
-
-```
-hooks/
-├── useAnalyticsData.ts        # Analytics data fetching
-├── useLeaderboardData.ts      # Leaderboard data fetching
-├── useSegmentsData.ts         # Market segments data
-├── useGzipJson.ts             # Generic cached JSON fetching
-└── ...
+app/
+├── public/
+│   └── data/                    # JSON files for dashboard (generated)
+│       ├── metrics.json
+│       ├── planning-areas.json
+│       └── trends.json
+├── src/
+│   ├── components/              # React components
+│   ├── layouts/                 # Astro layouts
+│   ├── pages/                   # Route pages
+│   └── styles/                  # Global styles
+├── tests/
+│   └── e2e/                     # Playwright E2E tests
+│       ├── home.spec.ts
+│       ├── dashboard.spec.ts
+│       └── analytics.spec.ts
+├── astro.config.mjs             # Astro configuration
+├── package.json                 # Node dependencies
+├── playwright.config.ts         # Playwright test config
+└── tsconfig.json                # TypeScript config
 ```
 
-### src/layouts/
-**Astro layout components**
+**Key Files**:
+- `src/pages/index.astro` - Home page
+- `src/pages/dashboard/*.astro` - Dashboard pages
+- `src/components/*.tsx` - React components
 
-```
-layouts/
-├── BaseLayout.astro           # Main layout wrapper
-├── DashboardLayout.astro      # Dashboard-specific layout
-└── AnalyticsLayout.astro      # Analytics page layout
-```
+---
 
-### src/pages/
-**File-based routing (Astro)**
+### `/data` - Data Storage
 
-```
-pages/
-├── index.astro                 # Landing page
-├── dashboard/
-│   ├── index.astro            # Main dashboard
-│   ├── trends.astro           # Trends view
-│   └── leaderboard.astro      # Leaderboard view
-├── analytics/
-│   └── [slug].astro           # Dynamic analytics (MDX)
-└── ...
-```
+**Purpose**: Store raw data, processed parquet files, logs, and exports
 
-### src/types/
-**TypeScript type definitions**
-
-```
-types/
-├── analytics.ts               # Analytics data types
-├── leaderboard.ts             # Leaderboard types
-├── segments.ts                # Market segment types
-└── ...
-```
-
-### src/utils/
-**Utility functions**
-
-```
-utils/
-├── gzip.ts                    # Gzip compression utilities
-├── formatters.ts              # Data formatting helpers
-└── ...
-```
-
-### public/data/
-**Static JSON files (generated by Python)**
-
+**Structure**:
 ```
 data/
-├── overview.json.gz           # Dashboard overview data
-├── trends.json.gz             # Trends time series
-├── leaderboard.json.gz        # Leaderboard rankings
-├── segments.json.gz           # Market segments
-└── analytics/
-    ├── spatial-analytics.json.gz
-    ├── feature-analytics.json.gz
-    └── predictive-analytics.json.gz
+├── raw/                         # Raw downloaded data
+├── parquets/                    # Processed parquet files by stage
+│   ├── L0_hdb_resale.parquet
+│   ├── L1_hdb_transaction.parquet
+│   ├── L2_hdb_with_features.parquet
+│   ├── L3_unified_dataset.parquet
+│   └── ...
+├── pipeline/                    # Pipeline-specific data
+├── analytics/                   # Analysis outputs
+├── exports/                     # Exported files
+├── logs/                        # Application logs
+├── cache/                       # API response cache
+├── metadata.json                # Dataset registry
+└── .gitkeep                     # Preserve directory structure
 ```
+
+**Key Files**:
+- `metadata.json` - Central registry of all datasets
+- `parquets/*.parquet` - Stage-based data files
+- `logs/*.log` - Timestamped log files
 
 ---
 
-## Python Pipeline Structure (scripts/)
+### `/scripts` - Main Python Codebase
 
-### core/
-**Core utilities and configuration**
+**Purpose**: Core data processing, analysis, and pipeline scripts
 
+**Structure**:
 ```
-core/
-├── config.py                  # Centralized configuration
-├── data_helpers.py            # Parquet I/O with metadata
-├── geocoding.py               # Geocoding (OneMap + Google)
-├── metrics.py                 # Dashboard metrics
-├── cache.py                   # Caching utilities
-└── stages/                    # Pipeline stages
-    ├── L0_collect.py          # Data collection
-    ├── L1_process.py          # Processing & geocoding
-    ├── L2_features.py         # Feature engineering
-    ├── L3_export.py           # Unified dataset export
-    ├── webapp_data_preparation.py  # JSON export
-    └── regional_mapping.py    # Geographic regions
+scripts/
+├── core/                        # Core abstractions and utilities
+│   ├── config.py                # Centralized configuration
+│   ├── data_helpers.py          # Parquet I/O with metadata
+│   ├── geocoding.py             # Geocoding engine
+│   ├── mrt_line_mapping.py      # MRT line/station data
+│   ├── school_features.py       # School tier assignments
+│   └── stages/                  # Pipeline stages (L0-L5)
+│       ├── L0_collect.py        # Data collection
+│       ├── L0_macro.py          # Macro data collection
+│       ├── L1_process.py        # Data processing
+│       ├── L2_features.py       # Feature engineering
+│       ├── L3_export.py         # Export for webapp
+│       └── ...
+│
+├── analytics/                   # Analytics and modeling
+│   ├── models/                  # ML models
+│   │   ├── area_arimax.py       # ARIMAX time series
+│   │   └── regional_var.py      # Regional variance models
+│   ├── analysis/                # Analysis scripts
+│   │   ├── market/              # Market analysis
+│   │   ├── mrt/                 # MRT impact analysis
+│   │   ├── school/              # School impact analysis
+│   │   ├── spatial/             # Spatial analysis
+│   │   ├── causal/              # Causal inference
+│   │   ├── appreciation/        # Appreciation analysis
+│   │   ├── amenity/             # Amenity analysis
+│   │   └── policy/              # Policy impact analysis
+│   ├── pipelines/               # Analytics pipelines
+│   ├── price_appreciation_modeling/  # Appreciation models
+│   ├── segmentation/            # Market segmentation
+│   ├── viz/                     # Visualization scripts
+│   └── run_backtesting.py       # Backtesting framework
+│
+├── data/                        # Data processing scripts
+│   ├── download/                # Data fetching
+│   │   ├── download_hdb_rental_data.py
+│   │   ├── download_ura_rental_index.py
+│   │   └── refresh_external_data.py
+│   ├── process/                 # Data processing utilities
+│   │   ├── amenities/           # Amenity features
+│   │   ├── geocode/             # Geocoding utilities
+│   │   └── planning_area/       # Planning area assignments
+│   ├── fetch_macro_data.py      # Macro data fetching
+│   └── create_l3_unified_dataset.py  # Unified dataset
+│
+├── utils/                       # Utility scripts
+│   ├── refresh_onemap_token.py  # Token management
+│   ├── check_geocoding_progress.py
+│   ├── detect_anomalies.py
+│   └── town_leaderboard.py
+│
+├── webapp/                      # Webapp-specific scripts
+│   ├── prepare_webapp_data.py   # Main export script
+│   ├── prepare_analytics_json.py
+│   └── transform_spatial_hotspots.py
+│
+├── tools/                       # Developer tools
+│   ├── validate_docs_layout.py
+│   └── verify_imports.py
+│
+└── run_pipeline.py              # Main pipeline entry point
 ```
 
-### analytics/
-**Analysis and ML models**
-
-```
-analytics/
-├── analysis/                  # Analysis modules
-│   ├── mrt/                   # MRT impact analysis
-│   ├── school/                # School tier analysis
-│   ├── market/                # Market analysis
-│   ├── amenity/               # Amenity impact
-│   └── spatial/               # Spatial analysis
-├── models/                    # ML models
-│   ├── area_arimax.py        # ARIMAX models
-│   ├── regional_var.py       # Regional variance models
-│   └── ...
-└── pipelines/                 # Analysis pipelines
-    ├── cross_validate.py
-    ├── forecast_appreciation.py
-    └── calculate_l3_metrics_pipeline.py
-```
-
-### data/
-**Data processing scripts**
-
-```
-data/
-├── fetch_macro_data.py        # SingStat macro data
-├── mrt_line_mapping.py        # MRT line definitions
-└── ...
-```
-
-### utils/
-**Utility scripts**
-
-```
-utils/
-├── verify_imports.py          # Import verification
-└── ...
-```
+**Key Files**:
+- `run_pipeline.py` - Main pipeline orchestrator
+- `core/config.py` - Configuration management
+- `core/data_helpers.py` - Data I/O utilities
+- `core/geocoding.py` - Geocoding engine
+- `prepare_webapp_data.py` - Dashboard data export
 
 ---
 
-## Data Storage Structure (data/)
+### `/notebooks` - Jupyter Notebooks
 
-### pipeline/
-**Stage-based data storage**
+**Purpose**: Data exploration, analysis, and prototyping
 
+**Structure**:
 ```
-pipeline/
-├── L0/                        # Raw collected data
-│   ├── hdb_resale.parquet
-│   ├── ura_transactions.parquet
-│   └── macro_data.parquet
-├── L1/                        # Processed & geocoded
-│   ├── hdb_transactions.parquet
-│   ├── ura_transactions.parquet
-│   └── ...
-├── L2/                        # Feature-enriched
-│   ├── hdb_with_features.parquet
-│   ├── ura_with_features.parquet
-│   └── ...
-└── L3/                        # Unified dataset
-    └── unified_dataset.parquet
-```
-
-### manual/
-**Manually uploaded data**
-
-```
-manual/
-├── mrt_stations.csv
-├── school_locations.csv
-└── ...
+notebooks/
+├── L0_datagovsg.ipynb           # Data.gov.sg exploration
+├── L0_datagovsg.py              # Paired Python script
+├── L0_onemap.ipynb              # OneMap API exploration
+├── L0_onemap.py                 # Paired Python script
+├── L0_image_gen.ipynb           # Image generation
+├── L0_webscrap_jina.ipynb       # Web scraping
+├── L0_wiki.ipynb                # Wikipedia data
+├── L1_ura_transactions_processing.ipynb
+├── L1_utilities_processing.ipynb
+├── L2_sales_facilities.ipynb    # Sales facilities analysis
+├── exploration/                 # Experimental notebooks
+│   ├── gemini-simple-call.ipynb
+│   ├── pandas_agent.ipynb
+│   └── spark-dataframe-agent-langchain.py
+├── visualize_feature_importance.ipynb
+└── 20260123_hdb_eda_investment_analysis.py
 ```
 
-### analytics/
-**Analysis outputs**
+**Key Convention**:
+- All `.ipynb` files have paired `.py` files (Jupytext)
+- Edit `.py` in VS Code for code changes
+- Use `.ipynb` in Jupyter for visualization
+- Sync with: `jupytext --sync notebook.ipynb`
 
-```
-analytics/
-├── mrt_impact.parquet
-├── school_analysis.parquet
-└── ...
-```
-
-### metadata.json
-**Dataset metadata and tracking**
-
-```json
-{
-  "datasets": {
-    "L0_hdb_resale": {
-      "path": "data/pipeline/L0/hdb_resale.parquet",
-      "source": "data.gov.sg",
-      "rows": 1000000,
-      "columns": 12,
-      "created_at": "2024-01-01T00:00:00",
-      "checksum": "abc123"
-    }
-  }
-}
-```
+**Naming**:
+- `L0_*` - Data collection notebooks
+- `L1_*` - Data processing notebooks
+- `L2_*` - Feature engineering notebooks
+- `exploration/` - Experimental analysis
 
 ---
 
-## Test Structure (tests/)
+### `/tests` - Python Tests
 
-**Mirrors production code structure**
+**Purpose**: Unit and integration tests for Python code
 
+**Structure**:
 ```
 tests/
-├── conftest.py                 # Shared fixtures
-├── core/                       # Core tests
+├── test_core/                   # Core module tests
 │   ├── test_config.py
 │   ├── test_data_helpers.py
-│   ├── test_cache.py
-│   └── test_regional_mapping.py
-├── analytics/                  # Analytics tests
-│   ├── models/
-│   │   ├── test_area_arimax.py
-│   │   └── test_regional_var.py
-│   ├── pipelines/
-│   │   ├── test_cross_validate.py
-│   │   └── test_forecast_appreciation.py
-│   └── test_prepare_timeseries_data.py
-├── data/                       # Data processing tests
-│   └── test_fetch_macro_data.py
-└── integration/                # Integration tests
-    ├── test_pipeline.py
-    ├── test_geocoding.py
-    ├── test_mrt_integration.py
-    └── test_analytics_export.py
+│   ├── test_geocoding.py
+│   └── conftest.py              # Core fixtures
+├── test_integration/            # Integration tests
+│   ├── test_pipeline_stages.py
+│   └── conftest.py              # Integration fixtures
+├── conftest.py                  # Shared fixtures
+└── __init__.py
+```
+
+**Test Structure**:
+- Mirrors `/scripts` structure
+- `test_*.py` or `*_test.py` naming
+- `Test*` classes
+- `test_*` functions
+
+**Markers**:
+- `@pytest.mark.unit` - Fast, isolated tests
+- `@pytest.mark.integration` - Component interaction tests
+- `@pytest.mark.slow` - Full pipeline tests
+- `@pytest.mark.api` - Tests that make API calls
+
+---
+
+### `/docs` - Documentation
+
+**Purpose**: Project documentation, guides, and reference
+
+**Structure**:
+```
+docs/
+├── guides/                      # How-to guides
+│   ├── 20260228-ci-cd-pipeline.md
+│   ├── 20260228-configuration.md
+│   └── e2e-testing.md
+├── reference/                   # Reference documentation
+├── architecture.md              # System architecture
+└── README.md                    # Docs overview
+```
+
+**Naming Convention**:
+- Guides: `YYYYMMDD-name.md`
+- Reference files: Descriptive names
+
+---
+
+### `/.planning` - Planning Documentation
+
+**Purpose**: Codebase analysis, planning docs, and technical debt tracking
+
+**Structure**:
+```
+.planning/
+└── codebase/                    # Codebase documentation
+    ├── ARCHITECTURE.md          # System architecture
+    ├── CONCERNS.md              # Tech debt and issues
+    ├── CONVENTIONS.md           # Code conventions
+    ├── INTEGRATIONS.md          # External integrations
+    ├── STACK.md                 # Technology stack
+    ├── STRUCTURE.md             # Directory structure
+    └── TESTING.md               # Testing strategy
+```
+
+---
+
+## Configuration Files
+
+### Root Level
+
+```
+├── pyproject.toml               # Python project configuration
+│   ├── [project]                # Project metadata
+│   ├── [tool.ruff]              # Ruff linting/formatting
+│   ├── [tool.pytest]            # Pytest configuration
+│   └── [tool.coverage]          # Coverage settings
+│
+├── package.json                 # Root package.json (scripts)
+├── .env.example                 # Environment variables template
+├── .gitignore                   # Git ignore rules
+├── CLAUDE.md                    # Claude Code instructions
+└── README.md                    # Project overview
+```
+
+### App Level
+
+```
+app/
+├── package.json                 # Node dependencies
+├── astro.config.mjs             # Astro configuration
+├── tsconfig.json                # TypeScript configuration
+├── playwright.config.ts         # Playwright test configuration
+└── .eslintrc.js                 # ESLint rules (if using ESLint)
 ```
 
 ---
 
 ## Naming Conventions
 
-### Python Files
+### Datasets (Parquet Files)
 
-**Pipeline Scripts:**
-- Pattern: `L{stage}_{description}.py`
-- Examples: `L0_collect.py`, `L1_process.py`, `L2_features.py`
+**Pattern**: `L{stage}_{entity}_{type}.parquet`
 
-**Dataset Files:**
-- Pattern: `L{stage}_{entity}_{type}.parquet`
-- Examples: `L1_hdb_transactions.parquet`, `L2_hdb_with_features.parquet`
+**Examples**:
+- `L0_hdb_resale.parquet` - Raw HDB resale data
+- `L1_hdb_transaction.parquet` - Cleaned HDB transactions
+- `L2_hdb_with_features.parquet` - HDB with features
+- `L3_unified_dataset.parquet` - All property types combined
+- `analysis_mrt_impact.parquet` - Analysis output
 
-**Analysis Scripts:**
-- Pattern: `analyze_{topic}.py`
-- Examples: `analyze_mrt_impact.py`, `analyze_school_tiers.py`
+**Stages**:
+- `L0` - Raw data collection
+- `L1` - Processing and geocoding
+- `L2` - Feature engineering
+- `L3` - Unified dataset
+- `L4` - Analytics output
+- `L5` - Dashboard metrics
 
-**Test Files:**
-- Pattern: `test_{module}.py`
-- Examples: `test_config.py`, `test_data_helpers.py`
+**Entities**:
+- `hdb` - HDB resale properties
+- `ura` - URA private property transactions
+- `condo` - Condominium data
+- `unified` - Combined dataset
+- `macro` - Macroeconomic indicators
 
-### Frontend Files
-
-**Components:**
-- Pattern: PascalCase.astro or PascalCase.tsx
-- Examples: `Sidebar.astro`, `TrendChart.tsx`
-
-**Pages:**
-- Pattern: kebab-case.astro
-- Examples: `index.astro`, `leaderboard.astro`
-
-**Hooks:**
-- Pattern: camelCase with `use` prefix
-- Examples: `useAnalyticsData.ts`, `useGzipJson.ts`
-
-**Types:**
-- Pattern: PascalCase.ts
-- Examples: `analytics.ts`, `leaderboard.ts`
-
-**JSON Data:**
-- Pattern: `{entity}-{type}.json.gz`
-- Examples: `spatial-analytics.json.gz`, `leaderboard.json.gz`
+**Types**:
+- `resale` - Resale transactions
+- `rental` - Rental data
+- `transaction` - Generic transactions
+- `with_features` - Feature-enriched data
 
 ---
 
-## Key File Locations
+### Documentation Files
 
-### Configuration
-- **Python:** `scripts/core/config.py`
-- **Frontend:** `app/astro.config.mjs`, `app/package.json`
-- **TypeScript:** `app/tsconfig.json`
-- **Tests:** `pyproject.toml`
+**Pattern**: `YYYYMMDD-filename.md`
 
-### Entry Points
-- **Pipeline:** `scripts/run_pipeline.py`
-- **Frontend:** `app/src/pages/index.astro`
-- **Dashboard:** `app/src/pages/dashboard/index.astro`
-- **Analytics:** `app/src/pages/analytics/[slug].astro`
+**Examples**:
+- `20260228-ci-cd-pipeline.md`
+- `20260228-configuration.md`
+- `20260123-hdb-eda-investment-analysis.py`
 
-### Data Flow
-- **Raw Data:** `data/pipeline/L0/`
-- **Processed:** `data/pipeline/L1/`, `L2/`, `L3/`
-- **Webapp Data:** `app/public/data/`
-- **Generated By:** `scripts/prepare_webapp_data.py`
+**Reason**: Chronological organization, easy sorting
 
-### Component Libraries
-- **Shared:** `app/src/components/shared/`
-- **Dashboard:** `app/src/components/dashboard/`
-- **Analytics:** `app/src/components/analytics/`
-- **Charts:** `app/src/components/charts/`
+---
+
+### Script Files
+
+**Python Scripts**:
+- `snake_case.py` - Module and script names
+- `run_pipeline.py` - Entry point scripts
+- `test_*.py` - Test files
+
+**Notebooks**:
+- `L0_*.ipynb` - Level 0 notebooks
+- `L1_*.ipynb` - Level 1 notebooks
+- `exploration/*.ipynb` - Experimental notebooks
+
+**TypeScript/React**:
+- `PascalCase.tsx` - React components
+- `kebab-case.astro` - Astro pages
+- `camelCase.ts` - Utility files
+
+---
+
+### Test Files
+
+**Python**:
+- `test_*.py` - Test modules
+- `*_test.py` - Alternative test naming
+- `conftest.py` - Shared fixtures
+
+**E2E (Playwright)**:
+- `*.spec.ts` - Test specs
+- `home.spec.ts` - Home page tests
+- `dashboard.spec.ts` - Dashboard tests
+
+---
+
+## Key Locations Summary
+
+| Purpose | Location |
+|---------|----------|
+| **Main Pipeline** | `scripts/run_pipeline.py` |
+| **Configuration** | `scripts/core/config.py` |
+| **Data I/O** | `scripts/core/data_helpers.py` |
+| **Geocoding** | `scripts/core/geocoding.py` |
+| **Webapp Export** | `scripts/prepare_webapp_data.py` |
+| **Metadata** | `data/metadata.json` |
+| **Parquet Files** | `data/parquets/` |
+| **Dashboard JSONs** | `app/public/data/` |
+| **Notebooks** | `notebooks/` |
+| **Python Tests** | `tests/` |
+| **E2E Tests** | `app/tests/e2e/` |
+| **Environment** | `.env` (from `.env.example`) |
+| **Python Config** | `pyproject.toml` |
+| **Frontend Config** | `app/astro.config.mjs` |
+| **Planning Docs** | `.planning/codebase/` |
+
+---
+
+## File Size Guidelines
+
+### Large Files (Warning)
+
+**Known Large Files**:
+- `scripts/core/stages/L3_export.py` - 1,879 lines ⚠️
+- `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` - 838 lines
+- `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` - 837 lines
+
+**Guideline**: Consider refactoring files > 500 lines
+
+### Hardcoded Data Files
+
+**Known Hardcoded Files**:
+- `scripts/core/mrt_line_mapping.py` - 407 lines (MRT stations)
+- `scripts/core/school_features.py` - 726 lines (school tiers)
+
+**Guideline**: Externalize to JSON/CSV if possible
 
 ---
 
 ## Import Path Conventions
 
-### Python
-**ALWAYS use absolute imports from project root:**
+**Always use absolute imports from project root**:
 
 ```python
 # ✓ Correct
 from scripts.core.config import Config
 from scripts.core.data_helpers import load_parquet
-from scripts.core.stages.L1_process import process_transactions
 
 # ✗ Wrong
 from ..core.config import Config
 from .stages.L1_process import process_transactions
 ```
 
-**Reason:** Relative imports break when scripts run from different directories.
-
-### Frontend (TypeScript)
-**Path aliases configured in tsconfig.json:**
-
-```typescript
-// Path aliases
-import { MyComponent } from '@components/shared/MyComponent';
-import { useAnalyticsData } from '@hooks/useAnalyticsData';
-import { AnalyticsData } from '@types/analytics';
-import { formatDate } from '@utils/formatters';
-```
-
-**Available Aliases:**
-- `@/*` → `./src/*`
-- `@components/*` → `./src/components/*`
-- `@layouts/*` → `./src/layouts/*`
-- `@hooks/*` → `./src/hooks/*`
-- `@types/*` → `./src/types/*`
-- `@utils/*` → `./src/utils/*`
-- `@data/*` → `./src/data/*`
+**Reason**: Relative imports break when scripts run from different directories
 
 ---
 
-## Hidden/System Files
+## Git Organization
 
-```
-.venv/                        # Python virtual environment (not in git)
-.node_modules/                # Node dependencies (not in git)
-.astro/                       # Astro build cache (not in git)
-.env                          # Environment variables (not in git)
-.claude/                      # Claude Code handoffs (not in git)
-.context7/                    # Context data (not in git)
-gitignore                     # Git ignore rules
-.env.example                  # Environment template
-```
+### Tracked Files
+
+- Source code (all `.py`, `.ts`, `.tsx`, `.astro`)
+- Configuration files
+- Documentation (`.md`)
+- Test files
+- `.gitkeep` files (preserve empty directories)
+
+### Not Tracked (Gitignored)
+
+- `.venv/` - Virtual environment
+- `.env` - Environment variables (use `.env.example`)
+- `__pycache__/` - Python cache
+- `*.pyc` - Compiled Python
+- `node_modules/` - Node dependencies
+- `data/raw/` - Large raw data files
+- `data/cache/` - API cache
+- `data/logs/` - Log files
+- `.pytest_cache/` - Pytest cache
+- `app/dist/` - Astro build output
+- `.coverage` - Coverage reports
+- `htmlcov/` - Coverage HTML
 
 ---
 
-## File Organization Principles
+## Summary
 
-1. **Separation of Concerns:** Clear boundary between data processing and presentation
-2. **Domain-Driven Structure:** Files grouped by feature/domain
-3. **Mirrored Test Structure:** Tests mirror production code
-4. **Centralized Configuration:** Config files in dedicated locations
-5. **Absolute Imports:** Prevents path issues
-6. **Consistent Naming:** Clear patterns for easy navigation
-7. **Metadata-Driven Data:** All data tracked in metadata.json
+**Top-Level Directories**: 7 main directories
+  - `app/` - Frontend
+  - `data/` - Data storage
+  - `docs/` - Documentation
+  - `notebooks/` - Exploration
+  - `scripts/` - Main codebase
+  - `tests/` - Tests
+  - `.planning/` - Planning docs
+
+**Total Python Files**: 144+ in `/scripts`
+**Total Notebooks**: 12+ in `/notebooks`
+**Total Test Files**: 8+ in `/tests`
+
+**Key Conventions**:
+- Dataset naming: `L{stage}_{entity}_{type}.parquet`
+- Documentation: `YYYYMMDD-name.md`
+- Absolute imports only
+- Paired notebooks (`.ipynb` + `.py`)

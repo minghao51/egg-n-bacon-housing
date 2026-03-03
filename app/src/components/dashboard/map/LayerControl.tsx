@@ -6,7 +6,8 @@
  */
 
 import React, { useState } from 'react';
-import { LayerId, LAYER_CATEGORIES, LAYER_METADATA } from '../../../types/analytics';
+import { LAYER_CATEGORIES, LAYER_METADATA } from '../../../types/analytics';
+import type { LayerId } from '../../../types/analytics';
 
 interface LayerControlProps {
   activeLayers: Record<string, boolean>;

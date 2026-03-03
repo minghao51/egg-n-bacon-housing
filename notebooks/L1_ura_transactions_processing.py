@@ -23,7 +23,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 # Add src directory to path for imports
-sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
+sys.path.append(str(pathlib.Path(__file__).parent.parent / "src"))
 
 load_dotenv()
 
@@ -32,7 +32,7 @@ from geocoding import extract_unique_addresses, fetch_data, load_ura_files, setu
 
 # %%
 # Load all URA and HDB transaction files using shared function
-csv_base_path = pathlib.Path(__file__).parent.parent / 'data' / 'raw_data' / 'csv'
+csv_base_path = pathlib.Path(__file__).parent.parent / "data" / "raw_data" / "csv"
 ec_df, condo_df, residential_df, hdb_df = load_ura_files(csv_base_path)
 
 # Save individual transaction datasets
@@ -49,7 +49,7 @@ save_parquet(hdb_df, "L1_housing_hdb_transaction", source="data.gov.sg CSV data"
 housing_df = extract_unique_addresses(ec_df, condo_df, residential_df, hdb_df)
 
 # Display first 10 addresses
-for search_string in housing_df['NameAddress'][:10]:
+for search_string in housing_df["NameAddress"][:10]:
     print(search_string)
 
 # %% [markdown]
@@ -69,29 +69,29 @@ import requests
 
 df_list = []
 failed_searches = []
-total_addresses = len(housing_df['NameAddress'])
+total_addresses = len(housing_df["NameAddress"])
 print(f"Starting geocoding for {total_addresses} unique addresses...")
 print("This may take 30+ minutes due to API rate limiting")
 
-for i, search_string in enumerate(housing_df['NameAddress'], 1):
-  try:
-    # Use fetch_data from shared geocoding module
-    _df = fetch_data(search_string, headers)
-    _df['NameAddress'] = search_string
-    df_list.append(_df)
+for i, search_string in enumerate(housing_df["NameAddress"], 1):
+    try:
+        # Use fetch_data from shared geocoding module
+        _df = fetch_data(search_string, headers)
+        _df["NameAddress"] = search_string
+        df_list.append(_df)
 
-    # Print progress every 50 addresses
-    if i % 50 == 0:
-      print(f"Progress: {i}/{total_addresses} addresses ({i/total_addresses*100:.1f}%)")
+        # Print progress every 50 addresses
+        if i % 50 == 0:
+            print(f"Progress: {i}/{total_addresses} addresses ({i / total_addresses * 100:.1f}%)")
 
-  except requests.RequestException:
-    failed_searches.append(search_string)
-    print(f"❌ Request failed for {search_string}. Skipping.")
+    except requests.RequestException:
+        failed_searches.append(search_string)
+        print(f"❌ Request failed for {search_string}. Skipping.")
 
 print(f"✅ Completed geocoding: {len(df_list)}/{total_addresses} successful")
 
 if failed_searches:
-  print(f"⚠️  Failed to retrieve data for {len(failed_searches)} addresses")
+    print(f"⚠️  Failed to retrieve data for {len(failed_searches)} addresses")
 
 # %%
 # import time
@@ -136,10 +136,12 @@ df_housing_searched = pd.concat(df_list)
 save_parquet(df_housing_searched, "L2_housing_unique_full_searched", source="L1 transaction data")
 
 # Filter for search_result == 0 and reset index
-df_housing_searched_selected = df_housing_searched[df_housing_searched['search_result'] == 0].reset_index(drop=True)
+df_housing_searched_selected = df_housing_searched[
+    df_housing_searched["search_result"] == 0
+].reset_index(drop=True)
 
 # Add the 'property_type' column
-df_housing_searched_selected['property_type'] = housing_df['property_type']
+df_housing_searched_selected["property_type"] = housing_df["property_type"]
 
 # Save the filtered dataset
 save_parquet(df_housing_searched_selected, "L2_housing_unique_searched", source="L2 housing data")

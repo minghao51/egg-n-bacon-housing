@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
   ReferenceLine
 } from 'recharts';
+import ClientChart from '@/components/charts/ClientChart';
 
 interface SegmentData {
   name: string;
@@ -119,7 +120,7 @@ export default function SegmentsAnalysis({ data }: { data: SegmentsData }) {
         </div>
       </div>
       
-      <div className="h-[600px]">
+      <ClientChart className="h-[600px]">
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -190,7 +191,7 @@ export default function SegmentsAnalysis({ data }: { data: SegmentsData }) {
             <ReferenceLine y={4} stroke="red" strokeDasharray="3 3" label={{ value: "4% Yield Target", position: 'insideTopRight', fill: 'red' }} />
           </ScatterChart>
         </ResponsiveContainer>
-      </div>
+      </ClientChart>
     </div>
   );
 }

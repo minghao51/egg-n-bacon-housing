@@ -14,6 +14,7 @@ def verify_from_project_root():
 
     try:
         import scripts.core.config
+
         print("  ✓ scripts.core.config")
     except ImportError as e:
         print(f"  ✗ scripts.core.config: {e}")
@@ -21,6 +22,7 @@ def verify_from_project_root():
 
     try:
         import scripts.core.data_loader
+
         print("  ✓ scripts.core.data_loader")
     except ImportError as e:
         print(f"  ✗ scripts.core.data_loader: {e}")
@@ -28,6 +30,7 @@ def verify_from_project_root():
 
     try:
         import scripts.core.geocoding
+
         print("  ✓ scripts.core.geocoding")
     except ImportError as e:
         print(f"  ✗ scripts.core.geocoding: {e}")
@@ -35,6 +38,7 @@ def verify_from_project_root():
 
     try:
         import scripts.core.cache
+
         print("  ✓ scripts.core.cache")
     except ImportError as e:
         print(f"  ✗ scripts.core.cache: {e}")
@@ -42,6 +46,7 @@ def verify_from_project_root():
 
     try:
         import scripts.core.data_helpers
+
         print("  ✓ scripts.core.data_helpers")
     except ImportError as e:
         print(f"  ✗ scripts.core.data_helpers: {e}")
@@ -49,6 +54,7 @@ def verify_from_project_root():
 
     try:
         import scripts.core.stages.L0_collect
+
         print("  ✓ scripts.core.stages.L0_collect")
     except ImportError as e:
         print(f"  ✗ scripts.core.stages.L0_collect: {e}")
@@ -56,6 +62,7 @@ def verify_from_project_root():
 
     try:
         import scripts.core.stages.L3_export
+
         print("  ✓ scripts.core.stages.L3_export")
     except ImportError as e:
         print(f"  ✗ scripts.core.stages.L3_export: {e}")
@@ -71,6 +78,7 @@ def verify_as_module():
 
     try:
         from scripts.core.config import Config
+
         print("  ✓ from scripts.core.config import Config")
     except ImportError as e:
         print(f"  ✗ from scripts.core.config import Config: {e}")
@@ -78,6 +86,7 @@ def verify_as_module():
 
     try:
         from scripts.core.data_loader import CSVLoader, TransactionLoader
+
         print("  ✓ from scripts.core.data_loader import TransactionLoader, CSVLoader")
     except ImportError as e:
         print(f"  ✗ from scripts.core.data_loader import TransactionLoader, CSVLoader: {e}")
@@ -85,6 +94,7 @@ def verify_as_module():
 
     try:
         from scripts.core.geocoding import load_ura_files
+
         print("  ✓ from scripts.core.geocoding import load_ura_files")
     except ImportError as e:
         print(f"  ✗ from scripts.core.geocoding import load_ura_files: {e}")
@@ -101,10 +111,18 @@ def verify_config_paths():
     from scripts.core.config import Config
 
     required_attrs = [
-        'L0_DIR', 'L1_DIR', 'L2_DIR', 'L3_DIR',
-        'CSV_DIR', 'GEOJSON_DIR', 'CROSSWALK_DIR',
-        'URA_DIR', 'HDB_RESALE_DIR',
-        'DATASET_HDB_TRANSACTION', 'DATASET_CONDO_TRANSACTION', 'DATASET_EC_TRANSACTION'
+        "L0_DIR",
+        "L1_DIR",
+        "L2_DIR",
+        "L3_DIR",
+        "CSV_DIR",
+        "GEOJSON_DIR",
+        "CROSSWALK_DIR",
+        "URA_DIR",
+        "HDB_RESALE_DIR",
+        "DATASET_HDB_TRANSACTION",
+        "DATASET_CONDO_TRANSACTION",
+        "DATASET_EC_TRANSACTION",
     ]
 
     for attr in required_attrs:

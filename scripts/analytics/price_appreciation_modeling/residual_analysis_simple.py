@@ -12,7 +12,7 @@ from pathlib import Path
 
 import matplotlib
 
-matplotlib.use('Agg')  # Non-interactive backend
+matplotlib.use("Agg")  # Non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -36,12 +36,7 @@ def main():
     logger.info("=" * 60)
 
     # Setup output directory
-    output_dir = (
-        Config.DATA_DIR
-        / "analysis"
-        / "price_appreciation_modeling"
-        / "residual_analysis"
-    )
+    output_dir = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "residual_analysis"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load predictions
@@ -81,21 +76,21 @@ def main():
     # Histogram
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-    axes[0].hist(residuals, bins=50, density=True, alpha=0.7, edgecolor='black')
-    axes[0].axvline(0, color='red', linestyle='--', linewidth=2, label='Zero')
-    axes[0].set_xlabel('Residuals (Actual - Predicted)')
-    axes[0].set_ylabel('Density')
-    axes[0].set_title('Residual Distribution')
+    axes[0].hist(residuals, bins=50, density=True, alpha=0.7, edgecolor="black")
+    axes[0].axvline(0, color="red", linestyle="--", linewidth=2, label="Zero")
+    axes[0].set_xlabel("Residuals (Actual - Predicted)")
+    axes[0].set_ylabel("Density")
+    axes[0].set_title("Residual Distribution")
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
 
     # Q-Q plot
     stats.probplot(residuals, dist="norm", plot=axes[1])
-    axes[1].set_title('Q-Q Plot: Normality Check')
+    axes[1].set_title("Q-Q Plot: Normality Check")
     axes[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(output_dir / "residual_distribution.png", dpi=150, bbox_inches='tight')
+    plt.savefig(output_dir / "residual_distribution.png", dpi=150, bbox_inches="tight")
     plt.close()
 
     logger.info(f"  Saved to {output_dir / 'residual_distribution.png'}")
@@ -115,21 +110,21 @@ def main():
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
     axes[0].scatter(y_pred, residuals, alpha=0.1, s=1)
-    axes[0].axhline(0, color='red', linestyle='--', linewidth=2)
-    axes[0].set_xlabel('Fitted Values (Predicted YoY %)')
-    axes[0].set_ylabel('Residuals')
-    axes[0].set_title('Residuals vs Fitted')
+    axes[0].axhline(0, color="red", linestyle="--", linewidth=2)
+    axes[0].set_xlabel("Fitted Values (Predicted YoY %)")
+    axes[0].set_ylabel("Residuals")
+    axes[0].set_title("Residuals vs Fitted")
     axes[0].grid(True, alpha=0.3)
 
     axes[1].scatter(y_test, residuals, alpha=0.1, s=1)
-    axes[1].axhline(0, color='red', linestyle='--', linewidth=2)
-    axes[1].set_xlabel('Actual Values (YoY %)')
-    axes[1].set_ylabel('Residuals')
-    axes[1].set_title('Residuals vs Actual')
+    axes[1].axhline(0, color="red", linestyle="--", linewidth=2)
+    axes[1].set_xlabel("Actual Values (YoY %)")
+    axes[1].set_ylabel("Residuals")
+    axes[1].set_title("Residuals vs Actual")
     axes[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(output_dir / "heteroscedasticity_check.png", dpi=150, bbox_inches='tight')
+    plt.savefig(output_dir / "heteroscedasticity_check.png", dpi=150, bbox_inches="tight")
     plt.close()
 
     logger.info(f"  Saved to {output_dir / 'heteroscedasticity_check.png'}")
@@ -177,7 +172,9 @@ def main():
         moran_i = np.mean(spatial_lags) / (residuals_spatial.var() + 1e-10)
 
         logger.info(f"  Moran's I: {moran_i:.4f}")
-        logger.info(f"  Interpretation: {'Positive spatial clustering' if moran_i > 0 else 'No pattern'}")
+        logger.info(
+            f"  Interpretation: {'Positive spatial clustering' if moran_i > 0 else 'No pattern'}"
+        )
 
     # 4. Temporal autocorrelation
     logger.info("\n[4/5] Checking temporal patterns...")
@@ -190,32 +187,33 @@ def main():
     acf_values = [1.0]
 
     for lag in range(1, max_lag + 1):
-        lag_corr = np.corrcoef(
-            residuals_sample.iloc[:-lag],
-            residuals_sample.iloc[lag:]
-        )[0, 1]
+        lag_corr = np.corrcoef(residuals_sample.iloc[:-lag], residuals_sample.iloc[lag:])[0, 1]
         acf_values.append(lag_corr)
 
     logger.info(f"  Lag-1 autocorrelation: {acf_values[1]:.4f}")
-    logger.info(f"  Interpretation: {'Positive autocorrelation' if acf_values[1] > 0.1 else 'No significant autocorrelation'}")
+    logger.info(
+        f"  Interpretation: {'Positive autocorrelation' if acf_values[1] > 0.1 else 'No significant autocorrelation'}"
+    )
 
     # Plot ACF
     fig, ax = plt.subplots(figsize=(10, 5))
 
     ax.stem(range(max_lag + 1), acf_values, basefmt=" ")
-    ax.axhline(0, color='black', linestyle='-', linewidth=1)
-    ax.axhline(0, color='red', linestyle='--', linewidth=2, alpha=0.5)
-    ax.set_xlabel('Lag (months)')
-    ax.set_ylabel('Autocorrelation')
-    ax.set_title('Residual Autocorrelation Function (ACF)')
+    ax.axhline(0, color="black", linestyle="-", linewidth=1)
+    ax.axhline(0, color="red", linestyle="--", linewidth=2, alpha=0.5)
+    ax.set_xlabel("Lag (months)")
+    ax.set_ylabel("Autocorrelation")
+    ax.set_title("Residual Autocorrelation Function (ACF)")
     ax.grid(True, alpha=0.3)
 
     n = len(residuals_sample)
     conf_level = 1.96 / np.sqrt(n)
-    ax.fill_between(range(max_lag + 1), -conf_level, conf_level, alpha=0.2, color='gray', label='95% CI')
+    ax.fill_between(
+        range(max_lag + 1), -conf_level, conf_level, alpha=0.2, color="gray", label="95% CI"
+    )
 
     plt.tight_layout()
-    plt.savefig(output_dir / "temporal_autocorrelation.png", dpi=150, bbox_inches='tight')
+    plt.savefig(output_dir / "temporal_autocorrelation.png", dpi=150, bbox_inches="tight")
     plt.close()
 
     logger.info(f"  Saved to {output_dir / 'temporal_autocorrelation.png'}")
@@ -227,31 +225,43 @@ def main():
 
     # Based on diagnostics
     if abs(stats_dict["skewness"]) > 1:
-        recommendations.append("• High residual skewness detected. Consider target transformation (log, Box-Cox) or use robust regression models.")
+        recommendations.append(
+            "• High residual skewness detected. Consider target transformation (log, Box-Cox) or use robust regression models."
+        )
 
     if stats_dict["kurtosis"] > 10:
-        recommendations.append("• Heavy tails in residuals (extreme errors). Consider separate models for luxury properties or outlier removal.")
+        recommendations.append(
+            "• Heavy tails in residuals (extreme errors). Consider separate models for luxury properties or outlier removal."
+        )
 
     if p_value < 0.05:
-        recommendations.append("• Heteroscedasticity detected. Variance increases with fitted values. Use weighted regression or robust standard errors.")
+        recommendations.append(
+            "• Heteroscedasticity detected. Variance increases with fitted values. Use weighted regression or robust standard errors."
+        )
 
     if moran_i > 0.1:
-        recommendations.append("• Positive spatial autocorrelation detected. Residuals cluster geographically. Add spatial lag features or regional models.")
+        recommendations.append(
+            "• Positive spatial autocorrelation detected. Residuals cluster geographically. Add spatial lag features or regional models."
+        )
 
     if abs(acf_values[1]) > 0.1:
-        recommendations.append("• Temporal autocorrelation detected. Add autoregressive features or use time series models.")
+        recommendations.append(
+            "• Temporal autocorrelation detected. Add autoregressive features or use time series models."
+        )
 
     # General recommendations
-    recommendations.extend([
-        "",
-        "General Improvements:",
-        "• Add polynomial features (squared distances, interaction terms)",
-        "• Add more temporal lags (2-year, 3-year)",
-        "• Separate models by property type (HDB, Condo, EC)",
-        "• Ensemble methods (stacking multiple models)",
-        "• Cross-validation with spatial folds (leave-one-area-out)",
-        "• Add macroeconomic features (interest rates, policy changes)",
-    ])
+    recommendations.extend(
+        [
+            "",
+            "General Improvements:",
+            "• Add polynomial features (squared distances, interaction terms)",
+            "• Add more temporal lags (2-year, 3-year)",
+            "• Separate models by property type (HDB, Condo, EC)",
+            "• Ensemble methods (stacking multiple models)",
+            "• Cross-validation with spatial folds (leave-one-area-out)",
+            "• Add macroeconomic features (interest rates, policy changes)",
+        ]
+    )
 
     # Save recommendations
     with open(output_dir / "improvement_recommendations.txt", "w") as f:

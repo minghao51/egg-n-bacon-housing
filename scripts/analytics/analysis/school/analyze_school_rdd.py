@@ -33,7 +33,7 @@ import warnings
 
 import pandas as pd
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 from scripts.analytics.analysis.school.utils.rdd_estimators import RDDEstimator
 
@@ -44,8 +44,7 @@ OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -61,15 +60,15 @@ def load_and_filter_data():
     print(f"  Full dataset: {len(df):,} records")
 
     # Filter to recent transactions (2021+)
-    df = df[df['year'] >= 2021].copy()
+    df = df[df["year"] >= 2021].copy()
     print(f"  Filtered to 2021+: {len(df):,} records")
 
     # Filter to properties within 2km of primary schools
-    df = df[df['nearest_schoolPRIMARY_dist'] <= 2000].copy()
+    df = df[df["nearest_schoolPRIMARY_dist"] <= 2000].copy()
     print(f"  Within 2km of primary school: {len(df):,} records")
 
     # Drop missing prices
-    df = df.dropna(subset=['price_psf'])
+    df = df.dropna(subset=["price_psf"])
     print(f"  Valid prices: {len(df):,} records")
 
     print("\nDistance distribution:")
@@ -100,9 +99,7 @@ def main():
 
     bandwidth = 200  # 200m on each side of 1km boundary
     rdd_df = estimator.create_rdd_dataset(
-        df,
-        bandwidth=bandwidth,
-        distance_col='nearest_schoolPRIMARY_dist'
+        df, bandwidth=bandwidth, distance_col="nearest_schoolPRIMARY_dist"
     )
 
     # Step 4: Estimate treatment effect
@@ -112,11 +109,11 @@ def main():
 
     # Control variables (property characteristics that should vary smoothly at cutoff)
     control_cols = [
-        'floor_area_sqm',
-        'remaining_lease_months',
-        'year',
-        'dist_to_nearest_mrt',
-        'dist_to_nearest_hawker'
+        "floor_area_sqm",
+        "remaining_lease_months",
+        "year",
+        "dist_to_nearest_mrt",
+        "dist_to_nearest_hawker",
     ]
 
     # Filter to available controls
@@ -124,9 +121,7 @@ def main():
     print(f"\nControl variables: {available_controls}")
 
     results = estimator.estimate_rdd(
-        rdd_df,
-        target_col='price_psf',
-        control_cols=available_controls
+        rdd_df, target_col="price_psf", control_cols=available_controls
     )
 
     # Step 5: Save main results
@@ -144,10 +139,7 @@ def main():
     # 6a. Covariate balance test
     print("\n[Covariate Balance Test]")
     print("Testing that covariates are balanced at the cutoff...")
-    balance_df = estimator.test_covariate_balance(
-        rdd_df,
-        covariate_cols=available_controls
-    )
+    balance_df = estimator.test_covariate_balance(rdd_df, covariate_cols=available_controls)
 
     print("\nCovariate Balance Results:")
     print(balance_df.to_string(index=False))
@@ -158,8 +150,8 @@ def main():
     sensitivity_df = estimator.bandwidth_sensitivity(
         df,
         bandwidths=[100, 150, 200, 250, 300],
-        target_col='price_psf',
-        control_cols=available_controls
+        target_col="price_psf",
+        control_cols=available_controls,
     )
 
     print("\nBandwidth Sensitivity Results:")
@@ -169,10 +161,7 @@ def main():
     print("\n[Placebo Tests]")
     print("Testing for fake cutoffs (should show no effect)...")
     placebo_df = estimator.placebo_tests(
-        df,
-        placebo_cutoffs=[800, 1200],
-        target_col='price_psf',
-        control_cols=available_controls
+        df, placebo_cutoffs=[800, 1200], target_col="price_psf", control_cols=available_controls
     )
 
     print("\nPlacebo Test Results:")
@@ -183,25 +172,26 @@ def main():
     print("CREATING VISUALIZATION")
     print("=" * 80)
 
-    estimator.visualize_discontinuity(
-        rdd_df,
-        target_col='price_psf',
-        bandwidth=bandwidth
-    )
+    estimator.visualize_discontinuity(rdd_df, target_col="price_psf", bandwidth=bandwidth)
 
     # Step 8: Summary
     print("\n" + "=" * 80)
     print("ANALYSIS SUMMARY")
     print("=" * 80)
 
-    inference = results['inference']
+    inference = results["inference"]
 
     print("\n📊 CAUSAL EFFECT ESTIMATE")
     print(f"  Treatment Effect (τ): ${inference['tau']:.2f} PSF")
-    print(f"  Standard Error: ${inference['se']:.2f}" if inference['se'] else "  Standard Error: N/A")
-    print(f"  95% CI: [{inference['ci_lower']:.2f}, {inference['ci_upper']:.2f}]"
-          if inference['ci_lower'] else "  95% CI: N/A")
-    print(f"  P-value: {inference['p_value']:.4f}" if inference['p_value'] else "  P-value: N/A")
+    print(
+        f"  Standard Error: ${inference['se']:.2f}" if inference["se"] else "  Standard Error: N/A"
+    )
+    print(
+        f"  95% CI: [{inference['ci_lower']:.2f}, {inference['ci_upper']:.2f}]"
+        if inference["ci_lower"]
+        else "  95% CI: N/A"
+    )
+    print(f"  P-value: {inference['p_value']:.4f}" if inference["p_value"] else "  P-value: N/A")
     print(f"  Statistically Significant: {'✓ YES' if inference.get('significant') else '✗ NO'}")
 
     print("\n📈 MODEL FIT")
@@ -211,17 +201,17 @@ def main():
     print(f"  Control (>1km): {results['n_control']:,}")
 
     print("\n✅ VALIDATION CHECKS")
-    n_balanced = balance_df['balanced'].sum()
+    n_balanced = balance_df["balanced"].sum()
     n_total = len(balance_df)
     print(f"  Covariate Balance: {n_balanced}/{n_total} balanced")
     print(f"  Bandwidth Sensitivity: {len(sensitivity_df)} bandwidths tested")
     print(f"  Placebo Tests: {len(placebo_df)} fake cutoffs tested")
 
-    placebo_sig = placebo_df['significant'].sum() if 'significant' in placebo_df.columns else 0
+    placebo_sig = placebo_df["significant"].sum() if "significant" in placebo_df.columns else 0
     print(f"  Placebo Effects: {placebo_sig} significant (should be 0)")
 
     print("\n💡 INTERPRETATION")
-    if inference.get('significant'):
+    if inference.get("significant"):
         print("  Properties within 1km of primary schools command a")
         print(f"  premium of ${inference['tau']:.2f} PSF compared to similar")
         print(f"  properties just outside 1km (p={inference['p_value']:.4f}).")

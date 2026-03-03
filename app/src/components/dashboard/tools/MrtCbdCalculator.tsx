@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import type { Persona } from '../PersonaSelector';
 import TrendsMap from '../TrendsMap';
+import ClientChart from '@/components/charts/ClientChart';
 
 interface MrtCbdData {
   property_type_multipliers: {
@@ -186,28 +187,32 @@ export default function MrtCbdCalculator({ data, persona }: MrtCbdCalculatorProp
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <h4 className="font-medium mb-3">MRT Premium Decay Curve</h4>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={decayData}>
+          <ClientChart style={{ height: 200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={decayData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="distance" label={{ value: 'Distance (m)', position: 'insideBottom', offset: -5 }} />
               <YAxis label={{ value: 'Premium ($)', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
               <Line type="monotone" dataKey="premium" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
+              </LineChart>
+            </ResponsiveContainer>
+          </ClientChart>
         </div>
 
         <div>
           <h4 className="font-medium mb-3">Top vs Bottom Towns (MRT Multiplier)</h4>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={[...topTowns, ...bottomTowns]} layout="vertical">
+          <ClientChart style={{ height: 200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={[...topTowns, ...bottomTowns]} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
               <YAxis dataKey="town" type="category" width={100} />
               <Tooltip />
               <Bar dataKey="multiplier" fill={(entry: any) => entry.multiplier >= 1 ? '#10b981' : '#ef4444'} />
-            </BarChart>
-          </ResponsiveContainer>
+              </BarChart>
+            </ResponsiveContainer>
+          </ClientChart>
         </div>
       </div>
       </div>

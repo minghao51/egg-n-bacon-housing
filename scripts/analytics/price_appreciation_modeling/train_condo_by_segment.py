@@ -56,7 +56,9 @@ def add_condo_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def prepare_features(df: pd.DataFrame, target_col: str = "yoy_change_pct", max_missing_pct: float = 0.3):
+def prepare_features(
+    df: pd.DataFrame, target_col: str = "yoy_change_pct", max_missing_pct: float = 0.3
+):
     """Select and prepare features for modeling."""
     # Select numeric columns
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
@@ -88,9 +90,9 @@ def prepare_features(df: pd.DataFrame, target_col: str = "yoy_change_pct", max_m
 
 def train_segment_model(X_train, y_train, X_test, y_test, segment_name: str, segment_params: dict):
     """Train XGBoost model for specific segment."""
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info(f"Training {segment_name} Model")
-    logger.info(f"{'='*60}")
+    logger.info(f"{'=' * 60}")
     logger.info(f"  Train samples: {len(X_train):,}")
     logger.info(f"  Test samples: {len(X_test):,}")
     logger.info(f"  Features: {len(X_train.columns)}")
@@ -234,7 +236,9 @@ def main():
 
         # Skip if insufficient data
         if len(train_segment) < 1000:
-            logger.warning(f"\nSkipping {segment['name']}: insufficient training data ({len(train_segment)} samples)")
+            logger.warning(
+                f"\nSkipping {segment['name']}: insufficient training data ({len(train_segment)} samples)"
+            )
             continue
 
         logger.info(f"\n{segment['name']} Segment ({segment['description']}):")
@@ -298,7 +302,9 @@ def main():
             {"feature": X_train.columns, "importance": model.feature_importances_}
         ).sort_values("importance", ascending=False)
 
-        importance_path = output_dir / f"{segment['name'].lower().replace(' ', '_')}_feature_importance.csv"
+        importance_path = (
+            output_dir / f"{segment['name'].lower().replace(' ', '_')}_feature_importance.csv"
+        )
         importance_df.to_csv(importance_path, index=False)
         logger.info(f"  Saved feature importance to {importance_path}")
 
@@ -331,10 +337,14 @@ def main():
 
     overall_r2 = r2_score(all_predictions["actual"], all_predictions["predicted"])
     overall_mae = mean_absolute_error(all_predictions["actual"], all_predictions["predicted"])
-    overall_rmse = np.sqrt(mean_squared_error(all_predictions["actual"], all_predictions["predicted"]))
+    overall_rmse = np.sqrt(
+        mean_squared_error(all_predictions["actual"], all_predictions["predicted"])
+    )
     overall_directional = (
-        (all_predictions["actual"] > 0) == (all_predictions["predicted"] > 0)
-    ).sum() / len(all_predictions) * 100
+        ((all_predictions["actual"] > 0) == (all_predictions["predicted"] > 0)).sum()
+        / len(all_predictions)
+        * 100
+    )
 
     logger.info(f"  R²: {overall_r2:.4f}")
     logger.info(f"  MAE: {overall_mae:.2f}%")
@@ -371,9 +381,15 @@ def main():
     logger.info(f"    Directional Accuracy: {original_condo_results['directional_accuracy']:.1f}%")
 
     logger.info("\n  New Segmented Models (Combined):")
-    logger.info(f"    Test R²: {overall_r2:.4f} ({(overall_r2/original_condo_results['test_r2']-1)*100:+.1f}%)")
-    logger.info(f"    Test MAE: {overall_mae:.2f}% ({(overall_mae/original_condo_results['test_mae']-1)*100:+.1f}%)")
-    logger.info(f"    Directional Accuracy: {overall_directional:.1f}% ({overall_directional-original_condo_results['directional_accuracy']:+.1f} pp)")
+    logger.info(
+        f"    Test R²: {overall_r2:.4f} ({(overall_r2 / original_condo_results['test_r2'] - 1) * 100:+.1f}%)"
+    )
+    logger.info(
+        f"    Test MAE: {overall_mae:.2f}% ({(overall_mae / original_condo_results['test_mae'] - 1) * 100:+.1f}%)"
+    )
+    logger.info(
+        f"    Directional Accuracy: {overall_directional:.1f}% ({overall_directional - original_condo_results['directional_accuracy']:+.1f} pp)"
+    )
 
     logger.info("\n" + "=" * 60)
     logger.info("Training Complete!")

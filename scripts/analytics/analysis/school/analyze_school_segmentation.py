@@ -126,9 +126,7 @@ def main():
     print("STAGE 3: SEGMENTED MODELS")
     print("=" * 80)
     segment_results = analyzer.run_segmented_models(
-        df_with_interactions,
-        feature_cols=feature_cols,
-        target_col="price_psf"
+        df_with_interactions, feature_cols=feature_cols, target_col="price_psf"
     )
 
     # Save segment coefficients
@@ -156,9 +154,7 @@ def main():
     print("STAGE 6: INTERACTION MODEL")
     print("=" * 80)
     interaction_result = analyzer.run_interaction_model(
-        df_with_interactions,
-        base_features=feature_cols,
-        target_col="price_psf"
+        df_with_interactions, base_features=feature_cols, target_col="price_psf"
     )
 
     # Save interaction results
@@ -172,7 +168,7 @@ def main():
         print(interaction_df.head(10).to_string(index=False))
 
         # Count significant interactions
-        n_significant = (interaction_df['abs_coef'] > 5).sum()
+        n_significant = (interaction_df["abs_coef"] > 5).sum()
         print(f"\nSignificant interactions (|coef| > 5): {n_significant}")
 
     # Print summary
@@ -191,14 +187,14 @@ def main():
         print("=" * 80)
 
         # Find segments with highest school impact
-        if 'school_primary_quality_score' in coef_df.columns:
-            top_segment = coef_df['school_primary_quality_score'].idxmax()
-            top_coef = coef_df['school_primary_quality_score'].max()
+        if "school_primary_quality_score" in coef_df.columns:
+            top_segment = coef_df["school_primary_quality_score"].idxmax()
+            top_coef = coef_df["school_primary_quality_score"].max()
             print(f"\nHighest school impact: {top_segment}")
             print(f"  Coefficient: {top_coef:.2f} $/psf per quality point")
 
-            bottom_segment = coef_df['school_primary_quality_score'].idxmin()
-            bottom_coef = coef_df['school_primary_quality_score'].min()
+            bottom_segment = coef_df["school_primary_quality_score"].idxmin()
+            bottom_coef = coef_df["school_primary_quality_score"].min()
             print(f"\nLowest school impact: {bottom_segment}")
             print(f"  Coefficient: {bottom_coef:.2f} $/psf per quality point")
 

@@ -33,7 +33,7 @@ import sys
 from pathlib import Path
 
 # Add src directory to path for imports
-sys.path.append(str(Path(__file__).parent.parent / 'src'))
+sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 # %%
 from scripts.core.stages.L2_features import run_l2_features_pipeline

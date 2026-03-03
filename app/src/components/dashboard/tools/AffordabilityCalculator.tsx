@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import type { Persona } from '../PersonaSelector';
 import TrendsMap from '../TrendsMap';
+import ClientChart from '@/components/charts/ClientChart';
 
 interface TownMetric {
   town: string;
@@ -311,8 +312,9 @@ export default function AffordabilityCalculator({
         <h4 className="font-medium mb-3">
           Affordability Ratio by Town ({propertyType})
         </h4>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={chartData} layout="vertical">
+        <ClientChart style={{ height: 400 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" domain={[0, 'dataMax + 1']} />
             <YAxis dataKey="town" type="category" width={120} />
@@ -332,8 +334,9 @@ export default function AffordabilityCalculator({
                   .barColor
               }
             />
-          </BarChart>
-        </ResponsiveContainer>
+            </BarChart>
+          </ResponsiveContainer>
+        </ClientChart>
         <div className="text-center mt-2">
           <span className="inline-flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
             <span className="w-3 h-3 bg-red-500 rounded"></span>

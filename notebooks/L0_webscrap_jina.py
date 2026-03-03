@@ -133,9 +133,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 def reader_url_jina(urls):
     # Use tenacity to retry failed requests with exponential backoff
-    @retry(
-        stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10)
-    )
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
     def _fetch_url(url):
         """
         Fetch a URL and return the response text.
@@ -209,9 +207,7 @@ def extract_all_url(text) -> dict:
     result["title"] = re.search(r"Title: (.*)", text).group(1).strip()
     result["url"] = re.search(r"URL Source: (.*)", text).group(1).strip()
     match = re.search(r"Published Time: (.*)", text)
-    result["time"] = (
-        re.search(r"Published Time: (.*)", text).group(1).strip() if match else ""
-    )
+    result["time"] = re.search(r"Published Time: (.*)", text).group(1).strip() if match else ""
     result["md"] = re.search(r"Markdown Content:(.*)", text, re.DOTALL).group(1).strip()
 
     if "title" in result and "url" in result:
@@ -226,13 +222,10 @@ def extract_all_url(text) -> dict:
 # %%
 import openai
 
-client = openai.OpenAI(
-    base_url="https://api.groq.com/openai/v1", api_key=os.environ.get("GROQ")
-)
+client = openai.OpenAI(base_url="https://api.groq.com/openai/v1", api_key=os.environ.get("GROQ"))
 
 # %%
 # extract the from the title and url in the response_text, craft a descriptive and concise name that is at indicative of "source domain -  title via llm"
-
 
 
 def llm_extract_name(
@@ -267,7 +260,6 @@ def llm_extract_name(
 
     # Return the response text as the extracted name
     return completion.choices[0].message.content
-
 
 
 # %% [markdown]
@@ -312,7 +304,7 @@ def save_dict_to_markdown(data, file_path):
     front_matter = f"# {data['title']}\n"
 
     # Create Markdown content
-    markdown_content = data['md'] #"\n\n---\n\n" +
+    markdown_content = data["md"]  # "\n\n---\n\n" +
 
     # Save to file
     with open(file_path, "w") as f:
@@ -332,14 +324,14 @@ for markdown_full, filename in zip(url_list_dict, filenames_list):
 import polars as pl
 
 df = pl.DataFrame(url_list_dict)
-df = df.drop('md')
+df = df.drop("md")
 
 df_filename = pl.DataFrame(filenames_list)
-df_filename.columns = ['file_name']
+df_filename.columns = ["file_name"]
 
 df_all = pl.concat([df_filename, df], how="horizontal")
 
-df_all.write_csv(dirname+"/data/raw_documents/master_index.csv")
+df_all.write_csv(dirname + "/data/raw_documents/master_index.csv")
 
 # %% [markdown]
 # # Extract exploration
@@ -405,4 +397,6 @@ list_files_in_directory(dirname + "/data/raw_documents")
 load_markdown(r"/home/howt/work/egg-n-bacon-housing/data/raw_documents/propertyreviewsg - 8@BT.md")
 
 # %%
-extract_front_matter(r"/home/howt/work/egg-n-bacon-housing/data/raw_documents/propertyreviewsg - 8@BT.md")
+extract_front_matter(
+    r"/home/howt/work/egg-n-bacon-housing/data/raw_documents/propertyreviewsg - 8@BT.md"
+)

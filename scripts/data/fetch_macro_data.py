@@ -24,6 +24,7 @@ import pandas as pd
 import requests
 
 from scripts.core.config import Config
+from scripts.core.data_quality import record_dataframe_quality
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,14 @@ GDP_TABLE_ID = "M014871"
 UNEMPLOYMENT_TABLE_ID = "M401871"  # Seasonally adjusted unemployment rate
 PROPERTY_PPI_TABLE_ID = "M200131"  # Property Price Index
 INTEREST_RATE_TABLE_ID = "M200131"  # Interest rates (may vary)
+
+
+def _save_macro_dataframe(df: pd.DataFrame, save_path: Path, dataset_name: str) -> None:
+    """Persist macro output and record data quality without changing file layout."""
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(save_path, compression="snappy", index=False)
+    logger.info(f"Saved {dataset_name} to {save_path}")
+    record_dataframe_quality(df, dataset_name=dataset_name, source="L0 macro collection")
 
 
 def search_singstat_table(keyword: str) -> dict | None:
@@ -65,9 +74,7 @@ def search_singstat_table(keyword: str) -> dict | None:
 
 
 def fetch_singstat_timeseries(
-    table_id: str,
-    start_year: int = 2020,
-    end_year: int = 2026
+    table_id: str, start_year: int = 2020, end_year: int = 2026
 ) -> pd.DataFrame:
     """
     Fetch time series data from SingStat Table Builder API.
@@ -81,14 +88,11 @@ def fetch_singstat_timeseries(
         DataFrame with columns: date, value, series_description
     """
     url = f"{SINGSTAT_BASE_URL}/tabledata/{table_id}"
-    params = {
-        "limit": 5000,
-        "sortBy": "key asc"
-    }
+    params = {"limit": 5000, "sortBy": "key asc"}
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "application/json"
+        "Accept": "application/json",
     }
 
     try:
@@ -112,11 +116,9 @@ def fetch_singstat_timeseries(
 
                 if key and value:
                     try:
-                        rows.append({
-                            "date": key,
-                            "value": float(value),
-                            "series_description": series_desc
-                        })
+                        rows.append(
+                            {"date": key, "value": float(value), "series_description": series_desc}
+                        )
                     except ValueError:
                         continue
 
@@ -130,9 +132,7 @@ def fetch_singstat_timeseries(
 
 
 def fetch_sora_rates(
-    start_date: str = '2021-01',
-    end_date: str = None,
-    save_path: Path = None
+    start_date: str = "2021-01", end_date: str = None, save_path: Path = None
 ) -> pd.DataFrame:
     """
     Fetch SORA (Singapore Overnight Rate Average) from MAS.
@@ -153,7 +153,7 @@ def fetch_sora_rates(
 
     # TODO: Replace with actual MAS API call
     # For now, generate mock data based on historical trends
-    dates = pd.date_range(start=start_date, periods=60, freq='ME')
+    dates = pd.date_range(start=start_date, periods=60, freq="ME")
 
     # Mock SORA rates (declining from 2021-2023, rising 2023-2026)
     base_rates = [0.2, 0.3, 0.5, 0.8, 1.2, 1.8, 2.5, 3.5, 3.8, 3.9, 4.0, 4.0]
@@ -165,25 +165,18 @@ def fetch_sora_rates(
         noise = (hash(str(date)) % 100) / 1000 - 0.05  # Small random noise
         sora_rates.append(base + noise)
 
-    df = pd.DataFrame({
-        'date': dates,
-        'sora_rate': sora_rates
-    })
+    df = pd.DataFrame({"date": dates, "sora_rate": sora_rates})
 
     logger.info(f"Fetched {len(df)} SORA rate observations")
 
     if save_path:
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        df.to_parquet(save_path, compression='snappy', index=False)
-        logger.info(f"Saved SORA rates to {save_path}")
+        _save_macro_dataframe(df, save_path, "raw_macro_sora_rates_monthly")
 
     return df
 
 
 def fetch_cpi_data(
-    start_date: str = '2021-01',
-    end_date: str = None,
-    save_path: Path = None
+    start_date: str = "2021-01", end_date: str = None, save_path: Path = None
 ) -> pd.DataFrame:
     """
     Fetch Consumer Price Index (CPI) from SingStat Table Builder API.
@@ -214,10 +207,9 @@ def fetch_cpi_data(
         if len(cpi_series) == 0:
             raise RuntimeError("CPI 'All Items' series not found")
 
-        cpi_data = pd.DataFrame({
-            "date_str": cpi_series["date"].tolist(),
-            "cpi": cpi_series["value"].tolist()
-        })
+        cpi_data = pd.DataFrame(
+            {"date_str": cpi_series["date"].tolist(), "cpi": cpi_series["value"].tolist()}
+        )
         cpi_data["date"] = pd.to_datetime(cpi_data["date_str"], format="%Y %b")
         cpi_data = cpi_data[["date", "cpi"]].sort_values("date")
 
@@ -237,16 +229,14 @@ def fetch_cpi_data(
         cpi_data = _generate_mock_cpi(start_date, end_date)
 
     if save_path:
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        cpi_data.to_parquet(save_path, compression='snappy', index=False)
-        logger.info(f"Saved CPI data to {save_path}")
+        _save_macro_dataframe(cpi_data, save_path, "raw_macro_singapore_cpi_monthly")
 
     return cpi_data
 
 
 def _generate_mock_cpi(start_date: str, end_date: str = None) -> pd.DataFrame:
     """Generate mock CPI data for fallback."""
-    dates = pd.date_range(start=start_date, periods=60, freq='ME')
+    dates = pd.date_range(start=start_date, periods=60, freq="ME")
     cpi_values = []
     base_cpi = 100.0
 
@@ -256,12 +246,10 @@ def _generate_mock_cpi(start_date: str, end_date: str = None) -> pd.DataFrame:
         noise = (hash(str(date)) % 100) / 2000 - 0.025
         cpi_values.append(base_cpi * inflation_factor + noise)
 
-    return pd.DataFrame({'date': dates, 'cpi': cpi_values})
+    return pd.DataFrame({"date": dates, "cpi": cpi_values})
 
 
-def fetch_gdp_data(
-    save_path: Path = None
-) -> pd.DataFrame:
+def fetch_gdp_data(save_path: Path = None) -> pd.DataFrame:
     """
     Fetch Singapore GDP data from SingStat Table Builder API.
 
@@ -283,10 +271,9 @@ def fetch_gdp_data(
         if df_raw.empty:
             raise RuntimeError("No GDP data returned from SingStat API")
 
-        gdp_data = pd.DataFrame({
-            "quarter_str": df_raw["date"].tolist(),
-            "gdp_value": df_raw["value"].tolist()
-        })
+        gdp_data = pd.DataFrame(
+            {"quarter_str": df_raw["date"].tolist(), "gdp_value": df_raw["value"].tolist()}
+        )
 
         gdp_data["quarter"] = pd.to_datetime(gdp_data["quarter_str"], format="%Y %b")
         gdp_data = gdp_data.sort_values("quarter")
@@ -299,25 +286,21 @@ def fetch_gdp_data(
         gdp_data = _generate_mock_gdp()
 
     if save_path:
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        gdp_data.to_parquet(save_path, compression='snappy', index=False)
-        logger.info(f"Saved GDP data to {save_path}")
+        _save_macro_dataframe(gdp_data, save_path, "raw_macro_sgdp_quarterly")
 
     return gdp_data
 
 
 def _generate_mock_gdp() -> pd.DataFrame:
     """Generate mock GDP data for fallback."""
-    quarters = pd.date_range(start='2021-01', periods=21, freq='QE')
+    quarters = pd.date_range(start="2021-01", periods=21, freq="QE")
     np.random.seed(42)
     gdp_growth = np.random.normal(0.03, 0.01, len(quarters))
-    return pd.DataFrame({'quarter': quarters, 'gdp_value': gdp_growth})
+    return pd.DataFrame({"quarter": quarters, "gdp_value": gdp_growth})
 
 
 def fetch_unemployment_data(
-    start_date: str = '2021-01',
-    end_date: str = None,
-    save_path: Path = None
+    start_date: str = "2021-01", end_date: str = None, save_path: Path = None
 ) -> pd.DataFrame:
     """
     Fetch unemployment rate from SingStat Table Builder API.
@@ -343,22 +326,28 @@ def fetch_unemployment_data(
             raise RuntimeError("No unemployment data returned from SingStat API")
 
         # Find the unemployment rate series
-        unemp_series = df_raw[df_raw["series_description"].str.contains("unemployment", case=False, na=False)]
+        unemp_series = df_raw[
+            df_raw["series_description"].str.contains("unemployment", case=False, na=False)
+        ]
 
         if len(unemp_series) == 0:
             # Try alternative - just use first series
             unemp_series = df_raw.head(10)
 
-        unemp_data = pd.DataFrame({
-            "date_str": unemp_series["date"].tolist(),
-            "unemployment_rate": unemp_series["value"].tolist()
-        })
+        unemp_data = pd.DataFrame(
+            {
+                "date_str": unemp_series["date"].tolist(),
+                "unemployment_rate": unemp_series["value"].tolist(),
+            }
+        )
 
         # Parse date
         try:
             unemp_data["date"] = pd.to_datetime(unemp_data["date_str"], format="%Y %b")
         except Exception:
-            unemp_data["date"] = pd.to_datetime(unemp_data["date_str"], format="%Y", errors='coerce')
+            unemp_data["date"] = pd.to_datetime(
+                unemp_data["date_str"], format="%Y", errors="coerce"
+            )
 
         unemp_data = unemp_data[["date", "unemployment_rate"]].dropna().sort_values("date")
 
@@ -375,25 +364,26 @@ def fetch_unemployment_data(
         unemp_data = _generate_mock_unemployment(start_date, end_date)
 
     if save_path:
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        unemp_data.to_parquet(save_path, compression='snappy', index=False)
-        logger.info(f"Saved unemployment data to {save_path}")
+        _save_macro_dataframe(
+            unemp_data, save_path, "raw_macro_unemployment_rate_monthly"
+        )
 
     return unemp_data
 
 
 def _generate_mock_unemployment(start_date: str, end_date: str = None) -> pd.DataFrame:
     """Generate mock unemployment data for fallback."""
-    dates = pd.date_range(start=start_date, periods=60, freq='ME')
+    dates = pd.date_range(start=start_date, periods=60, freq="ME")
     # Singapore typically has 2-3% unemployment
     base_rate = 2.5
-    rates = [base_rate + np.sin(i / 12 * np.pi) * 0.5 + np.random.normal(0, 0.1) for i in range(len(dates))]
-    return pd.DataFrame({'date': dates, 'unemployment_rate': rates})
+    rates = [
+        base_rate + np.sin(i / 12 * np.pi) * 0.5 + np.random.normal(0, 0.1)
+        for i in range(len(dates))
+    ]
+    return pd.DataFrame({"date": dates, "unemployment_rate": rates})
 
 
-def fetch_property_price_index(
-    save_path: Path = None
-) -> pd.DataFrame:
+def fetch_property_price_index(save_path: Path = None) -> pd.DataFrame:
     """
     Fetch Property Price Index (PPI) from SingStat Table Builder API.
 
@@ -415,16 +405,17 @@ def fetch_property_price_index(
         if df_raw.empty:
             raise RuntimeError("No PPI data returned from SingStat API")
 
-        ppi_data = pd.DataFrame({
-            "quarter_str": df_raw["date"].tolist(),
-            "ppi": df_raw["value"].tolist()
-        })
+        ppi_data = pd.DataFrame(
+            {"quarter_str": df_raw["date"].tolist(), "ppi": df_raw["value"].tolist()}
+        )
 
         # Parse quarter
         try:
             ppi_data["quarter"] = pd.to_datetime(ppi_data["quarter_str"], format="%Y %b")
         except Exception:
-            ppi_data["quarter"] = pd.to_datetime(ppi_data["quarter_str"], format="%Y", errors='coerce')
+            ppi_data["quarter"] = pd.to_datetime(
+                ppi_data["quarter_str"], format="%Y", errors="coerce"
+            )
 
         ppi_data = ppi_data[["quarter", "ppi"]].dropna().sort_values("quarter")
 
@@ -436,20 +427,20 @@ def fetch_property_price_index(
         ppi_data = _generate_mock_ppi()
 
     if save_path:
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        ppi_data.to_parquet(save_path, compression='snappy', index=False)
-        logger.info(f"Saved PPI data to {save_path}")
+        _save_macro_dataframe(
+            ppi_data, save_path, "raw_macro_property_price_index_quarterly"
+        )
 
     return ppi_data
 
 
 def _generate_mock_ppi() -> pd.DataFrame:
     """Generate mock Property Price Index data for fallback."""
-    quarters = pd.date_range(start='2021-01', periods=21, freq='QE')
+    quarters = pd.date_range(start="2021-01", periods=21, freq="QE")
     # PPI typically around 100-150 for Singapore
     base_ppi = 100
     ppi_values = [base_ppi + i * 2 + np.random.normal(0, 1) for i in range(len(quarters))]
-    return pd.DataFrame({'quarter': quarters, 'ppi': ppi_values})
+    return pd.DataFrame({"quarter": quarters, "ppi": ppi_values})
 
 
 def fetch_policy_dates(save_path: Path = None) -> pd.DataFrame:
@@ -470,30 +461,30 @@ def fetch_policy_dates(save_path: Path = None) -> pd.DataFrame:
 
     # Major housing policy changes 2021-2026
     policies = [
-        {'date': '2021-02-01', 'policy_type': 'absd_spr', 'rate_value': 5},  # Singaporean PR: 5%
-        {'date': '2021-02-01', 'policy_type': 'absd_foreign', 'rate_value': 20},  # Foreigners: 20%
-        {'date': '2022-04-01', 'policy_type': 'absd_spr', 'rate_value': 5},  # No change
-        {'date': '2022-09-30', 'policy_type': 'absd_foreign', 'rate_value': 30},  # Foreigners: 30%
-        {'date': '2023-04-27', 'policy_type': 'absd_spr', 'rate_value': 5},  # Additional ABSD for >2 properties
+        {"date": "2021-02-01", "policy_type": "absd_spr", "rate_value": 5},  # Singaporean PR: 5%
+        {"date": "2021-02-01", "policy_type": "absd_foreign", "rate_value": 20},  # Foreigners: 20%
+        {"date": "2022-04-01", "policy_type": "absd_spr", "rate_value": 5},  # No change
+        {"date": "2022-09-30", "policy_type": "absd_foreign", "rate_value": 30},  # Foreigners: 30%
+        {
+            "date": "2023-04-27",
+            "policy_type": "absd_spr",
+            "rate_value": 5,
+        },  # Additional ABSD for >2 properties
     ]
 
     df = pd.DataFrame(policies)
-    df['date'] = pd.to_datetime(df['date'])
+    df["date"] = pd.to_datetime(df["date"])
 
     logger.info(f"Fetched {len(df)} policy changes")
 
     if save_path:
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        df.to_parquet(save_path, compression='snappy', index=False)
-        logger.info(f"Saved policy dates to {save_path}")
+        _save_macro_dataframe(df, save_path, "raw_macro_housing_policy_dates")
 
     return df
 
 
 def fetch_all_macro_data(
-    start_date: str = '2021-01',
-    end_date: str = '2026-02',
-    output_dir: Path = None
+    start_date: str = "2021-01", end_date: str = "2026-02", output_dir: Path = None
 ) -> dict:
     """
     Fetch all macroeconomic data sources.
@@ -507,7 +498,7 @@ def fetch_all_macro_data(
         Dictionary with keys: 'sora', 'cpi', 'gdp', 'unemployment', 'ppi', 'policies'
     """
     if output_dir is None:
-        output_dir = Config.DATA_DIR / 'raw_data' / 'macro'
+        output_dir = Config.DATA_DIR / "raw_data" / "macro"
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -520,51 +511,46 @@ def fetch_all_macro_data(
     sora = fetch_sora_rates(
         start_date=start_date,
         end_date=end_date,
-        save_path=output_dir / 'sora_rates_monthly.parquet'
+        save_path=output_dir / "sora_rates_monthly.parquet",
     )
 
     cpi = fetch_cpi_data(
         start_date=start_date,
         end_date=end_date,
-        save_path=output_dir / 'singapore_cpi_monthly.parquet'
+        save_path=output_dir / "singapore_cpi_monthly.parquet",
     )
 
-    gdp = fetch_gdp_data(
-        save_path=output_dir / 'sgdp_quarterly.parquet'
-    )
+    gdp = fetch_gdp_data(save_path=output_dir / "sgdp_quarterly.parquet")
 
     unemployment = fetch_unemployment_data(
         start_date=start_date,
         end_date=end_date,
-        save_path=output_dir / 'unemployment_rate_monthly.parquet'
+        save_path=output_dir / "unemployment_rate_monthly.parquet",
     )
 
     ppi = fetch_property_price_index(
-        save_path=output_dir / 'property_price_index_quarterly.parquet'
+        save_path=output_dir / "property_price_index_quarterly.parquet"
     )
 
-    policies = fetch_policy_dates(
-        save_path=output_dir / 'housing_policy_dates.parquet'
-    )
+    policies = fetch_policy_dates(save_path=output_dir / "housing_policy_dates.parquet")
 
     logger.info("=" * 60)
     logger.info("Macroeconomic data fetching complete!")
     logger.info("=" * 60)
 
     return {
-        'sora': sora,
-        'cpi': cpi,
-        'gdp': gdp,
-        'unemployment': unemployment,
-        'ppi': ppi,
-        'policies': policies
+        "sora": sora,
+        "cpi": cpi,
+        "gdp": gdp,
+        "unemployment": unemployment,
+        "ppi": ppi,
+        "policies": policies,
     }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     fetch_all_macro_data()

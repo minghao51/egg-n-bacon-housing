@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/compare/ComparisonCharts.tsx
-import { Segment } from '@/types/segments';
+import type { Segment } from '@/types/segments';
 import {
   BarChart,
   Bar,

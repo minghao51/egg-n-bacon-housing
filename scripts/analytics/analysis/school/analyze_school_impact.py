@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 import xgboost as xgb
 from sklearn.linear_model import LinearRegression
@@ -34,6 +34,7 @@ from sklearn.model_selection import train_test_split
 
 try:
     import shap
+
     SHAP_AVAILABLE = True
 except ImportError:
     SHAP_AVAILABLE = False
@@ -43,7 +44,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Set style
-plt.style.use('seaborn-v0_8-whitegrid')
+plt.style.use("seaborn-v0_8-whitegrid")
 sns.set_palette("husl")
 
 # Paths
@@ -54,24 +55,24 @@ OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 def load_and_prepare_data():
     """Load unified dataset and filter to 2021+."""
-    print("="*80)
+    print("=" * 80)
     print("SCHOOL IMPACT ANALYSIS - SINGAPORE HOUSING MARKET (2021+)")
-    print("="*80)
+    print("=" * 80)
 
     print("\nLoading data...")
     df = pd.read_parquet(DATA_DIR / "housing_unified.parquet")
     print(f"  Full dataset: {len(df):,} records")
 
     # Filter to 2021+
-    df = df[df['year'] >= 2021].copy()
+    df = df[df["year"] >= 2021].copy()
     print(f"  Filtered to 2021+: {len(df):,} records")
 
     # Check school feature coverage
     school_cols = [
-        'school_within_1km',
-        'school_accessibility_score',
-        'school_primary_quality_score',
-        'school_secondary_quality_score'
+        "school_within_1km",
+        "school_accessibility_score",
+        "school_primary_quality_score",
+        "school_secondary_quality_score",
     ]
 
     print("\nSchool feature coverage:")
@@ -88,38 +89,43 @@ def load_and_prepare_data():
 
 def exploratory_analysis(df):
     """Explore relationships between school features and prices."""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXPLORATORY ANALYSIS")
-    print("="*80)
+    print("=" * 80)
 
     # Create school quality bands
-    if 'school_primary_quality_score' in df.columns:
-        df['school_quality_band'] = pd.cut(
-            df['school_primary_quality_score'],
+    if "school_primary_quality_score" in df.columns:
+        df["school_quality_band"] = pd.cut(
+            df["school_primary_quality_score"],
             bins=[0, 0.33, 0.67, 1.0],
-            labels=['Low Quality', 'Medium Quality', 'High Quality']
+            labels=["Low Quality", "Medium Quality", "High Quality"],
         )
 
     # Summary by school quality band
-    if 'school_quality_band' in df.columns:
+    if "school_quality_band" in df.columns:
         print("\nPrice by School Quality Band:")
-        band_stats = df.groupby('school_quality_band', observed=True).agg({
-            'price_psf': ['mean', 'median', 'count'],
-            'school_accessibility_score': 'mean'
-        }).round(2)
+        band_stats = (
+            df.groupby("school_quality_band", observed=True)
+            .agg({"price_psf": ["mean", "median", "count"], "school_accessibility_score": "mean"})
+            .round(2)
+        )
         print(band_stats)
 
     # Correlation analysis
     print("\nCorrelation with School Features:")
     school_features = [
-        'school_within_500m', 'school_within_1km', 'school_within_2km',
-        'school_accessibility_score',
-        'school_primary_dist_score', 'school_primary_quality_score',
-        'school_secondary_dist_score', 'school_secondary_quality_score',
-        'school_density_score'
+        "school_within_500m",
+        "school_within_1km",
+        "school_within_2km",
+        "school_accessibility_score",
+        "school_primary_dist_score",
+        "school_primary_quality_score",
+        "school_secondary_dist_score",
+        "school_secondary_quality_score",
+        "school_density_score",
     ]
 
-    for target in ['price_psf', 'rental_yield_pct', 'yoy_change_pct']:
+    for target in ["price_psf", "rental_yield_pct", "yoy_change_pct"]:
         if target in df.columns:
             print(f"\n  {target}:")
             for feature in school_features:
@@ -135,77 +141,120 @@ def exploratory_analysis(df):
 
     # 1. Price vs School Accessibility Score
     ax = axes[0, 0]
-    if 'school_accessibility_score' in df.columns:
+    if "school_accessibility_score" in df.columns:
         sample = df.sample(n=min(10000, len(df)), random_state=42)
-        ax.scatter(sample['school_accessibility_score'], sample['price_psf'],
-                   alpha=0.3, s=1)
-        ax.set_xlabel('School Accessibility Score')
-        ax.set_ylabel('Price PSF ($)')
-        ax.set_title('Price vs School Accessibility')
+        ax.scatter(sample["school_accessibility_score"], sample["price_psf"], alpha=0.3, s=1)
+        ax.set_xlabel("School Accessibility Score")
+        ax.set_ylabel("Price PSF ($)")
+        ax.set_title("Price vs School Accessibility")
         ax.grid(True, alpha=0.3)
     else:
-        ax.text(0.5, 0.5, 'School accessibility data not available',
-                ha='center', va='center', transform=ax.transAxes)
+        ax.text(
+            0.5,
+            0.5,
+            "School accessibility data not available",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
 
     # 2. Average price by school quality band
     ax = axes[0, 1]
-    if 'school_quality_band' in df.columns:
-        band_prices = df.groupby('school_quality_band', observed=True)['price_psf'].mean().sort_index()
+    if "school_quality_band" in df.columns:
+        band_prices = (
+            df.groupby("school_quality_band", observed=True)["price_psf"].mean().sort_index()
+        )
         if not band_prices.empty:
-            band_prices.plot(kind='bar', ax=ax, color=['lightcoral', 'gold', 'lightgreen'])
-            ax.set_xlabel('School Quality Band')
-            ax.set_ylabel('Average Price PSF ($)')
-            ax.set_title('Average Price by School Quality')
-            ax.tick_params(axis='x', rotation=45)
-            ax.grid(True, alpha=0.3, axis='y')
+            band_prices.plot(kind="bar", ax=ax, color=["lightcoral", "gold", "lightgreen"])
+            ax.set_xlabel("School Quality Band")
+            ax.set_ylabel("Average Price PSF ($)")
+            ax.set_title("Average Price by School Quality")
+            ax.tick_params(axis="x", rotation=45)
+            ax.grid(True, alpha=0.3, axis="y")
         else:
-            ax.text(0.5, 0.5, 'No data for quality bands',
-                    ha='center', va='center', transform=ax.transAxes)
+            ax.text(
+                0.5,
+                0.5,
+                "No data for quality bands",
+                ha="center",
+                va="center",
+                transform=ax.transAxes,
+            )
     else:
-        ax.text(0.5, 0.5, 'School quality data not available',
-                ha='center', va='center', transform=ax.transAxes)
+        ax.text(
+            0.5,
+            0.5,
+            "School quality data not available",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
 
     # 3. Distribution of school accessibility scores
     ax = axes[1, 0]
-    if 'school_accessibility_score' in df.columns:
-        ax.hist(df['school_accessibility_score'], bins=50, edgecolor='black', alpha=0.7)
-        ax.axvline(df['school_accessibility_score'].median(), color='red', linestyle='--',
-                   label=f"Median: {df['school_accessibility_score'].median():.2f}")
-        ax.set_xlabel('School Accessibility Score')
-        ax.set_ylabel('Frequency')
-        ax.set_title('Distribution of School Accessibility Scores')
+    if "school_accessibility_score" in df.columns:
+        ax.hist(df["school_accessibility_score"], bins=50, edgecolor="black", alpha=0.7)
+        ax.axvline(
+            df["school_accessibility_score"].median(),
+            color="red",
+            linestyle="--",
+            label=f"Median: {df['school_accessibility_score'].median():.2f}",
+        )
+        ax.set_xlabel("School Accessibility Score")
+        ax.set_ylabel("Frequency")
+        ax.set_title("Distribution of School Accessibility Scores")
         ax.legend()
-        ax.grid(True, alpha=0.3, axis='y')
+        ax.grid(True, alpha=0.3, axis="y")
     else:
-        ax.text(0.5, 0.5, 'School accessibility data not available',
-                ha='center', va='center', transform=ax.transAxes)
+        ax.text(
+            0.5,
+            0.5,
+            "School accessibility data not available",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
 
     # 4. Primary school quality vs Secondary school quality
     ax = axes[1, 1]
-    if 'school_primary_quality_score' in df.columns and 'school_secondary_quality_score' in df.columns:
+    if (
+        "school_primary_quality_score" in df.columns
+        and "school_secondary_quality_score" in df.columns
+    ):
         sample = df.sample(n=min(10000, len(df)), random_state=42)
-        scatter = ax.scatter(sample['school_primary_quality_score'],
-                           sample['school_secondary_quality_score'],
-                           c=sample['price_psf'], cmap='RdYlGn', alpha=0.3, s=1)
-        ax.set_xlabel('Primary School Quality Score')
-        ax.set_ylabel('Secondary School Quality Score')
-        ax.set_title('Primary vs Secondary School Quality')
-        plt.colorbar(scatter, ax=ax, label='Price PSF ($)')
+        scatter = ax.scatter(
+            sample["school_primary_quality_score"],
+            sample["school_secondary_quality_score"],
+            c=sample["price_psf"],
+            cmap="RdYlGn",
+            alpha=0.3,
+            s=1,
+        )
+        ax.set_xlabel("Primary School Quality Score")
+        ax.set_ylabel("Secondary School Quality Score")
+        ax.set_title("Primary vs Secondary School Quality")
+        plt.colorbar(scatter, ax=ax, label="Price PSF ($)")
         ax.grid(True, alpha=0.3)
     else:
-        ax.text(0.5, 0.5, 'School quality data not available',
-                ha='center', va='center', transform=ax.transAxes)
+        ax.text(
+            0.5,
+            0.5,
+            "School quality data not available",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
 
     plt.tight_layout()
     fig_path = OUTPUT_DIR / "exploratory_analysis.png"
-    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    plt.savefig(fig_path, dpi=150, bbox_inches="tight")
     print(f"  Saved: {fig_path}")
     plt.close()
 
     return df
 
 
-def prepare_features(df, target_col='price_psf'):
+def prepare_features(df, target_col="price_psf"):
     """Prepare features for modeling."""
     print(f"\nPreparing features for: {target_col}")
 
@@ -213,24 +262,19 @@ def prepare_features(df, target_col='price_psf'):
     df_model = df.dropna(subset=[target_col]).copy()
 
     # Basic property features
-    feature_cols = [
-        'floor_area_sqm',
-        'remaining_lease_months',
-        'year',
-        'month'
-    ]
+    feature_cols = ["floor_area_sqm", "remaining_lease_months", "year", "month"]
 
     # School features
     school_feature_cols = [
-        'school_within_500m',
-        'school_within_1km',
-        'school_within_2km',
-        'school_accessibility_score',
-        'school_primary_dist_score',
-        'school_primary_quality_score',
-        'school_secondary_dist_score',
-        'school_secondary_quality_score',
-        'school_density_score'
+        "school_within_500m",
+        "school_within_1km",
+        "school_within_2km",
+        "school_accessibility_score",
+        "school_primary_dist_score",
+        "school_primary_quality_score",
+        "school_secondary_dist_score",
+        "school_secondary_quality_score",
+        "school_density_score",
     ]
 
     # Add available school features
@@ -240,10 +284,10 @@ def prepare_features(df, target_col='price_psf'):
 
     # Add amenity controls (if available)
     amenity_cols = [
-        'dist_to_nearest_mrt',
-        'dist_to_nearest_hawker',
-        'dist_to_nearest_supermarket',
-        'dist_to_nearest_park'
+        "dist_to_nearest_mrt",
+        "dist_to_nearest_hawker",
+        "dist_to_nearest_supermarket",
+        "dist_to_nearest_park",
     ]
 
     for col in amenity_cols:
@@ -262,11 +306,11 @@ def prepare_features(df, target_col='price_psf'):
     return df_model, feature_cols
 
 
-def run_ols_regression(df, target_col='price_psf'):
+def run_ols_regression(df, target_col="price_psf"):
     """Run OLS regression with different feature specifications."""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"OLS REGRESSION: {target_col}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     df_model, base_features = prepare_features(df, target_col)
 
@@ -276,9 +320,7 @@ def run_ols_regression(df, target_col='price_psf'):
     X_all = df_model[base_features].select_dtypes(include=[np.number])
     y = df_model[target_col]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_all, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X_all, y, test_size=0.2, random_state=42)
 
     model = LinearRegression()
     model.fit(X_train, y_train)
@@ -287,13 +329,15 @@ def run_ols_regression(df, target_col='price_psf'):
     r2 = r2_score(y_test, y_pred)
     mae = mean_absolute_error(y_test, y_pred)
 
-    results.append({
-        'specification': 'All Features',
-        'r2': r2,
-        'mae': mae,
-        'model': model,
-        'features': X_all.columns.tolist()
-    })
+    results.append(
+        {
+            "specification": "All Features",
+            "r2": r2,
+            "mae": mae,
+            "model": model,
+            "features": X_all.columns.tolist(),
+        }
+    )
 
     print("\nAll Features:")
     print(f"  R²: {r2:.4f}")
@@ -302,15 +346,19 @@ def run_ols_regression(df, target_col='price_psf'):
     # Extract key school coefficients
     school_coefs = []
     for feature in X_all.columns:
-        if 'school' in feature.lower():
+        if "school" in feature.lower():
             idx = X_all.columns.get_loc(feature)
             coef = model.coef_[idx]
             school_coefs.append((feature, coef))
             print(f"  {feature}: {coef:.4f}")
 
     # Model 2: School quality scores only
-    quality_features = [f for f in base_features if 'quality' in f.lower() or 'accessibility' in f.lower()]
-    quality_features += [f for f in base_features if f in ['floor_area_sqm', 'year', 'remaining_lease_months']]
+    quality_features = [
+        f for f in base_features if "quality" in f.lower() or "accessibility" in f.lower()
+    ]
+    quality_features += [
+        f for f in base_features if f in ["floor_area_sqm", "year", "remaining_lease_months"]
+    ]
 
     if len(quality_features) > 3:
         X_quality = df_model[quality_features].select_dtypes(include=[np.number])
@@ -326,20 +374,22 @@ def run_ols_regression(df, target_col='price_psf'):
         r2 = r2_score(y_test, y_pred)
         mae = mean_absolute_error(y_test, y_pred)
 
-        results.append({
-            'specification': 'Quality Scores',
-            'r2': r2,
-            'mae': mae,
-            'model': model,
-            'features': X_quality.columns.tolist()
-        })
+        results.append(
+            {
+                "specification": "Quality Scores",
+                "r2": r2,
+                "mae": mae,
+                "model": model,
+                "features": X_quality.columns.tolist(),
+            }
+        )
 
         print("\nQuality Scores Only:")
         print(f"  R²: {r2:.4f}")
         print(f"  MAE: {mae:.2f}")
 
     # Select best model
-    best = max(results, key=lambda x: x['r2'])
+    best = max(results, key=lambda x: x["r2"])
     print(f"\nBest specification: {best['specification']} (R² = {best['r2']:.4f})")
 
     return results, best
@@ -347,22 +397,21 @@ def run_ols_regression(df, target_col='price_psf'):
 
 def extract_feature_coefficients(model, feature_names, target_col):
     """Extract coefficients from trained model."""
-    coefs = pd.DataFrame({
-        'feature': feature_names,
-        'coefficient': model.coef_
-    }).sort_values('coefficient', key=abs, ascending=False)
+    coefs = pd.DataFrame({"feature": feature_names, "coefficient": model.coef_}).sort_values(
+        "coefficient", key=abs, ascending=False
+    )
 
-    coefs['abs_coef'] = coefs['coefficient'].abs()
-    coefs['target'] = target_col
+    coefs["abs_coef"] = coefs["coefficient"].abs()
+    coefs["target"] = target_col
 
     return coefs
 
 
-def run_advanced_models(df, target_col='price_psf'):
+def run_advanced_models(df, target_col="price_psf"):
     """Run XGBoost and Random Forest models."""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"ADVANCED MODELS: {target_col}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     df_model, base_features = prepare_features(df, target_col)
 
@@ -370,9 +419,7 @@ def run_advanced_models(df, target_col='price_psf'):
     X = df_model[base_features].select_dtypes(include=[np.number])
     y = df_model[target_col]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     results = {}
 
@@ -385,7 +432,7 @@ def run_advanced_models(df, target_col='price_psf'):
         subsample=0.8,
         colsample_bytree=0.8,
         n_jobs=-1,
-        random_state=42
+        random_state=42,
     )
 
     xgb_model.fit(X_train, y_train)
@@ -395,28 +442,22 @@ def run_advanced_models(df, target_col='price_psf'):
     mae = mean_absolute_error(y_test, y_pred)
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
-    results['xgboost'] = {
-        'model': xgb_model,
-        'r2': r2,
-        'mae': mae,
-        'rmse': rmse
-    }
+    results["xgboost"] = {"model": xgb_model, "r2": r2, "mae": mae, "rmse": rmse}
 
     print(f"  R²: {r2:.4f}")
     print(f"  MAE: {mae:.2f}")
     print(f"  RMSE: {rmse:.2f}")
 
     # Feature importance
-    importance = pd.DataFrame({
-        'feature': X.columns,
-        'importance': xgb_model.feature_importances_
-    }).sort_values('importance', ascending=False)
+    importance = pd.DataFrame(
+        {"feature": X.columns, "importance": xgb_model.feature_importances_}
+    ).sort_values("importance", ascending=False)
 
-    importance['target'] = target_col
-    importance['model'] = 'xgboost'
+    importance["target"] = target_col
+    importance["model"] = "xgboost"
 
     print("\n  Top 10 Features:")
-    print(importance.head(10)[['feature', 'importance']].to_string(index=False))
+    print(importance.head(10)[["feature", "importance"]].to_string(index=False))
 
     # SHAP analysis
     shap_values = None
@@ -426,21 +467,20 @@ def run_advanced_models(df, target_col='price_psf'):
             explainer = shap.TreeExplainer(xgb_model)
             shap_values = explainer.shap_values(X_test)
 
-            shap_importance = pd.DataFrame({
-                'feature': X.columns,
-                'shap_value': np.abs(shap_values).mean(axis=0)
-            }).sort_values('shap_value', ascending=False)
+            shap_importance = pd.DataFrame(
+                {"feature": X.columns, "shap_value": np.abs(shap_values).mean(axis=0)}
+            ).sort_values("shap_value", ascending=False)
 
-            shap_importance['target'] = target_col
+            shap_importance["target"] = target_col
 
             print("\n  Top 10 Features by SHAP:")
-            print(shap_importance.head(10)[['feature', 'shap_value']].to_string(index=False))
+            print(shap_importance.head(10)[["feature", "shap_value"]].to_string(index=False))
 
-            results['shap'] = shap_importance
+            results["shap"] = shap_importance
         except Exception as e:
             print(f"  SHAP calculation failed: {e}")
 
-    results['importance'] = importance
+    results["importance"] = importance
 
     return results, X_test, y_test
 
@@ -456,9 +496,9 @@ def main():
 
     # Run models for each target
     targets = {
-        'price_psf': 'Transaction Price (PSF)',
-        'rental_yield_pct': 'Rental Yield (%)',
-        'yoy_change_pct': 'YoY Appreciation (%)'
+        "price_psf": "Transaction Price (PSF)",
+        "rental_yield_pct": "Rental Yield (%)",
+        "yoy_change_pct": "YoY Appreciation (%)",
     }
 
     all_ols_results = {}
@@ -466,9 +506,9 @@ def main():
     all_importance = []
 
     for target_col, target_name in targets.items():
-        print(f"\n{'#'*80}")
+        print(f"\n{'#' * 80}")
         print(f"# ANALYZING: {target_name}")
-        print(f"{'#'*80}")
+        print(f"{'#' * 80}")
 
         # Check if target exists and has sufficient data
         if target_col not in df.columns or df[target_col].notna().sum() < 1000:
@@ -482,9 +522,7 @@ def main():
 
             # Extract coefficients
             coef_df = extract_feature_coefficients(
-                best_ols['model'],
-                best_ols['features'],
-                target_col
+                best_ols["model"], best_ols["features"], target_col
             )
             coef_path = OUTPUT_DIR / f"coefficients_{target_col}.csv"
             coef_df.to_csv(coef_path, index=False)
@@ -499,15 +537,15 @@ def main():
             all_advanced_results[target_col] = advanced_results
 
             # Save feature importance
-            if 'importance' in advanced_results:
-                imp = advanced_results['importance']
+            if "importance" in advanced_results:
+                imp = advanced_results["importance"]
                 imp_path = OUTPUT_DIR / f"importance_{target_col}_xgboost.csv"
                 imp.to_csv(imp_path, index=False)
                 all_importance.append(imp)
 
             # Save SHAP if available
-            if 'shap' in advanced_results:
-                shap_df = advanced_results['shap']
+            if "shap" in advanced_results:
+                shap_df = advanced_results["shap"]
                 shap_path = OUTPUT_DIR / f"shap_{target_col}.csv"
                 shap_df.to_csv(shap_path, index=False)
 
@@ -516,27 +554,29 @@ def main():
             continue
 
     # Compile results summary
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("COMPILING RESULTS SUMMARY")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     summary_data = []
     for target_col, target_name in targets.items():
         if target_col in all_ols_results:
-            best_ols = max(all_ols_results[target_col], key=lambda x: x['r2'])
-            summary_data.append({
-                'target': target_col,
-                'target_name': target_name,
-                'best_ols_spec': best_ols['specification'],
-                'ols_r2': best_ols['r2'],
-                'ols_mae': best_ols['mae']
-            })
+            best_ols = max(all_ols_results[target_col], key=lambda x: x["r2"])
+            summary_data.append(
+                {
+                    "target": target_col,
+                    "target_name": target_name,
+                    "best_ols_spec": best_ols["specification"],
+                    "ols_r2": best_ols["r2"],
+                    "ols_mae": best_ols["mae"],
+                }
+            )
 
         if target_col in all_advanced_results:
             adv = all_advanced_results[target_col]
-            if 'xgboost' in adv:
-                summary_data[-1]['xgboost_r2'] = adv['xgboost']['r2']
-                summary_data[-1]['xgboost_mae'] = adv['xgboost']['mae']
+            if "xgboost" in adv:
+                summary_data[-1]["xgboost_r2"] = adv["xgboost"]["r2"]
+                summary_data[-1]["xgboost_mae"] = adv["xgboost"]["mae"]
 
     if summary_data:
         summary_df = pd.DataFrame(summary_data)
@@ -547,9 +587,9 @@ def main():
         print(summary_df.to_string(index=False))
         print(f"\n  Saved: {summary_path}")
 
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("ANALYSIS COMPLETE")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
     print(f"\nAll results saved to: {OUTPUT_DIR}")
     print("\nKey output files:")
     print("  - exploratory_analysis.png")

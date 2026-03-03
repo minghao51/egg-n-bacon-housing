@@ -1,6 +1,6 @@
 // app/src/hooks/useFilterState.ts
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import {
+import type {
   FilterState,
   Persona,
   InvestmentGoal,

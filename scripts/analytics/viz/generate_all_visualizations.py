@@ -20,8 +20,7 @@ import sys
 from pathlib import Path
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -76,7 +75,7 @@ def ensure_output_dirs():
     """Ensure all output directories exist."""
     for dir_path in [
         Path("data/analytics/spatial_autocorrelation"),
-        Path("data/analytics/spatial_autocorrelation/geojson")
+        Path("data/analytics/spatial_autocorrelation/geojson"),
     ]:
         dir_path.mkdir(parents=True, exist_ok=True)
         logger.info(f"Ensured directory exists: {dir_path}")
@@ -129,6 +128,7 @@ def run_dashboard():
     ensure_output_dirs()
     try:
         from visualize_cluster_profiles import plot_summary_dashboard
+
         plot_summary_dashboard(save=True)
         logger.info("Dashboard generated successfully!")
     except ImportError:
@@ -137,34 +137,18 @@ def run_dashboard():
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate spatial autocorrelation visualizations"
+    parser = argparse.ArgumentParser(description="Generate spatial autocorrelation visualizations")
+    parser.add_argument(
+        "--spatial", action="store_true", help="Generate spatial cluster visualizations"
     )
     parser.add_argument(
-        "--spatial",
-        action="store_true",
-        help="Generate spatial cluster visualizations"
+        "--evolution", action="store_true", help="Generate cluster evolution visualizations"
     )
     parser.add_argument(
-        "--evolution",
-        action="store_true",
-        help="Generate cluster evolution visualizations"
+        "--profiles", action="store_true", help="Generate cluster profile visualizations"
     )
-    parser.add_argument(
-        "--profiles",
-        action="store_true",
-        help="Generate cluster profile visualizations"
-    )
-    parser.add_argument(
-        "--all",
-        action="store_true",
-        help="Generate all visualizations (default)"
-    )
-    parser.add_argument(
-        "--dashboard",
-        action="store_true",
-        help="Generate summary dashboard only"
-    )
+    parser.add_argument("--all", action="store_true", help="Generate all visualizations (default)")
+    parser.add_argument("--dashboard", action="store_true", help="Generate summary dashboard only")
 
     args = parser.parse_args()
 

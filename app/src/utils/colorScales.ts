@@ -4,7 +4,7 @@
  * Functions for generating color scales for map visualizations.
  */
 
-import { ColorScaleType, LISAClusterType } from '../types/analytics';
+import type { ColorScaleType, LISAClusterType } from '../types/analytics';
 
 // ==================== Color Scales ====================
 

@@ -58,8 +58,12 @@ def close_browser(playwright, browser):
 
 
 def scrape_district(
-    page, district: int, property_type_code: str, property_type_name: str,
-    start_year: int = 2021, end_year: int = 2026
+    page,
+    district: int,
+    property_type_code: str,
+    property_type_name: str,
+    start_year: int = 2021,
+    end_year: int = 2026,
 ) -> pd.DataFrame:
     """Scrape rental contracts for a single district and property type."""
     from playwright.sync_api import TimeoutError
@@ -109,23 +113,43 @@ def scrape_district(
                                 data = {
                                     "project_name": project_name,
                                     "street_name": street,
-                                    "postal_district": int(district_val) if district_val.isdigit() else district,
+                                    "postal_district": int(district_val)
+                                    if district_val.isdigit()
+                                    else district,
                                     "property_type": property_type_name,
                                     "lease_start": lease_start,
-                                    "monthly_rent": float(monthly_rent.replace(",", "").replace("$", "")) if monthly_rent.replace(",", "").replace("$", "").replace(".", "").isdigit() else None,
-                                    "floor_area_sqft": float(floor_area.replace(",", "")) if floor_area.replace(",", "").replace(".", "").isdigit() else None,
-                                    "rent_psf": float(rent_psf.replace(",", "").replace("$", "")) if rent_psf.replace(",", "").replace("$", "").replace(".", "").isdigit() else None,
-                                    "created_at": datetime.now()
+                                    "monthly_rent": float(
+                                        monthly_rent.replace(",", "").replace("$", "")
+                                    )
+                                    if monthly_rent.replace(",", "")
+                                    .replace("$", "")
+                                    .replace(".", "")
+                                    .isdigit()
+                                    else None,
+                                    "floor_area_sqft": float(floor_area.replace(",", ""))
+                                    if floor_area.replace(",", "").replace(".", "").isdigit()
+                                    else None,
+                                    "rent_psf": float(rent_psf.replace(",", "").replace("$", ""))
+                                    if rent_psf.replace(",", "")
+                                    .replace("$", "")
+                                    .replace(".", "")
+                                    .isdigit()
+                                    else None,
+                                    "created_at": datetime.now(),
                                 }
                                 all_data.append(data)
                         except (ValueError, IndexError):
                             continue
 
             except TimeoutError:
-                logger.warning(f"Timeout for district {district}, type {property_type_name}, {year}-{month}")
+                logger.warning(
+                    f"Timeout for district {district}, type {property_type_name}, {year}-{month}"
+                )
                 continue
             except Exception as e:
-                logger.debug(f"Error for district {district}, type {property_type_name}, {year}-{month}: {e}")
+                logger.debug(
+                    f"Error for district {district}, type {property_type_name}, {year}-{month}: {e}"
+                )
                 continue
 
     return pd.DataFrame(all_data)
@@ -210,7 +234,9 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Scrape URA rental contracts")
-    parser.add_argument("--quick", action="store_true", help="Quick scrape (5 districts, 1 prop type)")
+    parser.add_argument(
+        "--quick", action="store_true", help="Quick scrape (5 districts, 1 prop type)"
+    )
     parser.add_argument("--districts", type=int, help="Limit number of districts")
     args = parser.parse_args()
 
@@ -248,8 +274,5 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     main()

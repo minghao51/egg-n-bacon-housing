@@ -9,7 +9,7 @@ import matplotlib
 import pandas as pd
 import xgboost as xgb
 
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
@@ -48,15 +48,15 @@ def main():
     X_sample = X.sample(n=min(10000, len(X)), random_state=42)
     y_sample = y.loc[X_sample.index]
 
-    model = xgb.XGBRegressor(
-        n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42
-    )
+    model = xgb.XGBRegressor(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42)
     model.fit(X_sample, y_sample)
 
-    importance = pd.DataFrame({
-        "feature": feature_cols,
-        "importance": model.feature_importances_,
-    }).sort_values("importance", ascending=False)
+    importance = pd.DataFrame(
+        {
+            "feature": feature_cols,
+            "importance": model.feature_importances_,
+        }
+    ).sort_values("importance", ascending=False)
 
     plt.figure(figsize=(10, 6))
     plt.barh(importance["feature"], importance["importance"])
@@ -72,14 +72,16 @@ def main():
     for _, row in importance.iterrows():
         logger.info(f"  {row['feature']}: {row['importance']:.3f}")
 
-    print({
-        "key_findings": [
-            f"Top feature: {importance.iloc[0]['feature']}",
-            f"Feature importance calculated for {len(feature_cols)} features",
-            f"Visualization saved to {output_path.name}",
-        ],
-        "outputs": ["feature_importance.png"],
-    })
+    print(
+        {
+            "key_findings": [
+                f"Top feature: {importance.iloc[0]['feature']}",
+                f"Feature importance calculated for {len(feature_cols)} features",
+                f"Visualization saved to {output_path.name}",
+            ],
+            "outputs": ["feature_importance.png"],
+        }
+    )
 
 
 if __name__ == "__main__":

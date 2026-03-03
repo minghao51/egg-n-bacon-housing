@@ -39,11 +39,17 @@ def main():
     kmeans = KMeans(n_clusters=5, random_state=42, n_init=10)
     df_cluster["segment"] = kmeans.fit_predict(X_scaled)
 
-    segment_stats = df_cluster.groupby("segment").agg({
-        "price": ["mean", "count"],
-        "floor_area_sqft": "mean",
-        "dist_nearest_mall": "mean",
-    }).round(2)
+    segment_stats = (
+        df_cluster.groupby("segment")
+        .agg(
+            {
+                "price": ["mean", "count"],
+                "floor_area_sqft": "mean",
+                "dist_nearest_mall": "mean",
+            }
+        )
+        .round(2)
+    )
 
     logger.info("\nSegment Profiles:")
     for segment in range(5):
@@ -54,19 +60,23 @@ def main():
             f"{stats[('floor_area_sqft', 'mean')]:.0f} sqft"
         )
 
-    output_df = df_cluster[["address", "price", "floor_area_sqft", "dist_nearest_mall", "segment"]].copy()
+    output_df = df_cluster[
+        ["address", "price", "floor_area_sqft", "dist_nearest_mall", "segment"]
+    ].copy()
     save_parquet(output_df, "L4_market_segments", source="K-means clustering")
     logger.info("✅ Saved segments to L4_market_segments.parquet")
 
-    print({
-        "key_findings": [
-            "Identified 5 market segments",
-            "Segment 0: Mid-range properties",
-            "Segment 4: Premium properties (highest price, largest size)",
-            "Clusters based on price, size, location, lease",
-        ],
-        "outputs": ["L4_market_segments.parquet"],
-    })
+    print(
+        {
+            "key_findings": [
+                "Identified 5 market segments",
+                "Segment 0: Mid-range properties",
+                "Segment 4: Premium properties (highest price, largest size)",
+                "Clusters based on price, size, location, lease",
+            ],
+            "outputs": ["L4_market_segments.parquet"],
+        }
+    )
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/discover/InsightCard.tsx
-import { Insight } from '@/types/segments';
+import type { Insight } from '@/types/segments';
 
 interface InsightCardProps {
   insight: Insight;

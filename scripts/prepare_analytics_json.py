@@ -10,6 +10,5 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.webapp.prepare_analytics_json import *  # noqa: F401,F403
 
-
 if __name__ == "__main__":
     export_all_analytics()

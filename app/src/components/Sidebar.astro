@@ -14,7 +14,7 @@ const analyticsDocs = allDocs
   .filter(doc => doc.data.status !== 'draft')
   .map(doc => ({
     title: doc.data.title || doc.id,
-    slug: doc.id,
+    slug: doc.id.replace(/\.mdx$/, ''),
   }))
   .sort((a, b) => a.title.localeCompare(b.title));
 

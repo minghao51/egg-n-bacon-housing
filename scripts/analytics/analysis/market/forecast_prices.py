@@ -47,12 +47,14 @@ def main():
 
             forecast = model_fit.forecast(steps=6)
 
-            forecasts.append({
-                "planning_area": area,
-                "forecast_6m_price_psf": float(forecast.iloc[-1]),
-                "last_price_psf": float(ts.iloc[-1]),
-                "projected_growth_pct": (forecast.iloc[-1] / ts.iloc[-1] - 1) * 100
-            })
+            forecasts.append(
+                {
+                    "planning_area": area,
+                    "forecast_6m_price_psf": float(forecast.iloc[-1]),
+                    "last_price_psf": float(ts.iloc[-1]),
+                    "projected_growth_pct": (forecast.iloc[-1] / ts.iloc[-1] - 1) * 100,
+                }
+            )
 
         except Exception as e:
             logger.warning(f"  Could not forecast {area}: {e}")
@@ -68,14 +70,16 @@ def main():
         for _, row in top_growth.iterrows():
             logger.info(f"  {row['planning_area']}: +{row['projected_growth_pct']:.1f}%")
 
-        print({
-            "key_findings": [
-                f"Forecasted prices for {len(forecast_df)} planning areas",
-                f"Top growth area: {top_growth.iloc[0]['planning_area']} (+{top_growth.iloc[0]['projected_growth_pct']:.1f}%)",
-                "Used ARIMA(1,1,1) model with 6-month horizon"
-            ],
-            "outputs": ["L4_price_forecasts.parquet"],
-        })
+        print(
+            {
+                "key_findings": [
+                    f"Forecasted prices for {len(forecast_df)} planning areas",
+                    f"Top growth area: {top_growth.iloc[0]['planning_area']} (+{top_growth.iloc[0]['projected_growth_pct']:.1f}%)",
+                    "Used ARIMA(1,1,1) model with 6-month horizon",
+                ],
+                "outputs": ["L4_price_forecasts.parquet"],
+            }
+        )
     else:
         logger.warning("No forecasts generated")
 

@@ -25,19 +25,19 @@ Usage:
 
 Examples:
     # Run L0 data collection
-    python scripts/run_pipeline.py --stage L0
+    uv run python scripts/run_pipeline.py --stage L0
 
     # Run L0 macro data collection
-    python scripts/run_pipeline.py --stage L0_macro
+    uv run python scripts/run_pipeline.py --stage L0_macro
 
     # Run L1 processing with parallel geocoding
-    python scripts/run_pipeline.py --stage L1 --parallel
+    uv run python scripts/run_pipeline.py --stage L1 --parallel
 
     # Run L2 features only
-    python scripts/run_pipeline.py --stage L2_features
+    uv run python scripts/run_pipeline.py --stage L2_features
 
     # Run all stages
-    python scripts/run_pipeline.py --stage all --parallel
+    uv run python scripts/run_pipeline.py --stage all --parallel
 """
 
 import argparse
@@ -89,7 +89,7 @@ def run_L0_collection():
     return results
 
 
-def run_L0_macro(start_date: str = '2021-01', end_date: str = '2026-02'):
+def run_L0_macro(start_date: str = "2021-01", end_date: str = "2026-02"):
     """Run L0: Macro economic data collection."""
     logger.info("🚀 Starting L0: Macro Economic Data Collection")
 
@@ -277,7 +277,18 @@ def main():
         "--stage",
         type=str,
         default="all",
-        choices=["L0", "L0_macro", "L1", "L2", "L2_rental", "L2_features", "L3", "L5", "webapp", "all"],
+        choices=[
+            "L0",
+            "L0_macro",
+            "L1",
+            "L2",
+            "L2_rental",
+            "L2_features",
+            "L3",
+            "L5",
+            "webapp",
+            "all",
+        ],
         help="Pipeline stage to run",
     )
     parser.add_argument(
@@ -296,7 +307,7 @@ def main():
     parser.add_argument(
         "--skip-affordability",
         action="store_true",
-        help="Skip affordability calculations in L5 (no income data required)"
+        help="Skip affordability calculations in L5 (no income data required)",
     )
     parser.add_argument(
         "--best-effort",

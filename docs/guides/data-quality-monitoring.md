@@ -42,6 +42,7 @@ The system uses adaptive thresholds (3σ) to detect anomalies:
 - Significant changes in row count
 - Significant changes in null percentage
 - Baselines are learned from historical data
+- The first 2 snapshots for a dataset are warm-up runs; alerts start on the 3rd snapshot
 
 Anomalies are logged with WARNING level during pipeline runs.
 
@@ -57,6 +58,12 @@ if z_score > 3: FLAG AS ANOMALY
 ```
 if pct_change > 50%: FLAG AS ANOMALY
 ```
+
+### Warm-up Period
+
+Baseline history is recorded from the first run, but anomaly checks stay silent until at
+least 3 snapshots exist for the same `dataset_name` and `stage`. This prevents low-signal
+alerts while the baseline is still being established.
 
 ## Database Schema
 
@@ -117,8 +124,7 @@ This provides O(1) space complexity for baseline tracking.
 - Verify decorator is applied to save_parquet
 
 **Too many anomalies:**
-- Normal for first few runs (baseline still learning)
-- Check if data source has changed
+- After the warm-up period, check if data source has changed
 - Review EXPECTED_REDUCTIONS in Config for valid drop rates
 - Historical baselines stabilize after ~10 runs
 

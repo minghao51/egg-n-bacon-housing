@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { ChartData } from '@/utils/data-parser';
+import ClientChart from './ClientChart';
 
 interface ComparisonChartProps {
   data: ChartData;
@@ -43,8 +44,8 @@ export default function ComparisonChart({
   ];
 
   return (
-    <div className="w-full">
-      <ResponsiveContainer width="100%" height={height}>
+    <ClientChart className="w-full" style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}
           layout={horizontal ? 'horizontal' : 'vertical'}
@@ -80,6 +81,6 @@ export default function ComparisonChart({
           ))}
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </ClientChart>
   );
 }

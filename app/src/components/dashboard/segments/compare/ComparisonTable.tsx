@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/compare/ComparisonTable.tsx
-import { Segment } from '@/types/segments';
+import type { Segment } from '@/types/segments';
 
 interface ComparisonTableProps {
   segments: Segment[];

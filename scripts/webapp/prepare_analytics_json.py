@@ -78,9 +78,9 @@ def generate_spatial_analysis_json():
         "metadata": {
             "generated_at": datetime.now().isoformat(),
             "data_version": "L3_unified_dataset",
-            "methodology": "Getis-Ord Gi* hotspot analysis, LISA clustering, Moran's I"
+            "methodology": "Getis-Ord Gi* hotspot analysis, LISA clustering, Moran's I",
         },
-        "planning_areas": {}
+        "planning_areas": {},
     }
 
     # Try loading from various possible sources
@@ -92,13 +92,13 @@ def generate_spatial_analysis_json():
         # Try to load existing spatial analysis
         df = load_unified_data()
 
-        if df.empty or 'planning_area' not in df.columns:
+        if df.empty or "planning_area" not in df.columns:
             logger.warning("No data available for spatial analysis")
             return spatial_data
 
         # Aggregate by planning area
-        for area in df['planning_area'].unique():
-            area_df = df[df['planning_area'] == area]
+        for area in df["planning_area"].unique():
+            area_df = df[df["planning_area"] == area]
 
             # Calculate basic metrics (placeholder for now)
             # In production, this would load from:
@@ -110,23 +110,29 @@ def generate_spatial_analysis_json():
                     "z_score": safe_float(0.0),
                     "p_value": safe_float(1.0),
                     "confidence": "NOT_SIGNIFICANT",
-                    "classification": "NOT_SIGNIFICANT"
+                    "classification": "NOT_SIGNIFICANT",
                 },
                 "lisa_cluster": {
                     "type": "STABLE",
-                    "yoy_appreciation": safe_float(area_df['price_psf'].pct_change().mean() * 100, decimals=1) if 'price_psf' in area_df.columns else 0,
+                    "yoy_appreciation": safe_float(
+                        area_df["price_psf"].pct_change().mean() * 100, decimals=1
+                    )
+                    if "price_psf" in area_df.columns
+                    else 0,
                     "persistence_rate": safe_float(0.5),
                     "transition_probabilities": {
                         "to_hotspot": safe_float(0.2),
                         "to_stable": safe_float(0.6),
-                        "to_coldspot": safe_float(0.2)
-                    }
+                        "to_coldspot": safe_float(0.2),
+                    },
                 },
                 "neighborhood_effect": {
                     "moran_i_local": safe_float(0.0),
-                    "spatial_lag": safe_float(area_df['price'].median(), decimals=0) if 'price' in area_df.columns else 0,
-                    "neighborhood_multiplier": safe_float(1.0)
-                }
+                    "spatial_lag": safe_float(area_df["price"].median(), decimals=0)
+                    if "price" in area_df.columns
+                    else 0,
+                    "neighborhood_multiplier": safe_float(1.0),
+                },
             }
 
         logger.info(f"Generated spatial data for {len(spatial_data['planning_areas'])} areas")
@@ -153,21 +159,21 @@ def generate_feature_impact_json():
         "metadata": {
             "generated_at": datetime.now().isoformat(),
             "data_version": "L2_hdb_with_features",
-            "methodology": "Geographically weighted regression, hedonic pricing models"
+            "methodology": "Geographically weighted regression, hedonic pricing models",
         },
-        "planning_areas": {}
+        "planning_areas": {},
     }
 
     try:
         df = load_unified_data()
 
-        if df.empty or 'planning_area' not in df.columns:
+        if df.empty or "planning_area" not in df.columns:
             logger.warning("No data available for feature impact")
             return feature_data
 
         # Aggregate by planning area
-        for area in df['planning_area'].unique():
-            area_df = df[df['planning_area'] == area]
+        for area in df["planning_area"].unique():
+            area_df = df[df["planning_area"] == area]
 
             # Placeholder values - in production would load from:
             # - analysis_mrt_impact.parquet
@@ -178,27 +184,31 @@ def generate_feature_impact_json():
                 "mrt_impact": {
                     "hdb_sensitivity_psf_per_100m": safe_float(-5.0),
                     "condo_sensitivity_psf_per_100m": safe_float(-20.0),
-                    "cbd_distance_km": safe_float(area_df['cbd_distance_km'].mean(), decimals=1) if 'cbd_distance_km' in area_df.columns else 10.0,
+                    "cbd_distance_km": safe_float(area_df["cbd_distance_km"].mean(), decimals=1)
+                    if "cbd_distance_km" in area_df.columns
+                    else 10.0,
                     "cbd_explains_variance": safe_float(0.226),
-                    "mrt_vs_cbd_ratio": safe_float(0.08)
+                    "mrt_vs_cbd_ratio": safe_float(0.08),
                 },
                 "school_quality": {
                     "primary_school_score": safe_float(5.0),
                     "secondary_school_score": safe_float(5.0),
                     "weighted_score": safe_float(5.0),
                     "num_top_tier_schools": 0,
-                    "predictive_power": safe_float(0.115)
+                    "predictive_power": safe_float(0.115),
                 },
                 "amenity_score": {
                     "hawker_center_accessibility": safe_float(5.0),
                     "mall_accessibility": safe_float(5.0),
                     "park_accessibility": safe_float(5.0),
                     "optimal_combination_score": safe_float(5.0),
-                    "amenity_cluster_synergy": safe_float(0.0)
-                }
+                    "amenity_cluster_synergy": safe_float(0.0),
+                },
             }
 
-        logger.info(f"Generated feature impact data for {len(feature_data['planning_areas'])} areas")
+        logger.info(
+            f"Generated feature impact data for {len(feature_data['planning_areas'])} areas"
+        )
 
     except Exception as e:
         logger.error(f"Failed to generate feature impact: {e}")
@@ -222,26 +232,26 @@ def generate_predictive_analytics_json():
             "generated_at": datetime.now().isoformat(),
             "forecast_horizon": "6_months",
             "model_r2": safe_float(0.887),
-            "last_training_date": "2025-01-01"
+            "last_training_date": "2025-01-01",
         },
-        "planning_areas": {}
+        "planning_areas": {},
     }
 
     try:
         df = load_unified_data()
 
-        if df.empty or 'planning_area' not in df.columns:
+        if df.empty or "planning_area" not in df.columns:
             logger.warning("No data available for predictive analytics")
             return predictive_data
 
         # Aggregate by planning area
-        for area in df['planning_area'].unique():
-            area_df = df[df['planning_area'] == area]
+        for area in df["planning_area"].unique():
+            area_df = df[df["planning_area"] == area]
 
             # Calculate basic forecast from historical trend
-            if 'price' in area_df.columns and 'transaction_date' in area_df.columns:
-                area_df = area_df.sort_values('transaction_date')
-                price_trend = area_df['price'].pct_change().mean()
+            if "price" in area_df.columns and "transaction_date" in area_df.columns:
+                area_df = area_df.sort_values("transaction_date")
+                price_trend = area_df["price"].pct_change().mean()
             else:
                 price_trend = 0.0
 
@@ -259,26 +269,36 @@ def generate_predictive_analytics_json():
                     "confidence_interval_upper": safe_float(projected_change * 1.3, decimals=1),
                     "model_r2": safe_float(0.85),
                     "forecast_date": "2025-07-01",
-                    "signal": "HOLD" if abs(projected_change) < 2 else ("BUY" if projected_change > 0 else "SELL")
+                    "signal": "HOLD"
+                    if abs(projected_change) < 2
+                    else ("BUY" if projected_change > 0 else "SELL"),
                 },
                 "policy_risk": {
                     "cooling_measure_sensitivity": safe_float(-50000),
-                    "market_segment": "HDB" if "HDB" in str(area_df['property_type'].mode().values) else "PRIVATE",
+                    "market_segment": "HDB"
+                    if "HDB" in str(area_df["property_type"].mode().values)
+                    else "PRIVATE",
                     "elasticity": safe_float(-0.15),
-                    "risk_level": "MODERATE"
+                    "risk_level": "MODERATE",
                 },
                 "lease_arbitrage": {
-                    "theoretical_value_30yr": safe_float(area_df['price'].median(), decimals=0) if 'price' in area_df.columns else 500000,
-                    "market_value_30yr": safe_float(area_df['price'].median(), decimals=0) if 'price' in area_df.columns else 500000,
+                    "theoretical_value_30yr": safe_float(area_df["price"].median(), decimals=0)
+                    if "price" in area_df.columns
+                    else 500000,
+                    "market_value_30yr": safe_float(area_df["price"].median(), decimals=0)
+                    if "price" in area_df.columns
+                    else 500000,
                     "arbitrage_pct": safe_float(0.0),
                     "recommendation": "HOLD",
                     "theoretical_value_95yr": safe_float(0),
                     "market_value_95yr": safe_float(0),
-                    "arbitrage_pct_95yr": safe_float(0.0)
-                }
+                    "arbitrage_pct_95yr": safe_float(0.0),
+                },
             }
 
-        logger.info(f"Generated predictive analytics for {len(predictive_data['planning_areas'])} areas")
+        logger.info(
+            f"Generated predictive analytics for {len(predictive_data['planning_areas'])} areas"
+        )
 
     except Exception as e:
         logger.error(f"Failed to generate predictive analytics: {e}")
@@ -305,10 +325,7 @@ def export_all_analytics(output_dir: Path | None = None):
     Args:
         output_dir: Optional output directory. Defaults to app/public/data/analytics
     """
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s'
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
     logger.info("Starting analytics JSON export...")
 

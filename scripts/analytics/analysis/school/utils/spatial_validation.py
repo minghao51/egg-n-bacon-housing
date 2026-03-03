@@ -23,11 +23,7 @@ class SpatialValidator:
         self.results = {}
 
     def compare_cv_methods(
-        self,
-        X: pd.DataFrame,
-        y: pd.Series,
-        groups: pd.Series,
-        model_type: str = 'ols'
+        self, X: pd.DataFrame, y: pd.Series, groups: pd.Series, model_type: str = "ols"
     ):
         """
         Compare standard KFold vs GroupKFold (spatial) CV.
@@ -44,20 +40,18 @@ class SpatialValidator:
         logger.info(f"Comparing CV methods for {model_type}")
 
         # Initialize model
-        if model_type == 'ols':
+        if model_type == "ols":
             model = LinearRegression()
-        elif model_type == 'rf':
+        elif model_type == "rf":
             model = RandomForestRegressor(n_estimators=100, n_jobs=-1, random_state=42)
-        elif model_type == 'xgboost':
+        elif model_type == "xgboost":
             model = xgb.XGBRegressor(n_estimators=100, max_depth=6, n_jobs=-1, random_state=42)
         else:
             raise ValueError(f"Unknown model type: {model_type}")
 
         # Standard 5-fold CV
         logger.info("  Running standard 5-fold CV...")
-        standard_scores = cross_val_score(
-            model, X, y, cv=5, scoring='r2', n_jobs=-1
-        )
+        standard_scores = cross_val_score(model, X, y, cv=5, scoring="r2", n_jobs=-1)
         standard_r2 = standard_scores.mean()
 
         # Spatial GroupKFold
@@ -81,11 +75,11 @@ class SpatialValidator:
         gap = standard_r2 - spatial_r2
 
         result = {
-            'model_type': model_type,
-            'standard_cv_r2': standard_r2,
-            'spatial_cv_r2': spatial_r2,
-            'generalization_gap': gap,
-            'gap_pct': (gap / standard_r2 * 100) if standard_r2 > 0 else 0
+            "model_type": model_type,
+            "standard_cv_r2": standard_r2,
+            "spatial_cv_r2": spatial_r2,
+            "generalization_gap": gap,
+            "gap_pct": (gap / standard_r2 * 100) if standard_r2 > 0 else 0,
         }
 
         logger.info(f"  Standard CV R²: {standard_r2:.4f}")
@@ -100,7 +94,7 @@ class SpatialValidator:
         df: pd.DataFrame,
         feature_cols: list,
         target_col: str,
-        group_col: str = 'planning_area'
+        group_col: str = "planning_area",
     ):
         """
         Test which planning areas generalize poorly.
@@ -134,19 +128,25 @@ class SpatialValidator:
             r2 = r2_score(y_test, y_pred)
             mae = mean_absolute_error(y_test, y_pred)
 
-            area_results.append({
-                'planning_area': area,
-                'n_test': test_mask.sum(),
-                'r2': r2,
-                'mae': mae,
-                'y_mean': y_test.mean()
-            })
+            area_results.append(
+                {
+                    "planning_area": area,
+                    "n_test": test_mask.sum(),
+                    "r2": r2,
+                    "mae": mae,
+                    "y_mean": y_test.mean(),
+                }
+            )
 
         results_df = pd.DataFrame(area_results)
-        results_df = results_df.sort_values('r2')
+        results_df = results_df.sort_values("r2")
 
-        logger.info(f"  Worst generalizing area: {results_df.iloc[0]['planning_area']} (R²={results_df.iloc[0]['r2']:.4f})")
-        logger.info(f"  Best generalizing area: {results_df.iloc[-1]['planning_area']} (R²={results_df.iloc[-1]['r2']:.4f})")
+        logger.info(
+            f"  Worst generalizing area: {results_df.iloc[0]['planning_area']} (R²={results_df.iloc[0]['r2']:.4f})"
+        )
+        logger.info(
+            f"  Best generalizing area: {results_df.iloc[-1]['planning_area']} (R²={results_df.iloc[-1]['r2']:.4f})"
+        )
 
         # Save results
         output_path = self.output_dir / "planning_area_generalization.csv"
@@ -164,8 +164,8 @@ class SpatialValidator:
         logger.info("Testing spatial autocorrelation...")
 
         # Group residuals by planning area
-        if 'planning_area' in coordinates.columns:
-            area_residuals = residuals.groupby(coordinates['planning_area']).mean()
+        if "planning_area" in coordinates.columns:
+            area_residuals = residuals.groupby(coordinates["planning_area"]).mean()
 
             # Calculate Moran's I approximation
             # Positive I = residuals clustered spatially (bad)
@@ -179,8 +179,8 @@ class SpatialValidator:
             moran_approx = area_residuals.var() / residuals.var()
 
             result = {
-                'moran_i_approx': moran_approx,
-                'interpretation': 'Positive' if moran_approx > 0 else 'Negative/None'
+                "moran_i_approx": moran_approx,
+                "interpretation": "Positive" if moran_approx > 0 else "Negative/None",
             }
 
             logger.info(f"  Moran's I (approx): {moran_approx:.4f}")

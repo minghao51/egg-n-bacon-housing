@@ -10,6 +10,5 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.webapp.transform_spatial_hotspots import *  # noqa: F401,F403
 
-
 if __name__ == "__main__":
     transform_spatial_hotspots()

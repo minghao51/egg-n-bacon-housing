@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/details/DetailsTab.tsx
-import { Segment, Persona, PlanningArea } from '@/types/segments';
+import type { Segment, Persona, PlanningArea } from '@/types/segments';
 import { SegmentOverview } from './SegmentOverview';
 import { GeographicDistribution } from './GeographicDistribution';
 import { RiskFactors } from './RiskFactors';

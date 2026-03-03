@@ -25,7 +25,7 @@ import geopandas as gpd
 import pandas as pd
 from bs4 import BeautifulSoup
 
-sys.path.append(str(pathlib.Path(__file__).parent.parent / 'src'))
+sys.path.append(str(pathlib.Path(__file__).parent.parent / "src"))
 
 import json
 import os
@@ -43,24 +43,27 @@ import requests
 from data_helpers import load_parquet, save_parquet
 
 # Try to use existing token from .env
-access_token = os.environ.get('ONEMAP_TOKEN')
+access_token = os.environ.get("ONEMAP_TOKEN")
 
 if access_token:
     # Decode JWT to check expiration
     try:
         import base64
         import time
-        parts = access_token.split('.')
+
+        parts = access_token.split(".")
         if len(parts) == 3:
             payload = parts[1]
-            payload += '=' * (4 - len(payload) % 4)
+            payload += "=" * (4 - len(payload) % 4)
             decoded = base64.b64decode(payload)
             token_data = json.loads(decoded)
 
             current_time = time.time()
-            if token_data.get('exp', 0) > current_time:
+            if token_data.get("exp", 0) > current_time:
                 print("✅ Using existing OneMap token from .env")
-                print(f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours")
+                print(
+                    f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours"
+                )
                 headers = {"Authorization": f"{access_token}"}
             else:
                 print("⚠️  Token in .env has expired")
@@ -78,8 +81,8 @@ if not access_token:
     url = "https://www.onemap.gov.sg/api/auth/post/getToken"
 
     payload = {
-        "email": os.environ.get('ONEMAP_EMAIL'),
-        "password": os.environ.get('ONEMAP_EMAIL_PASSWORD')
+        "email": os.environ.get("ONEMAP_EMAIL"),
+        "password": os.environ.get("ONEMAP_EMAIL_PASSWORD"),
     }
 
     response = requests.request("POST", url, json=payload)
@@ -87,7 +90,7 @@ if not access_token:
 
     if response.status_code == 200:
         response_data = json.loads(response.text)
-        access_token = response_data.get('access_token')
+        access_token = response_data.get("access_token")
         if access_token:
             print("✅ Successfully obtained new OneMap token")
             headers = {"Authorization": f"{access_token}"}
@@ -141,8 +144,8 @@ def extract_df_data(school_df, search_cols, initial_backoff, max_retries, max_ba
                 # print(f"{search_string}")
                 response.raise_for_status()  # Raise an exception for HTTP errors
                 data = json.loads(response.text)
-                _df = pd.DataFrame(data['results']).iloc[0:1]
-                _df['NameAddress'] = search_string
+                _df = pd.DataFrame(data["results"]).iloc[0:1]
+                _df["NameAddress"] = search_string
                 df_list.append(_df)
                 success = True
 
@@ -152,12 +155,12 @@ def extract_df_data(school_df, search_cols, initial_backoff, max_retries, max_ba
                 backoff = min(backoff * 2, max_backoff)  # Exponential backoff
                 delay = backoff + uniform(0, 1)  # Add jitter to the delay
                 print(
-                    f"Request failed for {search_string}. Retrying in {delay:.2f} seconds. (Retry {retries}/{max_retries})")
+                    f"Request failed for {search_string}. Retrying in {delay:.2f} seconds. (Retry {retries}/{max_retries})"
+                )
                 sleep(delay)
 
         if not success:
-            print(
-                f"Failed to retrieve data for {search_string} after {max_retries} retries.")
+            print(f"Failed to retrieve data for {search_string} after {max_retries} retries.")
 
     return df_list
 
@@ -184,24 +187,29 @@ def get_school_data_from_onemap(school_df):
     Returns:
         pd.DataFrame: DataFrame containing school data, including 'name', 'lat', 'lon', etc.
     """
-    df_list = extract_df_data(school_df,
-                              search_cols='postal_code',
-                              initial_backoff=initial_backoff,
-                              max_retries=max_retries,
-                              max_backoff=max_backoff,
-                              headers=headers)
+    df_list = extract_df_data(
+        school_df,
+        search_cols="postal_code",
+        initial_backoff=initial_backoff,
+        max_retries=max_retries,
+        max_backoff=max_backoff,
+        headers=headers,
+    )
     if df_list:  # Check if any data was retrieved
-        df_school = pd.concat(df_list).rename({
-            'SEARCHVAL': 'name',
-            'LATITUDE': 'lat',
-            'LONGITUDE': 'lon',
-            'POSTAL': 'postal',
-            'ADDRESS': 'address'
-        }, axis=1)
-        df_school = df_school[['name', 'lat', 'lon', 'postal', 'address']]
-        df_school['type'] = 'school'
-        df_school['address'] = [i.lower() for i in df_school['address']]
-        df_school['name'] = [i.lower() for i in df_school['name']]
+        df_school = pd.concat(df_list).rename(
+            {
+                "SEARCHVAL": "name",
+                "LATITUDE": "lat",
+                "LONGITUDE": "lon",
+                "POSTAL": "postal",
+                "ADDRESS": "address",
+            },
+            axis=1,
+        )
+        df_school = df_school[["name", "lat", "lon", "postal", "address"]]
+        df_school["type"] = "school"
+        df_school["address"] = [i.lower() for i in df_school["address"]]
+        df_school["name"] = [i.lower() for i in df_school["name"]]
     else:
         print("No school data retrieved from OneMap API.")
 
@@ -210,8 +218,7 @@ def get_school_data_from_onemap(school_df):
 
 # %%
 if school_query_onemap:
-    school = pd.read_csv(
-        "../data/raw_data/csv/datagov/Generalinformationofschools.csv")
+    school = pd.read_csv("../data/raw_data/csv/datagov/Generalinformationofschools.csv")
     school_df = get_school_data_from_onemap(school)
     save_parquet(school_df, "L1_school_queried", source="onemap API")
 
@@ -233,24 +240,29 @@ mall_query_onemap = False
 # %%
 if mall_query_onemap:
     mall = load_parquet("raw_wiki_shopping_mall")
-    df_list = extract_df_data(mall,
-                              search_cols='shopping_mall',
-                              initial_backoff=initial_backoff,
-                              max_retries=max_retries,
-                              max_backoff=max_backoff,
-                              headers=headers)
+    df_list = extract_df_data(
+        mall,
+        search_cols="shopping_mall",
+        initial_backoff=initial_backoff,
+        max_retries=max_retries,
+        max_backoff=max_backoff,
+        headers=headers,
+    )
     if df_list:  # Check if any data was retrieved
-        df_mall = pd.concat(df_list).rename({
-            'SEARCHVAL': 'name',
-            'LATITUDE': 'lat',
-            'LONGITUDE': 'lon',
-            'POSTAL': 'postal',
-            'ADDRESS': 'address'
-        }, axis=1)
-        df_mall = df_mall[['name', 'lat', 'lon', 'postal', 'address']]
-        df_mall['type'] = 'mall'
-        df_mall['address'] = [i.lower() for i in df_mall['address']]
-        df_mall['name'] = [i.lower() for i in df_mall['name']]
+        df_mall = pd.concat(df_list).rename(
+            {
+                "SEARCHVAL": "name",
+                "LATITUDE": "lat",
+                "LONGITUDE": "lon",
+                "POSTAL": "postal",
+                "ADDRESS": "address",
+            },
+            axis=1,
+        )
+        df_mall = df_mall[["name", "lat", "lon", "postal", "address"]]
+        df_mall["type"] = "mall"
+        df_mall["address"] = [i.lower() for i in df_mall["address"]]
+        df_mall["name"] = [i.lower() for i in df_mall["name"]]
 
         save_parquet(df_mall, "L1_mall_queried", source="onemap API")
 else:
@@ -273,13 +285,13 @@ def extract_html_name(html_str: str, name_search) -> str:
     Returns:
         str: The extracted name.
     """
-    soup = BeautifulSoup(html_str, 'html.parser')
-    name_cell = soup.find('th', string=name_search).find_next('td')
+    soup = BeautifulSoup(html_str, "html.parser")
+    name_cell = soup.find("th", string=name_search).find_next("td")
     name = name_cell.text.strip()
     return name
 
 
-def parse_datagov_geojson(path: str, data_type: str, name_search: str = 'NAME') -> pd.DataFrame:
+def parse_datagov_geojson(path: str, data_type: str, name_search: str = "NAME") -> pd.DataFrame:
     """
     Parses a GeoJSON file and extracts relevant data.
 
@@ -291,92 +303,96 @@ def parse_datagov_geojson(path: str, data_type: str, name_search: str = 'NAME') 
         pd.DataFrame: A DataFrame with the extracted data.
     """
     df = gpd.read_file(path)
-    df = df.to_crs('4326')
-    df["lat"] = df['geometry'].y
-    df["lon"] = df['geometry'].x
-    df['type'] = data_type
-    df['name'] = [extract_html_name(i, name_search) for i in df['Description']]
-    return pd.DataFrame(df[['name', 'type', 'lat', 'lon']])
+    df = df.to_crs("4326")
+    df["lat"] = df["geometry"].y
+    df["lon"] = df["geometry"].x
+    df["type"] = data_type
+    df["name"] = [extract_html_name(i, name_search) for i in df["Description"]]
+    return pd.DataFrame(df[["name", "type", "lat", "lon"]])
 
 
 # %%
 kindergarden_df = parse_datagov_geojson(
-    "../data/raw_data/csv/datagov/Kindergartens.geojson", "kindergarden")
+    "../data/raw_data/csv/datagov/Kindergartens.geojson", "kindergarden"
+)
 
 # %%
-gym_df = parse_datagov_geojson(
-    "../data/raw_data/csv/datagov/GymsSGGEOJSON.geojson", "gym")
+gym_df = parse_datagov_geojson("../data/raw_data/csv/datagov/GymsSGGEOJSON.geojson", "gym")
 
 # %%
 hawker_df = parse_datagov_geojson(
-    "../data/raw_data/csv/datagov/HawkerCentresGEOJSON.geojson", "hawker")
+    "../data/raw_data/csv/datagov/HawkerCentresGEOJSON.geojson", "hawker"
+)
 
 # %%
 water_activities_df = parse_datagov_geojson(
-    "../data/raw_data/csv/datagov/WaterActivitiesSG.geojson", "water_activities")
+    "../data/raw_data/csv/datagov/WaterActivitiesSG.geojson", "water_activities"
+)
 
 # %%
 supermarket_df = parse_datagov_geojson(
-    "../data/raw_data/csv/datagov/SupermarketsGEOJSON.geojson", "supermarket", "LIC_NAME")
+    "../data/raw_data/csv/datagov/SupermarketsGEOJSON.geojson", "supermarket", "LIC_NAME"
+)
 
 # %%
 preschool_df = parse_datagov_geojson(
-    "../data/raw_data/csv/datagov/PreSchoolsLocation.geojson", "preschool", "CENTRE_NAME")
+    "../data/raw_data/csv/datagov/PreSchoolsLocation.geojson", "preschool", "CENTRE_NAME"
+)
 
 # %% [markdown]
 # # park
 
 # %%
-df = gpd.read_file(
-    "../data/raw_data/csv/datagov/NParksParksandNatureReserves.geojson")
-df = df.set_crs(crs='epsg:4326')
+df = gpd.read_file("../data/raw_data/csv/datagov/NParksParksandNatureReserves.geojson")
+df = df.set_crs(crs="epsg:4326")
 df = df.to_crs(crs=3857)
-df['lon'] = df.centroid.x
-df['lat'] = df.centroid.y
-df['type'] = 'park'
-df['name'] = [extract_html_name(i, 'NAME') for i in df['Description']]
-park_df = df[['name', 'type', 'lon', 'lat', 'geometry']]
-park_df.to_file("../data/L1/park.geojson", driver='GeoJSON')
+df["lon"] = df.centroid.x
+df["lat"] = df.centroid.y
+df["type"] = "park"
+df["name"] = [extract_html_name(i, "NAME") for i in df["Description"]]
+park_df = df[["name", "type", "lon", "lat", "geometry"]]
+park_df.to_file("../data/L1/park.geojson", driver="GeoJSON")
 
 # %%
 df = gpd.read_file(
-    "../data/raw_data/csv/datagov/MasterPlan2019SDCPParkConnectorLinelayerGEOJSON.geojson")
-park_connector_df = df.drop('Description', axis=1)
-park_connector_df.to_file(
-    "../data/L1/park_connector.geojson", driver='GeoJSON')
+    "../data/raw_data/csv/datagov/MasterPlan2019SDCPParkConnectorLinelayerGEOJSON.geojson"
+)
+park_connector_df = df.drop("Description", axis=1)
+park_connector_df.to_file("../data/L1/park_connector.geojson", driver="GeoJSON")
 
 # %%
-waterbody_df = gpd.read_file(
-    "../data/raw_data/csv/datagov/MasterPlan2019SDCPWaterbodylayerKML.kml")
-waterbody_df = waterbody_df.to_crs('3857')
-waterbody_df['area_m'] = waterbody_df.geometry.area
-waterbody_df = waterbody_df[waterbody_df['area_m'] >= 4000].reset_index()
-waterbody_df = waterbody_df[['Name', 'geometry', 'area_m']]
+waterbody_df = gpd.read_file("../data/raw_data/csv/datagov/MasterPlan2019SDCPWaterbodylayerKML.kml")
+waterbody_df = waterbody_df.to_crs("3857")
+waterbody_df["area_m"] = waterbody_df.geometry.area
+waterbody_df = waterbody_df[waterbody_df["area_m"] >= 4000].reset_index()
+waterbody_df = waterbody_df[["Name", "geometry", "area_m"]]
 save_parquet(waterbody_df, "L1_waterbody", source="datagov geojson")
-waterbody_df.to_file("../data/L1/waterbody.geojson", driver='GeoJSON')
+waterbody_df.to_file("../data/L1/waterbody.geojson", driver="GeoJSON")
 
 # %% [markdown]
 # # Concat
 
 # %%
-df_combined = pd.concat([
-    school_df[['name', 'type', 'lat', 'lon']],
-    df_mall[['name', 'type', 'lat', 'lon']],
-    kindergarden_df,
-    gym_df,
-    hawker_df,
-    kindergarden_df,
-    water_activities_df,
-    supermarket_df,
-    preschool_df
-])
+df_combined = pd.concat(
+    [
+        school_df[["name", "type", "lat", "lon"]],
+        df_mall[["name", "type", "lat", "lon"]],
+        kindergarden_df,
+        gym_df,
+        hawker_df,
+        kindergarden_df,
+        water_activities_df,
+        supermarket_df,
+        preschool_df,
+    ]
+)
 
 # %%
-df_combined['lat'] = df_combined['lat'].astype('float')
-df_combined['lon'] = df_combined['lon'].astype('float')
+df_combined["lat"] = df_combined["lat"].astype("float")
+df_combined["lon"] = df_combined["lon"].astype("float")
 
 # %%
-df_combined['type'].value_counts()
+df_combined["type"].value_counts()
 
 # %%
 save_parquet(df_combined, "L1_amenity", source="L1 utilities processing")

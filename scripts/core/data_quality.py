@@ -20,6 +20,32 @@ logger = logging.getLogger(__name__)
 # Global collector instance
 _collector = None
 
+STRICT_DUPLICATES = "STRICT"
+ALLOW_ANY_DUPLICATES = "ALLOW_ANY"
+ALLOW_THRESHOLD_DUPLICATES = "ALLOW_THRESHOLD"
+MIN_BASELINE_SAMPLES = 3
+
+DATASET_DUPLICATE_POLICIES = {
+    "L3_property_nearby_facilities": {
+        "mode": ALLOW_ANY_DUPLICATES,
+    },
+    "L3_private_property_facilities": {
+        "mode": ALLOW_ANY_DUPLICATES,
+    },
+    "L3_property": {
+        "mode": ALLOW_ANY_DUPLICATES,
+    },
+    "L3_property_transactions_sales": {
+        "mode": ALLOW_ANY_DUPLICATES,
+    },
+    "L3_property_listing_sales": {
+        "mode": ALLOW_ANY_DUPLICATES,
+    },
+    "L2_housing_per_type_amenity_features": {
+        "mode": ALLOW_ANY_DUPLICATES,
+    },
+}
+
 
 @dataclass
 class QualitySnapshot:
@@ -51,12 +77,75 @@ class QualityBaseline:
     last_updated: str
 
 
-def get_collector() -> "DataQualityCollector":
-    """Get or create global collector instance."""
+def get_collector(db_path: Path | None = None) -> "DataQualityCollector":
+    """Get or create global collector instance.
+
+    If ``db_path`` is provided, reuse the current collector only when it points
+    at the same database. This keeps tests isolated when they override the data
+    directory.
+    """
     global _collector
     if _collector is None:
-        _collector = DataQualityCollector()
+        _collector = DataQualityCollector(db_path)
+    elif db_path is not None and Path(_collector.db_path) != Path(db_path):
+        _collector = DataQualityCollector(db_path)
     return _collector
+
+
+def reset_collector() -> None:
+    """Reset the global collector instance.
+
+    Intended for tests that need a fresh collector after monkeypatching
+    configuration paths.
+    """
+    global _collector
+    _collector = None
+
+
+def infer_quality_stage(dataset_name: str) -> str:
+    """Infer pipeline stage from the dataset name."""
+    stage_prefixes = {"L0", "L1", "L2", "L3", "L4", "L5"}
+    prefix = dataset_name.split("_", 1)[0]
+    if prefix in stage_prefixes:
+        return prefix
+    if dataset_name.startswith("raw_"):
+        return "L0"
+    return "unknown"
+
+
+def record_dataframe_quality(
+    df: pd.DataFrame,
+    dataset_name: str,
+    source: str = "unknown",
+    stage: str | None = None,
+    db_path: Path | None = None,
+    input_rows: int | None = None,
+) -> QualitySnapshot:
+    """Record quality metrics for an already-persisted DataFrame."""
+    null_percentage = 0.0
+    if df.size > 0:
+        null_percentage = round((df.isnull().sum().sum() / df.size) * 100, 2)
+
+    snapshot = QualitySnapshot(
+        timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        dataset_name=dataset_name,
+        input_rows=len(df) if input_rows is None else input_rows,
+        output_rows=len(df),
+        duplicate_count=int(df.duplicated().sum()),
+        null_percentage=null_percentage,
+        columns=df.columns.tolist(),
+        data_types={col: str(dtype) for col, dtype in df.dtypes.items()},
+        source=source,
+        stage=stage or infer_quality_stage(dataset_name),
+    )
+
+    collector = get_collector(db_path)
+    collector.record_snapshot(snapshot)
+
+    anomalies = collector.check_anomaly(snapshot)
+    _log_quality_summary(snapshot, anomalies)
+
+    return snapshot
 
 
 def monitor_data_quality(func):
@@ -66,7 +155,7 @@ def monitor_data_quality(func):
     def wrapper(df: pd.DataFrame, dataset_name: str, *args, **kwargs):
         # Capture input state
         input_rows = len(df)
-        stage = dataset_name.split("_")[0]  # L0, L1, L2...
+        stage = infer_quality_stage(dataset_name)
 
         # Get source from kwargs
         source = kwargs.get("source", "unknown")
@@ -74,35 +163,37 @@ def monitor_data_quality(func):
         # Run original save_parquet
         result = func(df, dataset_name, *args, **kwargs)
 
-        # Calculate metrics
-        duplicate_count = int(df.duplicated().sum())
-        null_pct = round((df.isnull().sum().sum() / df.size) * 100, 2)
-
-        # Create snapshot
-        snapshot = QualitySnapshot(
-            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        record_dataframe_quality(
+            df,
             dataset_name=dataset_name,
-            input_rows=input_rows,
-            output_rows=len(df),
-            duplicate_count=duplicate_count,
-            null_percentage=null_pct,
-            columns=df.columns.tolist(),
-            data_types={col: str(dtype) for col, dtype in df.dtypes.items()},
             source=source,
             stage=stage,
+            input_rows=input_rows,
         )
-
-        # Save snapshot
-        collector = get_collector()
-        collector.record_snapshot(snapshot)
-
-        # Check anomalies and log
-        anomalies = collector.check_anomaly(snapshot)
-        _log_quality_summary(snapshot, anomalies)
 
         return result
 
     return wrapper
+
+
+def get_duplicate_status(dataset_name: str, duplicate_count: int) -> tuple[str, bool]:
+    """Return a human-readable duplicate status and whether it should warn."""
+    if duplicate_count == 0:
+        return "✅ OK", False
+
+    policy = DATASET_DUPLICATE_POLICIES.get(dataset_name, {"mode": STRICT_DUPLICATES})
+    mode = policy["mode"]
+
+    if mode == ALLOW_ANY_DUPLICATES:
+        return "✅ OK (expected duplicates)", False
+
+    if mode == ALLOW_THRESHOLD_DUPLICATES:
+        threshold = policy.get("threshold", 0)
+        if duplicate_count <= threshold:
+            return f"✅ OK (<= {threshold} duplicates expected)", False
+        return f"⚠️  {duplicate_count} duplicates (> {threshold} expected)", True
+
+    return f"⚠️  {duplicate_count} duplicates", True
 
 
 def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> None:
@@ -114,12 +205,19 @@ def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> Non
         (row_change / snapshot.input_rows * 100) if snapshot.input_rows > 0 else 0
     )
 
+    duplicate_status, duplicate_warning = get_duplicate_status(
+        snapshot.dataset_name, snapshot.duplicate_count
+    )
+
     # Base log message
     if anomalies:
         status = "⚠️  ANOMALIES DETECTED"
         level = logger.warning
+    elif duplicate_warning:
+        status = duplicate_status
+        level = logger.warning
     else:
-        status = "✅ OK"
+        status = duplicate_status
         level = logger.info
 
     message = (
@@ -344,6 +442,9 @@ class DataQualityCollector:
 
         if baseline is None:
             return []  # First run, no baseline
+
+        if baseline.sample_count < MIN_BASELINE_SAMPLES:
+            return []  # Warm-up period, keep building baseline silently
 
         anomalies = []
 

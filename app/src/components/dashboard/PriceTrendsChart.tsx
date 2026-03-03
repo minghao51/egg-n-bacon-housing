@@ -9,6 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import ClientChart from '@/components/charts/ClientChart';
 
 interface TrendRecord {
   date: string;
@@ -28,7 +29,7 @@ export default function PriceTrendsChart({ data }: PriceTrendsChartProps) {
       <h3 className="text-lg font-semibold mb-6 text-foreground">
         Price Trends (Median Transaction Price)
       </h3>
-      <div className="h-[400px]">
+      <ClientChart className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -72,7 +73,7 @@ export default function PriceTrendsChart({ data }: PriceTrendsChartProps) {
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </ClientChart>
     </div>
   );
 }

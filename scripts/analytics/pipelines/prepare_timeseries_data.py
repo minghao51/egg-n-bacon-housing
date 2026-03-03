@@ -48,8 +48,8 @@ def load_l3_unified_data() -> pd.DataFrame:
     df = pd.read_parquet(path)
 
     # Ensure date columns
-    if 'transaction_date' in df.columns:
-        df['transaction_date'] = pd.to_datetime(df['transaction_date'])
+    if "transaction_date" in df.columns:
+        df["transaction_date"] = pd.to_datetime(df["transaction_date"])
 
     logger.info(f"Loaded {len(df):,} transactions from L3")
 
@@ -67,9 +67,9 @@ def load_l5_growth_metrics() -> pd.DataFrame:
         return pd.DataFrame()
 
     # Ensure month column
-    if 'month' in df.columns:
-        if df['month'].dtype == 'object':
-            df['month'] = pd.to_datetime(df['month'], format='%Y-%m')
+    if "month" in df.columns:
+        if df["month"].dtype == "object":
+            df["month"] = pd.to_datetime(df["month"], format="%Y-%m")
 
     logger.info(f"Loaded {len(df)} growth metric records")
 
@@ -80,30 +80,30 @@ def load_macro_data() -> dict:
     """Load macroeconomic data."""
     logger.info("Loading macroeconomic data...")
 
-    macro_dir = Config.DATA_DIR / 'raw_data' / 'macro'
+    macro_dir = Config.DATA_DIR / "raw_data" / "macro"
 
     macro_data = {}
 
     # SORA rates
-    sora_path = macro_dir / 'sora_rates_monthly.parquet'
+    sora_path = macro_dir / "sora_rates_monthly.parquet"
     if sora_path.exists():
-        macro_data['sora'] = pd.read_parquet(sora_path)
+        macro_data["sora"] = pd.read_parquet(sora_path)
         logger.info(f"Loaded SORA rates: {len(macro_data['sora'])} months")
     else:
         logger.warning(f"SORA rates not found: {sora_path}")
 
     # CPI
-    cpi_path = macro_dir / 'singapore_cpi_monthly.parquet'
+    cpi_path = macro_dir / "singapore_cpi_monthly.parquet"
     if cpi_path.exists():
-        macro_data['cpi'] = pd.read_parquet(cpi_path)
+        macro_data["cpi"] = pd.read_parquet(cpi_path)
         logger.info(f"Loaded CPI: {len(macro_data['cpi'])} months")
     else:
         logger.warning(f"CPI not found: {cpi_path}")
 
     # GDP (quarterly - will be interpolated to monthly)
-    gdp_path = macro_dir / 'sgdp_quarterly.parquet'
+    gdp_path = macro_dir / "sgdp_quarterly.parquet"
     if gdp_path.exists():
-        macro_data['gdp'] = pd.read_parquet(gdp_path)
+        macro_data["gdp"] = pd.read_parquet(gdp_path)
         logger.info(f"Loaded GDP: {len(macro_data['gdp'])} quarters")
     else:
         logger.warning(f"GDP not found: {gdp_path}")
@@ -112,8 +112,7 @@ def load_macro_data() -> dict:
 
 
 def aggregate_to_regional_timeseries(
-    transactions: pd.DataFrame,
-    growth_metrics: pd.DataFrame
+    transactions: pd.DataFrame, growth_metrics: pd.DataFrame
 ) -> pd.DataFrame:
     """
     Aggregate transaction data to regional monthly time series.
@@ -130,54 +129,64 @@ def aggregate_to_regional_timeseries(
 
     # Add region to transactions
     transactions = transactions.copy()
-    transactions['region'] = transactions['planning_area'].apply(get_region_for_planning_area)
+    transactions["region"] = transactions["planning_area"].apply(get_region_for_planning_area)
 
     # Filter to successful geocoding
-    if 'lat' in transactions.columns:
+    if "lat" in transactions.columns:
         before_count = len(transactions)
-        transactions = transactions.dropna(subset=['lat'])
+        transactions = transactions.dropna(subset=["lat"])
         logger.info(f"Dropped {before_count - len(transactions)} without coordinates")
 
     # Create month column
-    transactions['month'] = transactions['transaction_date'].dt.to_period('M').astype(str)
+    transactions["month"] = transactions["transaction_date"].dt.to_period("M").astype(str)
 
     # Aggregate to regional-month level
-    regional_agg = transactions.groupby(['region', 'month']).agg({
-        'price_psf': ['median', 'mean'],
-        'yoy_change_pct': 'median',
-        'address': 'count'  # Transaction count
-    }).reset_index()
+    regional_agg = (
+        transactions.groupby(["region", "month"])
+        .agg(
+            {
+                "price_psf": ["median", "mean"],
+                "yoy_change_pct": "median",
+                "address": "count",  # Transaction count
+            }
+        )
+        .reset_index()
+    )
 
     # Flatten column names
-    regional_agg.columns = ['region', 'month', 'regional_price_psf_median',
-                          'regional_price_psf_mean', 'regional_appreciation', 'regional_volume']
+    regional_agg.columns = [
+        "region",
+        "month",
+        "regional_price_psf_median",
+        "regional_price_psf_mean",
+        "regional_appreciation",
+        "regional_volume",
+    ]
 
     # Rename for clarity
-    regional_agg = regional_agg.rename(columns={
-        'regional_price_psf_median': 'regional_price_psf'
-    })
+    regional_agg = regional_agg.rename(columns={"regional_price_psf_median": "regional_price_psf"})
 
     # Select final columns
-    regional_agg = regional_agg[['region', 'month', 'regional_appreciation',
-                                 'regional_volume', 'regional_price_psf']]
+    regional_agg = regional_agg[
+        ["region", "month", "regional_appreciation", "regional_volume", "regional_price_psf"]
+    ]
 
     # Convert month to datetime
-    regional_agg['month'] = pd.to_datetime(regional_agg['month'])
+    regional_agg["month"] = pd.to_datetime(regional_agg["month"])
 
     # Filter to regions with sufficient data
-    region_counts = regional_agg.groupby('region').size()
+    region_counts = regional_agg.groupby("region").size()
     valid_regions = region_counts[region_counts >= MIN_MONTHS_REGIONAL].index
-    regional_agg = regional_agg[regional_agg['region'].isin(valid_regions)]
+    regional_agg = regional_agg[regional_agg["region"].isin(valid_regions)]
 
-    logger.info(f"Created regional timeseries: {len(regional_agg)} records, {len(valid_regions)} regions")
+    logger.info(
+        f"Created regional timeseries: {len(regional_agg)} records, {len(valid_regions)} regions"
+    )
 
     return regional_agg
 
 
-def handle_missing_months(
-    series: pd.Series,
-    max_gap: int = 2
-) -> pd.Series:
+def handle_missing_months(series: pd.Series, max_gap: int = 2) -> pd.Series:
     """
     Handle missing months in time series.
 
@@ -196,7 +205,7 @@ def handle_missing_months(
 
     # Interpolate small gaps
     if max_gap > 0:
-        interpolated = series.interpolate(method='linear', limit=max_gap)
+        interpolated = series.interpolate(method="linear", limit=max_gap)
     else:
         interpolated = series
 
@@ -209,8 +218,7 @@ def handle_missing_months(
 
 
 def create_area_timeseries(
-    transactions: pd.DataFrame,
-    growth_metrics: pd.DataFrame
+    transactions: pd.DataFrame, growth_metrics: pd.DataFrame
 ) -> pd.DataFrame:
     """
     Create planning area time series for top areas by volume.
@@ -227,113 +235,106 @@ def create_area_timeseries(
 
     # Create month column
     transactions = transactions.copy()
-    transactions['month'] = transactions['transaction_date'].dt.to_period('M').astype(str)
+    transactions["month"] = transactions["transaction_date"].dt.to_period("M").astype(str)
 
     # Calculate transaction volume per area
-    area_volume = transactions.groupby('planning_area').size().sort_values(ascending=False)
+    area_volume = transactions.groupby("planning_area").size().sort_values(ascending=False)
 
     # Select top 20 areas
     top_areas = area_volume.head(20).index.tolist()
     logger.info(f"Selected top {len(top_areas)} areas by volume")
 
     # Filter to top areas
-    top_transactions = transactions[transactions['planning_area'].isin(top_areas)]
+    top_transactions = transactions[transactions["planning_area"].isin(top_areas)]
 
     # Aggregate to area-month level
-    area_agg = top_transactions.groupby(['planning_area', 'month']).agg({
-        'yoy_change_pct': 'median',
-        'price_psf': 'median',
-        'address': 'count'
-    }).reset_index()
+    area_agg = (
+        top_transactions.groupby(["planning_area", "month"])
+        .agg({"yoy_change_pct": "median", "price_psf": "median", "address": "count"})
+        .reset_index()
+    )
 
-    area_agg.columns = ['area', 'month', 'area_appreciation', 'area_price_psf', 'area_volume']
+    area_agg.columns = ["area", "month", "area_appreciation", "area_price_psf", "area_volume"]
 
     # Add amenity features (from original data)
-    amenity_cols = ['mrt_within_1km', 'hawker_within_1km', 'school_within_1km']
+    amenity_cols = ["mrt_within_1km", "hawker_within_1km", "school_within_1km"]
 
     # Only include if they exist
     available_amenity_cols = [c for c in amenity_cols if c in top_transactions.columns]
 
     if available_amenity_cols:
         # Aggregate amenities to area-month (use mean)
-        amenity_agg = top_transactions.groupby(['planning_area', 'month'])[available_amenity_cols].mean().reset_index()
-        amenity_agg.columns = ['area', 'month'] + [f'{col}_mean' for col in available_amenity_cols]
+        amenity_agg = (
+            top_transactions.groupby(["planning_area", "month"])[available_amenity_cols]
+            .mean()
+            .reset_index()
+        )
+        amenity_agg.columns = ["area", "month"] + [f"{col}_mean" for col in available_amenity_cols]
 
         # Merge
-        area_agg = area_agg.merge(amenity_agg, on=['area', 'month'], how='left')
+        area_agg = area_agg.merge(amenity_agg, on=["area", "month"], how="left")
 
     # Convert month to datetime
-    area_agg['month'] = pd.to_datetime(area_agg['month'])
+    area_agg["month"] = pd.to_datetime(area_agg["month"])
 
     # Filter to areas with sufficient months
-    area_counts = area_agg.groupby('area').size()
+    area_counts = area_agg.groupby("area").size()
     valid_areas = area_counts[area_counts >= MIN_MONTHS_REQUIRED].index
-    area_agg = area_agg[area_agg['area'].isin(valid_areas)]
+    area_agg = area_agg[area_agg["area"].isin(valid_areas)]
 
     logger.info(f"Created area timeseries: {len(area_agg)} records, {len(valid_areas)} areas")
 
     return area_agg
 
 
-def merge_macro_data(
-    regional_data: pd.DataFrame,
-    macro_data: dict
-) -> pd.DataFrame:
+def merge_macro_data(regional_data: pd.DataFrame, macro_data: dict) -> pd.DataFrame:
     """Merge macroeconomic data into regional timeseries."""
     logger.info("Merging macroeconomic data...")
 
     # Merge SORA
-    if 'sora' in macro_data:
-        sora = macro_data['sora'].copy()
-        sora['month'] = pd.to_datetime(sora['date']).dt.to_period('M').dt.to_timestamp()
+    if "sora" in macro_data:
+        sora = macro_data["sora"].copy()
+        sora["month"] = pd.to_datetime(sora["date"]).dt.to_period("M").dt.to_timestamp()
 
-        regional_data = regional_data.merge(
-            sora[['month', 'sora_rate']],
-            on='month',
-            how='left'
-        )
+        regional_data = regional_data.merge(sora[["month", "sora_rate"]], on="month", how="left")
 
         # Forward-fill missing rates
-        regional_data['sora_rate'] = regional_data['sora_rate'].ffill()
+        regional_data["sora_rate"] = regional_data["sora_rate"].ffill()
 
     # Merge CPI
-    if 'cpi' in macro_data:
-        cpi = macro_data['cpi'].copy()
-        cpi['month'] = pd.to_datetime(cpi['date']).dt.to_period('M').dt.to_timestamp()
+    if "cpi" in macro_data:
+        cpi = macro_data["cpi"].copy()
+        cpi["month"] = pd.to_datetime(cpi["date"]).dt.to_period("M").dt.to_timestamp()
 
-        regional_data = regional_data.merge(
-            cpi[['month', 'cpi']],
-            on='month',
-            how='left'
-        )
+        regional_data = regional_data.merge(cpi[["month", "cpi"]], on="month", how="left")
 
         # Interpolate missing CPI
-        regional_data['cpi'] = regional_data['cpi'].interpolate(method='linear', limit=3)
+        regional_data["cpi"] = regional_data["cpi"].interpolate(method="linear", limit=3)
 
     # Merge GDP (quarterly - convert to monthly)
-    if 'gdp' in macro_data:
-        gdp = macro_data['gdp'].copy()
+    if "gdp" in macro_data:
+        gdp = macro_data["gdp"].copy()
         # Convert quarter to month (start of quarter)
-        gdp['month'] = pd.to_datetime(gdp['quarter']).dt.to_period('M').dt.to_timestamp()
+        gdp["month"] = pd.to_datetime(gdp["quarter"]).dt.to_period("M").dt.to_timestamp()
 
-        regional_data = regional_data.merge(
-            gdp[['month', 'gdp_growth']],
-            on='month',
-            how='left'
-        )
+        regional_data = regional_data.merge(gdp[["month", "gdp_growth"]], on="month", how="left")
 
         # Forward-fill quarterly data to monthly
-        regional_data['gdp_growth'] = regional_data['gdp_growth'].ffill()
+        regional_data["gdp_growth"] = regional_data["gdp_growth"].ffill()
 
         # Fill any remaining NaN with mean
-        regional_data['gdp_growth'] = regional_data['gdp_growth'].fillna(regional_data['gdp_growth'].mean())
+        regional_data["gdp_growth"] = regional_data["gdp_growth"].fillna(
+            regional_data["gdp_growth"].mean()
+        )
 
     logger.info("Macroeconomic data merged")
 
     return regional_data
 
 
-def cap_outliers(df: pd.DataFrame, column: str, lower: float = -50, upper: float = 50) -> pd.DataFrame:
+def cap_outliers(
+    df: pd.DataFrame, column: str, lower: float = -50, upper: float = 50
+) -> pd.DataFrame:
     """Cap outliers in appreciation column."""
     if column not in df.columns:
         return df
@@ -348,10 +349,7 @@ def cap_outliers(df: pd.DataFrame, column: str, lower: float = -50, upper: float
     return df
 
 
-def run_preparation_pipeline(
-    start_date: str = '2021-01',
-    end_date: str = '2026-02'
-) -> tuple:
+def run_preparation_pipeline(start_date: str = "2021-01", end_date: str = "2026-02") -> tuple:
     """
     Run complete time series data preparation pipeline.
 
@@ -385,15 +383,15 @@ def run_preparation_pipeline(
     regional_data = merge_macro_data(regional_data, macro_data)
 
     # Handle missing months
-    for region in regional_data['region'].unique():
-        mask = regional_data['region'] == region
-        regional_data.loc[mask, 'regional_appreciation'] = handle_missing_months(
-            regional_data.loc[mask, 'regional_appreciation']
+    for region in regional_data["region"].unique():
+        mask = regional_data["region"] == region
+        regional_data.loc[mask, "regional_appreciation"] = handle_missing_months(
+            regional_data.loc[mask, "regional_appreciation"]
         )
 
     # Cap outliers
-    regional_data = cap_outliers(regional_data, 'regional_appreciation')
-    area_data = cap_outliers(area_data, 'area_appreciation')
+    regional_data = cap_outliers(regional_data, "regional_appreciation")
+    area_data = cap_outliers(area_data, "area_appreciation")
 
     # Save outputs
     l5_dir = Config.PARQUETS_DIR / "L5"
@@ -404,17 +402,18 @@ def run_preparation_pipeline(
 
     logger.info("=" * 60)
     logger.info("Time series preparation complete!")
-    logger.info(f"  Regional: {len(regional_data)} records, {len(regional_data['region'].unique())} regions")
+    logger.info(
+        f"  Regional: {len(regional_data)} records, {len(regional_data['region'].unique())} regions"
+    )
     logger.info(f"  Area: {len(area_data)} records, {len(area_data['area'].unique())} areas")
     logger.info("=" * 60)
 
     return regional_data, area_data
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     run_preparation_pipeline()

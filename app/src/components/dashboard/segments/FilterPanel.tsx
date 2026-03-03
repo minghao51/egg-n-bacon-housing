@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/FilterPanel.tsx
-import { FilterState, InvestmentGoal, PropertyType, Region, TimeHorizon, SpatialCluster } from '@/types/segments';
+import type { FilterState, InvestmentGoal, PropertyType, Region, TimeHorizon, SpatialCluster } from '@/types/segments';
 
 interface FilterPanelProps {
   filters: FilterState;

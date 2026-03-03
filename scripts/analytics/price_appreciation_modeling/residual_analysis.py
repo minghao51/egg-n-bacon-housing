@@ -21,7 +21,7 @@ from pathlib import Path
 import joblib
 import matplotlib
 
-matplotlib.use('Agg')  # Non-interactive backend
+matplotlib.use("Agg")  # Non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -85,9 +85,7 @@ def load_data():
     return predictions_df, test_df, model, predictions_df
 
 
-def analyze_residual_distribution(
-    residuals: pd.Series, output_dir: Path
-) -> dict:
+def analyze_residual_distribution(residuals: pd.Series, output_dir: Path) -> dict:
     """Analyze residual distribution.
 
     Args:
@@ -119,21 +117,21 @@ def analyze_residual_distribution(
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
     # Histogram
-    axes[0].hist(residuals, bins=50, density=True, alpha=0.7, edgecolor='black')
-    axes[0].axvline(0, color='red', linestyle='--', linewidth=2, label='Zero')
-    axes[0].set_xlabel('Residuals (Actual - Predicted)')
-    axes[0].set_ylabel('Density')
-    axes[0].set_title('Residual Distribution')
+    axes[0].hist(residuals, bins=50, density=True, alpha=0.7, edgecolor="black")
+    axes[0].axvline(0, color="red", linestyle="--", linewidth=2, label="Zero")
+    axes[0].set_xlabel("Residuals (Actual - Predicted)")
+    axes[0].set_ylabel("Density")
+    axes[0].set_title("Residual Distribution")
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
 
     # Q-Q plot
     stats.probplot(residuals, dist="norm", plot=axes[1])
-    axes[1].set_title('Q-Q Plot: Normality Check')
+    axes[1].set_title("Q-Q Plot: Normality Check")
     axes[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(output_dir / "residual_distribution.png", dpi=150, bbox_inches='tight')
+    plt.savefig(output_dir / "residual_distribution.png", dpi=150, bbox_inches="tight")
     plt.close()
 
     logger.info(f"  Saved distribution plots to {output_dir}")
@@ -164,22 +162,22 @@ def analyze_heteroscedasticity(
 
     # Residuals vs Fitted
     axes[0].scatter(y_pred, residuals, alpha=0.1, s=1)
-    axes[0].axhline(0, color='red', linestyle='--', linewidth=2)
-    axes[0].set_xlabel('Fitted Values (Predicted YoY %)')
-    axes[0].set_ylabel('Residuals')
-    axes[0].set_title('Residuals vs Fitted (Homoscedasticity Check)')
+    axes[0].axhline(0, color="red", linestyle="--", linewidth=2)
+    axes[0].set_xlabel("Fitted Values (Predicted YoY %)")
+    axes[0].set_ylabel("Residuals")
+    axes[0].set_title("Residuals vs Fitted (Homoscedasticity Check)")
     axes[0].grid(True, alpha=0.3)
 
     # Residuals vs Actual
     axes[1].scatter(y_test, residuals, alpha=0.1, s=1)
-    axes[1].axhline(0, color='red', linestyle='--', linewidth=2)
-    axes[1].set_xlabel('Actual Values (YoY %)')
-    axes[1].set_ylabel('Residuals')
-    axes[1].set_title('Residuals vs Actual')
+    axes[1].axhline(0, color="red", linestyle="--", linewidth=2)
+    axes[1].set_xlabel("Actual Values (YoY %)")
+    axes[1].set_ylabel("Residuals")
+    axes[1].set_title("Residuals vs Actual")
     axes[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(output_dir / "heteroscedasticity_check.png", dpi=150, bbox_inches='tight')
+    plt.savefig(output_dir / "heteroscedasticity_check.png", dpi=150, bbox_inches="tight")
     plt.close()
 
     # Breusch-Pagan test (simplified version)
@@ -264,7 +262,9 @@ def analyze_spatial_autocorrelation(
         results["n_samples"] = len(residuals_valid)
 
         logger.info(f"  Moran's I: {moran_i:.4f}")
-        logger.info(f"  Interpretation: {'Positive spatial autocorrelation' if moran_i > 0 else 'Negative spatial autocorrelation' if moran_i < 0 else 'No spatial pattern'}")
+        logger.info(
+            f"  Interpretation: {'Positive spatial autocorrelation' if moran_i > 0 else 'Negative spatial autocorrelation' if moran_i < 0 else 'No spatial pattern'}"
+        )
 
         # Create spatial plot
         fig, ax = plt.subplots(figsize=(12, 8))
@@ -285,7 +285,7 @@ def analyze_spatial_autocorrelation(
         ax.set_title("Spatial Distribution of Residuals")
         plt.colorbar(scatter, ax=ax, label="Residuals (YoY %)")
         plt.tight_layout()
-        plt.savefig(output_dir / "spatial_residual_map.png", dpi=150, bbox_inches='tight')
+        plt.savefig(output_dir / "spatial_residual_map.png", dpi=150, bbox_inches="tight")
         plt.close()
 
         logger.info(f"  Saved spatial map to {output_dir}")
@@ -326,17 +326,14 @@ def analyze_temporal_autocorrelation(
     else:
         residuals_sample = residuals.reset_index(drop=True)
 
-    logger.info(f"  Analyzing {len(residual_sample):,} records")
+    logger.info(f"  Analyzing {len(residuals_sample):,} records")
 
     # Calculate autocorrelation
     max_lag = min(12, len(residuals_sample) - 1)
     acf_values = [1.0]  # Lag 0 is always 1.0
 
     for lag in range(1, max_lag + 1):
-        lag_corr = np.corrcoef(
-            residuals_sample.iloc[:-lag],
-            residuals_sample.iloc[lag:]
-        )[0, 1]
+        lag_corr = np.corrcoef(residuals_sample.iloc[:-lag], residuals_sample.iloc[lag:])[0, 1]
         acf_values.append(lag_corr)
 
     results["acf"] = acf_values
@@ -346,20 +343,22 @@ def analyze_temporal_autocorrelation(
     fig, ax = plt.subplots(figsize=(10, 5))
 
     ax.stem(results["lags"], acf_values, basefmt=" ")
-    ax.axhline(0, color='black', linestyle='-', linewidth=1)
-    ax.axhline(0, color='red', linestyle='--', linewidth=2, alpha=0.5)
-    ax.set_xlabel('Lag (months)')
-    ax.set_ylabel('Autocorrelation')
-    ax.set_title('Residual Autocorrelation Function (ACF)')
+    ax.axhline(0, color="black", linestyle="-", linewidth=1)
+    ax.axhline(0, color="red", linestyle="--", linewidth=2, alpha=0.5)
+    ax.set_xlabel("Lag (months)")
+    ax.set_ylabel("Autocorrelation")
+    ax.set_title("Residual Autocorrelation Function (ACF)")
     ax.grid(True, alpha=0.3)
 
     # Add confidence bands
     n = len(residuals_sample)
     conf_level = 1.96 / np.sqrt(n)
-    ax.fill_between(results["lags"], -conf_level, conf_level, alpha=0.2, color='gray', label='95% CI')
+    ax.fill_between(
+        results["lags"], -conf_level, conf_level, alpha=0.2, color="gray", label="95% CI"
+    )
 
     plt.tight_layout()
-    plt.savefig(output_dir / "temporal_autocorrelation.png", dpi=150, bbox_inches='tight')
+    plt.savefig(output_dir / "temporal_autocorrelation.png", dpi=150, bbox_inches="tight")
     plt.close()
 
     logger.info(f"  Lag-1 autocorrelation: {acf_values[1]:.4f}")
@@ -369,8 +368,11 @@ def analyze_temporal_autocorrelation(
 
 
 def analyze_error_patterns(
-    test_df: pd.DataFrame, y_test: pd.Series, y_pred: pd.Series, residuals: pd.Series,
-    output_dir: Path
+    test_df: pd.DataFrame,
+    y_test: pd.Series,
+    y_pred: pd.Series,
+    residuals: pd.Series,
+    output_dir: Path,
 ) -> pd.DataFrame:
     """Analyze error patterns by segment.
 
@@ -390,14 +392,16 @@ def analyze_error_patterns(
     test_df_aligned = test_df.loc[y_test.index].copy()
 
     # Create analysis DataFrame
-    error_df = pd.DataFrame({
-        "actual": y_test.values,
-        "predicted": y_pred.values,
-        "residual": residuals.values,
-        "abs_error": np.abs(residuals).values,
-        "squared_error": residuals.values ** 2,
-        "sign_correct": (np.sign(y_pred.values) == np.sign(y_test.values)),
-    })
+    error_df = pd.DataFrame(
+        {
+            "actual": y_test.values,
+            "predicted": y_pred.values,
+            "residual": residuals.values,
+            "abs_error": np.abs(residuals).values,
+            "squared_error": residuals.values**2,
+            "sign_correct": (np.sign(y_pred.values) == np.sign(y_test.values)),
+        }
+    )
 
     # Add segment information
     if "property_type" in test_df_aligned.columns:
@@ -414,44 +418,68 @@ def analyze_error_patterns(
 
     # By property type
     if "property_type" in error_df.columns:
-        prop_stats = error_df.groupby("property_type").agg({
-            "abs_error": ["mean", "median", "std", "count"],
-            "sign_correct": "mean",
-        }).round(2)
+        prop_stats = (
+            error_df.groupby("property_type")
+            .agg(
+                {
+                    "abs_error": ["mean", "median", "std", "count"],
+                    "sign_correct": "mean",
+                }
+            )
+            .round(2)
+        )
 
         logger.info("\n  By Property Type:")
         for prop_type in prop_stats.index:
             row = prop_stats.loc[prop_type]
-            logger.info(f"    {prop_type}: MAE={row[('abs_error', 'mean')]:.1f}, Acc={row[('sign_correct', 'mean')]*100:.1f}%")
+            logger.info(
+                f"    {prop_type}: MAE={row[('abs_error', 'mean')]:.1f}, Acc={row[('sign_correct', 'mean')] * 100:.1f}%"
+            )
 
         segment_stats.append(prop_stats)
 
     # By market tier
     if "market_tier" in error_df.columns:
-        tier_stats = error_df.groupby("market_tier").agg({
-            "abs_error": ["mean", "median", "std", "count"],
-            "sign_correct": "mean",
-        }).round(2)
+        tier_stats = (
+            error_df.groupby("market_tier")
+            .agg(
+                {
+                    "abs_error": ["mean", "median", "std", "count"],
+                    "sign_correct": "mean",
+                }
+            )
+            .round(2)
+        )
 
         logger.info("\n  By Market Tier:")
         for tier in tier_stats.index:
             row = tier_stats.loc[tier]
-            logger.info(f"    {tier}: MAE={row[('abs_error', 'mean')]:.1f}, Acc={row[('sign_correct', 'mean')]*100:.1f}%")
+            logger.info(
+                f"    {tier}: MAE={row[('abs_error', 'mean')]:.1f}, Acc={row[('sign_correct', 'mean')] * 100:.1f}%"
+            )
 
         segment_stats.append(tier_stats)
 
     # Worst areas
     if "planning_area" in error_df.columns:
-        area_stats = error_df.groupby("planning_area").agg({
-            "abs_error": "mean",
-            "sign_correct": "mean",
-            "residual": "count",
-        }).sort_values("abs_error", ascending=False)
+        area_stats = (
+            error_df.groupby("planning_area")
+            .agg(
+                {
+                    "abs_error": "mean",
+                    "sign_correct": "mean",
+                    "residual": "count",
+                }
+            )
+            .sort_values("abs_error", ascending=False)
+        )
 
         logger.info("\n  Top 10 Worst Predicted Planning Areas:")
         for area in area_stats.head(10).index:
             row = area_stats.loc[area]
-            logger.info(f"    {area}: MAE={row['abs_error']:.1f}, Acc={row['sign_correct']*100:.1f}%, Count={int(row['residual'])}")
+            logger.info(
+                f"    {area}: MAE={row['abs_error']:.1f}, Acc={row['sign_correct'] * 100:.1f}%, Count={int(row['residual'])}"
+            )
 
         # Save top areas
         area_stats.head(50).to_csv(output_dir / "error_by_planning_area.csv")
@@ -468,15 +496,17 @@ def analyze_error_patterns(
         axes[0].figure.suptitle("")  # Remove default title
 
         # Bar plot by property type
-        prop_mae = error_df.groupby("property_type")["abs_error"].mean().sort_values(ascending=False)
+        prop_mae = (
+            error_df.groupby("property_type")["abs_error"].mean().sort_values(ascending=False)
+        )
         prop_mae.plot(kind="bar", ax=axes[1], color="steelblue")
         axes[1].set_xlabel("Property Type")
         axes[1].set_ylabel("Mean Absolute Error")
         axes[1].set_title("Mean Absolute Error by Property Type")
-        axes[1].tick_params(axis='x', rotation=45)
+        axes[1].tick_params(axis="x", rotation=45)
 
         plt.tight_layout()
-        plt.savefig(output_dir / "error_by_property_type.png", dpi=150, bbox_inches='tight')
+        plt.savefig(output_dir / "error_by_property_type.png", dpi=150, bbox_inches="tight")
         plt.close()
 
     logger.info(f"\n  Saved error pattern analysis to {output_dir}")
@@ -485,8 +515,11 @@ def analyze_error_patterns(
 
 
 def generate_improvement_recommendations(
-    dist_stats: dict, hetero_stats: dict, spatial_stats: dict, temporal_stats: dict,
-    output_dir: Path
+    dist_stats: dict,
+    hetero_stats: dict,
+    spatial_stats: dict,
+    temporal_stats: dict,
+    output_dir: Path,
 ) -> None:
     """Generate improvement recommendations based on diagnostics.
 
@@ -503,27 +536,47 @@ def generate_improvement_recommendations(
 
     # Distribution issues
     if abs(dist_stats["skewness"]) > 1:
-        recommendations.append("1. RESIDUAL SKEWNESS: Residuals are highly skewed (skewness = {:.2f}). Consider target transformation (log, Box-Cox) or robust regression.".format(dist_stats["skewness"]))
+        recommendations.append(
+            "1. RESIDUAL SKEWNESS: Residuals are highly skewed (skewness = {:.2f}). Consider target transformation (log, Box-Cox) or robust regression.".format(
+                dist_stats["skewness"]
+            )
+        )
 
     if dist_stats["kurtosis"] > 5 or dist_stats["kurtosis"] < -1:
-        recommendations.append("2. HEAVY TAILS: Residuals have heavy tails (kurtosis = {:.2f}). Some extreme errors exist - consider outlier removal or separate models for luxury properties.".format(dist_stats["kurtosis"]))
+        recommendations.append(
+            "2. HEAVY TAILS: Residuals have heavy tails (kurtosis = {:.2f}). Some extreme errors exist - consider outlier removal or separate models for luxury properties.".format(
+                dist_stats["kurtosis"]
+            )
+        )
 
     # Heteroscedasticity
     if hetero_stats.get("is_heteroscedastic", False):
-        recommendations.append("3. HETEROSCEDASTICITY: Variance is not constant across fitted values. Use weighted regression, robust standard errors, or transform target variable.")
+        recommendations.append(
+            "3. HETEROSCEDASTICITY: Variance is not constant across fitted values. Use weighted regression, robust standard errors, or transform target variable."
+        )
 
     # Spatial autocorrelation
     if spatial_stats.get("moran_i", 0) > 0.1:
-        recommendations.append("4. SPATIAL AUTOCORRELATION: Residuals show positive spatial clustering (Moran's I = {:.4f}). Consider adding spatial lag features or regional models.".format(spatial_stats["moran_i"]))
+        recommendations.append(
+            "4. SPATIAL AUTOCORRELATION: Residuals show positive spatial clustering (Moran's I = {:.4f}). Consider adding spatial lag features or regional models.".format(
+                spatial_stats["moran_i"]
+            )
+        )
 
     # Temporal autocorrelation
     if temporal_stats.get("acf") and abs(temporal_stats["acf"][1]) > 0.1:
-        recommendations.append("5. TEMPORAL AUTOCORRELATION: Residuals show autocorrelation at lag 1 ({:.4f}). Add autoregressive features or use time series models.".format(temporal_stats["acf"][1]))
+        recommendations.append(
+            "5. TEMPORAL AUTOCORRELATION: Residuals show autocorrelation at lag 1 ({:.4f}). Add autoregressive features or use time series models.".format(
+                temporal_stats["acf"][1]
+            )
+        )
 
     # General recommendations
     recommendations.append("\nGENERAL IMPROVEMENTS:")
     recommendations.append("- Add more temporal features: longer lags, polynomial trends")
-    recommendations.append("- Add interaction features: price × amenities, property type × location")
+    recommendations.append(
+        "- Add interaction features: price × amenities, property type × location"
+    )
     recommendations.append("- Consider separate models by property type (HDB vs Condo vs EC)")
     recommendations.append("- Use ensemble methods (stacking, blending) to reduce variance")
     recommendations.append("- Add macroeconomic features (interest rates, policy changes)")
@@ -558,12 +611,7 @@ def main():
     logger.info("=" * 60)
 
     # Setup output directory
-    output_dir = (
-        Config.DATA_DIR
-        / "analysis"
-        / "price_appreciation_modeling"
-        / "residual_analysis"
-    )
+    output_dir = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "residual_analysis"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load data

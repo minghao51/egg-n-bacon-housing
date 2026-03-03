@@ -9,8 +9,12 @@
 
 import React, { useRef } from 'react';
 import { LayerGroup, GeoJSON } from 'react-leaflet';
-import { FeatureImpactData, LayerId } from '../../../../types/analytics';
-import { GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
+import type {
+  FeatureImpactData,
+  LayerId,
+  GeoJSONFeature,
+  GeoJSONFeatureCollection,
+} from '../../../../types/analytics';
 import { sequentialScale } from '../../../../utils/colorScales';
 
 interface FeatureImpactOverlayProps {

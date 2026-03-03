@@ -104,7 +104,9 @@ def prepare_features(
         if X[col].isna().sum() > 0:
             median_val = X[col].median()
             X[col] = X[col].fillna(median_val)
-            logger.info(f"    Filled {X[col].isna().sum():,} missing values in '{col}' with median {median_val:.2f}")
+            logger.info(
+                f"    Filled {X[col].isna().sum():,} missing values in '{col}' with median {median_val:.2f}"
+            )
 
     # Drop columns with too many missing values (>50%)
     missing_pct = X.isna().sum() / len(X) * 100
@@ -287,8 +289,11 @@ def train_xgboost(
 
 
 def train_stacking_ensemble(
-    results: list[dict], X_train: pd.DataFrame, y_train: pd.Series,
-    X_test: pd.DataFrame, y_test: pd.Series,
+    results: list[dict],
+    X_train: pd.DataFrame,
+    y_train: pd.Series,
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
 ) -> dict:
     """Train stacking ensemble model.
 
@@ -362,7 +367,9 @@ def save_models(results: list[dict], output_dir: Path) -> None:
 
 
 def calculate_feature_importance(
-    results: list[dict], X_test: pd.DataFrame, y_test: pd.Series,
+    results: list[dict],
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
 ) -> pd.DataFrame:
     """Calculate feature importance using permutation importance.
 
@@ -393,11 +400,13 @@ def calculate_feature_importance(
                 n_jobs=-1,
             )
 
-            imp_df = pd.DataFrame({
-                "feature": X_test.columns,
-                "importance": perm_importance.importances_mean,
-                "std": perm_importance.importances_std,
-            }).sort_values("importance", ascending=False)
+            imp_df = pd.DataFrame(
+                {
+                    "feature": X_test.columns,
+                    "importance": perm_importance.importances_mean,
+                    "std": perm_importance.importances_std,
+                }
+            ).sort_values("importance", ascending=False)
 
             imp_df["model"] = result["name"]
             importance_dfs.append(imp_df)
@@ -411,7 +420,12 @@ def calculate_feature_importance(
         return pd.DataFrame()
 
     combined_importance = pd.concat(importance_dfs, ignore_index=True)
-    top_features = combined_importance.groupby("feature")["importance"].max().sort_values(ascending=False).head(20)
+    top_features = (
+        combined_importance.groupby("feature")["importance"]
+        .max()
+        .sort_values(ascending=False)
+        .head(20)
+    )
 
     return top_features
 
@@ -521,7 +535,13 @@ def main():
     feature_importance = calculate_feature_importance(results, X_test, y_test)
 
     if not feature_importance.empty:
-        importance_path = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "data" / "feature_importance.csv"
+        importance_path = (
+            Config.DATA_DIR
+            / "analysis"
+            / "price_appreciation_modeling"
+            / "data"
+            / "feature_importance.csv"
+        )
         importance_path.parent.mkdir(parents=True, exist_ok=True)
         feature_importance.to_csv(importance_path, index=False)
         logger.info(f"  Saved feature importance to {importance_path}")
@@ -532,7 +552,9 @@ def main():
     logger.info("\nCreating model comparison table...")
     comparison_df = create_comparison_table(results)
 
-    comparison_path = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "model_comparison.csv"
+    comparison_path = (
+        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "model_comparison.csv"
+    )
     comparison_path.parent.mkdir(parents=True, exist_ok=True)
     comparison_df.to_csv(comparison_path, index=False)
     logger.info(f"  Saved model comparison to {comparison_path}")
@@ -544,13 +566,21 @@ def main():
 
     # 8. Save predictions
     logger.info("\nSaving predictions...")
-    predictions_path = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "predictions" / "test_predictions.parquet"
+    predictions_path = (
+        Config.DATA_DIR
+        / "analysis"
+        / "price_appreciation_modeling"
+        / "predictions"
+        / "test_predictions.parquet"
+    )
     predictions_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Combine all predictions
-    all_predictions = pd.DataFrame({
-        "actual": y_test,
-    })
+    all_predictions = pd.DataFrame(
+        {
+            "actual": y_test,
+        }
+    )
 
     for result in results:
         if "y_pred_test" in result:

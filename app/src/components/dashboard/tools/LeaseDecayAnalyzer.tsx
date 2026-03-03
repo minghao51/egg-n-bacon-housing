@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { Persona } from '../PersonaSelector';
 import TrendsMap from '../TrendsMap';
+import ClientChart from '@/components/charts/ClientChart';
 
 interface LeaseBand {
   lease_age_band: string;
@@ -157,16 +158,18 @@ export default function LeaseDecayAnalyzer({ data, persona }: LeaseDecayAnalyzer
       {/* Visualization */}
       <div>
         <h4 className="font-medium mb-3">Lease Decay Curve</h4>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={chartData}>
+        <ClientChart style={{ height: 250 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="age" label={{ value: 'Remaining Lease (years)', position: 'insideBottom', offset: -5 }} />
             <YAxis label={{ value: 'Discount (%)', angle: -90, position: 'insideLeft' }} />
             <Tooltip />
             <Line type="monotone" dataKey="discount" stroke="#f97316" strokeWidth={2} dot={{ r: 3 }} />
             <ReferenceLine x={remainingLease} stroke="#3b82f6" strokeDasharray="5 5" label="Your Position" />
-          </LineChart>
-        </ResponsiveContainer>
+            </LineChart>
+          </ResponsiveContainer>
+        </ClientChart>
       </div>
       </div>
     </div>

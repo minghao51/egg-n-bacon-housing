@@ -42,7 +42,9 @@ def load_data():
     return train_df, test_df
 
 
-def prepare_features(df: pd.DataFrame, target_col: str = "yoy_change_pct", max_missing_pct: float = 0.2):
+def prepare_features(
+    df: pd.DataFrame, target_col: str = "yoy_change_pct", max_missing_pct: float = 0.2
+):
     """Select and prepare features for modeling.
 
     Args:
@@ -69,7 +71,9 @@ def prepare_features(df: pd.DataFrame, target_col: str = "yoy_change_pct", max_m
     missing_pct = feature_df.isna().sum() / len(feature_df)
     valid_features = missing_pct[missing_pct <= max_missing_pct].index.tolist()
 
-    logger.info(f"    Selected {len(valid_features)}/{len(numeric_cols)} features (missing < {max_missing_pct*100:.0f}%)")
+    logger.info(
+        f"    Selected {len(valid_features)}/{len(numeric_cols)} features (missing < {max_missing_pct * 100:.0f}%)"
+    )
 
     # Keep only valid features
     feature_df = feature_df[valid_features]
@@ -85,9 +89,9 @@ def prepare_features(df: pd.DataFrame, target_col: str = "yoy_change_pct", max_m
 
 def train_model(X_train, y_train, X_test, y_test, property_type: str):
     """Train XGBoost model for specific property type."""
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info(f"Training {property_type} Model")
-    logger.info(f"{'='*60}")
+    logger.info(f"{'=' * 60}")
     logger.info(f"  Train samples: {len(X_train):,}")
     logger.info(f"  Test samples: {len(X_test):,}")
     logger.info(f"  Features: {len(X_train.columns)}")
@@ -159,7 +163,9 @@ def main():
     logger.info("=" * 60)
 
     # Setup output directory
-    output_dir = Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "models_by_property_type"
+    output_dir = (
+        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "models_by_property_type"
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load data
@@ -187,7 +193,9 @@ def main():
         test_subset = test_df[test_mask].copy()
 
         if len(train_subset) < 1000:
-            logger.warning(f"\n  Skipping {prop_name}: insufficient training data ({len(train_subset)} samples)")
+            logger.warning(
+                f"\n  Skipping {prop_name}: insufficient training data ({len(train_subset)} samples)"
+            )
             continue
 
         # Prepare features (with imputation)
@@ -289,8 +297,10 @@ def main():
         mean_squared_error(all_predictions["actual"], all_predictions["predicted"])
     )
     overall_directional = (
-        (all_predictions["actual"] > 0) == (all_predictions["predicted"] > 0)
-    ).sum() / len(all_predictions) * 100
+        ((all_predictions["actual"] > 0) == (all_predictions["predicted"] > 0)).sum()
+        / len(all_predictions)
+        * 100
+    )
 
     logger.info(f"  R²: {overall_r2:.4f}")
     logger.info(f"  MAE: {overall_mae:.2f}%")

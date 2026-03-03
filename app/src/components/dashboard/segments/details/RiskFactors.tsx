@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/details/RiskFactors.tsx
-import { Segment } from '@/types/segments';
+import type { Segment } from '@/types/segments';
 
 interface RiskFactorsProps {
   segment: Segment;

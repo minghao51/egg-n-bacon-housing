@@ -12,6 +12,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+import ClientChart from '@/components/charts/ClientChart';
 import PriceTrendsChart from './PriceTrendsChart';
 import TransactionVolumeChart from './TransactionVolumeChart';
 
@@ -169,7 +170,7 @@ export default function MarketOverviewDashboard({
           <h3 className="text-lg font-semibold mb-6 text-foreground">
             Property Type Distribution
           </h3>
-          <div className="h-[300px]">
+          <ClientChart className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%" minWidth={100}>
               <PieChart>
                 <Pie
@@ -197,14 +198,14 @@ export default function MarketOverviewDashboard({
                 />
               </PieChart>
             </ResponsiveContainer>
-          </div>
+          </ClientChart>
         </div>
 
         <div className="bg-card p-6 rounded-lg border border-border">
           <h3 className="text-lg font-semibold mb-6 text-foreground">
             Top 10 Planning Areas (Volume)
           </h3>
-          <div className="h-[300px]">
+          <ClientChart className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%" minWidth={100}>
               <BarChart
                 layout="vertical"
@@ -228,7 +229,7 @@ export default function MarketOverviewDashboard({
                 <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </ClientChart>
         </div>
       </div>
 

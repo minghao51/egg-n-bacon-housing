@@ -5,6 +5,7 @@ Refresh OneMap API token.
 This script attempts to get a new OneMap access token using the credentials
 in your .env file and updates the .env file with the new token.
 """
+
 import os
 import sys
 from pathlib import Path
@@ -25,8 +26,8 @@ def refresh_onemap_token() -> bool:
     logger = get_logger(__name__)
 
     url = "https://www.onemap.gov.sg/api/auth/post/getToken"
-    email = os.environ.get('ONEMAP_EMAIL')
-    password = os.environ.get('ONEMAP_EMAIL_PASSWORD')
+    email = os.environ.get("ONEMAP_EMAIL")
+    password = os.environ.get("ONEMAP_EMAIL_PASSWORD")
 
     logger.info("=" * 60)
     logger.info("OneMap Token Refresh")
@@ -52,7 +53,7 @@ def refresh_onemap_token() -> bool:
 
         if response.status_code == 200:
             data = response.json()
-            new_token = data.get('access_token')
+            new_token = data.get("access_token")
 
             logger.info("SUCCESS! Got new token")
             logger.info(f"Token (first 50 chars): {new_token[:50]}...")
@@ -62,13 +63,13 @@ def refresh_onemap_token() -> bool:
             env_content = env_path.read_text()
 
             # Replace the token line
-            lines = env_content.split('\n')
+            lines = env_content.split("\n")
             for i, line in enumerate(lines):
-                if line.startswith('ONEMAP_TOKEN='):
+                if line.startswith("ONEMAP_TOKEN="):
                     lines[i] = f"ONEMAP_TOKEN={new_token}"
                     break
 
-            env_path.write_text('\n'.join(lines))
+            env_path.write_text("\n".join(lines))
             logger.info("Updated .env file with new token")
             logger.info("You can now run the pipeline:")
             logger.info("  uv run python scripts/run_pipeline.py --stage L1 --parallel")
@@ -76,7 +77,7 @@ def refresh_onemap_token() -> bool:
 
         elif response.status_code == 400:
             error_data = response.json()
-            error_msg = error_data.get('error', 'Unknown error')
+            error_msg = error_data.get("error", "Unknown error")
             logger.error("Authentication Failed")
             logger.error(f"Error: {error_msg}")
             logger.info("This means:")

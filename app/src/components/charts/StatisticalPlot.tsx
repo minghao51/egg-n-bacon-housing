@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { ChartData } from '@/utils/data-parser';
+import ClientChart from './ClientChart';
 
 interface StatisticalPlotProps {
   data: ChartData;
@@ -53,8 +54,8 @@ export default function StatisticalPlot({
   });
 
   return (
-    <div className="w-full">
-      <ResponsiveContainer width="100%" height={height}>
+    <ClientChart className="w-full" style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
         <ScatterChart data={groupedData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
           <XAxis
@@ -94,6 +95,6 @@ export default function StatisticalPlot({
           })}
         </ScatterChart>
       </ResponsiveContainer>
-    </div>
+    </ClientChart>
   );
 }

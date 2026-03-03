@@ -42,9 +42,7 @@ def main():
 
     X = df_model[feature_cols]
     y = df_model["price"]
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     logger.info(f"Train: {len(X_train):,}, Test: {len(X_test):,}")
 
@@ -62,16 +60,18 @@ def main():
     y_pred = model.predict(X_test)
 
     mse = mean_squared_error(y_test, y_pred)
-    rmse = mse ** 0.5
+    rmse = mse**0.5
     r2 = r2_score(y_test, y_pred)
 
     logger.info(f"RMSE: ${rmse:,.0f}")
     logger.info(f"R²: {r2:.3f}")
 
-    importance = pd.DataFrame({
-        "feature": feature_cols,
-        "importance": model.feature_importances_,
-    }).sort_values("importance", ascending=False)
+    importance = pd.DataFrame(
+        {
+            "feature": feature_cols,
+            "importance": model.feature_importances_,
+        }
+    ).sort_values("importance", ascending=False)
 
     logger.info("\nFeature Importance:")
     for _, row in importance.head(10).iterrows():
@@ -85,15 +85,17 @@ def main():
     save_parquet(results, "L4_price_predictions", source="XGBoost model")
     logger.info("✅ Saved predictions to L4_price_predictions.parquet")
 
-    print({
-        "key_findings": [
-            f"Trained XGBoost model on {len(X_train):,} transactions",
-            f"Test RMSE: ${rmse:,.0f} ({rmse/y_train.mean()*100:.1f}% of mean price)",
-            f"R² score: {r2:.3f}",
-            f"Top feature: {importance.iloc[0]['feature']}",
-        ],
-        "outputs": ["L4_price_predictions.parquet"],
-    })
+    print(
+        {
+            "key_findings": [
+                f"Trained XGBoost model on {len(X_train):,} transactions",
+                f"Test RMSE: ${rmse:,.0f} ({rmse / y_train.mean() * 100:.1f}% of mean price)",
+                f"R² score: {r2:.3f}",
+                f"Top feature: {importance.iloc[0]['feature']}",
+            ],
+            "outputs": ["L4_price_predictions.parquet"],
+        }
+    )
 
 
 if __name__ == "__main__":

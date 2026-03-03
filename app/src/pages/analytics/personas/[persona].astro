@@ -26,6 +26,10 @@ const recommendedDocs = allDocs.filter(doc =>
 
 // If no docs have personas field, show all docs (fallback)
 const docsToShow = recommendedDocs.length > 0 ? recommendedDocs : allDocs;
+
+function getDocSlug(docId: string): string {
+  return docId.replace(/\.mdx$/, '');
+}
 ---
 
 <Layout title={`${personaData.title} - Singapore Housing Analytics`}>
@@ -95,13 +99,14 @@ const docsToShow = recommendedDocs.length > 0 ? recommendedDocs : allDocs;
         </h2>
         <div class="space-y-4">
           {docsToShow.map((doc) => {
+            const docSlug = getDocSlug(doc.id);
             // Find the reason from persona content if available
-            const recommendation = personaData.recommendedDocs.find(r => r.slug === doc.id);
+            const recommendation = personaData.recommendedDocs.find(r => r.slug === docSlug);
             const reason = recommendation?.reason || '';
 
             return (
               <a
-                href={`${import.meta.env.BASE_URL}analytics/${doc.id}`}
+                href={`${import.meta.env.BASE_URL}analytics/${docSlug}`}
                 class="block bg-card border border-border rounded-lg p-6 hover:bg-accent transition-colors"
               >
                 <div class="flex items-start justify-between">

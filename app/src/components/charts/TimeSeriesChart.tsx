@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { ChartData } from '@/utils/data-parser';
+import ClientChart from './ClientChart';
 
 interface TimeSeriesChartProps {
   data: ChartData;
@@ -41,8 +42,8 @@ export default function TimeSeriesChart({
   ];
 
   return (
-    <div className="w-full">
-      <ResponsiveContainer width="100%" height={height}>
+    <ClientChart className="w-full" style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
           <XAxis
@@ -76,6 +77,6 @@ export default function TimeSeriesChart({
           ))}
         </LineChart>
       </ResponsiveContainer>
-    </div>
+    </ClientChart>
   );
 }

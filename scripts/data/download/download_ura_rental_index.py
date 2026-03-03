@@ -39,7 +39,7 @@ def download_ura_rental_index() -> pd.DataFrame:
     try:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
-        df = pd.read_csv(StringIO(response.content.decode('utf-8')))
+        df = pd.read_csv(StringIO(response.content.decode("utf-8")))
         logger.info(f"Downloaded {len(df)} quarters of rental index data")
         logger.info(f"Columns: {df.columns.tolist()}")
         return df
@@ -59,25 +59,25 @@ def process_rental_index(df: pd.DataFrame) -> pd.DataFrame:
 
     if len(df.columns) > 0:
         first_col = df.columns[0]
-        df['QUARTER'] = pd.to_datetime(df[first_col], errors='coerce')
-        df['YEAR'] = df['QUARTER'].dt.year
-        df['QUARTER_NUM'] = df['QUARTER'].dt.quarter
+        df["QUARTER"] = pd.to_datetime(df[first_col], errors="coerce")
+        df["YEAR"] = df["QUARTER"].dt.year
+        df["QUARTER_NUM"] = df["QUARTER"].dt.quarter
 
     index_col = None
     for col in df.columns:
-        if 'INDEX' in col or 'RENTAL' in col:
+        if "INDEX" in col or "RENTAL" in col:
             index_col = col
             break
     if index_col is None and len(df.columns) > 1:
         index_col = df.columns[1]
 
     if index_col:
-        df['RENTAL_INDEX'] = pd.to_numeric(df[index_col], errors='coerce')
+        df["RENTAL_INDEX"] = pd.to_numeric(df[index_col], errors="coerce")
         logger.info(f"Using column '{index_col}' as rental index")
 
-    result_cols = ['QUARTER', 'YEAR', 'QUARTER_NUM', 'RENTAL_INDEX']
+    result_cols = ["QUARTER", "YEAR", "QUARTER_NUM", "RENTAL_INDEX"]
     result_df = df[[col for col in result_cols if col in df.columns]].copy()
-    result_df = result_df.dropna(subset=['RENTAL_INDEX'])
+    result_df = result_df.dropna(subset=["RENTAL_INDEX"])
     logger.info(f"Processed {len(result_df)} quarters of rental index")
     return result_df
 
@@ -88,7 +88,7 @@ def save_rental_index(df: pd.DataFrame):
     parquet_dir = Config.PARQUETS_DIR / "L2"
     parquet_dir.mkdir(parents=True, exist_ok=True)
     parquet_path = parquet_dir / "ura_rental_index.parquet"
-    df.to_parquet(parquet_path, compression='snappy', index=False)
+    df.to_parquet(parquet_path, compression="snappy", index=False)
     logger.info(f"Saved rental index to {parquet_path}")
 
 

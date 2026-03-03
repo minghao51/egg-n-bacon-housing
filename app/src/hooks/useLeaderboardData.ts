@@ -1,7 +1,7 @@
 // app/src/hooks/useLeaderboardData.ts
 import { useMemo } from 'react';
-import { LeaderboardEntry, LeaderboardMetric } from '@/types/leaderboard';
-import { PropertyType, Region, TimeHorizon, FilterState as BaseFilterState } from '@/types/segments';
+import type { LeaderboardEntry, LeaderboardMetric } from '@/types/leaderboard';
+import type { PropertyType, Region, TimeHorizon, FilterState as BaseFilterState } from '@/types/segments';
 import { useGzipJson } from './useGzipJson';
 import { DATA_URLS } from '@/constants/data-urls';
 

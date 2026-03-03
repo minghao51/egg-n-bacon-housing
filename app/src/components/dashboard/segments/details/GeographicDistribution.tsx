@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/details/GeographicDistribution.tsx
-import { Segment, PlanningArea } from '@/types/segments';
+import type { Segment, PlanningArea } from '@/types/segments';
 
 interface GeographicDistributionProps {
   segment: Segment;

@@ -1,6 +1,6 @@
 // app/src/components/dashboard/leaderboard/LeaderboardMap.tsx
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { LeaderboardEntry, LeaderboardMetric, MetricMeta } from '@/types/leaderboard';
+import type { LeaderboardEntry, LeaderboardMetric, MetricMeta } from '@/types/leaderboard';
 
 // Define types locally to avoid circular dependencies
 type PropertyType = 'HDB' | 'Condominium' | 'EC';

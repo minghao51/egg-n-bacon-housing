@@ -25,12 +25,13 @@ def main():
 
     try:
         regional_data, area_data = run_preparation_pipeline(
-            start_date='2021-01',
-            end_date='2026-02'
+            start_date="2021-01", end_date="2026-02"
         )
 
         logger.info("\nTime series preparation complete!")
-        logger.info(f"   Regional: {len(regional_data)} records, {len(regional_data['region'].unique())} regions")
+        logger.info(
+            f"   Regional: {len(regional_data)} records, {len(regional_data['region'].unique())} regions"
+        )
         logger.info(f"   Area: {len(area_data)} records, {len(area_data['area'].unique())} areas")
 
     except Exception as e:
@@ -44,9 +45,7 @@ def main():
 
     try:
         cv_results = run_cross_validation(
-            regional_data=regional_data,
-            area_data=area_data,
-            n_folds=5
+            regional_data=regional_data, area_data=area_data, n_folds=5
         )
 
         # Log regional results
@@ -54,15 +53,15 @@ def main():
         logger.info("REGIONAL VAR MODEL RESULTS")
         logger.info("-" * 80)
 
-        for region, results in cv_results['regional'].items():
-            if 'mean_rmse' in results:
+        for region, results in cv_results["regional"].items():
+            if "mean_rmse" in results:
                 logger.info(f"\n{region}:")
                 logger.info(f"  RMSE: {results['mean_rmse']:.2f}%")
                 logger.info(f"  MAE: {results['mean_mae']:.2f}%")
                 logger.info(f"  Directional Accuracy: {results['mean_directional_accuracy']:.1f}%")
 
                 # Check if meets success criteria
-                if results['mean_directional_accuracy'] >= 70:
+                if results["mean_directional_accuracy"] >= 70:
                     logger.info("  PASS: Meets 70% directional accuracy threshold")
                 else:
                     logger.warning("  WARNING: Below 70% directional accuracy threshold")
@@ -73,8 +72,10 @@ def main():
         logger.info("=" * 80)
 
         # Regional average
-        regional_dir_acc = [r['mean_directional_accuracy'] for r in cv_results['regional'].values()]
-        avg_regional_dir_acc = sum(regional_dir_acc) / len(regional_dir_acc) if regional_dir_acc else 0
+        regional_dir_acc = [r["mean_directional_accuracy"] for r in cv_results["regional"].values()]
+        avg_regional_dir_acc = (
+            sum(regional_dir_acc) / len(regional_dir_acc) if regional_dir_acc else 0
+        )
 
         logger.info(f"\nRegional Models: {len(cv_results['regional'])} regions")
         logger.info(f"  Average Directional Accuracy: {avg_regional_dir_acc:.1f}%")
@@ -87,8 +88,8 @@ def main():
         criteria_met = []
 
         # RMSE < 5% for regional
-        regional_rmse = [r['mean_rmse'] for r in cv_results['regional'].values()]
-        avg_rmse = sum(regional_rmse) / len(regional_rmse) if regional_rmse else float('inf')
+        regional_rmse = [r["mean_rmse"] for r in cv_results["regional"].values()]
+        avg_rmse = sum(regional_rmse) / len(regional_rmse) if regional_rmse else float("inf")
 
         if avg_rmse < 5:
             logger.info(f"PASS RMSE: {avg_rmse:.2f}% < 5%")
@@ -101,7 +102,9 @@ def main():
             logger.info(f"PASS Directional Accuracy: {avg_regional_dir_acc:.1f}% > 70%")
             criteria_met.append("Directional Accuracy")
         else:
-            logger.warning(f"FAIL Directional Accuracy: {avg_regional_dir_acc:.1f}% <= 70% (Target: > 70%)")
+            logger.warning(
+                f"FAIL Directional Accuracy: {avg_regional_dir_acc:.1f}% <= 70% (Target: > 70%)"
+            )
 
         logger.info(f"\nCriteria Passed: {len(criteria_met)}/2")
 
@@ -114,7 +117,7 @@ def main():
         output_path = Config.ANALYSIS_OUTPUT_DIR / "var_backtesting_results.txt"
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write("VAR Housing Appreciation - Backtesting Results\n")
             f.write("=" * 60 + "\n\n")
             f.write(f"Regional Models: {len(cv_results['regional'])} regions\n")
@@ -133,10 +136,9 @@ def main():
     logger.info("=" * 80)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     main()

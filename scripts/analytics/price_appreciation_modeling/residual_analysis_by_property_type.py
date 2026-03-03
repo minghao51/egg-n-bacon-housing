@@ -39,9 +39,9 @@ def analyze_residuals_for_property_type(
         property_type: Name of property type (HDB, Condo, EC)
         output_dir: Directory to save plots
     """
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info(f"Analyzing {property_type} Residuals")
-    logger.info(f"{'='*60}")
+    logger.info(f"{'=' * 60}")
 
     # Filter for this property type
     if "property_type" in predictions_df.columns:
@@ -92,7 +92,11 @@ def analyze_residuals_for_property_type(
     axes[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(output_dir / f"{property_type.lower()}_residual_distribution.png", dpi=150, bbox_inches="tight")
+    plt.savefig(
+        output_dir / f"{property_type.lower()}_residual_distribution.png",
+        dpi=150,
+        bbox_inches="tight",
+    )
     plt.close()
 
     logger.info(f"    Saved: {property_type.lower()}_residual_distribution.png")
@@ -125,7 +129,9 @@ def analyze_residuals_for_property_type(
     axes[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(output_dir / f"{property_type.lower()}_heteroscedasticity.png", dpi=150, bbox_inches="tight")
+    plt.savefig(
+        output_dir / f"{property_type.lower()}_heteroscedasticity.png", dpi=150, bbox_inches="tight"
+    )
     plt.close()
 
     logger.info(f"    Saved: {property_type.lower()}_heteroscedasticity.png")
@@ -140,11 +146,11 @@ def analyze_residuals_for_property_type(
     large = ((abs_residuals >= 20) & (abs_residuals < 50)).sum()
     extreme = (abs_residuals >= 50).sum()
 
-    logger.info(f"    Excellent (<5%): {excellent:,} ({excellent/len(df)*100:.1f}%)")
-    logger.info(f"    Good (5-10%): {good:,} ({good/len(df)*100:.1f}%)")
-    logger.info(f"    Moderate (10-20%): {moderate:,} ({moderate/len(df)*100:.1f}%)")
-    logger.info(f"    Large (20-50%): {large:,} ({large/len(df)*100:.1f}%)")
-    logger.info(f"    Extreme (>50%): {extreme:,} ({extreme/len(df)*100:.1f}%)")
+    logger.info(f"    Excellent (<5%): {excellent:,} ({excellent / len(df) * 100:.1f}%)")
+    logger.info(f"    Good (5-10%): {good:,} ({good / len(df) * 100:.1f}%)")
+    logger.info(f"    Moderate (10-20%): {moderate:,} ({moderate / len(df) * 100:.1f}%)")
+    logger.info(f"    Large (20-50%): {large:,} ({large / len(df) * 100:.1f}%)")
+    logger.info(f"    Extreme (>50%): {extreme:,} ({extreme / len(df) * 100:.1f}%)")
 
     # 4. Actual vs Predicted plot
     logger.info("\n  [4/4] Actual vs Predicted")
@@ -168,11 +174,22 @@ def analyze_residuals_for_property_type(
     # Add R² annotation
     r2 = stats_dict.get("r2", np.nan)
     if not np.isnan(r2):
-        ax.text(0.05, 0.95, f"R² = {r2:.4f}", transform=ax.transAxes, fontsize=12,
-                verticalalignment="top", bbox=dict(boxstyle="round", facecolor="white", alpha=0.8))
+        ax.text(
+            0.05,
+            0.95,
+            f"R² = {r2:.4f}",
+            transform=ax.transAxes,
+            fontsize=12,
+            verticalalignment="top",
+            bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+        )
 
     plt.tight_layout()
-    plt.savefig(output_dir / f"{property_type.lower()}_actual_vs_predicted.png", dpi=150, bbox_inches="tight")
+    plt.savefig(
+        output_dir / f"{property_type.lower()}_actual_vs_predicted.png",
+        dpi=150,
+        bbox_inches="tight",
+    )
     plt.close()
 
     logger.info(f"    Saved: {property_type.lower()}_actual_vs_predicted.png")
@@ -190,13 +207,20 @@ def main():
 
     # Setup output directory
     output_dir = (
-        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "residual_analysis_by_property_type"
+        Config.DATA_DIR
+        / "analysis"
+        / "price_appreciation_modeling"
+        / "residual_analysis_by_property_type"
     )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load predictions from property-type models
     predictions_path = (
-        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "models_by_property_type" / "all_predictions.parquet"
+        Config.DATA_DIR
+        / "analysis"
+        / "price_appreciation_modeling"
+        / "models_by_property_type"
+        / "all_predictions.parquet"
     )
 
     logger.info(f"\nLoading predictions from {predictions_path}")
@@ -205,7 +229,11 @@ def main():
 
     # Load model comparison for R² values
     comparison_path = (
-        Config.DATA_DIR / "analysis" / "price_appreciation_modeling" / "models_by_property_type" / "model_comparison.csv"
+        Config.DATA_DIR
+        / "analysis"
+        / "price_appreciation_modeling"
+        / "models_by_property_type"
+        / "model_comparison.csv"
     )
     comparison_df = pd.read_csv(comparison_path)
 
@@ -231,13 +259,15 @@ def main():
 
     summary_data = []
     for prop_type, stats_dict in results.items():
-        summary_data.append({
-            "Property Type": prop_type,
-            "Mean Residual": f"{stats_dict['mean']:.2f}",
-            "Std Residual": f"{stats_dict['std']:.2f}",
-            "Skewness": f"{stats_dict['skewness']:.2f}",
-            "Kurtosis": f"{stats_dict['kurtosis']:.2f}",
-        })
+        summary_data.append(
+            {
+                "Property Type": prop_type,
+                "Mean Residual": f"{stats_dict['mean']:.2f}",
+                "Std Residual": f"{stats_dict['std']:.2f}",
+                "Skewness": f"{stats_dict['skewness']:.2f}",
+                "Kurtosis": f"{stats_dict['kurtosis']:.2f}",
+            }
+        )
 
     summary_df = pd.DataFrame(summary_data)
     logger.info("\n" + summary_df.to_string(index=False))
@@ -265,11 +295,13 @@ def main():
         if hdb_stats["kurtosis"] > 10:
             hdb_rec.append("• Heavy tails - investigate outliers (possibly unusual transactions)")
 
-        hdb_rec.extend([
-            "• Add town-level features (mature vs non-mature estates)",
-            "• Add proximity to specific amenities (premium malls, top schools)",
-            "• Separate models for different room types (2-room, 3-room, 4-room, 5-room, multi-gen)",
-        ])
+        hdb_rec.extend(
+            [
+                "• Add town-level features (mature vs non-mature estates)",
+                "• Add proximity to specific amenities (premium malls, top schools)",
+                "• Separate models for different room types (2-room, 3-room, 4-room, 5-room, multi-gen)",
+            ]
+        )
 
         recommendations["HDB"] = hdb_rec
 
@@ -284,12 +316,14 @@ def main():
         if condo_stats["kurtosis"] > 10:
             condo_rec.append("• Extreme outliers - handle luxury properties separately")
 
-        condo_rec.extend([
-            "• Add freehold vs leasehold indicator",
-            "• Add project quality indicators (developer reputation, facilities)",
-            "• Separate models by price segment (mass, mid, luxury)",
-            "• Add strata-titled shophouse detection (different dynamics)",
-        ])
+        condo_rec.extend(
+            [
+                "• Add freehold vs leasehold indicator",
+                "• Add project quality indicators (developer reputation, facilities)",
+                "• Separate models by price segment (mass, mid, luxury)",
+                "• Add strata-titled shophouse detection (different dynamics)",
+            ]
+        )
 
         recommendations["Condo"] = condo_rec
 
@@ -301,11 +335,13 @@ def main():
         if ec_stats["std"] < 10:
             ec_rec.append("• Low variance - excellent predictability")
 
-        ec_rec.extend([
-            "• Add proximity to HDB towns (EC buyers often HDB upgraders)",
-            "• Add timing features ( privatisation milestones)",
-            "• Monitor market segment (HDB upgraders vs private condo downgraders)",
-        ])
+        ec_rec.extend(
+            [
+                "• Add proximity to HDB towns (EC buyers often HDB upgraders)",
+                "• Add timing features ( privatisation milestones)",
+                "• Monitor market segment (HDB upgraders vs private condo downgraders)",
+            ]
+        )
 
         recommendations["EC"] = ec_rec
 

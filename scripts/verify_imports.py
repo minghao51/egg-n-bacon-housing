@@ -10,6 +10,5 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.tools.verify_imports import *  # noqa: F401,F403
 
-
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -34,13 +34,13 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 # Set style
-plt.style.use('seaborn-v0_8-whitegrid')
+plt.style.use("seaborn-v0_8-whitegrid")
 sns.set_palette("husl")
-plt.rcParams['figure.figsize'] = (14, 8)
-plt.rcParams['font.size'] = 11
+plt.rcParams["figure.figsize"] = (14, 8)
+plt.rcParams["font.size"] = 11
 
 # Paths
 DATA_DIR = Path("../data/analysis/feature_importance")
@@ -54,9 +54,9 @@ OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 # %%
 # Load all feature importance files
 targets = {
-    'price_psm': 'Transaction Price (PSM)',
-    'rental_yield_pct': 'Rental Yield (%)',
-    'yoy_change_pct': 'YoY Appreciation (%)'
+    "price_psm": "Transaction Price (PSM)",
+    "rental_yield_pct": "Rental Yield (%)",
+    "yoy_change_pct": "YoY Appreciation (%)",
 }
 
 feature_importance = {}
@@ -84,7 +84,7 @@ comparison_path = DATA_DIR / "model_comparison.csv"
 if comparison_path.exists():
     model_comparison = pd.read_csv(comparison_path)
     print("Model Performance Summary:")
-    print(model_comparison[['model', 'target_name', 'test_r2', 'test_mae']].to_string(index=False))
+    print(model_comparison[["model", "target_name", "test_r2", "test_mae"]].to_string(index=False))
 else:
     print("Model comparison file not found")
 
@@ -92,8 +92,9 @@ else:
 # %% [markdown]
 # ## 2. Visualize Top Features by Target
 
+
 # %%
-def plot_top_features(target_key, target_name, model='rf', top_n=15):
+def plot_top_features(target_key, target_name, model="rf", top_n=15):
     """Plot top N features for a target variable."""
     key = f"{target_key}_{model}"
     if key not in feature_importance:
@@ -101,45 +102,46 @@ def plot_top_features(target_key, target_name, model='rf', top_n=15):
         return
 
     df = feature_importance[key].copy()
-    df = df.head(top_n).sort_values('importance', ascending=True)
+    df = df.head(top_n).sort_values("importance", ascending=True)
 
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    bars = ax.barh(df['feature'], df['importance'], color='steelblue')
-    ax.set_xlabel('Feature Importance', fontsize=12, fontweight='bold')
-    ax.set_ylabel('Feature', fontsize=12, fontweight='bold')
-    ax.set_title(f'Top {top_n} Features - {target_name}\n({model.upper()})',
-                 fontsize=14, fontweight='bold')
+    bars = ax.barh(df["feature"], df["importance"], color="steelblue")
+    ax.set_xlabel("Feature Importance", fontsize=12, fontweight="bold")
+    ax.set_ylabel("Feature", fontsize=12, fontweight="bold")
+    ax.set_title(
+        f"Top {top_n} Features - {target_name}\n({model.upper()})", fontsize=14, fontweight="bold"
+    )
 
     # Add value labels
     for i, (idx, row) in enumerate(df.iterrows()):
-        ax.text(row['importance'], i, f" {row['importance']:.3f}",
-                va='center', fontsize=9)
+        ax.text(row["importance"], i, f" {row['importance']:.3f}", va="center", fontsize=9)
 
     plt.tight_layout()
     filename = f"top_features_{target_key}_{model}.png"
-    plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches='tight')
+    plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches="tight")
     plt.show()
 
     print(f"\nTop {top_n} features for {target_name} ({model.upper()}):")
-    print(df[['feature', 'importance']].to_string(index=False))
+    print(df[["feature", "importance"]].to_string(index=False))
 
 
 # %%
 # Transaction Price (PSM) - Top Features
-plot_top_features('price_psm', 'Transaction Price (PSM)', model='rf', top_n=15)
+plot_top_features("price_psm", "Transaction Price (PSM)", model="rf", top_n=15)
 
 # %%
 # Rental Yield - Top Features
-plot_top_features('rental_yield_pct', 'Rental Yield (%)', model='rf', top_n=15)
+plot_top_features("rental_yield_pct", "Rental Yield (%)", model="rf", top_n=15)
 
 # %%
 # YoY Appreciation - Top Features
-plot_top_features('yoy_change_pct', 'YoY Appreciation (%)', model='rf', top_n=15)
+plot_top_features("yoy_change_pct", "YoY Appreciation (%)", model="rf", top_n=15)
 
 
 # %% [markdown]
 # ## 3. Compare Random Forest vs XGBoost Rankings
+
 
 # %%
 def compare_model_rankings(target_key, target_name, top_n=20):
@@ -155,112 +157,129 @@ def compare_model_rankings(target_key, target_name, top_n=20):
     xgb_df = feature_importance[xgb_key].head(top_n).copy()
 
     # Merge rankings
-    rf_df['rf_rank'] = range(1, len(rf_df) + 1)
-    xgb_df['xgb_rank'] = range(1, len(xgb_df) + 1)
+    rf_df["rf_rank"] = range(1, len(rf_df) + 1)
+    xgb_df["xgb_rank"] = range(1, len(xgb_df) + 1)
 
     merged = pd.merge(
-        rf_df[['feature', 'importance', 'rf_rank']],
-        xgb_df[['feature', 'importance', 'xgb_rank']],
-        on='feature',
-        how='outer',
-        suffixes=('_rf', '_xgb')
+        rf_df[["feature", "importance", "rf_rank"]],
+        xgb_df[["feature", "importance", "xgb_rank"]],
+        on="feature",
+        how="outer",
+        suffixes=("_rf", "_xgb"),
     ).fillna(999)  # Features not in top N get rank 999
 
     # Calculate rank difference
-    merged['rank_diff'] = merged['rf_rank'] - merged['xgb_rank']
-    merged = merged.sort_values('rf_rank')
+    merged["rank_diff"] = merged["rf_rank"] - merged["xgb_rank"]
+    merged = merged.sort_values("rf_rank")
 
     # Plot comparison
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 10))
 
     # Left plot: Side-by-side bars
-    features = merged['feature'].head(15)
+    features = merged["feature"].head(15)
     x = np.arange(len(features))
     width = 0.35
 
-    rf_importance = merged[merged['feature'].isin(features)]['importance_rf'].values
-    xgb_importance = merged[merged['feature'].isin(features)]['importance_xgb'].values
+    rf_importance = merged[merged["feature"].isin(features)]["importance_rf"].values
+    xgb_importance = merged[merged["feature"].isin(features)]["importance_xgb"].values
 
-    ax1.bar(x - width/2, rf_importance, width, label='Random Forest', color='steelblue')
-    ax1.bar(x + width/2, xgb_importance, width, label='XGBoost', color='coral')
-    ax1.set_xlabel('Feature Importance', fontsize=12, fontweight='bold')
-    ax1.set_title(f'RF vs XGBoost: {target_name}\n(Feature Importance)', fontsize=13, fontweight='bold')
+    ax1.bar(x - width / 2, rf_importance, width, label="Random Forest", color="steelblue")
+    ax1.bar(x + width / 2, xgb_importance, width, label="XGBoost", color="coral")
+    ax1.set_xlabel("Feature Importance", fontsize=12, fontweight="bold")
+    ax1.set_title(
+        f"RF vs XGBoost: {target_name}\n(Feature Importance)", fontsize=13, fontweight="bold"
+    )
     ax1.set_xticks(x)
-    ax1.set_xticklabels(features, rotation=45, ha='right')
+    ax1.set_xticklabels(features, rotation=45, ha="right")
     ax1.legend()
 
     # Right plot: Rank difference
     top_features = merged.head(15)
-    colors = ['green' if x < 0 else 'red' for x in top_features['rank_diff']]
-    ax2.barh(range(len(top_features)), top_features['rank_diff'], color=colors)
+    colors = ["green" if x < 0 else "red" for x in top_features["rank_diff"]]
+    ax2.barh(range(len(top_features)), top_features["rank_diff"], color=colors)
     ax2.set_yticks(range(len(top_features)))
-    ax2.set_yticklabels(top_features['feature'])
-    ax2.set_xlabel('Rank Difference (RF - XGBoost)', fontsize=12, fontweight='bold')
-    ax2.set_title('Ranking Difference\n(Green = Higher in RF, Red = Higher in XGBoost)',
-                 fontsize=13, fontweight='bold')
-    ax2.axvline(x=0, color='black', linestyle='--', linewidth=0.8)
+    ax2.set_yticklabels(top_features["feature"])
+    ax2.set_xlabel("Rank Difference (RF - XGBoost)", fontsize=12, fontweight="bold")
+    ax2.set_title(
+        "Ranking Difference\n(Green = Higher in RF, Red = Higher in XGBoost)",
+        fontsize=13,
+        fontweight="bold",
+    )
+    ax2.axvline(x=0, color="black", linestyle="--", linewidth=0.8)
 
     plt.tight_layout()
     filename = f"model_comparison_{target_key}.png"
-    plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches='tight')
+    plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches="tight")
     plt.show()
 
     print(f"\n{target_name} - Top {top_n} Features Comparison:")
-    print(merged[['feature', 'rf_rank', 'xgb_rank', 'rank_diff']].head(15).to_string(index=False))
+    print(merged[["feature", "rf_rank", "xgb_rank", "rank_diff"]].head(15).to_string(index=False))
 
 
 # %%
 # Compare models for Price Prediction
-compare_model_rankings('price_psm', 'Transaction Price (PSM)', top_n=20)
+compare_model_rankings("price_psm", "Transaction Price (PSM)", top_n=20)
 
 # %%
 # Compare models for Rental Yield
-compare_model_rankings('rental_yield_pct', 'Rental Yield (%)', top_n=20)
+compare_model_rankings("rental_yield_pct", "Rental Yield (%)", top_n=20)
 
 # %%
 # Compare models for Appreciation
-compare_model_rankings('yoy_change_pct', 'YoY Appreciation (%)', top_n=20)
+compare_model_rankings("yoy_change_pct", "YoY Appreciation (%)", top_n=20)
 
 
 # %% [markdown]
 # ## 4. Feature Category Analysis
 
+
 # %%
 def categorize_feature(feature_name):
     """Categorize features into groups."""
-    if 'town_' in feature_name or 'planning_area' in feature_name:
-        return 'Location (Town)'
-    elif 'dist_to_nearest' in feature_name:
-        return 'Amenity Distance'
-    elif 'within_' in feature_name:
-        return 'Amenity Proximity'
-    elif 'flat_type' in feature_name or 'storey' in feature_name or 'flat_model' in feature_name:
-        return 'Property Attributes'
-    elif 'property_type' in feature_name or 'psm_tier' in feature_name or 'market_tier' in feature_name:
-        return 'Market Segment'
-    elif 'area' in feature_name or 'lease' in feature_name:
-        return 'Physical Characteristics'
-    elif 'volume' in feature_name or 'transaction' in feature_name or 'momentum' in feature_name or 'median' in feature_name:
-        return 'Market Momentum'
+    if "town_" in feature_name or "planning_area" in feature_name:
+        return "Location (Town)"
+    elif "dist_to_nearest" in feature_name:
+        return "Amenity Distance"
+    elif "within_" in feature_name:
+        return "Amenity Proximity"
+    elif "flat_type" in feature_name or "storey" in feature_name or "flat_model" in feature_name:
+        return "Property Attributes"
+    elif (
+        "property_type" in feature_name
+        or "psm_tier" in feature_name
+        or "market_tier" in feature_name
+    ):
+        return "Market Segment"
+    elif "area" in feature_name or "lease" in feature_name:
+        return "Physical Characteristics"
+    elif (
+        "volume" in feature_name
+        or "transaction" in feature_name
+        or "momentum" in feature_name
+        or "median" in feature_name
+    ):
+        return "Market Momentum"
     else:
-        return 'Other'
+        return "Other"
 
-def analyze_category_importance(target_key, model='rf'):
+
+def analyze_category_importance(target_key, model="rf"):
     """Aggregate feature importance by category."""
     key = f"{target_key}_{model}"
     if key not in feature_importance:
         return None
 
     df = feature_importance[key].copy()
-    df['category'] = df['feature'].apply(categorize_feature)
+    df["category"] = df["feature"].apply(categorize_feature)
 
-    category_importance = df.groupby('category')['importance'].agg(['sum', 'mean', 'count'])
-    category_importance = category_importance.sort_values('sum', ascending=False)
-    category_importance.columns = ['Total Importance', 'Mean Importance', 'Feature Count']
+    category_importance = df.groupby("category")["importance"].agg(["sum", "mean", "count"])
+    category_importance = category_importance.sort_values("sum", ascending=False)
+    category_importance.columns = ["Total Importance", "Mean Importance", "Feature Count"]
 
     return category_importance
 
-def plot_category_importance(target_key, target_name, model='rf'):
+
+def plot_category_importance(target_key, target_name, model="rf"):
     """Plot feature importance by category."""
     cat_imp = analyze_category_importance(target_key, model)
     if cat_imp is None:
@@ -269,22 +288,22 @@ def plot_category_importance(target_key, target_name, model='rf'):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
     # Total importance by category
-    cat_imp['Total Importance'].plot(kind='bar', ax=ax1, color='steelblue')
-    ax1.set_title(f'{target_name}\nTotal Importance by Category', fontsize=13, fontweight='bold')
-    ax1.set_ylabel('Total Feature Importance', fontsize=12, fontweight='bold')
-    ax1.set_xlabel('Feature Category', fontsize=12, fontweight='bold')
-    ax1.tick_params(axis='x', rotation=45)
+    cat_imp["Total Importance"].plot(kind="bar", ax=ax1, color="steelblue")
+    ax1.set_title(f"{target_name}\nTotal Importance by Category", fontsize=13, fontweight="bold")
+    ax1.set_ylabel("Total Feature Importance", fontsize=12, fontweight="bold")
+    ax1.set_xlabel("Feature Category", fontsize=12, fontweight="bold")
+    ax1.tick_params(axis="x", rotation=45)
 
     # Feature count by category
-    cat_imp['Feature Count'].plot(kind='bar', ax=ax2, color='coral')
-    ax2.set_title('Feature Count by Category', fontsize=13, fontweight='bold')
-    ax2.set_ylabel('Number of Features', fontsize=12, fontweight='bold')
-    ax2.set_xlabel('Feature Category', fontsize=12, fontweight='bold')
-    ax2.tick_params(axis='x', rotation=45)
+    cat_imp["Feature Count"].plot(kind="bar", ax=ax2, color="coral")
+    ax2.set_title("Feature Count by Category", fontsize=13, fontweight="bold")
+    ax2.set_ylabel("Number of Features", fontsize=12, fontweight="bold")
+    ax2.set_xlabel("Feature Category", fontsize=12, fontweight="bold")
+    ax2.tick_params(axis="x", rotation=45)
 
     plt.tight_layout()
     filename = f"category_importance_{target_key}_{model}.png"
-    plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches='tight')
+    plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches="tight")
     plt.show()
 
     print(f"\n{target_name} - Category Analysis ({model.upper()}):")
@@ -293,19 +312,20 @@ def plot_category_importance(target_key, target_name, model='rf'):
 
 # %%
 # Category analysis for Price Prediction
-plot_category_importance('price_psm', 'Transaction Price (PSM)', model='rf')
+plot_category_importance("price_psm", "Transaction Price (PSM)", model="rf")
 
 # %%
 # Category analysis for Rental Yield
-plot_category_importance('rental_yield_pct', 'Rental Yield (%)', model='rf')
+plot_category_importance("rental_yield_pct", "Rental Yield (%)", model="rf")
 
 # %%
 # Category analysis for Appreciation
-plot_category_importance('yoy_change_pct', 'YoY Appreciation (%)', model='rf')
+plot_category_importance("yoy_change_pct", "YoY Appreciation (%)", model="rf")
 
 
 # %% [markdown]
 # ## 5. Key Insights Summary
+
 
 # %%
 def generate_insights_summary():
@@ -318,24 +338,27 @@ def generate_insights_summary():
             continue
 
         df = feature_importance[rf_key].head(10)
-        category_imp = analyze_category_importance(target_key, 'rf')
+        category_imp = analyze_category_importance(target_key, "rf")
 
         insights[target_name] = {
-            'top_feature': df.iloc[0]['feature'],
-            'top_importance': df.iloc[0]['importance'],
-            'top_3_features': df['feature'].head(3).tolist(),
-            'dominant_category': category_imp.index[0] if category_imp is not None else 'N/A',
-            'dominant_category_importance': category_imp.iloc[0]['Total Importance'] if category_imp is not None else 0
+            "top_feature": df.iloc[0]["feature"],
+            "top_importance": df.iloc[0]["importance"],
+            "top_3_features": df["feature"].head(3).tolist(),
+            "dominant_category": category_imp.index[0] if category_imp is not None else "N/A",
+            "dominant_category_importance": category_imp.iloc[0]["Total Importance"]
+            if category_imp is not None
+            else 0,
         }
 
     # Create summary DataFrame
     summary_df = pd.DataFrame(insights).T
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("KEY INSIGHTS SUMMARY")
-    print("="*80)
+    print("=" * 80)
     print(summary_df.to_string())
 
     return insights
+
 
 insights = generate_insights_summary()
 
@@ -345,9 +368,9 @@ insights = generate_insights_summary()
 # %%
 print("""
 """)
-print("="*80)
+print("=" * 80)
 print("ACTIONABLE RECOMMENDATIONS")
-print("="*80)
+print("=" * 80)
 
 print("""
 ### FOR INVESTORS:
@@ -399,9 +422,9 @@ print("""
 
 # %%
 # Create summary Excel file
-with pd.ExcelWriter(OUTPUT_DIR / 'feature_importance_summary.xlsx') as writer:
+with pd.ExcelWriter(OUTPUT_DIR / "feature_importance_summary.xlsx") as writer:
     for target_key, target_name in targets.items():
-        for model in ['rf', 'xgb']:
+        for model in ["rf", "xgb"]:
             key = f"{target_key}_{model}"
             if key in feature_importance:
                 df = feature_importance[key]
@@ -409,7 +432,7 @@ with pd.ExcelWriter(OUTPUT_DIR / 'feature_importance_summary.xlsx') as writer:
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
 
     # Add summary sheet
-    model_comparison.to_excel(writer, sheet_name='model_comparison', index=False)
+    model_comparison.to_excel(writer, sheet_name="model_comparison", index=False)
 
 print(f"\nSummary Excel file saved to: {OUTPUT_DIR / 'feature_importance_summary.xlsx'}")
 

@@ -22,29 +22,24 @@ logger = logging.getLogger(__name__)
 
 def simple_regional_forecast(regional_data: pd.DataFrame, region: str, horizon: int = 12):
     """Simple forecast using naive method as baseline."""
-    region_data = regional_data[regional_data['region'] == region].copy()
-    region_data = region_data.sort_values('month')
+    region_data = regional_data[regional_data["region"] == region].copy()
+    region_data = region_data.sort_values("month")
 
     # Get last value
-    last_appreciation = region_data['regional_appreciation'].iloc[-1]
+    last_appreciation = region_data["regional_appreciation"].iloc[-1]
 
     # Generate forecast (naive: repeat last value with small decay)
     forecast_months = pd.date_range(
-        start=region_data['month'].iloc[-1] + pd.DateOffset(months=1),
-        periods=horizon,
-        freq='ME'
+        start=region_data["month"].iloc[-1] + pd.DateOffset(months=1), periods=horizon, freq="ME"
     )
 
     # Simple forecast: decay towards 0
     forecast = []
     for i in range(horizon):
-        decay = 0.95 ** i
+        decay = 0.95**i
         forecast.append(last_appreciation * decay)
 
-    forecast_df = pd.DataFrame({
-        'month': forecast_months,
-        'forecast_mean': forecast
-    })
+    forecast_df = pd.DataFrame({"month": forecast_months, "forecast_mean": forecast})
 
     return forecast_df
 
@@ -57,8 +52,8 @@ def simple_backtest(regional_data: pd.DataFrame, area_data: pd.DataFrame):
 
     results = []
 
-    for region in regional_data['region'].unique():
-        region_data_filtered = regional_data[regional_data['region'] == region].copy()
+    for region in regional_data["region"].unique():
+        region_data_filtered = regional_data[regional_data["region"] == region].copy()
 
         if len(region_data_filtered) < 48:
             logger.warning(f"Skipping {region}: insufficient data")
@@ -73,9 +68,9 @@ def simple_backtest(regional_data: pd.DataFrame, area_data: pd.DataFrame):
             continue
 
         # Generate naive forecast
-        last_value = train['regional_appreciation'].iloc[-1]
+        last_value = train["regional_appreciation"].iloc[-1]
         forecast = [last_value] * len(test)
-        actual = test['regional_appreciation'].values
+        actual = test["regional_appreciation"].values
 
         # Calculate metrics
         rmse = np.sqrt(np.mean((actual - forecast) ** 2))
@@ -95,12 +90,9 @@ def simple_backtest(regional_data: pd.DataFrame, area_data: pd.DataFrame):
         logger.info(f"  MAE: {mae:.2f}%")
         logger.info(f"  Directional Accuracy: {dir_acc:.1f}%")
 
-        results.append({
-            'region': region,
-            'rmse': rmse,
-            'mae': mae,
-            'directional_accuracy': dir_acc
-        })
+        results.append(
+            {"region": region, "rmse": rmse, "mae": mae, "directional_accuracy": dir_acc}
+        )
 
     # Calculate overall statistics
     logger.info("\n" + "=" * 80)
@@ -108,9 +100,19 @@ def simple_backtest(regional_data: pd.DataFrame, area_data: pd.DataFrame):
     logger.info("=" * 80)
 
     if results:
-        avg_rmse = sum(r['rmse'] for r in results) / len(results)
-        avg_mae = sum(r['mae'] for r in results) / len(results)
-        avg_dir_acc = sum(r['directional_accuracy'] for r in results if 'directional_accuracy' in r and not np.isnan(r['directional_accuracy'])) / len([r for r in results if 'directional_accuracy' in r and not np.isnan(r['directional_accuracy'])])
+        avg_rmse = sum(r["rmse"] for r in results) / len(results)
+        avg_mae = sum(r["mae"] for r in results) / len(results)
+        avg_dir_acc = sum(
+            r["directional_accuracy"]
+            for r in results
+            if "directional_accuracy" in r and not np.isnan(r["directional_accuracy"])
+        ) / len(
+            [
+                r
+                for r in results
+                if "directional_accuracy" in r and not np.isnan(r["directional_accuracy"])
+            ]
+        )
 
         logger.info(f"\nRegions Tested: {len(results)}")
         logger.info(f"Average RMSE: {avg_rmse:.2f}%")
@@ -131,7 +133,7 @@ def simple_backtest(regional_data: pd.DataFrame, area_data: pd.DataFrame):
         output_path = Config.ANALYSIS_OUTPUT_DIR / "backtesting_baseline_results.txt"
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write("Simplified Backtesting Results (Naive Baseline)\n")
             f.write("=" * 60 + "\n\n")
             f.write(f"Regions Tested: {len(results)}\n")
@@ -142,20 +144,21 @@ def simple_backtest(regional_data: pd.DataFrame, area_data: pd.DataFrame):
         logger.info(f"\nResults saved to {output_path}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     # Load prepared data
     from scripts.core.data_helpers import load_parquet
 
     logger.info("Loading prepared time series data...")
-    regional_data = load_parquet('L5_regional_timeseries')
-    area_data = load_parquet('L5_area_timeseries')
+    regional_data = load_parquet("L5_regional_timeseries")
+    area_data = load_parquet("L5_area_timeseries")
 
-    logger.info(f"Loaded regional data: {len(regional_data)} records, {regional_data['region'].nunique()} regions")
+    logger.info(
+        f"Loaded regional data: {len(regional_data)} records, {regional_data['region'].nunique()} regions"
+    )
     logger.info(f"Loaded area data: {len(area_data)} records, {area_data['area'].nunique()} areas")
 
     # Run backtest

@@ -4,13 +4,14 @@
  * Custom React hook for lazy-loading analytics data with caching.
  */
 
-import {
+import type {
   SpatialAnalyticsData,
   FeatureImpactData,
   PredictiveAnalyticsData,
 } from '../types/analytics';
 import { useGzipJson } from './useGzipJson';
-import { AnalyticsType, getAnalyticsUrl } from '@/constants/data-urls';
+import { getAnalyticsUrl } from '@/constants/data-urls';
+import type { AnalyticsType } from '@/constants/data-urls';
 
 type UseAnalyticsDataResult<T> = ReturnType<typeof useGzipJson<T>>;
 

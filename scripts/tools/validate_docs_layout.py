@@ -14,7 +14,6 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DOCS_DIR = REPO_ROOT / "docs"
 
@@ -33,9 +32,7 @@ ALLOWED_DOCS_ROOT_MD = {
     "architecture.md",
 }
 
-PATH_PATTERN = re.compile(
-    r"(?P<path>(?:docs|scripts)/[A-Za-z0-9_./-]+\.(?:md|py|sh))"
-)
+PATH_PATTERN = re.compile(r"(?P<path>(?:docs|scripts)/[A-Za-z0-9_./-]+\.(?:md|py|sh))")
 
 KEBAB_CASE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 DATED_KEBAB_CASE = re.compile(r"^\d{4}-\d{2}-\d{2}-[a-z0-9-]+\.md$")
@@ -67,9 +64,7 @@ def check_referenced_paths(results: ValidationResults) -> None:
             rel = match.group("path")
             target = REPO_ROOT / rel
             if not target.exists():
-                results.error(
-                    f"Broken path reference in {file_path.relative_to(REPO_ROOT)}: {rel}"
-                )
+                results.error(f"Broken path reference in {file_path.relative_to(REPO_ROOT)}: {rel}")
 
 
 def check_docs_root(results: ValidationResults) -> None:
@@ -84,15 +79,11 @@ def check_docs_root(results: ValidationResults) -> None:
 def check_naming_conventions(results: ValidationResults) -> None:
     for md_file in sorted((DOCS_DIR / "guides").glob("*.md")):
         if not KEBAB_CASE.match(md_file.name):
-            results.warn(
-                f"Guide filename is not kebab-case: {md_file.relative_to(REPO_ROOT)}"
-            )
+            results.warn(f"Guide filename is not kebab-case: {md_file.relative_to(REPO_ROOT)}")
 
     for md_file in sorted((DOCS_DIR / "analytics").glob("*.md")):
         if not KEBAB_CASE.match(md_file.name):
-            results.warn(
-                f"Analytics filename is not kebab-case: {md_file.relative_to(REPO_ROOT)}"
-            )
+            results.warn(f"Analytics filename is not kebab-case: {md_file.relative_to(REPO_ROOT)}")
 
     for md_file in sorted((DOCS_DIR / "plans").glob("*.md")):
         if md_file.name == "README.md":

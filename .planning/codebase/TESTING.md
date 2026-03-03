@@ -1,682 +1,652 @@
 # Testing Strategy
 
-## Testing Framework
+**Generated**: 2026-02-28
 
-### pytest
+## Overview
 
-**Primary testing framework:** pytest 7.0.0+
+This project uses a **multi-layered testing approach**:
 
-**Configuration:** `pyproject.toml`
-```toml
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
+1. **Python Unit Tests** - Fast, isolated tests for core logic
+2. **Python Integration Tests** - Component interaction tests
+3. **E2E Tests** - Frontend functionality testing with Playwright
 
-addopts = [
-    "--verbose",
-    "--strict-markers",
-    "--tb=short",
-    "--cov=scripts/core",
-    "--cov-report=term-missing:skip-covered",
-    "--cov-report=html:htmlcov",
-    "--cov-report=xml:coverage.xml",
-]
+---
+
+## Testing Frameworks
+
+### Python: pytest
+
+**Framework**: pytest
+**Coverage**: pytest-cov
+**Configuration**: `pyproject.toml`
+
+**Why pytest**:
+- Simple, Pythonic syntax
+- Powerful fixtures
+- Parallel execution support
+- Excellent plugin ecosystem
+
+### Frontend: Playwright
+
+**Framework**: Playwright
+**Configuration**: `app/playwright.config.ts`
+**Language**: TypeScript
+
+**Why Playwright**:
+- Auto-waiting for elements
+- Multi-browser support
+- Network interception
+- Excellent debugging tools
+
+---
+
+## Python Tests
+
+### Running Tests
+
+**From project root**:
+
+```bash
+# Run all tests
+uv run pytest
+
+# Run unit tests only
+uv run pytest -m unit
+
+# Run integration tests only
+uv run pytest -m integration
+
+# Skip slow tests
+uv run pytest -m "not slow"
+
+# Run with coverage
+uv run pytest --cov=scripts/core
+
+# Run specific file
+uv run pytest tests/test_core/test_config.py
+
+# Run with verbose output
+uv run pytest -v
+
+# Stop on first failure
+uv run pytest -x
+```
+
+### Test Structure
+
+**Location**: `tests/`
+
+**Pattern**: Mirrors `/scripts` structure
+
+```
+tests/
+├── test_core/                   # Core module tests
+│   ├── test_config.py
+│   ├── test_data_helpers.py
+│   ├── test_geocoding.py
+│   └── conftest.py              # Core fixtures
+├── test_integration/            # Integration tests
+│   ├── test_pipeline_stages.py
+│   └── conftest.py              # Integration fixtures
+├── conftest.py                  # Shared fixtures
+└── __init__.py
+```
+
+### Test Naming
+
+**Files**: `test_*.py` or `*_test.py`
+
+**Classes**: `Test*`
+
+**Functions**: `test_*`
+
+**Examples**:
+```python
+# test_config.py
+
+def test_config_has_data_dir():
+    """Test that Config has DATA_DIR attribute."""
+    assert Config.DATA_DIR is not None
+
+class TestConfigValidation:
+    """Test configuration validation."""
+
+    def test_validate_fails_without_env_vars(self, monkeypatch):
+        """Test validation fails without env vars."""
+        monkeypatch.delenv("ONEMAP_EMAIL", raising=False)
+        with pytest.raises(ValueError):
+            Config.validate()
 ```
 
 ### Test Markers
 
-**Categorize tests with decorators:**
+**Markers are used to categorize tests**:
 
 ```python
-@pytest.mark.unit              # Fast, isolated tests (default)
-@pytest.mark.integration       # Component interaction tests
-@pytest.mark.slow             # Full pipeline tests (run infrequently)
-@pytest.mark.api              # Tests that make API calls
-```
+import pytest
 
-**Run by marker:**
-```bash
-uv run pytest                    # All tests
-uv run pytest -m unit            # Unit tests only
-uv run pytest -m integration     # Integration tests only
-uv run pytest -m "not slow"      # Skip slow tests
-uv run pytest -m api             # API tests only
-```
-
----
-
-## Test Structure
-
-### Directory Organization
-
-**Mirrors production code structure:**
-```
-tests/
-├── conftest.py                 # Shared fixtures
-├── core/                       # Core functionality tests
-│   ├── test_config.py
-│   ├── test_data_helpers.py
-│   ├── test_cache.py
-│   └── test_regional_mapping.py
-├── analytics/                  # Analytics tests
-│   ├── models/
-│   │   ├── test_area_arimax.py
-│   │   └── test_regional_var.py
-│   ├── pipelines/
-│   │   ├── test_cross_validate.py
-│   │   └── test_forecast_appreciation.py
-│   └── test_prepare_timeseries_data.py
-├── data/                       # Data processing tests
-│   └── test_fetch_macro_data.py
-└── integration/                # Integration tests
-    ├── test_pipeline.py
-    ├── test_geocoding.py
-    ├── test_mrt_integration.py
-    └── test_analytics_export.py
-```
-
-### Test Class Organization
-
-**Group related tests in classes:**
-```python
 @pytest.mark.unit
-class TestL0Collect:
-    """Test L0 collection functions."""
-
-    @patch("scripts.core.stages.L0_collect.requests.get")
-    def test_fetch_datagovsg_dataset_success(self, mock_get):
-        """Test successful data fetch."""
-        # Test implementation
-        pass
-
-    @patch("scripts.core.stages.L0_collect.requests.get")
-    def test_fetch_datagovsg_dataset_failure(self, mock_get):
-        """Test API failure handling."""
-        # Test implementation
-        pass
+def test_load_parquet():
+    """Unit test - fast, isolated."""
+    pass
 
 @pytest.mark.integration
-class TestGeocodingIntegration:
-    """Integration tests for geocoding."""
+def test_pipeline_stage():
+    """Integration test - component interaction."""
+    pass
 
-    def test_onemap_geocoding(self):
-        """Test OneMap geocoding with real API."""
-        # Test implementation
-        pass
-```
-
----
-
-## Fixtures
-
-### Shared Fixtures (conftest.py)
-
-**Sample DataFrame fixture:**
-```python
-@pytest.fixture
-def sample_dataframe() -> pd.DataFrame:
-    """Create a sample DataFrame for testing."""
-    return pd.DataFrame({
-        "id": range(100),
-        "town": ["Bishan", "Toa Payoh", "Ang Mo Kio"] * 33 + ["Bishan"],
-        "price": [500000 + i * 1000 for i in range(100)],
-        "floor_area": [80 + i * 0.5 for i in range(100)],
-        "date": pd.date_range("2020-01-01", periods=100, freq="ME")
-    })
-```
-
-**Mock config fixture:**
-```python
-@pytest.fixture
-def mock_config(monkeypatch, temp_data_dir):
-    """Mock configuration for testing."""
-    # Set up test environment
-    monkeypatch.setenv("ONEMAP_EMAIL", "test@example.com")
-    monkeypatch.setenv("GOOGLE_API_KEY", "test-api-key")
-
-    # Override paths
-    from scripts.core.config import Config
-    original_data_dir = Config.DATA_DIR
-    Config.DATA_DIR = temp_data_dir
-
-    yield Config
-
-    # Restore original paths
-    Config.DATA_DIR = original_data_dir
-```
-
-**Temp directory fixture:**
-```python
-@pytest.fixture
-def temp_data_dir(tmp_path):
-    """Create temporary data directory for tests."""
-    data_dir = tmp_path / "data"
-    data_dir.mkdir()
-    (data_dir / "pipeline").mkdir()
-    (data_dir / "manual").mkdir()
-    return data_dir
-```
-
----
-
-## Mocking Strategy
-
-### unittest.mock
-
-**Patch external dependencies:**
-```python
-from unittest.mock import Mock, patch
-
-@pytest.mark.unit
-class TestAPIFetch:
-    """Test API fetching functions."""
-
-    @patch("scripts.core.stages.L0_collect.requests.get")
-    def test_fetch_datagovsg_dataset(self, mock_get):
-        """Test fetching data from data.gov.sg API."""
-        # Mock API response
-        mock_response = Mock()
-        mock_response.json.return_value = {
-            "result": {
-                "records": [{"a": 1}, {"b": 2}],
-                "total": 2,
-                "_links": {}
-            }
-        }
-        mock_get.return_value = mock_response
-
-        # Test the function
-        result = fetch_datagovsg_dataset("https://api.test.com/", "test_id")
-
-        # Verify results
-        assert len(result) == 2
-        mock_get.assert_called_once()
-
-    @patch("scripts.core.stages.L0_collect.requests.get")
-    def test_fetch_with_pagination(self, mock_get):
-        """Test pagination handling."""
-        # Setup mock for multiple pages
-        mock_get.side_effect = [
-            Mock(json=lambda: {"result": {"records": [1, 2], "total": 4, "_links": {"next": "page2"}}}),
-            Mock(json=lambda: {"result": {"records": [3, 4], "total": 4, "_links": {}}})
-        ]
-
-        # Test function
-        result = fetch_datagovsg_dataset("https://api.test.com/", "test_id")
-
-        # Verify
-        assert len(result) == 4
-        assert mock_get.call_count == 2
-```
-
-### Mock File System
-
-**Use pytest's tmp_path:**
-```python
-def test_save_parquet(tmp_path):
-    """Test saving parquet file."""
-    from scripts.core.data_helpers import save_parquet
-
-    df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
-
-    # Use temp directory
-    save_parquet(df, "test_dataset", base_path=tmp_path)
-
-    # Verify file exists
-    assert (tmp_path / "test_dataset.parquet").exists()
-
-    # Verify contents
-    result = pd.read_parquet(tmp_path / "test_dataset.parquet")
-    pd.testing.assert_frame_equal(result, df)
-```
-
----
-
-## Test Patterns
-
-### Unit Tests
-
-**Characteristics:**
-- Fast execution (< 1 second each)
-- No external dependencies (all mocked)
-- Test single function or class
-- Isolated from other tests
-
-**Example:**
-```python
-@pytest.mark.unit
-class TestDataHelpers:
-    """Test data helper functions."""
-
-    def test_load_parquet_success(self, sample_parquet_file):
-        """Test successful parquet loading."""
-        from scripts.core.data_helpers import load_parquet
-
-        result = load_parquet("test_dataset")
-
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) > 0
-        assert "price" in result.columns
-
-    def test_load_parquet_file_not_found(self):
-        """Test loading non-existent parquet."""
-        from scripts.core.data_helpers import load_parquet
-
-        with pytest.raises(FileNotFoundError):
-            load_parquet("nonexistent_dataset")
-
-    def test_load_parquet_empty_file(self, empty_parquet_file):
-        """Test loading empty parquet file."""
-        from scripts.core.data_helpers import load_parquet
-
-        result = load_parquet("empty_dataset")
-
-        assert result.empty
-```
-
-### Integration Tests
-
-**Characteristics:**
-- Slower execution (may use external resources)
-- Test component interactions
-- May use real APIs (with caution)
-- Test workflows and pipelines
-
-**Example:**
-```python
-@pytest.mark.integration
-class TestPipelineIntegration:
-    """Integration tests for pipeline."""
-
-    def test_full_l0_collection_workflow(self):
-        """Test complete L0 collection workflow."""
-        from scripts.core.stages.L0_collect import fetch_all_l0_data
-
-        # Test real API call (may be slow)
-        result = fetch_all_l0_data()
-
-        assert result is not None
-        assert "hdb_resale" in result
-        assert len(result["hdb_resale"]) > 0
-
-    @pytest.mark.slow
-    def test_full_pipeline_execution(self):
-        """Test complete pipeline from L0 to L3."""
-        from scripts.run_pipeline import run_pipeline
-
-        # Run full pipeline (very slow)
-        result = run_pipeline(stages=["L0", "L1", "L2"])
-
-        assert result["L0"]["success"]
-        assert result["L1"]["success"]
-        assert result["L2"]["success"]
-```
-
-### API Tests
-
-**Characteristics:**
-- Test external API integration
-- May use real API calls
-- Handle rate limiting
-- Test error scenarios
-
-**Example:**
-```python
-@pytest.mark.api
 @pytest.mark.slow
-class TestGeocodingAPI:
-    """Test geocoding API integration."""
+def test_full_pipeline():
+    """Slow test - full pipeline run."""
+    pass
 
-    def test_onemap_real_geocoding(self):
-        """Test OneMap geocoding with real API."""
-        from scripts.core.geocoding import geocode_address_onemap
-
-        # Real API call
-        result = geocode_address_onemap("1 Bishan Street 12")
-
-        assert result is not None
-        assert "latitude" in result
-        assert "longitude" in result
-
-    def test_onemap_invalid_address(self):
-        """Test OneMap with invalid address."""
-        from scripts.core.geocoding import geocode_address_onemap
-
-        result = geocode_address_onemap("Invalid Address That Does Not Exist")
-
-        assert result is None or "latitude" not in result
+@pytest.mark.api
+def test_onemap_api():
+    """API test - makes external API call."""
+    pass
 ```
 
----
+**Running marked tests**:
+```bash
+# Unit only
+uv run pytest -m unit
 
-## Test Coverage
+# Integration only
+uv run pytest -m integration
 
-### Coverage Configuration
+# Skip slow
+uv run pytest -m "not slow"
 
-**Settings in pyproject.toml:**
+# API tests only
+uv run pytest -m api
+```
+
+### Fixtures
+
+**Shared fixtures in `conftest.py`**:
+
+```python
+import pytest
+import pandas as pd
+from pathlib import Path
+
+@pytest.fixture
+def project_root_path():
+    """Return absolute path to project root."""
+    return Path(__file__).parent.parent
+
+@pytest.fixture
+def temp_dir(tmp_path):
+    """Return temporary directory for test files."""
+    return tmp_path
+
+@pytest.fixture
+def sample_dataframe():
+    """Return sample DataFrame for testing."""
+    return pd.DataFrame({
+        "address": ["1 Orchard Road", "2 Marina Bay"],
+        "price": [1000000, 2000000],
+    })
+
+@pytest.fixture
+def mock_config(monkeypatch):
+    """Return mocked configuration with test paths."""
+    monkeypatch.setenv("ONEMAP_EMAIL", "test@example.com")
+    return Config
+
+@pytest.fixture
+def mock_onemap_response():
+    """Return mock OneMap API response."""
+    return {
+        "found": 1,
+        "results": [{
+            "LATITUDE": 1.3048,
+            "LONGITUDE": 103.8318,
+        }]
+    }
+```
+
+**Using fixtures**:
+```python
+def test_load_parquet(sample_dataframe):
+    """Test using sample_dataframe fixture."""
+    result = process_data(sample_dataframe)
+    assert not result.empty
+```
+
+### Test Coverage
+
+**Generate coverage report**:
+
+```bash
+# Terminal report
+uv run pytest --cov=scripts/core --cov-report=term
+
+# HTML report
+uv run pytest --cov=scripts/core --cov-report=html
+
+# XML report (for CI)
+uv run pytest --cov=scripts/core --cov-report=xml
+```
+
+**Configuration** (`pyproject.toml`):
+
 ```toml
 [tool.coverage.run]
 source = ["scripts"]
 omit = [
-    "*/tests/*",
-    "*/test_*.py",
-    "*/__pycache__/*",
-    "*/site-packages/*",
+    "tests/*",
+    "__pycache__/*",
+    "site-packages/*",
 ]
 
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
+    "if __name__ == "__main__":",
 ]
 ```
 
-### Running Coverage
-
+**View HTML report**:
 ```bash
-# Run tests with coverage
-uv run pytest --cov=scripts/core
-
-# Generate HTML coverage report
-uv run pytest --cov=scripts/core --cov-report=html
-
-# View coverage in browser
 open htmlcov/index.html
-
-# Generate XML coverage (for CI)
-uv run pytest --cov=scripts/core --cov-report=xml:coverage.xml
 ```
 
-### Coverage Goals
+### Testing Patterns
 
-**Target Coverage:**
-- **Core modules:** ≥ 80%
-- **Pipeline stages:** ≥ 70%
-- **Analytics:** ≥ 60% (newer code)
+#### 1. Arrange-Act-Assert
 
-**Current Status:**
-- `scripts/core/` - Good coverage
-- `scripts/analytics/` - Needs improvement
-- `scripts/data/` - Needs improvement
+```python
+def test_process_transactions(sample_dataframe):
+    # Arrange
+    input_data = sample_dataframe
+    expected_cols = ["address", "price", "processed"]
+
+    # Act
+    result = process_transactions(input_data)
+
+    # Assert
+    assert list(result.columns) == expected_cols
+    assert len(result) == len(input_data)
+```
+
+#### 2. Parametrized Tests
+
+```python
+@pytest.mark.parametrize("address,expected", [
+    ("1 Orchard Road, Singapore", True),
+    ("", False),
+    (None, False),
+])
+def test_validate_address(address, expected):
+    """Test address validation with multiple inputs."""
+    result = validate_address(address)
+    assert result == expected
+```
+
+#### 3. Exception Testing
+
+```python
+def test_load_parquet_raises_value_error():
+    """Test that ValueError is raised for invalid dataset."""
+    with pytest.raises(ValueError, match="Dataset.*not found"):
+        load_parquet("nonexistent_dataset")
+```
+
+#### 4. Mocking
+
+```python
+from unittest.mock import patch
+
+def test_geocode_with_mock():
+    """Test geocoding with mocked API."""
+    with patch('scripts.core.geocoding.requests.get') as mock_get:
+        mock_get.return_value.json.return_value = {
+            "found": 1,
+            "results": [{"LATITUDE": 1.0, "LONGITUDE": 103.0}]
+        }
+
+        result = geocode_address("Test Address")
+
+        assert result == (1.0, 103.0)
+        mock_get.assert_called_once()
+```
+
+### Known Test Gaps
+
+**Missing test coverage**:
+
+1. **Analytics Module**:
+   - 49 scripts vs 1 test file
+   - Need tests for ML models, analysis scripts
+
+2. **Data Module**:
+   - 44 scripts vs 3 test files
+   - Need tests for download scripts, processing utilities
+
+**Priority**:
+- High: Core utilities (`data_helpers.py`, `geocoding.py`)
+- Medium: Pipeline stages
+- Low: Notebooks, exploratory scripts
 
 ---
 
-## Test Execution
+## E2E Tests (Playwright)
 
-### Running Tests
+### Running E2E Tests
 
-**All tests:**
+**From `app/` directory**:
+
 ```bash
+cd app
+
+# Install dependencies (first time)
+npm install
+npx playwright install chromium
+
+# Run all E2E tests
+npm run test:e2e
+
+# Run in headed mode (visible browser)
+npm run test:e2e:headed
+
+# Run in UI mode (interactive)
+npm run test:e2e:ui
+
+# Run in debug mode
+npm run test:e2e:debug
+
+# View HTML report
+npm run test:e2e:report
+```
+
+### Test Structure
+
+**Location**: `app/tests/e2e/`
+
+**Coverage**: 97 tests covering:
+- Home page navigation
+- Dashboard pages (overview, map, trends, leaderboard, segments)
+- Analytics pages (index, personas, articles)
+- Cross-page navigation
+- Accessibility
+
+### Test Configuration
+
+**File**: `app/playwright.config.ts`
+
+```typescript
+export default defineConfig({
+  testDir: './tests/e2e',
+  fullyParallel: false,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+  use: {
+    baseURL: 'http://localhost:4321',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+});
+```
+
+### Test Example
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Home Page', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('should load the home page without errors', async ({ page }) => {
+    await expect(page).toHaveTitle(/Egg n Bacon Housing/);
+  });
+
+  test('should have navigation links', async ({ page }) => {
+    const dashboardLink = page.getByRole('link', { name: 'Dashboard' });
+    await expect(dashboardLink).toBeVisible();
+  });
+
+  test('should navigate to dashboard on click', async ({ page }) => {
+    await page.click('text=Dashboard');
+    await expect(page).toHaveURL(/\/dashboard/);
+  });
+});
+```
+
+### Page Object Model
+
+**Organize tests with page objects**:
+
+```typescript
+// tests/pages/DashboardPage.ts
+export class DashboardPage {
+  constructor(private page: Page) {}
+
+  async goto() {
+    await this.page.goto('/dashboard');
+  }
+
+  async getMetricValue(metricName: string) {
+    return this.page.getByText(metricName).locator('..').textContent();
+  }
+
+  async clickTab(tabName: string) {
+    await this.page.click(`button:has-text("${tabName}")`);
+  }
+}
+
+// tests/e2e/dashboard.spec.ts
+test('dashboard shows metrics', async ({ page }) => {
+  const dashboard = new DashboardPage(page);
+  await dashboard.goto();
+
+  const value = await dashboard.getMetricValue('Total Properties');
+  expect(value).toBeTruthy();
+});
+```
+
+### Accessibility Testing
+
+**Playwright has built-in accessibility support**:
+
+```typescript
+test('dashboard is accessible', async ({ page }) => {
+  await page.goto('/dashboard');
+
+  // Check for accessibility violations
+  const violations = await page.accessibility.snapshot();
+  expect(violations).toHaveLength(0);
+});
+```
+
+### Network Interception
+
+**Mock API calls if needed**:
+
+```typescript
+test('dashboard with mocked data', async ({ page }) => {
+  // Intercept data fetch
+  await page.route('**/data/metrics.json', route => {
+    route.fulfill({
+      status: 200,
+      body: JSON.stringify({ total: 100, growth: 5 }),
+    });
+  });
+
+  await page.goto('/dashboard');
+  await expect(page.getByText('100')).toBeVisible();
+});
+```
+
+### Debugging
+
+**UI Mode** (interactive debugging):
+```bash
+npm run test:e2e:ui
+```
+
+**Debug Mode** (step through tests):
+```bash
+npm run test:e2e:debug
+```
+
+**Trace Viewer** (after test failure):
+```bash
+npx playwright show-trace trace.zip
+```
+
+---
+
+## Test Environment Setup
+
+### Python Environment
+
+**Always use `uv run`**:
+
+```bash
+# Ensure correct environment
 uv run pytest
+
+# Not just
+pytest  # ✗ Wrong - might use system Python
 ```
 
-**Specific test file:**
+### Frontend Environment
+
+**Install dependencies**:
+
 ```bash
-uv run pytest tests/core/test_config.py
+cd app
+npm install
+npx playwright install chromium
 ```
 
-**Specific test class:**
+**Start dev server** (for local testing):
 ```bash
-uv run pytest tests/core/test_config.py::TestConfig
-```
-
-**Specific test function:**
-```bash
-uv run pytest tests/core/test_config.py::TestConfig::test_validate
-```
-
-**With markers:**
-```bash
-uv run pytest -m unit
-uv run pytest -m "not slow"
-uv run pytest -m "integration and not api"
-```
-
-**Verbose output:**
-```bash
-uv run pytest -v
-```
-
-**Stop on first failure:**
-```bash
-uv run pytest -x
-```
-
-**Show print statements:**
-```bash
-uv run pytest -s
+npm run dev
 ```
 
 ---
 
-## CI/CD Integration
+## Continuous Integration
 
-### GitHub Actions (Recommended)
+### GitHub Actions
 
-**Example workflow:**
+**Workflow**: `.github/workflows/test.yml`
+
 ```yaml
 name: Tests
 
 on: [push, pull_request]
 
 jobs:
-  test:
+  python-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: astral-sh/setup-uv@v1
       - run: uv sync
-      - run: uv run pytest -m "not slow" --cov=scripts/core
-      - uses: codecov/codecov-action@v3
-```
+      - run: uv run pytest --cov
 
-### Pre-commit Hooks (Recommended)
-
-**Setup:**
-```bash
-# Install pre-commit
-pip install pre-commit
-
-# Create .pre-commit-config.yaml
-cat > .pre-commit-config.yaml << 'EOF'
-repos:
-  - repo: local
-    hooks:
-      - id: pytest-unit
-        name: Run unit tests
-        entry: uv run pytest -m unit
-        language: system
-        pass_filenames: false
-      - id: ruff-check
-        name: Ruff lint
-        entry: uv run ruff check .
-        language: system
-      - id: ruff-format
-        name: Ruff format
-        entry: uv run ruff format --check .
-        language: system
-EOF
-
-# Install hooks
-pre-commit install
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: cd app && npm install
+      - run: cd app && npx playwright install chromium
+      - run: cd app && npm run build
+      - run: cd app && npm run test:e2e
 ```
 
 ---
 
 ## Testing Best Practices
 
-### Test Naming
+### Python Tests
 
-**Descriptive test names:**
-```python
-# ✓ Good - Descriptive
-def test_load_parquet_with_valid_dataset_returns_dataframe():
-    pass
+1. **Fast Unit Tests**: Keep unit tests < 0.1s each
+2. **Isolation**: Tests should not depend on each other
+3. **Deterministic**: Same result every run
+4. **Clear Names**: Test names should explain what is tested
+5. **AAA Pattern**: Arrange-Act-Assert
+6. **Mock External Services**: Don't make real API calls
 
-# ✗ Bad - Vague
-def test_load():
-    pass
-```
+### E2E Tests
 
-### Test Organization
-
-**AAA Pattern (Arrange, Act, Assert):**
-```python
-def test_calculate_price_per_sqft():
-    """Test price per square foot calculation."""
-    # Arrange - Setup test data
-    df = pd.DataFrame({
-        "price": [500000, 600000],
-        "floor_area": [100, 120]
-    })
-
-    # Act - Call function
-    result = calculate_price_per_sqft(df)
-
-    # Assert - Verify results
-    assert result["price_per_sqft"].tolist() == [5000, 5000]
-```
-
-### Test Isolation
-
-**Each test should be independent:**
-```python
-# ✓ Good - Isolated
-def test_function_with_scenario_1():
-    data = create_test_data(scenario=1)
-    result = function(data)
-    assert result == expected_1
-
-def test_function_with_scenario_2():
-    data = create_test_data(scenario=2)
-    result = function(data)
-    assert result == expected_2
-
-# ✗ Bad - Shared state
-shared_data = create_test_data()
-
-def test_function_1():
-    result = function(shared_data)  # May affect test_function_2
-
-def test_function_2():
-    result = function(shared_data)  # Depends on test_function_1
-```
-
-### Error Testing
-
-**Test both success and failure cases:**
-```python
-# Success case
-def test_load_parquet_success(self):
-    result = load_parquet("valid_dataset")
-    assert isinstance(result, pd.DataFrame)
-
-# Failure case
-def test_load_parquet_not_found(self):
-    with pytest.raises(FileNotFoundError):
-        load_parquet("nonexistent_dataset")
-
-# Invalid input
-def test_load_parquet_empty_name(self):
-    with pytest.raises(ValueError):
-        load_parquet("")
-```
+1. **User Perspective**: Test what users see and do
+2. **Stable Selectors**: Use data-testid or aria labels
+3. **Wait Properly**: Use auto-waiting, not fixed timeouts
+4. **Independent**: Tests should run in any order
+5. **Fast**: Avoid unnecessary sleeps
 
 ---
 
-## Frontend Testing
+## Common Testing Commands
 
-### Playwright E2E Testing
+### Python
 
-**Configuration:** Playwright 1.58.0
-
-**Example test:**
-```typescript
-import { test, expect } from '@playwright/test';
-
-test('dashboard loads correctly', async ({ page }) => {
-  await page.goto('http://localhost:4321/dashboard');
-  await expect(page).toHaveTitle(/Dashboard/);
-  await expect(page.locator('text=Overview')).toBeVisible();
-});
-```
-
-**Run E2E tests:**
 ```bash
-uv run playwright test
+# Quick check (unit only)
+uv run pytest -m unit -q
+
+# Full test suite
+uv run pytest -v
+
+# With coverage
+uv run pytest --cov=scripts/core --cov-report=html
+
+# Debug specific test
+uv run pytest tests/test_core/test_config.py::test_config_has_data_dir -v
 ```
 
----
+### E2E
 
-## Testing Checklist
+```bash
+cd app
 
-### Before Committing Code
+# Quick check
+npm run test:e2e
 
-- [ ] All unit tests pass
-- [ ] Integration tests pass
-- [ ] New tests added for new features
-- [ ] Test coverage maintained or improved
-- [ ] No tests skipped without reason
-- [ ] Error cases tested
-- [ ] Edge cases tested
-- [ ] Tests are isolated (no shared state)
+# Debug mode
+npm run test:e2e:debug
 
-### Test Review Checklist
+# Specific test file
+npx playwright test home.spec.ts
 
-- [ ] Tests are readable and maintainable
-- [ ] Test names are descriptive
-- [ ] Fixtures used appropriately
-- [ ] External dependencies mocked
-- [ ] Assertions are specific
-- [ ] Tests are fast (unit tests)
-- [ ] Tests cover edge cases
-- [ ] No hardcoded values that could change
-
----
-
-## Testing Challenges & Solutions
-
-### Challenge: Slow API Tests
-
-**Solution:**
-- Use extensive mocking for unit tests
-- Separate API tests into `@pytest.mark.api` marker
-- Run API tests infrequently (`@pytest.mark.slow`)
-- Use caching for API responses
-
-### Challenge: External Dependencies
-
-**Solution:**
-- Mock all external dependencies in unit tests
-- Use fixtures for consistent test data
-- Create integration tests for real API calls
-- Use dependency injection for better testability
-
-### Challenge: Large Data Files
-
-**Solution:**
-- Use small sample datasets for testing
-- Create fixtures with sample data
-- Use pytest's tmp_path for file operations
-- Avoid loading full production datasets
+# Specific test
+npx playwright test -g "should load home page"
+```
 
 ---
 
 ## Summary
 
-| Aspect | Standard |
-|--------|----------|
-| **Framework** | pytest 7.0.0+ |
-| **Markers** | unit, integration, slow, api |
-| **Coverage Goal** | ≥ 80% for core modules |
-| **Structure** | Mirrors production code |
-| **Fixtures** | Shared in conftest.py |
-| **Mocking** | unittest.mock for external deps |
-| **Execution** | `uv run pytest` |
-| **CI/CD** | GitHub Actions + pre-commit hooks |
+**Python Tests**:
+- Framework: pytest
+- Location: `tests/`
+- Run with: `uv run pytest`
+- Markers: unit, integration, slow, api
+- Coverage: `--cov` flag
+
+**E2E Tests**:
+- Framework: Playwright
+- Location: `app/tests/e2e/`
+- Run from: `app/` directory
+- Commands: `npm run test:e2e`
+- Coverage: 97 tests
+
+**CI/CD**:
+- GitHub Actions
+- Separate jobs for Python and E2E
+- Coverage reporting
+
+**Gaps**:
+- Analytics: 48 missing test files
+- Data module: 41 missing test files
+- Priority: Core utilities first
