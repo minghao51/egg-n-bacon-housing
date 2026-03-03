@@ -145,6 +145,20 @@ This is a **stage-based ETL pipeline** (L0-L5) for processing Singapore housing 
 - `scripts/core/geocoding.py` - OneMap/Google geocoding
 - `scripts/prepare_webapp_data.py` - Generate dashboard JSONs
 
+### Data Quality Monitoring
+
+The pipeline includes automatic data quality monitoring:
+- Metrics captured at every `save_parquet()` call
+- SQLite storage at `data/quality_metrics.db`
+- Adaptive anomaly detection (3σ thresholds)
+- CLI reporting: `uv run python scripts/utils/data_quality_report.py --summary`
+
+See `docs/guides/data-quality-monitoring.md` for details.
+- `scripts/core/config.py` - Centralized configuration
+- `scripts/core/data_helpers.py` - Parquet I/O with metadata tracking
+- `scripts/core/geocoding.py` - OneMap/Google geocoding
+- `scripts/prepare_webapp_data.py` - Generate dashboard JSONs
+
 ---
 
 ## Dataset Naming Convention
@@ -270,6 +284,8 @@ logger.error(f"API request failed: {status_code}")
 
 ## Testing
 
+### Python Tests (pytest)
+
 **Framework**: pytest
 ```bash
 uv run pytest                    # Run all tests
@@ -287,6 +303,38 @@ uv run pytest --cov=scripts/core # With coverage
 
 **Test Structure**: Mirrors `/scripts` structure
 **See**: `.planning/codebase/TESTING.md` for comprehensive testing strategy
+
+---
+
+### E2E Tests (Playwright)
+
+The webapp in `app/` has Playwright E2E tests for testing the frontend.
+
+**Run from `app/` directory**:
+```bash
+cd app
+
+# Install dependencies (first time)
+npm install
+npx playwright install chromium
+
+# Run all E2E tests
+npm run test:e2e
+
+# Run in headed mode (visible browser)
+npm run test:e2e:headed
+
+# Run in UI mode (interactive)
+npm run test:e2e:ui
+
+# View HTML report
+npm run test:e2e:report
+```
+
+**Test Location**: `app/tests/e2e/`
+**Coverage**: 97 tests covering home, dashboard, analytics pages, navigation, and accessibility
+
+**See**: `docs/guides/e2e-testing.md` for detailed E2E testing guide
 
 ---
 
@@ -396,6 +444,8 @@ save_parquet(
 | **Metadata** | `data/metadata.json` |
 | **Environment** | `.env` (from `.env.example`) |
 | **Test Config** | `pyproject.toml` |
+| **E2E Tests** | `app/tests/e2e/` |
+| **Playwright Config** | `app/playwright.config.ts` |
 | **Planning Docs** | `.planning/codebase/*.md` |
 
 **Planning Documentation** (detailed reference):
