@@ -14,6 +14,7 @@ from pathlib import Path
 import pandas as pd
 
 from scripts.core.config import Config
+from scripts.core.data_quality import monitor_data_quality
 
 # Get logger (don't call basicConfig - let the main script configure logging)
 logger = logging.getLogger(__name__)
@@ -77,6 +78,7 @@ def load_parquet(
         raise RuntimeError(f"Failed to load parquet {parquet_path}: {e}")
 
 
+@monitor_data_quality
 def save_parquet(
     df: pd.DataFrame,
     dataset_name: str,
