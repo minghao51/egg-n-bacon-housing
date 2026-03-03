@@ -136,3 +136,35 @@ class DataQualityCollector:
         conn.close()
 
         logger.debug(f"Recorded quality snapshot for {snapshot.dataset_name}")
+
+    def get_baseline(self, dataset_name: str, stage: str) -> QualityBaseline | None:
+        """Get historical baseline for comparison."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT dataset_name, stage, mean_rows, std_rows, mean_null_pct,
+                   std_null_pct, sample_count, last_updated
+            FROM historical_baselines
+            WHERE dataset_name = ? AND stage = ?
+        """,
+            (dataset_name, stage),
+        )
+
+        row = cursor.fetchone()
+        conn.close()
+
+        if row is None:
+            return None
+
+        return QualityBaseline(
+            dataset_name=row[0],
+            stage=row[1],
+            mean_rows=row[2],
+            std_rows=row[3],
+            mean_null_pct=row[4],
+            std_null_pct=row[5],
+            sample_count=row[6],
+            last_updated=row[7],
+        )
