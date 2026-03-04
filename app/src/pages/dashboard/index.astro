@@ -33,24 +33,103 @@ try {
 } catch (error) {
   console.error("Failed to load trends data:", error);
 }
+
+const mapMetricsPath = path.resolve('public/data/map_metrics.json.gz');
+let mapMetrics;
+
+try {
+  const rawData = fs.readFileSync(mapMetricsPath);
+  const decompressed = gunzip(rawData);
+  mapMetrics = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load map metrics data:", error);
+}
+
+function findLastTrend(records, key) {
+  for (let index = records.length - 1; index >= 0; index -= 1) {
+    const value = records[index]?.[key];
+    if (typeof value === 'number') {
+      return { index, value };
+    }
+  }
+  return null;
+}
+
+function computeDelta(records, key) {
+  const latest = findLastTrend(records, key);
+  if (!latest) return null;
+
+  for (let index = latest.index - 1; index >= 0; index -= 1) {
+    const previous = records[index]?.[key];
+    if (typeof previous === 'number' && previous !== 0) {
+      const change = ((latest.value - previous) / previous) * 100;
+      return {
+        current: latest.value,
+        previous,
+        change,
+      };
+    }
+  }
+
+  return null;
+}
+
+const recentPriceDelta = trendsData ? computeDelta(trendsData, 'Overall Price') : null;
+const recentVolumeDelta = trendsData
+  ? (() => {
+      const totals = trendsData.map((record) => ({
+        TotalVolume:
+          (typeof record['HDB Volume'] === 'number' ? record['HDB Volume'] : 0) +
+          (typeof record['Condominium Volume'] === 'number' ? record['Condominium Volume'] : 0) +
+          (typeof record['EC Volume'] === 'number' ? record['EC Volume'] : 0),
+      }));
+      return computeDelta(totals, 'TotalVolume');
+    })()
+  : null;
+
+const strongestPropertyType =
+  dashboardData?.distributions?.property_type &&
+  Object.entries(dashboardData.distributions.property_type).sort((a, b) => b[1] - a[1])[0];
+
+const recentAreaMoves =
+  mapMetrics?.recent &&
+  Object.entries(mapMetrics.recent)
+    .filter(([, metrics]) => typeof metrics?.yoy_change_pct === 'number')
+    .sort((a, b) => a[1].yoy_change_pct - b[1].yoy_change_pct);
+
+const weakestAreaTrend = recentAreaMoves?.[0] ?? null;
+const strongestAreaTrend = recentAreaMoves?.[recentAreaMoves.length - 1] ?? null;
+
+const overviewHighlights = {
+  recentPriceDelta,
+  recentVolumeDelta,
+  strongestPropertyType,
+  strongestAreaTrend,
+  weakestAreaTrend,
+};
 ---
 
-<Layout title="Market Overview - Dashboard">
+<Layout title="Overview - Dashboard">
   <Sidebar currentPath={Astro.url.pathname} />
 
   <main class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
       {/* Header */}
       <header class="mb-8">
-        <h1 class="text-3xl font-bold text-foreground">Market Overview</h1>
+        <h1 class="text-3xl font-bold text-foreground">Overview</h1>
         <p class="text-muted-foreground mt-2">
-          High-level market statistics, key performance indicators, and property distribution analysis.
+          Use this page to get a 15-second read on market direction before moving into maps, rankings, or segment discovery.
         </p>
       </header>
 
       {/* Dashboard Content */}
       {dashboardData ? (
-        <MarketOverviewDashboard client:load data={dashboardData} trendsData={trendsData} />
+        <MarketOverviewDashboard
+          client:load
+          data={dashboardData}
+          trendsData={trendsData}
+          overviewHighlights={overviewHighlights}
+        />
       ) : (
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
           Data not available. Please run the export script.

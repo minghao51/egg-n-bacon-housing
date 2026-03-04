@@ -82,6 +82,16 @@ jobs:
           fi
           echo "Build successful: dist/index.html exists"
 
+      - name: Smoke check built dashboard headings
+        working-directory: ./app
+        run: |
+          grep -q "Overview" dist/dashboard/index.html
+          grep -q "Explore Areas" dist/dashboard/map/index.html
+          grep -q "Decision Tools" dist/dashboard/trends/index.html
+          grep -q "Discover Segments" dist/dashboard/segments/index.html
+          grep -q "Compare Areas" dist/dashboard/leaderboard/index.html
+          echo "✅ Built dashboard pages contain the expected headings"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -97,3 +107,34 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Smoke check deployed Pages content
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          for path in "" "/dashboard/" "/dashboard/map/" "/dashboard/trends/" "/dashboard/segments/" "/dashboard/leaderboard/"; do
+            url="${PAGE_URL%/}${path}"
+            echo "Checking $url"
+            curl -fsSL "$url" > page.html
+            case "$path" in
+              "")
+                grep -q "Egg n Bacon Housing" page.html
+                ;;
+              "/dashboard/")
+                grep -q "Overview" page.html
+                ;;
+              "/dashboard/map/")
+                grep -q "Explore Areas" page.html
+                ;;
+              "/dashboard/trends/")
+                grep -q "Decision Tools" page.html
+                ;;
+              "/dashboard/segments/")
+                grep -q "Discover Segments" page.html
+                ;;
+              "/dashboard/leaderboard/")
+                grep -q "Compare Areas" page.html
+                ;;
+            esac
+          done
+          echo "✅ Deployed Pages smoke checks passed"

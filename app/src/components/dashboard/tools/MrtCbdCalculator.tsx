@@ -58,6 +58,8 @@ export default function MrtCbdCalculator({ data, persona }: MrtCbdCalculatorProp
       return `For ${propertyType}, focus on town multiplier (currently ${townMultiplier}x) rather than pure MRT distance. Consider towns with multipliers >1.5x for better appreciation.`;
     } else if (persona === 'first-time-buyer') {
       return `HDB MRT premium is minimal ($${premiumPer100m}/100m). Prioritize lease remaining and affordability over MRT proximity.`;
+    } else if (persona === 'all') {
+      return `Use this estimate as a tradeoff check: commute convenience can help, but CBD distance still explains more price movement than MRT distance in this dataset.`;
     } else {
       return `Compare current town (${data.town_multipliers[selectedTown]}x) vs target. Condos are 15x more MRT-sensitive than HDB.`;
     }
@@ -178,7 +180,11 @@ export default function MrtCbdCalculator({ data, persona }: MrtCbdCalculatorProp
       {/* Persona Recommendation */}
       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          <span className="font-medium">Recommendation for {persona === 'investor' ? 'Investors' : persona === 'first-time-buyer' ? 'First-Time Buyers' : 'Upgraders'}:</span>
+          <span className="font-medium">
+            {persona === 'all'
+              ? 'General guidance:'
+              : `Recommendation for ${persona === 'investor' ? 'Investors' : persona === 'first-time-buyer' ? 'First-Time Buyers' : 'Upgraders'}:`}
+          </span>
           <span className="ml-2">{getRecommendation()}</span>
         </div>
       </div>

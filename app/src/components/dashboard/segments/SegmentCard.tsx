@@ -4,9 +4,10 @@ import clsx from 'clsx';
 
 interface SegmentCardProps {
   segment: Segment;
-  matchScore?: number;
-  onViewDetails: (segment: Segment) => void;
+  matchScore: number;
+  onInvestigate: (segment: Segment) => void;
   onAddToCompare: (segment: Segment) => void;
+  isActive?: boolean;
   isSelectedForCompare?: boolean;
 }
 
@@ -36,8 +37,9 @@ const HOTSPOT_BADGES: Record<string, { icon: string; label: string; className: s
 export default function SegmentCard({
   segment,
   matchScore,
-  onViewDetails,
+  onInvestigate,
   onAddToCompare,
+  isActive = false,
   isSelectedForCompare = false,
 }: SegmentCardProps) {
   const icon = SEGMENT_ICONS[segment.id] || '📊';
@@ -46,11 +48,12 @@ export default function SegmentCard({
   return (
     <div
       className={clsx(
-        'bg-card border rounded-lg p-4 transition-all hover:shadow-md',
-        isSelectedForCompare ? 'border-primary' : 'border-border'
+        'bg-card border rounded-2xl p-4 transition-all hover:shadow-md',
+        isActive && 'border-primary ring-2 ring-primary/20 shadow-md',
+        !isActive && isSelectedForCompare && 'border-primary/60',
+        !isActive && !isSelectedForCompare && 'border-border'
       )}
     >
-      {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl">{icon}</span>
@@ -59,15 +62,12 @@ export default function SegmentCard({
             <p className="text-xs text-muted-foreground line-clamp-2">{segment.description}</p>
           </div>
         </div>
-        {matchScore !== undefined && (
-          <div className="text-right">
-            <div className="text-xs text-muted-foreground">Match</div>
-            <div className="text-lg font-bold text-primary">{matchScore}%</div>
-          </div>
-        )}
+        <div className="text-right">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground">Match</div>
+          <div className="text-2xl font-bold text-primary">{matchScore}%</div>
+        </div>
       </div>
 
-      {/* Risk and Hotspot Badges */}
       <div className="mb-3 flex items-center gap-2 flex-wrap">
         <span className={clsx('inline-block px-2 py-1 text-xs font-medium rounded-full', riskColor)}>
           {segment.characteristics.riskLevel.replace('_', ' ').toUpperCase()} RISK
@@ -79,15 +79,17 @@ export default function SegmentCard({
         )}
       </div>
 
-      {/* Metrics */}
+      <div className="mb-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        Selection Snapshot
+      </div>
+
       <div className="grid grid-cols-2 gap-3 mb-4">
         <MetricItem label="Price PSF" value={`$${segment.metrics.avgPricePsf.toFixed(0)}`} />
         <MetricItem label="Yield" value={`${segment.metrics.avgYield.toFixed(1)}%`} />
         <MetricItem label="YoY Growth" value={`+${segment.metrics.yoyGrowth.toFixed(1)}%`} />
-        <MetricItem label="Share" value={`${(segment.metrics.marketShare * 100).toFixed(0)}%`} />
+        <MetricItem label="Transactions" value={segment.metrics.transactionCount.toLocaleString()} />
       </div>
 
-      {/* Persistence */}
       {segment.persistenceProbability > 0 && (
         <div className="mb-4 p-2 bg-muted/50 rounded text-xs">
           <span className="text-muted-foreground">Persistence: </span>
@@ -95,13 +97,12 @@ export default function SegmentCard({
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex gap-2">
         <button
-          onClick={() => onViewDetails(segment)}
+          onClick={() => onInvestigate(segment)}
           className="flex-1 px-3 py-2 text-sm font-medium text-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
         >
-          Details
+          {isActive ? 'Investigating' : 'Investigate'}
         </button>
         <button
           onClick={() => onAddToCompare(segment)}
@@ -112,7 +113,7 @@ export default function SegmentCard({
               : 'border-border hover:border-primary hover:text-primary'
           )}
         >
-          {isSelectedForCompare ? '✓' : '+'}
+          {isSelectedForCompare ? 'In Compare' : 'Compare'}
         </button>
       </div>
     </div>

@@ -6,18 +6,22 @@ export function useSegmentMatching(
   segments: Segment[],
   filters: FilterState
 ) {
-  const matchedSegments = useMemo(() => {
+  const scoredSegments = useMemo(() => {
     return segments
       .map((segment) => ({
         segment,
         matchScore: calculateMatchScore(segment, filters),
       }))
       .filter(({ matchScore }) => matchScore > 0)
-      .sort((a, b) => b.matchScore - a.matchScore)
-      .map(({ segment }) => segment);
+      .sort((a, b) => b.matchScore - a.matchScore);
   }, [segments, filters]);
 
-  return { matchedSegments };
+  const matchedSegments = useMemo(
+    () => scoredSegments.map(({ segment }) => segment),
+    [scoredSegments]
+  );
+
+  return { matchedSegments, scoredSegments };
 }
 
 function calculateMatchScore(segment: Segment, filters: FilterState): number {

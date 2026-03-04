@@ -13,7 +13,7 @@ test.describe('Cross-Page Navigation', () => {
     await page.goto('/dashboard');
     await page.getByText('Analytics Index').click();
     await expect(page).toHaveURL(/analytics/);
-    await page.getByText('Market Overview').click();
+    await page.getByText('Overview').click();
     await expect(page).toHaveURL(/dashboard/);
   });
 
@@ -28,16 +28,16 @@ test.describe('Cross-Page Navigation', () => {
   test('should navigate between different dashboard pages', async ({ page }) => {
     await page.goto('/dashboard');
     
-    await page.getByText('Interactive Map').click();
+    await page.getByRole('link', { name: /Explore Areas/ }).first().click();
     await expect(page).toHaveURL(/dashboard\/map/);
     
-    await page.getByText('Analysis Tools').click();
+    await page.getByRole('link', { name: /Decision Tools/ }).first().click();
     await expect(page).toHaveURL(/dashboard\/trends/);
     
-    await page.getByText('Market Segments').click();
+    await page.getByRole('link', { name: /Discover Segments/ }).first().click();
     await expect(page).toHaveURL(/dashboard\/segments/);
     
-    await page.getByText('Area Rankings').click();
+    await page.getByRole('link', { name: /Compare Areas/ }).first().click();
     await expect(page).toHaveURL(/dashboard\/leaderboard/);
   });
 });

@@ -1,3 +1,5 @@
+import type { Region } from '@/types/segments';
+
 /**
  * Leaderboard type definitions for the enhanced leaderboard dashboard.
  */
@@ -104,4 +106,41 @@ export interface MetricMeta {
   formula: string;
   unit: string;
   colorScale: "sequential" | "diverging";
+}
+
+export type LeaderboardPropertyType = 'all' | 'hdb' | 'ec' | 'condo';
+export type LeaderboardTimeBasis = 'recent' | 'whole' | 'year_2025';
+
+export interface LeaderboardControlsState {
+  region: Region[];
+  propertyType: LeaderboardPropertyType;
+  timeBasis: LeaderboardTimeBasis;
+  priceRange: [number, number];
+  search: string;
+  rankMetric: LeaderboardMetric;
+}
+
+export interface LeaderboardDisplayRow {
+  sourceEntry: LeaderboardEntry;
+  planningArea: string;
+  areaKey: string;
+  region: string;
+  rank: number;
+  rankMetric: LeaderboardMetric;
+  rankMetricValue: number;
+  medianPrice: number | null;
+  medianPsf: number | null;
+  rentalYieldMean: number | null;
+  rentalYieldMedian: number | null;
+  yoyGrowthPct: number | null;
+  momChangePct: number | null;
+  momentum: number | null;
+  volume: number;
+  affordabilityRatio: number | null;
+  propertyMix: {
+    hdb: number;
+    ec: number;
+    condo: number;
+    total: number;
+  };
 }

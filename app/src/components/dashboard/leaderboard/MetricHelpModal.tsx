@@ -17,30 +17,6 @@ const METRICS: MetricMeta[] = [
     colorScale: 'sequential',
   },
   {
-    key: 'median_psf',
-    label: 'Median Price PSF',
-    description: 'The middle value of price per square foot for all transactions.',
-    formula: 'median(price ÷ floor_area_sqft)',
-    unit: 'SGD/sqft',
-    colorScale: 'sequential',
-  },
-  {
-    key: 'rental_yield_mean',
-    label: 'Rental Yield (Mean)',
-    description: 'Average annual rental income as a percentage of property price.',
-    formula: 'mean((monthly_rent × 12) ÷ property_price) × 100',
-    unit: '%',
-    colorScale: 'sequential',
-  },
-  {
-    key: 'rental_yield_median',
-    label: 'Rental Yield (Median)',
-    description: 'Middle value of annual rental yield as a percentage of property price.',
-    formula: 'median((monthly_rent × 12) ÷ property_price) × 100',
-    unit: '%',
-    colorScale: 'sequential',
-  },
-  {
     key: 'yoy_growth_pct',
     label: 'Year-over-Year Growth',
     description: 'Percentage change in median price compared to the previous year.',
@@ -49,35 +25,11 @@ const METRICS: MetricMeta[] = [
     colorScale: 'diverging',
   },
   {
-    key: 'mom_change_pct',
-    label: 'Month-over-Month Change',
-    description: 'Percentage change in median price compared to the previous month.',
-    formula: '((price_this_month - price_last_month) ÷ price_last_month) × 100',
-    unit: '%',
-    colorScale: 'diverging',
-  },
-  {
-    key: 'momentum',
-    label: 'Momentum',
-    description: 'Acceleration indicator - difference between 3-month and 12-month growth rates.',
-    formula: '3_month_growth - 12_month_growth',
-    unit: '',
-    colorScale: 'diverging',
-  },
-  {
     key: 'volume',
     label: 'Transaction Volume',
     description: 'Total number of property transactions in the period.',
     formula: 'count(all transactions)',
     unit: 'count',
-    colorScale: 'sequential',
-  },
-  {
-    key: 'affordability_ratio',
-    label: 'Affordability Ratio',
-    description: 'Ratio of median property price to median annual household income.',
-    formula: 'median_property_price ÷ median_annual_income',
-    unit: 'ratio',
     colorScale: 'sequential',
   },
 ];
@@ -147,11 +99,10 @@ export default function MetricHelpModal({ isOpen, onClose }: MetricHelpModalProp
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-6">
-            {/* Price Metrics */}
             <section>
               <h3 className="text-lg font-semibold mb-3 text-blue-600">Price Metrics</h3>
               <div className="space-y-4">
-                {METRICS.filter(m => m.key.includes('price') || m.key.includes('psf')).map(metric => (
+                {METRICS.filter(m => m.key === 'median_price').map(metric => (
                   <div key={metric.key} className="border-l-2 border-blue-500 pl-4">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-semibold">{metric.label}</h4>
@@ -168,11 +119,10 @@ export default function MetricHelpModal({ isOpen, onClose }: MetricHelpModalProp
               </div>
             </section>
 
-            {/* Growth Metrics */}
             <section>
               <h3 className="text-lg font-semibold mb-3 text-orange-600">Growth Metrics</h3>
               <div className="space-y-4">
-                {METRICS.filter(m => m.key.includes('growth') || m.key.includes('change') || m.key.includes('momentum')).map(metric => (
+                {METRICS.filter(m => m.key === 'yoy_growth_pct').map(metric => (
                   <div key={metric.key} className="border-l-2 border-orange-500 pl-4">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-semibold">{metric.label}</h4>
@@ -189,28 +139,6 @@ export default function MetricHelpModal({ isOpen, onClose }: MetricHelpModalProp
               </div>
             </section>
 
-            {/* Income Metrics */}
-            <section>
-              <h3 className="text-lg font-semibold mb-3 text-green-600">Income Metrics</h3>
-              <div className="space-y-4">
-                {METRICS.filter(m => m.key.includes('yield')).map(metric => (
-                  <div key={metric.key} className="border-l-2 border-green-500 pl-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold">{metric.label}</h4>
-                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                        {metric.unit}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">{metric.description}</p>
-                    <code className="text-xs bg-muted px-2 py-1 rounded block font-mono">
-                      {metric.formula}
-                    </code>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Market Activity */}
             <section>
               <h3 className="text-lg font-semibold mb-3 text-purple-600">Market Activity</h3>
               <div className="space-y-4">
@@ -231,26 +159,6 @@ export default function MetricHelpModal({ isOpen, onClose }: MetricHelpModalProp
               </div>
             </section>
 
-            {/* Other Metrics */}
-            <section>
-              <h3 className="text-lg font-semibold mb-3 text-gray-600">Other Metrics</h3>
-              <div className="space-y-4">
-                {METRICS.filter(m => m.key === 'affordability_ratio').map(metric => (
-                  <div key={metric.key} className="border-l-2 border-gray-500 pl-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold">{metric.label}</h4>
-                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                        {metric.unit}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">{metric.description}</p>
-                    <code className="text-xs bg-muted px-2 py-1 rounded block font-mono">
-                      {metric.formula}
-                    </code>
-                  </div>
-                ))}
-              </div>
-            </section>
           </div>
 
           {/* Data Source Note */}
@@ -260,7 +168,7 @@ export default function MetricHelpModal({ isOpen, onClose }: MetricHelpModalProp
             </p>
             <p>
               <strong>Time Period:</strong> Default metrics are based on recent transactions (2022+).
-              Time-based filters allow you to view different periods (pre-COVID, all-time, 2025).
+              Time-based filters allow you to compare recent, all-time, and 2025 views.
             </p>
             <p className="mt-2 text-xs">
               <strong>Note:</strong> Some metrics may be unavailable for certain planning areas or

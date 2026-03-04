@@ -32,21 +32,24 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 export function useGzipJson<T>(
   url: string,
   cacheKey?: string,
-  cacheEnabled: boolean = true
+  cacheEnabled: boolean = true,
+  initialData?: T | null
 ): UseGzipJsonResult<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<T | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const dataRef = useRef<T | null>(initialData ?? null);
 
   const key = cacheKey || url;
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (background: boolean = false) => {
     // Check cache first
     if (cacheEnabled) {
       const cached = globalCache.get(key);
       if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
         setData(cached.data as T);
+        dataRef.current = cached.data as T;
         setLoading(false);
         setError(null);
         return;
@@ -60,7 +63,9 @@ export function useGzipJson<T>(
 
     abortControllerRef.current = new AbortController();
 
-    setLoading(true);
+    if (!background) {
+      setLoading(true);
+    }
     setError(null);
 
     try {
@@ -71,28 +76,43 @@ export function useGzipJson<T>(
       }
       
       setData(result);
+      dataRef.current = result;
     } catch (err) {
+      const hasExistingData = dataRef.current !== null;
+
       if (err instanceof Error) {
         if (err.name === 'AbortError') return;
-        setError(err.message);
+        if (!background || !hasExistingData) {
+          setError(err.message);
+        }
       } else {
-        setError('Failed to load data');
+        if (!background || !hasExistingData) {
+          setError('Failed to load data');
+        }
       }
-      setData(null);
+
+      if (!background || !hasExistingData) {
+        setData(null);
+        dataRef.current = null;
+      }
     } finally {
       setLoading(false);
     }
   }, [url, key, cacheEnabled]);
 
   useEffect(() => {
-    loadData();
+    if (initialData) {
+      loadData(true);
+    } else {
+      loadData();
+    }
 
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, [loadData]);
+  }, [loadData, initialData]);
 
   return { data, loading, error, reload: loadData };
 }

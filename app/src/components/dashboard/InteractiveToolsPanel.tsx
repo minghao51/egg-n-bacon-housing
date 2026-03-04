@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import PersonaSelector, { type Persona } from './PersonaSelector';
-import PersonaHeader from './PersonaHeader';
+import { useMemo, useState } from 'react';
+import type { Persona } from './PersonaSelector';
 import ToolTabs, { type ToolTab } from './ToolTabs';
 import MrtCbdCalculator from './tools/MrtCbdCalculator';
 import LeaseDecayAnalyzer from './tools/LeaseDecayAnalyzer';
@@ -77,8 +76,48 @@ export default function InteractiveToolsPanel({
   hotspotsData,
   segmentsData,
 }: InteractiveToolsPanelProps) {
-  const [selectedPersona, setSelectedPersona] = useState<Persona>('first-time-buyer');
+  const [selectedPersona] = useState<Persona>('all');
   const [activeTab, setActiveTab] = useState<ToolTab>('mrt-cbd');
+
+  const toolMeta = useMemo(() => {
+    switch (activeTab) {
+      case 'mrt-cbd':
+        return {
+          title: 'Commute-price tradeoff estimator',
+          description: 'Estimate how MRT and CBD distance pull values up or down for a target area.',
+          learnMoreUrl: `${import.meta.env.BASE_URL}analytics/mrt-impact`,
+          learnMoreLabel: 'Read MRT impact methodology',
+        };
+      case 'lease-decay':
+        return {
+          title: 'Remaining-lease discount estimator',
+          description: 'Check where a property sits on the lease-decay curve and how fast value pressure builds.',
+          learnMoreUrl: `${import.meta.env.BASE_URL}analytics/lease-decay`,
+          learnMoreLabel: 'Read lease-decay methodology',
+        };
+      case 'affordability':
+        return {
+          title: 'Income-to-price capacity checker',
+          description: 'Test affordability ranges by income, property type, and town before you shortlist an area.',
+          learnMoreUrl: `${import.meta.env.BASE_URL}analytics/findings`,
+          learnMoreLabel: 'Read affordability context',
+        };
+      case 'hotspots':
+        return {
+          title: 'Spatial signal lookup',
+          description: 'Check hotspot and transition-zone signals when you already have towns in mind.',
+          learnMoreUrl: `${import.meta.env.BASE_URL}analytics/spatial-autocorrelation`,
+          learnMoreLabel: 'Read spatial methodology',
+        };
+      default:
+        return {
+          title: 'Decision support',
+          description: 'Run a scenario before you move back into area ranking or segment discovery.',
+          learnMoreUrl: `${import.meta.env.BASE_URL}analytics/`,
+          learnMoreLabel: 'Read analytics',
+        };
+    }
+  }, [activeTab]);
 
   const renderTool = () => {
     switch (activeTab) {
@@ -100,25 +139,95 @@ export default function InteractiveToolsPanel({
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Interactive Investment Tools
+          Decision Workspace
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Explore property dynamics with personalized analytics based on your investment profile
+          Use one calculator at a time, get an answer, then jump back into area comparison or segment discovery with that result.
         </p>
+        {segmentsData?.segments?.length ? (
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Cross-check your result later against {segmentsData.segments.length} market segments in the discovery flow.
+          </p>
+        ) : null}
       </div>
 
-      {/* Persona Header */}
-      <PersonaHeader persona={selectedPersona} segments={segmentsData?.segments || []} />
-
-      {/* Persona Selector */}
-      <PersonaSelector selected={selectedPersona} onChange={setSelectedPersona} />
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <button
+          type="button"
+          onClick={() => setActiveTab('mrt-cbd')}
+          className={`rounded-2xl border p-4 text-left transition-colors ${
+            activeTab === 'mrt-cbd'
+              ? 'border-primary bg-primary/5'
+              : 'border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30'
+          }`}
+        >
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">MRT / CBD Impact</div>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Quantify commute-distance pricing tradeoffs.</p>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('lease-decay')}
+          className={`rounded-2xl border p-4 text-left transition-colors ${
+            activeTab === 'lease-decay'
+              ? 'border-primary bg-primary/5'
+              : 'border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30'
+          }`}
+        >
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">Lease Decay</div>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Estimate remaining-lease discount and risk zone.</p>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('affordability')}
+          className={`rounded-2xl border p-4 text-left transition-colors ${
+            activeTab === 'affordability'
+              ? 'border-primary bg-primary/5'
+              : 'border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30'
+          }`}
+        >
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">Affordability</div>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Check income capacity before shortlisting.</p>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('hotspots')}
+          className={`rounded-2xl border p-4 text-left transition-colors ${
+            activeTab === 'hotspots'
+              ? 'border-primary bg-primary/5'
+              : 'border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30'
+          }`}
+        >
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">Spatial Hotspots</div>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Lookup clustering signals for candidate towns.</p>
+        </button>
+      </div>
 
       {/* Tool Tabs */}
       <ToolTabs active={activeTab} onChange={setActiveTab} />
 
+      <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/30">
+        <div className="text-sm font-semibold text-gray-900 dark:text-white">{toolMeta.title}</div>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{toolMeta.description}</p>
+      </div>
+
       {/* Active Tool */}
       <div className="mt-6">
         {renderTool()}
+      </div>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <a
+          href={toolMeta.learnMoreUrl}
+          className="rounded-2xl border border-gray-200 p-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-900/30"
+        >
+          {toolMeta.learnMoreLabel}
+        </a>
+        <a
+          href={`${import.meta.env.BASE_URL}${activeTab === 'affordability' ? 'dashboard/leaderboard' : 'dashboard/segments'}`}
+          className="rounded-2xl border border-gray-200 p-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-900/30"
+        >
+          {activeTab === 'affordability' ? 'Next: compare areas' : 'Next: discover matching segments'}
+        </a>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 // app/src/components/dashboard/segments/TabNavigation.tsx
 import clsx from 'clsx';
 
-type TabId = 'discover' | 'compare' | 'details';
+type TabId = 'discover' | 'investigate' | 'compare';
 
 interface TabNavigationProps {
   activeTab: TabId;
@@ -11,8 +11,8 @@ interface TabNavigationProps {
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: 'discover', label: 'Discover', icon: '🔍' },
+  { id: 'investigate', label: 'Investigate', icon: '🧭' },
   { id: 'compare', label: 'Compare', icon: '⚖️' },
-  { id: 'details', label: 'Details', icon: '📋' },
 ];
 
 export default function TabNavigation({ activeTab, onTabChange, disabledTabs = [] }: TabNavigationProps) {

@@ -147,6 +147,8 @@ export default function AffordabilityCalculator({
       return `Focus on rental yield potential rather than affordability. Properties in "stretched" areas often command higher rents, improving ROI.`;
     } else if (persona === 'first-time-buyer') {
       return `Target "affordable" towns with good transport links. Keep your ratio below 3.0x for better loan approval chances and financial buffer.`;
+    } else if (persona === 'all') {
+      return `Use affordability as an early screen. If the ratio is already stretched, narrow your shortlist before comparing lifestyle or upside factors.`;
     } else {
       return `Consider your current equity + sale proceeds. For upgraders, a ratio up to 4.0x is manageable if you're selling an existing property.`;
     }
@@ -295,13 +297,15 @@ export default function AffordabilityCalculator({
       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
         <div className="text-sm text-gray-600 dark:text-gray-400">
           <span className="font-medium">
-            Recommendation for{' '}
-            {persona === 'investor'
-              ? 'Investors'
-              : persona === 'first-time-buyer'
-              ? 'First-Time Buyers'
-              : 'Upgraders'}
-            :
+            {persona === 'all'
+              ? 'General guidance:'
+              : `Recommendation for ${
+                  persona === 'investor'
+                    ? 'Investors'
+                    : persona === 'first-time-buyer'
+                      ? 'First-Time Buyers'
+                      : 'Upgraders'
+                }:`}
           </span>{' '}
           <span className="ml-1">{getRecommendation()}</span>
         </div>

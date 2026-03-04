@@ -4,37 +4,39 @@ import type { Segment } from '@/types/segments';
 import SegmentCard from '../SegmentCard';
 
 interface SegmentGridProps {
-  segments: Segment[];
-  sortBy?: 'relevance' | 'price' | 'yield' | 'growth';
-  onViewDetails: (segment: Segment) => void;
+  scoredSegments: Array<{ segment: Segment; matchScore: number }>;
+  sortBy?: 'relevance' | 'yield' | 'growth' | 'value';
+  onInvestigate: (segment: Segment) => void;
   onAddToCompare: (segment: Segment) => void;
+  selectedSegmentId?: string | null;
   comparisonSet: Set<string>;
 }
 
-type SortOption = 'relevance' | 'price' | 'yield' | 'growth';
+type SortOption = 'relevance' | 'yield' | 'growth' | 'value';
 
 export function SegmentGrid({
-  segments,
+  scoredSegments,
   sortBy = 'relevance',
-  onViewDetails,
+  onInvestigate,
   onAddToCompare,
+  selectedSegmentId,
   comparisonSet,
 }: SegmentGridProps) {
   const sortedSegments = useMemo(() => {
-    const sorted = [...segments];
+    const sorted = [...scoredSegments];
 
     switch (sortBy) {
-      case 'price':
-        return sorted.sort((a, b) => a.metrics.avgPricePsf - b.metrics.avgPricePsf);
       case 'yield':
-        return sorted.sort((a, b) => b.metrics.avgYield - a.metrics.avgYield);
+        return sorted.sort((a, b) => b.segment.metrics.avgYield - a.segment.metrics.avgYield);
       case 'growth':
-        return sorted.sort((a, b) => b.metrics.yoyGrowth - a.metrics.yoyGrowth);
+        return sorted.sort((a, b) => b.segment.metrics.yoyGrowth - a.segment.metrics.yoyGrowth);
+      case 'value':
+        return sorted.sort((a, b) => a.segment.metrics.avgPricePsf - b.segment.metrics.avgPricePsf);
       case 'relevance':
       default:
-        return sorted; // Already sorted by match score
+        return sorted;
     }
-  }, [segments, sortBy]);
+  }, [scoredSegments, sortBy]);
 
   if (sortedSegments.length === 0) {
     return (
@@ -50,12 +52,14 @@ export function SegmentGrid({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-      {sortedSegments.map((segment) => (
+      {sortedSegments.map(({ segment, matchScore }) => (
         <SegmentCard
           key={segment.id}
           segment={segment}
-          onViewDetails={onViewDetails}
+          matchScore={matchScore}
+          onInvestigate={onInvestigate}
           onAddToCompare={onAddToCompare}
+          isActive={selectedSegmentId === segment.id}
           isSelectedForCompare={comparisonSet.has(segment.id)}
         />
       ))}

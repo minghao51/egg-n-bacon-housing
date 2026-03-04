@@ -1,5 +1,6 @@
 // app/src/components/dashboard/segments/FilterPanel.tsx
-import type { FilterState, InvestmentGoal, PropertyType, Region, TimeHorizon, SpatialCluster } from '@/types/segments';
+import type { ReactNode } from 'react';
+import type { FilterState, PropertyType, Region, SpatialCluster } from '@/types/segments';
 
 interface FilterPanelProps {
   filters: FilterState;
@@ -7,13 +8,6 @@ interface FilterPanelProps {
   onReset: () => void;
   activeFilterCount: number;
 }
-
-const INVESTMENT_GOALS: { value: InvestmentGoal; label: string; description: string }[] = [
-  { value: 'yield', label: 'Yield Focus', description: '4%+ target yield' },
-  { value: 'growth', label: 'Growth Focus', description: '12%+ YoY growth' },
-  { value: 'value', label: 'Value Play', description: 'Below market price' },
-  { value: 'balanced', label: 'Balanced', description: 'Growth + yield mix' },
-];
 
 const PROPERTY_TYPES: { value: PropertyType; label: string; note: string }[] = [
   { value: 'HDB', label: 'HDB', note: 'MRT impact minimal ~$5/100m' },
@@ -27,12 +21,6 @@ const REGIONS: { value: Region; label: string }[] = [
   { value: 'OCR', label: 'Outside Central Region' },
 ];
 
-const TIME_HORIZONS: { value: TimeHorizon; label: string; description: string }[] = [
-  { value: 'short', label: 'Short-term', description: '1-3 years' },
-  { value: 'medium', label: 'Medium-term', description: '3-7 years' },
-  { value: 'long', label: 'Long-term', description: '7+ years' },
-];
-
 const HOTSPOT_OPTIONS: { value: SpatialCluster | 'all'; label: string; icon: string; description: string }[] = [
   { value: 'all', label: 'All Areas', icon: '🌐', description: 'Show all segments' },
   { value: 'HH', label: 'Hotspots Only', icon: '🔥', description: 'High-price clusters (58-62% persistence)' },
@@ -43,53 +31,26 @@ const HOTSPOT_OPTIONS: { value: SpatialCluster | 'all'; label: string; icon: str
 
 export default function FilterPanel({ filters, onFilterChange, onReset, activeFilterCount }: FilterPanelProps) {
   return (
-    <div className="w-full lg:w-80 flex-shrink-0 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">Filters</h3>
-        <button
-          onClick={onReset}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Reset {activeFilterCount > 0 && `(${activeFilterCount})`}
-        </button>
+    <div className="w-full lg:w-80 flex-shrink-0 space-y-5 rounded-2xl border border-border bg-card p-5">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-foreground">Constraints</h3>
+          <button
+            onClick={onReset}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Reset {activeFilterCount > 0 && `(${activeFilterCount})`}
+          </button>
+        </div>
+        <div className="rounded-xl border border-border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+          {activeFilterCount > 0
+            ? `${activeFilterCount} active filter${activeFilterCount > 1 ? 's' : ''} shaping the shortlist`
+            : 'No constraints applied. All compatible segments are shown.'}
+        </div>
       </div>
 
-      {/* Investment Goal */}
-      <FilterSection title="Investment Goal">
-        <div className="space-y-2">
-          {INVESTMENT_GOALS.map((goal) => (
-            <label
-              key={goal.value}
-              className={`
-                flex items-start p-3 rounded-lg border cursor-pointer transition-all
-                ${filters.investmentGoal === goal.value
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50'
-                }
-              `}
-            >
-              <input
-                type="radio"
-                name="investmentGoal"
-                value={goal.value}
-                checked={filters.investmentGoal === goal.value}
-                onChange={(e) => onFilterChange('investmentGoal', e.target.value as InvestmentGoal)}
-                className="mt-1 mr-3"
-              />
-              <div>
-                <div className="font-medium text-sm">{goal.label}</div>
-                <div className="text-xs text-muted-foreground">{goal.description}</div>
-              </div>
-            </label>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Budget Range - Price PSF */}
       <FilterSection title="Budget Range (Price PSF)">
         <div className="space-y-3">
-          {/* Min Price Slider */}
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Min PSF</span>
@@ -110,8 +71,7 @@ export default function FilterPanel({ filters, onFilterChange, onReset, activeFi
               className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
             />
           </div>
-          
-          {/* Max Price Slider */}
+
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Max PSF</span>
@@ -134,17 +94,18 @@ export default function FilterPanel({ filters, onFilterChange, onReset, activeFi
               className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
             />
           </div>
-          
-          {/* Current Range Display */}
+
           <div className="pt-2 border-t border-border mt-2">
             <div className="text-xs text-center text-muted-foreground">
-              Current range: <span className="text-foreground font-medium">${filters.budgetRange[0]} - ${filters.budgetRange[1]}+ PSF</span>
+              Current range:{' '}
+              <span className="text-foreground font-medium">
+                ${filters.budgetRange[0]} - ${filters.budgetRange[1]}+ PSF
+              </span>
             </div>
           </div>
         </div>
       </FilterSection>
 
-      {/* Property Type */}
       <FilterSection title="Property Type">
         <div className="space-y-2">
           {PROPERTY_TYPES.map((type) => (
@@ -178,7 +139,6 @@ export default function FilterPanel({ filters, onFilterChange, onReset, activeFi
         </div>
       </FilterSection>
 
-      {/* Location */}
       <FilterSection title="Location">
         <div className="space-y-2">
           {REGIONS.map((region) => (
@@ -209,38 +169,6 @@ export default function FilterPanel({ filters, onFilterChange, onReset, activeFi
         </div>
       </FilterSection>
 
-      {/* Time Horizon */}
-      <FilterSection title="Time Horizon">
-        <div className="space-y-2">
-          {TIME_HORIZONS.map((horizon) => (
-            <label
-              key={horizon.value}
-              className={`
-                flex items-start p-3 rounded-lg border cursor-pointer transition-all
-                ${filters.timeHorizon === horizon.value
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50'
-                }
-              `}
-            >
-              <input
-                type="radio"
-                name="timeHorizon"
-                value={horizon.value}
-                checked={filters.timeHorizon === horizon.value}
-                onChange={(e) => onFilterChange('timeHorizon', e.target.value as TimeHorizon)}
-                className="mt-1 mr-3"
-              />
-              <div>
-                <div className="font-medium text-sm">{horizon.label}</div>
-                <div className="text-xs text-muted-foreground">{horizon.description}</div>
-              </div>
-            </label>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Hotspot Filter */}
       <FilterSection title="Spatial Hotspot">
         <div className="space-y-2">
           {HOTSPOT_OPTIONS.map((option) => (
@@ -277,7 +205,7 @@ export default function FilterPanel({ filters, onFilterChange, onReset, activeFi
   );
 }
 
-function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
+function FilterSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
       <h4 className="text-sm font-medium text-foreground mb-3">{title}</h4>

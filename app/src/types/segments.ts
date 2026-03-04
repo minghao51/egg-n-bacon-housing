@@ -13,6 +13,12 @@ export type MrtSensitivity = 'low' | 'moderate' | 'high';
 export type Persona = 'all' | 'investor' | 'first-time-buyer' | 'upgrader';
 export type InvestmentGoal = 'yield' | 'growth' | 'value' | 'balanced';
 export type TimeHorizon = 'short' | 'medium' | 'long';
+export type SegmentInvestigationMetric =
+  | 'avgPricePsf'
+  | 'avgYield'
+  | 'forecast6m'
+  | 'mrtPremium'
+  | 'persistenceProbability';
 
 export interface SegmentMetrics {
   avgPricePsf: number;
@@ -70,6 +76,22 @@ export interface PlanningArea {
   avgPricePsf: number;
   avgYield: number;
   segments: string[];
+}
+
+export interface SegmentAreaRow {
+  areaKey: string;
+  planningArea: string;
+  region: Region;
+  avgPricePsf: number;
+  avgYield: number;
+  forecast6m: number;
+  mrtPremium: number;
+  hotspotConfidence: PlanningArea['hotspotConfidence'];
+  persistenceProbability: number;
+  spatialCluster: SpatialCluster;
+  mrtSensitivity: MrtSensitivity;
+  schoolTier: SchoolTier;
+  matchesCurrentFilters: boolean;
 }
 
 export type PersonaApplicability = 'critical' | 'helpful' | 'optional';

@@ -21,6 +21,22 @@ interface TrendRecord {
   [key: string]: number | string;
 }
 
+interface OverviewHighlights {
+  recentPriceDelta?: {
+    current: number;
+    previous: number;
+    change: number;
+  } | null;
+  recentVolumeDelta?: {
+    current: number;
+    previous: number;
+    change: number;
+  } | null;
+  strongestPropertyType?: [string, number] | null;
+  strongestAreaTrend?: [string, { yoy_change_pct: number }] | null;
+  weakestAreaTrend?: [string, { yoy_change_pct: number }] | null;
+}
+
 interface OverviewData {
   metadata: {
     generated_at: string;
@@ -64,10 +80,12 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function MarketOverviewDashboard({
   data,
-  trendsData
+  trendsData,
+  overviewHighlights,
 }: {
   data: OverviewData;
   trendsData?: TrendRecord[];
+  overviewHighlights?: OverviewHighlights;
 }) {
   const [temporalFilter, setTemporalFilter] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
   const [propertyTypeFilter, setPropertyTypeFilter] = useState<'all' | 'hdb' | 'ec' | 'condo'>('all');
@@ -90,6 +108,62 @@ export default function MarketOverviewDashboard({
 
   return (
     <div className="space-y-8">
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-foreground">What Changed Recently</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Read the current market shift first, then decide whether to explore areas, compare rankings, or move into segment discovery.
+            </p>
+          </div>
+          <div className="rounded-xl bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            Best for: a quick market pulse before deeper analysis.
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <HighlightCard
+            title="Median Price"
+            value={formatDelta(overviewHighlights?.recentPriceDelta?.change, '%')}
+            description={
+              overviewHighlights?.recentPriceDelta
+                ? `From $${overviewHighlights.recentPriceDelta.previous.toLocaleString()} to $${overviewHighlights.recentPriceDelta.current.toLocaleString()}`
+                : 'Recent delta unavailable'
+            }
+          />
+          <HighlightCard
+            title="Transaction Volume"
+            value={formatDelta(overviewHighlights?.recentVolumeDelta?.change, '%')}
+            description={
+              overviewHighlights?.recentVolumeDelta
+                ? `From ${overviewHighlights.recentVolumeDelta.previous.toLocaleString()} to ${overviewHighlights.recentVolumeDelta.current.toLocaleString()} deals`
+                : 'Recent delta unavailable'
+            }
+          />
+          <HighlightCard
+            title="Largest Market Share"
+            value={overviewHighlights?.strongestPropertyType?.[0] ?? 'N/A'}
+            description={
+              overviewHighlights?.strongestPropertyType
+                ? `${overviewHighlights.strongestPropertyType[1].toLocaleString()} records in the current dataset`
+                : 'Property share unavailable'
+            }
+          />
+          <HighlightCard
+            title="Strongest vs Weakest Area Move"
+            value={
+              overviewHighlights?.strongestAreaTrend && overviewHighlights?.weakestAreaTrend
+                ? `${overviewHighlights.strongestAreaTrend[0]} / ${overviewHighlights.weakestAreaTrend[0]}`
+                : 'N/A'
+            }
+            description={
+              overviewHighlights?.strongestAreaTrend && overviewHighlights?.weakestAreaTrend
+                ? `${overviewHighlights.strongestAreaTrend[1].yoy_change_pct.toFixed(1)}% vs ${overviewHighlights.weakestAreaTrend[1].yoy_change_pct.toFixed(1)}% YoY`
+                : 'Area momentum unavailable'
+            }
+          />
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="flex flex-wrap justify-between items-center gap-4 bg-card p-4 rounded-lg border border-border">
         <h2 className="text-xl font-bold text-foreground">Market Snapshot</h2>
@@ -240,7 +314,82 @@ export default function MarketOverviewDashboard({
           <TransactionVolumeChart data={trendsData} />
         </div>
       )}
+
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Pick the Next Workspace</h3>
+            <p className="text-sm text-muted-foreground">
+              Move from the executive snapshot into the page built for your next decision.
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          <NextStepCard
+            href={`${import.meta.env.BASE_URL}dashboard/map`}
+            title="Explore on map"
+            description="Open the geographic view to see hotspots, affordability pockets, and overlay presets."
+          />
+          <NextStepCard
+            href={`${import.meta.env.BASE_URL}dashboard/leaderboard`}
+            title="See ranked areas"
+            description="Switch to a single-metric ranking workspace and narrow down a shortlist."
+          />
+          <NextStepCard
+            href={`${import.meta.env.BASE_URL}dashboard/segments`}
+            title="Find matching segments"
+            description="Start a guided discovery flow to match segment archetypes to your goal."
+          />
+        </div>
+      </div>
     </div>
+  );
+}
+
+function formatDelta(value?: number | null, suffix: string = ''): string {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return 'N/A';
+  }
+
+  const prefix = value > 0 ? '+' : '';
+  return `${prefix}${value.toFixed(1)}${suffix}`;
+}
+
+function HighlightCard({
+  title,
+  value,
+  description,
+}: {
+  title: string;
+  value: string;
+  description: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-background p-4">
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">{title}</div>
+      <div className="mt-2 text-lg font-bold text-foreground">{value}</div>
+      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+
+function NextStepCard({
+  href,
+  title,
+  description,
+}: {
+  href: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <a
+      href={href}
+      className="rounded-2xl border border-border bg-background p-4 transition-colors hover:bg-muted/40"
+    >
+      <div className="text-sm font-semibold text-foreground">{title}</div>
+      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+    </a>
   );
 }
 

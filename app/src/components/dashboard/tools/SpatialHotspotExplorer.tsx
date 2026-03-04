@@ -133,6 +133,15 @@ export default function SpatialHotspotExplorer({
         reasoning:
           'Balanced approach: LH coldspots near hotspots offer affordability with future upside. Prioritize stability over maximum growth.',
       };
+    } else if (persona === 'all') {
+      return {
+        HH: 35,
+        HL: 25,
+        LH: 25,
+        LL: 15,
+        reasoning:
+          'Use this as a neutral starting mix: keep exposure across stable hotspots, transition zones, and value pockets before choosing a narrower strategy.',
+      };
     } else {
       return {
         HH: 40,
@@ -361,12 +370,15 @@ export default function SpatialHotspotExplorer({
       {/* Portfolio Allocation */}
       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
         <h4 className="font-medium mb-3">
-          Portfolio Allocation for{' '}
-          {persona === 'investor'
-            ? 'Investors'
-            : persona === 'first-time-buyer'
-            ? 'First-Time Buyers'
-            : 'Upgraders'}
+          {persona === 'all'
+            ? 'Neutral Cluster Mix'
+            : `Portfolio Allocation for ${
+                persona === 'investor'
+                  ? 'Investors'
+                  : persona === 'first-time-buyer'
+                    ? 'First-Time Buyers'
+                    : 'Upgraders'
+              }`}
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
           {Object.entries(portfolio).map(([key, value]) =>

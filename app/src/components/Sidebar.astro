@@ -1,6 +1,7 @@
 ---
 import DarkModeToggle from './DarkModeToggle';
 import { getCollection } from 'astro:content';
+import { DASHBOARD_NAV_ITEMS } from '@/constants/dashboard-nav';
 
 interface Props {
   currentPath?: string;
@@ -56,71 +57,28 @@ function isActive(path: string, href: string): boolean {
       </div>
       <div class="border-t border-border my-3"></div>
       <ul class="space-y-1">
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}dashboard`}
-            class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            ]}
-          >
-            Market Overview
-          </a>
-        </li>
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}dashboard/map`}
-            class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/map`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            ]}
-          >
-            Interactive Map
-          </a>
-        </li>
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}dashboard/trends`}
-            class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/trends`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            ]}
-          >
-            Analysis Tools
-          </a>
-        </li>
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}dashboard/segments`}
-            class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/segments`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            ]}
-          >
-            Market Segments
-          </a>
-        </li>
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}dashboard/leaderboard`}
-            class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}dashboard/leaderboard`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            ]}
-          >
-            Area Rankings
-          </a>
-        </li>
+        {
+          DASHBOARD_NAV_ITEMS.map((item) => {
+            const href = `${import.meta.env.BASE_URL}${item.path}`;
+
+            return (
+              <li>
+                <a
+                  href={href}
+                  class:list={[
+                    "block rounded-lg px-3 py-2 transition-colors",
+                    isActive(currentPath, href)
+                      ? "bg-accent/50 border-l-2 border-primary text-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  ]}
+                >
+                  <span class="block text-sm font-medium">{item.label}</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">{item.description}</span>
+                </a>
+              </li>
+            );
+          })
+        }
       </ul>
     </div>
 

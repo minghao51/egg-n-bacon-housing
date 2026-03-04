@@ -47,6 +47,8 @@ export default function ToolTabs({ active, onChange }: ToolTabsProps) {
           <button
             key={tool.id}
             onClick={() => onChange(tool.id)}
+            role="tab"
+            aria-selected={active === tool.id}
             className={`
               whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors
               ${active === tool.id
@@ -55,6 +57,7 @@ export default function ToolTabs({ active, onChange }: ToolTabsProps) {
               }
             `}
             aria-current={active === tool.id ? 'page' : undefined}
+            title={tool.description}
           >
             <span className="text-lg">{tool.icon}</span>
             <span>{tool.label}</span>

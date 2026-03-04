@@ -8,14 +8,14 @@ test.describe('Dashboard - Market Overview', () => {
 
   test('should load market overview page', async ({ page }) => {
     await expect(page).toHaveURL(/dashboard/);
-    await expect(page.getByRole('heading', { name: 'Market Overview' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
   });
 
   test('should display sidebar navigation', async ({ page }) => {
     await expect(page.getByText('Egg n Bacon Housing')).toBeVisible();
-    await expect(page.getByText('Market Overview').first()).toBeVisible();
-    await expect(page.getByText('Interactive Map')).toBeVisible();
-    await expect(page.getByText('Analysis Tools')).toBeVisible();
+    await expect(page.getByRole('link', { name: /Overview/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Explore Areas/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Decision Tools/ }).first()).toBeVisible();
   });
 
   test('should display market overview dashboard content', async ({ page }) => {
@@ -23,15 +23,15 @@ test.describe('Dashboard - Market Overview', () => {
   });
 
   test('should have working navigation links in sidebar', async ({ page }) => {
-    await page.getByText('Interactive Map').click();
+    await page.getByRole('link', { name: /Explore Areas/ }).first().click();
     await expect(page).toHaveURL(/dashboard\/map/);
     await page.goBack();
 
-    await page.getByText('Analysis Tools').click();
+    await page.getByRole('link', { name: /Decision Tools/ }).first().click();
     await expect(page).toHaveURL(/dashboard\/trends/);
     await page.goBack();
 
-    await page.getByText('Market Segments').click();
+    await page.getByRole('link', { name: /Discover Segments/ }).first().click();
     await expect(page).toHaveURL(/dashboard\/segments/);
   });
 

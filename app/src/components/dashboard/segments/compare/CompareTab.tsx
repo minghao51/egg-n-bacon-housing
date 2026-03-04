@@ -11,13 +11,15 @@ interface CompareTabProps {
 }
 
 export function CompareTab({ segments, allSegments, persona }: CompareTabProps) {
+  void allSegments;
+
   if (segments.length < 2) {
     return (
       <div className="text-center py-16">
         <div className="text-6xl mb-4">⚖️</div>
-        <h3 className="text-xl font-semibold text-foreground mb-2">Select Segments to Compare</h3>
+        <h3 className="text-xl font-semibold text-foreground mb-2">Cross-Check Segments</h3>
         <p className="text-muted-foreground mb-6">
-          Choose 2-4 segments from the Discover tab to compare them side-by-side
+          Keep 2-4 segments in the compare tray to validate your shortlist side-by-side.
         </p>
         <p className="text-sm text-muted-foreground">
           {segments.length === 1 ? '1 segment selected' : '0 segments selected'} (need 2-4)

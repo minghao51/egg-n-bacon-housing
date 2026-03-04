@@ -1,268 +1,165 @@
-// app/src/components/dashboard/leaderboard/LeaderboardTable.tsx
-import React, { useMemo, useState } from 'react';
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  flexRender,
-  createColumnHelper,
-  type SortingState,
-} from '@tanstack/react-table';
-import type { LeaderboardEntry, LeaderboardMetric } from '@/types/leaderboard';
+import React from 'react';
+import type { LeaderboardDisplayRow, LeaderboardMetric } from '@/types/leaderboard';
+import { METRICS } from './MetricHelpModal';
 
 interface LeaderboardTableProps {
-  data: LeaderboardEntry[];
+  data: LeaderboardDisplayRow[];
+  selectedMetric: LeaderboardMetric;
   highlightedArea: string | null;
   onRowHover: (area: string | null) => void;
   onRowClick: (area: string) => void;
-  sortBy: LeaderboardMetric;
-  onSortChange: (metric: LeaderboardMetric) => void;
+}
+
+function formatNumber(value: number | null | undefined, digits: number = 1): string {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return '—';
+  }
+  return value.toFixed(digits);
+}
+
+function formatCurrency(value: number | null): string {
+  if (value === null || value === undefined) {
+    return '—';
+  }
+  return `$${value.toLocaleString()}`;
+}
+
+function formatMetricValue(row: LeaderboardDisplayRow, metric: LeaderboardMetric): string {
+  switch (metric) {
+    case 'median_price':
+      return formatCurrency(row.medianPrice);
+    case 'median_psf':
+      return row.medianPsf === null ? '—' : `$${row.medianPsf.toLocaleString()}`;
+    case 'rental_yield_mean':
+      return `${formatNumber(row.rentalYieldMean)}%`;
+    case 'rental_yield_median':
+      return `${formatNumber(row.rentalYieldMedian)}%`;
+    case 'yoy_growth_pct':
+      return `${row.yoyGrowthPct && row.yoyGrowthPct > 0 ? '+' : ''}${formatNumber(row.yoyGrowthPct)}%`;
+    case 'mom_change_pct':
+      return `${row.momChangePct && row.momChangePct > 0 ? '+' : ''}${formatNumber(row.momChangePct)}%`;
+    case 'momentum':
+      return `${row.momentum && row.momentum > 0 ? '+' : ''}${formatNumber(row.momentum)}`;
+    case 'volume':
+      return row.volume.toLocaleString();
+    case 'affordability_ratio':
+      return formatNumber(row.affordabilityRatio, 2);
+    default:
+      return '—';
+  }
+}
+
+function metricTone(metric: LeaderboardMetric, value: string): string {
+  if (metric === 'volume' || metric === 'median_price' || metric === 'median_psf' || metric === 'affordability_ratio') {
+    return 'text-foreground';
+  }
+
+  if (value.startsWith('+')) {
+    return 'text-emerald-600';
+  }
+
+  if (value.startsWith('-')) {
+    return 'text-rose-600';
+  }
+
+  return 'text-foreground';
 }
 
 export default function LeaderboardTable({
   data,
+  selectedMetric,
   highlightedArea,
   onRowHover,
   onRowClick,
-  sortBy,
-  onSortChange,
 }: LeaderboardTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([{ id: sortBy, desc: true }]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const selectedMetricMeta = METRICS.find((metric) => metric.key === selectedMetric) || METRICS[0];
+  const showPriceColumn = selectedMetric !== 'median_price';
+  const showVolumeColumn = selectedMetric !== 'volume';
 
-  const columnHelper = createColumnHelper<LeaderboardEntry>();
-
-  const columns = useMemo(() => [
-    columnHelper.accessor('rank_overall', {
-      header: 'Rank',
-      cell: info => <span className="font-bold">#{info.getValue()}</span>,
-    }),
-    columnHelper.accessor('planning_area', {
-      header: 'Planning Area',
-      cell: info => {
-        const area = info.getValue();
-        const isHighlighted = highlightedArea === area.toUpperCase();
-        return (
-          <span className={`font-medium ${isHighlighted ? 'text-blue-600' : ''}`}>
-            {area}
-          </span>
-        );
-      },
-    }),
-    columnHelper.accessor('region', {
-      header: 'Region',
-      cell: info => {
-        const region = info.getValue();
-        // Shorten region names for display
-        const shortRegion = region
-          .replace(' REGION', '')
-          .replace('CENTRAL', 'Core')
-          .replace('REST OF CENTRAL', 'RCR')
-          .replace('OUTSIDE CENTRAL', 'OCR');
-        return <span className="text-xs text-muted-foreground">{shortRegion}</span>;
-      },
-    }),
-    columnHelper.accessor('median_price', {
-      header: 'Median Price',
-      cell: info => {
-        const value = info.getValue();
-        return value ? `$${value.toLocaleString()}` : '—';
-      },
-    }),
-    columnHelper.accessor('median_psf', {
-      header: 'Median PSF',
-      cell: info => {
-        const value = info.getValue();
-        return value ? `$${value.toLocaleString()}` : '—';
-      },
-    }),
-    columnHelper.accessor(row => ({
-      mean: row.rental_yield_mean,
-      median: row.rental_yield_median,
-    }), {
-      id: 'rental_yield',
-      header: 'Rental Yield',
-      cell: info => {
-        const { mean, median } = info.getValue();
-        const displayValue = mean ?? median;
-        return (
-          <div className="flex items-center gap-2">
-            {displayValue !== null ? (
-              <>
-                <span className={displayValue > 4 ? 'text-green-600 font-bold' : ''}>
-                  {displayValue.toFixed(1)}%
-                </span>
-                <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-green-500"
-                    style={{ width: `${Math.min(displayValue * 20, 100)}%` }}
-                  />
-                </div>
-              </>
-            ) : (
-              <span className="text-muted-foreground">—</span>
-            )}
-          </div>
-        );
-      },
-    }),
-    columnHelper.accessor('yoy_growth_pct', {
-      header: 'YoY Growth',
-      cell: info => {
-        const val = info.getValue();
-        const color = val > 0 ? 'text-green-600' : val < 0 ? 'text-red-600' : 'text-muted-foreground';
-        return <span className={`${color} font-medium`}>{val > 0 ? '+' : ''}{val.toFixed(1)}%</span>;
-      },
-    }),
-    columnHelper.accessor('mom_change_pct', {
-      header: 'MoM Change',
-      cell: info => {
-        const val = info.getValue();
-        const color = val > 0 ? 'text-green-600' : val < 0 ? 'text-red-600' : 'text-muted-foreground';
-        return <span className={`${color} text-xs`}>{val > 0 ? '+' : ''}{val.toFixed(1)}%</span>;
-      },
-    }),
-    columnHelper.accessor('momentum', {
-      header: 'Momentum',
-      cell: info => {
-        const val = info.getValue();
-        const color = val > 2 ? 'text-green-600' : val < -2 ? 'text-red-600' : 'text-muted-foreground';
-        return <span className={`${color} text-xs`}>{val > 0 ? '+' : ''}{val.toFixed(1)}</span>;
-      },
-    }),
-    columnHelper.accessor('volume', {
-      header: 'Volume',
-      cell: info => info.getValue().toLocaleString(),
-    }),
-    columnHelper.accessor(row => ({
-      hdb: row.by_property_type.hdb.volume,
-      ec: row.by_property_type.ec.volume,
-      condo: row.by_property_type.condo.volume,
-      total: row.volume,
-    }), {
-      id: 'property_type_mix',
-      header: 'Property Mix',
-      cell: info => {
-        const { hdb, ec, condo, total } = info.getValue();
-        const hdbPct = total > 0 ? (hdb / total) * 100 : 0;
-        const ecPct = total > 0 ? (ec / total) * 100 : 0;
-        const condoPct = total > 0 ? (condo / total) * 100 : 0;
-
-        return (
-          <div className="flex gap-0.5 h-4 w-24">
-            {hdbPct > 0 && (
-              <div
-                className="bg-blue-500 rounded-l-sm"
-                style={{ width: `${hdbPct}%` }}
-                title={`HDB ${hdbPct.toFixed(0)}`}
-              />
-            )}
-            {ecPct > 0 && (
-              <div
-                className="bg-orange-500"
-                style={{ width: `${ecPct}%` }}
-                title={`EC ${ecPct.toFixed(0)}`}
-              />
-            )}
-            {condoPct > 0 && (
-              <div
-                className="bg-purple-500 rounded-r-sm"
-                style={{ width: `${condoPct}%` }}
-                title={`Condo ${condoPct.toFixed(0)}`}
-              />
-            )}
-          </div>
-        );
-      },
-    }),
-  ], [highlightedArea]);
-
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  });
+  if (data.length === 0) {
+    return (
+      <div className="rounded-2xl bg-muted/20 py-12 text-center">
+        <p className="mb-2 text-muted-foreground">No planning areas match the current filters.</p>
+        <p className="text-sm text-muted-foreground">Adjust the filters or clear the search to expand the results.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold text-foreground">Planning Area Rankings</h3>
-        <input
-          type="text"
-          value={globalFilter ?? ''}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search planning areas..."
-          className="px-3 py-2 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring w-64"
-        />
+      <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
+        <h3 className="text-lg font-semibold text-foreground">Planning Area Rankings</h3>
+        <p className="text-sm text-muted-foreground">
+          Sorted by <span className="font-medium text-foreground">{selectedMetricMeta.label}</span>
+        </p>
       </div>
 
-      {data.length === 0 ? (
-        <div className="text-center py-12 bg-muted/20 rounded-lg">
-          <p className="text-muted-foreground mb-2">No planning areas match your current filters.</p>
-          <p className="text-sm text-muted-foreground">Try adjusting your filters to see more results.</p>
-        </div>
-      ) : (
-        <div className="border border-border rounded-lg overflow-hidden bg-card">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-muted text-muted-foreground font-medium uppercase">
-                {table.getHeaderGroups().map(headerGroup => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <th
-                        key={header.id}
-                        className="px-4 py-3 cursor-pointer hover:bg-muted/80 whitespace-nowrap"
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        <div className="flex items-center gap-1">
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="divide-y divide-border">
-                {table.getRowModel().rows.map(row => {
-                  const area = row.original.planning_area.toUpperCase();
-                  const isHighlighted = highlightedArea === area;
+      <div className="overflow-x-auto rounded-2xl border border-border">
+        <table className="min-w-full text-left text-sm">
+          <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
+            <tr>
+              <th className="px-3 py-3 font-semibold">Rank</th>
+              <th className="px-3 py-3 font-semibold">Planning Area</th>
+              <th className="px-3 py-3 font-semibold">Region</th>
+              <th className="px-3 py-3 font-semibold">{selectedMetricMeta.label}</th>
+              {showPriceColumn && <th className="px-3 py-3 font-semibold">Median Price</th>}
+              {showVolumeColumn && <th className="hidden px-3 py-3 font-semibold lg:table-cell">Volume</th>}
+              <th className="hidden px-3 py-3 font-semibold xl:table-cell">Property Mix</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {data.map((row) => {
+              const isHighlighted = highlightedArea === row.areaKey;
+              const selectedValue = formatMetricValue(row, selectedMetric);
 
-                  return (
-                    <tr
-                      key={row.id}
-                      className={`hover:bg-muted/50 transition-colors cursor-pointer ${
-                        isHighlighted ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
-                      }`}
-                      onMouseEnter={() => onRowHover(area)}
-                      onMouseLeave={() => onRowHover(null)}
-                      onClick={() => onRowClick(row.original.planning_area)}
-                    >
-                      {row.getVisibleCells().map(cell => (
-                        <td key={cell.id} className="px-4 py-3 text-foreground whitespace-nowrap">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+              return (
+                <tr
+                  key={row.areaKey}
+                  data-area={row.areaKey}
+                  className={`cursor-pointer transition-colors ${
+                    isHighlighted ? 'bg-primary/10 ring-1 ring-inset ring-primary/20' : 'hover:bg-muted/40'
+                  }`}
+                  onMouseEnter={() => onRowHover(row.areaKey)}
+                  onMouseLeave={() => onRowHover(null)}
+                  onClick={() => onRowClick(row.areaKey)}
+                >
+                  <td className="px-3 py-3 font-semibold text-foreground">#{row.rank}</td>
+                  <td className="px-3 py-3 font-medium text-foreground">{row.planningArea}</td>
+                  <td className="px-3 py-3 text-muted-foreground">{row.region}</td>
+                  <td className={`px-3 py-3 font-semibold ${metricTone(selectedMetric, selectedValue)}`}>{selectedValue}</td>
+                  {showPriceColumn && <td className="px-3 py-3 text-foreground">{formatCurrency(row.medianPrice)}</td>}
+                  {showVolumeColumn && (
+                    <td className="hidden px-3 py-3 text-foreground lg:table-cell">{row.volume.toLocaleString()}</td>
+                  )}
+                  <td className="hidden px-3 py-3 xl:table-cell">
+                    <div className="flex h-3 w-24 overflow-hidden rounded-full bg-muted">
+                      {row.propertyMix.total > 0 && (
+                        <>
+                          <div
+                            className="bg-sky-500"
+                            style={{ width: `${(row.propertyMix.hdb / row.propertyMix.total) * 100}%` }}
+                            title={`HDB ${row.propertyMix.hdb}`}
+                          />
+                          <div
+                            className="bg-amber-500"
+                            style={{ width: `${(row.propertyMix.ec / row.propertyMix.total) * 100}%` }}
+                            title={`EC ${row.propertyMix.ec}`}
+                          />
+                          <div
+                            className="bg-emerald-500"
+                            style={{ width: `${(row.propertyMix.condo / row.propertyMix.total) * 100}%` }}
+                            title={`Condo ${row.propertyMix.condo}`}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

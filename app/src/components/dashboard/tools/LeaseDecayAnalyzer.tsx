@@ -68,6 +68,8 @@ export default function LeaseDecayAnalyzer({ data, persona }: LeaseDecayAnalyzer
         : remainingLease < 90
         ? `Moderate risk. Consider ${data.insights.safe_zone.band} for maximum loan tenure and CPF usage.`
         : `✅ Optimal: ${data.insights.safe_zone.band} for long-term security and minimal decay (${data.insights.safe_zone.annual_rate}%/year).`;
+    } else if (persona === 'all') {
+      return `Use the current lease band as a go / no-go screen: the maturity cliff matters more than small pricing differences once the remaining lease gets short.`;
     } else {
       return remainingLease < 70
         ? `Sell current property before cliff. Upgrade target should have ${data.insights.safe_zone.band} lease.`
@@ -150,7 +152,11 @@ export default function LeaseDecayAnalyzer({ data, persona }: LeaseDecayAnalyzer
       {/* Persona Recommendation */}
       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          <span className="font-medium">Recommendation for {persona === 'investor' ? 'Investors' : persona === 'first-time-buyer' ? 'First-Time Buyers' : 'Upgraders'}:</span>
+          <span className="font-medium">
+            {persona === 'all'
+              ? 'General guidance:'
+              : `Recommendation for ${persona === 'investor' ? 'Investors' : persona === 'first-time-buyer' ? 'First-Time Buyers' : 'Upgraders'}:`}
+          </span>
           <span className="ml-2">{getRecommendation()}</span>
         </div>
       </div>

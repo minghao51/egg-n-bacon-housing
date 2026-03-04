@@ -38,6 +38,32 @@ interface PriceMapProps {
 }
 
 const MAX_ACTIVE_LAYERS = 5;
+const MAP_PRESETS = [
+  {
+    id: 'expensive',
+    label: 'Show expensive areas',
+    metric: 'median_price' as MetricType,
+    layers: [] as LayerId[],
+  },
+  {
+    id: 'fastest-growth',
+    label: 'Show fastest-growing areas',
+    metric: 'yoy_change_pct' as MetricType,
+    layers: ['predictive.forecast'] as LayerId[],
+  },
+  {
+    id: 'affordability',
+    label: 'Show affordability pockets',
+    metric: 'affordability_ratio' as MetricType,
+    layers: [] as LayerId[],
+  },
+  {
+    id: 'forward-signals',
+    label: 'Show forecast / policy / lease overlays',
+    metric: 'yoy_change_pct' as MetricType,
+    layers: ['predictive.forecast', 'predictive.policy', 'predictive.lease'] as LayerId[],
+  },
+];
 
 export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<GeoJSONFeatureCollection | null>(null);
@@ -47,6 +73,7 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   const [temporalFilter, setTemporalFilter] = useState<TemporalFilter>('whole');
   const [propertyTypeFilter, setPropertyTypeFilter] = useState<PropertyTypeFilter>('all');
   const [metric, setMetric] = useState<MetricType>('median_price');
+  const [selectedArea, setSelectedArea] = useState<string | null>(null);
 
   // NEW: Analytics layers state
   const [activeLayers, setActiveLayers] = useState<Record<LayerId, boolean>>(() => {
@@ -107,21 +134,56 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   // Sync active layers to URL
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
+    const url = new URL(window.location.href);
     const activeLayerIds = Object.entries(activeLayers)
       .filter(([_, active]) => active)
       .map(([layerId, _]) => layerId);
 
-    const url = new URL(window.location.href);
+    url.searchParams.set('metric', metric);
+    url.searchParams.set('timeBasis', temporalFilter);
+    url.searchParams.set('propertyType', propertyTypeFilter);
+
     if (activeLayerIds.length > 0) {
       url.searchParams.set('layers', activeLayerIds.join(','));
     } else {
       url.searchParams.delete('layers');
     }
 
+    if (selectedArea) {
+      url.searchParams.set('area', selectedArea);
+    } else {
+      url.searchParams.delete('area');
+    }
+
     // Update URL without page reload
     window.history.replaceState({}, '', url.toString());
-  }, [activeLayers]);
+  }, [activeLayers, metric, propertyTypeFilter, selectedArea, temporalFilter]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const metricParam = urlParams.get('metric');
+    const timeBasisParam = urlParams.get('timeBasis');
+    const propertyTypeParam = urlParams.get('propertyType');
+    const areaParam = urlParams.get('area');
+
+    if (metricParam && ['median_price', 'median_psf', 'volume', 'rental_yield_median', 'yoy_change_pct', 'affordability_ratio'].includes(metricParam)) {
+      setMetric(metricParam as MetricType);
+    }
+
+    if (timeBasisParam && ['whole', 'pre_covid', 'recent', 'year_2025'].includes(timeBasisParam)) {
+      setTemporalFilter(timeBasisParam as TemporalFilter);
+    }
+
+    if (propertyTypeParam && ['all', 'hdb', 'ec', 'condo'].includes(propertyTypeParam)) {
+      setPropertyTypeFilter(propertyTypeParam as PropertyTypeFilter);
+    }
+
+    if (areaParam) {
+      setSelectedArea(areaParam.toUpperCase());
+    }
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -177,6 +239,13 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
     ? temporalFilter
     : `${temporalFilter}_${propertyTypeFilter}` as keyof MapData;
   const currentMetrics = allMetrics[dataKey];
+  const rankedAreas = Object.entries(currentMetrics)
+    .filter(([, metricData]) => typeof metricData?.[metric] === 'number')
+    .sort((a, b) => (b[1]?.[metric] ?? 0) - (a[1]?.[metric] ?? 0));
+  const selectedAreaMetrics = selectedArea ? currentMetrics[selectedArea] : null;
+  const selectedAreaRank = selectedArea
+    ? rankedAreas.findIndex(([areaName]) => areaName === selectedArea) + 1
+    : 0;
 
   // Dynamic Color Scale
   const getValues = () => {
@@ -215,14 +284,15 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
 
     const data = currentMetrics[name];
     const value = data ? data[metric] : 0;
+    const isSelected = selectedArea === name;
 
     return {
       fillColor: getColor(value),
-      weight: 1,
+      weight: isSelected ? 3 : 1,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
-      fillOpacity: 0.7
+      color: isSelected ? '#2563eb' : 'white',
+      dashArray: isSelected ? '' : '3',
+      fillOpacity: isSelected ? 0.9 : 0.7
     };
   };
 
@@ -301,7 +371,11 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
 
     // Highlight on hover
     const typedLayer = layer as {
-      on: (events: { mouseover: (e: LeafletLayerEvent) => void; mouseout: (e: LeafletLayerEvent) => void }) => void;
+      on: (events: {
+        mouseover: (e: LeafletLayerEvent) => void;
+        mouseout: (e: LeafletLayerEvent) => void;
+        click: () => void;
+      }) => void;
     };
     typedLayer.on({
       mouseover: (e: LeafletLayerEvent) => {
@@ -323,12 +397,67 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
           dashArray: '3',
           fillOpacity: 0.7
         });
+      },
+      click: () => {
+        if (name) {
+          setSelectedArea(name);
+        }
       }
     });
   };
 
+  const applyPreset = (presetId: string) => {
+    const preset = MAP_PRESETS.find((entry) => entry.id === presetId);
+    if (!preset) {
+      return;
+    }
+
+    setMetric(preset.metric);
+    setActiveLayers((prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach((layerId) => {
+        next[layerId as LayerId] = preset.layers.includes(layerId as LayerId);
+      });
+      return next;
+    });
+  };
+
+  const selectedAreaSummary =
+    selectedArea && selectedAreaMetrics
+      ? {
+          metricValue: selectedAreaMetrics[metric],
+          momentumSignal: selectedAreaMetrics.momentum_signal || 'Unspecified',
+          affordabilityClass: selectedAreaMetrics.affordability_class || 'Unspecified',
+          growth: selectedAreaMetrics.yoy_change_pct,
+          volume: selectedAreaMetrics.volume,
+        }
+      : null;
+
   return (
     <div className="space-y-4">
+      <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Question-led presets</h2>
+            <p className="text-sm text-muted-foreground">
+              Start with a saved lens instead of stacking layers manually.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {MAP_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => applyPreset(preset.id)}
+                className="rounded-full border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-4 justify-between items-center bg-card p-4 rounded-lg border border-border">
         {/* Metric Selector */}
         <div className="flex items-center gap-2">
@@ -399,112 +528,189 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
         loadingLayers={loadingLayers}
       />
 
-      <div className="h-[600px] border border-border rounded-lg overflow-hidden relative z-0 bg-slate-50 dark:bg-slate-900">
-        <MapContainer
-          center={[1.3521, 103.8198]}
-          zoom={11}
-          style={{ height: '100%', width: '100%' }}
-          zoomControl={false}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          />
-          <GeoJSON
-            key={`${dataKey}-${metric}`} // Force re-render when data changes
-            data={geoJsonData}
-            style={style}
-            onEachFeature={onEachFeature}
-          />
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="h-[600px] border border-border rounded-lg overflow-hidden relative z-0 bg-slate-50 dark:bg-slate-900">
+          <MapContainer
+            center={[1.3521, 103.8198]}
+            zoom={11}
+            style={{ height: '100%', width: '100%' }}
+            zoomControl={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            />
+            <GeoJSON
+              key={`${dataKey}-${metric}`} // Force re-render when data changes
+              data={geoJsonData}
+              style={style}
+              onEachFeature={onEachFeature}
+            />
 
-          {/* NEW: Analytics Overlays */}
-          <SpatialAnalysisOverlay
-            active={activeLayers['spatial.hotspot']}
-            data={spatialData.data}
-            loading={spatialData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="spatial.hotspot"
-          />
-          <SpatialAnalysisOverlay
-            active={activeLayers['spatial.lisa']}
-            data={spatialData.data}
-            loading={spatialData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="spatial.lisa"
-          />
-          <SpatialAnalysisOverlay
-            active={activeLayers['spatial.neighborhood']}
-            data={spatialData.data}
-            loading={spatialData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="spatial.neighborhood"
-          />
+            <SpatialAnalysisOverlay
+              active={activeLayers['spatial.hotspot']}
+              data={spatialData.data}
+              loading={spatialData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="spatial.hotspot"
+            />
+            <SpatialAnalysisOverlay
+              active={activeLayers['spatial.lisa']}
+              data={spatialData.data}
+              loading={spatialData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="spatial.lisa"
+            />
+            <SpatialAnalysisOverlay
+              active={activeLayers['spatial.neighborhood']}
+              data={spatialData.data}
+              loading={spatialData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="spatial.neighborhood"
+            />
 
-          <FeatureImpactOverlay
-            active={activeLayers['feature.mrt']}
-            data={featureData.data}
-            loading={featureData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="feature.mrt"
-            propertyType={propertyTypeFilter === 'all' ? 'hdb' : propertyTypeFilter}
-          />
-          <FeatureImpactOverlay
-            active={activeLayers['feature.school']}
-            data={featureData.data}
-            loading={featureData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="feature.school"
-          />
-          <FeatureImpactOverlay
-            active={activeLayers['feature.amenity']}
-            data={featureData.data}
-            loading={featureData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="feature.amenity"
-          />
+            <FeatureImpactOverlay
+              active={activeLayers['feature.mrt']}
+              data={featureData.data}
+              loading={featureData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="feature.mrt"
+              propertyType={propertyTypeFilter === 'all' ? 'hdb' : propertyTypeFilter}
+            />
+            <FeatureImpactOverlay
+              active={activeLayers['feature.school']}
+              data={featureData.data}
+              loading={featureData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="feature.school"
+            />
+            <FeatureImpactOverlay
+              active={activeLayers['feature.amenity']}
+              data={featureData.data}
+              loading={featureData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="feature.amenity"
+            />
 
-          <PredictiveAnalyticsOverlay
-            active={activeLayers['predictive.forecast']}
-            data={predictiveData.data}
-            loading={predictiveData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="predictive.forecast"
-          />
-          <PredictiveAnalyticsOverlay
-            active={activeLayers['predictive.policy']}
-            data={predictiveData.data}
-            loading={predictiveData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="predictive.policy"
-          />
-          <PredictiveAnalyticsOverlay
-            active={activeLayers['predictive.lease']}
-            data={predictiveData.data}
-            loading={predictiveData.loading}
-            planningAreasGeoJSON={geoJsonData}
-            layerId="predictive.lease"
-          />
-        </MapContainer>
+            <PredictiveAnalyticsOverlay
+              active={activeLayers['predictive.forecast']}
+              data={predictiveData.data}
+              loading={predictiveData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="predictive.forecast"
+            />
+            <PredictiveAnalyticsOverlay
+              active={activeLayers['predictive.policy']}
+              data={predictiveData.data}
+              loading={predictiveData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="predictive.policy"
+            />
+            <PredictiveAnalyticsOverlay
+              active={activeLayers['predictive.lease']}
+              data={predictiveData.data}
+              loading={predictiveData.loading}
+              planningAreasGeoJSON={geoJsonData}
+              layerId="predictive.lease"
+            />
+          </MapContainer>
 
-        {/* Legend Overlay */}
-        <div className="absolute bottom-4 right-4 bg-background/90 backdrop-blur p-3 rounded-lg border border-border text-xs z-[1000] shadow-lg">
-          <div className="font-semibold mb-2 capitalize">{metric.replace(/_/g, ' ')}</div>
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-4 rounded bg-[#800026]"></span>
-              <span>High</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-4 rounded bg-[#FD8D3C]"></span>
-              <span>Medium</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-4 rounded bg-[#FFEDA0]"></span>
-              <span>Low</span>
+          <div className="absolute bottom-4 right-4 bg-background/90 backdrop-blur p-3 rounded-lg border border-border text-xs z-[1000] shadow-lg">
+            <div className="font-semibold mb-2 capitalize">{metric.replace(/_/g, ' ')}</div>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded bg-[#800026]"></span>
+                <span>High</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded bg-[#FD8D3C]"></span>
+                <span>Medium</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded bg-[#FFEDA0]"></span>
+                <span>Low</span>
+              </div>
             </div>
           </div>
         </div>
+
+        <aside className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <h2 className="text-lg font-semibold text-foreground">Area Inspector</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Click a planning area to lock the highlight and hand it off to the ranking or segment pages.
+          </p>
+
+          {selectedAreaSummary ? (
+            <div className="mt-4 space-y-4">
+              <div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">Selected Area</div>
+                <div className="mt-1 text-base font-semibold text-foreground">{selectedArea}</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <InspectorItem
+                  label="Current Metric"
+                  value={formatInspectorValue(selectedAreaSummary.metricValue, metric)}
+                />
+                <InspectorItem
+                  label="Rank"
+                  value={selectedAreaRank > 0 ? `#${selectedAreaRank}` : 'N/A'}
+                />
+                <InspectorItem label="YoY Growth" value={`${selectedAreaSummary.growth?.toFixed(1) ?? '—'}%`} />
+                <InspectorItem label="Volume" value={selectedAreaSummary.volume?.toLocaleString() ?? '—'} />
+                <InspectorItem label="Momentum" value={selectedAreaSummary.momentumSignal} />
+                <InspectorItem label="Affordability" value={selectedAreaSummary.affordabilityClass} />
+              </div>
+              <div className="grid gap-2">
+                <a
+                  href={`${import.meta.env.BASE_URL}dashboard/leaderboard?area=${encodeURIComponent(selectedArea ?? '')}&metric=${encodeURIComponent(metric)}`}
+                  className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+                >
+                  Open in compare areas
+                </a>
+                <a
+                  href={`${import.meta.env.BASE_URL}dashboard/segments?area=${encodeURIComponent(selectedArea ?? '')}`}
+                  className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+                >
+                  Open in discover segments
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-4 rounded-2xl bg-muted/20 p-4 text-sm text-muted-foreground">
+              No area selected yet. Start with a preset, then click an area on the map.
+            </div>
+          )}
+        </aside>
       </div>
+    </div>
+  );
+}
+
+function formatInspectorValue(value: number | undefined, metric: MetricType): string {
+  if (value === undefined || value === null || Number.isNaN(value)) {
+    return '—';
+  }
+
+  if (metric === 'median_price' || metric === 'median_psf') {
+    return `$${value.toLocaleString()}`;
+  }
+
+  if (metric === 'volume') {
+    return value.toLocaleString();
+  }
+
+  if (metric === 'affordability_ratio') {
+    return `${value.toFixed(2)}x`;
+  }
+
+  return `${value.toFixed(1)}%`;
+}
+
+function InspectorItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-muted/30 p-3">
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-1 font-medium text-foreground">{value}</div>
     </div>
   );
 }

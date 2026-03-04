@@ -80,7 +80,14 @@ interface UseFilterStateResult {
   activeFilterCount: number;
 }
 
-export function useFilterState(initialPersona: Persona = 'all'): UseFilterStateResult {
+interface UseFilterStateOptions {
+  countVisibleFiltersOnly?: boolean;
+}
+
+export function useFilterState(
+  initialPersona: Persona = 'all',
+  options: UseFilterStateOptions = {}
+): UseFilterStateResult {
   const [persona, setPersona] = useState<Persona>(initialPersona);
   const [filters, setFilters] = useState<FilterState>(() => {
     const preset = PERSONA_PRESETS[initialPersona];
@@ -127,15 +134,15 @@ export function useFilterState(initialPersona: Persona = 'all'): UseFilterStateR
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (filters.investmentGoal) count++;
+    if (!options.countVisibleFiltersOnly && filters.investmentGoal) count++;
     if (filters.budgetRange[0] !== INITIAL_FILTERS.budgetRange[0] ||
         filters.budgetRange[1] !== INITIAL_FILTERS.budgetRange[1]) count++;
     if (filters.propertyTypes.length < 3) count++;
     if (filters.locations.length < 3) count++;
-    if (filters.timeHorizon) count++;
+    if (!options.countVisibleFiltersOnly && filters.timeHorizon) count++;
     if (filters.hotspotFilter !== 'all') count++;
     return count;
-  }, [filters]);
+  }, [filters, options.countVisibleFiltersOnly]);
 
   return {
     filters,
