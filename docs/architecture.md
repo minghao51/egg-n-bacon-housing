@@ -653,9 +653,9 @@ open htmlcov/index.html
 | **[L4 Analysis Pipeline](./guides/l4-analysis-pipeline.md)** | Analysis pipeline details | You're running market analysis |
 | **[Quick Start](./guides/quick-start.md)** | 5-minute setup guide | You want to start quickly |
 | **[External Data Setup](./guides/external-data-setup.md)** | API key configuration | You need to configure data sources |
-| **[Configuration Guide](./guides/20260228-configuration.md)** | Environment variables & settings | You need to configure the project |
-| **[CI/CD Pipeline Guide](./guides/20260228-ci-cd-pipeline.md)** | GitHub Actions workflows | You need to understand CI/CD |
-| **[API Reference](./reference/20260228-api-reference.md)** | Core utilities API documentation | You need to use core functions |
+| **[Configuration Guide](./guides/configuration.md)** | Environment variables & settings | You need to configure the project |
+| **[CI/CD Pipeline Guide](./guides/ci-cd-pipeline.md)** | GitHub Actions workflows | You need to understand CI/CD |
+| **[API Reference](./reference/api-reference.md)** | Core utilities API documentation | You need to use core functions |
 
 ---
 

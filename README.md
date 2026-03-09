@@ -117,25 +117,40 @@ egg-n-bacon-housing/
 
 ## Documentation
 
-**Core**:
-- [Documentation Index](docs/README.md) - Complete documentation hub
-- [Architecture](docs/architecture.md) - System design
-- [Development Workflow](CLAUDE.md) - Guidelines & principles
+**📚 [Complete Documentation](docs/README.md)** - Start here for full documentation index
 
-**Analytics**:
-- [Analytics Findings](docs/analytics/findings.md) - ML analysis
-- [MRT Impact](docs/analytics/mrt-impact.md) - MRT proximity analysis
-- [School Quality](docs/analytics/school-quality.md) - School feature analysis
-- [Spatial Hotspots](docs/analytics/spatial-hotspots.md) - Spatial market clustering
+**Getting Started**:
+- [Quick Start Guide](docs/guides/quick-start.md) - 5-minute setup
+- [Contributing Guide](CONTRIBUTING.md) - How to contribute
+- [Usage Guide](docs/guides/usage-guide.md) - Common tasks & workflows
 
-**Implementation**:
-- [Usage Guide](docs/guides/usage-guide.md) - Quick start & operations
+**Reference**:
+- [Architecture](docs/architecture.md) - System design & data flow
+- [Testing Guide](docs/guides/testing-guide.md) - Testing practices
+- [Configuration](docs/guides/configuration.md) - Environment variables
+
+**Analytics Reports**:
+- [Key Findings](docs/analytics/findings.md) - Main ML insights
+- [MRT Impact](docs/analytics/mrt-impact.md) - Distance to MRT effects
+- [School Quality](docs/analytics/school-quality.md) - School tier analysis
+- [Price Forecasts](docs/analytics/price-forecasts.md) - Time-series predictions
+- [Spatial Hotspots](docs/analytics/spatial-hotspots.md) - Geographic clustering
 
 ## Contributing
 
-1. Read [CLAUDE.md](CLAUDE.md)
-2. Run `uv sync && uv run pytest`
-3. Check `docs/` for implementation details
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+**Quick setup for contributors:**
+```bash
+# Install dependencies
+uv sync
+
+# Run tests
+uv run pytest
+
+# Format code
+uv run ruff format .
+```
 
 ## License
 

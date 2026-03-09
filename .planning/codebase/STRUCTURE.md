@@ -249,8 +249,8 @@ tests/
 ```
 docs/
 ├── guides/                      # How-to guides
-│   ├── 20260228-ci-cd-pipeline.md
-│   ├── 20260228-configuration.md
+│   ├── ci-cd-pipeline.md
+│   ├── configuration.md
 │   └── e2e-testing.md
 ├── reference/                   # Reference documentation
 ├── architecture.md              # System architecture
