@@ -1,5 +1,5 @@
 ---
-title: Policy Impact & Market Dynamics - Singapore Housing Market
+title: Policy Impact
 category: "market-analysis"
 description: What the causal analysis suggests about cooling measures, timing effects, and lease-related mispricing across major housing segments
 status: published

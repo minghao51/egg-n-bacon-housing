@@ -1,5 +1,5 @@
 ---
-title: Price Appreciation Prediction System - Singapore Housing Market
+title: Price Forecasts
 category: "market-analysis"
 description: Which price forecasts are decision-useful, which are too noisy, and how to interpret segment-level prediction quality
 status: published

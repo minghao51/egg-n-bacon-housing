@@ -1,5 +1,5 @@
 ---
-title: School Quality Impact on Singapore Property Prices
+title: School Quality Impact
 category: "market-analysis"
 description: What the data says about school-related housing premiums, where the effect is strongest, and why causal claims need caution
 status: published

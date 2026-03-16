@@ -1,5 +1,5 @@
 ---
-title: Lease Decay Impact on Singapore HDB Resale Prices
+title: Lease Decay Impact
 category: "market-analysis"
 description: Clear view of how remaining lease affects HDB resale value, where the sharpest discounts appear, and what that means for buyers
 status: published

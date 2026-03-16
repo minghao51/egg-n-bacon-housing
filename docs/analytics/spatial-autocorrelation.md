@@ -1,5 +1,5 @@
 ---
-title: Spatial Autocorrelation & Neighborhood Clusters for Property Appreciation
+title: Neighborhood Clusters
 category: "market-analysis"
 description: How strongly appreciation clusters by neighborhood, what cluster status means for buyers, and where spatial effects are most decision-relevant
 status: published

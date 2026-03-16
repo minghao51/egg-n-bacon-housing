@@ -1,5 +1,5 @@
 ---
-title: MRT Impact Analysis - Singapore Housing Market
+title: MRT Impact
 category: "market-analysis"
 description: What MRT access really contributes to housing prices, where the effect is meaningful, and where it is mostly overstated
 status: published
