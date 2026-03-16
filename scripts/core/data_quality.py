@@ -201,9 +201,7 @@ def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> Non
 
     # Calculate data change
     row_change = snapshot.output_rows - snapshot.input_rows
-    row_change_pct = (
-        (row_change / snapshot.input_rows * 100) if snapshot.input_rows > 0 else 0
-    )
+    row_change_pct = (row_change / snapshot.input_rows * 100) if snapshot.input_rows > 0 else 0
 
     duplicate_status, duplicate_warning = get_duplicate_status(
         snapshot.dataset_name, snapshot.duplicate_count
@@ -332,9 +330,7 @@ class DataQualityCollector:
 
         logger.debug(f"Recorded quality snapshot for {snapshot.dataset_name}")
 
-    def _update_baseline(
-        self, cursor: sqlite3.Cursor, snapshot: QualitySnapshot
-    ) -> None:
+    def _update_baseline(self, cursor: sqlite3.Cursor, snapshot: QualitySnapshot) -> None:
         """Update baseline using incremental algorithm (Welford's method)."""
         # Check if baseline exists
         cursor.execute(
@@ -374,7 +370,9 @@ class DataQualityCollector:
             n_new = n + 1
             delta = snapshot.output_rows - mean_rows
             mean_rows_new = mean_rows + delta / n_new
-            std_rows_new = std_rows * (n - 1) / n + (delta * (snapshot.output_rows - mean_rows_new)) / n
+            std_rows_new = (
+                std_rows * (n - 1) / n + (delta * (snapshot.output_rows - mean_rows_new)) / n
+            )
 
             # Update mean and std for null percentage
             delta_null = snapshot.null_percentage - mean_null_pct
@@ -464,7 +462,7 @@ class DataQualityCollector:
                 if pct_change > 0.5:  # 50% change
                     anomalies.append(
                         f"Row count: {snapshot.output_rows} "
-                        f"(baseline: {baseline.mean_rows:.0f}, change: {pct_change*100:.0f}%)"
+                        f"(baseline: {baseline.mean_rows:.0f}, change: {pct_change * 100:.0f}%)"
                     )
 
         # Check null percentage

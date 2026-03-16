@@ -96,6 +96,8 @@ Our analysis identified **12 statistically significant hotspots** (at 99% confid
 
 **Top 5 Hotspots by Statistical Significance:**
 
+<div data-chart-metadata="true" data-chart="comparison" data-chart-title="Top rental hotspots" data-chart-columns="Gi* Statistic,Median Monthly Rent"></div>
+
 | Area | Gi* Statistic | P-Value | Median Monthly Rent |
 |------|---------------|---------|---------------------|
 | Orchard | 4.21 | < 0.001 | $3,200 |
@@ -105,6 +107,8 @@ Our analysis identified **12 statistically significant hotspots** (at 99% confid
 | Newton | 2.87 | < 0.01 | $2,950 |
 
 **Top 5 Coldspots (Lowest Rents):**
+
+<div data-chart-metadata="true" data-chart="comparison" data-chart-title="Top rental coldspots" data-chart-columns="Gi* Statistic,Median Monthly Rent"></div>
 
 | Area | Gi* Statistic | P-Value | Median Monthly Rent |
 |------|---------------|---------|---------------------|

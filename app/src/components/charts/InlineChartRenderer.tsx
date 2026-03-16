@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import {
-  isTimeSeriesTable,
-  isComparisonTable,
+  parseChartConfigFromElement,
   tableToChartData,
   parseTableFromElement,
 } from '@/utils/data-parser';
 import TimeSeriesChart from './TimeSeriesChart';
 import ComparisonChart from './ComparisonChart';
-import StatisticalPlot from './StatisticalPlot';
 // @ts-ignore
 import { createRoot } from 'react-dom/client';
 
@@ -31,21 +29,17 @@ export default function InlineChartRenderer() {
       // Prevent processing if it's already part of a chart we created (nested check)
       if (tableElement.closest('.chart-container')) return;
 
+      const chartConfig = parseChartConfigFromElement(tableElement);
+      if (!chartConfig) return;
+
       const tableData = parseTableFromElement(tableElement);
       if (!tableData) return;
 
-      const chartData = tableToChartData(tableData);
+      const chartData = tableToChartData(tableData, chartConfig.columns);
       if (!chartData) return;
 
-      const isTimeSeries = isTimeSeriesTable(tableData);
-      const isComparison = isComparisonTable(tableData);
-
-      // Only render if we have a valid visualization type
-      if (!isTimeSeries && !isComparison) {
-        // Maybe just statistical plot? 
-        // For now, let's only auto-chart explicit types to avoid noise
-        return;
-      }
+      const renderTimeSeries = chartConfig.types.includes('time-series');
+      const renderComparison = chartConfig.types.includes('comparison');
 
       // Create chart container
       const chartContainer = document.createElement('div');
@@ -54,32 +48,37 @@ export default function InlineChartRenderer() {
       // Create title
       const title = document.createElement('h4');
       title.className = 'text-lg font-semibold mb-4 text-foreground';
-      title.textContent = isTimeSeries
-        ? 'Time Series Visualization'
-        : isComparison
-          ? 'Comparison Chart'
-          : 'Data Visualization';
+      title.textContent = chartConfig.title
+        ?? (renderTimeSeries && !renderComparison
+          ? 'Time Series Visualization'
+          : renderComparison && !renderTimeSeries
+            ? 'Comparison Chart'
+            : 'Data Visualization');
       chartContainer.appendChild(title);
 
+      // Insert the container before mounting charts so ResponsiveContainer can measure it.
+      tableElement.insertAdjacentElement('afterend', chartContainer);
+
       // Render Charts
-      if (isTimeSeries) {
+      if (renderTimeSeries) {
         const section = createChartSection('Trend', 'trend-chart');
         chartContainer.appendChild(section);
         const mount = section.querySelector('.chart-mount') as HTMLElement;
         const root = createRoot(mount);
-        root.render(<TimeSeriesChart data={chartData} height={300} />);
+        requestAnimationFrame(() => {
+          root.render(<TimeSeriesChart data={chartData} height={300} />);
+        });
       }
 
-      if (isComparison) {
+      if (renderComparison) {
         const section = createChartSection('Comparison', 'comparison-chart');
         chartContainer.appendChild(section);
         const mount = section.querySelector('.chart-mount') as HTMLElement;
         const root = createRoot(mount);
-        root.render(<ComparisonChart data={chartData} height={300} />);
+        requestAnimationFrame(() => {
+          root.render(<ComparisonChart data={chartData} height={300} />);
+        });
       }
-
-      // Insert chart AFTER the table
-      tableElement.insertAdjacentElement('afterend', chartContainer);
 
       processedTables.current.add(tableElement);
     });

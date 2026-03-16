@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
 } from 'recharts';
 import type { ChartData } from '@/utils/data-parser';
 import ClientChart from './ClientChart';
@@ -20,12 +19,11 @@ interface TimeSeriesChartProps {
 
 export default function TimeSeriesChart({
   data,
-  width = 800,
   height = 400,
 }: TimeSeriesChartProps) {
   // Transform data for Recharts
   const chartData = data.labels.map((label, index) => {
-    const point: Record<string, string | number> = { name: label };
+    const point: Record<string, string | number | null> = { name: label };
     data.datasets.forEach((dataset) => {
       point[dataset.label] = dataset.data[index];
     });
@@ -43,8 +41,8 @@ export default function TimeSeriesChart({
 
   return (
     <ClientChart className="w-full" style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData}>
+      {({ width }) => (
+        <LineChart width={width} height={height} data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
           <XAxis
             dataKey="name"
@@ -76,7 +74,7 @@ export default function TimeSeriesChart({
             />
           ))}
         </LineChart>
-      </ResponsiveContainer>
+      )}
     </ClientChart>
   );
 }

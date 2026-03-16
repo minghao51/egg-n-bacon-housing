@@ -28,9 +28,7 @@ def test_database_initialization():
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='run_snapshots'"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='run_snapshots'")
         assert cursor.fetchone() is not None, "run_snapshots table not created"
 
         cursor.execute(

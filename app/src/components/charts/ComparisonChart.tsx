@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
 } from 'recharts';
 import type { ChartData } from '@/utils/data-parser';
 import ClientChart from './ClientChart';
@@ -21,13 +20,12 @@ interface ComparisonChartProps {
 
 export default function ComparisonChart({
   data,
-  width = 800,
   height = 400,
-  horizontal = false,
+  horizontal = true,
 }: ComparisonChartProps) {
   // Transform data for Recharts
   const chartData = data.labels.map((label, index) => {
-    const point: Record<string, string | number> = { name: label };
+    const point: Record<string, string | number | null> = { name: label };
     data.datasets.forEach((dataset) => {
       point[dataset.label] = dataset.data[index];
     });
@@ -45,8 +43,10 @@ export default function ComparisonChart({
 
   return (
     <ClientChart className="w-full" style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
+      {({ width }) => (
         <BarChart
+          width={width}
+          height={height}
           data={chartData}
           layout={horizontal ? 'horizontal' : 'vertical'}
         >
@@ -60,6 +60,7 @@ export default function ComparisonChart({
           <YAxis
             dataKey={horizontal ? 'name' : undefined}
             type={horizontal ? 'category' : 'number'}
+            width={140}
             className="text-sm"
             tick={{ fill: 'hsl(var(--foreground))' }}
           />
@@ -80,7 +81,7 @@ export default function ComparisonChart({
             />
           ))}
         </BarChart>
-      </ResponsiveContainer>
+      )}
     </ClientChart>
   );
 }

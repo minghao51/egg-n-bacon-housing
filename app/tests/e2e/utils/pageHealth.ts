@@ -4,8 +4,10 @@ type IgnorePattern = RegExp | string;
 
 interface PageHealthOptions {
   ignoreConsoleErrors?: IgnorePattern[];
+  ignoreConsoleWarnings?: IgnorePattern[];
   ignorePageErrors?: IgnorePattern[];
   ignoreFailedRequests?: IgnorePattern[];
+  failOnConsoleWarnings?: boolean;
 }
 
 function matchesPattern(value: string, patterns: IgnorePattern[] = []): boolean {
@@ -31,15 +33,24 @@ export async function expectPageToLoadWithoutErrors(
   options: PageHealthOptions = {},
 ): Promise<void> {
   const consoleErrors: string[] = [];
+  const consoleWarnings: string[] = [];
   const pageErrors: string[] = [];
   const failedRequests: string[] = [];
 
   page.on('console', (msg) => {
+    const text = msg.text();
+
+    if (msg.type() === 'warning') {
+      if (!matchesPattern(text, options.ignoreConsoleWarnings)) {
+        consoleWarnings.push(text);
+      }
+      return;
+    }
+
     if (msg.type() !== 'error') {
       return;
     }
 
-    const text = msg.text();
     if (text.startsWith('Failed to load resource: the server responded with a status of')) {
       return;
     }
@@ -76,6 +87,9 @@ export async function expectPageToLoadWithoutErrors(
   await page.waitForLoadState('networkidle');
 
   expect(consoleErrors, `Unexpected console errors on ${url}`).toEqual([]);
+  if (options.failOnConsoleWarnings) {
+    expect(consoleWarnings, `Unexpected console warnings on ${url}`).toEqual([]);
+  }
   expect(pageErrors, `Unexpected uncaught page errors on ${url}`).toEqual([]);
   expect(failedRequests, `Unexpected failed requests on ${url}`).toEqual([]);
 }

@@ -86,6 +86,10 @@ const tocHeadings = headings.map((h) => ({
         .prose tr:hover {
           @apply bg-muted/50;
         }
+
+        .prose [data-chart-metadata='true'] {
+          display: none;
+        }
         
         /* KaTeX Styling adjustments */
         .katex-display {

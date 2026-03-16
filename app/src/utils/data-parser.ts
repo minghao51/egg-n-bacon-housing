@@ -8,6 +8,12 @@ export interface TableData {
   caption?: string;
 }
 
+export interface ChartConfig {
+  types: ('time-series' | 'comparison')[];
+  columns?: string[];
+  title?: string;
+}
+
 export interface ParsedMarkdown {
   content: string;
   tables: TableData[];
@@ -103,16 +109,31 @@ export function isComparisonTable(table: TableData): boolean {
     return false;
   }
 
-  // Check if we have categorical data in first column and numeric in others
-  const hasNonNumericFirstCol = table.rows.some(
-    (row) => row.length > 0 && isNaN(parseFloat(row[0]))
-  );
+  const rowCount = table.rows.length;
+  if (rowCount < 2) {
+    return false;
+  }
 
-  const hasNumericOtherCols = table.rows.some((row) =>
-    row.slice(1).some((cell) => !isNaN(parseFloat(cell)))
-  );
+  const nonNumericFirstColCount = table.rows.filter(
+    (row) => row.length > 0 && parseNumericValue(row[0]) === null
+  ).length;
 
-  return hasNonNumericFirstCol && hasNumericOtherCols;
+  const numericOtherCellCount = table.rows.reduce((count, row) => (
+    count + row.slice(1).filter((cell) => parseNumericValue(cell) !== null).length
+  ), 0);
+
+  const totalOtherCellCount = table.rows.reduce((count, row) => (
+    count + Math.max(0, row.length - 1)
+  ), 0);
+
+  if (totalOtherCellCount === 0) {
+    return false;
+  }
+
+  return (
+    nonNumericFirstColCount / rowCount >= 0.6 &&
+    numericOtherCellCount / totalOtherCellCount >= 0.6
+  );
 }
 
 /**
@@ -123,14 +144,38 @@ export function parseNumericValue(value: string): number | null {
     return null;
   }
 
+  const normalized = value.trim();
+
+  // Skip cells that are mostly descriptive text or compound/range values.
+  if (
+    /[a-zA-Z]/.test(normalized) ||
+    /\b(?:of|to|vs|baseline)\b/i.test(normalized) ||
+    /^p\s*=/.test(normalized) ||
+    /\[[^\]]+\]/.test(normalized)
+  ) {
+    return null;
+  }
+
+  if (/^\d+\s*-\s*\d+/.test(normalized) || /^[-+]?~?\d+%?\s+/.test(normalized)) {
+    return null;
+  }
+
   // Remove currency symbols, commas, and percentage signs
-  const cleaned = value
+  const cleaned = normalized
     .replace(/[$SGD]/gi, '')
     .replace(/,/g, '')
     .replace(/%/g, '')
+    .replace(/[()]/g, '')
+    .replace(/^~/, '')
+    .replace(/\s*\/\s*(100m|km)\b/gi, '')
+    .replace(/\s*(psf|sqm|yoy)\b/gi, '')
     .trim();
 
-  const parsed = parseFloat(cleaned);
+  if (!/^[-+]?\d*\.?\d+$/.test(cleaned)) {
+    return null;
+  }
+
+  const parsed = Number(cleaned);
   return isNaN(parsed) ? null : parsed;
 }
 
@@ -240,5 +285,41 @@ export function parseTableFromElement(tableElement: HTMLTableElement): TableData
     headers,
     rows,
     caption: tableElement.caption?.textContent || undefined,
+  };
+}
+
+export function parseChartConfigFromElement(tableElement: HTMLTableElement): ChartConfig | null {
+  const previousElement = tableElement.previousElementSibling;
+
+  if (!(previousElement instanceof HTMLElement)) {
+    return null;
+  }
+
+  if (previousElement.dataset.chartMetadata !== 'true') {
+    return null;
+  }
+
+  const rawTypes = previousElement.dataset.chart?.split(',').map((type) => type.trim()) ?? [];
+  const validTypes = rawTypes.filter(
+    (type): type is 'time-series' | 'comparison' => (
+      type === 'time-series' || type === 'comparison'
+    )
+  );
+
+  if (validTypes.length === 0) {
+    return null;
+  }
+
+  const columns = previousElement.dataset.chartColumns
+    ?.split(',')
+    .map((column) => column.trim())
+    .filter(Boolean);
+
+  const title = previousElement.dataset.chartTitle?.trim();
+
+  return {
+    types: validTypes,
+    columns: columns && columns.length > 0 ? columns : undefined,
+    title: title || undefined,
   };
 }

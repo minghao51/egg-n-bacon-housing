@@ -184,6 +184,8 @@ HDB properties show a modest overall MRT premium of **$1.28 per 100m** closer to
 
 Properties within 500m of MRT show the **highest appreciation rates (13.36% YoY)**, suggesting strong demand for transit-accessible housing.
 
+<div data-chart-metadata="true" data-chart="comparison" data-chart-title="MRT impact by distance band" data-chart-columns="YoY Appreciation,Median Price PSF,Transaction Count"></div>
+
 | Distance Bin | YoY Appreciation | Median Price PSF | Transaction Count |
 |--------------|------------------|------------------|-------------------|
 | **0-500m** | 13.36% | $494.48 | 82,572 |
@@ -250,6 +252,8 @@ MRT premium varies **100x across towns** - from +$59/100m in Central Area to -$3
 
 #### Top 5 Towns by MRT Premium
 
+<div data-chart-metadata="true" data-chart="comparison" data-chart-title="Top positive MRT premiums by town" data-chart-columns="MRT Premium,Mean Price PSF,Transactions"></div>
+
 | Rank | Town | MRT Premium | Mean Price PSF | Transactions | Avg MRT Distance |
 |------|------|-------------|----------------|--------------|------------------|
 | 1 | **Central Area** | **+$59.19/100m** | $903 | 599 | 318m |
@@ -273,6 +277,8 @@ MRT premium varies **100x across towns** - from +$59/100m in Central Area to -$3
 ### 4. Flat Type Variation
 
 Smaller flats show **4x higher MRT sensitivity** than larger units - reflecting transit dependence of different household segments.
+
+<div data-chart-metadata="true" data-chart="comparison" data-chart-title="MRT premium by flat type" data-chart-columns="Count,Mean Price PSF,MRT Premium per 100m,R²"></div>
 
 | Flat Type | Count | Mean Price PSF | MRT Premium per 100m | R² |
 |-----------|-------|----------------|---------------------|-----|

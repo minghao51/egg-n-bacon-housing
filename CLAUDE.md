@@ -12,6 +12,18 @@
     - uv run <command> (e.g., uv run pytest, uv run ruff check .) to execute commands within the managed environment.
     - uv add <package> to add a dependency to your pyproject.toml file.
 8. When creating or generating Markdown (.md) files, you must strict adhere to the following naming convention: YYYYMMDD-filename.md
+9. For analytics docs rendered in `app/`, markdown tables are plain tables by default. Only opt a table into chart rendering when the chart genuinely adds value, and use this exact metadata block immediately before the table:
+   ```html
+   <div
+     data-chart-metadata="true"
+     data-chart="comparison"
+     data-chart-title="Descriptive chart title"
+     data-chart-columns="Column A,Column B"
+   ></div>
+   ```
+   - `data-chart` supports `comparison`, `time-series`, or a comma-separated combination.
+   - `data-chart-columns` is optional but recommended to avoid noisy charts.
+   - Do not add chart metadata to glossary tables, risk/mitigation tables, file inventories, or other primarily descriptive tables.
 ---
 
 ## Development Workflow

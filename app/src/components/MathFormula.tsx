@@ -13,7 +13,7 @@ export default function MathFormula({ formula, display = true }: MathFormulaProp
     if (containerRef.current && !containerRef.current.hasChildNodes()) {
       try {
         katex.render(formula, containerRef.current, {
-          displayMode: display ? 'display' : 'inline',
+          displayMode: display,
           throwOnError: false,
         });
       } catch (error) {

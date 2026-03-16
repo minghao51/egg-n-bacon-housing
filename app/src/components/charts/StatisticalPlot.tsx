@@ -6,7 +6,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
 import type { ChartData } from '@/utils/data-parser';
 import ClientChart from './ClientChart';
@@ -46,7 +45,7 @@ export default function StatisticalPlot({
 
   // Group by dataset for better visualization
   const groupedData = data.labels.map((label, index) => {
-    const point: Record<string, string | number> = { name: label };
+    const point: Record<string, string | number | null> = { name: label };
     data.datasets.forEach((dataset) => {
       point[dataset.label] = dataset.data[index];
     });
@@ -55,8 +54,8 @@ export default function StatisticalPlot({
 
   return (
     <ClientChart className="w-full" style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <ScatterChart data={groupedData}>
+      {({ width }) => (
+        <ScatterChart width={width} height={height} data={groupedData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
           <XAxis
             dataKey="name"
@@ -94,7 +93,7 @@ export default function StatisticalPlot({
             );
           })}
         </ScatterChart>
-      </ResponsiveContainer>
+      )}
     </ClientChart>
   );
 }

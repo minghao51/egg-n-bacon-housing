@@ -364,9 +364,7 @@ def fetch_unemployment_data(
         unemp_data = _generate_mock_unemployment(start_date, end_date)
 
     if save_path:
-        _save_macro_dataframe(
-            unemp_data, save_path, "raw_macro_unemployment_rate_monthly"
-        )
+        _save_macro_dataframe(unemp_data, save_path, "raw_macro_unemployment_rate_monthly")
 
     return unemp_data
 
@@ -427,9 +425,7 @@ def fetch_property_price_index(save_path: Path = None) -> pd.DataFrame:
         ppi_data = _generate_mock_ppi()
 
     if save_path:
-        _save_macro_dataframe(
-            ppi_data, save_path, "raw_macro_property_price_index_quarterly"
-        )
+        _save_macro_dataframe(ppi_data, save_path, "raw_macro_property_price_index_quarterly")
 
     return ppi_data
 

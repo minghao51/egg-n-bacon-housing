@@ -35,4 +35,10 @@ test.describe('Analytics Articles', () => {
     await page.getByRole('link', { name: /MRT Impact/i }).first().click();
     await expect(page).toHaveURL(/analytics\/mrt-impact/);
   });
+
+  test('should not emit chart sizing warnings on lease decay article', async ({ page }) => {
+    await expectPageToLoadWithoutErrors(page, '/analytics/lease-decay', {
+      failOnConsoleWarnings: true,
+    });
+  });
 });
