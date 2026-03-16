@@ -1,5 +1,5 @@
 ---
-title: Singapore Housing Market - Key Investment Findings
+title: Key Investment Findings
 category: "market-analysis"
 description: Concise summary of the strongest findings from the 2017-2026 housing analysis, with technical details moved to appendices
 status: published

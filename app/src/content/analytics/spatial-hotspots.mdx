@@ -1,5 +1,5 @@
 ---
-title: Singapore Rental Hotspots - Where Premiums Cluster
+title: Rental Hotspots
 category: "market-analysis"
 description: Where HDB rental premiums cluster geographically, how persistent those clusters are, and how to interpret hotspot status without overclaiming
 status: published
