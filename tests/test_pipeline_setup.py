@@ -1,17 +1,18 @@
 #!/usr/bin/env python
-"""Test script to verify pipeline components are working."""
+"""Tests to verify pipeline components are working."""
 
+import pytest
+import pandas as pd
+import json
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
+class TestPipelineSetup:
+    """Test suite for pipeline setup verification."""
 
-def test_config():
-    """Test config module."""
-    print("Testing config module...")
-    try:
+    def test_config(self):
+        """Test config module."""
         from core.config import Config
 
         # Test paths
@@ -19,21 +20,8 @@ def test_config():
         assert Config.DATA_DIR.exists()
         assert Config.SRC_DIR.exists()
 
-        print(f"✅ BASE_DIR: {Config.BASE_DIR}")
-        print(f"✅ DATA_DIR: {Config.DATA_DIR}")
-        print(f"✅ PARQUETS_DIR: {Config.PARQUETS_DIR}")
-        print("✅ Config module working!\n")
-        return True
-    except Exception as e:
-        print(f"❌ Config test failed: {e}\n")
-        return False
-
-
-def test_data_helpers():
-    """Test data_helpers module."""
-    print("Testing data_helpers module...")
-    try:
-        import pandas as pd
+    def test_data_helpers(self):
+        """Test data_helpers module."""
         from core.data_helpers import list_datasets, load_parquet, save_parquet
 
         # Create test data
@@ -47,27 +35,13 @@ def test_data_helpers():
         # List
         datasets = list_datasets()
         assert "pipeline_test" in datasets
-        print(f"✅ Datasets available: {list(datasets.keys())}")
 
         # Load
         loaded = load_parquet("pipeline_test")
         assert loaded.equals(df)
-        print(f"✅ Loaded {len(loaded)} rows successfully")
 
-        print("✅ Data helpers working!\n")
-        return True
-    except Exception as e:
-        print(f"❌ Data helpers test failed: {e}\n")
-        import traceback
-
-        traceback.print_exc()
-        return False
-
-
-def test_parquet_structure():
-    """Test parquet file structure."""
-    print("Testing parquet directory structure...")
-    try:
+    def test_parquet_structure(self):
+        """Test parquet file structure."""
         from core.config import Config
 
         # Check directories
@@ -76,24 +50,10 @@ def test_parquet_structure():
 
         # Count files
         parquet_files = list(parquets_dir.rglob("*.parquet"))
-        print(f"✅ Found {len(parquet_files)} parquet files")
+        assert len(parquet_files) > 0
 
-        for pf in parquet_files[:5]:  # Show first 5
-            print(f"  - {pf.relative_to(Config.DATA_DIR)}")
-
-        print("✅ Parquet structure correct!\n")
-        return True
-    except Exception as e:
-        print(f"❌ Parquet structure test failed: {e}\n")
-        return False
-
-
-def test_metadata():
-    """Test metadata file."""
-    print("Testing metadata.json...")
-    try:
-        import json
-
+    def test_metadata(self):
+        """Test metadata file."""
         from core.config import Config
 
         metadata_file = Config.METADATA_FILE
@@ -105,76 +65,13 @@ def test_metadata():
         assert "datasets" in metadata
         assert "last_updated" in metadata
 
-        print("✅ Metadata file exists")
-        print(f"✅ Last updated: {metadata['last_updated']}")
-        print(f"✅ Datasets tracked: {len(metadata['datasets'])}")
-
-        for name, info in list(metadata["datasets"].items())[:3]:
-            print(f"  - {name}: {info['rows']} rows")
-
-        print("✅ Metadata working!\n")
-        return True
-    except Exception as e:
-        print(f"❌ Metadata test failed: {e}\n")
-        return False
-
-
-def test_notebook_imports():
-    """Test that notebooks can import required modules."""
-    print("Testing notebook imports...")
-    try:
+    def test_notebook_imports(self):
+        """Test that notebooks can import required modules."""
         # Test common imports used in notebooks
-
+        import pandas as pd
+        import numpy as np
+        import requests
+        
         # Test src imports
         sys.path.insert(0, "notebooks")
-
-        print("✅ pandas: OK")
-        print("✅ numpy: OK")
-        print("✅ requests: OK")
-        print("✅ src.data_helpers: OK")
-        print("✅ Notebook imports working!\n")
-        return True
-    except Exception as e:
-        print(f"❌ Notebook imports test failed: {e}\n")
-        return False
-
-
-def main():
-    """Run all tests."""
-    print("=" * 60)
-    print("PIPELINE SETUP TEST")
-    print("=" * 60)
-    print()
-
-    results = {
-        "Config": test_config(),
-        "Data Helpers": test_data_helpers(),
-        "Parquet Structure": test_parquet_structure(),
-        "Metadata": test_metadata(),
-        "Notebook Imports": test_notebook_imports(),
-    }
-
-    print("=" * 60)
-    print("TEST RESULTS")
-    print("=" * 60)
-
-    passed = sum(results.values())
-    total = len(results)
-
-    for test_name, result in results.items():
-        status = "✅ PASS" if result else "❌ FAIL"
-        print(f"{test_name:.<30} {status}")
-
-    print()
-    print(f"Total: {passed}/{total} tests passed")
-
-    if passed == total:
-        print("\n🎉 All tests passed! Pipeline is ready to run.")
-        return 0
-    else:
-        print("\n⚠️  Some tests failed. Please check the errors above.")
-        return 1
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+        from core import data_helpers

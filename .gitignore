@@ -1,99 +1,24 @@
-# Environment
-.env
-
+```
 # Python
-*.pyc
 __pycache__/
-.pytest_cache/
-.ruff_cache/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
 .venv/
-
-# Testing
-.pytest_cache/
-.coverage
-coverage.xml
-htmlcov/
+pip-log.txt
+pip-delete-this-directory.txt
 .tox/
-.nox/
+.coverage
+htmlcov/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
 *.cover
-.hypothesis/
-playwright-report/
-test-results/
-
-# Type checking
-.mypy_cache/
-.dmypy.json
-dmypy.json
-.pytype/
-
-# Node.js
-node_modules/
-bun.lockb
-
-# Pipeline data (L0-L3 outputs)
-/data/pipeline/
-/data/*.parquet
-
-# Analytics outputs (REMOVE from git - pipeline generated)
-# EXCEPTION: Track PNG visualization files for GitHub rendering
-!/data/analysis/**/*.png
-
-# Forecasts (REMOVE from git - pipeline generated)
-data/forecasts/
-
-# Archive (old/unused data)
-/data/archive/
-
-# API cache
-data/cache/
-
-# Runtime data (EXCEPTION: we track these)
-# data/logs/               # COMMENTED OUT - we track logs
-# data/checkpoints/        # COMMENTED OUT - we track checkpoints
-data/quality_metrics.db
-data/failed_addresses/
-
-# Manual downloads (EXCEPTION: we track these - 85MB of external data)
-# data/manual/**/*.geojson  # COMMENTED OUT - we track these
-# data/manual/**/*.csv      # COMMENTED OUT - we track these
-!data/manual/**/*.md
-
-# Keep metadata.json for version tracking
-!data/metadata.json
-
-# macOS
+*.log
 .DS_Store
-**/.DS_Store
-
-# Temporary analysis output files (exclude important docs)
-feature_*.txt
-*_output.txt
-analysis_*.txt
-
-# Claude Code skills (user-specific)
-*.skill
-
-# Marimo notebooks
-.marimo/
-marimo/
-
-# Backend (Astro/Bun static site)
-app/node_modules/
-app/dist/
-app/.astro/
-app/playwright-report/
-app/test-results/
-
-# Generated data files (EXCEPTION: we track dashboard JSON files)
-# app/public/data/*.json  # COMMENTED OUT - we track these
-!app/public/data/.gitkeep
-
-# Export data (temporary)
-data/exports/
-
-# Backup files
-*.bak
-data/metadata.json.bak
-
-# Git worktrees (isolated development workspaces)
-.worktrees/
+Thumbs.db
+```

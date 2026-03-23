@@ -5,6 +5,8 @@ Tests the generate_segments_data.py module which generates enhanced
 segments data for the interactive dashboard.
 """
 
+import pytest
+
 from scripts.generate_segments_data import (
     determine_mrt_sensitivity,
     determine_school_quality,
@@ -21,6 +23,7 @@ from scripts.generate_segments_data import (
 )
 
 
+@pytest.mark.unit
 def test_load_investment_clusters():
     """Test loading investment clusters from findings."""
     clusters = load_investment_clusters()
