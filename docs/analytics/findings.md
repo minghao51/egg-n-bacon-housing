@@ -139,19 +139,54 @@ Cooling measures appear to have worked in prime condo markets, but not in HDB.
 - OCR and selected RCR locations often provide the best balance between access and price.
 - When selling HDB and buying condo, remember that the two segments price accessibility differently.
 
-## Appendix A: Supporting Metrics
+## Technical Appendix
 
-| Topic | Metric | Value |
-|------|--------|-------|
-| CBD effect | R² from CBD-only model | 0.2263 |
-| MRT incremental lift | ΔR² after adding MRT | +0.0078 |
-| Condo vs HDB MRT sensitivity | Relative magnitude | about 15x |
-| Lease value band | Highest-liquidity discount band | 60-70 years |
-| Forecast reliability | Best directional accuracy | HDB 99.4% |
+### Data Used
 
-## Appendix B: Interpretation Notes
+- **Full dataset**: 911,797 transactions (2017-2026) across HDB, condo, and EC segments
+- **Primary analysis window**: 2021-2026
+- **Key inputs**: `data/parquets/L3/housing_unified.parquet`, `data/parquets/L1/housing_hdb_transaction.parquet`, `data/parquets/L1/housing_hdb_rental.parquet`
+- **Detailed data sources**: see individual analysis documents for per-topic data specifics
 
-- Most findings are strongest for the **2021-2026** market regime unless otherwise stated.
-- MRT effects are easier to observe in condos because buyer mix, rentability, and pricing power differ from HDB.
-- Some apparent amenities premiums likely include neighborhood quality, density, and centrality effects.
-- Forecasts are best used as **decision support**, not as standalone valuation.
+### Methodology
+
+Each finding draws from a distinct analytical pipeline. The table below cross-references the detailed analysis document and the underlying scripts.
+
+| Finding Area | Analysis Doc | Key Scripts |
+|-------------|-------------|-------------|
+| CBD vs MRT decomposition | `mrt-impact.md` | `analyze_mrt_impact.py`, `analyze_cbd_mrt_decomposition.py` |
+| MRT segment heterogeneity | `mrt-impact.md` | `analyze_mrt_heterogeneous.py`, `analyze_mrt_by_property_type.py` |
+| Lease decay and band pricing | `lease-decay.md` | `analyze_lease_decay.py`, `analyze_lease_decay_advanced.py` |
+| Price forecast reliability | `price-forecasts.md` | `forecast_prices.py`, `train_by_property_type.py`, `create_smart_ensemble.py` |
+| School quality premium | `school-quality.md` | `analyze_school_impact.py`, `analyze_school_rdd.py`, `analyze_school_spatial_cv.py` |
+| Spatial autocorrelation | `spatial-autocorrelation.md` | `analyze_spatial_autocorrelation.py`, `analyze_h3_clusters.py` |
+| Rental hotspots | `spatial-hotspots.md` | `analyze_spatial_hotspots.py` |
+| Policy causal effects | `causal-inference-overview.md` | `analyze_causal_did_enhanced.py`, `analyze_rd_policy_timing.py` |
+
+### Technical Findings (Consolidated)
+
+| Topic | Key Metric | Value | Confidence |
+|-------|-----------|-------|------------|
+| CBD effect | R² from CBD-only model | 0.2263 | High — robust across specifications |
+| MRT incremental lift | ΔR² after adding MRT to CBD model | +0.0078 | High — hierarchical regression |
+| Condo vs HDB MRT sensitivity | Relative magnitude | ~15× | High — consistent across OLS and XGBoost |
+| Lease steepest penalty | 70-80 yr band discount | -21.9% vs 90+ yr | High — 47,044 transactions |
+| Lease deepest discount | 60-70 yr band discount | -23.8% vs 90+ yr | High — 54,521 transactions |
+| Pure lease effect | Per extra year (after controls) | +$54.75 PSF | Moderate — hedonic regression |
+| HDB forecast accuracy | R² / directional accuracy | 79.8% / 99.4% | High — segment-specific XGBoost |
+| Luxury condo forecast | R² / directional accuracy | 30.1% / 92.3% | Low — magnitude unusable |
+| Ensemble vs unified | Accuracy improvement | 74% vs 47% | High — out-of-sample |
+| School quality OLS | Coefficient | +$9.66 PSF | High — predictive |
+| School RDD | Treatment effect at 1 km | -$79.47 PSF | Low — covariate balance failed |
+| Spatial clustering | Moran's I / z-score | 0.766 / 9.91 | High — p < 0.001 |
+| Rental hotspot selectivity | 99% confidence cells | 12 of 847 | High — Gi* statistic |
+| CCR condo policy effect | DiD estimate (Sep 2022) | ~-$137,743 | Moderate — regime-specific |
+| HDB policy response | RDiT jump (Dec 2023) | ~+$13,118 | Moderate — bandwidth-sensitive |
+
+### Conclusion
+
+Across all seven analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistication. HDB and condo markets respond differently to MRT access, lease decay, policy shocks, and forecasting signals. The strongest technical evidence supports the CBD-over-MRT finding (R² decomposition), the non-linear lease decay curve (223K transactions), and the forecast reliability gradient across segments (74% ensemble accuracy). The weakest causal claims are around school quality premiums (RDD covariate balance failed) and luxury condo forecasting (R²=30.1%). All findings are strongest for the 2021-2026 market regime. Forecasts are best used as decision support, not standalone valuation.
+
+### Scripts
+
+All scripts referenced above are located under `scripts/analytics/analysis/`. See individual analysis documents for full script paths and methodology details.

@@ -104,14 +104,41 @@ The same lease gap can price very differently across towns.
 - Selling a 90+ year flat can crystallize the market’s strongest lease premium.
 - Buying into a shorter lease can be rational if it unlocks a better location without a full central premium.
 
-## Appendix A: Method Notes
+## Technical Appendix
 
-- Sample: **223,634 HDB transactions** from 2017-2026.
-- Lease effects were estimated using band comparisons and multivariate controls.
-- “Pure lease effect” refers to the estimated value of an extra lease year after controlling for major structural features.
+### Data Used
 
-## Appendix B: Caveats
+- **Primary input**: `data/parquets/L1/housing_hdb_transaction.parquet`
+- **Sample**: 223,634 HDB transactions, 2017-2026, lease range 30-99 years
+- **Advanced input**: `data/parquets/L3/housing_unified.parquet` for multivariate hedonic regression
 
-- Lease value is mediated by financing rules, expected hold period, and town quality.
-- Older flats may reflect renovation condition, HIP timing, and block-level maintenance differences not fully visible in a lease-only summary.
-- Bala-style theoretical curves are useful as a benchmark, but the market does not price strictly to theory.
+### Methodology
+
+- **Lease bands**: bins [0, 60, 70, 80, 90, 100], labels [<60, 60-70, 70-80, 80-90, 90+]
+- **Remaining lease years**: `remaining_lease_months / 12`
+- **Price statistics**: median `resale_price` and `price_per_sqm` by band
+- **Discount to 90+ baseline**: `(baseline_psm - band_psm) / baseline_psm × 100`
+- **Annual decay rate**: linear approximation from discount vs years elapsed
+- **Town-level comparison**: short lease (<70 yr) vs fresh lease (90+ yr) median PSM within same town
+- **Hedonic regression** (advanced): `Price = β₀ + β₁(Lease) + β₂(FloorLevel) + β₃(DistToMRT) + β₄(Town) + ε`
+- **Policy threshold analysis**: Mann-Whitney U tests at 60-yr and 30-yr marks
+- **Bala's curve validation**: empirical vs theoretical depreciation, ≥5% deviation flagged
+
+### Technical Findings
+
+- **90+ year band**: 50,912 transactions, median $558,000, median PSM $6,205
+- **70-80 yr band**: 47,044 transactions, -21.9% discount (steepest penalty)
+- **60-70 yr band**: 54,521 transactions, -23.8% discount (deepest, highest volume)
+- **Pure lease effect**: +$54.75 PSF per extra year (after controlling for town, floor level, MRT distance)
+- **Town variation**: Clementi -40.6%, Toa Payoh -39.6%, Woodlands -6.2%, Pasir Ris +20.2% (inverted)
+- **60-yr policy threshold**: measurable “liquidity tax” between 61-yr and 59-yr leases (CPF restriction)
+- **Spline-based arbitrage**: identifies BUY/SELL/HOLD signals at lease years where market deviates ≥5% from theoretical Bala curve
+
+### Conclusion
+
+The data confirms non-linear lease decay. The 70-80 yr band shows the steepest penalty (not the oldest flats), while the 60-70 yr band offers the deepest absolute discount with strong liquidity. The pure lease effect of +$54.75 PSF/year is robust after multivariate controls. Town-level heterogeneity is extreme: central mature towns penalize short leases heavily (Clementi -40.6%), while some suburban towns show minimal or even inverted discounts, likely due to location desirability offsetting lease age. Key limitations: renovation condition, HIP timing, and block-level maintenance are not fully captured; financing rules shrink the buyer pool for shorter leases.
+
+### Scripts
+
+- `scripts/analytics/analysis/market/analyze_lease_decay.py` — Lease banding, price statistics, decay rates
+- `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` — Hedonic regression, Bala curve validation, spline arbitrage, policy thresholds

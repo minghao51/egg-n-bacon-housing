@@ -95,15 +95,45 @@ Regression discontinuity around the 1km admissions boundary does **not** support
 
 - Distinguish between paying for a specific school and paying for a neighborhood that happens to contain strong schools.
 
-## Appendix A: Technical Summary
+## Technical Appendix
 
-- Sample: **194,165 transactions** after filtering.
-- OLS and XGBoost both found school-related variables to be meaningful predictors.
-- Spatial validation showed large generalization gaps, implying neighborhood-specific learning.
-- RDD around the 1km cutoff exposed selection bias and assumption violations.
+### Data Used
 
-## Appendix B: Caveats
+- **Primary input**: `data/parquets/L3/housing_unified.parquet`
+- **Sample**: 194,165 transactions, 2021 onward, within 2 km of primary schools
+- **RDD sub-sample**: 52,881 near-boundary transactions (800-1200 m from nearest school)
 
-- School quality is entangled with neighborhood reputation, amenity mix, and household sorting.
-- Admission-policy relevance may vary by buyer type and child age.
-- Predictive importance should not be read as proof of a clean, stable causal premium.
+### Methodology
+
+- **OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`) plus controls (floor area, lease, amenities)
+  - XGBoost parameters: n_estimators=100, max_depth=6, learning_rate=0.1
+- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)
+  - Bandwidth: 200 m on each side of boundary
+  - Model: `price = α + τ·treated + β·running_var + γ·(treated × running_var) + controls`
+  - Robust HC3 standard errors, 95% confidence intervals
+- **Covariate balance testing**: t-tests at cutoff to check if boundary groups differ systematically
+- **Bandwidth sensitivity**: tested at 100-300 m; placebo tests at 800 m and 1200 m fake cutoffs
+- **Spatial cross-validation**: standard 5-fold CV vs GroupKFold by planning area, to measure generalization gaps
+
+### Technical Findings
+
+- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF
+- **Practical scale**: 1,000 sqft unit × 3-point quality score difference ≈ $29,000 modeled price difference
+- **RDD treatment effect**: -$79.47 PSF (within 1 km cheaper after controls)
+- **Covariate balance**: FAILED — boundary groups differ systematically on age, size, MRT distance, and neighborhood profile
+- **Regional split (heterogeneous)**:
+  - OCR: +$9.63 PSF (R²=0.53, n=146,553)
+  - RCR: -$23.67 PSF (R²=0.80, n=46,298) — sign flips, neighborhood forces dominate
+  - CCR: ~$0 PSF (R²=0.87, n=1,314) — school effect drowned out by centrality
+- **Spatial CV**: large generalization gap between standard CV and spatial CV, implying neighborhood-specific learning
+
+### Conclusion
+
+School quality shows up clearly in predictive models (OLS and XGBoost agree on direction and magnitude), but the causal read is much weaker. The RDD at the 1 km boundary does NOT support a clean positive premium — if anything, the treatment effect is negative after controls, and covariate balance fails. This means properties near good schools differ systematically on many dimensions beyond school access. The predictive importance of school features is real and decision-useful, but should not be interpreted as proof of a stable, isolated causal premium. Key limitations: school quality is entangled with neighborhood reputation, amenity mix, and household sorting; admission-policy relevance varies by buyer type and child age.
+
+### Scripts
+
+- `scripts/analytics/analysis/school/analyze_school_impact.py` — OLS + XGBoost
+- `scripts/analytics/analysis/school/analyze_school_rdd.py` — Regression discontinuity at 1 km boundary
+- `scripts/analytics/analysis/school/analyze_school_heterogeneous.py` — By region (CCR/RCR/OCR)
+- `scripts/analytics/analysis/school/analyze_school_spatial_cv.py` — Spatial cross-validation
