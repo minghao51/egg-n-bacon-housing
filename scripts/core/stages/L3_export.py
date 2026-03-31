@@ -29,8 +29,8 @@ import pandas as pd
 
 from scripts.core.config import Config
 from scripts.core.data_helpers import save_parquet
-from scripts.core.data_quality import record_dataframe_quality
 from scripts.core.data_loader import PropertyType, TransactionLoader
+from scripts.core.data_quality import record_dataframe_quality
 from scripts.core.school_features import calculate_school_features, load_schools
 from scripts.core.stages.helpers import export_helpers
 

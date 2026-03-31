@@ -147,6 +147,4 @@ class Config:
         )
 
 
-# Convenience: validate on import
-# Comment this out if you want lazy validation
-# Config.validate()
+Config.validate()

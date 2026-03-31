@@ -48,13 +48,25 @@ def extract_floor_range(floor_level: str) -> tuple[str, str]:
     return (digits_parts[0], digits_parts[1])
 
 
+ROOM_COUNT_BY_TYPE = {
+    "1 room": 1,
+    "2 room": 2,
+    "3 room": 3,
+    "4 room": 4,
+    "5 room": 5,
+    "executive": 5,
+    "multi-gen": 4,
+}
+
+MEDIAN_SQFT_PER_ROOM = 270
+
+
 def infer_room_count(property_sub_type: str, area_sqft: float) -> int:
     """
     Infer room count from property type and floor area.
 
     For properties without explicit room numbers, estimates based on:
-    - Typical room size: 150-250 sqft per room
-    - Assumes bedrooms + living room
+    - Typical median room size: 270 sqft per room (including living room)
 
     Args:
         property_sub_type: Property type string (e.g., "3 room", "executive")
@@ -63,25 +75,25 @@ def infer_room_count(property_sub_type: str, area_sqft: float) -> int:
     Returns:
         Estimated room count (1-6)
     """
-    # If type contains room number, extract it
-    if "room" in property_sub_type.lower():
-        try:
-            return int(property_sub_type[0])
-        except (ValueError, IndexError):
-            pass
+    subtype_lower = property_sub_type.lower()
 
-    # Estimate from floor area (random within realistic range)
-    # Assuming 150-250 sqft per room
-    estimated = area_sqft / np.random.randint(150, 250) / SQM_TO_SQFT
+    for key, count in ROOM_COUNT_BY_TYPE.items():
+        if key in subtype_lower:
+            return count
 
-    return np.clip(int(estimated), 1, 6)
+    estimated = area_sqft / MEDIAN_SQFT_PER_ROOM
+
+    return int(np.clip(estimated, 1, 6))
+
+
+MEDIAN_SQFT_PER_BATHROOM = 400
 
 
 def estimate_bathroom_count(area_sqft: float) -> int:
     """
     Estimate bathroom count from floor area.
 
-    Typical assumption: 1 bathroom per 350-450 sqft
+    Typical assumption: 1 bathroom per 400 sqft (median)
 
     Args:
         area_sqft: Floor area in square feet
@@ -89,16 +101,16 @@ def estimate_bathroom_count(area_sqft: float) -> int:
     Returns:
         Estimated bathroom count (1-4)
     """
-    estimated = area_sqft / np.random.randint(35, 45) / SQM_TO_SQFT
+    estimated = area_sqft / MEDIAN_SQFT_PER_BATHROOM
 
-    return np.clip(int(estimated), 1, 4)
+    return int(np.clip(estimated, 1, 4))
 
 
 def calculate_floor_number(floor_low: str, floor_high: str) -> int:
     """
     Calculate a representative floor number from floor range.
 
-    Takes the floor range and returns a random floor within that range.
+    Takes the floor range and returns the midpoint (deterministic).
 
     Args:
         floor_low: Low floor (e.g., "01")
@@ -108,18 +120,15 @@ def calculate_floor_number(floor_low: str, floor_high: str) -> int:
         Floor number as integer
     """
     try:
-        # Remove "B" suffix if present (basement floors)
         low_clean = floor_low.replace("B", "-").lstrip("-").zfill(2)
         high_clean = floor_high.replace("B", "-").lstrip("-").zfill(2)
 
         low_int = int(low_clean)
         high_int = int(high_clean)
 
-        # Return random floor in range
-        return int(np.random.randint(low_int, high_int + 1))
+        return int((low_int + high_int) / 2)
 
     except (ValueError, AttributeError):
-        # Default to mid-range if parsing fails
         return 3
 
 
