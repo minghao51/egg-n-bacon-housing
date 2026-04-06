@@ -1,9 +1,12 @@
 # tests/data/test_fetch_macro_data.py
 import pandas as pd
+import pytest
 
 from scripts.data.fetch_macro_data import fetch_cpi_data, fetch_sora_rates
 
 
+@pytest.mark.integration
+@pytest.mark.api
 def test_fetch_sora_rates_returns_dataframe():
     """Test SORA rate fetching returns DataFrame with correct columns."""
     df = fetch_sora_rates()
@@ -14,6 +17,8 @@ def test_fetch_sora_rates_returns_dataframe():
     assert len(df) > 0
 
 
+@pytest.mark.integration
+@pytest.mark.api
 def test_fetch_cpi_returns_dataframe():
     """Test CPI fetching returns DataFrame."""
     df = fetch_cpi_data()
@@ -24,6 +29,8 @@ def test_fetch_cpi_returns_dataframe():
     assert len(df) > 0
 
 
+@pytest.mark.integration
+@pytest.mark.api
 def test_macro_data_saved_to_parquet():
     """Test macro data is saved to correct location."""
     from scripts.core.config import Config
