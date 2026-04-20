@@ -73,7 +73,7 @@
   - `model_summary.csv` - Performance comparison table
 
 ### Enhanced Dataset
-- `data/pipeline/L3/housing_unified.parquet` - Now with **100% amenity coverage** for all property types!
+- `data/pipeline/04_platinum/housing_unified.parquet` - Now with **100% amenity coverage** for all property types!
 
 ---
 

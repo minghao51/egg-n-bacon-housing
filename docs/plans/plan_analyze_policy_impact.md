@@ -420,8 +420,8 @@ This investigation revealed **counterintuitive findings** about HDB market respo
 **Primary Analysis Script:** `scripts/analytics/analysis/policy/prepare_policy_findings.py`
 
 **Data Sources:**
-- L3 Unified Dataset: `data/pipeline/L3/housing_unified.parquet` (1.1M records, 79% HDB)
-- L5 Growth Metrics: `data/pipeline/L5_growth_metrics_by_area.parquet` (15K records)
+- L3 Unified Dataset: `data/pipeline/04_platinum/housing_unified.parquet` (1.1M records, 79% HDB)
+- L5 Growth Metrics: `data/pipeline/04_platinum/metrics/L5_growth_metrics_by_area.parquet` (15K records)
 
 **Processing Steps:**
 1. Load L3 unified data
@@ -673,8 +673,8 @@ Where:
 ## References
 
 ### Data Sources
-- **L3 Unified Dataset:** `data/pipeline/L3/housing_unified.parquet`
-- **L5 Growth Metrics:** `data/pipeline/L5_growth_metrics_by_area.parquet`
+- **L3 Unified Dataset:** `data/pipeline/04_platinum/housing_unified.parquet`
+- **L5 Growth Metrics:** `data/pipeline/04_platinum/metrics/L5_growth_metrics_by_area.parquet`
 - **Planning Area Boundaries:** URA Master Plan 2019
 - **Policy Announcements:** Monetary Authority of Singapore (MAS)
 

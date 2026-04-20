@@ -1,0 +1,17 @@
+{
+  "segments": [
+    {
+      "property_type": "hdb",
+      "count": 1,
+      "median_price": 500000.0,
+      "avg_psf": 500.0
+    },
+    {
+      "property_type": "condo",
+      "count": 1,
+      "median_price": 600000.0,
+      "avg_psf": 600.0
+    }
+  ],
+  "generated_at": "2026-04-20T14:34:08.252213"
+}

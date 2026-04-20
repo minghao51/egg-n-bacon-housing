@@ -93,7 +93,7 @@ tail -f /tmp/condo_amenities.log
 ```bash
 uv run python -c "
 import pandas as pd
-unified = pd.read_parquet('data/pipeline/L3/housing_unified.parquet')
+unified = pd.read_parquet('data/pipeline/04_platinum/housing_unified.parquet')
 for pt in ['HDB', 'Condominium', 'EC']:
     subset = unified[unified['property_type'] == pt]
     coverage = subset['dist_to_nearest_mrt'].notna().sum() / len(subset) * 100
@@ -228,8 +228,8 @@ Condominium:  $0-1/100m premium  (LOWEST)
 
 ### Data Files
 1. `data/analysis/mrt_impact/` - All MRT analysis outputs
-2. `data/pipeline/L3/housing_unified.parquet` - Being updated with condo/EC amenities
-3. `data/pipeline/L3/housing_unified_backup.parquet` - Backup before update
+2. `data/pipeline/04_platinum/housing_unified.parquet` - Being updated with condo/EC amenities
+3. `data/pipeline/04_platinum/housing_unified_backup.parquet` - Backup before update
 
 ### Reports
 1. `20260127-mrt-impact-analysis-report.md` - Main analysis findings
@@ -247,7 +247,7 @@ Condominium:  $0-1/100m premium  (LOWEST)
 # Check amenity coverage
 uv run python -c "
 import pandas as pd
-df = pd.read_parquet('data/pipeline/L3/housing_unified.parquet')
+df = pd.read_parquet('data/pipeline/04_platinum/housing_unified.parquet')
 print(df.groupby('property_type')['dist_to_nearest_mrt'].apply(lambda x: x.notna().sum() / len(x) * 100))
 "
 ```

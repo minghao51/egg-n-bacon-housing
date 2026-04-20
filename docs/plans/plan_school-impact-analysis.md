@@ -257,7 +257,7 @@ uv run python scripts/analytics/analysis/school/analyze_school_segmentation.py
 ## Data Requirements
 
 All scripts require:
-- **Unified dataset:** `data/pipeline/L3/housing_unified.parquet`
+- **Unified dataset:** `data/pipeline/04_platinum/housing_unified.parquet`
 - **School features:** Must be calculated by `scripts/core/stages/L3_export.py`
 - **Time period:** 2021+ for main analysis, 2017+ for temporal analysis
 
@@ -272,7 +272,7 @@ All scripts require:
 2. **Verify School Features:**
    ```python
    import pandas as pd
-   df = pd.read_parquet("data/pipeline/L3/housing_unified.parquet")
+   df = pd.read_parquet("data/pipeline/04_platinum/housing_unified.parquet")
    school_cols = [col for col in df.columns if 'school' in col.lower()]
    print(school_cols)
    ```

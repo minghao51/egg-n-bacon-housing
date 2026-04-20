@@ -20,6 +20,7 @@ htmlcov/
 .hypothesis/
 playwright-report/
 test-results/
+.playwright-cli/
 
 # Type checking
 .mypy_cache/
@@ -31,9 +32,13 @@ dmypy.json
 node_modules/
 bun.lockb
 
-# Pipeline data (L0-L3 outputs)
-/data/pipeline/
-/data/*.parquet
+# Pipeline data (medallion layers)
+data/pipeline/01_bronze/
+data/pipeline/02_silver/
+data/pipeline/03_gold/
+data/pipeline/04_platinum/
+data/*.parquet
+data/pipeline/*.parquet
 
 # Analytics outputs (REMOVE from git - pipeline generated)
 # EXCEPTION: Track PNG visualization files for GitHub rendering
@@ -98,3 +103,6 @@ data/metadata.json.bak
 
 # Git worktrees (isolated development workspaces)
 .worktrees/
+.secrets.baseline
+
+.claude/

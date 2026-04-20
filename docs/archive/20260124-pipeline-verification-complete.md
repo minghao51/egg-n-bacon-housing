@@ -43,32 +43,32 @@ data/
 ## Pipeline Test Results
 
 ### ✅ **L0: Data Collection** - COMPLETE
-- **Status**: All 8 datasets saved to `data/pipeline/L0/`
+- **Status**: All 8 datasets saved to `data/pipeline/01_bronze/`
 - **Records**: 969,748 HDB transactions + API data
 - **Cache**: Working (30-40x faster re-runs)
 - **Verification**: ✅ Files in correct location
 
 ### ✅ **L1: Data Processing** - VERIFIED
-- **Status**: 1,096,888 transactions loaded and saved to `data/pipeline/L1/`
+- **Status**: 1,096,888 transactions loaded and saved to `data/pipeline/02_silver/`
 - **Data Sources**: Correctly reading from `data/manual/csv/`
-- **Outputs**: Correctly saving to `data/pipeline/L1/`
+- **Outputs**: Correctly saving to `data/pipeline/02_silver/`
 - **Geocoding**: Using existing 17,722 geocoded addresses
 - **Verification**: ✅ All paths working
 
 ### ✅ **L2: Rental** - COMPLETE
 - **Status**: 1,556 rental yields calculated
-- **Outputs**: Saved to `data/pipeline/L2/rental_yield.parquet`
+- **Outputs**: Saved to `data/pipeline/03_gold/rental_yield.parquet`
 - **Verification**: ✅ Reading from L1, writing to L2
 
 ### ✅ **L2: Features** - COMPLETE
 - **Status**: 1,384,460 feature records created
-- **Outputs**: 5 L3 datasets created in `data/pipeline/L3/`
+- **Outputs**: 5 L3 datasets created in `data/pipeline/04_platinum/`
 - **Planning Areas**: ✅ Reading from `data/manual/geojsons/`
 - **Verification**: ✅ All spatial joins working
 
 ### ✅ **L3: Export** - COMPLETE
 - **Status**: 1,657,760 record unified dataset created
-- **Outputs**: Saved to `data/pipeline/L3/unified.parquet`
+- **Outputs**: Saved to `data/pipeline/04_platinum/unified.parquet`
 - **Verification**: ✅ Reading all L3 datasets, creating export
 
 ---

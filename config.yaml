@@ -1,0 +1,24 @@
+app_name: "egg-n-bacon-housing"
+data_path: "./data"
+
+pipeline:
+  parquet_compression: "snappy"
+  parquet_index: false
+  use_caching: true
+  cache_duration_hours: 24
+
+geocoding:
+  max_workers: 5
+  api_delay_seconds: 1.2
+  timeout_seconds: 30
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(message)s"
+  verbose: true
+
+layer_dirs:
+  bronze: "data/01_bronze"
+  silver: "data/02_silver"
+  gold: "data/03_gold"
+  platinum: "data/04_platinum"

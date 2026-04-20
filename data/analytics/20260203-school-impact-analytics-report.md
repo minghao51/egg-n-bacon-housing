@@ -214,7 +214,7 @@ data/analysis/school_impact/
 
 ### Dataset
 ```
-data/pipeline/L3/housing_unified.parquet
+data/pipeline/04_platinum/housing_unified.parquet
 - 1,116,323 total records (1990-2026)
 - 428,061 records (2021+ for analysis)
 - 62 columns including amenity and school features

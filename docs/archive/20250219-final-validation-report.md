@@ -237,11 +237,11 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 - `scripts/data/process/impute_rental_yields.py`
 
 ### Data Files Generated
-- `data/pipeline/L2/housing_per_type_amenity_features.parquet` (NEW)
-- `data/pipeline/L3/housing_unified.parquet` (UPDATED)
-- `data/pipeline/L4_price_predictions.parquet` (NEW)
-- `data/pipeline/L4_market_segments.parquet` (NEW)
-- `data/pipeline/L4_price_forecasts.parquet` (NEW)
+- `data/pipeline/03_gold/housing_per_type_amenity_features.parquet` (NEW)
+- `data/pipeline/04_platinum/housing_unified.parquet` (UPDATED)
+- `data/pipeline/04_platinum/L4_price_predictions.parquet` (NEW)
+- `data/pipeline/04_platinum/L4_market_segments.parquet` (NEW)
+- `data/pipeline/04_platinum/L4_price_forecasts.parquet` (NEW)
 - `data/analysis/feature_importance.png` (NEW)
 - `app/public/data/amenity_summary.json.gz` (NEW)
 

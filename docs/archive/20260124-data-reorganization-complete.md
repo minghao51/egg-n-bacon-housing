@@ -133,7 +133,7 @@ rm -rf data/archive/
 If you have scripts that reference the old paths:
 
 **Old path** → **New path**
-- `data/parquets/L1/` → `data/pipeline/L1/`
+- `data/parquets/L1/` → `data/pipeline/02_silver/`
 - `data/raw_data/csv/` → `data/manual/csv/`
 - `data/auxiliary/` → `data/manual/crosswalks/`
 

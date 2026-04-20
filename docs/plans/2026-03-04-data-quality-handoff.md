@@ -95,7 +95,7 @@ Tables currently bypassing the framework:
 Recommended approach:
 
 - convert those writes to monitored saves
-- preserve current output paths under `data/pipeline/L3/`
+- preserve current output paths under `data/pipeline/04_platinum/`
 
 Suggested implementation:
 
@@ -111,7 +111,7 @@ Suggested implementation:
 Acceptance criteria:
 
 - rerunning `uv run python scripts/run_pipeline.py --stage L3` creates new `run_snapshots` rows for all five tables
-- the files still exist at their current paths in `data/pipeline/L3/`
+- the files still exist at their current paths in `data/pipeline/04_platinum/`
 
 ### 3. Add a minimum baseline sample count before anomaly alerts
 

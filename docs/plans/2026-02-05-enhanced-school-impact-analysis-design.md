@@ -139,7 +139,7 @@ scripts/analytics/analysis/school/
 ### Data Dependencies
 
 **Input:**
-- `data/pipeline/L3/housing_unified.parquet` (111万+ records, 110 columns)
+- `data/pipeline/04_platinum/housing_unified.parquet` (111万+ records, 110 columns)
 - Required columns: `planning_area`, `property_type`, `school_*`, `nearest_schoolPRIMARY_*`
 
 **Output:**

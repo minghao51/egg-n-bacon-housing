@@ -121,7 +121,7 @@ Town-level averages mask significant within-town variation. Buyers should check 
 
 ### Data Used
 
-- **Primary input**: `data/pipeline/L3/housing_unified.parquet`
+- **Primary input**: `data/pipeline/04_platinum/housing_unified.parquet`
 - **Sample**: HDB and condo transactions, 2015-2026, with valid coordinates and amenity features
 - **Amenity features**: Distance and threshold indicators for hawker, mall, park, supermarket, preschool, childcare at 500m, 1km, and 2km radii
 - **Spatial grid**: 500m x 500m cells for micro-neighborhood analysis, minimum 10 transactions per cell

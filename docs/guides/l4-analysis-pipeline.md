@@ -14,19 +14,19 @@ The L4 Analysis Pipeline runs exploratory data analysis (EDA) and deep-dive anal
 
 ### L0: Data Collection
 - **Source**: data.gov.sg API, OneMap API, Wikipedia
-- **Output**: `data/pipeline/L0/`
+- **Output**: `data/pipeline/01_bronze/`
 
 ### L1: Data Processing
 - Geocoding, cleaning, amenity enrichment
-- **Output**: `data/pipeline/L1/`
+- **Output**: `data/pipeline/02_silver/`
 
 ### L2: Feature Engineering
 - MRT distances, rental yields, CBD distance
-- **Output**: `data/pipeline/L2/`
+- **Output**: `data/pipeline/03_gold/`
 
 ### L3: Unified Dataset
 - Combined HDB/Condo/EC transactions
-- **Output**: `data/pipeline/L3/housing_unified.parquet`
+- **Output**: `data/pipeline/04_platinum/housing_unified.parquet`
 
 ### L4: Analysis Pipeline
 - **Phase 1**: EDA (console summaries)

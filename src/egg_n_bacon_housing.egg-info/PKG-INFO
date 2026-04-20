@@ -1,0 +1,214 @@
+Metadata-Version: 2.4
+Name: egg-n-bacon-housing
+Version: 0.2.0
+Summary: Singapore housing data pipeline with ML analysis
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: pyarrow>=15.0.0
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: seaborn
+Requires-Dist: scikit-learn
+Requires-Dist: pydantic>=2.0
+Requires-Dist: pydantic-settings>=2.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: geopandas
+Requires-Dist: requests
+Requires-Dist: ipywidgets
+Requires-Dist: langchain>=0.3.0
+Requires-Dist: langchain-google-genai==2.0.0
+Requires-Dist: langchain-experimental==0.3.0
+Requires-Dist: langgraph==0.2.32
+Requires-Dist: langgraph-checkpoint==2.0.0
+Requires-Dist: langchain-community
+Requires-Dist: beautifulsoup4
+Requires-Dist: h3==4.1.0b2
+Requires-Dist: boto3
+Requires-Dist: pygwalker
+Requires-Dist: supabase
+Requires-Dist: tabulate==0.9.0
+Requires-Dist: plotly>=6.5.2
+Requires-Dist: cachetools>=6.2.4
+Requires-Dist: statsmodels>=0.14.0
+Requires-Dist: rapidfuzz>=3.14.3
+Requires-Dist: xgboost>=3.1.3
+Requires-Dist: prophet>=1.2.1
+Requires-Dist: libpysal>=4.6.0
+Requires-Dist: esda>=1.5.0
+Requires-Dist: lifelines>=0.27.0
+Requires-Dist: marimo>=0.19.6
+Requires-Dist: scipy>=1.17.0
+Requires-Dist: kaleido>=1.2.0
+Requires-Dist: patsy>=1.0.2
+Requires-Dist: shap>=0.49.1
+Requires-Dist: sf-hamilton>=1.0
+Requires-Dist: tenacity
+Requires-Dist: polars>=1.40.0
+
+# Egg-n-Bacon-Housing
+
+Singapore housing data pipeline and ML analysis platform.
+
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![uv](https://img.shields.io/badge/uv-0.1.0+-brightgreen.svg)](https://github.com/astral-sh/uv)
+
+## Overview
+
+Collects, processes, and analyzes Singapore housing data from government APIs.
+
+**Medallion Pipeline Layers**:
+```
+01_bronze  → 02_silver  → 03_gold  → 04_platinum
+  raw         validated    features    predictions
+```
+
+**Features**:
+- Hamilton DAG orchestration (lineage tracking, caching, parallel execution)
+- Pydantic schema validation at layer boundaries
+- Market Overview, Price Map, Trends & Analytics
+- Parallel geocoding (OneMap API)
+- ML market segmentation and forecasting
+
+## Quick Start
+
+```bash
+# Setup
+curl -LsSf https://astral.sh/uv/install.sh | sh
+git clone <repo-url>
+cd egg-n-bacon-housing
+uv sync
+
+# Configure API keys
+cp .env.example .env
+# Edit .env with your OneMap and Google AI keys
+
+# Run full pipeline
+uv run python main.py --stage all
+
+# Or run stage-by-stage
+uv run python scripts/01_ingest.py   # Bronze layer
+uv run python scripts/02_clean.py   # Silver layer
+uv run python scripts/03_features.py # Gold layer
+uv run python scripts/04_export.py  # Platinum export
+uv run python scripts/05_metrics.py # Metrics
+```
+
+## Setup
+
+### Prerequisites
+- Python 3.12+
+- OneMap API account ([free registration](https://www.onemap.gov.sg/apidocs/register))
+- Google AI API key ([free tier](https://makersuite.google.com/app/apikey))
+
+### Environment Variables
+
+Create `.env` in project root:
+```bash
+ONEMAP_EMAIL=your_email@example.com
+ONEMAP_EMAIL_PASSWORD=your_password
+GOOGLE_API_KEY=your_google_api_key
+```
+
+## Usage
+
+### CLI Entry Point
+
+```bash
+# Run all stages
+uv run python main.py --stage all
+
+# Run specific stage
+uv run python main.py --stage ingest    # Bronze: raw data collection
+uv run python main.py --stage clean     # Silver: validation & cleaning
+uv run python main.py --stage features  # Gold: feature engineering
+uv run python main.py --stage export    # Platinum: export & webapp data
+uv run python main.py --stage metrics   # Planning area metrics
+
+# Generate DAG visualization
+uv run python main.py --stage export --visualize
+```
+
+### Python API
+
+```python
+from egg_n_bacon_housing.pipeline import build_pipeline, run_full_pipeline
+from egg_n_bacon_housing.config import settings
+
+# Build and run pipeline
+dr = build_pipeline()
+results = dr.execute(final_vars=["unified_dataset", "dashboard_json"])
+
+# Inspect DAG
+dr.visualize_execution(final_vars=["unified_dataset"], output_file_path="dag.png")
+```
+
+### Documentation Site
+
+```bash
+cd app
+bun install
+bun run dev
+# Visit http://localhost:4321
+```
+
+## Project Structure
+
+```
+egg-n-bacon-housing/
+├── src/egg_n_bacon_housing/   # Source package
+│   ├── config.py              # pydantic-settings config
+│   ├── pipeline.py           # Hamilton DAG driver
+│   ├── components/           # Hamilton modules (01_ingestion → 06_analytics)
+│   ├── schemas/               # Pydantic models (raw, clean, feature)
+│   ├── adapters/              # External API adapters (onemap, datagovsg, geocoding)
+│   ├── utils/                 # Utilities (cache, data_helpers, metrics, etc.)
+│   └── analytics/             # Analysis modules (market, mrt, school, spatial...)
+├── scripts/                   # Stage entry points (01_ingest.py, etc.)
+├── main.py                    # CLI entry point
+├── config.yaml                # Pipeline configuration
+├── notebooks/                 # Exploratory analysis
+├── app/                       # Astro documentation site
+├── tests/                     # Test suite
+├── docs/                      # Architecture & guides
+└── data/                      # Pipeline data (01_bronze, 02_silver, 03_gold, 04_platinum)
+```
+
+## Configuration
+
+Configuration is managed via `config.yaml` with pydantic-settings:
+
+```yaml
+app_name: "egg-n-bacon-housing"
+data_path: "./data"
+pipeline:
+  parquet_compression: "snappy"
+  use_caching: true
+geocoding:
+  max_workers: 5
+  api_delay_seconds: 1.2
+```
+
+Environment variables and `.env` take priority over `config.yaml`.
+
+## Contributing
+
+```bash
+# Run tests
+uv run pytest
+
+# Format code
+uv run ruff format .
+
+# Lint
+uv run ruff check .
+```
+
+## License
+
+[Add your license here]
+
+## Acknowledgments
+
+- [data.gov.sg](https://data.gov.sg) - Open housing data
+- [OneMap](https://www.onemap.gov.sg) - Geospatial APIs
+- [LangChain](https://github.com/langchain-ai/langchain) - Agent framework

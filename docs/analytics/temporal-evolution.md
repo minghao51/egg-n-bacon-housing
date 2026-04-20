@@ -120,7 +120,7 @@ Recovery timing matters for buyers. Areas that recovered quickly may have alread
 
 ### Data Used
 
-- **Primary input**: `data/pipeline/L3/housing_unified.parquet`
+- **Primary input**: `data/pipeline/04_platinum/housing_unified.parquet`
 - **Time range**: 2017-2026 (10 years of transaction data)
 - **Temporal split**: Pre-COVID (2017-2019), COVID (2020-2022), Post-COVID (2023-2026)
 - **Property types**: HDB, Condominium, Executive Condominium

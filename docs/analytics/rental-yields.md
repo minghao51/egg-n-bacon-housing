@@ -124,12 +124,12 @@ The HDB rental market is less volatile than the sales market, making it a relati
 
 ### Data Used
 
-- **HDB rental transactions**: `data/pipeline/L1/housing_hdb_rental.parquet`
-- **HDB resale prices**: `data/pipeline/L1/housing_hdb_transaction.parquet`
-- **Rental yields**: `data/pipeline/L2/rental_yield.parquet`
-- **Top yield combinations**: `data/pipeline/L3/rental_yield_top_combos.parquet`
-- **Household income**: `data/pipeline/L1/household_income_estimates.parquet`
-- **HDB median rent by town/flat type**: `data/pipeline/L1/housing_hdb_median_rent_by_town_flat_type.parquet`
+- **HDB rental transactions**: `data/pipeline/02_silver/housing_hdb_rental.parquet`
+- **HDB resale prices**: `data/pipeline/02_silver/housing_hdb_transaction.parquet`
+- **Rental yields**: `data/pipeline/03_gold/rental_yield.parquet`
+- **Top yield combinations**: `data/pipeline/04_platinum/rental_yield_top_combos.parquet`
+- **Household income**: `data/pipeline/02_silver/household_income_estimates.parquet`
+- **HDB median rent by town/flat type**: `data/pipeline/02_silver/housing_hdb_median_rent_by_town_flat_type.parquet`
 
 ### Methodology
 

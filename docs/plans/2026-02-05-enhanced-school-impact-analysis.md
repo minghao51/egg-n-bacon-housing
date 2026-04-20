@@ -20,7 +20,7 @@
 
 **Verify Data:**
 ```bash
-uv run python -c "import pandas as pd; df = pd.read_parquet('data/pipeline/L3/housing_unified.parquet'); print(f'Shape: {df.shape}'); print(f'School cols: {[c for c in df.columns if \"school\" in c.lower()]}')"
+uv run python -c "import pandas as pd; df = pd.read_parquet('data/pipeline/04_platinum/housing_unified.parquet'); print(f'Shape: {df.shape}'); print(f'School cols: {[c for c in df.columns if \"school\" in c.lower()]}')"
 ```
 
 Expected: Shape with 110 columns, including school_accessibility_score, nearest_schoolPRIMARY_dist, planning_area, property_type

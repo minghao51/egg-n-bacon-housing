@@ -150,7 +150,7 @@ After script completes, verify:
 
 ```python
 # 1. Coverage check
-unified = pd.read_parquet('data/pipeline/L3/housing_unified.parquet')
+unified = pd.read_parquet('data/pipeline/04_platinum/housing_unified.parquet')
 for pt in ['HDB', 'Condominium', 'EC']:
     subset = unified[unified['property_type'] == pt]
     coverage = subset['dist_to_nearest_mrt'].notna().sum() / len(subset)
@@ -260,7 +260,7 @@ print(unified.groupby('property_type')['dist_to_nearest_mrt'].max())
    - Calculates amenity distances for condos/ECs
    - Updates L3 unified dataset in-place
 
-2. **Modified**: `data/pipeline/L3/housing_unified.parquet`
+2. **Modified**: `data/pipeline/04_platinum/housing_unified.parquet`
    - Will have complete amenity coverage after script completes
    - Backup created as `housing_unified_backup.parquet`
 

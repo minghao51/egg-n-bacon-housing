@@ -175,10 +175,10 @@ Config.ANALYTICS_DIR         # /path/to/project/data/analytics
 
 ```python
 # Data pipeline stages
-Config.L0_DIR                # data/pipeline/L0/ (raw data)
-Config.L1_DIR                # data/pipeline/L1/ (cleaned)
-Config.L2_DIR                # data/pipeline/L2/ (features)
-Config.L3_DIR                # data/pipeline/L3/ (metrics)
+Config.L0_DIR                # data/pipeline/01_bronze/ (raw data)
+Config.L1_DIR                # data/pipeline/02_silver/ (cleaned)
+Config.L2_DIR                # data/pipeline/03_gold/ (features)
+Config.L3_DIR                # data/pipeline/04_platinum/ (metrics)
 ```
 
 ### Manual Data Directories
@@ -514,7 +514,7 @@ workers: int = Config.GEOCODING_MAX_WORKERS
 
 ### Issue: Directories Not Created
 
-**Symptom:** `FileNotFoundError: data/pipeline/L0/`
+**Symptom:** `FileNotFoundError: data/pipeline/01_bronze/`
 
 **Solution:**
 ```python

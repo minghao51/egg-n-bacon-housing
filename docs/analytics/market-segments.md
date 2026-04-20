@@ -125,7 +125,7 @@ Chasing the hottest segment is a high-risk strategy. Momentum can reverse quickl
 
 ### Data Used
 
-- **Primary input**: `data/pipeline/L3/housing_unified.parquet`
+- **Primary input**: `data/pipeline/04_platinum/housing_unified.parquet`
 - **Transaction volume**: ~288K records (2021-2026 emphasis)
 - **Derived features**: `price_psm`, `rental_yield_pct`, `yoy_change_pct`, `mom_change_pct`, `remaining_lease_months`, `floor_area_sqm`
 - **Segmentation output**: Cluster assignments per transaction with segment labels

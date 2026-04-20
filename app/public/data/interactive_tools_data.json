@@ -1,0 +1,10 @@
+{
+  "planning_area_stats": [
+    {
+      "planning_area": "Orchard",
+      "median_price": 1500000.0,
+      "transaction_count": 1,
+      "price_std": NaN
+    }
+  ]
+}

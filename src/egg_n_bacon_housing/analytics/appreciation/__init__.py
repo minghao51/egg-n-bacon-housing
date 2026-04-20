@@ -1,0 +1,1 @@
+"""Appreciation pattern analysis."""

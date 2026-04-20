@@ -4,7 +4,6 @@ Shared pytest fixtures and configuration for egg-n-bacon-housing tests.
 This file provides common fixtures used across multiple test files.
 """
 
-import sys
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
@@ -12,10 +11,6 @@ from unittest.mock import MagicMock
 
 import pandas as pd
 import pytest
-
-# Add project root to path
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
 
 
 @pytest.fixture
@@ -46,7 +41,7 @@ def temp_data_dir(temp_dir) -> Generator[Path, None, None]:
     """
     Create a temporary data directory structure.
 
-    Creates subdirectories mimicking the project's data structure.
+    Creates subdirectories mimicking the medallion pipeline structure.
 
     Yields:
         Path to temporary data directory
@@ -54,12 +49,12 @@ def temp_data_dir(temp_dir) -> Generator[Path, None, None]:
     data_dir = temp_dir / "data"
     data_dir.mkdir()
 
-    # Create subdirectories
+    # Create medallion pipeline directories
     (data_dir / "pipeline").mkdir()
-    (data_dir / "pipeline" / "L0").mkdir()
-    (data_dir / "pipeline" / "L1").mkdir()
-    (data_dir / "pipeline" / "L2").mkdir()
-    (data_dir / "pipeline" / "L3").mkdir()
+    (data_dir / "pipeline" / "01_bronze").mkdir()
+    (data_dir / "pipeline" / "02_silver").mkdir()
+    (data_dir / "pipeline" / "03_gold").mkdir()
+    (data_dir / "pipeline" / "04_platinum").mkdir()
     (data_dir / "cache").mkdir()
     (data_dir / "manual").mkdir()
 
@@ -69,44 +64,45 @@ def temp_data_dir(temp_dir) -> Generator[Path, None, None]:
 @pytest.fixture
 def mock_config(monkeypatch, temp_data_dir):
     """
-    Mock configuration for testing.
+    Mock configuration for testing using settings-based config.
 
     Sets up test environment variables and paths.
 
     Example:
         >>> def test_with_mock_config(mock_config):
         ...     # Config is ready for testing
-        ...     from scripts.core.config import Config
-        ...     assert Config.DATA_DIR.exists()
+        ...     from egg_n_bacon_housing.config import settings
+        ...     assert settings.DATA_DIR.exists()
     """
     # Set required environment variables
     monkeypatch.setenv("ONEMAP_EMAIL", "test@example.com")
     monkeypatch.setenv("GOOGLE_API_KEY", "test-api-key")
     monkeypatch.setenv("LOG_LEVEL", "DEBUG")
 
-    # Import Config after environment is set
-    from scripts.core.config import Config
+    # Import settings after environment is set
+    from egg_n_bacon_housing.config import settings
 
-    # Temporarily override paths
-    original_data_dir = Config.DATA_DIR
-    original_pipeline_dir = Config.PIPELINE_DIR
-    original_parquets_dir = Config.PARQUETS_DIR
-    original_metadata_file = Config.METADATA_FILE
+    # Temporarily override paths via monkeypatch
+    original_data_dir = settings.DATA_DIR
+    original_pipeline_dir = settings.PIPELINE_DIR
+    original_parquets_dir = settings.PARQUETS_DIR
+    original_cache_dir = settings.CACHE_DIR
+    original_manual_dir = settings.MANUAL_DIR
 
-    Config.DATA_DIR = temp_data_dir
-    Config.PIPELINE_DIR = temp_data_dir / "pipeline"
-    Config.PARQUETS_DIR = Config.PIPELINE_DIR
-    Config.CACHE_DIR = temp_data_dir / "cache"
-    Config.MANUAL_DIR = temp_data_dir / "manual"
-    Config.METADATA_FILE = temp_data_dir / "metadata.json"
+    settings.DATA_DIR = temp_data_dir
+    settings.PIPELINE_DIR = temp_data_dir / "pipeline"
+    settings.PARQUETS_DIR = settings.PIPELINE_DIR
+    settings.CACHE_DIR = temp_data_dir / "cache"
+    settings.MANUAL_DIR = temp_data_dir / "manual"
 
-    yield Config
+    yield settings
 
     # Restore original paths
-    Config.DATA_DIR = original_data_dir
-    Config.PIPELINE_DIR = original_pipeline_dir
-    Config.PARQUETS_DIR = original_parquets_dir
-    Config.METADATA_FILE = original_metadata_file
+    settings.DATA_DIR = original_data_dir
+    settings.PIPELINE_DIR = original_pipeline_dir
+    settings.PARQUETS_DIR = original_parquets_dir
+    settings.CACHE_DIR = original_cache_dir
+    settings.MANUAL_DIR = original_manual_dir
 
 
 @pytest.fixture

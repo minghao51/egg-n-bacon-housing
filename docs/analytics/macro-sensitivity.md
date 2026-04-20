@@ -121,7 +121,7 @@ Policy changes are most effective when aligned with the macro regime. The Dec 20
 
 ### Data Used
 
-- **Housing data**: `data/pipeline/L3/housing_unified.parquet` (2017-2026 transactions)
+- **Housing data**: `data/pipeline/04_platinum/housing_unified.parquet` (2017-2026 transactions)
 - **Macro data** (all from `data/raw_data/macro/`):
   - `singapore_cpi_monthly.parquet` — 60 monthly observations (2021-2025)
   - `sgdp_quarterly.parquet` — 21 quarterly observations (2021-2026)

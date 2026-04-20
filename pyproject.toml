@@ -1,16 +1,18 @@
 [project]
 name = "egg-n-bacon-housing"
-version = "0.1.0"
+version = "0.2.0"
 description = "Singapore housing data pipeline with ML analysis"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "pandas>=2.0.0",
     "pyarrow>=15.0.0",
     "numpy>=1.24.0",
     "seaborn",
     "scikit-learn",
-    "python-dotenv",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "pyyaml>=6.0",
     "geopandas",
     "requests",
     "ipywidgets",
@@ -40,82 +42,68 @@ dependencies = [
     "kaleido>=1.2.0",
     "patsy>=1.0.2",
     "shap>=0.49.1",
+    "sf-hamilton>=1.0",
+    "tenacity",
+    "polars>=1.40.0",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "jupyter>=1.0.0",
     "ipykernel>=6.0.0",
-    "jupytext>=1.16.0",
-    "pytest>=7.0.0",
+    "pytest>=8.0",
     "pytest-cov>=4.0.0",
     "pytest-mock>=3.10.0",
     "pytest-asyncio>=0.21.0",
     "coverage[toml]>=7.0.0",
-    "ruff>=0.1.0",
+    "ruff>=0.3",
     "libpysal>=4.14.1",
     "esda>=2.8.1",
     "geopandas>=1.1.2",
     "shapely>=2.1.2",
     "kaleido>=1.2.0",
     "playwright>=1.58.0",
+    "pre-commit>=3.0.0",
+    "mypy>=1.8.0",
 ]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/egg_n_bacon_housing"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP"]
-ignore = ["E501"]  # Line length handled by formatter
+ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
-"notebooks/*.py" = ["E402", "E722", "F821", "F841"]  # Jupyter notebooks
-"scripts/core/stages/*.py" = ["N999"]  # Allow stage file names like L0_collect.py
-"scripts/analytics/analysis/**/*.py" = ["E402", "N806", "N803", "N802", "F401", "F841", "I001"]  # Analytics scripts use sys.path.insert and sklearn conventions
-"scripts/analytics/models/**/*.py" = ["E402", "N806", "F401", "I001"]  # Model scripts use sklearn conventions
-"scripts/analytics/price_appreciation_modeling/**/*.py" = ["E402", "N806", "N803", "F401", "I001"]  # Modeling scripts use sklearn conventions
-"scripts/analytics/pipelines/**/*.py" = ["E402", "N806", "N803", "N802", "F401", "F841", "I001"]  # Pipeline scripts
-"scripts/analytics/viz/**/*.py" = ["E402", "F401", "I001"]  # Visualization scripts
-"scripts/analytics/analysis/amenity/analyze_amenity_impact.py" = ["N806"]  # Allow uppercase variables for sklearn conventions (X, X_train, etc.)
-"scripts/analytics/analysis/causal/visualize_causal_findings.py" = ["F821"]  # Intentional variable reference
-"scripts/analytics/price_appreciation_modeling/residual_analysis.py" = ["F821"]  # Intentional variable reference
-"scripts/tools/verify_imports.py" = ["F401"]  # Intentional unused imports for testing
-"scripts/create_l3_unified_dataset.py" = ["E402", "F405"]  # Uses sys.path.insert
-"scripts/data/download/*.py" = ["E402"]  # Uses sys.path.insert
-"scripts/data/process/**/*.py" = ["E402", "N806", "I001"]  # Uses sys.path.insert
-"scripts/generate_segments_data.py" = ["E402", "F405"]  # Uses sys.path.insert
-"scripts/prepare_analytics_json.py" = ["E402", "F405"]  # Uses sys.path.insert
-"scripts/prepare_interactive_tools_data.py" = ["E402", "F405"]  # Uses sys.path.insert
-"scripts/run_pipeline.py" = ["E402", "N802", "I001"]  # Uses sys.path.insert
-"scripts/transform_spatial_hotspots.py" = ["E402", "F405"]  # Uses sys.path.insert
-"scripts/utils/check_geocoding_progress.py" = ["E722"]  # Bare except used intentionally
-"scripts/utils/detect_anomalies.py" = ["E402", "I001"]  # Uses sys.path.insert
-"scripts/utils/town_leaderboard.py" = ["E402", "I001"]  # Uses sys.path.insert
-"scripts/utils/validate_ura_data.py" = ["E402"]  # Uses sys.path.insert
-"scripts/verify_imports.py" = ["E402", "F401", "F405"]  # Uses sys.path.insert and intentionally unused imports
-"notebooks/*.ipynb" = ["E402", "E722", "F821", "F841"]  # Jupyter notebooks
-"notebooks/exploration/**/*.py" = ["F821"]  # Databricks snippets
-
+"notebooks/*.py" = ["E402", "E722", "F821", "F841"]
+"notebooks/**/*.py" = ["E402", "E722", "F821", "F841"]
+"src/egg_n_bacon_housing/analytics/**/*.py" = ["E402", "N806", "N803", "F401", "F821", "F841", "I001"]
+"src/egg_n_bacon_housing/components/*.py" = ["N999"]  # Numbered stage files like 01_ingestion.py
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 
-# Output options
 addopts = [
     "--verbose",
     "--strict-markers",
     "--tb=short",
-    "--cov=scripts/core",
+    "--cov=egg_n_bacon_housing",
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html:htmlcov",
     "--cov-report=xml:coverage.xml",
 ]
 
-# Markers for different test types
 markers = [
     "unit: Unit tests (fast, isolated)",
     "integration: Integration tests (slower, may use external resources)",
@@ -123,9 +111,8 @@ markers = [
     "api: Tests that make API calls (may need mocking)",
 ]
 
-# Coverage options
 [tool.coverage.run]
-source = ["scripts"]
+source = ["egg_n_bacon_housing"]
 omit = [
     "*/tests/*",
     "*/test_*.py",
@@ -146,9 +133,35 @@ exclude_lines = [
 ]
 
 [tool.mypy]
-python_version = "3.11"
+# Mypy type checking configuration
+# Strategy: Gradual strict mode - start with basic checking, enable strict as type hints improve
+python_version = "3.12"
+# strict = true  # TODO: Enable strict mode gradually as type hints are added
 ignore_missing_imports = true
 warn_unused_configs = true
 warn_redundant_casts = true
 no_implicit_optional = true
+plugins = ["pydantic.mypy"]
 
+# Known issues to address gradually:
+# 1. SecretStr fields in config.py - pydantic-settings compatibility with strict mode
+# 2. Legacy modules in analytics - need full type annotations
+
+# Override strict mode for legacy/experimental modules
+# Priority: Add type hints to these modules gradually, then remove overrides
+[[tool.mypy.overrides]]
+module = "notebooks.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "src/egg_n_bacon_housing.analytics.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "src/egg_n_bacon_housing.config.*"
+disable_error_code = ["assignment"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "src/egg_n_bacon_housing.analytics.*"
+ignore_errors = true

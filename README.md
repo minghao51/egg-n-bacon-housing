@@ -2,30 +2,30 @@
 
 Singapore housing data pipeline and ML analysis platform.
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-0.1.0+-brightgreen.svg)](https://github.com/astral-sh/uv)
 
 ## Overview
 
 Collects, processes, and analyzes Singapore housing data from government APIs.
 
-**Pipeline Stages**:
+**Medallion Pipeline Layers**:
 ```
-L0: Data Collection (data.gov.sg)
-L0_macro: Macro Economic Data (CPI, GDP, SORA, unemployment, PPI)
-L1: Processing → L2: Features → L3: Export
-L5: Metrics → Webapp: Dashboard
+01_bronze  → 02_silver  → 03_gold  → 04_platinum
+  raw         validated    features    predictions
 ```
 
 **Features**:
+- Hamilton DAG orchestration (lineage tracking, caching, parallel execution)
+- Pydantic schema validation at layer boundaries
 - Market Overview, Price Map, Trends & Analytics
-- Parallel geocoding (5x faster with OneMap API)
+- Parallel geocoding (OneMap API)
 - ML market segmentation and forecasting
 
 ## Quick Start
 
 ```bash
-# Setup (one-time uv install)
+# Setup
 curl -LsSf https://astral.sh/uv/install.sh | sh
 git clone <repo-url>
 cd egg-n-bacon-housing
@@ -35,14 +35,21 @@ uv sync
 cp .env.example .env
 # Edit .env with your OneMap and Google AI keys
 
-# Run pipeline
-uv run python scripts/run_pipeline.py --stage all --parallel
+# Run full pipeline
+uv run python main.py --stage all
+
+# Or run stage-by-stage
+uv run python scripts/01_ingest.py   # Bronze layer
+uv run python scripts/02_clean.py   # Silver layer
+uv run python scripts/03_features.py # Gold layer
+uv run python scripts/04_export.py  # Platinum export
+uv run python scripts/05_metrics.py # Metrics
 ```
 
 ## Setup
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.12+
 - OneMap API account ([free registration](https://www.onemap.gov.sg/apidocs/register))
 - Google AI API key ([free tier](https://makersuite.google.com/app/apikey))
 
@@ -57,33 +64,35 @@ GOOGLE_API_KEY=your_google_api_key
 
 ## Usage
 
-### Pipeline Runner
+### CLI Entry Point
 
 ```bash
 # Run all stages
-uv run python scripts/run_pipeline.py --stage all --parallel
+uv run python main.py --stage all
 
 # Run specific stage
-uv run python scripts/run_pipeline.py --stage L0           # Data collection (data.gov.sg)
-uv run python scripts/run_pipeline.py --stage L0_macro     # Macro data (CPI, GDP, SORA, unemployment, PPI)
-uv run python scripts/run_pipeline.py --stage L1           # Processing with geocoding
-uv run python scripts/run_pipeline.py --stage L2           # Rental yields & features
-uv run python scripts/run_pipeline.py --stage L3           # Unified dataset export
-uv run python scripts/run_pipeline.py --stage L5           # Metrics calculation
-uv run python scripts/run_pipeline.py --stage webapp       # Dashboard JSON export
+uv run python main.py --stage ingest    # Bronze: raw data collection
+uv run python main.py --stage clean     # Silver: validation & cleaning
+uv run python main.py --stage features  # Gold: feature engineering
+uv run python main.py --stage export    # Platinum: export & webapp data
+uv run python main.py --stage metrics   # Planning area metrics
+
+# Generate DAG visualization
+uv run python main.py --stage export --visualize
 ```
 
 ### Python API
 
 ```python
-from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
-from scripts.core.pipeline.L1_process import run_full_l1_pipeline
+from egg_n_bacon_housing.pipeline import build_pipeline, run_full_pipeline
+from egg_n_bacon_housing.config import settings
 
-# Data collection
-results = run_all_datagovsg_collection()
+# Build and run pipeline
+dr = build_pipeline()
+results = dr.execute(final_vars=["unified_dataset", "dashboard_json"])
 
-# Processing with parallel geocoding
-results = run_full_l1_pipeline(use_parallel_geocoding=True)
+# Inspect DAG
+dr.visualize_execution(final_vars=["unified_dataset"], output_file_path="dag.png")
 ```
 
 ### Documentation Site
@@ -93,63 +102,60 @@ cd app
 bun install
 bun run dev
 # Visit http://localhost:4321
-# Or view at: https://minghao51.github.io/egg-n-bacon-housing/
 ```
 
 ## Project Structure
 
 ```
 egg-n-bacon-housing/
-├── scripts/           # Core modules & analytics
-│   ├── core/         # Config, geocoding, cache, pipeline stages
-│   └── analytics/    # Analysis scripts
-├── notebooks/        # Exploratory analysis (Jupytext paired)
-├── app/          # Astro documentation site
-├── tests/            # Test suite
-├── docs/             # Architecture & guides
-└── data/             # Pipeline outputs, cache, logs
+├── src/egg_n_bacon_housing/   # Source package
+│   ├── config.py              # pydantic-settings config
+│   ├── pipeline.py           # Hamilton DAG driver
+│   ├── components/           # Hamilton modules (01_ingestion → 06_analytics) — core pipeline
+│   ├── schemas/               # Pydantic models (raw, clean, feature)
+│   ├── adapters/              # External API adapters (onemap, datagovsg, geocoding)
+│   ├── utils/                 # Utilities (cache, data_helpers, metrics, etc.)
+│   └── analytics/             # Analysis modules (market, mrt, school, spatial...) — exploratory, not wired to DAG
+├── scripts/                   # Stage entry points (01_ingest.py, etc.)
+├── main.py                    # CLI entry point
+├── config.yaml                # Pipeline configuration
+├── notebooks/                 # Exploratory analysis
+├── app/                       # Astro documentation site
+├── tests/                     # Test suite
+├── docs/                      # Architecture & guides
+└── data/                      # Pipeline data (01_bronze, 02_silver, 03_gold, 04_platinum)
 ```
 
-**Key Files**:
-- `pyproject.toml` - Dependencies (managed by uv)
-- `core/config.py` - Centralized configuration
-- `CLAUDE.md` - Development workflow & guidelines
+**Note**: The Hamilton DAG (`components/`) runs the core pipeline from bronze to platinum. Analytics modules (`analytics/`) are standalone exploratory scripts that consume exported datasets from the platinum layer. They are run on-demand for specific analyses and are not wired into the automated pipeline.
 
-## Documentation
+## Configuration
 
-**📚 [Complete Documentation](docs/README.md)** - Start here for full documentation index
+Configuration is managed via `config.yaml` with pydantic-settings:
 
-**Getting Started**:
-- [Quick Start Guide](docs/guides/quick-start.md) - 5-minute setup
-- [Contributing Guide](CONTRIBUTING.md) - How to contribute
-- [Usage Guide](docs/guides/usage-guide.md) - Common tasks & workflows
+```yaml
+app_name: "egg-n-bacon-housing"
+data_path: "./data"
+pipeline:
+  parquet_compression: "snappy"
+  use_caching: true
+geocoding:
+  max_workers: 5
+  api_delay_seconds: 1.2
+```
 
-**Reference**:
-- [Architecture](docs/architecture.md) - System design & data flow
-- [Testing Guide](docs/guides/testing-guide.md) - Testing practices
-- [Configuration](docs/guides/configuration.md) - Environment variables
-
-**Analytics Reports**:
-- [Key Findings](docs/analytics/findings.md) - Main ML insights
-- [MRT Impact](docs/analytics/mrt-impact.md) - Distance to MRT effects
-- [School Quality](docs/analytics/school-quality.md) - School tier analysis
-- [Price Forecasts](docs/analytics/price-forecasts.md) - Time-series predictions
-- [Spatial Hotspots](docs/analytics/spatial-hotspots.md) - Geographic clustering
+Environment variables and `.env` take priority over `config.yaml`.
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-**Quick setup for contributors:**
 ```bash
-# Install dependencies
-uv sync
-
 # Run tests
 uv run pytest
 
 # Format code
 uv run ruff format .
+
+# Lint
+uv run ruff check .
 ```
 
 ## License

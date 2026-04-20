@@ -45,10 +45,10 @@ Config.MANUAL_DIR            # Path: data/manual/
 Config.ANALYTICS_DIR         # Path: data/analytics/
 
 # Pipeline Stage Directories
-Config.L0_DIR                # Path: data/pipeline/L0/
-Config.L1_DIR                # Path: data/pipeline/L1/
-Config.L2_DIR                # Path: data/pipeline/L2/
-Config.L3_DIR                # Path: data/pipeline/L3/
+Config.L0_DIR                # Path: data/pipeline/01_bronze/
+Config.L1_DIR                # Path: data/pipeline/02_silver/
+Config.L2_DIR                # Path: data/pipeline/03_gold/
+Config.L3_DIR                # Path: data/pipeline/04_platinum/
 
 # Manual Data Subdirectories
 Config.CSV_DIR               # Path: data/manual/csv/

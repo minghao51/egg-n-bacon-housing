@@ -94,7 +94,7 @@ The amenity distance calculation (L2 pipeline) probably only processes:
 **Option 2**: Quick hack for analysis
 ```python
 # Load condo coordinates
-condo_geo = pd.read_parquet('data/pipeline/L2/housing_unique_searched.parquet')
+condo_geo = pd.read_parquet('data/pipeline/03_gold/housing_unique_searched.parquet')
 condo_geo = condo_geo[condo_geo['property_type'] == 'private']
 
 # Load MRT station locations

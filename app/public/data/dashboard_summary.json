@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-04-20T14:34:08.249302",
+  "total_transactions": 1,
+  "property_types": {
+    "hdb": 1
+  },
+  "price_range": {
+    "min": 500000.0,
+    "max": 500000.0,
+    "median": 500000.0
+  }
+}

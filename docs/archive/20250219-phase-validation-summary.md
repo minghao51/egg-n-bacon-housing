@@ -134,7 +134,7 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 - `scripts/core/stages/webapp_data_preparation.py` - Amenity summary export
 
 ### Data Files
-- `data/pipeline/L2/housing_per_type_amenity_features.parquet` (NEW)
-- `data/pipeline/L3/housing_unified.parquet` (UPDATED)
+- `data/pipeline/03_gold/housing_per_type_amenity_features.parquet` (NEW)
+- `data/pipeline/04_platinum/housing_unified.parquet` (UPDATED)
 - `app/public/data/amenity_summary.json.gz` (NEW)
 
