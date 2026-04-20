@@ -70,25 +70,6 @@ def create_granular_mrt_features(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.dropna(subset=["lat", "lon", "dist_to_nearest_mrt"])
 
-    interchange_stations = [
-        "dhoby ghaut",
-        "raffles place",
-        "marina bay",
-        "jurong east",
-        "paya lebar",
-        "bukit panjang",
-        "harbourfront",
-        "serangoon",
-        "woodlands",
-        "ang mo kio",
-        "clementi",
-        "outram park",
-        "one north",
-        "kent ridge",
-        "holland village",
-        "buona vista",
-    ]
-
     df["mrt_is_interchange"] = df["dist_to_nearest_mrt"].apply(lambda x: True if x < 300 else False)
 
     df["mrt_connectivity_score"] = (
@@ -659,11 +640,11 @@ The XGBoost feature importance rankings show:
 1. **Model-Agnostic Findings**:
    - Hawker centers 5x more important than MRT
    - Location context matters more than MRT alone
-   
+
 2. **Station-Specific Strategy**:
    - Target interchange stations over standard stations
    - Multi-station areas show agglomeration benefits
-   
+
 3. **Cluster Strategy**:
    - Amenity clusters show premium beyond individual effects
    - "15-minute city" concept validated

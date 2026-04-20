@@ -526,7 +526,7 @@ def main():
         logger.info(f"Saved: {csv_path}")
 
     # COVID impact assessment
-    covid_results = identify_covid_impact(df, feature=primary_feature)
+    identify_covid_impact(df, feature=primary_feature)
 
     # Generate visualizations
     plot_temporal_evolution(yearly_results)
@@ -538,7 +538,7 @@ def main():
         plot_top_areas_evolution(area_results_condo, property_type="Condominium", top_n=10)
 
     # Generate summary statistics
-    summary = generate_summary_statistics(yearly_results)
+    generate_summary_statistics(yearly_results)
 
     # Final summary
     duration = (datetime.now() - start_time).total_seconds()

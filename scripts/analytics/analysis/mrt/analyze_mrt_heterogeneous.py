@@ -16,13 +16,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, r2_score
 
+warnings.filterwarnings("ignore")
 plt.style.use("seaborn-v0_8-whitegrid")
 sns.set_palette("husl")
 

@@ -647,7 +647,7 @@ def main():
 
     # 5. Error patterns by segment
     logger.info("\n[6/6] Analyzing error patterns...")
-    error_df = analyze_error_patterns(test_df, y_test, y_pred_xgb, residuals_xgb, output_dir)
+    analyze_error_patterns(test_df, y_test, y_pred_xgb, residuals_xgb, output_dir)
 
     # 6. Generate recommendations
     logger.info("\n[7/7] Generating improvement recommendations...")

@@ -6,11 +6,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.preprocessing import StandardScaler
 
+warnings.filterwarnings("ignore")
 DATA_DIR = Path("data/analytics/market_segmentation")
 OUTPUT_DIR = Path("data/analytics/market_segmentation_2.0")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)

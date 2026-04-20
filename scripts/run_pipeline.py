@@ -9,7 +9,8 @@ This script orchestrates all data pipeline stages:
 - L2: Feature engineering (rental yields and property features)
 - L3: Export and final output
 - L5: Metrics calculation at planning area level
-- Webapp: Export lightweight JSON for dashboard
+- forecasts: Rental yield forecasting using Prophet
+- webapp: Export lightweight JSON for dashboard
 
 Usage:
     uv run python scripts/run_pipeline.py --stage L0
@@ -20,6 +21,7 @@ Usage:
     uv run python scripts/run_pipeline.py --stage L2_features
     uv run python scripts/run_pipeline.py --stage L3
     uv run python scripts/run_pipeline.py --stage L5
+    uv run python scripts/run_pipeline.py --stage forecasts
     uv run python scripts/run_pipeline.py --stage webapp
     uv run python scripts/run_pipeline.py --stage all
 
@@ -56,9 +58,11 @@ from scripts.core.stages.L1_process import run_processing_pipeline
 from scripts.core.stages.L2_features import run_l2_features_pipeline
 from scripts.core.stages.L2_rental import run_rental_pipeline
 from scripts.core.stages.L3_export import run_l3_pipeline
+from scripts.core.stages.L4_analysis import main as run_l4_analysis
 from scripts.core.stages.L5_metrics import run_metrics_pipeline
 from scripts.core.stages.webapp_data_preparation import export_dashboard_data
 from scripts.data.fetch_macro_data import fetch_all_macro_data
+from scripts.analytics.pipelines.forecast_yields_pipeline import main as run_yield_forecasts_main
 
 # Setup logging
 logging.basicConfig(
@@ -173,6 +177,26 @@ def run_L5(skip_affordability: bool = False):
     return results
 
 
+def run_L4():
+    """Run L4: Deep-dive analysis pipeline."""
+    logger.info("🚀 Starting L4: Analysis Pipeline")
+
+    run_l4_analysis()
+
+    logger.info("✅ L4 Complete")
+    return {"status": "success"}
+
+
+def run_forecasts():
+    """Run Forecasts: Yield forecasting using Prophet."""
+    logger.info("🚀 Starting Forecasts: Rental Yield Forecasting")
+
+    results = run_yield_forecasts_main()
+
+    logger.info("✅ Forecasts Complete")
+    return {"status": "success", "forecasts": len(results) if results is not None else 0}
+
+
 def run_webapp():
     """Run Webapp: Export lightweight JSON files for dashboard."""
     logger.info("🚀 Starting Webapp: Data Export")
@@ -255,6 +279,14 @@ def run_pipeline(
         logger.info("=" * 80)
         run_L5(skip_affordability=skip_affordability)
 
+    if stages in ["L4", "all"]:
+        logger.info("=" * 80)
+        run_L4()
+
+    if stages in ["forecasts", "all"]:
+        logger.info("=" * 80)
+        run_forecasts()
+
     if stages in ["webapp", "all"]:
         logger.info("=" * 80)
         run_webapp()
@@ -285,7 +317,9 @@ def main():
             "L2_rental",
             "L2_features",
             "L3",
+            "L4",
             "L5",
+            "forecasts",
             "webapp",
             "all",
         ],

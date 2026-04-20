@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Calculate school features - optimized using KDTree for nearest search."""
 
+import json
 import logging
 
 import numpy as np
@@ -56,29 +57,55 @@ def load_schools() -> pd.DataFrame:
     return schools_df
 
 
+def _load_reference_data(filename: str) -> dict | None:
+    """Load JSON reference data from data/config/ with fallback.
+
+    Args:
+        filename: Name of JSON file in data/config/
+
+    Returns:
+        Parsed JSON data or None if not found
+    """
+    config_path = Config.DATA_DIR / "config" / filename
+    if config_path.exists():
+        with open(config_path) as f:
+            return json.load(f)
+    logger.warning(f"Reference data file not found: {config_path}")
+    return None
+
+
 def load_school_tiers() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load school tier CSV files.
+    """Load school tier data from JSON with CSV fallback.
 
     Returns:
         Tuple of (primary_tiers, secondary_tiers) DataFrames
     """
-    csv_dir = Config.DATA_DIR / "manual" / "csv"
-
-    primary_path = csv_dir / "school_tiers_primary.csv"
-    secondary_path = csv_dir / "school_tiers_secondary.csv"
-
     primary_tiers = pd.DataFrame()
     secondary_tiers = pd.DataFrame()
 
+    json_data = _load_reference_data("school_tiers.json")
+    if json_data:
+        if "primary" in json_data:
+            primary_tiers = pd.DataFrame(json_data["primary"])
+            logger.info(f"Loaded {len(primary_tiers)} primary school tiers from JSON")
+        if "secondary" in json_data:
+            secondary_tiers = pd.DataFrame(json_data["secondary"])
+            logger.info(f"Loaded {len(secondary_tiers)} secondary school tiers from JSON")
+        return primary_tiers, secondary_tiers
+
+    csv_dir = Config.DATA_DIR / "manual" / "csv"
+    primary_path = csv_dir / "school_tiers_primary.csv"
+    secondary_path = csv_dir / "school_tiers_secondary.csv"
+
     if primary_path.exists():
         primary_tiers = pd.read_csv(primary_path)
-        logger.info(f"Loaded {len(primary_tiers)} primary school tiers")
+        logger.info(f"Loaded {len(primary_tiers)} primary school tiers from CSV")
     else:
         logger.warning(f"Primary school tiers not found: {primary_path}")
 
     if secondary_path.exists():
         secondary_tiers = pd.read_csv(secondary_path)
-        logger.info(f"Loaded {len(secondary_tiers)} secondary school tiers")
+        logger.info(f"Loaded {len(secondary_tiers)} secondary school tiers from CSV")
     else:
         logger.warning(f"Secondary school tiers not found: {secondary_path}")
 

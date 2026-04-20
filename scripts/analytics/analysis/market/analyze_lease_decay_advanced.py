@@ -202,9 +202,8 @@ def balas_curve_theoretical(lease_years: np.ndarray) -> np.ndarray:
     - At 75 years: ~70-80% of freehold value
     - At 50 years: ~50-60% of freehold value
     """
-    freehold_equivalent = 100
 
-    normalized_lease = lease_years / 99.0
+    lease_years / 99.0
 
     value_pct = np.where(
         lease_years >= 90,
@@ -535,7 +534,7 @@ def visualize_advanced_analysis(
     ax3 = axes[1, 0]
     lease_years = df["remaining_lease_years"]
     price_psm = df["price_psm"]
-    scatter = ax3.scatter(lease_years, price_psm, alpha=0.1, s=1, c="blue")
+    ax3.scatter(lease_years, price_psm, alpha=0.1, s=1, c="blue")
     ax3.set_xlabel("Remaining Lease (Years)")
     ax3.set_ylabel("Price PSM (SGD)")
     ax3.set_title("Lease Decay Scatter Plot")

@@ -192,7 +192,7 @@ def cluster_appreciation_patterns(df, n_clusters=6):
     for i in range(n_clusters):
         cluster_data = area_features[area_features["cluster"] == i]
         mean_growth = cluster_data["yoy_change_pct_mean"].mean()
-        vol = cluster_data["yoy_change_pct_std"].mean()
+        cluster_data["yoy_change_pct_std"].mean()
 
         if mean_growth > 15:
             name = f"High Growth Cluster {i + 1}"
@@ -700,7 +700,7 @@ def main():
     prop_stats, area_stats = analyze_appreciation_distribution(df)
     area_features, cluster_summary = cluster_appreciation_patterns(df, n_clusters=6)
     results_df, importance_df, rf_model, xgb_model = run_appreciation_regression(df)
-    mrt_impact = analyze_mrt_impact_on_appreciation(df)
+    analyze_mrt_impact_on_appreciation(df)
     yearly_stats = analyze_temporal_appreciation_dynamics(df)
     hotspot_df = identify_appreciation_hotspots(df, percentile_threshold=75)
 

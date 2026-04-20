@@ -156,7 +156,7 @@ def calculate_vif(df):
     df_clean = df[features + ["price_psf"]].dropna()
 
     X = df_clean[features].values
-    y = df_clean["price_psf"].values
+    df_clean["price_psf"].values
 
     # Calculate VIF for each feature
     from statsmodels.stats.outliers_influence import variance_inflation_factor

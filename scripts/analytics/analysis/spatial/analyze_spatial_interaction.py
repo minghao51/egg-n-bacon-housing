@@ -455,7 +455,7 @@ def main():
         plot_spatial_heterogeneity(df_sample, gwr_results)
 
     # Compare models
-    comparison = compare_models(ols_results, gwr_results, spatial_lag_results)
+    compare_models(ols_results, gwr_results, spatial_lag_results)
 
     # Final summary
     duration = (datetime.now() - start_time).total_seconds()

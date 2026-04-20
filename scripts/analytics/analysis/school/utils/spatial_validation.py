@@ -172,7 +172,7 @@ class SpatialValidator:
             # I ≈ 0 = no spatial autocorrelation (good)
 
             areas = area_residuals.index.tolist()
-            n = len(areas)
+            len(areas)
 
             # Simple spatial weights: binary adjacency (would need proper shapefile for exact)
             # Using correlation of neighboring areas as approximation

@@ -107,8 +107,6 @@ def create_synthetic_data(
 
     np.random.seed(42)
 
-    singapore_bounds = {"lat_min": 1.25, "lat_max": 1.475, "lon_min": 103.6, "lon_max": 104.0}
-
     location_premiums = {
         "orchard_marina": {
             "lat": (1.28, 1.32),
@@ -434,7 +432,7 @@ def create_comprehensive_clusters(
     def classify_comprehensive(row):
         lisa = row["lisa_cluster"]
         temporal = row["temporal_cluster"]
-        fundamental = row["fundamental_cluster"]
+        row["fundamental_cluster"]
 
         if lisa == "HH":
             if temporal >= 2:

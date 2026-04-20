@@ -61,8 +61,6 @@ def plot_feature_importance(importance_data: pd.DataFrame = None, save: bool = T
             }
         )
 
-    colors = ["#e74c3c", "#3498db"]
-
     for i, (col, color, title) in enumerate(
         [
             ("lisa_importance", "#e74c3c", "LISA Spatial Clustering"),
@@ -539,7 +537,7 @@ def generate_all_profile_visualizations():
     logger.info("Generating cluster profile visualizations...")
 
     feature_importance = load_feature_importance()
-    cluster_profiles = load_cluster_profiles()
+    load_cluster_profiles()
 
     plot_feature_importance(feature_importance)
     plot_combined_importance(feature_importance)

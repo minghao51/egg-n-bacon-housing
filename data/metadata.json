@@ -433,9 +433,9 @@
     "integration_test": {
       "path": "integration_test.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/integration_test.parquet",
-      "version": "2026-03-03",
+      "version": "2026-04-20",
       "rows": 3,
-      "created": "2026-03-03T13:14:12.893006",
+      "created": "2026-04-20T12:10:54.855804",
       "source": "integration_test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -443,9 +443,9 @@
     "e2e_test_dataset": {
       "path": "e2e_test_dataset.parquet",
       "full_path": "/Users/minghao/Desktop/personal/egg-n-bacon-housing/data/pipeline/e2e_test_dataset.parquet",
-      "version": "2026-03-03",
+      "version": "2026-04-20",
       "rows": 3,
-      "created": "2026-03-03T13:14:12.887529",
+      "created": "2026-04-20T12:10:54.848357",
       "source": "e2e_test",
       "mode": "overwrite",
       "compression": "snappy"
@@ -461,5 +461,5 @@
       "compression": "snappy"
     }
   },
-  "last_updated": "2026-03-03T23:03:03.780944"
+  "last_updated": "2026-04-20T12:10:54.855807"
 }

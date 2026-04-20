@@ -33,10 +33,10 @@ import warnings
 
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 from scripts.analytics.analysis.school.utils.rdd_estimators import RDDEstimator
 
+warnings.filterwarnings("ignore")
 # Setup paths
 DATA_PATH = Path("data/pipeline/L3/housing_unified.parquet")
 OUTPUT_DIR = Path("data/analytics/school_rdd")

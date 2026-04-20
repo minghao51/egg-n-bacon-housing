@@ -29,8 +29,46 @@ from scripts.core.stages.L5_metrics import (
     calculate_rental_yield_by_area,
     identify_appreciation_hotspots,
 )
+from scripts.core.stages.webapp_data_preparation_models import (
+    AmenitySummaryRecord,
+    HotspotData,
+    LeaderboardEntry,
+    OverviewData,
+    SegmentPoint,
+    TrendRecord,
+)
 
 logger = logging.getLogger(__name__)
+
+
+def validate_overview(data: dict) -> OverviewData:
+    """Validate and parse overview data through Pydantic model."""
+    return OverviewData.model_validate(data, strict=False)
+
+
+def validate_trends(data: list[dict]) -> list[TrendRecord]:
+    """Validate and parse trends data through Pydantic model."""
+    return [TrendRecord.model_validate(r, strict=False) for r in data]
+
+
+def validate_leaderboard(data: list[dict]) -> list[LeaderboardEntry]:
+    """Validate and parse leaderboard data through Pydantic model."""
+    return [LeaderboardEntry.model_validate(r, strict=False) for r in data]
+
+
+def validate_hotspots(data: dict) -> dict[str, HotspotData]:
+    """Validate and parse hotspots data through Pydantic model."""
+    return {k: HotspotData.model_validate(v, strict=False) for k, v in data.items()}
+
+
+def validate_amenity_summary(data: list[dict]) -> list[AmenitySummaryRecord]:
+    """Validate and parse amenity summary data through Pydantic model."""
+    return [AmenitySummaryRecord.model_validate(r, strict=False) for r in data]
+
+
+def validate_segments(data: list[dict]) -> list[SegmentPoint]:
+    """Validate and parse segments data through Pydantic model."""
+    return [SegmentPoint.model_validate(r, strict=False) for r in data]
 
 
 def _to_lower_indexed_records(
@@ -152,17 +190,19 @@ def safe_float(val, default=None):
         return default
 
 
-def export_dashboard_data():
+def export_dashboard_data(validate: bool = True):
     """
     Main entry point to export all dashboard data.
+
+    Args:
+        validate: If True, validate all outputs against Pydantic models before export.
+                  Validation failures are logged as warnings; export continues regardless.
     """
     logger.info("Starting web dashboard data export...")
 
-    # Ensure app data directory exists
     output_dir = Path("app/public/data")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load data
     logger.info("Loading unified dataset...")
     df = load_unified_data()
 
@@ -170,23 +210,31 @@ def export_dashboard_data():
         logger.error("Unified dataset is empty!")
         return
 
-    # Ensure dates
     if "transaction_date" in df.columns:
         df["transaction_date"] = pd.to_datetime(df["transaction_date"])
         df["month"] = df["transaction_date"].dt.to_period("M").astype(str)
         df["year"] = df["transaction_date"].dt.year
 
-    # Precompute reusable L5-derived metrics once for all web exports
     l5_cache = build_l5_metric_cache(df)
 
-    # 1. Export Overview Data
     logger.info("Exporting overview data...")
     overview_data = generate_overview_data(df)
+    if validate:
+        try:
+            validate_overview(overview_data)
+            logger.info("  Overview data validated successfully")
+        except Exception as e:
+            logger.warning(f"  Overview validation failed: {e}")
     write_json_gzip(sanitize_for_json(overview_data), output_dir / "dashboard_overview.json.gz")
 
-    # 2. Export Trends Data
     logger.info("Exporting trends data...")
     trends_data = generate_trends_data(df)
+    if validate:
+        try:
+            validate_trends(trends_data)
+            logger.info("  Trends data validated successfully")
+        except Exception as e:
+            logger.warning(f"  Trends validation failed: {e}")
     write_json_gzip(sanitize_for_json(trends_data), output_dir / "dashboard_trends.json.gz")
 
     # 3. Export Map Data
@@ -207,11 +255,24 @@ def export_dashboard_data():
     # 4. Export Segments Data
     logger.info("Exporting segments data...")
     segments_data = generate_filtered_segments_data(df)
+    if validate:
+        try:
+            all_segments = [pt for era_segs in segments_data.values() for pt in era_segs]
+            validate_segments(all_segments)
+            logger.info("  Segments data validated successfully")
+        except Exception as e:
+            logger.warning(f"  Segments validation failed: {e}")
     write_json_gzip(sanitize_for_json(segments_data), output_dir / "dashboard_segments.json.gz")
 
     # 5. Export Town Leaderboard
     logger.info("Exporting leaderboard data...")
     leaderboard_data = generate_leaderboard_data(df, l5_cache=l5_cache)
+    if validate:
+        try:
+            validate_leaderboard(leaderboard_data)
+            logger.info("  Leaderboard data validated successfully")
+        except Exception as e:
+            logger.warning(f"  Leaderboard validation failed: {e}")
     write_json_gzip(
         sanitize_for_json(leaderboard_data), output_dir / "dashboard_leaderboard.json.gz"
     )
@@ -219,11 +280,23 @@ def export_dashboard_data():
     # 6. Export Appreciation Hotspots (NEW)
     logger.info("Exporting hotspots data...")
     hotspots_data = generate_hotspots_data(df, l5_cache=l5_cache)
+    if validate:
+        try:
+            validate_hotspots(hotspots_data)
+            logger.info("  Hotspots data validated successfully")
+        except Exception as e:
+            logger.warning(f"  Hotspots validation failed: {e}")
     write_json_gzip(sanitize_for_json(hotspots_data), output_dir / "hotspots.json.gz")
 
     # 7. Export Amenity Summary (NEW - Phase 2)
     logger.info("Exporting amenity summary data...")
     amenity_summary_data = generate_amenity_summary_data(df)
+    if validate:
+        try:
+            validate_amenity_summary(amenity_summary_data)
+            logger.info("  Amenity summary data validated successfully")
+        except Exception as e:
+            logger.warning(f"  Amenity summary validation failed: {e}")
     write_json_gzip(sanitize_for_json(amenity_summary_data), output_dir / "amenity_summary.json.gz")
 
     logger.info(f"Export complete! Files saved to {output_dir}")

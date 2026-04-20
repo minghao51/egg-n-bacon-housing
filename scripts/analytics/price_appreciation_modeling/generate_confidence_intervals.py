@@ -337,7 +337,7 @@ def main():
         / "smart_ensemble"
         / "segment_performance.csv"
     )
-    segment_df = pd.read_csv(segment_path)
+    pd.read_csv(segment_path)
 
     logger.info("\n" + "=" * 60)
     logger.info("OVERALL CONFIDENCE INTERVALS")

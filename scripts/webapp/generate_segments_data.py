@@ -19,6 +19,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -561,38 +563,86 @@ def generate_insight_cards(
     ]
 
 
+def load_yield_and_forecast_data() -> tuple[dict[str, float], dict[str, float]]:
+    """
+    Load rental yield and forecast data from pipeline outputs.
+
+    Returns:
+        Tuple of (yield_by_town, forecast_6m_by_town) with lowercase town keys
+    """
+    yield_path = PROJECT_ROOT / "data/pipeline/L2/rental_yield.parquet"
+    forecast_path = PROJECT_ROOT / "data/forecasts/hdb_yield_forecasts.parquet"
+
+    yield_by_town: dict[str, float] = {}
+    forecast_6m_by_town: dict[str, float] = {}
+
+    if yield_path.exists():
+        try:
+            df = pd.read_parquet(yield_path)
+            if "rental_yield_pct" in df.columns and "town" in df.columns:
+                avg_yields = df.groupby("town")["rental_yield_pct"].mean()
+                yield_by_town = {str(k).lower(): float(v) for k, v in avg_yields.items()}
+                print(f"  Loaded yield data for {len(yield_by_town)} towns")
+        except Exception as e:
+            print(f"  Warning: Could not load yield data: {e}")
+
+    if forecast_path.exists():
+        try:
+            forecast_df = pd.read_parquet(forecast_path)
+            if "planning_area" in forecast_df.columns and "forecast_horizon" in forecast_df.columns:
+                forecasts_6m = forecast_df[forecast_df["forecast_horizon"] == "6m"]
+                forecast_6m_by_town = {
+                    str(k).lower(): float(v)
+                    for k, v in forecasts_6m.groupby("planning_area")["predicted_yield_pct"]
+                    .first()
+                    .items()
+                }
+                print(f"  Loaded 6m forecast data for {len(forecast_6m_by_town)} towns")
+        except Exception as e:
+            print(f"  Warning: Could not load forecast data: {e}")
+
+    return yield_by_town, forecast_6m_by_town
+
+
 def enrich_planning_areas(
     spatial_data: dict[str, Any],
     mrt_data: dict[str, Any],
     school_data: dict[str, Any],
+    yield_by_town: dict[str, float] | None = None,
+    forecast_6m_by_town: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Enrich planning areas with spatial/MRT/school data."""
+    if yield_by_town is None:
+        yield_by_town = {}
+    if forecast_6m_by_town is None:
+        forecast_6m_by_town = {}
+
     enriched = {}
 
     for area in spatial_data["planning_areas"]:
         name = area["name"]
         region = area["region"]
         cluster = area["cluster"]
+        name_lower = name.lower()
 
-        # Get MRT premium for this town (if available)
         mrt_premium = mrt_data["by_town"].get(name, {}).get("premium", 0)
 
-        # Determine MRT sensitivity
         mrt_sensitivity = "moderate"
         if abs(mrt_premium) > 20:
             mrt_sensitivity = "high"
         elif abs(mrt_premium) < 5:
             mrt_sensitivity = "low"
 
-        # Get school premium for region
         school_premium = school_data["by_region"][region]["premium"]
 
-        # Determine school tier based on region and cluster
         school_tier = "mixed"
         if region == "CCR":
-            school_tier = "tier_1"  # International schools
+            school_tier = "tier_1"
         elif cluster == "HH" and region == "OCR":
             school_tier = "tier_2"
+
+        avg_yield = yield_by_town.get(name_lower, 5.0)
+        forecast_6m = forecast_6m_by_town.get(name_lower, 0.0)
 
         enriched[name] = {
             "name": name,
@@ -609,10 +659,10 @@ def enrich_planning_areas(
             "cbdDistance": area["cbd_distance"],
             "schoolTier": school_tier,
             "schoolPremium": school_premium,
-            "forecast6m": 0.0,  # TODO: Add from forecast data
+            "forecast6m": forecast_6m,
             "avgPricePsf": mrt_data["by_town"].get(name, {}).get("mean_price", 500),
-            "avgYield": 5.0,  # TODO: Calculate from data
-            "segments": [],  # Will be filled later
+            "avgYield": round(avg_yield, 2),
+            "segments": [],
         }
 
     return enriched
@@ -634,13 +684,15 @@ def generate_segments_data() -> dict[str, Any]:
     print("  Loading analytics outputs...")
     segments = load_investment_clusters()
     spatial_data = load_spatial_clusters()
-    hotspot_data = (
-        load_hotspot_data()
-    )  # TODO: Will be used in future for hotspot integration  # noqa: F841
+    (load_hotspot_data())  # TODO: Will be used in future for hotspot integration  # noqa: F841
     mrt_data = load_mrt_analysis()
     school_data = load_school_impact()
 
-    # 2. Enrich segments
+    # 2. Load yield and forecast data from pipeline
+    print("  Loading yield and forecast data...")
+    yield_by_town, forecast_6m_by_town = load_yield_and_forecast_data()
+
+    # 3. Enrich segments
     print("  Enriching segments with spatial/MRT/school data...")
     for segment in segments:
         segment["spatialClassification"] = map_to_spatial_cluster(segment, spatial_data)
@@ -650,9 +702,11 @@ def generate_segments_data() -> dict[str, Any]:
         segment["planningAreas"] = get_areas_in_segment(segment, spatial_data)
         segment["implications"] = generate_implications(segment)
 
-    # 3. Enrich planning areas
+    # 4. Enrich planning areas
     print("  Enriching planning areas...")
-    planning_areas = enrich_planning_areas(spatial_data, mrt_data, school_data)
+    planning_areas = enrich_planning_areas(
+        spatial_data, mrt_data, school_data, yield_by_town, forecast_6m_by_town
+    )
 
     # Link segments to planning areas (reverse mapping)
     print("  Linking segments to planning areas...")
@@ -662,11 +716,11 @@ def generate_segments_data() -> dict[str, Any]:
                 if segment["id"] not in planning_areas[area_name]["segments"]:
                     planning_areas[area_name]["segments"].append(segment["id"])
 
-    # 4. Generate insight cards
+    # 5. Generate insight cards
     print("  Generating insight cards...")
     insights = generate_insight_cards(spatial_data, mrt_data, school_data)
 
-    # 5. Compile output
+    # 6. Compile output
     output = {
         "segments": segments,
         "planningAreas": planning_areas,
@@ -675,7 +729,7 @@ def generate_segments_data() -> dict[str, Any]:
         "version": "1.0.0",
     }
 
-    # 6. Save to file
+    # 7. Save to file
     output_path = Path("app/public/data/segments_enhanced.json.gz")
     save_gzipped_json(output, output_path)
 

@@ -7,7 +7,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 import sys
 
@@ -101,6 +100,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+warnings.filterwarnings("ignore")
 grid_results = []
 grids = df_grid["grid_id"].unique()
 print(f"Processing {len(grids)} grids...")

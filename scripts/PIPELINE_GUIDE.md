@@ -52,6 +52,11 @@ uv run python scripts/analytics/pipelines/forecast_yields_pipeline.py
 - Forecasts rental yields for different planning areas
 - Outputs to `data/forecasts/hdb_yield_forecasts.parquet`
 
+**Also available via main pipeline:**
+```bash
+uv run python scripts/run_pipeline.py --stage forecasts
+```
+
 #### Metrics Calculation Pipelines
 
 **`calculate_l3_metrics_pipeline.py`** - Calculate L3 housing market metrics

@@ -84,7 +84,7 @@ def calculate_affordability_metrics(
     print("=" * 60)
 
     # Create income lookup dictionary
-    income_lookup = dict(zip(income["planning_area"], income["estimated_median_annual_income"]))
+    dict(zip(income["planning_area"], income["estimated_median_annual_income"]))
 
     # Calculate median price per town
     price_by_pa = hdb.groupby("town")["resale_price"].agg(["median", "count"]).reset_index()

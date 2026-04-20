@@ -19,7 +19,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 import xgboost as xgb
 from scipy import stats
@@ -38,6 +37,7 @@ except ImportError:
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+warnings.filterwarnings("ignore")
 plt.style.use("seaborn-v0_8-whitegrid")
 sns.set_palette("husl")
 
@@ -432,7 +432,7 @@ def main():
     df = load_data()
 
     # Check amenity coverage
-    hdb_coverage = df[df["property_type"] == "HDB"]["dist_to_nearest_mrt"].notna().sum()
+    df[df["property_type"] == "HDB"]["dist_to_nearest_mrt"].notna().sum()
     condo_coverage = df[df["property_type"] == "Condominium"]["dist_to_nearest_mrt"].notna().sum()
     ec_coverage = df[df["property_type"] == "EC"]["dist_to_nearest_mrt"].notna().sum()
 

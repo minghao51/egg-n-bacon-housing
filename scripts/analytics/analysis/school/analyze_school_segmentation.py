@@ -25,10 +25,10 @@ import warnings
 
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 from scripts.analytics.analysis.school.utils.interaction_models import SegmentationAnalyzer
 
+warnings.filterwarnings("ignore")
 # Setup logging
 logging.basicConfig(
     level=logging.INFO,
@@ -125,7 +125,7 @@ def main():
     print("\n" + "=" * 80)
     print("STAGE 3: SEGMENTED MODELS")
     print("=" * 80)
-    segment_results = analyzer.run_segmented_models(
+    analyzer.run_segmented_models(
         df_with_interactions, feature_cols=feature_cols, target_col="price_psf"
     )
 
@@ -153,7 +153,7 @@ def main():
     print("\n" + "=" * 80)
     print("STAGE 6: INTERACTION MODEL")
     print("=" * 80)
-    interaction_result = analyzer.run_interaction_model(
+    analyzer.run_interaction_model(
         df_with_interactions, base_features=feature_cols, target_col="price_psf"
     )
 

@@ -1,618 +1,157 @@
-# Technical Debt & Concerns
-
-**Generated**: 2026-02-28
-
-## Overview
-
-This document tracks known issues, technical debt, security concerns, and areas for improvement in the codebase.
-
-**Priority Levels**:
-- 🔴 **Critical** - Must fix soon (security, data loss risk)
-- 🟡 **High** - Should fix soon (performance, maintainability)
-- 🟢 **Medium** - Nice to have (code quality, cleanup)
-- ⚪ **Low** - Minor issues (typos, inconsistencies)
-
----
-
-## Large Files Requiring Refactoring
-
-### 🔴 Critical
-
-#### `scripts/core/stages/L3_export.py` - 1,879 lines
-
-**Issues**:
-- Too many responsibilities in one file
-- Difficult to navigate and maintain
-- High risk of introducing bugs
-
-**Recommendation**:
-- Split into module-level functions
-- Create separate files for different export types
-- Use a factory pattern for export generators
-
-**Refactoring Plan**:
-```
-L3_export.py (1,879 lines)
-    ↓
-scripts/core/stages/export/
-    ├── __init__.py
-    ├── base_exporter.py
-    ├── metrics_exporter.py
-    ├── planning_area_exporter.py
-    └── trends_exporter.py
-```
-
-### 🟡 High
-
-#### `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` - 838 lines
-
-**Issues**:
-- Complex analysis logic mixed with visualization
-- Hard to test individual components
-
-**Recommendation**:
-- Extract analysis logic to separate module
-- Create dedicated visualization module
-- Add unit tests for core analysis functions
-
-#### `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` - 837 lines
-
-**Issues**:
-- Multiple analysis approaches in one file
-- Difficult to understand which method is used
-
-**Recommendation**:
-- Split into separate analysis methods
-- Create base class for impact analysis
-- Document each approach clearly
-
-#### `scripts/analytics/analysis/mrt/analyze_mrt_spatial_econometrics.py` - 817 lines
-
-**Issues**:
-- Spatial econometrics models mixed with data processing
-- Hard to reuse model components
-
-**Recommendation**:
-- Extract model definitions to `scripts/analytics/models/`
-- Create reusable spatial regression classes
-- Separate data preprocessing
-
-#### `scripts/analytics/analysis/appreciation/analyze_appreciation_patterns.py` - 747 lines
-
-**Issues**:
-- Multiple appreciation analysis methods
-- Complex parameter configurations
-
-**Recommendation**:
-- Create strategy pattern for different methods
-- Extract configuration to YAML/JSON
-- Add comprehensive documentation
-
----
-
-## Hardcoded Data
-
-### 🟡 High
-
-#### `scripts/core/mrt_line_mapping.py` - 407 lines
-
-**Issues**:
-- Hardcoded MRT stations and lines
-- Manual updates required when new stations open
-- Risk of outdated data
-
-**Current Content**:
-```python
-MRT_LINES = {
-    "EW": {"name": "East West Line", "stations": [...]},
-    "NS": {"name": "North South Line", "stations": [...]},
-    # ... 400+ lines
-}
-```
-
-**Recommendation**:
-- Externalize to `data/reference/mrt_stations.json`
-- Create script to fetch from LTA DataMall
-- Add validation to detect missing stations
-- Version control the JSON file
-
-**Refactoring Plan**:
-```python
-# Before
-from scripts.core.mrt_line_mapping import MRT_LINES
-
-# After
-from scripts.core.data_helpers import load_reference_data
-
-MRT_LINES = load_reference_data("mrt_stations")
-```
-
-#### `scripts/core/school_features.py` - 726 lines
-
-**Issues**:
-- Hardcoded school tiers and ratings
-- Manual updates required annually
-- Subjective tier assignments
-
-**Current Content**:
-```python
-SCHOOL_TIERS = {
-    "school_name": 1,  # Tier 1
-    "another_school": 2,  # Tier 2
-    # ... 700+ lines
-}
-```
-
-**Recommendation**:
-- Externalize to `data/reference/school_tiers.json`
-- Create data update script with validation
-- Document tier assignment methodology
-- Consider data-driven tier assignment (PSLE scores, awards)
-
-**Data Source**:
-- Ministry of Education school directory
-- PSLE performance data
-- Awards and achievements
-
----
-
-## Performance Concerns
-
-### 🟡 High
-
-#### Sequential Geocoding
-
-**Location**: `scripts/core/geocoding.py`
-
-**Issue**:
-- Sequential API calls with 1.2 second delay
-- Bottleneck for large datasets
-- Estimated time: 10,000 addresses × 1.2s = 3.3 hours
-
-**Current Implementation**:
-```python
-for address in addresses:
-    result = geocode_address(address)
-    time.sleep(1.2)  # Rate limit delay
-```
-
-**Recommendation**:
-- Implement parallel processing with ThreadPoolExecutor
-- Use async/await with aiohttp
-- Batch geocoding requests where possible
-- Optimize delay timing (1.0s might be sufficient)
-
-**Refactoring Plan**:
-```python
-from concurrent.futures import ThreadPoolExecutor
-
-with ThreadPoolExecutor(max_workers=5) as executor:
-    results = list(executor.map(geocode_address, addresses))
-```
-
-**Expected Improvement**:
-- 5 workers = 5x faster
-- 10,000 addresses in ~40 minutes (vs 3.3 hours)
-
-#### Full Dataset Loading
-
-**Location**: Throughout codebase
-
-**Issue**:
-- Complete datasets loaded into memory
-- Large datasets (1M+ rows) cause memory issues
-- No chunked processing
-
-**Current Implementation**:
-```python
-df = load_parquet("L3_unified_dataset")  # All rows in memory
-```
-
-**Recommendation**:
-- Implement chunked processing for large files
-- Use PyArrow for memory-efficient loading
-- Consider streaming data for some operations
-
-**Refactoring Plan**:
-```python
-# Process in chunks
-for chunk in pd.read_parquet(path, chunksize=10000):
-    process_chunk(chunk)
-```
-
-#### API Rate Limiting
-
-**Location**: `scripts/core/geocoding.py`, `scripts/data/download/`
-
-**Issue**:
-- Conservative delays may be unnecessary
-- No adaptive rate limiting based on API response
-- Wastes time during processing
-
-**Current Implementation**:
-```python
-time.sleep(1.2)  # Fixed delay
-```
-
-**Recommendation**:
-- Implement adaptive rate limiting
-- Monitor API response headers for rate limit info
-- Use exponential backoff on 429 responses
-- Cache responses aggressively
-
----
-
-## Missing Test Coverage
-
-### 🔴 Critical
-
-#### Analytics Module
-
-**Stats**:
-- 49 analysis scripts
-- 1 test file
-- ~48 missing test files
-
-**Gap**: 98% of analytics code is untested
-
-**High Priority for Testing**:
-- `scripts/analytics/models/` - ML models
-- `scripts/analytics/analysis/market/` - Market analysis
-- `scripts/analytics/pipelines/` - Metric calculation
-
-**Recommendation**:
-1. Add tests for core models first
-2. Test data processing pipelines
-3. Add integration tests for analysis scripts
-4. Use fixtures for sample data
-
-**Minimum Target**:
-- 60% coverage for analytics module
-- Critical paths: price prediction, segmentation
-
-#### Data Module
-
-**Stats**:
-- 44 scripts
-- 3 test files
-- ~41 missing test files
-
-**Gap**: 93% of data code is untested
-
-**High Priority for Testing**:
-- `scripts/data/download/` - Data fetching
-- `scripts/data/process/` - Data processing
-- `scripts/core/geocoding.py` - Geocoding logic
-
-**Recommendation**:
-1. Mock API calls in tests
-2. Test error handling
-3. Validate data transformations
-4. Test edge cases (empty data, missing fields)
-
----
-
-## Security Concerns
-
-### 🟢 Medium (Well Managed)
-
-#### Environment Variables
-
-**Status**: ✅ **Properly Managed**
-
-**Findings**:
-- No hardcoded secrets found in codebase
-- All secrets in `.env` file (not in git)
-- `.env.example` provided as template
-- `Config.validate()` checks required vars
-
-**Best Practices Followed**:
-- ✅ Secrets loaded from environment
-- ✅ `.env` in `.gitignore`
-- ✅ Template provided (`.env.example`)
-- ✅ Validation on startup
-
-**No Action Required**
-
-#### API Key Exposure Risk
-
-**Potential Issue**: Logging might expose sensitive data
-
-**Current Implementation**:
-```python
-logger.info(f"API response: {response}")  # Might include API key?
-```
-
-**Recommendation**:
-- Audit logging statements for sensitive data
-- Scrub API keys from logs
-- Use environment variable names in logs, not values
-
-**Fix**:
-```python
-# Before
-logger.info(f"Using API key: {api_key}")
-
-# After
-logger.info("Using API key from environment")
-```
-
----
-
-## Code Quality Issues
-
-### 🟡 High
-
-#### Duplicate Logic
-
-**Location**: L3 dataset creation
-
-**Files**:
-- `scripts/create_l3_unified_dataset.py` - 1,443 lines
-- `scripts/core/stages/L3_export.py` - 1,879 lines
-
-**Issue**:
-- Duplicate dataset merging logic in both files
-- Inconsistent behavior
-- Maintenance burden (fix in both places)
-
-**Recommendation**:
-- Extract common logic to shared module
-- Create single source of truth
-- Add tests to verify consistency
-
-**Refactoring Plan**:
-```python
-# scripts/core/stages/L3_merge.py
-def create_unified_dataset(hdb_df, ura_df, condo_df):
-    """Single implementation of dataset merging."""
-    # Merge logic here
-    return merged_df
-
-# Used by both
-from scripts.core.stages.L3_merge import create_unified_dataset
-```
-
-#### Missing Type Hints
-
-**Location**: Various files, especially older scripts
-
-**Issue**:
-- Some functions lack type hints
-- Difficult to understand expected inputs/outputs
-- IDE autocomplete less effective
-
-**Example**:
-```python
-# Before
-def process_data(df, config):
-    # What types are df and config?
-    pass
-
-# After
-def process_data(df: pd.DataFrame, config: dict) -> pd.DataFrame:
-    """Clear parameter and return types."""
-    pass
-```
-
-**Recommendation**:
-- Add type hints to all public functions
-- Use `mypy` for static type checking
-- Make it part of code review process
-
-#### Inconsistent Error Messages
-
-**Location**: Throughout codebase
-
-**Issue**:
-- Some error messages are vague
-- Inconsistent formatting
-- No suggested fixes
-
-**Examples**:
-```python
-# Bad
-raise ValueError("Invalid data")
-
-# Good
-raise ValueError(
-    f"Invalid data: expected 'price' column, "
-    f"got columns: {list(df.columns)}"
-)
-```
-
-**Recommendation**:
-- Standardize error message format
-- Include context and suggestions
-- Document common errors
-
----
-
-## Documentation Gaps
-
-### 🟢 Medium
-
-#### Missing Docstrings
-
-**Location**: Various modules
-
-**Issue**:
-- Some functions lack docstrings
-- Inconsistent docstring style
-- Missing parameter descriptions
-
-**Recommendation**:
-- Add docstrings to all public functions
-- Use Google style consistently
-- Include examples for complex functions
-
-#### Outdated Documentation
-
-**Location**: Some README files
-
-**Issue**:
-- Setup instructions may be outdated
-- Examples don't match current API
-- Missing new features
-
-**Recommendation**:
-- Audit all documentation quarterly
-- Update examples with code review
-- Add changelog for major changes
-
----
-
-## Technical Debt Summary
-
-### Immediate Actions (This Sprint)
-
-1. 🔴 **Split L3_export.py** - Break into smaller modules
-2. 🔴 **Add tests for core utilities** - `data_helpers.py`, `geocoding.py`
-3. 🟡 **Externalize MRT data** - Move to JSON file
-4. 🟡 **Implement parallel geocoding** - 5x performance improvement
-
-### Short-term (Next Month)
-
-1. 🟡 **Split large analysis files** - Reduce complexity
-2. 🟡 **Add analytics tests** - Target 60% coverage
-3. 🟡 **Implement chunked processing** - Reduce memory usage
-4. 🟢 **Externalize school data** - Move to JSON file
-
-### Long-term (Next Quarter)
-
-1. 🟢 **Complete test coverage** - 80%+ coverage target
-2. 🟢 **Refactor duplicate logic** - Single source of truth
-3. 🟢 **Update documentation** - Audit and refresh
-4. 🟢 **Add type hints everywhere** - Enable mypy checking
-
----
+# Codebase Concerns
+
+**Analysis Date:** 2026-04-19
+
+## Tech Debt
+
+**Segment Data Generation:**
+- Issue: Hardcoded mock values for `forecast6m` (0.0) and `avgYield` (5.0) in segment data
+- Files: `scripts/webapp/generate_segments_data.py:612,614`
+- Impact: Dashboard displays placeholder metrics instead of real forecast data
+- Fix approach: Integrate actual forecast pipeline output and calculate yield from rental data
+
+**Macro Data Integration:**
+- Issue: MAS API call is stubbed with TODO comment
+- Files: `scripts/data/fetch_macro_data.py:154`
+- Impact: External economic indicators not available for analysis
+- Fix approach: Implement actual MAS API integration
+
+**L3 Metrics Pipeline:**
+- Issue: Affordability index and ROI potential score lack required data inputs
+- Files: `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py:12,13`
+- Impact: Key investment metrics cannot be computed
+- Fix approach: Source income data and rental data, then implement calculations
+
+**URA Rental Scraper:**
+- Issue: Both rental statistics and rental contracts scrapers are disabled
+- Files: `scripts/core/stages/L0_collect.py:385,404`
+- Impact: Rental market data unavailable for analysis
+- Fix approach: Fix scraper and re-enable
 
 ## Known Bugs
 
-### 🟡 High
+**Disabled Data Collection:**
+- Symptoms: Rental data collection silently returns None without failing
+- Files: `scripts/core/stages/L0_collect.py:385,404`
+- Trigger: Any pipeline step expecting rental data
+- Workaround: Manual data procurement or scraper fix
 
-#### Geocoding Token Expiry
+## Security Considerations
 
-**Location**: `scripts/core/geocoding.py`
+**API Credential Management:**
+- Risk: `.env` file with live credentials present in repository structure
+- Files: `.env` (not tracked if gitignored, but exists)
+- Current mitigation: `.env.example` shows expected structure without values
+- Recommendations: Ensure `.env` is in `.gitignore`; rotate any committed credentials; use secrets manager in production
 
-**Issue**:
-- OneMap tokens expire unpredictably
-- Auto-refresh doesn't always work
-- Manual token refresh sometimes needed
+**Hardcoded API Endpoints:**
+- Risk: Third-party service URLs embedded in scripts could become outdated
+- Files: `scripts/core/geocoding.py:76,128`, `scripts/core/stages/L0_collect.py:426`
+- Current mitigation: Uses government official APIs (data.gov.sg, onemap.gov.sg)
+- Recommendations: Externalize to config; add health checks for external services
 
-**Symptoms**:
-```
-HTTPError: 401 Unauthorized
-Failed to geocode after 3 attempts
-```
+## Performance Bottlenecks
 
-**Workaround**:
-```bash
-uv run python scripts/utils/refresh_onemap_token.py
-```
+**Large JSON Payload Processing:**
+- Problem: Dashboard loads and decompresses large gzip-compressed JSON files
+- Files: `app/src/hooks/useGzipJson.ts`, `app/src/utils/gzip.ts`
+- Cause: Property transaction datasets can be very large
+- Improvement path: Implement pagination or streaming; consider Web Workers for decompression
 
-**Permanent Fix Needed**:
-- Implement proper token expiry detection
-- Add pre-emptive token refresh
-- Better error handling and recovery
+**Map Rendering with Multiple Overlays:**
+- Problem: PriceMap.tsx (716 lines) renders multiple analytical layers simultaneously
+- Files: `app/src/components/dashboard/PriceMap.tsx`
+- Cause: LayerControl allows up to 5 active overlays; each renders GeoJSON with tooltips
+- Improvement path: Virtualize off-screen layers; memoize layer calculations; reduce re-renders
 
-#### Missing Address Fields
+**Complex Data Parsing:**
+- Problem: data-parser.ts and colorScales.ts contain complex transformations
+- Files: `app/src/utils/data-parser.ts:325`, `app/src/utils/colorScales.ts:227`
+- Cause: Heavy computation during chart rendering
+- Improvement path: Pre-compute in pipelines; cache parsed results; web worker offloading
 
-**Location**: `scripts/core/stages/L1_process.py`
+## Fragile Areas
 
-**Issue**:
-- Some transactions missing address fields
-- Causes geocoding to fail silently
-- Results in incomplete data
+**Spatial Hotspot Explorer:**
+- Files: `app/src/components/dashboard/tools/SpatialHotspotExplorer.tsx:483`
+- Why fragile: Large component with complex spatial calculations; heavy coupling to geo data structures
+- Safe modification: Add feature flags; maintain regression test suite for spatial calculations
+- Test coverage: Likely minimal - spatial analysis is visual/heuristic
 
-**Symptoms**:
-- Missing coordinates for some properties
-- Inconsistent geocoding success rate
+**MRT Impact Analysis Pipeline:**
+- Files: `scripts/analytics/analysis/mrt/analyze_mrt_impact.py:837`
+- Why fragile: Complex spatial econometrics; depends on external MRT data freshness
+- Safe modification: Mock external data in tests; verify statistical outputs before production
 
-**Fix Needed**:
-- Validate address fields before geocoding
-- Log properties with missing addresses
-- Add fallback strategies (e.g., use postal code only)
+**Price Appreciation Modeling:**
+- Files: `scripts/analytics/price_appreciation_modeling/train_models.py:618`, `scripts/analytics/price_appreciation_modeling/residual_analysis.py:674`
+- Why fragile: Statistical models can degrade with data drift; multiple similar scripts suggest parallel experimentation
+- Safe modification: Version models; track prediction accuracy over time
+- Test coverage: Backtesting exists but may not cover edge cases
+
+## Scaling Limits
+
+**In-Memory Data Processing:**
+- Current capacity: Designed for Singapore property market (~1M transactions)
+- Limit: Full dataset loading may strain browsers on low-end devices
+- Scaling path: Server-side aggregation; incremental loading; client-side sampling
+
+**Static JSON Data Files:**
+- Current capacity: Pre-computed analytics stored as gzip JSON
+- Limit: Growth bounded by pipeline execution time and storage
+- Scaling path: Migrate to API endpoints with database backend; implement caching
+
+## Dependencies at Risk
+
+**OneMap API:**
+- Risk: External dependency on Singapore government mapping service
+- Impact: Geocoding and spatial features fail if service is down or rate-limited
+- Migration plan: Fallback to alternative geocoding (Google, HERE); cache aggressively
+
+**URA Data Portal:**
+- Risk: Scraping targets may change HTML structure or block requests
+- Impact: All rental and transaction data collection breaks
+- Migration plan: Official bulk download API when available; monitor for changes
+
+**Supabase:**
+- Risk: Database URL and key exposed in client code pattern
+- Impact: If keys are compromised, database can be accessed
+- Migration plan: Use server-side API routes instead of direct client access; rotate keys
+
+## Missing Critical Features
+
+**Forecast Integration:**
+- Problem: `forecast6m` field is hardcoded to 0.0 in segment data
+- Blocks: Forward-looking investment analysis; trend prediction dashboards
+
+**Rental Yield Calculation:**
+- Problem: `avgYield` is hardcoded to 5.0 across all segments
+- Blocks: Accurate buy-to-let investment analysis
+
+**MAS/SingStat Economic Data:**
+- Problem: Macro indicators not integrated
+- Blocks: Affordability analysis; market cycle analysis
+
+## Test Coverage Gaps
+
+**Frontend Dashboard Components:**
+- What's not tested: Interactive chart rendering; map interactions; filter state management
+- Files: `app/src/components/dashboard/**/*.tsx`
+- Risk: UI regression undetected; edge cases in user interactions fail silently
+- Priority: Medium
+
+**Analytics Pipelines:**
+- What's not tested: Output format validation; edge cases in statistical calculations
+- Files: `scripts/analytics/pipelines/*.py`
+- Risk: Invalid data propagates to dashboard; incorrect metrics displayed
+- Priority: High
+
+**Scraper/Stages:**
+- What's not tested: HTML parsing resilience; error handling for malformed responses
+- Files: `scripts/core/stages/*.py`, `scripts/data/download/*.py`
+- Risk: Silent failures; partial data collection
+- Priority: Medium
 
 ---
 
-## Performance Metrics
-
-### Current State
-
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| Test Coverage | ~40% | 80% | 🟡 Below target |
-| Avg File Size | 350 lines | <300 lines | 🟡 Slightly high |
-| Max File Size | 1,879 lines | <500 lines | 🔴 Way over |
-| Geocoding Speed | 1 addr/1.2s | 1 addr/0.5s | 🟡 Slow |
-| Memory Usage | High (full load) | Medium | 🟡 Needs optimization |
-
-### Improvement Targets
-
-**Q1 2026**:
-- Reduce max file size to <800 lines
-- Add 50 test files
-- Implement parallel geocoding
-- Externalize MRT/school data
-
-**Q2 2026**:
-- Reach 70% test coverage
-- Reduce max file size to <500 lines
-- Implement chunked processing
-- Complete documentation audit
-
----
-
-## Debt Tracking Template
-
-Use this template to track new debt:
-
-```markdown
-### [Priority] [File/Module]
-
-**Description**: Brief description of the issue
-
-**Impact**: Why this matters (performance, security, maintainability)
-
-**Recommendation**: What should be done
-
-**Effort**: Estimate (Low/Medium/High)
-
-**Owner**: Who is responsible (leave blank if unassigned)
-
-**Status**: Todo / In Progress / Done
-```
-
----
-
-## Summary
-
-**🔴 Critical Issues**: 3
-- L3_export.py too large
-- Missing test coverage (analytics, data)
-- Geocoding token expiry
-
-**🟡 High Priority**: 8
-- Large files (4 files >700 lines)
-- Hardcoded data (MRT, schools)
-- Sequential geocoding
-- Duplicate L3 logic
-
-**🟢 Medium Priority**: 6
-- Missing type hints
-- Documentation gaps
-- Code quality issues
-
-**✅ Well Managed**: 1
-- Environment variable security
-
-**Total Debt Items**: 18
-
-**Recommended Focus**:
-1. Split large files first (reduces complexity)
-2. Add tests for core utilities (builds confidence)
-3. Implement parallel geocoding (performance win)
-4. Externalize hardcoded data (maintainability)
-
-**Next Review**: 2026-03-31
+*Concerns audit: 2026-04-19*

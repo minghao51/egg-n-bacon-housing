@@ -122,19 +122,23 @@ def load_unified_data() -> pd.DataFrame:
     """
     logger.info("Loading L3 unified dataset...")
 
-    # Load directly from known path (not in metadata yet)
-    unified_path = Config.DATA_DIR / "pipeline" / "L3" / "housing_unified.parquet"
-    if not unified_path.exists():
-        logger.warning(f"  L3 unified dataset not found at {unified_path}")
-        return pd.DataFrame()
+    try:
+        df = load_parquet("L3_housing_unified")
+    except Exception as e:
+        logger.warning(f"  Could not load L3_housing_unified from metadata: {e}")
+        logger.info("  Falling back to direct path loading...")
+        unified_path = Config.DATA_DIR / "pipeline" / "L3" / "housing_unified.parquet"
+        if not unified_path.exists():
+            logger.warning(f"  L3 unified dataset not found at {unified_path}")
+            return pd.DataFrame()
+        df = pd.read_parquet(unified_path)
 
-    df = pd.read_parquet(unified_path)
+    if df.empty:
+        return df
 
-    # Ensure datetime columns
     if "transaction_date" in df.columns:
         df["transaction_date"] = pd.to_datetime(df["transaction_date"], errors="coerce")
 
-    # Add temporal columns
     if "transaction_date" in df.columns:
         df["year"] = df["transaction_date"].dt.year
         df["month"] = df["transaction_date"].dt.to_period("M").astype(str)

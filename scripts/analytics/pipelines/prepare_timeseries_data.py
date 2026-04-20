@@ -201,7 +201,7 @@ def handle_missing_months(series: pd.Series, max_gap: int = 2) -> pd.Series:
         return series
 
     # Find gaps
-    missing = series.isna()
+    series.isna()
 
     # Interpolate small gaps
     if max_gap > 0:

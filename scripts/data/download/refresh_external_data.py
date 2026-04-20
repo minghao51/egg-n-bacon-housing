@@ -219,7 +219,7 @@ def run_download_script(script_path: Path, args: list[str] = None) -> bool:
         cmd.extend(args)
 
     try:
-        result = subprocess.run(cmd, cwd=PROJECT_ROOT, check=True, capture_output=False)
+        subprocess.run(cmd, cwd=PROJECT_ROOT, check=True, capture_output=False)
         logger.info(f"✅ {script_path.name} completed successfully")
         return True
     except subprocess.CalledProcessError as e:

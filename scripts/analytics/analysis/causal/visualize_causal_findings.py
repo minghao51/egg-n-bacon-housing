@@ -60,12 +60,8 @@ def plot_did_analysis(output_dir: Path):
     x = np.arange(len(regions))
     width = 0.35
 
-    bars1 = ax1.bar(
-        x - width / 2, ccr_prices, width, label="CCR (Treatment)", color="#3b4cc0", alpha=0.8
-    )
-    bars2 = ax1.bar(
-        x + width / 2, ocr_prices, width, label="OCR (Control)", color="#cc3b3b", alpha=0.8
-    )
+    ax1.bar(x - width / 2, ccr_prices, width, label="CCR (Treatment)", color="#3b4cc0", alpha=0.8)
+    ax1.bar(x + width / 2, ocr_prices, width, label="OCR (Control)", color="#cc3b3b", alpha=0.8)
 
     ax1.set_xlabel("Period", fontweight="bold")
     ax1.set_ylabel("Median Price (SGD millions)", fontweight="bold")
@@ -146,13 +142,13 @@ def plot_rd_analysis(output_dir: Path):
 
     # Extract values from flattened CSV
     jump_coef = rdit_results["jump_jump_coef"].values[0]
-    jump_pval = rdit_results["jump_jump_pval"].values[0]
+    rdit_results["jump_jump_pval"].values[0]
     pre_mean = rdit_results["jump_pre_mean"].values[0]
     post_mean = rdit_results["jump_post_mean"].values[0]
 
     kink_coef = rdit_results["kink_kink_coef"].values[0]
     pre_slope = rdit_results["kink_pre_slope"].values[0]
-    post_slope = rdit_results["kink_post_slope"].values[0]
+    rdit_results["kink_post_slope"].values[0]
 
     # Chart 1: Jump test (level change)
     # Simulated data around policy cutoff

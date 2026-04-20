@@ -16,11 +16,11 @@ from pathlib import Path
 
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+warnings.filterwarnings("ignore")
 # Set style
 plt.style.use("seaborn-v0_8-whitegrid")
 sns.set_palette("husl")

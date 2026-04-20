@@ -25,7 +25,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-warnings.filterwarnings("ignore")
 
 import xgboost as xgb
 from sklearn.linear_model import LinearRegression
@@ -43,6 +42,7 @@ except ImportError:
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+warnings.filterwarnings("ignore")
 # Set style
 plt.style.use("seaborn-v0_8-whitegrid")
 sns.set_palette("husl")

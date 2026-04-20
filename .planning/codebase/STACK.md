@@ -1,180 +1,123 @@
-# Technology Stack
+# Tech Stack
 
-**Generated**: 2026-02-28
+## Languages
 
-## Core Languages
+- **Python** 3.11+ (primary data/ML pipeline)
+- **TypeScript** (frontend/app)
+- **JavaScript** (minimal, Astro config)
 
-### Python
-- **Version**: 3.11+ (minimum requirement)
-- **Package Manager**: uv (fast Python package manager)
-- **Virtual Environment**: `.venv/` (managed by uv)
+## Runtime & Package Managers
 
-### TypeScript
-- **Version**: Latest (managed by Astro)
-- **Runtime**: Node.js (for frontend build process)
+- **uv** (Python package manager, per pyproject.toml)
+- **npm** (Node.js for Astro app)
 
-## Python Packages
+## Frontend Framework (app/)
 
-### Data Processing
-- **pandas** - DataFrame manipulation and analysis
-- **numpy** - Numerical computing
-- **geopandas** - Spatial data operations
-- **pyarrow** - Parquet file format support
+- **Astro** 5.x - Static site generator with islands architecture
+- **React** 19 - UI components (Astro integration)
+- **TailwindCSS** 3 - Utility-first styling
+- **MDX** - Markdown with JSX for content
 
-### Machine Learning & Analytics
-- **scikit-learn** - Machine learning algorithms
-- **xgboost** - Gradient boosting models
-- **statsmodels** - Statistical analysis
-- **scipy** - Scientific computing
-- **langchain** - LLM integration for analytics agents
+### Frontend Dependencies
 
-### Spatial Analysis
-- **h3** - Uber's hexagonal spatial indexing
-- **shapely** - Geometric operations
-- **libpysal** - Spatial econometrics
-- **spreg** - Spatial regression models
-- **esda** - Spatial autocorrelation statistics
+| Package | Purpose |
+|---------|---------|
+| `recharts` | Data visualization charts |
+| `react-leaflet` / `leaflet` | Interactive maps |
+| `react-markdown` | Markdown rendering |
+| `katex` / `rehype-katex` | Math rendering |
+| `shiki` | Syntax highlighting |
+| `clsx` / `tailwind-merge` | Class utilities |
+| `dompurify` | HTML sanitization |
+| `@tanstack/react-table` | Data tables |
 
-### Data Visualization
-- **matplotlib** - Plotting and charts
-- **seaborn** - Statistical visualizations
-- **plotly** - Interactive plots
+## Data Processing (scripts/, notebooks/)
 
-### API & Cloud
-- **boto3** - AWS SDK for Python
-- **supabase** - Database and authentication client
-- **requests** - HTTP client
-- **httpx** - Async HTTP client
+| Package | Purpose |
+|---------|---------|
+| `pandas` 2.0+ | Data manipulation |
+| `numpy` 1.24+ | Numerical computing |
+| `pyarrow` 15+ | Parquet file support |
+| `scipy` 1.17+ | Scientific computing |
 
-### Web Scraping
-- **beautifulsoup4** - HTML parsing
-- **jina-reader** - AI-powered web scraping
+## ML & Statistics
 
-### Development Tools
-- **pytest** - Testing framework
-- **pytest-cov** - Coverage reporting
-- **ruff** - Linting and formatting (configured in pyproject.toml)
-- **ipykernel** - Jupyter notebook support
-- **jupytext** - Notebook ↔ Python script pairing
+| Package | Purpose |
+|---------|---------|
+| `scikit-learn` | ML algorithms |
+| `xgboost` 3.1+ | Gradient boosting |
+| `prophet` 1.2+ | Time series forecasting |
+| `statsmodels` 0.14+ | Statistical models |
+| `lifelines` 0.27+ | Survival analysis |
+| `shap` 0.49+ | SHAP explanations |
 
-## Frontend Stack
+## Spatial/GIS
 
-### Framework
-- **Astro** 5.16.16 - Modern static site generator
-  - File-based routing
-  - Content collections
-  - Build optimization
+| Package | Purpose |
+|---------|---------|
+| `geopandas` | Geospatial data |
+| `pygwalker` | Visual Geoprocessing |
+| `h3` 4.1b2 | Hexagonal spatial indexing |
+| `libpysal` 4.6+ | Spatial analysis |
+| `esda` 1.5+ | Spatial autocorrelation |
+| `shapely` | Geometric operations |
 
-### UI Library
-- **React** 19.2.4 - Component framework
-- **React DOM** 19.2.4 - DOM rendering
-- **TypeScript** - Type-safe React components
+## AI/LLM (notebooks/exploration/)
 
-### Styling
-- **Tailwind CSS** - Utility-first CSS framework
-- **Leaflet** - Interactive maps
-- **Recharts** - Chart library for data visualization
+| Package | Purpose |
+|---------|---------|
+| `langchain` 0.3+ | LLM framework |
+| `langgraph` 0.2+ | Agent orchestration |
+| `langchain-google-genai` 2.0 | Google Gemini integration |
+| `langchain-community` | Databricks, SQL agents |
+| `langchain-experimental` | Pandas/Spark DataFrame agents |
 
-### Development
-- **Playwright** - E2E testing framework
-- **Vite** - Build tool (via Astro)
-- **TypeScript ESLint** - Linting for TypeScript
+## Visualization
 
-## Data Formats
+| Package | Purpose |
+|---------|---------|
+| `plotly` 6.5+ | Interactive plots |
+| `seaborn` | Statistical plots |
+| `kaleido` | Static plot export |
 
-### Primary Storage
-- **Parquet** (.parquet) - Columnar storage format
-  - Efficient compression
-  - Fast query performance
-  - Schema preservation
-  - Used for all processed datasets
+## Infrastructure & External Services
 
-### Metadata
-- **JSON** (.json) - Configuration, metadata, API responses
-- **TOML** (pyproject.toml) - Python project configuration
+| Package | Purpose |
+|---------|---------|
+| `boto3` | AWS S3 interactions |
+| `supabase` | Backend-as-a-service |
+| `requests` | HTTP client |
 
-### Frontend Data
-- **JSON** - Export format for webapp consumption
+## Config Files
 
-## Development Tools
+### Frontend (app/)
 
-### Code Quality
-- **Ruff** (Python)
-  - Linter: `uv run ruff check .`
-  - Formatter: `uv run ruff format .`
-  - Configuration: `pyproject.toml`
-  - Line length: 100 characters
+| File | Purpose |
+|------|---------|
+| `tsconfig.json` | Extends Astro strict, path aliases (@/*, @components/*, etc.) |
+| `astro.config.mjs` | Astro integrations: React, MDX, Tailwind, remark/rehype plugins |
+| `tailwind.config.mjs` | Dark mode class, custom color tokens |
+| `playwright.config.ts` | E2E test config, Chromium only |
+| `content.config.ts` | Astro content collections schema |
 
-- **Biome/ESLint** (TypeScript)
-  - Located in `app/`
-  - Configuration for TypeScript/React
+### Python (root/)
 
-### Version Control
-- **Git** - Source code control
-- **GitHub** - Hosting, CI/CD, issue tracking
+| File | Purpose |
+|------|---------|
+| `pyproject.toml` | Ruff linting (E,F,W,I,N,UP), pytest config, coverage settings |
 
-### Testing
-- **pytest** - Python unit/integration tests
-- **Playwright** - Frontend E2E tests
-- **Coverage** - `pytest-cov` for test coverage reports
+## Testing
 
-## Deployment
+| Framework | Scope |
+|-----------|-------|
+| `pytest` | Python unit/integration tests |
+| `pytest-cov` | Coverage reporting |
+| `pytest-mock` | Mocking |
+| `pytest-asyncio` | Async tests |
+| `@playwright/test` | E2E tests |
 
-### Frontend
-- **GitHub Pages** - Static site hosting
-- **Build Output**: `app/dist/`
-- **Deployment**: GitHub Actions workflow
+## Linting & Formatting
 
-### Backend
-- **None** - Python scripts run locally or in CI
-- **Data**: Generated locally, committed to repo or stored in data/
-
-## Environment Configuration
-
-### Environment Variables
-- **File**: `.env` (from `.env.example`)
-- **Loading**: `python-dotenv` in `scripts/core/config.py`
-- **Required Keys**:
-  - `ONEMAP_EMAIL` - Singapore geocoding API
-  - `GOOGLE_API_KEY` - Google Maps geocoding fallback
-  - `AWS_*` - Optional AWS credentials
-  - `SUPABASE_*` - Optional Supabase credentials
-
-### Configuration Management
-- **Central Config**: `scripts/core/config.py`
-- **Validation**: `Config.validate()` method
-- **Feature Flags**: `USE_CACHING`, `VERBOSE_LOGGING`
-
-## Jupyter Stack
-
-### Notebooks
-- **Jupyter** - Interactive notebook environment
-- **Jupytext** - Notebook ↔ Python script pairing
-  - Format: `.ipynb` + `.py` (paired)
-  - Cell markers: `#%%`
-  - Sync: `jupytext --sync notebook.ipynb`
-
-### Notebook Organization
-- **Location**: `notebooks/`
-- **Levels**:
-  - `L0_*` - Data collection notebooks
-  - `L1_*` - Data processing notebooks
-  - `L2_*` - Feature engineering notebooks
-  - `exploration/` - Experimental analysis
-
-## CI/CD
-
-### GitHub Actions
-- **Python Tests**: `pytest` with coverage
-- **Linting**: `ruff check`
-- **E2E Tests**: Playwright
-- **Deployment**: Auto-deploy to GitHub Pages
-
-## Summary
-
-**Primary Language**: Python 3.11+
-**Frontend**: Astro + React + TypeScript
-**Data**: Parquet + JSON
-**Testing**: pytest + Playwright
-**Package Manager**: uv (Python), npm (Node)
-**Deployment**: GitHub Pages
+| Tool | Config |
+|------|--------|
+| `ruff` | pyproject.toml [tool.ruff], line-length 100, py311 target |
