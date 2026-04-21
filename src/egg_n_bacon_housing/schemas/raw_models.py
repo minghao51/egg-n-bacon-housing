@@ -1,6 +1,5 @@
 """Raw data schemas (Bronze layer - no validation, just structure hints)."""
 
-
 from pydantic import BaseModel
 
 
