@@ -1,8 +1,8 @@
 """Test schema validation in 02_cleaning.py."""
 
 import importlib
+
 import pandas as pd
-import pytest
 
 
 def _get_cleaning_module():
@@ -17,26 +17,28 @@ class TestHDBValidation:
         """Test that valid HDB transactions pass validation."""
         cleaning = _get_cleaning_module()
 
-        valid_data = pd.DataFrame([
-            {
-                "transaction_date": pd.Timestamp("2023-01-01"),
-                "price": 500000.0,
-                "lat": 1.35,
-                "lon": 103.8,
-                "property_type": "hdb",
-                "planning_area": "Toa Payoh",
-                "town": "TOA PAYOH",
-                "flat_type": "4 ROOM",
-                "block": "123",
-                "street_name": "TOA PAYOH LOR 1",
-                "storey_min": 4,
-                "storey_max": 6,
-                "floor_area_sqm": 90.0,
-                "floor_area_sqft": 969.0,
-                "remaining_lease_months": 960,
-                "address": "123 TOA PAYOH LOR 1",
-            },
-        ])
+        valid_data = pd.DataFrame(
+            [
+                {
+                    "transaction_date": pd.Timestamp("2023-01-01"),
+                    "price": 500000.0,
+                    "lat": 1.35,
+                    "lon": 103.8,
+                    "property_type": "hdb",
+                    "planning_area": "Toa Payoh",
+                    "town": "TOA PAYOH",
+                    "flat_type": "4 ROOM",
+                    "block": "123",
+                    "street_name": "TOA PAYOH LOR 1",
+                    "storey_min": 4,
+                    "storey_max": 6,
+                    "floor_area_sqm": 90.0,
+                    "floor_area_sqft": 969.0,
+                    "remaining_lease_months": 960,
+                    "address": "123 TOA PAYOH LOR 1",
+                },
+            ]
+        )
 
         result = cleaning.hdb_validated(valid_data)
 
@@ -48,26 +50,28 @@ class TestHDBValidation:
         """Test that transactions with invalid price fail validation."""
         cleaning = _get_cleaning_module()
 
-        invalid_data = pd.DataFrame([
-            {
-                "transaction_date": pd.Timestamp("2023-01-01"),
-                "price": -100.0,
-                "lat": 1.35,
-                "lon": 103.8,
-                "property_type": "hdb",
-                "planning_area": "Toa Payoh",
-                "town": "TOA PAYOH",
-                "flat_type": "4 ROOM",
-                "block": "123",
-                "street_name": "TOA PAYOH LOR 1",
-                "storey_min": 4,
-                "storey_max": 6,
-                "floor_area_sqm": 90.0,
-                "floor_area_sqft": 969.0,
-                "remaining_lease_months": 960,
-                "address": "123 TOA PAYOH LOR 1",
-            },
-        ])
+        invalid_data = pd.DataFrame(
+            [
+                {
+                    "transaction_date": pd.Timestamp("2023-01-01"),
+                    "price": -100.0,
+                    "lat": 1.35,
+                    "lon": 103.8,
+                    "property_type": "hdb",
+                    "planning_area": "Toa Payoh",
+                    "town": "TOA PAYOH",
+                    "flat_type": "4 ROOM",
+                    "block": "123",
+                    "street_name": "TOA PAYOH LOR 1",
+                    "storey_min": 4,
+                    "storey_max": 6,
+                    "floor_area_sqm": 90.0,
+                    "floor_area_sqft": 969.0,
+                    "remaining_lease_months": 960,
+                    "address": "123 TOA PAYOH LOR 1",
+                },
+            ]
+        )
 
         result = cleaning.hdb_validated(invalid_data)
 
@@ -91,23 +95,25 @@ class TestCondoValidation:
         """Test that valid condo transactions pass validation."""
         cleaning = _get_cleaning_module()
 
-        valid_data = pd.DataFrame([
-            {
-                "transaction_date": pd.Timestamp("2023-01-01"),
-                "price": 1500000.0,
-                "lat": 1.30,
-                "lon": 103.8,
-                "property_type": "condo",
-                "planning_area": "Orchard",
-                "project_name": "Orchard Residences",
-                "area": "Central",
-                "postal_district": 9,
-                "tenure": "Freehold",
-                "floor_area_sqm": 120.0,
-                "floor_area_sqft": 1292.0,
-                "address": "1 ORCHARD ROAD",
-            },
-        ])
+        valid_data = pd.DataFrame(
+            [
+                {
+                    "transaction_date": pd.Timestamp("2023-01-01"),
+                    "price": 1500000.0,
+                    "lat": 1.30,
+                    "lon": 103.8,
+                    "property_type": "condo",
+                    "planning_area": "Orchard",
+                    "project_name": "Orchard Residences",
+                    "area": "Central",
+                    "postal_district": 9,
+                    "tenure": "Freehold",
+                    "floor_area_sqm": 120.0,
+                    "floor_area_sqft": 1292.0,
+                    "address": "1 ORCHARD ROAD",
+                },
+            ]
+        )
 
         result = cleaning.condo_validated(valid_data)
 
@@ -123,16 +129,18 @@ class TestGeocodedValidation:
         """Test that valid geocoded properties pass validation."""
         cleaning = _get_cleaning_module()
 
-        valid_data = pd.DataFrame([
-            {
-                "address": "123 TOA PAYOH LOR 1",
-                "lat": 1.35,
-                "lon": 103.8,
-                "property_type": "hdb",
-                "postal_code": "312345",
-                "search_confidence": 0.95,
-            },
-        ])
+        valid_data = pd.DataFrame(
+            [
+                {
+                    "address": "123 TOA PAYOH LOR 1",
+                    "lat": 1.35,
+                    "lon": 103.8,
+                    "property_type": "hdb",
+                    "postal_code": "312345",
+                    "search_confidence": 0.95,
+                },
+            ]
+        )
 
         result = cleaning.geocoded_validated(valid_data)
 
@@ -144,16 +152,18 @@ class TestGeocodedValidation:
         """Test that invalid coordinates fail validation."""
         cleaning = _get_cleaning_module()
 
-        invalid_data = pd.DataFrame([
-            {
-                "address": "123 TOA PAYOH LOR 1",
-                "lat": 91.0,
-                "lon": 103.8,
-                "property_type": "hdb",
-                "postal_code": "312345",
-                "search_confidence": 0.95,
-            },
-        ])
+        invalid_data = pd.DataFrame(
+            [
+                {
+                    "address": "123 TOA PAYOH LOR 1",
+                    "lat": 91.0,
+                    "lon": 103.8,
+                    "property_type": "hdb",
+                    "postal_code": "312345",
+                    "search_confidence": 0.95,
+                },
+            ]
+        )
 
         result = cleaning.geocoded_validated(invalid_data)
 

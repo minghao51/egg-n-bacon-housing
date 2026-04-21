@@ -102,14 +102,40 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 - When moving from HDB to condo, recalibrate your accessibility assumptions. The same 300-500m difference carries different market value across segments.
 
-## Appendix A: Technical Summary
+## Technical Appendix
 
-- Main HDB sample: **97,133 transactions** from 2021 onward.
-- Additional decomposition work showed CBD distance explains more price variation than MRT distance alone.
-- Non-linear models materially outperformed OLS, but the relative ranking of major drivers remained similar.
+### Data Used
 
-## Appendix B: Caveats
+- **Primary input**: `data/parquets/L3/housing_unified.parquet`
+- **Sample**: 97,133 HDB transactions, filtered to 2021 onward, with valid coordinates
+- **Spatial grid**: H3 hexagonal grid at resolution 8 (~0.5 km² cells), minimum 10 records per cell
+- **CBD reference point**: (1.2839, 103.8513), haversine distance calculation
 
-- Distances are based on nearest-station proximity, not true walking path quality.
-- Some town-level coefficients may reflect omitted neighborhood factors.
-- Future-line premiums require separate event-style analysis and should not be inferred directly from this summary.
+### Methodology
+
+- **OLS LinearRegression** controlling for `dist_to_nearest_mrt`, `floor_area_sqm`, `remaining_lease_months`
+- **XGBoost** (100 trees, max_depth=6, learning_rate=0.1) for non-linear patterns, with SHAP for explainability
+- **Hierarchical regression** via `scripts/analytics/analysis/spatial/analyze_cbd_mrt_decomposition.py`: CBD-only → CBD+MRT → Full model, to isolate incremental MRT contribution
+- **VIF analysis** to check multicollinearity between MRT and CBD distance
+- **Town-level OLS** in `scripts/analytics/analysis/mrt/analyze_mrt_heterogeneous.py`, minimum 500 transactions per town
+- **Cross-property comparison** in `scripts/analytics/analysis/mrt/analyze_mrt_by_property_type.py`, interaction terms for property type × MRT distance
+
+### Technical Findings
+
+- **CBD-only model R² = 0.2263**, CBD+MRT R² = 0.2341, ΔR² = +0.0078 (MRT adds less than 1 percentage point beyond CBD)
+- **Full model R² = 0.4977** (broader housing features dominate)
+- **HDB MRT coefficient**: $1.28/100m (mean PSF $552); **Condo MRT sensitivity ~15× HDB**
+- **Feature importance (XGBoost)**: hawker_within_1km = 27.4%, remaining_lease_months = 14.1%, park_within_1km = 7.2%, mrt_within_1km = 5.5%
+- **Town-level variation**: Central Area +$59.19/100m, Marine Parade -$38.54/100m
+- **VIF**: MRT and CBD distance show moderate collinearity (~0.5-0.7 correlation), confirming they capture overlapping but distinct location effects
+
+### Conclusion
+
+The technical evidence supports the headline finding: CBD proximity is the dominant location factor for HDB, and MRT adds only a marginal incremental contribution. The ~15× condo-vs-HDB sensitivity gap is robust across OLS and XGBoost specifications. Town-level heterogeneity is large enough that a single national MRT premium is misleading. Key limitations: distances are straight-line to nearest station (not walking path quality), and some town coefficients likely absorb omitted neighborhood factors.
+
+### Scripts
+
+- `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` — OLS + XGBoost + SHAP on H3 H8 grid
+- `scripts/analytics/analysis/mrt/analyze_mrt_heterogeneous.py` — Town-level, flat-type, price-tier stratification
+- `scripts/analytics/analysis/mrt/analyze_mrt_by_property_type.py` — HDB vs Condo comparison
+- `scripts/analytics/analysis/spatial/analyze_cbd_mrt_decomposition.py` — Hierarchical regression, VIF, PCA

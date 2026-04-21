@@ -86,14 +86,43 @@ Only **12 H3 cells** qualified as 99% confidence hotspots, which is a useful rem
 - Treat hotspot premiums as a tenant-market signal, not a universal valuation rule.
 - Coldspots can still be attractive when commute, amenities, and own-stay needs line up.
 
-## Appendix A: Technical Summary
+## Technical Appendix
 
-- Method: Getis-Ord Gi* on **847 H3 cells**, with **623 cells** containing sufficient rental data.
-- Strong hotspots were concentrated around central, city-fringe locations.
-- Coldspots were concentrated in northern and outer suburban areas.
+### Data Used
 
-## Appendix B: Caveats
+- **Rental data**: `data/parquets/L1/housing_hdb_rental.parquet`
+- **Geocoding data**: `data/parquets/L2/housing_unique_searched.parquet` (lat/lon)
+- **Join key**: `block_street_name`, filtered to successfully geocoded records (`search_result == 0`)
+- **Date range**: 2024-01 to 2025-01
+- **Spatial aggregation**: H3 resolution 8, median `monthly_rent` per cell
+- **Coverage**: 847 total cells, 623 with sufficient data for analysis
 
-- Hotspot analysis is a spatial pricing summary, not a full asset-return model.
-- A hotspot can still be a weak investment if acquisition price already capitalizes the rent premium.
-- Some areas may shift with new transport links, supply additions, or rental policy changes.
+### Methodology
+
+- **Data join**: L1 rental data joined to L2 geocoded properties via block+street_name key
+- **Getis-Ord Gi\*** local statistic via `esda.getisord.G_Local`
+- **Spatial weights**: KNN (k=8) and Queen contiguity
+- **Classification thresholds**:
+  - Hotspot: z > 2.58 (99% confidence)
+  - Weak hotspot: z > 1.96 (95% confidence)
+  - Coldspot: z < -2.58 (99% confidence)
+  - Weak coldspot: z < -1.96 (95% confidence)
+- **Permutations**: 99 for significance testing
+- **Transition probability analysis**: persistence of hotspot/coldspot status across time periods
+
+### Technical Findings
+
+- **12 H3 cells** qualified as 99% confidence hotspots
+- **Top hotspots**: Orchard Gi* = 4.21, Marina South Gi* = 3.89, Bukit Timah Gi* = 3.45
+- **Top coldspots**: Woodlands Gi* = -3.21, Yishun Gi* = -2.98, Sembawang Gi* = -2.67
+- **Rent gap**: hotspot median $3,200 vs coldspot median ~$1,850-$2,100 ≈ $1,350/month
+- **Persistence rates**: hotspot remains hotspot 58-62%, coldspot remains coldspot 55-60%
+- **Transition rate**: non-significant → hotspot only 8-10%, confirming true hotspots are limited
+
+### Conclusion
+
+The Getis-Ord Gi* analysis identifies a small, statistically selective set of rental hotspots concentrated around central and city-fringe locations, with coldspots in northern suburbs. The ~$1,350/month rent gap between hotspots and coldspots is economically significant. Persistence is moderate (58-62%), meaning hotspot status is sticky but not permanent — investors should not treat it as a guaranteed perpetual premium. The low non-significant→hotspot transition rate (8-10%) confirms that emerging hotspot narratives require strong fundamental evidence. Key limitations: hotspot analysis summarizes spatial pricing only, not full asset returns; acquisition price may already capitalize the rent premium; areas can shift with new transport links, supply additions, or policy changes.
+
+### Scripts
+
+- `scripts/analytics/analysis/spatial/analyze_spatial_hotspots.py` — Getis-Ord Gi* with KNN and Queen weights

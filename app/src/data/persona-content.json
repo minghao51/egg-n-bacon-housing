@@ -11,15 +11,15 @@
     ],
     "recommendedDocs": [
       {
-        "slug": "analyze_lease_decay",
+        "slug": "lease-decay",
         "reason": "Understand how remaining lease affects your property's future value"
       },
       {
-        "slug": "analyze_price_appreciation_predictions",
+        "slug": "price-forecasts",
         "reason": "See which areas offer the best price growth for first homes"
       },
       {
-        "slug": "analyze_mrt-impact-analysis",
+        "slug": "mrt-impact",
         "reason": "Learn if paying extra for MRT proximity is worth it for HDBs"
       }
     ],
@@ -42,11 +42,11 @@
     ],
     "recommendedDocs": [
       {
-        "slug": "analyze_price_appreciation_predictions",
+        "slug": "price-forecasts",
         "reason": "6-month price forecasts with up to 79% expected gains for investment planning"
       },
       {
-        "slug": "analyze_mrt-impact-analysis",
+        "slug": "mrt-impact",
         "reason": "MRT proximity drives condo prices 15x more than HDBs - critical for investment decisions"
       },
       {
@@ -73,15 +73,15 @@
     ],
     "recommendedDocs": [
       {
-        "slug": "analyze_price_appreciation_predictions",
+        "slug": "price-forecasts",
         "reason": "Identify areas with highest appreciation to maximize your upgrade gains"
       },
       {
-        "slug": "analyze_mrt-impact-analysis",
+        "slug": "mrt-impact",
         "reason": "Location matters more than property type - CBD proximity is key"
       },
       {
-        "slug": "analyze_lease_decay",
+        "slug": "lease-decay",
         "reason": "Understand lease decay impact when selling your current HDB"
       }
     ],

@@ -27,7 +27,7 @@ try {
 <Layout title="Compare Areas - Dashboard">
   <Sidebar currentPath={Astro.url.pathname} />
 
-  <main class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
+  <main class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
     {leaderboardData.length > 0 ? (
       <LeaderboardDashboard client:load initialData={leaderboardData} />
     ) : (

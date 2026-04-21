@@ -1,7 +1,9 @@
 """Test config module works correctly."""
 
 import sys
+
 import pytest
+
 sys.path.insert(0, "src")
 
 from egg_n_bacon_housing.config import settings

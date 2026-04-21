@@ -86,14 +86,46 @@ The causal work suggests that immediate level changes and post-announcement slop
 
 - If selling HDB and buying condo, remember you are moving between segments with different policy sensitivity.
 
-## Appendix A: Technical Summary
+## Technical Appendix
 
-- Condo policy analysis used **difference-in-differences** across CCR and OCR.
-- HDB policy timing used **regression discontinuity in time** around the Dec 2023 measures.
-- Lease analysis compared empirical market pricing against a theoretical depreciation schedule.
+### Data Used
 
-## Appendix B: Caveats
+- **Primary input**: `data/parquets/L3/housing_unified.parquet`
+- **Coverage**: 2017-2026, split by property type (Condominium, HDB)
+- **Condo DiD sample**: Condominium transactions post-2021, CCR vs OCR
+- **HDB RDiT sample**: HDB transactions, Jun 2022 - Jun 2025 (18 months before/after policy)
 
-- Causal designs help, but they still rely on assumptions about comparability and timing windows.
-- Estimated policy effects should be read as regime-specific, not timeless constants.
-- Lease “arbitrage” may remain hard to realize because financing constraints reduce the buyer pool.
+### Methodology
+
+- **Regional classification**: CCR (10 planning areas — Bukit Timah, Downtown Core, Orchard, River Valley, etc.), RCR (12 planning areas — Bishan, Queenstown, Toa Payoh, Novena, etc.), OCR (remainder)
+- **Difference-in-differences (DiD)** via `scripts/analytics/analysis/causal/analyze_causal_did_enhanced.py`:
+  - Treatment: CCR condos; Control: OCR condos
+  - Policy event: Sep 2022 ABSD changes for foreigners
+  - Regression: `price ~ treatment + post + treatment × post`
+  - Minimum 100 transactions per group
+- **Regression discontinuity in time (RDiT)** via `scripts/analytics/analysis/causal/analyze_rd_policy_timing.py`:
+  - Running variable: months since policy (negative = before, positive = after)
+  - Policy event: Dec 2023 cooling measures
+  - Bandwidth: ±6 months (default), robustness tested at 3, 6, 9, 12 months
+  - Jump test: `price ~ post`; Kink test: `price ~ months_since + post + post × time`
+  - Minimum 100 transactions for analysis
+- **Lease mispricing**: empirical market pricing vs theoretical Bala depreciation schedule, ≥5% deviation flagged
+
+### Technical Findings
+
+- **Condo DiD**: ~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD) — prime condos meaningfully suppressed
+- **HDB RDiT**: ~+$13,118 immediate jump after Dec 2023 measures — HDB did not show intended cooling
+- **Lease mispricing patterns**:
+  - 30-50 yr range: market appears richly priced relative to Bala theory
+  - 80-84 yr range: mild undervaluation in some cases
+  - 97-98 yr range: large discount relative to theoretical schedule
+- **Robustness**: RDiT bandwidth sensitivity (3-12 months) confirms direction is stable, magnitude varies
+
+### Conclusion
+
+The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB showed resilience or even upward movement (+$13K) after cooling measures. This asymmetry is robust across multiple bandwidths and timing windows. The lease mispricing analysis suggests that the market does not price strictly to theoretical Bala depreciation — shorter leases (30-50 yr) may be richly valued while near-fresh leases (97-98 yr) trade at unexpected discounts, possibly due to financing constraints distorting the buyer pool. Key limitations: DiD relies on comparability of CCR and OCR condo segments; RDiT assumes no confounding events at the cutoff; causal estimates are regime-specific and should not be treated as timeless constants.
+
+### Scripts
+
+- `scripts/analytics/analysis/causal/analyze_causal_did_enhanced.py` — DiD with CCR/OCR regions
+- `scripts/analytics/analysis/causal/analyze_rd_policy_timing.py` — RDiT around policy events

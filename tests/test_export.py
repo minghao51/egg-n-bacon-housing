@@ -1,8 +1,8 @@
 """Test 04_export component."""
 
 import importlib
+
 import pandas as pd
-import pytest
 
 
 def _get_export_module():
@@ -17,13 +17,17 @@ class TestPlatinumLayer:
         """Test that unified_dataset returns a DataFrame."""
         export = _get_export_module()
 
-        unified_features = pd.DataFrame([{
-            "town": "TOA PAYOH",
-            "lat": 1.35,
-            "lon": 103.8,
-            "price": 500000.0,
-            "property_type": "hdb",
-        }])
+        unified_features = pd.DataFrame(
+            [
+                {
+                    "town": "TOA PAYOH",
+                    "lat": 1.35,
+                    "lon": 103.8,
+                    "price": 500000.0,
+                    "property_type": "hdb",
+                }
+            ]
+        )
 
         result = export.unified_dataset(unified_features)
 
@@ -47,11 +51,15 @@ class TestPlatinumLayer:
         """Test that dashboard_json returns a dictionary."""
         export = _get_export_module()
 
-        unified_dataset = pd.DataFrame([{
-            "town": "TOA PAYOH",
-            "price": 500000.0,
-            "property_type": "hdb",
-        }])
+        unified_dataset = pd.DataFrame(
+            [
+                {
+                    "town": "TOA PAYOH",
+                    "price": 500000.0,
+                    "property_type": "hdb",
+                }
+            ]
+        )
 
         result = export.dashboard_json(unified_dataset)
 
@@ -77,10 +85,12 @@ class TestPlatinumLayer:
         """Test that segments_data returns a dictionary."""
         export = _get_export_module()
 
-        unified_dataset = pd.DataFrame([
-            {"town": "TOA PAYOH", "price": 500000.0, "property_type": "hdb"},
-            {"town": "YISHUN", "price": 600000.0, "property_type": "condo"},
-        ])
+        unified_dataset = pd.DataFrame(
+            [
+                {"town": "TOA PAYOH", "price": 500000.0, "property_type": "hdb"},
+                {"town": "YISHUN", "price": 600000.0, "property_type": "condo"},
+            ]
+        )
 
         result = export.segments_data(unified_dataset)
 
@@ -105,11 +115,15 @@ class TestPlatinumLayer:
         """Test that interactive_tools_data returns a dictionary."""
         export = _get_export_module()
 
-        unified_dataset = pd.DataFrame([{
-            "planning_area": "Orchard",
-            "price": 1500000.0,
-            "property_type": "condo",
-        }])
+        unified_dataset = pd.DataFrame(
+            [
+                {
+                    "planning_area": "Orchard",
+                    "price": 1500000.0,
+                    "property_type": "condo",
+                }
+            ]
+        )
 
         result = export.interactive_tools_data(unified_dataset)
 
@@ -132,10 +146,14 @@ class TestPlatinumLayer:
         """Test that csv_export returns a Path or None."""
         export = _get_export_module()
 
-        unified_dataset = pd.DataFrame([{
-            "town": "TOA PAYOH",
-            "price": 500000.0,
-        }])
+        unified_dataset = pd.DataFrame(
+            [
+                {
+                    "town": "TOA PAYOH",
+                    "price": 500000.0,
+                }
+            ]
+        )
 
         result = export.csv_export(unified_dataset)
 

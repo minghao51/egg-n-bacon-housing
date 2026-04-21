@@ -85,14 +85,40 @@ This means appreciation is not randomly distributed. Nearby areas tend to share 
 
 - Cluster effects matter most when your hold period depends on future resale strength.
 
-## Appendix A: Technical Summary
+## Technical Appendix
 
-- Spatial analysis used **H3 cells** and local cluster classification.
-- Significant clusters split mostly between HH hotspots and LH outliers.
-- Transition analysis suggested moderate persistence rather than permanent status.
+### Data Used
 
-## Appendix B: Caveats
+- **Primary input**: `data/parquets/L1/housing_hdb_rental.parquet`
+- **Spatial aggregation**: H3 hexagonal grid at resolution 8 (~0.5 km² cells)
+- **Aggregation method**: median `monthly_rent` per H3 cell
+- **Minimum threshold**: ≥10 records per cell for analysis
 
-- Cluster labels summarize local context; they do not override all unit-specific factors.
-- A strong cluster does not make any price reasonable.
-- Spatial patterns can shift with supply, policy, or major infrastructure changes.
+### Methodology
+
+- **Global Moran's I**: KNN weights (k=8), row-standardized, 99 permutations
+- **Local LISA** (Local Indicators of Spatial Association): `Moran_Local` with 99 permutations
+- **Cluster classification**: HH (high-high), LL (low-low), HL (high-low), LH (low-high), NS (not significant)
+- **Significance threshold**: p ≤ 0.05
+- **Spatial lag correlation**: computed per property type (Condo, HDB, EC) to measure neighborhood dependence
+
+### Technical Findings
+
+- **Global Moran's I**: 0.766 (strong positive spatial clustering)
+- **Z-score**: 9.91, p-value < 0.001 — highly significant
+- **Cluster distribution**:
+  - HH (hotspot): 16 cells, 12.7% YoY appreciation
+  - LH (lagging in strong neighborhood): 17 cells, 11.3% YoY
+  - LL (coldspot): 1 cell, ~10% YoY
+  - Not significant: 8 cells, 12.0% YoY
+- **Spatial lag correlation by segment**: Condo 78%, HDB 71%, EC 65%
+- **Transition analysis**: moderate persistence — hotspot and coldspot status are sticky but not permanent
+
+### Conclusion
+
+The Moran's I of 0.766 with z=9.91 confirms that appreciation is far from randomly distributed; nearby areas share price momentum strongly. The HH cluster premium (12.7% YoY vs ~10-12% elsewhere) is modest but statistically robust. LH clusters (17 cells) represent the most analytically interesting group — potential catch-up opportunities, but also potential structural laggards requiring case-by-case assessment. The stronger spatial dependence in condos (78%) vs HDB (71%) vs EC (65%) suggests that condo pricing is more influenced by peer neighborhood performance. Key limitations: cluster labels summarize local context and do not override unit-specific factors; spatial patterns can shift with supply, policy, or infrastructure changes.
+
+### Scripts
+
+- `scripts/analytics/analysis/spatial/analyze_spatial_autocorrelation.py` — Moran's I + LISA
+- `scripts/analytics/analysis/spatial/analyze_h3_clusters.py` — H3 cluster classification
