@@ -221,7 +221,13 @@ class TransactionLoader:
         }
         dataset_name = dataset_name_map[property_type]
 
-        stage_dir = settings.data_dir / "pipeline" / stage
+        stage_map = {
+            "L0": settings.bronze_dir,
+            "L1": settings.silver_dir,
+            "L2": settings.gold_dir,
+            "L3": settings.platinum_dir,
+        }
+        stage_dir = stage_map[stage]
         path = stage_dir / f"{dataset_name}.parquet"
 
         if not path.exists():

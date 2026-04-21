@@ -1,8 +1,6 @@
 """CLI entry point for egg-n-bacon-housing pipeline."""
 
 import argparse
-import logging
-import sys
 
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.pipeline import build_pipeline, run_full_pipeline
@@ -47,8 +45,10 @@ def main():
         "ingest": [
             "raw_hdb_resale_transactions",
             "raw_condo_transactions",
+            "raw_hdb_rental",
             "raw_rental_index",
             "raw_school_directory",
+            "raw_shopping_malls",
             "raw_macro_data",
         ],
         "clean": [

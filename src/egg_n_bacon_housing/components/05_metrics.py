@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def platinum_metrics_dir() -> Path:
     """Platinum layer metrics subdirectory."""
-    return settings.data_dir / "04_platinum" / "metrics"
+    return settings.platinum_dir / "metrics"
 
 
 def price_metrics_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:

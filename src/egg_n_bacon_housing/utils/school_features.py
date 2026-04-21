@@ -40,7 +40,7 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
 
 def load_schools() -> pd.DataFrame:
     """Load schools, geocoding if necessary and saving results."""
-    school_path = settings.data_dir / "pipeline" / "raw_datagov_school_directory.parquet"
+    school_path = settings.bronze_dir / "raw_datagov_school_directory.parquet"
     schools_df = pd.read_parquet(school_path)
 
     # Check if already geocoded
@@ -58,15 +58,15 @@ def load_schools() -> pd.DataFrame:
 
 
 def _load_reference_data(filename: str) -> dict | None:
-    """Load JSON reference data from data/config/ with fallback.
+    """Load JSON reference data from bronze/external with fallback.
 
     Args:
-        filename: Name of JSON file in data/config/
+        filename: Name of JSON file in data/pipeline/01_bronze/external/
 
     Returns:
         Parsed JSON data or None if not found
     """
-    config_path = settings.data_dir / "config" / filename
+    config_path = settings.bronze_dir / "external" / filename
     if config_path.exists():
         with open(config_path) as f:
             return json.load(f)
@@ -707,7 +707,7 @@ def main():
     schools_df = load_schools()
     logger.info(f"Loaded {len(schools_df)} schools")
 
-    property_path = settings.data_dir / "pipeline" / "L3" / "housing_unified.parquet"
+    property_path = settings.platinum_dir / "unified_dataset.parquet"
     properties_df = pd.read_parquet(property_path)
     logger.info(f"Loaded {len(properties_df)} properties")
 

@@ -2,8 +2,6 @@
 
 This module provides functions to determine which MRT line(s) a station belongs to
 and assign importance scores based on line tier and interchange status.
-
-Data is loaded from JSON configuration files in data/config/
 """
 
 import json
@@ -17,15 +15,15 @@ logger = logging.getLogger(__name__)
 
 
 def _load_json_config(filename: str) -> dict:
-    """Load JSON configuration file with fallback to empty dict.
+    """Load JSON reference file with fallback to empty dict.
 
     Args:
-        filename: Name of JSON file in data/config/
+        filename: Name of JSON file in data/pipeline/01_bronze/external/
 
     Returns:
         Parsed JSON data or empty dict if not found
     """
-    config_path = settings.data_dir / "config" / filename
+    config_path = settings.bronze_dir / "external" / filename
     if config_path.exists():
         with open(config_path) as f:
             return json.load(f)

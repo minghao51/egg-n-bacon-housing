@@ -18,7 +18,7 @@ logging:
   verbose: true
 
 layer_dirs:
-  bronze: "data/01_bronze"
-  silver: "data/02_silver"
-  gold: "data/03_gold"
-  platinum: "data/04_platinum"
+  bronze: "data/pipeline/01_bronze"
+  silver: "data/pipeline/02_silver"
+  gold: "data/pipeline/03_gold"
+  platinum: "data/pipeline/04_platinum"

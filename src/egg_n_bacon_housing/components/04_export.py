@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def platinum_dir() -> Path:
     """Platinum layer directory path."""
-    return settings.data_dir / "04_platinum"
+    return settings.platinum_dir
 
 
 def webapp_data_dir() -> Path:
@@ -166,7 +166,7 @@ def csv_export(unified_dataset: pd.DataFrame, export_dir: Path | None = None) ->
         return None
 
     if export_dir is None:
-        export_dir = settings.data_dir / "exports"
+        export_dir = settings.platinum_dir / "exports"
 
     export_dir.mkdir(parents=True, exist_ok=True)
     out_path = export_dir / "l3_housing_unified.csv"

@@ -9,6 +9,7 @@ completion. This component provides lightweight integration points.
 
 import logging
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -31,7 +32,7 @@ def run_market_analysis(unified_dataset: pd.DataFrame) -> dict:
     Returns:
         Dictionary with analysis results.
     """
-    results = {}
+    results: dict[str, Any] = {}
 
     if unified_dataset.empty:
         return results
@@ -64,7 +65,7 @@ def run_spatial_analysis(unified_dataset: pd.DataFrame) -> dict:
     Returns:
         Dictionary with spatial analysis results.
     """
-    results = {}
+    results: dict[str, Any] = {}
 
     if unified_dataset.empty:
         return results
@@ -98,7 +99,7 @@ def run_appreciation_analysis(price_metrics_by_area: pd.DataFrame) -> dict:
     Returns:
         Dictionary with appreciation analysis.
     """
-    results = {}
+    results: dict[str, Any] = {}
 
     if price_metrics_by_area.empty:
         return results

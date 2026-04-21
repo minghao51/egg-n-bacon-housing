@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def silver_dir() -> Path:
     """Silver layer directory path."""
-    return settings.data_dir / "02_silver"
+    return settings.silver_dir
 
 
 def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.DataFrame:

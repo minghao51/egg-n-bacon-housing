@@ -114,10 +114,11 @@ def save_parquet(
         compression = settings.pipeline.parquet_compression
 
     path_parts = (
-        dataset_name.replace("L1_", "L1/")
-        .replace("L2_", "L2/")
-        .replace("L3_", "L3/")
-        .replace("raw_data", "raw_data")
+        dataset_name.replace("L1_", "01_bronze/")
+        .replace("L2_", "03_gold/")
+        .replace("L3_", "04_platinum/")
+        .replace("L5_", "04_platinum/metrics/")
+        .replace("raw_data", "01_bronze/raw_data")
     )
 
     if partition_cols:
