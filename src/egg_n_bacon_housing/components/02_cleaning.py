@@ -42,6 +42,24 @@ def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.Da
     if "month" in df.columns:
         df["transaction_date"] = pd.to_datetime(df["month"], format="%Y-%m", errors="coerce")
 
+    if "property_type" not in df.columns:
+        df["property_type"] = "hdb"
+
+    if "remaining_lease_months" in df.columns:
+        mask = df["remaining_lease_months"].isna()
+        if mask.any():
+            lcd = df.loc[mask, "lease_commence_date"].astype(int)
+            tx_year = df.loc[mask, "transaction_date"].dt.year
+            df.loc[mask, "remaining_lease_months"] = 99 - (tx_year - lcd)
+
+    if "storey_range" in df.columns and "storey_min" not in df.columns:
+        storey_parts = df["storey_range"].str.split(" TO ", n=1, expand=True)
+        df["storey_min"] = pd.to_numeric(storey_parts[0], errors="coerce").astype("Int64")
+        df["storey_max"] = pd.to_numeric(storey_parts[1], errors="coerce").astype("Int64")
+
+    if "address" not in df.columns and "block" in df.columns and "street_name" in df.columns:
+        df["address"] = df["block"] + " " + df["street_name"]
+
     df = df.dropna(subset=["price", "transaction_date"])
     df = df[df["price"] > 0]
 
