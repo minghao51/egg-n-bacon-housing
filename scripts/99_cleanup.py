@@ -1,6 +1,8 @@
 """Cleanup script: remove stale cache and old data."""
+
 from egg_n_bacon_housing.utils.cache import clear_cache, get_cache_stats
-from egg_n_bacon_housing.utils.logging_config import setup_logging_from_env, get_logger
+from egg_n_bacon_housing.utils.logging_config import get_logger, setup_logging_from_env
+
 
 def main():
     setup_logging_from_env()
@@ -10,6 +12,7 @@ def main():
     logger.info(f"Cache stats before cleanup: {stats}")
     clear_cache()
     logger.info("Cache cleared")
+
 
 if __name__ == "__main__":
     main()

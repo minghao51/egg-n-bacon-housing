@@ -87,6 +87,33 @@ class TestHDBValidation:
 
         assert result.empty
 
+    def test_cleaned_hdb_transactions_fills_remaining_lease_in_months(self, tmp_path, monkeypatch):
+        """Test missing remaining_lease_months is backfilled in months, not years."""
+        cleaning = _get_cleaning_module()
+
+        monkeypatch.setattr(cleaning, "silver_dir", lambda: tmp_path)
+
+        raw_data = pd.DataFrame(
+            [
+                {
+                    "month": "2024-01",
+                    "resale_price": 500000.0,
+                    "lease_commence_date": 2000,
+                    "remaining_lease_months": pd.NA,
+                    "town": "TOA PAYOH",
+                    "flat_type": "4 ROOM",
+                    "block": "123",
+                    "street_name": "TOA PAYOH LOR 1",
+                    "floor_area_sqm": 90.0,
+                }
+            ]
+        )
+
+        result = cleaning.cleaned_hdb_transactions(raw_data)
+
+        assert not result.empty
+        assert result.loc[0, "remaining_lease_months"] == 900
+
 
 class TestCondoValidation:
     """Test condo transaction validation."""

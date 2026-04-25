@@ -1,6 +1,6 @@
 # Final Pipeline Validation Report
 
-**Date**: 2025-02-19  
+**Date**: 2025-02-19
 **Status**: ✅ **ALL CHECKS PASSED** (10/10)
 
 ## Executive Summary
@@ -152,14 +152,14 @@ L1_amenity.parquet (3,991 amenities)
     ↓
 L2: compute_amenity_distances_by_type()
     ↓
-L2_housing_per_type_amenity_features.parquet 
+L2_housing_per_type_amenity_features.parquet
   (17,722 properties × 22 columns: POSTAL + 21 metrics)
     ↓ (merge on POSTAL)
 L2: L3_property table (41,338 properties × 22 amty_* columns)
     ↓
 L3: add_amenity_features()
     ↓
-L3_housing_unified.parquet 
+L3_housing_unified.parquet
   (1,116,323 records × 21 amenity columns)
     ↓
 L4: ML Analysis

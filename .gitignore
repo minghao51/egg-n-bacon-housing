@@ -8,6 +8,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
+*.egg-info/
 
 # Testing
 .pytest_cache/
@@ -103,6 +104,4 @@ data/metadata.json.bak
 
 # Git worktrees (isolated development workspaces)
 .worktrees/
-.secrets.baseline
-
 .claude/

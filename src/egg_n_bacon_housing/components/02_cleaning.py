@@ -45,12 +45,22 @@ def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.Da
     if "property_type" not in df.columns:
         df["property_type"] = "hdb"
 
-    if "remaining_lease_months" in df.columns:
+    if (
+        "remaining_lease_months" in df.columns
+        and "lease_commence_date" in df.columns
+        and "transaction_date" in df.columns
+    ):
         mask = df["remaining_lease_months"].isna()
         if mask.any():
-            lcd = df.loc[mask, "lease_commence_date"].astype(int)
-            tx_year = df.loc[mask, "transaction_date"].dt.year
-            df.loc[mask, "remaining_lease_months"] = 99 - (tx_year - lcd)
+            lease_commence_year = pd.to_numeric(
+                df.loc[mask, "lease_commence_date"], errors="coerce"
+            )
+            transaction_year = pd.to_numeric(
+                df.loc[mask, "transaction_date"].dt.year,
+                errors="coerce",
+            )
+            remaining_lease_years = 99 - (transaction_year - lease_commence_year)
+            df.loc[mask, "remaining_lease_months"] = (remaining_lease_years * 12).clip(lower=0)
 
     if "storey_range" in df.columns and "storey_min" not in df.columns:
         storey_parts = df["storey_range"].str.split(" TO ", n=1, expand=True)

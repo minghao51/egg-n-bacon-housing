@@ -1,0 +1,66 @@
+# Pre-commit hooks for egg-n-bacon-housing
+
+exclude: |
+  (?x)^(
+    data/|
+    app/public/data/|
+    app/.astro-cache/|
+    htmlcov/|
+    output/|
+    node_modules/|
+    \.venv/|
+    src/egg_n_bacon_housing\.egg-info/
+  )
+
+repos:
+  # Python linting with Ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.0
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # Type checking with mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.20.1
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pydantic>=2.0
+          - pydantic-settings>=2.0
+          - types-PyYAML
+          - types-requests
+        args: [--config-file=pyproject.toml]
+        files: ^src/egg_n_bacon_housing/(pipeline\.py|utils/(cache|logging_config)\.py|schemas/.*\.py|adapters/geocoding\.py)$
+
+  # General checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        files: \.(py|pyi|toml)$
+      - id: end-of-file-fixer
+        files: \.(py|pyi|toml)$
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-merge-conflict
+
+  # Security checks
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline]
+        exclude: package-lock\.json|pnpm-lock\.yaml|uv\.lock
+
+  # Optional dotenvx pre-commit hook (run manually: pre-commit run dotenvx-precommit --hook-stage manual)
+  - repo: local
+    hooks:
+      - id: dotenvx-precommit
+        name: dotenvx precommit
+        entry: dotenvx ext precommit .
+        language: system
+        pass_filenames: false
+        stages: [manual]

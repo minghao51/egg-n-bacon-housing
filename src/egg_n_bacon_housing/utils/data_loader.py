@@ -21,7 +21,16 @@ DATA_DIR = settings.data_dir / "pipeline"
 RAW_DATA_DIR = settings.data_dir / "manual" / "geojsons"
 SINGAPORE_CENTER = {"lat": 1.3521, "lon": 103.8198}
 
-_planning_areas = None
+_planning_areas: list[dict] | None = None
+
+
+def _read_first_existing(*paths: Path) -> pd.DataFrame:
+    """Read the first existing parquet path, else return an empty DataFrame."""
+    for path in paths:
+        if path.exists():
+            return pd.read_parquet(path)
+    logger.warning("No dataset found at any expected path: %s", ", ".join(str(p) for p in paths))
+    return pd.DataFrame()
 
 
 def load_planning_areas() -> list[dict]:
@@ -100,13 +109,10 @@ def load_hdb_amenity_data() -> pd.DataFrame:
     Returns:
         DataFrame with amenity locations
     """
-    path = DATA_DIR / "L2" / "hdb_amenities.parquet"
-
-    if not path.exists():
-        logger.warning(f"HDB amenity data not found at {path}")
-        return pd.DataFrame()
-
-    return pd.read_parquet(path)
+    return _read_first_existing(
+        settings.gold_dir / "features_with_amenities.parquet",
+        DATA_DIR / "L2" / "hdb_amenities.parquet",
+    )
 
 
 def load_rental_yield_data() -> pd.DataFrame:
@@ -116,13 +122,10 @@ def load_rental_yield_data() -> pd.DataFrame:
     Returns:
         DataFrame with rental yield percentages
     """
-    path = DATA_DIR / "L2" / "rental_yield.parquet"
-
-    if not path.exists():
-        logger.warning(f"Rental yield data not found at {path}")
-        return pd.DataFrame()
-
-    return pd.read_parquet(path)
+    return _read_first_existing(
+        settings.gold_dir / "rental_yield.parquet",
+        DATA_DIR / "L2" / "rental_yield.parquet",
+    )
 
 
 def load_market_summary() -> pd.DataFrame:
@@ -132,13 +135,10 @@ def load_market_summary() -> pd.DataFrame:
     Returns:
         DataFrame with aggregated market statistics
     """
-    path = DATA_DIR / "L3" / "market_summary.parquet"
-
-    if not path.exists():
-        logger.warning(f"Market summary not found at {path}")
-        return pd.DataFrame()
-
-    return pd.read_parquet(path)
+    return _read_first_existing(
+        settings.platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet",
+        DATA_DIR / "L3" / "market_summary.parquet",
+    )
 
 
 def load_planning_area_metrics() -> pd.DataFrame:
@@ -148,13 +148,11 @@ def load_planning_area_metrics() -> pd.DataFrame:
     Returns:
         DataFrame with metrics by planning area
     """
-    path = DATA_DIR / "L3" / "planning_area_metrics.parquet"
-
-    if not path.exists():
-        logger.warning(f"Planning area metrics not found at {path}")
-        return pd.DataFrame()
-
-    return pd.read_parquet(path)
+    return _read_first_existing(
+        settings.platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet",
+        settings.platinum_dir / "metrics" / "L5_affordability_by_area.parquet",
+        DATA_DIR / "L3" / "planning_area_metrics.parquet",
+    )
 
 
 def load_rental_yield_top_combos() -> pd.DataFrame:
@@ -164,13 +162,10 @@ def load_rental_yield_top_combos() -> pd.DataFrame:
     Returns:
         DataFrame with town/flat_type combinations ranked by yield
     """
-    path = DATA_DIR / "L3" / "rental_yield_top_combos.parquet"
-
-    if not path.exists():
-        logger.warning(f"Rental yield combos not found at {path}")
-        return pd.DataFrame()
-
-    return pd.read_parquet(path)
+    return _read_first_existing(
+        settings.platinum_dir / "metrics" / "L5_rental_yield_by_area.parquet",
+        DATA_DIR / "L3" / "rental_yield_top_combos.parquet",
+    )
 
 
 class PropertyType(Enum):
@@ -214,28 +209,55 @@ class TransactionLoader:
         if isinstance(property_type, str):
             property_type = PropertyType(property_type.lower())
 
-        dataset_name_map = {
-            PropertyType.HDB: "housing_hdb_transaction",
-            PropertyType.CONDO: "housing_condo_transaction",
-            PropertyType.EC: "housing_ec_transaction",
+        stage_file_map = {
+            "L0": {
+                PropertyType.HDB: settings.bronze_dir / "raw_hdb_resale.parquet",
+                PropertyType.CONDO: settings.bronze_dir / "raw_condo_transactions.parquet",
+                PropertyType.EC: settings.bronze_dir / "raw_condo_transactions.parquet",
+            },
+            "L1": {
+                PropertyType.HDB: settings.silver_dir / "cleaned_hdb_transactions.parquet",
+                PropertyType.CONDO: settings.silver_dir / "cleaned_condo_transactions.parquet",
+                PropertyType.EC: settings.silver_dir / "cleaned_ec_transactions.parquet",
+            },
+            "L2": {
+                PropertyType.HDB: settings.gold_dir / "unified_features.parquet",
+                PropertyType.CONDO: settings.gold_dir / "unified_features.parquet",
+                PropertyType.EC: settings.gold_dir / "unified_features.parquet",
+            },
+            "L3": {
+                PropertyType.HDB: settings.platinum_dir / "unified_dataset.parquet",
+                PropertyType.CONDO: settings.platinum_dir / "unified_dataset.parquet",
+                PropertyType.EC: settings.platinum_dir / "unified_dataset.parquet",
+            },
         }
-        dataset_name = dataset_name_map[property_type]
-
-        stage_map = {
-            "L0": settings.bronze_dir,
-            "L1": settings.silver_dir,
-            "L2": settings.gold_dir,
-            "L3": settings.platinum_dir,
-        }
-        stage_dir = stage_map[stage]
-        path = stage_dir / f"{dataset_name}.parquet"
+        path = stage_file_map[stage][property_type]
 
         if not path.exists():
             if settings.logging.verbose:
                 logger.warning(f"Transaction file not found: {path}")
             return pd.DataFrame()
 
-        return pd.read_parquet(path)
+        df = pd.read_parquet(path)
+        return self._filter_by_property_type(df, property_type)
+
+    def _filter_by_property_type(
+        self, df: pd.DataFrame, property_type: PropertyType
+    ) -> pd.DataFrame:
+        """Return rows for the requested property type when a type column is present."""
+        if df.empty or "property_type" not in df.columns:
+            return df
+
+        property_series = df["property_type"].astype(str).str.strip().str.lower()
+        filtered = df.loc[property_series == property_type.value].copy()
+
+        if filtered.empty and settings.logging.verbose:
+            logger.warning(
+                "No rows matched property_type=%s in loaded transaction dataset",
+                property_type.value,
+            )
+
+        return filtered
 
     def load_all_transactions(
         self, stage: Literal["L0", "L1", "L2", "L3"] = "L1"
@@ -361,7 +383,11 @@ def load_unified_data() -> pd.DataFrame:
     Returns:
         DataFrame with all housing transactions and features
     """
-    path = settings.data_dir / "pipeline" / "L3" / "housing_unified.parquet"
+    path = settings.platinum_dir / "unified_dataset.parquet"
+    legacy_path = settings.data_dir / "pipeline" / "L3" / "housing_unified.parquet"
+
+    if not path.exists() and legacy_path.exists():
+        path = legacy_path
 
     if not path.exists():
         logger.warning(f"Unified dataset not found at {path}")

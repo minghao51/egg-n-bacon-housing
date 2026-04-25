@@ -76,9 +76,10 @@ packages = ["src/egg_n_bacon_housing"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = ["notebooks/*.ipynb", "src/egg_n_bacon_housing/analytics/"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "N", "UP"]
+select = ["E", "F", "W", "I", "N"]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
@@ -145,23 +146,10 @@ plugins = ["pydantic.mypy"]
 
 # Known issues to address gradually:
 # 1. SecretStr fields in config.py - pydantic-settings compatibility with strict mode
-# 2. Legacy modules in analytics - need full type annotations
 
-# Override strict mode for legacy/experimental modules
-# Priority: Add type hints to these modules gradually, then remove overrides
-[[tool.mypy.overrides]]
-module = "notebooks.*"
-ignore_errors = true
+# Keep targeted overrides limited to modules that are still checked by our current mypy scope.
 
 [[tool.mypy.overrides]]
-module = "src/egg_n_bacon_housing.analytics.*"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "src/egg_n_bacon_housing.config.*"
+module = "egg_n_bacon_housing.config"
 disable_error_code = ["assignment"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "src/egg_n_bacon_housing.analytics.*"
 ignore_errors = true

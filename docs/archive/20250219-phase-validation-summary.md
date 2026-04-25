@@ -1,6 +1,6 @@
 # Phase 2 Validation Summary
 
-**Date**: 2025-02-19  
+**Date**: 2025-02-19
 **Status**: ✅ COMPLETE
 
 ## Overview
@@ -33,16 +33,16 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 **Commit**: `5e6faa9`
 
 ### Phase 2.4: Bug Fixes
-**Issue #1 - Merge Key Mismatch**: Amenity metrics used `property_id` but property_df used different keys  
-**Fix**: Use postal code as merge key instead  
+**Issue #1 - Merge Key Mismatch**: Amenity metrics used `property_id` but property_df used different keys
+**Fix**: Use postal code as merge key instead
 **Commit**: `ed0d208`
 
-**Issue #2 - Missing POSTAL in Amenity Features**: Amenity metrics output didn't include POSTAL for merging  
-**Fix**: Added POSTAL column to `compute_amenity_distances_by_type()` output  
+**Issue #2 - Missing POSTAL in Amenity Features**: Amenity metrics output didn't include POSTAL for merging
+**Fix**: Added POSTAL column to `compute_amenity_distances_by_type()` output
 **Commit**: `841e8c8`
 
-**Issue #3 - Path to Amenity Features**: L3 looking for file at wrong path  
-**Fix**: Updated path to check `L2/housing_per_type_amenity_features.parquet`  
+**Issue #3 - Path to Amenity Features**: L3 looking for file at wrong path
+**Fix**: Updated path to check `L2/housing_per_type_amenity_features.parquet`
 **Commit**: `55f795d`
 
 ## Validation Results
@@ -137,4 +137,3 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 - `data/pipeline/03_gold/housing_per_type_amenity_features.parquet` (NEW)
 - `data/pipeline/04_platinum/housing_unified.parquet` (UPDATED)
 - `app/public/data/amenity_summary.json.gz` (NEW)
-

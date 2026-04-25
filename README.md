@@ -119,11 +119,10 @@ egg-n-bacon-housing/
 ├── scripts/                   # Stage entry points (01_ingest.py, etc.)
 ├── main.py                    # CLI entry point
 ├── config.yaml                # Pipeline configuration
-├── notebooks/                 # Exploratory analysis
 ├── app/                       # Astro documentation site
 ├── tests/                     # Test suite
 ├── docs/                      # Architecture & guides
-└── data/                      # Pipeline data (01_bronze, 02_silver, 03_gold, 04_platinum)
+└── data/                      # Pipeline data (pipeline/01_bronze → 04_platinum)
 ```
 
 **Note**: The Hamilton DAG (`components/`) runs the core pipeline from bronze to platinum. Analytics modules (`analytics/`) are standalone exploratory scripts that consume exported datasets from the platinum layer. They are run on-demand for specific analyses and are not wired into the automated pipeline.
