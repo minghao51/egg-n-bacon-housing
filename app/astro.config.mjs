@@ -2,7 +2,6 @@ import { defineConfig } from 'astro/config';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import react from '@astrojs/react';
-import mdx from '@astrojs/mdx';
 import tailwind from '@astrojs/tailwind';
 
 import remarkMath from 'remark-math';
@@ -30,14 +29,14 @@ function remarkFixImagePaths() {
 export default defineConfig({
   integrations: [
     react(),
-    mdx({
-      remarkPlugins: [remarkMath, remarkFixImagePaths],
-      rehypePlugins: [rehypeKatex],
-    }),
     tailwind({
       applyBaseStyles: false,
     }),
   ],
+  markdown: {
+    remarkPlugins: [remarkMath, remarkFixImagePaths],
+    rehypePlugins: [rehypeKatex],
+  },
   site: isProduction
     ? 'https://minghao51.github.io/egg-n-bacon-housing'
     : 'http://localhost:4321',

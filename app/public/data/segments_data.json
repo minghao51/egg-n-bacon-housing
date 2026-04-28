@@ -4,14 +4,14 @@
       "property_type": "hdb",
       "count": 1,
       "median_price": 500000.0,
-      "avg_psf": 500.0
+      "avg_psf": null
     },
     {
       "property_type": "condo",
       "count": 1,
       "median_price": 600000.0,
-      "avg_psf": 600.0
+      "avg_psf": null
     }
   ],
-  "generated_at": "2026-04-24T10:39:00.362578"
+  "generated_at": "2026-04-28T12:16:09.395570"
 }

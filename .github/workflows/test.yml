@@ -44,10 +44,13 @@ jobs:
 
     - name: Create test data directories
       run: |
-        mkdir -p data/pipeline/{L0,L1,L2,L3} data/{cache,manual,analysis}
+        mkdir -p data/pipeline/{01_bronze,02_silver,03_gold,04_platinum} data/{cache,manual,analysis}
 
     - name: Run tests with coverage
-      run: uv run pytest tests/ -v --tb=short --cov=scripts/core --cov-report=xml --cov-report=term-missing:skip-covered
+      run: uv run pytest tests/ -v --tb=short --cov=egg_n_bacon_housing --cov-report=xml --cov-report=term-missing:skip-covered
+
+    - name: Enforce core module coverage floor
+      run: uv run python scripts/tools/check_core_coverage.py --coverage-xml coverage.xml --min-coverage 60
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4

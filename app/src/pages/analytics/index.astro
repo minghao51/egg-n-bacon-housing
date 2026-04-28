@@ -35,7 +35,7 @@ const docsByCategory = allDocs.reduce((acc, doc) => {
   if (!acc[category]) {
     acc[category] = [];
   }
-  const slug = doc.id.replace(/\.mdx$/, '');
+  const slug = doc.id.replace(/\.md$/, '');
   acc[category].push({
     slug,
     title: doc.data.title || doc.id,

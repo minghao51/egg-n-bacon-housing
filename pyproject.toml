@@ -79,7 +79,7 @@ target-version = "py312"
 extend-exclude = ["notebooks/*.ipynb", "src/egg_n_bacon_housing/analytics/"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "N"]
+select = ["E", "F", "W", "I", "N", "UP"]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
@@ -148,8 +148,8 @@ plugins = ["pydantic.mypy"]
 # 1. SecretStr fields in config.py - pydantic-settings compatibility with strict mode
 
 # Keep targeted overrides limited to modules that are still checked by our current mypy scope.
+# TODO: tighten this override once config.py gets proper type hints.
 
 [[tool.mypy.overrides]]
 module = "egg_n_bacon_housing.config"
-disable_error_code = ["assignment"]
 ignore_errors = true

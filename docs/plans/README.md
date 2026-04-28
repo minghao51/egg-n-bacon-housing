@@ -24,3 +24,7 @@ Include a header block near the top with:
 ## Recent Meta Plans
 
 - `docs/plans/2026-02-24-scripts-docs-simplification-plan.md` - scripts/docs organization conventions and migration steps
+
+## Audit Reports
+
+- `docs/plans/2026-04-28-code-audit-findings.md` - code audit of DAG refactor, rental ingestion, and schema relaxation (3 critical, 6 high, 7 medium, 5 low)

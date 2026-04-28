@@ -11,6 +11,15 @@ geocoding:
   max_workers: 5
   api_delay_seconds: 1.2
   timeout_seconds: 30
+  cache_duration_hours: 24
+  min_coordinate_coverage: 0.7
+
+metrics:
+  median_household_income: 85000
+  affordability_thresholds:
+    affordable: 5.0
+    moderate: 7.0
+    expensive: 9.0
 
 logging:
   level: "INFO"

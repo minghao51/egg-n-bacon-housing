@@ -19,7 +19,6 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DOCS_DIR = REPO_ROOT / "docs"
 DOCS_ANALYTICS_DIR = DOCS_DIR / "analytics"
-APP_CONTENT_DIR = REPO_ROOT / "app" / "src" / "content" / "analytics"
 
 ACTIVE_REFERENCE_FILES = [
     REPO_ROOT / "README.md",
@@ -139,32 +138,12 @@ def check_analytics_frontmatter(results: ValidationResults) -> None:
             results.warn(f"Unknown status '{status_match.group(1)}' in {rel}")
 
 
-def check_analytics_sync(results: ValidationResults) -> None:
-    if not DOCS_ANALYTICS_DIR.exists() or not APP_CONTENT_DIR.exists():
-        return
-
-    docs_slugs = {path.stem for path in DOCS_ANALYTICS_DIR.glob("*.md")}
-    app_slugs = {path.stem for path in APP_CONTENT_DIR.glob("*.mdx")}
-
-    missing_in_app = sorted(docs_slugs - app_slugs)
-    extra_in_app = sorted(app_slugs - docs_slugs)
-
-    for slug in missing_in_app:
-        results.error(f"Analytics doc is missing synced app content: docs/analytics/{slug}.md")
-
-    for slug in extra_in_app:
-        results.error(
-            f"App analytics content has no source doc: app/src/content/analytics/{slug}.mdx"
-        )
-
-
 def main() -> int:
     results = ValidationResults()
     check_referenced_paths(results)
     check_docs_root(results)
     check_naming_conventions(results)
     check_analytics_frontmatter(results)
-    check_analytics_sync(results)
 
     if results.errors:
         print("Errors:")

@@ -38,11 +38,6 @@ jobs:
         working-directory: ./app
         run: bun install
 
-      - name: Sync content files
-        run: |
-          chmod +x scripts/sync-content.sh
-          bash scripts/sync-content.sh
-
       - name: Verify dashboard data files
         working-directory: ./app
         run: |
