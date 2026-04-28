@@ -11,10 +11,10 @@ data.gov.sg is Singapore's official open data portal.
 import logging
 import re
 import time
-from collections.abc import Callable
 
 import pandas as pd
 import requests
+from requests import RequestException
 
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
@@ -43,6 +43,19 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         ... )
     """
 
+    max_retry_attempts = 5
+
+    def _sleep_for_retry(retry_attempts: int) -> None:
+        sleep_seconds = min(2**retry_attempts, 30)
+        logger.warning(
+            "Retrying dataset %s after transient failure (attempt %s/%s, sleeping %ss)",
+            dataset_id,
+            retry_attempts,
+            max_retry_attempts,
+            sleep_seconds,
+        )
+        time.sleep(sleep_seconds)
+
     def _fetch_from_api():
         response_agg = []
         offset_value = 0
@@ -51,7 +64,6 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         if "datastore_search" in request_url and "limit=" not in request_url:
             request_url = f"{request_url}&limit=10000"
         retry_attempts = 0
-        max_retry_attempts = 5
 
         while True:
             try:
@@ -104,7 +116,32 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
                     )
                     time.sleep(sleep_seconds)
                     continue
+                if (
+                    status is not None
+                    and 500 <= status < 600
+                    and retry_attempts < max_retry_attempts
+                ):
+                    retry_attempts += 1
+                    _sleep_for_retry(retry_attempts)
+                    continue
                 logger.error("Error fetching dataset %s (url=%s): %s", dataset_id, request_url, e)
+                if response_agg and total_records and offset_value < total_records:
+                    raise RuntimeError(
+                        f"Incomplete paginated fetch for {dataset_id}: retrieved {sum(len(df) for df in response_agg):,} "
+                        f"of expected {total_records:,} rows before error at offset {offset_value}"
+                    ) from e
+                break
+            except RequestException as e:
+                if retry_attempts < max_retry_attempts:
+                    retry_attempts += 1
+                    _sleep_for_retry(retry_attempts)
+                    continue
+                logger.error(
+                    "Request error fetching dataset %s (url=%s): %s",
+                    dataset_id,
+                    request_url,
+                    e,
+                )
                 if response_agg and total_records and offset_value < total_records:
                     raise RuntimeError(
                         f"Incomplete paginated fetch for {dataset_id}: retrieved {sum(len(df) for df in response_agg):,} "
@@ -166,7 +203,6 @@ def fetch_dataset_with_download_api(dataset_id: str) -> dict | None:
 def save_datagovsg_dataset(
     dataset_name: str,
     dataset_id: str,
-    fetch_fn: Callable[[], pd.DataFrame],
     use_cache: bool = True,
 ) -> pd.DataFrame | None:
     """Fetch dataset from data.gov.sg with caching and save to parquet.
@@ -174,7 +210,6 @@ def save_datagovsg_dataset(
     Args:
         dataset_name: Name for the parquet file (without extension)
         dataset_id: data.gov.sg dataset ID
-        fetch_fn: Function that fetches the data (no arguments)
         use_cache: Whether to use caching
 
     Returns:
@@ -187,7 +222,7 @@ def save_datagovsg_dataset(
     )
 
     if df is not None and not df.empty:
-        logger.info(f"✅ Fetched {dataset_name}: {len(df)} records")
+        logger.info("Fetched %s: %d records", dataset_name, len(df))
         return df
 
     return None

@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.neighbors import BallTree
 
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.mrt_distance import calculate_nearest_mrt, load_mrt_stations
@@ -76,18 +77,13 @@ def _nearest_mall_features(
     property_coords = np.radians(df[["lat", "lon"]].astype(float).to_numpy())
     mall_coords = np.radians(valid_malls[[lat_column, lon_column]].to_numpy())
 
-    deltas = property_coords[:, None, :] - mall_coords[None, :, :]
-    a = (
-        np.sin(deltas[:, :, 0] / 2.0) ** 2
-        + np.cos(property_coords[:, None, 0])
-        * np.cos(mall_coords[None, :, 0])
-        * np.sin(deltas[:, :, 1] / 2.0) ** 2
-    )
-    distances = 2 * 6371000 * np.arcsin(np.sqrt(a))
-    nearest_indices = distances.argmin(axis=1)
+    tree = BallTree(mall_coords, metric="haversine")
+    distances_rad, nearest_indices = tree.query(property_coords, k=1)
+    distances_m = distances_rad[:, 0] * 6371000
+    nearest_indices_flat = nearest_indices[:, 0]
 
-    df["dist_to_nearest_mall"] = distances[np.arange(len(df)), nearest_indices]
-    df["nearest_mall"] = valid_malls.iloc[nearest_indices][name_column].to_numpy()
+    df["dist_to_nearest_mall"] = distances_m
+    df["nearest_mall"] = valid_malls.iloc[nearest_indices_flat][name_column].to_numpy()
     return df
 
 
@@ -292,10 +288,46 @@ def unified_features(
 
     df = features_with_amenities.copy()
 
-    if not rental_yield.empty and "town" in rental_yield.columns:
-        yield_map = rental_yield.set_index("town")["rental_yield_pct"].to_dict()
-        if "town" in df.columns:
-            df["rental_yield_pct"] = df["town"].map(yield_map)
+    if not rental_yield.empty:
+        rental_df = rental_yield.copy()
+
+        if "transaction_date" in df.columns and "month" not in df.columns:
+            df["month"] = (
+                pd.to_datetime(df["transaction_date"], errors="coerce")
+                .dt.to_period("M")
+                .astype(str)
+            )
+
+        if "flat_type" in df.columns:
+            df["flat_type"] = _normalize_hdb_flat_type(df["flat_type"])
+        if "flat_type" in rental_df.columns:
+            rental_df["flat_type"] = _normalize_hdb_flat_type(rental_df["flat_type"])
+
+        merge_priority = [
+            ["town", "month", "flat_type"],
+            ["town", "month"],
+        ]
+        merge_keys: list[str] = []
+        for keys in merge_priority:
+            if all(k in df.columns for k in keys) and all(k in rental_df.columns for k in keys):
+                merge_keys = keys
+                break
+
+        if merge_keys and "rental_yield_pct" in rental_df.columns:
+            rental_cols = merge_keys + ["rental_yield_pct"]
+            rental_lookup = (
+                rental_df[rental_cols]
+                .dropna(subset=["rental_yield_pct"])
+                .drop_duplicates(
+                    subset=merge_keys,
+                    keep="last",
+                )
+            )
+            df = df.merge(rental_lookup, on=merge_keys, how="left")
+        else:
+            logger.warning(
+                "Skipping rental yield join: missing required join keys between feature and yield datasets"
+            )
 
     gold_dir().mkdir(parents=True, exist_ok=True)
     out_path = gold_dir() / "unified_features.parquet"

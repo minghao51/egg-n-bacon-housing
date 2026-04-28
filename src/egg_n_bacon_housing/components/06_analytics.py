@@ -90,22 +90,22 @@ def run_spatial_analysis(unified_dataset: pd.DataFrame) -> dict:
     return results
 
 
-def run_appreciation_analysis(price_metrics_by_area: pd.DataFrame) -> dict:
+def run_appreciation_analysis(appreciation_hotspots: pd.DataFrame) -> dict:
     """Run price appreciation analysis.
 
     Args:
-        price_metrics_by_area: Price metrics output.
+        appreciation_hotspots: Output from appreciation_hotspots in 05_metrics.
 
     Returns:
         Dictionary with appreciation analysis.
     """
     results: dict[str, Any] = {}
 
-    if price_metrics_by_area.empty:
+    if appreciation_hotspots.empty:
         return results
 
-    if "appreciation_3m_pct" in price_metrics_by_area.columns:
-        hotspots = price_metrics_by_area.dropna(subset=["appreciation_3m_pct"])
+    if "appreciation_3m_pct" in appreciation_hotspots.columns:
+        hotspots = appreciation_hotspots.dropna(subset=["appreciation_3m_pct"])
         hotspots = hotspots.sort_values("appreciation_3m_pct", ascending=False).head(10)
 
         results["top_hotspots"] = hotspots[["planning_area", "appreciation_3m_pct"]].to_dict(
@@ -113,24 +113,3 @@ def run_appreciation_analysis(price_metrics_by_area: pd.DataFrame) -> dict:
         )
 
     return results
-
-
-def save_analytics_report(analytics_results: dict) -> Path:
-    """Save analytics results as a report.
-
-    Args:
-        analytics_results: Dictionary of analysis results.
-
-    Returns:
-        Path to saved report.
-    """
-    analytics_dir().mkdir(parents=True, exist_ok=True)
-
-    import json
-
-    report_path = analytics_dir() / "analytics_report.json"
-    with open(report_path, "w") as f:
-        json.dump(analytics_results, f, indent=2, default=str)
-
-    logger.info(f"Saved analytics report to {report_path}")
-    return report_path

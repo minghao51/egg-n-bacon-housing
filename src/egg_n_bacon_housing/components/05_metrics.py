@@ -7,6 +7,7 @@ planning-area-level metrics from the platinum layer.
 import logging
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from egg_n_bacon_housing.config import settings
@@ -17,6 +18,18 @@ logger = logging.getLogger(__name__)
 def platinum_metrics_dir() -> Path:
     """Platinum layer metrics subdirectory."""
     return settings.platinum_dir / "metrics"
+
+
+def _ensure_month_column(df: pd.DataFrame) -> pd.DataFrame:
+    """Derive a month column from transaction_date, or return empty if impossible."""
+    if "month" not in df.columns and "transaction_date" in df.columns:
+        df["month"] = pd.to_datetime(df["transaction_date"]).dt.to_period("M").astype(str)
+
+    if "month" not in df.columns:
+        logger.error("No month or transaction_date column -- cannot compute metrics")
+        return pd.DataFrame()
+
+    return df
 
 
 def price_metrics_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:
@@ -36,26 +49,19 @@ def price_metrics_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:
         logger.warning("Missing required columns for price metrics")
         return pd.DataFrame()
 
-    df = unified_dataset.copy()
+    df = _ensure_month_column(unified_dataset.copy())
+    if df.empty:
+        return pd.DataFrame()
 
-    if "month" not in df.columns and "transaction_date" in df.columns:
-        df["month"] = pd.to_datetime(df["transaction_date"]).dt.to_period("M").astype(str)
+    agg_spec = {
+        "median_price": ("price", "median"),
+        "mean_price": ("price", "mean"),
+        "transaction_count": ("price", "count"),
+    }
+    if "psf" in df.columns:
+        agg_spec["avg_psf"] = ("psf", "mean")
 
-    if "month" not in df.columns:
-        df["month"] = "2025-01"
-
-    metrics = (
-        df.groupby(["planning_area", "month"])
-        .agg(
-            median_price=("price", "median"),
-            mean_price=("price", "mean"),
-            transaction_count=("price", "count"),
-            avg_psf=("psf", "mean")
-            if "psf" in df.columns
-            else ("price", lambda x: x.median() / 1000),
-        )
-        .reset_index()
-    )
+    metrics = df.groupby(["planning_area", "month"]).agg(**agg_spec).reset_index()
 
     platinum_metrics_dir().mkdir(parents=True, exist_ok=True)
     out_path = platinum_metrics_dir() / "L5_price_metrics_by_area.parquet"
@@ -81,16 +87,12 @@ def rental_yield_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:
         logger.warning("No rental yield data available")
         return pd.DataFrame()
 
-    df = unified_dataset.copy()
+    df = _ensure_month_column(unified_dataset.copy())
+    if df.empty:
+        return pd.DataFrame()
 
     if "planning_area" not in df.columns:
         return pd.DataFrame()
-
-    if "month" not in df.columns and "transaction_date" in df.columns:
-        df["month"] = pd.to_datetime(df["transaction_date"]).dt.to_period("M").astype(str)
-
-    if "month" not in df.columns:
-        df["month"] = "2025-01"
 
     metrics = (
         df.groupby(["planning_area", "month"])
@@ -125,13 +127,9 @@ def affordability_metrics(unified_dataset: pd.DataFrame) -> pd.DataFrame:
     if "planning_area" not in unified_dataset.columns:
         return pd.DataFrame()
 
-    df = unified_dataset.copy()
-
-    if "month" not in df.columns and "transaction_date" in df.columns:
-        df["month"] = pd.to_datetime(df["transaction_date"]).dt.to_period("M").astype(str)
-
-    if "month" not in df.columns:
-        df["month"] = "2025-01"
+    df = _ensure_month_column(unified_dataset.copy())
+    if df.empty:
+        return pd.DataFrame()
 
     metrics = (
         df.groupby(["planning_area", "month"])
@@ -142,15 +140,17 @@ def affordability_metrics(unified_dataset: pd.DataFrame) -> pd.DataFrame:
         .reset_index()
     )
 
-    estimated_income = 85000
+    estimated_income = settings.metrics.median_household_income
     metrics["affordability_ratio"] = metrics["median_price"] / estimated_income
 
+    thresholds = settings.metrics.affordability_thresholds
+
     def classify_affordability(ratio):
-        if ratio < 5:
+        if ratio < thresholds["affordable"]:
             return "Affordable"
-        elif ratio < 7:
+        elif ratio < thresholds["moderate"]:
             return "Moderate"
-        elif ratio < 9:
+        elif ratio < thresholds["expensive"]:
             return "Expensive"
         return "Severely Unaffordable"
 
@@ -178,24 +178,46 @@ def appreciation_hotspots(price_metrics_by_area: pd.DataFrame) -> pd.DataFrame:
 
     df = price_metrics_by_area.copy()
 
-    if "median_price" in df.columns:
-        df = df.sort_values(["planning_area", "month"])
-        df["appreciation_3m_pct"] = df.groupby("planning_area")["median_price"].pct_change(3) * 100
-        df["appreciation_12m_pct"] = (
-            df.groupby("planning_area")["median_price"].pct_change(12) * 100
-        )
+    if "median_price" not in df.columns:
+        return pd.DataFrame()
 
-        hotspots = df.dropna(subset=["appreciation_3m_pct"]).copy()
-        hotspots = hotspots[hotspots["appreciation_3m_pct"] > 0]
+    df["month_period"] = pd.PeriodIndex(df["month"], freq="M")
+    df = df.sort_values(["planning_area", "month_period"])
 
-        if len(hotspots) > 0:
-            hotspots = hotspots.sort_values("appreciation_3m_pct", ascending=False).head(20)
+    all_months = pd.period_range(df["month_period"].min(), df["month_period"].max(), freq="M")
+    records = []
+    for pa, group in df.groupby("planning_area"):
+        reindexed = group.set_index("month_period")["median_price"].reindex(all_months).ffill()
+        if len(reindexed.dropna()) < 2:
+            continue
+        pct_3m = reindexed.pct_change(3) * 100
+        pct_12m = reindexed.pct_change(12) * 100
+        for period in reindexed.index:
+            if pd.isna(pct_3m.get(period, np.nan)):
+                continue
+            records.append(
+                {
+                    "planning_area": pa,
+                    "month": str(period),
+                    "median_price": reindexed.get(period),
+                    "appreciation_3m_pct": pct_3m.get(period),
+                    "appreciation_12m_pct": pct_12m.get(period),
+                }
+            )
 
-        platinum_metrics_dir().mkdir(parents=True, exist_ok=True)
-        out_path = platinum_metrics_dir() / "L5_appreciation_hotspots.parquet"
-        hotspots.to_parquet(out_path, index=False)
-        logger.info(f"Saved {len(hotspots)} appreciation hotspot records")
+    if not records:
+        return pd.DataFrame()
 
-        return hotspots
+    hotspots = pd.DataFrame(records)
+    hotspots = hotspots.dropna(subset=["appreciation_3m_pct"])
+    hotspots = hotspots[hotspots["appreciation_3m_pct"] > 0]
 
-    return pd.DataFrame()
+    if len(hotspots) > 0:
+        hotspots = hotspots.sort_values("appreciation_3m_pct", ascending=False).head(20)
+
+    platinum_metrics_dir().mkdir(parents=True, exist_ok=True)
+    out_path = platinum_metrics_dir() / "L5_appreciation_hotspots.parquet"
+    hotspots.to_parquet(out_path, index=False)
+    logger.info(f"Saved {len(hotspots)} appreciation hotspot records")
+
+    return hotspots

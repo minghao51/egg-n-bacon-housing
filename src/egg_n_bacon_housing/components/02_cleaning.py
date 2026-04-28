@@ -81,36 +81,33 @@ def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.Da
     return df
 
 
-def hdb_validated(cleaned_hdb_transactions: pd.DataFrame) -> pd.DataFrame:
-    """Validate HDB transactions against schema.
+def _validate_against_schema(df: pd.DataFrame, model_cls: type, entity_name: str) -> pd.DataFrame:
+    """Validate DataFrame rows against a Pydantic schema, returning only valid records.
 
     Args:
-        cleaned_hdb_transactions: Output from cleaned_hdb_transactions.
+        df: Input DataFrame to validate.
+        model_cls: Pydantic model class to validate against.
+        entity_name: Human-readable label for logging (e.g. "HDB", "condo").
 
     Returns:
-        Validated DataFrame.
-
-    Raises:
-        ValueError: If validation fails.
+        DataFrame containing only records that passed validation.
     """
-    if cleaned_hdb_transactions.empty:
+    if df.empty:
         return pd.DataFrame()
-
-    from egg_n_bacon_housing.schemas.clean_models import HCleanHDBTransaction
 
     validation_errors = []
     validated_records = []
 
-    for idx, row in cleaned_hdb_transactions.iterrows():
+    for idx, row in df.iterrows():
         try:
-            record = HCleanHDBTransaction(**row.to_dict())
+            record = model_cls(**row.to_dict())
             validated_records.append(record.model_dump())
         except Exception as e:
             validation_errors.append({"index": idx, "error": str(e)})
 
     if validation_errors:
         error_count = len(validation_errors)
-        logger.warning(f"Validation failed for {error_count} HDB records")
+        logger.warning(f"Validation failed for {error_count} {entity_name} records")
         if error_count <= 5:
             for err in validation_errors[:5]:
                 logger.debug(f"  Row {err['index']}: {err['error']}")
@@ -121,11 +118,18 @@ def hdb_validated(cleaned_hdb_transactions: pd.DataFrame) -> pd.DataFrame:
 
     if validated_records:
         validated_df = pd.DataFrame(validated_records)
-        logger.info(f"Validated {len(validated_df)} HDB transactions successfully")
+        logger.info(f"Validated {len(validated_df)} {entity_name} transactions successfully")
         return validated_df
     else:
-        logger.warning("No HDB transactions passed validation")
+        logger.warning(f"No {entity_name} transactions passed validation")
         return pd.DataFrame()
+
+
+def hdb_validated(cleaned_hdb_transactions: pd.DataFrame) -> pd.DataFrame:
+    """Validate HDB transactions against schema."""
+    from egg_n_bacon_housing.schemas.clean_models import HCleanHDBTransaction
+
+    return _validate_against_schema(cleaned_hdb_transactions, HCleanHDBTransaction, "HDB")
 
 
 def cleaned_condo_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataFrame:
@@ -161,39 +165,9 @@ def cleaned_condo_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataF
 
 def condo_validated(cleaned_condo_transactions: pd.DataFrame) -> pd.DataFrame:
     """Validate condo transactions against schema."""
-    if cleaned_condo_transactions.empty:
-        return pd.DataFrame()
-
     from egg_n_bacon_housing.schemas.clean_models import HCleanCondoTransaction
 
-    validation_errors = []
-    validated_records = []
-
-    for idx, row in cleaned_condo_transactions.iterrows():
-        try:
-            record = HCleanCondoTransaction(**row.to_dict())
-            validated_records.append(record.model_dump())
-        except Exception as e:
-            validation_errors.append({"index": idx, "error": str(e)})
-
-    if validation_errors:
-        error_count = len(validation_errors)
-        logger.warning(f"Validation failed for {error_count} condo records")
-        if error_count <= 5:
-            for err in validation_errors[:5]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-        else:
-            for err in validation_errors[:3]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-            logger.debug(f"  ... and {error_count - 3} more")
-
-    if validated_records:
-        validated_df = pd.DataFrame(validated_records)
-        logger.info(f"Validated {len(validated_df)} condo transactions successfully")
-        return validated_df
-    else:
-        logger.warning("No condo transactions passed validation")
-        return pd.DataFrame()
+    return _validate_against_schema(cleaned_condo_transactions, HCleanCondoTransaction, "condo")
 
 
 def cleaned_ec_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataFrame:
@@ -230,39 +204,9 @@ def cleaned_ec_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataFram
 
 def ec_validated(cleaned_ec_transactions: pd.DataFrame) -> pd.DataFrame:
     """Validate EC transactions against schema."""
-    if cleaned_ec_transactions.empty:
-        return pd.DataFrame()
-
     from egg_n_bacon_housing.schemas.clean_models import HCleanECTransaction
 
-    validation_errors = []
-    validated_records = []
-
-    for idx, row in cleaned_ec_transactions.iterrows():
-        try:
-            record = HCleanECTransaction(**row.to_dict())
-            validated_records.append(record.model_dump())
-        except Exception as e:
-            validation_errors.append({"index": idx, "error": str(e)})
-
-    if validation_errors:
-        error_count = len(validation_errors)
-        logger.warning(f"Validation failed for {error_count} EC records")
-        if error_count <= 5:
-            for err in validation_errors[:5]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-        else:
-            for err in validation_errors[:3]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-            logger.debug(f"  ... and {error_count - 3} more")
-
-    if validated_records:
-        validated_df = pd.DataFrame(validated_records)
-        logger.info(f"Validated {len(validated_df)} EC transactions successfully")
-        return validated_df
-    else:
-        logger.warning("No EC transactions passed validation")
-        return pd.DataFrame()
+    return _validate_against_schema(cleaned_ec_transactions, HCleanECTransaction, "EC")
 
 
 def geocoded_properties(hdb_validated: pd.DataFrame, condo_validated: pd.DataFrame) -> pd.DataFrame:
@@ -290,8 +234,16 @@ def geocoded_properties(hdb_validated: pd.DataFrame, condo_validated: pd.DataFra
     combined = pd.concat(dfs, ignore_index=True)
 
     if "lat" not in combined.columns or "lon" not in combined.columns:
-        logger.warning("Geocoding not available - returning coordinates as-is")
-        return combined
+        raise ValueError(
+            "Geocoding data is required but lat/lon columns are missing from validated datasets"
+        )
+
+    coordinate_coverage = combined[["lat", "lon"]].notna().all(axis=1).mean()
+    min_coverage = settings.geocoding.min_coordinate_coverage
+    if coordinate_coverage < min_coverage:
+        raise ValueError(
+            f"Geocoding coverage too low: {coordinate_coverage:.1%} (required >= {min_coverage:.1%})"
+        )
 
     silver_dir().mkdir(parents=True, exist_ok=True)
     out_path = silver_dir() / "geocoded_properties.parquet"
@@ -303,36 +255,6 @@ def geocoded_properties(hdb_validated: pd.DataFrame, condo_validated: pd.DataFra
 
 def geocoded_validated(geocoded_properties: pd.DataFrame) -> pd.DataFrame:
     """Validate geocoded properties against schema."""
-    if geocoded_properties.empty:
-        return pd.DataFrame()
-
     from egg_n_bacon_housing.schemas.clean_models import GeocodedProperty
 
-    validation_errors = []
-    validated_records = []
-
-    for idx, row in geocoded_properties.iterrows():
-        try:
-            record = GeocodedProperty(**row.to_dict())
-            validated_records.append(record.model_dump())
-        except Exception as e:
-            validation_errors.append({"index": idx, "error": str(e)})
-
-    if validation_errors:
-        error_count = len(validation_errors)
-        logger.warning(f"Validation failed for {error_count} geocoded records")
-        if error_count <= 5:
-            for err in validation_errors[:5]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-        else:
-            for err in validation_errors[:3]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-            logger.debug(f"  ... and {error_count - 3} more")
-
-    if validated_records:
-        validated_df = pd.DataFrame(validated_records)
-        logger.info(f"Validated {len(validated_df)} geocoded properties successfully")
-        return validated_df
-    else:
-        logger.warning("No geocoded properties passed validation")
-        return pd.DataFrame()
+    return _validate_against_schema(geocoded_properties, GeocodedProperty, "geocoded")

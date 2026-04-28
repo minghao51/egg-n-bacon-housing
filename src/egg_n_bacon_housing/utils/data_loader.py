@@ -29,7 +29,7 @@ def _read_first_existing(*paths: Path) -> pd.DataFrame:
     for path in paths:
         if path.exists():
             return pd.read_parquet(path)
-    logger.warning("No dataset found at any expected path: %s", ", ".join(str(p) for p in paths))
+    logger.warning(f"No dataset found at any expected path: {[str(p) for p in paths]}")
     return pd.DataFrame()
 
 
@@ -146,13 +146,46 @@ def load_planning_area_metrics() -> pd.DataFrame:
     Load precomputed planning area metrics.
 
     Returns:
-        DataFrame with metrics by planning area
+        DataFrame with metrics by planning area. Tries to merge price metrics
+        and affordability metrics into a combined result; falls back to whichever
+        platinum file exists, then to the legacy path.
     """
-    return _read_first_existing(
-        settings.platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet",
-        settings.platinum_dir / "metrics" / "L5_affordability_by_area.parquet",
-        DATA_DIR / "L3" / "planning_area_metrics.parquet",
+    price_path = settings.platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet"
+    affordability_path = settings.platinum_dir / "metrics" / "L5_affordability_by_area.parquet"
+    legacy_path = DATA_DIR / "L3" / "planning_area_metrics.parquet"
+
+    price_df = pd.read_parquet(price_path) if price_path.exists() else pd.DataFrame()
+    affordability_df = (
+        pd.read_parquet(affordability_path) if affordability_path.exists() else pd.DataFrame()
     )
+
+    if not price_df.empty and not affordability_df.empty:
+        common_cols = ["planning_area", "town"]
+        merge_cols = [
+            c for c in common_cols if c in price_df.columns and c in affordability_df.columns
+        ]
+        if merge_cols:
+            merged = price_df.merge(
+                affordability_df,
+                on=merge_cols,
+                how="outer",
+                suffixes=("", "_affordability"),
+            )
+            logger.info(f"Merged price and affordability metrics: {len(merged)} rows")
+            return merged
+        logger.warning(
+            "No common key to merge price and affordability metrics, returning price only"
+        )
+
+    if not price_df.empty:
+        return price_df
+    if not affordability_df.empty:
+        return affordability_df
+    if legacy_path.exists():
+        return pd.read_parquet(legacy_path)
+
+    logger.warning("Planning area metrics not found at any expected path")
+    return pd.DataFrame()
 
 
 def load_rental_yield_top_combos() -> pd.DataFrame:
@@ -253,8 +286,7 @@ class TransactionLoader:
 
         if filtered.empty and settings.logging.verbose:
             logger.warning(
-                "No rows matched property_type=%s in loaded transaction dataset",
-                property_type.value,
+                f"No rows matched property_type={property_type.value} in loaded transaction dataset"
             )
 
         return filtered
@@ -383,22 +415,17 @@ def load_unified_data() -> pd.DataFrame:
     Returns:
         DataFrame with all housing transactions and features
     """
-    path = settings.platinum_dir / "unified_dataset.parquet"
-    legacy_path = settings.data_dir / "pipeline" / "L3" / "housing_unified.parquet"
+    df = _read_first_existing(
+        settings.platinum_dir / "unified_dataset.parquet",
+        settings.data_dir / "pipeline" / "L3" / "housing_unified.parquet",
+    )
 
-    if not path.exists() and legacy_path.exists():
-        path = legacy_path
-
-    if not path.exists():
-        logger.warning(f"Unified dataset not found at {path}")
-        return pd.DataFrame()
-
-    logger.info(f"Loading unified dataset from {path}")
-    df = pd.read_parquet(path)
+    if df.empty:
+        logger.warning("Unified dataset not found at any expected path")
+        return df
 
     if "transaction_date" in df.columns:
         df["transaction_date"] = pd.to_datetime(df["transaction_date"])
 
     logger.info(f"Loaded {len(df)} records from unified dataset")
-
     return df

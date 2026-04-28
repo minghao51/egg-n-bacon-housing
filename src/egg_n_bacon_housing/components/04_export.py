@@ -105,19 +105,21 @@ def segments_data(unified_dataset: pd.DataFrame) -> dict:
                         "property_type": ptype,
                         "count": len(subset),
                         "median_price": float(subset["price"].median()),
-                        "avg_psf": float(subset.get("psf", subset["price"] / 1000).median()),
+                        "avg_psf": float(subset["psf"].median())
+                        if "psf" in subset.columns
+                        else None,
                     }
                 )
 
-    segments_data = {"segments": segments, "generated_at": pd.Timestamp.now().isoformat()}
+    result = {"segments": segments, "generated_at": pd.Timestamp.now().isoformat()}
 
     webapp_data_dir().mkdir(parents=True, exist_ok=True)
     out_path = webapp_data_dir() / "segments_data.json"
     with open(out_path, "w") as f:
-        json.dump(segments_data, f, indent=2)
+        json.dump(result, f, indent=2)
     logger.info(f"Saved segments data to {out_path}")
 
-    return segments_data
+    return result
 
 
 def interactive_tools_data(unified_dataset: pd.DataFrame) -> dict:

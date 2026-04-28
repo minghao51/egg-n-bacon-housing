@@ -154,30 +154,33 @@ def calculate_nearest_mrt(
     properties_df["lat"] = pd.to_numeric(properties_df["lat"], errors="coerce")
     properties_df["lon"] = pd.to_numeric(properties_df["lon"], errors="coerce")
 
-    before_count = len(properties_df)
-    properties_df = properties_df.dropna(subset=["lat", "lon"])
-    after_count = len(properties_df)
-    if before_count != after_count:
-        logger.warning(f"Dropped {before_count - after_count} rows with invalid coordinates")
+    valid_mask = properties_df["lat"].notna() & properties_df["lon"].notna()
+    n_invalid = (~valid_mask).sum()
+    if n_invalid > 0:
+        logger.warning(f"{n_invalid} rows have invalid coordinates (NaN for MRT distance)")
+
+    valid_df = properties_df.loc[valid_mask]
 
     mrt_coords = mrt_stations_df[["lon", "lat"]].values
     tree = cKDTree(mrt_coords)
 
-    property_coords = properties_df[["lon", "lat"]].values
+    property_coords = valid_df[["lon", "lat"]].values
     distances, indices = tree.query(property_coords, k=1)
 
     nearest_stations = mrt_stations_df.iloc[indices]
 
-    properties_df["nearest_mrt_name"] = nearest_stations["name"].values
-    properties_df["nearest_mrt_lines"] = nearest_stations["lines"].values
-    properties_df["nearest_mrt_line_names"] = nearest_stations["line_names"].values
-    properties_df["nearest_mrt_tier"] = nearest_stations["tier"].values
-    properties_df["nearest_mrt_is_interchange"] = nearest_stations["is_interchange"].values
-    properties_df["nearest_mrt_colors"] = nearest_stations["colors"].values
+    properties_df.loc[valid_mask, "nearest_mrt_name"] = nearest_stations["name"].values
+    properties_df.loc[valid_mask, "nearest_mrt_lines"] = nearest_stations["lines"].values
+    properties_df.loc[valid_mask, "nearest_mrt_line_names"] = nearest_stations["line_names"].values
+    properties_df.loc[valid_mask, "nearest_mrt_tier"] = nearest_stations["tier"].values
+    properties_df.loc[valid_mask, "nearest_mrt_is_interchange"] = nearest_stations[
+        "is_interchange"
+    ].values
+    properties_df.loc[valid_mask, "nearest_mrt_colors"] = nearest_stations["colors"].values
 
     nearest_mrt_coords = nearest_stations[["lon", "lat"]].values
 
-    properties_df["nearest_mrt_distance"] = [
+    mrt_distances = [
         haversine_distance(lon1, lat1, lon2, lat2)
         for lon1, lat1, lon2, lat2 in zip(
             property_coords[:, 0],
@@ -186,18 +189,29 @@ def calculate_nearest_mrt(
             nearest_mrt_coords[:, 1],
         )
     ]
+    properties_df.loc[valid_mask, "nearest_mrt_distance"] = mrt_distances
 
-    properties_df["nearest_mrt_score"] = [
+    properties_df.loc[valid_mask, "nearest_mrt_score"] = [
         get_station_score(name, dist)
         for name, dist in zip(
-            properties_df["nearest_mrt_name"], properties_df["nearest_mrt_distance"]
+            properties_df.loc[valid_mask, "nearest_mrt_name"],
+            properties_df.loc[valid_mask, "nearest_mrt_distance"],
         )
     ]
 
+    properties_df.loc[~valid_mask, "nearest_mrt_name"] = None
+    properties_df.loc[~valid_mask, "nearest_mrt_distance"] = None
+    properties_df.loc[~valid_mask, "nearest_mrt_lines"] = None
+    properties_df.loc[~valid_mask, "nearest_mrt_line_names"] = None
+    properties_df.loc[~valid_mask, "nearest_mrt_tier"] = None
+    properties_df.loc[~valid_mask, "nearest_mrt_is_interchange"] = False
+    properties_df.loc[~valid_mask, "nearest_mrt_colors"] = None
+    properties_df.loc[~valid_mask, "nearest_mrt_score"] = 0.0
+
     logger.info("Added MRT distance features:")
-    logger.info(
-        f"  Mean distance to nearest MRT: {properties_df['nearest_mrt_distance'].mean():.0f}m"
-    )
+    valid_distances = properties_df.loc[valid_mask, "nearest_mrt_distance"]
+    if not valid_distances.empty:
+        logger.info(f"  Mean distance to nearest MRT: {valid_distances.mean():.0f}m")
     logger.info(
         f"  Median distance to nearest MRT: {properties_df['nearest_mrt_distance'].median():.0f}m"
     )

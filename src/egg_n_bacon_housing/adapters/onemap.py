@@ -47,44 +47,61 @@ def setup_onemap_headers() -> dict[str, str]:
 
                 current_time = time.time()
                 if token_data.get("exp", 0) > current_time:
-                    print("✅ Using existing OneMap token from .env")
-                    print(
-                        f"   Token expires in: {(token_data.get('exp') - current_time) / 3600:.1f} hours"
+                    logger.info("Using existing OneMap token from .env")
+                    logger.info(
+                        "Token expires in %.1f hours",
+                        (token_data.get("exp") - current_time) / 3600,
                     )
                     return {"Authorization": f"{access_token}"}
                 else:
-                    print("⚠️  Token in .env has expired")
+                    logger.warning("Token in .env has expired")
                     access_token = None
             else:
-                print("⚠️  Invalid token format")
+                logger.warning("Invalid token format")
                 access_token = None
         except Exception as e:
-            print(f"⚠️  Error decoding token: {e}")
+            logger.warning("Error decoding token: %s", e)
             access_token = None
 
     if not access_token:
-        print("Attempting to get new OneMap token...")
-        url = "https://www.onemap.gov.sg/api/auth/post/getToken"
-        payload = {
-            "email": os.environ.get("ONEMAP_EMAIL"),
-            "password": os.environ.get("ONEMAP_EMAIL_PASSWORD"),
-        }
+        return _request_new_token()
 
-        response = requests.request("POST", url, json=payload)
-        print(f"API Response Status: {response.status_code}")
+    raise Exception("Unable to obtain OneMap token")
 
-        if response.status_code == 200:
-            response_data = json.loads(response.text)
-            access_token = response_data.get("access_token")
-            if access_token:
-                print("✅ Successfully obtained new OneMap token")
-                return {"Authorization": f"{access_token}"}
-            else:
-                print(f"❌ No access_token in response: {response.text}")
-                raise KeyError("access_token not found in API response")
+
+@retry(
+    wait=wait_exponential(multiplier=1, min=1, max=10),
+    stop=stop_after_attempt(3),
+    before_sleep=lambda retry_state: logger.warning(
+        "Retrying OneMap auth (%d/3) after error: %s",
+        retry_state.attempt_number,
+        retry_state.outcome.exception(),
+    ),
+)
+def _request_new_token() -> dict[str, str]:
+    """Request a new OneMap API token with retry logic."""
+    logger.info("Requesting new OneMap token")
+    url = "https://www.onemap.gov.sg/api/auth/post/getToken"
+    payload = {
+        "email": os.environ.get("ONEMAP_EMAIL"),
+        "password": os.environ.get("ONEMAP_EMAIL_PASSWORD"),
+    }
+
+    response = requests.post(url, json=payload, timeout=30)
+    logger.debug("Token API status: %s", response.status_code)
+
+    if response.status_code == 200:
+        response_data = json.loads(response.text)
+        access_token = response_data.get("access_token")
+        if access_token:
+            logger.info("Obtained new OneMap token")
+            return {"Authorization": f"{access_token}"}
         else:
-            print(f"❌ Failed to get token: {response.text}")
-            raise Exception(f"Token request failed with status {response.status_code}")
+            logger.error("No access_token in response")
+            raise KeyError("access_token not found in API response")
+    else:
+        logger.error("Token request failed: status %s", response.status_code)
+        raise Exception(f"Token request failed with status {response.status_code}")
 
 
 initial_backoff = 1
@@ -95,7 +112,9 @@ max_backoff = 32
     wait=wait_exponential(multiplier=1, min=initial_backoff, max=max_backoff),
     stop=stop_after_attempt(3),
     before_sleep=lambda retry_state: logger.warning(
-        f"Retrying OneMap API ({retry_state.attempt_number}/3) after error: {retry_state.outcome.exception()}"
+        "Retrying OneMap API (%d/3) after error: %s",
+        retry_state.attempt_number,
+        retry_state.outcome.exception(),
     ),
 )
 def fetch_data(search_string: str, headers: dict[str, str], timeout: int = 30) -> pd.DataFrame:
@@ -146,4 +165,6 @@ def fetch_data_cached(
     def _fetch_from_api():
         return fetch_data(search_string, headers, timeout)
 
-    return cached_call(cache_id, _fetch_from_api, duration_hours=settings.geocoding.timeout_seconds)
+    return cached_call(
+        cache_id, _fetch_from_api, duration_hours=settings.geocoding.cache_duration_hours
+    )
