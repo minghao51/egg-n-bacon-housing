@@ -3,6 +3,7 @@
 import importlib
 
 import pandas as pd
+import pytest
 
 
 def _get_cleaning_module():
@@ -195,3 +196,30 @@ class TestGeocodedValidation:
         result = cleaning.geocoded_validated(invalid_data)
 
         assert result.empty
+
+    def test_geocoded_properties_raises_when_coordinate_columns_missing(self):
+        """Test geocoded_properties fails fast when lat/lon columns are missing."""
+        cleaning = _get_cleaning_module()
+
+        hdb_validated = pd.DataFrame([{"town": "TOA PAYOH", "price": 500000.0}])
+        condo_validated = pd.DataFrame()
+
+        with pytest.raises(ValueError, match="lat/lon columns are missing"):
+            cleaning.geocoded_properties(hdb_validated, condo_validated)
+
+    def test_geocoded_properties_raises_on_low_coordinate_coverage(self, monkeypatch):
+        """Test geocoded_properties enforces minimum coordinate coverage."""
+        cleaning = _get_cleaning_module()
+
+        monkeypatch.setattr(cleaning.settings.geocoding, "min_coordinate_coverage", 0.8)
+
+        hdb_validated = pd.DataFrame(
+            [
+                {"town": "TOA PAYOH", "price": 500000.0, "lat": 1.35, "lon": 103.8},
+                {"town": "ANG MO KIO", "price": 600000.0, "lat": pd.NA, "lon": 103.84},
+            ]
+        )
+        condo_validated = pd.DataFrame()
+
+        with pytest.raises(ValueError, match="Geocoding coverage too low"):
+            cleaning.geocoded_properties(hdb_validated, condo_validated)

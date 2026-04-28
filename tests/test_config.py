@@ -40,3 +40,7 @@ def test_legacy_dirs_removed():
 def test_pipeline_cache_settings():
     assert settings.pipeline.use_caching is True
     assert settings.pipeline.parquet_compression == "snappy"
+
+
+def test_geocoding_coverage_threshold_setting():
+    assert 0 <= settings.geocoding.min_coordinate_coverage <= 1

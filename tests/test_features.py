@@ -210,13 +210,15 @@ class TestGoldLayer:
         assert pd.isna(result.loc[0, "nearest_mall"])
 
     def test_unified_features_returns_dataframe(self):
-        """Test that unified_features returns a DataFrame."""
+        """Test that unified_features joins rental yield on month-level keys."""
         features = _get_features_module()
 
         features_with_amenities = pd.DataFrame(
             [
                 {
                     "town": "TOA PAYOH",
+                    "month": "2024-01",
+                    "flat_type": "4 ROOM",
                     "lat": 1.35,
                     "lon": 103.8,
                 }
@@ -227,8 +229,16 @@ class TestGoldLayer:
             [
                 {
                     "town": "TOA PAYOH",
+                    "month": "2024-01",
+                    "flat_type": "4-ROOM",
                     "rental_yield_pct": 0.48,
-                }
+                },
+                {
+                    "town": "TOA PAYOH",
+                    "month": "2024-02",
+                    "flat_type": "4-ROOM",
+                    "rental_yield_pct": 9.99,
+                },
             ]
         )
 
@@ -237,6 +247,7 @@ class TestGoldLayer:
         assert isinstance(result, pd.DataFrame)
         if not result.empty:
             assert "town" in result.columns
+            assert result.loc[0, "rental_yield_pct"] == pytest.approx(0.48)
 
     def test_unified_features_with_empty_input(self):
         """Test that unified_features handles empty input."""
