@@ -20,7 +20,6 @@ DISTANCES = {
 
 SCHOOL_LEVELS = ["PRIMARY", "SECONDARY (S1-S5)", "JUNIOR COLLEGE"]
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

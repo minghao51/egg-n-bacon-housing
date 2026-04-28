@@ -66,43 +66,32 @@ def mock_config(monkeypatch, temp_data_dir):
     """
     Mock configuration for testing using settings-based config.
 
-    Sets up test environment variables and paths.
-
-    Example:
-        >>> def test_with_mock_config(mock_config):
-        ...     # Config is ready for testing
-        ...     from egg_n_bacon_housing.config import settings
-        ...     assert settings.DATA_DIR.exists()
+    Sets up test environment variables and overrides data paths.
     """
-    # Set required environment variables
     monkeypatch.setenv("ONEMAP_EMAIL", "test@example.com")
     monkeypatch.setenv("GOOGLE_API_KEY", "test-api-key")
     monkeypatch.setenv("LOG_LEVEL", "DEBUG")
 
-    # Import settings after environment is set
-    from egg_n_bacon_housing.config import settings
+    from egg_n_bacon_housing.config import LayerDirs, Settings
 
-    # Temporarily override paths via monkeypatch
-    original_data_dir = settings.DATA_DIR
-    original_pipeline_dir = settings.PIPELINE_DIR
-    original_parquets_dir = settings.PARQUETS_DIR
-    original_cache_dir = settings.CACHE_DIR
-    original_manual_dir = settings.MANUAL_DIR
+    test_settings = Settings(
+        data_path=str(temp_data_dir).lstrip("./"),
+        layer_dirs=LayerDirs(
+            bronze=str(temp_data_dir / "pipeline" / "01_bronze"),
+            silver=str(temp_data_dir / "pipeline" / "02_silver"),
+            gold=str(temp_data_dir / "pipeline" / "03_gold"),
+            platinum=str(temp_data_dir / "pipeline" / "04_platinum"),
+        ),
+    )
 
-    settings.DATA_DIR = temp_data_dir
-    settings.PIPELINE_DIR = temp_data_dir / "pipeline"
-    settings.PARQUETS_DIR = settings.PIPELINE_DIR
-    settings.CACHE_DIR = temp_data_dir / "cache"
-    settings.MANUAL_DIR = temp_data_dir / "manual"
+    import egg_n_bacon_housing.config as config_module
 
-    yield settings
+    original = config_module.settings
+    config_module.settings = test_settings
 
-    # Restore original paths
-    settings.DATA_DIR = original_data_dir
-    settings.PIPELINE_DIR = original_pipeline_dir
-    settings.PARQUETS_DIR = original_parquets_dir
-    settings.CACHE_DIR = original_cache_dir
-    settings.MANUAL_DIR = original_manual_dir
+    yield test_settings
+
+    config_module.settings = original
 
 
 @pytest.fixture

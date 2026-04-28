@@ -19,6 +19,8 @@ from egg_n_bacon_housing.config import settings
 
 logger = logging.getLogger(__name__)
 
+_CACHE_MISS = object()
+
 
 class CacheManager:
     """File-based cache manager for API responses and computed results."""
@@ -45,19 +47,24 @@ class CacheManager:
         """
         return hashlib.md5(identifier.encode()).hexdigest()
 
-    def _get_cache_path(self, cache_key: str) -> Path:
-        """
-        Get the file path for a cache entry.
+    def _cache_paths(self, cache_key: str) -> dict[str, Path]:
+        """Return paths for supported cache formats."""
+        return {
+            "json": self.cache_dir / f"{cache_key}.json",
+            "parquet": self.cache_dir / f"{cache_key}.parquet",
+            "pickle": self.cache_dir / f"{cache_key}.pkl",  # legacy fallback only
+        }
 
-        Args:
-            cache_key: Cache key from _get_cache_key()
+    def _get_existing_cache_path(self, cache_key: str) -> Path | None:
+        """Return first existing cache path, preferring safe formats."""
+        paths = self._cache_paths(cache_key)
+        for key in ["json", "parquet", "pickle"]:
+            path = paths[key]
+            if path.exists():
+                return path
+        return None
 
-        Returns:
-            Path to cache file
-        """
-        return self.cache_dir / f"{cache_key}.pkl"
-
-    def _is_expired(self, cache_path: Path, duration_hours: int) -> bool:
+    def _is_expired(self, cache_path: Path | None, duration_hours: int) -> bool:
         """
         Check if a cache file has expired.
 
@@ -68,13 +75,13 @@ class CacheManager:
         Returns:
             True if cache is expired or doesn't exist
         """
-        if not cache_path.exists():
+        if cache_path is None or not cache_path.exists():
             return True
 
         file_age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
         return file_age > timedelta(hours=duration_hours)
 
-    def get(self, identifier: str, duration_hours: int = 24) -> Any | None:
+    def get(self, identifier: str, duration_hours: int = 24) -> Any:
         """
         Retrieve a cached value.
 
@@ -83,27 +90,37 @@ class CacheManager:
             duration_hours: How long cache is valid (default from settings.pipeline.cache_duration_hours)
 
         Returns:
-            Cached value, or None if not found/expired
+            Cached value, or _CACHE_MISS sentinel if not found/expired
         """
         if not settings.pipeline.use_caching:
             logger.debug("Caching is disabled")
-            return None
+            return _CACHE_MISS
 
         cache_key = self._get_cache_key(identifier)
-        cache_path = self._get_cache_path(cache_key)
+        cache_path = self._get_existing_cache_path(cache_key)
 
         if self._is_expired(cache_path, duration_hours):
             logger.debug(f"Cache miss or expired: {identifier[:100]}...")
-            return None
+            return _CACHE_MISS
+
+        assert cache_path is not None
 
         try:
-            with open(cache_path, "rb") as f:
-                value = pickle.load(f)
-            logger.info(f"✅ Cache hit: {identifier[:100]}...")
+            if cache_path.suffix == ".json":
+                with open(cache_path, encoding="utf-8") as f:
+                    value = json.load(f)
+            elif cache_path.suffix == ".parquet":
+                import pandas as pd
+
+                value = pd.read_parquet(cache_path)
+            else:
+                with open(cache_path, "rb") as f:
+                    value = pickle.load(f)
+            logger.info(f"Cache hit: {identifier[:100]}...")
             return value
         except Exception as e:
-            logger.warning(f"⚠️  Failed to load cache: {e}")
-            return None
+            logger.warning(f"Failed to load cache: {e}")
+            return _CACHE_MISS
 
     def set(self, identifier: str, value: Any) -> None:
         """
@@ -117,14 +134,20 @@ class CacheManager:
             return
 
         cache_key = self._get_cache_key(identifier)
-        cache_path = self._get_cache_path(cache_key)
+        cache_paths = self._cache_paths(cache_key)
+        json_path = cache_paths["json"]
+        parquet_path = cache_paths["parquet"]
 
         try:
-            with open(cache_path, "wb") as f:
-                pickle.dump(value, f)
-            logger.info(f"💾 Cached: {identifier[:100]}...")
+            if hasattr(value, "to_parquet") and callable(value.to_parquet):
+                # DataFrame-like payloads: use parquet instead of pickle.
+                value.to_parquet(parquet_path, index=False)
+            else:
+                with open(json_path, "w", encoding="utf-8") as f:
+                    json.dump(value, f)
+            logger.info(f"Cached: {identifier[:100]}...")
         except Exception as e:
-            logger.warning(f"⚠️  Failed to cache value: {e}")
+            logger.warning(f"Failed to cache value: {e}")
 
     def clear(self, identifier: str | None = None) -> None:
         """
@@ -135,14 +158,19 @@ class CacheManager:
         """
         if identifier:
             cache_key = self._get_cache_key(identifier)
-            cache_path = self._get_cache_path(cache_key)
-            if cache_path.exists():
-                cache_path.unlink()
-                logger.info(f"🗑️  Cleared cache: {identifier[:100]}...")
+            paths = self._cache_paths(cache_key)
+            deleted_any = False
+            for path in paths.values():
+                if path.exists():
+                    path.unlink()
+                    deleted_any = True
+            if deleted_any:
+                logger.info(f"Cleared cache: {identifier[:100]}...")
         else:
-            for cache_file in self.cache_dir.glob("*.pkl"):
-                cache_file.unlink()
-            logger.info("🗑️  Cleared all cache files")
+            for pattern in ("*.json", "*.parquet", "*.pkl"):
+                for cache_file in self.cache_dir.glob(pattern):
+                    cache_file.unlink()
+            logger.info("Cleared all cache files")
 
     def get_stats(self) -> dict:
         """
@@ -151,7 +179,9 @@ class CacheManager:
         Returns:
             Dictionary with cache stats (count, total size, oldest/newest)
         """
-        cache_files = list(self.cache_dir.glob("*.pkl"))
+        cache_files: list[Path] = []
+        for pattern in ("*.json", "*.parquet", "*.pkl"):
+            cache_files.extend(self.cache_dir.glob(pattern))
 
         if not cache_files:
             return {"count": 0, "total_size_mb": 0, "oldest": None, "newest": None}
@@ -189,10 +219,10 @@ def cached_call(
     Example:
         >>> result = cached_call("api_call_123", lambda: requests.get(url))
     """
-    duration = duration_hours or settings.pipeline.cache_duration_hours
+    duration = settings.pipeline.cache_duration_hours if duration_hours is None else duration_hours
 
     cached_value = _cache_manager.get(identifier, duration)
-    if cached_value is not None:
+    if cached_value is not _CACHE_MISS:
         return cached_value
 
     result = func()
@@ -230,10 +260,12 @@ def cached_api_call(
         @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
             cache_id = f"{method}:{url}:{json.dumps(params or {})} "
-            duration = duration_hours or settings.pipeline.cache_duration_hours
+            duration = (
+                settings.pipeline.cache_duration_hours if duration_hours is None else duration_hours
+            )
 
             cached_value = _cache_manager.get(cache_id, duration)
-            if cached_value is not None:
+            if cached_value is not _CACHE_MISS:
                 return cached_value
 
             result = func(*args, **kwargs)

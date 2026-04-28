@@ -22,6 +22,17 @@ class GeocodingConfig(BaseSettings):
     max_workers: int = 5
     api_delay_seconds: float = 1.2
     timeout_seconds: int = 30
+    cache_duration_hours: int = 24
+    min_coordinate_coverage: float = 0.7
+
+
+class MetricsConfig(BaseSettings):
+    median_household_income: int = 85000
+    affordability_thresholds: dict[str, float] = {
+        "affordable": 5.0,
+        "moderate": 7.0,
+        "expensive": 9.0,
+    }
 
 
 class LoggingConfig(BaseSettings):
@@ -53,6 +64,7 @@ class Settings(BaseSettings):
     geocoding: GeocodingConfig = Field(default_factory=GeocodingConfig)
     logging: LoggingConfig = Field(default_factory=LoggingConfig)
     layer_dirs: LayerDirs = Field(default_factory=LayerDirs)
+    metrics: MetricsConfig = Field(default_factory=MetricsConfig)
 
     onemap_email: SecretStr = Field(default="", alias="ONEMAP_EMAIL")
     onemap_password: SecretStr = Field(default="", alias="ONEMAP_EMAIL_PASSWORD")
