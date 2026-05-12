@@ -21,6 +21,14 @@ from pathlib import Path
 DEFAULT_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 DEFAULT_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+LEVEL_MAP = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+}
+
 
 def setup_logging(
     level: int = logging.INFO,
@@ -116,15 +124,7 @@ def get_logger_level_from_env() -> int:
     import os
 
     level_str = os.getenv("LOG_LEVEL", "INFO").upper()
-    level_map = {
-        "DEBUG": logging.DEBUG,
-        "INFO": logging.INFO,
-        "WARNING": logging.WARNING,
-        "ERROR": logging.ERROR,
-        "CRITICAL": logging.CRITICAL,
-    }
-
-    return level_map.get(level_str, logging.INFO)
+    return LEVEL_MAP.get(level_str, logging.INFO)
 
 
 def setup_logging_from_env(log_file: Path | None = None) -> None:

@@ -58,7 +58,9 @@ def raw_hdb_resale_transactions() -> pd.DataFrame:
         bronze_dir().mkdir(parents=True, exist_ok=True)
         df.to_parquet(cache_path, index=False)
         logger.info(f"Saved {len(df)} HDB resale records to bronze")
-    return df if df is not None else pd.DataFrame()
+    if df is None or df.empty:
+        raise RuntimeError("Core dataset fetch failed: hdb_resale")
+    return df
 
 
 def raw_condo_transactions() -> pd.DataFrame:
@@ -83,7 +85,9 @@ def raw_condo_transactions() -> pd.DataFrame:
         bronze_dir().mkdir(parents=True, exist_ok=True)
         df.to_parquet(cache_path, index=False)
         logger.info(f"Saved {len(df)} condo records to bronze")
-    return df if df is not None else pd.DataFrame()
+    if df is None or df.empty:
+        raise RuntimeError("Core dataset fetch failed: condo_resale")
+    return df
 
 
 def raw_rental_index() -> pd.DataFrame:
@@ -112,7 +116,9 @@ def raw_rental_index() -> pd.DataFrame:
         bronze_dir().mkdir(parents=True, exist_ok=True)
         df.to_parquet(cache_candidates[0], index=False)
         logger.info(f"Saved {len(df)} rental index records to bronze")
-    return df if df is not None else pd.DataFrame()
+    if df is None or df.empty:
+        raise RuntimeError("Core dataset fetch failed: rental_index")
+    return df
 
 
 def raw_hdb_rental() -> pd.DataFrame:
@@ -137,7 +143,9 @@ def raw_hdb_rental() -> pd.DataFrame:
         bronze_dir().mkdir(parents=True, exist_ok=True)
         df.to_parquet(cache_candidates[0], index=False)
         logger.info(f"Saved {len(df)} HDB rental records to bronze")
-    return df if df is not None else pd.DataFrame()
+    if df is None or df.empty:
+        raise RuntimeError("Core dataset fetch failed: hdb_rental")
+    return df
 
 
 def raw_school_directory() -> pd.DataFrame:
@@ -164,7 +172,9 @@ def raw_school_directory() -> pd.DataFrame:
         bronze_dir().mkdir(parents=True, exist_ok=True)
         df.to_parquet(cache_path, index=False)
         logger.info(f"Saved {len(df)} school records to bronze")
-    return df if df is not None else pd.DataFrame()
+    if df is None or df.empty:
+        raise RuntimeError("Core dataset fetch failed: school_directory")
+    return df
 
 
 def raw_macro_data() -> dict[str, pd.DataFrame]:

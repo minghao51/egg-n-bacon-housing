@@ -16,6 +16,10 @@ import pandas as pd
 import requests
 from requests import RequestException
 
+from egg_n_bacon_housing.adapters.exceptions import (
+    DatasetFetchError,
+    IncompleteDatasetFetchError,
+)
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
 
@@ -126,11 +130,13 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
                     continue
                 logger.error("Error fetching dataset %s (url=%s): %s", dataset_id, request_url, e)
                 if response_agg and total_records and offset_value < total_records:
-                    raise RuntimeError(
+                    raise IncompleteDatasetFetchError(
                         f"Incomplete paginated fetch for {dataset_id}: retrieved {sum(len(df) for df in response_agg):,} "
                         f"of expected {total_records:,} rows before error at offset {offset_value}"
                     ) from e
-                break
+                raise DatasetFetchError(
+                    f"Failed to fetch dataset {dataset_id} from {request_url} (status={status})"
+                ) from e
             except RequestException as e:
                 if retry_attempts < max_retry_attempts:
                     retry_attempts += 1
@@ -143,19 +149,23 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
                     e,
                 )
                 if response_agg and total_records and offset_value < total_records:
-                    raise RuntimeError(
+                    raise IncompleteDatasetFetchError(
                         f"Incomplete paginated fetch for {dataset_id}: retrieved {sum(len(df) for df in response_agg):,} "
                         f"of expected {total_records:,} rows before error at offset {offset_value}"
                     ) from e
-                break
+                raise DatasetFetchError(
+                    f"Request error fetching dataset {dataset_id} from {request_url}"
+                ) from e
             except Exception as e:
                 logger.error("Error fetching dataset %s (url=%s): %s", dataset_id, request_url, e)
                 if response_agg and total_records and offset_value < total_records:
-                    raise RuntimeError(
+                    raise IncompleteDatasetFetchError(
                         f"Incomplete paginated fetch for {dataset_id}: retrieved {sum(len(df) for df in response_agg):,} "
                         f"of expected {total_records:,} rows before error at offset {offset_value}"
                     ) from e
-                break
+                raise DatasetFetchError(
+                    f"Unexpected error fetching dataset {dataset_id} from {request_url}"
+                ) from e
 
         if not response_agg:
             logger.warning(f"No data fetched for dataset {dataset_id}")

@@ -38,7 +38,7 @@ def test_build_pipeline_and_execute_minimal_graph(monkeypatch, tmp_path):
         sys.modules.pop(module.__name__, None)
 
 
-def test_run_full_pipeline_uses_default_final_vars(monkeypatch):
+def test_run_pipeline_defaults_to_all_stage(monkeypatch):
     pipeline = _get_pipeline_module()
 
     captured = {}
@@ -50,12 +50,7 @@ def test_run_full_pipeline_uses_default_final_vars(monkeypatch):
 
     monkeypatch.setattr(pipeline, "build_pipeline", lambda data_path=None: DummyDriver())
 
-    result = pipeline.run_full_pipeline()
+    result = pipeline.run_pipeline()
 
-    assert captured["final_vars"] == [
-        "unified_dataset",
-        "dashboard_json",
-        "segments_data",
-        "price_metrics_by_area",
-    ]
+    assert captured["final_vars"] == pipeline.STAGE_VARS["all"]
     assert set(result.keys()) == set(captured["final_vars"])

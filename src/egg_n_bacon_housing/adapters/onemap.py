@@ -19,10 +19,20 @@ import pandas as pd
 import requests
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from egg_n_bacon_housing.adapters.exceptions import CredentialError, OneMapAuthError
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
 
 logger = logging.getLogger(__name__)
+
+
+def _retry_exception_message(retry_state) -> str:
+    """Get the latest retry exception message safely for logging."""
+    outcome = retry_state.outcome
+    if outcome is None:
+        return "unknown error"
+    exc = outcome.exception()
+    return str(exc) if exc is not None else "unknown error"
 
 
 def setup_onemap_headers() -> dict[str, str]:
@@ -32,7 +42,7 @@ def setup_onemap_headers() -> dict[str, str]:
         Dict with Authorization header containing valid JWT token
 
     Raises:
-        Exception: If token cannot be obtained or is invalid
+        OneMapAuthError: If token cannot be obtained or is invalid
     """
     access_token = os.environ.get("ONEMAP_TOKEN")
 
@@ -66,7 +76,14 @@ def setup_onemap_headers() -> dict[str, str]:
     if not access_token:
         return _request_new_token()
 
-    raise Exception("Unable to obtain OneMap token")
+    raise OneMapAuthError("Unable to obtain OneMap token")
+
+
+def _get_required_secret(secret_name: str) -> str:
+    value = getattr(settings, secret_name).get_secret_value().strip()
+    if not value:
+        raise CredentialError(f"Missing required credential: {secret_name.upper()}")
+    return value
 
 
 @retry(
@@ -75,7 +92,7 @@ def setup_onemap_headers() -> dict[str, str]:
     before_sleep=lambda retry_state: logger.warning(
         "Retrying OneMap auth (%d/3) after error: %s",
         retry_state.attempt_number,
-        retry_state.outcome.exception(),
+        _retry_exception_message(retry_state),
     ),
 )
 def _request_new_token() -> dict[str, str]:
@@ -83,8 +100,8 @@ def _request_new_token() -> dict[str, str]:
     logger.info("Requesting new OneMap token")
     url = "https://www.onemap.gov.sg/api/auth/post/getToken"
     payload = {
-        "email": os.environ.get("ONEMAP_EMAIL"),
-        "password": os.environ.get("ONEMAP_EMAIL_PASSWORD"),
+        "email": _get_required_secret("onemap_email"),
+        "password": _get_required_secret("onemap_password"),
     }
 
     response = requests.post(url, json=payload, timeout=30)
@@ -98,10 +115,10 @@ def _request_new_token() -> dict[str, str]:
             return {"Authorization": f"{access_token}"}
         else:
             logger.error("No access_token in response")
-            raise KeyError("access_token not found in API response")
+            raise OneMapAuthError("access_token not found in API response")
     else:
-        logger.error("Token request failed: status %s", response.status_code)
-        raise Exception(f"Token request failed with status {response.status_code}")
+        logger.error("onemap_auth_failed status=%s url=%s", response.status_code, url)
+        raise OneMapAuthError(f"Token request failed with status {response.status_code}")
 
 
 initial_backoff = 1
@@ -114,7 +131,7 @@ max_backoff = 32
     before_sleep=lambda retry_state: logger.warning(
         "Retrying OneMap API (%d/3) after error: %s",
         retry_state.attempt_number,
-        retry_state.outcome.exception(),
+        _retry_exception_message(retry_state),
     ),
 )
 def fetch_data(search_string: str, headers: dict[str, str], timeout: int = 30) -> pd.DataFrame:

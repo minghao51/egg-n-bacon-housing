@@ -3,6 +3,7 @@
 import importlib
 
 import pandas as pd
+import pytest
 
 
 def _get_export_module():
@@ -25,6 +26,7 @@ class TestPlatinumLayer:
                     "lon": 103.8,
                     "price": 500000.0,
                     "property_type": "hdb",
+                    "transaction_date": pd.Timestamp("2024-01-01"),
                 }
             ]
         )
@@ -46,6 +48,11 @@ class TestPlatinumLayer:
 
         assert isinstance(result, pd.DataFrame)
         assert result.empty
+
+    def test_unified_dataset_requires_contract_columns(self):
+        export = _get_export_module()
+        with pytest.raises(ValueError, match="missing required columns"):
+            export.unified_dataset(pd.DataFrame([{"price": 500000.0}]))
 
     def test_dashboard_json_returns_dict(self):
         """Test that dashboard_json returns a dictionary."""

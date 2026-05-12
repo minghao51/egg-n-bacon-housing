@@ -11,6 +11,7 @@ from pathlib import Path
 import pandas as pd
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.contracts import require_columns
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,7 @@ def unified_dataset(unified_features: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
 
     df = unified_features.copy()
+    require_columns(df, {"price", "property_type", "transaction_date"}, "unified_features")
 
     platinum_dir().mkdir(parents=True, exist_ok=True)
     out_path = platinum_dir() / "unified_dataset.parquet"

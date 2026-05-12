@@ -15,6 +15,9 @@ import pandas as pd
 
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.data_loader import CSVLoader
+from egg_n_bacon_housing.utils.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 def load_ura_files(
@@ -30,37 +33,20 @@ def load_ura_files(
     """
     csv_loader = CSVLoader(base_path=base_path)
 
-    ec_list = [
-        "ECResidentialTransaction20260121003532",
-        "ECResidentialTransaction20260121003707",
-    ]
-
-    condo_list = [
-        "ResidentialTransaction20260121003944",
-        "ResidentialTransaction20260121004101",
-        "ResidentialTransaction20260121004213",
-        "ResidentialTransaction20260121004407",
-        "ResidentialTransaction20260121004517",
-        "ResidentialTransaction20260121005130",
-        "ResidentialTransaction20260121005233",
-        "ResidentialTransaction20260121005346",
-        "ResidentialTransaction20260121005450",
-        "ResidentialTransaction20260121005601",
-        "ResidentialTransaction20260121005715",
-        "ResidentialTransaction20260121005734",
-    ]
+    ec_list = settings.ura_ec_files
+    condo_list = settings.ura_condo_files
 
     ura_dir = settings.data_dir / "manual" / "csv" / "ura"
 
     ec_dfs = [pd.read_csv(ura_dir / f"{ec}.csv", encoding="latin1") for ec in ec_list]
     ec_df = pd.concat(ec_dfs, ignore_index=True)
-    print(f"✅ Loaded {len(ec_df)} EC transactions from {len(ec_list)} files")
+    logger.info("loaded_ura_ec rows=%s files=%s", len(ec_df), len(ec_list))
 
     condo_dfs = [pd.read_csv(ura_dir / f"{condo}.csv", encoding="latin1") for condo in condo_list]
     condo_df = pd.concat(condo_dfs, ignore_index=True)
     condo_df["Area (SQM)"] = condo_df["Area (SQM)"].str.replace(",", "").str.strip()
     condo_df["Area (SQM)"] = pd.to_numeric(condo_df["Area (SQM)"], errors="coerce")
-    print(f"✅ Loaded {len(condo_df)} condo transactions from {len(condo_list)} files")
+    logger.info("loaded_ura_condo rows=%s files=%s", len(condo_df), len(condo_list))
 
     hdb_df = csv_loader.load_hdb_resale(base_path=base_path)
 
@@ -87,9 +73,9 @@ def load_ura_files(
             standardize_lease_duration
         )
         hdb_df.drop("remaining_lease", axis=1, inplace=True)
-        print(f"✅ Loaded {len(hdb_df)} HDB transactions with lease standardization")
+        logger.info("loaded_hdb_resale rows=%s lease_standardized=true", len(hdb_df))
     else:
-        print(f"✅ Loaded {len(hdb_df)} HDB transactions (no lease column)")
+        logger.info("loaded_hdb_resale rows=%s lease_standardized=false", len(hdb_df))
 
     return ec_df, condo_df, hdb_df
 
@@ -130,5 +116,5 @@ def extract_unique_addresses(
     housing_df["NameAddress"] = housing_df[name_address_list].agg(" ".join, axis=1)
     housing_df["NameAddress"] = [addr.strip() for addr in housing_df["NameAddress"]]
 
-    print(f"✅ Extracted {len(housing_df)} unique addresses")
+    logger.info("extracted_unique_addresses rows=%s", len(housing_df))
     return housing_df

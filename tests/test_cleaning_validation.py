@@ -115,6 +115,11 @@ class TestHDBValidation:
         assert not result.empty
         assert result.loc[0, "remaining_lease_months"] == 900
 
+    def test_cleaned_hdb_transactions_requires_month_column(self):
+        cleaning = _get_cleaning_module()
+        with pytest.raises(ValueError, match="missing required columns"):
+            cleaning.cleaned_hdb_transactions(pd.DataFrame([{"resale_price": 500000.0}]))
+
 
 class TestCondoValidation:
     """Test condo transaction validation."""
@@ -148,6 +153,13 @@ class TestCondoValidation:
         assert not result.empty
         assert len(result) == 1
         assert result.iloc[0]["price"] == 1500000.0
+
+    def test_cleaned_condo_transactions_requires_price_column(self):
+        cleaning = _get_cleaning_module()
+        with pytest.raises(ValueError, match="missing required columns"):
+            cleaning.cleaned_condo_transactions(
+                pd.DataFrame([{"date": "2023-01-01", "project_name": "X"}])
+            )
 
 
 class TestGeocodedValidation:

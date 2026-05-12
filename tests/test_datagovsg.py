@@ -4,6 +4,7 @@ import importlib
 from unittest.mock import MagicMock
 
 import pandas as pd
+import pytest
 import requests
 
 
@@ -51,6 +52,43 @@ class TestDatagovRetryBehavior:
         assert call_count == 3
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 1
+
+    def test_raises_on_incomplete_paginated_fetch(self, monkeypatch):
+        """Should raise when paginated fetch fails before reaching expected total."""
+        datagov = _get_datagov_module()
+
+        call_count = 0
+
+        def fake_get(url, timeout=60):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                response = MagicMock()
+                response.status_code = 200
+                response.raise_for_status.return_value = None
+                response.json.return_value = {
+                    "result": {
+                        "records": [{"month": "2024-01", "resale_price": 500000}],
+                        "_links": {"next": "/api/action/datastore_search?offset=10000"},
+                        "total": 20000,
+                    }
+                }
+                return response
+
+            response = MagicMock()
+            response.status_code = 500
+            response.raise_for_status.side_effect = requests.HTTPError(response=response)
+            return response
+
+        monkeypatch.setattr(datagov.requests, "get", fake_get)
+        monkeypatch.setattr(datagov.time, "sleep", lambda *_: None)
+
+        with pytest.raises(datagov.IncompleteDatasetFetchError):
+            datagov.fetch_datagovsg_dataset(
+                "https://data.gov.sg/api/action/datastore_search?resource_id=",
+                "dataset-id",
+                use_cache=False,
+            )
 
     def test_retries_on_request_exception_then_succeeds(self, monkeypatch):
         """Should retry transient request exceptions."""

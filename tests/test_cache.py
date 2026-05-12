@@ -1,7 +1,6 @@
 """Tests for utils/cache.py."""
 
 import importlib
-import pickle
 
 import pandas as pd
 
@@ -137,14 +136,14 @@ class TestCacheSerialization:
         assert (tmp_path / f"{key}.json").exists()
         assert not (tmp_path / f"{key}.pkl").exists()
 
-    def test_legacy_pickle_still_loads(self, tmp_path, monkeypatch):
+    def test_legacy_pickle_ignored_when_disabled(self, tmp_path, monkeypatch):
         cache = _get_cache_module()
         monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
         monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
+        monkeypatch.setattr(cache.settings.pipeline, "allow_legacy_pickle_cache", False)
 
         key = cache._cache_manager._get_cache_key("legacy_cache")
-        with open(tmp_path / f"{key}.pkl", "wb") as f:
-            pickle.dump({"legacy": True}, f)
+        (tmp_path / f"{key}.pkl").write_bytes(b"legacy")
 
         result = cache.cached_call("legacy_cache", lambda: {"legacy": False}, duration_hours=1)
-        assert result == {"legacy": True}
+        assert result == {"legacy": False}

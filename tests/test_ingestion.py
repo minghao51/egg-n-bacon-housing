@@ -32,6 +32,17 @@ class TestBronzeLayer:
         result = ingestion.raw_hdb_resale_transactions()
         pd.testing.assert_frame_equal(result, expected)
 
+    def test_raw_hdb_resale_transactions_hard_fails_on_empty_fetch(self, tmp_path, monkeypatch):
+        ingestion = _get_ingestion_module()
+        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
+        monkeypatch.setattr(
+            ingestion.datagovsg,
+            "fetch_datagovsg_dataset",
+            lambda *args, **kwargs: pd.DataFrame(),
+        )
+        with pytest.raises(RuntimeError, match="Core dataset fetch failed: hdb_resale"):
+            ingestion.raw_hdb_resale_transactions()
+
     def test_raw_rental_index_reads_legacy_bronze_filename(self, tmp_path, monkeypatch):
         """Test that rental index reads the tracked bronze parquet filename."""
         ingestion = _get_ingestion_module()

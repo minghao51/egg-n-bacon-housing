@@ -3,12 +3,7 @@
 from pathlib import Path
 
 from pydantic import Field, SecretStr
-from pydantic_settings import (
-    BaseSettings,
-    PydanticBaseSettingsSource,
-    SettingsConfigDict,
-    YamlConfigSettingsSource,
-)
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class PipelineConfig(BaseSettings):
@@ -16,6 +11,7 @@ class PipelineConfig(BaseSettings):
     parquet_index: bool = False
     use_caching: bool = True
     cache_duration_hours: int = 24
+    allow_legacy_pickle_cache: bool = False
 
 
 class GeocodingConfig(BaseSettings):
@@ -53,7 +49,6 @@ class Settings(BaseSettings):
         env_prefix="",
         env_nested_delimiter="__",
         env_file=".env",
-        yaml_file="config.yaml",
         extra="ignore",
     )
 
@@ -72,6 +67,24 @@ class Settings(BaseSettings):
     supabase_url: SecretStr = Field(default="", alias="SUPABASE_URL")
     supabase_key: SecretStr = Field(default="", alias="SUPABASE_KEY")
     jina_ai: SecretStr = Field(default="", alias="JINA_AI")
+    ura_ec_files: list[str] = [
+        "ECResidentialTransaction20260121003532",
+        "ECResidentialTransaction20260121003707",
+    ]
+    ura_condo_files: list[str] = [
+        "ResidentialTransaction20260121003944",
+        "ResidentialTransaction20260121004101",
+        "ResidentialTransaction20260121004213",
+        "ResidentialTransaction20260121004407",
+        "ResidentialTransaction20260121004517",
+        "ResidentialTransaction20260121005130",
+        "ResidentialTransaction20260121005233",
+        "ResidentialTransaction20260121005346",
+        "ResidentialTransaction20260121005450",
+        "ResidentialTransaction20260121005601",
+        "ResidentialTransaction20260121005715",
+        "ResidentialTransaction20260121005734",
+    ]
 
     @property
     def base_dir(self) -> Path:
@@ -96,22 +109,6 @@ class Settings(BaseSettings):
     @property
     def platinum_dir(self) -> Path:
         return self.base_dir / self.layer_dirs.platinum
-
-    @classmethod
-    def settings_customise_sources(
-        cls,
-        settings_cls: type[BaseSettings],
-        init_settings: PydanticBaseSettingsSource,
-        env_settings: PydanticBaseSettingsSource,
-        dotenv_settings: PydanticBaseSettingsSource,
-        file_secret_settings: PydanticBaseSettingsSource,
-    ) -> tuple[PydanticBaseSettingsSource, ...]:
-        return (
-            init_settings,
-            env_settings,
-            dotenv_settings,
-            YamlConfigSettingsSource(settings_cls),
-        )
 
 
 settings = Settings()

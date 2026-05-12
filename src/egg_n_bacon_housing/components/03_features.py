@@ -12,6 +12,7 @@ import pandas as pd
 from sklearn.neighbors import BallTree
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.mrt_distance import calculate_nearest_mrt, load_mrt_stations
 from egg_n_bacon_housing.utils.school_features import calculate_school_features
 
@@ -218,6 +219,7 @@ def features_with_amenities(
         return pd.DataFrame()
 
     df = geocoded_validated.copy()
+    require_columns(df, {"lat", "lon", "price"}, "geocoded_validated")
     df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
     df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
     df = df.dropna(subset=["lat", "lon"])

@@ -5,6 +5,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
+import pytest
 import requests
 
 
@@ -60,6 +61,20 @@ class TestSetupOnemapHeaders:
 
         assert call_count == 3
         assert result == {"Authorization": "retry-token"}
+
+    def test_missing_credentials_fail_preflight(self, monkeypatch):
+        """Should fail before outbound request when required credentials are missing."""
+        onemap = _get_onemap_module()
+
+        with patch("requests.post") as mock_post:
+            with patch.object(
+                onemap.settings.onemap_email,
+                "get_secret_value",
+                return_value="",
+            ):
+                with pytest.raises(onemap.CredentialError):
+                    onemap._get_required_secret("onemap_email")
+        mock_post.assert_not_called()
 
 
 class TestFetchDataCached:

@@ -6,10 +6,12 @@ validating bronze data into the silver layer.
 
 import logging
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.contracts import require_columns
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,7 @@ def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.Da
         return pd.DataFrame()
 
     df = raw_hdb_resale_transactions.copy()
+    require_columns(df, {"month"}, "raw_hdb_resale_transactions")
 
     if "resale_price" in df.columns:
         df = df.rename(columns={"resale_price": "price"})
@@ -81,7 +84,9 @@ def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.Da
     return df
 
 
-def _validate_against_schema(df: pd.DataFrame, model_cls: type, entity_name: str) -> pd.DataFrame:
+def _validate_against_schema(
+    df: pd.DataFrame, model_cls: type[Any], entity_name: str
+) -> pd.DataFrame:
     """Validate DataFrame rows against a Pydantic schema, returning only valid records.
 
     Args:
@@ -95,15 +100,31 @@ def _validate_against_schema(df: pd.DataFrame, model_cls: type, entity_name: str
     if df.empty:
         return pd.DataFrame()
 
+    required_fields = {
+        name
+        for name, field in model_cls.model_fields.items()
+        if field.is_required() and field.default is None
+    }
+    existing_required = [col for col in required_fields if col in df.columns]
+    if existing_required:
+        df = df.dropna(subset=existing_required)
+        if df.empty:
+            logger.warning("No %s records left after required-field prefilter", entity_name)
+            return pd.DataFrame()
+
     validation_errors = []
     validated_records = []
+    records = df.to_dict(orient="records")
+    chunk_size = 2000
 
-    for idx, row in df.iterrows():
-        try:
-            record = model_cls(**row.to_dict())
-            validated_records.append(record.model_dump())
-        except Exception as e:
-            validation_errors.append({"index": idx, "error": str(e)})
+    for chunk_start in range(0, len(records), chunk_size):
+        chunk = records[chunk_start : chunk_start + chunk_size]
+        for i, row in enumerate(chunk, start=chunk_start):
+            try:
+                record = model_cls(**row)
+                validated_records.append(record.model_dump())
+            except Exception as e:
+                validation_errors.append({"index": i, "error": str(e)})
 
     if validation_errors:
         error_count = len(validation_errors)
@@ -145,6 +166,7 @@ def cleaned_condo_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataF
         return pd.DataFrame()
 
     df = raw_condo_transactions.copy()
+    require_columns(df, {"price"}, "raw_condo_transactions")
 
     if "transaction_date" not in df.columns and "date" in df.columns:
         df["transaction_date"] = pd.to_datetime(df["date"], errors="coerce")

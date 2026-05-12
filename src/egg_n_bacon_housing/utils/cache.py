@@ -8,7 +8,6 @@ and reduce API quota usage.
 import hashlib
 import json
 import logging
-import pickle
 from collections.abc import Callable
 from datetime import datetime, timedelta
 from functools import wraps
@@ -52,13 +51,16 @@ class CacheManager:
         return {
             "json": self.cache_dir / f"{cache_key}.json",
             "parquet": self.cache_dir / f"{cache_key}.parquet",
-            "pickle": self.cache_dir / f"{cache_key}.pkl",  # legacy fallback only
+            "pickle": self.cache_dir / f"{cache_key}.pkl",  # optional legacy fallback only
         }
 
     def _get_existing_cache_path(self, cache_key: str) -> Path | None:
         """Return first existing cache path, preferring safe formats."""
         paths = self._cache_paths(cache_key)
-        for key in ["json", "parquet", "pickle"]:
+        ordered_keys = ["json", "parquet"]
+        if settings.pipeline.allow_legacy_pickle_cache:
+            ordered_keys.append("pickle")
+        for key in ordered_keys:
             path = paths[key]
             if path.exists():
                 return path
@@ -114,8 +116,8 @@ class CacheManager:
 
                 value = pd.read_parquet(cache_path)
             else:
-                with open(cache_path, "rb") as f:
-                    value = pickle.load(f)
+                logger.warning("Legacy pickle cache disabled: %s", cache_path)
+                return _CACHE_MISS
             logger.info(f"Cache hit: {identifier[:100]}...")
             return value
         except Exception as e:
