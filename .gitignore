@@ -38,6 +38,8 @@ data/pipeline/01_bronze/
 data/pipeline/02_silver/
 data/pipeline/03_gold/
 data/pipeline/04_platinum/
+data/03_gold/
+data/04_platinum/
 data/*.parquet
 data/pipeline/*.parquet
 
