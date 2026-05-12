@@ -5,12 +5,14 @@
 **Goal:** Transform the segments dashboard from a simple scatter plot into an interactive property discovery tool with multi-dimensional segmentation (investment clusters, spatial clusters, MRT/CBD, school quality), persona-based guidance, and comprehensive segment comparison.
 
 **Architecture:**
+
 - **Backend:** Python script generates enhanced JSON data from 5 analytics sources (investment clusters, spatial autocorrelation, hotspots, MRT impact, school quality)
 - **Frontend:** React components with 3-tab interface (Discover, Compare, Details), filter sidebar, persona presets, and interactive visualizations using Recharts
 - **State Management:** React hooks for filter state, segment matching, and data loading
 - **Data Flow:** Analytics → Python pipeline → segments_enhanced.json.gz → React components → User interactions
 
 **Tech Stack:**
+
 - Python 3.11+, pandas, gzip for data generation
 - React 19, TypeScript, Recharts, Tailwind CSS for frontend
 - Astro framework for SSR and routing
@@ -22,6 +24,7 @@
 ### Task 1: Create TypeScript types for segments data
 
 **Files:**
+
 - Create: `app/src/types/segments.ts`
 
 **Step 1: Write the type definitions**
@@ -29,19 +32,25 @@
 ```typescript
 // Segment types for the enhanced dashboard
 
-export type InvestmentType = 'yield' | 'growth' | 'value' | 'balanced' | 'luxury' | 'speculative';
-export type SpatialCluster = 'HH' | 'LH' | 'LL';
-export type PriceTier = 'affordable' | 'moderate' | 'premium' | 'luxury';
-export type RiskLevel = 'low' | 'medium' | 'high' | 'very_high';
-export type Volatility = 'low' | 'moderate' | 'high';
-export type AppreciationPotential = 'low' | 'moderate' | 'high' | 'exceptional';
-export type Region = 'CCR' | 'RCR' | 'OCR';
-export type PropertyType = 'HDB' | 'Condominium' | 'EC';
-export type SchoolTier = 'tier_1' | 'tier_2' | 'tier_3' | 'mixed';
-export type MrtSensitivity = 'low' | 'moderate' | 'high';
-export type Persona = 'all' | 'investor' | 'first-time-buyer' | 'upgrader';
-export type InvestmentGoal = 'yield' | 'growth' | 'value' | 'balanced';
-export type TimeHorizon = 'short' | 'medium' | 'long';
+export type InvestmentType =
+  | "yield"
+  | "growth"
+  | "value"
+  | "balanced"
+  | "luxury"
+  | "speculative";
+export type SpatialCluster = "HH" | "LH" | "LL";
+export type PriceTier = "affordable" | "moderate" | "premium" | "luxury";
+export type RiskLevel = "low" | "medium" | "high" | "very_high";
+export type Volatility = "low" | "moderate" | "high";
+export type AppreciationPotential = "low" | "moderate" | "high" | "exceptional";
+export type Region = "CCR" | "RCR" | "OCR";
+export type PropertyType = "HDB" | "Condominium" | "EC";
+export type SchoolTier = "tier_1" | "tier_2" | "tier_3" | "mixed";
+export type MrtSensitivity = "low" | "moderate" | "high";
+export type Persona = "all" | "investor" | "first-time-buyer" | "upgrader";
+export type InvestmentGoal = "yield" | "growth" | "value" | "balanced";
+export type TimeHorizon = "short" | "medium" | "long";
 
 export interface SegmentMetrics {
   avgPricePsf: number;
@@ -88,7 +97,7 @@ export interface PlanningArea {
   name: string;
   region: Region;
   spatialCluster: SpatialCluster;
-  hotspotConfidence: '99%' | '95%' | 'not_significant';
+  hotspotConfidence: "99%" | "95%" | "not_significant";
   persistenceProbability: number;
   mrtPremium: number;
   mrtSensitivity: MrtSensitivity;
@@ -101,7 +110,7 @@ export interface PlanningArea {
   segments: string[];
 }
 
-export type PersonaApplicability = 'critical' | 'helpful' | 'optional';
+export type PersonaApplicability = "critical" | "helpful" | "optional";
 
 export interface Insight {
   id: string;
@@ -155,6 +164,7 @@ git commit -m "feat(types): add segment types for enhanced dashboard"
 ### Task 2: Create segments data generator script stub
 
 **Files:**
+
 - Create: `scripts/generate_segments_data.py`
 
 **Step 1: Write the script structure with imports**
@@ -366,6 +376,7 @@ git commit -m "feat(scripts): add segments data generator script stub"
 ### Task 3: Implement investment clusters loader
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Test: `tests/test_segments_data.py` (create new)
 
@@ -590,6 +601,7 @@ git commit -m "feat(segments): implement investment clusters loader with 6 types
 ### Task 4: Implement spatial clusters loader
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Test: `tests/test_segments_data.py`
 
@@ -711,6 +723,7 @@ git commit -m "feat(segments): implement spatial clusters loader with HH/LH/LL"
 ### Task 5: Implement MRT impact analysis loader
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Test: `tests/test_segments_data.py`
 
@@ -847,6 +860,7 @@ git commit -m "feat(segments): implement MRT impact loader with 15x condo sensit
 ### Task 6: Implement school quality impact loader
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Test: `tests/test_segments_data.py`
 
@@ -957,6 +971,7 @@ git commit -m "feat(segments): implement school quality loader with regional var
 ### Task 7: Implement insight cards generator
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Test: `tests/test_segments_data.py`
 
@@ -1106,6 +1121,7 @@ git commit -m "feat(segments): implement insight cards generator"
 ### Task 8: Implement planning areas enrichment
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Test: `tests/test_segments_data.py`
 
@@ -1213,6 +1229,7 @@ git commit -m "feat(segments): implement planning areas enrichment"
 ### Task 9: Implement segment enrichment helpers
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Test: `tests/test_segments_data.py`
 
@@ -1378,6 +1395,7 @@ git commit -m "feat(segments): implement segment enrichment helpers"
 ### Task 10: Update main generation function and integrate with pipeline
 
 **Files:**
+
 - Modify: `scripts/generate_segments_data.py`
 - Modify: `scripts/prepare_webapp_data.py`
 
@@ -1454,6 +1472,7 @@ Expected: Script runs successfully and generates `app/public/data/segments_enhan
 **Step 3: Verify output file exists and is valid**
 
 Run:
+
 ```bash
 uv run python -c "
 import gzip
@@ -1472,6 +1491,7 @@ print(f'Last Updated: {data[\"lastUpdated\"]}')
 print(f'Version: {data[\"version\"]}')
 "
 ```
+
 Expected: Output shows 6 segments, ~30 planning areas, 4+ insights
 
 **Step 4: Update prepare_webapp_data.py to call segments generator**
@@ -1506,6 +1526,7 @@ git commit -m "feat(segments): complete data generator and integrate with pipeli
 ### Task 11: Create custom React hooks for segments
 
 **Files:**
+
 - Create: `app/src/hooks/useSegmentsData.ts`
 - Create: `app/src/hooks/useFilterState.ts`
 - Create: `app/src/hooks/useSegmentMatching.ts`
@@ -1514,8 +1535,8 @@ git commit -m "feat(segments): complete data generator and integrate with pipeli
 
 ```typescript
 // app/src/hooks/useSegmentsData.ts
-import { useState, useEffect } from 'react';
-import { SegmentsData } from '@/types/segments';
+import { useState, useEffect } from "react";
+import { SegmentsData } from "@/types/segments";
 
 interface UseSegmentsDataResult {
   data: SegmentsData | null;
@@ -1534,7 +1555,7 @@ export function useSegmentsData(): UseSegmentsDataResult {
     setError(null);
 
     try {
-      const response = await fetch('/data/segments_enhanced.json.gz');
+      const response = await fetch("/data/segments_enhanced.json.gz");
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -1545,7 +1566,7 @@ export function useSegmentsData(): UseSegmentsDataResult {
 
       // Decompress using gzip
       const text = new Response(
-        new Blob([decompressed], { type: 'application/gzip' })
+        new Blob([decompressed], { type: "application/gzip" }),
       ).text();
 
       const textStr = await text;
@@ -1553,9 +1574,9 @@ export function useSegmentsData(): UseSegmentsDataResult {
 
       setData(parsed);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
+      const message = err instanceof Error ? err.message : "Unknown error";
       setError(message);
-      console.error('Failed to load segments data:', err);
+      console.error("Failed to load segments data:", err);
     } finally {
       setLoading(false);
     }
@@ -1578,7 +1599,7 @@ export function useSegmentsData(): UseSegmentsDataResult {
 
 ```typescript
 // app/src/hooks/useFilterState.ts
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from "react";
 import {
   FilterState,
   Persona,
@@ -1587,13 +1608,13 @@ import {
   Region,
   TimeHorizon,
   PersonaPreset,
-} from '@/types/segments';
+} from "@/types/segments";
 
 const INITIAL_FILTERS: FilterState = {
   investmentGoal: null,
   budgetRange: [400, 1000],
-  propertyTypes: ['HDB', 'Condominium', 'EC'],
-  locations: ['CCR', 'RCR', 'OCR'],
+  propertyTypes: ["HDB", "Condominium", "EC"],
+  locations: ["CCR", "RCR", "OCR"],
   timeHorizon: null,
 };
 
@@ -1602,8 +1623,8 @@ const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
     filters: {
       investmentGoal: null,
       budgetRange: [400, 1000],
-      propertyTypes: ['HDB', 'Condominium', 'EC'],
-      locations: ['CCR', 'RCR', 'OCR'],
+      propertyTypes: ["HDB", "Condominium", "EC"],
+      locations: ["CCR", "RCR", "OCR"],
       timeHorizon: null,
     },
     priorityMetrics: [],
@@ -1611,36 +1632,36 @@ const PERSONA_PRESETS: Record<Persona, PersonaPreset> = {
   },
   investor: {
     filters: {
-      investmentGoal: 'yield',
+      investmentGoal: "yield",
       budgetRange: [500, 1000],
-      propertyTypes: ['Condominium', 'HDB'],
-      locations: ['CCR', 'RCR', 'OCR'],
-      timeHorizon: 'medium',
+      propertyTypes: ["Condominium", "HDB"],
+      locations: ["CCR", "RCR", "OCR"],
+      timeHorizon: "medium",
     },
-    priorityMetrics: ['rental_yield', 'mrt_proximity', 'appreciation'],
-    defaultInsights: ['condo_mrt_sensitivity', 'hotspot_persistence'],
+    priorityMetrics: ["rental_yield", "mrt_proximity", "appreciation"],
+    defaultInsights: ["condo_mrt_sensitivity", "hotspot_persistence"],
   },
-  'first-time-buyer': {
+  "first-time-buyer": {
     filters: {
-      investmentGoal: 'value',
+      investmentGoal: "value",
       budgetRange: [400, 600],
-      propertyTypes: ['HDB'],
-      locations: ['OCR', 'RCR'],
-      timeHorizon: 'long',
+      propertyTypes: ["HDB"],
+      locations: ["OCR", "RCR"],
+      timeHorizon: "long",
     },
-    priorityMetrics: ['affordability', 'school_quality', 'lease_remaining'],
-    defaultInsights: ['school_premiums_by_region', 'cbd_vs_mrt'],
+    priorityMetrics: ["affordability", "school_quality", "lease_remaining"],
+    defaultInsights: ["school_premiums_by_region", "cbd_vs_mrt"],
   },
   upgrader: {
     filters: {
-      investmentGoal: 'balanced',
+      investmentGoal: "balanced",
       budgetRange: [500, 800],
-      propertyTypes: ['HDB', 'Condominium'],
-      locations: ['RCR', 'OCR'],
-      timeHorizon: 'long',
+      propertyTypes: ["HDB", "Condominium"],
+      locations: ["RCR", "OCR"],
+      timeHorizon: "long",
     },
-    priorityMetrics: ['space_value', 'neighborhood', 'amenities'],
-    defaultInsights: ['cbd_vs_mrt', 'school_premiums_by_region'],
+    priorityMetrics: ["space_value", "neighborhood", "amenities"],
+    defaultInsights: ["cbd_vs_mrt", "school_premiums_by_region"],
   },
 };
 
@@ -1648,24 +1669,29 @@ interface UseFilterStateResult {
   filters: FilterState;
   persona: Persona;
   setPersona: (persona: Persona) => void;
-  updateFilter: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void;
+  updateFilter: <K extends keyof FilterState>(
+    key: K,
+    value: FilterState[K],
+  ) => void;
   resetFilters: () => void;
   activeFilterCount: number;
 }
 
-export function useFilterState(initialPersona: Persona = 'all'): UseFilterStateResult {
+export function useFilterState(
+  initialPersona: Persona = "all",
+): UseFilterStateResult {
   const [persona, setPersona] = useState<Persona>(initialPersona);
   const [filters, setFilters] = useState<FilterState>(() => {
     const preset = PERSONA_PRESETS[initialPersona];
     return { ...INITIAL_FILTERS, ...preset.filters };
   });
 
-  const updateFilter = useCallback(<K extends keyof FilterState>(
-    key: K,
-    value: FilterState[K]
-  ) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const updateFilter = useCallback(
+    <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
   const resetFilters = useCallback(() => {
     const preset = PERSONA_PRESETS[persona];
@@ -1681,8 +1707,11 @@ export function useFilterState(initialPersona: Persona = 'all'): UseFilterStateR
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filters.investmentGoal) count++;
-    if (filters.budgetRange[0] !== INITIAL_FILTERS.budgetRange[0] ||
-        filters.budgetRange[1] !== INITIAL_FILTERS.budgetRange[1]) count++;
+    if (
+      filters.budgetRange[0] !== INITIAL_FILTERS.budgetRange[0] ||
+      filters.budgetRange[1] !== INITIAL_FILTERS.budgetRange[1]
+    )
+      count++;
     if (filters.propertyTypes.length < 3) count++;
     if (filters.locations.length < 3) count++;
     if (filters.timeHorizon) count++;
@@ -1706,13 +1735,10 @@ export { PERSONA_PRESETS };
 
 ```typescript
 // app/src/hooks/useSegmentMatching.ts
-import { useMemo } from 'react';
-import { Segment, FilterState } from '@/types/segments';
+import { useMemo } from "react";
+import { Segment, FilterState } from "@/types/segments";
 
-export function useSegmentMatching(
-  segments: Segment[],
-  filters: FilterState
-) {
+export function useSegmentMatching(segments: Segment[], filters: FilterState) {
   const matchedSegments = useMemo(() => {
     return segments
       .map((segment) => ({
@@ -1734,10 +1760,13 @@ function calculateMatchScore(segment: Segment, filters: FilterState): number {
   // Investment goal (30% weight)
   if (filters.investmentGoal) {
     if (
-      (filters.investmentGoal === 'yield' && segment.metrics.avgYield >= 4) ||
-      (filters.investmentGoal === 'growth' && segment.metrics.yoyGrowth >= 12) ||
-      (filters.investmentGoal === 'value' && segment.characteristics.priceTier === 'affordable') ||
-      (filters.investmentGoal === 'balanced' && segment.investmentType === 'balanced')
+      (filters.investmentGoal === "yield" && segment.metrics.avgYield >= 4) ||
+      (filters.investmentGoal === "growth" &&
+        segment.metrics.yoyGrowth >= 12) ||
+      (filters.investmentGoal === "value" &&
+        segment.characteristics.priceTier === "affordable") ||
+      (filters.investmentGoal === "balanced" &&
+        segment.investmentType === "balanced")
     ) {
       score += 30;
     }
@@ -1768,8 +1797,10 @@ function calculateMatchScore(segment: Segment, filters: FilterState): number {
   // Time horizon fit (10% weight)
   if (filters.timeHorizon) {
     if (
-      (filters.timeHorizon === 'short' && segment.characteristics.volatility === 'high') ||
-      (filters.timeHorizon === 'long' && segment.characteristics.volatility === 'low')
+      (filters.timeHorizon === "short" &&
+        segment.characteristics.volatility === "high") ||
+      (filters.timeHorizon === "long" &&
+        segment.characteristics.volatility === "low")
     ) {
       score += 10;
     }
@@ -1792,6 +1823,7 @@ git commit -m "feat(hooks): add custom hooks for segments data, filters, and mat
 ### Task 12: Create FilterPanel component
 
 **Files:**
+
 - Create: `app/src/components/dashboard/segments/FilterPanel.tsx`
 
 **Step 1: Write the FilterPanel component**
@@ -2026,6 +2058,7 @@ git commit -m "feat(segments): add FilterPanel component with all filter options
 ### Task 13: Create TabNavigation component
 
 **Files:**
+
 - Create: `app/src/components/dashboard/segments/TabNavigation.tsx`
 
 **Step 1: Write the TabNavigation component**
@@ -2087,6 +2120,7 @@ git commit -m "feat(segments): add TabNavigation component"
 ### Task 14: Create SegmentCard component
 
 **Files:**
+
 - Create: `app/src/components/dashboard/segments/SegmentCard.tsx`
 
 **Step 1: Write the SegmentCard component**
@@ -2223,6 +2257,7 @@ git commit -m "feat(segments): add SegmentCard component with metrics and action
 ### Task 15: Update PersonaSelector for segments dashboard
 
 **Files:**
+
 - Modify: `app/src/components/dashboard/PersonaSelector.tsx`
 
 **Step 1: Update PersonaSelector to include "all" option**
@@ -2316,6 +2351,7 @@ git commit -m "feat(persona): add 'all' option to PersonaSelector"
 ### Task 16: Create SegmentsDashboard main container
 
 **Files:**
+
 - Create: `app/src/components/dashboard/segments/SegmentsDashboard.tsx`
 
 **Step 1: Write the main dashboard container component**
@@ -2477,6 +2513,7 @@ git commit -m "feat(segments): add main SegmentsDashboard container component"
 ### Task 17: Create Discover tab components
 
 **Files:**
+
 - Create: `app/src/components/dashboard/segments/discover/DiscoverTab.tsx`
 - Create: `app/src/components/dashboard/segments/discover/SegmentGrid.tsx`
 - Create: `app/src/components/dashboard/segments/discover/InsightCard.tsx`
@@ -2692,6 +2729,7 @@ git commit -m "feat(segments): add Discover tab with grid, sorting, and insight 
 ### Task 18: Create Compare tab components
 
 **Files:**
+
 - Create: `app/src/components/dashboard/segments/compare/CompareTab.tsx`
 - Create: `app/src/components/dashboard/segments/compare/ComparisonTable.tsx`
 - Create: `app/src/components/dashboard/segments/compare/ComparisonCharts.tsx`
@@ -2980,6 +3018,7 @@ git commit -m "feat(segments): add Compare tab with table, charts, and implicati
 ### Task 19: Create Details tab components
 
 **Files:**
+
 - Create: `app/src/components/dashboard/segments/details/DetailsTab.tsx`
 - Create: `app/src/components/dashboard/segments/details/SegmentOverview.tsx`
 - Create: `app/src/components/dashboard/segments/details/GeographicDistribution.tsx`
@@ -3334,6 +3373,7 @@ git commit -m "feat(segments): add Details tab with overview, geography, and ris
 ### Task 20: Update segments.astro page to use new dashboard
 
 **Files:**
+
 - Modify: `app/src/pages/dashboard/segments.astro`
 
 **Step 1: Update the segments page**
@@ -3370,6 +3410,7 @@ git commit -m "feat(segments): update segments page to use new SegmentsDashboard
 ### Task 21: Add error handling and loading states
 
 **Files:**
+
 - Modify: `app/src/hooks/useSegmentsData.ts`
 
 **Step 1: Enhance error handling in useSegmentsData**
@@ -3393,7 +3434,7 @@ export function useSegmentsData(maxRetries = 2) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-      const response = await fetch('/data/segments_enhanced.json.gz', {
+      const response = await fetch("/data/segments_enhanced.json.gz", {
         signal: controller.signal,
       });
 
@@ -3410,9 +3451,9 @@ export function useSegmentsData(maxRetries = 2) {
       setData(parsed);
       setRetryCount(0);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
+      const message = err instanceof Error ? err.message : "Unknown error";
 
-      if (attempt < maxRetries && message.includes('Failed to fetch')) {
+      if (attempt < maxRetries && message.includes("Failed to fetch")) {
         // Retry on network errors
         setTimeout(() => loadData(attempt + 1), 1000 * (attempt + 1));
         setRetryCount(attempt + 1);
@@ -3420,7 +3461,7 @@ export function useSegmentsData(maxRetries = 2) {
       }
 
       setError(message);
-      console.error('Failed to load segments data:', err);
+      console.error("Failed to load segments data:", err);
     } finally {
       setLoading(false);
     }
@@ -3451,6 +3492,7 @@ git commit -m "feat(segments): add retry logic and timeout to useSegmentsData"
 ### Task 22: Add responsive design improvements
 
 **Files:**
+
 - Modify: `app/src/components/dashboard/segments/FilterPanel.tsx`
 
 **Step 1: Add mobile responsive toggle for filters**
@@ -3504,6 +3546,7 @@ git commit -m "feat(segments): add mobile responsive toggle for filter panel"
 ### Task 23: Run data generation and verify output
 
 **Files:**
+
 - Scripts: `scripts/generate_segments_data.py`
 
 **Step 1: Run the data generation script**
@@ -3514,6 +3557,7 @@ Expected: Script runs successfully, outputs summary
 **Step 2: Verify the generated JSON file**
 
 Run:
+
 ```bash
 uv run python -c "
 import gzip
@@ -3535,6 +3579,7 @@ for i in data['insights']:
     print(f'  - {i[\"id\"]}: {i[\"title\"]}')
 "
 ```
+
 Expected: All 6 segments, 30 planning areas, 4 insights listed
 
 **Step 3: Test the full webapp data pipeline**
@@ -3554,6 +3599,7 @@ git commit -m "chore(segments): add generated segments data"
 ### Task 24: Write end-to-end integration test
 
 **Files:**
+
 - Create: `tests/integration/test_segments_dashboard.py`
 
 **Step 1: Write integration test for data pipeline**
@@ -3665,27 +3711,33 @@ git commit -m "test(segments): add integration tests for data pipeline"
 # Market Segments Dashboard
 
 ## Overview
+
 Interactive property discovery tool with multi-dimensional segmentation analysis.
 
 ## Data Sources
+
 - Investment Clusters: 6 types from findings analysis
 - Spatial Clusters: HH/LH/LL from LISA analysis
 - MRT Impact: Property type sensitivity analysis
 - School Quality: Regional variations
-- Hotspots: Getis-Ord Gi* statistics
+- Hotspots: Getis-Ord Gi\* statistics
 
 ## Data Generation
+
 Run: `uv run python scripts/generate_segments_data.py`
 
 Or full pipeline: `uv run python scripts/prepare_webapp_data.py`
 
 ## Output
+
 File: `app/public/data/segments_enhanced.json.gz`
 
 ## Data Schema
+
 See: `app/src/types/segments.ts`
 
 ## Last Updated
+
 Generated automatically by pipeline.
 ```
 
@@ -3697,11 +3749,13 @@ Expected: All tests PASS (or note any intentional skips)
 **Step 3: Build and verify the app**
 
 Run:
+
 ```bash
 cd app
 uv run astro build
 uv run astro preview
 ```
+
 Expected: Build succeeds, preview works, segments page loads
 
 **Step 4: Commit documentation**

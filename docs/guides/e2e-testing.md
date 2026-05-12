@@ -18,14 +18,14 @@ This guide covers end-to-end (E2E) testing for the Egg n Bacon Housing webapp us
 
 All commands should be run from the `app/` directory:
 
-| Command | Purpose |
-|---------|---------|
-| `cd app && npm run test:e2e` | Run all E2E tests |
-| `cd app && npm run test:e2e:prod` | Build the app, then run E2E tests against `astro preview` |
-| `cd app && npm run test:e2e:headed` | Run tests in headed mode (visible browser) |
-| `cd app && npm run test:e2e:ui` | Run tests in UI mode |
-| `cd app && npm run test:e2e:debug` | Debug mode with auto-opening browser |
-| `cd app && npm run test:e2e:report` | View HTML test report |
+| Command                             | Purpose                                                   |
+| ----------------------------------- | --------------------------------------------------------- |
+| `cd app && npm run test:e2e`        | Run all E2E tests                                         |
+| `cd app && npm run test:e2e:prod`   | Build the app, then run E2E tests against `astro preview` |
+| `cd app && npm run test:e2e:headed` | Run tests in headed mode (visible browser)                |
+| `cd app && npm run test:e2e:ui`     | Run tests in UI mode                                      |
+| `cd app && npm run test:e2e:debug`  | Debug mode with auto-opening browser                      |
+| `cd app && npm run test:e2e:report` | View HTML test report                                     |
 
 ---
 
@@ -50,6 +50,7 @@ cd app && npm run test:e2e
 ```
 
 This will:
+
 1. Start the Astro dev server (`npm run dev -- --host 127.0.0.1`)
 2. Run all E2E tests in headless Chromium
 3. Generate HTML report in `playwright-report/`
@@ -61,6 +62,7 @@ cd app && npm run test:e2e:prod
 ```
 
 This will:
+
 1. Build the app with `npm run build`
 2. Start `astro preview` on `127.0.0.1:4321`
 3. Run the same E2E suite against the built output
@@ -72,6 +74,7 @@ cd app && npm run test:e2e:headed
 ```
 
 Useful for:
+
 - Watching tests execute in real-time
 - Debugging visual issues
 - Understanding test flow
@@ -83,6 +86,7 @@ cd app && npm run test:e2e:ui
 ```
 
 Features:
+
 - Interactive test selection
 - Live execution view
 - Time-travel debugging
@@ -129,6 +133,7 @@ app/tests/e2e/
 ## Test Coverage
 
 ### Home Page
+
 - Page loads without errors
 - Hero section displays correctly
 - Navigation cards work
@@ -136,6 +141,7 @@ app/tests/e2e/
 - Navigation to dashboard/analytics
 
 ### Dashboard Pages
+
 - Market Overview
 - Interactive Map
 - Analysis Tools (Trends)
@@ -143,17 +149,20 @@ app/tests/e2e/
 - Area Rankings (Leaderboard)
 
 Each dashboard page tests:
+
 - Page loads correctly
 - Sidebar navigation works
 - Content displays
 - No console errors
 
 ### Analytics Pages
+
 - Analytics index page
 - All 8+ analytics articles
 - 3 persona pages (First-Time Buyer, Investor, Upgrader)
 
 ### Cross-Page Tests
+
 - Navigation between pages
 - Dark mode toggle presence
 - Responsive behavior (desktop, tablet, mobile)
@@ -167,20 +176,22 @@ Each dashboard page tests:
 ### Basic Test Structure
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Page Name', () => {
+test.describe("Page Name", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/page-url');
+    await page.goto("/page-url");
   });
 
-  test('should display page title', async ({ page }) => {
+  test("should display page title", async ({ page }) => {
     await expect(page).toHaveURL(/page-url/);
-    await expect(page.getByRole('heading', { name: 'Page Title' })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Page Title" }),
+    ).toBeVisible();
   });
 
-  test('should navigate correctly', async ({ page }) => {
-    await page.getByText('Link Text').click();
+  test("should navigate correctly", async ({ page }) => {
+    await page.getByText("Link Text").click();
     await expect(page).toHaveURL(/destination/);
   });
 });
@@ -189,36 +200,36 @@ test.describe('Page Name', () => {
 ### Testing Interactions
 
 ```typescript
-test('should filter data correctly', async ({ page }) => {
-  await page.goto('/dashboard/segments');
-  await page.getByRole('button', { name: 'Filter Option' }).click();
-  await expect(page.locator('.results')).toContainText('Expected Result');
+test("should filter data correctly", async ({ page }) => {
+  await page.goto("/dashboard/segments");
+  await page.getByRole("button", { name: "Filter Option" }).click();
+  await expect(page.locator(".results")).toContainText("Expected Result");
 });
 ```
 
 ### Handling Async Data
 
 ```typescript
-test('should load dashboard data', async ({ page }) => {
-  await page.goto('/dashboard');
-  await page.waitForLoadState('networkidle');
-  await expect(page.locator('main')).toBeVisible();
+test("should load dashboard data", async ({ page }) => {
+  await page.goto("/dashboard");
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator("main")).toBeVisible();
 });
 ```
 
 ### Checking Console Errors
 
 ```typescript
-test('should not have console errors', async ({ page }) => {
+test("should not have console errors", async ({ page }) => {
   const errors: string[] = [];
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') {
+  page.on("console", (msg) => {
+    if (msg.type() === "error") {
       errors.push(msg.text());
     }
   });
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  const criticalErrors = errors.filter(e => !e.includes('favicon'));
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  const criticalErrors = errors.filter((e) => !e.includes("favicon"));
   expect(criticalErrors).toHaveLength(0);
 });
 ```
@@ -238,6 +249,7 @@ The `playwright.config.ts` file is configured with:
 ### Modifying Configuration
 
 To change browser:
+
 ```typescript
 projects: [
   {
@@ -251,6 +263,7 @@ projects: [
 ```
 
 To change base URL:
+
 ```typescript
 use: {
   baseURL: 'http://localhost:4321',
@@ -265,6 +278,7 @@ use: {
 ### Using Trace Viewer
 
 1. Run tests with trace on retry:
+
    ```bash
    npx playwright test --trace on
    ```
@@ -281,6 +295,7 @@ cd app && npm run test:e2e:ui
 ```
 
 Click on a test to see:
+
 - Screenshot per step
 - Console logs
 - Network requests
@@ -294,12 +309,12 @@ cd app && npm run test:e2e:headed
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
+| Issue               | Solution                                   |
+| ------------------- | ------------------------------------------ |
 | Server not starting | Run `cd app && npm run dev` manually first |
-| Port 4321 in use | Kill process using port 4321 |
-| Tests timeout | Increase timeout in config |
-| Locator not found | Check element exists, use waitFor |
+| Port 4321 in use    | Kill process using port 4321               |
+| Tests timeout       | Increase timeout in config                 |
+| Locator not found   | Check element exists, use waitFor          |
 
 ---
 
@@ -325,13 +340,14 @@ Add to your CI workflow:
 2. **Test one thing per test**: Separate navigation tests from content tests
 
 3. **Use proper locators**:
+
    ```typescript
    // Good
-   await page.getByRole('button', { name: 'Submit' })
-   await page.getByText('Dashboard')
-   
+   await page.getByRole("button", { name: "Submit" });
+   await page.getByText("Dashboard");
+
    // Avoid
-   await page.locator('.btn-primary').first()
+   await page.locator(".btn-primary").first();
    ```
 
 4. **Handle async properly**: Use `waitForLoadState('networkidle')` for data-driven pages

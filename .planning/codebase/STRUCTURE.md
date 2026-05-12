@@ -1,195 +1,129 @@
 # Structure
 
-## Top-Level Directory
+## Top-Level
 
 ```
 egg-n-bacon-housing/
-├── app/                  # Astro webapp
-├── scripts/              # Python pipeline & analytics
-├── notebooks/            # Jupyter notebooks (exploration, analysis)
-├── tests/                # Pytest test suite
-├── data/                 # Pipeline outputs, cache, logs
-├── docs/                 # Documentation
-├── CLAUDE.md             # Development guidelines
-├── README.md             # Project overview
-├── QUICKSTART.md         # Quick start guide
-├── pyproject.toml        # Python dependencies (uv)
-├── jupytext.toml         # Jupyter notebook config
-└── .env.example          # Environment template
+├── main.py                  # CLI entry: --stage {stage}, --visualize
+├── config.yaml              # Pipeline config overrides
+├── pyproject.toml           # Python deps, ruff, pytest, coverage, mypy
+├── .env.example             # Env var template
+├── .pre-commit-config.yaml  # Ruff + mypy + detect-secrets
+├── src/egg_n_bacon_housing/ # Main Python package
+├── app/                     # Astro webapp
+├── tests/                   # Pytest suite
+├── scripts/                 # Tools (CI coverage check, docs validator)
+├── notebooks/               # Jupyter/marimo notebooks
+├── data/                    # Pipeline data (gitignored)
+│   ├── 01_bronze/           # Raw immutable data
+│   ├── 02_silver/           # Validated cleaned data
+│   ├── 03_gold/             # Feature-enriched data
+│   ├── 04_platinum/         # Exports, dashboard JSON, metrics
+│   └── cache/               # Hamilton cache
+└── docs/                    # Documentation
 ```
 
-## Python (`scripts/`)
+## Python Package (`src/egg_n_bacon_housing/`)
 
 ```
-scripts/
-├── run_pipeline.py           # Pipeline orchestrator (main entry)
-├── core/                     # Core pipeline modules
-│   ├── config.py             # Configuration (paths, API keys)
-│   ├── cache.py               # Caching utilities
-│   ├── geocoding.py           # OneMap geocoding
-│   ├── data_helpers.py       # Data loading helpers
-│   ├── data_loader.py        # Data loading utilities
-│   ├── data_quality.py       # Quality checks
-│   ├── logging_config.py     # Logging setup
-│   ├── metrics.py            # Metric calculations
-│   ├── mrt_distance.py       # MRT distance calculations
-│   ├── mrt_line_mapping.py   # MRT line mappings
-│   ├── network_check.py      # Network utilities
-│   ├── regional_mapping.py   # Regional mappings
-│   ├── script_base.py        # Base script class
-│   ├── school_features.py    # School feature engineering
-│   ├── utils.py              # General utilities
-│   ├── stages/               # Pipeline stages
-│   │   ├── L0_collect.py     # Data collection
-│   │   ├── L1_process.py     # Processing + geocoding
-│   │   ├── L2_features.py   # Feature engineering
-│   │   ├── L2_rental.py      # Rental yield calculations
-│   │   ├── L3_export.py      # Export
-│   │   ├── L4_analysis.py    # Analysis
-│   │   ├── L5_metrics.py     # Metrics
-│   │   ├── spatial_h3.py     # H3 spatial indexing
-│   │   └── webapp_data_preparation.py  # Dashboard data
-│   └── helpers/              # Stage helpers
-│       ├── collect_helpers.py
-│       ├── export_helpers.py
-│       ├── geocoding_helpers.py
-│       ├── spatial_helpers.py
-│       └── analysis_helpers.py
-├── analytics/                # ML & statistical analysis
-│   ├── analysis/             # Analysis scripts
-│   │   ├── school/           # School impact analysis
-│   │   └── policy/           # Policy findings
-│   ├── models/               # ML models
-│   ├── pipelines/            # Analysis pipelines
-│   ├── price_appreciation_modeling/  # Price modeling
-│   ├── segmentation/         # Market segmentation
-│   └── viz/                  # Visualizations
-├── webapp/                   # Webapp data preparation
-├── utils/                    # Standalone utilities
-└── tools/                    # Development tools
+src/egg_n_bacon_housing/
+├── __init__.py
+├── config.py                # pydantic-settings (PipelineConfig, LayerDirs, etc.)
+├── pipeline.py              # Hamilton DAG driver, STAGE_VARS
+│
+├── components/              # Hamilton DAG nodes
+│   ├── 01_ingestion.py      # Bronze: raw data fetch from APIs
+│   ├── 02_cleaning.py       # Silver: validation and cleaning
+│   ├── 03_features.py       # Gold: feature engineering
+│   ├── 04_export.py         # Platinum: exports + webapp data
+│   ├── 05_metrics.py        # Planning area metrics, hotspots
+│   └── 06_analytics.py      # Analytics integration
+│
+├── schemas/                 # Pydantic models for medallion layers
+│   ├── raw_models.py        # Bronze schema
+│   ├── clean_models.py      # Silver schema
+│   └── feature_models.py    # Gold schema
+│
+├── adapters/                # External API clients
+│   ├── onemap.py            # OneMap geospatial API
+│   ├── datagovsg.py         # data.gov.sg API
+│   └── geocoding.py         # Geocoding adapter
+│
+├── utils/                   # Shared utilities
+│   ├── cache.py             # LRU/file caching
+│   ├── data_helpers.py      # Data helpers
+│   ├── data_loader.py       # Parquet I/O
+│   ├── data_quality.py      # Quality checks, SQLite tracking
+│   ├── logging_config.py    # Structured logging
+│   ├── metrics.py           # Metric calculations
+│   ├── mrt_distance.py      # MRT distance calculations
+│   ├── mrt_line_mapping.py  # MRT line mappings
+│   ├── network_check.py     # Network connectivity
+│   ├── regional_mapping.py  # SG regional/planning area maps
+│   └── school_features.py   # School proximity features
+│
+└── analytics/               # Standalone analysis (NOT wired to DAG)
+    ├── analysis/            # Analysis scripts by domain
+    │   ├── amenity/
+    │   ├── appreciation/
+    │   ├── causal/
+    │   ├── market/
+    │   ├── mrt/
+    │   ├── policy/
+    │   ├── school/
+    │   └── spatial/
+    ├── models/              # ML models (ARIMAX, VAR)
+    ├── pipelines/           # Analytics Hamilton pipelines
+    ├── price_appreciation_modeling/
+    ├── segmentation/
+    ├── viz/
+    └── school/
 ```
 
-## Astro Webapp (`app/`)
+## Test Structure
 
 ```
-app/
-├── astro.config.mjs          # Astro configuration
-├── package.json              # Node dependencies
-├── tsconfig.json             # TypeScript config
-├── tailwind.config.mjs       # Tailwind CSS config
-├── playwright.config.ts      # E2E test config
-├── public/                   # Static assets
-└── src/
-    ├── index.astro            # Homepage
-    ├── content.config.ts      # Content collections
-    ├── layouts/
-    │   └── Layout.astro      # Base layout
-    ├── pages/
-    │   ├── index.astro       # Landing page
-    │   ├── dashboard/
-    │   │   ├── index.astro   # Market overview
-    │   │   ├── map.astro     # Price map
-    │   │   ├── trends.astro  # Trends analysis
-    │   │   ├── segments.astro # Market segments
-    │   │   └── leaderboard.astro # Town rankings
-    │   └── analytics/
-    │       ├── index.astro   # Analytics overview
-    │       ├── [slug].astro  # Dynamic analytics pages
-    │       └── personas/
-    │           └── [persona].astro # Persona-specific views
-    ├── components/
-    │   ├── charts/           # Reusable chart components
-    │   │   ├── ChartRenderer.tsx
-    │   │   ├── ClientChart.tsx
-    │   │   ├── ComparisonChart.tsx
-    │   │   ├── InlineChartRenderer.tsx
-    │   │   ├── InteractiveTable.tsx
-    │   │   ├── StatisticalPlot.tsx
-    │   │   └── TimeSeriesChart.tsx
-    │   ├── dashboard/        # Dashboard-specific components
-    │   │   ├── segments/     # Segment analysis
-    │   │   │   ├── compare/  # Comparison tab
-    │   │   │   ├── details/  # Details tab
-    │   │   │   ├── discover/ # Discovery tab
-    │   │   │   ├── investigate/ # Investigation tab
-    │   │   │   ├── FilterPanel.tsx
-    │   │   │   ├── SegmentCard.tsx
-    │   │   │   ├── SegmentsAnalysis.tsx
-    │   │   │   ├── TabNavigation.tsx
-    │   │   │   └── SegmentsDashboard.tsx
-    │   │   ├── leaderboard/  # Leaderboard components
-    │   │   ├── map/          # Map components
-    │   │   │   └── overlays/ # Map overlays
-    │   │   ├── tools/        # Interactive tools
-    │   │   ├── PriceMap.tsx
-    │   │   ├── TrendsMap.tsx
-    │   │   └── ...
-    │   ├── Sidebar.astro
-    │   ├── TableOfContents.astro
-    │   ├── DarkModeToggle.tsx
-    │   └── MarkdownContent.tsx
-    ├── hooks/                # React hooks
-    │   ├── useAnalyticsData.ts
-    │   ├── useFilterState.ts
-    │   ├── useGzipJson.ts
-    │   ├── useLeaderboardData.ts
-    │   ├── useSegmentMatching.ts
-    │   └── useSegmentsData.ts
-    ├── types/                # TypeScript types
-    │   ├── analytics.ts
-    │   ├── leaderboard.ts
-    │   └── segments.ts
-    ├── utils/                # Utilities
-    │   ├── cn.ts             # Class name utility
-    │   ├── colorScales.ts
-    │   ├── data-parser.ts
-    │   └── gzip.ts
-    ├── constants/            # App constants
-    │   ├── data-urls.ts
-    │   └── dashboard-nav.ts
-    ├── data/                 # Static data (JSON)
-    │   ├── analytics-glossary.json
-    │   └── persona-content.json
-    ├── content/              # Content collections
-    │   └── analytics/        # MDX analytics articles
-    │       ├── causal-inference-overview.mdx
-    │       ├── findings.mdx
-    │       ├── lease-decay.mdx
-    │       ├── mrt-impact.mdx
-    │       ├── price-forecasts.mdx
-    │       ├── school-quality.mdx
-    │       ├── spatial-autocorrelation.mdx
-    │       └── spatial-hotspots.mdx
-    └── styles/
-        └── globals.css
+tests/
+├── conftest.py             # Shared fixtures
+├── test_cache.py
+├── test_cleaning_validation.py
+├── test_config.py
+├── test_data_loader.py
+├── test_datagovsg.py
+├── test_export.py
+├── test_features.py
+├── test_ingestion.py
+├── test_metrics.py
+├── test_onemap.py
+└── test_pipeline.py
 ```
 
 ## Key Locations
 
-| Purpose | Location |
-|---------|----------|
-| Pipeline runner | `scripts/run_pipeline.py` |
-| Config | `scripts/core/config.py` |
-| Tests | `tests/` |
-| App entry | `app/src/pages/index.astro` |
-| Dashboard routes | `app/src/pages/dashboard/` |
-| Analytics routes | `app/src/pages/analytics/` |
-| Dashboard components | `app/src/components/dashboard/` |
-| Chart components | `app/src/components/charts/` |
-| Static data | `app/src/data/` |
-| Content collection | `app/src/content/analytics/` |
-| Data outputs | `data/analytics/` |
+| Purpose            | Location                              |
+| ------------------ | ------------------------------------- |
+| CLI entry          | `main.py`                             |
+| Config             | `src/egg_n_bacon_housing/config.py`   |
+| Pipeline driver    | `src/egg_n_bacon_housing/pipeline.py` |
+| Stage definitions  | `pipeline.py:STAGE_VARS`              |
+| Pipeline stages    | `src/egg_n_bacon_housing/components/` |
+| API adapters       | `src/egg_n_bacon_housing/adapters/`   |
+| Pydantic models    | `src/egg_n_bacon_housing/schemas/`    |
+| Tests              | `tests/`                              |
+| App entry          | `app/src/pages/index.astro`           |
+| Dashboard routes   | `app/src/pages/dashboard/`            |
+| Analytics routes   | `app/src/pages/analytics/`            |
+| Content collection | `app/src/content/analytics/`          |
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Python modules | snake_case | `data_helpers.py` |
-| Python classes | PascalCase | `class Config:` |
-| Python functions | snake_case | `run_processing_pipeline()` |
-| Astro pages | kebab-case | `price-trends.astro` |
-| React components | PascalCase | `SegmentsDashboard.tsx` |
-| TypeScript types | PascalCase | `interface AnalyticsData` |
-| Hooks | camelCase | `useSegmentsData.ts` |
-| Constants | SCREAMING_SNAKE | `MAX_BUFFER_SIZE` |
-| CSS classes | kebab-case | `bg-background` |
+| Type                   | Convention            | Example              |
+| ---------------------- | --------------------- | -------------------- |
+| Python modules         | snake_case            | `data_helpers.py`    |
+| Pipeline stage modules | NN_name.py            | `01_ingestion.py`    |
+| Python classes         | PascalCase            | `PipelineConfig`     |
+| Python functions/vars  | snake_case            | `load_data()`        |
+| Astro pages            | kebab-case            | `price-trends.astro` |
+| React components       | PascalCase            | `PriceMap.tsx`       |
+| Hooks                  | camelCase, use prefix | `useSegmentsData.ts` |
+| CSS classes            | kebab-case            | `bg-background`      |

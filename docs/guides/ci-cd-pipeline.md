@@ -14,11 +14,11 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 
 The repository contains four GitHub Actions workflows:
 
-| Workflow | File | Purpose | Triggers |
-|----------|------|---------|----------|
-| **Test Suite** | `.github/workflows/test.yml` | Run Python tests with coverage | Push to main/develop, PRs |
-| **Code Quality** | `.github/workflows/lint.yml` | Check formatting and linting | Push to main/develop, PRs |
-| **Deploy App** | `.github/workflows/deploy-app.yml` | Build and deploy to GitHub Pages | Push to main, manual |
+| Workflow              | File                                | Purpose                          | Triggers                  |
+| --------------------- | ----------------------------------- | -------------------------------- | ------------------------- |
+| **Test Suite**        | `.github/workflows/test.yml`        | Run Python tests with coverage   | Push to main/develop, PRs |
+| **Code Quality**      | `.github/workflows/lint.yml`        | Check formatting and linting     | Push to main/develop, PRs |
+| **Deploy App**        | `.github/workflows/deploy-app.yml`  | Build and deploy to GitHub Pages | Push to main, manual      |
 | **Docs Layout Check** | `.github/workflows/docs-layout.yml` | Validate documentation structure | Push to main/develop, PRs |
 
 ---
@@ -30,16 +30,19 @@ The repository contains four GitHub Actions workflows:
 ### What It Does
 
 1. **Sets up environment:**
+
    - Checks out code
    - Installs uv package manager
    - Sets up Python 3.11
    - Installs dependencies with `uv sync`
 
 2. **Creates test environment:**
+
    - Generates `.env` file with test values
    - Creates required data directories
 
 3. **Runs tests:**
+
    - Executes pytest with verbose output
    - Generates coverage report for `scripts/core`
    - Outputs coverage in XML and terminal formats
@@ -83,6 +86,7 @@ LOG_LEVEL=DEBUG
 ### What It Does
 
 1. **Checks code formatting:**
+
    - Runs `ruff format --check` on `scripts/core` and `tests`
    - Fails if code is not properly formatted
 
@@ -107,12 +111,12 @@ uv run ruff check scripts/core tests --fix
 
 ### Common Linting Issues
 
-| Issue | Fix Command |
-|-------|-------------|
-| Import not used | `uv run ruff check --fix` |
-| Line too long | Manual fix (target: 100 chars) |
-| Missing type hints | Add type annotations |
-| Incorrect formatting | `uv run ruff format` |
+| Issue                | Fix Command                    |
+| -------------------- | ------------------------------ |
+| Import not used      | `uv run ruff check --fix`      |
+| Line too long        | Manual fix (target: 100 chars) |
+| Missing type hints   | Add type annotations           |
+| Incorrect formatting | `uv run ruff format`           |
 
 ---
 
@@ -125,22 +129,27 @@ uv run ruff check scripts/core tests --fix
 #### Build Job
 
 1. **Sets up environment:**
+
    - Checks out code
    - Installs Bun (JavaScript runtime)
    - Installs Python 3.11
    - Installs uv package manager
 
 2. **Installs dependencies:**
+
    - Runs `bun install` in `app/` directory
 
 3. **Syncs content files:**
+
    - Executes `scripts/sync-content.sh` to prepare data
 
 4. **Verifies dashboard data:**
+
    - Checks for required JSON files in `app/public/data/`
    - Fails build if any required files are missing
 
 5. **Builds Astro app:**
+
    - Runs `bun run build` in `app/` directory
    - Verifies `dist/index.html` exists
 
@@ -193,6 +202,7 @@ public/data/interactive_tools/spatial_hotspots.json.gz
 ### Deployment URL
 
 After deployment:
+
 - URL: `https://<username>.github.io/egg-n-bacon-housing/`
 - Available in: Repository → Settings → Pages
 
@@ -258,12 +268,12 @@ Push to main only
 
 For local development, these are in `.env`. For CI, they're set in the workflow files:
 
-| Variable | Purpose | Source |
-|----------|---------|--------|
-| `ONEMAP_EMAIL` | OneMap API authentication | `.env` or GitHub Secrets |
-| `GOOGLE_API_KEY` | Google Maps fallback | `.env` or GitHub Secrets |
-| `SUPABASE_URL` | Supabase connection | `.env` or GitHub Secrets |
-| `SUPABASE_KEY` | Supabase authentication | `.env` or GitHub Secrets |
+| Variable         | Purpose                   | Source                   |
+| ---------------- | ------------------------- | ------------------------ |
+| `ONEMAP_EMAIL`   | OneMap API authentication | `.env` or GitHub Secrets |
+| `GOOGLE_API_KEY` | Google Maps fallback      | `.env` or GitHub Secrets |
+| `SUPABASE_URL`   | Supabase connection       | `.env` or GitHub Secrets |
+| `SUPABASE_KEY`   | Supabase authentication   | `.env` or GitHub Secrets |
 
 **Note:** Current workflows use test values that don't access real APIs.
 
@@ -278,17 +288,20 @@ For local development, these are in `.env`. For CI, they're set in the workflow 
 **Solutions:**
 
 1. **Check Python version:**
+
    ```bash
    # CI uses Python 3.11
    python --version  # Should be 3.11.x
    ```
 
 2. **Sync dependencies:**
+
    ```bash
    uv sync --upgrade
    ```
 
 3. **Check test environment:**
+
    ```bash
    # CI creates these directories
    mkdir -p data/pipeline/{L0,L1,L2,L3} data/{cache,manual,analysis}
@@ -306,6 +319,7 @@ For local development, these are in `.env`. For CI, they're set in the workflow 
 **Issue:** Code fails `ruff format --check` in CI
 
 **Solution:**
+
 ```bash
 # Format code locally
 uv run ruff format scripts/core tests
@@ -323,12 +337,14 @@ uv run ruff format --check scripts/core tests
 **Solutions:**
 
 1. **Generate missing data:**
+
    ```bash
    # Run webapp data preparation
    uv run python scripts/prepare_webapp_data.py
    ```
 
 2. **Verify files exist:**
+
    ```bash
    ls -la app/public/data/
    ls -la app/public/data/interactive_tools/
@@ -346,6 +362,7 @@ uv run ruff format --check scripts/core tests
 **Issue:** Docs layout check fails
 
 **Solution:**
+
 ```bash
 # Run validation locally to see errors
 uv run python scripts/tools/validate_docs_layout.py
@@ -386,21 +403,21 @@ Not currently supported - tests only run on push/PR. To enable:
 
 ```yaml
 on:
-  workflow_dispatch:  # Add this to test.yml
+  workflow_dispatch: # Add this to test.yml
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
 ```
 
 ---
 
 ## CI Performance
 
-| Workflow | Typical Duration |
-|----------|-----------------|
-| Test Suite | 2-3 minutes |
-| Code Quality | 30-60 seconds |
-| Deploy App | 3-5 minutes |
-| Docs Layout | 10-20 seconds |
+| Workflow     | Typical Duration |
+| ------------ | ---------------- |
+| Test Suite   | 2-3 minutes      |
+| Code Quality | 30-60 seconds    |
+| Deploy App   | 3-5 minutes      |
+| Docs Layout  | 10-20 seconds    |
 
 **Total CI time per push:** ~5-8 minutes (all workflows run in parallel)
 
@@ -457,14 +474,15 @@ uv run python scripts/tools/validate_docs_layout.py
 
 ## Summary
 
-| Workflow | Status Checks | Artifacts | Deployment |
-|----------|---------------|-----------|------------|
-| **Test** | ✅ Required | Coverage report | No |
-| **Lint** | ✅ Required | None | No |
-| **Deploy** | ❌ Optional | Build artifact | Yes (GitHub Pages) |
-| **Docs** | ✅ Required | None | No |
+| Workflow   | Status Checks | Artifacts       | Deployment         |
+| ---------- | ------------- | --------------- | ------------------ |
+| **Test**   | ✅ Required   | Coverage report | No                 |
+| **Lint**   | ✅ Required   | None            | No                 |
+| **Deploy** | ❌ Optional   | Build artifact  | Yes (GitHub Pages) |
+| **Docs**   | ✅ Required   | None            | No                 |
 
 **Key Points:**
+
 - All workflows run automatically on push/PR
 - Tests and linting must pass before merging
 - Deployment happens automatically on push to main
@@ -473,6 +491,7 @@ uv run python scripts/tools/validate_docs_layout.py
 ---
 
 **Need Help?**
+
 - Check [GitHub Actions runs](https://github.com/<username>/egg-n-bacon-housing/actions)
 - Review workflow logs for detailed error messages
 - Open an issue for persistent CI failures

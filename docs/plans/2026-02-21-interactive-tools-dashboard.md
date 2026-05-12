@@ -13,6 +13,7 @@
 ## Prerequisites
 
 **Read these files first:**
+
 - `app/src/components/dashboard/TrendsDashboard.tsx` - Current trends component structure
 - `app/src/pages/dashboard/trends.astro` - Page data loading pattern
 - `scripts/core/config.py` - Configuration paths
@@ -21,6 +22,7 @@
 - `app/public/data/dashboard_trends.json.gz` - Example data format
 
 **Key data sources:**
+
 - `data/parquets/L2_hdb_with_features.parquet` - HDB transactions with features
 - `data/parquets/L2_condo_with_features.parquet` - Condo transactions with features
 - `data/parquets/L3_unified_dataset.parquet` - Combined dataset
@@ -33,6 +35,7 @@
 ### Task 1.1: Create Data Preparation Script Structure
 
 **Files:**
+
 - Create: `scripts/prepare_interactive_tools_data.py`
 
 **Step 1: Create script with imports and configuration**
@@ -117,6 +120,7 @@ git commit -m "feat(interactive): add data preparation script structure"
 ### Task 1.2: Implement MRT/CBD Impact Data Generator
 
 **Files:**
+
 - Modify: `scripts/prepare_interactive_tools_data.py`
 
 **Step 1: Add MRT/CBD data generation function**
@@ -209,6 +213,7 @@ git commit -m "feat(interactive): add MRT/CBD impact data generator"
 ### Task 1.3: Implement Lease Decay Data Generator
 
 **Files:**
+
 - Modify: `scripts/prepare_interactive_tools_data.py`
 
 **Step 1: Add lease decay generation function**
@@ -325,6 +330,7 @@ git commit -m "feat(interactive): add lease decay analysis generator"
 ### Task 1.4: Implement Affordability Metrics Generator
 
 **Files:**
+
 - Modify: `scripts/prepare_interactive_tools_data.py`
 
 **Step 1: Add affordability data generation function**
@@ -412,6 +418,7 @@ git commit -m "feat(interactive): add affordability metrics generator"
 ### Task 1.5: Implement Spatial Hotspots Data Generator
 
 **Files:**
+
 - Modify: `scripts/prepare_interactive_tools_data.py`
 
 **Step 1: Add spatial hotspots generation function**
@@ -528,6 +535,7 @@ git commit -m "feat(interactive): complete data preparation script with all 4 ge
 ### Task 2.1: Create Persona Selector Component
 
 **Files:**
+
 - Create: `app/src/components/dashboard/PersonaSelector.tsx`
 
 **Step 1: Create PersonaSelector component**
@@ -619,6 +627,7 @@ git commit -m "feat(interactive): add PersonaSelector component"
 ### Task 2.2: Create Tool Tabs Component
 
 **Files:**
+
 - Create: `app/src/components/dashboard/ToolTabs.tsx`
 
 **Step 1: Create ToolTabs component**
@@ -712,6 +721,7 @@ git commit -m "feat(interactive): add ToolTabs component"
 ### Task 2.3: Create MRT/CBD Calculator Tool
 
 **Files:**
+
 - Create: `app/src/components/dashboard/tools/MrtCbdCalculator.tsx`
 
 **Step 1: Create MrtCbdCalculator component**
@@ -930,6 +940,7 @@ git commit -m "feat(interactive): add MRT/CBD Impact Calculator tool"
 ### Task 2.4: Create Lease Decay Analyzer Tool
 
 **Files:**
+
 - Create: `app/src/components/dashboard/tools/LeaseDecayAnalyzer.tsx`
 
 **Step 1: Create LeaseDecayAnalyzer component**
@@ -1106,6 +1117,7 @@ git commit -m "feat(interactive): add Lease Decay Analyzer tool"
 ### Task 2.5: Create Affordability Calculator Tool
 
 **Files:**
+
 - Create: `app/src/components/dashboard/tools/AffordabilityCalculator.tsx`
 
 **Step 1: Create AffordabilityCalculator component**
@@ -1307,6 +1319,7 @@ git commit -m "feat(interactive): add Affordability Calculator tool"
 ### Task 2.6: Create Spatial Hotspots Explorer Tool
 
 **Files:**
+
 - Create: `app/src/components/dashboard/tools/SpatialHotspotExplorer.tsx`
 
 **Step 1: Create SpatialHotspotExplorer component**
@@ -1538,6 +1551,7 @@ git commit -m "feat(interactive): add Spatial Hotspots Explorer tool"
 ### Task 2.7: Create Interactive Tools Panel Container
 
 **Files:**
+
 - Create: `app/src/components/dashboard/InteractiveToolsPanel.tsx`
 
 **Step 1: Create InteractiveToolsPanel component**
@@ -1644,6 +1658,7 @@ git commit -m "feat(interactive): add InteractiveToolsPanel container"
 ### Task 3.1: Update Trends Astro Page to Load New Data
 
 **Files:**
+
 - Modify: `app/src/pages/dashboard/trends.astro`
 
 **Step 1: Add data loading for interactive tools**
@@ -1720,6 +1735,7 @@ git commit -m "feat(interactive): load interactive tools data on trends page"
 ### Task 3.2: Update TrendsDashboard Component to Render Tools Panel
 
 **Files:**
+
 - Modify: `app/src/components/dashboard/TrendsDashboard.tsx`
 
 **Step 1: Add InteractiveToolsPanel and new props**
@@ -1925,6 +1941,7 @@ git commit -m "test(interactive): verify data accuracy against analytics finding
 **If using GitHub Actions for data generation:**
 
 **Files:**
+
 - Modify: `.github/workflows/deploy.yml` (or equivalent)
 
 **Step 1: Add data generation step to CI**
@@ -2007,6 +2024,7 @@ If all items pass, implementation is complete!
 ## Files Modified/Created Summary
 
 **Created:**
+
 - `scripts/prepare_interactive_tools_data.py` - Data generation script
 - `app/src/components/dashboard/PersonaSelector.tsx` - Persona selector
 - `app/src/components/dashboard/ToolTabs.tsx` - Tab navigation
@@ -2021,6 +2039,7 @@ If all items pass, implementation is complete!
 - `app/public/data/interactive_tools/spatial_hotspots.json.gz` - Hotspots data
 
 **Modified:**
+
 - `app/src/pages/dashboard/trends.astro` - Added data loading
 - `app/src/components/dashboard/TrendsDashboard.tsx` - Added tools panel
 

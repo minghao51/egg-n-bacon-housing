@@ -10,13 +10,15 @@ This folder contains notebooks that were used for exploration and testing but ar
 ### Test & Experimentation Notebooks
 
 #### AI/Agent Testing
+
 - `gemini-simple-call.ipynb` / `.py` - Testing Google Gemini API integration
 - `pandas_agent.ipynb` / `.py` - Testing LangChain pandas agent for data analysis
 
 #### Geospatial Experiments
+
 - `hexgrid_test.ipynb` / `.py` - Testing hexagonal grid generation for Singapore regions
 
-### Databricks & Spark (ZZ_ prefix = experimental/archived)
+### Databricks & Spark (ZZ\_ prefix = experimental/archived)
 
 These were experiments with Databricks and LangChain integrations:
 
@@ -38,12 +40,14 @@ These notebooks are **not required** for the main pipeline but can be useful for
 ## Main Pipeline vs. Exploration
 
 **Main Pipeline** (in parent `notebooks/` directory):
+
 - `L0_*` - Data collection from APIs
 - `L1_*` - Data processing and cleaning
 - `L2_*` - Feature engineering
 - These are productionized and maintained
 
 **Exploration** (this folder):
+
 - Experimental features
 - Proof-of-concepts
 - Testing new libraries/APIs

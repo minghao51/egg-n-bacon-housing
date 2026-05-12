@@ -6,13 +6,13 @@ Solutions to common issues when working with the Egg-n-Bacon-Housing project.
 
 ## Quick Fixes
 
-| Issue | Quick Fix |
-|-------|-----------|
-| Can't import scripts | Run from project root with `uv run` |
-| Tests fail locally | Run `uv sync` to update dependencies |
-| Geocoding returns `None` | Check OneMap credentials in `.env` |
-| Pipeline stage fails | Run prerequisite stages first |
-| API rate limit error | Wait or check API quota |
+| Issue                    | Quick Fix                            |
+| ------------------------ | ------------------------------------ |
+| Can't import scripts     | Run from project root with `uv run`  |
+| Tests fail locally       | Run `uv sync` to update dependencies |
+| Geocoding returns `None` | Check OneMap credentials in `.env`   |
+| Pipeline stage fails     | Run prerequisite stages first        |
+| API rate limit error     | Wait or check API quota              |
 
 ---
 
@@ -21,6 +21,7 @@ Solutions to common issues when working with the Egg-n-Bacon-Housing project.
 ### ModuleNotFoundError: No module named 'scripts'
 
 **Symptom:**
+
 ```
 ModuleNotFoundError: No module named 'scripts'
 ```
@@ -28,6 +29,7 @@ ModuleNotFoundError: No module named 'scripts'
 **Cause:** Running Python from wrong directory or without `uv run`
 
 **Solution:**
+
 ```bash
 # Always run from project root
 cd /path/to/egg-n-bacon-housing
@@ -43,6 +45,7 @@ uv run python scripts/run_pipeline.py --stage all
 ### Dataset 'X' not found
 
 **Symptom:**
+
 ```
 ValueError: Dataset 'L2_hdb_with_features' not found. Available: ['L0_hdb_resale']
 ```
@@ -50,6 +53,7 @@ ValueError: Dataset 'L2_hdb_with_features' not found. Available: ['L0_hdb_resale
 **Cause:** Trying to load a dataset that hasn't been created yet
 
 **Solution:**
+
 ```bash
 # Run preceding pipeline stages first
 uv run python scripts/run_pipeline.py --stage L0    # Raw data
@@ -58,6 +62,7 @@ uv run python scripts/run_pipeline.py --stage L2    # Features
 ```
 
 **Check available datasets:**
+
 ```python
 from scripts.core.data_helpers import list_datasets
 print(list_datasets())
@@ -68,6 +73,7 @@ print(list_datasets())
 ### 429 Too Many Requests
 
 **Symptom:**
+
 ```
 HTTPError: 429 Client Error: Too Many Requests
 ```
@@ -75,11 +81,13 @@ HTTPError: 429 Client Error: Too Many Requests
 **Cause:** Hitting API rate limits (OneMap or data.gov.sg)
 
 **Solution:**
+
 - Wait 15-30 minutes before retrying
 - Check if you're running multiple pipeline instances
 - Built-in delays should prevent this under normal use
 
 **Prevention:**
+
 - Use cached data when possible
 - Don't run parallel geocoding with too many workers (>10)
 
@@ -88,6 +96,7 @@ HTTPError: 429 Client Error: Too Many Requests
 ### Geocoding Fails (All Addresses Return None)
 
 **Symptom:**
+
 ```
 All geocoded addresses are None or empty
 ```
@@ -95,6 +104,7 @@ All geocoded addresses are None or empty
 **Cause:** Invalid OneMap credentials or expired token
 
 **Solution:**
+
 ```bash
 # Check .env file has correct credentials
 cat .env | grep ONEMAP
@@ -105,11 +115,13 @@ cat .env | grep ONEMAP
 ```
 
 **Refresh token manually:**
+
 ```bash
 uv run python scripts/utils/refresh_onemap_token.py
 ```
 
 **Verify OneMap account:**
+
 1. Log in to https://www.onemap.gov.sg/apidocs
 2. Check account is active
 3. Regenerate password if needed
@@ -123,6 +135,7 @@ uv run python scripts/utils/refresh_onemap_token.py
 **Cause:** Outdated dependencies or different environment
 
 **Solution:**
+
 ```bash
 # Update all dependencies
 uv sync --upgrade
@@ -135,6 +148,7 @@ uv run pytest
 ```
 
 **Check Python version:**
+
 ```bash
 # Must be Python 3.11+
 uv run python --version
@@ -145,6 +159,7 @@ uv run python --version
 ### MemoryError When Loading Large Datasets
 
 **Symptom:**
+
 ```
 MemoryError: Unable to allocate array
 ```
@@ -152,6 +167,7 @@ MemoryError: Unable to allocate array
 **Cause:** Loading large parquet files exceeds available RAM
 
 **Solution:**
+
 ```python
 # Load in chunks
 import pandas as pd
@@ -172,6 +188,7 @@ df = pd.read_parquet('data/parquets/L2/L2_hdb_with_features.parquet',
 ### OneMap Token Expiry During Pipeline
 
 **Symptom:**
+
 ```
 HTTPError: 401 Unauthorized - Token expired
 ```
@@ -193,6 +210,7 @@ uv run python scripts/run_pipeline.py --stage L1
 ### Jupyter Notebook Can't Find Modules
 
 **Symptom:**
+
 ```
 ModuleNotFoundError: No module named 'scripts.core'
 ```
@@ -200,6 +218,7 @@ ModuleNotFoundError: No module named 'scripts.core'
 **Cause:** Jupyter kernel using wrong Python environment
 
 **Solution:**
+
 ```bash
 # Restart Jupyter with correct environment
 uv run jupyter notebook
@@ -221,6 +240,7 @@ Then select the `egg-n-bacon` kernel in Jupyter.
 **Cause:** API returned no data or filters too restrictive
 
 **Solution:**
+
 ```python
 # Check dataset size
 from scripts.core.data_helpers import load_parquet
@@ -232,6 +252,7 @@ tail -f data/logs/pipeline.log
 ```
 
 **Check API status:**
+
 - https://data.gov.sg - Should be accessible
 - https://www.onemap.gov.sg - Should be accessible
 
@@ -244,6 +265,7 @@ tail -f data/logs/pipeline.log
 **Cause:** Running pipeline multiple times without clearing old data
 
 **Solution:**
+
 ```bash
 # Remove old parquet files
 rm -rf data/parquets/L1/*.parquet
@@ -263,6 +285,7 @@ uv run python scripts/run_pipeline.py --stage L1
 **Cause:** OneMap API returning different results, cached data mixed with fresh results
 
 **Solution:**
+
 ```bash
 # Clear geocoding cache
 rm -rf data/cache/geocoding_cache.*
@@ -282,12 +305,14 @@ uv run python scripts/data/process/geocode/geocode_addresses.py --parallel
 **Cause:** Sequential geocoding or not using parallel processing
 
 **Solution:**
+
 ```bash
 # Use parallel geocoding (10-20 workers recommended)
 uv run python scripts/run_pipeline.py --stage L1 --parallel --workers 10
 ```
 
 **Check if parallel is working:**
+
 ```bash
 # Should see multiple CPU cores utilized
 top -pid $(pgrep -f "geocode_addresses.py")
@@ -302,6 +327,7 @@ top -pid $(pgrep -f "geocode_addresses.py")
 **Cause:** Too many workers for available RAM
 
 **Solution:**
+
 ```bash
 # Reduce worker count
 uv run python scripts/run_pipeline.py --stage L1 --parallel --workers 5

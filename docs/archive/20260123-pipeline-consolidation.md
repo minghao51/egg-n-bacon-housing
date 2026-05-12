@@ -11,18 +11,18 @@ This document describes the structural changes made to consolidate the data pipe
 
 ### New Files Created (4)
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `core/pipeline/_distance.py` | 180 | Shared distance utilities (haversine, H3 grid, KD-tree amenity calculations) |
-| `core/pipeline/L2_rental.py` | 215 | Rental yield pipeline (HDB + Condo yields) |
-| `core/pipeline/L2_features.py` | 540 | Feature engineering pipeline (properties, transactions, facilities) |
-| `core/pipeline/L3_export.py` | 140 | Export pipeline (S3 upload, CSV export, unified dataset) |
+| File                           | Lines | Purpose                                                                      |
+| ------------------------------ | ----- | ---------------------------------------------------------------------------- |
+| `core/pipeline/_distance.py`   | 180   | Shared distance utilities (haversine, H3 grid, KD-tree amenity calculations) |
+| `core/pipeline/L2_rental.py`   | 215   | Rental yield pipeline (HDB + Condo yields)                                   |
+| `core/pipeline/L2_features.py` | 540   | Feature engineering pipeline (properties, transactions, facilities)          |
+| `core/pipeline/L3_export.py`   | 140   | Export pipeline (S3 upload, CSV export, unified dataset)                     |
 
 ### Files Modified (2)
 
-| File | Change |
-|------|--------|
-| `scripts/run_pipeline.py` | Added L2, L2_rental, L2_features, L3 stage options |
+| File                               | Change                                                                      |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| `scripts/run_pipeline.py`          | Added L2, L2_rental, L2_features, L3 stage options                          |
 | `notebooks/L2_sales_facilities.py` | Reduced from 554 lines to ~50 lines; now calls `run_l2_features_pipeline()` |
 
 ### Files Deleted (11)
@@ -68,6 +68,7 @@ notebooks/
 ## New Pipeline Stages
 
 ### Stage: L2_rental
+
 Downloads rental data and calculates rental yields for HDB and Condo properties.
 
 ```bash
@@ -75,7 +76,9 @@ uv run python scripts/run_pipeline.py --stage L2_rental --force
 ```
 
 ### Stage: L2_features
+
 Creates property features including:
+
 - Property table with planning areas
 - Private property facilities (randomized amenities)
 - Nearby facilities with distances
@@ -87,6 +90,7 @@ uv run python scripts/run_pipeline.py --stage L2_features
 ```
 
 ### Stage: L2
+
 Runs both L2_rental and L2_features pipelines.
 
 ```bash
@@ -94,6 +98,7 @@ uv run python scripts/run_pipeline.py --stage L2 --force
 ```
 
 ### Stage: L3
+
 Exports L3 datasets to S3 and/or CSV.
 
 ```bash
@@ -102,7 +107,8 @@ uv run python scripts/run_pipeline.py --stage L3 --upload-s3 --export-csv
 
 ## Module Functions
 
-### core/pipeline/_distance.py
+### core/pipeline/\_distance.py
+
 - `haversine_distance()` - Calculate distance between two lat/lon points
 - `generate_h3_grid_cell()` - Create H3 cell from coordinates
 - `generate_grid_disk()` - Generate H3 grid disk
@@ -111,6 +117,7 @@ uv run python scripts/run_pipeline.py --stage L3 --upload-s3 --export-csv
 - `calculate_amenity_distances()` - Calculate distances and counts using KD-tree
 
 ### core/pipeline/L2_rental.py
+
 - `download_hdb_rental_data()` - Download HDB rental data
 - `download_ura_rental_index()` - Download URA rental index
 - `calculate_hdb_rental_yield()` - Calculate HDB rental yields
@@ -119,6 +126,7 @@ uv run python scripts/run_pipeline.py --stage L3 --upload-s3 --export-csv
 - `run_l2_rental_pipeline()` - Main entry point
 
 ### core/pipeline/L2_features.py
+
 - `load_transaction_data()` - Load HDB/Condo/EC transactions
 - `load_property_and_amenity_data()` - Load geocoded properties
 - `load_planning_area()` - Load planning area shapefile
@@ -139,6 +147,7 @@ uv run python scripts/run_pipeline.py --stage L3 --upload-s3 --export-csv
 - `run_l2_features_pipeline()` - Main entry point
 
 ### core/pipeline/L3_export.py
+
 - `load_l3_datasets()` - Load all L3 parquet files
 - `create_unified_dataset()` - Join property with transactions/listings
 - `upload_to_s3()` - Upload DataFrame to S3

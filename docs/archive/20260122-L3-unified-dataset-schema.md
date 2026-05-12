@@ -23,6 +23,7 @@ The L3 unified dataset combines transaction data from L1, feature engineering fr
 ## Dataset Features
 
 ### ✅ Core Features (11 columns)
+
 - `property_type` - HDB or Condominium
 - `transaction_date` - Full timestamp
 - `town` - HDB town or Condo district
@@ -38,7 +39,9 @@ The L3 unified dataset combines transaction data from L1, feature engineering fr
 ### ✅ Amenity Features (24 columns)
 
 #### Distance Features (6 columns)
+
 Distance to nearest amenity in meters:
+
 - `dist_to_nearest_supermarket`
 - `dist_to_nearest_preschool`
 - `dist_to_nearest_park`
@@ -47,7 +50,9 @@ Distance to nearest amenity in meters:
 - `dist_to_nearest_childcare`
 
 #### Count Features (18 columns)
+
 Number of amenities within radius (0.5km, 1km, 2km):
+
 - Supermarkets: `supermarket_within_500m`, `supermarket_within_1km`, `supermarket_within_2km`
 - Preschools: `preschool_within_500m`, `preschool_within_1km`, `preschool_within_2km`
 - Parks: `park_within_500m`, `park_within_1km`, `park_within_2km`
@@ -58,11 +63,14 @@ Number of amenities within radius (0.5km, 1km, 2km):
 **Coverage:** 100% (all geocoded properties have amenity data)
 
 ### ✅ Rental Yield (1 column)
+
 - `rental_yield_pct` - Monthly rental yield by town (3.37% - 9.64%)
 - **Coverage:** 15.3% (16,824 records - limited to HDB with rental data)
 
 ### ✅ Precomputed Metrics (5 columns)
+
 Monthly metrics computed from L3 metrics pipeline:
+
 - `stratified_median_price` - Stratified median price by area/month (26.9% coverage)
 - `mom_change_pct` - Month-over-month price change (26.8% coverage)
 - `yoy_change_pct` - Year-over-year price change (25.6% coverage)
@@ -72,6 +80,7 @@ Monthly metrics computed from L3 metrics pipeline:
 **Note:** Limited coverage because metrics only computed from 2015 onwards.
 
 ### ✅ HDB-Specific Columns (6 columns)
+
 - `month` - Original month string (YYYY-MM)
 - `flat_type` - e.g., "4 ROOM", "5 ROOM"
 - `flat_model` - e.g., "Improved", "Premium Apartment"
@@ -80,6 +89,7 @@ Monthly metrics computed from L3 metrics pipeline:
 - `remaining_lease_months` - Remaining lease in months
 
 ### ✅ Condominium-Specific Columns (5 columns)
+
 - `Project Name` - Condo project name
 - `Street Name` - Street address
 - `Postal District` - Singapore postal district (01-28)
@@ -90,46 +100,52 @@ Monthly metrics computed from L3 metrics pipeline:
 
 ## Data Sources
 
-| Feature | Source | Path |
-|---------|--------|------|
-| HDB Transactions | L1 | `data/parquets/L1/housing_hdb_transaction.parquet` |
-| Condo Transactions | L1 | `data/parquets/L1/housing_condo_transaction.parquet` |
-| Geocoding | L2 | `data/parquets/L2/housing_unique_searched.parquet` |
-| Amenity Features | L2 | `data/parquets/L2/housing_multi_amenity_features.parquet` |
-| Rental Yield | L2 | `data/parquets/L2/rental_yield.parquet` |
-| Planning Areas | Raw | `data/raw_data/onemap_planning_area_polygon.geojson` |
-| Precomputed Metrics | L3 | `data/parquets/L3/metrics_monthly.parquet` |
+| Feature             | Source | Path                                                      |
+| ------------------- | ------ | --------------------------------------------------------- |
+| HDB Transactions    | L1     | `data/parquets/L1/housing_hdb_transaction.parquet`        |
+| Condo Transactions  | L1     | `data/parquets/L1/housing_condo_transaction.parquet`      |
+| Geocoding           | L2     | `data/parquets/L2/housing_unique_searched.parquet`        |
+| Amenity Features    | L2     | `data/parquets/L2/housing_multi_amenity_features.parquet` |
+| Rental Yield        | L2     | `data/parquets/L2/rental_yield.parquet`                   |
+| Planning Areas      | Raw    | `data/raw_data/onemap_planning_area_polygon.geojson`      |
+| Precomputed Metrics | L3     | `data/parquets/L3/metrics_monthly.parquet`                |
 
 ---
 
 ## Merge Logic
 
 ### 1. Transaction Standardization
+
 - HDB: Add `property_type='HDB'`, compute price_psm/psf
 - Condo: Add `property_type='Condominium'`, clean price columns
 - Both: Standardize to unified schema
 
 ### 2. Geocoding Merge
+
 - HDB: Join on `[block, street_name]` = `[BLK_NO, ROAD_NAME]`
 - Condo: Join on uppercased `Street Name` = `ROAD_NAME`
 - **Coverage:** 10.8% (109,780 of 1,018,800)
 
 ### 3. Planning Area Assignment
+
 - Spatial join: Points within planning area polygons
 - Method: `geopandas.sjoin(..., predicate='within')`
 - **Coverage:** 100% of geocoded properties
 
 ### 4. Amenity Features Merge
+
 - Join key: `POSTAL` code
 - Columns: All distance and count features (24 columns)
 - **Coverage:** 100%
 
 ### 5. Rental Yield Merge
+
 - Join key: `[town, month]` (both as datetime)
 - Left join (preserve all transactions)
 - **Coverage:** 15.3% (HDB only, 2021-2025)
 
 ### 6. Precomputed Metrics Merge
+
 - Join key: `[town, month]` (both as datetime)
 - Columns: 7 metric columns
 - **Coverage:** 26.9% (2015-2026 only)
@@ -139,6 +155,7 @@ Monthly metrics computed from L3 metrics pipeline:
 ## Data Quality
 
 ### ✅ Strengths
+
 1. **Complete geocoding** for included properties (109,780)
 2. **100% planning area coverage** via spatial join
 3. **Comprehensive amenities** (6 distance + 18 count features)
@@ -146,16 +163,20 @@ Monthly metrics computed from L3 metrics pipeline:
 5. **Both property types** (HDB + Condo)
 
 ### ⚠️ Known Limitations
+
 1. **Geocoding coverage:** Only 10.8% of total transactions
+
    - Missing: 909,020 transactions without coordinates
    - Reason: L2 geocoding limited to unique properties
 
 2. **Rental yield coverage:** Only 15.3%
+
    - Missing: Condo rental data
    - Missing: Pre-2021 HDB rental data
    - Recommendation: Use for recent HDB analysis only
 
 3. **Metrics coverage:** Only 26.9%
+
    - Missing: Pre-2015 data (before L3 metrics pipeline)
    - Missing: Some towns in early months
    - Recommendation: Filter to `month >= '2015-01-01'` for complete metrics
@@ -171,6 +192,7 @@ Monthly metrics computed from L3 metrics pipeline:
 ## Usage Examples
 
 ### Load Dataset
+
 ```python
 import pandas as pd
 
@@ -179,12 +201,14 @@ print(f"Shape: {df.shape}")  # (109780, 55)
 ```
 
 ### Filter by Property Type
+
 ```python
 hdb = df[df['property_type'] == 'HDB']
 condo = df[df['property_type'] == 'Condominium']
 ```
 
 ### Filter by Date Range
+
 ```python
 # Recent transactions with complete metrics
 recent = df[df['transaction_date'] >= '2020-01-01']
@@ -192,6 +216,7 @@ print(f"Recent: {len(recent):,} records")
 ```
 
 ### Filter by Planning Area
+
 ```python
 # Central areas
 central = df[df['planning_area'].isin([
@@ -203,6 +228,7 @@ central = df[df['planning_area'].isin([
 ```
 
 ### Analyze Amenities
+
 ```python
 # Properties near MRT
 near_mrt = df[df['dist_to_nearest_mrt'] <= 500]
@@ -215,6 +241,7 @@ print(avg_distances)
 ```
 
 ### Access Precomputed Metrics
+
 ```python
 # Filter to records with complete metrics
 complete_metrics = df[df['stratified_median_price'].notna()]
@@ -225,6 +252,7 @@ print(f"Median YoY change: {complete_metrics['yoy_change_pct'].median():.2f}%")
 ```
 
 ### Rental Yield Analysis
+
 ```python
 # HDB with rental data
 with_rental = df[df['rental_yield_pct'].notna()]
@@ -244,6 +272,7 @@ print(rental_by_town.head(10))
 ## Streamlit Integration
 
 ### Market Overview App (apps/1_market_overview.py)
+
 ```python
 import pandas as pd
 import streamlit as st
@@ -261,6 +290,7 @@ st.metric("Date Range", f"{df['transaction_date'].min().date()} to {df['transact
 ```
 
 ### Price Map App (apps/2_price_map.py)
+
 ```python
 import pydeck as pdk
 
@@ -288,6 +318,7 @@ tooltip = {
 ```
 
 ### Trends Analytics App (apps/3_trends_analytics.py)
+
 ```python
 # Use precomputed metrics directly
 metrics_df = df[df['stratified_median_price'].notna()].copy()
@@ -310,17 +341,20 @@ st.plotly_chart(fig)
 ## Pipeline Execution
 
 ### Run the Pipeline
+
 ```bash
 # Generate enhanced L3 unified dataset
 uv run python scripts/create_l3_unified_dataset.py
 ```
 
 ### Output Files
+
 - **Main dataset:** `data/parquets/L3/housing_unified.parquet`
 - **Metrics summary:** `data/parquets/L3/metrics_summary.csv`
 - **Precomputed metrics:** `data/parquets/L3/metrics_monthly.parquet`
 
 ### Performance
+
 - **Runtime:** ~5 seconds for full pipeline
 - **Memory:** Efficient (in-memory processing)
 - **Storage:** Compressed parquet (~14MB for 110K records × 55 columns)
@@ -330,6 +364,7 @@ uv run python scripts/create_l3_unified_dataset.py
 ## Schema Changes (v1.0 → v2.0)
 
 ### Added Columns (10 columns)
+
 1. `planning_area` - Geographic planning area (NEW)
 2. `supermarket_within_1km`, `supermarket_within_2km` (NEW)
 3. `preschool_within_1km`, `preschool_within_2km` (NEW)
@@ -345,6 +380,7 @@ uv run python scripts/create_l3_unified_dataset.py
 13. `volume_3m_avg`, `volume_12m_avg` - Rolling averages (NEW)
 
 ### Improved Features
+
 - **Planning area mapping:** Spatial join with geojson polygons
 - **Amenity counts:** Added 18 "within radius" columns
 - **Rental yield:** Integrated HDB rental yield data
@@ -352,6 +388,7 @@ uv run python scripts/create_l3_unified_dataset.py
 - **Date handling:** Fixed month column type mismatches
 
 ### Column Count
+
 - **v1.0:** 25 columns
 - **v2.0:** 55 columns (+120% increase)
 
@@ -360,11 +397,14 @@ uv run python scripts/create_l3_unified_dataset.py
 ## Future Enhancements
 
 ### Phase 1: Coverage Improvements
+
 1. **Increase geocoding coverage**
+
    - Target: 50%+ of transactions
    - Method: Batch geocoding with OneMap API
 
 2. **Complete rental yield data**
+
    - Add Condo rental yield from URA
    - Extend historical HDB rental data
 
@@ -373,12 +413,14 @@ uv run python scripts/create_l3_unified_dataset.py
    - Add quarterly metrics for early years
 
 ### Phase 2: New Features
+
 1. **School quality scores** (MOE data)
 2. **Distance to CBD** (calculated from coordinates)
 3. **Age-based features** (property age bands)
 4. **Price percentiles** (rank within planning_area)
 
 ### Phase 3: Advanced Analytics
+
 1. **Time series features** (lagged prices, moving averages)
 2. **Cluster analysis** (market segments)
 3. **Anomaly detection** (unusual transactions)

@@ -33,9 +33,11 @@ The price map dashboard now includes advanced analytics layers that allow real e
 ### Category 1: Spatial Analysis
 
 #### 1.1 Hotspots/Coldspots (`spatial.hotspot`)
-**Methodology**: Getis-Ord Gi* statistic
+
+**Methodology**: Getis-Ord Gi\* statistic
 
 Identifies statistically significant price clusters:
+
 - **Hotspots** (red): Areas with unusually high prices
 - **Coldspots** (blue): Areas with unusually low prices
 - **Confidence levels**: 95% (z > 1.96), 99% (z > 2.58)
@@ -43,6 +45,7 @@ Identifies statistically significant price clusters:
 **Visualization**: Diverging color scale (blue → gray → red)
 
 **Data Fields**:
+
 ```json
 {
   "z_score": 3.42,
@@ -57,9 +60,11 @@ Identifies statistically significant price clusters:
 ---
 
 #### 1.2 LISA Clusters (`spatial.lisa`)
+
 **Methodology**: Local Indicators of Spatial Association (LISA)
 
 Classifies planning areas into 6 cluster types:
+
 - **MATURE_HOTSPOT**: 38.1% of areas, 12.7% YoY appreciation
 - **EMERGING_HOTSPOT**: Catching up to mature hotspots
 - **VALUE_OPPORTUNITY**: 40.5% of areas, 11.3% YoY (buy before price rise)
@@ -70,6 +75,7 @@ Classifies planning areas into 6 cluster types:
 **Visualization**: Categorical colors (6 distinct colors)
 
 **Data Fields**:
+
 ```json
 {
   "type": "MATURE_HOTSPOT",
@@ -88,15 +94,18 @@ Classifies planning areas into 6 cluster types:
 ---
 
 #### 1.3 Neighborhood Effects (`spatial.neighborhood`)
+
 **Methodology**: Local Moran's I
 
 Shows how neighborhood context affects property values:
+
 - **Spatial Lag**: Average price of neighboring areas
 - **Neighborhood Multiplier**: Price boost/reduction from location
 
 **Visualization**: Sequential color (blue → red based on multiplier)
 
 **Data Fields**:
+
 ```json
 {
   "moran_i_local": 0.78,
@@ -112,15 +121,18 @@ Shows how neighborhood context affects property values:
 ### Category 2: Feature Impact
 
 #### 2.1 MRT Sensitivity (`feature.mrt`)
+
 **Methodology**: Hedonic pricing models
 
 Shows price impact per 100m distance from MRT:
+
 - **HDB Sensitivity**: -$5 to -$7 PSF/100m
 - **Condo Sensitivity**: -$24 to -$46 PSF/100m (15x more sensitive!)
 
 **Visualization**: Sequential color (light → dark indicating impact)
 
 **Data Fields**:
+
 ```json
 {
   "hdb_sensitivity_psf_per_100m": -5,
@@ -137,9 +149,11 @@ Shows price impact per 100m distance from MRT:
 ---
 
 #### 2.2 School Quality (`feature.school`)
+
 **Methodology**: Quality-weighted scoring
 
 Shows school quality metrics:
+
 - **Primary School Score**: Based on GEP, SAP schools
 - **Secondary School Score**: IP tracks, academic performance
 - **Weighted Score**: Combined quality metric
@@ -147,6 +161,7 @@ Shows school quality metrics:
 **Visualization**: Sequential color (low → high quality)
 
 **Data Fields**:
+
 ```json
 {
   "primary_school_score": 8.5,
@@ -164,9 +179,11 @@ Shows school quality metrics:
 ---
 
 #### 2.3 Amenity Scores (`feature.amenity`)
+
 **Methodology**: Accessibility analysis
 
 Shows amenity access scores:
+
 - **Hawker Center Accessibility**: Distance to food centers
 - **Mall Accessibility**: Shopping convenience
 - **Park Accessibility**: Green space access
@@ -175,6 +192,7 @@ Shows amenity access scores:
 **Visualization**: Sequential color (low → high accessibility)
 
 **Data Fields**:
+
 ```json
 {
   "hawker_center_accessibility": 9.2,
@@ -194,9 +212,11 @@ Shows amenity access scores:
 ### Category 3: Predictive Analytics
 
 #### 3.1 Price Forecasts (`predictive.forecast`)
+
 **Methodology**: Machine learning ensemble models
 
 Shows 6-month price projections:
+
 - **Projected Change**: Expected % price change
 - **Confidence Interval**: Prediction range (95% CI)
 - **Signal**: BUY/HOLD/SELL recommendation
@@ -204,6 +224,7 @@ Shows 6-month price projections:
 **Visualization**: Diverging color (red → gray → green)
 
 **Data Fields**:
+
 ```json
 {
   "projected_change_pct": 8.5,
@@ -222,9 +243,11 @@ Shows 6-month price projections:
 ---
 
 #### 3.2 Policy Risk (`predictive.policy`)
+
 **Methodology**: Causal inference (Difference-in-Differences)
 
 Shows sensitivity to cooling measures:
+
 - **Cooling Measure Sensitivity**: Price impact of cooling measures
 - **Market Segment**: HDB vs Private market sensitivity
 - **Elasticity**: Price responsiveness to policy
@@ -232,6 +255,7 @@ Shows sensitivity to cooling measures:
 **Visualization**: Sequential color (green → yellow → red risk)
 
 **Data Fields**:
+
 ```json
 {
   "cooling_measure_sensitivity": -137743,
@@ -242,6 +266,7 @@ Shows sensitivity to cooling measures:
 ```
 
 **Revolutionary Finding**:
+
 - Private housing: -$137,743 reduction in CCR (p < 0.05)
 - HDB market: +$13,118 jump (opposite effect!)
 
@@ -250,15 +275,18 @@ Shows sensitivity to cooling measures:
 ---
 
 #### 3.3 Lease Decay Arbitrage (`predictive.lease`)
+
 **Methodology:** Theoretical lease decay models
 
 Identifies arbitrage opportunities:
+
 - **30-Year Leases**: Some trade 400-1700% above theoretical value (SELL)
 - **95-Year Leases**: Trade 25-32% below theoretical value (BUY for cash buyers)
 
 **Visualization**: Diverging color (red → yellow → green)
 
 **Data Fields**:
+
 ```json
 {
   "theoretical_value_30yr": 850000,
@@ -284,6 +312,7 @@ Identifies arbitrage opportunities:
 2. **Locate** the "Analytics Layers" panel in the sidebar (below filters)
 
 3. **Expand** categories by clicking category names:
+
    - Spatial Analysis
    - Feature Impact
    - Predictive Analytics
@@ -301,16 +330,19 @@ Identifies arbitrage opportunities:
 ### Layer Combinations
 
 **Investment Analysis:**
+
 1. Toggle "LISA Clusters" to see market segments
 2. Toggle "Price Forecasts" to see future projections
 3. Identify VALUE_OPPORTUNITY areas with strong BUY signals
 
 **Policy Analysis:**
+
 1. Toggle "Policy Risk" to see cooling measure sensitivity
 2. Toggle "MRT Sensitivity" to understand location factors
 3. Identify high-risk areas for policy changes
 
 **Arbitrage Opportunities:**
+
 1. Toggle "Lease Arbitrage" to find mispriced leases
 2. Toggle "Hotspots/Coldspots" for over/under-valued areas
 3. Look for SELL signals on overvalued leases
@@ -324,6 +356,7 @@ http://localhost:4321/dashboard/map/?layers=spatial.lisa,feature.mrt,predictive.
 ```
 
 **Available Layer IDs:**
+
 - `spatial.hotspot`
 - `spatial.lisa`
 - `spatial.neighborhood`
@@ -341,6 +374,7 @@ http://localhost:4321/dashboard/map/?layers=spatial.lisa,feature.mrt,predictive.
 ### Frontend Components
 
 **File Structure:**
+
 ```
 app/src/
 ├── components/dashboard/
@@ -389,16 +423,19 @@ app/src/
 **Purpose**: Export analytics data to JSON for web dashboard
 
 **Input**: Parquet files from analytics pipeline
+
 - Spatial: `analysis_spatial_hotspots.parquet`
 - Feature: `analysis_feature_impact.parquet`
 - Predictive: `analysis_price_forecasts.parquet`
 
 **Output**: JSON files in `app/public/data/analytics/`
+
 - `spatial_analysis.json.gz` (~200-400KB)
 - `feature_impact.json.gz` (~300-500KB)
 - `predictive_analytics.json.gz` (~250-400KB)
 
 **Compression**: Built-in gzip compression (level 9)
+
 - Each export script creates .gz files directly using `gzip.open()`
 - Achieves 70-80% size reduction
 
@@ -430,6 +467,7 @@ All JSON files follow this structure:
 **Test Suite**: `tests/test_analytics_export.py`
 
 **Test Coverage:**
+
 - ✅ JSON structure validation
 - ✅ NaN/Inf sanitization
 - ✅ Metadata completeness
@@ -437,6 +475,7 @@ All JSON files follow this structure:
 - ✅ Data export functionality
 
 **Run Tests:**
+
 ```bash
 # Run all analytics tests
 uv run pytest tests/test_analytics_export.py -v
@@ -449,6 +488,7 @@ uv run pytest tests/test_analytics_export.py::TestAnalyticsDataExport::test_spat
 ```
 
 **Test Results** (2025-02-16):
+
 ```
 12 passed, 3 failed, 1 skipped
 Coverage: 2% (scripts/core)
@@ -461,11 +501,13 @@ Coverage: 2% (scripts/core)
 **Test File**: `test_analytics_layers.py`
 
 **Run Tests:**
+
 ```bash
 uv run python test_analytics_layers.py
 ```
 
 **Test Results** (2025-02-16):
+
 - ✅ Page loads successfully
 - ✅ Analytics Layers panel renders
 - ✅ All JSON endpoints return 200
@@ -490,6 +532,7 @@ uv run python test_analytics_layers.py
 ### 🔄 Placeholder Data
 
 The analytics JSON files currently contain empty `planning_areas` objects because:
+
 - L3_unified_dataset not yet generated
 - Analysis parquets not yet run
 - Framework ready for real data
@@ -497,6 +540,7 @@ The analytics JSON files currently contain empty `planning_areas` objects becaus
 **To Populate with Real Analytics:**
 
 1. Run analysis pipelines:
+
 ```bash
 # Spatial hotspots
 uv run python scripts/analytics/analysis/spatial/analyze_spatial_hotspots.py
@@ -511,6 +555,7 @@ uv run python scripts/analytics/price_appreciation_modeling/create_smart_ensembl
 2. Update `scripts/prepare_analytics_json.py` to load from actual analysis results
 
 3. Re-export:
+
 ```bash
 uv run python scripts/prepare_analytics_json.py
 ```
@@ -522,6 +567,7 @@ uv run python scripts/prepare_analytics_json.py
 ## Implementation Checklist
 
 ### Frontend (React/TypeScript)
+
 - [x] TypeScript type definitions
 - [x] Color scale utilities
 - [x] Analytics data loading hook
@@ -535,12 +581,14 @@ uv run python scripts/prepare_analytics_json.py
 - [x] Tooltips with analytics data
 
 ### Backend (Python)
+
 - [x] Analytics JSON export script (with built-in gzip compression)
 - [x] Data sanitization utilities
 - [ ] Integration with main pipeline
 - [ ] Load from actual analysis parquets
 
 ### Testing
+
 - [x] Pytest test suite (12/15 passing)
 - [x] Playwright browser tests
 - [ ] Fix Path shadowing in tests
@@ -548,6 +596,7 @@ uv run python scripts/prepare_analytics_json.py
 - [ ] Add visual regression tests
 
 ### Documentation
+
 - [x] Technical documentation (this file)
 - [ ] User guide with screenshots
 - [ ] API documentation for analysts
@@ -558,6 +607,7 @@ uv run python scripts/prepare_analytics_json.py
 ## Future Enhancements
 
 ### Phase 2 Features
+
 1. **Dynamic Legend**: Auto-generate legends based on active layers
 2. **Layer Opacity**: Adjust layer transparency to compare overlays
 3. **Cross-Layer Analysis**: Identify patterns across multiple layers
@@ -565,6 +615,7 @@ uv run python scripts/prepare_analytics_json.py
 5. **Custom Notifications**: Alert when layers detect opportunities
 
 ### Advanced Features
+
 1. **Time-Series Slider**: Compare analytics across time periods
 2. **What-If Scenarios**: Simulate policy changes or new infrastructure
 3. **Cluster Evolution Timelines**: Animated transitions over time
@@ -578,11 +629,13 @@ uv run python scripts/prepare_analytics_json.py
 ### Issue: Analytics Layers panel not appearing
 
 **Check:**
+
 1. Browser console for errors (F12 → Console)
 2. Network tab for failed JSON requests
 3. Look for: `The requested module '/src/types/analytics.ts' does not provide an export named 'LayerId'`
 
 **Solution:**
+
 - Ensure `tsconfig.json` has `verbatimModuleSyntax: false`
 - Restart dev server: `pkill -f "astro dev"; npm run dev`
 - Clear Vite cache: `rm -rf node_modules/.vite`
@@ -590,22 +643,26 @@ uv run python scripts/prepare_analytics_json.py
 ### Issue: JSON files return 404
 
 **Check:**
+
 - Files exist in `app/public/data/analytics/`
 - Filenames match what the hook expects
 - Server is serving from correct directory
 
 **Solution:**
+
 - Run: `uv run python scripts/prepare_analytics_json.py`
 - Verify: `ls app/public/data/analytics/`
 
 ### Issue: Layers not interactive
 
 **Check:**
+
 - JavaScript console for errors
 - Leaflet map is rendering
 - Z-index conflicts with other UI elements
 
 **Solution:**
+
 - Increase map z-index: `z-index: 0` → `z-index: 10`
 - Check Leaflet CSS isn't being overridden
 - Ensure `LayerGroup` is added to map

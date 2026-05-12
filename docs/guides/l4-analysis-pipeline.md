@@ -13,27 +13,33 @@ The L4 Analysis Pipeline runs exploratory data analysis (EDA) and deep-dive anal
 ## Pipeline Stages
 
 ### L0: Data Collection
+
 - **Source**: data.gov.sg API, OneMap API, Wikipedia
 - **Output**: `data/pipeline/01_bronze/`
 
 ### L1: Data Processing
+
 - Geocoding, cleaning, amenity enrichment
 - **Output**: `data/pipeline/02_silver/`
 
 ### L2: Feature Engineering
+
 - MRT distances, rental yields, CBD distance
 - **Output**: `data/pipeline/03_gold/`
 
 ### L3: Unified Dataset
+
 - Combined HDB/Condo/EC transactions
 - **Output**: `data/pipeline/04_platinum/housing_unified.parquet`
 
 ### L4: Analysis Pipeline
+
 - **Phase 1**: EDA (console summaries)
 - **Phase 2**: Deep-dive analysis scripts
 - **Phase 3**: Report generation
 
 ### L5: Metrics
+
 - Planning area level aggregations
 
 ---
@@ -47,6 +53,7 @@ Runs at the start of L4 to provide quick data overviews:
 **Script**: `scripts/analytics/analysis/market/analyze_investment_eda.py`
 
 **Outputs (Console)**:
+
 - Data quality overview (record counts, date ranges)
 - Planning area transaction volumes
 - Price appreciation (CAGR) by area
@@ -59,14 +66,14 @@ Runs at the start of L4 to provide quick data overviews:
 
 Runs analysis scripts from `scripts/analytics/analysis/`:
 
-| Category | Scripts |
-|----------|---------|
-| Market | `analyze_hdb_rental_market.py`, `analyze_lease_decay.py`, `analyze_policy_impact.py` |
-| Amenity | `analyze_amenity_impact.py`, `analyze_feature_importance.py` |
-| Spatial | `analyze_spatial_hotspots.py`, `analyze_spatial_autocorrelation.py`, `analyze_h3_clusters.py` |
-| Causal | `analyze_causal_did_enhanced.py`, `analyze_rd_policy_timing.py` |
-| School | `analyze_school_impact.py`, `analyze_school_rdd.py` |
-| MRT | `analyze_mrt_impact.py`, `analyze_mrt_heterogeneous.py` |
+| Category | Scripts                                                                                       |
+| -------- | --------------------------------------------------------------------------------------------- |
+| Market   | `analyze_hdb_rental_market.py`, `analyze_lease_decay.py`, `analyze_policy_impact.py`          |
+| Amenity  | `analyze_amenity_impact.py`, `analyze_feature_importance.py`                                  |
+| Spatial  | `analyze_spatial_hotspots.py`, `analyze_spatial_autocorrelation.py`, `analyze_h3_clusters.py` |
+| Causal   | `analyze_causal_did_enhanced.py`, `analyze_rd_policy_timing.py`                               |
+| School   | `analyze_school_impact.py`, `analyze_school_rdd.py`                                           |
+| MRT      | `analyze_mrt_impact.py`, `analyze_mrt_heterogeneous.py`                                       |
 
 ### Phase 3: Report Generation
 
@@ -140,31 +147,31 @@ results = list_analysis_results()
 
 ### EDA Results
 
-| Name | Description |
-|------|-------------|
-| `price_appreciation_by_area` | CAGR by planning area (2015-2025) |
-| `rental_yield_by_area` | Rental yield statistics by area |
-| `investment_scores` | Combined appreciation + yield scores |
-| `market_momentum` | YoY changes by area |
+| Name                         | Description                          |
+| ---------------------------- | ------------------------------------ |
+| `price_appreciation_by_area` | CAGR by planning area (2015-2025)    |
+| `rental_yield_by_area`       | Rental yield statistics by area      |
+| `investment_scores`          | Combined appreciation + yield scores |
+| `market_momentum`            | YoY changes by area                  |
 
 ### Market Results
 
-| Name | Description |
-|------|-------------|
-| `rental_trends_by_year` | Median rent by year |
-| `rental_by_town` | Rental stats by town (2024+) |
-| `rental_by_flat_type` | Rental stats by flat type |
-| `rental_vs_resale_comparison` | Yield by town + flat type |
+| Name                          | Description                  |
+| ----------------------------- | ---------------------------- |
+| `rental_trends_by_year`       | Median rent by year          |
+| `rental_by_town`              | Rental stats by town (2024+) |
+| `rental_by_flat_type`         | Rental stats by flat type    |
+| `rental_vs_resale_comparison` | Yield by town + flat type    |
 
 ### Amenity Results
 
-| Name | Description |
-|------|-------------|
-| `temporal_comparison` | Feature importance by period |
-| `within_town_effects` | MRT importance by town |
-| `grid_analysis` | 500m x 500m grid analysis |
-| `mrt_distance_stratification` | Price by MRT distance bands |
-| `amenity_summary_stats` | Summary statistics |
+| Name                          | Description                  |
+| ----------------------------- | ---------------------------- |
+| `temporal_comparison`         | Feature importance by period |
+| `within_town_effects`         | MRT importance by town       |
+| `grid_analysis`               | 500m x 500m grid analysis    |
+| `mrt_distance_stratification` | Price by MRT distance bands  |
+| `amenity_summary_stats`       | Summary statistics           |
 
 ---
 
@@ -192,21 +199,21 @@ uv run python scripts/analytics/analysis/market/analyze_investment_eda.py
 
 ## Data Sources
 
-| Source | Type | API/Location |
-|--------|------|--------------|
-| data.gov.sg | HDB transactions, rental data | REST API |
-| OneMap | Geocoding, planning areas | REST API |
-| Wikipedia | Shopping malls, schools | Web scraping |
-| Google Maps | Geocoding fallback | API |
+| Source      | Type                          | API/Location |
+| ----------- | ----------------------------- | ------------ |
+| data.gov.sg | HDB transactions, rental data | REST API     |
+| OneMap      | Geocoding, planning areas     | REST API     |
+| Wikipedia   | Shopping malls, schools       | Web scraping |
+| Google Maps | Geocoding fallback            | API          |
 
 ---
 
 ## Key Files
 
-| Purpose | File |
-|---------|------|
-| Pipeline runner | `scripts/run_pipeline.py` |
-| L4 orchestration | `scripts/core/stages/L4_analysis.py` |
-| EDA script | `scripts/analytics/analysis/market/analyze_investment_eda.py` |
-| Results helper | `scripts/core/stages/helpers/analysis_helpers.py` |
-| Configuration | `scripts/core/config.py` |
+| Purpose          | File                                                          |
+| ---------------- | ------------------------------------------------------------- |
+| Pipeline runner  | `scripts/run_pipeline.py`                                     |
+| L4 orchestration | `scripts/core/stages/L4_analysis.py`                          |
+| EDA script       | `scripts/analytics/analysis/market/analyze_investment_eda.py` |
+| Results helper   | `scripts/core/stages/helpers/analysis_helpers.py`             |
+| Configuration    | `scripts/core/config.py`                                      |

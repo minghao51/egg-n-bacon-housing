@@ -5,9 +5,11 @@
 **Branch:** `feature/var-housing-forecast`
 
 ---
+
 category: "technical-reports"
 description: Implementation report for VAR-based housing appreciation forecasting system
 status: published
+
 ---
 
 ## Overview
@@ -15,6 +17,7 @@ status: published
 Successfully implemented a two-stage hierarchical VAR (Vector Autoregression) system for forecasting Singapore housing price appreciation rates at regional and planning area levels.
 
 **Architecture:**
+
 - **Stage 1:** Regional VAR models (7 regions) with endogenous variables (appreciation, volume, price) + exogenous macroeconomic factors
 - **Stage 2:** Planning area ARIMAX models (~20 high-volume areas) using regional forecasts as exogenous predictors
 
@@ -23,14 +26,17 @@ Successfully implemented a two-stage hierarchical VAR (Vector Autoregression) sy
 ## Implementation Details
 
 ### 1. Regional Mapping Configuration
+
 **File:** `scripts/core/regional_mapping.py`
 
 Maps 50+ planning areas to 7 Singapore regions:
+
 - CCR (Core Central Region)
 - RCR (Rest of Central Region)
 - OCR East, North-East, North, West, Central
 
 **Usage:**
+
 ```python
 from scripts.core.regional_mapping import get_region_for_planning_area
 
@@ -38,9 +44,11 @@ region = get_region_for_planning_area('Downtown')  # Returns 'CCR'
 ```
 
 ### 2. Macroeconomic Data Fetching
+
 **File:** `scripts/data/fetch_macro_data.py`
 
 Fetches Singapore macroeconomic indicators:
+
 - SORA rates (Singapore Overnight Rate Average)
 - CPI (Consumer Price Index)
 - GDP growth (quarterly)
@@ -49,6 +57,7 @@ Fetches Singapore macroeconomic indicators:
 **Note:** Currently uses mock data for MVP. TODO: Integrate MAS/SingStat APIs.
 
 **Usage:**
+
 ```python
 from scripts.data.fetch_macro_data import fetch_all_macro_data
 
@@ -56,9 +65,11 @@ macro_data = fetch_all_macro_data(start_date='2021-01', end_date='2026-02')
 ```
 
 ### 3. Time Series Data Preparation
+
 **File:** `scripts/analytics/pipelines/prepare_timeseries_data.py`
 
 Transforms L3 unified data into time series datasets:
+
 - Aggregates transactions to regional monthly time series
 - Creates planning area time series for top 20 areas by volume
 - Merges macroeconomic data (SORA, CPI, GDP)
@@ -66,10 +77,12 @@ Transforms L3 unified data into time series datasets:
 - Caps outliers at ±50% appreciation
 
 **Outputs:**
+
 - `L5_regional_timeseries.parquet`
 - `L5_area_timeseries.parquet`
 
 **Usage:**
+
 ```python
 from scripts.analytics.pipelines.prepare_timeseries_data import run_preparation_pipeline
 
@@ -80,9 +93,11 @@ regional_data, area_data = run_preparation_pipeline(
 ```
 
 ### 4. Regional VAR Model
+
 **File:** `scripts/analytics/models/regional_var.py`
 
 Implements VAR models for regional forecasting:
+
 - Stationarity checking via Augmented Dickey-Fuller test
 - Automatic lag order selection (AIC-optimized, 1-6 lags)
 - Granger causality testing for causal inference
@@ -90,6 +105,7 @@ Implements VAR models for regional forecasting:
 - Model evaluation (RMSE, MAE, MAPE)
 
 **Usage:**
+
 ```python
 from scripts.analytics.models.regional_var import RegionalVARModel
 
@@ -102,9 +118,11 @@ granger_results = model.granger_causality_tests()
 ```
 
 ### 5. Planning Area ARIMAX Model
+
 **File:** `scripts/analytics/models/area_arimax.py`
 
 Implements ARIMAX models for planning area forecasting:
+
 - Uses regional VAR forecasts as exogenous predictors
 - Includes local amenity features (MRT, hawker, school proximity)
 - Automatic ARIMA order selection via grid search (AIC-optimized)
@@ -112,6 +130,7 @@ Implements ARIMAX models for planning area forecasting:
 - Model evaluation metrics
 
 **Usage:**
+
 ```python
 from scripts.analytics.models.area_arimax import AreaARIMAXModel
 
@@ -121,15 +140,18 @@ forecast = model.forecast(horizon=12, exog_future=regional_forecast)
 ```
 
 ### 6. Cross-Validation Pipeline
+
 **File:** `scripts/analytics/pipelines/cross_validate_timeseries.py`
 
 Expanding window cross-validation for robust performance estimation:
+
 - 5-fold expanding window validation
 - Evaluates regional VAR and area ARIMAX models
 - Calculates RMSE, MAE, MAPE, directional accuracy
 - Handles model failures gracefully
 
 **Usage:**
+
 ```python
 from scripts.analytics.pipelines.cross_validate_timeseries import run_cross_validation
 
@@ -141,9 +163,11 @@ results = run_cross_validation(
 ```
 
 ### 7. Forecasting Pipeline
+
 **File:** `scripts/analytics/pipelines/forecast_appreciation.py`
 
 Multi-scenario forecasting pipeline:
+
 - **Scenarios:** baseline, bullish, bearish, policy_shock
 - Regional VAR forecasts (36-month horizon)
 - Area ARIMAX forecasts (24-month horizon)
@@ -151,6 +175,7 @@ Multi-scenario forecasting pipeline:
 - Robust error handling
 
 **Usage:**
+
 ```python
 from scripts.analytics.pipelines.forecast_appreciation import run_forecasting_pipeline
 
@@ -165,11 +190,14 @@ forecasts = run_forecasting_pipeline(
 ## Data Requirements
 
 ### Required Datasets
+
 1. **L3 unified dataset** - Transaction-level data with planning areas
+
    - Currently needs to be created
    - Location: `data/pipeline/04_platinum/housing_unified.parquet`
 
 2. **L5 growth metrics** - Monthly growth metrics by planning area
+
    - Already exists in project
    - Location: `data/pipeline/04_platinum/metrics/L5_growth_metrics_by_area.parquet`
 
@@ -178,6 +206,7 @@ forecasts = run_forecasting_pipeline(
    - Location: `data/raw_data/macro/`
 
 ### Output Datasets
+
 1. **L5_regional_timeseries.parquet** - Regional monthly time series
 2. **L5_area_timeseries.parquet** - Planning area monthly time series
 
@@ -186,11 +215,13 @@ forecasts = run_forecasting_pipeline(
 ## Testing
 
 **Test Statistics:**
+
 - 21 tests across 7 test files
 - All tests passing ✅
 - Test coverage: 62-71% for core modules
 
 **Run Tests:**
+
 ```bash
 # Run all analytics tests
 uv run pytest tests/analytics/ tests/core/test_regional_mapping.py tests/data/ -v
@@ -209,16 +240,19 @@ Open `htmlcov/index.html` in browser
 ### Complete Pipeline Execution
 
 1. **Fetch macroeconomic data:**
+
    ```bash
    uv run python scripts/data/fetch_macro_data.py
    ```
 
 2. **Prepare time series data:**
+
    ```bash
    uv run python scripts/analytics/pipelines/prepare_timeseries_data.py
    ```
 
 3. **Run cross-validation:**
+
    ```python
    from scripts.analytics.pipelines.cross_validate_timeseries import run_cross_validation
    from scripts.core.data_helpers import load_parquet
@@ -230,6 +264,7 @@ Open `htmlcov/index.html` in browser
    ```
 
 4. **Generate forecasts:**
+
    ```python
    from scripts.analytics.pipelines.forecast_appreciation import run_forecasting_pipeline
 
@@ -244,18 +279,21 @@ Open `htmlcov/index.html` in browser
 ## Technical Specifications
 
 **Dependencies:**
+
 - Python 3.11+
 - pandas, numpy
 - statsmodels (VAR, ARIMA, stationarity tests, Granger causality)
 - pytest (testing)
 
 **Model Configuration:**
+
 - **VAR Endogenous Variables:** regional_appreciation, regional_volume, regional_price_psf
 - **VAR Exogenous Variables:** sora_rate, cpi, gdp_growth
 - **ARIMAX Endogenous:** area_appreciation
 - **ARIMAX Exogenous:** regional_appreciation, mrt_within_1km_mean, hawker_within_1km_mean
 
 **Performance Targets (from design doc):**
+
 - RMSE < 5% for regional forecasts
 - RMSE < 8% for planning area forecasts
 - Backtest directional accuracy > 70%
@@ -274,12 +312,14 @@ Open `htmlcov/index.html` in browser
 ## Next Steps
 
 ### Immediate (Required for Production)
+
 1. **Generate L3 unified dataset** from existing transaction data
 2. **Run full pipeline** with real data
 3. **Validate forecasts** via backtesting (2021-2025)
 4. **Improve test coverage** to 80%+
 
 ### Future Enhancements
+
 1. **Integrate MAS/SingStat APIs** for real macroeconomic data
 2. **Add IRF (Impulse Response Functions)** for causal analysis
 3. **Add FEVD (Forecast Error Variance Decomposition)** for variable importance
@@ -291,19 +331,23 @@ Open `htmlcov/index.html` in browser
 ## Files Created
 
 **Core Modules:**
+
 - `scripts/core/regional_mapping.py` (180 lines)
 - `scripts/data/fetch_macro_data.py` (269 lines)
 - `scripts/analytics/pipelines/prepare_timeseries_data.py` (410 lines)
 
 **Models:**
+
 - `scripts/analytics/models/regional_var.py` (349 lines)
 - `scripts/analytics/models/area_arimax.py` (308 lines)
 
 **Pipelines:**
+
 - `scripts/analytics/pipelines/cross_validate_timeseries.py` (243 lines)
 - `scripts/analytics/pipelines/forecast_appreciation.py` (329 lines)
 
 **Tests:**
+
 - `tests/core/test_regional_mapping.py` (30 lines)
 - `tests/data/test_fetch_macro_data.py` (33 lines)
 - `tests/analytics/test_prepare_timeseries_data.py` (54 lines)
@@ -326,6 +370,7 @@ Open `htmlcov/index.html` in browser
 ## Git History
 
 **Commits on `feature/var-housing-forecast`:**
+
 1. `0a2af0d` - feat(analytics): add regional mapping for 7 Singapore regions
 2. `d292d57` - feat(data): add macroeconomic data fetching module
 3. `3483f14` - feat(analytics): add time series data preparation pipeline

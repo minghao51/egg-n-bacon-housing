@@ -33,12 +33,12 @@ uv run python scripts/analysis/analyze_h3_clusters.py --features price_psf,renta
 
 ### Arguments
 
-| Argument | Type | Default | Description |
-|----------|------|---------|-------------|
-| `--resolution` | int | 8 | H3 resolution |
-| `--eps` | float | 0.5 | DBSCAN eps (neighborhood radius) |
-| `--min-samples` | int | 10 | Minimum samples per cluster |
-| `--features` | str | `price_psf,floor_area_sqm,rental_yield_pct,remaining_lease_months` | Features for clustering |
+| Argument        | Type  | Default                                                            | Description                      |
+| --------------- | ----- | ------------------------------------------------------------------ | -------------------------------- |
+| `--resolution`  | int   | 8                                                                  | H3 resolution                    |
+| `--eps`         | float | 0.5                                                                | DBSCAN eps (neighborhood radius) |
+| `--min-samples` | int   | 10                                                                 | Minimum samples per cluster      |
+| `--features`    | str   | `price_psf,floor_area_sqm,rental_yield_pct,remaining_lease_months` | Features for clustering          |
 
 ---
 
@@ -46,12 +46,12 @@ uv run python scripts/analysis/analyze_h3_clusters.py --features price_psf,renta
 
 ### Files Created
 
-| File | Description |
-|------|-------------|
+| File                                                      | Description                           |
+| --------------------------------------------------------- | ------------------------------------- |
 | `data/analysis/analyze_h3_clusters/property_clusters.csv` | Each property with cluster assignment |
-| `data/analysis/analyze_h3_clusters/cluster_profiles.csv` | Statistical profile per cluster |
-| `data/analysis/analyze_h3_clusters/cluster_map.png` | Geographic cluster map |
-| `data/analysis/analyze_h3_clusters/silhouette_plot.png` | Cluster quality assessment |
+| `data/analysis/analyze_h3_clusters/cluster_profiles.csv`  | Statistical profile per cluster       |
+| `data/analysis/analyze_h3_clusters/cluster_map.png`       | Geographic cluster map                |
+| `data/analysis/analyze_h3_clusters/silhouette_plot.png`   | Cluster quality assessment            |
 
 ### Property Clusters Schema
 
@@ -99,12 +99,12 @@ z = (x - mean) / std
 
 Clusters are automatically named based on characteristics:
 
-| Pattern | Name Template |
-|---------|---------------|
+| Pattern                | Name Template        |
+| ---------------------- | -------------------- |
 | High price, high yield | "{Location} Premium" |
-| Low price, high yield | "{Location} Value" |
-| High price, low yield | "{Location} Luxury" |
-| Low price, low yield | "{Location} Budget" |
+| Low price, high yield  | "{Location} Value"   |
+| High price, low yield  | "{Location} Luxury"  |
+| Low price, low yield   | "{Location} Budget"  |
 
 ---
 
@@ -253,11 +253,11 @@ distances = np.sort(distances[:, k-1])
 
 ### Min Samples
 
-| Min Samples | Effect |
-|-------------|--------|
-| 5-10 | More clusters, more noise |
-| 10-20 | Conservative clustering |
-| 20+ | Only dense regions form clusters |
+| Min Samples | Effect                           |
+| ----------- | -------------------------------- |
+| 5-10        | More clusters, more noise        |
+| 10-20       | Conservative clustering          |
+| 20+         | Only dense regions form clusters |
 
 ---
 

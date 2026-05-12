@@ -1,62 +1,50 @@
 # Testing
 
-## Python (Backend/Data Pipeline)
+## Python
 
 ### Framework
 
 - **Tool**: pytest
 - **Plugins**: pytest-cov, pytest-mock, pytest-asyncio
-- **Config**: `pyproject.toml` [lines 83-127]
-
-```toml
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = [
-    "--verbose",
-    "--strict-markers",
-    "--tb=short",
-    "--cov=scripts/core",
-]
-```
+- **Config**: `pyproject.toml` [tool.pytest.ini_options]
 
 ### Test Structure
 
 ```
 tests/
-├── conftest.py           # Shared fixtures
-├── core/
-│   ├── test_utils.py     # Tests for scripts/core/utils.py
-│   └── ...
-├── unit/
-│   └── ...
-├── integration/
-│   └── ...
-└── analytics/
-    └── ...
+├── conftest.py
+├── test_cache.py
+├── test_cleaning_validation.py
+├── test_config.py
+├── test_data_loader.py
+├── test_datagovsg.py
+├── test_export.py
+├── test_features.py
+├── test_ingestion.py
+├── test_metrics.py
+├── test_onemap.py
+└── test_pipeline.py
 ```
 
 ### Test Markers
 
-- `@pytest.mark.unit` - Fast, isolated tests
-- `@pytest.mark.integration` - Slower, may use external resources
-- `@pytest.mark.slow` - Should run infrequently
-- `@pytest.mark.api` - Tests that make API calls (may need mocking)
+- `@pytest.mark.unit` — Fast, isolated
+- `@pytest.mark.integration` — Slower, may use external resources
+- `@pytest.mark.slow` — Infrequent
+- `@pytest.mark.api` — API calls (may need mocking)
 
 ### Shared Fixtures (conftest.py)
 
-| Fixture | Purpose |
-|---------|---------|
-| `project_root_path` | Project root Path |
-| `temp_dir` | Temporary directory for test files |
-| `temp_data_dir` | Mimics project data structure |
-| `mock_config` | Mock Config with test paths |
-| `sample_dataframe` | 100-row sample DataFrame |
-| `sample_transactions` | Sample HDB transaction data |
-| `mock_onemap_response` | Mock OneMap API response |
-| `mock_env_vars` | Environment variables |
+| Fixture                | Purpose                            |
+| ---------------------- | ---------------------------------- |
+| `project_root_path`    | Project root Path                  |
+| `temp_dir`             | Temporary directory for test files |
+| `temp_data_dir`        | Mimics project data structure      |
+| `mock_config`          | Mock Config with test paths        |
+| `sample_dataframe`     | 100-row sample DataFrame           |
+| `sample_transactions`  | Sample HDB transaction data        |
+| `mock_onemap_response` | Mock OneMap API response           |
+| `mock_env_vars`        | Environment variables              |
 
 ### Mocking Pattern
 
@@ -67,52 +55,25 @@ from unittest.mock import MagicMock
 def mock_onemap_response():
     mock = MagicMock()
     mock.status_code = 200
-    mock.json.return_value = {
-        "found": 1,
-        "totalNumPages": 1,
-        "results": [{ ... }]
-    }
+    mock.json.return_value = {"found": 1, "results": [{...}]}
     return mock
 ```
 
 ### Running Tests
 
 ```bash
-# All tests
-uv run pytest tests/ -v
-
-# With coverage
-uv run pytest tests/ -v --cov=scripts/core --cov-report=xml
-
-# Specific marker
-uv run pytest -v -m unit
-
-# Specific file
-uv run pytest tests/core/test_utils.py
+uv run pytest tests/ -v                          # All tests
+uv run pytest tests/ -v --cov=egg_n_bacon_housing  # With coverage
+uv run pytest -v -m unit                          # Specific marker
+uv run pytest tests/test_config.py                # Specific file
 ```
 
----
-
-## TypeScript/Astro (Frontend)
+## TypeScript/Astro (E2E)
 
 ### Framework
 
 - **Tool**: Playwright
 - **Config**: `app/playwright.config.ts`
-
-```typescript
-export default defineConfig({
-  testDir: './tests/e2e',
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['list'],
-  ],
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-});
-```
 
 ### Test Structure
 
@@ -122,104 +83,27 @@ app/tests/e2e/
 ├── cross-page.spec.ts
 ├── dashboard/
 │   ├── overview.spec.ts
-│   ├── trends.spec.ts
-│   └── ...
+│   └── trends.spec.ts
 ├── analytics/
-│   ├── articles.spec.ts
-│   └── ...
+│   └── articles.spec.ts
 └── utils/
-    └── pageHealth.ts      # Shared test utilities
+    └── pageHealth.ts
 ```
 
-### Test Patterns
-
-**Basic page test**:
-```typescript
-test('should load page', async ({ page }) => {
-  await page.goto('/analytics/lease-decay');
-  await expect(page).toHaveURL(/analytics\/lease-decay/);
-  await expect(page.locator('main')).toBeVisible();
-});
-```
-
-**Health check pattern** (from `utils/pageHealth.ts`):
-```typescript
-import { expectPageToLoadWithoutErrors } from '../utils/pageHealth';
-
-test('should not have critical errors', async ({ page }) => {
-  await expectPageToLoadWithoutErrors(page, '/analytics/lease-decay');
-});
-```
-
-**With console warning checks**:
-```typescript
-test('should not emit chart sizing warnings', async ({ page }) => {
-  await expectPageToLoadWithoutErrors(page, '/analytics/lease-decay', {
-    failOnConsoleWarnings: true,
-  });
-});
-```
-
-### PageHealth Utility
-
-`app/tests/e2e/utils/pageHealth.ts` provides `expectPageToLoadWithoutErrors()`:
-
-```typescript
-interface PageHealthOptions {
-  ignoreConsoleErrors?: RegExp | string[];
-  ignoreConsoleWarnings?: RegExp | string[];
-  ignorePageErrors?: RegExp | string[];
-  ignoreFailedRequests?: RegExp | string[];
-  failOnConsoleWarnings?: boolean;
-}
-```
-
-Ignores by default:
-- 404s for favicon and apple-touch-icon files
-- "Failed to load resource" console errors
-
-### Running Tests
+### Running
 
 ```bash
-# E2E tests
-npm run test:e2e
-
-# headed mode
-npm run test:e2e:headed
-
-# UI mode
-npm run test:e2e:ui
-
-# With production build
-npm run test:e2e:prod
-
-# Show report
-npm run test:e2e:report
+npm run test:e2e           # Headless
+npm run test:e2e:headed    # Visible browser
+npm run test:e2e:ui        # Playwright UI mode
+npm run test:e2e:prod      # Against production build
 ```
-
-### CI Configuration
-
-From `.github/workflows/e2e.yml`:
-- Runs on push to main/develop
-- Parallel execution
-- 2 retries on CI
-- HTML report generated
-
----
 
 ## Coverage
 
-### Python
+Python coverage targets `egg_n_bacon_housing`, excludes:
 
-Coverage targets `scripts/core`:
-```bash
-uv run pytest tests/ -v --cov=scripts/core --cov-report=xml --cov-report=term-missing:skip-covered
-```
+- `tests/`, `*/test_*.py`
+- `__pycache__/`, `site-packages/`
 
-Excluded from coverage:
-- `tests/`
-- `*/test_*.py`
-- `__pycache__/`
-- `site-packages/`
-
-Coverage uploaded to Codecov on CI.
+CI gate: core pipeline components must maintain ≥60% line coverage (enforced by `scripts/tools/check_core_coverage.py`).

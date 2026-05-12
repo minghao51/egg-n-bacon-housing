@@ -13,6 +13,7 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 ## Data Sources & Completeness
 
 ### ✅ HDB Resale Transactions
+
 - **Source:** data.gov.sg API
 - **Records:** 969,748 transactions
 - **Date Range:** 1990-01 to 2026-01 (36 years)
@@ -21,6 +22,7 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 - **Geography:** Town-level (can be aggregated to planning area)
 
 **Key Fields:**
+
 - `month` - Transaction month (YYYY-MM format)
 - `town` - HDB town (e.g., "BISHAN", "TAMPINES")
 - `flat_type` - Flat type (e.g., "4 ROOM", "EXECUTIVE")
@@ -32,12 +34,14 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 ---
 
 ### ✅ Private Condo Transactions
+
 - **Source:** URA (Urban Redevelopment Authority) CSV data
 - **Records:** 49,052 transactions
 - **File:** `L1/housing_condo_transaction.parquet`
 - **Granularity:** Individual transaction level
 
 **Key Fields:**
+
 - `Project Name` - Condo project name
 - `Transacted Price ($)` - Sale price
 - `Area (SQFT)` / `Area (SQM)` - Floor area
@@ -51,6 +55,7 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 ---
 
 ### ✅ Amenity Data
+
 - **Source:** Multiple sources (data.gov.sg, OneMap)
 - **Records:** 5,569 amenities across 6 categories
 - **File:** `L1/amenity_v2.parquet`
@@ -67,6 +72,7 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 | Hawker | 129 | Hawker centers, food courts |
 
 **Key Fields:**
+
 - `name` - Amenity name
 - `type` - Amenity category
 - `lat` / `lon` - Coordinates (WGS84)
@@ -76,6 +82,7 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 ### ✅ L2 Feature Engineered Data
 
 #### File 1: `L2/housing_multi_amenity_features.parquet`
+
 - **Records:** 17,720 unique properties
 - **Size:** 2.3 MB (compressed)
 - **Purpose:** Distance-based features to nearest amenities
@@ -83,6 +90,7 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 **Feature Schema:**
 
 **Identifiers:**
+
 - `search_result` - Search result index
 - `NameAddress` - Name and address string
 - `SEARCHVAL` - Search value
@@ -97,6 +105,7 @@ This document provides a comprehensive reference for the L2 (Level 2) housing da
 
 **Distance Features (for each amenity type):**
 For each of: **supermarket, preschool, park, hawker, mrt, childcare**
+
 - `dist_to_nearest_{type}` - Distance to nearest amenity (km)
 - `{type}_within_500m` - Count of amenities within 500m
 - `{type}_within_1km` - Count of amenities within 1km
@@ -109,11 +118,13 @@ For each of: **supermarket, preschool, park, hawker, mrt, childcare**
 ## Planning Area Mapping
 
 ### Current Limitation
+
 - HDB data uses **town** field (e.g., "BISHAN", "TAMPINES")
 - Condo data uses **postal district** or street name
 - Planning area mapping required for unified analysis
 
 ### Recommended Approach
+
 1. Use OneMap API to map towns/postal districts to planning areas
 2. Create a planning area crosswalk table
 3. Add `planning_area` column to all transaction records
@@ -123,12 +134,12 @@ For each of: **supermarket, preschool, park, hawker, mrt, childcare**
 
 ## Data Quality Summary
 
-| Dataset | Records | Date Range | Coverage | Status |
-|---------|---------|------------|----------|--------|
-| HDB Transactions | 969,748 | 1990-2026 | National | ✅ Complete |
-| Condo Transactions | 49,052 | ~2000-2026 | Private | ✅ Complete |
-| Amenities | 5,569 | 2026 | National | ✅ Complete |
-| L2 Features | 17,720 | 2026 | Unique properties | ✅ Complete |
+| Dataset            | Records | Date Range | Coverage          | Status      |
+| ------------------ | ------- | ---------- | ----------------- | ----------- |
+| HDB Transactions   | 969,748 | 1990-2026  | National          | ✅ Complete |
+| Condo Transactions | 49,052  | ~2000-2026 | Private           | ✅ Complete |
+| Amenities          | 5,569   | 2026       | National          | ✅ Complete |
+| L2 Features        | 17,720  | 2026       | Unique properties | ✅ Complete |
 
 **Data Completeness:** 100% - All core datasets available and verified
 
@@ -137,6 +148,7 @@ For each of: **supermarket, preschool, park, hawker, mrt, childcare**
 ## Metadata & Versioning
 
 All datasets tracked in `data/metadata.json`:
+
 - Version: YYYY-MM-DD format
 - Row counts verified
 - Compression: Snappy
@@ -149,6 +161,7 @@ All datasets tracked in `data/metadata.json`:
 ## Usage Examples
 
 ### Loading L2 Data
+
 ```python
 import pandas as pd
 
@@ -164,6 +177,7 @@ amenities = pd.read_parquet('data/parquets/L1/amenity_v2.parquet')
 ```
 
 ### Planning Area Aggregation (TODO)
+
 ```python
 # After adding planning_area mapping:
 metrics_by_area = df.groupby('planning_area').agg({
@@ -178,11 +192,13 @@ metrics_by_area = df.groupby('planning_area').agg({
 ## Next Steps for Analysis
 
 1. **Geocode to Planning Areas**
+
    - Map towns to planning areas
    - Map postal districts to planning areas
    - Add `planning_area` column to all datasets
 
 2. **Time-Series Aggregation**
+
    - Aggregate by month + planning area
    - Create quarterly/annual aggregates
 

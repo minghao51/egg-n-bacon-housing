@@ -27,20 +27,20 @@ Navigate to any dashboard page and use the "📅 Period Mode" sidebar filter.
 
 ### Phase 1-3: Era Selection
 
-| Mode | Date Range | Description |
-|------|------------|-------------|
-| **Whole Period** | 1990-2026 | All historical data |
-| **Pre-COVID** | 2015-2021 | Historical market including early COVID |
-| **Recent** | 2022-2026 | Post-pandemic recovery period |
+| Mode             | Date Range | Description                             |
+| ---------------- | ---------- | --------------------------------------- |
+| **Whole Period** | 1990-2026  | All historical data                     |
+| **Pre-COVID**    | 2015-2021  | Historical market including early COVID |
+| **Recent**       | 2022-2026  | Post-pandemic recovery period           |
 
 ### Phase 4: Cross-Era Comparison
 
 Compare metrics side-by-side between two eras:
 
-| Page | Comparison Feature |
-|------|-------------------|
-| Market Overview | ✅ Side-by-side metrics |
-| Price Map | ✅ Coming soon |
+| Page               | Comparison Feature                         |
+| ------------------ | ------------------------------------------ |
+| Market Overview    | ✅ Side-by-side metrics                    |
+| Price Map          | ✅ Coming soon                             |
 | Trends & Analytics | ✅ Full comparison with property breakdown |
 
 ### Phase 4: Custom Date Range
@@ -51,45 +51,45 @@ Override era selection with a specific date range slider.
 
 ## Dashboard Pages
 
-| Page | Era Mode | Cross-Era Compare | Custom Range |
-|------|----------|-------------------|--------------|
-| Market Overview | ✅ Yes | ✅ Yes | ✅ Yes |
-| Price Map | ✅ Yes | ✅ Yes (NEW) | ✅ Yes (NEW) |
-| Trends & Analytics | ✅ Yes | ✅ Yes | ✅ Yes |
+| Page               | Era Mode | Cross-Era Compare | Custom Range |
+| ------------------ | -------- | ----------------- | ------------ |
+| Market Overview    | ✅ Yes   | ✅ Yes            | ✅ Yes       |
+| Price Map          | ✅ Yes   | ✅ Yes (NEW)      | ✅ Yes (NEW) |
+| Trends & Analytics | ✅ Yes   | ✅ Yes            | ✅ Yes       |
 
 ---
 
 ## Detailed Comparison Eras (Data Only)
 
-| Era | Date Range | Transactions | Percentage |
-|-----|------------|--------------|------------|
-| pre_covid_strict | 2015-2019 | 671,732 | 73.7% |
-| covid_period | 2020-2021 | 70,091 | 7.7% |
-| post_covid | 2022-2026 | 169,974 | 18.6% |
+| Era              | Date Range | Transactions | Percentage |
+| ---------------- | ---------- | ------------ | ---------- |
+| pre_covid_strict | 2015-2019  | 671,732      | 73.7%      |
+| covid_period     | 2020-2021  | 70,091       | 7.7%       |
+| post_covid       | 2022-2026  | 169,974      | 18.6%      |
 
 ---
 
 ## Modified Files
 
-| File | Changes |
-|------|---------|
-| `scripts/create_period_segmentation.py` | Added `create_era_segments()` and `create_comparison_eras()` functions |
-| `scripts/calculate_coming_soon_metrics.py` | NEW: Coming soon properties, forecasted metrics, era comparisons |
-| `core/metrics.py` | Added `calculate_forecasted_metrics()`, `calculate_era_comparison()`, `identify_coming_soon()`, `calculate_coming_soon_score()` |
-| `core/data_loader.py` | Added `filter_by_era()`, `get_era_summary()`, `era` parameter to `apply_unified_filters()` |
-| `apps/1_market_overview.py` | Added Period Mode, Cross-Era Comparison, Custom Date Range |
-| `apps/2_price_map.py` | Added Period Mode, Cross-Era Comparison ✅, Custom Date Range ✅, 3-Way Comparison ✅ |
-| `apps/3_trends_analytics.py` | Added Period Mode, Cross-Era Comparison with property breakdown, Custom Date Range |
-| `docs/20260124-era-period-selection.md` | Documentation |
+| File                                       | Changes                                                                                                                         |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/create_period_segmentation.py`    | Added `create_era_segments()` and `create_comparison_eras()` functions                                                          |
+| `scripts/calculate_coming_soon_metrics.py` | NEW: Coming soon properties, forecasted metrics, era comparisons                                                                |
+| `core/metrics.py`                          | Added `calculate_forecasted_metrics()`, `calculate_era_comparison()`, `identify_coming_soon()`, `calculate_coming_soon_score()` |
+| `core/data_loader.py`                      | Added `filter_by_era()`, `get_era_summary()`, `era` parameter to `apply_unified_filters()`                                      |
+| `apps/1_market_overview.py`                | Added Period Mode, Cross-Era Comparison, Custom Date Range                                                                      |
+| `apps/2_price_map.py`                      | Added Period Mode, Cross-Era Comparison ✅, Custom Date Range ✅, 3-Way Comparison ✅                                           |
+| `apps/3_trends_analytics.py`               | Added Period Mode, Cross-Era Comparison with property breakdown, Custom Date Range                                              |
+| `docs/20260124-era-period-selection.md`    | Documentation                                                                                                                   |
 
 ---
 
 ## Era Distribution
 
-| Era | Transactions | Percentage |
-|-----|--------------|------------|
-| pre_covid (2015-2021) | 741,823 | 81.4% |
-| recent (2022-2026) | 169,974 | 18.6% |
+| Era                   | Transactions | Percentage |
+| --------------------- | ------------ | ---------- |
+| pre_covid (2015-2021) | 741,823      | 81.4%      |
+| recent (2022-2026)    | 169,974      | 18.6%      |
 
 ---
 
@@ -135,11 +135,11 @@ Price PSF                   $5,200                   $6,850                +31.7
 
 ## Future Enhancements
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| Cross-Era Comparison | ✅ Complete | Side-by-side metrics |
-| Custom Date Range | ✅ Complete | Date slider |
-| Price Map Era Filter | ✅ Complete | Apply to map visualizations |
+| Feature                | Status      | Description                                        |
+| ---------------------- | ----------- | -------------------------------------------------- |
+| Cross-Era Comparison   | ✅ Complete | Side-by-side metrics                               |
+| Custom Date Range      | ✅ Complete | Date slider                                        |
+| Price Map Era Filter   | ✅ Complete | Apply to map visualizations                        |
 | Comparison Era (3-way) | ✅ Complete | Compare pre_covid_strict, covid_period, post_covid |
 
 ---
@@ -147,6 +147,7 @@ Price PSF                   $5,200                   $6,850                +31.7
 ## Overview
 
 Added era-based period selection to the Singapore Housing Dashboard, enabling users to filter and analyze data by broader market eras:
+
 - **Whole Period** - All data (1990-2026)
 - **Pre-COVID (2015-2021)** - Historical market including early COVID years
 - **Recent (2022-2026)** - Post-pandemic recovery period
@@ -164,14 +165,14 @@ Added two new functions:
 ```python
 def create_era_segments(df: pd.DataFrame) -> pd.DataFrame:
     """Create broader era segments for comparative analysis.
-    
+
     - pre_covid: 2015-2021 (includes early COVID years 2020-2021)
     - recent: 2022-2026 (post-pandemic recovery)
     """
-    
+
 def create_comparison_eras(df: pd.DataFrame) -> pd.DataFrame:
     """Create detailed comparison eras for granular analysis.
-    
+
     - pre_covid_strict: 2015-2019 (before pandemic)
     - covid_period: 2020-2021 (pandemic years)
     - post_covid: 2022-2026 (recovery period)
@@ -179,6 +180,7 @@ def create_comparison_eras(df: pd.DataFrame) -> pd.DataFrame:
 ```
 
 **Output Files:**
+
 - `data/analysis/market_segmentation_period/era_summary.csv`
 - `data/analysis/market_segmentation_period/comparison_era_summary.csv`
 
@@ -189,7 +191,7 @@ Added filtering functions:
 ```python
 def filter_by_era(df: pd.DataFrame, era: str) -> pd.DataFrame:
     """Filter data by era mode."""
-    
+
 def get_era_summary(df: pd.DataFrame) -> dict:
     """Get summary statistics by era."""
 ```
@@ -201,6 +203,7 @@ Extended `apply_unified_filters()` with `era` parameter.
 #### `apps/3_trends_analytics.py`
 
 **Sidebar Filter:**
+
 ```python
 st.sidebar.subheader("📅 Period Mode")
 
@@ -227,16 +230,16 @@ Dynamic info banner at top of page showing current analysis mode.
 
 After running `create_period_segmentation.py`:
 
-| Era | Transactions | Percentage |
-|-----|--------------|------------|
-| pre_covid (2015-2021) | 741,823 | 81.4% |
-| recent (2022-2026) | 169,974 | 18.6% |
+| Era                   | Transactions | Percentage |
+| --------------------- | ------------ | ---------- |
+| pre_covid (2015-2021) | 741,823      | 81.4%      |
+| recent (2022-2026)    | 169,974      | 18.6%      |
 
-| Comparison Era | Transactions | Percentage |
-|----------------|--------------|------------|
-| pre_covid_strict (2015-2019) | 671,732 | 73.7% |
-| covid_period (2020-2021) | 70,091 | 7.7% |
-| post_covid (2022-2026) | 169,974 | 18.6% |
+| Comparison Era               | Transactions | Percentage |
+| ---------------------------- | ------------ | ---------- |
+| pre_covid_strict (2015-2019) | 671,732      | 73.7%      |
+| covid_period (2020-2021)     | 70,091       | 7.7%       |
+| post_covid (2022-2026)       | 169,974      | 18.6%      |
 
 ---
 

@@ -26,16 +26,19 @@ Transform the analytics documentation from technical reports into accessible, ac
 Three core personas to help users find relevant content:
 
 **First-Time Home Buyer** (🏠)
+
 - Buying first HDB/condo for owner-occupation
 - Cares about: Affordability, lease decay, location value
 - Curated docs: Lease decay, price predictions, affordability analysis
 
 **Property Investor** (💼)
+
 - Building investment portfolio (rental or capital appreciation)
 - Cares about: Price appreciation, MRT/CBD premiums, market timing
 - Curated docs: Price predictions, MRT impact, clustering analysis, policy effects
 
 **Upsizer / Upgrader** (⬆️)
+
 - Moving from smaller to larger property (HDB → condo, or larger HDB)
 - Cares about: Maximizing sale price, finding best value upgrade location
 - Curated docs: Price appreciation, MRT impact, market forecasts
@@ -65,6 +68,7 @@ One-sentence revolutionary finding
 ```
 
 **Enhanced Executive Summary:**
+
 - Keep existing 3 critical insights format
 - Add "Who should read this" badge (First-time buyer, Investor, Upgrader, or All)
 - Add "Reading time" and "Technical level" indicators
@@ -82,6 +86,7 @@ Astro component: `<Tooltip term="H3 hexagons">`
 - Glossary data source: `app/src/data/analytics-glossary.json`
 
 **Sample glossary entries:**
+
 ```json
 {
   "H3 hexagons": {
@@ -141,14 +146,16 @@ Astro component: `<Scenario>`
 **Situation:** You're considering a $1.2M condo 500m from a future MRT station opening in 2028
 
 **Our Analysis Says:**
+
 - Condos see 2.3% price increase per 100m closer to MRT
 - Future MRT lines typically boost nearby prices by 5-10% once operational
 
 **Your Decision Framework:**
+
 1. Check if the 5-10% premium is already priced in
 2. If not fully priced in and you can hold until 2028+, this may be a good investment
 3. Verify the station isn't already factored into current valuation
-</Scenario>
+   </Scenario>
 ```
 
 **C. Decision Checklist Component**
@@ -172,23 +179,28 @@ Astro component: `<DecisionChecklist>`
 ### Astro Components to Create
 
 1. **`src/components/analytics/Tooltip.astro`**
+
    - Props: `term`, `definition`, `whyItMatters`
    - Fetches from `analytics-glossary.json` if only `term` provided
    - CSS: Hover/tap to show tooltip bubble
 
 2. **`src/components/analytics/StatCallout.astro`**
+
    - Props: `value`, `label`, `trend`, `context`
    - Renders: Card with large number, colored trend indicator
 
 3. **`src/components/analytics/ImplicationBox.astro`**
+
    - Props: `persona`, `html` (or `children`)
    - Color-coded card by persona (investor=blue, first-time=green, upgrader=orange)
 
 4. **`src/components/analytics/Scenario.astro`**
+
    - Props: `title`, `html` (or `children`)
    - Box with scenario header, bulleted analysis, decision framework
 
 5. **`src/components/analytics/DecisionChecklist.astro`**
+
    - Props: `title`, `items`
    - Interactive checklist with checkboxes (local storage to save state)
 

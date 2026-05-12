@@ -10,6 +10,7 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 ## Implementation Summary
 
 ### Phase 2.1: Per-Type Amenity Metrics (L2)
+
 - Created `compute_amenity_distances_by_type()` in L2_features.py
 - Calculates 21 amenity columns (7 types × 3 metrics each)
 - Types: childcare, hawker, mall, mrt_exit, mrt_station, park, supermarket
@@ -19,6 +20,7 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 **Commit**: `30cfbeb`
 
 ### Phase 2.2: L3 Export Schema Update
+
 - Modified L3's `load_amenity_features()` to support new schema
 - Maintains backward compatibility with legacy `*_within_*` schema
 - Output: `L3_housing_unified.parquet` with 21 amenity columns
@@ -26,6 +28,7 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 **Commit**: `8f6a3fb`
 
 ### Phase 2.3: Webapp Data Export
+
 - Added `generate_amenity_summary_data()` function
 - Exports amenity coverage by planning area to JSON
 - Output: `app/public/data/amenity_summary.json.gz` (41 planning areas)
@@ -33,6 +36,7 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 **Commit**: `5e6faa9`
 
 ### Phase 2.4: Bug Fixes
+
 **Issue #1 - Merge Key Mismatch**: Amenity metrics used `property_id` but property_df used different keys
 **Fix**: Use postal code as merge key instead
 **Commit**: `ed0d208`
@@ -48,6 +52,7 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 ## Validation Results
 
 ### L2 Pipeline
+
 ```
 ✅ Amenity features: 17,722 properties
 ✅ POSTAL column: 100% coverage (17,722/17,722)
@@ -57,6 +62,7 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 ```
 
 ### L3 Pipeline
+
 ```
 ✅ Unified dataset: 1,116,323 records
 ✅ New amenity columns: 21 (dist_nearest_*, count_*_*m)
@@ -67,6 +73,7 @@ Successfully implemented and validated Phase 2 of the pipeline improvements: **I
 ```
 
 ### Webapp Export
+
 ```
 ✅ Amenity summary: 41 planning areas
 ✅ Distance metrics: 7 (avg_dist_to_*)
@@ -97,6 +104,7 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 ## Known Limitations
 
 1. **Coverage**: Amenity features only available for HDB properties (79% of unified dataset)
+
    - Private properties don't go through L2 pipeline
    - Future: Add amenity calculation for private properties
 
@@ -106,14 +114,18 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 ## Phase 3 & 4 Verification
 
 ### Phase 3: L4 ML Analysis
+
 ✅ All 4 models implemented:
+
 - Price Prediction (XGBoost): 57,675 predictions
 - Market Segmentation (K-means): 288,374 segments
 - Price Forecasts (ARIMA): 20 forecasts
 - Feature Importance (SHAP): Implemented
 
 ### Phase 4: Rental Yield
+
 ✅ Imputation implemented:
+
 - Planning area averages (KNN-style)
 - Property type median fallback
 - Coverage: 100% (up from 17.1%)
@@ -129,11 +141,13 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 ## Files Modified
 
 ### Core Scripts
+
 - `scripts/core/stages/L2_features.py` - Per-type amenity calculation
 - `scripts/core/stages/L3_export.py` - Schema support, path fix
 - `scripts/core/stages/webapp_data_preparation.py` - Amenity summary export
 
 ### Data Files
+
 - `data/pipeline/03_gold/housing_per_type_amenity_features.parquet` (NEW)
 - `data/pipeline/04_platinum/housing_unified.parquet` (UPDATED)
 - `app/public/data/amenity_summary.json.gz` (NEW)

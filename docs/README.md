@@ -4,22 +4,22 @@ This directory is split into a small active set of operational docs plus a large
 
 ## Start Here
 
-| Need | Document |
-|------|----------|
-| Project overview | [README.md](../README.md) |
-| System structure | [docs/architecture.md](./architecture.md) |
+| Need                         | Document                                              |
+| ---------------------------- | ----------------------------------------------------- |
+| Project overview             | [README.md](../README.md)                             |
+| System structure             | [docs/architecture.md](./architecture.md)             |
 | Daily commands and workflows | [docs/guides/usage-guide.md](./guides/usage-guide.md) |
-| Guide index | [docs/guides/README.md](./guides/README.md) |
-| Troubleshooting | [docs/TROUBLESHOOTING.md](./TROUBLESHOOTING.md) |
+| Guide index                  | [docs/guides/README.md](./guides/README.md)           |
+| Troubleshooting              | [docs/TROUBLESHOOTING.md](./TROUBLESHOOTING.md)       |
 
 ## Main Sections
 
-| Path | Purpose |
-|------|---------|
+| Path              | Purpose                                             |
+| ----------------- | --------------------------------------------------- |
 | `docs/analytics/` | Published analytics writeups that also feed the app |
-| `docs/guides/` | How-to guides for setup, testing, and operations |
-| `docs/plans/` | Design docs and implementation plans |
-| `docs/archive/` | Historical references and superseded material |
+| `docs/guides/`    | How-to guides for setup, testing, and operations    |
+| `docs/plans/`     | Design docs and implementation plans                |
+| `docs/archive/`   | Historical references and superseded material       |
 
 ## Active Validation Scope
 

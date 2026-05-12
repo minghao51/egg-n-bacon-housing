@@ -11,6 +11,7 @@ A data quality monitoring system that provides **comprehensive visibility** into
 ### Problem Statement
 
 The current pipeline (L0 → L1 → L2 → L3 → L4 → L5) has limited visibility into:
+
 - Records being silently dropped during transformations (e.g., geocoding filters)
 - Duplicate records being introduced (e.g., concat operations, spatial joins)
 - Data quality degradation over time
@@ -18,6 +19,7 @@ The current pipeline (L0 → L1 → L2 → L3 → L4 → L5) has limited visibil
 ### Solution
 
 A non-intrusive decorator-based framework that:
+
 - **Automatically captures** quality metrics at every data persistence point
 - **Tracks historical baselines** for adaptive anomaly detection
 - **Never breaks the pipeline** - failures are logged, data is still saved
@@ -162,6 +164,7 @@ def monitor_data_quality(func):
 ### 3. Integration
 
 **Single-line change to `data_helpers.py`:**
+
 ```python
 from scripts.core.data_quality import monitor_data_quality
 
@@ -249,16 +252,20 @@ def _update_baseline(self, snapshot: QualitySnapshot) -> None:
 ## Error Handling & Edge Cases
 
 ### 1. First Run (No Baseline)
+
 - Returns `None` from `get_baseline()`
 - No anomalies possible on first run
 - Baseline created after first snapshot
 
 ### 2. Low Variance (std ≈ 0)
+
 - If `std_rows < 1`, skip anomaly check
 - Log: "Skipping row check - low variance"
 
 ### 3. Expected Data Loss
+
 Certain pipeline stages are expected to drop records:
+
 ```python
 # In Config class
 EXPECTED_REDUCTIONS = {
@@ -266,9 +273,11 @@ EXPECTED_REDUCTIONS = {
     "L3_property": 0.80,                 # Expected to keep 80% of L2
 }
 ```
+
 These use a **5σ threshold** instead of 3σ for anomaly detection.
 
 ### 4. Decorator Failures Never Break Pipeline
+
 ```python
 try:
     collector.record_snapshot(snapshot)
@@ -337,17 +346,20 @@ data/
 ### Steps
 
 1. **Create `data_quality.py`**
+
    - Implement `QualitySnapshot`, `QualityBaseline` dataclasses
    - Implement `DataQualityCollector` class
    - Implement `@monitor_data_quality` decorator
    - Add unit tests
 
 2. **Modify `data_helpers.py`**
+
    - Import decorator
    - Apply to `save_parquet()` function (1-line change)
    - No other code changes needed
 
 3. **Create CLI reporter**
+
    - Implement `data_quality_report.py`
    - Add arguments: `--summary`, `--dataset`, `--anomalies`, `--trend`
 
@@ -378,23 +390,28 @@ def test_adaptive_thresholds():
 The framework is designed to support these features with minimal changes:
 
 ### Comprehensive Profiling
+
 - Statistical metrics: min/max/mean/std for each column
 - Value range validation
 - Distribution shift detection (KL divergence)
 
 ### Load-Side Monitoring
+
 - Decorator on `load_parquet()` for input tracking
 - Full input→output lineage per stage
 
 ### Key-Based Duplicate Detection
+
 - Configurable key columns per dataset
 - Fuzzy matching for near-duplicates
 
 ### HTML Dashboard
+
 - Web interface for visual exploration
 - Real-time anomaly alerts
 
 ### ML-Based Anomaly Detection
+
 - Isolation Forest for multivariate outliers
 - Time-series forecasting for trend prediction
 

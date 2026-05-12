@@ -34,13 +34,13 @@ The standard HDB/Condo/EC split misses important behavioral differences. Cluster
 
 ### 1. Five behavioral segments emerge from clustering
 
-| Segment | Typical Profile | Price PSF | Rental Yield | YoY Appreciation |
-|---------|----------------|-----------|-------------|-----------------|
-| High-Growth HDB | Newer HDBs in developing towns | $450-550 | 4-5% | 8-15% |
-| Stable Mid-Tier | Mature town HDBs and mass condos | $500-700 | 3-4.5% | 3-7% |
-| Premium Condo (Low Yield) | Central/RCR condos | $1,200-2,000 | 2-3% | 4-8% |
-| High-Yield Apartments | OCR condos near transport hubs | $800-1,200 | 4-6% | 5-10% |
-| Luxury Segment | CCR condos and landed | $2,000+ | 1-2.5% | Variable |
+| Segment                   | Typical Profile                  | Price PSF    | Rental Yield | YoY Appreciation |
+| ------------------------- | -------------------------------- | ------------ | ------------ | ---------------- |
+| High-Growth HDB           | Newer HDBs in developing towns   | $450-550     | 4-5%         | 8-15%            |
+| Stable Mid-Tier           | Mature town HDBs and mass condos | $500-700     | 3-4.5%       | 3-7%             |
+| Premium Condo (Low Yield) | Central/RCR condos               | $1,200-2,000 | 2-3%         | 4-8%             |
+| High-Yield Apartments     | OCR condos near transport hubs   | $800-1,200   | 4-6%         | 5-10%            |
+| Luxury Segment            | CCR condos and landed            | $2,000+      | 1-2.5%       | Variable         |
 
 **Impact**
 
@@ -50,14 +50,14 @@ Each segment has a distinct risk-return profile. The "Premium Condo (Low Yield)"
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="CAGR by planning area (2015-2025)" data-chart-columns="CAGR,Median Price PSF"></div>
 
-| Planning Area | CAGR | Median Price PSF | Segment |
-|--------------|------|-----------------|---------|
-| Bukit Timah | ~5-7% | $1,800+ | Luxury |
-| Queenstown | ~4-6% | $700-900 | High-Growth HDB |
-| Jurong East | ~4-6% | $550-650 | High-Growth HDB |
-| Punggol | ~3-5% | $500-600 | High-Growth HDB |
-| Sengkang | ~2-4% | $450-550 | Stable Mid-Tier |
-| Woodlands | ~1-3% | $400-500 | Stable Mid-Tier |
+| Planning Area | CAGR  | Median Price PSF | Segment         |
+| ------------- | ----- | ---------------- | --------------- |
+| Bukit Timah   | ~5-7% | $1,800+          | Luxury          |
+| Queenstown    | ~4-6% | $700-900         | High-Growth HDB |
+| Jurong East   | ~4-6% | $550-650         | High-Growth HDB |
+| Punggol       | ~3-5% | $500-600         | High-Growth HDB |
+| Sengkang      | ~2-4% | $450-550         | Stable Mid-Tier |
+| Woodlands     | ~1-3% | $400-500         | Stable Mid-Tier |
 
 **Impact**
 
@@ -65,13 +65,13 @@ Planning area is a stronger predictor of appreciation trajectory than property t
 
 ### 3. Risk-return trade-offs are segment-specific
 
-| Strategy | Target Segment | Expected Return | Risk Level | Best For |
-|----------|---------------|----------------|------------|---------|
-| Hold & Grow | High yield + strong appreciation (>6% yield, >10% growth) | High | Medium-High | Experienced investors |
-| Yield Play | High rental yield focus (>6%) | Medium | Low-Medium | Income-focused investors |
-| Growth Play | High appreciation potential (>15% YoY) | High | High | Speculative investors |
-| Value Investing | Affordable entry (<$5,000 PSF) | Medium | Low | First-time buyers |
-| Balanced Approach | Moderate metrics across the board | Medium | Medium | Most buyers |
+| Strategy          | Target Segment                                            | Expected Return | Risk Level  | Best For                 |
+| ----------------- | --------------------------------------------------------- | --------------- | ----------- | ------------------------ |
+| Hold & Grow       | High yield + strong appreciation (>6% yield, >10% growth) | High            | Medium-High | Experienced investors    |
+| Yield Play        | High rental yield focus (>6%)                             | Medium          | Low-Medium  | Income-focused investors |
+| Growth Play       | High appreciation potential (>15% YoY)                    | High            | High        | Speculative investors    |
+| Value Investing   | Affordable entry (<$5,000 PSF)                            | Medium          | Low         | First-time buyers        |
+| Balanced Approach | Moderate metrics across the board                         | Medium          | Medium      | Most buyers              |
 
 **Impact**
 
@@ -81,13 +81,13 @@ There is no universally optimal strategy. The right choice depends on the buyer'
 
 The composite investment score (50% appreciation z-score + 50% yield z-score, normalized to 0-100) identifies areas that are strong on both dimensions.
 
-| Score Range | Interpretation | Typical Areas |
-|-------------|---------------|---------------|
-| 80-100 | Exceptional | Emerging towns with new MRT lines |
-| 60-79 | Strong | Mature estates with good yield |
-| 40-59 | Average | Most established areas |
-| 20-39 | Below average | Luxury areas (low yield offsets appreciation) |
-| 0-19 | Weak | Depreciating or oversupplied areas |
+| Score Range | Interpretation | Typical Areas                                 |
+| ----------- | -------------- | --------------------------------------------- |
+| 80-100      | Exceptional    | Emerging towns with new MRT lines             |
+| 60-79       | Strong         | Mature estates with good yield                |
+| 40-59       | Average        | Most established areas                        |
+| 20-39       | Below average  | Luxury areas (low yield offsets appreciation) |
+| 0-19        | Weak           | Depreciating or oversupplied areas            |
 
 **Impact**
 

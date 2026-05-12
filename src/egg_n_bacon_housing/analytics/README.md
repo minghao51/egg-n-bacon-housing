@@ -7,9 +7,11 @@ This directory contains analytical functions and modules for the Singapore housi
 ## Structure
 
 ### `analysis/`
+
 In-depth analytical functions organized by focus area.
 
 #### `analysis/spatial/`
+
 Spatial analysis and geospatial clustering.
 
 - **analyze_spatial_hotspots.py** - Identify price hotspots and coldspots
@@ -17,12 +19,14 @@ Spatial analysis and geospatial clustering.
 - **analyze_h3_clusters.py** - H3 grid-based spatial clustering analysis
 
 #### `analysis/amenity/`
+
 Amenity impact analysis on property prices.
 
 - **analyze_amenity_impact.py** - Analyze amenity impact on prices (temporal, within-town, grid-based)
 - **analyze_feature_importance.py** - ML-based feature importance analysis
 
 #### `analysis/market/`
+
 Broad market trend analysis.
 
 - **analyze_hdb_rental_market.py** - HDB rental market analysis
@@ -31,6 +35,7 @@ Broad market trend analysis.
 - **market_segmentation_advanced.py** - Advanced market segmentation techniques
 
 #### `analysis/mrt/`
+
 MRT station impact analysis.
 
 - **analyze_mrt_impact.py** - Overall MRT proximity impact on prices
@@ -40,6 +45,7 @@ MRT station impact analysis.
 ## Running Analysis Scripts
 
 From project root:
+
 ```bash
 # Run spatial analysis
 uv run python scripts/analytics/analysis/spatial/analyze_spatial_hotspots.py
@@ -73,6 +79,7 @@ See `scripts/PIPELINE_GUIDE.md` for complete pipeline documentation.
 All analytics functions follow these conventions:
 
 1. **Import paths**: Use relative imports from project root
+
    ```python
    import sys
    from pathlib import Path
@@ -81,6 +88,7 @@ All analytics functions follow these conventions:
    ```
 
 2. **Logging**: Configure logging for output
+
    ```python
    import logging
    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

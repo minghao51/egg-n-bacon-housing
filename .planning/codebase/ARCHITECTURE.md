@@ -2,93 +2,55 @@
 
 ## Overview
 
-Dual-stack project: **Python data pipeline** + **Astro webapp**.
+Dual-stack project: **Python data pipeline** (Hamilton DAG) + **Astro webapp**.
 
-## Patterns
+## Python Pipeline: Hamilton DAG + Medallion Architecture
 
-### Python Pipeline: Stage-Based Processing
-Sequential data pipeline with clear separation:
-- **L0**: Data collection (data.gov.sg APIs)
-- **L0_macro**: Macro economic data (CPI, GDP, SORA, unemployment, PPI)
-- **L1**: Processing + geocoding
-- **L2**: Feature engineering (rental yields, property features)
-- **L3**: Export to unified dataset
-- **L4**: Analysis (spatial, school, price modeling)
-- **L5**: Metrics calculation
-- **Webapp**: JSON export for dashboard
+Directed acyclic graph orchestrated by Hamilton (`sf-hamilton`). Function signatures define dependencies — each function is a DAG node producing exactly one variable.
 
-### Astro Webapp: Page-Based + Content Collections
-- File-based routing in `app/src/pages/`
-- Content collections for analytics (`app/src/content/analytics/`)
-- React components for interactive dashboard elements
-- Astro layouts for consistent page structure
+### Medallion Layers
 
-## Layers
+| Layer    | Directory           | Component                    | Purpose                           |
+| -------- | ------------------- | ---------------------------- | --------------------------------- |
+| Bronze   | `data/01_bronze/`   | `components/01_ingestion.py` | Raw immutable data from APIs      |
+| Silver   | `data/02_silver/`   | `components/02_cleaning.py`  | Validated, cleaned data           |
+| Gold     | `data/03_gold/`     | `components/03_features.py`  | Feature-enriched data             |
+| Platinum | `data/04_platinum/` | `components/04_export.py`    | Exports, dashboard JSON, segments |
+| Platinum | `data/04_platinum/` | `components/05_metrics.py`   | Planning area metrics, hotspots   |
+| —        | —                   | `components/06_analytics.py` | Analytics integration             |
 
-### Python (`scripts/`)
-```
-core/           # Config, geocoding, cache, pipeline orchestration
-├── config.py   # Centralized configuration (entry point dependency)
-├── cache.py    # Caching utilities
-├── geocoding.py # OneMap API integration
-└── stages/     # Pipeline stage implementations
-analytics/      # ML models, statistical analysis
-webapp/         # Dashboard data preparation scripts
-```
+### Entry Points
 
-### Astro (`app/src/`)
-```
-pages/          # File-based routes (Astro + dynamic routes)
-layouts/       # Page layouts (Layout.astro)
-components/     # UI components (Astro + React)
-  ├── charts/   # Reusable chart components (tsx)
-  ├── dashboard/ # Dashboard-specific components (tsx)
-  └── ...
-hooks/          # React hooks (useSegmentsData, useGzipJson, etc.)
-types/          # TypeScript type definitions
-utils/          # Utility functions (data-parser, colorScales, gzip)
-constants/      # App constants (data-urls, dashboard-nav)
-content/        # Content collection (MDX analytics)
-data/           # Static JSON data (personas, glossary)
-styles/         # Global CSS
-```
+| Component       | Entry Point                                                      |
+| --------------- | ---------------------------------------------------------------- |
+| Pipeline CLI    | `main.py` (`--stage {ingest,clean,features,export,metrics,all}`) |
+| Pipeline driver | `src/egg_n_bacon_housing/pipeline.py`                            |
+| Configuration   | `src/egg_n_bacon_housing/config.py` (pydantic-settings)          |
+| Webapp          | `app/src/pages/index.astro`                                      |
 
-## Data Flow
+### Data Flow
 
 ```
-data.gov.sg APIs
-      ↓
-L0_collect → L1_process → L2_features → L3_export → L4/L5 → webapp_data_preparation
-      ↓           ↓            ↓            ↓            ↓              ↓
-   Raw JSON   Geocoded    Rental yields  Unified    Analytics    Dashboard JSON
-   datasets   parquet     + features     dataset    results      (app/data/)
+APIs (data.gov.sg, OneMap, URA)
+        ↓
+Bronze → Silver → Gold → Platinum
+(ingest) (clean)  (features) (export + metrics)
+        ↓
+  dashboard JSON → Astro webapp
+  analytics modules → standalone analysis
 ```
 
-Dashboard reads JSON from `app/src/data/` or generated analytics.
+## Astro Webapp
 
-## Entry Points
+File-based routing (`app/src/pages/`), React islands for interactive components, MDX content collections for analytics pages.
 
-| Component | Entry Point |
-|-----------|-------------|
-| Pipeline | `scripts/run_pipeline.py` |
-| Webapp | `app/src/pages/index.astro` |
-| Dashboard Routes | `app/src/pages/dashboard/*.astro` |
-| Analytics Routes | `app/src/pages/analytics/*.astro` |
-| Content | `app/src/content.config.ts` |
+### Routing
 
-## Routing
-
-### Astro Pages
-- `/` → `index.astro`
-- `/dashboard` → `dashboard/index.astro`
-- `/dashboard/map` → `dashboard/map.astro`
-- `/dashboard/trends` → `dashboard/trends.astro`
-- `/dashboard/segments` → `dashboard/segments.astro`
-- `/dashboard/leaderboard` → `dashboard/leaderboard.astro`
-- `/analytics` → `analytics/index.astro`
-- `/analytics/[slug]` → `analytics/[slug].astro`
-- `/analytics/personas/[persona]` → `analytics/personas/[persona].astro`
-
-### Dynamic Routing
-- `[slug].astro` uses `getStaticPaths()` for analytics content
-- `[persona].astro` uses persona routing for personalized views
+- `/` → landing page
+- `/dashboard` → market overview
+- `/dashboard/map` → price map
+- `/dashboard/trends` → trends
+- `/dashboard/segments` → market segments
+- `/dashboard/leaderboard` → town rankings
+- `/analytics` → analytics overview
+- `/analytics/[slug]` → dynamic analytics pages

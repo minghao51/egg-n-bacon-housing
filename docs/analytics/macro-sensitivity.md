@@ -36,12 +36,12 @@ Housing prices and macro indicators are correlated, but the relationship is regi
 
 <div data-chart-metadata="true" data-chart="time-series" data-chart-title="SORA rate vs HDB median price trend" data-chart-columns="SORA Rate (%),HDB Median Price Index"></div>
 
-| Period | SORA Rate | HDB Price Trend | Transaction Volume |
-|--------|----------|----------------|-------------------|
-| 2021 (H1) | 0.1-0.2% | Rising | High |
-| 2022 (H2) | 2.5-3.5% | Decelerating | Declining |
-| 2023 | 3.5-4.0% | Flat to modest growth | Low |
-| 2024-2025 | 3.0-3.5% | Resumed growth | Recovering |
+| Period    | SORA Rate | HDB Price Trend       | Transaction Volume |
+| --------- | --------- | --------------------- | ------------------ |
+| 2021 (H1) | 0.1-0.2%  | Rising                | High               |
+| 2022 (H2) | 2.5-3.5%  | Decelerating          | Declining          |
+| 2023      | 3.5-4.0%  | Flat to modest growth | Low                |
+| 2024-2025 | 3.0-3.5%  | Resumed growth        | Recovering         |
 
 **Impact**
 
@@ -49,12 +49,12 @@ The rapid SORA increase from near-zero to 3.5-4% between 2022-2023 coincided wit
 
 ### 2. GDP growth leads transaction volume, not price level
 
-| Indicator | Correlation with Price | Correlation with Volume | Lag |
-|-----------|----------------------|----------------------|-----|
-| GDP growth (quarterly) | Weak positive | Moderate positive | 1-2 quarters |
-| SORA rate | Moderate negative | Strong negative | Immediate to 1 quarter |
-| CPI inflation | Weak positive | Weak | Variable |
-| Unemployment | Moderate negative | Moderate negative | 1-2 quarters |
+| Indicator              | Correlation with Price | Correlation with Volume | Lag                    |
+| ---------------------- | ---------------------- | ----------------------- | ---------------------- |
+| GDP growth (quarterly) | Weak positive          | Moderate positive       | 1-2 quarters           |
+| SORA rate              | Moderate negative      | Strong negative         | Immediate to 1 quarter |
+| CPI inflation          | Weak positive          | Weak                    | Variable               |
+| Unemployment           | Moderate negative      | Moderate negative       | 1-2 quarters           |
 
 **Impact**
 
@@ -62,12 +62,12 @@ GDP growth signals market activity (volume) more reliably than price direction. 
 
 ### 3. Inflation-adjusted returns vary significantly by segment
 
-| Segment | Nominal CAGR | Real CAGR (CPI-adjusted) | Spread |
-|---------|-------------|-------------------------|--------|
-| HDB (overall) | ~4-5% | ~2-3% | ~2% |
-| Mass-market condo | ~5-6% | ~3-4% | ~2% |
-| Premium condo | ~3-5% | ~1-3% | ~2% |
-| Luxury condo | ~2-4% | ~0-2% | ~2% |
+| Segment           | Nominal CAGR | Real CAGR (CPI-adjusted) | Spread |
+| ----------------- | ------------ | ------------------------ | ------ |
+| HDB (overall)     | ~4-5%        | ~2-3%                    | ~2%    |
+| Mass-market condo | ~5-6%        | ~3-4%                    | ~2%    |
+| Premium condo     | ~3-5%        | ~1-3%                    | ~2%    |
+| Luxury condo      | ~2-4%        | ~0-2%                    | ~2%    |
 
 **Impact**
 
@@ -75,11 +75,11 @@ All segments deliver positive real returns over the 2021-2026 period, but the sp
 
 ### 4. Three macro regimes are identifiable (2021-2026)
 
-| Regime | Period | Characteristics | Housing Market Behavior |
-|--------|--------|----------------|------------------------|
-| Expansion | 2021 - mid-2022 | Low rates, rising GDP, low unemployment | Strong price growth, high volume |
-| Tightening | Mid-2022 - 2023 | Rapid rate hikes, GDP deceleration | Price growth stall, volume decline |
-| Stabilization | 2024-2026 | Rates plateau, GDP recovery | Moderate price growth, volume recovery |
+| Regime        | Period          | Characteristics                         | Housing Market Behavior                |
+| ------------- | --------------- | --------------------------------------- | -------------------------------------- |
+| Expansion     | 2021 - mid-2022 | Low rates, rising GDP, low unemployment | Strong price growth, high volume       |
+| Tightening    | Mid-2022 - 2023 | Rapid rate hikes, GDP deceleration      | Price growth stall, volume decline     |
+| Stabilization | 2024-2026       | Rates plateau, GDP recovery             | Moderate price growth, volume recovery |
 
 **Impact**
 
@@ -87,12 +87,12 @@ Each regime favors different strategies. Expansion favors buying early and lever
 
 ### 5. Policy dates align with macro shifts
 
-| Policy Date | Policy Change | Macro Context | Market Impact |
-|------------|--------------|---------------|---------------|
-| Dec 2021 | ABSD tightening | Low rates, exuberant market | Short-term price dip, quick recovery |
-| Sep 2022 | Additional cooling | Rising rates, tightening regime | Amplified rate-driven slowdown |
-| Apr 2023 | LTV tightening | Peak rates, low volume | Extended demand suppression |
-| Dec 2023 | HDB-specific measures | Stabilizing rates | Counter-intuitive HDB price increase |
+| Policy Date | Policy Change         | Macro Context                   | Market Impact                        |
+| ----------- | --------------------- | ------------------------------- | ------------------------------------ |
+| Dec 2021    | ABSD tightening       | Low rates, exuberant market     | Short-term price dip, quick recovery |
+| Sep 2022    | Additional cooling    | Rising rates, tightening regime | Amplified rate-driven slowdown       |
+| Apr 2023    | LTV tightening        | Peak rates, low volume          | Extended demand suppression          |
+| Dec 2023    | HDB-specific measures | Stabilizing rates               | Counter-intuitive HDB price increase |
 
 **Impact**
 

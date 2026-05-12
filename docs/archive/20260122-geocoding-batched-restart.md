@@ -6,6 +6,7 @@
 ## Issue Summary
 
 The original geocoding process (`scripts/geocode_addresses.py`) was processing addresses **sequentially** with a 1-second delay between each request. This resulted in:
+
 - Very slow progress (~653 addresses in several hours)
 - Estimated completion time: **223-447 minutes** (3.7-7.5 hours)
 - Single-threaded processing
@@ -13,9 +14,11 @@ The original geocoding process (`scripts/geocode_addresses.py`) was processing a
 ## Solution Implemented
 
 ### 1. Created New Batched Geocoding Script
+
 Created `scripts/geocode_addresses_batched.py` with the following improvements:
 
 **Key Features:**
+
 - **Parallel processing:** Uses `ThreadPoolExecutor` with 5 workers
 - **Batched processing:** Processes addresses in batches of 1,000
 - **Checkpointing:** Saves progress every 500 addresses
@@ -23,6 +26,7 @@ Created `scripts/geocode_addresses_batched.py` with the following improvements:
 - **Progress logging:** Real-time progress updates every 200 addresses
 
 **Performance Improvements:**
+
 - **5 parallel workers** instead of sequential processing
 - Estimated completion time: **~48 minutes** (vs 3.7-7.5 hours)
 - **~4-9x faster** than the original approach
@@ -30,6 +34,7 @@ Created `scripts/geocode_addresses_batched.py` with the following improvements:
 ### 2. Fixed Import Issues
 
 Fixed circular import issues in the following files:
+
 - `core/geocoding.py`: Changed `from scripts.core.config import Config` → `from config import Config`
 - `core/cache.py`: Changed `from scripts.core.config import Config` → `from config import Config`
 - `core/data_helpers.py`: Changed `from scripts.core.config import Config` → `from config import Config`
@@ -41,6 +46,7 @@ This allows the scripts to properly import modules when the `core` directory is 
 ### ✅ Process Running Successfully
 
 **Process Details:**
+
 - **PID:** 9545
 - **Started:** 2026-01-22 00:55:56
 - **Total addresses:** 14,369
@@ -50,6 +56,7 @@ This allows the scripts to properly import modules when the `core` directory is 
 - **Estimated completion:** ~48 minutes
 
 **Configuration:**
+
 - **API delay:** 1.0 seconds (respects rate limits)
 - **Checkpoint interval:** Every 500 addresses
 - **Progress log:** Every 200 addresses
@@ -58,31 +65,34 @@ This allows the scripts to properly import modules when the `core` directory is 
 ### Monitoring
 
 **View real-time progress:**
+
 ```bash
 tail -f data/logs/geocoding_batched_*.log
 ```
 
 **Check if process is running:**
+
 ```bash
 ps aux | grep geocode_addresses_batched | grep -v grep
 ```
 
 **View latest checkpoint:**
+
 ```bash
 ls -lh data/checkpoints/L2_housing_unique_searched_checkpoint_*.parquet
 ```
 
 ## Key Differences: Sequential vs Batched
 
-| Feature | Sequential (old) | Batched (new) |
-|---------|------------------|---------------|
-| Processing | One address at a time | 5 parallel workers |
-| Speed | ~30-60 addresses/min | ~300/min (5x faster) |
-| Est. Time | 3.7-7.5 hours | ~48 minutes |
-| Memory Usage | Low | Moderate (batched) |
-| API Rate Limit | 1 req/sec | 5 req/sec (distributed) |
-| Checkpointing | Every 500 addresses | Every 500 addresses |
-| Caching | ✅ Yes | ✅ Yes |
+| Feature        | Sequential (old)      | Batched (new)           |
+| -------------- | --------------------- | ----------------------- |
+| Processing     | One address at a time | 5 parallel workers      |
+| Speed          | ~30-60 addresses/min  | ~300/min (5x faster)    |
+| Est. Time      | 3.7-7.5 hours         | ~48 minutes             |
+| Memory Usage   | Low                   | Moderate (batched)      |
+| API Rate Limit | 1 req/sec             | 5 req/sec (distributed) |
+| Checkpointing  | Every 500 addresses   | Every 500 addresses     |
+| Caching        | ✅ Yes                | ✅ Yes                  |
 
 ## Technical Details
 
@@ -113,13 +123,16 @@ ls -lh data/checkpoints/L2_housing_unique_searched_checkpoint_*.parquet
 The geocoding process will complete automatically in approximately **48 minutes**. Once complete:
 
 1. **Final results** will be saved to:
+
    - `data/parquets/L2_housing_unique_full_searched.parquet` - All search results
    - `data/parquets/L2/housing_unique_searched.parquet` - Filtered best results
 
 2. **Failed addresses** (if any) will be saved to:
+
    - `data/failed_addresses/failed_addresses_*.csv`
 
 3. **Monitor progress** with:
+
    ```bash
    tail -f data/logs/geocoding_batched_*.log
    ```
@@ -133,11 +146,13 @@ The geocoding process will complete automatically in approximately **48 minutes*
 ## Troubleshooting
 
 **If process stops unexpectedly:**
+
 - Checkpoint will be saved automatically
 - Simply rerun: `uv run python scripts/geocode_addresses_batched.py`
 - It will auto-resume from the last checkpoint
 
 **To verify imports are working:**
+
 ```bash
 uv run python -c "import sys; sys.path.append('src'); import geocoding; print('✅ Imports work')"
 ```

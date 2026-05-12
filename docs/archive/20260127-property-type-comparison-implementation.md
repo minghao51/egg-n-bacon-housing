@@ -8,9 +8,11 @@
 ## Problem Identified
 
 ### Original Issue
+
 **Question**: Does MRT impact vary by property type (HDB vs Condo vs EC)?
 
 **Discovery**: Amenity features (MRT distances, etc.) were ONLY available for HDB in the L3 unified dataset:
+
 - **HDB**: 785,395 transactions with amenity features ✅
 - **Condominium**: 109,576 transactions, **100% missing** amenity data ❌
 - **EC**: 16,826 transactions, **100% missing** amenity data ❌
@@ -20,11 +22,13 @@
 **Why were condos/ECs missing?**
 
 1. **Limited geocoding**: The amenity calculation pipeline (`L2_features.py`) only calculated distances for:
+
    - 9,814 unique HDB addresses (blocks)
    - 7,906 unique private property addresses
    - **Total**: 17,720 unique properties
 
 2. **Join mismatch**: The unified dataset has **911,797 transactions**:
+
    - 785K HDB transactions → 9,814 unique blocks → **Successful join**
    - 109K condo transactions → Only 2,298 unique postal codes in amenity file → **Failed join**
    - 16K EC transactions → Same issue
@@ -42,6 +46,7 @@ Instead of relying on the complex pipeline join, I created a script to **directl
 **Script**: `scripts/calculate_condo_amenities.py`
 
 **Method**:
+
 1. Load condo/EC transactions from unified dataset (filter: missing amenity features)
 2. Load amenity locations from L1 data (MRT, hawker, supermarket, park, etc.)
 3. Use **scipy.spatial.cKDTree** for fast nearest-neighbor search
@@ -52,6 +57,7 @@ Instead of relying on the complex pipeline join, I created a script to **directl
 6. Update unified dataset with complete amenity coverage
 
 **Performance Optimizations**:
+
 - KDTree for O(log n) nearest neighbor queries (vs O(n) brute force)
 - Vectorized numpy operations
 - Batch processing per amenity type
@@ -62,14 +68,14 @@ Instead of relying on the complex pipeline join, I created a script to **directl
 
 ### Available Amenity Types (from L1)
 
-| Amenity Type | Locations | Impact on Prices |
-|---------------|-----------|------------------|
-| **MRT** | 249 stations | HIGH (5.5% importance) |
-| **Hawker** | 129 centers | VERY HIGH (27.4% importance) |
-| **Supermarket** | 526 stores | Medium (5.2% importance) |
-| **Park** | 450 parks | High (7.2% importance) |
-| **Preschool** | 2,290 centers | Medium |
-| **Childcare** | 1,925 centers | Low-Medium |
+| Amenity Type    | Locations     | Impact on Prices             |
+| --------------- | ------------- | ---------------------------- |
+| **MRT**         | 249 stations  | HIGH (5.5% importance)       |
+| **Hawker**      | 129 centers   | VERY HIGH (27.4% importance) |
+| **Supermarket** | 526 stores    | Medium (5.2% importance)     |
+| **Park**        | 450 parks     | High (7.2% importance)       |
+| **Preschool**   | 2,290 centers | Medium                       |
+| **Childcare**   | 1,925 centers | Low-Medium                   |
 
 **Note**: Importance values from XGBoost feature importance analysis (HDB data).
 
@@ -78,6 +84,7 @@ Instead of relying on the complex pipeline join, I created a script to **directl
 ## Expected Results After Running Script
 
 ### Before (Current State)
+
 ```
 Amenity Coverage:
   HDB: 785,395 / 785,395 (100%) ✅
@@ -86,6 +93,7 @@ Amenity Coverage:
 ```
 
 ### After (Target State)
+
 ```
 Amenity Coverage:
   HDB: 785,395 / 785,395 (100%) ✅
@@ -100,6 +108,7 @@ Amenity Coverage:
 ## Next Steps After Script Completes
 
 ### 1. Re-run Heterogeneous Analysis
+
 Update `scripts/analysis/analyze_mrt_heterogeneous.py` to include condos/ECs:
 
 ```python
@@ -115,10 +124,13 @@ for property_type in ['HDB', 'Condominium', 'EC']:
 ### 2. Compare MRT Impact by Property Type
 
 **Expected Hypothesis**:
+
 - **HDB**: Highest MRT sensitivity (~$1-4/100m)
+
   - Rationale: Public transport-dependent, budget-conscious
 
 - **EC**: Medium MRT sensitivity (~$0.5-2/100m)
+
   - Rationale: Hybrid (HDB upgraders), mixed car ownership
 
 - **Condominium**: Lowest MRT sensitivity (~$0-1/100m)
@@ -137,6 +149,7 @@ price = β0 + β1(mrt_dist) + β2(condo) + β3(mrt_dist × condo) + controls
 ```
 
 **Key test**: Is β3 statistically significant?
+
 - If YES → MRT impact differs by property type
 - If NO → No significant difference
 
@@ -167,36 +180,42 @@ print(unified.groupby('property_type')['dist_to_nearest_mrt'].max())
 
 ### Expected Distributions
 
-| Property Type | Mean MRT Distance | Expected |
-|---------------|-------------------|-----------|
-| HDB | ~500m | Baseline |
-| Condominium | ~700m | Further from MRT (more affluent areas) |
-| EC | ~600m | Intermediate |
+| Property Type | Mean MRT Distance | Expected                               |
+| ------------- | ----------------- | -------------------------------------- |
+| HDB           | ~500m             | Baseline                               |
+| Condominium   | ~700m             | Further from MRT (more affluent areas) |
+| EC            | ~600m             | Intermediate                           |
 
 ---
 
 ## Potential Issues & Mitigations
 
 ### Issue 1: Computational Time
+
 **Problem**: 126K transactions × 6 amenity types × up to 2,290 locations each
 **Estimated time**: 10-30 minutes
 
 **Mitigation**:
+
 - Script runs in background
 - Progress logging built-in
 - Can resume if interrupted
 
 ### Issue 2: Missing Coordinates
+
 **Problem**: Some condos/ECs lack lat/lon
 
 **Mitigation**:
+
 - Script filters to records with valid coordinates
 - Coverage will be ~98-99% (acceptable)
 
 ### Issue 3: Distance Accuracy
+
 **Problem**: KDTree uses Euclidean distance on lat/lon (approximation)
 
 **Mitigation**:
+
 - KDTree for nearest neighbor (fast)
 - Haversine for counts within radius (accurate)
 - Hybrid approach balances speed and accuracy
@@ -206,14 +225,17 @@ print(unified.groupby('property_type')['dist_to_nearest_mrt'].max())
 ## Alternative Approaches Considered
 
 ### Option 1: Fix L2 Pipeline ✗ (Rejected)
+
 **Why**: Too complex, would require re-running entire pipeline
 **Time**: Several hours of development + testing
 
 ### Option 2: Re-geocode All Properties ✗ (Rejected)
+
 **Why**: Expensive API calls, rate limits, potential data quality issues
 **Time**: Days to complete geocoding
 
 ### Option 3: Direct Calculation (Chosen) ✓
+
 **Why**: Fast, uses existing coordinates, no external dependencies
 **Time**: 10-30 minutes runtime + 1 hour development
 
@@ -221,14 +243,14 @@ print(unified.groupby('property_type')['dist_to_nearest_mrt'].max())
 
 ## Timeline
 
-| Step | Status | Estimated Time |
-|------|--------|----------------|
-| 1. Root cause analysis | ✅ Complete | 30 min |
-| 2. Script development | ✅ Complete | 1 hour |
-| 3. Run calculation (126K records) | 🔄 In Progress | 15-30 min |
-| 4. Validate results | ⏳ Pending | 5 min |
-| 5. Re-run MRT analysis (all property types) | ⏳ Pending | 10 min |
-| 6. Create comparison report | ⏳ Pending | 20 min |
+| Step                                        | Status         | Estimated Time |
+| ------------------------------------------- | -------------- | -------------- |
+| 1. Root cause analysis                      | ✅ Complete    | 30 min         |
+| 2. Script development                       | ✅ Complete    | 1 hour         |
+| 3. Run calculation (126K records)           | 🔄 In Progress | 15-30 min      |
+| 4. Validate results                         | ⏳ Pending     | 5 min          |
+| 5. Re-run MRT analysis (all property types) | ⏳ Pending     | 10 min         |
+| 6. Create comparison report                 | ⏳ Pending     | 20 min         |
 
 **Total Estimated**: ~2 hours
 
@@ -239,12 +261,15 @@ print(unified.groupby('property_type')['dist_to_nearest_mrt'].max())
 ### Questions We'll Be Able to Answer
 
 1. **Does MRT proximity matter more for HDB vs Condo?**
+
    - Quantify the difference in $/100m
 
 2. **Are luxury condos less MRT-dependent?**
+
    - Test hypothesis: Premium amenities substitute for transit access
 
 3. **Do EC buyers behave like HDB or Condo buyers?**
+
    - Identify which market segment ECs belong to
 
 4. **Should investment strategies differ by property type?**
@@ -257,10 +282,12 @@ print(unified.groupby('property_type')['dist_to_nearest_mrt'].max())
 ## Files Modified/Created
 
 1. **Created**: `scripts/calculate_condo_amenities.py`
+
    - Calculates amenity distances for condos/ECs
    - Updates L3 unified dataset in-place
 
 2. **Modified**: `data/pipeline/04_platinum/housing_unified.parquet`
+
    - Will have complete amenity coverage after script completes
    - Backup created as `housing_unified_backup.parquet`
 

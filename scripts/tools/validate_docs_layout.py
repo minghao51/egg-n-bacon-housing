@@ -44,8 +44,9 @@ VALID_CATEGORIES = {
 VALID_STATUSES = {"published", "draft", "review"}
 
 PATH_PATTERN = re.compile(
-    r"(?P<path>(?:README\.md|main\.py|pyproject\.toml|config\.yaml|(?:app|docs|scripts|src)/[A-Za-z0-9_./-]+\.(?:md|py|sh|ts|tsx)))"
+    r"(?P<path>(?:README\.md|main\.py|pyproject\.toml|(?:app|docs|scripts|src)/[A-Za-z0-9_./-]+\.(?:md|py|sh|ts|tsx)))"
 )
+PYTHON_CMD_PATTERN = re.compile(r"uv run python (?P<path>[A-Za-z0-9_./-]+\.py)")
 
 KEBAB_CASE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 DATED_KEBAB_CASE = re.compile(r"^\d{4}-\d{2}-\d{2}-[a-z0-9-]+\.md$")
@@ -77,6 +78,19 @@ def check_referenced_paths(results: ValidationResults) -> None:
             target = REPO_ROOT / rel
             if not target.exists():
                 results.error(f"Broken path reference in {file_path.relative_to(REPO_ROOT)}: {rel}")
+
+
+def check_python_command_paths(results: ValidationResults) -> None:
+    """Validate python file paths referenced in docs command examples."""
+    for file_path in iter_active_reference_files():
+        text = file_path.read_text(encoding="utf-8", errors="ignore")
+        for match in PYTHON_CMD_PATTERN.finditer(text):
+            rel = match.group("path")
+            target = REPO_ROOT / rel
+            if not target.exists():
+                results.error(
+                    f"Broken command path in {file_path.relative_to(REPO_ROOT)}: uv run python {rel}"
+                )
 
 
 def check_docs_root(results: ValidationResults) -> None:
@@ -141,6 +155,7 @@ def check_analytics_frontmatter(results: ValidationResults) -> None:
 def main() -> int:
     results = ValidationResults()
     check_referenced_paths(results)
+    check_python_command_paths(results)
     check_docs_root(results)
     check_naming_conventions(results)
     check_analytics_frontmatter(results)

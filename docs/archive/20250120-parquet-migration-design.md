@@ -68,6 +68,7 @@ data/
 ```
 
 **Benefits**:
+
 - **Reproducibility**: Track when data was created and source
 - **Lineage**: See dataset dependencies
 - **Verification**: Checksums detect accidental changes
@@ -78,12 +79,14 @@ data/
 **New file: `core/data_helpers.py`**
 
 Key functions:
+
 - `load_parquet(dataset_name, version=None)` - Load dataset
 - `save_parquet(df, dataset_name, source, version, mode)` - Save with overwrite/append
 - `list_datasets()` - List all datasets
 - `verify_metadata()` - Validate all checksums
 
 **Features**:
+
 - Simple, consistent API
 - Automatic metadata tracking
 - Overwrite and append modes
@@ -93,6 +96,7 @@ Key functions:
 ### 1.4 Notebook Migration
 
 **Migration order** (incremental to avoid breaks):
+
 1. Create `core/data_helpers.py`
 2. Migrate L0 notebooks to SAVE to parquet
 3. Migrate L1 notebooks to READ/WRITE parquet
@@ -119,18 +123,21 @@ save_parquet(processed, "L1_ura_transactions", source="raw_data")
 ### 1.5 DVC Cleanup
 
 **Remove**:
+
 - `.dvc/` directory
 - `.dvcignore` file
 - All `data/*.dvc` files
 - `dvc` and `dvc-s3` from dependencies
 
 **Update `.gitignore`**:
+
 ```
 /data/parquets/
 /data/*.parquet
 ```
 
 **Commit**:
+
 ```bash
 git add .gitignore environment.yml
 git rm -r .dvc .dvcignore data/*.dvc
@@ -148,12 +155,14 @@ git commit -m "Remove DVC, migrate to parquet + metadata"
 **Why**: Much faster than conda/pip, modern standard
 
 **Actions**:
+
 1. Install uv
 2. Create `pyproject.toml` with all dependencies
 3. Migrate from `environment.yml`
 4. Update CLAUDE.md to use `uv run` commands
 
 **Dependencies to migrate**:
+
 ```toml
 [project]
 name = "egg-n-bacon-housing"
@@ -230,6 +239,7 @@ class Config:
 ```
 
 **Benefits**:
+
 - Single source of truth for configuration
 - Validation prevents runtime errors
 - Easy to test with different configs
@@ -239,6 +249,7 @@ class Config:
 #### 2.3 Restructure core/ Directory
 
 **Current structure**:
+
 ```
 core/
 └── agent/
@@ -246,6 +257,7 @@ core/
 ```
 
 **Target structure**:
+
 ```
 core/
 ├── __init__.py
@@ -262,6 +274,7 @@ core/
 ```
 
 **Benefits**:
+
 - Clear separation of concerns
 - Reusable pipeline functions
 - Easier to test
@@ -290,6 +303,7 @@ def test_metadata_tracking():
 ```
 
 **Add to `pyproject.toml`**:
+
 ```toml
 [tool.ruff]
 line-length = 100
@@ -300,6 +314,7 @@ testpaths = ["tests"]
 ```
 
 **Run tests**:
+
 ```bash
 uv run pytest
 uv run ruff check .
@@ -310,17 +325,20 @@ uv run ruff check .
 #### 2.5 Refactor Notebooks to Scripts
 
 **Extract stable pipeline logic** from notebooks to `core/pipeline/*.py`:
+
 - L0 notebooks → `pipeline/L0_collect.py`
 - L1 notebooks → `pipeline/L1_process.py`
 - L2 notebooks → `pipeline/L2_features.py`
 - L3 notebooks → `pipeline/L3_export.py`
 
 **Notebooks become**:
+
 - Visualization tools
 - Debugging/inspection tools
 - Exploratory analysis
 
 **Benefits**:
+
 - Version control for pipeline code
 - Easier to test
 - Can run via CLI or scripts
@@ -328,6 +346,7 @@ uv run ruff check .
 #### 2.6 Consolidate Streamlit Apps
 
 **Current**:
+
 ```
 apps/
 ├── single_agent.py
@@ -338,6 +357,7 @@ streamlit_app.py (at root)
 ```
 
 **Target**:
+
 ```
 apps/
 └── streamlit/
@@ -352,6 +372,7 @@ apps/
 ```
 
 **Benefits**:
+
 - Multi-page Streamlit app
 - Reusable components
 - Organized by feature
@@ -359,6 +380,7 @@ apps/
 #### 2.7 Comprehensive Documentation
 
 **Create documentation structure**:
+
 ```
 docs/
 ├── architecture.md           # System architecture
@@ -368,6 +390,7 @@ docs/
 ```
 
 **Update README.md**:
+
 - Quick start (5 min setup)
 - Project structure overview
 - How to run the pipeline
@@ -378,6 +401,7 @@ docs/
 ## Implementation Plan
 
 ### Phase 1: Parquet Migration (Week 1)
+
 1. ✅ Design complete (this document)
 2. Create `core/data_helpers.py`
 3. Update `.gitignore`
@@ -389,6 +413,7 @@ docs/
 9. Test full pipeline
 
 ### Phase 2: High Priority Improvements (Week 2)
+
 1. Install uv, create `pyproject.toml`
 2. Migrate all dependencies
 3. Create `core/config.py`
@@ -396,6 +421,7 @@ docs/
 5. Test everything still works
 
 ### Phase 3: Medium Priority (Week 3)
+
 1. Restructure `core/` directory
 2. Create `core/pipeline/` structure
 3. Add basic tests
@@ -403,6 +429,7 @@ docs/
 5. Run tests in CI/CD
 
 ### Phase 4: Low Priority (Ongoing)
+
 1. Extract notebook logic to scripts
 2. Consolidate Streamlit apps
 3. Write comprehensive docs
@@ -447,6 +474,7 @@ docs/
 ---
 
 **Questions?** Refer to:
+
 - CLAUDE.md for development principles
 - This document for design decisions
 - GitHub issues for tracking progress

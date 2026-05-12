@@ -12,12 +12,14 @@
 You'll need to register for these free APIs:
 
 #### OneMap API (Required for L1)
+
 - **Register**: https://www.onemap.gov.sg/apidocs/register
 - **Email**: Your email address
 - **Password**: Choose a password
 - **Free**: Yes, completely free
 
 #### Google AI API (Optional, for agents)
+
 - **Register**: https://makersuite.google.com/app/apikey
 - **Purpose**: LangChain agents
 - **Free tier**: Available
@@ -33,6 +35,7 @@ nano .env  # or use your preferred editor
 ```
 
 Add your credentials:
+
 ```bash
 ONEMAP_EMAIL=your_email@example.com
 ONEMAP_EMAIL_PASSWORD=your_password
@@ -51,6 +54,7 @@ uv run python run_real_pipeline.py
 ```
 
 This will:
+
 - ✅ Check if .env is configured
 - ✅ Guide you through each level (L0, L1, L2)
 - ✅ Run notebooks in correct order
@@ -97,6 +101,7 @@ uv run python notebooks/L2_sales_facilities.py
 **Collects raw data from APIs:**
 
 1. **data.gov.sg API**
+
    - General sale statistics
    - Rental indices
    - Price indices
@@ -104,6 +109,7 @@ uv run python notebooks/L2_sales_facilities.py
    - Private property transactions
 
 2. **OneMap API**
+
    - Planning area names
    - Household income data
 
@@ -117,6 +123,7 @@ uv run python notebooks/L2_sales_facilities.py
 **Processes and cleans data:**
 
 1. **URA Transactions**
+
    - Cleans transaction data
    - Calculates price per sqft
    - Standardizes property types
@@ -181,6 +188,7 @@ print(df.describe())
 **Error**: `429 Too Many Requests`
 
 **Solution**:
+
 - The pipeline has built-in delays
 - Wait a few minutes and retry
 - Check API quota limits
@@ -190,6 +198,7 @@ print(df.describe())
 **Error**: `Authentication failed`
 
 **Solution**:
+
 - Verify ONEMAP_EMAIL and ONEMAP_EMAIL_PASSWORD in .env
 - Check you've registered at https://www.onemap.gov.sg/apidocs/register
 - Try logging in via web interface first
@@ -199,6 +208,7 @@ print(df.describe())
 **Error**: `Dataset 'xxx' not found in metadata`
 
 **Solution**:
+
 - Run preceding notebooks first
 - Check data/metadata.json for dependencies
 - Verify the dataset was created
@@ -208,6 +218,7 @@ print(df.describe())
 **Error**: `Failed to geocode postal code`
 
 **Solution**:
+
 - Check OneMap API status
 - Verify postal code format
 - Some postal codes may not exist
@@ -217,21 +228,25 @@ print(df.describe())
 ## Expected Results
 
 ### After L0
+
 - ~12 datasets in metadata
 - ~100K rows total
 - Files in `data/parquets/raw_data/`
 
 ### After L1
+
 - ~9 additional datasets
 - Cleaned, geocoded data
 - Files in `data/parquets/L1/`
 
 ### After L2
+
 - ~5 feature datasets
 - ML-ready features
 - Files in `data/parquets/L2/` and `L3/`
 
 ### Total
+
 - **~26 datasets**
 - **~100K+ rows**
 - **Complete pipeline data**
@@ -268,17 +283,20 @@ assert is_valid, "Some datasets are corrupted!"
 After pipeline completes:
 
 1. **Explore Data**
+
    ```python
    from scripts.core.data_helpers import load_parquet
    df = load_parquet("L3_property")
    ```
 
 2. **Run Analysis**
+
    - Use Jupyter notebooks for exploration
    - Build ML models on features
    - Create visualizations
 
 3. **Export Data** (Optional)
+
    ```bash
    uv run python notebooks/L3_upload_s3.py
    ```
@@ -314,12 +332,12 @@ The pipeline caches geocoding results automatically. Subsequent runs will be muc
 
 ## Estimated Time
 
-| Level | Time | Dependencies |
-|-------|------|--------------|
-| L0: Data Collection | 10-15 min | None |
-| L1: Data Processing | 10-15 min | L0 |
-| L2: Feature Engineering | 5 min | L1 |
-| **Total** | **25-35 min** | |
+| Level                   | Time          | Dependencies |
+| ----------------------- | ------------- | ------------ |
+| L0: Data Collection     | 10-15 min     | None         |
+| L1: Data Processing     | 10-15 min     | L0           |
+| L2: Feature Engineering | 5 min         | L1           |
+| **Total**               | **25-35 min** |              |
 
 **First run**: Slowest (API calls, geocoding)
 **Subsequent runs**: Much faster (cached data)
@@ -329,11 +347,13 @@ The pipeline caches geocoding results automatically. Subsequent runs will be muc
 ## Support
 
 ### Issues?
+
 1. Check [docs/20250120-data-pipeline.md](docs/20250120-data-pipeline.md)
 2. Check [docs/20250120-pipeline-test-results.md](docs/20250120-pipeline-test-results.md)
 3. Run `uv run pytest` to verify setup
 
 ### Logs
+
 - Check console output for errors
 - Pipeline logs INFO-level messages
 - Check data/metadata.json for state

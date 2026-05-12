@@ -7,18 +7,21 @@
 ## 🚀 Quick Start
 
 ### Step 1: Update L2 Data (Rental Yields)
+
 ```bash
 # Download rental data and calculate yields
 uv run python scripts/run_pipeline.py --stage L2_rental
 ```
 
 ### Step 2: Run L3 Metrics Pipeline
+
 ```bash
 # Calculate market metrics
 uv run python scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py
 ```
 
 ### Step 3: Load Results
+
 ```python
 import pandas as pd
 
@@ -38,14 +41,14 @@ print(f"Date range: {df['month'].min()} to {df['month'].max()}")
 
 ### 6 Core Metrics
 
-| Metric | Column Name | Description |
-|--------|-------------|-------------|
-| **Price Growth Rate** | `growth_rate` | Month-over-month % change (stratified median) |
-| **Price per SQM** | Not stored (computed) | Use resale_price / floor_area_sqm |
-| **Transaction Volume** | `transaction_count` | Number of transactions |
-| **Volume Trend** | `volume_3m_avg`, `volume_12m_avg` | Rolling averages |
-| **Market Momentum** | `momentum` | 3M growth - 12M growth |
-| **Momentum Signal** | `momentum_signal` | categorical (stable/acceleration/deceleration) |
+| Metric                 | Column Name                       | Description                                    |
+| ---------------------- | --------------------------------- | ---------------------------------------------- |
+| **Price Growth Rate**  | `growth_rate`                     | Month-over-month % change (stratified median)  |
+| **Price per SQM**      | Not stored (computed)             | Use resale_price / floor_area_sqm              |
+| **Transaction Volume** | `transaction_count`               | Number of transactions                         |
+| **Volume Trend**       | `volume_3m_avg`, `volume_12m_avg` | Rolling averages                               |
+| **Market Momentum**    | `momentum`                        | 3M growth - 12M growth                         |
+| **Momentum Signal**    | `momentum_signal`                 | categorical (stable/acceleration/deceleration) |
 
 ### Additional Columns
 
@@ -63,6 +66,7 @@ print(f"Date range: {df['month'].min()} to {df['month'].max()}")
 ## 🔍 Common Queries
 
 ### 1. National Average Growth Rate
+
 ```python
 import pandas as pd
 
@@ -76,6 +80,7 @@ print(national_avg.tail(12))
 ```
 
 ### 2. Top Performing Towns
+
 ```python
 # Filter for recent month
 recent = df[df['month'] == '2026-01']
@@ -86,6 +91,7 @@ print(hdb_growth[['town', 'growth_rate', 'stratified_median_price']].head(10))
 ```
 
 ### 3. Market Momentum Analysis
+
 ```python
 # Find areas with strong acceleration
 accelerating = df[df['momentum_signal'] == 'strong_acceleration']
@@ -96,6 +102,7 @@ print(accelerating[['month', 'town', 'momentum', 'growth_rate']].tail(10))
 ```
 
 ### 4. Transaction Volume Trends
+
 ```python
 # National transaction volume
 volume = df.groupby(['month', 'property_type'])['transaction_count'].sum()
@@ -105,6 +112,7 @@ volume.unstack().plot(kind='line', title='Monthly Transaction Volume')
 ```
 
 ### 5. Filter by Time Range
+
 ```python
 # Focus on post-COVID period
 post_covid = df[df['month'] >= '2020-01']
@@ -119,6 +127,7 @@ print(avg_growth.sort_values(ascending=False).head(10))
 ## 📁 File Locations
 
 ### Input Data
+
 ```
 data/parquets/L1/housing_hdb_transaction.parquet
 data/parquets/L1/housing_condo_transaction.parquet
@@ -126,12 +135,14 @@ data/parquets/L2/housing_multi_amenity_features.parquet
 ```
 
 ### Output Data
+
 ```
 data/parquets/L3/metrics_monthly.parquet          # Main metrics
 data/parquets/L3/metrics_summary.csv              # Summary by area
 ```
 
 ### Documentation
+
 ```
 docs/guides/data-reference.md                     # Current data catalog
 docs/archive/20260122-L2-data-reference.md        # Historical L2 reference
@@ -140,6 +151,7 @@ docs/guides/l4-analysis-pipeline.md               # Current analytics pipeline g
 ```
 
 ### Code
+
 ```
 core/metrics.py                                    # Calculation functions
 scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py  # Main pipeline
@@ -150,7 +162,9 @@ scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py  # Main pipeline
 ## ⚙️ Configuration
 
 ### Change Date Range
+
 Edit `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py`:
+
 ```python
 metrics_df = compute_monthly_metrics(
     hdf_df=hdb_df,
@@ -161,7 +175,9 @@ metrics_df = compute_monthly_metrics(
 ```
 
 ### Adjust Stratification Bands
+
 Edit `core/metrics.py` in `assign_price_strata()`:
+
 ```python
 if price_column == 'resale_price':  # HDB
     bins = [0, 300000, 450000, 600000, 800000, float('inf')]
@@ -173,7 +189,9 @@ if price_column == 'resale_price':  # HDB
 ## 🐛 Troubleshooting
 
 ### Issue: Pipeline Fails
+
 **Check:**
+
 ```bash
 # Verify input files exist
 ls -lh data/parquets/L1/*.parquet
@@ -183,6 +201,7 @@ uv run python -c "import pandas; print(pandas.__version__)"
 ```
 
 ### Issue: Missing Data
+
 **Expected:** Some `momentum_signal` and `yoy_change_pct` values are null
 **Reason:** Need 12 months of history for momentum calculation
 **Solution:** Filter to periods after 2016-01
@@ -192,6 +211,7 @@ df = df[df['month'] >= '2016-01']  # Remove early periods
 ```
 
 ### Issue: High Volatility in Condo Metrics
+
 **Reason:** Fewer transactions per district
 **Solution:** Aggregate to quarterly or regional level
 
@@ -243,21 +263,25 @@ plt.savefig('yishun_analysis.png')
 ## 🎯 Next Steps
 
 ### 1. Planning Area Mapping (Priority)
+
 - Currently using town/district
 - Map to planning areas for unified analysis
 - See: `docs/guides/l4-analysis-pipeline.md`
 
 ### 2. Visualization Dashboard
+
 - Build Streamlit app for interactive exploration
 - Add choropleth maps
 - Create time-series animations
 
 ### 3. Forecasting
+
 - Implement ARIMA/Prophet models
 - Predict future prices and momentum
 - Build confidence intervals
 
 ### 4. Advanced Metrics
+
 - Add affordability index (needs income data)
 - Implement ROI score (needs rental data)
 - Build composite health score
@@ -267,17 +291,21 @@ plt.savefig('yishun_analysis.png')
 ## 📞 Support
 
 ### Documentation
+
 - L2 Data Reference (historical): `docs/archive/20260122-L2-data-reference.md`
 - Current Data Reference: `docs/guides/data-reference.md`
 - Pipeline Overview: `docs/guides/l4-analysis-pipeline.md`
 
 ### Code
+
 - Metrics functions: `core/metrics.py` (well-documented)
 - Pipeline script: `scripts/analytics/pipelines/calculate_l3_metrics_pipeline.py`
 - Type hints and docstrings throughout
 
 ### Validation
+
 - Run validation after any changes:
+
 ```python
 from scripts.core.metrics import validate_metrics
 df = pd.read_parquet('data/parquets/L3/metrics_monthly.parquet')

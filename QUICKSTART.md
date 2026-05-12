@@ -24,6 +24,7 @@ cp .env.example .env
 ```
 
 Edit `.env` and add:
+
 - `ONEMAP_EMAIL` - Register free at https://www.onemap.gov.sg/apidocs/register
 - `ONEMAP_EMAIL_PASSWORD` - Your OneMap password
 - `GOOGLE_API_KEY` - Optional, for agents

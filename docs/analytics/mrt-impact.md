@@ -34,11 +34,11 @@ For HDB, the “MRT premium” is much smaller than popular market language sugg
 
 ### 1. MRT has a modest average effect on HDB prices
 
-| Metric | Value | Interpretation |
-|--------|-------|----------------|
-| HDB MRT premium | $1.28 per 100m closer | Small average pricing effect |
-| Mean HDB price PSF | $552 | Context for the premium |
-| OLS R² | 0.52 | Moderate explanatory power |
+| Metric             | Value                 | Interpretation               |
+| ------------------ | --------------------- | ---------------------------- |
+| HDB MRT premium    | $1.28 per 100m closer | Small average pricing effect |
+| Mean HDB price PSF | $552                  | Context for the premium      |
+| OLS R²             | 0.52                  | Moderate explanatory power   |
 
 On its own, that average is too small to justify many listing premiums seen in practice.
 
@@ -46,14 +46,14 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Town-level MRT premium variation" data-chart-columns="MRT Premium,Mean Price PSF,Transactions"></div>
 
-| Town | MRT Premium per 100m | Mean Price PSF | Transactions |
-|------|----------------------|----------------|--------------|
-| Central Area | +$59.19 | $903 | 599 |
-| Serangoon | +$12.91 | $566 | 1,853 |
-| Bishan | +$5.88 | $644 | 1,951 |
-| Marine Parade | -$38.54 | $629 | 515 |
-| Geylang | -$20.54 | $584 | 2,054 |
-| Sengkang | -$16.88 | $558 | 7,585 |
+| Town          | MRT Premium per 100m | Mean Price PSF | Transactions |
+| ------------- | -------------------- | -------------- | ------------ |
+| Central Area  | +$59.19              | $903           | 599          |
+| Serangoon     | +$12.91              | $566           | 1,853        |
+| Bishan        | +$5.88               | $644           | 1,951        |
+| Marine Parade | -$38.54              | $629           | 515          |
+| Geylang       | -$20.54              | $584           | 2,054        |
+| Sengkang      | -$16.88              | $558           | 7,585        |
 
 **Impact**
 
@@ -62,10 +62,10 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 ### 3. MRT matters far more for condos than HDB
 
-| Property Type | MRT sensitivity |
-|--------------|-----------------|
-| HDB | low |
-| Condo | roughly 15x higher than HDB |
+| Property Type | MRT sensitivity             |
+| ------------- | --------------------------- |
+| HDB           | low                         |
+| Condo         | roughly 15x higher than HDB |
 
 **Impact**
 
@@ -74,12 +74,12 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 ### 4. Other amenities can outrank MRT in HDB pricing
 
-| Feature | Importance |
-|---------|------------|
-| Hawker within 1km | 27.4% |
-| Remaining lease months | 14.1% |
-| Park within 1km | 7.2% |
-| MRT within 1km | 5.5% |
+| Feature                | Importance |
+| ---------------------- | ---------- |
+| Hawker within 1km      | 27.4%      |
+| Remaining lease months | 14.1%      |
+| Park within 1km        | 7.2%       |
+| MRT within 1km         | 5.5%       |
 
 **Impact**
 

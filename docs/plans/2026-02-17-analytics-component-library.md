@@ -21,17 +21,20 @@ This component library transforms technical analytics documentation into accessi
 **File:** `app/src/components/analytics/Tooltip.astro`
 
 **Usage:**
+
 ```md
 <Tooltip term="H3 hexagons">H3 hexagons</Tooltip>
 ```
 
 **Features:**
+
 - Looks up terms in `analytics-glossary.json`
 - Hover on desktop, tap on mobile
 - Shows explanation + "why it matters"
 - Accessible with ARIA tooltip role
 
 **Glossary format:**
+
 ```json
 {
   "TERM": {
@@ -50,6 +53,7 @@ This component library transforms technical analytics documentation into accessi
 **File:** `app/src/components/analytics/StatCallout.astro`
 
 **Usage:**
+
 ```md
 <StatCallout
   value="22.6%"
@@ -60,12 +64,14 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Props:**
+
 - `value` (required): The statistic to display
 - `label` (required): Description of what it means
 - `trend` (optional): "high" | "medium" | "low" | "neutral"
 - `context` (optional): Additional interpretation
 
 **Features:**
+
 - Large prominent value (4xl font)
 - Color-coded by trend (green/yellow/red)
 - Hover animation
@@ -80,6 +86,7 @@ This component library transforms technical analytics documentation into accessi
 **File:** `app/src/components/analytics/ImplicationBox.astro`
 
 **Usage:**
+
 ```md
 <ImplicationBox persona="investor">
 **For Investors:** MRT proximity drives condo prices 15x more than HDBs.
@@ -90,10 +97,12 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Props:**
+
 - `persona` (required): "first-time-buyer" | "investor" | "upgrader"
 - `title` (optional): Custom header (defaults to "For {Persona}")
 
 **Features:**
+
 - Color-coded by persona (green/blue/orange)
 - Renders markdown content
 - Pulls colors from `persona-content.json`
@@ -107,15 +116,18 @@ This component library transforms technical analytics documentation into accessi
 **File:** `app/src/components/analytics/Scenario.astro`
 
 **Usage:**
+
 ```md
 <Scenario title="Evaluating a Condo Near Future MRT Line">
 **Situation:** You're considering a $1.2M condo 500m from a future MRT station.
 
 **Our Analysis Says:**
+
 - Condos show 15x higher MRT sensitivity than HDBs
 - Future MRT lines typically boost prices by 5-10%
 
 **Your Decision Framework:**
+
 1. Check if premium is already priced in
 2. Verify holding timeline
 3. Assess CBD distance
@@ -125,6 +137,7 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Features:**
+
 - Prominent border and styling
 - Markdown content support
 - Visual hierarchy (Situation → Analysis → Framework → Bottom Line)
@@ -138,10 +151,12 @@ This component library transforms technical analytics documentation into accessi
 **File:** `app/src/components/analytics/DecisionChecklist.astro`
 
 **Usage:**
+
 ```md
 <DecisionChecklist
-  title="Evaluating MRT Proximity Premium"
-  storageKey="mrt-premium-checklist"
+title="Evaluating MRT Proximity Premium"
+storageKey="mrt-premium-checklist"
+
 >
 
 - [ ] Property type? (Condo = MRT matters 15x more)
@@ -153,10 +168,12 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Props:**
+
 - `title` (required): Checklist name
 - `storageKey` (optional): Unique localStorage key (auto-generated if omitted)
 
 **Features:**
+
 - Interactive checkboxes
 - Persisted to localStorage
 - Reset button
@@ -175,6 +192,7 @@ This component library transforms technical analytics documentation into accessi
 **Current terms:** H3 hexagons, VAR model, OLS Regression, XGBoost, R², coefficient, p-value, DiD, RDiT, standard error, 95% confidence interval, spatial autocorrelation, cross-validation, feature importance, YoY, PSF, amenity agglomeration, lease decay, appreciation rate, heterogeneous effects, CBD
 
 **Adding new terms:**
+
 ```json
 {
   "NEW TERM": {
@@ -193,11 +211,13 @@ This component library transforms technical analytics documentation into accessi
 **Contains:** 3 personas with metadata
 
 **Current personas:**
+
 - **first-time-buyer** (green): Affordability, lease decay, location
 - **investor** (blue): Price appreciation, rental yields, market timing
 - **upgrader** (orange): Maximizing sale price, finding upgrade value
 
 **Persona structure:**
+
 ```json
 {
   "persona-key": {
@@ -257,15 +277,19 @@ import DecisionChecklist from '@/components/analytics/DecisionChecklist.astro';
 ## 📋 Key Takeaways
 
 ### 💡 The One Big Insight
+
 One-sentence revolutionary finding
 
 ### 🎯 What This Means For You
+
 3 bullet points translating findings
 
 ### ✅ Action Steps
+
 3-5 concrete actions
 
 ### 📊 By The Numbers
+
 3-5 <StatCallout> components
 ```
 
@@ -323,12 +347,14 @@ cp app/src/content/analytics/doc-name.md docs/analytics/doc-name.md
 ## Future Enhancements
 
 **Phase 2:**
+
 - Apply template to remaining 14 analytics docs
 - Expand glossary to 50+ terms
 - A/B test component effectiveness
 - Add PDF export with styles
 
 **Phase 3:**
+
 - Interactive calculators (MRT Premium Calculator)
 - Dynamic persona detection via quiz
 - Video explainers for complex concepts
@@ -339,20 +365,24 @@ cp app/src/content/analytics/doc-name.md docs/analytics/doc-name.md
 ## Troubleshooting
 
 **Tooltip not showing:**
+
 - Check term exists in `analytics-glossary.json`
 - Verify component import at top of document
 - Check browser console for JavaScript errors
 
 **StatCallout not rendering:**
+
 - Verify all required props (value, label) are provided
 - Check trend value is valid: "high" | "medium" | "low" | "neutral"
 
 **DecisionChecklist not persisting:**
+
 - Check localStorage is enabled in browser
 - Verify storageKey is unique per checklist
 - Check browser console for quota exceeded errors
 
 **Persona page showing no docs:**
+
 - Verify docs have `personas` field in frontmatter
 - Check slug matches in `persona-content.json`
 - Ensure doc status is "published"
@@ -371,6 +401,7 @@ cp app/src/content/analytics/doc-name.md docs/analytics/doc-name.md
 6. Document in this file
 
 **Component checklist:**
+
 - [ ] Astro component in `app/src/components/analytics/`
 - [ ] TypeScript props interface
 - [ ] Tailwind styling with CSS variables
@@ -386,6 +417,7 @@ cp app/src/content/analytics/doc-name.md docs/analytics/doc-name.md
 ## Maintenance
 
 **Regular tasks:**
+
 - Add new technical terms to glossary as they appear
 - Update persona recommendations as new docs are added
 - Test all components after Astro version upgrades
@@ -393,6 +425,7 @@ cp app/src/content/analytics/doc-name.md docs/analytics/doc-name.md
 - Verify mobile responsiveness quarterly
 
 **When new analytics docs are added:**
+
 1. Add to appropriate persona's `recommendedDocs` in `persona-content.json`
 2. Set `personas` frontmatter field
 3. Apply enhancement template (this document)

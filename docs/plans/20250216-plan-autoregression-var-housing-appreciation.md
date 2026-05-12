@@ -16,6 +16,7 @@ category: "market-analysis"
 ## Implementation Summary
 
 **Completed Tasks (2025-02-17):**
+
 - ✅ Regional mapping configuration (50+ planning areas → 7 regions)
 - ✅ Macroeconomic data fetching (SORA, CPI, GDP, policy dates)
 - ✅ Time series data preparation pipeline (regional & area aggregation)
@@ -25,12 +26,14 @@ category: "market-analysis"
 - ✅ Multi-scenario forecasting pipeline (baseline/bullish/bearish/policy shock)
 
 **Implementation Statistics:**
+
 - 7 Python modules created
 - 7 test files with 21 tests (all passing)
 - Test coverage: 62-71% for core analytics modules
 - Total LOC: ~2,300 lines (including tests)
 
 **Next Steps:**
+
 - Generate L3 unified dataset (required for time series preparation)
 - Run cross-validation to validate model accuracy
 - Test forecasting pipeline with real data
@@ -43,6 +46,7 @@ category: "market-analysis"
 **Goal:** Build a time series forecasting system to predict housing price appreciation rates (1-3 years at planning area level, 3-5 years at regional level) while enabling causal inference on appreciation drivers.
 
 **Approach:** Two-Stage Hierarchical VAR
+
 - **Stage 1:** Regional Panel VAR (7 regions) with endogenous variables (appreciation, volume, prices) + exogenous macroeconomic/amenity factors
 - **Stage 2:** Planning Area ARIMAX models (~20 high-volume areas) using regional forecasts as exogenous predictors
 
@@ -56,6 +60,7 @@ category: "market-analysis"
 ### Primary Goals
 
 1. **Predictive Forecasting (Priority A)**
+
    - Medium-term (1-3 years) at planning area level
    - Long-term (3-5 years) at regional level
    - Actionable for investment decisions
@@ -86,6 +91,7 @@ category: "market-analysis"
 ### Why This Approach?
 
 **Advantages:**
+
 - ✅ Cleanly separates 1-3 yr (area) and 3-5 yr (regional) goals
 - ✅ Captures spillover effects through regional exogenous variables
 - ✅ Computationally manageable (5-8 VAR models + ~20 AR models)
@@ -94,6 +100,7 @@ category: "market-analysis"
 - ✅ Naturally handles spatial autocorrelation via regional aggregation
 
 **Trade-offs:**
+
 - ❌ Requires manual regional aggregation
 - ❌ Doesn't fully account for within-region spatial correlation
 - ❌ Regional → planning area assumptions may not hold for all areas
@@ -101,11 +108,13 @@ category: "market-analysis"
 ### Alternatives Considered
 
 **Approach 2: Bayesian Hierarchical PVAR**
+
 - Most statistically rigorous but computationally intensive (MCMC)
 - Higher implementation complexity (4-6 weeks)
 - Harder to explain to stakeholders
 
 **Approach 3: Hybrid VAR + XGBoost Ensemble**
+
 - Leverages existing XGBoost success (R²=0.91)
 - Less suitable for causal inference
 - Harder to interpret coefficient effects
@@ -118,33 +127,37 @@ category: "market-analysis"
 
 **7 Regions defined:**
 
-| Region | Planning Areas | Rationale |
-|--------|---------------|-----------|
-| **CCR** | Downtown, Newton, Orchard, Marina Bay | Prime residential, highest prices |
-| **RCR** | Bukit Merah, Queenstown, Geylang, Kallang | City fringe, mature estates |
-| **OCR East** | Bedok, Pasir Ris, Tampines, Changi | East regional identity |
-| **OCR North-East** | Ang Mo Kio, Serangoon, Hougang, Sengkang, Punggol | MRT line corridor |
-| **OCR North** | Woodlands, Yishun, Sembawang | North-South corridor |
-| **OCR West** | Jurong, Bukit Batok, Choa Chu Kang | Jurong Lake District hub |
-| **OCR Central** | Bishan, Toa Payoh, Central | Geographic center |
+| Region             | Planning Areas                                    | Rationale                         |
+| ------------------ | ------------------------------------------------- | --------------------------------- |
+| **CCR**            | Downtown, Newton, Orchard, Marina Bay             | Prime residential, highest prices |
+| **RCR**            | Bukit Merah, Queenstown, Geylang, Kallang         | City fringe, mature estates       |
+| **OCR East**       | Bedok, Pasir Ris, Tampines, Changi                | East regional identity            |
+| **OCR North-East** | Ang Mo Kio, Serangoon, Hougang, Sengkang, Punggol | MRT line corridor                 |
+| **OCR North**      | Woodlands, Yishun, Sembawang                      | North-South corridor              |
+| **OCR West**       | Jurong, Bukit Batok, Choa Chu Kang                | Jurong Lake District hub          |
+| **OCR Central**    | Bishan, Toa Payoh, Central                        | Geographic center                 |
 
 **Filtering:**
+
 - Minimum 30 months of data per region
 - Top 20 planning areas by transaction volume
 
 ### Time Series Variables
 
 **Regional-level (VAR endogenous):**
+
 - `regional_appreciation`: Median YoY appreciation % in region
 - `regional_volume`: Transaction count in region
 - `regional_price_psf`: Median price PSF in region
 
 **Regional-level (VAR exogenous):**
+
 - Macroeconomic: `interest_rate` (SORA), `cpi`, `gdp_growth`
 - Policy: `absd_rate`, `ltv_limit` (binary indicators)
 - Amenity: `mrt_accessibility`, `hawker_accessibility`
 
 **Planning area-level (AR predictors):**
+
 - Target: `area_appreciation` (YoY appreciation %)
 - Regional forecasts: `regional_appreciation_forecast`, `regional_volume_forecast`
 - Local amenities: `mrt_within_1km`, `hawker_within_1km`, `school_quality_score`
@@ -155,6 +168,7 @@ category: "market-analysis"
 **New Scripts:**
 
 1. **`scripts/data/fetch_macro_data.py`**
+
    - Fetch macro data from MAS, SingStat, MND
    - Storage: `data/raw_data/macro/`
    - Files: `singapore_cpi_monthly.parquet`, `sora_rates_monthly.parquet`, `sgdp_quarterly.parquet`, `housing_policy_dates.parquet`
@@ -169,6 +183,7 @@ category: "market-analysis"
    - Output: `L5_regional_timeseries.parquet`, `L5_area_timeseries.parquet`
 
 **Data Quality Checks:**
+
 - Minimum 30 months of non-NaN data
 - Outlier detection (cap appreciation at ±50%)
 - Stationarity tests (ADF test) - apply differencing if needed
@@ -188,6 +203,7 @@ Y_r,t = c + A₁·Y_r,t-1 + A₂·Y_r,t-2 + ... + A_p·Y_r,t-p + B·X_t + ε_t
 ```
 
 **Where:**
+
 - `Y_r,t = [appreciation, volume, price_psf]` (3 endogenous variables)
 - `X_t = [interest_rate, cpi, gdp_growth, mrt_accessibility, hawker_accessibility]` (5 exogenous variables)
 - `A₁...A_p` = 3×3 coefficient matrices (p = optimal lag order)
@@ -204,6 +220,7 @@ selected_lag = select_order(data, maxlags=max_lag, criterion='aic')  # AIC prefe
 ```
 
 **Estimation:**
+
 - Method: OLS per equation (SUR not needed - same regressors per equation)
 - Regularization: Ridge penalty if multicollinearity detected (VIF > 10)
 - Sample size: 60 months (2021-2026) - sufficient for VAR(3-6) with 8 variables
@@ -216,6 +233,7 @@ selected_lag = select_order(data, maxlags=max_lag, criterion='aic')  # AIC prefe
 4. **Normality:** Jarque-Bera test on residuals
 
 **If diagnostics fail:**
+
 - Non-stationary: Apply first differences to non-stationary variables
 - Serial correlation: Increase lag order
 - Heteroskedasticity: Robust standard errors (Newey-West)
@@ -223,11 +241,13 @@ selected_lag = select_order(data, maxlags=max_lag, criterion='aic')  # AIC prefe
 **Causal Inference Tools:**
 
 1. **Granger Causality Tests:**
+
    - Test: Does variable X Granger-cause appreciation?
    - Null hypothesis: Coefficients on lags of X are jointly zero
    - Significance: p < 0.05 (F-test)
 
 2. **Impulse Response Functions (IRF):**
+
    - Shock to interest rate → appreciation response over 12-24 months
    - Shock to MRT accessibility → appreciation response
    - Confidence bands: 68% (1 SE) and 95% (2 SE)
@@ -250,6 +270,7 @@ appreciation_a,t = c + Σ(φ_i·appreciation_a,t-i) + θ·regional_forecast_t + 
 ```
 
 **Where:**
+
 - `φ_i` = AR coefficients (i = 1 to p, p selected by AIC)
 - `regional_forecast_t` = Regional VAR forecast (exogenous predictor)
 - `local_features_t` = [mrt_within_1km, hawker_within_1km, school_quality, new_mrt_opening, interaction_terms]
@@ -273,10 +294,12 @@ best_model = min(grid_search, key=lambda m: m.aic)
 **Special Cases:**
 
 1. **New MRT openings:** Intervention dummy variable
+
    - `new_mrt_opening_t = 1` if month t is within 6 months of opening, else 0
    - Tests pre-announcement vs. post-opening effects
 
 2. **Policy changes:** Step function dummy
+
    - `absd_increase_t = 1` if t ≥ policy_date, else 0
    - Captures permanent level shifts
 
@@ -301,12 +324,14 @@ mrt_decay_t = mrt_within_1km_a,t × exp(-0.1 × months_since_opening_t)
 **Forecasting Procedure:**
 
 1. **Generate regional forecasts (Stage 1 VAR):**
+
    ```python
    regional_var.fit(train_data)
    regional_forecast = regional_var.forecast(steps=36)  # 3-year horizon
    ```
 
 2. **Prepare regional exogenous inputs for Stage 2:**
+
    ```python
    area_exog = {
        'regional_appreciation_forecast': regional_forecast[:, 0],  # Col 0 = appreciation
@@ -352,6 +377,7 @@ Test period:       2025-07 to 2026-02 (8 months, 10%)
 **Rolling Window Validation:**
 
 Expanding window validation with 5 folds:
+
 - Start with 42 months training data
 - Expand by 3 months each fold
 - Forecast 12 months ahead each fold
@@ -360,6 +386,7 @@ Expanding window validation with 5 folds:
 ### Stage 1 (Regional VAR) Training
 
 **Steps:**
+
 1. Load regional timeseries data
 2. Stationarity checks (ADF test) - apply differencing if needed
 3. Split train/test (temporal)
@@ -368,6 +395,7 @@ Expanding window validation with 5 folds:
 6. Forecast and evaluate (RMSE, MAE, MAPE, directional accuracy)
 
 **Hyperparameter Tuning:**
+
 - Lag order: 1-6 months (AIC-optimized)
 - Regularization: Ridge if VIF > 10
 - Differencing: d=0 or d=1 based on ADF test
@@ -375,6 +403,7 @@ Expanding window validation with 5 folds:
 ### Stage 2 (Planning Area AR) Training
 
 **Steps:**
+
 1. For each of top 20 planning areas by volume
 2. Prepare data (target + regional forecasts + local features)
 3. Grid search ARIMA orders (p=1-6, d=0-1, q=0-1)
@@ -382,6 +411,7 @@ Expanding window validation with 5 folds:
 5. Forecast and evaluate
 
 **Feature Selection:**
+
 - Backward elimination on local features
 - Keep only significant features (p < 0.10)
 - Test interaction terms (MRT × regional appreciation)
@@ -389,17 +419,20 @@ Expanding window validation with 5 folds:
 ### Evaluation Metrics
 
 **Forecast Accuracy:**
+
 - RMSE: < 5% (regional), < 8% (area)
 - MAE: < 4% (regional), < 6% (area)
 - MAPE: < 10%
 - Directional accuracy: > 70%
 
 **Causal Validity:**
+
 - Granger causality: p < 0.05 for key drivers
 - IRF significance: 95% CI excludes 0
 - FEVD: > 10% variance explained by amenity/macro vars
 
 **Model Comparison:**
+
 - Baseline: Naïve forecast (last period)
 - Benchmark: XGBoost (R²=0.91 from MRT analysis)
 - Proposed: VAR+AR hierarchical
@@ -409,6 +442,7 @@ Expanding window validation with 5 folds:
 **New script:** `scripts/analytics/pipelines/cross_validate_timeseries.py`
 
 **Outputs:**
+
 - `L5_regional_var_results.parquet` (RMSE, MAE, best_lag per region)
 - `L5_area_ar_results.parquet` (RMSE, MAE, best_order per area)
 - `L5_forecast_comparison.parquet` (actual vs. forecast)
@@ -422,18 +456,19 @@ Expanding window validation with 5 folds:
 **New script:** `scripts/analytics/pipelines/forecast_appreciation.py`
 
 **Functions:**
+
 - `generate_regional_forecasts()` - Generate VAR forecasts with uncertainty bands
 - `generate_area_forecasts()` - Generate ARIMAX forecasts using regional forecasts
 - Monte Carlo simulation for propagating regional uncertainty to area level
 
 **Forecast Scenarios:**
 
-| Scenario | Interest Rate | GDP Growth | Use Case |
-|----------|--------------|------------|----------|
-| **Baseline** | Current trajectory | Historical trend | Standard forecast |
-| **Bullish** | -1% vs baseline | +0.5% vs baseline | Low-rate environment |
-| **Bearish** | +1% vs baseline | -0.5% vs baseline | High-rate/recession |
-| **Policy shock** | Unchanged | New ABSD rate | Policy impact |
+| Scenario         | Interest Rate      | GDP Growth        | Use Case             |
+| ---------------- | ------------------ | ----------------- | -------------------- |
+| **Baseline**     | Current trajectory | Historical trend  | Standard forecast    |
+| **Bullish**      | -1% vs baseline    | +0.5% vs baseline | Low-rate environment |
+| **Bearish**      | +1% vs baseline    | -0.5% vs baseline | High-rate/recession  |
+| **Policy shock** | Unchanged          | New ABSD rate     | Policy impact        |
 
 ### Uncertainty Quantification
 
@@ -448,6 +483,7 @@ Expanding window validation with 5 folds:
 **Output directory:** `data/analysis/var_forecasts/`
 
 **Plots:**
+
 1. `regional_forecast_overview.png` - 7 regional forecasts (2021-2029)
 2. `area_forecasts_top20.png` - 20 planning area forecasts (2021-2028)
 3. `granger_causality_network.png` - Directed network of causal relationships
@@ -456,6 +492,7 @@ Expanding window validation with 5 folds:
 6. `backtest_results_2021-2026.png` - Extended backtesting (2021-2026 validation)
 
 **Visualization decisions:**
+
 - Static PNG plots (sufficient for reporting)
 - 68% and 95% confidence bands
 - Historical + forecast on same plot
@@ -467,6 +504,7 @@ Expanding window validation with 5 folds:
 **Output:** `app/public/data/analytics/var_forecasts.json.gz`
 
 **Structure:**
+
 - Metadata (timestamp, horizon, scenario)
 - Regional forecasts (historical + forecasted with CIs)
 - Area forecasts (forecasted with CIs)
@@ -482,11 +520,11 @@ Expanding window validation with 5 folds:
 
 **Issue 1: Missing Months**
 
-| Gap size | Action | Rationale |
-|----------|--------|-----------|
-| **1-2 months** | Linear interpolation | Small gaps, preserve trends |
-| **3-6 months** | Seasonal decompose + imputation | Account for seasonality |
-| **>6 months** | Drop series | Too much missing |
+| Gap size       | Action                          | Rationale                   |
+| -------------- | ------------------------------- | --------------------------- |
+| **1-2 months** | Linear interpolation            | Small gaps, preserve trends |
+| **3-6 months** | Seasonal decompose + imputation | Account for seasonality     |
+| **>6 months**  | Drop series                     | Too much missing            |
 
 **Issue 2: Outliers**
 
@@ -517,6 +555,7 @@ Expanding window validation with 5 folds:
 **Issue 2: ARIMA Convergence Failure**
 
 **Automated retry strategy:**
+
 ```python
 # Try progressively simpler models
 orders_to_try = [
@@ -545,6 +584,7 @@ return get_fallback_model(area, y_train, X_train)
 Instead of simple AR(1), use:
 
 1. **Regional average model** (if regional VAR succeeded):
+
    ```python
    # Predict area appreciation as regional appreciation + area bias
    area_bias = area_appreciation_mean - regional_appreciation_mean
@@ -552,6 +592,7 @@ Instead of simple AR(1), use:
    ```
 
 2. **Similar area model** (k-nearest neighbors):
+
    ```python
    # Find 3 most similar areas (by price level, volume, amenities)
    # Average their forecasts
@@ -592,6 +633,7 @@ Instead of simple AR(1), use:
 **Issue 1: Missing Macroeconomic Data**
 
 **Fallbacks:**
+
 - `interest_rate`: Last available rate (assume constant)
 - `cpi`: Linear interpolation
 - `gdp_growth`: Historical mean (3% annual)
@@ -600,6 +642,7 @@ Instead of simple AR(1), use:
 **Issue 2: Future Macro Data for Forecasts**
 
 Use scenario-based assumptions:
+
 - Baseline: Current rates
 - Bullish: -1% rates, +0.5% GDP
 - Bearish: +1% rates, -0.5% GDP
@@ -649,6 +692,7 @@ def fit_model_with_retry(area, data):
 **Output:** `data/logs/var_modeling_errors_YYYYMMDD.json`
 
 **Contents:**
+
 - Summary (success/failure counts)
 - Failed regions/areas with reasons
 - Warnings (outliers, missing data)
@@ -656,10 +700,12 @@ def fit_model_with_retry(area, data):
 - Retry history (which parameters succeeded)
 
 **Acceptable failure rate:**
+
 - Regions: ≤1 failure out of 7 (~14%)
 - Areas: ≤2 failures out of 20 (10%)
 
 **Logging:**
+
 - File only (no alerts)
 - Review after each run
 - Investigate systematic failures
@@ -673,6 +719,7 @@ def fit_model_with_retry(area, data):
 **File:** `tests/analytics/test_var_models.py`
 
 **Test cases:**
+
 - Regional aggregation correctness
 - Stationarity detection (ADF test)
 - Missing month interpolation
@@ -689,6 +736,7 @@ def fit_model_with_retry(area, data):
 **File:** `tests/analytics/integration/test_forecasting_pipeline.py`
 
 **Test cases:**
+
 - End-to-end forecasting pipeline
 - Regional to area forecast propagation
 - Scenario forecast differences
@@ -700,6 +748,7 @@ def fit_model_with_retry(area, data):
 **File:** `tests/analytics/validation/test_backtesting.py`
 
 **Test cases:**
+
 - Backtest accuracy meets targets (>70% directional)
 - Extended backtest (2021-2026)
 - Rolling window validation (5 folds)
@@ -711,6 +760,7 @@ def fit_model_with_retry(area, data):
 **File:** `tests/analytics/test_performance.py`
 
 **Test cases:**
+
 - Regional VAR training < 10 minutes
 - Area AR training < 5 minutes
 - Forecast generation < 1 second
@@ -720,6 +770,7 @@ def fit_model_with_retry(area, data):
 ### Manual Validation Checklist
 
 **Before deployment:**
+
 - Data quality checks (no missing months, outliers capped)
 - Model validation (stationarity, no serial correlation)
 - Forecast validation (backtest accuracy > 70%)
@@ -729,7 +780,7 @@ def fit_model_with_retry(area, data):
 
 ### Test Coverage Target
 
->80% coverage for analytics code
+> 80% coverage for analytics code
 
 **Check:** `uv run pytest --cov=scripts/analytics --cov-report=html`
 
@@ -740,6 +791,7 @@ def fit_model_with_retry(area, data):
 **Status:** ✅ Approved - Proceed to Implementation Planning
 
 **Summary:**
+
 - Approach: Two-Stage Hierarchical VAR
 - Data: Post-COVID (2021-2026), 7 regions + 20 planning areas
 - Goals: Predictive forecasting + Causal inference
@@ -752,22 +804,26 @@ def fit_model_with_retry(area, data):
 ## Implementation Roadmap
 
 **Week 1:** Data Preparation
+
 - Regional aggregation implementation
 - Macro data fetching
 - Time series dataset construction
 
 **Week 2:** Regional VAR
+
 - Model estimation & validation
 - Lag selection (AIC/BIC)
 - Granger causality tests
 - Regional forecasting (12-36 month horizon)
 
 **Week 3:** Planning Area AR
+
 - ARIMAX model estimation
 - Integration with regional forecasts
 - Area-level forecasting (12-36 month horizon)
 
 **Week 4:** System Integration
+
 - Forecasting engine
 - Visualization dashboard
 - Backtesting validation
@@ -778,20 +834,24 @@ def fit_model_with_retry(area, data):
 ## Dependencies
 
 **Existing Data:**
+
 - `L3/housing_unified.parquet` (unified transaction data)
 - `L5_temporal_features.parquet` (lagged appreciation, momentum)
 - `L5_growth_metrics_by_area.parquet` (monthly growth by planning area)
 
 **Existing Analysis:**
+
 - MRT impact analysis (amenity feature engineering)
 - Spatial autocorrelation analysis (Moran's I = 0.67)
 
 **Python Libraries:**
+
 - `statsmodels` (VAR, ARIMA, Granger causality)
 - `arch` (volatility modeling, if needed)
 - `pandas`, `numpy`, `scipy` (data manipulation)
 
 **External Data:**
+
 - MAS SORA rates API
 - SingStat data API
 - MND policy announcements

@@ -7,6 +7,7 @@
 ## Problem
 
 Log files in `data/logs/` were created but remained empty (0 bytes) even though:
+
 - The geocoding process was running successfully
 - Log messages were visible in stderr/stdout
 - No errors were reported
@@ -18,11 +19,13 @@ Log files in `data/logs/` were created but remained empty (0 bytes) even though:
 ### Technical Details
 
 1. **`core/data_helpers.py`** imported `logging` and called:
+
    ```python
    logging.basicConfig(level=logging.INFO)
    ```
 
 2. When **`scripts/geocode_addresses.py`** imported data_helpers:
+
    ```python
    from data_helpers import save_parquet
    ```
@@ -30,6 +33,7 @@ Log files in `data/logs/` were created but remained empty (0 bytes) even though:
 3. The data_helpers module's `basicConfig()` ran **first**, configuring the root logger with only a StreamHandler (console output).
 
 4. When geocode_addresses.py then tried to configure logging:
+
    ```python
    logging.basicConfig(
        level=logging.INFO,
@@ -50,6 +54,7 @@ Log files in `data/logs/` were created but remained empty (0 bytes) even though:
 **Removed `logging.basicConfig()` from `core/data_helpers.py:17`**
 
 ### Before
+
 ```python
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -57,6 +62,7 @@ logger = logging.getLogger(__name__)
 ```
 
 ### After
+
 ```python
 # Get logger (don't call basicConfig - let the main script configure logging)
 logger = logging.getLogger(__name__)
@@ -111,11 +117,13 @@ logging.basicConfig(level=logging.INFO)  # ❌ WRONG
 ## Testing
 
 Run the test script to verify the fix:
+
 ```bash
 uv run python scripts/test_logging_fix.py
 ```
 
 Expected output:
+
 - Log messages to console (stdout)
 - Log messages written to file
 - "✅ LOGGING FIX SUCCESSFUL!" message
@@ -123,10 +131,12 @@ Expected output:
 ## Impact on Running Processes
 
 The current geocoding process (PID 54241) will NOT be affected by this fix because:
+
 - It was started with the old code
 - Its logging configuration is already set
 
 **To apply the fix:**
+
 1. Let current process complete (~4 hours)
 2. Future runs will automatically use the fixed logging
 3. No manual intervention needed
@@ -134,6 +144,7 @@ The current geocoding process (PID 54241) will NOT be affected by this fix becau
 ## Verification
 
 After the fix, new geocoding runs will have:
+
 - ✅ Console output (stderr/stdout)
 - ✅ File logging to `data/logs/geocoding_YYYYMMDD_HHMMSS.log`
 - ✅ Progress logs every 200 addresses

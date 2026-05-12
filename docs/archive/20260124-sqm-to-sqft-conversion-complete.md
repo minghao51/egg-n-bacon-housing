@@ -20,12 +20,14 @@ Successfully converted all metrics from **Square Meters (SQM)** to **Square Feet
 **File:** `scripts/dashboard/create_l3_unified_dataset.py`
 
 **Before (INCORRECT):**
+
 ```python
 df['price_psm'] = df['price'] / df['floor_area_sqm']
 df['price_psf'] = df['price_psm'] * 0.092903  # WRONG conversion factor
 ```
 
 **After (CORRECT):**
+
 ```python
 df['price_psf'] = df['price'] / df['floor_area_sqft']  # Primary calculation
 df['price_psm'] = df['price_psf'] * 10.764  # Derived from PSF
@@ -37,30 +39,30 @@ df['price_psm'] = df['price_psf'] * 10.764  # Derived from PSF
 
 ### 2. **Core Pipeline Files** ✅
 
-| File | Changes |
-|------|---------|
+| File                                             | Changes                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------- |
 | `scripts/dashboard/create_l3_unified_dataset.py` | Fixed price calculations, renamed psm_tier_period → psf_tier_period |
-| `core/metrics.py` | Renamed calculate_psm() → calculate_psf(), updated defaults to sqft |
-| `core/data_loader.py` | Fixed price calculation logic to prioritize sqft |
-| `scripts/calculate_l3_metrics.py` | Updated documentation |
+| `core/metrics.py`                                | Renamed calculate_psm() → calculate_psf(), updated defaults to sqft |
+| `core/data_loader.py`                            | Fixed price calculation logic to prioritize sqft                    |
+| `scripts/calculate_l3_metrics.py`                | Updated documentation                                               |
 
 ---
 
 ### 3. **Streamlit Apps** ✅
 
-| File | Changes |
-|------|---------|
-| `apps/2_price_map.py` | Updated display columns to use psf_tier_period |
+| File                                  | Changes                                                  |
+| ------------------------------------- | -------------------------------------------------------- |
+| `apps/2_price_map.py`                 | Updated display columns to use psf_tier_period           |
 | `apps/market_insights/4a_segments.py` | Updated all PSM references to PSF in displays and labels |
 
 ---
 
 ### 4. **Analysis Scripts** ✅
 
-| File | Changes |
-|------|---------|
-| `scripts/analyze_feature_importance.py` | Changed target variable from price_psm to price_psf |
-| `scripts/create_market_segmentation.py` | Renamed calculate_psm_tiers() → calculate_psf_tiers() |
+| File                                    | Changes                                                             |
+| --------------------------------------- | ------------------------------------------------------------------- |
+| `scripts/analyze_feature_importance.py` | Changed target variable from price_psm to price_psf                 |
+| `scripts/create_market_segmentation.py` | Renamed calculate_psm_tiers() → calculate_psf_tiers()               |
 | `scripts/create_period_segmentation.py` | Renamed calculate_period_psm_tiers() → calculate_period_psf_tiers() |
 
 ---
@@ -70,6 +72,7 @@ df['price_psm'] = df['price_psf'] * 10.764  # Derived from PSF
 ### ✅ Pipeline Test - SUCCESSFUL
 
 Ran the full L3 unified dataset creation pipeline:
+
 - **Total records processed:** 911,797 transactions
 - **Properties:** 785,395 HDB + 109,576 Condo + 16,826 EC
 - **Date range:** 1990-2026
@@ -78,18 +81,21 @@ Ran the full L3 unified dataset creation pipeline:
 ### ✅ Conversion Accuracy - ALL CORRECT
 
 **Test 1: price_psf calculation**
+
 ```
 price_psf = price / floor_area_sqft
 Result: ✓ ALL 5 sample records matched perfectly
 ```
 
 **Test 2: price_psm calculation**
+
 ```
 price_psm = price_psf * 10.764
 Result: ✓ ALL 5 sample records matched perfectly
 ```
 
 **Test 3: PSF Tier Distribution**
+
 ```
 Low PSF:     283,957 transactions (31.1%)
 Medium PSF:  363,705 transactions (39.9%)
@@ -97,6 +103,7 @@ High PSF:    264,135 transactions (29.0%)
 ```
 
 **Test 4: Price Statistics by Property Type**
+
 ```
 HDB:         Mean $313.60 psf  (Range: $15-$1,500 psf)
 Condominium: Mean $1,904.50 psf (Range: $274-$6,593 psf)
@@ -104,6 +111,7 @@ EC:          Mean $1,281.91 psf (Range: $519-$2,055 psf)
 ```
 
 **Sample Comparison:**
+
 - HDB Sample: $516.12 psf ($5,555.56 psm)
 - Condo Sample: $1,532.00 psf ($16,490.45 psm)
 
@@ -114,11 +122,13 @@ EC:          Mean $1,281.91 psf (Range: $519-$2,055 psf)
 **Exact Conversion Factor Used:** `1 sqm = 10.764 sqft`
 
 **Primary Calculation:**
+
 ```python
 price_psf = price / floor_area_sqft
 ```
 
 **Derived Calculation:**
+
 ```python
 price_psm = price_psf * 10.764
 ```
@@ -128,12 +138,14 @@ price_psm = price_psf * 10.764
 ## Data Schema Changes
 
 ### Columns Maintained (Backward Compatible)
+
 - `floor_area_sqm` - Still present for historical data
 - `floor_area_sqft` - Now the primary area column
 - `price_psm` - Derived from PSF for compatibility
 - `price_psf` - **NOW PRIMARY** price metric
 
 ### New/Updated Columns
+
 - `psf_tier_period` - Replaces `psm_tier_period`
 - Tier labels: "Low PSF", "Medium PSF", "High PSF"
 
@@ -159,11 +171,13 @@ uv run streamlit run streamlit_app.py
 ## Next Steps
 
 ### Optional Future Enhancements:
+
 1. Remove `floor_area_sqm` column if no longer needed (after verifying all systems work with SQFT)
 2. Update any remaining documentation that references PSM
 3. Consider updating API contracts if external systems expect PSF
 
 ### Recommended:
+
 1. ✅ Test the Streamlit app UI with new PSF metrics
 2. ✅ Re-run feature importance analysis with new PSF targets
 3. ✅ Update any saved ML models that were trained on PSM
@@ -195,6 +209,7 @@ If issues arise, rollback steps:
 4. Re-run pipeline with original SQM logic
 
 **Git revert command:**
+
 ```bash
 git checkout HEAD~1 -- scripts/dashboard/create_l3_unified_dataset.py core/metrics.py
 ```
@@ -221,5 +236,5 @@ The old SQM columns are preserved for backward compatibility, but all new calcul
 
 ---
 
-*Generated: 2026-01-24*
-*Pipeline Version: L3 Unified Dataset v1.0*
+_Generated: 2026-01-24_
+_Pipeline Version: L3 Unified Dataset v1.0_

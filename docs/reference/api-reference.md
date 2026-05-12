@@ -93,12 +93,15 @@ Config.validate() -> None
 ```
 
 **Raises:**
+
 - `ValueError`: If required API keys missing or directories don't exist
 
 **Side Effects:**
+
 - Creates all required directories if they don't exist
 
 **Example:**
+
 ```python
 from scripts.core.config import Config
 
@@ -120,6 +123,7 @@ Config.print_config() -> None
 ```
 
 **Example:**
+
 ```python
 from scripts.core.config import Config
 
@@ -156,19 +160,23 @@ load_parquet(
 ```
 
 **Parameters:**
+
 - `dataset_name` (str): Key from metadata.json (e.g., `'L1_hdb_transaction'`)
 - `version` (str, optional): Specific version to load (defaults to latest)
 - `columns` (list[str], optional): Specific columns to load (None = all columns)
 
 **Returns:**
+
 - `pd.DataFrame`: Loaded data
 
 **Raises:**
+
 - `ValueError`: If dataset not found in metadata
 - `FileNotFoundError`: If parquet file missing
 - `RuntimeError`: If file read fails
 
 **Example:**
+
 ```python
 from scripts.core.data_helpers import load_parquet
 
@@ -202,6 +210,7 @@ save_parquet(
 ```
 
 **Parameters:**
+
 - `df` (pd.DataFrame): DataFrame to save
 - `dataset_name` (str): Unique identifier for this dataset
 - `source` (str, optional): Source dataset or description (for lineage)
@@ -212,15 +221,18 @@ save_parquet(
 - `calculate_checksum` (bool): Calculate MD5 checksum (default: False for performance)
 
 **Raises:**
+
 - `ValueError`: If df is empty or invalid mode
 - `RuntimeError`: If save operation fails
 
 **Side Effects:**
+
 - Updates `data/metadata.json`
 - Creates parent directories if needed
 - Overwrites existing data if `mode='overwrite'`
 
 **Example:**
+
 ```python
 from scripts.core.data_helpers import save_parquet
 
@@ -257,12 +269,15 @@ list_datasets(refresh_rows: bool = False) -> dict
 ```
 
 **Parameters:**
+
 - `refresh_rows` (bool): If True, recalculate row counts from disk (slower but accurate)
 
 **Returns:**
+
 - `dict`: Dictionary of dataset information
 
 **Example:**
+
 ```python
 from scripts.core.data_helpers import list_datasets
 
@@ -287,12 +302,15 @@ verify_metadata() -> bool
 ```
 
 **Returns:**
+
 - `bool`: True if all datasets valid, False otherwise
 
 **Side Effects:**
+
 - Logs errors for invalid datasets
 
 **Example:**
+
 ```python
 from scripts.core.data_helpers import verify_metadata
 
@@ -323,18 +341,22 @@ setup_onemap_headers() -> dict[str, str]
 ```
 
 **Returns:**
+
 - `dict[str, str]`: Headers with `Authorization` key containing valid JWT token
 
 **Raises:**
+
 - `Exception`: If token cannot be obtained or is invalid
 
 **Behavior:**
+
 1. Checks for existing `ONEMAP_TOKEN` in environment
 2. Validates token expiration
 3. Falls back to email/password authentication if token expired
 4. Returns headers with valid token
 
 **Example:**
+
 ```python
 from scripts.core.geocoding import setup_onemap_headers
 
@@ -357,11 +379,13 @@ fetch_data(
 ```
 
 **Parameters:**
+
 - `search_string` (str): Address to search for
 - `headers` (dict): Authentication headers from `setup_onemap_headers()`
 - `timeout` (int): Request timeout in seconds (default: 30)
 
 **Returns:**
+
 - `pd.DataFrame`: Search results with columns:
   - `search_result`: Result index
   - `SEARCHVAL`: Search value
@@ -371,14 +395,17 @@ fetch_data(
   - And other OneMap fields
 
 **Raises:**
+
 - `requests.RequestException`: If API call fails after retries
 - `requests.Timeout`: If request times out
 
 **Retry Behavior:**
+
 - Up to 3 attempts with exponential backoff
 - 1 second initial backoff, max 32 seconds
 
 **Example:**
+
 ```python
 from scripts.core.geocoding import fetch_data, setup_onemap_headers
 
@@ -402,15 +429,18 @@ load_ura_files(base_path: Path | None = None) -> tuple[pd.DataFrame, pd.DataFram
 ```
 
 **Parameters:**
+
 - `base_path` (Path, optional): Base path to data directory (defaults to `Config.CSV_DIR`)
 
 **Returns:**
+
 - `tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]`: (ec_df, condo_df, hdb_df)
   - `ec_df`: Executive Condo transactions
   - `condo_df`: Condominium transactions
   - `hdb_df`: HDB transactions
 
 **Example:**
+
 ```python
 from scripts.core.geocoding import load_ura_files
 
@@ -445,16 +475,19 @@ calculate_roi_score(
 ```
 
 **Parameters:**
+
 - `feature_df` (pd.DataFrame): Property features
 - `rental_yield_df` (pd.DataFrame): Rental yield data
 
 **Returns:**
+
 - `dict`: ROI score information with keys:
   - `roi_score`: Overall ROI score (0-100)
   - `rank`: Percentile rank (e.g., `'top_10%'`)
   - Additional metrics depending on implementation
 
 **Example:**
+
 ```python
 from scripts.core.metrics import calculate_roi_score
 
@@ -477,10 +510,12 @@ compute_monthly_metrics(
 ```
 
 **Parameters:**
+
 - `start_date` (str): Start date in format `'YYYY-MM'`
 - `end_date` (str): End date in format `'YYYY-MM'`
 
 **Returns:**
+
 - `pd.DataFrame`: Monthly metrics with columns:
   - `month`: Month identifier
   - `median_price`: Median transaction price
@@ -489,6 +524,7 @@ compute_monthly_metrics(
   - And other calculated metrics
 
 **Example:**
+
 ```python
 from scripts.core.metrics import compute_monthly_metrics
 
@@ -524,15 +560,18 @@ def expensive_function(param):
 ```
 
 **Parameters:**
+
 - `ttl_hours` (int): Time-to-live in hours (default: 24)
 - `cache_dir` (Path, optional): Custom cache directory
 
 **Behavior:**
+
 - Caches function results based on arguments
 - Returns cached result if available and not expired
 - Stores results as compressed pickle files
 
 **Example:**
+
 ```python
 from scripts.core.cache import cached_call
 
@@ -573,14 +612,17 @@ calculate_distance_to_mrt(
 ```
 
 **Parameters:**
+
 - `lat` (float): Property latitude
 - `lng` (float): Property longitude
 - `mrt_stations_df` (pd.DataFrame): MRT station data with `lat` and `lng` columns
 
 **Returns:**
+
 - `float`: Distance in meters to nearest MRT station
 
 **Example:**
+
 ```python
 from scripts.core.mrt_distance import calculate_distance_to_mrt
 
@@ -603,11 +645,13 @@ find_nearest_mrt_station(
 ```
 
 **Parameters:**
+
 - `lat` (float): Property latitude
 - `lng` (float): Property longitude
 - `mrt_stations_df` (pd.DataFrame): MRT station data
 
 **Returns:**
+
 - `pd.Series`: Nearest station information with keys:
   - `station_name`: MRT station name
   - `line`: MRT line
@@ -615,6 +659,7 @@ find_nearest_mrt_station(
   - And other station attributes
 
 **Example:**
+
 ```python
 from scripts.core.mrt_distance import find_nearest_mrt_station
 
@@ -757,6 +802,7 @@ def geocode_with_retry(address):
 ---
 
 **Need Help?**
+
 - Check module docstrings: `help(module_name)`
 - Review code in `scripts/core/`
 - Open an issue for API questions

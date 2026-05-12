@@ -6,6 +6,7 @@
 ## Summary
 
 Successfully implemented nearest MRT station distance calculation for all properties in the L3 export pipeline. Each property now includes:
+
 - `nearest_mrt_name`: Name of the closest MRT station
 - `nearest_mrt_distance`: Distance in meters to that station
 
@@ -14,6 +15,7 @@ Successfully implemented nearest MRT station distance calculation for all proper
 ### Files Created
 
 1. **`core/mrt_distance.py`** - New module for MRT distance calculations
+
    - `load_mrt_stations()`: Loads MRT data from geojson
    - `calculate_nearest_mrt()`: Calculates nearest MRT for properties
    - Uses KD-tree for efficient spatial search
@@ -34,6 +36,7 @@ Successfully implemented nearest MRT station distance calculation for all proper
 ## Technical Approach
 
 ### Algorithm
+
 1. **Load MRT Stations**: Extract centroids from MRT station polygons (257 stations)
 2. **Build KD-tree**: Efficient spatial index for nearest neighbor search
 3. **Query Nearest**: Find closest MRT for each property using KD-tree
@@ -41,6 +44,7 @@ Successfully implemented nearest MRT station distance calculation for all proper
 5. **Add Features**: Add `nearest_mrt_name` and `nearest_mrt_distance` columns
 
 ### Performance
+
 - **Efficient**: KD-tree provides O(log n) lookup for nearest neighbors
 - **Scalable**: Tested on 911,797 properties
 - **Fast**: Processes 1,000 properties in <0.01 seconds
@@ -48,6 +52,7 @@ Successfully implemented nearest MRT station distance calculation for all proper
 ## Test Results
 
 ### Sample Test (1,000 properties)
+
 ```
 Mean distance to MRT: 500m
 Median distance to MRT: 465m
@@ -58,6 +63,7 @@ Properties within 1km: 941 (94.1%)
 ```
 
 ### Top MRT Stations (by proximity)
+
 1. ANG MO KIO INTERCHANGE: 83 properties
 2. PASIR RIS EAST: 54 properties
 3. CHOA CHU KANG: 48 properties
@@ -67,6 +73,7 @@ Properties within 1km: 941 (94.1%)
 ## Data Source
 
 **MRT Station Data**: `data/manual/csv/datagov/MRTStations.geojson`
+
 - 257 MRT/LRT stations
 - Includes station name, rail type, ground level
 - Polygon geometries converted to centroids for distance calculation
@@ -74,6 +81,7 @@ Properties within 1km: 941 (94.1%)
 ## Usage
 
 ### Direct Use
+
 ```python
 from scripts.core.mrt_distance import calculate_nearest_mrt, load_mrt_stations
 
@@ -85,6 +93,7 @@ properties_with_mrt = calculate_nearest_mrt(properties_df, mrt_stations_df=mrt_s
 ```
 
 ### Via L3 Export Pipeline
+
 ```python
 from scripts.core.pipeline.L3_export import run_export_pipeline
 
@@ -95,6 +104,7 @@ results = run_export_pipeline()
 ## Output Columns
 
 The unified dataset now includes:
+
 - `nearest_mrt_name` (string): Name of nearest MRT station
 - `nearest_mrt_distance` (float): Distance in meters
 
@@ -108,6 +118,7 @@ The unified dataset now includes:
 ## Next Steps
 
 Optional enhancements for future consideration:
+
 - Add MRT line/color information (North-South Line, East-West Line, etc.)
 - Calculate distance to multiple MRT stations (e.g., 2nd nearest, 3rd nearest)
 - Add MRT interchange indicator (for stations connecting multiple lines)
@@ -119,6 +130,7 @@ Optional enhancements for future consideration:
 Test file saved to: `data/test_mrt_output.parquet`
 
 Run tests with:
+
 ```bash
 uv run python test_mrt_integration.py
 ```

@@ -5,11 +5,11 @@ Scope: commits `4dde6da`..`3241b8a` (last 5 commits), covering the Hamilton DAG 
 ## Summary
 
 | Severity | Count |
-|----------|-------|
-| Critical | 3 |
-| High | 6 |
-| Medium | 7 |
-| Low | 5 |
+| -------- | ----- |
+| Critical | 3     |
+| High     | 6     |
+| Medium   | 7     |
+| Low      | 5     |
 
 All 42 existing tests pass. Ruff and mypy (components) are clean. The issues below are all in untested paths or logic gaps that the current test suite does not cover.
 
@@ -206,13 +206,13 @@ All unmatched schools receive `quality_score=0.0`. Properties near only unmatche
 
 ## Low
 
-| # | File | Issue |
-|---|------|-------|
-| L1 | `04_export.py:112` | Local variable `segments_data` shadows the function name. Harmless but confusing. |
-| L2 | `05_metrics.py:148-155` | Affordability thresholds (`<5`, `<7`, `<9`) hardcoded. Should be configurable. |
-| L3 | `school_features.py:680` | Accessibility weights `0.4/0.6` for primary/secondary hardcoded. |
-| L4 | `mrt_distance.py`, `school_features.py` | `__main__` blocks in library code. Should be scripts. |
-| L5 | `04_export.py:63` | `pd.Timestamp.now().isoformat()` is timezone-naive. |
+| #   | File                                    | Issue                                                                             |
+| --- | --------------------------------------- | --------------------------------------------------------------------------------- |
+| L1  | `04_export.py:112`                      | Local variable `segments_data` shadows the function name. Harmless but confusing. |
+| L2  | `05_metrics.py:148-155`                 | Affordability thresholds (`<5`, `<7`, `<9`) hardcoded. Should be configurable.    |
+| L3  | `school_features.py:680`                | Accessibility weights `0.4/0.6` for primary/secondary hardcoded.                  |
+| L4  | `mrt_distance.py`, `school_features.py` | `__main__` blocks in library code. Should be scripts.                             |
+| L5  | `04_export.py:63`                       | `pd.Timestamp.now().isoformat()` is timezone-naive.                               |
 
 ---
 
@@ -220,16 +220,16 @@ All unmatched schools receive `quality_score=0.0`. Properties near only unmatche
 
 The following modules have **zero test coverage**:
 
-| Module | Risk |
-|--------|------|
-| `components/05_metrics.py` | High — affordability income, appreciation hotspots, rental yield metrics |
-| `components/06_analytics.py` | Medium — analytics wiring, dead code |
-| `adapters/onemap.py` | High — auth flow, retry, caching |
-| `adapters/datagovsg.py` | Medium — pagination, rate limiting |
-| `utils/cache.py` | High — falsy-value cache bug |
-| `utils/mrt_distance.py` | Medium — row dropping |
-| `utils/school_features.py` | Medium — quality scores, KDTree |
-| `pipeline.py` | Low — DAG build, import failure |
+| Module                       | Risk                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| `components/05_metrics.py`   | High — affordability income, appreciation hotspots, rental yield metrics |
+| `components/06_analytics.py` | Medium — analytics wiring, dead code                                     |
+| `adapters/onemap.py`         | High — auth flow, retry, caching                                         |
+| `adapters/datagovsg.py`      | Medium — pagination, rate limiting                                       |
+| `utils/cache.py`             | High — falsy-value cache bug                                             |
+| `utils/mrt_distance.py`      | Medium — row dropping                                                    |
+| `utils/school_features.py`   | Medium — quality scores, KDTree                                          |
+| `pipeline.py`                | Low — DAG build, import failure                                          |
 
 **Recommended test priority:** `05_metrics.py` → `cache.py` → `onemap.py` → `mrt_distance.py`
 

@@ -33,17 +33,17 @@ Most condo facilities are table stakes that buyers expect but do not pay extra f
 
 ### 1. Most facilities are table stakes, not differentiators
 
-| Facility | Prevalence (% of properties) | Premium Impact | Classification |
-|----------|------------------------------|---------------|----------------|
-| Swimming pool | ~85-90% | Minimal (expected) | Table stake |
-| Security (24hr) | ~80-85% | Minimal (expected) | Table stake |
-| Gym / Fitness corner | ~75-80% | Minimal (expected) | Table stake |
-| BBQ pits | ~70-75% | Minimal | Table stake |
-| Function room | ~60-65% | Modest | Nice-to-have |
-| Tennis court | ~25-30% | Moderate | Differentiator |
-| Sky garden / Roof terrace | ~15-20% | Moderate-High | Differentiator |
-| Concierge / Clubhouse | ~10-15% | Moderate | Differentiator |
-| Jacuzzi / Hydrospa | ~20-25% | Low-Moderate | Minor differentiator |
+| Facility                  | Prevalence (% of properties) | Premium Impact     | Classification       |
+| ------------------------- | ---------------------------- | ------------------ | -------------------- |
+| Swimming pool             | ~85-90%                      | Minimal (expected) | Table stake          |
+| Security (24hr)           | ~80-85%                      | Minimal (expected) | Table stake          |
+| Gym / Fitness corner      | ~75-80%                      | Minimal (expected) | Table stake          |
+| BBQ pits                  | ~70-75%                      | Minimal            | Table stake          |
+| Function room             | ~60-65%                      | Modest             | Nice-to-have         |
+| Tennis court              | ~25-30%                      | Moderate           | Differentiator       |
+| Sky garden / Roof terrace | ~15-20%                      | Moderate-High      | Differentiator       |
+| Concierge / Clubhouse     | ~10-15%                      | Moderate           | Differentiator       |
+| Jacuzzi / Hydrospa        | ~20-25%                      | Low-Moderate       | Minor differentiator |
 
 **Impact**
 
@@ -51,13 +51,13 @@ The facilities that actually move prices are the ones that are not universally a
 
 ### 2. Facility combinations create stronger premiums than individual amenities
 
-| Facility Combination | Synergy Effect | Typical Premium vs Base |
-|---------------------|---------------|------------------------|
-| Pool + Gym + Security | Baseline | 0% (expected) |
-| + Tennis Court | Moderate | +2-4% |
-| + Sky Garden | Moderate-High | +3-5% |
-| Tennis + Sky Garden + Concierge | Strong | +5-8% |
-| Full premium suite | Diminishing returns | +6-10% |
+| Facility Combination            | Synergy Effect      | Typical Premium vs Base |
+| ------------------------------- | ------------------- | ----------------------- |
+| Pool + Gym + Security           | Baseline            | 0% (expected)           |
+| + Tennis Court                  | Moderate            | +2-4%                   |
+| + Sky Garden                    | Moderate-High       | +3-5%                   |
+| Tennis + Sky Garden + Concierge | Strong              | +5-8%                   |
+| Full premium suite              | Diminishing returns | +6-10%                  |
 
 **Impact**
 
@@ -67,12 +67,12 @@ The first differentiating facility adds the most value. Adding more facilities b
 
 The 3.6M records of nearby facilities data reveal that proximity to external amenities (childcare, hawker, mall) matters alongside in-house facilities.
 
-| External Facility | Distance Premium | Interaction with In-House |
-|-------------------|-----------------|--------------------------|
-| MRT within 500m | High | Strong synergy with condo facilities |
-| Mall within 500m | Moderate | Complements retail-deprived condos |
-| Childcare within 500m | Low-Moderate | Relevant for family-oriented buyers |
-| Hawker within 1km | Low | Less relevant for condo segment |
+| External Facility     | Distance Premium | Interaction with In-House            |
+| --------------------- | ---------------- | ------------------------------------ |
+| MRT within 500m       | High             | Strong synergy with condo facilities |
+| Mall within 500m      | Moderate         | Complements retail-deprived condos   |
+| Childcare within 500m | Low-Moderate     | Relevant for family-oriented buyers  |
+| Hawker within 1km     | Low              | Less relevant for condo segment      |
 
 **Impact**
 
@@ -82,11 +82,11 @@ Condos near MRT stations with good in-house facilities command the strongest pri
 
 Properties with aging or poorly maintained facilities show weaker value retention compared to well-maintained equivalents.
 
-| Facility Age/Condition | Value Retention Impact |
-|-----------------------|----------------------|
-| New / Well-maintained | Supports price stability and appreciation |
-| Aging / Functional | Neutral to slightly negative |
-| Dilapidated / Unusable | Negative, buyers discount heavily |
+| Facility Age/Condition | Value Retention Impact                    |
+| ---------------------- | ----------------------------------------- |
+| New / Well-maintained  | Supports price stability and appreciation |
+| Aging / Functional     | Neutral to slightly negative              |
+| Dilapidated / Unusable | Negative, buyers discount heavily         |
 
 **Impact**
 

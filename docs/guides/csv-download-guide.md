@@ -25,10 +25,12 @@ All required CSV files have been successfully downloaded and configured!
 **Location**: `data/raw_data/csv/ura/`
 
 #### EC (Executive Condominium) Transactions - 2 files:
+
 1. ✅ `URA_ResidentialTransaction_EC2020_20240917220317.csv`
 2. ✅ `URA_ResidentialTransaction_EC2021_20240917220358.csv`
 
 #### Condo Transactions - 5 files:
+
 1. ✅ `URA_ResidentialTransaction_Conda2020_20240917220234.csv`
 2. ✅ `URA_ResidentialTransaction_Conda2021_20240917220149.csv`
 3. ✅ `URA_ResidentialTransaction_Conda2022_20240917220116.csv`
@@ -36,6 +38,7 @@ All required CSV files have been successfully downloaded and configured!
 5. ✅ `URA_ResidentialTransaction_Condo2024_20240917215852.csv`
 
 #### Additional Residential Transactions - 7 files:
+
 1. ✅ `ResidentialTransaction20260121005130.csv`
 2. ✅ `ResidentialTransaction20260121005233.csv`
 3. ✅ `ResidentialTransaction20260121005346.csv`
@@ -51,6 +54,7 @@ All required CSV files have been successfully downloaded and configured!
 ## Pipeline Updates
 
 The `L1_ura_transactions_processing.py` notebook has been updated to:
+
 - Use the 2 available EC files (2020-2021)
 - Use all 5 Condo files (2020-2024)
 - Include all 7 additional residential transaction files
@@ -61,6 +65,7 @@ The `L1_ura_transactions_processing.py` notebook has been updated to:
 ## Verification
 
 All files verified and ready:
+
 ```bash
 # HDB files
 ls -la data/raw_data/csv/*.csv
@@ -78,6 +83,7 @@ ls -la data/raw_data/csv/ura/*.csv
 ## Next Steps
 
 Run the pipeline:
+
 ```bash
 echo "y
 y

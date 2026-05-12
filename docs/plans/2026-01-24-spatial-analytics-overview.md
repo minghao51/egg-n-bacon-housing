@@ -16,18 +16,20 @@ status: published
 
 Spatial analytics methods identify statistically significant patterns in geographic data. Three complementary scripts analyze spatial relationships in Singapore housing data:
 
-1. **Hotspot Analysis** - Find high/low value clusters using Getis-Ord Gi*
+1. **Hotspot Analysis** - Find high/low value clusters using Getis-Ord Gi\*
 2. **Spatial Autocorrelation** - Measure overall clustering strength with Moran's I
 3. **H3 Clustering** - Discover natural property groups using DBSCAN on hex grids
 
 ### 🎯 Why This Matters
 
 **In Plain English:** Imagine you're house hunting. Spatial analytics answers questions like:
-- *"Where are the expensive neighborhoods clustered?"* (Hotspots)
-- *"Are nearby properties more similar than distant ones?"* (Spatial Autocorrelation)
-- *"What are the natural market segments across Singapore?"* (H3 Clustering)
+
+- _"Where are the expensive neighborhoods clustered?"_ (Hotspots)
+- _"Are nearby properties more similar than distant ones?"_ (Spatial Autocorrelation)
+- _"What are the natural market segments across Singapore?"_ (H3 Clustering)
 
 **Practical Applications:**
+
 - **Homebuyers:** Identify up-and-coming areas before prices spike
 - **Investors:** Spot undervalued clusters with appreciation potential
 - **Policy Makers:** Target cooling measures where they'll be most effective
@@ -37,20 +39,21 @@ Spatial analytics methods identify statistically significant patterns in geograp
 
 ## Methods
 
-### 1. Getis-Ord Gi* (Hotspot Analysis)
+### 1. Getis-Ord Gi\* (Hotspot Analysis)
 
 #### 🎯 What It Does (Plain English)
+
 Identifies neighborhoods where prices are **consistently higher** (hotspots) or **consistently lower** (coldspots) than surrounding areas, with statistical confidence.
 
 **Real-World Analogy:** Like finding "hot neighborhoods" where every street seems expensive, but with mathematical rigor that proves it's not just random chance.
 
 #### 💡 Practical Interpretation
 
-| Your Situation | How to Use Hotspot Analysis |
-|---------------|---------------------------|
-| **Homebuyer** | Focus on emerging hotspots (95% confidence) for appreciation potential, avoid overpriced established hotspots |
-| **Investor** | Target coldspots near future infrastructure for turnaround opportunities |
-| **Policy Maker** | Monitor hotspots for cooling measure effectiveness |
+| Your Situation   | How to Use Hotspot Analysis                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Homebuyer**    | Focus on emerging hotspots (95% confidence) for appreciation potential, avoid overpriced established hotspots |
+| **Investor**     | Target coldspots near future infrastructure for turnaround opportunities                                      |
+| **Policy Maker** | Monitor hotspots for cooling measure effectiveness                                                            |
 
 #### 📊 Interactive Plotly Visualization
 
@@ -88,21 +91,24 @@ fig.show()
 ```
 
 **Interactive Features:**
+
 - Hover over cells to see Z-scores and confidence levels
 - Zoom into specific neighborhoods
 - Filter by confidence level (95% vs 99%)
 
 #### 🔬 How It Works (Technical)
+
 - Calculates local Getis-Ord statistics for each H3 hex cell
 - Z-score indicates significance: |Z| > 1.96 for 95% confidence, |Z| > 2.58 for 99% confidence
 - Accounts for spatial dependency (nearby cells influence each other)
 
 **Output:**
+
 - `hotspots.geojson` - Hex cells with hotspot/coldspot classifications
-- `hotspot_stats.csv` - Gi* Z-scores and p-values per cell
+- `hotspot_stats.csv` - Gi\* Z-scores and p-values per cell
 
 **Interpretation:**
-| Gi* Z-score | Classification | Confidence |
+| Gi\* Z-score | Classification | Confidence |
 |-------------|----------------|------------|
 | > 2.58 | Hotspot | 99% |
 | 1.96 - 2.58 | Hotspot | 95% |
@@ -113,17 +119,18 @@ fig.show()
 ### 2. Moran's I (Global Spatial Autocorrelation)
 
 #### 🎯 What It Does (Plain English)
-Measures whether **similar property prices tend to cluster together** across the entire country. Answers: *"Is location destiny in Singapore's housing market?"*
+
+Measures whether **similar property prices tend to cluster together** across the entire country. Answers: _"Is location destiny in Singapore's housing market?"_
 
 **Real-World Analogy:** Like measuring how "cliquish" high school is - do popular kids hang out together, or is everyone randomly mixed?
 
 #### 💡 Practical Interpretation
 
-| Moran's I Value | What It Means for You |
-|----------------|---------------------|
-| **0.5 - 1.0 (Strong)** | Location matters A LOT. Neighborhood defines price. Focus on area, not individual property. |
-| **0.3 - 0.5 (Moderate)** | Location matters, but individual property differences also important. |
-| **0 - 0.3 (Weak)** | Property-specific features (size, condition, floor) matter more than location. |
+| Moran's I Value          | What It Means for You                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------- |
+| **0.5 - 1.0 (Strong)**   | Location matters A LOT. Neighborhood defines price. Focus on area, not individual property. |
+| **0.3 - 0.5 (Moderate)** | Location matters, but individual property differences also important.                       |
+| **0 - 0.3 (Weak)**       | Property-specific features (size, condition, floor) matter more than location.              |
 
 #### 📊 Interactive Plotly Visualization
 
@@ -165,12 +172,14 @@ fig.show()
 ```
 
 #### 🔬 How It Works (Technical)
+
 - Computes correlation between nearby values
 - I > 0: Positive autocorrelation (similar values cluster)
 - I = 0: Random spatial distribution
 - I < 0: Negative autocorrelation (dissimilar values near each other)
 
 **Output:**
+
 - `moran_results.csv` - Moran's I statistic, p-value, permutation test results
 
 **Interpretation:**
@@ -183,9 +192,11 @@ fig.show()
 ### 3. Local Indicators of Spatial Association (LISA)
 
 #### 🎯 What It Does (Plain English)
+
 Identifies **specific cluster types** at the local level. Goes beyond "hotspot/coldspot" to classify four types of spatial relationships.
 
 **Real-World Analogy:** Like labeling each property based on its neighborhood context:
+
 - **HH (High-High):** "Luxury enclave" - expensive home in expensive area
 - **LL (Low-Low):** "Affordable pocket" - budget home in budget area
 - **HL (High-Low):** "Overpriced outlier" - mansion in modest neighborhood
@@ -193,12 +204,12 @@ Identifies **specific cluster types** at the local level. Goes beyond "hotspot/c
 
 #### 💡 Practical Interpretation
 
-| LISA Cluster | Investment Strategy |
-|--------------|-------------------|
-| **HH (Hotspot)** | Safe bet, established area. Low risk, lower appreciation potential. |
-| **LL (Coldspot)** | Stable rental market. Look for turnaround catalysts (new MRT, amenities). |
-| **HL (Outlier)** **⚠️** | Risky. Either overpriced or special feature (penthouse, corner unit). |
-| **LH (Deal)** **✨** | Potential bargain. Undervalued relative to neighbors. |
+| LISA Cluster            | Investment Strategy                                                       |
+| ----------------------- | ------------------------------------------------------------------------- |
+| **HH (Hotspot)**        | Safe bet, established area. Low risk, lower appreciation potential.       |
+| **LL (Coldspot)**       | Stable rental market. Look for turnaround catalysts (new MRT, amenities). |
+| **HL (Outlier)** **⚠️** | Risky. Either overpriced or special feature (penthouse, corner unit).     |
+| **LH (Deal)** **✨**    | Potential bargain. Undervalued relative to neighbors.                     |
 
 #### 📊 Interactive Plotly Visualization
 
@@ -236,6 +247,7 @@ fig.show()
 ```
 
 #### 🔬 How It Works (Technical)
+
 - Decomposes global Moran's I into local contributions
 - Four classifications:
   - **HH:** High value surrounded by high values (hotspot)
@@ -244,22 +256,24 @@ fig.show()
   - **LH:** Low value surrounded by high values (outlier)
 
 **Output:**
+
 - `lisa_clusters.geojson` - Cluster map with HH/LH/HL/LL classifications
 
 ### 4. H3 Clustering with DBSCAN
 
 #### 🎯 What It Does (Plain English)
+
 Groups properties into **natural market segments** based on location AND characteristics (price, size, rental yield). Unlike administrative boundaries, these clusters emerge from the data itself.
 
 **Real-World Analogy:** Like grouping students by study habits AND grades, not just by classroom. Finds "hidden" neighborhoods that cross town boundaries.
 
 #### 💡 Practical Interpretation
 
-| Cluster Type | What It Represents | Investment Strategy |
-|--------------|-------------------|-------------------|
+| Cluster Type     | What It Represents                                           | Investment Strategy                       |
+| ---------------- | ------------------------------------------------------------ | ----------------------------------------- |
 | **Core Cluster** | Well-defined market segment (e.g., "luxury condos near MRT") | Understand pricing norms, fair comparison |
-| **Edge Cluster** | Transitional areas, changing character | Speculative, higher risk/reward |
-| **Noise** | Unique properties (penthouse, shophouse) | Harder to value, specialist market |
+| **Edge Cluster** | Transitional areas, changing character                       | Speculative, higher risk/reward           |
+| **Noise**        | Unique properties (penthouse, shophouse)                     | Harder to value, specialist market        |
 
 #### 📊 Interactive Plotly Visualization
 
@@ -307,12 +321,14 @@ fig_parallel.show()
 ```
 
 #### 🔬 How It Works (Technical)
+
 - Maps properties to H3 hex grid (resolution 8-10)
 - Uses DBSCAN clustering on hex cells with feature vectors
 - Feature vector includes: price_psf, rental_yield, floor_area, remaining_lease
 - Only dense regions (eps threshold) become clusters; sparse cells are noise
 
 **Output:**
+
 - `property_clusters.csv` - Each property with cluster assignment
 - `cluster_profiles.csv` - Statistical profile per cluster
 
@@ -372,21 +388,21 @@ data/analysis/
 
 ### Hotspot Analysis Results
 
-| Region | Gi* Z-score | Classification | Confidence |
-|--------|-------------|----------------|------------|
-| Orchard | 3.42 | Hotspot | 99% |
-| Marina South | 2.89 | Hotspot | 99% |
-| Bukit Timah | 2.15 | Hotspot | 95% |
-| Woodlands | -2.34 | Coldspot | 95% |
-| Yishun | -2.67 | Coldspot | 99% |
+| Region       | Gi\* Z-score | Classification | Confidence |
+| ------------ | ------------ | -------------- | ---------- |
+| Orchard      | 3.42         | Hotspot        | 99%        |
+| Marina South | 2.89         | Hotspot        | 99%        |
+| Bukit Timah  | 2.15         | Hotspot        | 95%        |
+| Woodlands    | -2.34        | Coldspot       | 95%        |
+| Yishun       | -2.67        | Coldspot       | 99%        |
 
 ### Spatial Autocorrelation Results
 
-| Metric | Value | Interpretation |
-|--------|-------|----------------|
-| Moran's I | 0.342 | Moderate clustering |
-| p-value | < 0.001 | Statistically significant |
-| Z-score | 8.45 | Strong evidence of clustering |
+| Metric    | Value   | Interpretation                |
+| --------- | ------- | ----------------------------- |
+| Moran's I | 0.342   | Moderate clustering           |
+| p-value   | < 0.001 | Statistically significant     |
+| Z-score   | 8.45    | Strong evidence of clustering |
 
 ---
 
@@ -399,12 +415,12 @@ data/analysis/
 
 ### H3 Resolution
 
-| Resolution | Cell Area | Use Case |
-|------------|-----------|----------|
-| 7 | ~4 km² | Regional analysis |
-| 8 | ~0.5 km² | Town-level (default) |
-| 9 | ~0.07 km² | Neighborhood-level |
-| 10 | ~0.01 km² | Street-level |
+| Resolution | Cell Area | Use Case             |
+| ---------- | --------- | -------------------- |
+| 7          | ~4 km²    | Regional analysis    |
+| 8          | ~0.5 km²  | Town-level (default) |
+| 9          | ~0.07 km² | Neighborhood-level   |
+| 10         | ~0.01 km² | Street-level         |
 
 ---
 
@@ -455,6 +471,7 @@ While the methods above provide powerful insights, modern ML techniques can enha
 #### 1. Spatially-Explicit ML Models
 
 **Geographically Weighted Regression (GWR)**
+
 - **What:** Local regression model where coefficients vary by location
 - **Why:** Captures spatial heterogeneity - relationships change across space
 - **Example:** MRT proximity effect might be +15% in OCR but only +5% in CCR
@@ -494,6 +511,7 @@ fig = px.choropleth_mapbox(
 ```
 
 **Random Forest with Spatial Features**
+
 - **What:** Ensemble decision trees with engineered spatial features
 - **Why:** Captures non-linear relationships and interactions
 - **Spatial Features:** Distance to CBD, MRT, schools, amenities; neighborhood medians; spatial lag features
@@ -524,6 +542,7 @@ shap.dependence_plot('mrt_distance', shap_values, X)
 #### 2. Clustering Enhancements
 
 **HDBSCAN (Hierarchical DBSCAN)**
+
 - **What:** Extension of DBSCAN that finds clusters of varying density
 - **Why:** More robust than DBSCAN, provides cluster probability scores
 - **Benefit:** Softer cluster assignments (can belong to multiple clusters)
@@ -549,6 +568,7 @@ fig = px.scatter(
 ```
 
 **Gaussian Mixture Models (GMM)**
+
 - **What:** Probabilistic clustering assuming Gaussian distributions
 - **Why:** Provides probability of belonging to each cluster
 - **Use Case:** Market segmentation with "fuzzy" boundaries
@@ -572,6 +592,7 @@ df['cluster_1_prob'] = probabilities[:, 1]
 #### 3. Deep Learning for Spatial Data
 
 **Graph Neural Networks (GNN)**
+
 - **What:** Neural networks that operate on graph structures
 - **Why:** Naturally captures spatial dependencies as graph edges
 - **Architecture:** Properties = nodes, spatial proximity = edges
@@ -604,6 +625,7 @@ predictions = model(features, edge_index)
 ```
 
 **Spatial Autoencoders**
+
 - **What:** Neural networks for dimensionality reduction with spatial structure
 - **Why:** Learn compressed representations preserving spatial relationships
 - **Use Case:** Visualization, anomaly detection, feature engineering
@@ -611,6 +633,7 @@ predictions = model(features, edge_index)
 #### 4. Spatial-Temporal Analysis
 
 **Spatio-Temporal Clustering**
+
 - **What:** Cluster properties considering both location AND time
 - **Why:** Markets evolve - hotspots shift over time
 - **Method:** ST-DBSCAN (spatio-temporal DBSCAN)
@@ -634,6 +657,7 @@ fig = px.scatter_3d(
 ```
 
 **Predictive Hotspot Detection**
+
 - **What:** Forecast where hotspots will emerge
 - **Why:** Get ahead of market trends
 - **Method:** LSTM + spatial lag features
@@ -660,6 +684,7 @@ future_hotspots = model.predict(future_features)
 #### 5. Explainable AI (XAI) for Spatial Insights
 
 **SHAP for Spatial Feature Importance**
+
 - **What:** Quantifies how much each spatial feature contributes to predictions
 - **Why:** Understand what drives prices in different areas
 - **Visualization:** Spatial maps of SHAP values

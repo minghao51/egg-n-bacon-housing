@@ -11,6 +11,7 @@
 ### ❌ **Before: H3 Grid Cells Not Showing Selected Metric**
 
 **Problem:** When using H3 Grid visualization modes (R6, R7, R8) and selecting different metrics from the "Color By" dropdown (Median Price, Median PSF, Transaction Count, Average Price), the map would:
+
 - ✅ **Color correctly** by the selected metric
 - ❌ **Always show** "Median Price" in hover text regardless of selection
 
@@ -29,6 +30,7 @@ Updated both H3 Grid and Planning Area maps to show **metric-specific hover text
 **Changes:**
 
 1. **H3 Grid Map** (lines 546-572):
+
    - Added dynamic hover text generation based on `color_column`
    - Format changes based on metric type:
      - **Price metrics**: Show as `$XXX,XXX`
@@ -36,11 +38,13 @@ Updated both H3 Grid and Planning Area maps to show **metric-specific hover text
      - **Transaction Count**: Show as `XXX transactions`
 
    **Before:**
+
    ```python
    text=f"H3 Cell: {cell}<br>Median Price: ${row['median_price']:,.0f}<br>Transactions: {row['count']}"
    ```
 
    **After:**
+
    ```python
    color_label = color_column.replace('_', ' ').title()
    if 'price' in color_column.lower():
@@ -54,11 +58,13 @@ Updated both H3 Grid and Planning Area maps to show **metric-specific hover text
    ```
 
 2. **Planning Area Map** (lines 464-484):
+
    - Reorganized hover template to highlight selected metric first
    - Selected metric now appears in **bold** at the top
    - Added visual separator (─) for clarity
 
    **Before:**
+
    ```python
    hovertemplate=(
        "<b>%{location}</b><br>"
@@ -69,6 +75,7 @@ Updated both H3 Grid and Planning Area maps to show **metric-specific hover text
    ```
 
    **After:**
+
    ```python
    customdata=np.stack([
        aggregated_df[color_column],  # Selected metric FIRST
@@ -92,6 +99,7 @@ Updated both H3 Grid and Planning Area maps to show **metric-specific hover text
 ### H3 Grid Map - Hover Text Examples
 
 **When "Median Price" is selected:**
+
 ```
 H3 Cell: 8a28308267ffff
 Median Price: $450,000
@@ -99,6 +107,7 @@ Transactions: 127
 ```
 
 **When "Median PSF" is selected:**
+
 ```
 H3 Cell: 8a28308267ffff
 Median PSF: $575 psf
@@ -106,6 +115,7 @@ Transactions: 127
 ```
 
 **When "Transaction Count" is selected:**
+
 ```
 H3 Cell: 8a28308267ffff
 Count: 127 transactions
@@ -115,6 +125,7 @@ Transactions: 127
 ### Planning Area Map - Hover Text Example
 
 **When "Median PSF" is selected:**
+
 ```
 Bishan
 Median PSF: $598        ← Bold and highlighted
@@ -133,6 +144,7 @@ Price Range: $350,000 - $890,000
 To verify the fix:
 
 1. **Launch the app:**
+
    ```bash
    uv run streamlit run streamlit_app.py
    ```
@@ -140,9 +152,11 @@ To verify the fix:
 2. **Navigate to Price Map page**
 
 3. **Select H3 Grid mode:**
+
    - Choose "H3 Grid R7" from View Mode dropdown
 
 4. **Test different metrics:**
+
    - Select "Median PSF" from Color By → hover cells should show "$XXX psf"
    - Select "Median Price" → hover cells should show "$XXX,XXX"
    - Select "Transaction Count" → hover cells should show "XXX transactions"
@@ -160,12 +174,12 @@ To verify the fix:
 
 The dropdown options map to these column names:
 
-| Display Name | Column Name | Format |
-|--------------|-------------|--------|
-| Median Price | `median_price` | `$XXX,XXX` |
-| Median PSF | `median_psf` | `$XXX,XXX psf` |
-| Average Price | `mean_price` | `$XXX,XXX` |
-| Transaction Count | `count` | `XXX transactions` |
+| Display Name      | Column Name    | Format             |
+| ----------------- | -------------- | ------------------ |
+| Median Price      | `median_price` | `$XXX,XXX`         |
+| Median PSF        | `median_psf`   | `$XXX,XXX psf`     |
+| Average Price     | `mean_price`   | `$XXX,XXX`         |
+| Transaction Count | `count`        | `XXX transactions` |
 
 ### Why This Matters
 
@@ -189,5 +203,5 @@ The dropdown options map to these column names:
 
 **Status: READY FOR PRODUCTION** ✅
 
-*Generated: 2026-01-24*
-*Map Visualization Version: 2.0 (Dynamic Metrics)*
+_Generated: 2026-01-24_
+_Map Visualization Version: 2.0 (Dynamic Metrics)_

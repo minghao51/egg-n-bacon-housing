@@ -16,12 +16,14 @@ The deployed webapp showed "Data not available" errors because:
 ### 1. GitHub Actions Workflow (`.github/workflows/deploy-app.yml`)
 
 **Added**:
+
 - Python 3.11 setup step
 - uv package manager installation
 - Dashboard data generation step with environment variables
 - Data file verification step
 
 **Key change**:
+
 ```yaml
 - name: Generate dashboard data
   run: PYTHONPATH=. uv run python scripts/prepare_webapp_data.py
@@ -33,21 +35,23 @@ The deployed webapp showed "Data not available" errors because:
 ### 2. Fixed Gunzip Functions (Astro Pages)
 
 **Files modified**:
+
 - `app/src/pages/dashboard/index.astro`
 - `app/src/pages/dashboard/trends.astro`
 - `app/src/pages/dashboard/segments.astro`
 - `app/src/pages/dashboard/leaderboard.astro`
 
 **Change**:
+
 ```javascript
 // Before (incorrect):
 function gunzip(data) {
-  return zlib.inflateSync(Buffer.from(data, 'base64')).toString('utf-8');
+  return zlib.inflateSync(Buffer.from(data, "base64")).toString("utf-8");
 }
 
 // After (correct):
 function gunzip(data) {
-  return zlib.gunzipSync(data).toString('utf-8');
+  return zlib.gunzipSync(data).toString("utf-8");
 }
 ```
 
@@ -56,6 +60,7 @@ function gunzip(data) {
 ### 3. Documentation
 
 **Created**: `docs/guides/github-secrets-setup.md`
+
 - Instructions for adding required GitHub secrets
 - Troubleshooting guide
 - Security best practices
@@ -63,12 +68,14 @@ function gunzip(data) {
 ## Verification
 
 ### Local Testing
+
 ✅ Data generation: `PYTHONPATH=. uv run python scripts/prepare_webapp_data.py`
 ✅ Build succeeds: `cd app && bun run build`
 ✅ Built HTML contains data (no "Data not available" messages)
 ✅ All dashboard pages verified: index, trends, segments, leaderboard
 
 ### Expected CI/CD Behavior
+
 1. On push to `main`, workflow triggers
 2. Python + uv are installed
 3. Dashboard data is generated (requires API keys from secrets)
@@ -88,18 +95,19 @@ See `docs/guides/github-secrets-setup.md` for detailed instructions.
 
 ## Files Changed
 
-| File | Change |
-|------|--------|
-| `.github/workflows/deploy-app.yml` | Added Python setup, data generation, verification |
-| `app/src/pages/dashboard/index.astro` | Fixed gunzip function |
-| `app/src/pages/dashboard/trends.astro` | Fixed gunzip function |
-| `app/src/pages/dashboard/segments.astro` | Fixed gunzip function |
-| `app/src/pages/dashboard/leaderboard.astro` | Fixed gunzip function |
-| `docs/guides/github-secrets-setup.md` | New documentation file |
+| File                                        | Change                                            |
+| ------------------------------------------- | ------------------------------------------------- |
+| `.github/workflows/deploy-app.yml`          | Added Python setup, data generation, verification |
+| `app/src/pages/dashboard/index.astro`       | Fixed gunzip function                             |
+| `app/src/pages/dashboard/trends.astro`      | Fixed gunzip function                             |
+| `app/src/pages/dashboard/segments.astro`    | Fixed gunzip function                             |
+| `app/src/pages/dashboard/leaderboard.astro` | Fixed gunzip function                             |
+| `docs/guides/github-secrets-setup.md`       | New documentation file                            |
 
 ## Testing Checklist
 
 After deployment to GitHub Pages:
+
 - [ ] https://minghao51.github.io/egg-n-bacon-housing/dashboard/ shows market overview
 - [ ] https://minghao51.github.io/egg-n-bacon-housing/dashboard/segments/ shows scatter plot
 - [ ] https://minghao51.github.io/egg-n-bacon-housing/dashboard/trends/ shows trends charts

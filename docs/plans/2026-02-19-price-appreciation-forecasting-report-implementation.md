@@ -13,16 +13,19 @@
 ## Prerequisites
 
 **Before starting this implementation:**
+
 1. VAR implementation must be complete (already done per `docs/analytics/20250217-var-implementation-report.md`)
 2. L3 unified dataset must exist (currently pending - see "Phase 1" below)
 3. VAR pipeline must have run successfully with real data (currently pending)
 
 **Reference Documents:**
+
 - Design doc: `docs/plans/2026-02-19-price-appreciation-forecasting-report-design.md`
 - VAR technical report: `docs/analytics/20250217-var-implementation-report.md`
 - Style reference: `docs/analytics/analyze_mrt-impact-analysis.md`
 
 **Output Files:**
+
 - Report: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 - Visualizations: `app/public/data/analysis/price_forecasts/*.png`
 - Forecast data: `app/public/data/analysis/price_forecasts/*.csv`
@@ -38,6 +41,7 @@ This phase is currently BLOCKED because the L3 unified dataset doesn't exist yet
 ### Task 1.1: Generate L3 Unified Dataset
 
 **Files:**
+
 - Modify: `scripts/core/stages/L3_export.py` (existing file, 1632 lines)
 - Output: `data/parquets/L3_housing_unified.parquet`
 
@@ -46,6 +50,7 @@ This phase is currently BLOCKED because the L3 unified dataset doesn't exist yet
 **Step 1: Review existing L3 export code**
 
 Read the file to understand current structure:
+
 ```bash
 uv run cat scripts/core/stages/L3_export.py | head -100
 ```
@@ -53,6 +58,7 @@ uv run cat scripts/core/stages/L3_export.py | head -100
 **Step 2: Identify if L3 unified dataset creation exists**
 
 Check if `create_l3_unified_dataset.py` exists:
+
 ```bash
 ls -la scripts/ | grep -i unified
 ```
@@ -150,6 +156,7 @@ uv run python scripts/analytics/pipelines/create_l3_unified_dataset.py
 ```
 
 **Expected output:**
+
 ```
 Creating L3 unified dataset...
 ✅ Generated 150,000 transactions
@@ -185,6 +192,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 1.2: Run Full VAR Forecasting Pipeline
 
 **Files:**
+
 - Run: `scripts/analytics/pipelines/forecast_appreciation.py`
 - Output: `data/forecasts/regional_forecasts.csv`, `data/forecasts/area_forecasts.csv`
 
@@ -209,6 +217,7 @@ uv run python scripts/analytics/pipelines/forecast_appreciation.py --scenario ba
 ```
 
 **Expected output:**
+
 ```
 Loading time series data...
 Running VAR forecasting for regions...
@@ -243,6 +252,7 @@ cat data/forecasts/regional_forecasts_baseline.csv | head -20
 ### Task 1.3: Generate All Visualizations
 
 **Files:**
+
 - Create: `scripts/analytics/visualization/generate_forecast_visualizations.py`
 - Output: `app/public/data/analysis/price_forecasts/*.png`
 
@@ -424,6 +434,7 @@ uv run python scripts/analytics/visualization/generate_forecast_visualizations.p
 ```
 
 **Expected output:**
+
 ```
 Generating forecast visualizations...
 ✅ Generated regional_forecast_comparison.png
@@ -440,6 +451,7 @@ ls -la app/public/data/analysis/price_forecasts/
 ```
 
 **Expected files:**
+
 ```
 regional_forecast_comparison.png
 planning_area_forecasts.png
@@ -472,6 +484,7 @@ This phase creates the complete report structure with placeholders. Can be done 
 ### Task 2.1: Create Report Front Matter and Imports
 
 **Files:**
+
 - Create: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Create file with front matter**
@@ -533,6 +546,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.2: Write Key Takeaways Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Key Takeaways section after front matter**
@@ -610,6 +624,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.3: Write Executive Summary Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Executive Summary section**
@@ -624,6 +639,7 @@ This report presents **24-month price appreciation forecasts** for Singapore hou
 ### What's Covered
 
 **7 Singapore Regions:**
+
 - CCR (Core Central Region)
 - RCR (Rest of Central Region)
 - OCR East, North-East, North, West, Central
@@ -631,6 +647,7 @@ This report presents **24-month price appreciation forecasts** for Singapore hou
 **Top 20 Planning Areas:** High-volume neighborhoods with reliable forecast signals
 
 **4 Scenarios:**
+
 - **Baseline**: Most likely outcome (current trends continue)
 - **Bullish**: Optimistic case (low rates, strong demand)
 - **Bearish**: Pessimistic case (high rates, policy tightening)
@@ -680,6 +697,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.4: Write Methodology Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Methodology section**
@@ -715,12 +733,12 @@ This two-stage approach ensures local forecasts respect regional macro trends wh
 
 ### What Goes Into Forecasts
 
-| Data Source | Variables | Frequency | Notes |
-|-------------|-----------|-----------|-------|
-| **Transaction data** | Price, volume, PSF | Monthly | 97,133 HDB + 52,867 condo transactions (2021+) |
-| **Macroeconomic** | SORA, CPI, GDP | Monthly/Quarterly | MAS and SingStat data |
-| **Policy dates** | ABSD, LTV, TDSR changes | Event-based | Housing cooling measures |
-| **Amenities** | MRT, hawker, schools | Static | Distance-based features |
+| Data Source          | Variables               | Frequency         | Notes                                          |
+| -------------------- | ----------------------- | ----------------- | ---------------------------------------------- |
+| **Transaction data** | Price, volume, PSF      | Monthly           | 97,133 HDB + 52,867 condo transactions (2021+) |
+| **Macroeconomic**    | SORA, CPI, GDP          | Monthly/Quarterly | MAS and SingStat data                          |
+| **Policy dates**     | ABSD, LTV, TDSR changes | Event-based       | Housing cooling measures                       |
+| **Amenities**        | MRT, hawker, schools    | Static            | Distance-based features                        |
 
 ### Scenario Modeling
 
@@ -735,6 +753,7 @@ Our four scenarios represent different macroeconomic and policy environments:
 <Tooltip term="Policy Shock Scenario">Policy Shock Scenario</Tooltip>: Sudden regulatory changes (e.g., unexpected ABSD hike). Stress-test scenario.
 
 **How to interpret scenarios:**
+
 - Smart buyers look for properties that appreciate in **all scenarios**
 - Investors can tolerate bearish losses if bullish upside is high
 - First-time buyers should prioritize narrow scenario spreads (lower risk)
@@ -746,11 +765,13 @@ All forecasts include **95% confidence intervals**:
 ![Example Forecast with Confidence Bands](../data/analysis/price_forecasts/example_forecast_curve.png)
 
 **What 95% confidence means:**
+
 - There's a 95% chance the actual appreciation will fall within the confidence band
 - Narrow bands (±2%) = high certainty
 - Wide bands (±5%) = high uncertainty
 
 **Practical interpretation:**
+
 - If baseline = 8% ± 2%, you can reasonably expect 6-10% appreciation
 - If baseline = 8% ± 5%, actual appreciation could range from 3-13%
 
@@ -758,29 +779,31 @@ All forecasts include **95% confidence intervals**:
 
 We validate our model using **expanding window cross-validation** on 2021-2025 data:
 
-| Metric | Regional Models | Area Models | Target |
-|--------|----------------|-------------|--------|
-| **RMSE** | [X]% | [Y]% | <5% (regional), <8% (area) |
-| **MAE** | [X]% | [Y]% | Lower is better |
-| **Directional Accuracy** | [X]% | [Y]% | >70% |
+| Metric                   | Regional Models | Area Models | Target                     |
+| ------------------------ | --------------- | ----------- | -------------------------- |
+| **RMSE**                 | [X]%            | [Y]%        | <5% (regional), <8% (area) |
+| **MAE**                  | [X]%            | [Y]%        | Lower is better            |
+| **Directional Accuracy** | [X]%            | [Y]%        | >70%                       |
 
 **Backtesting Example:**
 
-| Region | Forecast (2024) | Actual (2024) | Error |
-|--------|-----------------|---------------|-------|
-| OCR East | +10.2% | +11.5% | +1.3% |
-| CCR | +5.8% | +4.2% | -1.6% |
-| RCR | +6.1% | +7.3% | +1.2% |
+| Region   | Forecast (2024) | Actual (2024) | Error |
+| -------- | --------------- | ------------- | ----- |
+| OCR East | +10.2%          | +11.5%        | +1.3% |
+| CCR      | +5.8%           | +4.2%         | -1.6% |
+| RCR      | +6.1%           | +7.3%         | +1.2% |
 
 ### Limitations
 
 **What our forecasts CAN predict:**
+
 - ✅ Regional appreciation trends over 24 months
 - ✅ Relative performance (Region A vs Region B)
 - ✅ Impact of interest rate changes
 - ✅ Policy shock scenarios
 
 **What our forecasts CANNOT predict:**
+
 - ❌ Black swan events (pandemics, global financial crises)
 - ❌ Specific property-level appreciation (unit condition, renovation quality)
 - ❌ Beyond 36 months (too much uncertainty)
@@ -806,6 +829,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.5: Write Regional Outlook Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Regional Outlook section**
@@ -819,17 +843,18 @@ This section answers the #1 question: **"Which regions will appreciate most over
 
 ### Regional Comparison Table
 
-| Region | Baseline Forecast | Bearish Scenario | Bullish Scenario | Confidence Interval | Transactions (2021+) |
-|--------|-------------------|------------------|------------------|---------------------|---------------------|
-| **[TOP_REGION]** | **[X]%** | [Y]% | [Z]% | ±[W]% | [N] |
-| **[2ND_REGION]** | **[X]%** | [Y]% | [Z]% | ±[W]% | [N] |
-| **[3RD_REGION]** | **[X]%** | [Y]% | [Z]% | ±[W]% | [N] |
-| **[4TH_REGION]** | **[X]%** | [Y]% | [Z]% | ±[W]% | [N] |
-| **[5TH_REGION]** | **[X]%** | [Y]% | [Z]% | ±[W]% | [N] |
-| **[6TH_REGION]** | **[X]%** | [Y]% | [Z]% | ±[W]% | [N] |
-| **[7TH_REGION]** | **[X]%** | [Y]% | [Z]% | ±[W]% | [N] |
+| Region           | Baseline Forecast | Bearish Scenario | Bullish Scenario | Confidence Interval | Transactions (2021+) |
+| ---------------- | ----------------- | ---------------- | ---------------- | ------------------- | -------------------- |
+| **[TOP_REGION]** | **[X]%**          | [Y]%             | [Z]%             | ±[W]%               | [N]                  |
+| **[2ND_REGION]** | **[X]%**          | [Y]%             | [Z]%             | ±[W]%               | [N]                  |
+| **[3RD_REGION]** | **[X]%**          | [Y]%             | [Z]%             | ±[W]%               | [N]                  |
+| **[4TH_REGION]** | **[X]%**          | [Y]%             | [Z]%             | ±[W]%               | [N]                  |
+| **[5TH_REGION]** | **[X]%**          | [Y]%             | [Z]%             | ±[W]%               | [N]                  |
+| **[6TH_REGION]** | **[X]%**          | [Y]%             | [Z]%             | ±[W]%               | [N]                  |
+| **[7TH_REGION]** | **[X]%**          | [Y]%             | [Z]%             | ±[W]%               | [N]                  |
 
 **How to read this table:**
+
 - **Baseline**: Most likely outcome
 - **Bearish**: Downside case (if rates rise, demand weakens)
 - **Bullish**: Upside case (if rates fall, demand strengthens)
@@ -848,12 +873,14 @@ This section answers the #1 question: **"Which regions will appreciate most over
 [REGIONAL_ANALYSIS_2-3_paragraphs_explaining_drivers]
 
 **Key Drivers:**
+
 - [Driver 1]: [Explanation]
 - [Driver 2]: [Explanation]
 - [Driver 3]: [Explanation]
 
 **Planning Area Highlights:**
 Within [TOP_REGION], these planning areas show strongest appreciation:
+
 - **[Area #1]**: [X]% forecast (vs regional avg of [Y]%)
 - **[Area #2]**: [X]% forecast (vs regional avg of [Y]%)
 - **[Area #3]**: [X]% forecast (vs regional avg of [Y]%)
@@ -865,11 +892,13 @@ Within [TOP_REGION], these planning areas show strongest appreciation:
 [REGIONAL_ANALYSIS_2-3_paragraphs]
 
 **Key Drivers:**
+
 - [Driver 1]
 - [Driver 2]
 - [Driver 3]
 
 **Planning Area Highlights:**
+
 - **[Area #1]**: [X]% forecast
 - **[Area #2]**: [X]% forecast
 
@@ -880,10 +909,12 @@ Within [TOP_REGION], these planning areas show strongest appreciation:
 [REGIONAL_ANALYSIS_2-3_paragraphs]
 
 **Key Drivers:**
+
 - [Driver 1]
 - [Driver 2]
 
 **Planning Area Highlights:**
+
 - **[Area #1]**: [X]% forecast
 
 ### Bottom 2 Regions: Slower Appreciation
@@ -895,6 +926,7 @@ Within [TOP_REGION], these planning areas show strongest appreciation:
 [EXPLAIN_NEGATIVE_FACTORS_2-3_paragraphs]
 
 **Risks to consider:**
+
 - [Risk 1]
 - [Risk 2]
 
@@ -905,6 +937,7 @@ Within [TOP_REGION], these planning areas show strongest appreciation:
 [EXPLAIN_NEGATIVE_FACTORS]
 
 **Risks to consider:**
+
 - [Risk 1]
 
 ### Regional Heatmap
@@ -956,6 +989,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.6: Write Planning Area Forecasts Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Planning Area Forecasts section**
@@ -969,15 +1003,16 @@ Narrow down from regions to specific neighborhoods with our planning area-level 
 
 ### Planning Area Ranking Table
 
-| Rank | Planning Area | Region | Baseline Forecast | Bearish | Bullish | Confidence |
-|------|---------------|--------|-------------------|---------|---------|------------|
-| 1 | **[AREA_1]** | [REGION] | **[X]%** | [Y]% | [Z]% | ±[W]% |
-| 2 | **[AREA_2]** | [REGION] | **[X]%** | [Y]% | [Z]% | ±[W]% |
-| 3 | **[AREA_3]** | [REGION] | **[X]%** | [Y]% | [Z]% | ±[W]% |
-| ... | ... | ... | ... | ... | ... | ... |
-| 20 | **[AREA_20]** | [REGION] | **[X]%** | [Y]% | [Z]% | ±[W]% |
+| Rank | Planning Area | Region   | Baseline Forecast | Bearish | Bullish | Confidence |
+| ---- | ------------- | -------- | ----------------- | ------- | ------- | ---------- |
+| 1    | **[AREA_1]**  | [REGION] | **[X]%**          | [Y]%    | [Z]%    | ±[W]%      |
+| 2    | **[AREA_2]**  | [REGION] | **[X]%**          | [Y]%    | [Z]%    | ±[W]%      |
+| 3    | **[AREA_3]**  | [REGION] | **[X]%**          | [Y]%    | [Z]%    | ±[W]%      |
+| ...  | ...           | ...      | ...               | ...     | ...     | ...        |
+| 20   | **[AREA_20]** | [REGION] | **[X]%**          | [Y]%    | [Z]%    | ±[W]%      |
 
 **How to use this table:**
+
 1. **Start with regional choice** - If you're set on CCR, filter by CCR areas
 2. **Check scenario spread** - Narrow spread (bullish - bearish < 5%) = lower risk
 3. **Compare to regional average** - Is this area outperforming its region?
@@ -994,15 +1029,18 @@ Narrow down from regions to specific neighborhoods with our planning area-level 
 [SPOTLIGHT_AREA_1] in [REGION] shows strong appreciation potential at [X]%, above the regional average of [Y]%.
 
 **Why it's appreciating:**
+
 - **Driver 1**: [Explanation with data]
 - **Driver 2**: [Explanation with data]
 - **Driver 3**: [Explanation with data]
 
 **Local Developments:**
+
 - [Development 1]: [Impact on prices]
 - [Development 2]: [Impact on prices]
 
 **Compared to regional average:**
+
 - Forecast: [X]% vs regional [Y]% (+[Z]% points)
 - Confidence: ±[W]% vs regional ±[V]% ([narrower/wider])
 - Transactions: [N] (high volume = reliable forecast)
@@ -1013,13 +1051,16 @@ Narrow down from regions to specific neighborhoods with our planning area-level 
 [SPOTLIGHT_AREA_2] in [REGION] shows [strong/moderate] appreciation potential.
 
 **Why it's appreciating:**
+
 - **Driver 1**
 - **Driver 2**
 
 **Local Developments:**
+
 - [Development 1]
 
 **Compared to regional average:**
+
 - Forecast: [X]% vs regional [Y]%
 
 #### [SPOTLIGHT_AREA_3]: [X]% ± [Y]% Forecast
@@ -1028,39 +1069,48 @@ Narrow down from regions to specific neighborhoods with our planning area-level 
 [SPOTLIGHT_AREA_3] offers stable appreciation with narrow confidence bands.
 
 **Why it's appreciating:**
+
 - **Driver 1**
 
 **Compared to regional average:**
+
 - Forecast: [X]% vs regional [Y]%
 
 ### Regional Grouping: Find Areas by Region
 
 **If you're eyeing CCR (Core Central Region), consider:**
+
 - **[Area 1]**: [X]% forecast, [feature description]
 - **[Area 2]**: [X]% forecast, [feature description]
 - **[Area 3]**: [X]% forecast, [feature description]
 
 **If you're eyeing RCR (Rest of Central Region), consider:**
+
 - **[Area 1]**: [X]% forecast
 - **[Area 2]**: [X]% forecast
 
 **If you're eyeing OCR East, consider:**
+
 - **[Area 1]**: [X]% forecast
 - **[Area 2]**: [X]% forecast
 - **[Area 3]**: [X]% forecast
 
 **If you're eyeing OCR North-East, consider:**
+
 - **[Area 1]**: [X]% forecast
 - **[Area 2]**: [X]% forecast
 
 **If you're eyeing OCR North, consider:**
+
 - **[Area 1]**: [X]% forecast
 
 **If you're eyeing OCR West, consider:**
+
 - **[Area 1]**: [X]% forecast
 - **[Area 2]**: [X]% forecast
 
 **If you're eyeing OCR Central, consider:**
+
 - **[Area 1]**: [X]% forecast
 
 ### Undervalued Areas: Current Price vs Forecast Appreciation
@@ -1070,12 +1120,14 @@ Narrow down from regions to specific neighborhoods with our planning area-level 
 **Scatter plot analysis:** Each point is a planning area. X-axis = current median PSF, Y-axis = 24-month forecast.
 
 **Key insights:**
+
 - **Top-right**: High price, high forecast (luxury areas with growth)
 - **Bottom-right**: High price, low forecast (may be overvalued)
 - **Top-left**: Low price, high forecast (undervalued gems)
 - **Bottom-left**: Low price, low forecast (affordable but slow growth)
 
 **Undervalued areas to watch:**
+
 - **[Area 1]**: [Current Price] PSF, [X]% forecast (above average for price tier)
 - **[Area 2]**: [Current Price] PSF, [X]% forecast
 
@@ -1099,6 +1151,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.7: Write Scenario Analysis Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Scenario Analysis section**
@@ -1113,51 +1166,58 @@ Smart buyers don't guess the market - they plan for multiple scenarios. This sec
 ### Understanding the Four Scenarios
 
 <Tooltip term="Baseline Scenario">Baseline Scenario</Tooltip>: **Most likely outcome**
+
 - Assumes current trends continue
 - SORA at [X]%, no new policy changes
 - Use this as your primary reference
 
 <Tooltip term="Bullish Scenario">Bullish Scenario</Tooltip>: **Optimistic upside case**
+
 - Low interest rates (SORA [X]%)
 - Strong demand, supportive policies
 - Best-case scenario for appreciation
 
 <Tooltip term="Bearish Scenario">Bearish Scenario</Tooltip>: **Pessimistic downside case**
+
 - High interest rates (SORA [X]%)
 - Policy tightening, weak demand
 - Worst-case scenario for appreciation
 
 <Tooltip term="Policy Shock Scenario">Policy Shock Scenario</Tooltip>: **Sudden regulatory changes**
+
 - Unexpected ABSD hikes, LTV restrictions
 - Stress-test for black swan policy events
 - Extreme downside scenario
 
 ### Scenario Comparison Table
 
-| Region | Baseline | Bearish | Bullish | Policy Shock | Scenario Spread* |
-|--------|----------|---------|---------|--------------|------------------|
-| **[REGION_1]** | [X]% | [Y]% | [Z]% | [W]% | [Z-Y]% points |
-| **[REGION_2]** | [X]% | [Y]% | [Z]% | [W]% | [Z-Y]% points |
-| **[REGION_3]** | [X]% | [Y]% | [Z]% | [W]% | [Z-Y]% points |
-| **[REGION_4]** | [X]% | [Y]% | [Z]% | [W]% | [Z-Y]% points |
-| **[REGION_5]** | [X]% | [Y]% | [Z]% | [W]% | [Z-Y]% points |
-| **[REGION_6]** | [X]% | [Y]% | [Z]% | [W]% | [Z-Y]% points |
-| **[REGION_7]** | [X]% | [Y]% | [Z]% | [W]% | [Z-Y]% points |
+| Region         | Baseline | Bearish | Bullish | Policy Shock | Scenario Spread\* |
+| -------------- | -------- | ------- | ------- | ------------ | ----------------- |
+| **[REGION_1]** | [X]%     | [Y]%    | [Z]%    | [W]%         | [Z-Y]% points     |
+| **[REGION_2]** | [X]%     | [Y]%    | [Z]%    | [W]%         | [Z-Y]% points     |
+| **[REGION_3]** | [X]%     | [Y]%    | [Z]%    | [W]%         | [Z-Y]% points     |
+| **[REGION_4]** | [X]%     | [Y]%    | [Z]%    | [W]%         | [Z-Y]% points     |
+| **[REGION_5]** | [X]%     | [Y]%    | [Z]%    | [W]%         | [Z-Y]% points     |
+| **[REGION_6]** | [X]%     | [Y]%    | [Z]%    | [W]%         | [Z-Y]% points     |
+| **[REGION_7]** | [X]%     | [Y]%    | [Z]%    | [W]%         | [Z-Y]% points     |
 
-*\*Scenario Spread = Bullish - Bearish (wider spread = higher uncertainty)*
+_\*Scenario Spread = Bullish - Bearish (wider spread = higher uncertainty)_
 
 ### How to Interpret Scenarios
 
 **Rule 1: Check if all scenarios show appreciation**
+
 - ✅ **Buy**: If Bearish > 0% (even worst case shows gains)
 - ⚠️ **Caution**: If Bearish = 0-3% (thin margin of safety)
 - ❌ **Avoid**: If Bearish < 0% (downside risk)
 
 **Rule 2: Look at scenario spread**
+
 - **Narrow spread (< 5%)**: Low uncertainty, stable outlook
 - **Wide spread (> 10%)**: High uncertainty, speculative
 
 **Rule 3: Match your risk tolerance**
+
 - **Risk-averse**: Prioritize narrow spreads + positive bearish
 - **Risk-tolerant**: Chase high bullish, accept bearish losses
 - **Balanced**: Baseline > 5%, Bearish > 2%
@@ -1169,6 +1229,7 @@ Smart buyers don't guess the market - they plan for multiple scenarios. This sec
 **Fan chart shows:** Baseline forecast (solid blue line) with confidence bands (shaded area). Bullish (green dashed) and Bearish (red dashed) scenarios bound the uncertainty range.
 
 **Example interpretation:**
+
 - At month 12: Baseline = 6%, Bearish = 3%, Bullish = 10%
 - At month 24: Baseline = [X]%, Bearish = [Y]%, Bullish = [Z]%
 - Bands widen over time = uncertainty increases with horizon
@@ -1228,6 +1289,7 @@ Steers clear of regions with downside risk in adverse scenarios.
 **Tornado chart shows:** Which factors most impact forecast appreciation. Longer bars = greater sensitivity.
 
 **Key factors (ranked by impact):**
+
 1. **SORA interest rates**: ±[X]% impact on appreciation
 2. **Housing policy (ABSD/LTV)**: ±[X]% impact
 3. **GDP growth**: ±[X]% impact
@@ -1242,6 +1304,7 @@ Steers clear of regions with downside risk in adverse scenarios.
 > **Question:** "I'm choosing between [Region A: 8% ± 3%] and [Region B: 10% ± 6%]. Which is better?"
 
 **Analysis:**
+
 - **Region A**: Bearish = 5% (8% - 3%), Bullish = 13% (8% + 3%)
 - **Region B**: Bearish = 4% (10% - 6%), Bullish = 16% (10% + 6%)
 
@@ -1252,6 +1315,7 @@ Steers clear of regions with downside risk in adverse scenarios.
 > **Question:** "Is [Region C: 7% baseline, Bearish 2%, Bullish 15%] worth the risk?"
 
 **Analysis:**
+
 - **Scenario spread**: 15% - 2% = 13% (very wide = high uncertainty)
 - **Upside potential**: +8% above baseline (15% - 7%)
 - **Downside risk**: 2% Bearish (still positive)
@@ -1278,6 +1342,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.8: Write Persona-Specific Guidance Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Persona-Specific Guidance section**
@@ -1298,6 +1363,7 @@ This section translates forecasts into action for your specific situation.
 Your priorities: **Affordability > Appreciation > Location**. You're buying your first home, not an investment property.
 
 **Best regions for first-time buyers:**
+
 - **OCR North**: [X]% forecast, affordable entry, stable appreciation
 - **OCR East**: [X]% forecast, good amenities, reliable growth
 - **OCR Central**: [X]% forecast, central location without CCR prices
@@ -1305,14 +1371,17 @@ Your priorities: **Affordability > Appreciation > Location**. You're buying your
 **How to use forecasts:**
 
 1. **Look for narrow confidence bands** (±2-3%)
+
    - Low uncertainty = predictable appreciation
    - Avoid wide bands (±5%+), too much risk for first purchase
 
 2. **Ensure bearish scenario > 3%**
+
    - Even worst-case should show meaningful appreciation
    - Skip regions with Bearish < 3%
 
 3. **Prioritize regional consistency over high upside**
+
    - Region at 8% ± 2% > Region at 12% ± 6%
    - Stable growth beats volatile gains
 
@@ -1321,11 +1390,13 @@ Your priorities: **Affordability > Appreciation > Location**. You're buying your
    - Look for areas with [Feature: e.g., upcoming MRT] not yet priced in
 
 **Red flags to avoid:**
+
 - ❌ Regions with Bearish < 3% (too risky)
 - ❌ Wide confidence bands (±5%+ = unpredictable)
 - ❌ Chasing top-ranked areas (premium may be priced in)
 
 **Action plan:**
+
 1. Shortlist 2-3 regions with Bearish > 3%
 2. Within each region, find 2-3 planning areas with narrow confidence
 3. Compare current prices across 6-9 shortlisted areas
@@ -1342,6 +1413,7 @@ Your priorities: **Affordability > Appreciation > Location**. You're buying your
 Your priorities: **Appreciation > Risk Management > Liquidity**. You're buying for returns, not just shelter.
 
 **Top picks for investors:**
+
 - **CCR areas with bullish upside**: [Area 1: X%], [Area 2: Y%]
 - **OCR East growth corridors**: [Area 3: X%], [Area 4: Y%]
 - **Undervalued gems**: [Area 5: X% forecast, below regional avg]
@@ -1349,15 +1421,18 @@ Your priorities: **Appreciation > Risk Management > Liquidity**. You're buying f
 **How to use forecasts:**
 
 1. **Maximize bullish upside while ensuring Bearish > 0%**
+
    - Target regions with (Bullish - Baseline) > 5%
    - But only if Bearish scenario still positive
 
 2. **Use scenario spread as risk indicator**
+
    - Narrow spread (< 5%): Low risk, lower return
    - Wide spread (> 10%): High risk, high return
    - Build diversified portfolio across both
 
 3. **Portfolio diversification strategy**
+
    - 60% in stable regions (narrow confidence, Bearish > 3%)
    - 30% in growth regions (high Bullish, moderate spread)
    - 10% in speculative regions (high upside, accept Bearish < 0%)
@@ -1370,26 +1445,31 @@ Your priorities: **Appreciation > Risk Management > Liquidity**. You're buying f
 **Risk management frameworks:**
 
 **Conservative Investor:**
+
 - Only buy if Bearish > 3%
 - Diversify across 5+ regions
 - Target 8-12% annual returns
 
 **Aggressive Investor:**
+
 - Buy if Bullish > 12% (accept Bearish < 0%)
 - Concentrate in top 2-3 regions
 - Target 15%+ annual returns
 
 **Balanced Investor:**
+
 - Buy if Baseline > 6% AND Bearish > 2%
 - Diversify across 3-4 regions
 - Target 10-15% annual returns
 
 **Red flags to avoid:**
+
 - ❌ Regions with Policy Shock < -5% (vulnerable to regulation)
 - ❌ Areas where appreciation already priced in (check scatter plot)
 - ❌ All regions with same scenario (no diversification)
 
 **Action plan:**
+
 1. Determine your risk tolerance (conservative/balanced/aggressive)
 2. Apply corresponding framework to filter regions
 3. Build diversified portfolio across 3-5 regions
@@ -1408,31 +1488,37 @@ Your priorities: **Maximize resale value > Upgrade timing > Affordability**. You
 **When to sell your current flat:**
 
 **Sell if your region's forecast peaks within 12 months:**
+
 - **[Region with peak]**: [X]% forecast in next 12 months, then slows
 - Sell now to capture peak appreciation
 - Avoid holding past peak (diminishing returns)
 
 **Sell if your region's forecast < 5% baseline:**
+
 - Low forecast = flat to slow appreciation
 - Better to sell now, buy in high-appreciation region
 
 **Hold if your region's forecast > 10% baseline:**
+
 - Strong appreciation still ahead
 - Delay upgrade, let current flat appreciate more
 
 **Where to upgrade:**
 
 **From HDB to Condo:**
+
 - Target **CCR** areas with appreciation: [Area 1], [Area 2]
 - Condos show 15x higher MRT sensitivity than HDBs
 - Proximity to future MRT lines adds 5-10% premium
 
 **From smaller HDB to larger HDB:**
+
 - Target **OCR East** for space + appreciation: [Area 1], [Area 2]
 - More floor area per dollar than central regions
 - Still-solid appreciation (8-10% forecast)
 
 **From older lease to newer lease:**
+
 - Lease decay accelerates after 70 years remaining
 - Upgrade to flats with 80+ years remaining
 - Factor lease decay into appreciation (longer lease = higher appreciation)
@@ -1440,21 +1526,25 @@ Your priorities: **Maximize resale value > Upgrade timing > Affordability**. You
 **Upgrade strategy frameworks:**
 
 **Strategy A: Sell High, Buy Higher**
+
 1. Sell in region with [Forecast X]% but [Trend: slowing]
 2. Buy in region with [Forecast Y]% and [Trend: accelerating]
 3. Capture spread: [Y - X]% additional appreciation
 
 **Strategy B: Sell Flat, Buy Growth**
+
 1. Sell in region with < 5% forecast (flat growth)
 2. Buy in region with > 10% forecast (high growth)
 3. 2x appreciation differential
 
 **Strategy C: Hold and Upgrade Later**
+
 1. If current region forecast > 10%, hold for now
 2. Let current flat appreciate for 12-24 months
 3. Re-evaluate upgrade timing later
 
 **Action plan:**
+
 1. Check your current region's forecast timing (when does it peak?)
 2. Check your target region's forecast (is it > current region?)
 3. Calculate spread (target - current = net benefit)
@@ -1462,12 +1552,14 @@ Your priorities: **Maximize resale value > Upgrade timing > Affordability**. You
 
 **Example Timeline:**
 ```
-Month 0-6:  Current flat appreciates [X]%
-Month 6:    Sell current flat at peak
+
+Month 0-6: Current flat appreciates [X]%
+Month 6: Sell current flat at peak
 Month 6-12: Rent temporary accommodation
-Month 12:   Buy upgrade in high-appreciation region
+Month 12: Buy upgrade in high-appreciation region
 Month 12-24: New flat appreciates [Y]%
 Total benefit: [Y]% - [X]% + sale premium - rent cost
+
 ```
 
 </ImplicationBox>
@@ -1512,6 +1604,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.9: Write Scenario-Based Decision Frameworks Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Scenario-Based Decision Frameworks section**
@@ -1526,6 +1619,7 @@ Put forecasts into practice with concrete examples. See how to use scenario plan
 <Scenario title="First-Time Buyer with $600K Budget - OCR or RCR?">
 
 **Situation:** You're a first-time buyer choosing between:
+
 - **Option A:** 4-room HDB in Pasir Ris (OCR East) - $600K
 - **Option B:** 4-room HDB in Bishan (RCR) - $600K
 
@@ -1533,33 +1627,38 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 
 **Our Forecasts Say:**
 
-| Region | Baseline | Bearish | Bullish | Confidence |
-|--------|----------|---------|---------|------------|
-| **OCR East** | **10.5%** | 8.0% | 13.0% | ±2.5% |
-| **RCR** | **6.2%** | 3.0% | 10.0% | ±3.2% |
+| Region       | Baseline  | Bearish | Bullish | Confidence |
+| ------------ | --------- | ------- | ------- | ---------- |
+| **OCR East** | **10.5%** | 8.0%    | 13.0%   | ±2.5%      |
+| **RCR**      | **6.2%**  | 3.0%    | 10.0%   | ±3.2%      |
 
 **Your Decision Framework:**
 
 **Step 1: Check risk tolerance**
+
 - **OCR East**: Narrower confidence band (±2.5% vs ±3.2%)
 - ✅ OCR East = lower uncertainty, more predictable
 
 **Step 2: Compare downside risk (Bearish scenario)**
+
 - **OCR East**: 8% appreciation = $48K gain in worst case
 - **RCR**: 3% appreciation = $18K gain in worst case
 - ✅ OCR East = 2.7x more downside protection
 
 **Step 3: Compare upside potential (Bullish scenario)**
+
 - **OCR East**: 13% = $78K gain in best case
 - **RCR**: 10% = $60K gain in best case
 - ✅ OCR East = 30% more upside
 
 **Step 4: Assess total appreciation (Baseline)**
+
 - **OCR East**: 10.5% = $63K gain over 24 months
 - **RCR**: 6.2% = $37K gain over 24 months
 - ✅ OCR East = $26K more appreciation
 
 **Step 5: Consider non-forecast factors**
+
 - **Bishan (RCR)**: Better amenities, shorter CBD commute, established town
 - **Pasir Ris (OCR East)**: Resort living, future TEL line, more space for money
 
@@ -1576,44 +1675,51 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 <Scenario title="Investor - Condo in CCR Now or Wait for Price Correction?">
 
 **Situation:** You're an investor considering a 2-bedroom condo in Downtown Core (CCR):
+
 - **Current price:** $1.8M ($2,000 PSF, 900 sqft)
 - **Rental yield:** 3.2%
 - **Question:** Buy now or wait 12 months for potential price correction?
 
 **Our Forecasts Say:**
 
-| Region | Baseline | Bearish | Bullish | Confidence |
-|--------|----------|---------|---------|------------|
-| **CCR** | **7.2%** | 2.5% | 12.0% | ±4.8% |
+| Region  | Baseline | Bearish | Bullish | Confidence |
+| ------- | -------- | ------- | ------- | ---------- |
+| **CCR** | **7.2%** | 2.5%    | 12.0%   | ±4.8%      |
 
 **Your Decision Framework:**
 
 **Step 1: Check Bearish scenario (downside risk)**
+
 - **Bearish**: 2.5% appreciation = $45K gain even in worst case
 - ✅ No downside risk (Bearish > 0%)
 
 **Step 2: Calculate opportunity cost of waiting**
+
 - **If you buy now:** 7.2% appreciation = $130K gain over 24 months
 - **If you wait 12 months:** Miss first 6 months of appreciation (~3.5% = $63K)
 - ❌ Waiting costs $63K in forgone appreciation
 
 **Step 3: Assess rental income**
+
 - **Monthly rent:** $4,800 (3.2% yield)
 - **12-month rental if you buy now:** $57,600
 - **12-month rental if you wait:** $0
 - ❌ Waiting costs $57,600 in forgone rental income
 
 **Step 4: Check scenario spread (uncertainty)**
+
 - **Spread**: Bullish (12%) - Bearish (2.5%) = 9.5%
 - ⚠️ Wide confidence band (±4.8%) = high uncertainty
 - ⚠️ CCR is volatile, sensitive to interest rates and foreign demand
 
 **Step 5: Compare to rental yield benchmark**
+
 - **Your rental yield:** 3.2%
 - **Singapore average:** 3.5%
 - ❌ Below average yield (prices may be elevated)
 
 **Step 6: Run stress test (Policy Shock scenario)**
+
 - **Policy Shock forecast:** -2.0% (if ABSD for foreigners increases)
 - **Loss if Policy Shock hits:** -$36K
 - **Probability:** Low (15% chance), but high impact
@@ -1621,11 +1727,13 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 **Bottom Line:**
 
 **Buy now if:**
+
 - ✅ You believe Bearish scenario (2.5%) is achievable
 - ✅ You can hold 24+ months to capture full appreciation
 - ✅ You want to avoid $63K + $57K = $120K in opportunity costs
 
 **Wait if:**
+
 - ❌ You expect CCR prices to correct (drop >5%) in next 12 months
 - ❌ You're risk-averse (wide confidence bands = unpredictable)
 - ❌ You think ABSD changes are imminent (Policy Shock risk)
@@ -1639,6 +1747,7 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 <Scenario title="Upgrader - When to Sell 4-Room HDB in Bishan?">
 
 **Situation:** You own a 4-room HDB in Bishan (RCR):
+
 - **Current value:** $680K
 - **Remaining lease:** 72 years
 - **Region forecast:** RCR at 6.2% ± 3.2% (Baseline, Bearish, Bullish = 6.2%, 3.0%, 10.0%)
@@ -1646,11 +1755,12 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 
 **Our Forecasts Say:**
 
-| Region | 0-12 Month Forecast | 12-24 Month Forecast | Trend |
-|--------|---------------------|----------------------|-------|
-| **RCR** | 3.5% | 2.7% | Slowing |
+| Region  | 0-12 Month Forecast | 12-24 Month Forecast | Trend   |
+| ------- | ------------------- | -------------------- | ------- |
+| **RCR** | 3.5%                | 2.7%                 | Slowing |
 
 **Target upgrade:** 2-bedroom condo in OCR East
+
 - **Current price:** $850K
 - **24-month forecast:** 10.5% ± 2.5%
 - **Future value:** $939K (+$89K)
@@ -1658,18 +1768,21 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 **Your Decision Framework:**
 
 **Step 1: Calculate current flat appreciation if you hold**
+
 - **0-12 months:** 3.5% = $23.8K gain
 - **12-24 months:** 2.7% = $18.6K gain
 - **Total 24-month gain:** $42.4K
 - **Future value (month 24):** $722.4K
 
 **Step 2: Calculate target condo appreciation if you buy now**
+
 - **24-month forecast:** 10.5% = $89K gain
 - **Future value (month 24):** $939K
 
 **Step 3: Compare two strategies**
 
 **Strategy A: Sell now, buy condo now**
+
 - **Sell Bishan:** $680K (today)
 - **Buy condo:** $850K (today)
 - **Net cash needed:** $170K
@@ -1677,6 +1790,7 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 - **Net equity in 24 months:** $939K - $170K = $769K
 
 **Strategy B: Hold 24 months, then sell and buy**
+
 - **Bishan value in 24 months:** $722.4K
 - **Condo value in 24 months:** $939K
 - **Net cash needed:** $939K - $722.4K = $216.6K
@@ -1684,20 +1798,22 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 
 **Step 4: Calculate upgrade premium**
 
-| Strategy | Net Equity in 24 Months | Difference |
-|----------|-------------------------|------------|
-| **Sell now, buy now** | $769K | +$46.6K ✅ |
-| **Hold, then sell** | $722.4K | - |
+| Strategy              | Net Equity in 24 Months | Difference |
+| --------------------- | ----------------------- | ---------- |
+| **Sell now, buy now** | $769K                   | +$46.6K ✅ |
+| **Hold, then sell**   | $722.4K                 | -          |
 
 **Conclusion:** Selling now and buying now yields $46.6K more equity in 24 months.
 
 **Step 5: Check timing risk**
+
 - **If you wait 12 months:** RCR appreciates 3.5% = $23.8K gain
 - **But condo also appreciates:** 10.5% of first 12 months = 5.25% ≈ $44.6K
 - **Spread:** Condo gains $20.8K more than HDB
 - ❌ Waiting costs money (condo appreciates faster)
 
 **Step 6: Consider lifestyle factors**
+
 - **Upgrade now:** Enjoy condo living for 24 extra months
 - **Upgrade later:** Stay in HDB for 24 more months
 - **Value of lifestyle upgrade:** ~$2K/month (estimated) = $48K over 24 months
@@ -1724,23 +1840,28 @@ Both are similar size (~1,000 sqft), same lease remaining (75 years).
 ### Key Takeaways from Scenarios
 
 **Theme 1: Opportunity Cost Matters**
+
 - Waiting "for clarity" often costs more than downside risk
 - Scenario [1]: Waiting cost $120K in forgone gains
 - Scenario [3]: Waiting cost $48.6K in equity + lifestyle value
 
 **Theme 2: Bearish Scenario is Your Safety Net**
+
 - If Bearish > 0%, even worst case shows gains
 - If Bearish < 0%, only buy if you can tolerate losses
 
 **Theme 3: Appreciation Spreads Create Alpha**
+
 - Buy in faster-appreciating regions, sell in slower ones
 - Scenario [3]: Condo (10.5%) vs HDB (6.2%) = 4.3% spread = $46.6K gain
 
 **Theme 4: Confidence Bands Show Uncertainty**
+
 - Narrow bands (±2.5%): Low risk, predictable
 - Wide bands (±4.8%): High risk, volatile
 
 **Theme 5: Time Horizon Changes Decisions**
+
 - Short-term (< 12 months): Prioritize Bearish scenario
 - Long-term (24+ months): Can tolerate wider confidence bands
 
@@ -1768,6 +1889,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.10: Write Forecasting Dashboard Integration Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Dashboard Integration section**
@@ -1786,24 +1908,28 @@ For live, interactive forecasts with custom filtering, visit our **[Price Apprec
 **Interactive Features:**
 
 1. **Regional Forecasts Explorer**
+
    - Select any of 7 regions
    - View all 4 scenarios (Baseline, Bullish, Bearish, Policy Shock)
    - Toggle forecast horizon (12, 24, 36 months)
    - Compare regions side-by-side
 
 2. **Planning Area Deep Dive**
+
    - Search 20+ planning areas
    - View forecast vs regional average
    - Check amenity scores (MRT, hawker, schools)
    - Filter by transaction volume
 
 3. **Scenario Analysis Tool**
+
    - Adjust macroeconomic assumptions (SORA, GDP)
    - See how forecasts change in real-time
    - Stress-test policy shocks
    - Export custom scenarios
 
 4. **Portfolio Planner** (for investors)
+
    - Build diversified portfolio across regions
    - Optimize for risk tolerance
    - Backtest historical performance
@@ -1816,38 +1942,43 @@ For live, interactive forecasts with custom filtering, visit our **[Price Apprec
 
 ### Dashboard vs Report
 
-| Feature | This Report | Interactive Dashboard |
-|---------|-------------|----------------------|
-| **Forecast data** | Snapshot (Feb 2026) | Always latest |
-| **Interactivity** | Static read-only | Full filtering and exploration |
-| **Visualizations** | 10 key charts | 20+ interactive charts |
-| **Planning areas** | Top 20 | All 50+ areas |
-| **Custom scenarios** | 4 pre-built | Unlimited custom |
-| **Portfolio tools** | Text guidance | Interactive optimizer |
-| **Updates** | One-time | Monthly |
+| Feature              | This Report         | Interactive Dashboard          |
+| -------------------- | ------------------- | ------------------------------ |
+| **Forecast data**    | Snapshot (Feb 2026) | Always latest                  |
+| **Interactivity**    | Static read-only    | Full filtering and exploration |
+| **Visualizations**   | 10 key charts       | 20+ interactive charts         |
+| **Planning areas**   | Top 20              | All 50+ areas                  |
+| **Custom scenarios** | 4 pre-built         | Unlimited custom               |
+| **Portfolio tools**  | Text guidance       | Interactive optimizer          |
+| **Updates**          | One-time            | Monthly                        |
 
 ### How to Use Dashboard
 
 **Step 1: Select your region**
+
 - Use dropdown or click map
 - View regional summary card
 
 **Step 2: Explore scenarios**
+
 - Toggle between Baseline, Bullish, Bearish, Policy Shock
 - Check confidence bands
 - Note scenario spread
 
 **Step 3: Drill down to planning areas**
+
 - Filter by selected region
 - Sort by forecast, confidence, or transaction volume
 - Click area for detailed breakdown
 
 **Step 4: Apply decision framework**
+
 - Use "Decision Checklist" tab
 - Score specific properties
 - Compare against forecast criteria
 
 **Step 5: Export or save**
+
 - Download forecast CSVs
 - Save scenario comparisons
 - Share with stakeholders
@@ -1858,9 +1989,11 @@ For live, interactive forecasts with custom filtering, visit our **[Price Apprec
 
 **API Access:** For developers, forecasts are available via REST API:
 ```
+
 GET /api/forecasts/regions/{region_id}
 GET /api/forecasts/areas/{area_id}
 GET /api/forecasts/scenarios/{scenario}
+
 ```
 
 See `docs/api/forecasts.md` for full API documentation.
@@ -1895,6 +2028,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.11: Write Technical Appendix Section
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Technical Appendix section**
@@ -1910,26 +2044,27 @@ Detailed technical information for readers who want to understand the forecastin
 
 **Primary Data:**
 
-| Source | Description | Frequency | Vintage |
-|--------|-------------|-----------|---------|
-| **HDB Resale Transactions** | 97,133 transactions from data.gov.sg | Monthly | 2021-2026 |
-| **URA Private Property Transactions** | 52,867 condo transactions | Monthly | 2021-2026 |
-| **SORA Rates** | Singapore Overnight Rate Average | Daily | 2021-2026 |
-| **CPI** | Consumer Price Index | Monthly | 2021-2026 |
-| **GDP** | Singapore GDP Growth | Quarterly | 2021-2026 |
-| **Housing Policy Dates** | ABSD, LTV, TDSR changes | Event-based | 2013-2026 |
+| Source                                | Description                          | Frequency   | Vintage   |
+| ------------------------------------- | ------------------------------------ | ----------- | --------- |
+| **HDB Resale Transactions**           | 97,133 transactions from data.gov.sg | Monthly     | 2021-2026 |
+| **URA Private Property Transactions** | 52,867 condo transactions            | Monthly     | 2021-2026 |
+| **SORA Rates**                        | Singapore Overnight Rate Average     | Daily       | 2021-2026 |
+| **CPI**                               | Consumer Price Index                 | Monthly     | 2021-2026 |
+| **GDP**                               | Singapore GDP Growth                 | Quarterly   | 2021-2026 |
+| **Housing Policy Dates**              | ABSD, LTV, TDSR changes              | Event-based | 2013-2026 |
 
 **Amenity Data:**
 
-| Source | Features | Count |
-|--------|----------|-------|
-| **MRT/LRT Stations** | 257 stations with line codes, tiers | 257 |
-| **Hawker Centers** | Location, capacity | 120+ |
-| **Supermarkets** | Location, chain | 300+ |
-| **Parks** | Location, size | 200+ |
-| **Schools** | Location, tier, PSLE scores | 180+ |
+| Source               | Features                            | Count |
+| -------------------- | ----------------------------------- | ----- |
+| **MRT/LRT Stations** | 257 stations with line codes, tiers | 257   |
+| **Hawker Centers**   | Location, capacity                  | 120+  |
+| **Supermarkets**     | Location, chain                     | 300+  |
+| **Parks**            | Location, size                      | 200+  |
+| **Schools**          | Location, tier, PSLE scores         | 180+  |
 
 **Data Quality:**
+
 - Missing data imputed via linear interpolation
 - Outliers capped at ±50% appreciation
 - Spatial resolution: H3 hexagons (H8, ~0.5km²)
@@ -1940,33 +2075,33 @@ Detailed technical information for readers who want to understand the forecastin
 
 Expanding window cross-validation (5 folds) on 2021-2025 data:
 
-| Metric | Regional VAR | Area ARIMAX | Target |
-|--------|--------------|-------------|--------|
-| **RMSE** | [X]% | [Y]% | <5% (regional), <8% (area) |
-| **MAE** | [X]% | [Y]% | Lower is better |
-| **MAPE** | [X]% | [Y]% | <10% |
-| **Directional Accuracy** | [X]% | [Y]% | >70% |
+| Metric                   | Regional VAR | Area ARIMAX | Target                     |
+| ------------------------ | ------------ | ----------- | -------------------------- |
+| **RMSE**                 | [X]%         | [Y]%        | <5% (regional), <8% (area) |
+| **MAE**                  | [X]%         | [Y]%        | Lower is better            |
+| **MAPE**                 | [X]%         | [Y]%        | <10%                       |
+| **Directional Accuracy** | [X]%         | [Y]%        | >70%                       |
 
 **Regional Performance Breakdown:**
 
-| Region | RMSE | MAE | Directional Acc. | Sample Size |
-|--------|------|-----|------------------|-------------|
-| **CCR** | [X]% | [Y]% | [Z]% | [N] transactions |
-| **RCR** | [X]% | [Y]% | [Z]% | [N] transactions |
-| **OCR East** | [X]% | [Y]% | [Z]% | [N] transactions |
-| **OCR North-East** | [X]% | [Y]% | [Z]% | [N] transactions |
-| **OCR North** | [X]% | [Y]% | [Z]% | [N] transactions |
-| **OCR West** | [X]% | [Y]% | [Z]% | [N] transactions |
-| **OCR Central** | [X]% | [Y]% | [Z]% | [N] transactions |
+| Region             | RMSE | MAE  | Directional Acc. | Sample Size      |
+| ------------------ | ---- | ---- | ---------------- | ---------------- |
+| **CCR**            | [X]% | [Y]% | [Z]%             | [N] transactions |
+| **RCR**            | [X]% | [Y]% | [Z]%             | [N] transactions |
+| **OCR East**       | [X]% | [Y]% | [Z]%             | [N] transactions |
+| **OCR North-East** | [X]% | [Y]% | [Z]%             | [N] transactions |
+| **OCR North**      | [X]% | [Y]% | [Z]%             | [N] transactions |
+| **OCR West**       | [X]% | [Y]% | [Z]%             | [N] transactions |
+| **OCR Central**    | [X]% | [Y]% | [Z]%             | [N] transactions |
 
 **Backtesting Example: 2024 Forecasts**
 
-| Region | Forecast (Jan 2024) | Actual (Dec 2024) | Error | Direction |
-|--------|---------------------|-------------------|-------|-----------|
-| OCR East | +10.2% | +11.5% | +1.3% | ✅ Correct |
-| CCR | +5.8% | +4.2% | -1.6% | ✅ Correct |
-| RCR | +6.1% | +7.3% | +1.2% | ✅ Correct |
-| OCR North | +8.9% | +6.2% | -2.7% | ✅ Correct |
+| Region    | Forecast (Jan 2024) | Actual (Dec 2024) | Error | Direction  |
+| --------- | ------------------- | ----------------- | ----- | ---------- |
+| OCR East  | +10.2%              | +11.5%            | +1.3% | ✅ Correct |
+| CCR       | +5.8%               | +4.2%             | -1.6% | ✅ Correct |
+| RCR       | +6.1%               | +7.3%             | +1.2% | ✅ Correct |
+| OCR North | +8.9%               | +6.2%             | -2.7% | ✅ Correct |
 
 **Overall directional accuracy:** 86% (6 of 7 regions correct direction)
 
@@ -1975,24 +2110,26 @@ Expanding window cross-validation (5 folds) on 2021-2025 data:
 **Why 24 months for areas, 36 months for regions?**
 
 **Regional models (36 months):**
+
 - More data points (all areas in region combined)
 - Slower-moving trends (macro-driven)
 - Lower volatility, more predictable long-term
 
 **Area models (24 months):**
+
 - Less data (single planning area)
 - Faster-moving trends (local factors)
 - Higher uncertainty, shorter reliable horizon
 
 **Forecast accuracy by horizon:**
 
-| Horizon | Regional RMSE | Area RMSE |
-|---------|---------------|-----------|
-| **12 months** | [X]% | [Y]% |
-| **24 months** | [X]% | [Y]% |
-| **36 months** | [X]% | N/A* |
+| Horizon       | Regional RMSE | Area RMSE |
+| ------------- | ------------- | --------- |
+| **12 months** | [X]%          | [Y]%      |
+| **24 months** | [X]%          | [Y]%      |
+| **36 months** | [X]%          | N/A\*     |
 
-*Area models not reliable beyond 24 months
+\*Area models not reliable beyond 24 months
 
 ### Confidence Intervals
 
@@ -2004,12 +2141,12 @@ Expanding window cross-validation (5 folds) on 2021-2025 data:
 
 **Interpretation guide:**
 
-| Confidence Band Width | Interpretation | Recommended Action |
-|-----------------------|----------------|-------------------|
-| **±1-2%** | Very high certainty | Treat forecast as highly reliable |
-| **±2-3%** | High certainty | Use as primary decision input |
-| **±3-5%** | Moderate certainty | Use as one of several inputs |
-| **±5%+** | Low certainty | Treat as rough estimate only |
+| Confidence Band Width | Interpretation      | Recommended Action                |
+| --------------------- | ------------------- | --------------------------------- |
+| **±1-2%**             | Very high certainty | Treat forecast as highly reliable |
+| **±2-3%**             | High certainty      | Use as primary decision input     |
+| **±3-5%**             | Moderate certainty  | Use as one of several inputs      |
+| **±5%+**              | Low certainty       | Treat as rough estimate only      |
 
 **Narrow vs Wide Bands:**
 
@@ -2019,24 +2156,28 @@ Expanding window cross-validation (5 folds) on 2021-2025 data:
 ### Scenario Definitions
 
 **Baseline Scenario:**
+
 - SORA: [X]% (current rate)
 - GDP growth: [X]% (consensus forecast)
 - No new housing policies
 - Historical trends continue
 
 **Bullish Scenario:**
+
 - SORA: [X]% (100 bps lower than baseline)
 - GDP growth: [X]% (optimistic forecast)
 - Supportive housing policies (e.g., ABSD reduction)
 - Strong foreign demand
 
 **Bearish Scenario:**
+
 - SORA: [X]% (100 bps higher than baseline)
 - GDP growth: [X]% (pessimistic forecast)
 - Restrictive housing policies (e.g., ABSD increase)
 - Weak foreign demand
 
 **Policy Shock Scenario:**
+
 - SORA: Unchanged
 - Sudden housing policy change:
   - ABSD for foreigners +10%
@@ -2047,12 +2188,14 @@ Expanding window cross-validation (5 folds) on 2021-2025 data:
 ### Known Limitations
 
 **What forecasts CAN predict:**
+
 - ✅ Regional appreciation trends over 24 months
 - ✅ Relative performance (Region A vs Region B)
 - ✅ Impact of interest rate changes (via scenarios)
 - ✅ Policy shock impacts (via scenarios)
 
 **What forecasts CANNOT predict:**
+
 - ❌ Black swan events (pandemics, global financial crises)
 - ❌ Specific property-level appreciation:
   - Unit condition (renovated vs original)
@@ -2066,12 +2209,14 @@ Expanding window cross-validation (5 folds) on 2021-2025 data:
   - Specific development launches
 
 **Model assumptions:**
+
 - Linear relationships between variables (VAR limitation)
 - Stationarity after differencing (no structural breaks)
 - No regime changes (e.g., major policy shifts)
 - Historical patterns continue (past ≠ future always)
 
 **Usage guidelines:**
+
 - Use forecasts as one input among many (not sole decision factor)
 - Combine with local knowledge, property inspection, personal circumstances
 - Re-evaluate decisions as new data arrives (monthly updates)
@@ -2082,30 +2227,36 @@ Expanding window cross-validation (5 folds) on 2021-2025 data:
 **Forecast refresh:** Monthly (first week of each month)
 
 **Data vintage:**
+
 - Transactions: Through end of previous month
 - Macro data: Through previous month (SORA, CPI) or previous quarter (GDP)
 
 **Model retraining:** Quarterly (every 3 months)
+
 - Full model retrain on all historical data
 - Updated hyperparameters if needed
 - Backtesting on latest period
 
 **Report updates:** One-time (this is a static snapshot)
+
 - For latest forecasts, always use interactive dashboard
 - Dashboard shows most recent forecast (updated monthly)
 
 ### Technical References
 
 **VAR Model Documentation:**
+
 - Implementation report: `docs/analytics/20250217-var-implementation-report.md`
 - Design document: `docs/analytics/20250216-plan-autoregression-var-housing-appreciation.md`
 
 **Statistical Methods:**
-- Lütkepohl, H. (2005). *New Introduction to Multiple Time Series Analysis*
-- Hamilton, J. D. (1994). *Time Series Analysis*
-- Box, G. E. P., & Jenkins, G. M. (2015). *Time Series Analysis: Forecasting and Control*
+
+- Lütkepohl, H. (2005). _New Introduction to Multiple Time Series Analysis_
+- Hamilton, J. D. (1994). _Time Series Analysis_
+- Box, G. E. P., & Jenkins, G. M. (2015). _Time Series Analysis: Forecasting and Control_
 
 **Python Libraries:**
+
 - `statsmodels`: VAR, ARIMA implementation
 - `pandas`: Data manipulation
 - `numpy`: Numerical computing
@@ -2116,14 +2267,17 @@ Expanding window cross-validation (5 folds) on 2021-2025 data:
 **Forecasting pipeline:** `scripts/analytics/pipelines/forecast_appreciation.py`
 
 **Models:**
+
 - Regional VAR: `scripts/analytics/models/regional_var.py`
 - Area ARIMAX: `scripts/analytics/models/area_arimax.py`
 
 **Data preparation:**
+
 - Time series: `scripts/analytics/pipelines/prepare_timeseries_data.py`
 - Macro data: `scripts/data/fetch_macro_data.py`
 
 **Tests:**
+
 - Model tests: `tests/analytics/models/`
 - Pipeline tests: `tests/analytics/pipelines/`
 
@@ -2148,6 +2302,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 2.12: Write Decision Checklist and Final Sections
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Add Decision Checklist section**
@@ -2160,23 +2315,27 @@ Append to file:
 Use this checklist when evaluating any property to ensure you're making a data-driven decision.
 
 <DecisionChecklist
-  title="Use this checklist when evaluating any property purchase"
-  storageKey="forecast-decision-checklist"
+title="Use this checklist when evaluating any property purchase"
+storageKey="forecast-decision-checklist"
+
 >
 
 ### Regional Analysis
 
 - [ ] **What's the 24-month forecast for this region?**
+
   - Check Regional Outlook section
   - Baseline > 5% is ideal
   - Bearish > 3% for risk-averse buyers
 
 - [ ] **How do scenarios compare?**
+
   - If bearish < 3%, reconsider (too risky)
   - If bearish > 0%, even worst case shows gains
   - Narrow scenario spread (< 5%) = lower uncertainty
 
 - [ ] **What's driving the forecast?**
+
   - Check regional deep dive for key drivers
   - New MRT line? Policy changes? Supply constraints?
   - Understand WHY, not just WHAT
@@ -2189,11 +2348,13 @@ Use this checklist when evaluating any property to ensure you're making a data-d
 ### Planning Area Analysis
 
 - [ ] **How does this area compare to its region?**
+
   - Is it above or below regional average?
   - Below average = potentially undervalued
   - Above average = premium already priced in?
 
 - [ ] **What's the planning area forecast?**
+
   - Check Planning Area Forecasts section
   - Rank within top 20 for reliable data
   - Look for areas with narrow confidence bands
@@ -2206,16 +2367,19 @@ Use this checklist when evaluating any property to ensure you're making a data-d
 ### Personal Fit
 
 - [ ] **Does this match my time horizon?**
+
   - 24-month forecast vs 5-year holding plan
   - If holding < 24 months, prioritize Bearish scenario
   - If holding 5+ years, can tolerate wider confidence bands
 
 - [ ] **What do all 3 scenarios say?**
+
   - Buy if all scenarios show appreciation
   - Proceed with caution if Bearish = 0-3%
   - Avoid if Bearish < 0% (downside risk)
 
 - [ ] **Am I paying for forecasted appreciation?**
+
   - Compare to similar properties in lower-appreciation areas
   - If premium > forecasted upside, overpriced
   - Look for undervalued areas (scatter plot analysis)
@@ -2228,10 +2392,12 @@ Use this checklist when evaluating any property to ensure you're making a data-d
 ### Scenario Testing
 
 - [ ] **What if interest rates rise 100 bps?**
+
   - Check Bearish scenario (assumes higher rates)
   - If Bearish < 0%, can you afford to hold?
 
 - [ ] **What if policy shock hits?**
+
   - Check Policy Shock scenario
   - If < -5%, ensure you can withstand temporary drop
 
@@ -2242,10 +2408,12 @@ Use this checklist when evaluating any property to ensure you're making a data-d
 ### Cross-Checks
 
 - [ ] **Does the forecast align with market sentiment?**
+
   - If forecast >> consensus, who's right? (model vs crowd)
   - Contrarian views can be right, but verify assumptions
 
 - [ ] **What are non-forecast factors?**
+
   - Unit condition, renovation needs
   - Floor level, view, orientation
   - Lease remaining (critical for HDB)
@@ -2321,6 +2489,7 @@ This phase replaces all placeholders with real forecast data from Phase 1. Can o
 ### Task 3.1: Replace Regional Forecast Placeholders
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 - Read: `data/forecasts/regional_forecasts_baseline.csv`
 
@@ -2337,6 +2506,7 @@ print(df.to_markdown(index=False))
 **Step 2: Extract key values for each region**
 
 Create mapping:
+
 ```
 TOP_REGION = [Region with highest baseline]
 2ND_REGION = [Region with 2nd highest baseline]
@@ -2379,6 +2549,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 3.2: Replace Planning Area Forecast Placeholders
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 - Read: `data/forecasts/area_forecasts_baseline.csv`
 
@@ -2396,6 +2567,7 @@ print(df_top20.to_markdown(index=False))
 **Step 2: Replace top 20 planning areas in ranking table**
 
 Use Edit tool to populate:
+
 ```
 [AREA_1] = actual top area
 [AREA_2] = actual 2nd area
@@ -2429,11 +2601,13 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 3.3: Update Scenario Examples with Real Data
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Update Scenario 1 (First-Time Buyer)**
 
 Replace placeholder values with actual regional forecasts:
+
 ```
 OCR East forecast: [X]% ± [Y]%  →  OCR East forecast: 10.5% ± 2.5%
 RCR forecast: [X]% ± [Y]%  →  RCR forecast: 6.2% ± 3.2%
@@ -2452,6 +2626,7 @@ Replace RCR and OCR East forecasts with actual values.
 **Step 4: Verify all calculations are correct with new numbers**
 
 Example verification:
+
 ```bash
 # If OCR East is 10.5% on $600K flat
 # Expected gain = $600K * 10.5% = $63K
@@ -2476,6 +2651,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 3.4: Update Methodology Performance Metrics
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 - Read: Backtesting results from `scripts/analytics/pipelines/cross_validate_timeseries.py`
 
@@ -2518,11 +2694,13 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 3.5: Update Technical Appendix
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Replace all remaining placeholders**
 
 Search for all remaining `[PLACEHOLDER]` patterns:
+
 ```bash
 grep -n "\[.*\]" app/src/content/analytics/analyze_price_appreciation_predictions.md
 ```
@@ -2530,6 +2708,7 @@ grep -n "\[.*\]" app/src/content/analytics/analyze_price_appreciation_prediction
 **Step 2: Replace with actual values**
 
 Common placeholders to replace:
+
 - Data vintage dates
 - Transaction counts
 - SORA rates
@@ -2563,6 +2742,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 4.1: Technical Review
 
 **Files:**
+
 - Review: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Verify all forecast numbers are accurate**
@@ -2581,6 +2761,7 @@ for _, row in df.iterrows():
 **Step 2: Verify all calculations are correct**
 
 Check scenario examples:
+
 - $600K × 10.5% = $63K ✅
 - 24-month gains ✅
 - Spread calculations ✅
@@ -2599,6 +2780,7 @@ done
 **Step 4: Verify all component imports are valid**
 
 Check that all Astro components exist:
+
 ```bash
 ls -la app/src/components/analytics/
 # Should see: Tooltip.astro, StatCallout.astro, ImplicationBox.astro, Scenario.astro, DecisionChecklist.astro
@@ -2611,6 +2793,7 @@ ls -la app/src/components/analytics/
 ### Task 4.2: Editorial Review
 
 **Files:**
+
 - Review: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Check for consistency**
@@ -2639,6 +2822,7 @@ ls -la app/src/components/analytics/
 ### Task 4.3: Link Validation
 
 **Files:**
+
 - Review: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Test dashboard link**
@@ -2679,6 +2863,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 4.4: Front Matter Update
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_price_appreciation_predictions.md`
 
 **Step 1: Update publication date**
@@ -2690,12 +2875,13 @@ date: 2026-02-XX  →  date: 2026-02-19
 **Step 2: Update status**
 
 ```yaml
-status: published  # (or "draft" if not ready)
+status: published # (or "draft" if not ready)
 ```
 
 **Step 3: Verify all front matter fields**
 
 Check that all required fields are present:
+
 - title
 - category
 - description
@@ -2722,6 +2908,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ### Task 4.5: Build Verification
 
 **Files:**
+
 - Build: Astro site
 
 **Step 1: Build the site**
@@ -2732,6 +2919,7 @@ uv run astro build
 ```
 
 **Expected output:**
+
 ```
 ✓ Building in SSR mode
 ✓ Generated static pages
@@ -2742,6 +2930,7 @@ build complete in X.XXs
 **Step 2: Check for build errors**
 
 If build fails, check error messages and fix:
+
 - Missing imports
 - Invalid markdown syntax
 - Missing images
@@ -2762,6 +2951,7 @@ Visit `http://localhost:4321/analytics/analyze_price_appreciation_predictions` t
 ### Task 4.6: Final Commit and Tag
 
 **Files:**
+
 - Git operations
 
 **Step 1: Review all commits**
@@ -2841,6 +3031,7 @@ git push origin analytics/price-forecasts/v1.0
 ## Success Criteria
 
 **Content Requirements:**
+
 - ✅ All 12 sections complete
 - ✅ All 10 visualizations generated and embedded
 - ✅ All 3 personas addressed with specific guidance
@@ -2849,6 +3040,7 @@ git push origin analytics/price-forecasts/v1.0
 - ✅ Zero placeholders in final version
 
 **Quality Requirements:**
+
 - ✅ All forecast numbers sourced from VAR pipeline output
 - ✅ All claims backed by data (no speculation)
 - ✅ Confidence intervals clearly communicated
@@ -2856,6 +3048,7 @@ git push origin analytics/price-forecasts/v1.0
 - ✅ Action steps specific and measurable
 
 **Technical Requirements:**
+
 - ✅ Markdown file valid for Astro processing
 - ✅ All image paths correct and relative
 - ✅ All component imports valid
@@ -2873,6 +3066,7 @@ git push origin analytics/price-forecasts/v1.0
 **Issue: Build fails due to missing Astro components**
 
 **Solution:** Copy components from MRT analysis:
+
 ```bash
 cp app/src/components/analytics/* app/src/components/analytics/
 ```
@@ -2884,6 +3078,7 @@ cp app/src/components/analytics/* app/src/components/analytics/
 **Issue: Placeholders not replaced**
 
 **Solution:** Run grep to find remaining placeholders:
+
 ```bash
 grep -rn "\[.*\]" app/src/content/analytics/analyze_price_appreciation_predictions.md
 ```

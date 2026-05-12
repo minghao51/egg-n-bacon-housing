@@ -34,10 +34,10 @@ Cooling measures do **not** transmit evenly across Singapore housing segments. T
 
 ### 1. Prime condos reacted differently from HDB
 
-| Policy event | Segment | Observed effect | Interpretation |
-|-------------|---------|-----------------|----------------|
-| Sep 2022 ABSD changes | CCR condos vs OCR | about -$137,743 relative effect | Prime condos were meaningfully suppressed |
-| Dec 2023 cooling measures | HDB | about +$13,118 immediate jump | HDB did not show the intended cooling response |
+| Policy event              | Segment           | Observed effect                 | Interpretation                                 |
+| ------------------------- | ----------------- | ------------------------------- | ---------------------------------------------- |
+| Sep 2022 ABSD changes     | CCR condos vs OCR | about -$137,743 relative effect | Prime condos were meaningfully suppressed      |
+| Dec 2023 cooling measures | HDB               | about +$13,118 immediate jump   | HDB did not show the intended cooling response |
 
 **Impact**
 
@@ -48,9 +48,9 @@ Cooling measures do **not** transmit evenly across Singapore housing segments. T
 
 The causal work suggests that immediate level changes and post-announcement slope changes can tell different stories from simple before-and-after comparisons.
 
-| Timing lens | What it adds |
-|------------|--------------|
-| Difference-in-differences | Relative segment effect |
+| Timing lens                      | What it adds                             |
+| -------------------------------- | ---------------------------------------- |
+| Difference-in-differences        | Relative segment effect                  |
 | Regression discontinuity in time | Immediate jump and slope-change behavior |
 
 **Impact**
@@ -60,10 +60,10 @@ The causal work suggests that immediate level changes and post-announcement slop
 
 ### 3. Lease mispricing is concentrated, not universal
 
-| Lease range | Signal |
-|------------|--------|
+| Lease range | Signal                                          |
+| ----------- | ----------------------------------------------- |
 | 30-50 years | Market appears richly priced relative to theory |
-| 80-84 years | Mild undervaluation in some cases |
+| 80-84 years | Mild undervaluation in some cases               |
 | 97-98 years | Large discount relative to theoretical schedule |
 
 **Impact**

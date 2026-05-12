@@ -34,6 +34,7 @@ git push origin feature/your-feature-name
 ### Setting Up Your Environment
 
 **Prerequisites:**
+
 - Python 3.11+
 - [uv](https://github.com/astral-sh/uv) package manager
 - OneMap API account (for geocoding)
@@ -88,6 +89,7 @@ uv run ruff check . --fix
 ```
 
 **Code Style:**
+
 - Line length: 100 characters
 - Python 3.11+ type hints required
 - Google-style docstrings
@@ -114,12 +116,14 @@ uv run python scripts/run_pipeline.py --stage L5    # Dashboard data
 ### What to Work On
 
 **Good first issues:**
+
 - Look for issues labeled `good first issue`
 - Improve test coverage
 - Update documentation
 - Fix bugs
 
 **Areas needing attention:**
+
 - `scripts/analytics/` - Missing test coverage
 - `scripts/data/` - Missing test coverage
 - Performance optimizations (geocoding, data loading)
@@ -184,6 +188,7 @@ logger.error(f"API request failed: {status_code}")
 ### Adding New Features
 
 **For new pipeline stages:**
+
 1. Create file in `scripts/core/stages/` (e.g., `L6_my_feature.py`)
 2. Add stage to `scripts/run_pipeline.py`
 3. Update `docs/architecture.md`
@@ -191,6 +196,7 @@ logger.error(f"API request failed: {status_code}")
 5. Update `CLAUDE.md` if conventions change
 
 **For new analyses:**
+
 1. Create script in `scripts/analytics/analysis/{category}/`
 2. Save output to `data/analysis/`
 3. Document findings in `docs/analytics/`
@@ -274,6 +280,7 @@ npm run test:e2e
 ```
 
 **Types:**
+
 - `feat` - New feature
 - `fix` - Bug fix
 - `docs` - Documentation changes
@@ -282,6 +289,7 @@ npm run test:e2e
 - `chore` - Maintenance tasks
 
 **Examples:**
+
 ```
 feat(pipeline): add parallel geocoding support
 fix(geocoding): handle OneMap token expiry
@@ -336,12 +344,14 @@ egg-n-bacon-housing/
 ## Getting Help
 
 **Resources:**
+
 - [Documentation](docs/README.md) - Complete documentation hub
 - [Architecture](docs/architecture.md) - System design
 - [CLAUDE.md](CLAUDE.md) - Detailed project conventions
 - [GitHub Issues](https://github.com/your-org/egg-n-bacon-housing/issues) - Bug reports and feature requests
 
 **Asking questions:**
+
 1. Search existing issues and docs first
 2. Include error messages, steps to reproduce
 3. Specify your environment (OS, Python version, uv version)
@@ -354,6 +364,7 @@ egg-n-bacon-housing/
 Be respectful, inclusive, and constructive. We're all here to build something useful together.
 
 **Guidelines:**
+
 - Use inclusive language
 - Provide constructive feedback
 - Accept feedback gracefully

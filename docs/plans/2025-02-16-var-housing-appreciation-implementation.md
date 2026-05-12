@@ -15,6 +15,7 @@
 ## Task 1: Create Regional Mapping Configuration
 
 **Files:**
+
 - Create: `scripts/core/config/regional_mapping.py`
 - Test: `tests/core/test_regional_mapping.py`
 
@@ -211,6 +212,7 @@ Part of VAR housing appreciation forecasting system"
 ## Task 2: Fetch Macroeconomic Data
 
 **Files:**
+
 - Create: `scripts/data/fetch_macro_data.py`
 - Create: `data/raw_data/macro/.gitkeep`
 - Test: `tests/data/test_fetch_macro_data.py`
@@ -566,6 +568,7 @@ Part of VAR housing appreciation forecasting system"
 ## Task 3: Create Time Series Dataset Preparation Pipeline
 
 **Files:**
+
 - Create: `scripts/analytics/pipelines/prepare_timeseries_data.py`
 - Create: `tests/analytics/test_prepare_timeseries_data.py`
 - Test: `tests/analytics/pipelines/test_prepare_timeseries_data.py`
@@ -1085,6 +1088,7 @@ Part of VAR housing appreciation forecasting system"
 ## Task 4: Implement Regional VAR Model Training
 
 **Files:**
+
 - Create: `scripts/analytics/models/regional_var.py`
 - Create: `tests/analytics/models/test_regional_var.py`
 
@@ -1540,6 +1544,7 @@ Part of VAR housing appreciation forecasting system"
 ## Task 5: Implement Planning Area ARIMAX Model
 
 **Files:**
+
 - Create: `scripts/analytics/models/area_arimax.py`
 - Create: `tests/analytics/models/test_area_arimax.py`
 
@@ -1932,6 +1937,7 @@ Part of VAR housing appreciation forecasting system"
 ## Task 6: Implement Cross-Validation Pipeline
 
 **Files:**
+
 - Create: `scripts/analytics/pipelines/cross_validate_timeseries.py`
 - Create: `tests/analytics/pipelines/test_cross_validate.py`
 
@@ -2255,6 +2261,7 @@ Part of VAR housing appreciation forecasting system"
 ## Task 7: Implement Forecasting Pipeline
 
 **Files:**
+
 - Create: `scripts/analytics/pipelines/forecast_appreciation.py`
 - Create: `tests/analytics/pipelines/test_forecast_appreciation.py`
 

@@ -43,14 +43,17 @@ The Egg-n-Bacon-Housing data pipeline collects, processes, and engineers feature
 ## L0: Data Collection
 
 ### Purpose
+
 Collect raw data from external government APIs and web sources.
 
 ### Data Sources
 
 #### 1. data.gov.sg API
+
 **Notebooks**: `L0_datagovsg.ipynb`
 
 **Datasets Collected**:
+
 - `raw_datagov_general_sale` - General property sale statistics
 - `raw_datagov_rental_index` - Rental price indices over time
 - `raw_datagov_price_index` - Property price indices
@@ -68,15 +71,18 @@ Collect raw data from external government APIs and web sources.
 **Data Volume**: ~100K rows per dataset
 
 #### 2. OneMap API
+
 **Notebooks**: `L0_onemap.ipynb`
 
 **Datasets Collected**:
+
 - `raw_onemap_planning_area_names` - Singapore planning areas
 - `raw_onemap_household_income` - Household income by planning area
 
 **API Authentication**: Email/password required
 
 **API Endpoints**:
+
 - Planning Area Search: `https://www.onemap.gov.sg/apis/planning-area`
 - Household Income: `https://www.onemap.gov.sg/api/public/popapi/getHouseholdIncome`
 
@@ -85,9 +91,11 @@ Collect raw data from external government APIs and web sources.
 **Data Volume**: ~50 rows per dataset
 
 #### 3. Wikipedia Scraping
+
 **Notebooks**: `L0_wiki.ipynb`
 
 **Datasets Collected**:
+
 - `raw_wiki_shopping_mall` - Singapore shopping malls list
 
 **Source**: Wikipedia page scraping
@@ -99,6 +107,7 @@ Collect raw data from external government APIs and web sources.
 ### Output Format
 
 All L0 datasets are saved as parquet files with the following structure:
+
 ```python
 {
     "dataset_name": "raw_<source>_<data_type>",
@@ -112,17 +121,18 @@ All L0 datasets are saved as parquet files with the following structure:
 ### Metadata Tracking
 
 All datasets are tracked in `data/metadata.json`:
+
 ```json
 {
-    "raw_datagov_general_sale": {
-        "path": "raw_data/raw_datagov_general_sale.parquet",
-        "version": "2025-01-20",
-        "rows": 15000,
-        "created": "2025-01-20T10:00:00Z",
-        "source": "data.gov.sg API",
-        "checksum": "abc123...",
-        "mode": "overwrite"
-    }
+  "raw_datagov_general_sale": {
+    "path": "raw_data/raw_datagov_general_sale.parquet",
+    "version": "2025-01-20",
+    "rows": 15000,
+    "created": "2025-01-20T10:00:00Z",
+    "source": "data.gov.sg API",
+    "checksum": "abc123...",
+    "mode": "overwrite"
+  }
 }
 ```
 
@@ -137,21 +147,25 @@ All datasets are tracked in `data/metadata.json`:
 ## L1: Data Processing
 
 ### Purpose
+
 Clean, standardize, and transform raw data into analysis-ready formats.
 
 ### Processing Steps
 
 #### 1. URA Transaction Processing
+
 **Notebooks**: `L1_ura_transactions_processing.ipynb`
 
 **Input**: CSV files from URA (Urban Redevelopment Authority)
 
 **Outputs**:
+
 - `L1_housing_ec_transaction` - Executive condo transactions
 - `L1_housing_condo_transaction` - Private condominium transactions
 - `L1_housing_hdb_transaction` - HDB transactions
 
 **Transformations**:
+
 - Column name standardization
 - Data type conversion
 - Date parsing and standardization
@@ -161,23 +175,27 @@ Clean, standardize, and transform raw data into analysis-ready formats.
 - Outlier detection and filtering
 
 **Quality Checks**:
+
 - No null critical fields (price, date, property_id)
 - Valid date ranges
 - Positive prices
 - Unique property IDs
 
 #### 2. Utilities Processing
+
 **Notebooks**: `L1_utilities_processing.ipynb`
 
 **Input**: Raw data from L0, OneMap API queries
 
 **Outputs**:
+
 - `L1_school_queried` - Schools with geospatial data
 - `L1_mall_queried` - Shopping malls with geospatial data
 - `L1_waterbody` - Water bodies in Singapore
 - `L1_amenity` - General amenities
 
 **Transformations**:
+
 - Geospatial queries (lat/lng → postal code, planning area)
 - Distance calculations
 - Category standardization
@@ -185,16 +203,19 @@ Clean, standardize, and transform raw data into analysis-ready formats.
 - Data enrichment from multiple sources
 
 **API Calls**:
+
 - OneMap Geocoding API
 - OneMap Reverse Geocoding API
 
 **Rate Limiting**:
+
 - 1 request per second (respectful API usage)
 - Retry on 429 (Too Many Requests)
 
 ### Data Schema Examples
 
 #### Transaction Data (L1)
+
 ```python
 {
     "transaction_id": "str",
@@ -211,6 +232,7 @@ Clean, standardize, and transform raw data into analysis-ready formats.
 ```
 
 #### Amenity Data (L1)
+
 ```python
 {
     "amenity_id": "str",
@@ -229,16 +251,19 @@ Clean, standardize, and transform raw data into analysis-ready formats.
 ## L2: Feature Engineering
 
 ### Purpose
+
 Create features for machine learning and analysis from processed data.
 
 ### Feature Categories
 
 #### 1. Property Features
+
 **Notebooks**: `L2_sales_facilities.ipynb`
 
 **Input**: L1 transaction data, L1 amenity data
 
 **Outputs**:
+
 - `L3_property` - Enhanced property data with features
 - `L3_private_property_facilities` - Private property facilities
 - `L3_property_nearby_facilities` - Nearby amenities counts
@@ -246,6 +271,7 @@ Create features for machine learning and analysis from processed data.
 - `L3_property_listing_sales` - Listing sales data
 
 **Features Created**:
+
 - Distance to nearest MRT station
 - Number of schools within 1km
 - Number of malls within 1km
@@ -256,19 +282,24 @@ Create features for machine learning and analysis from processed data.
 - Remaining lease years
 
 #### 2. Distance Features
+
 **Calculations**:
+
 - Haversine distance for lat/lng
 - Walking distance (via OneMap routing API, optional)
 - Driving distance (via OneMap routing API, optional)
 
 #### 3. Aggregation Features
+
 **By Planning Area**:
+
 - Average price per sqft
 - Median transaction volume
 - Price growth rate
 - Rental yield
 
 **By Time Period**:
+
 - Monthly transaction counts
 - Quarterly price indices
 - Year-over-year changes
@@ -294,6 +325,7 @@ L2/L3 Data
 ### Feature Selection
 
 **Used for Modeling**:
+
 - Distance to MRT (top predictor)
 - Planning area (categorical)
 - Property type (categorical)
@@ -303,6 +335,7 @@ L2/L3 Data
 - Nearby school count
 
 **Dropped**:
+
 - Redundant features (high correlation >0.95)
 - Low variance features (<1% variance)
 - Leakage features (future information)
@@ -312,6 +345,7 @@ L2/L3 Data
 ## L3: Export
 
 ### Purpose
+
 Export processed and feature-engineered data to external systems.
 
 ### Current Status (2026-01-22)
@@ -319,6 +353,7 @@ Export processed and feature-engineered data to external systems.
 The pipeline currently operates entirely with local parquet files. Cloud export functionality (S3, Supabase, Databricks) has been deprecated and archived.
 
 **Why local-only?**
+
 - Faster development iteration
 - No dependency on external services
 - Simpler architecture
@@ -327,6 +362,7 @@ The pipeline currently operates entirely with local parquet files. Cloud export 
 ### Local Output Format
 
 All L3 datasets are saved as parquet files in `data/parquets/`:
+
 - `L3_property` - Enhanced property data with features
 - `L3_private_property_facilities` - Private property facilities
 - `L3_property_nearby_facilities` - Nearby amenities counts
@@ -338,6 +374,7 @@ All L3 datasets are saved as parquet files in `data/parquets/`:
 If you need S3/Supabase/Databricks integration in the future:
 
 1. **Archived notebooks available in**: `docs/archive/notebooks/`
+
    - `L3_upload_s3.ipynb` - S3 and Supabase export
    - `L4_s3_databricks_catalog.py` - Databricks Delta tables
 
@@ -354,6 +391,7 @@ If you need S3/Supabase/Databricks integration in the future:
 ### Prerequisites
 
 1. **Environment Setup**:
+
    ```bash
    uv sync
    cp .env.example .env
@@ -361,6 +399,7 @@ If you need S3/Supabase/Databricks integration in the future:
    ```
 
 2. **Required API Keys**:
+
    - `ONEMAP_EMAIL` - For OneMap API
    - `ONEMAP_EMAIL_PASSWORD` - For OneMap API
    - `GOOGLE_API_KEY` - For LangChain agents
@@ -375,6 +414,7 @@ If you need S3/Supabase/Databricks integration in the future:
 Run notebooks in order:
 
 1. **L0: Data Collection**
+
    ```bash
    uv run jupyter notebook notebooks/L0_datagovsg.ipynb
    uv run jupyter notebook notebooks/L0_onemap.ipynb
@@ -382,6 +422,7 @@ Run notebooks in order:
    ```
 
 2. **L1: Data Processing**
+
    ```bash
    uv run jupyter notebook notebooks/L1_ura_transactions_processing.ipynb
    uv run jupyter notebook notebooks/L1_utilities_processing.ipynb
@@ -417,12 +458,14 @@ uv run jupytext --sync L0_datagovsg.ipynb
 ### Validation Checks
 
 #### L0 Validation
+
 - ✅ API response is valid JSON
 - ✅ Expected fields are present
 - ✅ No duplicate records
 - ✅ File checksum matches
 
 #### L1 Validation
+
 - ✅ No null critical fields
 - ✅ Valid date ranges
 - ✅ Positive prices
@@ -430,12 +473,14 @@ uv run jupytext --sync L0_datagovsg.ipynb
 - ✅ Geocoding success rate >95%
 
 #### L2 Validation
+
 - ✅ No negative distances
 - ✅ Feature counts non-negative
 - ✅ No infinite values
 - ✅ Correlation matrix sanity check
 
 #### L3 Validation
+
 - ✅ Parquet files successfully created
 - ✅ Row counts match expectations
 - ✅ No missing critical fields
@@ -446,6 +491,7 @@ uv run jupytext --sync L0_datagovsg.ipynb
 ### Monitoring
 
 **Track in `data/metadata.json`**:
+
 - Dataset versions
 - Checksums for integrity
 - Row counts
@@ -453,6 +499,7 @@ uv run jupytext --sync L0_datagovsg.ipynb
 - Source lineage
 
 **Alert on**:
+
 - Checksum mismatches
 - Missing files
 - Drastic row count changes (>50%)
@@ -465,18 +512,21 @@ uv run jupytext --sync L0_datagovsg.ipynb
 ### Parquet Optimization
 
 **Column Pruning**:
+
 ```python
 # Only load needed columns
 df = pd.read_parquet(path, columns=['col1', 'col2', 'col3'])
 ```
 
 **Filter Pushdown**:
+
 ```python
 # Filter before loading
 df = pd.read_parquet(path, filters=[('year', '>=', 2020)])
 ```
 
 **Compression**:
+
 - Using `snappy` compression (default)
 - Balance between speed and size
 - 50-70% compression ratio
@@ -484,6 +534,7 @@ df = pd.read_parquet(path, filters=[('year', '>=', 2020)])
 ### API Optimization
 
 **Caching**:
+
 ```python
 from functools import lru_cache
 
@@ -494,6 +545,7 @@ def geocode(postal_code):
 ```
 
 **Batching**:
+
 - Process 1000 records at a time
 - Parallel processing where possible
 - Rate limiting to respect API limits
@@ -505,33 +557,41 @@ def geocode(postal_code):
 ### Common Issues
 
 #### 1. API Rate Limiting
+
 **Error**: `429 Too Many Requests`
 
 **Solution**:
+
 - Increase delay between requests
 - Check API quota limits
 - Use exponential backoff
 
 #### 2. Memory Issues
+
 **Error**: `MemoryError` or notebook kernel crash
 
 **Solution**:
+
 - Process data in chunks
 - Use `chunksize` parameter in pandas
 - Close unused datasets
 
 #### 3. Geocoding Failures
+
 **Error**: `Failed to geocode postal code`
 
 **Solution**:
+
 - Check OneMap API status
 - Verify postal code format
 - Use cached results where possible
 
 #### 4. File Not Found
+
 **Error**: `FileNotFoundError: Parquet file not found`
 
 **Solution**:
+
 - Run preceding notebooks first
 - Check `data/metadata.json` for dependencies
 - Verify dataset was created successfully
@@ -539,12 +599,14 @@ def geocode(postal_code):
 ### Debug Mode
 
 Enable verbose logging:
+
 ```python
 import logging
 logging.basicConfig(level=logging.DEBUG)
 ```
 
 Check dataset metadata:
+
 ```python
 from scripts.core.data_helpers import list_datasets
 datasets = list_datasets()
@@ -552,6 +614,7 @@ print(datasets)
 ```
 
 Verify file integrity:
+
 ```python
 from scripts.core.data_helpers import verify_metadata
 is_valid = verify_metadata()
@@ -565,16 +628,19 @@ print(f"All datasets valid: {is_valid}")
 ### Regular Tasks
 
 **Weekly**:
+
 - Run L0 notebooks to fetch latest data
 - Check for API changes
 - Monitor data quality
 
 **Monthly**:
+
 - Run full pipeline (L0→L3)
 - Update feature engineering
 - Review and optimize slow queries
 
 **Quarterly**:
+
 - Review and update documentation
 - Clean up old data versions
 - Performance tuning
@@ -602,6 +668,7 @@ print(f"All datasets valid: {is_valid}")
 ### Complete Dataset List
 
 #### L0 Datasets (Raw)
+
 1. `raw_datagov_general_sale`
 2. `raw_datagov_rental_index`
 3. `raw_datagov_price_index`
@@ -616,6 +683,7 @@ print(f"All datasets valid: {is_valid}")
 12. `raw_wiki_shopping_mall`
 
 #### L1 Datasets (Processed)
+
 1. `L1_housing_ec_transaction`
 2. `L1_housing_condo_transaction`
 3. `L1_housing_hdb_transaction`
@@ -627,6 +695,7 @@ print(f"All datasets valid: {is_valid}")
 9. `L1_amenity`
 
 #### L2/L3 Datasets (Features)
+
 1. `L3_property`
 2. `L3_private_property_facilities`
 3. `L3_property_nearby_facilities`

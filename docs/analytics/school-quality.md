@@ -34,11 +34,11 @@ Properties near stronger schools do appear to command higher prices in standard 
 
 ### 1. School quality shows up in pricing models
 
-| Feature | Coefficient | Interpretation |
-|---------|-------------|----------------|
-| `school_primary_quality_score` | +$9.66 PSF | Higher quality is associated with higher prices |
-| `school_primary_dist_score` | +$6.27 PSF | Better primary-school access adds value |
-| `school_secondary_dist_score` | +$3.52 PSF | Secondary access also matters |
+| Feature                        | Coefficient | Interpretation                                  |
+| ------------------------------ | ----------- | ----------------------------------------------- |
+| `school_primary_quality_score` | +$9.66 PSF  | Higher quality is associated with higher prices |
+| `school_primary_dist_score`    | +$6.27 PSF  | Better primary-school access adds value         |
+| `school_secondary_dist_score`  | +$3.52 PSF  | Secondary access also matters                   |
 
 For a 1,000 sqft unit, a 3-point quality-score difference implies about **$29,000** in modeled price difference.
 
@@ -51,11 +51,11 @@ For a 1,000 sqft unit, a 3-point quality-score difference implies about **$29,00
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="School quality effect by HDB region" data-chart-columns="Records,School Quality Coefficient,R²"></div>
 
-| Segment | Records | School Quality Coefficient | R² |
-|---------|---------|---------------------------|-----|
-| HDB_OCR | 146,553 | +$9.63 PSF | 0.53 |
-| HDB_RCR | 46,298 | -$23.67 PSF | 0.80 |
-| HDB_CCR | 1,314 | about $0 PSF | 0.87 |
+| Segment | Records | School Quality Coefficient | R²   |
+| ------- | ------- | -------------------------- | ---- |
+| HDB_OCR | 146,553 | +$9.63 PSF                 | 0.53 |
+| HDB_RCR | 46,298  | -$23.67 PSF                | 0.80 |
+| HDB_CCR | 1,314   | about $0 PSF               | 0.87 |
 
 **What stands out**
 
@@ -67,11 +67,11 @@ For a 1,000 sqft unit, a 3-point quality-score difference implies about **$29,00
 
 Regression discontinuity around the 1km admissions boundary does **not** support a clean positive premium.
 
-| RDD metric | Value | Interpretation |
-|-----------|-------|----------------|
-| Treatment effect | -$79.47 PSF | Units within 1km were cheaper after controls |
-| Sample size | 52,881 | Large enough to take seriously |
-| Covariate balance | Failed | Boundary groups differ systematically |
+| RDD metric        | Value       | Interpretation                               |
+| ----------------- | ----------- | -------------------------------------------- |
+| Treatment effect  | -$79.47 PSF | Units within 1km were cheaper after controls |
+| Sample size       | 52,881      | Large enough to take seriously               |
+| Covariate balance | Failed      | Boundary groups differ systematically        |
 
 **Impact**
 

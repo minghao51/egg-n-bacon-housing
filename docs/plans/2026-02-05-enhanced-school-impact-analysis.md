@@ -13,12 +13,14 @@
 ## Prerequisites
 
 **Read These Files First:**
+
 - `docs/analytics/school-impact-analysis.md` - Current pipeline documentation
 - `docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md` - Design specification
 - `scripts/analytics/analysis/school/analyze_school_impact.py` - Existing main analysis
 - `scripts/core/school_features.py` - School feature calculation logic
 
 **Verify Data:**
+
 ```bash
 uv run python -c "import pandas as pd; df = pd.read_parquet('data/pipeline/04_platinum/housing_unified.parquet'); print(f'Shape: {df.shape}'); print(f'School cols: {[c for c in df.columns if \"school\" in c.lower()]}')"
 ```
@@ -30,11 +32,13 @@ Expected: Shape with 110 columns, including school_accessibility_score, nearest_
 ## Task 1: Add Dependencies
 
 **Files:**
+
 - Modify: `pyproject.toml`
 
 **Step 1: Add scipy and statsmodels to dependencies**
 
 Run:
+
 ```bash
 uv add scipy statsmodels
 ```
@@ -44,6 +48,7 @@ Expected: Output shows packages added to pyproject.toml
 **Step 2: Verify installation**
 
 Run:
+
 ```bash
 uv run python -c "import scipy; import statsmodels; print('Dependencies installed')"
 ```
@@ -62,14 +67,16 @@ git commit -m "feat: add scipy and statsmodels for RDD and spatial analysis"
 ## Task 2: Create Utils Directory Structure
 
 **Files:**
+
 - Create: `scripts/analytics/analysis/school/utils/__init__.py`
 - Create: `scripts/analytics/analysis/school/utils/spatial_validation.py`
 - Create: `scripts/analytics/analysis/school/utils/rdd_estimators.py`
 - Create: `scripts/analytics/analysis/school/utils/interaction_models.py`
 
-**Step 1: Create __init__.py**
+**Step 1: Create **init**.py**
 
 Create file `scripts/analytics/analysis/school/utils/__init__.py`:
+
 ```python
 """Shared utilities for enhanced school impact analysis."""
 
@@ -92,11 +99,13 @@ git commit -m "feat: add utils package for shared school analysis utilities"
 ## Task 3: Implement Spatial Validation Utilities
 
 **Files:**
+
 - Modify: `scripts/analytics/analysis/school/utils/spatial_validation.py`
 
 **Step 1: Write SpatialValidator class**
 
 Create file `scripts/analytics/analysis/school/utils/spatial_validation.py`:
+
 ```python
 """Spatial cross-validation utilities for school impact analysis."""
 
@@ -315,6 +324,7 @@ class SpatialValidator:
 **Step 2: Test the utilities**
 
 Run:
+
 ```bash
 uv run python -c "
 from scripts.analytics.analysis.school.utils.spatial_validation import SpatialValidator
@@ -339,11 +349,13 @@ git commit -m "feat: implement SpatialValidator class for spatial cross-validati
 ## Task 4: Implement RDD Estimator Utilities
 
 **Files:**
+
 - Modify: `scripts/analytics/analysis/school/utils/rdd_estimators.py`
 
 **Step 1: Write RDDEstimator class**
 
 Create file `scripts/analytics/analysis/school/utils/rdd_estimators.py`:
+
 ```python
 """Regression Discontinuity Design utilities for causal inference."""
 
@@ -748,6 +760,7 @@ class RDDEstimator:
 **Step 2: Test the utilities**
 
 Run:
+
 ```bash
 uv run python -c "
 from scripts.analytics.analysis.school.utils.rdd_estimators import RDDEstimator
@@ -772,11 +785,13 @@ git commit -m "feat: implement RDDEstimator class for causal inference"
 ## Task 5: Implement Segmentation Analyzer Utilities
 
 **Files:**
+
 - Modify: `scripts/analytics/analysis/school/utils/interaction_models.py`
 
 **Step 1: Write SegmentationAnalyzer class**
 
 Create file `scripts/analytics/analysis/school/utils/interaction_models.py`:
+
 ```python
 """Segmentation and interaction effects analysis utilities."""
 
@@ -1090,6 +1105,7 @@ class SegmentationAnalyzer:
 **Step 2: Test the utilities**
 
 Run:
+
 ```bash
 uv run python -c "
 from scripts.analytics.analysis.school.utils.interaction_models import SegmentationAnalyzer
@@ -1114,11 +1130,13 @@ git commit -m "feat: implement SegmentationAnalyzer for heterogeneous effects"
 ## Task 6: Implement Spatial CV Analysis Script
 
 **Files:**
+
 - Create: `scripts/analytics/analysis/school/analyze_school_spatial_cv.py`
 
 **Step 1: Write main spatial CV script**
 
 Create file `scripts/analytics/analysis/school/analyze_school_spatial_cv.py`:
+
 ```python
 """
 Spatial Cross-Validation Analysis for School Impact
@@ -1297,6 +1315,7 @@ if __name__ == "__main__":
 **Step 2: Run spatial CV analysis**
 
 Run:
+
 ```bash
 uv run python scripts/analytics/analysis/school/analyze_school_spatial_cv.py
 ```
@@ -1315,11 +1334,13 @@ git commit -m "feat: add spatial cross-validation analysis script"
 ## Task 7: Implement RDD Analysis Script
 
 **Files:**
+
 - Create: `scripts/analytics/analysis/school/analyze_school_rdd.py`
 
 **Step 1: Write main RDD script**
 
 Create file `scripts/analytics/analysis/school/analyze_school_rdd.py`:
+
 ```python
 """
 Regression Discontinuity Design Analysis for Causal Inference
@@ -1481,6 +1502,7 @@ if __name__ == "__main__":
 **Step 2: Run RDD analysis**
 
 Run:
+
 ```bash
 uv run python scripts/analytics/analysis/school/analyze_school_rdd.py
 ```
@@ -1499,11 +1521,13 @@ git commit -m "feat: add RDD causal inference analysis script"
 ## Task 8: Implement Segmentation Analysis Script
 
 **Files:**
+
 - Create: `scripts/analytics/analysis/school/analyze_school_segmentation.py`
 
 **Step 1: Write main segmentation script**
 
 Create file `scripts/analytics/analysis/school/analyze_school_segmentation.py`:
+
 ```python
 """
 Segmentation and Interaction Effects Analysis
@@ -1658,6 +1682,7 @@ if __name__ == "__main__":
 **Step 2: Run segmentation analysis**
 
 Run:
+
 ```bash
 uv run python scripts/analytics/analysis/school/analyze_school_segmentation.py
 ```
@@ -1676,11 +1701,13 @@ git commit -m "feat: add segmentation and interaction analysis script"
 ## Task 9: Update Documentation
 
 **Files:**
+
 - Modify: `docs/analytics/school-impact-analysis.md`
 
 **Step 1: Add new sections to documentation**
 
 Read the existing documentation:
+
 ```bash
 cat docs/analytics/school-impact-analysis.md
 ```
@@ -1689,7 +1716,7 @@ Then update with new sections by inserting after "Pipeline Scripts" section:
 
 Add to `docs/analytics/school-impact-analysis.md` (insert after line 139, before "Data Requirements"):
 
-```markdown
+````markdown
 ## Enhanced Analysis Modules
 
 ### 5. Spatial Cross-Validation (`analyze_school_spatial_cv.py`)
@@ -1697,27 +1724,33 @@ Add to `docs/analytics/school-impact-analysis.md` (insert after line 139, before
 **Purpose:** Test whether school impact models generalize to new geographic areas, guarding against spatial autocorrelation bias.
 
 **Key Features:**
+
 - Compares standard KFold vs GroupKFold (spatial) cross-validation
 - Calculates spatial generalization gap (R² drop when testing on new areas)
 - Identifies which planning areas generalize well vs poorly
 - Tests for spatial autocorrelation in residuals using Moran's I
 
 **Research Questions:**
+
 - Do school impact models overfit to specific neighborhoods?
 - Which planning areas are hardest to predict?
 - How much does spatial autocorrelation inflate performance metrics?
 
 **Outputs:**
+
 - `spatial_cv_performance.csv`: Performance comparison (OLS/RF/XGBoost)
 - `planning_area_generalization.csv`: Area-by-area diagnostics
 - `spatial_autocorrelation_test.csv`: Moran's I test results
 
 **Usage:**
+
 ```bash
 uv run python scripts/analytics/analysis/school/analyze_school_spatial_cv.py
 ```
+````
 
 **Interpretation:**
+
 - **Generalization gap >10%**: Significant spatial autocorrelation, model needs spatial regularization
 - **High gap area**: Model fails to generalize, may need area-specific features
 - **Moran's I >0**: Residuals clustered spatially (violates independence assumption)
@@ -1727,6 +1760,7 @@ uv run python scripts/analytics/analysis/school/analyze_school_spatial_cv.py
 **Purpose:** Establish causal effect of school proximity using Regression Discontinuity Design at 1km admission boundary.
 
 **Key Features:**
+
 - Exploits Singapore's primary school 1km admission priority as natural experiment
 - Compares properties just inside vs just outside 1km radius
 - Bandwidth sensitivity testing (100m-300m)
@@ -1734,11 +1768,13 @@ uv run python scripts/analytics/analysis/school/analyze_school_spatial_cv.py
 - Covariate balance validation
 
 **Research Questions:**
+
 - What is the **causal** effect of being within 1km of a top school?
 - Do OLS coefficients suffer from selection bias?
 - How robust is the causal estimate to bandwidth changes?
 
 **Outputs:**
+
 - `rdd_main_effect.csv`: Causal estimate (τ) with robust standard errors
 - `rdd_bandwidth_sensitivity.csv`: Results across bandwidths
 - `rdd_covariate_balance.csv`: Balance statistics for controls
@@ -1746,17 +1782,20 @@ uv run python scripts/analytics/analysis/school/analyze_school_spatial_cv.py
 - `rdd_visualization.png`: Price discontinuity plot
 
 **Usage:**
+
 ```bash
 uv run python scripts/analytics/analysis/school/analyze_school_rdd.py
 ```
 
 **Interpretation:**
+
 - **τ = $25 PSF (p<0.05)**: Being within 1km causes $25 PSF premium
 - **Covariates balanced**: No significant differences at cutoff (validation passed)
 - **Placebo tests null**: No effect at fake cutoffs (RDD specification valid)
 - **Bandwidth stable**: τ similar across 100-300m (robust estimate)
 
 **Limitations:**
+
 - Only estimates **local** effect (for properties near 1km boundary)
 - Requires sufficient sample near boundary (may need to aggregate schools)
 - Does not account for fuzzy eligibility (not all within 1km qualify)
@@ -1766,40 +1805,46 @@ uv run python scripts/analytics/analysis/school/analyze_school_rdd.py
 **Purpose:** Reveal how school premium varies across market segments and property characteristics.
 
 **Key Features:**
+
 - 9 market segments: property_type (HDB/Condo/EC) × region (CCR/RCR/OCR)
 - Separate OLS models per segment
 - Pooled interaction model with explicit interaction terms
 - Tests for heterogeneous treatment effects
 
 **Research Questions:**
+
 - Do Condo buyers value schools more than HDB buyers?
 - Does school premium vanish in CCR (international schools compete)?
 - Do large luxury units discount school proximity?
 - Is there synergy between school and MRT accessibility?
 
 **Outputs:**
+
 - `segment_coefficients.csv`: School premium by 9 market segments
 - `interaction_model_results.csv`: All interaction coefficients
 - `segment_r2_comparison.csv`: Model performance across segments
 
 **Usage:**
+
 ```bash
 uv run python scripts/analytics/analysis/school/analyze_school_segmentation.py
 ```
 
 **Interpretation:**
+
 - **Higher coefficient in OCR**: School premium larger outside central region
 - **school_x_mrt negative**: School and MRT proximity substitute (not complement)
 - **school_x_area negative**: Luxury buyers (large units) value schools less
 - **Segment R² varies**: School features explain more variance in some segments
 
 **Interaction Effects to Examine:**
+
 - `school × Condominium`: Do private buyers value schools more?
 - `school × CCR`: Does central location reduce school premium?
 - `school × floor_area`: Do larger units discount school access?
 - `school × MRT_distance`: Accessibility synergy or substitute?
 
-```
+````
 
 **Step 2: Update changelog**
 
@@ -1819,7 +1864,7 @@ Add to end of `docs/analytics/school-impact-analysis.md`:
   - Causal inference with RDD at 1km boundary
   - Segmentation and interaction effects analysis
   - Robustness validation suite
-```
+````
 
 **Step 3: Commit**
 
@@ -1833,11 +1878,13 @@ git commit -m "docs: add enhanced analysis modules to school impact documentatio
 ## Task 10: Verify All Modules Run Successfully
 
 **Files:**
+
 - None (verification)
 
 **Step 1: Run all three new modules in sequence**
 
 Run:
+
 ```bash
 echo "=== Running Spatial CV ===" && \
 uv run python scripts/analytics/analysis/school/analyze_school_spatial_cv.py && \
@@ -1853,6 +1900,7 @@ Expected: All three scripts run without errors, outputs generated
 **Step 2: Verify outputs**
 
 Run:
+
 ```bash
 echo "Spatial CV outputs:" && ls -lh data/analysis/school_spatial_cv/ && \
 echo -e "\nRDD outputs:" && ls -lh data/analysis/school_rdd/ && \
@@ -1873,11 +1921,13 @@ git commit -m "chore: add analysis outputs (initial run)"
 ## Task 11: Create Summary Integration Script
 
 **Files:**
+
 - Create: `scripts/analytics/analysis/school/run_enhanced_analysis.sh`
 
 **Step 1: Create convenience script**
 
 Create file `scripts/analytics/analysis/school/run_enhanced_analysis.sh`:
+
 ```bash
 #!/bin/bash
 # Enhanced School Impact Analysis - Complete Pipeline
@@ -1910,6 +1960,7 @@ echo "  - data/analysis/school_segmentation/"
 **Step 2: Make executable**
 
 Run:
+
 ```bash
 chmod +x scripts/analytics/analysis/school/run_enhanced_analysis.sh
 ```
@@ -1943,6 +1994,7 @@ git commit -m "chore: add convenience script for running all enhanced analysis m
 **Final Verification Step:**
 
 Run all modules and check outputs:
+
 ```bash
 bash scripts/analytics/analysis/school/run_enhanced_analysis.sh
 ```
@@ -1975,6 +2027,7 @@ All modules tested and working successfully."
 **Total Modified Files:** 2
 
 **Next Steps After Implementation:**
+
 1. Review all generated outputs and validate findings
 2. Create summary report comparing results across modules
 3. Consider adding visualizations for stakeholder presentation

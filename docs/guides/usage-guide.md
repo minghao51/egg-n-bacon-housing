@@ -8,7 +8,7 @@ This guide covers the supported day-to-day workflow for the repository:
 
 - Set up the local environment with `uv`
 - Run the Hamilton pipeline through `main.py`
-- Inspect pipeline outputs under `data/pipeline/`
+- Inspect pipeline outputs under `data/`
 - Run standalone analytics scripts from `src/egg_n_bacon_housing/analytics/`
 
 ## Setup
@@ -22,11 +22,11 @@ cp .env.example .env
 
 Required environment variables:
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `ONEMAP_EMAIL` | Yes | OneMap authentication |
-| `ONEMAP_EMAIL_PASSWORD` | Yes | OneMap authentication |
-| `GOOGLE_API_KEY` | No | Geocoding fallback |
+| Variable                | Required | Purpose               |
+| ----------------------- | -------- | --------------------- |
+| `ONEMAP_EMAIL`          | Yes      | OneMap authentication |
+| `ONEMAP_EMAIL_PASSWORD` | Yes      | OneMap authentication |
+| `GOOGLE_API_KEY`        | No       | Geocoding fallback    |
 
 Verification:
 
@@ -67,32 +67,32 @@ uv run python main.py --final-var unified_dataset --final-var dashboard_json
 
 ## Stage Map
 
-| Stage | Purpose | Main outputs |
-|-------|---------|--------------|
-| `ingest` | Fetch raw source data | `raw_hdb_resale_transactions`, `raw_condo_transactions`, `raw_hdb_rental` |
-| `clean` | Validate and standardize raw data | `cleaned_hdb_transactions`, `cleaned_condo_transactions`, `geocoded_properties` |
-| `features` | Build model and analytics features | `rental_yield`, `features_with_amenities`, `unified_features` |
-| `export` | Produce app- and dashboard-facing datasets | `unified_dataset`, `dashboard_json`, `segments_data` |
-| `metrics` | Compute summary metrics and rankings | `price_metrics_by_area`, `rental_yield_by_area`, `affordability_metrics` |
+| Stage      | Purpose                                    | Main outputs                                                                    |
+| ---------- | ------------------------------------------ | ------------------------------------------------------------------------------- |
+| `ingest`   | Fetch raw source data                      | `raw_hdb_resale_transactions`, `raw_condo_transactions`, `raw_hdb_rental`       |
+| `clean`    | Validate and standardize raw data          | `cleaned_hdb_transactions`, `cleaned_condo_transactions`, `geocoded_properties` |
+| `features` | Build model and analytics features         | `rental_yield`, `features_with_amenities`, `unified_features`                   |
+| `export`   | Produce app- and dashboard-facing datasets | `unified_dataset`, `dashboard_json`, `segments_data`                            |
+| `metrics`  | Compute summary metrics and rankings       | `price_metrics_by_area`, `rental_yield_by_area`, `affordability_metrics`        |
 
 ## Data Locations
 
-Pipeline outputs use a medallion layout rooted at `data/pipeline/`:
+Pipeline outputs use a medallion layout rooted at `data/`:
 
-| Layer | Path |
-|-------|------|
-| Bronze | `data/pipeline/01_bronze/` |
-| Silver | `data/pipeline/02_silver/` |
-| Gold | `data/pipeline/03_gold/` |
-| Platinum | `data/pipeline/04_platinum/` |
+| Layer    | Path                |
+| -------- | ------------------- |
+| Bronze   | `data/01_bronze/`   |
+| Silver   | `data/02_silver/`   |
+| Gold     | `data/03_gold/`     |
+| Platinum | `data/04_platinum/` |
 
 App-facing analytics content is synced to:
 
-| Content | Path |
-|---------|------|
-| Analytics source docs | `docs/analytics/` |
-| Synced MDX copies | `app/src/content/analytics/` |
-| Analytics images | `app/public/data/analysis/` |
+| Content               | Path                         |
+| --------------------- | ---------------------------- |
+| Analytics source docs | `docs/analytics/`            |
+| Synced MDX copies     | `app/src/content/analytics/` |
+| Analytics images      | `app/public/data/analysis/`  |
 
 ## Load Data In Python
 
@@ -131,25 +131,12 @@ uv run python src/egg_n_bacon_housing/analytics/analysis/spatial/analyze_spatial
 uv run python src/egg_n_bacon_housing/analytics/pipelines/forecast_prices_pipeline.py
 ```
 
-When analytics docs change, sync them into the Astro app:
-
-```bash
-./scripts/sync-content.sh
-```
-
 ## Common Workflows
-
-Refresh the published analytics content:
-
-```bash
-./scripts/sync-content.sh
-uv run python scripts/tools/validate_docs_layout.py
-```
 
 Rebuild a stage after deleting an output:
 
 ```bash
-rm data/pipeline/02_silver/cleaned_hdb_transactions.parquet
+rm data/02_silver/cleaned_hdb_transactions.parquet
 uv run python main.py --stage clean
 ```
 
@@ -164,13 +151,13 @@ uv run python scripts/tools/validate_docs_layout.py
 
 ## Troubleshooting
 
-| Issue | What to check |
-|-------|---------------|
-| `ModuleNotFoundError: egg_n_bacon_housing` | Run commands from the repo root with `uv run` |
-| Missing parquet outputs | Run the upstream pipeline stage again |
-| OneMap authentication failures | Confirm `ONEMAP_EMAIL` and `ONEMAP_EMAIL_PASSWORD` in `.env` |
-| Analytics page missing from app | Re-run `./scripts/sync-content.sh` and verify the slug exists in `app/src/content/analytics/` |
-| Docs validator failure | Fix the referenced path or update the active-doc scope in `scripts/tools/validate_docs_layout.py` |
+| Issue                                      | What to check                                                                                     |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `ModuleNotFoundError: egg_n_bacon_housing` | Run commands from the repo root with `uv run`                                                     |
+| Missing parquet outputs                    | Run the upstream pipeline stage again                                                             |
+| OneMap authentication failures             | Confirm `ONEMAP_EMAIL` and `ONEMAP_EMAIL_PASSWORD` in `.env`                                      |
+| Analytics page missing from app            | Verify the slug exists in `app/src/content/analytics/` and rerun app build                        |
+| Docs validator failure                     | Fix the referenced path or update the active-doc scope in `scripts/tools/validate_docs_layout.py` |
 
 ## Related Docs
 

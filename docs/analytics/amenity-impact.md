@@ -34,13 +34,13 @@ Hawker centre proximity is the single most important amenity feature for HDB pri
 
 ### 1. Hawker centres dominate HDB feature importance
 
-| Feature | XGBoost Importance | Interpretation |
-|---------|-------------------|----------------|
-| Hawker within 1km | 27.4% | Strongest single feature after structural attributes |
-| Remaining lease months | 14.1% | Core structural factor |
-| Park within 1km | 7.2% | Meaningful and often underpriced |
-| MRT within 1km | 5.5% | Modest relative to daily convenience |
-| Supermarket within 1km | 3.8% | Present but secondary |
+| Feature                | XGBoost Importance | Interpretation                                       |
+| ---------------------- | ------------------ | ---------------------------------------------------- |
+| Hawker within 1km      | 27.4%              | Strongest single feature after structural attributes |
+| Remaining lease months | 14.1%              | Core structural factor                               |
+| Park within 1km        | 7.2%               | Meaningful and often underpriced                     |
+| MRT within 1km         | 5.5%               | Modest relative to daily convenience                 |
+| Supermarket within 1km | 3.8%               | Present but secondary                                |
 
 **Impact**
 
@@ -50,11 +50,11 @@ For HDB, daily food access is priced more strongly than transit access. This lik
 
 Park proximity adds a measurable premium that is frequently underweighted in buyer decisions.
 
-| Amenity | HDB Premium Signal | Condo Premium Signal | Market Awareness |
-|---------|--------------------|---------------------|-----------------|
-| Park within 1km | 7.2% importance | Moderate | Low |
-| MRT within 1km | 5.5% importance | High | High |
-| Mall within 1km | 4.1% importance | Moderate | High |
+| Amenity         | HDB Premium Signal | Condo Premium Signal | Market Awareness |
+| --------------- | ------------------ | -------------------- | ---------------- |
+| Park within 1km | 7.2% importance    | Moderate             | Low              |
+| MRT within 1km  | 5.5% importance    | High                 | High             |
+| Mall within 1km | 4.1% importance    | Moderate             | High             |
 
 **Impact**
 
@@ -64,12 +64,12 @@ Properties near large parks (East Coast, Bishan-Ang Mo Kio, Bukit Timah) may off
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Amenity feature importance across periods" data-chart-columns="Pre-COVID (2015-2019),COVID (2020-2022),Post-COVID (2023-2026)"></div>
 
-| Amenity | Pre-COVID (2015-2019) | COVID (2020-2022) | Post-COVID (2023-2026) |
-|---------|----------------------|-------------------|------------------------|
-| Hawker proximity | High | High | High |
-| Park proximity | Moderate | Elevated | Elevated |
-| MRT proximity | Moderate | Reduced | Partially recovered |
-| Mall proximity | Moderate | Reduced | Recovered |
+| Amenity          | Pre-COVID (2015-2019) | COVID (2020-2022) | Post-COVID (2023-2026) |
+| ---------------- | --------------------- | ----------------- | ---------------------- |
+| Hawker proximity | High                  | High              | High                   |
+| Park proximity   | Moderate              | Elevated          | Elevated               |
+| MRT proximity    | Moderate              | Reduced           | Partially recovered    |
+| Mall proximity   | Moderate              | Reduced           | Recovered              |
 
 **Impact**
 
@@ -79,12 +79,12 @@ COVID elevated the importance of nearby green space and reduced the MRT premium 
 
 The combined effect of having multiple amenities nearby exceeds the sum of individual effects.
 
-| Amenity Combination | Observed Effect | Interpretation |
-|---------------------|----------------|----------------|
-| MRT + Mall + Hawker | Synergistic premium | Convenience hub effect |
-| MRT + Park | Moderate synergy | Transit + lifestyle appeal |
-| Park + Hawker | Mild synergy | Neighborhood livability |
-| Mall + Supermarket | Minimal synergy | Largely substitutable |
+| Amenity Combination | Observed Effect     | Interpretation             |
+| ------------------- | ------------------- | -------------------------- |
+| MRT + Mall + Hawker | Synergistic premium | Convenience hub effect     |
+| MRT + Park          | Moderate synergy    | Transit + lifestyle appeal |
+| Park + Hawker       | Mild synergy        | Neighborhood livability    |
+| Mall + Supermarket  | Minimal synergy     | Largely substitutable      |
 
 **Impact**
 

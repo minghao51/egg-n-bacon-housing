@@ -4,68 +4,59 @@
 
 ### Singapore Government Data
 
-| Source | Usage | Script/Notebook |
-|--------|-------|-----------------|
-| **OneMap API** | Geocoding, postal search, planning area boundaries | `scripts/core/geocoding.py`, `scripts/utils/refresh_onemap_token.py` |
-| **URA** (Urban Redevelopment Authority) | Property transaction data, rental index | `scripts/data/download/download_ura_rental_index.py` |
-| **Data.gov.sg** | Open data (schools, etc.) | `scripts/data/download/download_datagov_datasets.py` |
-| **HDB** | Housing transaction data | `scripts/data/download/download_hdb_rental_data.py` |
+| Source          | Usage                                              | Adapter                                         |
+| --------------- | -------------------------------------------------- | ----------------------------------------------- |
+| **OneMap API**  | Geocoding, postal search, planning area boundaries | `src/egg_n_bacon_housing/adapters/onemap.py`    |
+| **Data.gov.sg** | Open data (schools, transactions, malls)           | `src/egg_n_bacon_housing/adapters/datagovsg.py` |
+| **URA**         | Property transaction data, rental index            | `src/egg_n_bacon_housing/adapters/datagovsg.py` |
+| **HDB**         | Housing transaction data                           | `src/egg_n_bacon_housing/adapters/datagovsg.py` |
 
 ### AI/ML Services
 
-| Service | Purpose | Integration |
-|---------|---------|-------------|
-| **Google Generative AI** (Gemini) | LLM analysis | `langchain-google-genai==2.0.0` in notebooks |
-| **Databricks** | SQL/DataFrame agents | `langchain_databricks` in notebooks |
-
-### Data Processing
-
-| Service | Purpose | Notes |
-|---------|---------|-------|
-| **Jina AI** | Web scraping/conversion | `JINA_AI` env var configured |
-| **FAISS** | Vector store for embeddings | Notebook exploration only |
+| Service                           | Purpose                 | Integration              |
+| --------------------------------- | ----------------------- | ------------------------ |
+| **Google Generative AI** (Gemini) | LLM analysis            | `langchain-google-genai` |
+| **Jina AI**                       | Web scraping/conversion | `JINA_AI` env var        |
 
 ## Databases
 
 ### Local SQLite
 
 - **Purpose**: Data quality tracking and baseline snapshots
-- **Location**: `scripts/core/data_quality.py`, `scripts/utils/data_quality_report.py`
-- **Tables**: `run_snapshots`, `historical_baselines`
+- **File**: `src/egg_n_bacon_housing/utils/data_quality.py`
 
 ### Vector Store
 
-- **FAISS**: Used in `notebooks/exploration/ZZ_pyspark-dataframe-loader-langchain.py` for RAG/embeddings
+- **FAISS**: Used in notebooks for RAG/embeddings
 
 ## Auth & Identity
 
-| Provider | Status | Configuration |
-|----------|--------|---------------|
-| **Supabase** | Configured but not detected in code | `SUPABASE_URL`, `SUPABASE_KEY` env vars |
+| Provider     | Status     | Configuration                           |
+| ------------ | ---------- | --------------------------------------- |
+| **Supabase** | Configured | `SUPABASE_URL`, `SUPABASE_KEY` env vars |
 
 ## Storage
 
-| Service | Purpose | Integration |
-|---------|---------|-------------|
-| **AWS S3** | Potential export/dashboard hosting | `boto3` in `scripts/core/stages/export/dashboard_exporter.py:411` |
+| Service    | Purpose                  | Integration                          |
+| ---------- | ------------------------ | ------------------------------------ |
+| **AWS S3** | Export/dashboard hosting | `boto3` in `components/04_export.py` |
 
 ## Environment Variables
 
-```env
-ONEMAP_EMAIL=
-ONEMAP_EMAIL_PASSWORD=
-ONEMAP_TOKEN=
-GOOGLE_API_KEY=
-SUPABASE_URL=
-SUPABASE_KEY=
-JINA_AI=
+```
+ONEMAP_EMAIL=           # OneMap API authentication
+ONEMAP_EMAIL_PASSWORD=  # OneMap API password
+GOOGLE_API_KEY=         # Google APIs (geocoding, Gemini)
+SUPABASE_URL=           # Supabase project URL
+SUPABASE_KEY=           # Supabase anon key
+JINA_AI=                # Jina AI API key
 ```
 
-## Webhooks
+## Config Files
 
-No webhooks detected in codebase.
-
-## CDN/Static Assets
-
-- **KaTeax** (CDN): Math rendering
-- **Shiki**: Built-in syntax highlighting (no external CDN)
+| File             | Purpose                                              |
+| ---------------- | ---------------------------------------------------- |
+| `config.yaml`    | Pipeline, geocoding, metrics, layer config overrides |
+| `.env`           | Secrets (gitignored)                                 |
+| `.env.example`   | Env var template                                     |
+| `pyproject.toml` | Dependencies, Ruff, pytest, coverage, mypy           |

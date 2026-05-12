@@ -48,13 +48,7 @@ egg-n-bacon-housing/
 │   ├── plans/                        # Design and implementation plans
 │   └── archive/                      # Historical docs
 ├── scripts/
-│   ├── 01_ingest.py
-│   ├── 02_clean.py
-│   ├── 03_features.py
-│   ├── 04_export.py
-│   ├── 05_metrics.py
 │   ├── 99_cleanup.py
-│   ├── sync-content.sh
 │   └── tools/validate_docs_layout.py
 ├── src/egg_n_bacon_housing/
 │   ├── adapters/                     # External clients and integrations
@@ -76,7 +70,7 @@ egg-n-bacon-housing/
 [src/egg_n_bacon_housing/config.py](../src/egg_n_bacon_housing/config.py) loads:
 
 - environment variables from `.env`
-- defaults and nested settings from `config.yaml`
+- defaults and nested settings from pydantic-settings models
 - normalized accessors for `data/` and medallion-layer directories
 
 Key path properties:
@@ -91,50 +85,41 @@ Key path properties:
 
 [src/egg_n_bacon_housing/pipeline.py](../src/egg_n_bacon_housing/pipeline.py) imports the numbered component modules dynamically and builds a Hamilton `Driver`.
 
-Execution entrypoints:
+Execution entrypoint:
 
 - [main.py](../main.py) for CLI-driven stage selection
-- [scripts/01_ingest.py](../scripts/01_ingest.py) through [scripts/05_metrics.py](../scripts/05_metrics.py) for direct stage runs
 
 ### 3. Medallion Data Flow
 
-| Layer | Path | Responsibility |
-|-------|------|----------------|
-| Bronze | `data/pipeline/01_bronze/` | Raw fetched source data |
-| Silver | `data/pipeline/02_silver/` | Cleaned and validated datasets |
-| Gold | `data/pipeline/03_gold/` | Enriched feature tables |
-| Platinum | `data/pipeline/04_platinum/` | Dashboard exports, metrics, final datasets |
+| Layer    | Path                | Responsibility                             |
+| -------- | ------------------- | ------------------------------------------ |
+| Bronze   | `data/01_bronze/`   | Raw fetched source data                    |
+| Silver   | `data/02_silver/`   | Cleaned and validated datasets             |
+| Gold     | `data/03_gold/`     | Enriched feature tables                    |
+| Platinum | `data/04_platinum/` | Dashboard exports, metrics, final datasets |
 
 ### 4. Downstream Consumers
 
-| Consumer | Reads from | Purpose |
-|----------|------------|---------|
-| Astro app | `app/public/data/`, `app/src/content/analytics/` | Dashboard and analytics publishing |
-| Analytics scripts | `data/pipeline/04_platinum/` and supporting layers | On-demand research and forecasting |
-| Utility loaders | `src/egg_n_bacon_housing/utils/` | Reusable access patterns for Python workflows |
+| Consumer          | Reads from                                       | Purpose                                       |
+| ----------------- | ------------------------------------------------ | --------------------------------------------- |
+| Astro app         | `app/public/data/`, `app/src/content/analytics/` | Dashboard and analytics publishing            |
+| Analytics scripts | `data/04_platinum/` and supporting layers        | On-demand research and forecasting            |
+| Utility loaders   | `src/egg_n_bacon_housing/utils/`                 | Reusable access patterns for Python workflows |
 
 ## Pipeline Stages
 
-| Stage | Module family | Typical outputs |
-|-------|---------------|-----------------|
+| Stage     | Module family                | Typical outputs                                           |
+| --------- | ---------------------------- | --------------------------------------------------------- |
 | Ingestion | `components/01_ingestion.py` | raw transactions, rental data, schools, malls, macro data |
-| Cleaning | `components/02_cleaning.py` | cleaned transaction sets, validation artifacts, geocoding |
-| Features | `components/03_features.py` | rental yield and amenity-enriched features |
-| Export | `components/04_export.py` | unified dataset, dashboard JSON, app exports |
-| Metrics | `components/05_metrics.py` | area metrics, affordability, hotspots |
-| Analytics | `components/06_analytics.py` | optional DAG-connected analytical outputs |
+| Cleaning  | `components/02_cleaning.py`  | cleaned transaction sets, validation artifacts, geocoding |
+| Features  | `components/03_features.py`  | rental yield and amenity-enriched features                |
+| Export    | `components/04_export.py`    | unified dataset, dashboard JSON, app exports              |
+| Metrics   | `components/05_metrics.py`   | area metrics, affordability, hotspots                     |
+| Analytics | `components/06_analytics.py` | optional DAG-connected analytical outputs                 |
 
 ## Analytics Publishing Flow
 
-Analytics content is authored in Markdown and then synced into the Astro app:
-
-1. Write or update a document in `docs/analytics/`
-2. Run [scripts/sync-content.sh](../scripts/sync-content.sh)
-3. The script copies `.md` to `app/src/content/analytics/*.mdx`
-4. Charts and images from `data/analytics/` are mirrored to `app/public/data/analysis/`
-5. Astro renders the synced MDX through [app/src/content.config.ts](../app/src/content.config.ts)
-
-The sync step is intentionally conservative: unsupported analytics-only MDX component markup should fail the sync rather than being dropped silently.
+Analytics content is authored in Markdown under `docs/analytics/` and rendered by the Astro app content system in `app/src/content/analytics/`.
 
 ## Important Boundaries
 
@@ -157,7 +142,6 @@ Common commands:
 ```bash
 uv run python main.py
 uv run python main.py --stage features
-./scripts/sync-content.sh
 uv run python scripts/tools/validate_docs_layout.py
 uv run pytest
 uv run ruff check .

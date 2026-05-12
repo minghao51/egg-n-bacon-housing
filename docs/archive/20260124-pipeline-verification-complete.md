@@ -43,12 +43,14 @@ data/
 ## Pipeline Test Results
 
 ### ✅ **L0: Data Collection** - COMPLETE
+
 - **Status**: All 8 datasets saved to `data/pipeline/01_bronze/`
 - **Records**: 969,748 HDB transactions + API data
 - **Cache**: Working (30-40x faster re-runs)
 - **Verification**: ✅ Files in correct location
 
 ### ✅ **L1: Data Processing** - VERIFIED
+
 - **Status**: 1,096,888 transactions loaded and saved to `data/pipeline/02_silver/`
 - **Data Sources**: Correctly reading from `data/manual/csv/`
 - **Outputs**: Correctly saving to `data/pipeline/02_silver/`
@@ -56,17 +58,20 @@ data/
 - **Verification**: ✅ All paths working
 
 ### ✅ **L2: Rental** - COMPLETE
+
 - **Status**: 1,556 rental yields calculated
 - **Outputs**: Saved to `data/pipeline/03_gold/rental_yield.parquet`
 - **Verification**: ✅ Reading from L1, writing to L2
 
 ### ✅ **L2: Features** - COMPLETE
+
 - **Status**: 1,384,460 feature records created
 - **Outputs**: 5 L3 datasets created in `data/pipeline/04_platinum/`
 - **Planning Areas**: ✅ Reading from `data/manual/geojsons/`
 - **Verification**: ✅ All spatial joins working
 
 ### ✅ **L3: Export** - COMPLETE
+
 - **Status**: 1,657,760 record unified dataset created
 - **Outputs**: Saved to `data/pipeline/04_platinum/unified.parquet`
 - **Verification**: ✅ Reading all L3 datasets, creating export
@@ -75,22 +80,23 @@ data/
 
 ## Code Updates Verified
 
-| File | Changes | Status |
-|------|---------|--------|
-| `core/config.py` | Added PIPELINE_DIR, MANUAL_DIR, ANALYSIS_DIR, ARCHIVE_DIR | ✅ Working |
-| `core/pipeline/L0_collect.py` | CSV path → `Config.MANUAL_DIR / "csv"` | ✅ Working |
-| `core/pipeline/L1_process.py` | CSV path → `Config.MANUAL_DIR / "csv"` | ✅ Working |
-| `core/pipeline/L2_features.py` | Geojson path → `Config.MANUAL_DIR / "geojsons"` | ✅ Working |
-| `core/pipeline/L2_rental.py` | All PARQUETS_DIR → PIPELINE_DIR | ✅ Working |
-| `core/data_loader.py` | Uses Config.PIPELINE_DIR and Config.MANUAL_DIR | ✅ Working |
-| `scripts/run_pipeline.py` | Updated imports and paths | ✅ Working |
-| `.gitignore` | Updated for new structure | ✅ Working |
+| File                           | Changes                                                   | Status     |
+| ------------------------------ | --------------------------------------------------------- | ---------- |
+| `core/config.py`               | Added PIPELINE_DIR, MANUAL_DIR, ANALYSIS_DIR, ARCHIVE_DIR | ✅ Working |
+| `core/pipeline/L0_collect.py`  | CSV path → `Config.MANUAL_DIR / "csv"`                    | ✅ Working |
+| `core/pipeline/L1_process.py`  | CSV path → `Config.MANUAL_DIR / "csv"`                    | ✅ Working |
+| `core/pipeline/L2_features.py` | Geojson path → `Config.MANUAL_DIR / "geojsons"`           | ✅ Working |
+| `core/pipeline/L2_rental.py`   | All PARQUETS_DIR → PIPELINE_DIR                           | ✅ Working |
+| `core/data_loader.py`          | Uses Config.PIPELINE_DIR and Config.MANUAL_DIR            | ✅ Working |
+| `scripts/run_pipeline.py`      | Updated imports and paths                                 | ✅ Working |
+| `.gitignore`                   | Updated for new structure                                 | ✅ Working |
 
 ---
 
 ## Known Issues
 
 ### ⚠️ **OneMap API Authentication**
+
 - **Issue**: Token expired, credentials rejected by API
 - **Impact**: Cannot geocode NEW addresses (297 pending)
 - **Workaround**: Using existing 17,722 geocoded addresses
@@ -109,6 +115,7 @@ data/
 **Total Datasets**: 31 (all accessible from new locations)
 
 ### By Stage:
+
 - **L0 (Raw API data)**: 8 datasets in `pipeline/L0/`
 - **L1 (Processed)**: 4 datasets in `pipeline/L1/`
 - **L2 (Features)**: 7 datasets in `pipeline/L2/`
@@ -116,6 +123,7 @@ data/
 - **Analytics**: 6 datasets in `analysis/` subdirs
 
 ### By Type:
+
 - **Transactions**: 1,096,888 records (HDB, EC, Condo)
 - **Properties**: 17,722 unique addresses
 - **Amenities**: 5,569 facilities
@@ -127,15 +135,18 @@ data/
 ## Migration Impact
 
 ### ✅ **Streamlit App**
+
 - **Status**: Ready to use
 - **Paths Updated**: `core/data_loader.py` uses new Config
 - **Datasets**: All accessible from `data/pipeline/`
 
 ### ✅ **Notebooks**
+
 - **Status**: Compatible
 - **Action**: Use `Config.PIPELINE_DIR` instead of hardcoded paths
 
 ### ✅ **Scripts**
+
 - **Status**: All updated
 - **Test**: `scripts/run_pipeline.py` verified working
 
@@ -144,6 +155,7 @@ data/
 ## Performance
 
 **Reorganization Benefits**:
+
 - ✅ **Logical Organization**: Clear separation of pipeline/manual/analytics
 - ✅ **Streamlit-Ready**: All app data in `pipeline/`
 - ✅ **Archive Cleanup**: Test/demo files out of production
@@ -158,6 +170,7 @@ data/
 ### Optional (If You Want Complete L1 Geocoding)
 
 1. **Fix OneMap Credentials**:
+
    ```bash
    # Visit https://www.onemap.gov.sg/ and verify/reset credentials
    # Update .env file
@@ -172,6 +185,7 @@ data/
 ### Recommended (Use Pipeline As-Is)
 
 The pipeline is **fully functional** with existing geocoded data. You can:
+
 - ✅ Run L0, L2, L3 stages
 - ✅ Use the Streamlit app
 - ✅ Run analytics scripts
@@ -182,17 +196,17 @@ Only geocoding NEW addresses requires OneMap fix.
 
 ## Success Metrics
 
-| Metric | Status | Details |
-|--------|--------|---------|
-| **Directory Structure** | ✅ Complete | All files reorganized |
-| **Code Updates** | ✅ Complete | 9 files updated |
-| **L0 Pipeline** | ✅ Working | Data collection successful |
-| **L1 Pipeline** | ✅ Working | Data loading successful |
-| **L2 Pipeline** | ✅ Working | Features calculated |
-| **L3 Pipeline** | ✅ Working | Exports created |
-| **Data Accessibility** | ✅ Complete | 31 datasets accessible |
-| **Backward Compatibility** | ✅ Maintained | PARQUETS_DIR alias works |
-| **Streamlit Ready** | ✅ Yes | All paths updated |
+| Metric                     | Status        | Details                    |
+| -------------------------- | ------------- | -------------------------- |
+| **Directory Structure**    | ✅ Complete   | All files reorganized      |
+| **Code Updates**           | ✅ Complete   | 9 files updated            |
+| **L0 Pipeline**            | ✅ Working    | Data collection successful |
+| **L1 Pipeline**            | ✅ Working    | Data loading successful    |
+| **L2 Pipeline**            | ✅ Working    | Features calculated        |
+| **L3 Pipeline**            | ✅ Working    | Exports created            |
+| **Data Accessibility**     | ✅ Complete   | 31 datasets accessible     |
+| **Backward Compatibility** | ✅ Maintained | PARQUETS_DIR alias works   |
+| **Streamlit Ready**        | ✅ Yes        | All paths updated          |
 
 ---
 
@@ -214,6 +228,6 @@ All pipeline stages have been tested and verified working with the new directory
 
 ---
 
-*Generated: 2026-01-24*
-*Pipeline Version: v0.4.0*
-*Reorganization: COMPLETE ✅*
+_Generated: 2026-01-24_
+_Pipeline Version: v0.4.0_
+_Reorganization: COMPLETE ✅_

@@ -10,12 +10,14 @@ Singapore housing data pipeline and ML analysis platform.
 Collects, processes, and analyzes Singapore housing data from government APIs.
 
 **Medallion Pipeline Layers**:
+
 ```
 01_bronze  → 02_silver  → 03_gold  → 04_platinum
   raw         validated    features    predictions
 ```
 
 **Features**:
+
 - Hamilton DAG orchestration (lineage tracking, caching, parallel execution)
 - Pydantic schema validation at layer boundaries
 - Market Overview, Price Map, Trends & Analytics
@@ -39,16 +41,17 @@ cp .env.example .env
 uv run python main.py --stage all
 
 # Or run stage-by-stage
-uv run python scripts/01_ingest.py   # Bronze layer
-uv run python scripts/02_clean.py   # Silver layer
-uv run python scripts/03_features.py # Gold layer
-uv run python scripts/04_export.py  # Platinum export
-uv run python scripts/05_metrics.py # Metrics
+uv run python main.py --stage ingest
+uv run python main.py --stage clean
+uv run python main.py --stage features
+uv run python main.py --stage export
+uv run python main.py --stage metrics
 ```
 
 ## Setup
 
 ### Prerequisites
+
 - Python 3.12+
 - OneMap API account ([free registration](https://www.onemap.gov.sg/apidocs/register))
 - Google AI API key ([free tier](https://makersuite.google.com/app/apikey))
@@ -56,6 +59,7 @@ uv run python scripts/05_metrics.py # Metrics
 ### Environment Variables
 
 Create `.env` in project root:
+
 ```bash
 ONEMAP_EMAIL=your_email@example.com
 ONEMAP_EMAIL_PASSWORD=your_password
@@ -84,7 +88,7 @@ uv run python main.py --stage export --visualize
 ### Python API
 
 ```python
-from egg_n_bacon_housing.pipeline import build_pipeline, run_full_pipeline
+from egg_n_bacon_housing.pipeline import build_pipeline, run_pipeline
 from egg_n_bacon_housing.config import settings
 
 # Build and run pipeline
@@ -116,9 +120,8 @@ egg-n-bacon-housing/
 │   ├── adapters/              # External API adapters (onemap, datagovsg, geocoding)
 │   ├── utils/                 # Utilities (cache, data_helpers, metrics, etc.)
 │   └── analytics/             # Analysis modules (market, mrt, school, spatial...) — exploratory, not wired to DAG
-├── scripts/                   # Stage entry points (01_ingest.py, etc.)
+├── scripts/                   # Utility tools (coverage/docs checks)
 ├── main.py                    # CLI entry point
-├── config.yaml                # Pipeline configuration
 ├── app/                       # Astro documentation site
 ├── tests/                     # Test suite
 ├── docs/                      # Architecture & guides
@@ -129,20 +132,15 @@ egg-n-bacon-housing/
 
 ## Configuration
 
-Configuration is managed via `config.yaml` with pydantic-settings:
+Configuration is managed via `.env` / environment variables with pydantic-settings:
 
 ```yaml
-app_name: "egg-n-bacon-housing"
-data_path: "./data"
-pipeline:
-  parquet_compression: "snappy"
-  use_caching: true
-geocoding:
-  max_workers: 5
-  api_delay_seconds: 1.2
+PIPELINE__USE_CACHING=true
+PIPELINE__CACHE_DURATION_HOURS=24
+GEOCODING__MIN_COORDINATE_COVERAGE=0.7
 ```
 
-Environment variables and `.env` take priority over `config.yaml`.
+Nested environment variables use `__` (double underscore), e.g. `PIPELINE__USE_CACHING=true`.
 
 ## Contributing
 

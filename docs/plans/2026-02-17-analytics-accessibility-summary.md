@@ -31,6 +31,7 @@
 ### 1 Enhanced Analytics Document
 
 **MRT Impact Analysis** (`analyze_mrt-impact-analysis.md`) enhanced with:
+
 - ✅ Key Takeaways section (One Big Insight + What It Means + Action Steps + By The Numbers)
 - ✅ 5 StatCallout boxes highlighting key statistics
 - ✅ 5+ tooltips explaining technical terms
@@ -191,6 +192,7 @@ docs/analytics/analyze_mrt-impact-analysis.md - Synced enhanced version
 ## Implementation Statistics
 
 ### Code Added
+
 - **New components**: 5 Astro components (403 total lines)
 - **Data files**: 2 JSON files (117 total entries)
 - **Pages**: 1 dynamic route (167 lines)
@@ -198,11 +200,13 @@ docs/analytics/analyze_mrt-impact-analysis.md - Synced enhanced version
 - **Documentation**: ~650 lines across 4 documents
 
 ### Time Investment
+
 - **22 tasks** completed in systematic batches
 - **Worktree isolation** for clean development
 - **Commit-after-each-task** approach for easy rollback
 
 ### Files Modified
+
 - **Created**: 14 new files
 - **Modified**: 5 existing files
 - **Total changes**: 19 files across the codebase
@@ -223,17 +227,14 @@ docs/analytics/analyze_mrt-impact-analysis.md - Synced enhanced version
 Priority order (by user impact):
 
 **High Priority (Investment Guides):**
+
 1. `findings.md` - Master summary (all personas)
 2. `analyze_price_appreciation_predictions.md` - Investors (high value)
 3. `analyze_lease_decay.md` - First-time buyers (critical concern)
 
-**Medium Priority (Market Analysis):**
-4. `analyze_school-quality-features.md` - Families (upgraders)
-5. `analyze_spatial_autocorrelation.md` - Investors (location strategy)
+**Medium Priority (Market Analysis):** 4. `analyze_school-quality-features.md` - Families (upgraders) 5. `analyze_spatial_autocorrelation.md` - Investors (location strategy)
 
-**Lower Priority (Technical Reports):**
-6. `causal-inference-overview.md` - Advanced users
-7. Planning documents (future analysis)
+**Lower Priority (Technical Reports):** 6. `causal-inference-overview.md` - Advanced users 7. Planning documents (future analysis)
 
 ### Expansion Opportunities
 
@@ -276,11 +277,13 @@ Priority order (by user impact):
 ## Known Limitations
 
 ### Build/Dev Server Issues
+
 - **Missing analysis images** - Pre-existing issue, not introduced by this work
 - **Image references** in analytics documents point to non-existent files
 - **Workaround needed**: Generate images or implement graceful fallback
 
 ### Component Limitations
+
 - **Tooltip positioning** - Basic implementation may overflow viewport edges
 - **Mobile tap behavior** - Requires clicking outside to close tooltips
 - **Glossary sync** - Must manually add terms when using new jargon
@@ -291,20 +294,24 @@ Priority order (by user impact):
 ## Maintenance Plan
 
 ### Weekly
+
 - Monitor user feedback and bug reports
 - Check analytics for engagement metrics (once deployed)
 
 ### Monthly
+
 - Add new technical terms to glossary as needed
 - Update persona recommendations as new docs are published
 - Test all components on mobile/desktop
 
 ### Quarterly
+
 - Review and update persona content based on usage
 - Refresh StatCallout data if underlying analysis changes
 - Accessibility audit (keyboard nav, screen reader)
 
 ### As Needed
+
 - Fix bugs discovered through user testing
 - Add new components as requirements emerge
 - Update documentation when patterns change
@@ -342,6 +349,7 @@ Priority order (by user impact):
 ### Before Enhancement
 
 **MRT Impact Analysis document:**
+
 - 800+ lines of dense technical content
 - Postgraduate reading level
 - Minimal actionable guidance
@@ -351,6 +359,7 @@ Priority order (by user impact):
 ### After Enhancement
 
 **MRT Impact Analysis document:**
+
 - Scannable Key Takeaways at top
 - College reading level (tooltips explain jargon)
 - 5 action steps + 10-point checklist
@@ -360,6 +369,7 @@ Priority order (by user impact):
 - 5+ clickable tooltips for technical terms
 
 **User can now:**
+
 - Understand key insight in 30 seconds (Key Takeaways)
 - Learn technical terms without leaving page (tooltips)
 - See what findings mean for their situation (ImplicationBoxes)
@@ -382,6 +392,7 @@ Priority order (by user impact):
 ## Contact
 
 **Questions?** See documentation:
+
 - Design: `docs/plans/2026-02-17-analytics-accessibility-design.md`
 - Implementation: `docs/plans/2026-02-17-analytics-accessibility-implementation.md`
 - Component Library: `docs/plans/2026-02-17-analytics-component-library.md`

@@ -34,10 +34,10 @@ Appreciation is spatially clustered. Nearby neighborhoods tend to move together 
 
 ### 1. Neighborhood effects are statistically strong
 
-| Metric | Value | Interpretation |
-|--------|-------|----------------|
+| Metric    | Value | Interpretation                     |
+| --------- | ----- | ---------------------------------- |
 | Moran's I | 0.766 | Strong positive spatial clustering |
-| Z-score | 9.91 | Highly significant |
+| Z-score   | 9.91  | Highly significant                 |
 
 This means appreciation is not randomly distributed. Nearby areas tend to share price momentum.
 
@@ -45,12 +45,12 @@ This means appreciation is not randomly distributed. Nearby areas tend to share 
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Appreciation by spatial cluster type" data-chart-columns="Count,YoY Appreciation"></div>
 
-| Cluster Type | Count | YoY Appreciation | Description |
-|-------------|-------|------------------|-------------|
-| HH (hotspot) | 16 | 12.7% | High-growth areas near other high-growth areas |
-| LH (lagging in strong neighborhoods) | 17 | 11.3% | Potential catch-up or persistent underperformers |
-| LL (coldspot) | 1 | about 10% | Weak area in weak surroundings |
-| Not significant | 8 | 12.0% | No strong local pattern |
+| Cluster Type                         | Count | YoY Appreciation | Description                                      |
+| ------------------------------------ | ----- | ---------------- | ------------------------------------------------ |
+| HH (hotspot)                         | 16    | 12.7%            | High-growth areas near other high-growth areas   |
+| LH (lagging in strong neighborhoods) | 17    | 11.3%            | Potential catch-up or persistent underperformers |
+| LL (coldspot)                        | 1     | about 10%        | Weak area in weak surroundings                   |
+| Not significant                      | 8     | 12.0%            | No strong local pattern                          |
 
 **Impact**
 
@@ -60,10 +60,10 @@ This means appreciation is not randomly distributed. Nearby areas tend to share 
 ### 3. Spatial dependence is stronger in some segments than others
 
 | Property Type | Spatial lag correlation |
-|---------------|-------------------------|
-| Condo | 78% |
-| HDB | 71% |
-| EC | 65% |
+| ------------- | ----------------------- |
+| Condo         | 78%                     |
+| HDB           | 71%                     |
+| EC            | 65%                     |
 
 **Impact**
 

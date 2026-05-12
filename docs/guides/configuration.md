@@ -44,9 +44,9 @@ uv run python -c "from scripts.core.config import Config; Config.validate(); pri
 
 These variables **must be set** for the project to function:
 
-| Variable | Description | How to Get |
-|----------|-------------|------------|
-| `ONEMAP_EMAIL` | OneMap API email for Singapore geocoding | Register at [onemap.gov.sg](https://www.onemap.gov.sg/) |
+| Variable         | Description                              | How to Get                                                          |
+| ---------------- | ---------------------------------------- | ------------------------------------------------------------------- |
+| `ONEMAP_EMAIL`   | OneMap API email for Singapore geocoding | Register at [onemap.gov.sg](https://www.onemap.gov.sg/)             |
 | `GOOGLE_API_KEY` | Google Maps API key (geocoding fallback) | Create at [Google Cloud Console](https://console.cloud.google.com/) |
 
 **Validation:** Both keys are checked by `Config.validate()`
@@ -57,13 +57,13 @@ These variables **must be set** for the project to function:
 
 These variables are optional but enable additional features:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ONEMAP_EMAIL_PASSWORD` | OneMap password for auto-token refresh | None (manual token refresh) |
-| `ONEMAP_TOKEN` | Pre-generated OneMap JWT token | None (auto-generated if email/password provided) |
-| `SUPABASE_URL` | Supabase project URL | None |
-| `SUPABASE_KEY` | Supabase API key | None |
-| `JINA_AI` | Jina AI API key for embeddings | None |
+| Variable                | Description                            | Default                                          |
+| ----------------------- | -------------------------------------- | ------------------------------------------------ |
+| `ONEMAP_EMAIL_PASSWORD` | OneMap password for auto-token refresh | None (manual token refresh)                      |
+| `ONEMAP_TOKEN`          | Pre-generated OneMap JWT token         | None (auto-generated if email/password provided) |
+| `SUPABASE_URL`          | Supabase project URL                   | None                                             |
+| `SUPABASE_KEY`          | Supabase API key                       | None                                             |
+| `JINA_AI`               | Jina AI API key for embeddings         | None                                             |
 
 **Validation:** Not checked by `Config.validate()` - only used if provided
 
@@ -91,6 +91,7 @@ Control project behavior using feature flags in `scripts/core/config.py`:
 **Purpose:** Enable/disable caching for API calls and expensive operations
 
 **Usage:**
+
 ```python
 from scripts.core.config import Config
 
@@ -103,6 +104,7 @@ else:
 ```
 
 **When to Disable:**
+
 - Debugging API issues
 - Testing with fresh data
 - When cache is corrupted
@@ -116,6 +118,7 @@ else:
 **Purpose:** Control logging verbosity
 
 **Usage:**
+
 ```python
 from scripts.core.config import Config
 import logging
@@ -127,6 +130,7 @@ else:
 ```
 
 **When to Disable:**
+
 - Production deployments
 - Reducing log file size
 - Performance optimization
@@ -140,6 +144,7 @@ else:
 **Purpose:** Automatically add scripts directory to Python path in Jupyter notebooks
 
 **Usage:**
+
 ```python
 # In notebooks
 if Config.AUTO_ADD_SRC_PATH:
@@ -148,6 +153,7 @@ if Config.AUTO_ADD_SRC_PATH:
 ```
 
 **When to Disable:**
+
 - Custom path management
 - Namespace conflicts
 
@@ -210,6 +216,7 @@ Config.PARQUET_COMPRESSION    # "snappy"
 ```
 
 **Options:**
+
 - `"snappy"`: Fast compression (default)
 - `"gzip"`: Better compression, slower
 - `"brotli"`: Best compression, slowest
@@ -228,10 +235,12 @@ Config.PARQUET_INDEX         # False
 **Purpose:** Include DataFrame index in parquet files
 
 **When to Enable:**
+
 - Index has meaningful values
 - Need to preserve index on load
 
 **When to Disable (default):**
+
 - Index is just row numbers
 - Save disk space
 
@@ -244,6 +253,7 @@ Config.PARQUET_ENGINE        # "pyarrow"
 ```
 
 **Options:**
+
 - `"pyarrow"`: Faster, more features (default)
 - `"fastparquet"`: Pure Python, slower
 
@@ -262,12 +272,14 @@ Config.GEOCODING_API_DELAY   # 1.2 seconds
 **Purpose:** Delay between API calls to respect rate limits
 
 **Increasing Delay:**
+
 ```python
 # More conservative rate limiting
 Config.GEOCODING_API_DELAY = 2.0
 ```
 
 **Decreasing Delay:**
+
 ```python
 # More aggressive (may hit rate limits)
 Config.GEOCODING_API_DELAY = 1.0
@@ -284,10 +296,12 @@ Config.GEOCODING_TIMEOUT     # 30 seconds
 **Purpose:** Request timeout in seconds
 
 **Increase For:**
+
 - Slow networks
 - Large batch requests
 
 **Decrease For:**
+
 - Fast failover
 - Quick error detection
 
@@ -302,10 +316,12 @@ Config.GEOCODING_MAX_WORKERS # 5
 **Purpose:** Number of parallel geocoding workers
 
 **Increasing:**
+
 - Faster processing (more API calls per second)
 - Higher risk of rate limiting
 
 **Decreasing:**
+
 - Slower processing
 - More conservative rate limiting
 
@@ -330,12 +346,14 @@ except ValueError as e:
 ### What Validation Checks
 
 1. **Required API Keys:**
+
    ```python
    - ONEMAP_EMAIL is set
    - GOOGLE_API_KEY is set
    ```
 
 2. **Directory Existence:**
+
    ```python
    - DATA_DIR exists
    ```
@@ -367,6 +385,7 @@ ValueError: DATA_DIR does not exist: /path/to/project/data
 ```
 
 **Solution:**
+
 ```bash
 mkdir -p data
 ```
@@ -387,6 +406,7 @@ VERBOSE_LOGGING=true
 ```
 
 **Characteristics:**
+
 - Verbose logging
 - Caching enabled
 - Test API keys OK
@@ -405,6 +425,7 @@ VERBOSE_LOGGING=false
 ```
 
 **Characteristics:**
+
 - Minimal logging
 - Caching enabled
 - Production API keys required
@@ -418,6 +439,7 @@ VERBOSE_LOGGING=false
 **Problem:** API keys in version control are security risks
 
 **Solution:**
+
 ```bash
 # .gitignore
 .env
@@ -493,12 +515,14 @@ workers: int = Config.GEOCODING_MAX_WORKERS
 **Solutions:**
 
 1. **Check file location:**
+
    ```bash
    # .env must be in project root
    ls -la .env
    ```
 
 2. **Verify format:**
+
    ```bash
    # No spaces around =
    ONEMAP_EMAIL=correct@example.com  # ✅
@@ -517,6 +541,7 @@ workers: int = Config.GEOCODING_MAX_WORKERS
 **Symptom:** `FileNotFoundError: data/pipeline/01_bronze/`
 
 **Solution:**
+
 ```python
 from scripts.core.config import Config
 
@@ -532,12 +557,14 @@ Config.validate()  # Creates all directories
 **Solutions:**
 
 1. **Restart Python process:**
+
    ```bash
    # Environment variables loaded at import time
    uv run python script.py
    ```
 
 2. **Check for multiple .env files:**
+
    ```bash
    # Only one .env should exist
    ls -la .env*
@@ -561,24 +588,25 @@ Config.validate()  # Creates all directories
 
 ## Summary
 
-| Configuration | Type | Required | Default | Validation |
-|---------------|------|----------|---------|------------|
-| `ONEMAP_EMAIL` | str | ✅ Yes | None | Checked |
-| `GOOGLE_API_KEY` | str | ✅ Yes | None | Checked |
-| `ONEMAP_EMAIL_PASSWORD` | str | No | None | Not checked |
-| `ONEMAP_TOKEN` | str | No | None | Not checked |
-| `SUPABASE_URL` | str | No | None | Not checked |
-| `SUPABASE_KEY` | str | No | None | Not checked |
-| `JINA_AI` | str | No | None | Not checked |
-| `USE_CACHING` | bool | No | True | Not checked |
-| `VERBOSE_LOGGING` | bool | No | True | Not checked |
-| `GEOCODING_API_DELAY` | float | No | 1.2 | Not checked |
-| `GEOCODING_TIMEOUT` | int | No | 30 | Not checked |
-| `GEOCODING_MAX_WORKERS` | int | No | 5 | Not checked |
+| Configuration           | Type  | Required | Default | Validation  |
+| ----------------------- | ----- | -------- | ------- | ----------- |
+| `ONEMAP_EMAIL`          | str   | ✅ Yes   | None    | Checked     |
+| `GOOGLE_API_KEY`        | str   | ✅ Yes   | None    | Checked     |
+| `ONEMAP_EMAIL_PASSWORD` | str   | No       | None    | Not checked |
+| `ONEMAP_TOKEN`          | str   | No       | None    | Not checked |
+| `SUPABASE_URL`          | str   | No       | None    | Not checked |
+| `SUPABASE_KEY`          | str   | No       | None    | Not checked |
+| `JINA_AI`               | str   | No       | None    | Not checked |
+| `USE_CACHING`           | bool  | No       | True    | Not checked |
+| `VERBOSE_LOGGING`       | bool  | No       | True    | Not checked |
+| `GEOCODING_API_DELAY`   | float | No       | 1.2     | Not checked |
+| `GEOCODING_TIMEOUT`     | int   | No       | 30      | Not checked |
+| `GEOCODING_MAX_WORKERS` | int   | No       | 5       | Not checked |
 
 ---
 
 **Need Help?**
+
 - Check `.env.example` for required variables
 - Run `Config.validate()` to check setup
 - Review error messages carefully

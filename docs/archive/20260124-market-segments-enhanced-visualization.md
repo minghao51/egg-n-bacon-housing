@@ -17,11 +17,13 @@ Enhanced the Market Segmentation Analysis page with rich cluster characteristics
 ### 1. **Segment Profiles with Expandable Cards** ✨
 
 **Before:**
+
 - Basic metric displays for each cluster
 - Limited visual organization
 - No characteristics indicators
 
 **After:**
+
 - **Expandable cards** for each segment with comprehensive details
 - **Smart characteristic tags** automatically generated based on metrics:
   - 📈 High Growth / 📉 Declining / 📊 Moderate Growth
@@ -50,6 +52,7 @@ Premium New Units: 💎 Premium 🆕 New Lease
 **New Feature:** Comprehensive side-by-side comparison table
 
 **Columns:**
+
 - Segment name
 - Tier classification
 - Market Share (%)
@@ -67,9 +70,11 @@ Premium New Units: 💎 Premium 🆕 New Lease
 ### 3. **Enhanced Scatter Plot with Rich Hover Text** 🎯
 
 **Before:**
+
 - Basic hover showing segment name only
 
 **After:**
+
 - **Rich hover template** showing all cluster characteristics:
   - Segment name (bold)
   - Tier classification (italic)
@@ -82,6 +87,7 @@ Premium New Units: 💎 Premium 🆕 New Lease
   - Remaining lease months
 
 **Hover Example:**
+
 ```
 Mid-Tier Value
 Mid Tier
@@ -100,11 +106,13 @@ Lease: 768 mo
 ### 4. **Enhanced Investment Strategies with Risk Indicators** ⚠️
 
 **Before:**
+
 - Basic strategy display
 - No risk assessment
 - Limited visual differentiation
 
 **After:**
+
 - **Risk level badges** based on yield and growth:
   - 🟢 Low Risk: High yield, stable growth
   - 🟡 Medium Risk: Moderate growth
@@ -124,6 +132,7 @@ Lease: 768 mo
   - Purple background: LUXURY
 
 **Risk Calculation Logic:**
+
 ```python
 if avg_growth > 50 or avg_yield < 4:
     risk_level = "Very High" (Dark Red)
@@ -138,28 +147,34 @@ elif avg_growth > 10:
 ### 5. **Updated Tier Classification Description** 📝
 
 **Before:**
+
 - Generic descriptions not matching actual cluster names
 
 **After:**
+
 - Updated to match new cluster names
 - Added specific percentages and characteristics
 - Aligned with actual cluster data
 
 **Mass Market** (Declining Areas)
+
 - Lower price PSF, negative growth
 - Focus on affordability
 
 **Mid Tier** (Large Size Stable, Mid-Tier Value)
+
 - Balanced price and yield
 - Most of the market volume (38%)
 - Stable growth & value opportunities
 
 **Premium** (High Growth Recent, Speculator Hotspots)
+
 - Higher appreciation potential
 - Growth-oriented segments (24-84% growth)
 - Active trading & speculation
 
 **Luxury** (Premium New Units)
+
 - Highest price PSF ($826)
 - Newest leases (89 years remaining)
 - Premium pricing & quality
@@ -169,11 +184,14 @@ elif avg_growth > 10:
 ## Technical Implementation
 
 ### Data Source (Static)
+
 All data loaded from pre-computed CSV files:
+
 - `data/analysis/market_segmentation_2.0/cluster_profiles.csv`
 - `data/analysis/market_segmentation_2.0/investment_strategies.csv`
 
 **Benefits:**
+
 - ✅ No on-the-fly computation
 - ✅ Fast page loads
 - ✅ Consistent data
@@ -182,6 +200,7 @@ All data loaded from pre-computed CSV files:
 ### Key Functions
 
 #### Characteristic Tags Generation
+
 ```python
 characteristics = []
 if growth > 20:
@@ -192,6 +211,7 @@ elif growth < 0:
 ```
 
 #### Enhanced Hover Template
+
 ```python
 hovertemplate=(
     "<b>%{customdata[0]}</b><br>"
@@ -204,6 +224,7 @@ hovertemplate=(
 ```
 
 #### Risk Calculation
+
 ```python
 if avg_growth > 50 or avg_yield < 4:
     risk_level = "Very High"
@@ -219,7 +240,9 @@ elif avg_growth > 20 or avg_yield < 5:
 ## Visual Coherence Improvements
 
 ### Consistent Color Scheme
+
 - **Segment colors**: Match across all visualizations
+
   - Large Size Stable: Blue (#3498db)
   - High Growth Recent: Green (#2ecc71)
   - Speculator Hotspots: Purple (#9b59b6)
@@ -228,6 +251,7 @@ elif avg_growth > 20 or avg_yield < 5:
   - Premium New Units: Teal (#1abc9c)
 
 - **Tier colors**: Consistent badges
+
   - Mass Market: Red
   - Mid Tier: Blue
   - Premium: Orange
@@ -240,6 +264,7 @@ elif avg_growth > 20 or avg_yield < 5:
   - Very High: Dark Red (#d32f2f)
 
 ### Improved Layout
+
 - **Section dividers**: Clear visual separation with horizontal rules
 - **Consistent spacing**: Standardized padding and margins
 - **Visual hierarchy**: Proper heading sizes and bold weights
@@ -253,12 +278,14 @@ elif avg_growth > 20 or avg_yield < 5:
 ### Before vs After
 
 **Before:**
+
 - 6 basic profile cards with 4 metrics each
 - Simple scatter plot hover
 - Basic investment strategy cards
 - No summary table
 
 **After:**
+
 - 6 expandable cards with 7 metrics + characteristic tags
 - Rich scatter plot hover with 9 data points
 - Investment strategies with risk assessment and visual icons
@@ -270,11 +297,13 @@ elif avg_growth > 20 or avg_yield < 5:
 ## Testing
 
 **Test Command:**
+
 ```bash
 uv run streamlit run apps/market_insights/4a_segments.py --server.port 8502
 ```
 
 **Verification:**
+
 - ✅ App loads successfully with no errors
 - ✅ All segments display with correct characteristics
 - ✅ Summary table shows all metrics correctly
@@ -289,12 +318,14 @@ uv run streamlit run apps/market_insights/4a_segments.py --server.port 8502
 ## Performance
 
 **Data Loading:**
+
 - Cached with `@st.cache_data` decorator
 - Loads instantly from CSV files
 - No computation overhead
 - ~95K rows processed in < 1 second
 
 **Page Interactivity:**
+
 - Expandable cards: Instant
 - Scatter plot hover: < 100ms
 - Table rendering: < 500ms
@@ -307,6 +338,7 @@ uv run streamlit run apps/market_insights/4a_segments.py --server.port 8502
 **File:** `apps/market_insights/4a_segments.py`
 
 **Lines Modified:**
+
 - Lines 203-225: Updated tier classification description
 - Lines 227-336: Enhanced segment profiles with expandable cards and characteristics
 - Lines 337-385: Added cluster summary table
@@ -316,6 +348,7 @@ uv run streamlit run apps/market_insights/4a_segments.py --server.port 8502
 **Total Changes:** ~200 lines added/modified
 
 **New Features:**
+
 1. Characteristic tag generation (8 tag types)
 2. Expandable segment cards with 7 metrics
 3. Comprehensive summary table
@@ -328,6 +361,7 @@ uv run streamlit run apps/market_insights/4a_segments.py --server.port 8502
 ## Future Enhancements (Optional)
 
 Potential improvements for later:
+
 1. Add time-series comparison of cluster evolution
 2. Export segment profiles to PDF/Excel
 3. Add filtering by characteristics (e.g., "Show only High Growth")
@@ -339,16 +373,19 @@ Potential improvements for later:
 ## Maintenance
 
 **To regenerate cluster data:**
+
 ```bash
 uv run python scripts/quick_cluster_profiles.py
 ```
 
 **To update visualization:**
+
 1. Regenerate cluster profiles (above)
 2. Refresh the Streamlit page
 3. New data will appear instantly
 
 **Data Files:**
+
 - `data/analysis/market_segmentation_2.0/cluster_profiles.csv`
 - `data/analysis/market_segmentation_2.0/investment_strategies.csv`
 
@@ -356,5 +393,5 @@ uv run python scripts/quick_cluster_profiles.py
 
 **Status: PRODUCTION READY** ✅
 
-*Generated: 2026-01-24*
-*Market Segmentation Version: 2.0 (Enhanced Visualization)*
+_Generated: 2026-01-24_
+_Market Segmentation Version: 2.0 (Enhanced Visualization)_

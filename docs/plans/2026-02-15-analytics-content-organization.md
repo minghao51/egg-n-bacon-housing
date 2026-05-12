@@ -13,6 +13,7 @@
 ## Task 1: Update Sync Script with Category Validation
 
 **Files:**
+
 - Modify: `scripts/sync-content.sh:20-33`
 
 **Step 1: Add validation function to sync script**
@@ -102,7 +103,7 @@ echo "✅ All categories validated successfully"
 **Step 3: Test validation with existing files**
 
 Run: `bash scripts/sync-content.sh`
-Expected: ⚠️  Missing category warnings (current files don't have categories yet)
+Expected: ⚠️ Missing category warnings (current files don't have categories yet)
 
 **Step 4: Commit**
 
@@ -121,6 +122,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 2: Update Frontmatter for Investment Guides Category
 
 **Files:**
+
 - Modify: `docs/analytics/findings.md:2-7`
 
 **Step 1: Add category frontmatter to findings.md**
@@ -157,6 +159,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 3: Update Frontmatter for Market Analysis Files
 
 **Files:**
+
 - Modify: `docs/analytics/analyze_lease_decay.md:2-7`
 - Modify: `docs/analytics/analyze_mrt-impact-analysis.md:2-7`
 - Modify: `docs/analytics/analyze_school-quality-features.md:2-7`
@@ -231,6 +234,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 4: Update Frontmatter for Technical Reports Files
 
 **Files:**
+
 - Modify: `docs/analytics/causal-inference-overview.md:2-7`
 - Modify: `docs/analytics/plan_analyze_h3_clusters.md:2-7`
 - Modify: `docs/analytics/plan_analyze_policy_impact.md:2-7`
@@ -331,6 +335,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 5: Update Analytics Index Page with Category Grouping
 
 **Files:**
+
 - Modify: `app/src/pages/analytics/index.astro:5-93`
 
 **Step 1: Add category configuration and grouping logic**
@@ -545,6 +550,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 6: Verify Full Integration
 
 **Files:**
+
 - Test: `scripts/sync-content.sh`
 - Test: `app/src/pages/analytics/index.astro`
 
@@ -568,6 +574,7 @@ Expected: Build succeeds without errors
 Run: `cd app && bun run preview`
 Visit: `http://localhost:4321/analytics`
 Verify:
+
 - ✅ 4 category sections visible
 - ✅ Documents grouped correctly
 - ✅ Collapse/expand works
@@ -578,6 +585,7 @@ Verify:
 
 Resize browser to 375px width (iPhone)
 Verify:
+
 - ✅ Sections stack vertically
 - ✅ Touch-friendly expand/collapse
 - ✅ No horizontal scroll
@@ -604,31 +612,34 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 7: Update Content Config Schema (Optional Enhancement)
 
 **Files:**
+
 - Modify: `app/src/content/config.ts:1-17`
 
 **Step 1: Add category enum validation**
 
 ```typescript
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, z } from "astro:content";
 
 const analyticsCollection = defineCollection({
-    type: 'content',
-    schema: z.object({
-        title: z.string().optional(),
-        date: z.coerce.date().optional(),
-        status: z.string().optional(),
-        category: z.enum([
-            'investment-guides',
-            'market-analysis',
-            'technical-reports',
-            'quick-reference'
-        ]).optional(),
-        description: z.string().optional(),
-    }),
+  type: "content",
+  schema: z.object({
+    title: z.string().optional(),
+    date: z.coerce.date().optional(),
+    status: z.string().optional(),
+    category: z
+      .enum([
+        "investment-guides",
+        "market-analysis",
+        "technical-reports",
+        "quick-reference",
+      ])
+      .optional(),
+    description: z.string().optional(),
+  }),
 });
 
 export const collections = {
-    'analytics': analyticsCollection,
+  analytics: analyticsCollection,
 };
 ```
 
@@ -654,17 +665,20 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Testing Checklist
 
 ### Sync Script Validation
+
 - [ ] Missing category prints warning
 - [ ] Invalid category prints warning with valid values
 - [ ] Valid categories pass silently
 - [ ] Exit code 1 on validation errors
 
 ### Frontmatter Updates
+
 - [ ] All 11 files have category field
 - [ ] Category values match specification
 - [ ] No typos in category names
 
 ### Analytics Page Display
+
 - [ ] 4 category sections render
 - [ ] Documents grouped correctly
 - [ ] Collapse/expand works
@@ -672,12 +686,14 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 - [ ] Document counts accurate
 
 ### Responsive Design
+
 - [ ] Desktop: sections display side-by-side stats
 - [ ] Mobile: sections stack vertically
 - [ ] Touch-friendly expand/collapse
 - [ ] No horizontal scroll
 
 ### Build Verification
+
 - [ ] Local build succeeds: `cd app && bun run build`
 - [ ] No console errors
 - [ ] All assets load correctly
@@ -689,21 +705,25 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 If deployment fails:
 
 1. Revert commits:
+
 ```bash
 git revert HEAD~6..HEAD
 ```
 
 2. Restore previous sync script:
+
 ```bash
 git checkout HEAD~6 scripts/sync-content.sh
 ```
 
 3. Remove category frontmatter:
+
 ```bash
 git checkout HEAD~6 docs/analytics/*.md
 ```
 
 4. Restore analytics page:
+
 ```bash
 git checkout HEAD~6 app/src/pages/analytics/index.astro
 ```

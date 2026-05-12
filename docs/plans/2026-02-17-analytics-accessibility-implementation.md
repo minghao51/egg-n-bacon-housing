@@ -5,6 +5,7 @@
 **Goal:** Transform technical analytics documentation into accessible, actionable guides for non-technical users by creating reusable Astro components for tooltips, stat callouts, persona-based navigation, and actionable insights, then pilot with the MRT Impact Analysis document.
 
 **Architecture:**
+
 - Create reusable Astro components in `app/src/components/analytics/`
 - Store glossary and persona data as JSON in `app/src/data/`
 - Enhance MDX content files in `app/src/content/analytics/` with component syntax
@@ -12,6 +13,7 @@
 - Keep content synced between `/docs/analytics/` (reference) and `app/src/content/analytics/` (served)
 
 **Tech Stack:**
+
 - Astro 5 with MDX content collections
 - Tailwind CSS with existing CSS custom properties
 - TypeScript for type safety
@@ -22,6 +24,7 @@
 ## Task 1: Create Analytics Components Directory
 
 **Files:**
+
 - Create: `app/src/components/analytics/.gitkeep`
 
 **Step 1: Create directory**
@@ -49,6 +52,7 @@ git commit -m "feat(analytics): create analytics components directory"
 ## Task 2: Create Glossary Data File
 
 **Files:**
+
 - Create: `app/src/data/analytics-glossary.json`
 
 **Step 1: Create data directory**
@@ -175,6 +179,7 @@ Defines jargon like VAR, OLS, XGBoost, R², etc. with:
 ## Task 3: Create Persona Data File
 
 **Files:**
+
 - Create: `app/src/data/persona-content.json`
 
 **Step 1: Create persona content JSON**
@@ -305,6 +310,7 @@ Includes:
 ## Task 4: Create Tooltip Component
 
 **Files:**
+
 - Create: `app/src/components/analytics/Tooltip.astro`
 
 **Step 1: Write the Tooltip component**
@@ -469,6 +475,7 @@ Features:
 ## Task 5: Create StatCallout Component
 
 **Files:**
+
 - Create: `app/src/components/analytics/StatCallout.astro`
 
 **Step 1: Write the StatCallout component**
@@ -582,6 +589,7 @@ Features:
 ## Task 6: Create ImplicationBox Component
 
 **Files:**
+
 - Create: `app/src/components/analytics/ImplicationBox.astro`
 
 **Step 1: Write the ImplicationBox component**
@@ -662,6 +670,7 @@ Features:
 ## Task 7: Create Scenario Component
 
 **Files:**
+
 - Create: `app/src/components/analytics/Scenario.astro`
 
 **Step 1: Write the Scenario component**
@@ -740,6 +749,7 @@ Features:
 ## Task 8: Create DecisionChecklist Component
 
 **Files:**
+
 - Create: `app/src/components/analytics/DecisionChecklist.astro`
 
 **Step 1: Write the DecisionChecklist component**
@@ -890,6 +900,7 @@ Features:
 ## Task 9: Update Content Schema to Support New Badges
 
 **Files:**
+
 - Modify: `app/src/content/config.ts`
 
 **Step 1: Add new frontmatter fields**
@@ -951,6 +962,7 @@ Allows analytics docs to specify:
 ## Task 10: Create Persona Landing Pages
 
 **Files:**
+
 - Create: `app/src/pages/analytics/personas/[persona].astro`
 
 **Step 1: Create personas directory**
@@ -1165,6 +1177,7 @@ Each page shows:
 ## Task 11: Add Persona Links to Analytics Index
 
 **Files:**
+
 - Modify: `app/src/pages/analytics/index.astro`
 
 **Step 1: Read current file to find insertion point**
@@ -1272,6 +1285,7 @@ Placed above category sections for visibility
 ## Task 12: Enhance MRT Impact Analysis Document - Part 1 (Frontmatter and Key Takeaways)
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_mrt-impact-analysis.md`
 
 **Step 1: Read current frontmatter**
@@ -1397,6 +1411,7 @@ git commit -m "feat(analytics): add Key Takeaways and enhanced frontmatter to MR
 ## Task 13: Enhance MRT Impact Analysis Document - Part 2 (Add Tooltips)
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_mrt-impact-analysis.md`
 
 **Step 1: Add Tooltip imports at top of file**
@@ -1431,6 +1446,7 @@ In "Statistical Models" section (around line 62):
 
 ```markdown
 **1. <Tooltip term="OLS Regression">OLS Regression</Tooltip> (Linear Baseline)**
+
 - Three distance specifications tested:
   - Linear: `price = β₀ + β₁ × distance`
   - Log: `price = β₀ + β₁ × log(distance)`
@@ -1442,6 +1458,7 @@ In "Statistical Models" section (around line 62):
 
 ```markdown
 **2. <Tooltip term="XGBoost">XGBoost</Tooltip> (Non-linear Machine Learning)**
+
 - Hyperparameters: 100 estimators, max_depth=6, learning_rate=0.1
 - Feature importance: Gain-based importance scores
 - Performance: <Tooltip term="R²">R²</Tooltip> = 0.91 for price prediction (outstanding)
@@ -1471,6 +1488,7 @@ Each tooltip shows:
 ## Task 14: Enhance MRT Impact Analysis Document - Part 3 (Add Implication Boxes)
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_mrt-impact-analysis.md`
 
 **Step 1: Add investor implication after "Core Findings" section**
@@ -1485,7 +1503,7 @@ Find the line "### 5. Feature Importance Ranking" (around line 187) and insert t
 - ⚠️ **Risk**: HDB "MRT premium" marketing is often misleading - the real driver is CBD proximity
 - **Action**: When evaluating condos, prioritize MRT access; for HDBs, focus on lease remaining and floor area instead
 - **Strategy**: Target condos within 500m of future MRT lines for potential appreciation, but verify the premium isn't already priced in
-</ImplicationBox>
+  </ImplicationBox>
 
 <ImplicationBox persona="first-time-buyer">
 **For First-Time Buyers:** Don't overpay for "MRT proximity" when buying HDB flats.
@@ -1494,7 +1512,7 @@ Find the line "### 5. Feature Importance Ranking" (around line 187) and insert t
 - The $1.28 average masks wild variation: Central Area +$59/100m, but Marine Parade shows -$39/100m
 - **What to prioritize instead**: Hawker center proximity (27% importance), remaining lease (14.1%), and park access (7.2%)
 - **Budget tip**: If you're budget-constrained, consider HDBs 500m-1km from MRT - you'll save money without sacrificing much appreciation
-</ImplicationBox>
+  </ImplicationBox>
 
 <ImplicationBox persona="upgrader">
 **For Upsizers:** When selling your current HDB to upgrade, <strong>location matters more than property type</strong>.
@@ -1503,7 +1521,7 @@ Find the line "### 5. Feature Importance Ranking" (around line 187) and insert t
 - **When buying**: The "MRT premium" varies 100x across towns - research your target area's specific premium
 - **Upgrade strategy**: If upgrading from HDB to condo, prioritize condos near MRT stations (15x more sensitive than HDBs)
 - **Timing leverage**: Properties within 500m of MRT appreciate 35% faster - use this for your upgrade timeline planning
-</ImplicationBox>
+  </ImplicationBox>
 ```
 
 **Step 2: Verify markdown renders correctly**
@@ -1535,6 +1553,7 @@ Each includes opportunities, risks, and action items
 ## Task 15: Enhance MRT Impact Analysis Document - Part 4 (Add Scenarios)
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_mrt-impact-analysis.md`
 
 **Step 1: Add scenario after "Appreciation Impact" section**
@@ -1546,11 +1565,13 @@ Find the line "### 3. Town-Level Heterogeneity" (around line 139) and insert thi
 **Situation:** You're considering a \$1.2M condo 500m from a future MRT station opening in 2028.
 
 **Our Analysis Says:**
+
 - Condos show **15x higher MRT sensitivity** than HDBs ($2.30/100m vs $0.15/100m)
 - Properties within 500m of MRT appreciate **35% faster** (13.36% YoY vs 9.90% for >2km)
 - Future MRT lines typically boost nearby prices by **5-10%** once operational
 
 **Your Decision Framework:**
+
 1. **Check if premium is already priced in**: Compare this condo to similar ones 1km away. If the price difference is >5-10%, the MRT premium is already factored in.
 2. **Verify holding timeline**: Can you hold until 2028+? If you need to sell before the station opens, you won't capture the full premium.
 3. **Assess CBD distance**: Is this condo also close to the city center? Remember: CBD proximity explains 22.6% of price variation.
@@ -1566,12 +1587,14 @@ Find the line "### 3. Town-Level Heterogeneity" (around line 139) and insert thi
 - Option B: \$520,000, 800m from MRT (same town)
 
 **Our Analysis Says:**
+
 - HDB MRT premium is only **\$1.28/100m** on average
 - For 500m difference: 500m / 100m × \$1.28 = **\$6.40 PSF premium**
 - For a 1,000 sqft flat: \$6.40 × 1,000 = **\$6,400 premium justified by MRT proximity**
 - **But**: This varies wildly by town - Bishan shows +\$5.88/100m, while Marine Parade shows -\$39/100m
 
 **Your Decision Framework:**
+
 1. **Calculate actual premium**: Option A costs \$30K more = \$30 PSF for 1,000 sqft
 2. **Compare to justified premium**: \$30 PSF actual vs \$29.40 PSF justified (500m × \$5.88/100m for Bishan)
 3. **Check what else matters**: Hawker center proximity matters 5x more than MRT (27% vs 5.5% importance)
@@ -1614,6 +1637,7 @@ Each scenario includes:
 ## Task 16: Enhance MRT Impact Analysis Document - Part 5 (Add Decision Checklist)
 
 **Files:**
+
 - Modify: `app/src/content/analytics/analyze_mrt-impact-analysis.md`
 
 **Step 1: Add checklist at the end of the document**
@@ -1622,12 +1646,11 @@ Find the end of the document and insert before the final `---`:
 
 ```markdown
 ---
-
 ## 🎯 Decision Checklist: Evaluating MRT Proximity Premium
 
 <DecisionChecklist
-  title="Use this checklist when evaluating any property"
-  storageKey="mrt-premium-checklist"
+title="Use this checklist when evaluating any property"
+storageKey="mrt-premium-checklist"
 >
 
 - [ ] **Property type?** (Condo = MRT matters 15x more; HDB = minimal impact)
@@ -1642,7 +1665,6 @@ Find the end of the document and insert before the final `---`:
 - [ ] **Can you hold long enough?** (Properties < 500m appreciate 35% faster - time horizon matters)
 
 </DecisionChecklist>
-
 ---
 
 ## 🔗 Related Analytics
@@ -1696,6 +1718,7 @@ Persisted to localStorage so users can track their evaluation
 ## Task 17: Update Sidebar with Persona Links
 
 **Files:**
+
 - Modify: `app/src/components/Sidebar.astro`
 
 **Step 1: Find analytics section in sidebar**
@@ -1765,6 +1788,7 @@ Each persona link includes icon for visual identification
 ## Task 18: Sync Enhanced Content to Reference Directory
 
 **Files:**
+
 - Copy: `app/src/content/analytics/analyze_mrt-impact-analysis.md` → `docs/analytics/analyze_mrt-impact-analysis.md`
 
 **Step 1: Copy enhanced version to reference directory**
@@ -1804,6 +1828,7 @@ Enhanced version includes:
 ## Task 19: Test All Functionality
 
 **Files:**
+
 - Test: All components and pages
 
 **Step 1: Build the site**
@@ -1898,11 +1923,12 @@ Verified:
 ## Task 20: Create Component Documentation
 
 **Files:**
+
 - Create: `docs/plans/2026-02-17-analytics-component-library.md`
 
 **Step 1: Write component documentation**
 
-```bash
+````bash
 cat > /Users/minghao/Desktop/personal/egg-n-bacon-housing/docs/plans/2026-02-17-analytics-component-library.md << 'EOF'
 # Analytics Accessibility Component Library
 
@@ -1927,9 +1953,10 @@ This component library transforms technical analytics documentation into accessi
 **Usage:**
 ```md
 <Tooltip term="H3 hexagons">H3 hexagons</Tooltip>
-```
+````
 
 **Features:**
+
 - Looks up terms in `analytics-glossary.json`
 - Hover on desktop, tap on mobile
 - Shows explanation + "why it matters"
@@ -1938,6 +1965,7 @@ This component library transforms technical analytics documentation into accessi
 **Data source:** `app/src/data/analytics-glossary.json`
 
 **Glossary format:**
+
 ```json
 {
   "TERM": {
@@ -1954,6 +1982,7 @@ This component library transforms technical analytics documentation into accessi
 **Purpose:** Highlight key statistics with visual prominence
 
 **Usage:**
+
 ```md
 <StatCallout
   value="22.6%"
@@ -1964,12 +1993,14 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Props:**
+
 - `value` (required): The statistic to display
 - `label` (required): Description of what it means
 - `trend` (optional): "high" | "medium" | "low" | "neutral"
 - `context` (optional): Additional interpretation
 
 **Features:**
+
 - Large prominent value (4xl font)
 - Color-coded by trend (green/yellow/red)
 - Hover animation
@@ -1982,6 +2013,7 @@ This component library transforms technical analytics documentation into accessi
 **Purpose:** Show what findings mean for different user personas
 
 **Usage:**
+
 ```md
 <ImplicationBox persona="investor">
 **For Investors:** MRT proximity drives condo prices 15x more than HDBs.
@@ -1992,10 +2024,12 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Props:**
+
 - `persona` (required): "first-time-buyer" | "investor" | "upgrader"
 - `title` (optional): Custom header (defaults to "For {Persona}")
 
 **Features:**
+
 - Color-coded by persona (green/blue/orange)
 - Renders markdown content
 - Pulls colors from `persona-content.json`
@@ -2007,15 +2041,18 @@ This component library transforms technical analytics documentation into accessi
 **Purpose:** Real-world examples showing how to apply insights
 
 **Usage:**
+
 ```md
 <Scenario title="Evaluating a Condo Near Future MRT Line">
 **Situation:** You're considering a $1.2M condo 500m from a future MRT station.
 
 **Our Analysis Says:**
+
 - Condos show 15x higher MRT sensitivity than HDBs
 - Future MRT lines typically boost prices by 5-10%
 
 **Your Decision Framework:**
+
 1. Check if premium is already priced in
 2. Verify holding timeline
 3. Assess CBD distance
@@ -2025,6 +2062,7 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Features:**
+
 - Prominent border and styling
 - Markdown content support
 - Visual hierarchy (Situation → Analysis → Framework → Bottom Line)
@@ -2036,10 +2074,12 @@ This component library transforms technical analytics documentation into accessi
 **Purpose:** Interactive evaluation framework for property decisions
 
 **Usage:**
+
 ```md
 <DecisionChecklist
-  title="Evaluating MRT Proximity Premium"
-  storageKey="mrt-premium-checklist"
+title="Evaluating MRT Proximity Premium"
+storageKey="mrt-premium-checklist"
+
 >
 
 - [ ] Property type? (Condo = MRT matters 15x more)
@@ -2051,10 +2091,12 @@ This component library transforms technical analytics documentation into accessi
 ```
 
 **Props:**
+
 - `title` (required): Checklist name
 - `storageKey` (optional): Unique localStorage key (auto-generated if omitted)
 
 **Features:**
+
 - Interactive checkboxes
 - Persisted to localStorage
 - Reset button
@@ -2071,6 +2113,7 @@ This component library transforms technical analytics documentation into accessi
 **Contains:** 22 technical terms with explanations
 
 **Adding new terms:**
+
 ```json
 {
   "NEW TERM": {
@@ -2091,6 +2134,7 @@ This component library transforms technical analytics documentation into accessi
 **Contains:** 3 personas with metadata
 
 **Persona structure:**
+
 ```json
 {
   "persona-key": {
@@ -2123,6 +2167,7 @@ This component library transforms technical analytics documentation into accessi
 ### Step 1: Update Frontmatter
 
 Add to analytics doc frontmatter:
+
 ```yaml
 ---
 title: Document Title
@@ -2139,6 +2184,7 @@ technicalLevel: intermediate
 ### Step 2: Add Imports
 
 After frontmatter, add component imports:
+
 ```markdown
 ---
 
@@ -2155,15 +2201,19 @@ import DecisionChecklist from '@/components/analytics/DecisionChecklist';
 ## 📋 Key Takeaways
 
 ### 💡 The One Big Insight
+
 One-sentence revolutionary finding
 
 ### 🎯 What This Means For You
+
 3 bullet points translating findings
 
 ### ✅ Action Steps
+
 3-5 concrete actions
 
 ### 📊 By The Numbers
+
 3-5 <StatCallout> components
 ```
 
@@ -2177,6 +2227,7 @@ After: "Using <Tooltip term='H3 hexagons'>H3 hexagons</Tooltip> for spatial anal
 ### Step 5: Add Implication Boxes
 
 After major findings, add persona-specific implications:
+
 ```markdown
 <ImplicationBox persona="investor">
 **For Investors:** ...
@@ -2201,6 +2252,7 @@ After major findings, add persona-specific implications:
 ### Step 7: Add Decision Checklist
 
 At the end of the document:
+
 ```markdown
 ## 🎯 Decision Checklist
 
@@ -2238,17 +2290,20 @@ git commit -m "docs(analytics): sync enhanced doc to reference"
 ## Browser Testing
 
 **Desktop (Chrome/Firefox/Safari):**
+
 - Tooltips show on hover
 - All components render correctly
 - Sidebar navigation works
 
 **Mobile (iOS Safari/Chrome Mobile):**
+
 - Tooltips show on tap
 - Checklists save to localStorage
 - Persona cards tappable
 - No horizontal scroll
 
 **Accessibility (screen reader):**
+
 - Tooltips announced as "tooltip" role
 - Checkboxes have proper labels
 - Links are descriptive
@@ -2267,12 +2322,14 @@ git commit -m "docs(analytics): sync enhanced doc to reference"
 ## Future Enhancements
 
 **Phase 2:**
+
 - Apply template to remaining 14 analytics docs
 - Expand glossary to 50+ terms
 - A/B test component effectiveness
 - Add PDF export with styles
 
 **Phase 3:**
+
 - Interactive calculators (MRT Premium Calculator)
 - Dynamic persona detection via quiz
 - Video explainers for complex concepts
@@ -2283,20 +2340,24 @@ git commit -m "docs(analytics): sync enhanced doc to reference"
 ## Troubleshooting
 
 **Tooltip not showing:**
+
 - Check term exists in `analytics-glossary.json`
 - Verify component import at top of document
 - Check browser console for JavaScript errors
 
 **StatCallout not rendering:**
+
 - Verify all required props (value, label) are provided
 - Check trend value is valid: "high" | "medium" | "low" | "neutral"
 
 **DecisionChecklist not persisting:**
+
 - Check localStorage is enabled in browser
 - Verify storageKey is unique per checklist
 - Check browser console for quota exceeded errors
 
 **Persona page showing no docs:**
+
 - Verify docs have `personas` field in frontmatter
 - Check slug matches in `persona-content.json`
 - Ensure doc status is "published"
@@ -2315,6 +2376,7 @@ git commit -m "docs(analytics): sync enhanced doc to reference"
 6. Document in this file
 
 **Component checklist:**
+
 - [ ] Astro component in `app/src/components/analytics/`
 - [ ] TypeScript props interface
 - [ ] Tailwind styling with CSS variables
@@ -2330,6 +2392,7 @@ git commit -m "docs(analytics): sync enhanced doc to reference"
 ## Maintenance
 
 **Regular tasks:**
+
 - Add new technical terms to glossary as they appear
 - Update persona recommendations as new docs are added
 - Test all components after Astro version upgrades
@@ -2337,13 +2400,15 @@ git commit -m "docs(analytics): sync enhanced doc to reference"
 - Verify mobile responsiveness quarterly
 
 **When new analytics docs are added:**
+
 1. Add to appropriate persona's `recommendedDocs` in `persona-content.json`
 2. Set `personas` frontmatter field
 3. Apply enhancement template (this document)
 4. Sync to reference directory
 5. Test on all device types
-EOF
-```
+   EOF
+
+````
 
 **Step 2: Commit documentation**
 
@@ -2359,13 +2424,14 @@ Documents all 5 components + 2 data files:
 - Testing checklist
 - Troubleshooting guide
 "
-```
+````
 
 ---
 
 ## Task 21: Create Final Summary and Verification
 
 **Files:**
+
 - Create: `docs/plans/2026-02-17-analytics-accessibility-summary.md`
 
 **Step 1: Write implementation summary**
@@ -2419,37 +2485,41 @@ cat > /Users/minghao/Desktop/personal/egg-n-bacon-housing/docs/plans/2026-02-17-
 ### New Files Created
 
 ```
+
 app/src/components/analytics/
-  ├── .gitkeep
-  ├── Tooltip.astro
-  ├── StatCallout.astro
-  ├── ImplicationBox.astro
-  ├── Scenario.astro
-  └── DecisionChecklist.astro
+├── .gitkeep
+├── Tooltip.astro
+├── StatCallout.astro
+├── ImplicationBox.astro
+├── Scenario.astro
+└── DecisionChecklist.astro
 
 app/src/data/
-  ├── analytics-glossary.json
-  └── persona-content.json
+├── analytics-glossary.json
+└── persona-content.json
 
 app/src/pages/analytics/personas/
-  └── [persona].astro
+└── [persona].astro
 
 docs/plans/
-  ├── 2026-02-17-analytics-accessibility-design.md
-  ├── 2026-02-17-analytics-accessibility-implementation.md
-  ├── 2026-02-17-analytics-component-library.md
-  └── 2026-02-17-analytics-accessibility-summary.md
+├── 2026-02-17-analytics-accessibility-design.md
+├── 2026-02-17-analytics-accessibility-implementation.md
+├── 2026-02-17-analytics-component-library.md
+└── 2026-02-17-analytics-accessibility-summary.md
+
 ```
 
 ### Modified Files
 
 ```
+
 app/src/content/config.ts - Added personas, readingTime, technicalLevel to schema
 app/src/pages/analytics/index.astro - Added persona selection cards
 app/src/components/Sidebar.astro - Added persona links under Analytics
 app/src/content/analytics/analyze_mrt-impact-analysis.md - Full enhancement pilot
 docs/analytics/analyze_mrt-impact-analysis.md - Synced enhanced version
-```
+
+````
 
 ---
 
@@ -2511,7 +2581,7 @@ All tests passed:
 
 # Content synced
 ✓ app/src/content/analytics/ = docs/analytics/
-```
+````
 
 ---
 
@@ -2556,17 +2626,14 @@ All tests passed:
 Priority order (by user impact):
 
 **High Priority (Investment Guides):**
+
 1. `findings.md` - Master summary (all personas)
 2. `analyze_price_appreciation_predictions.md` - Investors (high value)
 3. `analyze_lease_decay.md` - First-time buyers (critical concern)
 
-**Medium Priority (Market Analysis):**
-4. `analyze_school-quality-features.md` - Families (upgraders)
-5. `analyze_spatial_autocorrelation.md` - Investors (location strategy)
+**Medium Priority (Market Analysis):** 4. `analyze_school-quality-features.md` - Families (upgraders) 5. `analyze_spatial_autocorrelation.md` - Investors (location strategy)
 
-**Lower Priority (Technical Reports):**
-6. `causal-inference-overview.md` - Advanced users
-7. Planning documents (future analysis)
+**Lower Priority (Technical Reports):** 6. `causal-inference-overview.md` - Advanced users 7. Planning documents (future analysis)
 
 ### Expansion Opportunities
 
@@ -2609,17 +2676,20 @@ Priority order (by user impact):
 ## Metrics to Track
 
 **User Engagement:**
+
 - Persona page visits (which personas are most popular?)
 - Checklist completion rates (are users using them?)
 - Time on page (did enhancements help or slow down?)
 - Bounce rate (do users find what they need?)
 
 **Accessibility:**
+
 - Tooltip usage (which terms are most confusing?)
 - Mobile vs desktop usage
 - Screen reader usage
 
 **Content Effectiveness:**
+
 - Which scenarios resonate most?
 - Are actionable steps clear?
 - Do personas help content discovery?
@@ -2629,20 +2699,24 @@ Priority order (by user impact):
 ## Maintenance Plan
 
 ### Weekly
+
 - Monitor user feedback and bug reports
 - Check analytics for engagement metrics
 
 ### Monthly
+
 - Add new technical terms to glossary as needed
 - Update persona recommendations as new docs are published
 - Test all components on mobile/desktop
 
 ### Quarterly
+
 - Review and update persona content based on usage
 - Refresh StatCallout data if underlying analysis changes
 - Accessibility audit (keyboard nav, screen reader)
 
 ### As Needed
+
 - Fix bugs discovered through user testing
 - Add new components as requirements emerge
 - Update documentation when patterns change
@@ -2679,6 +2753,7 @@ Priority order (by user impact):
 ### Before Enhancement
 
 **MRT Impact Analysis document:**
+
 - 330 lines of dense technical content
 - Postgraduate reading level
 - Minimal actionable guidance
@@ -2688,6 +2763,7 @@ Priority order (by user impact):
 ### After Enhancement
 
 **MRT Impact Analysis document:**
+
 - Scannable Key Takeaways at top
 - College reading level (tooltips explain jargon)
 - 5 action steps + 10-point checklist
@@ -2697,6 +2773,7 @@ Priority order (by user impact):
 - 20+ clickable tooltips
 
 **User can now:**
+
 - Understand key insight in 30 seconds (Key Takeaways)
 - Learn technical terms without leaving page (tooltips)
 - See what findings mean for their situation (ImplicationBoxes)
@@ -2719,6 +2796,7 @@ Priority order (by user impact):
 ## Contact
 
 **Questions?** See documentation:
+
 - Design: `docs/plans/2026-02-17-analytics-accessibility-design.md`
 - Implementation: `docs/plans/2026-02-17-analytics-accessibility-implementation.md`
 - Component Library: `docs/plans/2026-02-17-analytics-component-library.md`
@@ -2726,7 +2804,8 @@ Priority order (by user impact):
 
 **Ready for Phase 2:** Apply template to remaining 14 analytics documents.
 EOF
-```
+
+````
 
 **Step 2: Commit summary**
 
@@ -2747,7 +2826,7 @@ Summary includes:
 - Next steps
 - Maintenance plan
 "
-```
+````
 
 ---
 

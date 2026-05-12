@@ -5,12 +5,14 @@
 **Goal:** Build a decorator-based data quality monitoring system that captures metrics at every `save_parquet()` call, stores them in SQLite, and alerts on anomalies using adaptive thresholds.
 
 **Architecture:**
+
 - Decorator pattern on `save_parquet()` for automatic metric capture
 - SQLite database for time-series quality metrics
 - Adaptive thresholds using statistical process control (3σ)
 - CLI reporter for viewing quality summaries and trends
 
 **Tech Stack:**
+
 - Python 3.11+
 - pandas (DataFrames)
 - SQLite3 (built-in)
@@ -21,6 +23,7 @@
 ## Task 1: Create Data Quality Module Structure
 
 **Files:**
+
 - Create: `scripts/core/data_quality.py`
 
 **Step 1: Create module with dataclasses**
@@ -106,6 +109,7 @@ git commit -m "feat(data-quality): add module structure with dataclasses"
 ## Task 2: Implement Database Initialization
 
 **Files:**
+
 - Modify: `scripts/core/data_quality.py`
 
 **Step 1: Write test for database initialization**
@@ -148,7 +152,7 @@ def test_database_initialization():
 Run: `uv run pytest tests/unit/test_data_quality.py::test_database_initialization -v`
 Expected: FAIL - tables don't exist yet
 
-**Step 3: Implement _init_db method**
+**Step 3: Implement \_init_db method**
 
 ```python
 # In DataQualityCollector class
@@ -225,6 +229,7 @@ git commit -m "feat(data-quality): implement database initialization with schema
 ## Task 3: Implement Snapshot Recording
 
 **Files:**
+
 - Modify: `scripts/core/data_quality.py`
 - Modify: `tests/unit/test_data_quality.py`
 
@@ -329,6 +334,7 @@ git commit -m "feat(data-quality): implement snapshot recording"
 ## Task 4: Implement Baseline Retrieval
 
 **Files:**
+
 - Modify: `scripts/core/data_quality.py`
 - Modify: `tests/unit/test_data_quality.py`
 
@@ -437,6 +443,7 @@ git commit -m "feat(data-quality): implement baseline retrieval"
 ## Task 5: Implement Baseline Update Logic
 
 **Files:**
+
 - Modify: `scripts/core/data_quality.py`
 - Modify: `tests/unit/test_data_quality.py`
 
@@ -651,6 +658,7 @@ git commit -m "feat(data-quality): implement baseline update with Welford's algo
 ## Task 6: Implement Anomaly Detection
 
 **Files:**
+
 - Modify: `scripts/core/data_quality.py`
 - Modify: `tests/unit/test_data_quality.py`
 
@@ -780,6 +788,7 @@ git commit -m "feat(data-quality): implement anomaly detection with 3-sigma thre
 ## Task 7: Implement Decorator
 
 **Files:**
+
 - Modify: `scripts/core/data_quality.py`
 - Modify: `tests/unit/test_data_quality.py`
 
@@ -949,6 +958,7 @@ git commit -m "feat(data-quality): implement decorator for automatic metric capt
 ## Task 8: Integrate Decorator into data_helpers.py
 
 **Files:**
+
 - Modify: `scripts/core/data_helpers.py`
 
 **Step 1: Read current save_parquet function**
@@ -1042,6 +1052,7 @@ git commit -m "feat(data-quality): integrate decorator with save_parquet"
 ## Task 9: Create CLI Reporter
 
 **Files:**
+
 - Create: `scripts/utils/data_quality_report.py`
 - Create: `tests/unit/test_data_quality_report.py`
 
@@ -1250,6 +1261,7 @@ git commit -m "feat(data-quality): add CLI reporter for quality summaries"
 ## Task 10: End-to-End Testing
 
 **Files:**
+
 - Create: `tests/integration/test_data_quality_e2e.py`
 
 **Step 1: Write end-to-end test**
@@ -1317,16 +1329,19 @@ git commit -m "test(data-quality): add end-to-end integration test"
 ## Task 11: Documentation
 
 **Files:**
+
 - Modify: `CLAUDE.md`
 - Create: `docs/guides/data-quality-monitoring.md`
 
 **Step 1: Add reference to CLAUDE.md**
 
 Add to "## Project Architecture" section:
+
 ```markdown
 ### Data Quality Monitoring
 
 The pipeline includes automatic data quality monitoring:
+
 - Metrics captured at every `save_parquet()` call
 - SQLite storage at `data/quality_metrics.db`
 - Adaptive anomaly detection (3σ thresholds)
@@ -1337,7 +1352,7 @@ See `docs/guides/data-quality-monitoring.md` for details.
 
 **Step 2: Create usage guide**
 
-```markdown
+````markdown
 # Data Quality Monitoring Guide
 
 ## Overview
@@ -1347,11 +1362,14 @@ The data quality framework automatically monitors pipeline health by capturing m
 ## Viewing Quality Reports
 
 ### Quick Summary
+
 ```bash
 uv run python scripts/utils/data_quality_report.py --summary
 ```
+````
 
 Output:
+
 ```
 Recent Data Quality Summary
 ================================================================================
@@ -1361,6 +1379,7 @@ Timestamp           | Dataset                  | Rows      | Dups | Nulls | Stat
 ```
 
 ### Customizing Output
+
 ```bash
 # Show last 20 runs
 uv run python scripts/utils/data_quality_report.py --summary --limit 20
@@ -1376,6 +1395,7 @@ uv run python scripts/utils/data_quality_report.py --summary --limit 20
 ## Anomaly Detection
 
 The system uses adaptive thresholds (3σ) to detect anomalies:
+
 - Significant changes in row count
 - Significant changes in null percentage
 - Baselines are learned from historical data
@@ -1385,10 +1405,12 @@ Anomalies are logged with WARNING level during pipeline runs.
 ## Database Schema
 
 Quality data is stored in `data/quality_metrics.db`:
+
 - `run_snapshots`: Individual run records
 - `historical_baselines`: Aggregated statistics for anomaly detection
 
 Query directly with SQLite:
+
 ```bash
 sqlite3 data/quality_metrics.db "SELECT * FROM run_snapshots ORDER BY timestamp DESC LIMIT 5"
 ```
@@ -1396,21 +1418,24 @@ sqlite3 data/quality_metrics.db "SELECT * FROM run_snapshots ORDER BY timestamp 
 ## Troubleshooting
 
 **No quality data found:**
+
 - Run the pipeline first to generate data
 - Check that `data/quality_metrics.db` exists
 
 **Too many anomalies:**
+
 - Normal for first few runs (baseline still learning)
 - Check if data source has changed
 - Review `EXPECTED_REDUCTIONS` in Config for valid drop rates
-```
+
+````
 
 **Step 3: Commit documentation**
 
 ```bash
 git add CLAUDE.md docs/guides/data-quality-monitoring.md
 git commit -m "docs(data-quality): add usage guide and CLAUDE.md reference"
-```
+````
 
 ---
 
@@ -1430,6 +1455,7 @@ Expected: No errors
 **Step 3: Verify pipeline integration**
 
 Run a small pipeline stage to ensure decorator works:
+
 ```bash
 uv run python -c "
 from pandas import DataFrame

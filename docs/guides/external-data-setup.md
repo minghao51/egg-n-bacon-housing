@@ -6,13 +6,13 @@ This guide covers downloading and setting up external data sources required for 
 
 The pipeline requires several external data sources:
 
-| Category | Source | Automation | Refresh Frequency |
-|----------|--------|------------|-------------------|
-| Amenity Datasets | data.gov.sg API | ✅ Automated | On demand |
-| HDB Rental Data | data.gov.sg API | ✅ Automated | Monthly |
-| URA Rental Index | data.gov.sg API | ✅ Automated | Quarterly |
-| URA Transactions | URA Website | ❌ Manual | Quarterly |
-| HDB Resale Prices | data.gov.sg API | ✅ Automated | Via L0 pipeline |
+| Category          | Source          | Automation   | Refresh Frequency |
+| ----------------- | --------------- | ------------ | ----------------- |
+| Amenity Datasets  | data.gov.sg API | ✅ Automated | On demand         |
+| HDB Rental Data   | data.gov.sg API | ✅ Automated | Monthly           |
+| URA Rental Index  | data.gov.sg API | ✅ Automated | Quarterly         |
+| URA Transactions  | URA Website     | ❌ Manual    | Quarterly         |
+| HDB Resale Prices | data.gov.sg API | ✅ Automated | Via L0 pipeline   |
 
 ## Quick Start
 
@@ -44,6 +44,7 @@ URA private property transaction files must be downloaded manually from the URA 
 **Location:** `data/manual/csv/datagov/`
 
 **Phase 1 Datasets:**
+
 - PreSchoolsLocation.geojson
 - NParksParksandNatureReserves.geojson
 - MasterPlan2019SDCPParkConnectorLinelayerGEOJSON.geojson
@@ -55,11 +56,13 @@ URA private property transaction files must be downloaded manually from the URA 
 - WaterActivitiesSG.geojson
 
 **Phase 2 Datasets:**
+
 - MRTStations.geojson
 - ChildCareServices.geojson
 - MRTStationExits.geojson
 
 **Individual Download:**
+
 ```bash
 # Download phase 1 only
 uv run python scripts/data/download/download_datagov_datasets.py --phase 1
@@ -75,6 +78,7 @@ uv run python scripts/data/download/download_datagov_datasets.py --phase all --f
 ```
 
 **Refresh via Pipeline:**
+
 ```bash
 uv run python scripts/data/download/refresh_external_data.py --amenities
 ```
@@ -86,11 +90,13 @@ uv run python scripts/data/download/refresh_external_data.py --amenities
 **Source:** Renting Out of Flats from Jan 2021
 
 **Individual Download:**
+
 ```bash
 uv run python scripts/data/download/download_hdb_rental_data.py
 ```
 
 **Refresh via Pipeline:**
+
 ```bash
 uv run python scripts/data/download/refresh_external_data.py --hdb
 ```
@@ -102,11 +108,13 @@ uv run python scripts/data/download/refresh_external_data.py --hdb
 **Source:** URA Private Residential Property Rental Index
 
 **Individual Download:**
+
 ```bash
 uv run python scripts/data/download/download_ura_rental_index.py
 ```
 
 **Refresh via Pipeline:**
+
 ```bash
 uv run python scripts/data/download/refresh_external_data.py --ura
 ```
@@ -122,6 +130,7 @@ These files **must be downloaded manually** from the URA website as they require
 **Required Files:**
 
 1. **EC Residential Transaction** (latest file)
+
    - Filename pattern: `ECResidentialTransactionYYYYMMDDhhmmss.csv`
    - Contains: Executive Condo transaction data
 
@@ -133,6 +142,7 @@ These files **must be downloaded manually** from the URA website as they require
 **Download Steps:**
 
 1. Visit URA Transaction Bulk Download:
+
    ```
    https://www.ura.gov.sg/property-market-information/transaction-bulk-download
    ```
@@ -140,6 +150,7 @@ These files **must be downloaded manually** from the URA website as they require
 2. Complete the CAPTCHA verification
 
 3. Download the following:
+
    - **EC Residential Transaction** → Download latest file
    - **Residential Transaction** → Download all files
 
@@ -151,6 +162,7 @@ These files **must be downloaded manually** from the URA website as they require
    ```
 
 **Expected Structure:**
+
 ```
 data/manual/csv/ura/
 ├── ECResidentialTransaction20260121003532.csv
@@ -163,6 +175,7 @@ data/manual/csv/ura/
 **Validation:**
 
 After downloading, validate the files:
+
 ```bash
 uv run python scripts/utils/validate_ura_data.py
 ```
@@ -194,24 +207,26 @@ uv run python scripts/data/download/refresh_external_data.py --amenities --phase
 
 ### Options
 
-| Option | Description |
-|--------|-------------|
-| `--dry-run` | Check for missing files without downloading |
-| `--force-all` | Force refresh all data even if files exist |
-| `--amenities` | Check/download amenity datasets |
-| `--phase {1\|2\|all}` | Which amenity phase (default: all) |
-| `--ura` | Check/download URA rental index |
-| `--hdb` | Check/download HDB rental data |
+| Option                | Description                                 |
+| --------------------- | ------------------------------------------- |
+| `--dry-run`           | Check for missing files without downloading |
+| `--force-all`         | Force refresh all data even if files exist  |
+| `--amenities`         | Check/download amenity datasets             |
+| `--phase {1\|2\|all}` | Which amenity phase (default: all)          |
+| `--ura`               | Check/download URA rental index             |
+| `--hdb`               | Check/download HDB rental data              |
 
 ### Output
 
 The script provides:
+
 1. **Status check** of all external data files
 2. **Summary** of missing vs existing files
 3. **Automated downloads** for supported sources
 4. **Instructions** for manual downloads (URA transactions)
 
 Example output:
+
 ```
 ================================================================================
 DATA REFRESH SUMMARY
@@ -245,27 +260,27 @@ REFRESH COMPLETE
 
 ### Automated Downloads
 
-| Data Type | Location | Script |
-|-----------|----------|--------|
-| Amenity GeoJSONs | `data/manual/csv/datagov/` | `download_datagov_datasets.py` |
-| HDB Rental Data | `data/parquets/L1/housing_hdb_rental.parquet` | `download_hdb_rental_data.py` |
-| URA Rental Index | `data/parquets/L2/ura_rental_index.parquet` | `download_ura_rental_index.py` |
+| Data Type        | Location                                      | Script                         |
+| ---------------- | --------------------------------------------- | ------------------------------ |
+| Amenity GeoJSONs | `data/manual/csv/datagov/`                    | `download_datagov_datasets.py` |
+| HDB Rental Data  | `data/parquets/L1/housing_hdb_rental.parquet` | `download_hdb_rental_data.py`  |
+| URA Rental Index | `data/parquets/L2/ura_rental_index.parquet`   | `download_ura_rental_index.py` |
 
 ### Manual Downloads
 
-| Data Type | Location | Download URL |
-|-----------|----------|--------------|
-| URA Transactions | `data/manual/csv/ura/` | URA Website |
+| Data Type        | Location               | Download URL |
+| ---------------- | ---------------------- | ------------ |
+| URA Transactions | `data/manual/csv/ura/` | URA Website  |
 
 ### Generated/Processed Data
 
-| Data Type | Location | Generated By |
-|-----------|----------|--------------|
-| HDB Transactions | `data/parquets/L1/housing_hdb_transaction.parquet` | L0 pipeline |
-| Condo Transactions | `data/parquets/L1/housing_condo_transaction.parquet` | L1 pipeline |
-| EC Transactions | `data/parquets/L1/housing_ec_transaction.parquet` | L1 pipeline |
-| Geocoded Properties | `data/parquets/L2/housing_unique_searched.parquet` | L1 pipeline |
-| Unified Dataset | `data/parquets/L3/housing_unified.parquet` | L3 pipeline |
+| Data Type           | Location                                             | Generated By |
+| ------------------- | ---------------------------------------------------- | ------------ |
+| HDB Transactions    | `data/parquets/L1/housing_hdb_transaction.parquet`   | L0 pipeline  |
+| Condo Transactions  | `data/parquets/L1/housing_condo_transaction.parquet` | L1 pipeline  |
+| EC Transactions     | `data/parquets/L1/housing_ec_transaction.parquet`    | L1 pipeline  |
+| Geocoded Properties | `data/parquets/L2/housing_unique_searched.parquet`   | L1 pipeline  |
+| Unified Dataset     | `data/parquets/L3/housing_unified.parquet`           | L3 pipeline  |
 
 ---
 
@@ -307,6 +322,7 @@ uv sync
 **Error:** HTTP 429 (Too Many Requests) from data.gov.sg
 
 **Solution:** The scripts include rate limiting delays. If you encounter this:
+
 1. Wait a few minutes
 2. Re-run the download script
 3. Use `--phase 1` and `--phase 2` separately to reduce concurrent requests
@@ -331,12 +347,12 @@ uv run python scripts/data/download/download_datagov_datasets.py --force
 
 ### Recommended Refresh Intervals
 
-| Data Source | Frequency | Reason |
-|-------------|-----------|--------|
+| Data Source      | Frequency | Reason                                |
+| ---------------- | --------- | ------------------------------------- |
 | Amenity Datasets | Quarterly | New amenities open, facilities change |
-| HDB Rental Data | Monthly | Latest rental rates |
-| URA Rental Index | Quarterly | Updated quarterly by URA |
-| URA Transactions | Quarterly | New transaction data released |
+| HDB Rental Data  | Monthly   | Latest rental rates                   |
+| URA Rental Index | Quarterly | Updated quarterly by URA              |
+| URA Transactions | Quarterly | New transaction data released         |
 
 ### Automation
 

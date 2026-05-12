@@ -13,29 +13,32 @@
 ## Task 1: Update Sidebar Component with New Structure
 
 **Files:**
+
 - Modify: `app/src/components/Sidebar.astro`
 
 **Step 1: Add currentPath prop to Sidebar component**
 
 Add to frontmatter:
+
 ```typescript
 interface Props {
   currentPath?: string;
 }
 
-const { currentPath = '' } = Astro.props;
+const { currentPath = "" } = Astro.props;
 ```
 
 **Step 2: Create isActive helper function**
 
 Add after imports:
+
 ```typescript
 function isActive(path: string, href: string): boolean {
   if (!path) return false;
   // Exact match for dashboard pages
-  if (href.includes('/dashboard/')) {
-    const normalizedPath = path.replace(/\/$/, '') || '/dashboard';
-    const normalizedHref = href.replace(/\/$/, '') || '/dashboard';
+  if (href.includes("/dashboard/")) {
+    const normalizedPath = path.replace(/\/$/, "") || "/dashboard";
+    const normalizedHref = href.replace(/\/$/, "") || "/dashboard";
     return normalizedPath === normalizedHref;
   }
   // Prefix match for analytics
@@ -46,6 +49,7 @@ function isActive(path: string, href: string): boolean {
 **Step 3: Update Dashboard section with new styling**
 
 Replace Dashboard section with:
+
 ```astro
 <!-- Dashboard Section -->
 <div>
@@ -130,6 +134,7 @@ Replace Dashboard section with:
 **Step 4: Update Personas section as standalone**
 
 Replace Personas subsection with:
+
 ```astro
 <!-- Personas Section -->
 <div class="mt-6">
@@ -191,6 +196,7 @@ Replace Personas subsection with:
 **Step 5: Update Analytics section with new styling**
 
 Replace Analytics section with:
+
 ```astro
 <!-- Analytics Section -->
 <div class="mt-6">
@@ -257,6 +263,7 @@ git commit -m "feat(sidebar): add active state highlighting and visual separatio
 ## Task 2: Update Dashboard Pages
 
 **Files:**
+
 - Modify: `app/src/pages/dashboard/index.astro`
 - Modify: `app/src/pages/dashboard/map.astro`
 - Modify: `app/src/pages/dashboard/trends.astro`
@@ -266,6 +273,7 @@ git commit -m "feat(sidebar): add active state highlighting and visual separatio
 **Step 1: Update index.astro**
 
 Find line with `<Sidebar />` and replace with:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -273,6 +281,7 @@ Find line with `<Sidebar />` and replace with:
 **Step 2: Update map.astro**
 
 Find line with `<Sidebar />` and replace with:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -280,6 +289,7 @@ Find line with `<Sidebar />` and replace with:
 **Step 3: Update trends.astro**
 
 Find line with `<Sidebar />` and replace with:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -287,6 +297,7 @@ Find line with `<Sidebar />` and replace with:
 **Step 4: Update segments.astro**
 
 Find line with `<Sidebar />` and replace with:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -294,6 +305,7 @@ Find line with `<Sidebar />` and replace with:
 **Step 5: Update leaderboard.astro**
 
 Find line with `<Sidebar />` and replace with:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -312,6 +324,7 @@ Update all dashboard pages to pass current pathname to Sidebar component for act
 ## Task 3: Update Analytics Pages
 
 **Files:**
+
 - Modify: `app/src/pages/analytics/index.astro`
 - Modify: `app/src/pages/analytics/[slug].astro`
 - Modify: `app/src/pages/analytics/personas/[persona].astro`
@@ -319,6 +332,7 @@ Update all dashboard pages to pass current pathname to Sidebar component for act
 **Step 1: Update analytics index.astro**
 
 Read file first to locate Sidebar usage, then update:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -326,6 +340,7 @@ Read file first to locate Sidebar usage, then update:
 **Step 2: Update analytics [slug].astro**
 
 Read file first to locate Sidebar usage, then update:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -333,6 +348,7 @@ Read file first to locate Sidebar usage, then update:
 **Step 3: Update analytics personas [persona].astro**
 
 Read file first to locate Sidebar usage (around line 32), then update:
+
 ```astro
 <Sidebar currentPath={Astro.url.pathname} />
 ```
@@ -351,23 +367,28 @@ Update all analytics pages including persona pages to pass current pathname to S
 ## Task 4: Build and Test
 
 **Files:**
+
 - No file modifications
 
 **Step 1: Build the application**
 
 Run from app directory:
+
 ```bash
 cd app
 npm run build
 ```
+
 Expected: Build completes successfully
 
 **Step 2: Start dev server**
 
 Run:
+
 ```bash
 npm run dev
 ```
+
 Expected: Dev server starts on default port
 
 **Step 3: Manual testing checklist**
@@ -375,6 +396,7 @@ Expected: Dev server starts on default port
 Navigate to each page and verify:
 
 Dashboard pages:
+
 - [ ] `/dashboard` - "Market Overview" link is active (left border, darker bg)
 - [ ] `/dashboard/map` - "Interactive Map" link is active
 - [ ] `/dashboard/trends` - "Analysis Tools" link is active
@@ -382,16 +404,19 @@ Dashboard pages:
 - [ ] `/dashboard/leaderboard` - "Area Rankings" link is active
 
 Analytics pages:
+
 - [ ] `/analytics/` - "Analytics Index" link is active
 - [ ] `/analytics/lease-decay` - "Lease Decay" doc link is active
 - [ ] `/analytics/mrt-impact` - "MRT Impact" doc link is active
 
 Persona pages:
+
 - [ ] `/analytics/personas/first-time-buyer` - "First-Time Buyer" link is active
 - [ ] `/analytics/personas/investor` - "Investor" link is active
 - [ ] `/analytics/personas/upgrader` - "Upgrader" link is active
 
 Visual checks:
+
 - [ ] Section headers have colored accent bar on left
 - [ ] Horizontal dividers separate sections
 - [ ] Sections have proper vertical spacing (mt-6)
@@ -404,16 +429,19 @@ Visual checks:
 **Step 4: Test responsive behavior**
 
 Check mobile view:
+
 - [ ] Sidebar hidden on mobile
 - [ ] Layout works without sidebar on small screens
 
 Check desktop view:
+
 - [ ] Sidebar visible on lg breakpoint
 - [ ] Main content has proper left margin (ml-64)
 
 **Step 5: Final commit if adjustments needed**
 
 If any styling adjustments were made during testing:
+
 ```bash
 git add app/src/components/Sidebar.astro
 git commit -m "style(sidebar): fine-tune active state styling based on testing"
@@ -424,11 +452,13 @@ git commit -m "style(sidebar): fine-tune active state styling based on testing"
 ## Task 5: Update Documentation
 
 **Files:**
+
 - Modify: `docs/plans/2025-02-24-sidebar-improvement-design.md`
 
 **Step 1: Mark design as implemented**
 
 Add to top of design document:
+
 ```markdown
 **Status:** ✅ Implemented
 ```
@@ -436,6 +466,7 @@ Add to top of design document:
 **Step 2: Add implementation notes**
 
 Add section at end:
+
 ```markdown
 ## Implementation Notes
 
@@ -474,6 +505,7 @@ After implementation, verify:
 ## Related Files
 
 Reference these files during implementation:
+
 - Design doc: `docs/plans/2025-02-24-sidebar-improvement-design.md`
 - Component: `app/src/components/Sidebar.astro`
 - Layout: `app/src/layouts/Layout.astro`
@@ -482,11 +514,13 @@ Reference these files during implementation:
 ## Rollback Plan
 
 If issues arise, revert commits:
+
 ```bash
 git revert HEAD~3..HEAD
 ```
 
 This will remove:
+
 1. Documentation update
 2. Analytics page updates
 3. Dashboard page updates

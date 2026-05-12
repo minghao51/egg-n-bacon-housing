@@ -36,11 +36,11 @@ Static premium estimates go stale. MRT premiums fluctuated significantly across 
 
 <div data-chart-metadata="true" data-chart="time-series" data-chart-title="MRT premium evolution by period" data-chart-columns="Pre-COVID,COVID,Post-COVID"></div>
 
-| Period | HDB MRT Premium | Condo MRT Premium | Interpretation |
-|--------|-----------------|-------------------|----------------|
-| Pre-COVID (2017-2019) | Moderate | High | Baseline premium structure |
-| COVID (2020-2022) | Reduced | Reduced significantly | Remote work depressed transit value |
-| Post-COVID (2023-2026) | Partially recovered | Partially recovered | Hybrid work = partial premium restoration |
+| Period                 | HDB MRT Premium     | Condo MRT Premium     | Interpretation                            |
+| ---------------------- | ------------------- | --------------------- | ----------------------------------------- |
+| Pre-COVID (2017-2019)  | Moderate            | High                  | Baseline premium structure                |
+| COVID (2020-2022)      | Reduced             | Reduced significantly | Remote work depressed transit value       |
+| Post-COVID (2023-2026) | Partially recovered | Partially recovered   | Hybrid work = partial premium restoration |
 
 **Impact**
 
@@ -48,10 +48,10 @@ The COVID period reduced the MRT premium across all property types. While premiu
 
 ### 2. School premiums proved more resilient than MRT premiums
 
-| Premium Type | Pre-COVID Stability | COVID Impact | Post-COVID Recovery |
-|-------------|---------------------|-------------|---------------------|
-| MRT proximity | Moderate | Significant decline | Partial recovery |
-| School quality | Stable | Minimal decline | Full recovery |
+| Premium Type   | Pre-COVID Stability | COVID Impact        | Post-COVID Recovery |
+| -------------- | ------------------- | ------------------- | ------------------- |
+| MRT proximity  | Moderate            | Significant decline | Partial recovery    |
+| School quality | Stable              | Minimal decline     | Full recovery       |
 
 **Impact**
 
@@ -61,12 +61,12 @@ School proximity premiums were more resilient during COVID because school attend
 
 Some areas show accelerating appreciation while others decelerate, creating widening gaps over time.
 
-| Trajectory | Example Areas | Pattern |
-|-----------|--------------|---------|
-| Accelerating | Jurong East, Punggol, Bidadari | New infrastructure + development |
-| Steady | Bishan, Ang Mo Kio, Queenstown | Mature with stable demand |
-| Decelerating | Some mature CCR areas | Price ceiling effects |
-| Volatile | Luxury segments | Policy-sensitive, momentum-driven |
+| Trajectory   | Example Areas                  | Pattern                           |
+| ------------ | ------------------------------ | --------------------------------- |
+| Accelerating | Jurong East, Punggol, Bidadari | New infrastructure + development  |
+| Steady       | Bishan, Ang Mo Kio, Queenstown | Mature with stable demand         |
+| Decelerating | Some mature CCR areas          | Price ceiling effects             |
+| Volatile     | Luxury segments                | Policy-sensitive, momentum-driven |
 
 **Impact**
 
@@ -76,13 +76,13 @@ Areas on an accelerating trajectory may offer better future appreciation even at
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Planning area appreciation clusters" data-chart-columns="Average YoY Growth,Cluster"></div>
 
-| Cluster | Average YoY Growth | Characteristic | Areas |
-|---------|-------------------|---------------|-------|
-| High Growth | 31-51% | Speculative or supply-constrained | Bukit Timah (select periods) |
-| Moderate Growth 1 | 9-17% | Strong fundamentals | Developing towns |
-| Moderate Growth 2 | ~10% | Steady appreciation | Most mature estates |
-| Moderate Growth 3 | ~14% | Above average | Popular mid-tier |
-| Low Growth | 7-18% | Variable, flat overall | Outer regions |
+| Cluster           | Average YoY Growth | Characteristic                    | Areas                        |
+| ----------------- | ------------------ | --------------------------------- | ---------------------------- |
+| High Growth       | 31-51%             | Speculative or supply-constrained | Bukit Timah (select periods) |
+| Moderate Growth 1 | 9-17%              | Strong fundamentals               | Developing towns             |
+| Moderate Growth 2 | ~10%               | Steady appreciation               | Most mature estates          |
+| Moderate Growth 3 | ~14%               | Above average                     | Popular mid-tier             |
+| Low Growth        | 7-18%              | Variable, flat overall            | Outer regions                |
 
 **Impact**
 

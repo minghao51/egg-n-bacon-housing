@@ -14,26 +14,27 @@ This document provides a quick reference for the housing data available in the p
 
 ### L0: Raw Data
 
-| Dataset | Source | Records |
-|---------|--------|---------|
-| `raw_datagov_*` | data.gov.sg API | ~100K |
-| `raw_onemap_*` | OneMap API | ~50 |
-| `raw_wiki_shopping_mall` | Wikipedia | ~200 |
+| Dataset                  | Source          | Records |
+| ------------------------ | --------------- | ------- |
+| `raw_datagov_*`          | data.gov.sg API | ~100K   |
+| `raw_onemap_*`           | OneMap API      | ~50     |
+| `raw_wiki_shopping_mall` | Wikipedia       | ~200    |
 
 ### L0_macro: Macro Economic Data
 
 Located in `data/raw_data/macro/`:
 
-| Dataset | Source | Frequency | Description |
-|---------|--------|-----------|-------------|
-| `sora_rates_monthly.parquet` | MAS (mock) | Monthly | Singapore Overnight Rate Average |
-| `singapore_cpi_monthly.parquet` | SingStat API | Monthly | Consumer Price Index |
-| `sgdp_quarterly.parquet` | SingStat API | Quarterly | GDP at current prices |
-| `unemployment_rate_monthly.parquet` | SingStat API | Monthly | Unemployment rate |
-| `property_price_index_quarterly.parquet` | SingStat API | Quarterly | Property Price Index |
-| `housing_policy_dates.parquet` | Manual | Event-based | Housing policy changes |
+| Dataset                                  | Source       | Frequency   | Description                      |
+| ---------------------------------------- | ------------ | ----------- | -------------------------------- |
+| `sora_rates_monthly.parquet`             | MAS (mock)   | Monthly     | Singapore Overnight Rate Average |
+| `singapore_cpi_monthly.parquet`          | SingStat API | Monthly     | Consumer Price Index             |
+| `sgdp_quarterly.parquet`                 | SingStat API | Quarterly   | GDP at current prices            |
+| `unemployment_rate_monthly.parquet`      | SingStat API | Monthly     | Unemployment rate                |
+| `property_price_index_quarterly.parquet` | SingStat API | Quarterly   | Property Price Index             |
+| `housing_policy_dates.parquet`           | Manual       | Event-based | Housing policy changes           |
 
 **Usage**:
+
 ```python
 from scripts.core.stages.L5_metrics import load_macro_data
 
@@ -45,25 +46,25 @@ gdp = macro['gdp']         # GDP data
 
 ### L1: Processed
 
-| Dataset | Description | Records |
-|---------|-------------|---------|
-| `housing_hdb_transaction` | HDB resale transactions | 969,748 |
-| `housing_condo_transaction` | Condo transactions | 49,052 |
-| `amenity_v2` | Amenities (6 categories) | 5,569 |
+| Dataset                     | Description              | Records |
+| --------------------------- | ------------------------ | ------- |
+| `housing_hdb_transaction`   | HDB resale transactions  | 969,748 |
+| `housing_condo_transaction` | Condo transactions       | 49,052  |
+| `amenity_v2`                | Amenities (6 categories) | 5,569   |
 
 ### L2: Feature Engineered
 
-| Dataset | Description |
-|---------|-------------|
+| Dataset                          | Description                    |
+| -------------------------------- | ------------------------------ |
 | `housing_multi_amenity_features` | Distance features to amenities |
-| `rental_yield` | Rental yield calculations |
+| `rental_yield`                   | Rental yield calculations      |
 
 ### L3: Precomputed
 
-| Dataset | Description |
-|---------|-------------|
-| `metrics_monthly` | Monthly market metrics |
-| `market_summary` | Aggregated stats by property_type/period/tier |
+| Dataset           | Description                                   |
+| ----------------- | --------------------------------------------- |
+| `metrics_monthly` | Monthly market metrics                        |
+| `market_summary`  | Aggregated stats by property_type/period/tier |
 
 ---
 
@@ -71,12 +72,12 @@ gdp = macro['gdp']         # GDP data
 
 Results from L4 analysis pipeline are stored in `data/analysis/results/`:
 
-| Category | Description |
-|----------|-------------|
-| `eda/` | EDA outputs (appreciation, yields, scores) |
-| `market/` | Market analysis (rental trends) |
-| `amenity/` | Amenity impact analysis |
-| `spatial/` | Spatial analysis results |
+| Category   | Description                                |
+| ---------- | ------------------------------------------ |
+| `eda/`     | EDA outputs (appreciation, yields, scores) |
+| `market/`  | Market analysis (rental trends)            |
+| `amenity/` | Amenity impact analysis                    |
+| `spatial/` | Spatial analysis results                   |
 
 ### Using Results
 
@@ -121,12 +122,15 @@ df = load_parquet("L2_rental_yield")
 ## Key Fields
 
 ### HDB Transactions
+
 - `month`, `town`, `flat_type`, `floor_area_sqm`, `resale_price`, `remaining_lease_months`
 
 ### Condo Transactions
+
 - `Project Name`, `Transacted Price`, `Area (SQM)`, `Sale Date`, `Postal District`
 
 ### Amenities
+
 - `name`, `type`, `lat`, `lon`
 
 ---

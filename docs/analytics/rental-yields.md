@@ -36,14 +36,14 @@ Rental yield and price appreciation are largely separate strategies. High-yield 
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Median rental yield by flat type" data-chart-columns="Median Yield,Typical Monthly Rent"></div>
 
-| Flat Type | Median Yield | Typical Monthly Rent | Best-Yield Towns |
-|-----------|-------------|---------------------|-----------------|
-| 1-Room | 5-7% | $1,200-1,600 | Central, Queenstown |
-| 2-Room | 4-6% | $1,500-2,200 | Ang Mo Kio, Bedok, Jurong |
-| 3-Room | 3.5-5% | $2,000-2,800 | Most mature towns |
-| 4-Room | 3-4.5% | $2,500-3,500 | Town-dependent |
-| 5-Room | 2.5-4% | $3,000-3,800 | Lower yields, larger units |
-| Multi-generation | 2-3.5% | $3,200-4,000 | Lowest yield, niche demand |
+| Flat Type        | Median Yield | Typical Monthly Rent | Best-Yield Towns           |
+| ---------------- | ------------ | -------------------- | -------------------------- |
+| 1-Room           | 5-7%         | $1,200-1,600         | Central, Queenstown        |
+| 2-Room           | 4-6%         | $1,500-2,200         | Ang Mo Kio, Bedok, Jurong  |
+| 3-Room           | 3.5-5%       | $2,000-2,800         | Most mature towns          |
+| 4-Room           | 3-4.5%       | $2,500-3,500         | Town-dependent             |
+| 5-Room           | 2.5-4%       | $3,000-3,800         | Lower yields, larger units |
+| Multi-generation | 2-3.5%       | $3,200-4,000         | Lowest yield, niche demand |
 
 **Impact**
 
@@ -51,11 +51,11 @@ Smaller flats offer higher yields but lower absolute rental income. Investors sh
 
 ### 2. Yield and appreciation are weakly negatively correlated
 
-| Strategy | Yield Focus | Appreciation Focus | Combined Score |
-|----------|------------|-------------------|---------------|
-| Income investing | >5% yield | 1-3% CAGR | Moderate |
-| Growth investing | 2-3% yield | 5-7% CAGR | Moderate |
-| Balanced approach | 3.5-4.5% yield | 3-5% CAGR | Often highest |
+| Strategy          | Yield Focus    | Appreciation Focus | Combined Score |
+| ----------------- | -------------- | ------------------ | -------------- |
+| Income investing  | >5% yield      | 1-3% CAGR          | Moderate       |
+| Growth investing  | 2-3% yield     | 5-7% CAGR          | Moderate       |
+| Balanced approach | 3.5-4.5% yield | 3-5% CAGR          | Often highest  |
 
 **Impact**
 
@@ -63,13 +63,13 @@ The highest total returns often come from a balanced approach rather than optimi
 
 ### 3. Top rental yield combinations reveal niche opportunities
 
-| Rank | Flat Type + Area | Estimated Yield | Why It Works |
-|------|-----------------|----------------|-------------|
-| 1 | 2-Room Queenstown | ~6% | Central location, strong rental demand |
-| 2 | 1-Room Central Area | ~6% | Expat and single professional demand |
-| 3 | 3-Room Ang Mo Kio | ~5% | Mature amenities, MRT connectivity |
-| 4 | 2-Room Jurong East | ~5% | Business hub proximity, new supply |
-| 5 | 4-Room Bedok | ~4.5% | Town revitalization, transport links |
+| Rank | Flat Type + Area    | Estimated Yield | Why It Works                           |
+| ---- | ------------------- | --------------- | -------------------------------------- |
+| 1    | 2-Room Queenstown   | ~6%             | Central location, strong rental demand |
+| 2    | 1-Room Central Area | ~6%             | Expat and single professional demand   |
+| 3    | 3-Room Ang Mo Kio   | ~5%             | Mature amenities, MRT connectivity     |
+| 4    | 2-Room Jurong East  | ~5%             | Business hub proximity, new supply     |
+| 5    | 4-Room Bedok        | ~4.5%           | Town revitalization, transport links   |
 
 **Impact**
 
@@ -77,11 +77,11 @@ The top yield combinations are not random. They cluster around areas with strong
 
 ### 4. Affordability ratios show sustainable HDB rental market
 
-| Metric | Value | Interpretation |
-|--------|-------|---------------|
-| Median HDB rent / median household income | 15-25% | Within the 30% affordability threshold |
-| Income growth vs rental growth | Income slightly ahead | Rental affordability stable or improving |
-| Rental burden by quintile | Higher for lower quintiles | Affordability stress concentrated at lower incomes |
+| Metric                                    | Value                      | Interpretation                                     |
+| ----------------------------------------- | -------------------------- | -------------------------------------------------- |
+| Median HDB rent / median household income | 15-25%                     | Within the 30% affordability threshold             |
+| Income growth vs rental growth            | Income slightly ahead      | Rental affordability stable or improving           |
+| Rental burden by quintile                 | Higher for lower quintiles | Affordability stress concentrated at lower incomes |
 
 **Impact**
 
@@ -89,12 +89,12 @@ Overall HDB rental affordability is sustainable, but lower-income households fac
 
 ### 5. HDB rental market dynamics favor steady income
 
-| Pattern | Observation |
-|---------|------------|
-| Annual rental growth | 3-5% median rent increase |
-| Seasonal variation | Slightly higher demand year-end |
-| Volume trends | Steady with COVID bump (2021-2022) |
-| Dominant segments | 3-room and 4-room flats dominate rental volume |
+| Pattern              | Observation                                    |
+| -------------------- | ---------------------------------------------- |
+| Annual rental growth | 3-5% median rent increase                      |
+| Seasonal variation   | Slightly higher demand year-end                |
+| Volume trends        | Steady with COVID bump (2021-2022)             |
+| Dominant segments    | 3-room and 4-room flats dominate rental volume |
 
 **Impact**
 

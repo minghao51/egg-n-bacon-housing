@@ -24,20 +24,22 @@
 
 ### MRT Premium by Property Type
 
-| Property Type | Premium per 100m | Sensitivity | Mean Price (PSF) |
-|---------------|-----------------|-------------|------------------|
-| **Condominium** | **$19.20** | **15x** | $1,761 |
-| **HDB** | $1.28 | 1x (baseline) | $552 |
-| **EC** | +$10.21 | Negative effect | $1,282 |
+| Property Type   | Premium per 100m | Sensitivity     | Mean Price (PSF) |
+| --------------- | ---------------- | --------------- | ---------------- |
+| **Condominium** | **$19.20**       | **15x**         | $1,761           |
+| **HDB**         | $1.28            | 1x (baseline)   | $552             |
+| **EC**          | +$10.21          | Negative effect | $1,282           |
 
-*Negative values: closer to MRT = higher price*
+_Negative values: closer to MRT = higher price_
 
 ### Key Insight
 
 **Condominiums show a MASSIVE 15x stronger MRT premium** than HDB properties.
 
 **Economic Impact**:
+
 - For a 1,000 sqft condo:
+
   - Being 100m closer to MRT = **$19,200 higher price**
   - Being 500m closer to MRT = **$96,000 higher price**!
 
@@ -51,12 +53,14 @@
 ## 📁 Complete Deliverables
 
 ### Analysis Scripts (4)
+
 1. `scripts/analysis/analyze_mrt_impact.py` - HDB baseline analysis
 2. `scripts/analysis/analyze_mrt_heterogeneous.py` - HDB sub-group analysis
 3. `scripts/calculate_condo_amenities.py` - Condo/EC amenity calculation
 4. `scripts/analysis/analyze_mrt_by_property_type.py` - Cross-property-type comparison
 
 ### Reports (5 comprehensive markdown documents)
+
 1. `20260127-mrt-impact-analysis-report.md` - Main HDB analysis
 2. `20260127-mrt-heterogeneous-effects-addendum.md` - HDB sub-groups
 3. `20260127-property-type-mrt-impact-summary.md` - Problem summary
@@ -64,6 +68,7 @@
 5. `20260127-property-type-mrt-comparison-final-results.md` - **Final results** ⭐
 
 ### Data Outputs (complete)
+
 - `data/analysis/mrt_impact/` directory contains:
   - `exploratory_analysis.png` - 4-panel visualization
   - `heterogeneous_effects.png` - Sub-group analysis charts
@@ -73,6 +78,7 @@
   - `model_summary.csv` - Performance comparison table
 
 ### Enhanced Dataset
+
 - `data/pipeline/04_platinum/housing_unified.parquet` - Now with **100% amenity coverage** for all property types!
 
 ---
@@ -80,12 +86,15 @@
 ## 🔬 Analysis Methods Used
 
 ### Statistical Models
+
 1. **OLS Regression** (Linear baseline)
+
    - Interpretable coefficients
    - Statistical significance tests
    - Three distance specifications (linear, log, inverse)
 
 2. **XGBoost** (Non-linear machine learning)
+
    - Captures complex interactions
    - Feature importance analysis
    - R² = 0.81-0.95 (excellent!)
@@ -96,6 +105,7 @@
    - Town-level heterogeneity
 
 ### Data Scale
+
 - **Total transactions analyzed**: 223,535 (2021+)
   - HDB: 97,133
   - Condominium: 109,576
@@ -110,10 +120,12 @@
 ### 1. Property Type Dramatically Changes MRT Impact
 
 **Condos are 15x more sensitive**:
+
 - Condo: $19.20/100m premium
 - HDB: $1.28/100m premium
 
 **Why?**
+
 - Luxury condos cluster near MRT interchanges
 - Investment properties (rental demand)
 - Affluent buyers value walkability
@@ -122,6 +134,7 @@
 ### 2. Location Context is Critical
 
 **Within HDB alone, we found 100x variation by town**:
+
 - Central Area: +$59.19/100m (positive premium!)
 - Marine Parade: -$38.54/100m (negative effect!)
 - Most towns: ~$0/100m
@@ -131,10 +144,12 @@
 ### 3. Other Amenities Dominate
 
 **Food access is king**:
+
 - Hawker centers: 17-27% importance
 - MRT: 5-12% importance
 
 **Supermarkets matter for luxury**:
+
 - EC: 30% importance (TOP predictor!)
 - Condo: 14% importance
 - HDB: Not in top 5
@@ -142,6 +157,7 @@
 ### 4. Non-Linear Models Are Essential
 
 **Model performance**:
+
 - OLS R²: 0.13-0.65 (poor to moderate)
 - XGBoost R²: 0.81-0.95 (excellent!)
 
@@ -150,6 +166,7 @@
 ### 5. Heterogeneous Effects Everywhere
 
 MRT impact varies by:
+
 - **Property type**: 15x (Condo vs HDB)
 - **Flat type**: 4x (2 ROOM vs EXECUTIVE)
 - **Town**: 100x (Central Area vs Marine Parade)
@@ -162,7 +179,9 @@ MRT impact varies by:
 ## 🚀 Investment Strategies
 
 ### For HDB Investors
+
 ✅ **MRT proximity matters** ($1.28/100m)
+
 - Best: 2-3 room flats near MRT
 - Sweet spot: 200-500m from MRT
 - Avoid: >1km from MRT
@@ -170,7 +189,9 @@ MRT impact varies by:
 **ROI**: Up to $6,400 premium for 1,000 sqft flat 500m closer to MRT
 
 ### For Condominium Investors
+
 🚨 **MRT proximity is CRITICAL** ($19.20/100m)
+
 - **15x more important than HDB!**
 - Target: Luxury condos near MRT interchanges
 - Sweet spot: 200-500m from MRT
@@ -179,7 +200,9 @@ MRT impact varies by:
 **ROI**: Up to $96,000 premium for 1,000 sqft condo 500m closer to MRT
 
 ### For EC Investors
+
 ⚠️ **MRT proximity less important**
+
 - Focus: Supermarket access (30% importance!)
 - Consider: Suburban locations with good facilities
 - Note: Positive MRT coefficient (unusual, investigate further)
@@ -189,24 +212,28 @@ MRT impact varies by:
 ## 📖 Technical Achievements
 
 ### Data Engineering
+
 - Fixed pipeline limitation (0% → 100% amenity coverage for condos/EC)
 - Calculated 758K+ distances using scipy KDTree (O(log n) queries)
 - Integrated haversine formula for accurate distance calculations
 - Updated unified dataset with complete coverage
 
 ### Machine Learning
+
 - Implemented OLS with 3 specifications (linear, log, inverse)
 - Implemented XGBoost with feature importance
 - Compared model performance (OLS vs XGBoost)
 - SHAP analysis attempted (not available in environment)
 
 ### Spatial Analysis
+
 - H3 hexagonal grid (H8 resolution, ~0.5km² cells)
 - Distance bands for non-linearity detection
 - Town-level fixed effects
 - Spatial autocorrelation analysis
 
 ### Statistical Rigor
+
 - 80/20 train-test split
 - Cross-validation with 5 folds
 - Multiple model specifications
@@ -217,18 +244,21 @@ MRT impact varies by:
 ## 🎓 Lessons Learned
 
 ### Data Science
+
 1. **Always validate data coverage** - Found 0% amenity coverage for condos
 2. **Check subgroup heterogeneity** - Found 4x to 100x variation
 3. **Use both simple and complex models** - OLS for interpretability, XGBoost for accuracy
 4. **Visualize before concluding** - Discovered non-linear patterns
 
 ### Domain Knowledge
+
 1. **Singapore housing is complex** - Multiple interacting factors
 2. **Location context dominates** - MRT matters differently by town
 3. **Food access is critical** - Hawker centers more important than MRT
 4. **Property types behave differently** - Cannot generalize from HDB to condos
 
 ### Methodology
+
 1. **Start simple, iterate** - Began with HDB-only, added condos/ECs
 2. **Fix root causes** - Addressed amenity calculation gap, not just symptoms
 3. **Validate assumptions** - Hypothesis rejected (condos MORE MRT-sensitive)
@@ -238,16 +268,16 @@ MRT impact varies by:
 
 ## 📊 Timeline
 
-| Time | Achievement |
-|------|------------|
+| Time            | Achievement                                 |
+| --------------- | ------------------------------------------- |
 | **0:00 - 0:30** | Root cause analysis (why no condo/EC data?) |
-| **0:30 - 2:30** | HDB baseline + heterogeneous analysis |
-| **2:30 - 3:30** | Created condo amenity calculation script |
-| **3:30 - 3:45** | Script ran (calculated 758K distances) |
-| **3:45 - 4:00** | Fixed save errors, verified results |
+| **0:30 - 2:30** | HDB baseline + heterogeneous analysis       |
+| **2:30 - 3:30** | Created condo amenity calculation script    |
+| **3:30 - 3:45** | Script ran (calculated 758K distances)      |
+| **3:45 - 4:00** | Fixed save errors, verified results         |
 | **4:00 - 4:15** | Created cross-property-type analysis script |
-| **4:15 - 4:30** | Ran comparison analysis |
-| **4:30 - 5:00** | Created final reports and summaries |
+| **4:15 - 4:30** | Ran comparison analysis                     |
+| **4:30 - 5:00** | Created final reports and summaries         |
 
 **Total Time**: ~5 hours
 **Lines of Code**: ~3,000+ across 4 scripts
@@ -257,34 +287,38 @@ MRT impact varies by:
 
 ## 🎯 Success Metrics
 
-| Metric | Target | Achieved |
-|--------|--------|----------|
-| Amenity coverage (HDB) | 100% | ✅ 100% (785,395/785,395) |
-| Amenity coverage (Condo) | >90% | ✅ 100% (109,576/109,576) |
-| Amenity coverage (EC) | >90% | ✅ 100% (16,826/16,826) |
-| Property types analyzed | 3 | ✅ HDB, Condo, EC |
-| Statistical models | 2 | ✅ OLS + XGBoost |
-| Visualizations | 4+ | ✅ Exploratory, heterogeneous, comparison |
-| Reports | 5 | ✅ Comprehensive markdown docs |
-| Code quality | Production-ready | ✅ Clean, documented, reusable |
+| Metric                   | Target           | Achieved                                  |
+| ------------------------ | ---------------- | ----------------------------------------- |
+| Amenity coverage (HDB)   | 100%             | ✅ 100% (785,395/785,395)                 |
+| Amenity coverage (Condo) | >90%             | ✅ 100% (109,576/109,576)                 |
+| Amenity coverage (EC)    | >90%             | ✅ 100% (16,826/16,826)                   |
+| Property types analyzed  | 3                | ✅ HDB, Condo, EC                         |
+| Statistical models       | 2                | ✅ OLS + XGBoost                          |
+| Visualizations           | 4+               | ✅ Exploratory, heterogeneous, comparison |
+| Reports                  | 5                | ✅ Comprehensive markdown docs            |
+| Code quality             | Production-ready | ✅ Clean, documented, reusable            |
 
 ---
 
 ## 🚀 Next Steps (Future Enhancements)
 
 ### Short-term (Easy wins)
+
 1. Add SHAP analysis (install package)
 2. Create Streamlit dashboard with property type toggle
 3. Add confidence intervals to MRT premium estimates
 4. Generate interactive plots (plotly)
 
 ### Medium-term (More analysis)
+
 1. **Causal inference**:
+
    - Instrumental variables (planned MRT routes)
    - Difference-in-differences (new line openings)
    - Propensity score matching
 
 2. **Temporal analysis**:
+
    - Include full history (1990-2026)
    - Track MRT premium evolution
    - Assess impact of new MRT lines (TEL, CCL)
@@ -295,12 +329,15 @@ MRT impact varies by:
    - Moran's I for spatial autocorrelation
 
 ### Long-term (Advanced)
+
 1. **Real-time valuation tool**:
+
    - Input: Property details
    - Output: Predicted price with MRT impact
    - Show: Confidence intervals
 
 2. **Investment recommender**:
+
    - Best properties within budget
    - Ranked by MRT potential
    - ROI projections
@@ -315,16 +352,19 @@ MRT impact varies by:
 ## 📞 How to Use These Results
 
 ### For Researchers/Analysts
+
 1. **Data**: All outputs in `data/analysis/mrt_impact/`
 2. **Code**: Reusable scripts in `scripts/analysis/`
 3. **Reports**: Comprehensive documentation of methodology
 
 ### For Investors/Buyers
+
 1. **Key finding**: Condos near MRT worth 15x more than HDB
 2. **Action**: Prioritize MRT proximity when buying condos
 3. **Caution**: EC anomaly needs further investigation
 
 ### For Policy Makers
+
 1. **Insight**: MRT infrastructure benefits all segments
 2. **Impact**: $19.20/100m premium for condos
 3. **Equity**: HDB less MRT-dependent (good for affordability)
@@ -379,6 +419,7 @@ Methods: OLS Regression, XGBoost, Spatial Analysis (H3)
 > **"Condominiums are 15x more sensitive to MRT proximity than HDB properties."**
 
 This finding fundamentally changes our understanding of Singapore's housing market and has significant implications for:
+
 - **Buyers**: Prioritize MRT proximity when buying condos
 - **Investors**: Highest ROI from MRT-adjacent luxury properties
 - **Policy**: Transit infrastructure benefits all, especially luxury segment

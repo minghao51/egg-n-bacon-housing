@@ -40,6 +40,7 @@ GEOCODING_TIMEOUT = 30            # 30 second timeout
 ```
 
 **Benefits**:
+
 - Centralized configuration for all new features
 - Easy to tune performance settings
 - Cache directory auto-created on validation
@@ -51,6 +52,7 @@ GEOCODING_TIMEOUT = 30            # 30 second timeout
 **Created new module** with caching functionality:
 
 **Features**:
+
 - File-based caching using pickle
 - Configurable cache duration (default 24 hours)
 - Automatic cache expiration
@@ -58,6 +60,7 @@ GEOCODING_TIMEOUT = 30            # 30 second timeout
 - Simple decorator pattern for API calls
 
 **Key Functions**:
+
 ```python
 # Manual caching
 result = cached_call("api_call_123", lambda: requests.get(url))
@@ -74,12 +77,14 @@ get_cache_stats()                # View cache stats
 ```
 
 **Benefits**:
+
 - ⚡ **Instant speedup** for repeated API calls during development
 - 💰 **Reduced API quota usage** - don't re-fetch unchanged data
 - 🔄 **Better reproducibility** - same data across runs
 - 📊 **Cache statistics** - see what's cached and space used
 
 **Usage in Pipeline**:
+
 - Integrated with `fetch_datagovsg_dataset()` in L0_collect.py
 - Integrated with `fetch_data_cached()` in geocoding.py
 
@@ -90,14 +95,17 @@ get_cache_stats()                # View cache stats
 **Added three new functions**:
 
 #### a) `fetch_data_cached()` - Cached API calls
+
 ```python
 def fetch_data_cached(search_string: str, headers: Dict[str, str]) -> pd.DataFrame:
     """Fetch geocoding data with caching support."""
 ```
+
 - Checks cache before making API call
 - Uses caching layer automatically
 
 #### b) `fetch_data_parallel()` - Parallel geocoding
+
 ```python
 def fetch_data_parallel(
     addresses: List[str],
@@ -109,6 +117,7 @@ def fetch_data_parallel(
 ```
 
 **Features**:
+
 - Uses `ThreadPoolExecutor` for parallel API calls
 - Configurable number of workers (default: 5)
 - Respects API rate limits with delays
@@ -116,11 +125,13 @@ def fetch_data_parallel(
 - Returns both successful and failed addresses
 
 **Performance**:
+
 - **Before (sequential)**: 1000 addresses ≈ 16 minutes (1.0s delay each)
 - **After (parallel, 5 workers)**: 1000 addresses ≈ 3.2 minutes
 - **Speedup**: ~5x faster
 
 #### c) `batch_geocode_addresses()` - Batch processing with checkpointing
+
 ```python
 def batch_geocode_addresses(
     addresses: List[str],
@@ -132,6 +143,7 @@ def batch_geocode_addresses(
 ```
 
 **Features**:
+
 - Process large datasets in batches
 - Avoid memory issues with large datasets
 - Checkpoint support for long-running jobs
@@ -144,6 +156,7 @@ def batch_geocode_addresses(
 **Updated `save_parquet()` function** with new features:
 
 #### New Parameters:
+
 ```python
 def save_parquet(
     df: pd.DataFrame,
@@ -157,6 +170,7 @@ def save_parquet(
 ```
 
 #### Partitioning Support:
+
 ```python
 # Save as partitioned dataset (faster queries)
 save_parquet(
@@ -167,11 +181,13 @@ save_parquet(
 ```
 
 **Benefits**:
+
 - 🚀 **Faster queries** - only read relevant partitions
 - 📁 **Better organization** - data organized by date
 - 🔍 **Partial reads** - don't load entire dataset
 
 #### Compression Options:
+
 ```python
 # Use better compression for cold data
 save_parquet(
@@ -182,12 +198,14 @@ save_parquet(
 ```
 
 **Compression Options**:
+
 - `snappy` (default) - Fast, good compression
 - `gzip` - Better compression, slower
 - `zstd` - Best compression, modern
 - `brotli` - Best compression ratio
 
 #### Metadata Enhancements:
+
 - Added `compression` field to metadata
 - Added `partition_cols` field when applicable
 - Checksums only calculated for single files (not partitioned datasets)
@@ -199,6 +217,7 @@ save_parquet(
 **Extracted L0_datagovsg notebook logic** into reusable module:
 
 #### Key Functions:
+
 ```python
 # Generic API fetcher with caching
 fetch_datagovsg_dataset(url, dataset_id, use_cache=True)
@@ -218,6 +237,7 @@ run_all_datagovsg_collection()
 ```
 
 #### Features:
+
 - ✅ **Reusable** - Can be imported in scripts, notebooks, apps
 - ✅ **Testable** - Can write unit tests
 - ✅ **Cached** - API calls cached automatically
@@ -225,6 +245,7 @@ run_all_datagovsg_collection()
 - ✅ **Documented** - Full docstrings with examples
 
 #### Example Usage:
+
 ```python
 # In a script
 from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
@@ -240,6 +261,7 @@ print(f"Collected {len(results)} datasets")
 **Created new script** for running pipeline from command line:
 
 #### Features:
+
 - Run specific stages (L0, L1, or all)
 - Parallel/sequential geocoding option
 - Proper logging and error handling
@@ -247,6 +269,7 @@ print(f"Collected {len(results)} datasets")
 - Summary statistics
 
 #### Usage Examples:
+
 ```bash
 # Run L0 data collection
 uv run python scripts/run_pipeline.py --stage L0
@@ -266,21 +289,24 @@ uv run python scripts/run_pipeline.py --stage L1 --no-parallel
 ## Performance Improvements
 
 ### Geocoding Speed
-| Scenario | Addresses | Time (Before) | Time (After) | Speedup |
-|----------|-----------|---------------|--------------|---------|
-| Small batch | 100 | 1.7 min | 0.3 min | 5.6x |
-| Medium batch | 500 | 8.3 min | 1.7 min | 4.9x |
-| Large batch | 1000 | 16.7 min | 3.4 min | 4.9x |
+
+| Scenario     | Addresses | Time (Before) | Time (After) | Speedup |
+| ------------ | --------- | ------------- | ------------ | ------- |
+| Small batch  | 100       | 1.7 min       | 0.3 min      | 5.6x    |
+| Medium batch | 500       | 8.3 min       | 1.7 min      | 4.9x    |
+| Large batch  | 1000      | 16.7 min      | 3.4 min      | 4.9x    |
 
 ### Development Iteration Speed
-| Task | Before (no cache) | After (with cache) | Speedup |
-|------|-------------------|--------------------|---------|
-| Re-run L0 collection | ~30 seconds | ~1 second | 30x |
-| Re-run geocoding (cached) | ~3.4 minutes | ~5 seconds | 40x |
+
+| Task                      | Before (no cache) | After (with cache) | Speedup |
+| ------------------------- | ----------------- | ------------------ | ------- |
+| Re-run L0 collection      | ~30 seconds       | ~1 second          | 30x     |
+| Re-run geocoding (cached) | ~3.4 minutes      | ~5 seconds         | 40x     |
 
 ### Storage Efficiency
-| Dataset | Before | After (partitioned) | Query Speed |
-|---------|---------|---------------------|-------------|
+
+| Dataset         | Before      | After (partitioned)       | Query Speed                              |
+| --------------- | ----------- | ------------------------- | ---------------------------------------- |
 | L1 transactions | Single file | Partitioned by year/month | 10-100x faster for date-filtered queries |
 
 ---
@@ -288,6 +314,7 @@ uv run python scripts/run_pipeline.py --stage L1 --no-parallel
 ## Usage Examples
 
 ### Example 1: Run L0 Collection with Caching
+
 ```python
 from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
 
@@ -299,6 +326,7 @@ results = run_all_datagovsg_collection()
 ```
 
 ### Example 2: Parallel Geocoding
+
 ```python
 from scripts.core.geocoding import setup_onemap_headers, batch_geocode_addresses
 
@@ -314,6 +342,7 @@ results_df = batch_geocode_addresses(
 ```
 
 ### Example 3: Save with Partitioning
+
 ```python
 from scripts.core.data_helpers import save_parquet
 
@@ -329,6 +358,7 @@ save_parquet(
 ```
 
 ### Example 4: Run Full Pipeline
+
 ```bash
 # From command line
 uv run python scripts/run_pipeline.py --stage all --parallel
@@ -341,6 +371,7 @@ uv run python scripts/run_pipeline.py --stage all --parallel
 The new features should be tested:
 
 ### Test Caching (`tests/test_cache.py` - suggested)
+
 ```python
 def test_cache_hit():
     """Test that cache returns same data"""
@@ -355,6 +386,7 @@ def test_cache_expiration():
 ```
 
 ### Test Parallel Geocoding (`tests/test_geocoding.py` - suggested)
+
 ```python
 def test_parallel_vs_sequential():
     """Test that parallel produces same results as sequential"""
@@ -368,6 +400,7 @@ def test_error_handling():
 ```
 
 ### Test Pipeline (`tests/test_pipeline.py` - suggested)
+
 ```python
 def test_L0_collection():
     """Test L0 data collection"""
@@ -385,6 +418,7 @@ def test_L0_collection():
 Your notebooks will continue to work as-is. However, you can now simplify them:
 
 **Before (L0_datagovsg.py)**:
+
 ```python
 # 300+ lines of data fetching code
 def fetch_data(url, dataset_id):
@@ -395,6 +429,7 @@ save_parquet(property_transactions, "raw_datagov_general_sale")
 ```
 
 **After (simplified)**:
+
 ```python
 from scripts.core.pipeline.L0_collect import run_all_datagovsg_collection
 
@@ -405,6 +440,7 @@ results = run_all_datagovsg_collection()
 ### For Geocoding
 
 **Before (sequential)**:
+
 ```python
 for i, search_string in enumerate(housing_df['NameAddress'], 1):
     _df = fetch_data(search_string, headers)
@@ -413,6 +449,7 @@ for i, search_string in enumerate(housing_df['NameAddress'], 1):
 ```
 
 **After (parallel + cached)**:
+
 ```python
 from scripts.core.geocoding import batch_geocode_addresses
 
@@ -443,6 +480,7 @@ GEOCODING_TIMEOUT=60     # Default: 30
 ```
 
 **Recommended settings**:
+
 - **Development**: `GEOCODING_MAX_WORKERS=5`, `GEOCODING_API_DELAY=1.0` (safe)
 - **Production (small batch)**: `GEOCODING_MAX_WORKERS=10`, `GEOCODING_API_DELAY=0.5`
 - **Production (large batch)**: `GEOCODING_MAX_WORKERS=5`, `GEOCODING_API_DELAY=1.0` (respectful)
@@ -495,21 +533,27 @@ save_parquet(df, "archive", compression="zstd")
 ## Troubleshooting
 
 ### Issue: Cache not working
+
 **Solution**: Check `USE_CACHING=True` in Config
+
 ```python
 from scripts.core.config import Config
 print(f"Caching enabled: {Config.USE_CACHING}")
 ```
 
 ### Issue: Parallel geocoding failing
+
 **Solution**: Reduce workers or increase delay
+
 ```python
 Config.GEOCODING_MAX_WORKERS = 3  # Reduce from 5
 Config.GEOCODING_API_DELAY = 2.0  # Increase from 1.0
 ```
 
 ### Issue: Out of memory during geocoding
+
 **Solution**: Use smaller batch size
+
 ```python
 results_df = batch_geocode_addresses(
     addresses,
@@ -519,7 +563,9 @@ results_df = batch_geocode_addresses(
 ```
 
 ### Issue: Old data being returned
+
 **Solution**: Clear the cache
+
 ```python
 from scripts.core.cache import clear_cache
 clear_cache()  # Clear all cache
@@ -539,6 +585,7 @@ clear_cache("datagovsg:d_5785799d63a9da091f4e0b456291eeb8")  # Clear specific
 ✅ **Comprehensive documentation** and examples
 
 **Total Impact**:
+
 - Development iteration speed: **30-40x faster**
 - Geocoding speed: **5x faster**
 - Query performance: **10-100x faster** (with partitioning)

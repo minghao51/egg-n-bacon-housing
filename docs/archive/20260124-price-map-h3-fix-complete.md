@@ -17,6 +17,7 @@ Fixed the H3 grid cell color display issue and improved the overall presentation
 **Root Cause**: The `create_h3_grid_map()` function was using `marker.color` with `colorscale` property in `Scattermapbox`, which doesn't work properly for filled polygons.
 
 **Solution**:
+
 - Modified `core/map_utils.py:505` - `create_h3_grid_map()` function
 - Added helper functions `get_color_from_scale()` and `interpolate_color()` in `core/map_utils.py:33`
 - Changed approach to use `fillcolor` property directly with calculated hex colors
@@ -26,14 +27,17 @@ Fixed the H3 grid cell color display issue and improved the overall presentation
   3. Applying the interpolated hex color via `fillcolor` parameter
 
 **Files Modified**:
+
 - `core/map_utils.py` (lines 23-84, 505-624)
 
 ### 2. Improved Presentation & Coherence ✅
 
 #### Map Settings Section
+
 **File**: `apps/2_price_map.py:288`
 
 Changes:
+
 - Added icon (🗺️) to section header
 - Made labels more professional with bold text (`**Label**`)
 - Improved help text with multi-line explanations for each view mode
@@ -41,9 +45,11 @@ Changes:
 - Enhanced reset button with icon and bold text
 
 #### Sidebar Filter Headers
+
 **File**: `apps/2_price_map.py:48-257`
 
 Changes:
+
 - Changed main header from "🔍 Filters" to "🔍 Filter Controls"
 - Made all subheaders bold and more descriptive:
   - "Property Type" → "**Property Type**"
@@ -56,27 +62,33 @@ Changes:
   - "Time Period" → "**📅 Transaction Date**"
 
 #### Era Banners
+
 **File**: `apps/2_price_map.py:513-531`
 
 Changes:
+
 - More informative messages showing transaction counts
 - Clear era descriptions with dates
 - Better formatting with bold key terms
 - Example: "📊 **Analysis Period**: **All Historical Data** (1990-2026) | Showing **X,XXX** transactions across all time periods"
 
 #### Map Display Section
+
 **File**: `apps/2_price_map.py:568-591`
 
 Changes:
+
 - Added section header with icon: "### 📍 Interactive Map"
 - Improved aggregation summary with better formatting
 - Performance warning now in separate column with clearer messaging
 - Added horizontal rule separator for better visual hierarchy
 
 #### Data Preview & Export
+
 **File**: `apps/2_price_map.py:593-634`
 
 Changes:
+
 - Expander header: "📋 View Filtered Data (First 100 Rows)"
 - Export section: "### 💾 Export Data"
 - Enhanced export button with icon and primary styling
@@ -84,9 +96,11 @@ Changes:
 - Improved tip messaging
 
 #### User Guide (Help Section)
+
 **File**: `apps/2_price_map.py:636-723`
 
 Changes:
+
 - Renamed from "How to Use This Page" to "📖 User Guide"
 - Completely restructured with clear sections:
   - Understanding View Modes
@@ -119,6 +133,7 @@ def get_color_from_scale(value: float) -> str:
 ### Color Scale
 
 The map uses a 5-point color scale:
+
 - **0.0** (#2E5EAA): Blue (lowest)
 - **0.25** (#54A24B): Green
 - **0.5** (#F4D03F): Yellow (average)
@@ -136,16 +151,19 @@ The map uses a 5-point color scale:
 ## Impact
 
 ### User Experience
+
 - **Before**: H3 grid cells appeared with incorrect/missing colors
 - **After**: H3 grid cells display with proper color gradient based on selected metric
 
 ### Visual Quality
+
 - More professional and coherent interface
 - Clearer section headers with icons
 - Better information hierarchy
 - Improved help documentation
 
 ### Maintainability
+
 - Cleaner code structure with helper functions
 - Better comments and documentation
 - Consistent formatting throughout
@@ -153,6 +171,7 @@ The map uses a 5-point color scale:
 ## Files Modified
 
 1. **core/map_utils.py**
+
    - Added `get_color_from_scale()` function (lines 33-59)
    - Added `interpolate_color()` function (lines 62-84)
    - Refactored `create_h3_grid_map()` function (lines 505-624)
@@ -174,6 +193,7 @@ The map uses a 5-point color scale:
 ## Next Steps (Optional)
 
 Consider these future enhancements:
+
 1. Add option to adjust color scale endpoints
 2. Support custom color scales
 3. Add color-blind friendly color scale option

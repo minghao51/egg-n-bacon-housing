@@ -12,6 +12,7 @@ Successfully implemented and validated **Phase 2: Integrate Amenities into L2/L3
 ## Validation Results
 
 ### ✅ L1: Amenity Data Collection
+
 - **3,991 amenities** across 7 types
 - Breakdown:
   - Childcare: 1,925 (48%)
@@ -23,22 +24,25 @@ Successfully implemented and validated **Phase 2: Integrate Amenities into L2/L3
   - Mall: 107 (3%)
 
 ### ✅ L2: Per-Type Amenity Metrics
+
 - **17,722 properties** × 22 columns (POSTAL + 21 metrics)
 - **100% coverage** for all properties
 - **21 amenity columns** (7 types × 3 metrics):
-  - Distance to nearest (dist_nearest_{type})
-  - Count within 500m (count_{type}_500m)
-  - Count within 1000m (count_{type}_1000m)
+  - Distance to nearest (dist*nearest*{type})
+  - Count within 500m (count\_{type}\_500m)
+  - Count within 1000m (count\_{type}\_1000m)
 
 ### ✅ L2: Property Table (with merged amenity metrics)
+
 - **41,338 properties**
-- **22 merged amenity columns** (amty_*)
+- **22 merged amenity columns** (amty\_\*)
 - **100% coverage** - all properties have amenity data
 
 ### ✅ L3: Unified Dataset
+
 - **1,116,323 records** × 21 amenity columns
 - **79.0% amenity coverage** (882,427/1,116,323 HDB records)
-  - *Note: Only HDB properties have amenity features (private properties don't use L2 pipeline)*
+  - _Note: Only HDB properties have amenity features (private properties don't use L2 pipeline)_
 - **100% rental yield coverage** (1,116,323/1,116,323)
   - 191,037 original values
   - 925,286 imputed values
@@ -46,6 +50,7 @@ Successfully implemented and validated **Phase 2: Integrate Amenities into L2/L3
 ### ✅ L4: ML Analysis Outputs
 
 #### Price Prediction (XGBoost)
+
 - **57,675 predictions** (test set)
 - **R² = 0.860** (excellent fit)
 - **RMSE = $69,628** (13.3% of mean price)
@@ -57,6 +62,7 @@ Successfully implemented and validated **Phase 2: Integrate Amenities into L2/L3
   5. count_mrt_station_1000m: 9.6%
 
 #### Market Segmentation (K-means)
+
 - **288,374 properties** clustered into 5 segments
 - Segment profiles:
   - Segment 0: $370,612, 82,834 properties, 745 sqft (Budget)
@@ -66,6 +72,7 @@ Successfully implemented and validated **Phase 2: Integrate Amenities into L2/L3
   - Segment 4: $750,170, 41,043 properties, 1,445 sqft (Premium)
 
 #### Price Forecasts (ARIMA)
+
 - **20 planning areas** with 6-month forecasts
 - Top growth areas:
   1. Bukit Merah: +70.3%
@@ -75,11 +82,13 @@ Successfully implemented and validated **Phase 2: Integrate Amenities into L2/L3
   5. Geylang: +40.7%
 
 #### Feature Importance Analysis
+
 - **Visualization generated**: feature_importance.png
 - Confirms amenity count features are strong predictors (20-17% importance)
 - Count within 1000m more predictive than nearest distance
 
 ### ✅ Webapp: Data Exports
+
 - **Amenity summary**: 41 planning areas (1,743 bytes compressed)
 - **Map metrics**: 11,620 bytes compressed
 
@@ -88,36 +97,45 @@ Successfully implemented and validated **Phase 2: Integrate Amenities into L2/L3
 ## Implementation Details
 
 ### Phase 2.1: Per-Type Amenity Metrics (L2)
+
 **File**: `scripts/core/stages/L2_features.py`
 
 Created `compute_amenity_distances_by_type()` function:
+
 - Calculates distances using metric CRS (EPSG:3857) for accuracy
 - Processes 7 amenity types in single pass
 - Outputs DataFrame with POSTAL column for merging
 - **Commit**: `30cfbeb`
 
 ### Phase 2.2: L3 Export Schema Update
+
 **File**: `scripts/core/stages/L3_export.py`
 
 Modified `load_amenity_features()`:
-- Supports new schema (dist_nearest_*, count_*_*m)
-- Maintains backward compatibility with legacy (*_within_*)
+
+- Supports new schema (dist*nearest*_, count\__\_\*m)
+- Maintains backward compatibility with legacy (_*within*_)
 - **Commit**: `8f6a3fb`, `55f795d`
 
 ### Phase 2.3: Webapp Data Export
+
 **File**: `scripts/core/stages/webapp_data_preparation.py`
 
 Added `generate_amenity_summary_data()`:
+
 - Aggregates amenity metrics by planning area
 - Outputs compressed JSON for webapp
 - **Commit**: `5e6faa9`
 
 ### Phase 2.4: Bug Fixes
+
 1. **Merge Key Mismatch** (Commit: `ed0d208`)
+
    - Issue: property_id keys didn't match between tables
    - Fix: Use postal code as merge key
 
 2. **Missing POSTAL in Amenity Features** (Commit: `841e8c8`)
+
    - Issue: Amenity metrics output didn't include POSTAL
    - Fix: Added POSTAL column to `compute_amenity_distances_by_type()`
 
@@ -126,9 +144,11 @@ Added `generate_amenity_summary_data()`:
    - Fix: Updated path to check L2 subdirectory
 
 ### Phase 3: L4 ML Analysis Updates
+
 **Files**: `scripts/analytics/analysis/market/*.py`
 
 Updated all ML scripts to use new amenity schema:
+
 - `price_prediction.py`: Updated feature columns
 - `market_segmentation.py`: Updated feature columns
 - `forecast_prices.py`: No changes needed
@@ -136,6 +156,7 @@ Updated all ML scripts to use new amenity schema:
 - **Commit**: `2a323e0`
 
 ### Phase 4: Rental Yield Imputation
+
 **File**: `scripts/data/process/impute_rental_yields.py`
 
 - Planning area averages (KNN-style imputation)
@@ -178,13 +199,16 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 ## Key Findings
 
 ### Amenity Feature Importance
+
 1. **Count metrics more predictive than distance metrics**
+
    - count_mall_1000m: 18.1%
    - count_supermarket_1000m: 15.2%
    - count_mrt_station_1000m: 9.6%
-   - dist_nearest_*: ~0% (model learned to ignore)
+   - dist*nearest*\*: ~0% (model learned to ignore)
 
 2. **Why counts > distance?**
+
    - Accessibility matters more than proximity
    - Multiple options within area = better accessibility
    - Distance to single amenity less informative
@@ -195,6 +219,7 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
    - Amenity features contribute ~43% of predictive power
 
 ### Coverage Considerations
+
 - **79% amenity coverage** is due to HDB-only processing in L2
 - Private properties ( condos/ECs) bypass L2 pipeline
 - **Future improvement**: Add amenity calculation for private properties
@@ -204,11 +229,13 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 ## Known Limitations
 
 1. **Amenity Coverage**
+
    - Currently: 79% (HDB only)
    - Missing: Private properties (21% of dataset)
    - Impact: Slight bias in amenity-based analyses
 
 2. **Data Freshness**
+
    - Amenity data from Feb 2025 Wikipedia scrape
    - Some amenities may have opened/closed since then
    - Recommendation: Quarterly refresh
@@ -223,20 +250,24 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 ## Files Modified
 
 ### Core Scripts (L2/L3)
+
 - `scripts/core/stages/L2_features.py` - Per-type amenity calculation
 - `scripts/core/stages/L3_export.py` - Schema support, path fix
 - `scripts/core/stages/webapp_data_preparation.py` - Amenity summary export
 
 ### ML Analysis Scripts (L4)
+
 - `scripts/analytics/analysis/market/price_prediction.py`
 - `scripts/analytics/analysis/market/market_segmentation.py`
 - `scripts/analytics/analysis/market/forecast_prices.py`
 - `scripts/analytics/analysis/market/feature_importance.py`
 
 ### Data Processing Scripts
+
 - `scripts/data/process/impute_rental_yields.py`
 
 ### Data Files Generated
+
 - `data/pipeline/03_gold/housing_per_type_amenity_features.parquet` (NEW)
 - `data/pipeline/04_platinum/housing_unified.parquet` (UPDATED)
 - `data/pipeline/04_platinum/L4_price_predictions.parquet` (NEW)
@@ -263,18 +294,21 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 ## Recommendations
 
 ### Immediate (Completed)
+
 - ✅ Implement per-type amenity metrics
 - ✅ Integrate into L2/L3 pipeline
 - ✅ Update ML models to use new features
 - ✅ Validate all phases end-to-end
 
 ### Short-term (Future Work)
+
 - [ ] Add amenity calculation for private properties
 - [ ] Implement automated amenity data refresh
 - [ ] Add amenity-based price analysis dashboard
 - [ ] Create amenity score composite metric
 
 ### Long-term (Enhancements)
+
 - [ ] Real-time amenity data API integration
 - [ ] Amenity quality ratings (e.g., hawker center hygiene grades)
 - [ ] Temporal amenity analysis (how amenities change over time)
@@ -287,6 +321,7 @@ app/public/data/amenity_summary.json.gz (41 planning areas)
 **Phase 2: Integrate Amenities into L2/L3** is **COMPLETE** and **VALIDATED**.
 
 All 10 validation checks passed:
+
 - ✅ L1 Amenity data collection (3,991 amenities)
 - ✅ L2 Per-type amenity metrics (17,722 properties)
 - ✅ L2 Property table merge (41,338 properties)

@@ -17,6 +17,7 @@
 ### Task 1.1: Fix Supermarket Parsing
 
 **Files:**
+
 - Modify: `scripts/data/process/amenities/process_amenities.py:120-130`
 
 **Step 1: Inspect supermarket geojson structure**
@@ -129,6 +130,7 @@ Fixes #pipeline-phase1"
 ### Task 1.2: Download Phase 2 Datasets
 
 **Files:**
+
 - Use existing: `scripts/data/download/download_datagov_datasets.py`
 
 **Step 1: Run Phase 2 download**
@@ -212,6 +214,7 @@ Progress: #pipeline-phase1"
 ### Task 1.3: Add Park Centroid Extraction
 
 **Files:**
+
 - Modify: `scripts/data/process/amenities/process_amenities.py`
 
 **Step 1: Add park centroid extraction function**
@@ -312,6 +315,7 @@ Progress: #pipeline-phase1"
 ### Task 1.4: Geocode Shopping Malls
 
 **Files:**
+
 - Create: `scripts/data/process/geocode_malls.py`
 
 **Step 1: Create mall geocoding script**
@@ -478,6 +482,7 @@ Completes: #pipeline-phase1"
 ### Task 2.1: Add Per-Type Amenity Metrics to L2
 
 **Files:**
+
 - Modify: `scripts/core/stages/L2_features.py:126-160`
 
 **Step 1: Update compute_amenity_distances function**
@@ -602,6 +607,7 @@ Progress: #pipeline-phase2"
 ### Task 2.2: Update L3 Export Schema
 
 **Files:**
+
 - Modify: `scripts/core/stages/L3_export.py` (schema definition around line 100-200)
 
 **Step 1: Update L3 schema to include amenity columns**
@@ -676,6 +682,7 @@ Progress: #pipeline-phase2"
 ### Task 2.3: Update Webapp Data Export
 
 **Files:**
+
 - Modify: `scripts/core/stages/webapp_data_preparation.py`
 
 **Step 1: Export amenity summary statistics**
@@ -833,6 +840,7 @@ Validation complete for #pipeline-phase2"
 ### Task 3.1: Create L4 Directory Structure
 
 **Files:**
+
 - Create: `scripts/analytics/analysis/market/price_prediction.py`
 - Create: `scripts/analytics/analysis/market/market_segmentation.py`
 - Create: `scripts/analytics/analysis/market/forecast_prices.py`
@@ -1140,6 +1148,7 @@ Progress: #pipeline-phase3"
 ### Task 3.2: Implement Price Prediction Model
 
 **Files:**
+
 - Modify: `scripts/analytics/analysis/market/price_prediction.py`
 
 **Step 1: Complete price prediction implementation**
@@ -1183,6 +1192,7 @@ Progress: #pipeline-phase3"
 ### Task 3.3: Implement Market Segmentation
 
 **Files:**
+
 - Modify: `scripts/analytics/analysis/market/market_segmentation.py`
 
 **Step 1: Complete segmentation implementation**
@@ -1225,6 +1235,7 @@ Progress: #pipeline-phase3"
 ### Task 3.4: Implement Feature Importance Analysis
 
 **Files:**
+
 - Create: `scripts/analytics/analysis/market/feature_importance.py`
 
 **Step 1: Create SHAP analysis script**
@@ -1392,6 +1403,7 @@ Completes: #pipeline-phase3"
 ### Task 4.1: Add HDB Rental Data Source
 
 **Files:**
+
 - Modify: `scripts/core/stages/L2_rental.py`
 
 **Step 1: Check existing HDB rental data**
@@ -1434,6 +1446,7 @@ Progress: #pipeline-phase4"
 ### Task 4.2: Implement KNN Imputation
 
 **Files:**
+
 - Create: `scripts/core/stages/helpers/rental_helpers.py`
 
 **Step 1: Create rental helpers module**
@@ -1553,6 +1566,7 @@ Progress: #pipeline-phase4"
 ### Task 4.3: Add Size Stratification
 
 **Files:**
+
 - Modify: `scripts/core/stages/L2_rental.py`
 
 **Step 1: Add room count-based yield calculation**
@@ -1740,12 +1754,14 @@ Completes: #pipeline-improvements-all"
 **Tests to run:** pytest (incremental per phase)
 
 **Success criteria:**
+
 - ✅ Amenity coverage: 1100+ locations (was 129)
 - ✅ L3 features: 60+ columns (was ~24)
 - ✅ ML models: 4 implemented (prediction, segmentation, forecasting, importance)
 - ✅ Rental yield: 80%+ coverage (was 17%)
 
 **Next steps after implementation:**
+
 1. Run full test suite: `pytest`
 2. Run integration tests: `uv run python scripts/run_pipeline.py --stage all`
 3. Review L4 analysis report: `data/L4_analysis_report.md`

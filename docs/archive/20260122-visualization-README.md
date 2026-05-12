@@ -28,12 +28,14 @@ Press `Ctrl+C` in the terminal
 Interactive map visualization with two modes:
 
 #### **Heatmap Mode** (Default)
+
 - **Performance optimized** for large datasets (>10K points)
 - Color-coded by price (Blue = Low, Red = High)
 - Hover tooltips showing property address and price
 - Smooth zoom and pan
 
 #### **Scatter Plot Mode**
+
 - Individual property markers
 - Sized by floor area
 - Colored by price per square foot ($PSF)
@@ -44,25 +46,30 @@ Interactive map visualization with two modes:
 Located in the sidebar:
 
 **Property Type**
+
 - HDB
 - Condominium
 - Executive Condominium
 - Landed
 
 **Location**
+
 - Town (26 HDB towns)
 - Postal District (01-83)
 - Street address (via search)
 
 **Price**
+
 - Minimum and maximum price range
 - Floor area range (sqft)
 
 **Time Period**
+
 - Transaction date range
 - From 2015 to present
 
 **Map Settings**
+
 - Toggle between Heatmap and Scatter views
 - Show/hide amenity overlays
 - Select which amenities to display
@@ -70,6 +77,7 @@ Located in the sidebar:
 ### **3. Market Overview**
 
 High-level market statistics:
+
 - Total transactions
 - Median price
 - Property type distribution
@@ -120,21 +128,25 @@ egg-n-bacon-housing/
 ### **Data Sources**
 
 **HDB Data** (L1)
+
 - 969,748 resale transactions
 - From data.gov.sg API
 - Fields: month, town, flat_type, floor_area_sqm, resale_price, remaining_lease
 
 **Condo Data** (L1)
+
 - 49,052 private property transactions
 - From URA (Urban Redevelopment Authority)
 - Fields: Project Name, Transacted Price, Area (SQFT), Unit Price ($PSF)
 
 **Geocoded Data** (L2)
+
 - 17,720 unique properties with coordinates
 - Via OneMap Singapore geocoding API
 - Fields: lat, lon, postal, address
 
 **Amenity Data** (L2)
+
 - 5,569 amenity locations
 - Types: MRT, hawker, schools, parks, childcare, preschool, supermarket
 - Distance features: nearest within 500m/1km/2km
@@ -146,6 +158,7 @@ egg-n-bacon-housing/
 ### **Dark Theme**
 
 The app uses a dark theme for better visual contrast:
+
 - Background: `#1e1e1e`
 - Text: `#e0e0e0`
 - Map: Carto Dark Matter tiles
@@ -153,6 +166,7 @@ The app uses a dark theme for better visual contrast:
 ### **Color Scale**
 
 Price heatmap uses a 5-color scale:
+
 - Blue (low prices)
 - Green
 - Yellow
@@ -178,14 +192,17 @@ LIGHT_THEME = "open-street-map"
 ### **Optimizations**
 
 1. **Data Caching**
+
    - 1-hour TTL on all data loads
    - Reduces loading time on subsequent visits
 
 2. **Heatmap Mode**
+
    - Uses `density_mapbox` for automatic aggregation
    - Handles 10K+ points smoothly
 
 3. **Lazy Loading**
+
    - Data loaded only when needed
    - Progress indicators for long operations
 
@@ -231,6 +248,7 @@ DATA_DIR = Path("data/parquets")
 **Cause**: Data files not found
 
 **Solution**:
+
 1. Check that `data/parquets/L1/` and `data/parquets/L2/` exist
 2. Verify that parquet files are present
 3. Run L2 pipeline if needed: `uv run python scripts/run_l2_pipeline.py`
@@ -240,6 +258,7 @@ DATA_DIR = Path("data/parquets")
 **Cause**: Invalid coordinates or empty data after filtering
 
 **Solution**:
+
 1. Try relaxing filters (wider date range, all towns)
 2. Check data has valid lat/lon coordinates
 3. Look for warnings in the UI
@@ -249,6 +268,7 @@ DATA_DIR = Path("data/parquets")
 **Cause**: Too many points in Scatter mode
 
 **Solution**:
+
 1. Switch to Heatmap mode
 2. Apply more filters to reduce data size
 3. Reduce time range (e.g., last 2 years instead of all)
@@ -258,6 +278,7 @@ DATA_DIR = Path("data/parquets")
 **Cause**: Missing dependencies
 
 **Solution**:
+
 ```bash
 uv sync
 ```
@@ -267,6 +288,7 @@ uv sync
 ## 🚧 Roadmap
 
 ### **Phase 1: MVP** ✅ (Complete)
+
 - [x] Basic data loading with caching
 - [x] Interactive map with heatmap
 - [x] Property filters (type, town, price, time)
@@ -274,6 +296,7 @@ uv sync
 - [x] Export functionality
 
 ### **Phase 2: Advanced Features** (Next)
+
 - [ ] Customizable trend charts (monthly/quarterly/yearly)
 - [ ] Comparative analysis (by town, property type)
 - [ ] Rental yield visualization
@@ -281,6 +304,7 @@ uv sync
 - [ ] Time-series animation
 
 ### **Phase 3: Polish & Optimize**
+
 - [ ] User documentation and help tooltips
 - [ ] Responsive design improvements
 - [ ] Error handling and validation
@@ -308,11 +332,13 @@ uv sync
 ### **Testing**
 
 Test data loading:
+
 ```bash
 uv run python -c "from scripts.core.data_loader import load_combined_data; df = load_combined_data(); print(df.head())"
 ```
 
 Test map utilities:
+
 ```bash
 uv run python -c "from scripts.core.map_utils import create_base_map; fig = create_base_map(); print('Map created successfully')"
 ```
@@ -346,6 +372,7 @@ This project is part of the egg-n-bacon-housing repository.
 ## 📞 Support
 
 For issues or questions:
+
 1. Check this README
 2. Review the implementation plan: `docs/20260122-visualization-implementation-plan.md`
 3. Check inline code comments

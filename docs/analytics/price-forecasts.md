@@ -36,13 +36,13 @@ Forecast quality depends far more on **market segment** than on having a single 
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Forecast reliability by property segment" data-chart-columns="Accuracy (R²),95% CI Width,Directional Acc"></div>
 
-| Segment | Accuracy (R²) | 95% CI Width | Directional Acc | Practical read |
-|---------|---------------|--------------|-----------------|----------------|
-| HDB flats | 79.8% | ±18.58% | 99.4% | Strong |
-| Executive Condos | 98.5% | ±50.15% | 97.1% | Strong but wider uncertainty |
-| Mass Market Condos | 85.6% | ±40.48% | 96.4% | Useful with caution |
-| Mid Market Condos | 72.6% | ±1877.88% | 94.2% | Direction only |
-| Luxury Condos | 30.1% | ±1076.24% | 92.3% | Magnitude unusable |
+| Segment            | Accuracy (R²) | 95% CI Width | Directional Acc | Practical read               |
+| ------------------ | ------------- | ------------ | --------------- | ---------------------------- |
+| HDB flats          | 79.8%         | ±18.58%      | 99.4%           | Strong                       |
+| Executive Condos   | 98.5%         | ±50.15%      | 97.1%           | Strong but wider uncertainty |
+| Mass Market Condos | 85.6%         | ±40.48%      | 96.4%           | Useful with caution          |
+| Mid Market Condos  | 72.6%         | ±1877.88%    | 94.2%           | Direction only               |
+| Luxury Condos      | 30.1%         | ±1076.24%    | 92.3%           | Magnitude unusable           |
 
 ### 2. Direction is often easier to predict than magnitude
 
@@ -55,10 +55,10 @@ The directional hit rate remains high even when confidence intervals are too wid
 
 ### 3. Momentum is the dominant forecast driver
 
-| Segment | Top feature | Importance |
-|--------|-------------|------------|
-| HDB | 2-year YoY appreciation | 51.14% |
-| Mass market condo | 2-year YoY appreciation | 65.50% |
+| Segment           | Top feature             | Importance |
+| ----------------- | ----------------------- | ---------- |
+| HDB               | 2-year YoY appreciation | 51.14%     |
+| Mass market condo | 2-year YoY appreciation | 65.50%     |
 
 **Impact**
 
@@ -104,13 +104,13 @@ The directional hit rate remains high even when confidence intervals are too wid
 
 ### Technical Findings
 
-| Segment | R² | Directional Accuracy | 95% CI Width |
-|---------|-----|---------------------|--------------|
-| HDB | 79.8% | 99.4% | ±18.58% |
-| Executive Condos | 98.5% | 97.1% | ±50.15% |
-| Mass Market Condos | 85.6% | 96.4% | ±40.48% |
-| Mid Market Condos | 72.6% | 94.2% | ±1877.88% |
-| Luxury Condos | 30.1% | 92.3% | ±1076.24% |
+| Segment            | R²    | Directional Accuracy | 95% CI Width |
+| ------------------ | ----- | -------------------- | ------------ |
+| HDB                | 79.8% | 99.4%                | ±18.58%      |
+| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |
+| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |
+| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |
+| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |
 
 - **Top feature**: 2-year YoY appreciation (51.14% importance for HDB, 65.50% for mass-market condo)
 - **Ensemble accuracy**: 74% vs 47% for a unified one-size-fits-all model

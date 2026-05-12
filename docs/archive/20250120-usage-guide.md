@@ -50,11 +50,13 @@ uv run python run_real_pipeline.py
 ### 1. Install uv
 
 **macOS/Linux**:
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 **Windows**:
+
 ```bash
 powershell -c "irm https://astral.sh/uv/install.sh | iex"
 ```
@@ -62,6 +64,7 @@ powershell -c "irm https://astral.sh/uv/install.sh | iex"
 ### 2. Get API Keys
 
 #### OneMap API (Required)
+
 - **URL**: https://www.onemap.gov.sg/apidocs/register
 - **Cost**: Free
 - **Purpose**: Geocoding, planning areas, amenities data
@@ -70,6 +73,7 @@ powershell -c "irm https://astral.sh/uv/install.sh | iex"
   - `ONEMAP_EMAIL_PASSWORD`
 
 #### Google AI API (Optional)
+
 - **URL**: https://makersuite.google.com/app/apikey
 - **Cost**: Free tier available
 - **Purpose**: LangChain agents
@@ -77,6 +81,7 @@ powershell -c "irm https://astral.sh/uv/install.sh | iex"
   - `GOOGLE_API_KEY`
 
 #### Supabase (Optional)
+
 - **URL**: https://supabase.com/
 - **Cost**: Free tier available
 - **Purpose**: Database export
@@ -95,6 +100,7 @@ nano .env  # or code .env, vim .env, etc.
 ```
 
 Add your credentials:
+
 ```bash
 # Required for L1 processing
 ONEMAP_EMAIL=your_email@example.com
@@ -167,6 +173,7 @@ uv run python run_real_pipeline.py
 ```
 
 **Features**:
+
 - ✅ Checks if .env is configured
 - ✅ Guides you through L0 → L1 → L2
 - ✅ Runs notebooks in correct order
@@ -262,6 +269,7 @@ uv run jupytext --sync L0_datagovsg.ipynb
 ```
 
 **Benefits**:
+
 - ✅ Full IDE support (autocomplete, linting)
 - ✅ Clean git diffs
 - ✅ Better refactoring tools
@@ -278,6 +286,7 @@ uv run jupyter notebook
 ```
 
 **Best for**:
+
 - Exploratory data analysis
 - Visualization
 - Debugging
@@ -517,6 +526,7 @@ plt.show()
 **Error**: `ModuleNotFoundError: No module named 'src'`
 
 **Solution**:
+
 ```python
 import sys
 from pathlib import Path
@@ -526,6 +536,7 @@ from scripts.core.data_helpers import load_parquet
 ```
 
 Or use from notebooks:
+
 ```python
 import sys
 sys.path.append('../src')
@@ -538,6 +549,7 @@ from scripts.core.data_helpers import load_parquet
 **Error**: `Dataset 'xxx' not found in metadata`
 
 **Solution**:
+
 1. Run the preceding notebooks first
 2. Check `data/metadata.json` for dependencies
 3. Verify the dataset was created
@@ -553,6 +565,7 @@ print(list(datasets.keys()))
 **Error**: `429 Too Many Requests`
 
 **Solution**:
+
 1. Wait a few minutes
 2. The pipeline has built-in delays
 3. Check API quota limits
@@ -562,6 +575,7 @@ print(list(datasets.keys()))
 **Error**: API keys are None/empty
 
 **Solution**:
+
 ```bash
 # Check .env exists
 ls -la .env
@@ -577,6 +591,7 @@ cat .env
 **Error**: .ipynb and .py files out of sync
 
 **Solution**:
+
 ```bash
 cd notebooks
 uv run jupytext --sync notebook_name.ipynb
@@ -587,6 +602,7 @@ uv run jupytext --sync notebook_name.ipynb
 **Error**: pytest failures
 
 **Solution**:
+
 ```bash
 # Reinstall dependencies
 uv sync
@@ -603,6 +619,7 @@ uv run pytest tests/test_config.py -v
 **Error**: Merge conflicts in .ipynb files
 
 **Solution**:
+
 ```bash
 # Resolve conflicts in .py file instead
 # Then sync back to .ipynb
@@ -722,13 +739,13 @@ uv run ruff check .
 
 ### Quick Reference
 
-| Task | Command | File |
-|------|---------|------|
-| Setup | `uv sync` | pyproject.toml |
-| Test | `uv run pytest` | tests/ |
-| Pipeline | `uv run python run_real_pipeline.py` | run_real_pipeline.py |
-| Load data | `load_parquet("name")` | core/data_helpers.py |
-| Config | `Config.DATA_DIR` | core/config.py |
+| Task      | Command                              | File                 |
+| --------- | ------------------------------------ | -------------------- |
+| Setup     | `uv sync`                            | pyproject.toml       |
+| Test      | `uv run pytest`                      | tests/               |
+| Pipeline  | `uv run python run_real_pipeline.py` | run_real_pipeline.py |
+| Load data | `load_parquet("name")`               | core/data_helpers.py |
+| Config    | `Config.DATA_DIR`                    | core/config.py       |
 
 ---
 
@@ -759,6 +776,7 @@ uv run ruff check .
 ## Summary
 
 **Key Commands**:
+
 ```bash
 uv sync                          # Install dependencies
 uv run pytest                    # Run tests
@@ -768,6 +786,7 @@ uv run streamlit run apps/*.py   # Run apps
 ```
 
 **Key Modules**:
+
 ```python
 from scripts.core.config import Config           # Configuration
 from scripts.core.data_helpers import (          # Data management

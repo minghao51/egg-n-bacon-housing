@@ -11,6 +11,7 @@ The deployment workflow (`.github/workflows/deploy-app.yml`) requires two API ke
 **Purpose**: Email address for accessing Singapore's OneMap geocoding API.
 
 **How to obtain**:
+
 1. Use any valid email address (personal or work email)
 2. No registration required - OneMap API is free and open
 3. The email is used to generate an access token automatically
@@ -22,6 +23,7 @@ The deployment workflow (`.github/workflows/deploy-app.yml`) requires two API ke
 **Purpose**: API key for Google Maps Geocoding API (fallback when OneMap fails).
 
 **How to obtain**:
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
 3. Navigate to **APIs & Services** → **Credentials**
@@ -58,6 +60,7 @@ The deployment workflow (`.github/workflows/deploy-app.yml`) requires two API ke
 ### Step 4: Verify Secrets
 
 After adding both secrets, you should see:
+
 - ✅ `ONEMAP_EMAIL`
 - ✅ `GOOGLE_API_KEY`
 
@@ -66,11 +69,13 @@ After adding both secrets, you should see:
 ### Secret Not Found Error
 
 If you see this error in the GitHub Actions workflow:
+
 ```
 Error: Input required and not supplied: ONEMAP_EMAIL
 ```
 
 **Solution**: Verify the secret name exactly matches (case-sensitive):
+
 - ✅ `ONEMAP_EMAIL`
 - ❌ `onemap_email`
 - ❌ `ONEMAP_EMAIL_ADDRESS`
@@ -80,6 +85,7 @@ Error: Input required and not supplied: ONEMAP_EMAIL
 If the data generation fails with API errors:
 
 1. **For Google API Key**:
+
    - Verify the Geocoding API is enabled
    - Check if the API key has quotas/restrictions
    - Ensure billing is enabled (free tier should be sufficient)

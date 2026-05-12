@@ -36,13 +36,13 @@ Lease decay is **non-linear**. The steepest market discount does not appear only
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="HDB price profile by lease band" data-chart-columns="Median Price,Median PSF,Transactions"></div>
 
-| Lease Band | Avg Remaining Years | Median Price | Median PSF | Discount vs 90+ yrs | Transactions |
-|------------|--------------------|--------------|------------|---------------------|--------------|
-| 90+ years | 93.5 years | $558,000 | $6,205 | baseline | 50,912 |
-| 80-90 years | 84.6 years | $520,000 | $5,389 | -13.2% | 29,562 |
-| 70-80 years | 75.4 years | $548,000 | $4,845 | -21.9% | 47,044 |
-| 60-70 years | 64.6 years | $446,000 | $4,730 | -23.8% | 54,521 |
-| <60 years | 54.5 years | $390,000 | $5,274 | -15.0% | 41,595 |
+| Lease Band  | Avg Remaining Years | Median Price | Median PSF | Discount vs 90+ yrs | Transactions |
+| ----------- | ------------------- | ------------ | ---------- | ------------------- | ------------ |
+| 90+ years   | 93.5 years          | $558,000     | $6,205     | baseline            | 50,912       |
+| 80-90 years | 84.6 years          | $520,000     | $5,389     | -13.2%              | 29,562       |
+| 70-80 years | 75.4 years          | $548,000     | $4,845     | -21.9%              | 47,044       |
+| 60-70 years | 64.6 years          | $446,000     | $4,730     | -23.8%              | 54,521       |
+| <60 years   | 54.5 years          | $390,000     | $5,274     | -15.0%              | 41,595       |
 
 **What stands out**
 
@@ -54,11 +54,11 @@ Lease decay is **non-linear**. The steepest market discount does not appear only
 
 This is the band where price relief and market liquidity overlap most clearly.
 
-| Metric | Value | Why it matters |
-|--------|-------|----------------|
-| Discount vs 90+ years | -23.8% | Large entry-price reduction |
-| Share of transactions | 24.4% | Resale market remains active |
-| Pure lease effect | +$54.75 PSF per extra year | Lease still has measurable pricing power |
+| Metric                | Value                      | Why it matters                           |
+| --------------------- | -------------------------- | ---------------------------------------- |
+| Discount vs 90+ years | -23.8%                     | Large entry-price reduction              |
+| Share of transactions | 24.4%                      | Resale market remains active             |
+| Pure lease effect     | +$54.75 PSF per extra year | Lease still has measurable pricing power |
 
 **Impact**
 
@@ -71,14 +71,14 @@ The same lease gap can price very differently across towns.
 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Within-town short-lease discount" data-chart-columns="Short Lease (PSM),Fresh Lease (PSM),Discount %"></div>
 
-| Town | Short Lease (PSM) | Fresh Lease (PSM) | Discount % |
-|------|-------------------|-------------------|-----------|
-| CLEMENTI | $5,224 | $8,796 | 40.6% |
-| TOA PAYOH | $4,939 | $8,182 | 39.6% |
-| QUEENSTOWN | $5,526 | $9,048 | 38.9% |
-| WOODLANDS | $4,262 | $4,544 | 6.2% |
-| JURONG WEST | $4,496 | $4,516 | 0.4% |
-| PASIR RIS | $5,621 | $4,676 | -20.2% |
+| Town        | Short Lease (PSM) | Fresh Lease (PSM) | Discount % |
+| ----------- | ----------------- | ----------------- | ---------- |
+| CLEMENTI    | $5,224            | $8,796            | 40.6%      |
+| TOA PAYOH   | $4,939            | $8,182            | 39.6%      |
+| QUEENSTOWN  | $5,526            | $9,048            | 38.9%      |
+| WOODLANDS   | $4,262            | $4,544            | 6.2%       |
+| JURONG WEST | $4,496            | $4,516            | 0.4%       |
+| PASIR RIS   | $5,621            | $4,676            | -20.2%     |
 
 **Impact**
 

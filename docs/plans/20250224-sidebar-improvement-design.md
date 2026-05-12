@@ -22,6 +22,7 @@ Improve the dashboard sidebar with better visual hierarchy, section separation, 
 **Decision:** Keep personas but elevate them to a top-level section with clearer purpose.
 
 **Rationale:**
+
 - Personas provide valuable context for different user types (first-time buyers, investors, upgraders)
 - They serve as onboarding/educational content, not analytics
 - Deserves own section to highlight their unique role
@@ -31,6 +32,7 @@ Improve the dashboard sidebar with better visual hierarchy, section separation, 
 **Decision:** Use horizontal divider lines between major sections with prominent section headers.
 
 **Rationale:**
+
 - Clean, professional look matching dashboard aesthetic
 - Clear visual boundaries without overwhelming card-style containers
 - Scales well if more sections are added later
@@ -40,6 +42,7 @@ Improve the dashboard sidebar with better visual hierarchy, section separation, 
 **Decision:** Active links have a 2px colored left border with darker background and brighter text.
 
 **Rationale:**
+
 - Modern, recognizable pattern for navigation
 - Subtle but clear indication
 - Works well with existing hover states (`hover:bg-accent`)
@@ -86,7 +89,7 @@ Sidebar
 
 ```typescript
 interface SidebarProps {
-  currentPath: string;  // e.g., "/dashboard/map"
+  currentPath: string; // e.g., "/dashboard/map"
 }
 ```
 
@@ -105,13 +108,19 @@ interface SidebarProps {
 ### Link States
 
 **Default:**
+
 ```html
-<a class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+<a
+  class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+></a>
 ```
 
 **Active:**
+
 ```html
-<a class="block px-3 py-2 rounded-md text-sm font-medium text-foreground bg-accent/50 border-l-2 border-primary transition-colors">
+<a
+  class="block px-3 py-2 rounded-md text-sm font-medium text-foreground bg-accent/50 border-l-2 border-primary transition-colors"
+></a>
 ```
 
 ### Active State Logic
@@ -119,7 +128,7 @@ interface SidebarProps {
 ```typescript
 function isActive(currentPath: string, href: string): boolean {
   // Exact match for dashboard pages
-  if (href.includes('/dashboard/')) {
+  if (href.includes("/dashboard/")) {
     return currentPath === href;
   }
   // Prefix match for analytics (e.g., /analytics/lease-decay)
@@ -130,17 +139,20 @@ function isActive(currentPath: string, href: string): boolean {
 ### Styling Changes
 
 **Section Headers:**
+
 - Add vertical accent bar (`.h-4.w-0.5.bg-primary.rounded-full`)
 - Increase font weight to `font-bold`
 - Add margin top (`mt-6`)
 - Add divider after header (`border-t.border-border.my-3`)
 
 **Links:**
+
 - Active: `bg-accent/50.border-l-2.border-primary.text-foreground`
 - Remove `text-muted-foreground` from active state
 - Keep hover states consistent
 
 **Spacing:**
+
 - `mt-6` before each major section
 - `mb-3` after section header
 - `my-3` for dividers
@@ -150,6 +162,7 @@ function isActive(currentPath: string, href: string): boolean {
 ### Files to Modify
 
 1. **`app/src/components/Sidebar.astro`**
+
    - Add `currentPath` prop
    - Implement active state detection
    - Add section header styling with accent bars
