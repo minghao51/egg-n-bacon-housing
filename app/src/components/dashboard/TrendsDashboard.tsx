@@ -1,5 +1,5 @@
-import React from 'react';
-import InteractiveToolsPanel from './InteractiveToolsPanel';
+import React from "react";
+import InteractiveToolsPanel from "./InteractiveToolsPanel";
 
 interface TrendsDashboardProps {
   mrtCbdData: any;

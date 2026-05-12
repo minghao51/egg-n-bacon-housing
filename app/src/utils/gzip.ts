@@ -21,7 +21,7 @@ export async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
     const text = new TextDecoder().decode(buffer);
     // If it looks like valid JSON, return it
     const trimmed = text.trim();
-    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
       return text;
     }
   } catch {
@@ -29,13 +29,13 @@ export async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
   }
 
   // Use DecompressionStream if available (modern browsers)
-  if ('DecompressionStream' in window) {
+  if ("DecompressionStream" in window) {
     try {
       const stream = new Response(buffer).body;
-      if (!stream) throw new Error('No stream available');
+      if (!stream) throw new Error("No stream available");
 
       const decompressedStream = stream.pipeThrough(
-        new DecompressionStream('gzip')
+        new DecompressionStream("gzip"),
       );
 
       const reader = decompressedStream.getReader();
@@ -74,7 +74,10 @@ export async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
  * @returns Promise resolving to parsed JSON object
  * @throws Error if fetch fails or JSON parsing fails
  */
-export async function fetchGzipJson<T>(url: string, signal?: AbortSignal): Promise<T> {
+export async function fetchGzipJson<T>(
+  url: string,
+  signal?: AbortSignal,
+): Promise<T> {
   const response = await fetch(url, { signal });
 
   if (!response.ok) {

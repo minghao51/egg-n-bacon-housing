@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   LineChart,
   Line,
@@ -8,8 +8,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
-import ClientChart from '@/components/charts/ClientChart';
+} from "recharts";
+import ClientChart from "@/components/charts/ClientChart";
 
 interface TrendRecord {
   date: string;
@@ -22,7 +22,7 @@ interface PriceTrendsChartProps {
 
 export default function PriceTrendsChart({ data }: PriceTrendsChartProps) {
   // Filter data to show only dates after 2021
-  const filteredData = data.filter(record => record.date > '2021-12');
+  const filteredData = data.filter((record) => record.date > "2021-12");
 
   return (
     <div className="bg-card p-6 rounded-lg border border-border">
@@ -36,18 +36,21 @@ export default function PriceTrendsChart({ data }: PriceTrendsChartProps) {
             <XAxis
               dataKey="date"
               className="text-xs"
-              tick={{ fill: 'hsl(var(--foreground))' }}
+              tick={{ fill: "hsl(var(--foreground))" }}
               minTickGap={30}
             />
             <YAxis
               className="text-xs"
-              tick={{ fill: 'hsl(var(--foreground))' }}
+              tick={{ fill: "hsl(var(--foreground))" }}
               tickFormatter={(value) => `$${value / 1000}k`}
             />
             <Tooltip
-              contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
-              itemStyle={{ color: 'hsl(var(--foreground))' }}
-              labelStyle={{ color: 'hsl(var(--foreground))' }}
+              contentStyle={{
+                backgroundColor: "hsl(var(--card))",
+                borderColor: "hsl(var(--border))",
+              }}
+              itemStyle={{ color: "hsl(var(--foreground))" }}
+              labelStyle={{ color: "hsl(var(--foreground))" }}
             />
             <Legend />
             <Line

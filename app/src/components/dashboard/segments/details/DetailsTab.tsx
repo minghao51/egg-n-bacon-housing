@@ -1,8 +1,8 @@
 // app/src/components/dashboard/segments/details/DetailsTab.tsx
-import type { Segment, Persona, PlanningArea } from '@/types/segments';
-import { SegmentOverview } from './SegmentOverview';
-import { GeographicDistribution } from './GeographicDistribution';
-import { RiskFactors } from './RiskFactors';
+import type { Segment, Persona, PlanningArea } from "@/types/segments";
+import { SegmentOverview } from "./SegmentOverview";
+import { GeographicDistribution } from "./GeographicDistribution";
+import { RiskFactors } from "./RiskFactors";
 
 interface DetailsTabProps {
   segment: Segment;
@@ -11,7 +11,12 @@ interface DetailsTabProps {
   onBack: () => void;
 }
 
-export function DetailsTab({ segment, planningAreas, persona, onBack }: DetailsTabProps) {
+export function DetailsTab({
+  segment,
+  planningAreas,
+  persona,
+  onBack,
+}: DetailsTabProps) {
   return (
     <div className="space-y-6">
       {/* Back Button */}

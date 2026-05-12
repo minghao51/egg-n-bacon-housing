@@ -1,5 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { SegmentAreaRow, SegmentInvestigationMetric } from '@/types/segments';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type {
+  SegmentAreaRow,
+  SegmentInvestigationMetric,
+} from "@/types/segments";
 
 interface SegmentAreaMapProps {
   rows: SegmentAreaRow[];
@@ -26,17 +29,19 @@ interface LeafletLayerEvent {
 async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
   try {
     const text = new TextDecoder().decode(buffer);
-    if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+    if (text.trim().startsWith("{") || text.trim().startsWith("[")) {
       return text;
     }
   } catch {
     // Ignore and fall back to browser decompression.
   }
 
-  if ('DecompressionStream' in window) {
+  if ("DecompressionStream" in window) {
     const stream = new Response(buffer).body;
     if (stream) {
-      const decompressedStream = stream.pipeThrough(new DecompressionStream('gzip'));
+      const decompressedStream = stream.pipeThrough(
+        new DecompressionStream("gzip"),
+      );
       const reader = decompressedStream.getReader();
       const chunks: Uint8Array[] = [];
 
@@ -62,34 +67,37 @@ async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
   return new TextDecoder().decode(buffer);
 }
 
-const COLORS = ['#e0f2fe', '#93c5fd', '#60a5fa', '#2563eb', '#1d4ed8'];
+const COLORS = ["#e0f2fe", "#93c5fd", "#60a5fa", "#2563eb", "#1d4ed8"];
 
 function metricLabel(metric: SegmentInvestigationMetric): string {
   switch (metric) {
-    case 'avgPricePsf':
-      return 'Average Price PSF';
-    case 'avgYield':
-      return 'Average Yield';
-    case 'forecast6m':
-      return '6M Forecast';
-    case 'mrtPremium':
-      return 'MRT Premium';
-    case 'persistenceProbability':
-      return 'Persistence Probability';
+    case "avgPricePsf":
+      return "Average Price PSF";
+    case "avgYield":
+      return "Average Yield";
+    case "forecast6m":
+      return "6M Forecast";
+    case "mrtPremium":
+      return "MRT Premium";
+    case "persistenceProbability":
+      return "Persistence Probability";
     default:
       return metric;
   }
 }
 
-function formatMetricValue(value: number, metric: SegmentInvestigationMetric): string {
+function formatMetricValue(
+  value: number,
+  metric: SegmentInvestigationMetric,
+): string {
   switch (metric) {
-    case 'avgPricePsf':
-    case 'mrtPremium':
+    case "avgPricePsf":
+    case "mrtPremium":
       return `$${value.toFixed(0)}`;
-    case 'avgYield':
-    case 'forecast6m':
+    case "avgYield":
+    case "forecast6m":
       return `${value.toFixed(1)}%`;
-    case 'persistenceProbability':
+    case "persistenceProbability":
       return `${(value * 100).toFixed(1)}%`;
     default:
       return value.toFixed(1);
@@ -112,20 +120,22 @@ export default function SegmentAreaMap({
   useEffect(() => {
     setIsClient(true);
 
-    import('react-leaflet').then((modules) => {
+    import("react-leaflet").then((modules) => {
       setMapContainer(() => modules.MapContainer);
       setTileLayer(() => modules.TileLayer);
       setGeoJSON(() => modules.GeoJSON);
     });
 
-    import('leaflet/dist/leaflet.css');
+    import("leaflet/dist/leaflet.css");
 
     fetch(`${import.meta.env.BASE_URL}data/planning_areas.geojson.gz`)
       .then((response) => response.arrayBuffer())
       .then((buffer) => decompressGzip(buffer))
       .then((text) => JSON.parse(text))
       .then((parsed) => setGeoJsonData(parsed))
-      .catch((error) => console.error('Failed to load planning area map:', error));
+      .catch((error) =>
+        console.error("Failed to load planning area map:", error),
+      );
   }, []);
 
   const rowsByArea = useMemo(() => {
@@ -137,8 +147,11 @@ export default function SegmentAreaMap({
   }, [rows]);
 
   const values = useMemo(
-    () => rows.map((row) => row[selectedMetric]).filter((value) => !Number.isNaN(value)),
-    [rows, selectedMetric]
+    () =>
+      rows
+        .map((row) => row[selectedMetric])
+        .filter((value) => !Number.isNaN(value)),
+    [rows, selectedMetric],
   );
 
   const minValue = values.length > 0 ? Math.min(...values) : 0;
@@ -147,35 +160,40 @@ export default function SegmentAreaMap({
   const getColor = useCallback(
     (value: number) => {
       const normalized = (value - minValue) / (maxValue - minValue || 1);
-      const index = Math.min(COLORS.length - 1, Math.floor(normalized * (COLORS.length - 1)));
+      const index = Math.min(
+        COLORS.length - 1,
+        Math.floor(normalized * (COLORS.length - 1)),
+      );
       return COLORS[index];
     },
-    [maxValue, minValue]
+    [maxValue, minValue],
   );
 
   const style = useMemo(
     () => (feature: GeoJSONFeature) => {
-      const rawName = feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
-      const areaKey = rawName ? String(rawName).toUpperCase() : '';
+      const rawName =
+        feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
+      const areaKey = rawName ? String(rawName).toUpperCase() : "";
       const row = rowsByArea[areaKey];
       const isHighlighted = highlightedArea === areaKey;
 
       return {
-        fillColor: row ? getColor(row[selectedMetric]) : '#e5e7eb',
+        fillColor: row ? getColor(row[selectedMetric]) : "#e5e7eb",
         weight: isHighlighted ? 3 : 1,
         opacity: 1,
-        color: isHighlighted ? '#1d4ed8' : '#ffffff',
-        dashArray: isHighlighted ? '' : '3',
+        color: isHighlighted ? "#1d4ed8" : "#ffffff",
+        dashArray: isHighlighted ? "" : "3",
         fillOpacity: row ? (isHighlighted ? 0.95 : 0.8) : 0.2,
       };
     },
-    [getColor, highlightedArea, rowsByArea, selectedMetric]
+    [getColor, highlightedArea, rowsByArea, selectedMetric],
   );
 
   const onEachFeature = useMemo(
     () => (feature: GeoJSONFeature, layer: unknown) => {
-      const rawName = feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
-      const areaKey = rawName ? String(rawName).toUpperCase() : '';
+      const rawName =
+        feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
+      const areaKey = rawName ? String(rawName).toUpperCase() : "";
       const row = rowsByArea[areaKey];
       const leafletLayer = layer as {
         bindTooltip: (content: string, options: unknown) => void;
@@ -204,8 +222,8 @@ export default function SegmentAreaMap({
 
       leafletLayer.bindTooltip(tooltip, {
         sticky: true,
-        direction: 'top',
-        className: 'custom-leaflet-tooltip',
+        direction: "top",
+        className: "custom-leaflet-tooltip",
       });
 
       leafletLayer.on({
@@ -215,8 +233,8 @@ export default function SegmentAreaMap({
           }
           event.target.setStyle({
             weight: 3,
-            color: '#1d4ed8',
-            dashArray: '',
+            color: "#1d4ed8",
+            dashArray: "",
             fillOpacity: 0.95,
           });
           event.target.bringToFront();
@@ -238,29 +256,58 @@ export default function SegmentAreaMap({
         },
       });
     },
-    [highlightedArea, onAreaClick, onAreaHover, rowsByArea, selectedMetric, style]
+    [
+      highlightedArea,
+      onAreaClick,
+      onAreaHover,
+      rowsByArea,
+      selectedMetric,
+      style,
+    ],
   );
 
   if (!isClient || !MapContainer || !geoJsonData) {
-    return <div className="flex h-full items-center justify-center bg-muted/20">Loading Map Data...</div>;
+    return (
+      <div className="flex h-full items-center justify-center bg-muted/20">
+        Loading Map Data...
+      </div>
+    );
   }
 
   return (
     <div className="relative h-full w-full">
-      <MapContainer center={[1.3521, 103.8198]} zoom={11} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+      <MapContainer
+        center={[1.3521, 103.8198]}
+        zoom={11}
+        style={{ width: "100%", height: "100%" }}
+        zoomControl={false}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
-        <GeoJSON data={geoJsonData} style={style} onEachFeature={onEachFeature} />
+        <GeoJSON
+          data={geoJsonData}
+          style={style}
+          onEachFeature={onEachFeature}
+        />
       </MapContainer>
 
       <div className="absolute bottom-4 right-4 z-[1000] rounded-2xl border border-border bg-background/95 p-3 text-xs shadow-lg backdrop-blur">
         <div className="mb-2 font-semibold">{metricLabel(selectedMetric)}</div>
         <div className="space-y-1">
-          <LegendRow color={COLORS[COLORS.length - 1]} label={`High (${formatMetricValue(maxValue, selectedMetric)})`} />
-          <LegendRow color={COLORS[Math.floor(COLORS.length / 2)]} label="Mid" />
-          <LegendRow color={COLORS[0]} label={`Low (${formatMetricValue(minValue, selectedMetric)})`} />
+          <LegendRow
+            color={COLORS[COLORS.length - 1]}
+            label={`High (${formatMetricValue(maxValue, selectedMetric)})`}
+          />
+          <LegendRow
+            color={COLORS[Math.floor(COLORS.length / 2)]}
+            label="Mid"
+          />
+          <LegendRow
+            color={COLORS[0]}
+            label={`Low (${formatMetricValue(minValue, selectedMetric)})`}
+          />
           <LegendRow color="#e5e7eb" label="Outside segment" />
         </div>
       </div>

@@ -1,24 +1,30 @@
 // Segment types for the enhanced dashboard
 
-export type InvestmentType = 'yield' | 'growth' | 'value' | 'balanced' | 'luxury' | 'speculative';
-export type SpatialCluster = 'HH' | 'HL' | 'LH' | 'LL';
-export type PriceTier = 'affordable' | 'moderate' | 'premium' | 'luxury';
-export type RiskLevel = 'low' | 'medium' | 'high' | 'very_high';
-export type Volatility = 'low' | 'moderate' | 'high';
-export type AppreciationPotential = 'low' | 'moderate' | 'high' | 'exceptional';
-export type Region = 'CCR' | 'RCR' | 'OCR';
-export type PropertyType = 'HDB' | 'Condominium' | 'EC';
-export type SchoolTier = 'tier_1' | 'tier_2' | 'tier_3' | 'mixed';
-export type MrtSensitivity = 'low' | 'moderate' | 'high';
-export type Persona = 'all' | 'investor' | 'first-time-buyer' | 'upgrader';
-export type InvestmentGoal = 'yield' | 'growth' | 'value' | 'balanced';
-export type TimeHorizon = 'short' | 'medium' | 'long';
+export type InvestmentType =
+  | "yield"
+  | "growth"
+  | "value"
+  | "balanced"
+  | "luxury"
+  | "speculative";
+export type SpatialCluster = "HH" | "HL" | "LH" | "LL";
+export type PriceTier = "affordable" | "moderate" | "premium" | "luxury";
+export type RiskLevel = "low" | "medium" | "high" | "very_high";
+export type Volatility = "low" | "moderate" | "high";
+export type AppreciationPotential = "low" | "moderate" | "high" | "exceptional";
+export type Region = "CCR" | "RCR" | "OCR";
+export type PropertyType = "HDB" | "Condominium" | "EC";
+export type SchoolTier = "tier_1" | "tier_2" | "tier_3" | "mixed";
+export type MrtSensitivity = "low" | "moderate" | "high";
+export type Persona = "all" | "investor" | "first-time-buyer" | "upgrader";
+export type InvestmentGoal = "yield" | "growth" | "value" | "balanced";
+export type TimeHorizon = "short" | "medium" | "long";
 export type SegmentInvestigationMetric =
-  | 'avgPricePsf'
-  | 'avgYield'
-  | 'forecast6m'
-  | 'mrtPremium'
-  | 'persistenceProbability';
+  | "avgPricePsf"
+  | "avgYield"
+  | "forecast6m"
+  | "mrtPremium"
+  | "persistenceProbability";
 
 export interface SegmentMetrics {
   avgPricePsf: number;
@@ -65,7 +71,7 @@ export interface PlanningArea {
   name: string;
   region: Region;
   spatialCluster: SpatialCluster;
-  hotspotConfidence: '99%' | '95%' | 'not_significant';
+  hotspotConfidence: "99%" | "95%" | "not_significant";
   persistenceProbability: number;
   mrtPremium: number;
   mrtSensitivity: MrtSensitivity;
@@ -86,7 +92,7 @@ export interface SegmentAreaRow {
   avgYield: number;
   forecast6m: number;
   mrtPremium: number;
-  hotspotConfidence: PlanningArea['hotspotConfidence'];
+  hotspotConfidence: PlanningArea["hotspotConfidence"];
   persistenceProbability: number;
   spatialCluster: SpatialCluster;
   mrtSensitivity: MrtSensitivity;
@@ -94,7 +100,7 @@ export interface SegmentAreaRow {
   matchesCurrentFilters: boolean;
 }
 
-export type PersonaApplicability = 'critical' | 'helpful' | 'optional';
+export type PersonaApplicability = "critical" | "helpful" | "optional";
 
 export interface Insight {
   id: string;
@@ -122,7 +128,7 @@ export interface FilterState {
   propertyTypes: PropertyType[];
   locations: Region[];
   timeHorizon: TimeHorizon | null;
-  hotspotFilter: SpatialCluster | 'all';
+  hotspotFilter: SpatialCluster | "all";
 }
 
 export interface PersonaPreset {

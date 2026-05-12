@@ -29,7 +29,7 @@ export interface HotspotData {
   z_score: number | null;
   p_value: number | null;
   confidence: string;
-  classification: 'HOTSPOT' | 'COLDSPOT' | 'NOT_SIGNIFICANT';
+  classification: "HOTSPOT" | "COLDSPOT" | "NOT_SIGNIFICANT";
 }
 
 export interface LISAClusterData {
@@ -44,15 +44,15 @@ export interface LISAClusterData {
 }
 
 export const allLISAClusterTypes = [
-  'MATURE_HOTSPOT',
-  'EMERGING_HOTSPOT',
-  'VALUE_OPPORTUNITY',
-  'STABLE',
-  'DECLINING',
-  'TRANSITIONAL',
+  "MATURE_HOTSPOT",
+  "EMERGING_HOTSPOT",
+  "VALUE_OPPORTUNITY",
+  "STABLE",
+  "DECLINING",
+  "TRANSITIONAL",
 ] as const;
 
-export type LISAClusterType = typeof allLISAClusterTypes[number];
+export type LISAClusterType = (typeof allLISAClusterTypes)[number];
 
 export interface NeighborhoodEffectData {
   moran_i_local: number | null;
@@ -127,13 +127,13 @@ export interface PriceForecastData {
   signal: TradingSignal;
 }
 
-export type TradingSignal = 'BUY' | 'HOLD' | 'SELL';
+export type TradingSignal = "BUY" | "HOLD" | "SELL";
 
 export interface PolicyRiskData {
   cooling_measure_sensitivity: number | null;
-  market_segment: 'HDB' | 'PRIVATE' | 'ALL';
+  market_segment: "HDB" | "PRIVATE" | "ALL";
   elasticity: number | null;
-  risk_level: 'LOW' | 'MODERATE' | 'HIGH';
+  risk_level: "LOW" | "MODERATE" | "HIGH";
 }
 
 export interface LeaseArbitrageData {
@@ -151,29 +151,29 @@ export interface LeaseArbitrageData {
 // Define and export LayerId type directly (Vite/Astro compatible)
 export type LayerId =
   // Spatial Analysis
-  'spatial.hotspot' |
-  'spatial.lisa' |
-  'spatial.neighborhood' |
+  | "spatial.hotspot"
+  | "spatial.lisa"
+  | "spatial.neighborhood"
   // Feature Impact
-  'feature.mrt' |
-  'feature.school' |
-  'feature.amenity' |
+  | "feature.mrt"
+  | "feature.school"
+  | "feature.amenity"
   // Predictive Analytics
-  'predictive.policy' |
-  'predictive.lease' |
-  'predictive.forecast';
+  | "predictive.policy"
+  | "predictive.lease"
+  | "predictive.forecast";
 
 // Helper constant with all layer IDs
 export const ALL_LAYER_IDS: LayerId[] = [
-  'spatial.hotspot',
-  'spatial.lisa',
-  'spatial.neighborhood',
-  'feature.mrt',
-  'feature.school',
-  'feature.amenity',
-  'predictive.policy',
-  'predictive.lease',
-  'predictive.forecast',
+  "spatial.hotspot",
+  "spatial.lisa",
+  "spatial.neighborhood",
+  "feature.mrt",
+  "feature.school",
+  "feature.amenity",
+  "predictive.policy",
+  "predictive.lease",
+  "predictive.forecast",
 ];
 
 export interface LayerState {
@@ -181,74 +181,76 @@ export interface LayerState {
 }
 
 export const LAYER_CATEGORIES: Record<string, LayerId[]> = {
-  spatial: ['spatial.hotspot', 'spatial.lisa', 'spatial.neighborhood'],
-  feature: ['feature.mrt', 'feature.school', 'feature.amenity'],
-  predictive: ['predictive.policy', 'predictive.lease', 'predictive.forecast'],
+  spatial: ["spatial.hotspot", "spatial.lisa", "spatial.neighborhood"],
+  feature: ["feature.mrt", "feature.school", "feature.amenity"],
+  predictive: ["predictive.policy", "predictive.lease", "predictive.forecast"],
 };
 
 export const LAYER_METADATA: Record<LayerId, LayerMetadata> = {
-  'spatial.hotspot': {
-    id: 'spatial.hotspot',
-    name: 'Hotspots/Coldspots',
-    category: 'spatial',
-    description: 'Getis-Ord Gi* z-scores showing statistically significant price clusters',
-    colorScale: 'diverging',
+  "spatial.hotspot": {
+    id: "spatial.hotspot",
+    name: "Hotspots/Coldspots",
+    category: "spatial",
+    description:
+      "Getis-Ord Gi* z-scores showing statistically significant price clusters",
+    colorScale: "diverging",
   },
-  'spatial.lisa': {
-    id: 'spatial.lisa',
-    name: 'LISA Clusters',
-    category: 'spatial',
-    description: 'Local Indicators of Spatial Association cluster classification',
-    colorScale: 'categorical',
+  "spatial.lisa": {
+    id: "spatial.lisa",
+    name: "LISA Clusters",
+    category: "spatial",
+    description:
+      "Local Indicators of Spatial Association cluster classification",
+    colorScale: "categorical",
   },
-  'spatial.neighborhood': {
-    id: 'spatial.neighborhood',
-    name: 'Neighborhood Effects',
-    category: 'spatial',
-    description: 'Local Moran\'s I showing neighborhood multiplier effects',
-    colorScale: 'sequential',
+  "spatial.neighborhood": {
+    id: "spatial.neighborhood",
+    name: "Neighborhood Effects",
+    category: "spatial",
+    description: "Local Moran's I showing neighborhood multiplier effects",
+    colorScale: "sequential",
   },
-  'feature.mrt': {
-    id: 'feature.mrt',
-    name: 'MRT Sensitivity',
-    category: 'feature',
-    description: 'Price impact per 100m distance from MRT stations',
-    colorScale: 'sequential',
+  "feature.mrt": {
+    id: "feature.mrt",
+    name: "MRT Sensitivity",
+    category: "feature",
+    description: "Price impact per 100m distance from MRT stations",
+    colorScale: "sequential",
   },
-  'feature.school': {
-    id: 'feature.school',
-    name: 'School Quality',
-    category: 'feature',
-    description: 'Quality-weighted primary and secondary school scores',
-    colorScale: 'sequential',
+  "feature.school": {
+    id: "feature.school",
+    name: "School Quality",
+    category: "feature",
+    description: "Quality-weighted primary and secondary school scores",
+    colorScale: "sequential",
   },
-  'feature.amenity': {
-    id: 'feature.amenity',
-    name: 'Amenity Scores',
-    category: 'feature',
-    description: 'Hawker, mall, and park accessibility scores',
-    colorScale: 'sequential',
+  "feature.amenity": {
+    id: "feature.amenity",
+    name: "Amenity Scores",
+    category: "feature",
+    description: "Hawker, mall, and park accessibility scores",
+    colorScale: "sequential",
   },
-  'predictive.policy': {
-    id: 'predictive.policy',
-    name: 'Policy Risk',
-    category: 'predictive',
-    description: 'Cooling measure sensitivity by market segment',
-    colorScale: 'sequential',
+  "predictive.policy": {
+    id: "predictive.policy",
+    name: "Policy Risk",
+    category: "predictive",
+    description: "Cooling measure sensitivity by market segment",
+    colorScale: "sequential",
   },
-  'predictive.lease': {
-    id: 'predictive.lease',
-    name: 'Lease Arbitrage',
-    category: 'predictive',
-    description: 'Theoretical vs market value for 30-year and 95-year leases',
-    colorScale: 'diverging',
+  "predictive.lease": {
+    id: "predictive.lease",
+    name: "Lease Arbitrage",
+    category: "predictive",
+    description: "Theoretical vs market value for 30-year and 95-year leases",
+    colorScale: "diverging",
   },
-  'predictive.forecast': {
-    id: 'predictive.forecast',
-    name: 'Price Forecasts',
-    category: 'predictive',
-    description: '6-month price projections with confidence intervals',
-    colorScale: 'diverging',
+  "predictive.forecast": {
+    id: "predictive.forecast",
+    name: "Price Forecasts",
+    category: "predictive",
+    description: "6-month price projections with confidence intervals",
+    colorScale: "diverging",
   },
 };
 
@@ -257,10 +259,10 @@ export interface LayerMetadata {
   name: string;
   category: string;
   description: string;
-  colorScale: 'diverging' | 'sequential' | 'categorical';
+  colorScale: "diverging" | "sequential" | "categorical";
 }
 
-export type ColorScaleType = 'diverging' | 'sequential' | 'categorical';
+export type ColorScaleType = "diverging" | "sequential" | "categorical";
 
 // ==================== GeoJSON Types ====================
 
@@ -272,24 +274,24 @@ export interface GeoJSONProperties {
 }
 
 export interface GeoJSONFeature {
-  type: 'Feature';
+  type: "Feature";
   id?: string | number;
   geometry: GeoJSONGeometry;
   properties: GeoJSONProperties;
 }
 
 export interface GeoJSONFeatureCollection {
-  type: 'FeatureCollection';
+  type: "FeatureCollection";
   features: GeoJSONFeature[];
 }
 
 export type GeoJSONGeometry =
-  | { type: 'Point'; coordinates: [number, number] }
-  | { type: 'MultiPoint'; coordinates: [number, number][] }
-  | { type: 'LineString'; coordinates: [number, number][] }
-  | { type: 'MultiLineString'; coordinates: [number, number][][] }
-  | { type: 'Polygon'; coordinates: [number, number][][] }
-  | { type: 'MultiPolygon'; coordinates: [number, number][][][] };
+  | { type: "Point"; coordinates: [number, number] }
+  | { type: "MultiPoint"; coordinates: [number, number][] }
+  | { type: "LineString"; coordinates: [number, number][] }
+  | { type: "MultiLineString"; coordinates: [number, number][][] }
+  | { type: "Polygon"; coordinates: [number, number][][] }
+  | { type: "MultiPolygon"; coordinates: [number, number][][][] };
 
 // ==================== Map Metrics Types ====================
 
@@ -335,12 +337,12 @@ export interface MapData {
   year_2025_condo: MapMetrics;
 }
 
-export type TemporalFilter = 'whole' | 'pre_covid' | 'recent' | 'year_2025';
-export type PropertyTypeFilter = 'all' | 'hdb' | 'ec' | 'condo';
+export type TemporalFilter = "whole" | "pre_covid" | "recent" | "year_2025";
+export type PropertyTypeFilter = "all" | "hdb" | "ec" | "condo";
 export type MetricType =
-  | 'median_price'
-  | 'median_psf'
-  | 'volume'
-  | 'rental_yield_median'
-  | 'yoy_change_pct'
-  | 'affordability_ratio';
+  | "median_price"
+  | "median_psf"
+  | "volume"
+  | "rental_yield_median"
+  | "yoy_change_pct"
+  | "affordability_ratio";

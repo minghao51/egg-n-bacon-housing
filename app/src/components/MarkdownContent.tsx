@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import DOMPurify from 'dompurify';
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import DOMPurify from "dompurify";
 
 interface MarkdownContentProps {
   content: string;

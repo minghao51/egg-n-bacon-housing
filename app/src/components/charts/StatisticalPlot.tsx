@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   ScatterChart,
   Scatter,
@@ -6,9 +6,9 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-} from 'recharts';
-import type { ChartData } from '@/utils/data-parser';
-import ClientChart from './ClientChart';
+} from "recharts";
+import type { ChartData } from "@/utils/data-parser";
+import ClientChart from "./ClientChart";
 
 interface StatisticalPlotProps {
   data: ChartData;
@@ -23,13 +23,7 @@ export default function StatisticalPlot({
   const plotData: Record<string, string | number>[] = [];
 
   data.datasets.forEach((dataset, datasetIndex) => {
-    const colors = [
-      '#3b82f6',
-      '#10b981',
-      '#f59e0b',
-      '#ef4444',
-      '#8b5cf6',
-    ];
+    const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
     dataset.data.forEach((value, valueIndex) => {
       if (value !== null) {
@@ -60,27 +54,27 @@ export default function StatisticalPlot({
           <XAxis
             dataKey="name"
             className="text-sm"
-            tick={{ fill: 'hsl(var(--foreground))' }}
+            tick={{ fill: "hsl(var(--foreground))" }}
           />
           <YAxis
             className="text-sm"
-            tick={{ fill: 'hsl(var(--foreground))' }}
+            tick={{ fill: "hsl(var(--foreground))" }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '0.5rem',
+              backgroundColor: "hsl(var(--card))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: "0.5rem",
             }}
-            itemStyle={{ color: 'hsl(var(--foreground))' }}
+            itemStyle={{ color: "hsl(var(--foreground))" }}
           />
           {data.datasets.map((dataset, index) => {
             const colors = [
-              '#3b82f6',
-              '#10b981',
-              '#f59e0b',
-              '#ef4444',
-              '#8b5cf6',
+              "#3b82f6",
+              "#10b981",
+              "#f59e0b",
+              "#ef4444",
+              "#8b5cf6",
             ];
             return (
               <Scatter

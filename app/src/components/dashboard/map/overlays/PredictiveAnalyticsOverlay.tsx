@@ -7,15 +7,20 @@
  * - Lease Arbitrage (theoretical vs market value)
  */
 
-import React, { useRef } from 'react';
-import { LayerGroup, GeoJSON } from 'react-leaflet';
+import React, { useRef } from "react";
+import { LayerGroup, GeoJSON } from "react-leaflet";
 import type {
   PredictiveAnalyticsData,
   LayerId,
   GeoJSONFeature,
   GeoJSONFeatureCollection,
-} from '../../../../types/analytics';
-import { divergingScale, sequentialScale, getForecastSignalColor, getPolicyRiskColor } from '../../../../utils/colorScales';
+} from "../../../../types/analytics";
+import {
+  divergingScale,
+  sequentialScale,
+  getForecastSignalColor,
+  getPolicyRiskColor,
+} from "../../../../utils/colorScales";
 
 interface PredictiveAnalyticsOverlayProps {
   active: boolean;
@@ -28,17 +33,20 @@ interface PredictiveAnalyticsOverlayProps {
 /**
  * Get price forecast style function
  */
-function getForecastStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData) {
+function getForecastStyle(
+  feature: GeoJSONFeature,
+  data: PredictiveAnalyticsData,
+) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
   if (!areaData?.price_forecast) {
     return {
-      fillColor: '#cccccc',
+      fillColor: "#cccccc",
       weight: 2,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: "white",
+      dashArray: "3",
       fillOpacity: 0.3,
     };
   }
@@ -53,8 +61,8 @@ function getForecastStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData
     fillColor: color,
     weight: 2,
     opacity: 1,
-    color: 'white',
-    dashArray: '3',
+    color: "white",
+    dashArray: "3",
     fillOpacity: 0.7,
   };
 }
@@ -62,30 +70,33 @@ function getForecastStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData
 /**
  * Get policy risk style function
  */
-function getPolicyRiskStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData) {
+function getPolicyRiskStyle(
+  feature: GeoJSONFeature,
+  data: PredictiveAnalyticsData,
+) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
   if (!areaData?.policy_risk) {
     return {
-      fillColor: '#cccccc',
+      fillColor: "#cccccc",
       weight: 2,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: "white",
+      dashArray: "3",
       fillOpacity: 0.3,
     };
   }
 
   const { policy_risk } = areaData;
-  const riskLevel = policy_risk.risk_level || 'MODERATE';
+  const riskLevel = policy_risk.risk_level || "MODERATE";
 
   return {
     fillColor: getPolicyRiskColor(riskLevel),
     weight: 2,
     opacity: 1,
-    color: 'white',
-    dashArray: '3',
+    color: "white",
+    dashArray: "3",
     fillOpacity: 0.7,
   };
 }
@@ -93,17 +104,20 @@ function getPolicyRiskStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsDa
 /**
  * Get lease arbitrage style function
  */
-function getLeaseArbitrageStyle(feature: GeoJSONFeature, data: PredictiveAnalyticsData) {
+function getLeaseArbitrageStyle(
+  feature: GeoJSONFeature,
+  data: PredictiveAnalyticsData,
+) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
   if (!areaData?.lease_arbitrage) {
     return {
-      fillColor: '#cccccc',
+      fillColor: "#cccccc",
       weight: 2,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: "white",
+      dashArray: "3",
       fillOpacity: 0.3,
     };
   }
@@ -118,8 +132,8 @@ function getLeaseArbitrageStyle(feature: GeoJSONFeature, data: PredictiveAnalyti
     fillColor: color,
     weight: 2,
     opacity: 1,
-    color: 'white',
-    dashArray: '3',
+    color: "white",
+    dashArray: "3",
     fillOpacity: 0.7,
   };
 }
@@ -127,7 +141,10 @@ function getLeaseArbitrageStyle(feature: GeoJSONFeature, data: PredictiveAnalyti
 /**
  * Create tooltip content for price forecast layer
  */
-function createForecastTooltip(feature: GeoJSONFeature, data: PredictiveAnalyticsData): string {
+function createForecastTooltip(
+  feature: GeoJSONFeature,
+  data: PredictiveAnalyticsData,
+): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -141,9 +158,9 @@ function createForecastTooltip(feature: GeoJSONFeature, data: PredictiveAnalytic
     <div class="text-sm">
       <h3 class="font-bold">${areaName}</h3>
       <h4 class="font-semibold mt-2">Price Forecast</h4>
-      <p><b>6-Month Projection:</b> ${price_forecast.projected_change_pct?.toFixed(1) || 'N/A'}%</p>
-      <p><b>Confidence Interval:</b> ${price_forecast.confidence_interval_lower?.toFixed(1) || 'N/A'}% to ${price_forecast.confidence_interval_upper?.toFixed(1) || 'N/A'}%</p>
-      <p><b>Model R²:</b> ${price_forecast.model_r2?.toFixed(3) || 'N/A'}</p>
+      <p><b>6-Month Projection:</b> ${price_forecast.projected_change_pct?.toFixed(1) || "N/A"}%</p>
+      <p><b>Confidence Interval:</b> ${price_forecast.confidence_interval_lower?.toFixed(1) || "N/A"}% to ${price_forecast.confidence_interval_upper?.toFixed(1) || "N/A"}%</p>
+      <p><b>Model R²:</b> ${price_forecast.model_r2?.toFixed(3) || "N/A"}</p>
       <p><b>Forecast Date:</b> ${price_forecast.forecast_date}</p>
       <p><b>Signal:</b> <span style="color: ${getForecastSignalColor(price_forecast.signal)}">${price_forecast.signal}</span></p>
     </div>
@@ -153,7 +170,10 @@ function createForecastTooltip(feature: GeoJSONFeature, data: PredictiveAnalytic
 /**
  * Create tooltip content for policy risk layer
  */
-function createPolicyRiskTooltip(feature: GeoJSONFeature, data: PredictiveAnalyticsData): string {
+function createPolicyRiskTooltip(
+  feature: GeoJSONFeature,
+  data: PredictiveAnalyticsData,
+): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -169,7 +189,7 @@ function createPolicyRiskTooltip(feature: GeoJSONFeature, data: PredictiveAnalyt
       <h4 class="font-semibold mt-2">Policy Risk</h4>
       <p><b>Cooling Measure Sensitivity:</b> $${Math.abs(policy_risk.cooling_measure_sensitivity || 0).toLocaleString()}</p>
       <p><b>Market Segment:</b> ${policy_risk.market_segment}</p>
-      <p><b>Elasticity:</b> ${policy_risk.elasticity?.toFixed(2) || 'N/A'}</p>
+      <p><b>Elasticity:</b> ${policy_risk.elasticity?.toFixed(2) || "N/A"}</p>
       <p><b>Risk Level:</b> <span style="color: ${getPolicyRiskColor(policy_risk.risk_level)}">${policy_risk.risk_level}</span></p>
     </div>
   `;
@@ -178,7 +198,10 @@ function createPolicyRiskTooltip(feature: GeoJSONFeature, data: PredictiveAnalyt
 /**
  * Create tooltip content for lease arbitrage layer
  */
-function createLeaseArbitrageTooltip(feature: GeoJSONFeature, data: PredictiveAnalyticsData): string {
+function createLeaseArbitrageTooltip(
+  feature: GeoJSONFeature,
+  data: PredictiveAnalyticsData,
+): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -194,7 +217,7 @@ function createLeaseArbitrageTooltip(feature: GeoJSONFeature, data: PredictiveAn
       <h4 class="font-semibold mt-2">Lease Arbitrage (30-year)</h4>
       <p><b>Theoretical Value:</b> $${(lease_arbitrage.theoretical_value_30yr || 0).toLocaleString()}</p>
       <p><b>Market Value:</b> $${(lease_arbitrage.market_value_30yr || 0).toLocaleString()}</p>
-      <p><b>Arbitrage:</b> ${lease_arbitrage.arbitrage_pct?.toFixed(1) || 'N/A'}%</p>
+      <p><b>Arbitrage:</b> ${lease_arbitrage.arbitrage_pct?.toFixed(1) || "N/A"}%</p>
       <p><b>Recommendation:</b> <span style="color: ${getForecastSignalColor(lease_arbitrage.recommendation)}">${lease_arbitrage.recommendation}</span></p>
     </div>
   `;
@@ -229,12 +252,13 @@ export default function PredictiveAnalyticsOverlay({
   // Determine which sub-layer to render
   const getStyleFunction = () => {
     switch (layerId) {
-      case 'predictive.forecast':
+      case "predictive.forecast":
         return (feature: GeoJSONFeature) => getForecastStyle(feature, data!);
-      case 'predictive.policy':
+      case "predictive.policy":
         return (feature: GeoJSONFeature) => getPolicyRiskStyle(feature, data!);
-      case 'predictive.lease':
-        return (feature: GeoJSONFeature) => getLeaseArbitrageStyle(feature, data!);
+      case "predictive.lease":
+        return (feature: GeoJSONFeature) =>
+          getLeaseArbitrageStyle(feature, data!);
       default:
         return () => ({});
     }
@@ -242,14 +266,17 @@ export default function PredictiveAnalyticsOverlay({
 
   const getTooltipFunction = () => {
     switch (layerId) {
-      case 'predictive.forecast':
-        return (feature: GeoJSONFeature) => createForecastTooltip(feature, data!);
-      case 'predictive.policy':
-        return (feature: GeoJSONFeature) => createPolicyRiskTooltip(feature, data!);
-      case 'predictive.lease':
-        return (feature: GeoJSONFeature) => createLeaseArbitrageTooltip(feature, data!);
+      case "predictive.forecast":
+        return (feature: GeoJSONFeature) =>
+          createForecastTooltip(feature, data!);
+      case "predictive.policy":
+        return (feature: GeoJSONFeature) =>
+          createPolicyRiskTooltip(feature, data!);
+      case "predictive.lease":
+        return (feature: GeoJSONFeature) =>
+          createLeaseArbitrageTooltip(feature, data!);
       default:
-        return () => '';
+        return () => "";
     }
   };
 
@@ -262,7 +289,7 @@ export default function PredictiveAnalyticsOverlay({
           const tooltip = getTooltipFunction();
           layer.bindTooltip(tooltip(feature), {
             sticky: true,
-            direction: 'top',
+            direction: "top",
           });
         }}
       />

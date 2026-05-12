@@ -1,4 +1,4 @@
-import type { Region } from '@/types/segments';
+import type { Region } from "@/types/segments";
 
 /**
  * Leaderboard type definitions for the enhanced leaderboard dashboard.
@@ -108,8 +108,8 @@ export interface MetricMeta {
   colorScale: "sequential" | "diverging";
 }
 
-export type LeaderboardPropertyType = 'all' | 'hdb' | 'ec' | 'condo';
-export type LeaderboardTimeBasis = 'recent' | 'whole' | 'year_2025';
+export type LeaderboardPropertyType = "all" | "hdb" | "ec" | "condo";
+export type LeaderboardTimeBasis = "recent" | "whole" | "year_2025";
 
 export interface LeaderboardControlsState {
   region: Region[];

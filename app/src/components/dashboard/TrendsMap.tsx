@@ -1,16 +1,16 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from "react";
 
 // Do NOT import react-leaflet at module level
 // Import it dynamically only in the browser
 
 async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
   // Use DecompressionStream if available (modern browsers)
-  if ('DecompressionStream' in window) {
+  if ("DecompressionStream" in window) {
     const stream = new Response(buffer).body;
-    if (!stream) throw new Error('No stream available');
+    if (!stream) throw new Error("No stream available");
 
     const decompressedStream = stream.pipeThrough(
-      new DecompressionStream('gzip')
+      new DecompressionStream("gzip"),
     );
 
     const reader = decompressedStream.getReader();
@@ -22,7 +22,9 @@ async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
       chunks.push(value);
     }
 
-    const decompressed = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+    const decompressed = new Uint8Array(
+      chunks.reduce((acc, chunk) => acc + chunk.length, 0),
+    );
     let offset = 0;
     for (const chunk of chunks) {
       decompressed.set(chunk, offset);
@@ -39,7 +41,7 @@ async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
 interface TrendsMapProps {
   metricData: Record<string, number | { value: number; label: string }>;
   metricLabel: string;
-  colorScale?: 'sequential' | 'diverging';
+  colorScale?: "sequential" | "diverging";
   showLegend?: boolean;
   hoverTooltip?: (town: string, value: number, rank: string) => string;
 }
@@ -59,26 +61,34 @@ interface LeafletLayerEvent {
 }
 
 // Color scales
-const SEQUENTIAL_COLORS = ['#FFEDA0', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
+const SEQUENTIAL_COLORS = [
+  "#FFEDA0",
+  "#FEB24C",
+  "#FD8D3C",
+  "#FC4E2A",
+  "#E31A1C",
+  "#BD0026",
+  "#800026",
+];
 
 const DIVERGING_COLORS: Record<string, string> = {
-  'HH': '#d73027', // Dark red - hotspots
-  'LL': '#4575b4', // Dark blue - coldspots
-  'HL': '#fee08b', // Light orange - high surrounded by low
-  'LH': '#d1e5f0', // Light cyan - low surrounded by high
+  HH: "#d73027", // Dark red - hotspots
+  LL: "#4575b4", // Dark blue - coldspots
+  HL: "#fee08b", // Light orange - high surrounded by low
+  LH: "#d1e5f0", // Light cyan - low surrounded by high
 };
 
 const CLUSTER_LABELS: Record<string, string> = {
-  'HH': 'High-High Hotspot',
-  'LL': 'Low-Low Coldspot',
-  'HL': 'High-Low Pioneer',
-  'LH': 'Low-High Transition',
+  HH: "High-High Hotspot",
+  LL: "Low-Low Coldspot",
+  HL: "High-Low Pioneer",
+  LH: "Low-High Transition",
 };
 
 export default function TrendsMap({
   metricData,
   metricLabel,
-  colorScale = 'sequential',
+  colorScale = "sequential",
   showLegend = true,
   hoverTooltip,
 }: TrendsMapProps) {
@@ -93,75 +103,81 @@ export default function TrendsMap({
     setIsClient(true);
 
     // Dynamic import of react-leaflet
-    import('react-leaflet').then((modules) => {
+    import("react-leaflet").then((modules) => {
       setMapContainer(() => modules.MapContainer);
       setTileLayer(() => modules.TileLayer);
       setGeoJSON(() => modules.GeoJSON);
     });
 
     // Load CSS
-    import('leaflet/dist/leaflet.css');
+    import("leaflet/dist/leaflet.css");
 
     // Load GeoJSON data
     fetch(`${import.meta.env.BASE_URL}data/planning_areas.geojson.gz`)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         return res.arrayBuffer();
       })
-      .then(async buffer => {
+      .then(async (buffer) => {
         const textStr = await decompressGzip(buffer);
         return JSON.parse(textStr);
       })
-      .then(data => setGeoJsonData(data))
-      .catch(err => console.error('Failed to load GeoJSON:', err));
+      .then((data) => setGeoJsonData(data))
+      .catch((err) => console.error("Failed to load GeoJSON:", err));
   }, []);
 
   // Extract values and compute color scale
   const { minValue, maxValue, getColor, getRank } = useMemo(() => {
-    if (colorScale === 'diverging') {
+    if (colorScale === "diverging") {
       return {
         minValue: 0,
         maxValue: 1,
         getColor: (value: any) => {
-          if (typeof value === 'string') {
-            return DIVERGING_COLORS[value] || '#cccccc';
+          if (typeof value === "string") {
+            return DIVERGING_COLORS[value] || "#cccccc";
           }
-          return '#cccccc';
+          return "#cccccc";
         },
-        getRank: () => '',
+        getRank: () => "",
       };
     }
 
-    const values = Object.values(metricData).map(v =>
-      typeof v === 'object' ? v.value : v
+    const values = Object.values(metricData).map((v) =>
+      typeof v === "object" ? v.value : v,
     );
-    const validValues = values.filter(v => v !== null && v !== undefined && !isNaN(v));
+    const validValues = values.filter(
+      (v) => v !== null && v !== undefined && !isNaN(v),
+    );
     const min = validValues.length > 0 ? Math.min(...validValues) : 0;
     const max = validValues.length > 0 ? Math.max(...validValues) : 1;
 
     const getColor = (value: any) => {
-      const numValue = typeof value === 'object' ? value.value : value;
+      const numValue = typeof value === "object" ? value.value : value;
       if (numValue === null || numValue === undefined || isNaN(numValue)) {
-        return '#cccccc';
+        return "#cccccc";
       }
 
       const normalized = (numValue - min) / (max - min);
-      const colorIndex = Math.floor(normalized * (SEQUENTIAL_COLORS.length - 1));
-      return SEQUENTIAL_COLORS[Math.min(colorIndex, SEQUENTIAL_COLORS.length - 1)];
+      const colorIndex = Math.floor(
+        normalized * (SEQUENTIAL_COLORS.length - 1),
+      );
+      return SEQUENTIAL_COLORS[
+        Math.min(colorIndex, SEQUENTIAL_COLORS.length - 1)
+      ];
     };
 
     const getRank = (value: any) => {
-      const numValue = typeof value === 'object' ? value.value : value;
+      const numValue = typeof value === "object" ? value.value : value;
       if (numValue === null || numValue === undefined || isNaN(numValue)) {
-        return 'N/A';
+        return "N/A";
       }
 
       const normalized = (numValue - min) / (max - min);
-      if (normalized >= 0.9) return 'Top 10%';
-      if (normalized >= 0.75) return 'Top 25%';
-      if (normalized >= 0.5) return 'Above Average';
-      if (normalized >= 0.25) return 'Below Average';
-      return 'Bottom 25%';
+      if (normalized >= 0.9) return "Top 10%";
+      if (normalized >= 0.75) return "Top 25%";
+      if (normalized >= 0.5) return "Above Average";
+      if (normalized >= 0.25) return "Below Average";
+      return "Bottom 25%";
     };
 
     return { minValue: min, maxValue: max, getColor, getRank };
@@ -169,36 +185,38 @@ export default function TrendsMap({
 
   // Style function for GeoJSON
   const style = (feature: GeoJSONFeature) => {
-    const rawName = feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
-    const name = rawName ? String(rawName).toUpperCase() : '';
+    const rawName =
+      feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
+    const name = rawName ? String(rawName).toUpperCase() : "";
     const value = metricData[name];
 
     return {
-      fillColor: value ? getColor(value) : '#cccccc',
+      fillColor: value ? getColor(value) : "#cccccc",
       weight: 1,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: "white",
+      dashArray: "3",
       fillOpacity: 0.7,
     };
   };
 
   // Tooltip and hover handlers
   const onEachFeature = (feature: GeoJSONFeature, layer: unknown) => {
-    const rawName = feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
-    const name = rawName ? String(rawName).toUpperCase() : 'Unknown Area';
+    const rawName =
+      feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
+    const name = rawName ? String(rawName).toUpperCase() : "Unknown Area";
     const value = metricData[name];
 
-    const numValue = value && typeof value === 'object' ? value.value : value;
+    const numValue = value && typeof value === "object" ? value.value : value;
     const rank = getRank(value);
-    const label = value && typeof value === 'object' ? value.label : undefined;
+    const label = value && typeof value === "object" ? value.label : undefined;
 
     // Build tooltip content
     let tooltipContent = `<div class="text-sm min-w-[200px]">`;
     tooltipContent += `<div class="font-bold border-b pb-1 mb-2 text-base">${name}</div>`;
 
     if (value !== null && value !== undefined) {
-      if (colorScale === 'diverging' && typeof value === 'string') {
+      if (colorScale === "diverging" && typeof value === "string") {
         tooltipContent += `<div class="grid grid-cols-2 gap-x-4 gap-y-1">`;
         tooltipContent += `<span class="text-muted-foreground">Cluster Type:</span>`;
         tooltipContent += `<span class="font-medium text-right">${value} - ${CLUSTER_LABELS[value] || value}</span>`;
@@ -206,7 +224,7 @@ export default function TrendsMap({
       } else {
         tooltipContent += `<div class="grid grid-cols-2 gap-x-4 gap-y-1">`;
         tooltipContent += `<span class="text-muted-foreground">${metricLabel}:</span>`;
-        tooltipContent += `<span class="font-medium text-right">${numValue !== null && numValue !== undefined ? numValue.toFixed(2) : 'N/A'}</span>`;
+        tooltipContent += `<span class="font-medium text-right">${numValue !== null && numValue !== undefined ? numValue.toFixed(2) : "N/A"}</span>`;
         if (label) {
           tooltipContent += `<span class="text-muted-foreground">${label}:</span>`;
           tooltipContent += `<span class="font-medium text-right">${label}</span>`;
@@ -221,24 +239,29 @@ export default function TrendsMap({
     tooltipContent += `</div>`;
 
     // Bind tooltip
-    const leafletLayer = layer as { bindTooltip: (content: string, options: unknown) => void };
+    const leafletLayer = layer as {
+      bindTooltip: (content: string, options: unknown) => void;
+    };
     leafletLayer.bindTooltip(tooltipContent, {
       sticky: true,
-      direction: 'top',
-      className: 'custom-leaflet-tooltip',
+      direction: "top",
+      className: "custom-leaflet-tooltip",
     });
 
     // Add hover effects
     const typedLayer = layer as {
-      on: (events: { mouseover: (e: LeafletLayerEvent) => void; mouseout: (e: LeafletLayerEvent) => void }) => void;
+      on: (events: {
+        mouseover: (e: LeafletLayerEvent) => void;
+        mouseout: (e: LeafletLayerEvent) => void;
+      }) => void;
     };
     typedLayer.on({
       mouseover: (e: LeafletLayerEvent) => {
         const layer = e.target;
         layer.setStyle({
           weight: 3,
-          color: '#666',
-          dashArray: '',
+          color: "#666",
+          dashArray: "",
           fillOpacity: 0.9,
         });
         layer.bringToFront();
@@ -247,8 +270,8 @@ export default function TrendsMap({
         const layer = e.target;
         layer.setStyle({
           weight: 1,
-          color: 'white',
-          dashArray: '3',
+          color: "white",
+          dashArray: "3",
           fillOpacity: 0.7,
         });
       },
@@ -269,7 +292,7 @@ export default function TrendsMap({
       <MapContainer
         center={[1.3521, 103.8198]}
         zoom={11}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: "100%", width: "100%" }}
         zoomControl={false}
         aria-label={`Map showing ${metricLabel} by town`}
       >
@@ -277,10 +300,14 @@ export default function TrendsMap({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
-        <GeoJSON data={geoJsonData} style={style} onEachFeature={onEachFeature} />
+        <GeoJSON
+          data={geoJsonData}
+          style={style}
+          onEachFeature={onEachFeature}
+        />
       </MapContainer>
 
-      {showLegend && colorScale === 'sequential' && (
+      {showLegend && colorScale === "sequential" && (
         <div className="absolute bottom-4 right-4 bg-background/90 backdrop-blur p-3 rounded-lg border border-border text-xs z-[1000] shadow-lg">
           <div className="font-semibold mb-2 capitalize">{metricLabel}</div>
           <div className="flex flex-col gap-1">
@@ -300,7 +327,7 @@ export default function TrendsMap({
         </div>
       )}
 
-      {showLegend && colorScale === 'diverging' && (
+      {showLegend && colorScale === "diverging" && (
         <div className="absolute bottom-4 right-4 bg-background/90 backdrop-blur p-3 rounded-lg border border-border text-xs z-[1000] shadow-lg">
           <div className="font-semibold mb-2">Cluster Type</div>
           <div className="flex flex-col gap-1">

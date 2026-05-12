@@ -7,10 +7,18 @@
  * - Neighborhood Effects (local Moran's I)
  */
 
-import React, { useRef } from 'react';
-import { LayerGroup, GeoJSON } from 'react-leaflet';
-import type { SpatialAnalyticsData, LayerId, GeoJSONFeature, GeoJSONFeatureCollection } from '../../../../types/analytics';
-import { getHotspotColor, LISA_CLUSTER_COLORS } from '../../../../utils/colorScales';
+import React, { useRef } from "react";
+import { LayerGroup, GeoJSON } from "react-leaflet";
+import type {
+  SpatialAnalyticsData,
+  LayerId,
+  GeoJSONFeature,
+  GeoJSONFeatureCollection,
+} from "../../../../types/analytics";
+import {
+  getHotspotColor,
+  LISA_CLUSTER_COLORS,
+} from "../../../../utils/colorScales";
 
 interface SpatialAnalysisOverlayProps {
   active: boolean;
@@ -29,11 +37,11 @@ function getHotspotStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
 
   if (!areaData?.hotspot) {
     return {
-      fillColor: '#cccccc',
+      fillColor: "#cccccc",
       weight: 2,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: "white",
+      dashArray: "3",
       fillOpacity: 0.3,
     };
   }
@@ -45,8 +53,8 @@ function getHotspotStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
     fillColor: color,
     weight: 2,
     opacity: 1,
-    color: 'white',
-    dashArray: '3',
+    color: "white",
+    dashArray: "3",
     fillOpacity: 0.7,
   };
 }
@@ -54,30 +62,33 @@ function getHotspotStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
 /**
  * Get LISA cluster style function
  */
-function getLISAClusterStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
+function getLISAClusterStyle(
+  feature: GeoJSONFeature,
+  data: SpatialAnalyticsData,
+) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
   if (!areaData?.lisa_cluster) {
     return {
-      fillColor: '#cccccc',
+      fillColor: "#cccccc",
       weight: 2,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: "white",
+      dashArray: "3",
       fillOpacity: 0.3,
     };
   }
 
   const clusterType = areaData.lisa_cluster.type;
-  const color = LISA_CLUSTER_COLORS[clusterType] || '#cccccc';
+  const color = LISA_CLUSTER_COLORS[clusterType] || "#cccccc";
 
   return {
     fillColor: color,
     weight: 2,
     opacity: 1,
-    color: 'white',
-    dashArray: '3',
+    color: "white",
+    dashArray: "3",
     fillOpacity: 0.7,
   };
 }
@@ -85,22 +96,26 @@ function getLISAClusterStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData
 /**
  * Get neighborhood effect style function
  */
-function getNeighborhoodStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
+function getNeighborhoodStyle(
+  feature: GeoJSONFeature,
+  data: SpatialAnalyticsData,
+) {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
   if (!areaData?.neighborhood_effect) {
     return {
-      fillColor: '#cccccc',
+      fillColor: "#cccccc",
       weight: 2,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: "white",
+      dashArray: "3",
       fillOpacity: 0.3,
     };
   }
 
-  const multiplier = areaData.neighborhood_effect.neighborhood_multiplier || 1.0;
+  const multiplier =
+    areaData.neighborhood_effect.neighborhood_multiplier || 1.0;
   // Color gradient from blue (low multiplier) to red (high multiplier)
   const intensity = Math.min(1, Math.max(0, (multiplier - 0.8) / 0.4));
   const r = Math.round(intensity * 255);
@@ -111,8 +126,8 @@ function getNeighborhoodStyle(feature: GeoJSONFeature, data: SpatialAnalyticsDat
     fillColor: color,
     weight: 2,
     opacity: 1,
-    color: 'white',
-    dashArray: '3',
+    color: "white",
+    dashArray: "3",
     fillOpacity: 0.7,
   };
 }
@@ -120,7 +135,10 @@ function getNeighborhoodStyle(feature: GeoJSONFeature, data: SpatialAnalyticsDat
 /**
  * Create tooltip content for hotspot layer
  */
-function createHotspotTooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData): string {
+function createHotspotTooltip(
+  feature: GeoJSONFeature,
+  data: SpatialAnalyticsData,
+): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -134,8 +152,8 @@ function createHotspotTooltip(feature: GeoJSONFeature, data: SpatialAnalyticsDat
     <div class="text-sm">
       <h3 class="font-bold">${areaName}</h3>
       <h4 class="font-semibold mt-2">Hotspot Analysis</h4>
-      <p><b>Z-Score:</b> ${z_score?.toFixed(2) || 'N/A'}</p>
-      <p><b>P-Value:</b> ${p_value?.toFixed(4) || 'N/A'}</p>
+      <p><b>Z-Score:</b> ${z_score?.toFixed(2) || "N/A"}</p>
+      <p><b>P-Value:</b> ${p_value?.toFixed(4) || "N/A"}</p>
       <p><b>Confidence:</b> ${confidence}</p>
       <p><b>Classification:</b> ${classification}</p>
     </div>
@@ -145,7 +163,10 @@ function createHotspotTooltip(feature: GeoJSONFeature, data: SpatialAnalyticsDat
 /**
  * Create tooltip content for LISA cluster layer
  */
-function createLISATooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData): string {
+function createLISATooltip(
+  feature: GeoJSONFeature,
+  data: SpatialAnalyticsData,
+): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -153,16 +174,17 @@ function createLISATooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData):
     return `<b>${areaName}</b><br>No LISA data available`;
   }
 
-  const { type, yoy_appreciation, persistence_rate, transition_probabilities } = areaData.lisa_cluster;
+  const { type, yoy_appreciation, persistence_rate, transition_probabilities } =
+    areaData.lisa_cluster;
 
   return `
     <div class="text-sm">
       <h3 class="font-bold">${areaName}</h3>
       <h4 class="font-semibold mt-2">LISA Cluster</h4>
       <p><b>Type:</b> ${type}</p>
-      <p><b>YoY Appreciation:</b> ${yoy_appreciation?.toFixed(1) || 'N/A'}%</p>
-      <p><b>Persistence Rate:</b> ${(persistence_rate * 100).toFixed(1) || 'N/A'}%</p>
-      <p><b>Transition to Hotspot:</b> ${(transition_probabilities.to_hotspot * 100).toFixed(1) || 'N/A'}%</p>
+      <p><b>YoY Appreciation:</b> ${yoy_appreciation?.toFixed(1) || "N/A"}%</p>
+      <p><b>Persistence Rate:</b> ${(persistence_rate * 100).toFixed(1) || "N/A"}%</p>
+      <p><b>Transition to Hotspot:</b> ${(transition_probabilities.to_hotspot * 100).toFixed(1) || "N/A"}%</p>
     </div>
   `;
 }
@@ -170,7 +192,10 @@ function createLISATooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData):
 /**
  * Create tooltip content for neighborhood effect layer
  */
-function createNeighborhoodTooltip(feature: GeoJSONFeature, data: SpatialAnalyticsData): string {
+function createNeighborhoodTooltip(
+  feature: GeoJSONFeature,
+  data: SpatialAnalyticsData,
+): string {
   const areaName = feature.properties?.pln_area_n;
   const areaData = data?.planning_areas?.[areaName];
 
@@ -178,15 +203,16 @@ function createNeighborhoodTooltip(feature: GeoJSONFeature, data: SpatialAnalyti
     return `<b>${areaName}</b><br>No neighborhood data available`;
   }
 
-  const { moran_i_local, spatial_lag, neighborhood_multiplier } = areaData.neighborhood_effect;
+  const { moran_i_local, spatial_lag, neighborhood_multiplier } =
+    areaData.neighborhood_effect;
 
   return `
     <div class="text-sm">
       <h3 class="font-bold">${areaName}</h3>
       <h4 class="font-semibold mt-2">Neighborhood Effect</h4>
-      <p><b>Local Moran's I:</b> ${moran_i_local?.toFixed(3) || 'N/A'}</p>
-      <p><b>Spatial Lag:</b> $${spatial_lag?.toLocaleString() || 'N/A'}</p>
-      <p><b>Neighborhood Multiplier:</b> ${neighborhood_multiplier?.toFixed(2) || 'N/A'}x</p>
+      <p><b>Local Moran's I:</b> ${moran_i_local?.toFixed(3) || "N/A"}</p>
+      <p><b>Spatial Lag:</b> $${spatial_lag?.toLocaleString() || "N/A"}</p>
+      <p><b>Neighborhood Multiplier:</b> ${neighborhood_multiplier?.toFixed(2) || "N/A"}x</p>
     </div>
   `;
 }
@@ -220,12 +246,13 @@ export default function SpatialAnalysisOverlay({
   // Determine which sub-layer to render
   const getStyleFunction = () => {
     switch (layerId) {
-      case 'spatial.hotspot':
+      case "spatial.hotspot":
         return (feature: GeoJSONFeature) => getHotspotStyle(feature, data!);
-      case 'spatial.lisa':
+      case "spatial.lisa":
         return (feature: GeoJSONFeature) => getLISAClusterStyle(feature, data!);
-      case 'spatial.neighborhood':
-        return (feature: GeoJSONFeature) => getNeighborhoodStyle(feature, data!);
+      case "spatial.neighborhood":
+        return (feature: GeoJSONFeature) =>
+          getNeighborhoodStyle(feature, data!);
       default:
         return () => ({});
     }
@@ -233,14 +260,16 @@ export default function SpatialAnalysisOverlay({
 
   const getTooltipFunction = () => {
     switch (layerId) {
-      case 'spatial.hotspot':
-        return (feature: GeoJSONFeature) => createHotspotTooltip(feature, data!);
-      case 'spatial.lisa':
+      case "spatial.hotspot":
+        return (feature: GeoJSONFeature) =>
+          createHotspotTooltip(feature, data!);
+      case "spatial.lisa":
         return (feature: GeoJSONFeature) => createLISATooltip(feature, data!);
-      case 'spatial.neighborhood':
-        return (feature: GeoJSONFeature) => createNeighborhoodTooltip(feature, data!);
+      case "spatial.neighborhood":
+        return (feature: GeoJSONFeature) =>
+          createNeighborhoodTooltip(feature, data!);
       default:
-        return () => '';
+        return () => "";
     }
   };
 
@@ -253,7 +282,7 @@ export default function SpatialAnalysisOverlay({
           const tooltip = getTooltipFunction();
           layer.bindTooltip(tooltip(feature), {
             sticky: true,
-            direction: 'top',
+            direction: "top",
           });
         }}
       />

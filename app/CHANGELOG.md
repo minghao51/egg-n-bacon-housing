@@ -7,6 +7,7 @@ Astro/Bun static documentation site for Singapore housing market analytics.
 ### Initial Release Features
 
 #### Core Features
+
 - **Fast & Modern**: Built with Bun runtime and Astro static site generator
 - **Interactive Charts**: Time series, comparison, and statistical visualizations
 - **Beautiful UI**: Tailwind CSS with shadcn/ui components
@@ -23,27 +24,31 @@ Astro/Bun static documentation site for Singapore housing market analytics.
 ### Major Improvements Implemented
 
 #### 1. Syntax Highlighting (Shiki)
+
 - **Engine**: Shiki v3.21.0
 - **Languages**: 100+ (Python, JavaScript, SQL, etc.)
 - **Themes**: GitHub Light/Dark with auto-switching
 - **Impact**: Professional code display with colored syntax
 
 #### 2. Formula LaTeX Rendering (KaTeX)
+
 - **Auto-conversion**: Plain text to LaTeX (e.g., `P_t` → \(P_t\))
 - **Features**:
-  - Subscripts: `P_{t-1}` → \(P_{t-1}\)
+  - Subscripts: `P_{t-1}` → \(P\_{t-1}\)
   - Fractions: `a / b` → \(\frac{a}{b}\)
   - Multiplication: `×` → \(\times\)
   - Percentages: `%` → `\%\)
 - **Result**: Beautiful mathematical notation
 
 #### 3. Inline Chart Rendering
+
 - **Architecture**: React portals for inline placement
 - **Component**: `InlineChartRenderer.tsx`
 - **Bundle Improvement**: 55KB smaller (440KB → 385KB)
 - **UX**: Charts appear inline with content, not at bottom
 
 #### 4. Table of Contents
+
 - **Auto-generated**: From H2/H3 headings
 - **Position**: Sticky right sidebar (xl screens only)
 - **Features**:
@@ -53,6 +58,7 @@ Astro/Bun static documentation site for Singapore housing market analytics.
   - Hidden on smaller screens
 
 #### 5. Enhanced Markdown Rendering
+
 - **Tables**: Proper HTML with borders, styling, hover effects
 - **Typography**: Proper H2/H3 spacing with scroll offset
 - **Code blocks**: Background, padding, monospace font
@@ -74,22 +80,24 @@ Astro/Bun static documentation site for Singapore housing market analytics.
 
 ### Performance Metrics
 
-| Metric | Value |
-|--------|-------|
-| Build Time | 1.48s for 13 pages |
-| Chart Bundle | 385KB (gzipped: ~110KB) |
-| Total Bundle | 415KB (gzipped: ~120KB) |
-| Page Generation | 1-67ms per page |
+| Metric          | Value                   |
+| --------------- | ----------------------- |
+| Build Time      | 1.48s for 13 pages      |
+| Chart Bundle    | 385KB (gzipped: ~110KB) |
+| Total Bundle    | 415KB (gzipped: ~120KB) |
+| Page Generation | 1-67ms per page         |
 
 ### Dependencies
 
 **Production**:
+
 - `astro@^4.18.0`
 - `react@^19.2.4`
 - `shiki@^3.21.0` (syntax highlighting)
 - `@tailwindcss/vite@^4.0.0`
 
 **Dev Dependencies**:
+
 - `@astrojs/react@^4.0.1`
 - `@astrojs/tailwind@^6.0.0`
 - `bun-types@latest`
@@ -97,17 +105,20 @@ Astro/Bun static documentation site for Singapore housing market analytics.
 ### Files Created
 
 #### Components
+
 - `src/components/charts/InlineChartRenderer.tsx` - Inline chart rendering
 - `src/components/PlotlyEmbed.astro` - Plotly iframe embed
 - `src/components/TableOfContents.astro` - Auto-generated TOC
 - `src/components/DarkModeToggle.tsx` - Theme switcher
 
 #### Utilities
+
 - `src/utils/markdown-renderer.ts` - Markdown to HTML with async highlighting
 - `src/utils/syntax-highlight.ts` - Shiki integration
 - `src/utils/formula-converter.ts` - Plain text to LaTeX converter
 
 #### Directories
+
 - `public/images/analytics/` - Static chart images
 - `public/plots/` - Plotly HTML exports
 
@@ -142,6 +153,7 @@ Astro/Bun static documentation site for Singapore housing market analytics.
 ### Usage Examples
 
 #### Adding Images
+
 ```python
 # Python: Save chart
 plt.savefig('app/public/images/analytics/chart.png', dpi=150)
@@ -149,10 +161,12 @@ plt.savefig('app/public/images/analytics/chart.png', dpi=150)
 
 ```markdown
 <!-- Markdown: Reference image -->
+
 ![Analysis Results](images/analytics/chart.png)
 ```
 
 #### Adding Plotly Charts
+
 ```python
 # Python: Export Plotly
 fig.write_html('app/public/plots/price-trend.html')
@@ -161,14 +175,18 @@ fig.write_html('app/public/plots/price-trend.html')
 Auto-detected - just place HTML file in `public/plots/`
 
 #### Writing Formulas
+
 ```markdown
 **Formula:**
 ```
-Growth (%) = (P_t - P_{t-1}) / P_{t-1} × 100
-```
+
+Growth (%) = (P*t - P*{t-1}) / P\_{t-1} × 100
+
 ```
 
-Auto-converts to: \(Growth (\%) = \frac{P_t - P_{t-1}}{P_{t-1}} \times 100\)
+```
+
+Auto-converts to: \(Growth (\%) = \frac{P*t - P*{t-1}}{P\_{t-1}} \times 100\)
 
 ### Development
 
@@ -197,6 +215,7 @@ bun run preview
 ### Migration Notes
 
 **For Content Authors**:
+
 - No markdown changes needed
 - Code blocks auto-highlight (specify language for best results)
 - Tables auto-convert to inline charts

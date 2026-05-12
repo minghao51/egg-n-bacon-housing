@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -7,9 +7,9 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from 'recharts';
-import type { ChartData } from '@/utils/data-parser';
-import ClientChart from './ClientChart';
+} from "recharts";
+import type { ChartData } from "@/utils/data-parser";
+import ClientChart from "./ClientChart";
 
 interface ComparisonChartProps {
   data: ChartData;
@@ -34,11 +34,11 @@ export default function ComparisonChart({
 
   // Generate colors for each dataset
   const colors = [
-    '#3b82f6', // blue
-    '#10b981', // green
-    '#f59e0b', // amber
-    '#ef4444', // red
-    '#8b5cf6', // violet
+    "#3b82f6", // blue
+    "#10b981", // green
+    "#f59e0b", // amber
+    "#ef4444", // red
+    "#8b5cf6", // violet
   ];
 
   return (
@@ -48,29 +48,29 @@ export default function ComparisonChart({
           width={width}
           height={height}
           data={chartData}
-          layout={horizontal ? 'horizontal' : 'vertical'}
+          layout={horizontal ? "horizontal" : "vertical"}
         >
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
           <XAxis
-            dataKey={horizontal ? undefined : 'name'}
-            type={horizontal ? 'number' : 'category'}
+            dataKey={horizontal ? undefined : "name"}
+            type={horizontal ? "number" : "category"}
             className="text-sm"
-            tick={{ fill: 'hsl(var(--foreground))' }}
+            tick={{ fill: "hsl(var(--foreground))" }}
           />
           <YAxis
-            dataKey={horizontal ? 'name' : undefined}
-            type={horizontal ? 'category' : 'number'}
+            dataKey={horizontal ? "name" : undefined}
+            type={horizontal ? "category" : "number"}
             width={140}
             className="text-sm"
-            tick={{ fill: 'hsl(var(--foreground))' }}
+            tick={{ fill: "hsl(var(--foreground))" }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '0.5rem',
+              backgroundColor: "hsl(var(--card))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: "0.5rem",
             }}
-            itemStyle={{ color: 'hsl(var(--foreground))' }}
+            itemStyle={{ color: "hsl(var(--foreground))" }}
           />
           <Legend />
           {data.datasets.map((dataset, index) => (

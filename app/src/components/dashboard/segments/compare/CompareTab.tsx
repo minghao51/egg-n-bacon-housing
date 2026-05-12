@@ -1,8 +1,8 @@
 // app/src/components/dashboard/segments/compare/CompareTab.tsx
-import type { Segment, Persona } from '@/types/segments';
-import { ComparisonTable } from './ComparisonTable';
-import { ComparisonCharts } from './ComparisonCharts';
-import { InvestmentImplications } from './InvestmentImplications';
+import type { Segment, Persona } from "@/types/segments";
+import { ComparisonTable } from "./ComparisonTable";
+import { ComparisonCharts } from "./ComparisonCharts";
+import { InvestmentImplications } from "./InvestmentImplications";
 
 interface CompareTabProps {
   segments: Segment[];
@@ -10,19 +10,27 @@ interface CompareTabProps {
   persona: Persona;
 }
 
-export function CompareTab({ segments, allSegments, persona }: CompareTabProps) {
+export function CompareTab({
+  segments,
+  allSegments,
+  persona,
+}: CompareTabProps) {
   void allSegments;
 
   if (segments.length < 2) {
     return (
       <div className="text-center py-16">
         <div className="text-6xl mb-4">⚖️</div>
-        <h3 className="text-xl font-semibold text-foreground mb-2">Cross-Check Segments</h3>
+        <h3 className="text-xl font-semibold text-foreground mb-2">
+          Cross-Check Segments
+        </h3>
         <p className="text-muted-foreground mb-6">
-          Keep 2-4 segments in the compare tray to validate your shortlist side-by-side.
+          Keep 2-4 segments in the compare tray to validate your shortlist
+          side-by-side.
         </p>
         <p className="text-sm text-muted-foreground">
-          {segments.length === 1 ? '1 segment selected' : '0 segments selected'} (need 2-4)
+          {segments.length === 1 ? "1 segment selected" : "0 segments selected"}{" "}
+          (need 2-4)
         </p>
       </div>
     );
@@ -32,13 +40,17 @@ export function CompareTab({ segments, allSegments, persona }: CompareTabProps) 
     <div className="space-y-8">
       {/* Comparison Table */}
       <div>
-        <h2 className="text-xl font-semibold text-foreground mb-4">Metrics Comparison</h2>
+        <h2 className="text-xl font-semibold text-foreground mb-4">
+          Metrics Comparison
+        </h2>
         <ComparisonTable segments={segments} persona={persona} />
       </div>
 
       {/* Charts */}
       <div>
-        <h2 className="text-xl font-semibold text-foreground mb-4">Visual Comparison</h2>
+        <h2 className="text-xl font-semibold text-foreground mb-4">
+          Visual Comparison
+        </h2>
         <ComparisonCharts segments={segments} />
       </div>
 

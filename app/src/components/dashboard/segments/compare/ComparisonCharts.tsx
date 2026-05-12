@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/compare/ComparisonCharts.tsx
-import type { Segment } from '@/types/segments';
+import type { Segment } from "@/types/segments";
 import {
   BarChart,
   Bar,
@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 interface ComparisonChartsProps {
   segments: Segment[];
@@ -27,25 +27,34 @@ export function ComparisonCharts({ segments }: ComparisonChartsProps) {
   // Prepare data for bar chart
   const barData = segments.map((segment) => ({
     name: segment.name,
-    'Price PSF': segment.metrics.avgPricePsf,
-    'Yield %': segment.metrics.avgYield,
-    'YoY Growth %': segment.metrics.yoyGrowth,
+    "Price PSF": segment.metrics.avgPricePsf,
+    "Yield %": segment.metrics.avgYield,
+    "YoY Growth %": segment.metrics.yoyGrowth,
   }));
 
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold text-foreground mb-4">Key Metrics Comparison</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">
+          Key Metrics Comparison
+        </h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={barData}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--foreground))' }} />
-            <YAxis className="text-xs" tick={{ fill: 'hsl(var(--foreground))' }} />
+            <XAxis
+              dataKey="name"
+              className="text-xs"
+              tick={{ fill: "hsl(var(--foreground))" }}
+            />
+            <YAxis
+              className="text-xs"
+              tick={{ fill: "hsl(var(--foreground))" }}
+            />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
-                borderColor: 'hsl(var(--border))',
-                color: 'hsl(var(--foreground))',
+                backgroundColor: "hsl(var(--card))",
+                borderColor: "hsl(var(--border))",
+                color: "hsl(var(--foreground))",
               }}
             />
             <Legend />

@@ -100,6 +100,7 @@ app/
 ### Auto-Detection
 
 The `ChartRenderer` component automatically:
+
 - Detects time-series and comparison data
 - Extracts numeric values from formatted text
 - Renders appropriate chart types
@@ -136,4 +137,4 @@ The sync script also creates a symlink for image paths to work correctly.
 
 ---
 
-*Generated with Bun + Astro + React*
+_Generated with Bun + Astro + React_

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -8,8 +8,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
-import ClientChart from '@/components/charts/ClientChart';
+} from "recharts";
+import ClientChart from "@/components/charts/ClientChart";
 
 interface TrendRecord {
   date: string;
@@ -20,7 +20,9 @@ interface TransactionVolumeChartProps {
   data: TrendRecord[];
 }
 
-export default function TransactionVolumeChart({ data }: TransactionVolumeChartProps) {
+export default function TransactionVolumeChart({
+  data,
+}: TransactionVolumeChartProps) {
   return (
     <div className="bg-card p-6 rounded-lg border border-border">
       <h3 className="text-lg font-semibold mb-6 text-foreground">
@@ -33,17 +35,20 @@ export default function TransactionVolumeChart({ data }: TransactionVolumeChartP
             <XAxis
               dataKey="date"
               className="text-xs"
-              tick={{ fill: 'hsl(var(--foreground))' }}
+              tick={{ fill: "hsl(var(--foreground))" }}
               minTickGap={30}
             />
             <YAxis
               className="text-xs"
-              tick={{ fill: 'hsl(var(--foreground))' }}
+              tick={{ fill: "hsl(var(--foreground))" }}
             />
             <Tooltip
-              cursor={{ fill: 'hsl(var(--muted)/0.2)' }}
-              contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
-              itemStyle={{ color: 'hsl(var(--foreground))' }}
+              cursor={{ fill: "hsl(var(--muted)/0.2)" }}
+              contentStyle={{
+                backgroundColor: "hsl(var(--card))",
+                borderColor: "hsl(var(--border))",
+              }}
+              itemStyle={{ color: "hsl(var(--foreground))" }}
             />
             <Legend />
             <Bar dataKey="HDB Volume" stackId="a" fill="#10b981" />

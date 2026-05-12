@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -11,10 +11,10 @@ import {
   PieChart,
   Pie,
   Cell,
-} from 'recharts';
-import ClientChart from '@/components/charts/ClientChart';
-import PriceTrendsChart from './PriceTrendsChart';
-import TransactionVolumeChart from './TransactionVolumeChart';
+} from "recharts";
+import ClientChart from "@/components/charts/ClientChart";
+import PriceTrendsChart from "./PriceTrendsChart";
+import TransactionVolumeChart from "./TransactionVolumeChart";
 
 interface TrendRecord {
   date: string;
@@ -76,7 +76,7 @@ interface StatBlock {
   volume: number;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
 export default function MarketOverviewDashboard({
   data,
@@ -87,18 +87,23 @@ export default function MarketOverviewDashboard({
   trendsData?: TrendRecord[];
   overviewHighlights?: OverviewHighlights;
 }) {
-  const [temporalFilter, setTemporalFilter] = useState<'whole' | 'pre_covid' | 'recent' | 'year_2025'>('whole');
-  const [propertyTypeFilter, setPropertyTypeFilter] = useState<'all' | 'hdb' | 'ec' | 'condo'>('all');
+  const [temporalFilter, setTemporalFilter] = useState<
+    "whole" | "pre_covid" | "recent" | "year_2025"
+  >("whole");
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState<
+    "all" | "hdb" | "ec" | "condo"
+  >("all");
 
   // Determine data key based on temporal and property type filters
-  const dataKey = propertyTypeFilter === 'all'
-    ? temporalFilter
-    : `${temporalFilter}_${propertyTypeFilter}` as keyof typeof data.stats;
+  const dataKey =
+    propertyTypeFilter === "all"
+      ? temporalFilter
+      : (`${temporalFilter}_${propertyTypeFilter}` as keyof typeof data.stats);
   const currentStats = data.stats[dataKey];
 
   // Prepare chart data
   const propertyTypeData = Object.entries(data.distributions.property_type).map(
-    ([name, value]) => ({ name, value })
+    ([name, value]) => ({ name, value }),
   );
 
   const planningAreaData = Object.entries(data.distributions.planning_area)
@@ -111,9 +116,12 @@ export default function MarketOverviewDashboard({
       <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-foreground">What Changed Recently</h2>
+            <h2 className="text-xl font-bold text-foreground">
+              What Changed Recently
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Read the current market shift first, then decide whether to explore areas, compare rankings, or move into segment discovery.
+              Read the current market shift first, then decide whether to
+              explore areas, compare rankings, or move into segment discovery.
             </p>
           </div>
           <div className="rounded-xl bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
@@ -123,42 +131,50 @@ export default function MarketOverviewDashboard({
         <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <HighlightCard
             title="Median Price"
-            value={formatDelta(overviewHighlights?.recentPriceDelta?.change, '%')}
+            value={formatDelta(
+              overviewHighlights?.recentPriceDelta?.change,
+              "%",
+            )}
             description={
               overviewHighlights?.recentPriceDelta
                 ? `From $${overviewHighlights.recentPriceDelta.previous.toLocaleString()} to $${overviewHighlights.recentPriceDelta.current.toLocaleString()}`
-                : 'Recent delta unavailable'
+                : "Recent delta unavailable"
             }
           />
           <HighlightCard
             title="Transaction Volume"
-            value={formatDelta(overviewHighlights?.recentVolumeDelta?.change, '%')}
+            value={formatDelta(
+              overviewHighlights?.recentVolumeDelta?.change,
+              "%",
+            )}
             description={
               overviewHighlights?.recentVolumeDelta
                 ? `From ${overviewHighlights.recentVolumeDelta.previous.toLocaleString()} to ${overviewHighlights.recentVolumeDelta.current.toLocaleString()} deals`
-                : 'Recent delta unavailable'
+                : "Recent delta unavailable"
             }
           />
           <HighlightCard
             title="Largest Market Share"
-            value={overviewHighlights?.strongestPropertyType?.[0] ?? 'N/A'}
+            value={overviewHighlights?.strongestPropertyType?.[0] ?? "N/A"}
             description={
               overviewHighlights?.strongestPropertyType
                 ? `${overviewHighlights.strongestPropertyType[1].toLocaleString()} records in the current dataset`
-                : 'Property share unavailable'
+                : "Property share unavailable"
             }
           />
           <HighlightCard
             title="Strongest vs Weakest Area Move"
             value={
-              overviewHighlights?.strongestAreaTrend && overviewHighlights?.weakestAreaTrend
+              overviewHighlights?.strongestAreaTrend &&
+              overviewHighlights?.weakestAreaTrend
                 ? `${overviewHighlights.strongestAreaTrend[0]} / ${overviewHighlights.weakestAreaTrend[0]}`
-                : 'N/A'
+                : "N/A"
             }
             description={
-              overviewHighlights?.strongestAreaTrend && overviewHighlights?.weakestAreaTrend
+              overviewHighlights?.strongestAreaTrend &&
+              overviewHighlights?.weakestAreaTrend
                 ? `${overviewHighlights.strongestAreaTrend[1].yoy_change_pct.toFixed(1)}% vs ${overviewHighlights.weakestAreaTrend[1].yoy_change_pct.toFixed(1)}% YoY`
-                : 'Area momentum unavailable'
+                : "Area momentum unavailable"
             }
           />
         </div>
@@ -170,43 +186,51 @@ export default function MarketOverviewDashboard({
         <div className="flex flex-wrap gap-2">
           {/* Temporal Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-muted-foreground">Period:</span>
+            <span className="text-sm font-medium text-muted-foreground">
+              Period:
+            </span>
             <div className="flex space-x-1 bg-muted p-1 rounded-md">
-              {(['whole', 'pre_covid', 'recent', 'year_2025'] as const).map((key) => (
-                <button
-                  key={key}
-                  onClick={() => setTemporalFilter(key)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${temporalFilter === key
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
+              {(["whole", "pre_covid", "recent", "year_2025"] as const).map(
+                (key) => (
+                  <button
+                    key={key}
+                    onClick={() => setTemporalFilter(key)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${
+                      temporalFilter === key
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
-                >
-                  {key === 'whole'
-                    ? 'All Time'
-                    : key === 'pre_covid'
-                      ? 'Pre-COVID'
-                      : key === 'recent'
-                        ? 'Recent'
-                        : '2025'}
-                </button>
-              ))}
+                  >
+                    {key === "whole"
+                      ? "All Time"
+                      : key === "pre_covid"
+                        ? "Pre-COVID"
+                        : key === "recent"
+                          ? "Recent"
+                          : "2025"}
+                  </button>
+                ),
+              )}
             </div>
           </div>
 
           {/* Property Type Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-muted-foreground">Type:</span>
+            <span className="text-sm font-medium text-muted-foreground">
+              Type:
+            </span>
             <div className="flex space-x-1 bg-muted p-1 rounded-md">
-              {(['all', 'hdb', 'ec', 'condo'] as const).map((key) => (
+              {(["all", "hdb", "ec", "condo"] as const).map((key) => (
                 <button
                   key={key}
                   onClick={() => setPropertyTypeFilter(key)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${propertyTypeFilter === key
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                    }`}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${
+                    propertyTypeFilter === key
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  {key === 'all' ? 'All' : key.toUpperCase()}
+                  {key === "all" ? "All" : key.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -219,7 +243,11 @@ export default function MarketOverviewDashboard({
         <KpiCard
           title="Total Transactions"
           value={currentStats.count.toLocaleString()}
-          subtext={temporalFilter === 'whole' && propertyTypeFilter === 'all' ? 'All records' : 'In selected period'}
+          subtext={
+            temporalFilter === "whole" && propertyTypeFilter === "all"
+              ? "All records"
+              : "In selected period"
+          }
         />
         <KpiCard
           title="Median Price"
@@ -233,7 +261,11 @@ export default function MarketOverviewDashboard({
         />
         <KpiCard
           title="Date Range"
-          value={data.metadata.date_range.start.substring(0, 4) + ' - ' + data.metadata.date_range.end.substring(0, 4)}
+          value={
+            data.metadata.date_range.start.substring(0, 4) +
+            " - " +
+            data.metadata.date_range.end.substring(0, 4)
+          }
           subtext="Full dataset range"
         />
       </div>
@@ -267,8 +299,11 @@ export default function MarketOverviewDashboard({
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
-                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    borderColor: "hsl(var(--border))",
+                  }}
+                  itemStyle={{ color: "hsl(var(--foreground))" }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -286,19 +321,30 @@ export default function MarketOverviewDashboard({
                 data={planningAreaData}
                 margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
-                <XAxis type="number" className="text-xs" tick={{ fill: 'hsl(var(--foreground))' }} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-muted"
+                  horizontal={false}
+                />
+                <XAxis
+                  type="number"
+                  className="text-xs"
+                  tick={{ fill: "hsl(var(--foreground))" }}
+                />
                 <YAxis
                   dataKey="name"
                   type="category"
                   width={100}
                   className="text-xs"
-                  tick={{ fill: 'hsl(var(--foreground))' }}
+                  tick={{ fill: "hsl(var(--foreground))" }}
                 />
                 <Tooltip
-                  cursor={{ fill: 'hsl(var(--muted)/0.2)' }}
-                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
-                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  cursor={{ fill: "hsl(var(--muted)/0.2)" }}
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    borderColor: "hsl(var(--border))",
+                  }}
+                  itemStyle={{ color: "hsl(var(--foreground))" }}
                 />
                 <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -318,9 +364,12 @@ export default function MarketOverviewDashboard({
       <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Pick the Next Workspace</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Pick the Next Workspace
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Move from the executive snapshot into the page built for your next decision.
+              Move from the executive snapshot into the page built for your next
+              decision.
             </p>
           </div>
         </div>
@@ -346,12 +395,12 @@ export default function MarketOverviewDashboard({
   );
 }
 
-function formatDelta(value?: number | null, suffix: string = ''): string {
+function formatDelta(value?: number | null, suffix: string = ""): string {
   if (value === null || value === undefined || Number.isNaN(value)) {
-    return 'N/A';
+    return "N/A";
   }
 
-  const prefix = value > 0 ? '+' : '';
+  const prefix = value > 0 ? "+" : "";
   return `${prefix}${value.toFixed(1)}${suffix}`;
 }
 
@@ -366,7 +415,9 @@ function HighlightCard({
 }) {
   return (
     <div className="rounded-2xl border border-border bg-background p-4">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{title}</div>
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">
+        {title}
+      </div>
       <div className="mt-2 text-lg font-bold text-foreground">{value}</div>
       <p className="mt-2 text-sm text-muted-foreground">{description}</p>
     </div>

@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
-import katex from 'katex';
+import React, { useEffect } from "react";
+import katex from "katex";
 
 interface MathFormulaProps {
   formula: string;
   display?: boolean;
 }
 
-export default function MathFormula({ formula, display = true }: MathFormulaProps) {
+export default function MathFormula({
+  formula,
+  display = true,
+}: MathFormulaProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,7 +20,7 @@ export default function MathFormula({ formula, display = true }: MathFormulaProp
           throwOnError: false,
         });
       } catch (error) {
-        console.error('KaTeX render error:', error);
+        console.error("KaTeX render error:", error);
         // Fallback: display as plain text
         if (containerRef.current) {
           containerRef.current.textContent = formula;
@@ -29,7 +32,7 @@ export default function MathFormula({ formula, display = true }: MathFormulaProp
   return (
     <div
       ref={containerRef}
-      className={`math-formula ${display ? 'block' : 'inline'}`}
+      className={`math-formula ${display ? "block" : "inline"}`}
     />
   );
 }

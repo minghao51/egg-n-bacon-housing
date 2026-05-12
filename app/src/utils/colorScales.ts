@@ -4,7 +4,7 @@
  * Functions for generating color scales for map visualizations.
  */
 
-import type { ColorScaleType, LISAClusterType } from '../types/analytics';
+import type { ColorScaleType, LISAClusterType } from "../types/analytics";
 
 // ==================== Color Scales ====================
 
@@ -13,25 +13,25 @@ import type { ColorScaleType, LISAClusterType } from '../types/analytics';
  */
 export const DIVERGING_COLORS = {
   hotspot: [
-    '#313695', // Dark Blue (coldspot 99%)
-    '#4575b4', // Blue (coldspot 95%)
-    '#fee090', // Light Yellow (not significant)
-    '#d73027', // Orange (hotspot 95%)
-    '#a50026', // Red (hotspot 99%)
+    "#313695", // Dark Blue (coldspot 99%)
+    "#4575b4", // Blue (coldspot 95%)
+    "#fee090", // Light Yellow (not significant)
+    "#d73027", // Orange (hotspot 95%)
+    "#a50026", // Red (hotspot 99%)
   ],
   forecast: [
-    '#d73027', // Dark Red (strong sell)
-    '#f46d43', // Red (sell)
-    '#ffffbf', // Gray/Yellow (hold)
-    '#a6d96a', // Light Green (buy)
-    '#1a9850', // Dark Green (strong buy)
+    "#d73027", // Dark Red (strong sell)
+    "#f46d43", // Red (sell)
+    "#ffffbf", // Gray/Yellow (hold)
+    "#a6d96a", // Light Green (buy)
+    "#1a9850", // Dark Green (strong buy)
   ],
   lease: [
-    '#d73027', // Red (overvalued)
-    '#f46d43', // Light Red
-    '#ffffbf', // Yellow (fair value)
-    '#a6d96a', // Light Green
-    '#1a9850', // Dark Green (undervalued)
+    "#d73027", // Red (overvalued)
+    "#f46d43", // Light Red
+    "#ffffbf", // Yellow (fair value)
+    "#a6d96a", // Light Green
+    "#1a9850", // Dark Green (undervalued)
   ],
 };
 
@@ -39,22 +39,22 @@ export const DIVERGING_COLORS = {
  * Sequential color scale (for MRT impact, school quality, etc.)
  */
 export const SEQUENTIAL_COLORS = {
-  mrt: ['#ffffcc', '#a1dab4', '#41b6c4', '#2c7fb8', '#253494'],
-  school: ['#ffffcc', '#c2e699', '#78c679', '#31a354', '#006837'],
-  amenity: ['#ffffcc', '#fed976', '#feb24c', '#fd8d3c', '#f03b20'],
-  policy: ['#31a354', '#addd8e', '#ffffcc', '#fee391', '#fec44f', '#fc4e2a'],
+  mrt: ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"],
+  school: ["#ffffcc", "#c2e699", "#78c679", "#31a354", "#006837"],
+  amenity: ["#ffffcc", "#fed976", "#feb24c", "#fd8d3c", "#f03b20"],
+  policy: ["#31a354", "#addd8e", "#ffffcc", "#fee391", "#fec44f", "#fc4e2a"],
 };
 
 /**
  * Categorical color scale (for LISA clusters)
  */
 export const LISA_CLUSTER_COLORS: Record<LISAClusterType, string> = {
-  MATURE_HOTSPOT: '#a50026', // Dark Red
-  EMERGING_HOTSPOT: '#f46d43', // Orange
-  VALUE_OPPORTUNITY: '#a6d96a', // Light Green
-  STABLE: '#d3d3d3', // Gray
-  DECLINING: '#74add1', // Light Blue
-  TRANSITIONAL: '#ffffbf', // Yellow
+  MATURE_HOTSPOT: "#a50026", // Dark Red
+  EMERGING_HOTSPOT: "#f46d43", // Orange
+  VALUE_OPPORTUNITY: "#a6d96a", // Light Green
+  STABLE: "#d3d3d3", // Gray
+  DECLINING: "#74add1", // Light Blue
+  TRANSITIONAL: "#ffffbf", // Yellow
 };
 
 // ==================== Color Scale Functions ====================
@@ -72,10 +72,10 @@ export function divergingScale(
   value: number,
   min: number,
   max: number,
-  colors: string[] = DIVERGING_COLORS.hotspot
+  colors: string[] = DIVERGING_COLORS.hotspot,
 ): string {
   if (value == null || isNaN(value)) {
-    return '#cccccc'; // Gray for missing values
+    return "#cccccc"; // Gray for missing values
   }
 
   const normalized = (value - min) / (max - min);
@@ -98,15 +98,19 @@ export function sequentialScale(
   value: number,
   min: number,
   max: number,
-  colorStart: string = '#ffffcc',
-  colorEnd: string = '#006837'
+  colorStart: string = "#ffffcc",
+  colorEnd: string = "#006837",
 ): string {
   if (value == null || isNaN(value)) {
-    return '#cccccc';
+    return "#cccccc";
   }
 
   const ratio = (value - min) / (max - min);
-  return interpolateColor(colorStart, colorEnd, Math.max(0, Math.min(1, ratio)));
+  return interpolateColor(
+    colorStart,
+    colorEnd,
+    Math.max(0, Math.min(1, ratio)),
+  );
 }
 
 /**
@@ -118,9 +122,9 @@ export function sequentialScale(
  */
 export function categoricalScale(
   category: string,
-  colorMap: Record<string, string>
+  colorMap: Record<string, string>,
 ): string {
-  return colorMap[category] || '#cccccc';
+  return colorMap[category] || "#cccccc";
 }
 
 /**
@@ -131,12 +135,16 @@ export function categoricalScale(
  * @param ratio - Interpolation ratio (0-1)
  * @returns Hex color string
  */
-export function interpolateColor(color1: string, color2: string, ratio: number): string {
+export function interpolateColor(
+  color1: string,
+  color2: string,
+  ratio: number,
+): string {
   const c1 = hexToRgb(color1);
   const c2 = hexToRgb(color2);
 
   if (!c1 || !c2) {
-    return '#cccccc';
+    return "#cccccc";
   }
 
   const r = Math.round(c1.r + (c2.r - c1.r) * ratio);
@@ -150,25 +158,27 @@ export function interpolateColor(color1: string, color2: string, ratio: number):
  * Get hotspot classification color
  */
 export function getHotspotColor(zScore: number | null): string {
-  if (zScore == null) return '#cccccc';
+  if (zScore == null) return "#cccccc";
 
   const abs = Math.abs(zScore);
   if (abs >= 2.58) {
-    return zScore > 0 ? '#a50026' : '#313695'; // 99% confidence
+    return zScore > 0 ? "#a50026" : "#313695"; // 99% confidence
   } else if (abs >= 1.96) {
-    return zScore > 0 ? '#d73027' : '#4575b4'; // 95% confidence
+    return zScore > 0 ? "#d73027" : "#4575b4"; // 95% confidence
   }
-  return '#fee090'; // Not significant
+  return "#fee090"; // Not significant
 }
 
 /**
  * Get forecast signal color
  */
-export function getForecastSignalColor(signal: 'BUY' | 'HOLD' | 'SELL'): string {
+export function getForecastSignalColor(
+  signal: "BUY" | "HOLD" | "SELL",
+): string {
   const colors = {
-    BUY: '#1a9850',
-    HOLD: '#ffffbf',
-    SELL: '#d73027',
+    BUY: "#1a9850",
+    HOLD: "#ffffbf",
+    SELL: "#d73027",
   };
   return colors[signal];
 }
@@ -176,11 +186,13 @@ export function getForecastSignalColor(signal: 'BUY' | 'HOLD' | 'SELL'): string 
 /**
  * Get policy risk color
  */
-export function getPolicyRiskColor(riskLevel: 'LOW' | 'MODERATE' | 'HIGH'): string {
+export function getPolicyRiskColor(
+  riskLevel: "LOW" | "MODERATE" | "HIGH",
+): string {
   const colors = {
-    LOW: '#31a354',
-    MODERATE: '#ffffcc',
-    HIGH: '#fc4e2a',
+    LOW: "#31a354",
+    MODERATE: "#ffffcc",
+    HIGH: "#fc4e2a",
   };
   return colors[riskLevel];
 }
@@ -205,10 +217,15 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
  * Convert RGB to hex color
  */
 function rgbToHex(r: number, g: number, b: number): string {
-  return '#' + [r, g, b].map((x) => {
-    const hex = x.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  }).join('');
+  return (
+    "#" +
+    [r, g, b]
+      .map((x) => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      })
+      .join("")
+  );
 }
 
 /**
@@ -216,12 +233,18 @@ function rgbToHex(r: number, g: number, b: number): string {
  */
 export function getColorScale(
   scaleType: ColorScaleType,
-  scaleName: string = 'default'
+  scaleName: string = "default",
 ): string[] {
-  if (scaleType === 'diverging') {
-    return DIVERGING_COLORS[scaleName as keyof typeof DIVERGING_COLORS] || DIVERGING_COLORS.hotspot;
-  } else if (scaleType === 'sequential') {
-    return SEQUENTIAL_COLORS[scaleName as keyof typeof SEQUENTIAL_COLORS] || SEQUENTIAL_COLORS.mrt;
+  if (scaleType === "diverging") {
+    return (
+      DIVERGING_COLORS[scaleName as keyof typeof DIVERGING_COLORS] ||
+      DIVERGING_COLORS.hotspot
+    );
+  } else if (scaleType === "sequential") {
+    return (
+      SEQUENTIAL_COLORS[scaleName as keyof typeof SEQUENTIAL_COLORS] ||
+      SEQUENTIAL_COLORS.mrt
+    );
   }
   return [];
 }

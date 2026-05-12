@@ -1,39 +1,42 @@
-import React from 'react';
+import React from "react";
 import type {
   LeaderboardControlsState,
   LeaderboardPropertyType,
   LeaderboardTimeBasis,
-} from '@/types/leaderboard';
-import type { Region } from '@/types/segments';
+} from "@/types/leaderboard";
+import type { Region } from "@/types/segments";
 
 interface LeaderboardControlsProps {
   controls: LeaderboardControlsState;
   activeFilterCount: number;
   onChange: <K extends keyof LeaderboardControlsState>(
     key: K,
-    value: LeaderboardControlsState[K]
+    value: LeaderboardControlsState[K],
   ) => void;
   onReset: () => void;
   compact?: boolean;
 }
 
 const REGION_OPTIONS: { value: Region; label: string }[] = [
-  { value: 'CCR', label: 'Core Central Region' },
-  { value: 'RCR', label: 'Rest of Central Region' },
-  { value: 'OCR', label: 'Outside Central Region' },
+  { value: "CCR", label: "Core Central Region" },
+  { value: "RCR", label: "Rest of Central Region" },
+  { value: "OCR", label: "Outside Central Region" },
 ];
 
-const PROPERTY_TYPE_OPTIONS: { value: LeaderboardPropertyType; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'hdb', label: 'HDB' },
-  { value: 'condo', label: 'Condo' },
-  { value: 'ec', label: 'EC' },
+const PROPERTY_TYPE_OPTIONS: {
+  value: LeaderboardPropertyType;
+  label: string;
+}[] = [
+  { value: "all", label: "All" },
+  { value: "hdb", label: "HDB" },
+  { value: "condo", label: "Condo" },
+  { value: "ec", label: "EC" },
 ];
 
 const TIME_BASIS_OPTIONS: { value: LeaderboardTimeBasis; label: string }[] = [
-  { value: 'recent', label: 'Recent' },
-  { value: 'whole', label: 'All-time' },
-  { value: 'year_2025', label: '2025' },
+  { value: "recent", label: "Recent" },
+  { value: "whole", label: "All-time" },
+  { value: "year_2025", label: "2025" },
 ];
 
 function formatCurrency(value: number): string {
@@ -50,21 +53,25 @@ export default function LeaderboardControls({
   onReset,
   compact = false,
 }: LeaderboardControlsProps) {
-  const sectionGap = compact ? 'space-y-4' : 'space-y-6';
+  const sectionGap = compact ? "space-y-4" : "space-y-6";
 
   return (
-    <div className={`rounded-2xl border border-border bg-card p-4 shadow-sm ${sectionGap}`}>
+    <div
+      className={`rounded-2xl border border-border bg-card p-4 shadow-sm ${sectionGap}`}
+    >
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-foreground">Filters</h2>
-          <p className="text-xs text-muted-foreground">Every control updates the map and rankings.</p>
+          <p className="text-xs text-muted-foreground">
+            Every control updates the map and rankings.
+          </p>
         </div>
         <button
           type="button"
           onClick={onReset}
           className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          Reset {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
+          Reset {activeFilterCount > 0 ? `(${activeFilterCount})` : ""}
         </button>
       </div>
 
@@ -76,7 +83,9 @@ export default function LeaderboardControls({
               <label
                 key={option.value}
                 className={`flex items-center gap-3 rounded-xl border px-3 py-2 text-sm transition-colors ${
-                  checked ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+                  checked
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/40"
                 }`}
               >
                 <input
@@ -85,8 +94,10 @@ export default function LeaderboardControls({
                   onChange={(event) => {
                     const next = event.target.checked
                       ? [...controls.region, option.value]
-                      : controls.region.filter((region) => region !== option.value);
-                    onChange('region', next);
+                      : controls.region.filter(
+                          (region) => region !== option.value,
+                        );
+                    onChange("region", next);
                   }}
                 />
                 <span>{option.label}</span>
@@ -100,7 +111,7 @@ export default function LeaderboardControls({
         <SegmentedButtons
           options={PROPERTY_TYPE_OPTIONS}
           value={controls.propertyType}
-          onChange={(value) => onChange('propertyType', value)}
+          onChange={(value) => onChange("propertyType", value)}
         />
       </FilterSection>
 
@@ -108,7 +119,7 @@ export default function LeaderboardControls({
         <SegmentedButtons
           options={TIME_BASIS_OPTIONS}
           value={controls.timeBasis}
-          onChange={(value) => onChange('timeBasis', value)}
+          onChange={(value) => onChange("timeBasis", value)}
         />
       </FilterSection>
 
@@ -123,7 +134,7 @@ export default function LeaderboardControls({
             displayValue={formatCurrency(controls.priceRange[0])}
             onChange={(value) => {
               if (value < controls.priceRange[1]) {
-                onChange('priceRange', [value, controls.priceRange[1]]);
+                onChange("priceRange", [value, controls.priceRange[1]]);
               }
             }}
           />
@@ -136,14 +147,20 @@ export default function LeaderboardControls({
             displayValue={formatCurrency(controls.priceRange[1])}
             onChange={(value) => {
               if (value > controls.priceRange[0]) {
-                onChange('priceRange', [controls.priceRange[0], value]);
+                onChange("priceRange", [controls.priceRange[0], value]);
               }
             }}
           />
           <div className="rounded-xl bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-            Showing areas between{' '}
-            <span className="font-medium text-foreground">{formatCurrency(controls.priceRange[0])}</span>{' '}
-            and <span className="font-medium text-foreground">{formatCurrency(controls.priceRange[1])}</span>.
+            Showing areas between{" "}
+            <span className="font-medium text-foreground">
+              {formatCurrency(controls.priceRange[0])}
+            </span>{" "}
+            and{" "}
+            <span className="font-medium text-foreground">
+              {formatCurrency(controls.priceRange[1])}
+            </span>
+            .
           </div>
         </div>
       </FilterSection>
@@ -151,7 +168,13 @@ export default function LeaderboardControls({
   );
 }
 
-function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
+function FilterSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <section className="space-y-3">
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
@@ -178,8 +201,8 @@ function SegmentedButtons<T extends string>({
           onClick={() => onChange(option.value)}
           className={`rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${
             value === option.value
-              ? 'border-primary bg-primary text-primary-foreground'
-              : 'border-border bg-background hover:border-primary/40'
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-border bg-background hover:border-primary/40"
           }`}
         >
           {option.label}

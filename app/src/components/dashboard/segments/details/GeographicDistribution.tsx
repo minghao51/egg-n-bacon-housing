@@ -1,37 +1,47 @@
 // app/src/components/dashboard/segments/details/GeographicDistribution.tsx
-import type { Segment, PlanningArea } from '@/types/segments';
+import type { Segment, PlanningArea } from "@/types/segments";
 
 interface GeographicDistributionProps {
   segment: Segment;
   planningAreas: Record<string, PlanningArea>;
 }
 
-export function GeographicDistribution({ segment, planningAreas }: GeographicDistributionProps) {
+export function GeographicDistribution({
+  segment,
+  planningAreas,
+}: GeographicDistributionProps) {
   const segmentAreas = segment.planningAreas
     .map((name) => planningAreas[name])
     .filter(Boolean);
 
-  const regionCounts = segmentAreas.reduce((acc, area) => {
-    acc[area.region] = (acc[area.region] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const regionCounts = segmentAreas.reduce(
+    (acc, area) => {
+      acc[area.region] = (acc[area.region] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-foreground">Geographic Distribution</h3>
+      <h3 className="text-lg font-semibold text-foreground">
+        Geographic Distribution
+      </h3>
 
       {/* Region Breakdown */}
       <div className="grid grid-cols-3 gap-3">
-        {(['CCR', 'RCR', 'OCR'] as const).map((region) => (
+        {(["CCR", "RCR", "OCR"] as const).map((region) => (
           <div
             key={region}
             className={`p-3 rounded-lg border text-center ${
               segment.regions.includes(region)
-                ? 'border-primary bg-primary/5'
-                : 'border-border opacity-50'
+                ? "border-primary bg-primary/5"
+                : "border-border opacity-50"
             }`}
           >
-            <div className="text-2xl font-bold text-foreground">{regionCounts[region] || 0}</div>
+            <div className="text-2xl font-bold text-foreground">
+              {regionCounts[region] || 0}
+            </div>
             <div className="text-xs text-muted-foreground">{region} Areas</div>
           </div>
         ))}

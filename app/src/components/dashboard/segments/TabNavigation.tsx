@@ -1,7 +1,7 @@
 // app/src/components/dashboard/segments/TabNavigation.tsx
-import clsx from 'clsx';
+import clsx from "clsx";
 
-type TabId = 'discover' | 'investigate' | 'compare';
+type TabId = "discover" | "investigate" | "compare";
 
 interface TabNavigationProps {
   activeTab: TabId;
@@ -10,12 +10,16 @@ interface TabNavigationProps {
 }
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
-  { id: 'discover', label: 'Discover', icon: '🔍' },
-  { id: 'investigate', label: 'Investigate', icon: '🧭' },
-  { id: 'compare', label: 'Compare', icon: '⚖️' },
+  { id: "discover", label: "Discover", icon: "🔍" },
+  { id: "investigate", label: "Investigate", icon: "🧭" },
+  { id: "compare", label: "Compare", icon: "⚖️" },
 ];
 
-export default function TabNavigation({ activeTab, onTabChange, disabledTabs = [] }: TabNavigationProps) {
+export default function TabNavigation({
+  activeTab,
+  onTabChange,
+  disabledTabs = [],
+}: TabNavigationProps) {
   return (
     <div className="flex space-x-1 bg-muted p-1 rounded-lg">
       {TABS.map((tab) => {
@@ -26,10 +30,12 @@ export default function TabNavigation({ activeTab, onTabChange, disabledTabs = [
             onClick={() => !isDisabled && onTabChange(tab.id)}
             disabled={isDisabled}
             className={clsx(
-              'flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2',
-              activeTab === tab.id && 'bg-background text-foreground shadow-sm',
-              activeTab !== tab.id && !isDisabled && 'text-muted-foreground hover:text-foreground',
-              isDisabled && 'opacity-50 cursor-not-allowed'
+              "flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2",
+              activeTab === tab.id && "bg-background text-foreground shadow-sm",
+              activeTab !== tab.id &&
+                !isDisabled &&
+                "text-muted-foreground hover:text-foreground",
+              isDisabled && "opacity-50 cursor-not-allowed",
             )}
           >
             <span>{tab.icon}</span>

@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/details/RiskFactors.tsx
-import type { Segment } from '@/types/segments';
+import type { Segment } from "@/types/segments";
 
 interface RiskFactorsProps {
   segment: Segment;
@@ -12,7 +12,9 @@ export function RiskFactors({ segment }: RiskFactorsProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-foreground">Risk & Opportunities</h3>
+      <h3 className="text-lg font-semibold text-foreground">
+        Risk & Opportunities
+      </h3>
 
       {/* Risk Factors */}
       {segment.riskFactors.length > 0 && (
@@ -22,7 +24,10 @@ export function RiskFactors({ segment }: RiskFactorsProps) {
           </h4>
           <ul className="space-y-1">
             {segment.riskFactors.map((risk, index) => (
-              <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+              <li
+                key={index}
+                className="text-sm text-muted-foreground flex items-start gap-2"
+              >
                 <span className="text-red-500 mt-0.5">•</span>
                 <span>{risk}</span>
               </li>
@@ -39,7 +44,10 @@ export function RiskFactors({ segment }: RiskFactorsProps) {
           </h4>
           <ul className="space-y-1">
             {segment.opportunities.map((opportunity, index) => (
-              <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+              <li
+                key={index}
+                className="text-sm text-muted-foreground flex items-start gap-2"
+              >
                 <span className="text-green-500 mt-0.5">•</span>
                 <span>{opportunity}</span>
               </li>

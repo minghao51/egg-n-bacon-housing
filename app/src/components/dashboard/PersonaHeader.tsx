@@ -1,4 +1,4 @@
-import type { Persona } from './PersonaSelector';
+import type { Persona } from "./PersonaSelector";
 
 interface Segment {
   id: string;
@@ -17,15 +17,18 @@ interface PersonaHeaderProps {
 }
 
 const PERSONA_LABELS: Record<Persona, string> = {
-  all: 'All Personas',
-  investor: 'Investors',
-  'first-time-buyer': 'First-Time Buyers',
-  upgrader: 'Upgraders',
+  all: "All Personas",
+  investor: "Investors",
+  "first-time-buyer": "First-Time Buyers",
+  upgrader: "Upgraders",
 };
 
-export default function PersonaHeader({ persona, segments }: PersonaHeaderProps) {
+export default function PersonaHeader({
+  persona,
+  segments,
+}: PersonaHeaderProps) {
   // Map persona to the key used in segments data
-  const key = persona === 'first-time-buyer' ? 'firstTimeBuyer' : persona;
+  const key = persona === "first-time-buyer" ? "firstTimeBuyer" : persona;
 
   // Get segments with relevant implications for this persona
   const relevantSegments = segments

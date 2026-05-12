@@ -5,9 +5,9 @@
  * Features hierarchical checkboxes (category > sub-layers).
  */
 
-import React, { useState } from 'react';
-import { LAYER_CATEGORIES, LAYER_METADATA } from '../../../types/analytics';
-import type { LayerId } from '../../../types/analytics';
+import React, { useState } from "react";
+import { LAYER_CATEGORIES, LAYER_METADATA } from "../../../types/analytics";
+import type { LayerId } from "../../../types/analytics";
 
 interface LayerControlProps {
   activeLayers: Record<string, boolean>;
@@ -62,7 +62,8 @@ function CategorySection({
             onChange={toggleCategory}
             ref={(input) => {
               if (input) {
-                input.indeterminate = activeCount > 0 && activeCount < layers.length;
+                input.indeterminate =
+                  activeCount > 0 && activeCount < layers.length;
               }
             }}
           />
@@ -75,7 +76,7 @@ function CategorySection({
           onClick={() => setExpanded(!expanded)}
           className="text-xs text-blue-600 hover:text-blue-800"
         >
-          {expanded ? '▼' : '▶'}
+          {expanded ? "▼" : "▶"}
         </button>
       </div>
 
@@ -87,7 +88,10 @@ function CategorySection({
             const isLoading = loadingLayers.has(layerId);
 
             return (
-              <label key={layerId} className="flex items-center space-x-2 cursor-pointer text-sm">
+              <label
+                key={layerId}
+                className="flex items-center space-x-2 cursor-pointer text-sm"
+              >
                 <input
                   type="checkbox"
                   className="form-checkbox h-3 w-3 text-blue-600 rounded"
@@ -95,7 +99,13 @@ function CategorySection({
                   onChange={() => onToggleLayer(layerId)}
                   disabled={activeCount === 0 && !activeLayers[layerId]}
                 />
-                <span className={activeCount === 0 && !activeLayers[layerId] ? 'text-gray-400' : ''}>
+                <span
+                  className={
+                    activeCount === 0 && !activeLayers[layerId]
+                      ? "text-gray-400"
+                      : ""
+                  }
+                >
                   {metadata?.name || layerId}
                 </span>
                 {isLoading && (

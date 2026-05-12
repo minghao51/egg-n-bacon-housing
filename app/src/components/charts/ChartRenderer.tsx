@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 import {
   extractTables,
   isTimeSeriesTable,
   isComparisonTable,
   tableToChartData,
   type TableData,
-} from '@/utils/data-parser';
-import TimeSeriesChart from './TimeSeriesChart';
-import ComparisonChart from './ComparisonChart';
-import StatisticalPlot from './StatisticalPlot';
-import InteractiveTable from './InteractiveTable';
+} from "@/utils/data-parser";
+import TimeSeriesChart from "./TimeSeriesChart";
+import ComparisonChart from "./ComparisonChart";
+import StatisticalPlot from "./StatisticalPlot";
+import InteractiveTable from "./InteractiveTable";
 
 interface ChartRendererProps {
   markdown: string;
@@ -40,10 +40,10 @@ export default function ChartRenderer({ markdown }: ChartRendererProps) {
           >
             <h4 className="text-lg font-semibold mb-4 text-foreground">
               {isTimeSeries
-                ? 'Time Series Visualization'
+                ? "Time Series Visualization"
                 : isComparison
-                ? 'Comparison Chart'
-                : 'Data Visualization'}
+                  ? "Comparison Chart"
+                  : "Data Visualization"}
             </h4>
 
             {/* Render multiple chart types for comprehensive analysis */}

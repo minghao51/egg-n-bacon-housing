@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   LineChart,
   Line,
@@ -7,9 +7,9 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from 'recharts';
-import type { ChartData } from '@/utils/data-parser';
-import ClientChart from './ClientChart';
+} from "recharts";
+import type { ChartData } from "@/utils/data-parser";
+import ClientChart from "./ClientChart";
 
 interface TimeSeriesChartProps {
   data: ChartData;
@@ -32,11 +32,11 @@ export default function TimeSeriesChart({
 
   // Generate colors for each dataset
   const colors = [
-    '#3b82f6', // blue
-    '#10b981', // green
-    '#f59e0b', // amber
-    '#ef4444', // red
-    '#8b5cf6', // violet
+    "#3b82f6", // blue
+    "#10b981", // green
+    "#f59e0b", // amber
+    "#ef4444", // red
+    "#8b5cf6", // violet
   ];
 
   return (
@@ -47,19 +47,19 @@ export default function TimeSeriesChart({
           <XAxis
             dataKey="name"
             className="text-sm"
-            tick={{ fill: 'hsl(var(--foreground))' }}
+            tick={{ fill: "hsl(var(--foreground))" }}
           />
           <YAxis
             className="text-sm"
-            tick={{ fill: 'hsl(var(--foreground))' }}
+            tick={{ fill: "hsl(var(--foreground))" }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '0.5rem',
+              backgroundColor: "hsl(var(--card))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: "0.5rem",
             }}
-            itemStyle={{ color: 'hsl(var(--foreground))' }}
+            itemStyle={{ color: "hsl(var(--foreground))" }}
           />
           <Legend />
           {data.datasets.map((dataset, index) => (

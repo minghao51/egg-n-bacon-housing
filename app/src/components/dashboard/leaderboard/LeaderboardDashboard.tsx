@@ -1,86 +1,116 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Loader2, HelpCircle, Search, SlidersHorizontal, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Loader2,
+  HelpCircle,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import type {
   LeaderboardControlsState,
   LeaderboardEntry,
   LeaderboardMetric,
-} from '@/types/leaderboard';
-import type { Region } from '@/types/segments';
-import { useLeaderboardData } from '@/hooks/useLeaderboardData';
-import LeaderboardControls from './LeaderboardControls';
-import LeaderboardMap from './LeaderboardMap';
-import LeaderboardTable from './LeaderboardTable';
-import MetricHelpModal, { METRICS } from './MetricHelpModal';
+} from "@/types/leaderboard";
+import type { Region } from "@/types/segments";
+import { useLeaderboardData } from "@/hooks/useLeaderboardData";
+import LeaderboardControls from "./LeaderboardControls";
+import LeaderboardMap from "./LeaderboardMap";
+import LeaderboardTable from "./LeaderboardTable";
+import MetricHelpModal, { METRICS } from "./MetricHelpModal";
 
 interface LeaderboardDashboardProps {
   initialData?: LeaderboardEntry[];
 }
 
 const DEFAULT_CONTROLS: LeaderboardControlsState = {
-  region: ['CCR', 'RCR', 'OCR'],
-  propertyType: 'all',
-  timeBasis: 'recent',
+  region: ["CCR", "RCR", "OCR"],
+  propertyType: "all",
+  timeBasis: "recent",
   priceRange: [300000, 2500000],
-  search: '',
-  rankMetric: 'yoy_growth_pct',
+  search: "",
+  rankMetric: "yoy_growth_pct",
 };
 
 const REGION_LABELS: Record<Region, string> = {
-  CCR: 'CCR',
-  RCR: 'RCR',
-  OCR: 'OCR',
+  CCR: "CCR",
+  RCR: "RCR",
+  OCR: "OCR",
 };
 
-const TIME_BASIS_LABELS: Record<LeaderboardControlsState['timeBasis'], string> = {
-  recent: 'Recent',
-  whole: 'All-time',
-  year_2025: '2025',
-};
+const TIME_BASIS_LABELS: Record<LeaderboardControlsState["timeBasis"], string> =
+  {
+    recent: "Recent",
+    whole: "All-time",
+    year_2025: "2025",
+  };
 
 function formatCurrency(value: number): string {
   return `$${value.toLocaleString()}`;
 }
 
-export default function LeaderboardDashboard({ initialData }: LeaderboardDashboardProps) {
-  const [controls, setControls] = useState<LeaderboardControlsState>(DEFAULT_CONTROLS);
+export default function LeaderboardDashboard({
+  initialData,
+}: LeaderboardDashboardProps) {
+  const [controls, setControls] =
+    useState<LeaderboardControlsState>(DEFAULT_CONTROLS);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [highlightedArea, setHighlightedArea] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
-  const [mobileView, setMobileView] = useState<'map' | 'rankings'>('map');
+  const [mobileView, setMobileView] = useState<"map" | "rankings">("map");
   const [isInteractiveReady, setIsInteractiveReady] = useState(false);
 
-  const { data, loading, error, reload } = useLeaderboardData(controls, initialData);
-  const metricMeta = METRICS.find((metric) => metric.key === controls.rankMetric) || METRICS[0];
+  const { data, loading, error, reload } = useLeaderboardData(
+    controls,
+    initialData,
+  );
+  const metricMeta =
+    METRICS.find((metric) => metric.key === controls.rankMetric) || METRICS[0];
 
   useEffect(() => {
     setIsInteractiveReady(true);
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
     const params = new URLSearchParams(window.location.search);
-    const areaParam = params.get('area');
-    const metricParam = params.get('metric');
-    const propertyTypeParam = params.get('propertyType');
-    const timeBasisParam = params.get('timeBasis');
+    const areaParam = params.get("area");
+    const metricParam = params.get("metric");
+    const propertyTypeParam = params.get("propertyType");
+    const timeBasisParam = params.get("timeBasis");
 
     if (areaParam) {
       setHighlightedArea(areaParam.toUpperCase());
     }
 
     if (metricParam && METRICS.some((metric) => metric.key === metricParam)) {
-      setControls((current) => ({ ...current, rankMetric: metricParam as LeaderboardMetric }));
+      setControls((current) => ({
+        ...current,
+        rankMetric: metricParam as LeaderboardMetric,
+      }));
     }
 
-    if (propertyTypeParam && ['all', 'hdb', 'ec', 'condo'].includes(propertyTypeParam)) {
-      setControls((current) => ({ ...current, propertyType: propertyTypeParam as LeaderboardControlsState['propertyType'] }));
+    if (
+      propertyTypeParam &&
+      ["all", "hdb", "ec", "condo"].includes(propertyTypeParam)
+    ) {
+      setControls((current) => ({
+        ...current,
+        propertyType:
+          propertyTypeParam as LeaderboardControlsState["propertyType"],
+      }));
     }
 
-    if (timeBasisParam && ['recent', 'whole', 'year_2025'].includes(timeBasisParam)) {
-      setControls((current) => ({ ...current, timeBasis: timeBasisParam as LeaderboardControlsState['timeBasis'] }));
+    if (
+      timeBasisParam &&
+      ["recent", "whole", "year_2025"].includes(timeBasisParam)
+    ) {
+      setControls((current) => ({
+        ...current,
+        timeBasis: timeBasisParam as LeaderboardControlsState["timeBasis"],
+      }));
     }
   }, []);
 
@@ -103,7 +133,9 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
     const chips: string[] = [];
 
     if (controls.region.length !== DEFAULT_CONTROLS.region.length) {
-      chips.push(`Region: ${controls.region.map((region) => REGION_LABELS[region]).join(', ') || 'None'}`);
+      chips.push(
+        `Region: ${controls.region.map((region) => REGION_LABELS[region]).join(", ") || "None"}`,
+      );
     }
 
     if (controls.propertyType !== DEFAULT_CONTROLS.propertyType) {
@@ -118,7 +150,9 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
       controls.priceRange[0] !== DEFAULT_CONTROLS.priceRange[0] ||
       controls.priceRange[1] !== DEFAULT_CONTROLS.priceRange[1]
     ) {
-      chips.push(`Price: ${formatCurrency(controls.priceRange[0])} - ${formatCurrency(controls.priceRange[1])}`);
+      chips.push(
+        `Price: ${formatCurrency(controls.priceRange[0])} - ${formatCurrency(controls.priceRange[1])}`,
+      );
     }
 
     if (controls.search.trim()) {
@@ -129,27 +163,32 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
   }, [controls]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
     const url = new URL(window.location.href);
-    url.searchParams.set('metric', controls.rankMetric);
-    url.searchParams.set('propertyType', controls.propertyType);
-    url.searchParams.set('timeBasis', controls.timeBasis);
+    url.searchParams.set("metric", controls.rankMetric);
+    url.searchParams.set("propertyType", controls.propertyType);
+    url.searchParams.set("timeBasis", controls.timeBasis);
 
     if (highlightedArea) {
-      url.searchParams.set('area', highlightedArea);
+      url.searchParams.set("area", highlightedArea);
     } else {
-      url.searchParams.delete('area');
+      url.searchParams.delete("area");
     }
 
-    window.history.replaceState({}, '', url.toString());
-  }, [controls.propertyType, controls.rankMetric, controls.timeBasis, highlightedArea]);
+    window.history.replaceState({}, "", url.toString());
+  }, [
+    controls.propertyType,
+    controls.rankMetric,
+    controls.timeBasis,
+    highlightedArea,
+  ]);
 
   const updateControl = <K extends keyof LeaderboardControlsState>(
     key: K,
-    value: LeaderboardControlsState[K]
+    value: LeaderboardControlsState[K],
   ) => {
     setControls((current) => ({ ...current, [key]: value }));
   };
@@ -161,30 +200,33 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
 
   const handleAreaClick = (area: string) => {
     setHighlightedArea(area);
-    const rowElement = document.querySelector(`[data-area="${area.toUpperCase()}"]`);
+    const rowElement = document.querySelector(
+      `[data-area="${area.toUpperCase()}"]`,
+    );
     if (rowElement) {
-      rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
 
   const selectedAreaRow = useMemo(
     () => data.find((row) => row.areaKey === highlightedArea) ?? null,
-    [data, highlightedArea]
+    [data, highlightedArea],
   );
   const quickSummary = useMemo(() => {
     const topFive = data.slice(0, 5);
     const topLabel =
-      controls.rankMetric === 'rental_yield_mean' || controls.rankMetric === 'rental_yield_median'
-        ? 'Top 5 by yield'
-        : controls.rankMetric === 'yoy_growth_pct'
-          ? 'Top movers by recent growth'
-          : controls.rankMetric === 'affordability_ratio'
-            ? 'Best value under current budget'
-            : 'Top 5 under current metric';
+      controls.rankMetric === "rental_yield_mean" ||
+      controls.rankMetric === "rental_yield_median"
+        ? "Top 5 by yield"
+        : controls.rankMetric === "yoy_growth_pct"
+          ? "Top movers by recent growth"
+          : controls.rankMetric === "affordability_ratio"
+            ? "Best value under current budget"
+            : "Top 5 under current metric";
 
     return {
       label: topLabel,
-      areas: topFive.map((row) => row.planningArea).join(', '),
+      areas: topFive.map((row) => row.planningArea).join(", "),
     };
   }, [controls.rankMetric, data]);
 
@@ -218,23 +260,37 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
   }
 
   return (
-    <div className="min-h-screen bg-background" data-interactive-ready={isInteractiveReady ? 'true' : 'false'}>
+    <div
+      className="min-h-screen bg-background"
+      data-interactive-ready={isInteractiveReady ? "true" : "false"}
+    >
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto space-y-4 px-4 py-4">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight">Compare Areas</h1>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Compare Areas
+              </h1>
               <p className="text-sm text-muted-foreground">
-                Use this page to rank planning areas on one metric, shortlist the strongest options, and hand them into the map or segment flow.
+                Use this page to rank planning areas on one metric, shortlist
+                the strongest options, and hand them into the map or segment
+                flow.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm shadow-sm">
-                <span className="font-medium text-muted-foreground">Rank by</span>
+                <span className="font-medium text-muted-foreground">
+                  Rank by
+                </span>
                 <select
                   aria-label="Rank by"
                   value={controls.rankMetric}
-                  onChange={(event) => updateControl('rankMetric', event.target.value as LeaderboardMetric)}
+                  onChange={(event) =>
+                    updateControl(
+                      "rankMetric",
+                      event.target.value as LeaderboardMetric,
+                    )
+                  }
                   className="bg-transparent font-medium text-foreground focus:outline-none"
                 >
                   {METRICS.map((metric) => (
@@ -258,10 +314,15 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
           <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-2">
               <div className="text-sm font-medium text-foreground">
-                Showing {data.length} areas ranked by {metricMeta.label.toLowerCase()} using {TIME_BASIS_LABELS[controls.timeBasis].toLowerCase()} data.
+                Showing {data.length} areas ranked by{" "}
+                {metricMeta.label.toLowerCase()} using{" "}
+                {TIME_BASIS_LABELS[controls.timeBasis].toLowerCase()} data.
               </div>
               <div className="text-sm text-muted-foreground">
-                {quickSummary.label}: <span className="font-medium text-foreground">{quickSummary.areas || 'No areas available'}</span>
+                {quickSummary.label}:{" "}
+                <span className="font-medium text-foreground">
+                  {quickSummary.areas || "No areas available"}
+                </span>
               </div>
               {activeChips.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -317,9 +378,13 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
               <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold text-foreground">Selected Area</h2>
+                    <h2 className="text-lg font-semibold text-foreground">
+                      Selected Area
+                    </h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {selectedAreaRow.planningArea} is currently highlighted at rank #{selectedAreaRow.rank} for {metricMeta.label.toLowerCase()}.
+                      {selectedAreaRow.planningArea} is currently highlighted at
+                      rank #{selectedAreaRow.rank} for{" "}
+                      {metricMeta.label.toLowerCase()}.
                     </p>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
@@ -344,18 +409,22 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
               <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-card p-2 shadow-sm">
                 <button
                   type="button"
-                  onClick={() => setMobileView('map')}
+                  onClick={() => setMobileView("map")}
                   className={`rounded-xl px-3 py-2 text-sm font-medium ${
-                    mobileView === 'map' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                    mobileView === "map"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground"
                   }`}
                 >
                   Map
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMobileView('rankings')}
+                  onClick={() => setMobileView("rankings")}
                   className={`rounded-xl px-3 py-2 text-sm font-medium ${
-                    mobileView === 'rankings' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                    mobileView === "rankings"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground"
                   }`}
                 >
                   Rankings
@@ -363,12 +432,16 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
               </div>
             </section>
 
-            <section className={`${mobileView === 'rankings' ? 'hidden lg:block' : 'block'}`}>
+            <section
+              className={`${mobileView === "rankings" ? "hidden lg:block" : "block"}`}
+            >
               <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                 <div className="border-b border-border px-5 py-4">
                   <h2 className="text-lg font-semibold">Geographic View</h2>
                   <p className="text-sm text-muted-foreground">
-                    Color-coded by {metricMeta.label.toLowerCase()} using {TIME_BASIS_LABELS[controls.timeBasis].toLowerCase()} values.
+                    Color-coded by {metricMeta.label.toLowerCase()} using{" "}
+                    {TIME_BASIS_LABELS[controls.timeBasis].toLowerCase()}{" "}
+                    values.
                   </p>
                 </div>
                 <div className="h-[420px] md:h-[520px]">
@@ -384,14 +457,19 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
               </div>
             </section>
 
-            <section className={`${mobileView === 'map' ? 'hidden lg:block' : 'block'}`}>
+            <section
+              className={`${mobileView === "map" ? "hidden lg:block" : "block"}`}
+            >
               <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                 <div className="border-b border-border px-5 py-4">
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
-                      <h2 className="text-lg font-semibold">Detailed Rankings</h2>
+                      <h2 className="text-lg font-semibold">
+                        Detailed Rankings
+                      </h2>
                       <p className="text-sm text-muted-foreground">
-                        Rows stay sorted by the selected ranking metric. Hover to sync with the map.
+                        Rows stay sorted by the selected ranking metric. Hover
+                        to sync with the map.
                       </p>
                     </div>
                     <label className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm">
@@ -400,7 +478,9 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
                         type="text"
                         aria-label="Search planning areas"
                         value={controls.search}
-                        onChange={(event) => updateControl('search', event.target.value)}
+                        onChange={(event) =>
+                          updateControl("search", event.target.value)
+                        }
                         placeholder="Search planning areas..."
                         className="w-full bg-transparent outline-none md:w-64"
                       />
@@ -428,7 +508,9 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold">Leaderboard Filters</h2>
-                <p className="text-sm text-muted-foreground">Adjust filters, then close to return to the page.</p>
+                <p className="text-sm text-muted-foreground">
+                  Adjust filters, then close to return to the page.
+                </p>
               </div>
               <button
                 type="button"
@@ -450,7 +532,10 @@ export default function LeaderboardDashboard({ initialData }: LeaderboardDashboa
         </div>
       )}
 
-      <MetricHelpModal isOpen={showHelpModal} onClose={() => setShowHelpModal(false)} />
+      <MetricHelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+      />
     </div>
   );
 }

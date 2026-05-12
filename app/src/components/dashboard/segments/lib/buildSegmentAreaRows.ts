@@ -4,7 +4,7 @@ import type {
   Segment,
   SegmentAreaRow,
   SegmentInvestigationMetric,
-} from '@/types/segments';
+} from "@/types/segments";
 
 function normalizeAreaKey(areaName: string): string {
   return areaName.toUpperCase();
@@ -16,15 +16,20 @@ function intersects<T>(left: T[], right: T[]): boolean {
 
 function matchesAreaFilters(area: PlanningArea, filters: FilterState): boolean {
   const inBudget =
-    area.avgPricePsf >= filters.budgetRange[0] && area.avgPricePsf <= filters.budgetRange[1];
+    area.avgPricePsf >= filters.budgetRange[0] &&
+    area.avgPricePsf <= filters.budgetRange[1];
   const inRegion = filters.locations.includes(area.region);
   const inHotspot =
-    filters.hotspotFilter === 'all' || area.spatialCluster === filters.hotspotFilter;
+    filters.hotspotFilter === "all" ||
+    area.spatialCluster === filters.hotspotFilter;
 
   return inBudget && inRegion && inHotspot;
 }
 
-function resolveMetricValue(row: SegmentAreaRow, metric: SegmentInvestigationMetric): number {
+function resolveMetricValue(
+  row: SegmentAreaRow,
+  metric: SegmentInvestigationMetric,
+): number {
   return row[metric];
 }
 
@@ -32,7 +37,7 @@ export function buildSegmentAreaRows(
   segment: Segment,
   planningAreas: Record<string, PlanningArea>,
   filters: FilterState,
-  metric: SegmentInvestigationMetric
+  metric: SegmentInvestigationMetric,
 ): SegmentAreaRow[] {
   if (!intersects(segment.propertyTypes, filters.propertyTypes)) {
     return [];
@@ -66,5 +71,7 @@ export function buildSegmentAreaRows(
     .filter((row): row is SegmentAreaRow => Boolean(row))
     .filter((row) => row.matchesCurrentFilters);
 
-  return rows.sort((a, b) => resolveMetricValue(b, metric) - resolveMetricValue(a, metric));
+  return rows.sort(
+    (a, b) => resolveMetricValue(b, metric) - resolveMetricValue(a, metric),
+  );
 }

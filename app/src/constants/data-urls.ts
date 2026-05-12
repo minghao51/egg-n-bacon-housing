@@ -4,7 +4,7 @@
  * Centralized list of all data endpoints used by the dashboard.
  */
 
-const BASE_URL = import.meta.env.BASE_URL || '/';
+const BASE_URL = import.meta.env.BASE_URL || "/";
 
 export const DATA_URLS = {
   segments: `${BASE_URL}data/segments_enhanced.json.gz`,
@@ -30,7 +30,7 @@ export const DATA_URLS = {
   },
 } as const;
 
-export type AnalyticsType = 'spatial' | 'feature' | 'predictive';
+export type AnalyticsType = "spatial" | "feature" | "predictive";
 
 export function getAnalyticsUrl(type: AnalyticsType): string {
   return DATA_URLS.analytics[type];

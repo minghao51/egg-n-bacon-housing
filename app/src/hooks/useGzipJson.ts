@@ -4,8 +4,8 @@
  * Reusable hook for loading gzipped JSON data with caching and error handling.
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { fetchGzipJson } from '@/utils/gzip';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { fetchGzipJson } from "@/utils/gzip";
 
 interface UseGzipJsonResult<T> {
   data: T | null;
@@ -33,7 +33,7 @@ export function useGzipJson<T>(
   url: string,
   cacheKey?: string,
   cacheEnabled: boolean = true,
-  initialData?: T | null
+  initialData?: T | null,
 ): UseGzipJsonResult<T> {
   const [data, setData] = useState<T | null>(initialData ?? null);
   const [loading, setLoading] = useState(!initialData);
@@ -43,62 +43,68 @@ export function useGzipJson<T>(
 
   const key = cacheKey || url;
 
-  const loadData = useCallback(async (background: boolean = false) => {
-    // Check cache first
-    if (cacheEnabled) {
-      const cached = globalCache.get(key);
-      if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-        setData(cached.data as T);
-        dataRef.current = cached.data as T;
-        setLoading(false);
-        setError(null);
-        return;
-      }
-    }
-
-    // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    abortControllerRef.current = new AbortController();
-
-    if (!background) {
-      setLoading(true);
-    }
-    setError(null);
-
-    try {
-      const result = await fetchGzipJson<T>(url, abortControllerRef.current.signal);
-      
+  const loadData = useCallback(
+    async (background: boolean = false) => {
+      // Check cache first
       if (cacheEnabled) {
-        globalCache.set(key, { data: result, timestamp: Date.now() });
-      }
-      
-      setData(result);
-      dataRef.current = result;
-    } catch (err) {
-      const hasExistingData = dataRef.current !== null;
-
-      if (err instanceof Error) {
-        if (err.name === 'AbortError') return;
-        if (!background || !hasExistingData) {
-          setError(err.message);
-        }
-      } else {
-        if (!background || !hasExistingData) {
-          setError('Failed to load data');
+        const cached = globalCache.get(key);
+        if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+          setData(cached.data as T);
+          dataRef.current = cached.data as T;
+          setLoading(false);
+          setError(null);
+          return;
         }
       }
 
-      if (!background || !hasExistingData) {
-        setData(null);
-        dataRef.current = null;
+      // Cancel previous request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [url, key, cacheEnabled]);
+
+      abortControllerRef.current = new AbortController();
+
+      if (!background) {
+        setLoading(true);
+      }
+      setError(null);
+
+      try {
+        const result = await fetchGzipJson<T>(
+          url,
+          abortControllerRef.current.signal,
+        );
+
+        if (cacheEnabled) {
+          globalCache.set(key, { data: result, timestamp: Date.now() });
+        }
+
+        setData(result);
+        dataRef.current = result;
+      } catch (err) {
+        const hasExistingData = dataRef.current !== null;
+
+        if (err instanceof Error) {
+          if (err.name === "AbortError") return;
+          if (!background || !hasExistingData) {
+            setError(err.message);
+          }
+        } else {
+          if (!background || !hasExistingData) {
+            setError("Failed to load data");
+          }
+        }
+
+        if (!background || !hasExistingData) {
+          setData(null);
+          dataRef.current = null;
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [url, key, cacheEnabled],
+  );
 
   useEffect(() => {
     if (initialData) {

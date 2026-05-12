@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -9,8 +9,8 @@ import {
   type ColumnDef,
   type SortingState,
   type ColumnFiltersState,
-} from '@tanstack/react-table';
-import type { TableData } from '@/utils/data-parser';
+} from "@tanstack/react-table";
+import type { TableData } from "@/utils/data-parser";
 
 interface InteractiveTableProps {
   data: TableData;
@@ -19,14 +19,14 @@ interface InteractiveTableProps {
 export default function InteractiveTable({ data }: InteractiveTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
 
   // Transform table data for TanStack Table
   const tableData = useMemo(() => {
     return data.rows.map((row) => {
       const obj: Record<string, string> = {};
       data.headers.forEach((header, index) => {
-        obj[header] = row[index] || '';
+        obj[header] = row[index] || "";
       });
       return obj;
     });
@@ -63,7 +63,7 @@ export default function InteractiveTable({ data }: InteractiveTableProps) {
       <div className="flex items-center gap-2">
         <input
           type="text"
-          value={globalFilter ?? ''}
+          value={globalFilter ?? ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
           placeholder="Search all columns..."
           className="px-3 py-2 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring w-64"
@@ -88,18 +88,18 @@ export default function InteractiveTable({ data }: InteractiveTableProps) {
                       <div
                         className={
                           header.column.getCanSort()
-                            ? 'cursor-pointer select-none flex items-center gap-2 hover:text-foreground'
-                            : ''
+                            ? "cursor-pointer select-none flex items-center gap-2 hover:text-foreground"
+                            : ""
                         }
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         {flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                         {{
-                          asc: ' 🔼',
-                          desc: ' 🔽',
+                          asc: " 🔼",
+                          desc: " 🔽",
                         }[header.column.getIsSorted() as string] ?? null}
                       </div>
                     )}
@@ -130,7 +130,7 @@ export default function InteractiveTable({ data }: InteractiveTableProps) {
 
       {/* Pagination info */}
       <div className="text-sm text-muted-foreground">
-        Showing {table.getFilteredRowModel().rows.length} of{' '}
+        Showing {table.getFilteredRowModel().rows.length} of{" "}
         {table.getCoreRowModel().rows.length} rows
       </div>
     </div>
