@@ -6,12 +6,13 @@ for HDB, Condo, and amenity data.
 
 import json
 import logging
-from enum import Enum
+from functools import lru_cache
 from pathlib import Path
-from typing import Literal
 
 import pandas as pd
+from shapely import STRtree
 from shapely.geometry import Point, shape
+from shapely.prepared import prep
 
 from egg_n_bacon_housing.config import settings
 
@@ -19,9 +20,6 @@ logger = logging.getLogger(__name__)
 
 DATA_DIR = settings.data_dir / "pipeline"
 RAW_DATA_DIR = settings.data_dir / "manual" / "geojsons"
-SINGAPORE_CENTER = {"lat": 1.3521, "lon": 103.8198}
-
-_planning_areas: list[dict] | None = None
 
 
 def _read_first_existing(*paths: Path) -> pd.DataFrame:
@@ -33,6 +31,42 @@ def _read_first_existing(*paths: Path) -> pd.DataFrame:
     return pd.DataFrame()
 
 
+@lru_cache(maxsize=1)
+def _load_planning_areas_raw() -> tuple[list[dict], list[tuple], STRtree | None, list[str]]:
+    geojson_path = RAW_DATA_DIR / "onemap_planning_area_polygon.geojson"
+
+    if not geojson_path.exists():
+        logger.warning(f"Planning area GeoJSON not found at {geojson_path}")
+        return ([], [], None, [])
+
+    try:
+        with open(geojson_path) as f:
+            geojson_data = json.load(f)
+
+        planning_areas = []
+        prepared_list = []
+        geom_list = []
+        name_list = []
+        for feature in geojson_data.get("features", []):
+            props = feature.get("properties", {})
+            geom = shape(geom_data) if (geom_data := feature.get("geometry")) else None
+
+            name = props.get("pln_area_n", "Unknown")
+            planning_areas.append({"name": name, "geometry": geom})
+
+            if geom is not None:
+                prepared_list.append((name, prep(geom)))
+                geom_list.append(geom)
+                name_list.append(name)
+
+        tree = STRtree(geom_list) if geom_list else None
+        return (planning_areas, prepared_list, tree, name_list)
+
+    except (OSError, json.JSONDecodeError, ValueError, KeyError) as e:
+        logger.warning(f"Error loading planning areas: {e}")
+        return ([], [], None, [])
+
+
 def load_planning_areas() -> list[dict]:
     """
     Load Singapore planning area polygons from GeoJSON.
@@ -40,46 +74,15 @@ def load_planning_areas() -> list[dict]:
     Returns:
         List of planning areas with properties and geometry
     """
-    global _planning_areas
-
-    if _planning_areas is not None:
-        return _planning_areas
-
-    geojson_path = RAW_DATA_DIR / "onemap_planning_area_polygon.geojson"
-
-    if not geojson_path.exists():
-        logger.warning(f"Planning area GeoJSON not found at {geojson_path}")
-        _planning_areas = []
-        return _planning_areas
-
-    try:
-        with open(geojson_path) as f:
-            geojson_data = json.load(f)
-
-        planning_areas = []
-        for feature in geojson_data.get("features", []):
-            props = feature.get("properties", {})
-            geom = feature.get("geometry")
-
-            planning_areas.append(
-                {
-                    "name": props.get("pln_area_n", "Unknown"),
-                    "geometry": shape(geom) if geom else None,
-                }
-            )
-
-        _planning_areas = planning_areas
-        return _planning_areas
-
-    except Exception as e:
-        logger.warning(f"Error loading planning areas: {e}")
-        _planning_areas = []
-        return _planning_areas
+    return _load_planning_areas_raw()[0]
 
 
 def get_planning_area_for_point(lat: float, lon: float) -> str | None:
     """
     Get the planning area name for a given lat/lon coordinate.
+
+    Uses STRtree spatial index for candidate filtering, then prepared
+    geometries for exact point-in-polygon tests.
 
     Args:
         lat: Latitude
@@ -88,44 +91,21 @@ def get_planning_area_for_point(lat: float, lon: float) -> str | None:
     Returns:
         Planning area name or None if not found
     """
-    planning_areas = load_planning_areas()
+    _, prepared_list, tree, name_list = _load_planning_areas_raw()
 
-    if not planning_areas:
+    if tree is None or not prepared_list:
         return None
 
     point = Point(lon, lat)
 
-    for area in planning_areas:
-        if area["geometry"] and area["geometry"].contains(point):
-            return area["name"]
+    candidate_indices = tree.query(point)
+    for idx in candidate_indices:
+        name = name_list[idx]
+        _, prepared_geom = prepared_list[idx]
+        if prepared_geom.contains(point):
+            return name
 
     return None
-
-
-def load_hdb_amenity_data() -> pd.DataFrame:
-    """
-    Load HDB amenity data (car parks, schools, etc.).
-
-    Returns:
-        DataFrame with amenity locations
-    """
-    return _read_first_existing(
-        settings.gold_dir / "features_with_amenities.parquet",
-        DATA_DIR / "L2" / "hdb_amenities.parquet",
-    )
-
-
-def load_rental_yield_data() -> pd.DataFrame:
-    """
-    Load precomputed rental yield data by town and month.
-
-    Returns:
-        DataFrame with rental yield percentages
-    """
-    return _read_first_existing(
-        settings.gold_dir / "rental_yield.parquet",
-        DATA_DIR / "L2" / "rental_yield.parquet",
-    )
 
 
 def load_market_summary() -> pd.DataFrame:
@@ -186,123 +166,6 @@ def load_planning_area_metrics() -> pd.DataFrame:
 
     logger.warning("Planning area metrics not found at any expected path")
     return pd.DataFrame()
-
-
-def load_rental_yield_top_combos() -> pd.DataFrame:
-    """
-    Load precomputed top rental yield combinations.
-
-    Returns:
-        DataFrame with town/flat_type combinations ranked by yield
-    """
-    return _read_first_existing(
-        settings.platinum_dir / "metrics" / "L5_rental_yield_by_area.parquet",
-        DATA_DIR / "L3" / "rental_yield_top_combos.parquet",
-    )
-
-
-class PropertyType(Enum):
-    """Property type enumeration."""
-
-    HDB = "hdb"
-    CONDO = "condo"
-    EC = "ec"
-
-
-class TransactionLoader:
-    """Load transaction data from L1 parquet files.
-
-    This class provides a consistent interface for loading transaction data
-    across different property types and pipeline stages. Uses settings path constants
-    to ensure single source of truth for data locations.
-    """
-
-    def __init__(self, use_config_paths: bool = True):
-        """Initialize loader.
-
-        Args:
-            use_config_paths: If True, use settings path constants; else use custom base
-        """
-        self.use_config_paths = use_config_paths
-
-    def load_transaction(
-        self,
-        property_type: PropertyType | str,
-        stage: Literal["L0", "L1", "L2", "L3"] = "L1",
-    ) -> pd.DataFrame:
-        """Load transaction data for a property type.
-
-        Args:
-            property_type: Type of property (HDB, CONDO, EC) as enum or string
-            stage: Pipeline stage (default "L1")
-
-        Returns:
-            DataFrame with transaction data, empty DataFrame if file not found
-        """
-        if isinstance(property_type, str):
-            property_type = PropertyType(property_type.lower())
-
-        stage_file_map = {
-            "L0": {
-                PropertyType.HDB: settings.bronze_dir / "raw_hdb_resale.parquet",
-                PropertyType.CONDO: settings.bronze_dir / "raw_condo_transactions.parquet",
-                PropertyType.EC: settings.bronze_dir / "raw_condo_transactions.parquet",
-            },
-            "L1": {
-                PropertyType.HDB: settings.silver_dir / "cleaned_hdb_transactions.parquet",
-                PropertyType.CONDO: settings.silver_dir / "cleaned_condo_transactions.parquet",
-                PropertyType.EC: settings.silver_dir / "cleaned_ec_transactions.parquet",
-            },
-            "L2": {
-                PropertyType.HDB: settings.gold_dir / "unified_features.parquet",
-                PropertyType.CONDO: settings.gold_dir / "unified_features.parquet",
-                PropertyType.EC: settings.gold_dir / "unified_features.parquet",
-            },
-            "L3": {
-                PropertyType.HDB: settings.platinum_dir / "unified_dataset.parquet",
-                PropertyType.CONDO: settings.platinum_dir / "unified_dataset.parquet",
-                PropertyType.EC: settings.platinum_dir / "unified_dataset.parquet",
-            },
-        }
-        path = stage_file_map[stage][property_type]
-
-        if not path.exists():
-            if settings.logging.verbose:
-                logger.warning(f"Transaction file not found: {path}")
-            return pd.DataFrame()
-
-        df = pd.read_parquet(path)
-        return self._filter_by_property_type(df, property_type)
-
-    def _filter_by_property_type(
-        self, df: pd.DataFrame, property_type: PropertyType
-    ) -> pd.DataFrame:
-        """Return rows for the requested property type when a type column is present."""
-        if df.empty or "property_type" not in df.columns:
-            return df
-
-        property_series = df["property_type"].astype(str).str.strip().str.lower()
-        filtered = df.loc[property_series == property_type.value].copy()
-
-        if filtered.empty and settings.logging.verbose:
-            logger.warning(
-                f"No rows matched property_type={property_type.value} in loaded transaction dataset"
-            )
-
-        return filtered
-
-    def load_all_transactions(
-        self, stage: Literal["L0", "L1", "L2", "L3"] = "L1"
-    ) -> dict[PropertyType, pd.DataFrame]:
-        """Load all transaction types.
-
-        Args:
-            stage: Pipeline stage (default "L1")
-
-        Returns:
-            Dictionary mapping property type to DataFrame
-        """
-        return {pt: self.load_transaction(pt, stage) for pt in PropertyType}
 
 
 class CSVLoader:

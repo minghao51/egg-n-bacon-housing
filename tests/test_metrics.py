@@ -6,20 +6,17 @@ from types import SimpleNamespace
 import pandas as pd
 import pytest
 
+pytestmark = pytest.mark.unit
+
 
 def _get_metrics_module():
     return importlib.import_module("egg_n_bacon_housing.components.05_metrics")
 
 
-def _patch_platinum_dir(metrics, tmp_path, monkeypatch):
-    """Monkeypatch the platinum_dir property via layer_dirs."""
-    monkeypatch.setattr(metrics.settings.layer_dirs, "platinum", str(tmp_path / "04_platinum"))
-
-
 class TestPriceMetrics:
     def test_price_metrics_produces_expected_columns(self, tmp_path, monkeypatch):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
+        platinum_dir = tmp_path / "platinum"
 
         df = pd.DataFrame(
             [
@@ -38,7 +35,7 @@ class TestPriceMetrics:
             ]
         )
 
-        result = metrics.price_metrics_by_area(df)
+        result = metrics.price_metrics_by_area(df, platinum_dir=platinum_dir)
 
         assert not result.empty
         assert "median_price" in result.columns
@@ -50,25 +47,22 @@ class TestPriceMetrics:
 
     def test_price_metrics_empty_input(self, tmp_path, monkeypatch):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
 
-        result = metrics.price_metrics_by_area(pd.DataFrame())
+        result = metrics.price_metrics_by_area(pd.DataFrame(), platinum_dir=tmp_path / "platinum")
 
         assert result.empty
 
     def test_price_metrics_missing_month_and_date_returns_empty(self, tmp_path, monkeypatch):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
 
         df = pd.DataFrame([{"planning_area": "Toa Payoh", "price": 500000.0}])
 
-        result = metrics.price_metrics_by_area(df)
+        result = metrics.price_metrics_by_area(df, platinum_dir=tmp_path / "platinum")
 
         assert result.empty
 
     def test_price_metrics_without_psf_omits_avg_psf(self, tmp_path, monkeypatch):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
 
         df = pd.DataFrame(
             [
@@ -80,7 +74,7 @@ class TestPriceMetrics:
             ]
         )
 
-        result = metrics.price_metrics_by_area(df)
+        result = metrics.price_metrics_by_area(df, platinum_dir=tmp_path / "platinum")
 
         assert not result.empty
         assert "avg_psf" not in result.columns
@@ -89,7 +83,6 @@ class TestPriceMetrics:
 class TestAffordabilityMetrics:
     def test_affordability_uses_config_income(self, tmp_path, monkeypatch):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
         monkeypatch.setattr(
             metrics.settings,
             "metrics",
@@ -113,14 +106,22 @@ class TestAffordabilityMetrics:
             ]
         )
 
-        result = metrics.affordability_metrics(df)
+        result = metrics.affordability_metrics(df, platinum_dir=tmp_path / "platinum")
 
         assert not result.empty
         assert result.loc[0, "affordability_ratio"] == pytest.approx(5.0)
 
-    def test_affordability_classification(self, tmp_path, monkeypatch):
+    @pytest.mark.parametrize(
+        "price,expected_class",
+        [
+            (400000.0, "Affordable"),
+            (550000.0, "Moderate"),
+            (700000.0, "Expensive"),
+            (900000.0, "Severely Unaffordable"),
+        ],
+    )
+    def test_affordability_classification(self, tmp_path, monkeypatch, price, expected_class):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
         monkeypatch.setattr(
             metrics.settings,
             "metrics",
@@ -137,41 +138,22 @@ class TestAffordabilityMetrics:
         df = pd.DataFrame(
             [
                 {
-                    "planning_area": "Cheap",
-                    "price": 400000.0,
-                    "transaction_date": pd.Timestamp("2024-01-01"),
-                },
-                {
-                    "planning_area": "Mid",
-                    "price": 550000.0,
-                    "transaction_date": pd.Timestamp("2024-01-01"),
-                },
-                {
-                    "planning_area": "Pricey",
-                    "price": 700000.0,
-                    "transaction_date": pd.Timestamp("2024-01-01"),
-                },
-                {
-                    "planning_area": "Crazy",
-                    "price": 900000.0,
+                    "planning_area": "TestArea",
+                    "price": price,
                     "transaction_date": pd.Timestamp("2024-01-01"),
                 },
             ]
         )
 
-        result = metrics.affordability_metrics(df)
+        result = metrics.affordability_metrics(df, platinum_dir=tmp_path / "platinum")
 
-        classes = result.set_index("planning_area")["affordability_class"]
-        assert classes["Cheap"] == "Affordable"
-        assert classes["Mid"] == "Moderate"
-        assert classes["Pricey"] == "Expensive"
-        assert classes["Crazy"] == "Severely Unaffordable"
+        assert not result.empty
+        assert result.loc[0, "affordability_class"] == expected_class
 
 
 class TestAppreciationHotspots:
     def test_contiguous_months_produce_correct_pct_change(self, tmp_path, monkeypatch):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
 
         rows = []
         for i in range(13):
@@ -186,7 +168,7 @@ class TestAppreciationHotspots:
 
         df = pd.DataFrame(rows)
 
-        result = metrics.appreciation_hotspots(df)
+        result = metrics.appreciation_hotspots(df, platinum_dir=tmp_path / "platinum")
 
         assert not result.empty
         assert "appreciation_3m_pct" in result.columns
@@ -199,7 +181,6 @@ class TestAppreciationHotspots:
 
     def test_gaps_in_months_handled_correctly(self, tmp_path, monkeypatch):
         metrics = _get_metrics_module()
-        _patch_platinum_dir(metrics, tmp_path, monkeypatch)
 
         rows = [
             {"planning_area": "Toa Payoh", "month": "2024-01", "median_price": 500000.0},
@@ -210,7 +191,7 @@ class TestAppreciationHotspots:
 
         df = pd.DataFrame(rows)
 
-        result = metrics.appreciation_hotspots(df)
+        result = metrics.appreciation_hotspots(df, platinum_dir=tmp_path / "platinum")
 
         if not result.empty:
             for _, row in result.iterrows():

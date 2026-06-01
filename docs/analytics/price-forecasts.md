@@ -14,8 +14,8 @@ technicalLevel: intermediate
 
 # Price Appreciation Prediction
 
-**Analysis Date**: 2026-02-17  
-**Data Period**: 2021-2026  
+**Analysis Date**: 2026-02-17
+**Data Period**: 2021-2026
 **Coverage**: HDB, condo, and EC segments
 
 ## Key Takeaways

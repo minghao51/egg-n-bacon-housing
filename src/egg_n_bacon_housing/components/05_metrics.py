@@ -11,13 +11,10 @@ import numpy as np
 import pandas as pd
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.io_helpers import save_parquet
+from egg_n_bacon_housing.utils.metrics import classify_affordability
 
 logger = logging.getLogger(__name__)
-
-
-def platinum_metrics_dir() -> Path:
-    """Platinum layer metrics subdirectory."""
-    return settings.platinum_dir / "metrics"
 
 
 def _ensure_month_column(df: pd.DataFrame) -> pd.DataFrame:
@@ -32,7 +29,7 @@ def _ensure_month_column(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def price_metrics_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:
+def price_metrics_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
     """Compute price metrics by planning area and month.
 
     Args:
@@ -63,15 +60,14 @@ def price_metrics_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:
 
     metrics = df.groupby(["planning_area", "month"]).agg(**agg_spec).reset_index()
 
-    platinum_metrics_dir().mkdir(parents=True, exist_ok=True)
-    out_path = platinum_metrics_dir() / "L5_price_metrics_by_area.parquet"
-    metrics.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(metrics)} price metrics records")
+    save_parquet(
+        metrics, platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet", "price metrics"
+    )
 
     return metrics
 
 
-def rental_yield_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:
+def rental_yield_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
     """Compute rental yield metrics by planning area.
 
     Args:
@@ -104,15 +100,16 @@ def rental_yield_by_area(unified_dataset: pd.DataFrame) -> pd.DataFrame:
         .reset_index()
     )
 
-    platinum_metrics_dir().mkdir(parents=True, exist_ok=True)
-    out_path = platinum_metrics_dir() / "L5_rental_yield_by_area.parquet"
-    metrics.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(metrics)} rental yield metrics records")
+    save_parquet(
+        metrics,
+        platinum_dir / "metrics" / "L5_rental_yield_by_area.parquet",
+        "rental yield metrics",
+    )
 
     return metrics
 
 
-def affordability_metrics(unified_dataset: pd.DataFrame) -> pd.DataFrame:
+def affordability_metrics(unified_dataset: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
     """Compute affordability metrics by planning area.
 
     Args:
@@ -143,28 +140,18 @@ def affordability_metrics(unified_dataset: pd.DataFrame) -> pd.DataFrame:
     estimated_income = settings.metrics.median_household_income
     metrics["affordability_ratio"] = metrics["median_price"] / estimated_income
 
-    thresholds = settings.metrics.affordability_thresholds
-
-    def classify_affordability(ratio):
-        if ratio < thresholds["affordable"]:
-            return "Affordable"
-        elif ratio < thresholds["moderate"]:
-            return "Moderate"
-        elif ratio < thresholds["expensive"]:
-            return "Expensive"
-        return "Severely Unaffordable"
-
     metrics["affordability_class"] = metrics["affordability_ratio"].apply(classify_affordability)
 
-    platinum_metrics_dir().mkdir(parents=True, exist_ok=True)
-    out_path = platinum_metrics_dir() / "L5_affordability_by_area.parquet"
-    metrics.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(metrics)} affordability metrics records")
+    save_parquet(
+        metrics,
+        platinum_dir / "metrics" / "L5_affordability_by_area.parquet",
+        "affordability metrics",
+    )
 
     return metrics
 
 
-def appreciation_hotspots(price_metrics_by_area: pd.DataFrame) -> pd.DataFrame:
+def appreciation_hotspots(price_metrics_by_area: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
     """Identify price appreciation hotspots.
 
     Args:
@@ -210,14 +197,14 @@ def appreciation_hotspots(price_metrics_by_area: pd.DataFrame) -> pd.DataFrame:
 
     hotspots = pd.DataFrame(records)
     hotspots = hotspots.dropna(subset=["appreciation_3m_pct"])
-    hotspots = hotspots[hotspots["appreciation_3m_pct"] > 0]
+    hotspots["is_declining"] = hotspots["appreciation_3m_pct"] < 0
 
-    if len(hotspots) > 0:
-        hotspots = hotspots.sort_values("appreciation_3m_pct", ascending=False).head(20)
+    hotspots = hotspots.sort_values("appreciation_3m_pct", ascending=False).head(20)
 
-    platinum_metrics_dir().mkdir(parents=True, exist_ok=True)
-    out_path = platinum_metrics_dir() / "L5_appreciation_hotspots.parquet"
-    hotspots.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(hotspots)} appreciation hotspot records")
+    save_parquet(
+        hotspots,
+        platinum_dir / "metrics" / "L5_appreciation_hotspots.parquet",
+        "appreciation hotspots",
+    )
 
     return hotspots

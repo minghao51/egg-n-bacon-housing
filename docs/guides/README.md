@@ -7,6 +7,7 @@ Operational guides for the current repository layout.
 | Guide                                    | Purpose                                         |
 | ---------------------------------------- | ----------------------------------------------- |
 | [usage-guide.md](./usage-guide.md)       | Primary setup, pipeline, and analytics workflow |
+| [r2-sync-guide.md](./r2-sync-guide.md)   | Manual data fetch from Cloudflare R2            |
 | [testing-guide.md](./testing-guide.md)   | Test commands and testing practices             |
 | [configuration.md](./configuration.md)   | Environment and settings details                |
 | [e2e-testing.md](./e2e-testing.md)       | Astro app end-to-end testing                    |

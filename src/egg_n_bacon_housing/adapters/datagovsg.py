@@ -8,6 +8,7 @@ This module provides:
 data.gov.sg is Singapore's official open data portal.
 """
 
+import json
 import logging
 import re
 import time
@@ -26,7 +27,6 @@ from egg_n_bacon_housing.utils.cache import cached_call
 logger = logging.getLogger(__name__)
 
 DATAGOVSG_BASE_URL = "https://data.gov.sg/api/action/datastore_search"
-DATAGOVSG_POLL_DOWNLOAD_URL = "https://api-open.data.gov.sg/v1/public/api/datasets"
 
 
 def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -> pd.DataFrame:
@@ -156,7 +156,7 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
                 raise DatasetFetchError(
                     f"Request error fetching dataset {dataset_id} from {request_url}"
                 ) from e
-            except Exception as e:
+            except (ValueError, KeyError, TypeError, json.JSONDecodeError) as e:
                 logger.error("Error fetching dataset %s (url=%s): %s", dataset_id, request_url, e)
                 if response_agg and total_records and offset_value < total_records:
                     raise IncompleteDatasetFetchError(
@@ -180,59 +180,3 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         )
     else:
         return _fetch_from_api()
-
-
-def fetch_dataset_with_download_api(dataset_id: str) -> dict | None:
-    """Fetch dataset using the poll-download API.
-
-    This is an alternative API for downloading complete dataset exports.
-
-    Args:
-        dataset_id: data.gov.sg dataset ID
-
-    Returns:
-        Dictionary with download result data, or None if failed
-    """
-    url = f"{DATAGOVSG_POLL_DOWNLOAD_URL}/{dataset_id}/poll-download"
-
-    try:
-        response = requests.get(url, timeout=60)
-        json_data = response.json()
-
-        if json_data.get("code") != 0:
-            logger.error(f"Failed to poll download: {json_data.get('errMsg')}")
-            return None
-
-        return json_data.get("data")
-
-    except Exception as e:
-        logger.error(f"Error fetching dataset {dataset_id}: {e}")
-        return None
-
-
-def save_datagovsg_dataset(
-    dataset_name: str,
-    dataset_id: str,
-    use_cache: bool = True,
-) -> pd.DataFrame | None:
-    """Fetch dataset from data.gov.sg with caching and save to parquet.
-
-    Args:
-        dataset_name: Name for the parquet file (without extension)
-        dataset_id: data.gov.sg dataset ID
-        use_cache: Whether to use caching
-
-    Returns:
-        DataFrame with data, or None if unavailable
-    """
-    df = fetch_datagovsg_dataset(
-        url=f"{DATAGOVSG_BASE_URL}?resource_id=",
-        dataset_id=dataset_id,
-        use_cache=use_cache,
-    )
-
-    if df is not None and not df.empty:
-        logger.info("Fetched %s: %d records", dataset_name, len(df))
-        return df
-
-    return None

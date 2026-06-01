@@ -26,28 +26,7 @@ from egg_n_bacon_housing.utils.mrt_line_mapping import (
 logger = logging.getLogger(__name__)
 
 
-def haversine_distance(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
-    """Calculate the great circle distance between two points.
-
-    Args:
-        lon1: Longitude of first point (decimal degrees)
-        lat1: Latitude of first point (decimal degrees)
-        lon2: Longitude of second point (decimal degrees)
-        lat2: Latitude of second point (decimal degrees)
-
-    Returns:
-        Distance in meters
-    """
-    lon1, lat1, lon2, lat2 = map(np.radians, [lon1, lat1, lon2, lat2])
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = np.sin(dlat / 2.0) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2.0) ** 2
-    c = 2 * np.arcsin(np.sqrt(a))
-    r = 6371000
-    return c * r
-
-
-def load_mrt_stations(mrt_geojson_path: Path = None) -> pd.DataFrame:
+def load_mrt_stations(mrt_geojson_path: Path | None = None) -> pd.DataFrame:
     """Load MRT station data from geojson and extract centroids.
 
     Args:
@@ -120,7 +99,7 @@ def calculate_nearest_mrt(
 
     Returns:
         DataFrame with new columns added:
-        - nearest_mrt_name: Name of closest MRT station
+        - nearest_mrt_station: Name of closest MRT station
         - nearest_mrt_distance: Distance in meters to closest MRT
         - nearest_mrt_lines: List of MRT line codes (e.g., ['NSL', 'EWL'])
         - nearest_mrt_line_names: List of full line names
@@ -136,7 +115,7 @@ def calculate_nearest_mrt(
 
     if mrt_stations_df.empty:
         logger.warning("No MRT station data available")
-        properties_df["nearest_mrt_name"] = None
+        properties_df["nearest_mrt_station"] = None
         properties_df["nearest_mrt_distance"] = None
         properties_df["nearest_mrt_lines"] = None
         properties_df["nearest_mrt_line_names"] = None
@@ -169,7 +148,7 @@ def calculate_nearest_mrt(
 
     nearest_stations = mrt_stations_df.iloc[indices]
 
-    properties_df.loc[valid_mask, "nearest_mrt_name"] = nearest_stations["name"].values
+    properties_df.loc[valid_mask, "nearest_mrt_station"] = nearest_stations["name"].values
     properties_df.loc[valid_mask, "nearest_mrt_lines"] = nearest_stations["lines"].values
     properties_df.loc[valid_mask, "nearest_mrt_line_names"] = nearest_stations["line_names"].values
     properties_df.loc[valid_mask, "nearest_mrt_tier"] = nearest_stations["tier"].values
@@ -180,26 +159,23 @@ def calculate_nearest_mrt(
 
     nearest_mrt_coords = nearest_stations[["lon", "lat"]].values
 
-    mrt_distances = [
-        haversine_distance(lon1, lat1, lon2, lat2)
-        for lon1, lat1, lon2, lat2 in zip(
-            property_coords[:, 0],
-            property_coords[:, 1],
-            nearest_mrt_coords[:, 0],
-            nearest_mrt_coords[:, 1],
-        )
-    ]
+    dlon = np.radians(nearest_mrt_coords[:, 0]) - np.radians(property_coords[:, 0])
+    dlat = np.radians(nearest_mrt_coords[:, 1]) - np.radians(property_coords[:, 1])
+    lat1 = np.radians(property_coords[:, 1])
+    lat2 = np.radians(nearest_mrt_coords[:, 1])
+    a = np.sin(dlat / 2.0) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2.0) ** 2
+    mrt_distances = 2 * np.arcsin(np.sqrt(a)) * 6371000
     properties_df.loc[valid_mask, "nearest_mrt_distance"] = mrt_distances
 
     properties_df.loc[valid_mask, "nearest_mrt_score"] = [
         get_station_score(name, dist)
         for name, dist in zip(
-            properties_df.loc[valid_mask, "nearest_mrt_name"],
+            properties_df.loc[valid_mask, "nearest_mrt_station"],
             properties_df.loc[valid_mask, "nearest_mrt_distance"],
         )
     ]
 
-    properties_df.loc[~valid_mask, "nearest_mrt_name"] = None
+    properties_df.loc[~valid_mask, "nearest_mrt_station"] = None
     properties_df.loc[~valid_mask, "nearest_mrt_distance"] = None
     properties_df.loc[~valid_mask, "nearest_mrt_lines"] = None
     properties_df.loc[~valid_mask, "nearest_mrt_line_names"] = None
@@ -261,4 +237,4 @@ if __name__ == "__main__":
     result = calculate_nearest_mrt(sample_properties, mrt_df, show_progress=False)
 
     print("\nResults:")
-    print(result[["address", "nearest_mrt_name", "nearest_mrt_distance"]])
+    print(result[["address", "nearest_mrt_station", "nearest_mrt_distance"]])

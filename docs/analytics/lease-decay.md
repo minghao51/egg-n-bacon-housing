@@ -14,8 +14,8 @@ technicalLevel: intermediate
 
 # Lease Decay Impact
 
-**Analysis Date**: 2026-02-04  
-**Data Period**: 2017-2026  
+**Analysis Date**: 2026-02-04
+**Data Period**: 2017-2026
 **Property Type**: HDB resale
 
 ## Key Takeaways

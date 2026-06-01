@@ -7,9 +7,7 @@ This file provides common fixtures used across multiple test files.
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
-from unittest.mock import MagicMock
 
-import pandas as pd
 import pytest
 
 
@@ -62,113 +60,6 @@ def temp_data_dir(temp_dir) -> Generator[Path, None, None]:
 
 
 @pytest.fixture
-def mock_config(monkeypatch, temp_data_dir):
-    """
-    Mock configuration for testing using settings-based config.
-
-    Sets up test environment variables and overrides data paths.
-    """
-    monkeypatch.setenv("ONEMAP_EMAIL", "test@example.com")
-    monkeypatch.setenv("GOOGLE_API_KEY", "test-api-key")
-    monkeypatch.setenv("LOG_LEVEL", "DEBUG")
-
-    from egg_n_bacon_housing.config import LayerDirs, Settings
-
-    test_settings = Settings(
-        data_path=str(temp_data_dir).lstrip("./"),
-        layer_dirs=LayerDirs(
-            bronze=str(temp_data_dir / "pipeline" / "01_bronze"),
-            silver=str(temp_data_dir / "pipeline" / "02_silver"),
-            gold=str(temp_data_dir / "pipeline" / "03_gold"),
-            platinum=str(temp_data_dir / "pipeline" / "04_platinum"),
-        ),
-    )
-
-    import egg_n_bacon_housing.config as config_module
-
-    original = config_module.settings
-    config_module.settings = test_settings
-
-    yield test_settings
-
-    config_module.settings = original
-
-
-@pytest.fixture
-def sample_dataframe() -> pd.DataFrame:
-    """
-    Create a sample DataFrame for testing.
-
-    Returns:
-        DataFrame with sample data
-
-    Example:
-        >>> def test_dataframe_operations(sample_dataframe):
-        ...     assert len(sample_dataframe) == 100
-        ...     assert "price" in sample_dataframe.columns
-    """
-    return pd.DataFrame(
-        {
-            "id": range(100),
-            "town": ["Bishan", "Toa Payoh", "Ang Mo Kio"] * 33 + ["Bishan"],
-            "price": [500000 + i * 1000 for i in range(100)],
-            "floor_area_sqft": [800 + i * 10 for i in range(100)],
-            "lease_remaining_years": [99 - i for i in range(100)],
-            "latitude": [1.350 + i * 0.001 for i in range(100)],
-            "longitude": [103.820 + i * 0.001 for i in range(100)],
-        }
-    )
-
-
-@pytest.fixture
-def sample_transactions(sample_dataframe) -> pd.DataFrame:
-    """
-    Create sample transaction data for testing.
-
-    Returns:
-        DataFrame with sample HDB transactions
-
-    Example:
-        >>> def test_transaction_analysis(sample_transactions):
-        ...     assert len(sample_transactions) == 100
-    """
-    return sample_dataframe
-
-
-@pytest.fixture
-def mock_onemap_response():
-    """
-    Mock OneMap API response for testing.
-
-    Returns:
-        Mock response object
-
-    Example:
-        >>> def test_geocoding(mock_onemap_response):
-        ...     response = mock_onemap_response
-        ...     assert response.status_code == 200
-    """
-    mock = MagicMock()
-    mock.status_code = 200
-    mock.json.return_value = {
-        "found": 1,
-        "totalNumPages": 1,
-        "results": [
-            {
-                "SEARCHVAL": "BISHAN STREET 12",
-                "BLK_NO": "123",
-                "ROAD": "BISHAN STREET 12",
-                "BUILDING": "BLOCK 123",
-                "ADDRESS": "123 BISHAN STREET 12",
-                "LATITUDE": "1.350",
-                "LONGITUDE": "103.820",
-            }
-        ],
-    }
-    return mock
-
-
-@pytest.fixture
 def mock_env_vars(monkeypatch):
     """
     Set up mock environment variables for testing.
@@ -194,13 +85,3 @@ def mock_env_vars(monkeypatch):
         monkeypatch.setenv(key, value)
 
     return env_vars
-
-
-def pytest_configure(config):
-    """Configure pytest with custom markers."""
-    config.addinivalue_line(
-        "markers", "integration: mark test as integration test (slow, requires external resources)"
-    )
-    config.addinivalue_line("markers", "unit: mark test as unit test (fast, isolated)")
-    config.addinivalue_line("markers", "slow: mark test as slow (should be run infrequently)")
-    config.addinivalue_line("markers", "api: mark test as making API calls (may need mocking)")

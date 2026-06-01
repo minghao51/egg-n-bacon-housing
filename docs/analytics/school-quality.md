@@ -14,8 +14,8 @@ technicalLevel: intermediate
 
 # School Quality Impact
 
-**Analysis Date**: 2026-02-06  
-**Sample**: 194,165 transactions  
+**Analysis Date**: 2026-02-06
+**Sample**: 194,165 transactions
 **Primary Focus**: Post-2021 housing market
 
 ## Key Takeaways

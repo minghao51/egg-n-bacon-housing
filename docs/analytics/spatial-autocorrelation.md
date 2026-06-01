@@ -14,8 +14,8 @@ technicalLevel: intermediate
 
 # Spatial Autocorrelation
 
-**Analysis Date**: 2026-02-06  
-**Data Period**: 2021-2026  
+**Analysis Date**: 2026-02-06
+**Data Period**: 2021-2026
 **Coverage**: HDB, EC, and condominium appreciation patterns
 
 ## Key Takeaways

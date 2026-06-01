@@ -23,30 +23,10 @@ from scipy.spatial import cKDTree
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from egg_n_bacon_housing.config import settings
 
+from egg_n_bacon_housing.utils.geo import haversine_distance
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-
-def haversine_distance(lat1, lon1, lat2, lon2):
-    """Calculate great circle distance between two points on Earth.
-
-    Args:
-        lat1, lon1: First point coordinates (degrees)
-        lat2, lon2: Second point coordinates (degrees)
-
-    Returns:
-        Distance in meters
-    """
-    # Convert to radians
-    lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
-
-    # Haversine formula
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
-    c = 2 * np.arcsin(np.sqrt(a))
-    r = 6371000  # Earth radius in meters
-    return c * r
 
 
 def load_amenity_locations():

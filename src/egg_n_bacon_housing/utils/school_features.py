@@ -3,13 +3,16 @@
 
 import json
 import logging
+from typing import Any
 
 import numpy as np
 import pandas as pd
 from rapidfuzz import fuzz, process
 from scipy.spatial import cKDTree
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.geo import haversine_distance
 
 # Constants
 DISTANCES = {
@@ -21,20 +24,6 @@ DISTANCES = {
 SCHOOL_LEVELS = ["PRIMARY", "SECONDARY (S1-S5)", "JUNIOR COLLEGE"]
 
 logger = logging.getLogger(__name__)
-
-
-def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """Calculate distance in meters between two lat/lon points using Haversine formula."""
-    from math import asin, cos, radians, sin, sqrt
-
-    # Ensure coordinates are floats
-    lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
-    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    return 2 * asin(sqrt(a)) * 6371000  # Earth radius in meters
 
 
 def load_schools() -> pd.DataFrame:
@@ -276,20 +265,32 @@ def fuzzy_match_schools(
 
 
 def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
-    """Geocode school addresses using OneMap API."""
-    import time
+    """Geocode school addresses using OneMap API with concurrent requests."""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
     import requests
 
     schools_df["latitude"] = None
     schools_df["longitude"] = None
-    geocoded = 0
 
+    rows_to_geocode = []
     for idx, row in schools_df.iterrows():
         postal_code = str(row.get("postal_code", "")).strip()
-        if len(postal_code) < 6:
-            continue
+        if len(postal_code) >= 6:
+            rows_to_geocode.append((idx, postal_code))
 
+    @retry(
+        retry=retry_if_exception_type(requests.RequestException),
+        wait=wait_exponential(min=1, max=10),
+        stop=stop_after_attempt(3),
+        before_sleep=lambda rs: logger.debug(
+            "Retrying geocode (attempt %d): %s",
+            rs.attempt_number,
+            rs.outcome.exception() if rs.outcome else "unknown",
+        ),
+    )
+    def _geocode_one(args: tuple) -> tuple:
+        idx, postal_code = args
         try:
             response = requests.get(
                 "https://www.onemap.gov.sg/api/common/elastic/search",
@@ -301,21 +302,28 @@ def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
                 },
                 timeout=10,
             )
+            response.raise_for_status()
             data = response.json()
-
             if data.get("found", 0) > 0:
                 result = data["results"][0]
-                schools_df.at[idx, "latitude"] = float(result["LATITUDE"])
-                schools_df.at[idx, "longitude"] = float(result["LONGITUDE"])
+                return (idx, float(result["LATITUDE"]), float(result["LONGITUDE"]))
+        except (requests.RequestException, ValueError, KeyError) as e:
+            logger.debug("Geocoding failed for %s: %s", postal_code, e)
+            raise
+        return (idx, None, None)
+
+    geocoded = 0
+    with ThreadPoolExecutor(max_workers=settings.geocoding.max_workers) as executor:
+        futures = {}
+        for i, item in enumerate(rows_to_geocode):
+            futures[executor.submit(_geocode_one, item)] = item
+
+        for future in as_completed(futures):
+            idx, lat, lon = future.result()
+            if lat is not None:
+                schools_df.at[idx, "latitude"] = lat
+                schools_df.at[idx, "longitude"] = lon
                 geocoded += 1
-
-        except Exception as e:
-            logger.debug(f"Geocoding failed for {postal_code}: {e}")
-
-        if (geocoded + 1) % 50 == 0:
-            logger.info(f"Geocoded {geocoded}/{len(schools_df)} schools...")
-
-        time.sleep(0.1)  # Rate limiting
 
     logger.info(f"Geocoded {geocoded}/{len(schools_df)} schools")
     return schools_df
@@ -362,7 +370,7 @@ def _initialize_school_columns(df: pd.DataFrame, levels: list[str]) -> pd.DataFr
     return df
 
 
-def _get_school_attributes(school: pd.Series) -> dict[str, any]:
+def _get_school_attributes(school: pd.Series) -> dict[str, Any]:
     """Extract school attributes as a dictionary."""
     return {
         "dist": None,  # Calculated separately
@@ -394,21 +402,16 @@ def _create_unique_location_index(properties_df: pd.DataFrame) -> tuple[pd.DataF
         - unique_locations_df: DataFrame with unique lat/lon pairs
         - index_mapping: Dict mapping unique_idx -> list of original indices
     """
-    # Get unique lat/lon combinations
     unique_coords = properties_df[["lat", "lon"]].drop_duplicates()
 
-    # Create mapping from unique coordinates back to original indices
-    coord_to_idx = {}
-    for orig_idx, row in properties_df[["lat", "lon"]].iterrows():
-        coord_key = (row["lat"], row["lon"])
-        if coord_key not in coord_to_idx:
-            coord_to_idx[coord_key] = []
-        coord_to_idx[coord_key].append(orig_idx)
+    coord_groups = properties_df.groupby(["lat", "lon"]).groups
+    coord_to_idx: dict[tuple[float, float], list[int]] = {
+        (lat, lon): list(indices) for (lat, lon), indices in coord_groups.items()
+    }
 
-    # Convert to index mapping
+    unique_reset = unique_coords.reset_index(drop=True)
     index_mapping = {
-        i: coord_to_idx[(row["lat"], row["lon"])]
-        for i, row in unique_coords.reset_index(drop=True).iterrows()
+        i: coord_to_idx[(row["lat"], row["lon"])] for i, row in unique_reset.iterrows()
     }
 
     return unique_coords, index_mapping

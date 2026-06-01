@@ -5,6 +5,11 @@ import sys
 import types
 
 import pandas as pd
+import pytest
+
+from egg_n_bacon_housing.config import settings
+
+pytestmark = pytest.mark.integration
 
 
 def _get_pipeline_module():
@@ -13,27 +18,30 @@ def _get_pipeline_module():
 
 def test_build_pipeline_and_execute_minimal_graph(monkeypatch, tmp_path):
     pipeline = _get_pipeline_module()
-    config_module = importlib.import_module("egg_n_bacon_housing.config")
 
     module = types.ModuleType("test_component")
     exec(
         "import pandas as pd\n"
-        "def unified_dataset() -> pd.DataFrame:\n"
+        "from pathlib import Path\n"
+        "def unified_features(platinum_dir: Path) -> pd.DataFrame:\n"
         "    return pd.DataFrame([{'price': 1}])\n",
         module.__dict__,
     )
     sys.modules[module.__name__] = module
 
-    monkeypatch.setattr(pipeline, "COMPONENTS", [module])
-    monkeypatch.setattr(config_module.settings.pipeline, "use_caching", False)
+    monkeypatch.setattr(pipeline, "_get_components", lambda: [module])
+    monkeypatch.setattr(settings.pipeline, "use_caching", False)
 
     try:
         dr = pipeline.build_pipeline(data_path=str(tmp_path))
-        result = dr.execute(final_vars=["unified_dataset"])
+        result = dr.execute(
+            final_vars=["unified_features"],
+            inputs={"platinum_dir": tmp_path / "platinum"},
+        )
 
-        assert "unified_dataset" in result
-        assert isinstance(result["unified_dataset"], pd.DataFrame)
-        assert len(result["unified_dataset"]) == 1
+        assert "unified_features" in result
+        assert isinstance(result["unified_features"], pd.DataFrame)
+        assert len(result["unified_features"]) == 1
     finally:
         sys.modules.pop(module.__name__, None)
 
@@ -44,8 +52,9 @@ def test_run_pipeline_defaults_to_all_stage(monkeypatch):
     captured = {}
 
     class DummyDriver:
-        def execute(self, final_vars):
+        def execute(self, final_vars, inputs=None):
             captured["final_vars"] = final_vars
+            captured["inputs"] = inputs
             return {name: "ok" for name in final_vars}
 
     monkeypatch.setattr(pipeline, "build_pipeline", lambda data_path=None: DummyDriver())

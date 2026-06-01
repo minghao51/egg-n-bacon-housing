@@ -11,7 +11,7 @@ def _log_results(logger, results: dict):
     for name, value in results.items():
         if hasattr(value, "shape"):
             logger.info(f"  {name}: {value.shape}")
-        elif isinstance(value, (int, float)):
+        elif isinstance(value, int | float):
             logger.info(f"  {name}: {value}")
         elif isinstance(value, dict):
             logger.info(f"  {name}: {len(value)} keys")

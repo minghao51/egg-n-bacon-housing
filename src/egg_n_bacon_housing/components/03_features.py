@@ -11,37 +11,60 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import BallTree
 
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.contracts import require_columns
-from egg_n_bacon_housing.utils.mrt_distance import calculate_nearest_mrt, load_mrt_stations
+from egg_n_bacon_housing.utils.io_helpers import save_parquet
+from egg_n_bacon_housing.utils.mrt_distance import calculate_nearest_mrt
 from egg_n_bacon_housing.utils.school_features import calculate_school_features
+from egg_n_bacon_housing.utils.validation import validate_schema
 
 logger = logging.getLogger(__name__)
 
 
-def gold_dir() -> Path:
-    """Gold layer directory path."""
-    return settings.gold_dir
+def _quarantine_gold_path(gold_dir: Path, dataset_name: str) -> Path:
+    from datetime import datetime as _dt
+
+    timestamp = _dt.now().strftime("%Y%m%d_%H%M%S")
+    return gold_dir / "_quarantine" / f"{dataset_name}_{timestamp}.parquet"
+
+
+_FLAT_TYPE_NORMALIZE_MAP: dict[str, str] = {}
+
+
+def _build_flat_type_map() -> dict[str, str]:
+    canonical = [
+        ("1-ROOM", "1-ROOM"),
+        ("2-ROOM", "2-ROOM"),
+        ("3-ROOM", "3-ROOM"),
+        ("4-ROOM", "4-ROOM"),
+        ("5-ROOM", "5-ROOM"),
+        ("EXECUTIVE", "EXECUTIVE"),
+        ("MULTI-GENERATION", "MULTI-GENERATION"),
+    ]
+    variants: dict[str, str] = {}
+    for std, val in canonical:
+        for form in [std, std.replace("-", " "), std.replace("-", "")]:
+            variants[form] = val
+    variants["EXEC"] = "EXECUTIVE"
+    variants["EXEC."] = "EXECUTIVE"
+    variants["MULTI-GEN"] = "MULTI-GENERATION"
+    variants["MULTI GEN"] = "MULTI-GENERATION"
+    variants["MG"] = "MULTI-GENERATION"
+    variants["STUDIO"] = "2-ROOM"
+    variants["STUDIO APARTMENT"] = "2-ROOM"
+    m: dict[str, str] = {}
+    for k, v in {**variants}.items():
+        m[k] = v
+        m[k.upper()] = v
+        m[k.lower()] = v
+    return m
+
+
+_FLAT_TYPE_NORMALIZE_MAP = _build_flat_type_map()
 
 
 def _normalize_hdb_flat_type(series: pd.Series) -> pd.Series:
-    """Normalize HDB flat types so rental and resale records can be joined."""
-    return (
-        series.astype(str)
-        .str.upper()
-        .str.strip()
-        .replace(
-            {
-                "1 ROOM": "1-ROOM",
-                "2 ROOM": "2-ROOM",
-                "3 ROOM": "3-ROOM",
-                "4 ROOM": "4-ROOM",
-                "5 ROOM": "5-ROOM",
-                "EXECUTIVE": "EXECUTIVE",
-                "MULTI GENERATION": "MULTI-GENERATION",
-            }
-        )
-    )
+    upper = series.astype(str).str.strip().str.upper()
+    return upper.map(_FLAT_TYPE_NORMALIZE_MAP).fillna(upper)
 
 
 def _nearest_mall_features(
@@ -92,6 +115,7 @@ def rental_yield(
     hdb_validated: pd.DataFrame,
     raw_hdb_rental: pd.DataFrame,
     raw_rental_index: pd.DataFrame,
+    gold_dir: Path,
 ) -> pd.DataFrame:
     """Compute rental yield metrics.
 
@@ -141,6 +165,16 @@ def rental_yield(
     monthly_rents = rents.groupby(["town", "flat_type", "month"], as_index=False).agg(
         median_rent=("monthly_rent", "median"), rent_sample_size=("monthly_rent", "size")
     )
+
+    sales_keys = set(zip(monthly_sales["town"], monthly_sales["flat_type"], monthly_sales["month"]))
+    rent_keys = set(zip(monthly_rents["town"], monthly_rents["flat_type"], monthly_rents["month"]))
+    sales_only_count = len(sales_keys - rent_keys)
+    rent_only_count = len(rent_keys - sales_keys)
+    if sales_only_count > 0 or rent_only_count > 0:
+        logger.info(
+            f"Rental yield join: {sales_only_count} unmatched sales groups, "
+            f"{rent_only_count} unmatched rent groups (no match on town/flat_type/month)"
+        )
 
     combo_yields = monthly_sales.merge(
         monthly_rents,
@@ -193,10 +227,18 @@ def rental_yield(
             how="left",
         )
 
-    gold_dir().mkdir(parents=True, exist_ok=True)
-    out_path = gold_dir() / "rental_yield.parquet"
-    df.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(df)} rental yield records to gold")
+    from egg_n_bacon_housing.schemas.feature_models import HRentalYieldRecord
+
+    valid_ry, quarantine_ry = validate_schema(df, HRentalYieldRecord, "rental_yield")
+    if not quarantine_ry.empty:
+        save_parquet(
+            quarantine_ry,
+            _quarantine_gold_path(gold_dir, "rental_yield"),
+            "quarantined rental yield",
+        )
+    df = valid_ry
+
+    save_parquet(df, gold_dir / "rental_yield.parquet", "rental yield")
 
     return df
 
@@ -205,12 +247,15 @@ def features_with_amenities(
     geocoded_validated: pd.DataFrame,
     raw_school_directory: pd.DataFrame,
     raw_shopping_malls: pd.DataFrame,
+    raw_mrt_stations: pd.DataFrame,
+    gold_dir: Path,
 ) -> pd.DataFrame:
     """Compute amenity distance features.
 
     Args:
         geocoded_validated: Geocoded transaction data.
         raw_school_directory: School locations.
+        raw_mrt_stations: MRT station data (from 01_ingestion).
 
     Returns:
         DataFrame with computed features.
@@ -252,29 +297,39 @@ def features_with_amenities(
             df["dist_to_nearest_school"] = df[school_distance_cols].min(axis=1, skipna=True)
 
     try:
-        mrt_stations = load_mrt_stations()
-        df = calculate_nearest_mrt(df, mrt_stations_df=mrt_stations, show_progress=False)
-        if "nearest_mrt_distance" in df.columns:
-            df["dist_to_nearest_mrt"] = df["nearest_mrt_distance"]
-        if "nearest_mrt_name" in df.columns:
-            df["nearest_mrt_station"] = df["nearest_mrt_name"]
-    except Exception as exc:
+        if not raw_mrt_stations.empty:
+            df = calculate_nearest_mrt(df, mrt_stations_df=raw_mrt_stations, show_progress=False)
+            if "nearest_mrt_distance" in df.columns:
+                df["dist_to_nearest_mrt"] = df["nearest_mrt_distance"]
+        else:
+            logger.warning("MRT station data is empty — skipping MRT feature enrichment")
+            df["dist_to_nearest_mrt"] = pd.NA
+            df["nearest_mrt_station"] = pd.NA
+    except (OSError, ValueError, KeyError, RuntimeError) as exc:
         logger.warning(f"Skipping MRT feature enrichment: {exc}")
         df["dist_to_nearest_mrt"] = pd.NA
         df["nearest_mrt_station"] = pd.NA
 
     df = _nearest_mall_features(df, raw_shopping_malls)
 
-    gold_dir().mkdir(parents=True, exist_ok=True)
-    out_path = gold_dir() / "features_with_amenities.parquet"
-    df.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(df)} feature records to gold")
+    from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction
+
+    valid_feat, quarantine_feat = validate_schema(df, HFeatureTransaction, "feature_transaction")
+    if not quarantine_feat.empty:
+        save_parquet(
+            quarantine_feat,
+            _quarantine_gold_path(gold_dir, "feature_transactions"),
+            "quarantined feature transactions",
+        )
+    df = valid_feat
+
+    save_parquet(df, gold_dir / "features_with_amenities.parquet", "feature records")
 
     return df
 
 
 def unified_features(
-    features_with_amenities: pd.DataFrame, rental_yield: pd.DataFrame
+    features_with_amenities: pd.DataFrame, rental_yield: pd.DataFrame, gold_dir: Path
 ) -> pd.DataFrame:
     """Merge rental yield onto feature data.
 
@@ -317,13 +372,11 @@ def unified_features(
 
         if merge_keys and "rental_yield_pct" in rental_df.columns:
             rental_cols = merge_keys + ["rental_yield_pct"]
-            rental_lookup = (
-                rental_df[rental_cols]
-                .dropna(subset=["rental_yield_pct"])
-                .drop_duplicates(
-                    subset=merge_keys,
-                    keep="last",
-                )
+            rental_lookup = rental_df[rental_cols].dropna(subset=["rental_yield_pct"])
+            sort_col = next((c for c in merge_keys if "month" in c or "date" in c), merge_keys[0])
+            rental_lookup = rental_lookup.sort_values(sort_col).drop_duplicates(
+                subset=merge_keys,
+                keep="last",
             )
             df = df.merge(rental_lookup, on=merge_keys, how="left")
         else:
@@ -331,9 +384,17 @@ def unified_features(
                 "Skipping rental yield join: missing required join keys between feature and yield datasets"
             )
 
-    gold_dir().mkdir(parents=True, exist_ok=True)
-    out_path = gold_dir() / "unified_features.parquet"
-    df.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(df)} unified features to gold")
+    from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction
+
+    valid_uni, quarantine_uni = validate_schema(df, HFeatureTransaction, "unified_feature")
+    if not quarantine_uni.empty:
+        save_parquet(
+            quarantine_uni,
+            _quarantine_gold_path(gold_dir, "unified_features"),
+            "quarantined unified features",
+        )
+    df = valid_uni
+
+    save_parquet(df, gold_dir / "unified_features.parquet", "unified features")
 
     return df

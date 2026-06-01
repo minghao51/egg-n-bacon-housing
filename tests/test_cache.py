@@ -3,6 +3,9 @@
 import importlib
 
 import pandas as pd
+import pytest
+
+pytestmark = pytest.mark.unit
 
 
 def _get_cache_module():

@@ -8,6 +8,8 @@ import pandas as pd
 import pytest
 import requests
 
+pytestmark = pytest.mark.unit
+
 
 def _get_onemap_module():
     return importlib.import_module("egg_n_bacon_housing.adapters.onemap")
@@ -133,3 +135,85 @@ class TestFetchDataRetry:
         assert call_count == 3
         assert not df.empty
         assert "search_result" in df.columns
+
+
+class TestJWTTokenHandling:
+    def test_valid_jwt_token_with_future_expiry(self, monkeypatch):
+        """Valid JWT token with future expiry is used directly."""
+        import base64
+
+        onemap = _get_onemap_module()
+
+        payload = {"exp": 9999999999, "sub": "test"}
+        payload_b64 = base64.b64encode(json.dumps(payload).encode()).decode().rstrip("=")
+        token = f"header.{payload_b64}.signature"
+
+        monkeypatch.setenv("ONEMAP_TOKEN", token)
+
+        result = onemap.setup_onemap_headers()
+
+        assert result == {"Authorization": token}
+
+    def test_expired_jwt_token_requests_new_one(self, monkeypatch):
+        """Expired JWT token triggers new token request."""
+        import base64
+
+        onemap = _get_onemap_module()
+
+        payload = {"exp": 1, "sub": "test"}
+        payload_b64 = base64.b64encode(json.dumps(payload).encode()).decode().rstrip("=")
+        token = f"header.{payload_b64}.signature"
+
+        monkeypatch.setenv("ONEMAP_TOKEN", token)
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = json.dumps({"access_token": "fresh-token"})
+
+        with patch("requests.post", return_value=mock_response):
+            result = onemap.setup_onemap_headers()
+
+        assert result == {"Authorization": "fresh-token"}
+
+    def test_invalid_token_format_requests_new_one(self, monkeypatch):
+        """Token without 3 JWT parts triggers new token request."""
+        onemap = _get_onemap_module()
+
+        monkeypatch.setenv("ONEMAP_TOKEN", "not-a-jwt")
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = json.dumps({"access_token": "new-token"})
+
+        with patch("requests.post", return_value=mock_response):
+            result = onemap.setup_onemap_headers()
+
+        assert result == {"Authorization": "new-token"}
+
+    def test_missing_access_token_in_response_raises(self, monkeypatch):
+        """Response without access_token raises error after retries."""
+        onemap = _get_onemap_module()
+
+        monkeypatch.delenv("ONEMAP_TOKEN", raising=False)
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = json.dumps({"error": "no token"})
+
+        with patch("requests.post", return_value=mock_response):
+            with pytest.raises((onemap.OneMapAuthError, Exception)):
+                onemap._request_new_token()
+
+    def test_non_200_status_raises(self, monkeypatch):
+        """Non-200 status from token endpoint raises error."""
+        onemap = _get_onemap_module()
+
+        monkeypatch.delenv("ONEMAP_TOKEN", raising=False)
+
+        mock_response = MagicMock()
+        mock_response.status_code = 401
+        mock_response.text = "Unauthorized"
+
+        with patch("requests.post", return_value=mock_response):
+            with pytest.raises((onemap.OneMapAuthError, Exception)):
+                onemap._request_new_token()

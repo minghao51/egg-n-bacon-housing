@@ -5,6 +5,8 @@ import importlib
 import pandas as pd
 import pytest
 
+pytestmark = pytest.mark.unit
+
 
 def _get_export_module():
     """Get the 04_export module."""
@@ -14,7 +16,7 @@ def _get_export_module():
 class TestPlatinumLayer:
     """Test platinum layer export functions."""
 
-    def test_unified_dataset_returns_dataframe(self):
+    def test_unified_dataset_returns_dataframe(self, tmp_path):
         """Test that unified_dataset returns a DataFrame."""
         export = _get_export_module()
 
@@ -31,30 +33,32 @@ class TestPlatinumLayer:
             ]
         )
 
-        result = export.unified_dataset(unified_features)
+        result = export.unified_dataset(unified_features, platinum_dir=tmp_path / "platinum")
 
         assert isinstance(result, pd.DataFrame)
         if not result.empty:
             assert "town" in result.columns
             assert "lat" in result.columns
 
-    def test_unified_dataset_with_empty_input(self):
+    def test_unified_dataset_with_empty_input(self, tmp_path):
         """Test that unified_dataset handles empty input."""
         export = _get_export_module()
 
         unified_features = pd.DataFrame()
 
-        result = export.unified_dataset(unified_features)
+        result = export.unified_dataset(unified_features, platinum_dir=tmp_path / "platinum")
 
         assert isinstance(result, pd.DataFrame)
         assert result.empty
 
-    def test_unified_dataset_requires_contract_columns(self):
+    def test_unified_dataset_requires_contract_columns(self, tmp_path):
         export = _get_export_module()
         with pytest.raises(ValueError, match="missing required columns"):
-            export.unified_dataset(pd.DataFrame([{"price": 500000.0}]))
+            export.unified_dataset(
+                pd.DataFrame([{"price": 500000.0}]), platinum_dir=tmp_path / "platinum"
+            )
 
-    def test_dashboard_json_returns_dict(self):
+    def test_dashboard_json_returns_dict(self, tmp_path):
         """Test that dashboard_json returns a dictionary."""
         export = _get_export_module()
 
@@ -68,7 +72,7 @@ class TestPlatinumLayer:
             ]
         )
 
-        result = export.dashboard_json(unified_dataset)
+        result = export.dashboard_json(unified_dataset, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         if result:
@@ -77,18 +81,18 @@ class TestPlatinumLayer:
             assert "price_range" in result
             assert "generated_at" in result
 
-    def test_dashboard_json_with_empty_input(self):
+    def test_dashboard_json_with_empty_input(self, tmp_path):
         """Test that dashboard_json handles empty input."""
         export = _get_export_module()
 
         unified_dataset = pd.DataFrame()
 
-        result = export.dashboard_json(unified_dataset)
+        result = export.dashboard_json(unified_dataset, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         assert result == {}
 
-    def test_segments_data_returns_dict(self):
+    def test_segments_data_returns_dict(self, tmp_path):
         """Test that segments_data returns a dictionary."""
         export = _get_export_module()
 
@@ -99,7 +103,7 @@ class TestPlatinumLayer:
             ]
         )
 
-        result = export.segments_data(unified_dataset)
+        result = export.segments_data(unified_dataset, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         if result:
@@ -107,18 +111,18 @@ class TestPlatinumLayer:
             assert isinstance(result["segments"], list)
             assert "generated_at" in result
 
-    def test_segments_data_with_empty_input(self):
+    def test_segments_data_with_empty_input(self, tmp_path):
         """Test that segments_data handles empty input."""
         export = _get_export_module()
 
         unified_dataset = pd.DataFrame()
 
-        result = export.segments_data(unified_dataset)
+        result = export.segments_data(unified_dataset, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         assert result == {}
 
-    def test_interactive_tools_data_returns_dict(self):
+    def test_interactive_tools_data_returns_dict(self, tmp_path):
         """Test that interactive_tools_data returns a dictionary."""
         export = _get_export_module()
 
@@ -132,40 +136,19 @@ class TestPlatinumLayer:
             ]
         )
 
-        result = export.interactive_tools_data(unified_dataset)
+        result = export.interactive_tools_data(unified_dataset, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         if result:
             assert "planning_area_stats" in result
 
-    def test_interactive_tools_data_with_empty_input(self):
+    def test_interactive_tools_data_with_empty_input(self, tmp_path):
         """Test that interactive_tools_data handles empty input."""
         export = _get_export_module()
 
         unified_dataset = pd.DataFrame()
 
-        result = export.interactive_tools_data(unified_dataset)
+        result = export.interactive_tools_data(unified_dataset, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         assert result == {}
-
-    def test_csv_export_returns_path_or_none(self):
-        """Test that csv_export returns a Path or None."""
-        export = _get_export_module()
-
-        unified_dataset = pd.DataFrame(
-            [
-                {
-                    "town": "TOA PAYOH",
-                    "price": 500000.0,
-                }
-            ]
-        )
-
-        result = export.csv_export(unified_dataset)
-
-        if result is not None:
-            assert result.exists()
-            assert result.suffix == ".csv"
-        else:
-            assert result is None

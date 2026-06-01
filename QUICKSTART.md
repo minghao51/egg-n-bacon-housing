@@ -40,52 +40,34 @@ All tests should pass! ✅
 ## Step 5: Run the Pipeline (When ready)
 
 ```bash
-# Interactive guide - recommended!
-uv run python run_real_pipeline.py
+# Fetch manual data from Cloudflare R2 (~100MB) - one time after clone
+dotenvx run -- uv run python scripts/00_sync_data.py
 
-# Or run demo first (no API keys needed)
-uv run python demo_pipeline.py
+# Run the pipeline
+uv run python main.py --stage all
 ```
 
 ---
 
 ## 📚 Documentation
 
+- **[R2 Sync Guide](docs/guides/r2-sync-guide.md)** - Manual data setup
 - **[Usage Guide](docs/20250120-usage-guide.md)** - Complete usage reference
 - **[Architecture](docs/20250120-architecture.md)** - System design
 - **[Pipeline Details](docs/20250120-data-pipeline.md)** - Data flow
-- **[Running Real Pipeline](docs/20250120-running-real-pipeline.md)** - Execution guide
 
 ## 🎯 Common Commands
 
 ```bash
+# Sync manual data from R2
+dotenvx run -- uv run python scripts/00_sync_data.py
+
 # Run tests
 uv run pytest
 
-# Run demo pipeline
-uv run python demo_pipeline.py
+# Run the pipeline
+uv run python main.py --stage all
 
-# Run real pipeline (needs API keys)
-uv run python run_real_pipeline.py
-
-# Start Jupyter
-uv run jupyter notebook
-
-# Check linting
+# Lint
 uv run ruff check .
 ```
-
-## 📖 Learning Path
-
-1. **Start Here** - Read [CLAUDE.md](CLAUDE.md) (5 min)
-2. **Architecture** - Read [docs/20250120-architecture.md](docs/20250120-architecture.md) (10 min)
-3. **Usage** - Read [docs/20250120-usage-guide.md](docs/20250120-usage-guide.md) (15 min)
-4. **Build** - Run the pipeline! 🚀
-
----
-
-**Done!** You're ready to use the project.
-
-Need help? Check the [Usage Guide](docs/20250120-usage-guide.md) or [docs/](docs/) folder.
-
-Happy coding! 🎉

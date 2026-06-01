@@ -215,10 +215,6 @@ def get_station_lines_mapping() -> dict:
     return _STATION_LINES
 
 
-_MRT_LINES: dict | None = None
-_STATION_LINES: dict | None = None
-
-
 def get_station_lines(station_name: str) -> list[str]:
     """Get MRT line codes for a station.
 

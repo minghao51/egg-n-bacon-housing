@@ -31,6 +31,27 @@ class MetricsConfig(BaseSettings):
     }
 
 
+_DEFAULT_URA_EC_FILES = [
+    "ECResidentialTransaction20260121003532",
+    "ECResidentialTransaction20260121003707",
+]
+
+_DEFAULT_URA_CONDO_FILES = [
+    "ResidentialTransaction20260121003944",
+    "ResidentialTransaction20260121004101",
+    "ResidentialTransaction20260121004213",
+    "ResidentialTransaction20260121004407",
+    "ResidentialTransaction20260121004517",
+    "ResidentialTransaction20260121005130",
+    "ResidentialTransaction20260121005233",
+    "ResidentialTransaction20260121005346",
+    "ResidentialTransaction20260121005450",
+    "ResidentialTransaction20260121005601",
+    "ResidentialTransaction20260121005715",
+    "ResidentialTransaction20260121005734",
+]
+
+
 class LoggingConfig(BaseSettings):
     level: str = "INFO"
     format: str = "%(asctime)s - %(levelname)s - %(message)s"
@@ -67,24 +88,14 @@ class Settings(BaseSettings):
     supabase_url: SecretStr = Field(default="", alias="SUPABASE_URL")
     supabase_key: SecretStr = Field(default="", alias="SUPABASE_KEY")
     jina_ai: SecretStr = Field(default="", alias="JINA_AI")
-    ura_ec_files: list[str] = [
-        "ECResidentialTransaction20260121003532",
-        "ECResidentialTransaction20260121003707",
-    ]
-    ura_condo_files: list[str] = [
-        "ResidentialTransaction20260121003944",
-        "ResidentialTransaction20260121004101",
-        "ResidentialTransaction20260121004213",
-        "ResidentialTransaction20260121004407",
-        "ResidentialTransaction20260121004517",
-        "ResidentialTransaction20260121005130",
-        "ResidentialTransaction20260121005233",
-        "ResidentialTransaction20260121005346",
-        "ResidentialTransaction20260121005450",
-        "ResidentialTransaction20260121005601",
-        "ResidentialTransaction20260121005715",
-        "ResidentialTransaction20260121005734",
-    ]
+
+    r2_account_id: str = Field(default="", alias="R2_ACCOUNT_ID")
+    r2_access_key_id: SecretStr = Field(default="", alias="R2_ACCESS_KEY_ID")
+    r2_secret_access_key: SecretStr = Field(default="", alias="R2_SECRET_ACCESS_KEY")
+    r2_bucket: str = Field(default="egg-bacon-housing-data", alias="R2_BUCKET")
+    r2_endpoint: str = Field(default="", alias="R2_ENDPOINT")
+    ura_ec_files: list[str] = _DEFAULT_URA_EC_FILES
+    ura_condo_files: list[str] = _DEFAULT_URA_CONDO_FILES
 
     @property
     def base_dir(self) -> Path:
@@ -92,7 +103,7 @@ class Settings(BaseSettings):
 
     @property
     def data_dir(self) -> Path:
-        return self.base_dir / self.data_path.lstrip("./")
+        return self.base_dir / self.data_path.removeprefix("./")
 
     @property
     def bronze_dir(self) -> Path:
@@ -111,4 +122,19 @@ class Settings(BaseSettings):
         return self.base_dir / self.layer_dirs.platinum
 
 
-settings = Settings()
+_settings: Settings | None = None
+
+
+def get_settings() -> Settings:
+    global _settings
+    if _settings is None:
+        _settings = Settings()
+    return _settings
+
+
+def reset_settings() -> None:
+    global _settings
+    _settings = None
+
+
+settings = get_settings()

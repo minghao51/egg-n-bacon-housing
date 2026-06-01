@@ -1,6 +1,10 @@
 """
 Caching layer for API calls and expensive operations.
 
+SECURITY NOTE: Cache files may contain API response data including geocoding
+results and dataset contents. Ensure cache directories are gitignored and
+not exposed in production.
+
 This module provides a simple file-based caching system to speed up development
 and reduce API quota usage.
 """
@@ -10,7 +14,6 @@ import json
 import logging
 from collections.abc import Callable
 from datetime import datetime, timedelta
-from functools import wraps
 from pathlib import Path
 from typing import Any
 
@@ -44,7 +47,7 @@ class CacheManager:
         Returns:
             MD5 hash of the identifier
         """
-        return hashlib.md5(identifier.encode()).hexdigest()
+        return hashlib.sha256(identifier.encode()).hexdigest()
 
     def _cache_paths(self, cache_key: str) -> dict[str, Path]:
         """Return paths for supported cache formats."""
@@ -120,7 +123,7 @@ class CacheManager:
                 return _CACHE_MISS
             logger.info(f"Cache hit: {identifier[:100]}...")
             return value
-        except Exception as e:
+        except (OSError, json.JSONDecodeError, ValueError) as e:
             logger.warning(f"Failed to load cache: {e}")
             return _CACHE_MISS
 
@@ -148,7 +151,7 @@ class CacheManager:
                 with open(json_path, "w", encoding="utf-8") as f:
                     json.dump(value, f)
             logger.info(f"Cached: {identifier[:100]}...")
-        except Exception as e:
+        except (OSError, TypeError, ValueError) as e:
             logger.warning(f"Failed to cache value: {e}")
 
     def clear(self, identifier: str | None = None) -> None:
@@ -232,53 +235,6 @@ def cached_call(
     _cache_manager.set(identifier, result)
 
     return result
-
-
-def cached_api_call(
-    url: str,
-    params: dict | None = None,
-    method: str = "GET",
-    duration_hours: int | None = None,
-) -> Callable:
-    """
-    Decorator for caching API calls.
-
-    Args:
-        url: API endpoint URL
-        params: Query parameters
-        method: HTTP method
-        duration_hours: Cache duration
-
-    Returns:
-        Decorated function
-
-    Example:
-        >>> @cached_api_call("https://api.example.com/data", {"param": "value"})
-        >>> def fetch_data():
-        ...     return requests.get("https://api.example.com/data", params={"param": "value"})
-    """
-
-    def decorator(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(*args, **kwargs) -> Any:
-            cache_id = f"{method}:{url}:{json.dumps(params or {})} "
-            duration = (
-                settings.pipeline.cache_duration_hours if duration_hours is None else duration_hours
-            )
-
-            cached_value = _cache_manager.get(cache_id, duration)
-            if cached_value is not _CACHE_MISS:
-                return cached_value
-
-            result = func(*args, **kwargs)
-
-            _cache_manager.set(cache_id, result)
-
-            return result
-
-        return wrapper
-
-    return decorator
 
 
 def clear_cache(identifier: str | None = None) -> None:

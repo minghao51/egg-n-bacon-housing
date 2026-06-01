@@ -6,6 +6,8 @@ import json
 import pandas as pd
 import pytest
 
+pytestmark = pytest.mark.unit
+
 
 def _get_ingestion_module():
     """Get the 01_ingestion module."""
@@ -22,26 +24,38 @@ class TestBronzeLayer:
         (tmp_path / "raw_hdb_resale.parquet").parent.mkdir(parents=True, exist_ok=True)
         expected.to_parquet(tmp_path / "raw_hdb_resale.parquet", index=False)
 
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
         monkeypatch.setattr(
             ingestion.datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pytest.fail("network fetch should not run when cache exists"),
         )
 
-        result = ingestion.raw_hdb_resale_transactions()
+        result = ingestion.raw_dataset(
+            bronze_dir=tmp_path,
+            resource_id="d_5785799d63a9da091f4e0b456291eeb8",
+            cache_id="bronze_hdb_resale_raw",
+            cache_filenames=("raw_hdb_resale.parquet",),
+            display_name="HDB resale",
+            error_name="hdb_resale",
+        )
         pd.testing.assert_frame_equal(result, expected)
 
     def test_raw_hdb_resale_transactions_hard_fails_on_empty_fetch(self, tmp_path, monkeypatch):
         ingestion = _get_ingestion_module()
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
         monkeypatch.setattr(
             ingestion.datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pd.DataFrame(),
         )
         with pytest.raises(RuntimeError, match="Core dataset fetch failed: hdb_resale"):
-            ingestion.raw_hdb_resale_transactions()
+            ingestion.raw_dataset(
+                bronze_dir=tmp_path,
+                resource_id="d_5785799d63a9da091f4e0b456291eeb8",
+                cache_id="bronze_hdb_resale_raw",
+                cache_filenames=("raw_hdb_resale.parquet",),
+                display_name="HDB resale",
+                error_name="hdb_resale",
+            )
 
     def test_raw_rental_index_reads_legacy_bronze_filename(self, tmp_path, monkeypatch):
         """Test that rental index reads the tracked bronze parquet filename."""
@@ -49,14 +63,20 @@ class TestBronzeLayer:
         expected = pd.DataFrame([{"quarter": "2024-Q1", "index": "100.0"}])
         expected.to_parquet(tmp_path / "raw_datagov_rental_index.parquet", index=False)
 
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
         monkeypatch.setattr(
             ingestion.datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pytest.fail("network fetch should not run when cache exists"),
         )
 
-        result = ingestion.raw_rental_index()
+        result = ingestion.raw_dataset(
+            bronze_dir=tmp_path,
+            resource_id="d_e03d53203e43c32df38b5123c9e1d2a4",
+            cache_id="bronze_rental_index",
+            cache_filenames=("raw_rental_index.parquet", "raw_datagov_rental_index.parquet"),
+            display_name="rental index",
+            error_name="rental_index",
+        )
         pd.testing.assert_frame_equal(result, expected)
 
     def test_raw_hdb_rental_reads_tracked_bronze_filename(self, tmp_path, monkeypatch):
@@ -65,14 +85,20 @@ class TestBronzeLayer:
         expected = pd.DataFrame([{"town": "TOA PAYOH", "monthly_rent": "3500"}])
         expected.to_parquet(tmp_path / "raw_datagov_hdb_rental.parquet", index=False)
 
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
         monkeypatch.setattr(
             ingestion.datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pytest.fail("network fetch should not run when cache exists"),
         )
 
-        result = ingestion.raw_hdb_rental()
+        result = ingestion.raw_dataset(
+            bronze_dir=tmp_path,
+            resource_id="d_8b84f0dfe7acb6d6585a7d7e6e406b31",
+            cache_id="bronze_hdb_rental_raw",
+            cache_filenames=("raw_hdb_rental.parquet", "raw_datagov_hdb_rental.parquet"),
+            display_name="HDB rental",
+            error_name="hdb_rental",
+        )
         pd.testing.assert_frame_equal(result, expected)
 
     def test_raw_mrt_stations_reads_from_bronze_external(self, tmp_path, monkeypatch):
@@ -83,8 +109,7 @@ class TestBronzeLayer:
         mrt_payload = [{"name": "TOA PAYOH", "lat": 1.33, "lon": 103.85}]
         (external_dir / "mrt_stations.json").write_text(json.dumps(mrt_payload))
 
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
-        result = ingestion.raw_mrt_stations()
+        result = ingestion.raw_mrt_stations(bronze_dir=tmp_path)
 
         assert result.to_dict(orient="records") == mrt_payload
 
@@ -96,9 +121,7 @@ class TestBronzeLayer:
         pd.DataFrame([{"rate": 1.2}]).to_parquet(external_dir / "sora_rates.parquet", index=False)
         pd.DataFrame([{"value": 100}]).to_parquet(external_dir / "cpi.parquet", index=False)
 
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
-
-        result = ingestion.raw_macro_data()
+        result = ingestion.raw_macro_data(bronze_dir=tmp_path)
 
         assert isinstance(result, dict)
         assert set(result) == {"sora", "cpi", "gdp", "unemployment", "ppi"}
@@ -126,14 +149,13 @@ class TestBronzeLayer:
             index=False,
         )
 
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
         monkeypatch.setattr(
             ingestion,
             "_geocode_shopping_malls",
             lambda malls_df: pytest.fail("geocoding should not run when geocoded bronze exists"),
         )
 
-        result = ingestion.raw_shopping_malls()
+        result = ingestion.raw_shopping_malls(bronze_dir=tmp_path)
 
         assert result.loc[0, "shopping_mall"] == "ION Orchard"
         assert result.loc[0, "lat"] == pytest.approx(1.3048)
@@ -149,7 +171,6 @@ class TestBronzeLayer:
 
         query_log = []
 
-        monkeypatch.setattr(ingestion, "bronze_dir", lambda: tmp_path)
         monkeypatch.setattr(
             ingestion.onemap, "setup_onemap_headers", lambda: {"Authorization": "x"}
         )
@@ -174,7 +195,7 @@ class TestBronzeLayer:
 
         monkeypatch.setattr(ingestion.onemap, "fetch_data_cached", fake_fetch)
 
-        result = ingestion.raw_shopping_malls()
+        result = ingestion.raw_shopping_malls(bronze_dir=tmp_path)
 
         assert query_log == ["ION Orchard", "ION Orchard Singapore"]
         assert result.loc[0, "shopping_mall"] == "ION Orchard"

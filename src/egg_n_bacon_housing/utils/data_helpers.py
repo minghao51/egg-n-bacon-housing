@@ -69,7 +69,7 @@ def load_parquet(
         df = pd.read_parquet(parquet_path, columns=columns)
         logger.info(f"Loaded {dataset_name}: {len(df)} rows from {parquet_path}")
         return df
-    except Exception as e:
+    except (OSError, ValueError) as e:
         raise RuntimeError(f"Failed to load parquet {parquet_path}: {e}")
 
 
@@ -133,14 +133,12 @@ def save_parquet(
 
     if mode == "append" and parquet_path.exists():
         try:
-            if partition_cols:
-                existing_df = pd.read_parquet(parquet_path)
-            else:
-                existing_df = pd.read_parquet(parquet_path)
+            existing_df = pd.read_parquet(parquet_path)
             original_rows = len(existing_df)
             df = pd.concat([existing_df, df], ignore_index=True)
+            del existing_df
             logger.info(f"Appended {len(df) - original_rows} rows to {dataset_name}")
-        except Exception as e:
+        except (OSError, ValueError) as e:
             raise RuntimeError(f"Failed to append to existing parquet: {e}")
 
     try:
@@ -156,7 +154,7 @@ def save_parquet(
         else:
             df.to_parquet(parquet_path, **save_kwargs)
             logger.info(f"Saved {len(df)} rows to {parquet_path} (compression: {compression})")
-    except Exception as e:
+    except (OSError, ValueError) as e:
         raise RuntimeError(f"Failed to save parquet {parquet_path}: {e}")
 
     if not partition_cols and calculate_checksum:
@@ -196,80 +194,6 @@ def save_parquet(
     _save_metadata(metadata)
 
 
-def list_datasets(refresh_rows: bool = False) -> dict:
-    """
-    Return all datasets from metadata.
-
-    Args:
-        refresh_rows: If True, recalculate row counts from parquet files on disk
-            for more accurate runtime summaries (does not rewrite metadata).
-
-    Returns:
-        Dictionary of dataset information
-    """
-    metadata = _load_metadata()
-    datasets = metadata["datasets"]
-
-    if not refresh_rows:
-        return datasets
-
-    refreshed: dict = {}
-    for name, info in datasets.items():
-        updated = dict(info)
-        rel_path = info.get("path")
-        if rel_path:
-            parquet_path = PARQUETS_DIR / rel_path
-            if parquet_path.exists():
-                try:
-                    updated["rows"] = len(pd.read_parquet(parquet_path))
-                except Exception as e:
-                    logger.debug("Could not refresh row count for %s: %s", name, e)
-        refreshed[name] = updated
-    return refreshed
-
-
-def verify_metadata() -> bool:
-    """
-    Verify all datasets in metadata actually exist and checksums match.
-
-    Returns:
-        True if all datasets valid, False otherwise
-
-    Logs errors for any invalid datasets found.
-    """
-    metadata = _load_metadata()
-    all_valid = True
-
-    if not metadata["datasets"]:
-        logger.warning("No datasets found in metadata")
-        return True
-
-    for name, info in metadata["datasets"].items():
-        parquet_path = PARQUETS_DIR / info["path"]
-
-        if not parquet_path.exists():
-            logger.error(f"Dataset {name}: file not found at {parquet_path}")
-            all_valid = False
-            continue
-
-        if "checksum" in info:
-            current_checksum = _calculate_checksum(parquet_path)
-            if current_checksum != info["checksum"]:
-                logger.error(
-                    f"Dataset {name}: checksum mismatch. "
-                    f"Expected {info['checksum']}, got {current_checksum}"
-                )
-                all_valid = False
-            else:
-                logger.info(
-                    f"Dataset {name}: OK ({info['rows']} rows, checksum: {current_checksum})"
-                )
-        else:
-            logger.info(f"Dataset {name}: OK ({info['rows']} rows, no checksum)")
-
-    return all_valid
-
-
 def _load_metadata(metadata_file: Path | None = None) -> dict:
     """
     Load metadata.json, create if doesn't exist.
@@ -307,13 +231,4 @@ def _save_metadata(metadata: dict, metadata_file: Path | None = None) -> None:
 
 
 def _calculate_checksum(file_path: Path) -> str:
-    """
-    Calculate MD5 checksum of file.
-
-    Args:
-        file_path: Path to file
-
-    Returns:
-        First 8 characters of MD5 hash
-    """
-    return hashlib.md5(file_path.read_bytes()).hexdigest()[:8]
+    return hashlib.sha256(file_path.read_bytes()).hexdigest()[:16]

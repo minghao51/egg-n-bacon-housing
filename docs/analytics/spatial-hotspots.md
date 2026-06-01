@@ -14,8 +14,8 @@ technicalLevel: intermediate
 
 # Singapore Rental Hotspots
 
-**Analysis Date**: 2026-02-20  
-**Data Period**: 2024-01 to 2025-01  
+**Analysis Date**: 2026-02-20
+**Data Period**: 2024-01 to 2025-01
 **Property Type**: HDB rentals
 
 ## Key Takeaways

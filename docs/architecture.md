@@ -115,7 +115,6 @@ Execution entrypoint:
 | Features  | `components/03_features.py`  | rental yield and amenity-enriched features                |
 | Export    | `components/04_export.py`    | unified dataset, dashboard JSON, app exports              |
 | Metrics   | `components/05_metrics.py`   | area metrics, affordability, hotspots                     |
-| Analytics | `components/06_analytics.py` | optional DAG-connected analytical outputs                 |
 
 ## Analytics Publishing Flow
 

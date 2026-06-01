@@ -14,8 +14,8 @@ technicalLevel: intermediate
 
 # MRT Impact Analysis
 
-**Analysis Date**: 2026-02-04  
-**Data Period**: 2021-2026  
+**Analysis Date**: 2026-02-04
+**Data Period**: 2021-2026
 **Primary Focus**: HDB, with cross-segment comparison
 
 ## Key Takeaways

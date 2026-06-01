@@ -14,8 +14,8 @@ technicalLevel: intermediate
 
 # Policy Impact & Market Dynamics
 
-**Analysis Date**: 2026-02-06  
-**Data Period**: 2017-2026  
+**Analysis Date**: 2026-02-06
+**Data Period**: 2017-2026
 **Coverage**: HDB, condominium, and EC market dynamics
 
 ## Key Takeaways

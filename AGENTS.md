@@ -1,5 +1,30 @@
 # Agent Notes
 
+## Behavior
+
+- **Analyze first** — Understand code, imports, patterns before changes.
+- **Minimal scope** — Only what's needed. No scope-creep refactors.
+- **Check skills** — Before any task, check + follow matching skill.
+- **Verify** — Lint + type-check after changes. Ask user for command.
+- **No commits** — Never commit unless explicitly asked.
+
+## Stack
+
+- **Package mgr:** `uv`
+- **Execution:** `uv run <cmd>` (never `python` directly)
+- **Install:** `uv add <pkg>`
+- **Sync:** `uv sync`
+
+## Output
+
+- Concise. Bulletpoints > paragraphs.
+- File:line references.
+- No preamble/postamble. Answer directly.
+
+## File Ops
+
+- Read before edit. Edit > Write for surgical changes. Edit existing > new files.
+
 ## Project Structure
 
 Source code lives in `src/egg_n_bacon_housing/`:
@@ -11,6 +36,10 @@ Source code lives in `src/egg_n_bacon_housing/`:
 - `adapters/` — External API clients (onemap, datagovsg, geocoding)
 - `utils/` — Utilities (cache, data_helpers, metrics, etc.)
 - `analytics/` — Standalone exploratory analysis scripts (not wired to DAG)
+
+**Manual data**: ~100MB of CSV/GeoJSON source files in `data/manual/` are stored in **Cloudflare R2** (gitignored). Fetch with `dotenvx run -- uv run python scripts/00_sync_data.py`. See `docs/guides/r2-sync-guide.md`.
+
+**Env vars**: Encrypted via `dotenvx` — run commands as `dotenvx run -- uv run <cmd>`.
 
 **Pipeline vs Analytics**: The Hamilton DAG (`components/`) runs the core automated pipeline from bronze to platinum. Analytics modules are run on-demand as standalone scripts that consume exported datasets from the platinum layer. They are not part of the automated pipeline.
 

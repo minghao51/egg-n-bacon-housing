@@ -8,6 +8,8 @@ sys.path.insert(0, "src")
 
 from egg_n_bacon_housing.config import settings
 
+pytestmark = pytest.mark.unit
+
 
 def test_config_loads():
     assert settings.app_name == "egg-n-bacon-housing"

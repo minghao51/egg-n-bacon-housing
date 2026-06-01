@@ -11,179 +11,91 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+import requests
+from hamilton.function_modifiers import parameterize, value
 
 from egg_n_bacon_housing.adapters import datagovsg, onemap
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
 
 logger = logging.getLogger(__name__)
 
-DATASET_IDS = {
-    "hdb_resale": "d_5785799d63a9da091f4e0b456291eeb8",
-    "condo_resale": "d_2fd959a62c2d04c67a5a7c7538c53ddd",
-    "private_transactions": "d_77b2707fa5e1d23fb40ca42f5f8a9d6d",
-    "hdb_rental": "d_8b84f0dfe7acb6d6585a7d7e6e406b31",
-    "rental_index": "d_e03d53203e43c32df38b5123c9e1d2a4",
-    "price_index": "d_9e06eb3f7b3b1e19aa2e0d868b0f1c8",
-    "school_directory": "d_69d6a3ed8b3b1e19aa2e0d868b0f2c7",
-}
+DATAGOVSG_API_BASE_URL = "https://data.gov.sg/api/action/datastore_search?resource_id="
 
 
-def bronze_dir() -> Path:
-    """Bronze layer directory path."""
-    return settings.bronze_dir
+@parameterize(
+    raw_hdb_resale_transactions={
+        "resource_id": value("d_5785799d63a9da091f4e0b456291eeb8"),
+        "cache_id": value("bronze_hdb_resale_raw"),
+        "cache_filenames": value(("raw_hdb_resale.parquet",)),
+        "display_name": value("HDB resale"),
+        "error_name": value("hdb_resale"),
+    },
+    raw_condo_transactions={
+        "resource_id": value("d_2fd959a62c2d04c67a5a7c7538c53ddd"),
+        "cache_id": value("bronze_condo_raw"),
+        "cache_filenames": value(("raw_condo_transactions.parquet",)),
+        "display_name": value("condo"),
+        "error_name": value("condo_resale"),
+    },
+    raw_rental_index={
+        "resource_id": value("d_e03d53203e43c32df38b5123c9e1d2a4"),
+        "cache_id": value("bronze_rental_index"),
+        "cache_filenames": value(("raw_rental_index.parquet", "raw_datagov_rental_index.parquet")),
+        "display_name": value("rental index"),
+        "error_name": value("rental_index"),
+    },
+    raw_hdb_rental={
+        "resource_id": value("d_8b84f0dfe7acb6d6585a7d7e6e406b31"),
+        "cache_id": value("bronze_hdb_rental_raw"),
+        "cache_filenames": value(("raw_hdb_rental.parquet", "raw_datagov_hdb_rental.parquet")),
+        "display_name": value("HDB rental"),
+        "error_name": value("hdb_rental"),
+    },
+    raw_school_directory={
+        "resource_id": value("d_69d6a3ed8b3b1e19aa2e0d868b0f2c7"),
+        "cache_id": value("bronze_school_directory"),
+        "cache_filenames": value(("raw_school_directory.parquet",)),
+        "display_name": value("school"),
+        "error_name": value("school_directory"),
+    },
+)
+def raw_dataset(
+    bronze_dir: Path,
+    resource_id: str,
+    cache_id: str,
+    cache_filenames: tuple[str, ...],
+    display_name: str,
+    error_name: str,
+) -> pd.DataFrame:
+    cache_paths = [bronze_dir / f for f in cache_filenames]
 
-
-def raw_hdb_resale_transactions() -> pd.DataFrame:
-    """Fetch raw HDB resale transactions from data.gov.sg.
-
-    Returns:
-        DataFrame with raw HDB resale transactions.
-
-    Loads from bronze if cached, otherwise fetches from API.
-    """
-    cache_id = "bronze_hdb_resale_raw"
-    cache_path = bronze_dir() / "raw_hdb_resale.parquet"
-
-    if cache_path.exists():
-        logger.info(f"Loading HDB resale from bronze: {cache_path}")
-        return pd.read_parquet(cache_path)
-
-    def _fetch():
-        url = "https://data.gov.sg/api/action/datastore_search?resource_id="
-        return datagovsg.fetch_datagovsg_dataset(url, DATASET_IDS["hdb_resale"], use_cache=False)
-
-    df = cached_call(cache_id, _fetch)
-    if df is not None and not df.empty:
-        bronze_dir().mkdir(parents=True, exist_ok=True)
-        df.to_parquet(cache_path, index=False)
-        logger.info(f"Saved {len(df)} HDB resale records to bronze")
-    if df is None or df.empty:
-        raise RuntimeError("Core dataset fetch failed: hdb_resale")
-    return df
-
-
-def raw_condo_transactions() -> pd.DataFrame:
-    """Fetch raw condo transactions from data.gov.sg.
-
-    Returns:
-        DataFrame with raw condo transactions.
-    """
-    cache_id = "bronze_condo_raw"
-    cache_path = bronze_dir() / "raw_condo_transactions.parquet"
-
-    if cache_path.exists():
-        logger.info(f"Loading condo transactions from bronze: {cache_path}")
-        return pd.read_parquet(cache_path)
-
-    def _fetch():
-        url = "https://data.gov.sg/api/action/datastore_search?resource_id="
-        return datagovsg.fetch_datagovsg_dataset(url, DATASET_IDS["condo_resale"], use_cache=False)
-
-    df = cached_call(cache_id, _fetch)
-    if df is not None and not df.empty:
-        bronze_dir().mkdir(parents=True, exist_ok=True)
-        df.to_parquet(cache_path, index=False)
-        logger.info(f"Saved {len(df)} condo records to bronze")
-    if df is None or df.empty:
-        raise RuntimeError("Core dataset fetch failed: condo_resale")
-    return df
-
-
-def raw_rental_index() -> pd.DataFrame:
-    """Fetch URA rental index from data.gov.sg.
-
-    Returns:
-        DataFrame with rental index time series.
-    """
-    cache_id = "bronze_rental_index"
-    cache_candidates = [
-        bronze_dir() / "raw_rental_index.parquet",
-        bronze_dir() / "raw_datagov_rental_index.parquet",
-    ]
-
-    for cache_path in cache_candidates:
+    for cache_path in cache_paths:
         if cache_path.exists():
-            logger.info(f"Loading rental index from bronze: {cache_path}")
+            logger.info(f"Loading {display_name} from bronze: {cache_path}")
             return pd.read_parquet(cache_path)
 
     def _fetch():
-        url = "https://data.gov.sg/api/action/datastore_search?resource_id="
-        return datagovsg.fetch_datagovsg_dataset(url, DATASET_IDS["rental_index"], use_cache=False)
-
-    df = cached_call(cache_id, _fetch)
-    if df is not None and not df.empty:
-        bronze_dir().mkdir(parents=True, exist_ok=True)
-        df.to_parquet(cache_candidates[0], index=False)
-        logger.info(f"Saved {len(df)} rental index records to bronze")
-    if df is None or df.empty:
-        raise RuntimeError("Core dataset fetch failed: rental_index")
-    return df
-
-
-def raw_hdb_rental() -> pd.DataFrame:
-    """Fetch or load raw HDB rental transactions from bronze."""
-    cache_id = "bronze_hdb_rental_raw"
-    cache_candidates = [
-        bronze_dir() / "raw_hdb_rental.parquet",
-        bronze_dir() / "raw_datagov_hdb_rental.parquet",
-    ]
-
-    for cache_path in cache_candidates:
-        if cache_path.exists():
-            logger.info(f"Loading HDB rental data from bronze: {cache_path}")
-            return pd.read_parquet(cache_path)
-
-    def _fetch():
-        url = "https://data.gov.sg/api/action/datastore_search?resource_id="
-        return datagovsg.fetch_datagovsg_dataset(url, DATASET_IDS["hdb_rental"], use_cache=False)
-
-    df = cached_call(cache_id, _fetch)
-    if df is not None and not df.empty:
-        bronze_dir().mkdir(parents=True, exist_ok=True)
-        df.to_parquet(cache_candidates[0], index=False)
-        logger.info(f"Saved {len(df)} HDB rental records to bronze")
-    if df is None or df.empty:
-        raise RuntimeError("Core dataset fetch failed: hdb_rental")
-    return df
-
-
-def raw_school_directory() -> pd.DataFrame:
-    """Fetch school directory data.
-
-    Returns:
-        DataFrame with school locations and attributes.
-    """
-    cache_id = "bronze_school_directory"
-    cache_path = bronze_dir() / "raw_school_directory.parquet"
-
-    if cache_path.exists():
-        logger.info(f"Loading school directory from bronze: {cache_path}")
-        return pd.read_parquet(cache_path)
-
-    def _fetch():
-        url = "https://data.gov.sg/api/action/datastore_search?resource_id="
         return datagovsg.fetch_datagovsg_dataset(
-            url, DATASET_IDS["school_directory"], use_cache=False
+            DATAGOVSG_API_BASE_URL, resource_id, use_cache=False
         )
 
     df = cached_call(cache_id, _fetch)
     if df is not None and not df.empty:
-        bronze_dir().mkdir(parents=True, exist_ok=True)
-        df.to_parquet(cache_path, index=False)
-        logger.info(f"Saved {len(df)} school records to bronze")
+        bronze_dir.mkdir(parents=True, exist_ok=True)
+        df.to_parquet(cache_paths[0], index=False)
+        logger.info(f"Saved {len(df)} {display_name} records to bronze")
     if df is None or df.empty:
-        raise RuntimeError("Core dataset fetch failed: school_directory")
+        raise RuntimeError(f"Core dataset fetch failed: {error_name}")
     return df
 
 
-def raw_macro_data() -> dict[str, pd.DataFrame]:
+def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
     """Load macro economic data from bronze layer.
 
     Returns:
         Dictionary with keys: 'sora', 'cpi', 'gdp', 'unemployment', 'ppi'.
     """
-    external_dir = bronze_dir() / "external"
+    external_dir = bronze_dir / "external"
     result = {}
 
     sora_path = external_dir / "sora_rates.parquet"
@@ -204,11 +116,11 @@ def raw_macro_data() -> dict[str, pd.DataFrame]:
     return result
 
 
-def _mall_cache_paths() -> tuple[Path, Path]:
+def _mall_cache_paths(bronze_dir: Path) -> tuple[Path, Path]:
     """Return raw and geocoded mall bronze paths."""
     return (
-        bronze_dir() / "raw_wiki_shopping_mall.parquet",
-        bronze_dir() / "raw_wiki_shopping_mall_geocoded.parquet",
+        bronze_dir / "raw_wiki_shopping_mall.parquet",
+        bronze_dir / "raw_wiki_shopping_mall_geocoded.parquet",
     )
 
 
@@ -289,13 +201,13 @@ def _geocode_shopping_malls(malls_df: pd.DataFrame) -> pd.DataFrame:
     return _standardize_geocoded_mall_columns(pd.DataFrame(geocoded_rows))
 
 
-def raw_shopping_malls() -> pd.DataFrame:
+def raw_shopping_malls(bronze_dir: Path) -> pd.DataFrame:
     """Load shopping mall data from bronze layer.
 
     Returns:
         DataFrame with mall locations.
     """
-    raw_path, geocoded_path = _mall_cache_paths()
+    raw_path, geocoded_path = _mall_cache_paths(bronze_dir)
 
     if geocoded_path.exists():
         logger.info(f"Loading geocoded shopping malls from bronze: {geocoded_path}")
@@ -319,22 +231,26 @@ def raw_shopping_malls() -> pd.DataFrame:
                 geocoded_df.to_parquet(geocoded_path, index=False)
                 logger.info(f"Saved {len(geocoded_df)} geocoded shopping malls to bronze")
                 return geocoded_df
-        except Exception as exc:
+        except (requests.RequestException, OSError, ValueError, KeyError) as exc:
             logger.warning(f"Could not geocode shopping malls via OneMap: {exc}")
 
         return malls_df
 
-    logger.warning("Shopping mall data not found in bronze layer")
+    logger.warning(
+        "Shopping mall data not found in bronze layer — "
+        "downstream mall proximity features (dist_to_nearest_mall, nearest_mall) "
+        "will be empty for all records"
+    )
     return pd.DataFrame()
 
 
-def raw_mrt_stations() -> pd.DataFrame:
+def raw_mrt_stations(bronze_dir: Path) -> pd.DataFrame:
     """Load MRT station data from bronze/external.
 
     Returns:
         DataFrame with MRT station locations.
     """
-    config_path = bronze_dir() / "external" / "mrt_stations.json"
+    config_path = bronze_dir / "external" / "mrt_stations.json"
 
     if not config_path.exists():
         logger.warning("MRT stations config not found")

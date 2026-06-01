@@ -4,29 +4,23 @@ This module provides Hamilton-compatible functions for exporting unified
 data to the platinum layer and generating webapp-ready JSON.
 """
 
-import json
 import logging
 from pathlib import Path
 
+import orjson
 import pandas as pd
 
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.contracts import require_columns
+from egg_n_bacon_housing.utils.io_helpers import save_parquet
 
 logger = logging.getLogger(__name__)
 
 
-def platinum_dir() -> Path:
-    """Platinum layer directory path."""
-    return settings.platinum_dir
+def _safe_json_serialize(data: dict) -> bytes:
+    return orjson.dumps(data, option=orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2)
 
 
-def webapp_data_dir() -> Path:
-    """Webapp data output directory."""
-    return settings.base_dir / "app" / "public" / "data"
-
-
-def unified_dataset(unified_features: pd.DataFrame) -> pd.DataFrame:
+def unified_dataset(unified_features: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
     """Create the unified dataset for platinum layer.
 
     Args:
@@ -41,15 +35,12 @@ def unified_dataset(unified_features: pd.DataFrame) -> pd.DataFrame:
     df = unified_features.copy()
     require_columns(df, {"price", "property_type", "transaction_date"}, "unified_features")
 
-    platinum_dir().mkdir(parents=True, exist_ok=True)
-    out_path = platinum_dir() / "unified_dataset.parquet"
-    df.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(df)} records to platinum as unified_dataset")
+    save_parquet(df, platinum_dir / "unified_dataset.parquet", "unified dataset")
 
     return df
 
 
-def dashboard_json(unified_dataset: pd.DataFrame) -> dict:
+def dashboard_json(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
     """Generate webapp-ready JSON summary.
 
     Args:
@@ -75,16 +66,15 @@ def dashboard_json(unified_dataset: pd.DataFrame) -> dict:
     if "planning_area" in unified_dataset.columns:
         summary["by_planning_area"] = unified_dataset.groupby("planning_area").size().to_dict()
 
-    webapp_data_dir().mkdir(parents=True, exist_ok=True)
-    out_path = webapp_data_dir() / "dashboard_summary.json"
-    with open(out_path, "w") as f:
-        json.dump(summary, f, indent=2)
+    webapp_data_dir.mkdir(parents=True, exist_ok=True)
+    out_path = webapp_data_dir / "dashboard_summary.json"
+    out_path.write_bytes(_safe_json_serialize(summary))
     logger.info(f"Saved dashboard JSON to {out_path}")
 
     return summary
 
 
-def segments_data(unified_dataset: pd.DataFrame) -> dict:
+def segments_data(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
     """Generate market segments data for webapp.
 
     Args:
@@ -107,7 +97,7 @@ def segments_data(unified_dataset: pd.DataFrame) -> dict:
                         "property_type": ptype,
                         "count": len(subset),
                         "median_price": float(subset["price"].median()),
-                        "avg_psf": float(subset["psf"].median())
+                        "median_psf": float(subset["psf"].median())
                         if "psf" in subset.columns
                         else None,
                     }
@@ -115,16 +105,15 @@ def segments_data(unified_dataset: pd.DataFrame) -> dict:
 
     result = {"segments": segments, "generated_at": pd.Timestamp.now().isoformat()}
 
-    webapp_data_dir().mkdir(parents=True, exist_ok=True)
-    out_path = webapp_data_dir() / "segments_data.json"
-    with open(out_path, "w") as f:
-        json.dump(result, f, indent=2)
+    webapp_data_dir.mkdir(parents=True, exist_ok=True)
+    out_path = webapp_data_dir / "segments_data.json"
+    out_path.write_bytes(_safe_json_serialize(result))
     logger.info(f"Saved segments data to {out_path}")
 
     return result
 
 
-def interactive_tools_data(unified_dataset: pd.DataFrame) -> dict:
+def interactive_tools_data(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
     """Generate interactive tools data (hotspots, trends).
 
     Args:
@@ -147,34 +136,9 @@ def interactive_tools_data(unified_dataset: pd.DataFrame) -> dict:
         pa_stats.columns = ["planning_area", "median_price", "transaction_count", "price_std"]
         result["planning_area_stats"] = pa_stats.to_dict(orient="records")
 
-    webapp_data_dir().mkdir(parents=True, exist_ok=True)
-    out_path = webapp_data_dir() / "interactive_tools_data.json"
-    with open(out_path, "w") as f:
-        json.dump(result, f, indent=2)
+    webapp_data_dir.mkdir(parents=True, exist_ok=True)
+    out_path = webapp_data_dir / "interactive_tools_data.json"
+    out_path.write_bytes(_safe_json_serialize(result))
     logger.info(f"Saved interactive tools data to {out_path}")
 
     return result
-
-
-def csv_export(unified_dataset: pd.DataFrame, export_dir: Path | None = None) -> Path | None:
-    """Export unified dataset to CSV for external use.
-
-    Args:
-        unified_dataset: Full unified dataset.
-        export_dir: Optional custom export directory.
-
-    Returns:
-        Path to exported CSV or None if failed.
-    """
-    if unified_dataset.empty:
-        return None
-
-    if export_dir is None:
-        export_dir = settings.platinum_dir / "exports"
-
-    export_dir.mkdir(parents=True, exist_ok=True)
-    out_path = export_dir / "l3_housing_unified.csv"
-    unified_dataset.to_csv(out_path, index=False)
-    logger.info(f"Exported {len(unified_dataset)} records to CSV: {out_path}")
-
-    return out_path

@@ -9,8 +9,8 @@ This script:
    - Price per square foot (PSF)
    - Transaction volume
    - Market momentum
-   - Affordability index (TODO: needs income data)
-   - ROI potential score (TODO: needs rental data)
+   - Affordability index (placeholder: requires income data)
+   - ROI potential score (placeholder: requires rental data)
 4. Saves results to L3 parquet files
 """
 

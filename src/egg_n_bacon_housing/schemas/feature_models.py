@@ -14,12 +14,12 @@ class HFeatureTransaction(BaseModel):
     lat: Annotated[float, Field(ge=-90, le=90)]
     lon: Annotated[float, Field(ge=-180, le=180)]
     property_type: str
-    planning_area: str
+    planning_area: str | None = None
     town: str | None = None
 
-    floor_area_sqft: Annotated[float, Field(gt=0)]
-    psf: Annotated[float, Field(gt=0)]
-    remaining_lease_years: Annotated[float, Field(ge=0)]
+    floor_area_sqft: Annotated[float, Field(gt=0)] | None = None
+    psf: Annotated[float, Field(gt=0)] | None = None
+    remaining_lease_years: Annotated[float, Field(ge=0)] | None = None
 
     dist_to_nearest_mrt: float | None = Field(ge=0, default=None)
     nearest_mrt_station: str | None = None
@@ -39,28 +39,6 @@ class HFeatureTransaction(BaseModel):
     price_stratum: str | None = None
 
 
-class HAmenityFeatures(BaseModel):
-    """Precomputed amenity density features."""
-
-    planning_area: str
-    lat: float
-    lon: float
-
-    malls_within_1km: int
-    malls_within_2km: int
-    malls_within_5km: int
-
-    schools_within_1km: int
-    schools_within_2km: int
-    schools_within_5km: int
-
-    mrt_stations_within_1km: int
-    mrt_stations_within_2km: int
-
-    avg_mall_size_within_2km: float | None = None
-    school_quality_score: float | None = None
-
-
 class HRentalYieldRecord(BaseModel):
     """Precomputed rental yield record."""
 
@@ -74,25 +52,3 @@ class HRentalYieldRecord(BaseModel):
     rental_yield_pct: Annotated[float, Field(ge=0, le=20)]
     sample_size: int
     month: str
-
-
-class HPlanningAreaMetrics(BaseModel):
-    """Aggregated planning area metrics."""
-
-    planning_area: str
-    month: str
-
-    median_price: float
-    mean_price: float
-    transaction_count: int
-
-    avg_psf: float
-    median_psf: float
-
-    avg_remaining_lease_years: float
-
-    rental_yield_pct: float | None = None
-
-    appreciation_1m_pct: float | None = None
-    appreciation_3m_pct: float | None = None
-    appreciation_12m_pct: float | None = None

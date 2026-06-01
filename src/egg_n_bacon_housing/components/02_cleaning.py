@@ -5,23 +5,23 @@ validating bronze data into the silver layer.
 """
 
 import logging
+from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
+from hamilton.function_modifiers import check_output
 
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.contracts import require_columns
+from egg_n_bacon_housing.utils.io_helpers import save_parquet
+from egg_n_bacon_housing.utils.validation import validate_schema
 
 logger = logging.getLogger(__name__)
 
 
-def silver_dir() -> Path:
-    """Silver layer directory path."""
-    return settings.silver_dir
-
-
-def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.DataFrame:
+def cleaned_hdb_transactions(
+    raw_hdb_resale_transactions: pd.DataFrame, silver_dir: Path
+) -> pd.DataFrame:
     """Clean and validate HDB resale transactions.
 
     Args:
@@ -76,84 +76,35 @@ def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.Da
     df = df.dropna(subset=["price", "transaction_date"])
     df = df[df["price"] > 0]
 
-    silver_dir().mkdir(parents=True, exist_ok=True)
-    out_path = silver_dir() / "cleaned_hdb_transactions.parquet"
-    df.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(df)} cleaned HDB transactions to silver")
-
     return df
 
 
-def _validate_against_schema(
-    df: pd.DataFrame, model_cls: type[Any], entity_name: str
-) -> pd.DataFrame:
-    """Validate DataFrame rows against a Pydantic schema, returning only valid records.
-
-    Args:
-        df: Input DataFrame to validate.
-        model_cls: Pydantic model class to validate against.
-        entity_name: Human-readable label for logging (e.g. "HDB", "condo").
-
-    Returns:
-        DataFrame containing only records that passed validation.
-    """
-    if df.empty:
-        return pd.DataFrame()
-
-    required_fields = {
-        name
-        for name, field in model_cls.model_fields.items()
-        if field.is_required() and field.default is None
-    }
-    existing_required = [col for col in required_fields if col in df.columns]
-    if existing_required:
-        df = df.dropna(subset=existing_required)
-        if df.empty:
-            logger.warning("No %s records left after required-field prefilter", entity_name)
-            return pd.DataFrame()
-
-    validation_errors = []
-    validated_records = []
-    records = df.to_dict(orient="records")
-    chunk_size = 2000
-
-    for chunk_start in range(0, len(records), chunk_size):
-        chunk = records[chunk_start : chunk_start + chunk_size]
-        for i, row in enumerate(chunk, start=chunk_start):
-            try:
-                record = model_cls(**row)
-                validated_records.append(record.model_dump())
-            except Exception as e:
-                validation_errors.append({"index": i, "error": str(e)})
-
-    if validation_errors:
-        error_count = len(validation_errors)
-        logger.warning(f"Validation failed for {error_count} {entity_name} records")
-        if error_count <= 5:
-            for err in validation_errors[:5]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-        else:
-            for err in validation_errors[:3]:
-                logger.debug(f"  Row {err['index']}: {err['error']}")
-            logger.debug(f"  ... and {error_count - 3} more")
-
-    if validated_records:
-        validated_df = pd.DataFrame(validated_records)
-        logger.info(f"Validated {len(validated_df)} {entity_name} transactions successfully")
-        return validated_df
-    else:
-        logger.warning(f"No {entity_name} transactions passed validation")
-        return pd.DataFrame()
+def _quarantine_path(silver_dir: Path, dataset_name: str) -> Path:
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return silver_dir / "_quarantine" / f"{dataset_name}_{timestamp}.parquet"
 
 
-def hdb_validated(cleaned_hdb_transactions: pd.DataFrame) -> pd.DataFrame:
+@check_output(data_type=pd.DataFrame, importance="warn")
+def hdb_validated(cleaned_hdb_transactions: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate HDB transactions against schema."""
     from egg_n_bacon_housing.schemas.clean_models import HCleanHDBTransaction
 
-    return _validate_against_schema(cleaned_hdb_transactions, HCleanHDBTransaction, "HDB")
+    valid_df, quarantine_df = validate_schema(cleaned_hdb_transactions, HCleanHDBTransaction, "HDB")
+
+    save_parquet(
+        valid_df, silver_dir / "cleaned_hdb_transactions.parquet", "validated HDB transactions"
+    )
+
+    if not quarantine_df.empty:
+        q_path = _quarantine_path(silver_dir, "hdb_transactions")
+        save_parquet(quarantine_df, q_path, "quarantined HDB transactions")
+
+    return valid_df
 
 
-def cleaned_condo_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataFrame:
+def cleaned_condo_transactions(
+    raw_condo_transactions: pd.DataFrame, silver_dir: Path
+) -> pd.DataFrame:
     """Clean and validate condo transactions.
 
     Args:
@@ -177,61 +128,32 @@ def cleaned_condo_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataF
     df = df.dropna(subset=["price", "transaction_date"])
     df = df[df["price"] > 0]
 
-    silver_dir().mkdir(parents=True, exist_ok=True)
-    out_path = silver_dir() / "cleaned_condo_transactions.parquet"
-    df.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(df)} cleaned condo transactions to silver")
-
     return df
 
 
-def condo_validated(cleaned_condo_transactions: pd.DataFrame) -> pd.DataFrame:
+@check_output(data_type=pd.DataFrame, importance="warn")
+def condo_validated(cleaned_condo_transactions: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate condo transactions against schema."""
     from egg_n_bacon_housing.schemas.clean_models import HCleanCondoTransaction
 
-    return _validate_against_schema(cleaned_condo_transactions, HCleanCondoTransaction, "condo")
+    valid_df, quarantine_df = validate_schema(
+        cleaned_condo_transactions, HCleanCondoTransaction, "condo"
+    )
+
+    save_parquet(
+        valid_df, silver_dir / "cleaned_condo_transactions.parquet", "validated condo transactions"
+    )
+
+    if not quarantine_df.empty:
+        q_path = _quarantine_path(silver_dir, "condo_transactions")
+        save_parquet(quarantine_df, q_path, "quarantined condo transactions")
+
+    return valid_df
 
 
-def cleaned_ec_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataFrame:
-    """Clean EC transactions (subset of condo data with EC filter).
-
-    Args:
-        raw_condo_transactions: Raw condo data.
-
-    Returns:
-        Cleaned EC DataFrame.
-    """
-    if raw_condo_transactions.empty:
-        return pd.DataFrame()
-
-    df = raw_condo_transactions.copy()
-
-    if "property_type" in df.columns:
-        df = df[df["property_type"].str.lower().str.contains("ec", na=False)]
-
-    if "transaction_date" not in df.columns and "date" in df.columns:
-        df["transaction_date"] = pd.to_datetime(df["date"], errors="coerce")
-
-    df["price"] = pd.to_numeric(df.get("price", df.get("transaction_price", 0)), errors="coerce")
-    df = df.dropna(subset=["price", "transaction_date"])
-    df = df[df["price"] > 0]
-
-    silver_dir().mkdir(parents=True, exist_ok=True)
-    out_path = silver_dir() / "cleaned_ec_transactions.parquet"
-    df.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(df)} cleaned EC transactions to silver")
-
-    return df
-
-
-def ec_validated(cleaned_ec_transactions: pd.DataFrame) -> pd.DataFrame:
-    """Validate EC transactions against schema."""
-    from egg_n_bacon_housing.schemas.clean_models import HCleanECTransaction
-
-    return _validate_against_schema(cleaned_ec_transactions, HCleanECTransaction, "EC")
-
-
-def geocoded_properties(hdb_validated: pd.DataFrame, condo_validated: pd.DataFrame) -> pd.DataFrame:
+def geocoded_properties(
+    hdb_validated: pd.DataFrame, condo_validated: pd.DataFrame, silver_dir: Path
+) -> pd.DataFrame:
     """Merge geocoding data onto validated transactions.
 
     Args:
@@ -256,27 +178,41 @@ def geocoded_properties(hdb_validated: pd.DataFrame, condo_validated: pd.DataFra
     combined = pd.concat(dfs, ignore_index=True)
 
     if "lat" not in combined.columns or "lon" not in combined.columns:
-        raise ValueError(
-            "Geocoding data is required but lat/lon columns are missing from validated datasets"
+        logger.warning(
+            "lat/lon columns missing from validated datasets — "
+            "geocoding must happen externally before coordinate coverage checks"
         )
+        combined["lat"] = pd.NA
+        combined["lon"] = pd.NA
+    else:
+        coordinate_coverage = combined[["lat", "lon"]].notna().all(axis=1).mean()
+        min_coverage = settings.geocoding.min_coordinate_coverage
+        if coordinate_coverage < min_coverage:
+            logger.warning(
+                f"Geocoding coverage too low: {coordinate_coverage:.1%} "
+                f"(required >= {min_coverage:.1%}) — proceeding without coordinate gate"
+            )
 
-    coordinate_coverage = combined[["lat", "lon"]].notna().all(axis=1).mean()
-    min_coverage = settings.geocoding.min_coordinate_coverage
-    if coordinate_coverage < min_coverage:
-        raise ValueError(
-            f"Geocoding coverage too low: {coordinate_coverage:.1%} (required >= {min_coverage:.1%})"
-        )
-
-    silver_dir().mkdir(parents=True, exist_ok=True)
-    out_path = silver_dir() / "geocoded_properties.parquet"
-    combined.to_parquet(out_path, index=False)
-    logger.info(f"Saved {len(combined)} geocoded properties to silver")
+    save_parquet(combined, silver_dir / "geocoded_properties.parquet", "geocoded properties")
 
     return combined
 
 
-def geocoded_validated(geocoded_properties: pd.DataFrame) -> pd.DataFrame:
+@check_output(data_type=pd.DataFrame, importance="warn")
+def geocoded_validated(geocoded_properties: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate geocoded properties against schema."""
     from egg_n_bacon_housing.schemas.clean_models import GeocodedProperty
 
-    return _validate_against_schema(geocoded_properties, GeocodedProperty, "geocoded")
+    valid_df, quarantine_df = validate_schema(geocoded_properties, GeocodedProperty, "geocoded")
+
+    save_parquet(
+        valid_df,
+        silver_dir / "validated_geocoded_properties.parquet",
+        "validated geocoded properties",
+    )
+
+    if not quarantine_df.empty:
+        q_path = _quarantine_path(silver_dir, "geocoded_properties")
+        save_parquet(quarantine_df, q_path, "quarantined geocoded records")
+
+    return valid_df

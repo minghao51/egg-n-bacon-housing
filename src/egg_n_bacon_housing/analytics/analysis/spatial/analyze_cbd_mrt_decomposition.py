@@ -60,17 +60,11 @@ CBD_LAT = 1.2839
 CBD_LON = 103.8513
 
 
-def haversine_distance(lat1, lon1, lat2, lon2):
-    """Calculate great-circle distance between two points in kilometers."""
-    from math import asin, cos, radians, sin, sqrt
+from egg_n_bacon_housing.utils.geo import haversine_distance as _haversine_meters
 
-    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
 
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    c = 2 * asin(sqrt(a))
-    r = 6371  # Earth's radius in kilometers
+def _haversine_km(lat1, lon1, lat2, lon2):
+    return _haversine_meters(lat1, lon1, lat2, lon2) / 1000.0
 
     return c * r
 
@@ -94,7 +88,7 @@ def load_data(min_year=2021, property_type="HDB"):
     # Calculate CBD distance for each property
     logger.info("Calculating CBD distances...")
     df["dist_to_cbd_km"] = df.apply(
-        lambda row: haversine_distance(float(row["lat"]), float(row["lon"]), CBD_LAT, CBD_LON),
+        lambda row: _haversine_km(float(row["lat"]), float(row["lon"]), CBD_LAT, CBD_LON),
         axis=1,
     )
     df["dist_to_cbd_m"] = df["dist_to_cbd_km"] * 1000  # Convert to meters

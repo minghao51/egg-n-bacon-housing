@@ -113,7 +113,7 @@ Created `compute_amenity_distances_by_type()` function:
 
 Modified `load_amenity_features()`:
 
-- Supports new schema (dist*nearest*_, count\__\_\*m)
+- Supports new schema (dist*nearest*\_, count\_\_\_\*m)
 - Maintains backward compatibility with legacy (_*within*_)
 - **Commit**: `8f6a3fb`, `55f795d`
 

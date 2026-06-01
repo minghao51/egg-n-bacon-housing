@@ -371,7 +371,7 @@ Set up a cron job or scheduled task to refresh data automatically:
 - [data.gov.sg API Documentation](https://data.gov.sg/developer)
 - [URA Property Market Information](https://www.ura.gov.sg/property-market-information)
 - [HDB Resale Data Portal](https://services2.hdb.gov.sg/webapp/BR12AWResaleTransactions/BTWEBResaleTransaction)
-- [Pipeline Guide](./l2-pipeline.md)
+- [Usage Guide](./usage-guide.md)
 - [Architecture Overview](../architecture.md)
 
 ---

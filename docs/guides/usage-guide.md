@@ -18,6 +18,7 @@ git clone <repo-url>
 cd egg-n-bacon-housing
 uv sync
 cp .env.example .env
+dotenvx run -- uv run python scripts/00_sync_data.py
 ```
 
 Required environment variables:
@@ -27,6 +28,10 @@ Required environment variables:
 | `ONEMAP_EMAIL`          | Yes      | OneMap authentication |
 | `ONEMAP_EMAIL_PASSWORD` | Yes      | OneMap authentication |
 | `GOOGLE_API_KEY`        | No       | Geocoding fallback    |
+| `R2_ACCESS_KEY_ID`      | Yes      | Manual data sync      |
+| `R2_SECRET_ACCESS_KEY`  | Yes      | Manual data sync      |
+| `R2_BUCKET`             | Yes      | Manual data sync      |
+| `R2_ENDPOINT`           | Yes      | Manual data sync      |
 
 Verification:
 
@@ -99,10 +104,7 @@ App-facing analytics content is synced to:
 For metadata-backed parquet access, use [src/egg_n_bacon_housing/utils/data_helpers.py](../../src/egg_n_bacon_housing/utils/data_helpers.py).
 
 ```python
-from egg_n_bacon_housing.utils.data_helpers import list_datasets, load_parquet
-
-datasets = list_datasets()
-print(sorted(datasets)[:5])
+from egg_n_bacon_housing.utils.data_helpers import load_parquet
 
 df = load_parquet("L3_housing_unified")
 print(df.head())
@@ -111,12 +113,14 @@ print(df.head())
 For convenience loaders around common outputs, use [src/egg_n_bacon_housing/utils/data_loader.py](../../src/egg_n_bacon_housing/utils/data_loader.py).
 
 ```python
-from egg_n_bacon_housing.utils.data_loader import TransactionLoader, load_unified_data
+from egg_n_bacon_housing.utils.data_loader import (
+    load_market_summary,
+    load_planning_area_metrics,
+)
 
-loader = TransactionLoader()
-hdb_df = loader.load_transaction("hdb", stage="L1")
-unified_df = load_unified_data()
-print(hdb_df.shape, unified_df.shape)
+market_summary = load_market_summary()
+planning_area_metrics = load_planning_area_metrics()
+print(market_summary.shape, planning_area_metrics.shape)
 ```
 
 ## Run Analytics

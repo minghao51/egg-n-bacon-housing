@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "<string>", line 9, in <module>
-    stations = sorted(gdf['NAME'].unique())
-TypeError: '<' not supported between instances of 'NoneType' and 'str'

@@ -69,17 +69,18 @@ def setup_onemap_headers() -> dict[str, str]:
             else:
                 logger.warning("Invalid token format")
                 access_token = None
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             logger.warning("Error decoding token: %s", e)
             access_token = None
 
     if not access_token:
         return _request_new_token()
 
-    raise OneMapAuthError("Unable to obtain OneMap token")
+    return {"Authorization": access_token}
 
 
 def _get_required_secret(secret_name: str) -> str:
+    """Retrieve a secret from settings. Internal-use only — callers must not persist the value."""
     value = getattr(settings, secret_name).get_secret_value().strip()
     if not value:
         raise CredentialError(f"Missing required credential: {secret_name.upper()}")
@@ -112,7 +113,7 @@ def _request_new_token() -> dict[str, str]:
         access_token = response_data.get("access_token")
         if access_token:
             logger.info("Obtained new OneMap token")
-            return {"Authorization": f"{access_token}"}
+            return {"Authorization": access_token}
         else:
             logger.error("No access_token in response")
             raise OneMapAuthError("access_token not found in API response")

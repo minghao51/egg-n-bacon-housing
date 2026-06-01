@@ -7,13 +7,20 @@ from hamilton import driver
 
 logger = logging.getLogger(__name__)
 
+try:
+    from hamilton_sdk import adapters as _sdk_adapters
+
+    _HAS_TRACKER = True
+except ImportError:
+    _sdk_adapters = None
+    _HAS_TRACKER = False
+
 _STAGE_MODULES = [
     "egg_n_bacon_housing.components.01_ingestion",
     "egg_n_bacon_housing.components.02_cleaning",
     "egg_n_bacon_housing.components.03_features",
     "egg_n_bacon_housing.components.04_export",
     "egg_n_bacon_housing.components.05_metrics",
-    "egg_n_bacon_housing.components.06_analytics",
 ]
 
 STAGE_VARS: dict[str, list[str]] = {
@@ -59,7 +66,11 @@ STAGE_VARS: dict[str, list[str]] = {
     ],
 }
 
-COMPONENTS = [importlib.import_module(m) for m in _STAGE_MODULES]
+
+def _get_components() -> list:
+    if not hasattr(_get_components, "_cache"):
+        _get_components._cache = [importlib.import_module(m) for m in _STAGE_MODULES]  # type: ignore[attr-defined]
+    return _get_components._cache  # type: ignore[attr-defined]
 
 
 def build_pipeline(
@@ -72,7 +83,18 @@ def build_pipeline(
     if data_path is None:
         data_path = str(settings.data_path)
 
-    builder = driver.Builder().with_modules(*COMPONENTS).with_config({"data_path": data_path})
+    builder = (
+        driver.Builder().with_modules(*_get_components()).with_config({"data_path": data_path})
+    )
+
+    if _HAS_TRACKER:
+        tracker = _sdk_adapters.HamiltonTracker(
+            project_id=1,
+            username="pipeline@egg-n-bacon-housing",
+            dag_name="medallion_pipeline",
+            tags={"env": "dev"},
+        )
+        builder = builder.with_adapters(tracker)
 
     if cache_dir:
         builder = builder.with_cache(path=cache_dir)
@@ -104,6 +126,16 @@ def run_pipeline(
     if final_vars is None:
         final_vars = STAGE_VARS.get(stage) if stage else STAGE_VARS["all"]
 
+    from egg_n_bacon_housing.config import settings
+
     if dr is None:
         dr = build_pipeline(data_path=data_path)
-    return dr.execute(final_vars=final_vars)
+
+    layer_inputs = {
+        "bronze_dir": settings.bronze_dir,
+        "silver_dir": settings.silver_dir,
+        "gold_dir": settings.gold_dir,
+        "platinum_dir": settings.platinum_dir,
+        "webapp_data_dir": settings.base_dir / "app" / "public" / "data",
+    }
+    return dr.execute(final_vars=final_vars, inputs=layer_inputs)

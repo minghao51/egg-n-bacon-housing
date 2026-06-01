@@ -33,9 +33,12 @@ git clone <repo-url>
 cd egg-n-bacon-housing
 uv sync
 
-# Configure API keys
+# Configure API keys (encrypted via dotenvx)
 cp .env.example .env
-# Edit .env with your OneMap and Google AI keys
+# Edit .env with your OneMap, Google AI, and R2 keys
+
+# Fetch manual data files from Cloudflare R2 (~100MB)
+dotenvx run -- uv run python scripts/00_sync_data.py
 
 # Run full pipeline
 uv run python main.py --stage all
@@ -48,6 +51,8 @@ uv run python main.py --stage export
 uv run python main.py --stage metrics
 ```
 
+> **Note on manual data**: ~100MB of CSV/GeoJSON source files (URA transactions, HDB resale, school directory, etc.) are stored in Cloudflare R2 rather than git. Run the sync script after cloning to populate `data/manual/`. See [R2 Sync Guide](docs/guides/r2-sync-guide.md) for details.
+
 ## Setup
 
 ### Prerequisites
@@ -58,13 +63,23 @@ uv run python main.py --stage metrics
 
 ### Environment Variables
 
-Create `.env` in project root:
+Create `.env` in project root (encrypted with dotenvx):
 
 ```bash
+# Required for geocoding
 ONEMAP_EMAIL=your_email@example.com
 ONEMAP_EMAIL_PASSWORD=your_password
 GOOGLE_API_KEY=your_google_api_key
+
+# Required for R2 manual data sync
+R2_ACCOUNT_ID=your_cloudflare_account_id
+R2_ACCESS_KEY_ID=your_r2_access_key
+R2_SECRET_ACCESS_KEY=your_r2_secret_key
+R2_BUCKET=egg-bacon-housing-data
+R2_ENDPOINT=https://<account_id>.r2.cloudflarestorage.com
 ```
+
+Run commands with `dotenvx run --` to decrypt and inject the env vars.
 
 ## Usage
 
@@ -115,7 +130,7 @@ egg-n-bacon-housing/
 ├── src/egg_n_bacon_housing/   # Source package
 │   ├── config.py              # pydantic-settings config
 │   ├── pipeline.py           # Hamilton DAG driver
-│   ├── components/           # Hamilton modules (01_ingestion → 06_analytics) — core pipeline
+│   ├── components/           # Hamilton modules (01_ingestion → 05_metrics) — core pipeline
 │   ├── schemas/               # Pydantic models (raw, clean, feature)
 │   ├── adapters/              # External API adapters (onemap, datagovsg, geocoding)
 │   ├── utils/                 # Utilities (cache, data_helpers, metrics, etc.)

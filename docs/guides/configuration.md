@@ -57,13 +57,20 @@ These variables **must be set** for the project to function:
 
 These variables are optional but enable additional features:
 
-| Variable                | Description                            | Default                                          |
-| ----------------------- | -------------------------------------- | ------------------------------------------------ |
-| `ONEMAP_EMAIL_PASSWORD` | OneMap password for auto-token refresh | None (manual token refresh)                      |
-| `ONEMAP_TOKEN`          | Pre-generated OneMap JWT token         | None (auto-generated if email/password provided) |
-| `SUPABASE_URL`          | Supabase project URL                   | None                                             |
-| `SUPABASE_KEY`          | Supabase API key                       | None                                             |
-| `JINA_AI`               | Jina AI API key for embeddings         | None                                             |
+| Variable                | Description                                   | Default                                          |
+| ----------------------- | --------------------------------------------- | ------------------------------------------------ |
+| `ONEMAP_EMAIL_PASSWORD` | OneMap password for auto-token refresh        | None (manual token refresh)                      |
+| `ONEMAP_TOKEN`          | Pre-generated OneMap JWT token                | None (auto-generated if email/password provided) |
+| `SUPABASE_URL`          | Supabase project URL                          | None                                             |
+| `SUPABASE_KEY`          | Supabase API key                              | None                                             |
+| `JINA_AI`               | Jina AI API key for embeddings                | None                                             |
+| `R2_ACCOUNT_ID`         | Cloudflare R2 account ID for manual data sync | None (script errors if missing)                  |
+| `R2_ACCESS_KEY_ID`      | R2 API access key                             | None                                             |
+| `R2_SECRET_ACCESS_KEY`  | R2 API secret key                             | None                                             |
+| `R2_BUCKET`             | R2 bucket name                                | `egg-bacon-housing-data`                         |
+| `R2_ENDPOINT`           | R2 S3-compatible endpoint URL                 | None                                             |
+
+The R2 variables are required by `scripts/00_sync_data.py` to fetch ~100MB of manual source data (URA, HDB resale, geojson) from Cloudflare R2. See [r2-sync-guide.md](./r2-sync-guide.md).
 
 **Validation:** Not checked by `Config.validate()` - only used if provided
 
@@ -581,7 +588,7 @@ Config.validate()  # Creates all directories
 
 - [External Data Setup](./external-data-setup.md) - API key setup instructions
 - [GitHub Secrets Setup](./github-secrets-setup.md) - CI/CD configuration
-- [API Reference](../reference/api-reference.md) - Config class API
+- [Usage Guide](./usage-guide.md) - Current commands and supported helper modules
 - [Architecture](../architecture.md) - System design
 
 ---

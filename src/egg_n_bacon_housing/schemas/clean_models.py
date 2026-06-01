@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class HCleanTransactionBase(BaseModel):
@@ -65,23 +65,8 @@ class HCleanECTransaction(HCleanTransactionBase):
     address: str
 
 
-class HCleanRentalRecord(BaseModel):
-    """Validated rental record."""
-
-    date: datetime
-    property_type: str
-    area: str
-    rental_price: Annotated[float, Field(gt=0)]
-    tenure: str
-
-
 class GeocodedProperty(BaseModel):
-    """Validated geocoded property record.
-
-    lat/lon are optional here because the geocoding adapter may not have
-    coordinates available (e.g., HDB blocks use block+street for geocoding).
-    They are added in subsequent feature stages.
-    """
+    """Validated geocoded property record."""
 
     address: str | None = None
     lat: Annotated[float, Field(ge=-90, le=90)] | None = None
@@ -89,3 +74,17 @@ class GeocodedProperty(BaseModel):
     property_type: str
     postal_code: str | None = None
     search_confidence: float | None = Field(default=None, le=1.0, ge=0)
+
+    @field_validator("lat")
+    @classmethod
+    def _validate_lat(cls, v: float) -> float:
+        if not -90 <= v <= 90:
+            raise ValueError(f"Latitude must be between -90 and 90, got {v}")
+        return v
+
+    @field_validator("lon")
+    @classmethod
+    def _validate_lon(cls, v: float) -> float:
+        if not -180 <= v <= 180:
+            raise ValueError(f"Longitude must be between -180 and 180, got {v}")
+        return v

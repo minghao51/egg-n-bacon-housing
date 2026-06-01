@@ -18,12 +18,12 @@ Solutions to common issues when working with the Egg-n-Bacon-Housing project.
 
 ## Common Errors
 
-### ModuleNotFoundError: No module named 'scripts'
+### ModuleNotFoundError: No module named 'egg_n_bacon_housing'
 
 **Symptom:**
 
 ```
-ModuleNotFoundError: No module named 'scripts'
+ModuleNotFoundError: No module named 'egg_n_bacon_housing'
 ```
 
 **Cause:** Running Python from wrong directory or without `uv run`
@@ -35,7 +35,7 @@ ModuleNotFoundError: No module named 'scripts'
 cd /path/to/egg-n-bacon-housing
 
 # Always use uv run
-uv run python scripts/run_pipeline.py --stage all
+uv run python main.py --stage all
 ```
 
 **Prevention:** Never use `python` or `python3` directly - always use `uv run python`
@@ -56,16 +56,18 @@ ValueError: Dataset 'L2_hdb_with_features' not found. Available: ['L0_hdb_resale
 
 ```bash
 # Run preceding pipeline stages first
-uv run python scripts/run_pipeline.py --stage L0    # Raw data
-uv run python scripts/run_pipeline.py --stage L1    # Processing
-uv run python scripts/run_pipeline.py --stage L2    # Features
+uv run python main.py --stage ingest    # Raw data
+uv run python main.py --stage clean     # Processing
+uv run python main.py --stage features  # Features
 ```
 
 **Check available datasets:**
 
 ```python
-from scripts.core.data_helpers import list_datasets
-print(list_datasets())
+from egg_n_bacon_housing.utils.data_helpers import load_parquet
+
+df = load_parquet("L3_housing_unified")
+print(df.head())
 ```
 
 ---

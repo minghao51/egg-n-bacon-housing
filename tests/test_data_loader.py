@@ -4,8 +4,11 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pandas as pd
+import pytest
 
 from egg_n_bacon_housing.utils import data_loader
+
+pytestmark = pytest.mark.unit
 
 
 class _DummySettings:
@@ -19,27 +22,6 @@ class _DummySettings:
         self.gold_dir = root_path / "03_gold"
         self.platinum_dir = root_path / "04_platinum"
         self.logging = SimpleNamespace(verbose=True)
-
-
-def test_transaction_loader_filters_unified_features_by_property_type(tmp_path, monkeypatch):
-    """L2 loader should filter unified features to the requested property type."""
-    settings = _DummySettings(tmp_path)
-    settings.gold_dir.mkdir(parents=True)
-    pd.DataFrame(
-        [
-            {"property_type": "hdb", "town": "TOA PAYOH"},
-            {"property_type": "condo", "town": "ORCHARD"},
-            {"property_type": "ec", "town": "TAMPINES"},
-        ]
-    ).to_parquet(settings.gold_dir / "unified_features.parquet", index=False)
-
-    monkeypatch.setattr(data_loader, "settings", settings)
-
-    loader = data_loader.TransactionLoader()
-    condo_rows = loader.load_transaction("condo", stage="L2")
-
-    assert len(condo_rows) == 1
-    assert condo_rows.iloc[0]["property_type"] == "condo"
 
 
 def test_load_market_summary_prefers_platinum_metrics_path(tmp_path, monkeypatch):
@@ -97,19 +79,6 @@ def test_read_first_existing_returns_empty_when_no_paths_exist(tmp_path, monkeyp
     )
 
     assert result.empty
-
-
-def test_filter_by_property_type_returns_df_unchanged_when_no_column(tmp_path, monkeypatch):
-    """Returns df unchanged when property_type column is absent."""
-    settings = _DummySettings(tmp_path)
-    monkeypatch.setattr(data_loader, "settings", settings)
-
-    loader = data_loader.TransactionLoader()
-    df = pd.DataFrame([{"town": "TOA PAYOH"}, {"town": "ORCHARD"}])
-
-    result = loader._filter_by_property_type(df, data_loader.PropertyType.HDB)
-
-    assert len(result) == 2
 
 
 def test_load_unified_data_falls_back_to_legacy_path(tmp_path, monkeypatch):
