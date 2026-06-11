@@ -168,7 +168,7 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
                 ) from e
 
         if not response_agg:
-            logger.warning(f"No data fetched for dataset {dataset_id}")
+            logger.warning("No data fetched for dataset %s", dataset_id)
             return pd.DataFrame()
 
         return pd.concat(response_agg, ignore_index=True)
@@ -178,5 +178,4 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         return cached_call(
             cache_id, _fetch_from_api, duration_hours=settings.pipeline.cache_duration_hours
         )
-    else:
-        return _fetch_from_api()
+    return _fetch_from_api()

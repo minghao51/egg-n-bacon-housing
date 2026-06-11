@@ -15,6 +15,7 @@ Usage:
 """
 
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -121,8 +122,6 @@ def get_logger_level_from_env() -> int:
         >>> level = get_logger_level_from_env()
         >>> setup_logging(level=level)
     """
-    import os
-
     level_str = os.getenv("LOG_LEVEL", "INFO").upper()
     return LEVEL_MAP.get(level_str, logging.INFO)
 

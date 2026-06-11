@@ -24,10 +24,10 @@ def save_parquet(df: pd.DataFrame, path: Path, description: str = "") -> Path:
         The path written to.
     """
     if df.empty:
-        logger.debug(f"Skipping parquet write for empty DataFrame: {description or path.name}")
+        logger.debug("Skipping parquet write for empty DataFrame: %s", description or path.name)
         return path
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(path, index=False)
     label = description or path.stem
-    logger.info(f"Saved {len(df)} {label} records to {path.parent.name}/")
+    logger.info("Saved %s %s records to %s/", len(df), label, path.parent.name)
     return path

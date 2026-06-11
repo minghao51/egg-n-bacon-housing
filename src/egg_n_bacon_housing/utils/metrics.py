@@ -6,6 +6,7 @@ from transaction data, including:
 - Price per square foot (PSF)
 - Transaction volume
 - Market momentum
+- Affordability classification
 """
 
 from typing import Any
@@ -30,12 +31,11 @@ def classify_affordability(ratio: float) -> str:
     thresholds = settings.metrics.affordability_thresholds
     if ratio < thresholds["affordable"]:
         return "Affordable"
-    elif ratio < thresholds["moderate"]:
+    if ratio < thresholds["moderate"]:
         return "Moderate"
-    elif ratio < thresholds["expensive"]:
+    if ratio < thresholds["expensive"]:
         return "Expensive"
-    else:
-        return "Severely Unaffordable"
+    return "Severely Unaffordable"
 
 
 def assign_price_strata(
@@ -59,15 +59,14 @@ def assign_price_strata(
         strata = pd.qcut(df[price_column], q=n_strata, labels=False, duplicates="drop")
         return strata + 1
 
+    if price_column == "resale_price":
+        bins = [0, 300000, 450000, 600000, 800000, float("inf")]
+        labels = ["budget", "mass_market", "mid_tier", "premium", "luxury"]
     else:
-        if price_column == "resale_price":
-            bins = [0, 300000, 450000, 600000, 800000, float("inf")]
-            labels = ["budget", "mass_market", "mid_tier", "premium", "luxury"]
-        else:
-            bins = [0, 800000, 1500000, 2500000, 5000000, float("inf")]
-            labels = ["budget", "mass_market", "mid_tier", "premium", "luxury"]
+        bins = [0, 800000, 1500000, 2500000, 5000000, float("inf")]
+        labels = ["budget", "mass_market", "mid_tier", "premium", "luxury"]
 
-        return pd.cut(df[price_column], bins=bins, labels=labels)
+    return pd.cut(df[price_column], bins=bins, labels=labels)
 
 
 def calculate_stratified_median(
@@ -95,13 +94,13 @@ def calculate_stratified_median(
         df["_stratum"] = assign_price_strata(df, price_column)
         strata_column = "_stratum"
 
-    stratum_medians = df.groupby(group_columns + [strata_column])[price_column].median()
+    stratum_medians = df.groupby([*group_columns, strata_column])[price_column].median()
 
     if weight_column is None:
-        weights = df.groupby(group_columns + [strata_column]).size()
+        weights = df.groupby([*group_columns, strata_column]).size()
         weights = weights / weights.groupby(level=group_columns).sum()
     else:
-        weights = df.groupby(group_columns + [strata_column])[weight_column].sum()
+        weights = df.groupby([*group_columns, strata_column])[weight_column].sum()
         weights = weights / weights.groupby(level=group_columns).sum()
 
     weighted_median = (stratum_medians * weights).groupby(level=group_columns).sum()
@@ -126,15 +125,14 @@ def calculate_psf(
     Returns:
         Series with PSF values
     """
-    psf = df[price_column] / df[area_column]
-    return psf
+    return df[price_column] / df[area_column]
 
 
 def calculate_volume_metrics(
     df: pd.DataFrame,
     date_column: str = "month",
     geo_column: str = "planning_area",
-    rolling_windows: list[int] = [3, 12],
+    rolling_windows: list[int] | None = None,
 ) -> pd.DataFrame:
     """Calculate transaction volume metrics.
 
@@ -147,13 +145,15 @@ def calculate_volume_metrics(
     Returns:
         DataFrame with volume metrics
     """
+    if rolling_windows is None:
+        rolling_windows = [3, 12]
     volume = df.groupby([date_column, geo_column]).size().reset_index(name="transaction_count")
 
     volume = volume.sort_values([geo_column, date_column])
 
     for window in rolling_windows:
         volume[f"volume_{window}m_avg"] = volume.groupby(geo_column)["transaction_count"].transform(
-            lambda x: x.rolling(window, min_periods=1).mean()
+            lambda x, w=window: x.rolling(w, min_periods=1).mean()
         )
 
     volume["mom_change_pct"] = volume.groupby(geo_column)["transaction_count"].transform(
@@ -231,9 +231,7 @@ def compute_monthly_metrics(
 
     condo_metrics = _process_property_type(condo_df, "Condo", start_date, end_date)
 
-    all_metrics = pd.concat([hdb_metrics, condo_metrics], ignore_index=True)
-
-    return all_metrics
+    return pd.concat([hdb_metrics, condo_metrics], ignore_index=True)
 
 
 def _process_property_type(
@@ -276,9 +274,7 @@ def _process_property_type(
         lambda x: x.pct_change() * 100
     )
 
-    metrics = calculate_momentum(metrics, date_column="month", geo_column=geo_col)
-
-    return metrics
+    return calculate_momentum(metrics, date_column="month", geo_column=geo_col)
 
 
 def validate_metrics(metrics_df: pd.DataFrame) -> dict[str, Any]:
@@ -290,7 +286,7 @@ def validate_metrics(metrics_df: pd.DataFrame) -> dict[str, Any]:
     Returns:
         Dictionary with validation results
     """
-    results = {
+    return {
         "total_records": len(metrics_df),
         "date_range": (metrics_df["month"].min(), metrics_df["month"].max()),
         "missing_values": metrics_df.isnull().sum().to_dict(),
@@ -302,5 +298,3 @@ def validate_metrics(metrics_df: pd.DataFrame) -> dict[str, Any]:
         if "planning_area" in metrics_df.columns
         else None,
     }
-
-    return results

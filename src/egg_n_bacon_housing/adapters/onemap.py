@@ -63,9 +63,8 @@ def setup_onemap_headers() -> dict[str, str]:
                         (token_data.get("exp") - current_time) / 3600,
                     )
                     return {"Authorization": f"{access_token}"}
-                else:
-                    logger.warning("Token in .env has expired")
-                    access_token = None
+                logger.warning("Token in .env has expired")
+                access_token = None
             else:
                 logger.warning("Invalid token format")
                 access_token = None
@@ -114,9 +113,8 @@ def _request_new_token() -> dict[str, str]:
         if access_token:
             logger.info("Obtained new OneMap token")
             return {"Authorization": access_token}
-        else:
-            logger.error("No access_token in response")
-            raise OneMapAuthError("access_token not found in API response")
+        logger.error("No access_token in response")
+        raise OneMapAuthError("access_token not found in API response")
     else:
         logger.error("onemap_auth_failed status=%s url=%s", response.status_code, url)
         raise OneMapAuthError(f"Token request failed with status {response.status_code}")

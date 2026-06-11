@@ -3,10 +3,12 @@
 
 import json
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 import numpy as np
 import pandas as pd
+import requests
 from rapidfuzz import fuzz, process
 from scipy.spatial import cKDTree
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
@@ -33,7 +35,7 @@ def load_schools() -> pd.DataFrame:
 
     # Check if already geocoded
     if "latitude" in schools_df.columns and schools_df["latitude"].notna().sum() > 100:
-        logger.info(f"Loaded {schools_df['latitude'].notna().sum()} pre-geocoded schools")
+        logger.info("Loaded %s pre-geocoded schools", schools_df["latitude"].notna().sum())
         return schools_df
 
     # Geocode and save
@@ -58,7 +60,7 @@ def _load_reference_data(filename: str) -> dict | None:
     if config_path.exists():
         with open(config_path) as f:
             return json.load(f)
-    logger.warning(f"Reference data file not found: {config_path}")
+    logger.warning("Reference data file not found: %s", config_path)
     return None
 
 
@@ -75,10 +77,10 @@ def load_school_tiers() -> tuple[pd.DataFrame, pd.DataFrame]:
     if json_data:
         if "primary" in json_data:
             primary_tiers = pd.DataFrame(json_data["primary"])
-            logger.info(f"Loaded {len(primary_tiers)} primary school tiers from JSON")
+            logger.info("Loaded %s primary school tiers from JSON", len(primary_tiers))
         if "secondary" in json_data:
             secondary_tiers = pd.DataFrame(json_data["secondary"])
-            logger.info(f"Loaded {len(secondary_tiers)} secondary school tiers from JSON")
+            logger.info("Loaded %s secondary school tiers from JSON", len(secondary_tiers))
         return primary_tiers, secondary_tiers
 
     csv_dir = settings.data_dir / "manual" / "csv"
@@ -87,15 +89,15 @@ def load_school_tiers() -> tuple[pd.DataFrame, pd.DataFrame]:
 
     if primary_path.exists():
         primary_tiers = pd.read_csv(primary_path)
-        logger.info(f"Loaded {len(primary_tiers)} primary school tiers from CSV")
+        logger.info("Loaded %s primary school tiers from CSV", len(primary_tiers))
     else:
-        logger.warning(f"Primary school tiers not found: {primary_path}")
+        logger.warning("Primary school tiers not found: %s", primary_path)
 
     if secondary_path.exists():
         secondary_tiers = pd.read_csv(secondary_path)
-        logger.info(f"Loaded {len(secondary_tiers)} secondary school tiers from CSV")
+        logger.info("Loaded %s secondary school tiers from CSV", len(secondary_tiers))
     else:
-        logger.warning(f"Secondary school tiers not found: {secondary_path}")
+        logger.warning("Secondary school tiers not found: %s", secondary_path)
 
     return primary_tiers, secondary_tiers
 
@@ -258,7 +260,10 @@ def fuzzy_match_schools(
             mapping[tier_name] = None
 
     logger.info(
-        f"Fuzzy matched {matched_count}/{len(tier_schools)} schools ({matched_count / len(tier_schools) * 100:.1f}%)"
+        "Fuzzy matched %s/%s schools (%s)",
+        matched_count,
+        len(tier_schools),
+        f"{matched_count / len(tier_schools) * 100:.1f}%",
     )
 
     return tier_schools, mapping
@@ -266,10 +271,6 @@ def fuzzy_match_schools(
 
 def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
     """Geocode school addresses using OneMap API with concurrent requests."""
-    from concurrent.futures import ThreadPoolExecutor, as_completed
-
-    import requests
-
     schools_df["latitude"] = None
     schools_df["longitude"] = None
 
@@ -315,7 +316,7 @@ def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
     geocoded = 0
     with ThreadPoolExecutor(max_workers=settings.geocoding.max_workers) as executor:
         futures = {}
-        for i, item in enumerate(rows_to_geocode):
+        for _i, item in enumerate(rows_to_geocode):
             futures[executor.submit(_geocode_one, item)] = item
 
         for future in as_completed(futures):
@@ -325,7 +326,7 @@ def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
                 schools_df.at[idx, "longitude"] = lon
                 geocoded += 1
 
-    logger.info(f"Geocoded {geocoded}/{len(schools_df)} schools")
+    logger.info("Geocoded %s/%s schools", geocoded, len(schools_df))
     return schools_df
 
 
@@ -352,11 +353,11 @@ def _initialize_school_columns(df: pd.DataFrame, levels: list[str]) -> pd.DataFr
     # School count columns (0)
     for level in levels:
         level_code = level.split()[0]
-        for label in DISTANCES.keys():
+        for label in DISTANCES:
             df[f"school{level_code}_count{label}"] = 0
 
     # Aggregate school counts
-    for label in DISTANCES.keys():
+    for label in DISTANCES:
         df[f"school_within_{label}"] = 0
 
     # Quality-weighted columns (0)
@@ -441,7 +442,8 @@ def calculate_school_features(
             calculate_primary_quality_score, axis=1
         )
         logger.info(
-            f"Primary school quality scores: mean={primary_tiers['quality_score'].mean():.2f}"
+            "Primary school quality scores: mean=%s",
+            f"{primary_tiers['quality_score'].mean():.2f}",
         )
 
     if not secondary_tiers.empty:
@@ -449,7 +451,8 @@ def calculate_school_features(
             calculate_secondary_quality_score, axis=1
         )
         logger.info(
-            f"Secondary school quality scores: mean={secondary_tiers['quality_score'].mean():.2f}"
+            "Secondary school quality scores: mean=%s",
+            f"{secondary_tiers['quality_score'].mean():.2f}",
         )
 
     # Merge quality scores with schools data using fuzzy matching
@@ -457,7 +460,7 @@ def calculate_school_features(
 
     if not primary_tiers.empty:
         # Use fuzzy matching to match tier CSV names to official names
-        primary_tiers_matched, primary_mapping = fuzzy_match_schools(primary_tiers, schools_df)
+        _primary_tiers_matched, primary_mapping = fuzzy_match_schools(primary_tiers, schools_df)
 
         # Create mapping from official name to quality score
         official_to_quality = {}
@@ -478,7 +481,7 @@ def calculate_school_features(
 
     if not secondary_tiers.empty:
         # Use fuzzy matching for secondary schools too
-        secondary_tiers_matched, secondary_mapping = fuzzy_match_schools(
+        _secondary_tiers_matched, secondary_mapping = fuzzy_match_schools(
             secondary_tiers, schools_df
         )
 
@@ -519,7 +522,9 @@ def calculate_school_features(
     if "quality_score" not in schools_geo.columns:
         schools_geo["quality_score"] = 0.0
     else:
-        schools_geo["quality_score"] = schools_geo["quality_score"].fillna(0.0)
+        schools_geo["quality_score"] = schools_geo["quality_score"].where(
+            schools_geo["quality_score"].notna(), 0.0
+        )
 
     # Build KD-trees for each school level (convert to radians for distance queries)
     schools_by_level = {}
@@ -550,7 +555,7 @@ def calculate_school_features(
     level_summary = ", ".join(
         [f"{k[:3]}({v['data'].shape[0]})" for k, v in schools_by_level.items()]
     )
-    logger.info(f"Schools by level: {level_summary}")
+    logger.info("Schools by level: %s", level_summary)
 
     # Initialize columns (including new quality columns)
     properties_df = _initialize_school_columns(properties_df, levels)
@@ -569,7 +574,9 @@ def calculate_school_features(
 
     unique_coords, index_mapping = _create_unique_location_index(props_with_coords)
     logger.info(
-        f"Reduced to {len(unique_coords)} unique locations from {total_original} total records"
+        "Reduced to %s unique locations from %s total records",
+        len(unique_coords),
+        total_original,
     )
 
     # Initialize a DataFrame to store calculated features for unique locations
@@ -595,10 +602,10 @@ def calculate_school_features(
 
     for level in levels:
         level_code = level.split()[0]
-        for label in DISTANCES.keys():
+        for label in DISTANCES:
             unique_features[f"school{level_code}_count{label}"] = 0
 
-    for label in DISTANCES.keys():
+    for label in DISTANCES:
         unique_features[f"school_within_{label}"] = 0
 
     unique_features["school_accessibility_score"] = 0.0
@@ -637,7 +644,7 @@ def calculate_school_features(
             level_df = school_data["data"]
 
             # Find nearest school (query in radians)
-            dist_radians, nearest_idx = tree.query(
+            _dist_radians, nearest_idx = tree.query(
                 [np.radians(prop_lat), np.radians(prop_lon)], k=1
             )
             nearest_school = level_df.iloc[nearest_idx]
@@ -685,7 +692,7 @@ def calculate_school_features(
         )
 
         if idx % 1000 == 0:
-            logger.info(f"Processed {idx}/{len(unique_coords)} unique locations...")
+            logger.info("Processed %s/%s unique locations...", idx, len(unique_coords))
 
     # Map calculated features back to all original records
     logger.info("Mapping features back to all records...")
@@ -707,11 +714,11 @@ def main():
     logger.info("🚀 Calculating school features...")
 
     schools_df = load_schools()
-    logger.info(f"Loaded {len(schools_df)} schools")
+    logger.info("Loaded %s schools", len(schools_df))
 
     property_path = settings.platinum_dir / "unified_dataset.parquet"
     properties_df = pd.read_parquet(property_path)
-    logger.info(f"Loaded {len(properties_df)} properties")
+    logger.info("Loaded %s properties", len(properties_df))
 
     properties_df = calculate_school_features(properties_df, schools_df)
     properties_df.to_parquet(property_path, compression="snappy", index=False)
@@ -724,11 +731,12 @@ def main():
         if col in properties_df.columns:
             dist = properties_df[col].dropna()
             logger.info(
-                f"  {level}: "
-                f"mean={dist.mean():.0f}m, "
-                f"median={dist.median():.0f}m, "
-                f"min={dist.min():.0f}m, "
-                f"max={dist.max():.0f}m"
+                "  %s: mean=%sm, median=%sm, min=%sm, max=%sm",
+                level,
+                f"{dist.mean():.0f}",
+                f"{dist.median():.0f}",
+                f"{dist.min():.0f}",
+                f"{dist.max():.0f}",
             )
 
     # Print quality score statistics
@@ -743,11 +751,12 @@ def main():
         if col in properties_df.columns:
             scores = properties_df[col]
             logger.info(
-                f"  {label}:\n"
-                f"    mean={scores.mean():.2f}, "
-                f"median={scores.median():.2f}, "
-                f"min={scores.min():.2f}, "
-                f"max={scores.max():.2f}"
+                "  %s:\n    mean=%s, median=%s, min=%s, max=%s",
+                label,
+                f"{scores.mean():.2f}",
+                f"{scores.median():.2f}",
+                f"{scores.min():.2f}",
+                f"{scores.max():.2f}",
             )
 
 

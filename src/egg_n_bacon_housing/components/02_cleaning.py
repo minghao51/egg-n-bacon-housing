@@ -5,13 +5,18 @@ validating bronze data into the silver layer.
 """
 
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
 from hamilton.function_modifiers import check_output
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.schemas.clean_models import (
+    GeocodedProperty,
+    HCleanCondoTransaction,
+    HCleanHDBTransaction,
+)
 from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.io_helpers import save_parquet
 from egg_n_bacon_housing.utils.validation import validate_schema
@@ -74,21 +79,17 @@ def cleaned_hdb_transactions(
         df["address"] = df["block"] + " " + df["street_name"]
 
     df = df.dropna(subset=["price", "transaction_date"])
-    df = df[df["price"] > 0]
-
-    return df
+    return df[df["price"] > 0]
 
 
 def _quarantine_path(silver_dir: Path, dataset_name: str) -> Path:
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
     return silver_dir / "_quarantine" / f"{dataset_name}_{timestamp}.parquet"
 
 
 @check_output(data_type=pd.DataFrame, importance="warn")
 def hdb_validated(cleaned_hdb_transactions: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate HDB transactions against schema."""
-    from egg_n_bacon_housing.schemas.clean_models import HCleanHDBTransaction
-
     valid_df, quarantine_df = validate_schema(cleaned_hdb_transactions, HCleanHDBTransaction, "HDB")
 
     save_parquet(
@@ -126,16 +127,12 @@ def cleaned_condo_transactions(
         df["price"] = pd.to_numeric(df["price"], errors="coerce")
 
     df = df.dropna(subset=["price", "transaction_date"])
-    df = df[df["price"] > 0]
-
-    return df
+    return df[df["price"] > 0]
 
 
 @check_output(data_type=pd.DataFrame, importance="warn")
 def condo_validated(cleaned_condo_transactions: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate condo transactions against schema."""
-    from egg_n_bacon_housing.schemas.clean_models import HCleanCondoTransaction
-
     valid_df, quarantine_df = validate_schema(
         cleaned_condo_transactions, HCleanCondoTransaction, "condo"
     )
@@ -189,8 +186,9 @@ def geocoded_properties(
         min_coverage = settings.geocoding.min_coordinate_coverage
         if coordinate_coverage < min_coverage:
             logger.warning(
-                f"Geocoding coverage too low: {coordinate_coverage:.1%} "
-                f"(required >= {min_coverage:.1%}) — proceeding without coordinate gate"
+                "Geocoding coverage too low: %s (required >= %s) — proceeding without coordinate gate",
+                f"{coordinate_coverage:.1%}",
+                f"{min_coverage:.1%}",
             )
 
     save_parquet(combined, silver_dir / "geocoded_properties.parquet", "geocoded properties")
@@ -201,8 +199,6 @@ def geocoded_properties(
 @check_output(data_type=pd.DataFrame, importance="warn")
 def geocoded_validated(geocoded_properties: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate geocoded properties against schema."""
-    from egg_n_bacon_housing.schemas.clean_models import GeocodedProperty
-
     valid_df, quarantine_df = validate_schema(geocoded_properties, GeocodedProperty, "geocoded")
 
     save_parquet(

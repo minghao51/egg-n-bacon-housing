@@ -7,7 +7,7 @@ SQLite storage for historical baselines, and adaptive anomaly detection.
 import logging
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from functools import wraps
 from pathlib import Path
 
@@ -126,7 +126,7 @@ def record_dataframe_quality(
         null_percentage = round((df.isnull().sum().sum() / df.size) * 100, 2)
 
     snapshot = QualitySnapshot(
-        timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        timestamp=datetime.now(tz=UTC).strftime("%Y-%m-%d %H:%M:%S"),
         dataset_name=dataset_name,
         input_rows=len(df) if input_rows is None else input_rows,
         output_rows=len(df),
@@ -212,19 +212,20 @@ def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> Non
         status = duplicate_status
         level = logger.info
 
-    message = (
-        f"Data Quality: {snapshot.dataset_name} | "
-        f"{snapshot.output_rows:,} rows "
-        f"({row_change:+,} ({row_change_pct:+.1f}%)) | "
-        f"{snapshot.duplicate_count} duplicates | "
-        f"{snapshot.null_percentage:.2f}% nulls | "
-        f"{status}"
+    message = "Data Quality: {} | {} rows ({} ({}%)) | {} duplicates | {}% nulls | {}".format(
+        snapshot.dataset_name,
+        f"{snapshot.output_rows:,}",
+        f"{row_change:+,}",
+        f"{row_change_pct:+.1f}",
+        snapshot.duplicate_count,
+        f"{snapshot.null_percentage:.2f}",
+        status,
     )
 
     level(message)
 
     for anomaly in anomalies:
-        logger.warning(f"  ⚠️  {anomaly}")
+        logger.warning("  ⚠️  %s", anomaly)
 
 
 class DataQualityCollector:
@@ -284,7 +285,7 @@ class DataQualityCollector:
         conn.commit()
         conn.close()
 
-        logger.info(f"Data quality database initialized: {self.db_path}")
+        logger.info("Data quality database initialized: %s", self.db_path)
 
     def record_snapshot(self, snapshot: QualitySnapshot) -> None:
         """Save snapshot to database and update baseline."""
@@ -316,7 +317,7 @@ class DataQualityCollector:
         conn.commit()
         conn.close()
 
-        logger.debug(f"Recorded quality snapshot for {snapshot.dataset_name}")
+        logger.debug("Recorded quality snapshot for %s", snapshot.dataset_name)
 
     def _update_baseline(self, cursor: sqlite3.Cursor, snapshot: QualitySnapshot) -> None:
         """Update baseline using incremental algorithm (Welford's method)."""

@@ -1,23 +1,16 @@
-"""04_export: Platinum layer export and webapp data (Hamilton DAG node).
+"""04_export: Platinum layer export and lightweight summaries.
 
-This module provides Hamilton-compatible functions for exporting unified
-data to the platinum layer and generating webapp-ready JSON.
+This module keeps the Hamilton export stage focused on the platinum dataset
+and in-memory summaries. The published app assets are maintained separately
+from this stage.
 """
 
-import logging
 from pathlib import Path
 
-import orjson
 import pandas as pd
 
 from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.io_helpers import save_parquet
-
-logger = logging.getLogger(__name__)
-
-
-def _safe_json_serialize(data: dict) -> bytes:
-    return orjson.dumps(data, option=orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2)
 
 
 def unified_dataset(unified_features: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
@@ -41,7 +34,7 @@ def unified_dataset(unified_features: pd.DataFrame, platinum_dir: Path) -> pd.Da
 
 
 def dashboard_json(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
-    """Generate webapp-ready JSON summary.
+    """Generate a lightweight dataset summary.
 
     Args:
         unified_dataset: Full unified dataset.
@@ -66,16 +59,11 @@ def dashboard_json(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict
     if "planning_area" in unified_dataset.columns:
         summary["by_planning_area"] = unified_dataset.groupby("planning_area").size().to_dict()
 
-    webapp_data_dir.mkdir(parents=True, exist_ok=True)
-    out_path = webapp_data_dir / "dashboard_summary.json"
-    out_path.write_bytes(_safe_json_serialize(summary))
-    logger.info(f"Saved dashboard JSON to {out_path}")
-
     return summary
 
 
 def segments_data(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
-    """Generate market segments data for webapp.
+    """Generate lightweight segment summaries.
 
     Args:
         unified_dataset: Full unified dataset.
@@ -103,18 +91,11 @@ def segments_data(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
                     }
                 )
 
-    result = {"segments": segments, "generated_at": pd.Timestamp.now().isoformat()}
-
-    webapp_data_dir.mkdir(parents=True, exist_ok=True)
-    out_path = webapp_data_dir / "segments_data.json"
-    out_path.write_bytes(_safe_json_serialize(result))
-    logger.info(f"Saved segments data to {out_path}")
-
-    return result
+    return {"segments": segments, "generated_at": pd.Timestamp.now().isoformat()}
 
 
 def interactive_tools_data(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
-    """Generate interactive tools data (hotspots, trends).
+    """Generate lightweight planning-area aggregates.
 
     Args:
         unified_dataset: Full unified dataset.
@@ -135,10 +116,5 @@ def interactive_tools_data(unified_dataset: pd.DataFrame, webapp_data_dir: Path)
         )
         pa_stats.columns = ["planning_area", "median_price", "transaction_count", "price_std"]
         result["planning_area_stats"] = pa_stats.to_dict(orient="records")
-
-    webapp_data_dir.mkdir(parents=True, exist_ok=True)
-    out_path = webapp_data_dir / "interactive_tools_data.json"
-    out_path.write_bytes(_safe_json_serialize(result))
-    logger.info(f"Saved interactive tools data to {out_path}")
 
     return result

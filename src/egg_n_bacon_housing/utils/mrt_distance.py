@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
 
+from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.mrt_line_mapping import (
     get_line_color,
     get_line_name,
@@ -38,12 +39,10 @@ def load_mrt_stations(mrt_geojson_path: Path | None = None) -> pd.DataFrame:
                                lines, tier, is_interchange, line_names, colors
     """
     if mrt_geojson_path is None:
-        from egg_n_bacon_housing.config import settings
-
         mrt_geojson_path = settings.data_dir / "manual" / "csv" / "datagov" / "MRTStations.geojson"
 
     if not mrt_geojson_path.exists():
-        logger.warning(f"MRT geojson not found: {mrt_geojson_path}")
+        logger.warning("MRT geojson not found: %s", mrt_geojson_path)
         return pd.DataFrame()
 
     gdf = gpd.read_file(mrt_geojson_path)
@@ -76,9 +75,9 @@ def load_mrt_stations(mrt_geojson_path: Path | None = None) -> pd.DataFrame:
 
     mrt_df = pd.DataFrame(stations)
 
-    logger.info(f"Loaded {len(mrt_df)} MRT stations from {mrt_geojson_path}")
-    logger.info(f"  By tier: {mrt_df['tier'].value_counts().to_dict()}")
-    logger.info(f"  Interchanges: {mrt_df['is_interchange'].sum()} stations")
+    logger.info("Loaded %s MRT stations from %s", len(mrt_df), mrt_geojson_path)
+    logger.info("  By tier: %s", mrt_df["tier"].value_counts().to_dict())
+    logger.info("  Interchanges: %s stations", mrt_df["is_interchange"].sum())
 
     return mrt_df
 
@@ -136,7 +135,7 @@ def calculate_nearest_mrt(
     valid_mask = properties_df["lat"].notna() & properties_df["lon"].notna()
     n_invalid = (~valid_mask).sum()
     if n_invalid > 0:
-        logger.warning(f"{n_invalid} rows have invalid coordinates (NaN for MRT distance)")
+        logger.warning("%s rows have invalid coordinates (NaN for MRT distance)", n_invalid)
 
     valid_df = properties_df.loc[valid_mask]
 
@@ -144,7 +143,7 @@ def calculate_nearest_mrt(
     tree = cKDTree(mrt_coords)
 
     property_coords = valid_df[["lon", "lat"]].values
-    distances, indices = tree.query(property_coords, k=1)
+    _distances, indices = tree.query(property_coords, k=1)
 
     nearest_stations = mrt_stations_df.iloc[indices]
 
@@ -172,6 +171,7 @@ def calculate_nearest_mrt(
         for name, dist in zip(
             properties_df.loc[valid_mask, "nearest_mrt_station"],
             properties_df.loc[valid_mask, "nearest_mrt_distance"],
+            strict=True,
         )
     ]
 
@@ -187,27 +187,39 @@ def calculate_nearest_mrt(
     logger.info("Added MRT distance features:")
     valid_distances = properties_df.loc[valid_mask, "nearest_mrt_distance"]
     if not valid_distances.empty:
-        logger.info(f"  Mean distance to nearest MRT: {valid_distances.mean():.0f}m")
+        logger.info("  Mean distance to nearest MRT: %sm", f"{valid_distances.mean():.0f}")
     logger.info(
-        f"  Median distance to nearest MRT: {properties_df['nearest_mrt_distance'].median():.0f}m"
+        "  Median distance to nearest MRT: %sm",
+        f"{properties_df['nearest_mrt_distance'].median():.0f}",
     )
-    logger.info(f"  Min distance: {properties_df['nearest_mrt_distance'].min():.0f}m")
-    logger.info(f"  Max distance: {properties_df['nearest_mrt_distance'].max():.0f}m")
+    logger.info("  Min distance: %sm", f"{properties_df['nearest_mrt_distance'].min():.0f}")
+    logger.info("  Max distance: %sm", f"{properties_df['nearest_mrt_distance'].max():.0f}")
 
-    logger.info(f"  Tier 1 stations: {(properties_df['nearest_mrt_tier'] == 1).sum():,} properties")
-    logger.info(f"  Tier 2 stations: {(properties_df['nearest_mrt_tier'] == 2).sum():,} properties")
-    logger.info(f"  Tier 3 stations: {(properties_df['nearest_mrt_tier'] == 3).sum():,} properties")
     logger.info(
-        f"  Interchange stations: {properties_df['nearest_mrt_is_interchange'].sum():,} properties"
+        "  Tier 1 stations: %s properties", f"{(properties_df['nearest_mrt_tier'] == 1).sum():,}"
+    )
+    logger.info(
+        "  Tier 2 stations: %s properties", f"{(properties_df['nearest_mrt_tier'] == 2).sum():,}"
+    )
+    logger.info(
+        "  Tier 3 stations: %s properties", f"{(properties_df['nearest_mrt_tier'] == 3).sum():,}"
+    )
+    logger.info(
+        "  Interchange stations: %s properties",
+        f"{properties_df['nearest_mrt_is_interchange'].sum():,}",
     )
 
     within_500m = (properties_df["nearest_mrt_distance"] <= 500).sum()
     within_1km = (properties_df["nearest_mrt_distance"] <= 1000).sum()
     logger.info(
-        f"  Properties within 500m: {within_500m:,} ({within_500m / len(properties_df) * 100:.1f}%)"
+        "  Properties within 500m: %s (%s%%)",
+        f"{within_500m:,}",
+        f"{within_500m / len(properties_df) * 100:.1f}",
     )
     logger.info(
-        f"  Properties within 1km: {within_1km:,} ({within_1km / len(properties_df) * 100:.1f}%)"
+        "  Properties within 1km: %s (%s%%)",
+        f"{within_1km:,}",
+        f"{within_1km / len(properties_df) * 100:.1f}",
     )
 
     return properties_df

@@ -5,6 +5,8 @@ import logging
 
 from hamilton import driver
 
+from egg_n_bacon_housing.config import settings
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -78,8 +80,6 @@ def build_pipeline(
     cache_dir: str | None = None,
 ) -> driver.Driver:
     """Build and return a configured Hamilton Driver."""
-    from egg_n_bacon_housing.config import settings
-
     if data_path is None:
         data_path = str(settings.data_path)
 
@@ -125,8 +125,6 @@ def run_pipeline(
     """
     if final_vars is None:
         final_vars = STAGE_VARS.get(stage) if stage else STAGE_VARS["all"]
-
-    from egg_n_bacon_housing.config import settings
 
     if dr is None:
         dr = build_pipeline(data_path=data_path)

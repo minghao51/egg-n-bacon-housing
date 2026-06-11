@@ -65,14 +65,13 @@ def validate_schema(
 
     quarantine_count = len(quarantine_records)
     if quarantine_count:
-        logger.warning(f"Validation failed for {quarantine_count} {entity_name} records")
+        logger.warning("Validation failed for %s %s records", quarantine_count, entity_name)
 
     quarantine_df = pd.DataFrame(quarantine_records) if quarantine_records else pd.DataFrame()
 
     if valid_indices:
         valid_df = df.loc[valid_indices]
-        logger.info(f"Validated {len(valid_df)} {entity_name} records successfully")
+        logger.info("Validated %s %s records successfully", len(valid_df), entity_name)
         return valid_df, quarantine_df
-    else:
-        logger.warning(f"No {entity_name} records passed validation")
-        return pd.DataFrame(), quarantine_df
+    logger.warning("No %s records passed validation", entity_name)
+    return pd.DataFrame(), quarantine_df

@@ -27,7 +27,7 @@ def _load_json_config(filename: str) -> dict:
     if config_path.exists():
         with open(config_path) as f:
             return json.load(f)
-    logger.warning(f"Config file not found: {config_path}")
+    logger.warning("Config file not found: %s", config_path)
     return {}
 
 
@@ -249,7 +249,7 @@ def get_station_lines(station_name: str) -> list[str]:
         if variant in station_mapping:
             return station_mapping[variant]
 
-    logger.debug(f"No line info found for station: {station_name}")
+    logger.debug("No line info found for station: %s", station_name)
     return []
 
 
@@ -324,9 +324,7 @@ def get_station_score(station_name: str, distance_m: float) -> float:
     if distance_m <= 0:
         distance_m = 1
 
-    score = (tier_score * 1000) / distance_m
-
-    return score
+    return (tier_score * 1000) / distance_m
 
 
 def get_line_color(line_code: str) -> str:

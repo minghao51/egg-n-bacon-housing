@@ -13,9 +13,11 @@ import hashlib
 import json
 import logging
 from collections.abc import Callable
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
+
+import pandas as pd
 
 from egg_n_bacon_housing.config import settings
 
@@ -83,7 +85,7 @@ class CacheManager:
         if cache_path is None or not cache_path.exists():
             return True
 
-        file_age = datetime.now() - datetime.fromtimestamp(cache_path.stat().st_mtime)
+        file_age = datetime.now(tz=UTC) - datetime.fromtimestamp(cache_path.stat().st_mtime, tz=UTC)
         return file_age > timedelta(hours=duration_hours)
 
     def get(self, identifier: str, duration_hours: int = 24) -> Any:
@@ -105,7 +107,7 @@ class CacheManager:
         cache_path = self._get_existing_cache_path(cache_key)
 
         if self._is_expired(cache_path, duration_hours):
-            logger.debug(f"Cache miss or expired: {identifier[:100]}...")
+            logger.debug("Cache miss or expired: %s...", identifier[:100])
             return _CACHE_MISS
 
         assert cache_path is not None
@@ -115,16 +117,14 @@ class CacheManager:
                 with open(cache_path, encoding="utf-8") as f:
                     value = json.load(f)
             elif cache_path.suffix == ".parquet":
-                import pandas as pd
-
                 value = pd.read_parquet(cache_path)
             else:
                 logger.warning("Legacy pickle cache disabled: %s", cache_path)
                 return _CACHE_MISS
-            logger.info(f"Cache hit: {identifier[:100]}...")
+            logger.info("Cache hit: %s...", identifier[:100])
             return value
         except (OSError, json.JSONDecodeError, ValueError) as e:
-            logger.warning(f"Failed to load cache: {e}")
+            logger.warning("Failed to load cache: %s", e)
             return _CACHE_MISS
 
     def set(self, identifier: str, value: Any) -> None:
@@ -150,9 +150,9 @@ class CacheManager:
             else:
                 with open(json_path, "w", encoding="utf-8") as f:
                     json.dump(value, f)
-            logger.info(f"Cached: {identifier[:100]}...")
+            logger.info("Cached: %s...", identifier[:100])
         except (OSError, TypeError, ValueError) as e:
-            logger.warning(f"Failed to cache value: {e}")
+            logger.warning("Failed to cache value: %s", e)
 
     def clear(self, identifier: str | None = None) -> None:
         """
@@ -170,7 +170,7 @@ class CacheManager:
                     path.unlink()
                     deleted_any = True
             if deleted_any:
-                logger.info(f"Cleared cache: {identifier[:100]}...")
+                logger.info("Cleared cache: %s...", identifier[:100])
         else:
             for pattern in ("*.json", "*.parquet", "*.pkl"):
                 for cache_file in self.cache_dir.glob(pattern):
@@ -192,7 +192,7 @@ class CacheManager:
             return {"count": 0, "total_size_mb": 0, "oldest": None, "newest": None}
 
         total_size = sum(f.stat().st_size for f in cache_files)
-        mtimes = [datetime.fromtimestamp(f.stat().st_mtime) for f in cache_files]
+        mtimes = [datetime.fromtimestamp(f.stat().st_mtime, tz=UTC) for f in cache_files]
 
         return {
             "count": len(cache_files),

@@ -5,12 +5,14 @@ from silver data into the gold layer.
 """
 
 import logging
+from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import BallTree
 
+from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction, HRentalYieldRecord
 from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.io_helpers import save_parquet
 from egg_n_bacon_housing.utils.mrt_distance import calculate_nearest_mrt
@@ -21,9 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def _quarantine_gold_path(gold_dir: Path, dataset_name: str) -> Path:
-    from datetime import datetime as _dt
-
-    timestamp = _dt.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
     return gold_dir / "_quarantine" / f"{dataset_name}_{timestamp}.parquet"
 
 
@@ -166,14 +166,20 @@ def rental_yield(
         median_rent=("monthly_rent", "median"), rent_sample_size=("monthly_rent", "size")
     )
 
-    sales_keys = set(zip(monthly_sales["town"], monthly_sales["flat_type"], monthly_sales["month"]))
-    rent_keys = set(zip(monthly_rents["town"], monthly_rents["flat_type"], monthly_rents["month"]))
+    sales_keys = set(
+        zip(monthly_sales["town"], monthly_sales["flat_type"], monthly_sales["month"], strict=True)
+    )
+    rent_keys = set(
+        zip(monthly_rents["town"], monthly_rents["flat_type"], monthly_rents["month"], strict=True)
+    )
     sales_only_count = len(sales_keys - rent_keys)
     rent_only_count = len(rent_keys - sales_keys)
     if sales_only_count > 0 or rent_only_count > 0:
         logger.info(
-            f"Rental yield join: {sales_only_count} unmatched sales groups, "
-            f"{rent_only_count} unmatched rent groups (no match on town/flat_type/month)"
+            "Rental yield join: %s unmatched sales groups, "
+            "%s unmatched rent groups (no match on town/flat_type/month)",
+            sales_only_count,
+            rent_only_count,
         )
 
     combo_yields = monthly_sales.merge(
@@ -226,8 +232,6 @@ def rental_yield(
             on="month",
             how="left",
         )
-
-    from egg_n_bacon_housing.schemas.feature_models import HRentalYieldRecord
 
     valid_ry, quarantine_ry = validate_schema(df, HRentalYieldRecord, "rental_yield")
     if not quarantine_ry.empty:
@@ -306,13 +310,11 @@ def features_with_amenities(
             df["dist_to_nearest_mrt"] = pd.NA
             df["nearest_mrt_station"] = pd.NA
     except (OSError, ValueError, KeyError, RuntimeError) as exc:
-        logger.warning(f"Skipping MRT feature enrichment: {exc}")
+        logger.warning("Skipping MRT feature enrichment: %s", exc)
         df["dist_to_nearest_mrt"] = pd.NA
         df["nearest_mrt_station"] = pd.NA
 
     df = _nearest_mall_features(df, raw_shopping_malls)
-
-    from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction
 
     valid_feat, quarantine_feat = validate_schema(df, HFeatureTransaction, "feature_transaction")
     if not quarantine_feat.empty:
@@ -371,7 +373,7 @@ def unified_features(
                 break
 
         if merge_keys and "rental_yield_pct" in rental_df.columns:
-            rental_cols = merge_keys + ["rental_yield_pct"]
+            rental_cols = [*merge_keys, "rental_yield_pct"]
             rental_lookup = rental_df[rental_cols].dropna(subset=["rental_yield_pct"])
             sort_col = next((c for c in merge_keys if "month" in c or "date" in c), merge_keys[0])
             rental_lookup = rental_lookup.sort_values(sort_col).drop_duplicates(
@@ -383,8 +385,6 @@ def unified_features(
             logger.warning(
                 "Skipping rental yield join: missing required join keys between feature and yield datasets"
             )
-
-    from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction
 
     valid_uni, quarantine_uni = validate_schema(df, HFeatureTransaction, "unified_feature")
     if not quarantine_uni.empty:

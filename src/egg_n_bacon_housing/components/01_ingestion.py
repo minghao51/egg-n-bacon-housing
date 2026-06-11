@@ -7,6 +7,7 @@ Functions here are "pure" in the Hamilton sense: output depends only on
 inputs + config, no global state.
 """
 
+import json
 import logging
 from pathlib import Path
 
@@ -71,7 +72,7 @@ def raw_dataset(
 
     for cache_path in cache_paths:
         if cache_path.exists():
-            logger.info(f"Loading {display_name} from bronze: {cache_path}")
+            logger.info("Loading %s from bronze: %s", display_name, cache_path)
             return pd.read_parquet(cache_path)
 
     def _fetch():
@@ -83,7 +84,7 @@ def raw_dataset(
     if df is not None and not df.empty:
         bronze_dir.mkdir(parents=True, exist_ok=True)
         df.to_parquet(cache_paths[0], index=False)
-        logger.info(f"Saved {len(df)} {display_name} records to bronze")
+        logger.info("Saved %s %s records to bronze", len(df), display_name)
     if df is None or df.empty:
         raise RuntimeError(f"Core dataset fetch failed: {error_name}")
     return df
@@ -110,7 +111,7 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
         if path.exists():
             result[indicator] = pd.read_parquet(path)
         else:
-            logger.warning(f"Macro data not found: {indicator}")
+            logger.warning("Macro data not found: %s", indicator)
             result[indicator] = pd.DataFrame()
 
     return result
@@ -194,7 +195,7 @@ def _geocode_shopping_malls(malls_df: pd.DataFrame) -> pd.DataFrame:
                     "search_result": pd.NA,
                 }
             )
-            logger.warning(f"Could not geocode shopping mall: {mall_name}")
+            logger.warning("Could not geocode shopping mall: %s", mall_name)
         else:
             geocoded_rows.append(best_match)
 
@@ -210,11 +211,11 @@ def raw_shopping_malls(bronze_dir: Path) -> pd.DataFrame:
     raw_path, geocoded_path = _mall_cache_paths(bronze_dir)
 
     if geocoded_path.exists():
-        logger.info(f"Loading geocoded shopping malls from bronze: {geocoded_path}")
+        logger.info("Loading geocoded shopping malls from bronze: %s", geocoded_path)
         return _standardize_geocoded_mall_columns(pd.read_parquet(geocoded_path))
 
     if raw_path.exists():
-        logger.info(f"Loading shopping malls from bronze: {raw_path}")
+        logger.info("Loading shopping malls from bronze: %s", raw_path)
         malls_df = pd.read_parquet(raw_path)
 
         has_coordinates = {"lat", "lon"}.issubset(malls_df.columns) or {
@@ -229,10 +230,10 @@ def raw_shopping_malls(bronze_dir: Path) -> pd.DataFrame:
             if not geocoded_df.empty:
                 geocoded_path.parent.mkdir(parents=True, exist_ok=True)
                 geocoded_df.to_parquet(geocoded_path, index=False)
-                logger.info(f"Saved {len(geocoded_df)} geocoded shopping malls to bronze")
+                logger.info("Saved %s geocoded shopping malls to bronze", len(geocoded_df))
                 return geocoded_df
         except (requests.RequestException, OSError, ValueError, KeyError) as exc:
-            logger.warning(f"Could not geocode shopping malls via OneMap: {exc}")
+            logger.warning("Could not geocode shopping malls via OneMap: %s", exc)
 
         return malls_df
 
@@ -255,8 +256,6 @@ def raw_mrt_stations(bronze_dir: Path) -> pd.DataFrame:
     if not config_path.exists():
         logger.warning("MRT stations config not found")
         return pd.DataFrame()
-
-    import json
 
     with open(config_path) as f:
         data = json.load(f)

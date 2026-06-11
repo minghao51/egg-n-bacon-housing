@@ -6,7 +6,6 @@ Checks:
 - Naming conventions for files in docs/guides, docs/analytics, and docs/plans.
 - docs/ root contains only approved top-level markdown files.
 - Analytics docs have valid frontmatter (category, status).
-- docs/analytics .md files stay in sync with app/src/content/analytics .mdx files.
 """
 
 from __future__ import annotations
@@ -22,10 +21,16 @@ DOCS_ANALYTICS_DIR = DOCS_DIR / "analytics"
 
 ACTIVE_REFERENCE_FILES = [
     REPO_ROOT / "README.md",
+    REPO_ROOT / "QUICKSTART.md",
+    REPO_ROOT / "CONTRIBUTING.md",
     REPO_ROOT / "docs" / "README.md",
+    REPO_ROOT / "docs" / "TROUBLESHOOTING.md",
     REPO_ROOT / "docs" / "architecture.md",
     REPO_ROOT / "docs" / "guides" / "README.md",
+    REPO_ROOT / "docs" / "guides" / "quick-start.md",
     REPO_ROOT / "docs" / "guides" / "usage-guide.md",
+    REPO_ROOT / "docs" / "guides" / "ci-cd-pipeline.md",
+    REPO_ROOT / "app" / "README.md",
 ]
 
 ALLOWED_DOCS_ROOT_MD = {

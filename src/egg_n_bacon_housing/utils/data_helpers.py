@@ -8,7 +8,7 @@ with automatic metadata tracking for reproducibility and lineage.
 import hashlib
 import json
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -67,10 +67,10 @@ def load_parquet(
 
     try:
         df = pd.read_parquet(parquet_path, columns=columns)
-        logger.info(f"Loaded {dataset_name}: {len(df)} rows from {parquet_path}")
+        logger.info("Loaded %s: %s rows from %s", dataset_name, len(df), parquet_path)
         return df
     except (OSError, ValueError) as e:
-        raise RuntimeError(f"Failed to load parquet {parquet_path}: {e}")
+        raise RuntimeError(f"Failed to load parquet {parquet_path}: {e}") from e
 
 
 @monitor_data_quality
@@ -108,7 +108,7 @@ def save_parquet(
         raise ValueError(f"mode must be 'overwrite' or 'append', got '{mode}'")
 
     if version is None:
-        version = datetime.now().strftime("%Y-%m-%d")
+        version = datetime.now(tz=UTC).strftime("%Y-%m-%d")
 
     if compression is None:
         compression = settings.pipeline.parquet_compression
@@ -137,9 +137,9 @@ def save_parquet(
             original_rows = len(existing_df)
             df = pd.concat([existing_df, df], ignore_index=True)
             del existing_df
-            logger.info(f"Appended {len(df) - original_rows} rows to {dataset_name}")
+            logger.info("Appended %s rows to %s", len(df) - original_rows, dataset_name)
         except (OSError, ValueError) as e:
-            raise RuntimeError(f"Failed to append to existing parquet: {e}")
+            raise RuntimeError(f"Failed to append to existing parquet: {e}") from e
 
     try:
         save_kwargs = {
@@ -150,17 +150,19 @@ def save_parquet(
 
         if partition_cols:
             df.to_parquet(parquet_path, partition_cols=partition_cols, **save_kwargs)
-            logger.info(f"Saved {len(df)} rows to {parquet_path} (partitioned by {partition_cols})")
+            logger.info(
+                "Saved %s rows to %s (partitioned by %s)", len(df), parquet_path, partition_cols
+            )
         else:
             df.to_parquet(parquet_path, **save_kwargs)
-            logger.info(f"Saved {len(df)} rows to {parquet_path} (compression: {compression})")
+            logger.info("Saved %s rows to %s (compression: %s)", len(df), parquet_path, compression)
     except (OSError, ValueError) as e:
-        raise RuntimeError(f"Failed to save parquet {parquet_path}: {e}")
+        raise RuntimeError(f"Failed to save parquet {parquet_path}: {e}") from e
 
     if not partition_cols and calculate_checksum:
         logger.info("🔐 Calculating checksum...")
         checksum = _calculate_checksum(parquet_path)
-        logger.info(f"✅ Checksum: {checksum}")
+        logger.info("✅ Checksum: %s", checksum)
     else:
         checksum = None
 
@@ -169,14 +171,14 @@ def save_parquet(
     if dataset_name in metadata["datasets"] and mode == "overwrite":
         old_version = metadata["datasets"][dataset_name]["version"]
         if old_version != version:
-            logger.warning(f"Overwriting {dataset_name}: version {old_version} -> {version}")
+            logger.warning("Overwriting %s: version %s -> %s", dataset_name, old_version, version)
 
     dataset_metadata = {
         "path": str(parquet_path.relative_to(PARQUETS_DIR)),
         "full_path": str(parquet_path),
         "version": version,
         "rows": len(df),
-        "created": datetime.now().isoformat(),
+        "created": datetime.now(tz=UTC).isoformat(),
         "source": source or "unknown",
         "mode": mode,
         "compression": compression,
@@ -189,7 +191,7 @@ def save_parquet(
         dataset_metadata["partition_cols"] = partition_cols
 
     metadata["datasets"][dataset_name] = dataset_metadata
-    metadata["last_updated"] = datetime.now().isoformat()
+    metadata["last_updated"] = datetime.now(tz=UTC).isoformat()
 
     _save_metadata(metadata)
 
@@ -208,7 +210,7 @@ def _load_metadata(metadata_file: Path | None = None) -> dict:
         metadata_file = METADATA_FILE
 
     if not metadata_file.exists():
-        logger.info(f"Creating new metadata file at {metadata_file}")
+        logger.info("Creating new metadata file at %s", metadata_file)
         return {"datasets": {}, "last_updated": None}
 
     with open(metadata_file) as f:

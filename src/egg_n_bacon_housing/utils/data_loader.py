@@ -27,7 +27,7 @@ def _read_first_existing(*paths: Path) -> pd.DataFrame:
     for path in paths:
         if path.exists():
             return pd.read_parquet(path)
-    logger.warning(f"No dataset found at any expected path: {[str(p) for p in paths]}")
+    logger.warning("No dataset found at any expected path: %s", [str(p) for p in paths])
     return pd.DataFrame()
 
 
@@ -36,7 +36,7 @@ def _load_planning_areas_raw() -> tuple[list[dict], list[tuple], STRtree | None,
     geojson_path = RAW_DATA_DIR / "onemap_planning_area_polygon.geojson"
 
     if not geojson_path.exists():
-        logger.warning(f"Planning area GeoJSON not found at {geojson_path}")
+        logger.warning("Planning area GeoJSON not found at %s", geojson_path)
         return ([], [], None, [])
 
     try:
@@ -63,7 +63,7 @@ def _load_planning_areas_raw() -> tuple[list[dict], list[tuple], STRtree | None,
         return (planning_areas, prepared_list, tree, name_list)
 
     except (OSError, json.JSONDecodeError, ValueError, KeyError) as e:
-        logger.warning(f"Error loading planning areas: {e}")
+        logger.warning("Error loading planning areas: %s", e)
         return ([], [], None, [])
 
 
@@ -151,7 +151,7 @@ def load_planning_area_metrics() -> pd.DataFrame:
                 how="outer",
                 suffixes=("", "_affordability"),
             )
-            logger.info(f"Merged price and affordability metrics: {len(merged)} rows")
+            logger.info("Merged price and affordability metrics: %s rows", len(merged))
             return merged
         logger.warning(
             "No common key to merge price and affordability metrics, returning price only"
@@ -233,14 +233,14 @@ class CSVLoader:
 
         if not resale_dir.exists():
             if settings.logging.verbose:
-                logger.warning(f"HDB resale directory not found: {resale_dir}")
+                logger.warning("HDB resale directory not found: %s", resale_dir)
             return pd.DataFrame()
 
         files = list(resale_dir.glob("*.csv"))
 
         if not files:
             if settings.logging.verbose:
-                logger.warning(f"No CSV files found in: {resale_dir}")
+                logger.warning("No CSV files found in: %s", resale_dir)
             return pd.DataFrame()
 
         dfs = [pd.read_csv(f) for f in files]
@@ -265,7 +265,7 @@ class CSVLoader:
 
         if not path.exists():
             if settings.logging.verbose:
-                logger.warning(f"CSV file not found: {path}")
+                logger.warning("CSV file not found: %s", path)
             return pd.DataFrame()
 
         return pd.read_csv(path, **kwargs)
@@ -290,5 +290,5 @@ def load_unified_data() -> pd.DataFrame:
     if "transaction_date" in df.columns:
         df["transaction_date"] = pd.to_datetime(df["transaction_date"])
 
-    logger.info(f"Loaded {len(df)} records from unified dataset")
+    logger.info("Loaded %s records from unified dataset", len(df))
     return df
