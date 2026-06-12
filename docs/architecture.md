@@ -4,12 +4,12 @@
 
 ## Overview
 
-`egg-n-bacon-housing` is a Python-first Singapore housing data platform with two distinct execution modes:
+`egg-n-bacon-housing` is a Python-first Singapore housing data platform with two distinct supported surfaces:
 
 - a Hamilton pipeline that moves data through bronze, silver, gold, and platinum layers
-- standalone analytics scripts that read exported datasets and produce reports, charts, and app-facing artifacts
+- an Astro publishing layer that serves analytics markdown and precomputed app artifacts
 
-The Hamilton DAG is the automated system of record. Analytics modules are intentionally separate so they can evolve independently without changing pipeline orchestration.
+The Hamilton DAG is the automated system of record. Published analytics are maintained as markdown plus precomputed app assets; the old standalone Python analytics package has been retired.
 
 ## System Shape
 
@@ -20,13 +20,11 @@ External APIs / manual files
 src/egg_n_bacon_housing/components/
         |
         v
-data/pipeline/01_bronze -> 02_silver -> 03_gold -> 04_platinum
+data/01_bronze -> 02_silver -> 03_gold -> 04_platinum
         |
         +--> app/public/data/
         |
         +--> docs/analytics/ (loaded directly by Astro)
-        |
-        +--> src/egg_n_bacon_housing/analytics/
 ```
 
 ## Repository Layout
@@ -53,7 +51,6 @@ egg-n-bacon-housing/
 │   └── tools/validate_docs_layout.py
 ├── src/egg_n_bacon_housing/
 │   ├── adapters/                     # External clients and integrations
-│   ├── analytics/                    # Standalone analysis scripts and pipelines
 │   ├── components/                   # Hamilton DAG nodes
 │   ├── schemas/                      # Pydantic models
 │   ├── utils/                        # Loaders, caching, metrics, helpers
@@ -92,11 +89,10 @@ Execution entrypoint:
 
 ### Downstream Consumers
 
-| Consumer          | Reads from                                         | Purpose                                       |
-| ----------------- | -------------------------------------------------- | --------------------------------------------- |
-| Astro app         | `app/public/data/`, `docs/analytics/`              | Dashboard and analytics publishing            |
-| Analytics scripts | `data/pipeline/04_platinum/` and supporting layers | On-demand research and forecasting            |
-| Utility loaders   | `src/egg_n_bacon_housing/utils/`                   | Reusable access patterns for Python workflows |
+| Consumer        | Reads from                            | Purpose                                       |
+| --------------- | ------------------------------------- | --------------------------------------------- |
+| Astro app       | `app/public/data/`, `docs/analytics/` | Dashboard and analytics publishing            |
+| Utility loaders | `src/egg_n_bacon_housing/utils/`      | Reusable access patterns for Python workflows |
 
 ## Pipeline Stages
 
@@ -110,13 +106,13 @@ Execution entrypoint:
 
 ## Content Publishing Flow
 
-Analytics content is authored in `docs/analytics/` and loaded by Astro through [app/src/content.config.ts](../app/src/content.config.ts). There is no generated intermediate content-copy step in the supported repo shape.
+Analytics content is authored in `docs/analytics/` and loaded by Astro through [app/src/content.config.ts](../app/src/content.config.ts). App-consumed analytics data lives under `app/public/data/`. There is no supported Python script runner or generated intermediate content-copy step in the current repo shape.
 
 ## Important Boundaries
 
 - `src/egg_n_bacon_housing/components/` is supported pipeline code.
-- `src/egg_n_bacon_housing/analytics/` is exploratory and reporting code.
-- Analytics code may consume pipeline outputs, but the automated pipeline should not depend on notebook-era or ad hoc research assumptions.
+- `docs/analytics/` and `app/public/data/` are the supported analytics publishing surface.
+- Historical analysis outputs under `data/analytics/` and `data/analysis/` were retired from the tracked supported surface and should be treated as reproducible archive material, not runtime inputs.
 
 ## Developer Workflow
 
@@ -124,6 +120,6 @@ Analytics content is authored in `docs/analytics/` and loaded by Astro through [
 uv run python main.py
 uv run python main.py --stage features
 uv run python scripts/tools/validate_docs_layout.py
-uv run pytest
+uv run pytest --no-cov
 uv run ruff check .
 ```

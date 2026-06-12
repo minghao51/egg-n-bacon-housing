@@ -120,7 +120,7 @@ Recovery timing matters for buyers. Areas that recovered quickly may have alread
 
 ### Data Used
 
-- **Primary input**: `data/pipeline/04_platinum/housing_unified.parquet`
+- **Primary input**: `data/04_platinum/housing_unified.parquet`
 - **Time range**: 2017-2026 (10 years of transaction data)
 - **Temporal split**: Pre-COVID (2017-2019), COVID (2020-2022), Post-COVID (2023-2026)
 - **Property types**: HDB, Condominium, Executive Condominium
@@ -146,8 +146,6 @@ Recovery timing matters for buyers. Areas that recovered quickly may have alread
 
 Temporal evolution analysis confirms that pricing premiums are not static. MRT premiums experienced a structural break during COVID and have only partially recovered, while school premiums proved more resilient. Planning area trajectories diverge, with developing towns showing accelerating appreciation and some mature areas plateauing. Key limitation: the 2017-2026 window includes only one major structural break (COVID), making it difficult to generalize about premium stability in other scenarios.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/mrt/analyze_mrt_temporal_evolution.py` — Year-by-year MRT premium tracking at national and area level
-- `scripts/analytics/analysis/school/analyze_school_temporal_evolution.py` — School quality premium evolution over time
-- `scripts/analytics/analysis/appreciation/analyze_appreciation_patterns.py` — YoY appreciation clustering, hotspot identification, appreciation drivers
+This article is maintained as published analysis content. The retired Python temporal-analysis scripts are no longer a supported runtime surface; the canonical assets for this page now live under `app/public/data/analysis/`.

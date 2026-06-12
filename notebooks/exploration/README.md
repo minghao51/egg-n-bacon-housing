@@ -66,6 +66,8 @@ uv run python notebooks/exploration/hexgrid_test.py
 
 **Warning**: Some notebooks may require additional API keys or setup not covered in the main `.env.example` file.
 
+Some older analytics exploration notebooks and outputs were retired during the analytics-surface consolidation. If an exploratory notebook mentions removed paths such as `data/analysis/`, `data/analytics/`, or the old standalone analytics scripts, treat it as archival context rather than a supported workflow.
+
 ---
 
 **Last Updated**: 2026-01-22

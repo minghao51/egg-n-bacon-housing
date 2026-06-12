@@ -34,7 +34,7 @@ bun run preview
 - dashboard and interactive-tool data is served from `public/data/`
 - analytics images used by articles are served from `public/data/analysis/`
 
-There is no supported generated analytics-content copy or legacy sync-shell step in the current repo shape.
+There is no supported standalone Python analytics runtime, generated analytics-content copy, or legacy sync-shell step in the current repo shape.
 
 ## E2E Tests
 

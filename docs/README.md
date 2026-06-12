@@ -54,6 +54,8 @@ uv run python scripts/tools/validate_docs_layout.py
 
 ## Maintenance Notes
 
-- Keep operational docs aligned to `main.py` and the current GitHub workflows.
+- Keep operational docs aligned to `main.py`, `app/public/data/`, and the current GitHub workflows.
 - Treat `docs/analytics/*.md` as the editable analytics content source.
+- Treat `docs/archive/` as historical context only; re-verify anything you want to promote back into active guidance.
 - Move superseded operational notes into `docs/archive/` instead of keeping stale guidance in the active docs path.
+- Do not reintroduce docs that describe the retired standalone Python analytics package as a supported surface.

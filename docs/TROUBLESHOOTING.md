@@ -111,7 +111,7 @@ Read only the columns you need:
 import pandas as pd
 
 df = pd.read_parquet(
-    "data/pipeline/04_platinum/unified_dataset.parquet",
+    "data/04_platinum/unified_dataset.parquet",
     columns=["planning_area", "price_psf", "rental_yield_pct"],
 )
 ```

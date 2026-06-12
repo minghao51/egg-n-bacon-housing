@@ -94,13 +94,13 @@ The directional hit rate remains high even when confidence intervals are too wid
 
 ### Methodology
 
-- **XGBoost models** trained per property type (HDB, Condo, EC) in `scripts/analytics/price_appreciation_modeling/train_by_property_type.py`
+- **XGBoost models** were trained per property type (HDB, Condo, EC) in the historical research workflow
   - Parameters: n_estimators=100, max_depth=6, learning_rate=0.1, subsample=0.8
 - **Target variable**: `yoy_change_pct` (year-over-year appreciation)
-- **Smart ensemble**: stacked model combining segment-specific predictions via `scripts/analytics/price_appreciation_modeling/create_smart_ensemble.py`
-- **Confidence intervals**: calibrated per segment using residual distribution in `scripts/analytics/price_appreciation_modeling/generate_confidence_intervals.py`
-- **ARIMA(1,1,1)** for time-series forecasting per planning area via `scripts/analytics/analysis/market/forecast_prices.py`
-- **Condo sub-segmentation**: mass market, mid market, luxury in `scripts/analytics/price_appreciation_modeling/train_condo_by_segment.py`
+- **Smart ensemble**: stacked model combining segment-specific predictions
+- **Confidence intervals**: calibrated per segment using residual distributions
+- **ARIMA(1,1,1)** for time-series forecasting per planning area
+- **Condo sub-segmentation**: mass market, mid market, luxury
 
 ### Technical Findings
 
@@ -120,9 +120,6 @@ The directional hit rate remains high even when confidence intervals are too wid
 
 Segment-specific modeling dramatically outperforms unified approaches (74% vs 47% accuracy). HDB and EC segments are the most forecastable; luxury condos are essentially unpredictable in magnitude (R²=30.1%, CI width ±1076%). Momentum (recent 2-year appreciation) dominates feature importance, which means these models are vulnerable to regime changes and policy shocks. High directional accuracy can coexist with impractically wide error bands, especially in mid/luxury condo segments. Key limitations: momentum-heavy models assume trend persistence, and the luxury segment lacks sufficient signal for reliable magnitude forecasts.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/market/forecast_prices.py` — ARIMA(1,1,1) per planning area
-- `scripts/analytics/price_appreciation_modeling/train_by_property_type.py` — Segmented XGBoost
-- `scripts/analytics/price_appreciation_modeling/create_smart_ensemble.py` — Ensemble stacking
-- `scripts/analytics/price_appreciation_modeling/generate_confidence_intervals.py` — CI calibration
+This article is maintained as published analysis content. The historical Python forecasting scripts were retired from the supported repo surface; the canonical assets for the app now live under `app/public/data/analysis/`.

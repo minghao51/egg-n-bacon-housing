@@ -229,24 +229,24 @@ See `facility-premiums.md` for full analysis.
 
 ### Methodology
 
-Each finding draws from a distinct analytical pipeline. The table below cross-references the detailed analysis document and the underlying scripts.
+Each finding draws from a distinct analytical workflow. The table below cross-references the detailed analysis document and the primary published asset focus that still remains in the supported repo surface.
 
-| Finding Area                                | Analysis Doc                   | Key Scripts                                                                                                     |
-| ------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| CBD vs MRT decomposition                    | `mrt-impact.md`                | `analyze_mrt_impact.py`, `analyze_cbd_mrt_decomposition.py`                                                     |
-| MRT segment heterogeneity                   | `mrt-impact.md`                | `analyze_mrt_heterogeneous.py`, `analyze_mrt_by_property_type.py`                                               |
-| Lease decay and band pricing                | `lease-decay.md`               | `analyze_lease_decay.py`, `analyze_lease_decay_advanced.py`                                                     |
-| Price forecast reliability                  | `price-forecasts.md`           | `forecast_prices.py`, `train_by_property_type.py`, `create_smart_ensemble.py`                                   |
-| School quality premium                      | `school-quality.md`            | `analyze_school_impact.py`, `analyze_school_rdd.py`, `analyze_school_spatial_cv.py`                             |
-| Spatial autocorrelation                     | `spatial-autocorrelation.md`   | `analyze_spatial_autocorrelation.py`, `analyze_h3_clusters.py`                                                  |
-| Rental hotspots                             | `spatial-hotspots.md`          | `analyze_spatial_hotspots.py`                                                                                   |
-| Policy causal effects                       | `causal-inference-overview.md` | `analyze_causal_did_enhanced.py`, `analyze_rd_policy_timing.py`                                                 |
-| Amenity impact and feature importance       | `amenity-impact.md`            | `analyze_amenity_impact.py`, `analyze_feature_importance.py`                                                    |
-| Market segmentation and investment profiles | `market-segments.md`           | `market_segmentation.py`, `market_segmentation_advanced.py`, `analyze_investment_eda.py`                        |
-| Temporal evolution of premiums              | `temporal-evolution.md`        | `analyze_mrt_temporal_evolution.py`, `analyze_school_temporal_evolution.py`, `analyze_appreciation_patterns.py` |
-| Macro-economic sensitivity                  | `macro-sensitivity.md`         | `fetch_macro_data.py`, `prepare_timeseries_data.py`                                                             |
-| Rental yields and affordability             | `rental-yields.md`             | `analyze_hdb_rental_market.py`, `residual_analysis.py`                                                          |
-| Private property facility premiums          | `facility-premiums.md`         | L3 pipeline facility processing                                                                                 |
+| Finding Area                                | Analysis Doc                   | Published Asset Focus                                      |
+| ------------------------------------------- | ------------------------------ | ---------------------------------------------------------- |
+| CBD vs MRT decomposition                    | `mrt-impact.md`                | MRT premium charts and CBD/MRT decomposition visuals       |
+| MRT segment heterogeneity                   | `mrt-impact.md`                | Cross-segment comparison charts and town stratification    |
+| Lease decay and band pricing                | `lease-decay.md`               | Lease-decay article plus advanced decay visual assets      |
+| Price forecast reliability                  | `price-forecasts.md`           | Forecast charts, residual visuals, and confidence-band art |
+| School quality premium                      | `school-quality.md`            | School-impact charts and RDD visualization                 |
+| Spatial autocorrelation                     | `spatial-autocorrelation.md`   | Moran, cluster, and transition visual assets               |
+| Rental hotspots                             | `spatial-hotspots.md`          | Hotspot article plus app-served hotspot datasets           |
+| Policy causal effects                       | `causal-inference-overview.md` | Causal summary narrative and published result tables       |
+| Amenity impact and feature importance       | `amenity-impact.md`            | Amenity article plus feature-importance visuals            |
+| Market segmentation and investment profiles | `market-segments.md`           | Segment article plus app-served segment datasets           |
+| Temporal evolution of premiums              | `temporal-evolution.md`        | Temporal charts and comparative narrative                  |
+| Macro-economic sensitivity                  | `macro-sensitivity.md`         | Macro sensitivity article and published summary tables     |
+| Rental yields and affordability             | `rental-yields.md`             | Yield article plus affordability-oriented summary outputs  |
+| Private property facility premiums          | `facility-premiums.md`         | L3 pipeline facility processing                            |
 
 ### Technical Findings (Consolidated)
 
@@ -279,6 +279,6 @@ Each finding draws from a distinct analytical pipeline. The table below cross-re
 
 Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistication. HDB and condo markets respond differently to MRT access, lease decay, policy shocks, and forecasting signals. The strongest technical evidence supports the CBD-over-MRT finding (R² decomposition), the non-linear lease decay curve (223K transactions), the forecast reliability gradient across segments (74% ensemble accuracy), and the hawker-over-MRT amenity ranking (27.4% XGBoost importance). The weakest causal claims are around school quality premiums (RDD covariate balance failed) and luxury condo forecasting (R²=30.1%). Key additions from the six new analysis domains: macro sensitivity confirms interest rates as the most actionable timing signal, rental yield analysis reveals the yield-growth trade-off, market segmentation shows behavioral clusters outperform property-type labels, temporal evolution confirms COVID created a structural break in premium structure, and facility analysis identifies tennis courts and sky gardens as the genuine condo differentiators. All findings are strongest for the 2021-2026 market regime. Forecasts are best used as decision support, not standalone valuation.
 
-### Scripts
+### Provenance
 
-All scripts referenced above are located under `scripts/analytics/analysis/`. See individual analysis documents for full script paths and methodology details.
+The individual findings pages remain the canonical published analytics surface. Historical standalone Python analysis scripts were retired from the supported repo shape; app-facing content now depends on `docs/analytics/` plus precomputed assets under `app/public/data/`.

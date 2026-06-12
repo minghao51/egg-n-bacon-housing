@@ -98,12 +98,12 @@ The causal work suggests that immediate level changes and post-announcement slop
 ### Methodology
 
 - **Regional classification**: CCR (10 planning areas — Bukit Timah, Downtown Core, Orchard, River Valley, etc.), RCR (12 planning areas — Bishan, Queenstown, Toa Payoh, Novena, etc.), OCR (remainder)
-- **Difference-in-differences (DiD)** via `scripts/analytics/analysis/causal/analyze_causal_did_enhanced.py`:
+- **Difference-in-differences (DiD)**:
   - Treatment: CCR condos; Control: OCR condos
   - Policy event: Sep 2022 ABSD changes for foreigners
   - Regression: `price ~ treatment + post + treatment × post`
   - Minimum 100 transactions per group
-- **Regression discontinuity in time (RDiT)** via `scripts/analytics/analysis/causal/analyze_rd_policy_timing.py`:
+- **Regression discontinuity in time (RDiT)**:
   - Running variable: months since policy (negative = before, positive = after)
   - Policy event: Dec 2023 cooling measures
   - Bandwidth: ±6 months (default), robustness tested at 3, 6, 9, 12 months
@@ -125,7 +125,6 @@ The causal work suggests that immediate level changes and post-announcement slop
 
 The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB showed resilience or even upward movement (+$13K) after cooling measures. This asymmetry is robust across multiple bandwidths and timing windows. The lease mispricing analysis suggests that the market does not price strictly to theoretical Bala depreciation — shorter leases (30-50 yr) may be richly valued while near-fresh leases (97-98 yr) trade at unexpected discounts, possibly due to financing constraints distorting the buyer pool. Key limitations: DiD relies on comparability of CCR and OCR condo segments; RDiT assumes no confounding events at the cutoff; causal estimates are regime-specific and should not be treated as timeless constants.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/causal/analyze_causal_did_enhanced.py` — DiD with CCR/OCR regions
-- `scripts/analytics/analysis/causal/analyze_rd_policy_timing.py` — RDiT around policy events
+This article is maintained as published analysis content. The historical Python causal-analysis scripts were retired from the supported repo surface; the canonical assets for this page now live under `app/public/data/analysis/`.

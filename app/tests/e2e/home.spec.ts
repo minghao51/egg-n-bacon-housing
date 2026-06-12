@@ -34,9 +34,7 @@ test.describe("Home Page", () => {
   }) => {
     await page.getByText("Live Dashboard").click();
     await expect(page).toHaveURL(/dashboard/);
-    await expect(
-      page.getByRole("heading", { name: "Market Overview" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
   });
 
   test("should navigate to analytics when clicking Analytics Reports card", async ({

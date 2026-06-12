@@ -125,7 +125,7 @@ Chasing the hottest segment is a high-risk strategy. Momentum can reverse quickl
 
 ### Data Used
 
-- **Primary input**: `data/pipeline/04_platinum/housing_unified.parquet`
+- **Primary input**: `data/04_platinum/housing_unified.parquet`
 - **Transaction volume**: ~288K records (2021-2026 emphasis)
 - **Derived features**: `price_psm`, `rental_yield_pct`, `yoy_change_pct`, `mom_change_pct`, `remaining_lease_months`, `floor_area_sqm`
 - **Segmentation output**: Cluster assignments per transaction with segment labels
@@ -152,8 +152,6 @@ Chasing the hottest segment is a high-risk strategy. Momentum can reverse quickl
 
 Market segmentation reveals that behavioral clusters are more decision-useful than property type labels. The five identified segments have distinct risk-return profiles that should drive investment strategy. The composite scoring framework helps identify non-obvious opportunities that balance yield and appreciation. Key limitation: clusters are defined on 2021-2026 data and may shift as market conditions change.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/market/market_segmentation.py` — Basic K-means clustering with 5 segments
-- `scripts/analytics/analysis/market/market_segmentation_advanced.py` — Multi-method clustering (K-means + hierarchical + PCA) with optimal K selection
-- `scripts/analytics/analysis/market/analyze_investment_eda.py` — CAGR analysis, investment scoring, rental yield analysis, market momentum
+This article is maintained as published analysis content. The historical Python market-segmentation scripts were retired from the supported repo surface; the canonical artifacts for the app now live under `app/public/data/`.

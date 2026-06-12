@@ -1,6 +1,6 @@
 # Egg-n-Bacon-Housing
 
-Singapore housing data pipeline and ML analysis platform.
+Singapore housing data pipeline and analytics publishing platform.
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-0.1.0+-brightgreen.svg)](https://github.com/astral-sh/uv)
@@ -22,7 +22,7 @@ Collects, processes, and analyzes Singapore housing data from government APIs.
 - Pydantic schema validation at layer boundaries
 - Market Overview, Price Map, Trends & Analytics
 - Parallel geocoding (OneMap API)
-- ML market segmentation and forecasting
+- Published analytics markdown and precomputed app assets
 
 ## Quick Start
 
@@ -133,8 +133,7 @@ egg-n-bacon-housing/
 │   ├── components/           # Hamilton modules (01_ingestion → 05_metrics) — core pipeline
 │   ├── schemas/               # Pydantic models (raw, clean, feature)
 │   ├── adapters/              # External API adapters (onemap, datagovsg, geocoding)
-│   ├── utils/                 # Utilities (cache, data_helpers, metrics, etc.)
-│   └── analytics/             # Analysis modules (market, mrt, school, spatial...) — exploratory, not wired to DAG
+│   └── utils/                 # Utilities (cache, loaders, metrics, etc.)
 ├── scripts/                   # Utility tools (coverage/docs checks)
 ├── main.py                    # CLI entry point
 ├── app/                       # Astro documentation site
@@ -143,7 +142,7 @@ egg-n-bacon-housing/
 └── data/                      # Pipeline data (pipeline/01_bronze → 04_platinum)
 ```
 
-**Note**: The Hamilton DAG (`components/`) runs the core pipeline from bronze to platinum. Analytics modules (`analytics/`) are standalone exploratory scripts that consume exported datasets from the platinum layer. They are run on-demand for specific analyses and are not wired into the automated pipeline.
+**Note**: The supported Python surface is the Hamilton DAG plus shared loaders/config. Published analytics are authored in `docs/analytics/` and served from precomputed assets in `app/public/data/`. The old standalone Python analytics package has been retired from the supported repo surface.
 
 ## Configuration
 
@@ -161,7 +160,7 @@ Nested environment variables use `__` (double underscore), e.g. `PIPELINE__USE_C
 
 ```bash
 # Run tests
-uv run pytest
+uv run pytest --no-cov
 
 # Format code
 uv run ruff format .
@@ -178,4 +177,3 @@ uv run ruff check .
 
 - [data.gov.sg](https://data.gov.sg) - Open housing data
 - [OneMap](https://www.onemap.gov.sg) - Geospatial APIs
-- [LangChain](https://github.com/langchain-ai/langchain) - Agent framework

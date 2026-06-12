@@ -116,10 +116,10 @@ The facility premium depends on ongoing maintenance. An older condo with well-ma
 
 ### Data Used
 
-- **Property facilities**: `data/pipeline/04_platinum/private_property_facilities.parquet` (172,504 records)
-- **Nearby facilities**: `data/pipeline/04_platinum/property_nearby_facilities.parquet` (3,638,104 records)
-- **Property master data**: `data/pipeline/04_platinum/property.parquet` (41,340 records, 30 columns including amenity distance features)
-- **Transaction data**: `data/pipeline/04_platinum/housing_unified.parquet` (price data for premium estimation)
+- **Property facilities**: `data/04_platinum/private_property_facilities.parquet` (172,504 records)
+- **Nearby facilities**: `data/04_platinum/property_nearby_facilities.parquet` (3,638,104 records)
+- **Property master data**: `data/04_platinum/property.parquet` (41,340 records, 30 columns including amenity distance features)
+- **Transaction data**: `data/04_platinum/housing_unified.parquet` (price data for premium estimation)
 
 ### Methodology
 

@@ -131,9 +131,6 @@ Regression discontinuity around the 1km admissions boundary does **not** support
 
 School quality shows up clearly in predictive models (OLS and XGBoost agree on direction and magnitude), but the causal read is much weaker. The RDD at the 1 km boundary does NOT support a clean positive premium — if anything, the treatment effect is negative after controls, and covariate balance fails. This means properties near good schools differ systematically on many dimensions beyond school access. The predictive importance of school features is real and decision-useful, but should not be interpreted as proof of a stable, isolated causal premium. Key limitations: school quality is entangled with neighborhood reputation, amenity mix, and household sorting; admission-policy relevance varies by buyer type and child age.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/school/analyze_school_impact.py` — OLS + XGBoost
-- `scripts/analytics/analysis/school/analyze_school_rdd.py` — Regression discontinuity at 1 km boundary
-- `scripts/analytics/analysis/school/analyze_school_heterogeneous.py` — By region (CCR/RCR/OCR)
-- `scripts/analytics/analysis/school/analyze_school_spatial_cv.py` — Spatial cross-validation
+This article is maintained as published analysis content. The old standalone Python school-analysis scripts were retired from the supported repo surface; the canonical assets now live in this markdown page and the precomputed files served from `app/public/data/analysis/`.

@@ -18,8 +18,9 @@ Include a header block near the top with:
 ## Working Rules
 
 - Active design and implementation plans stay in `docs/plans/`.
-- Once a plan becomes purely historical and no longer drives work, move the outcome summary to `docs/archive/`.
+- Once a plan becomes purely historical and no longer drives work, move the outcome summary to `docs/archive/` and keep only the active or superseding plan here.
 - If a plan is replaced, keep the file but mark it `Superseded` and point to the replacement.
+- Many older plans document now-removed analytics scripts and historical output paths; use them as design history only unless a newer active doc explicitly revives that surface.
 
 ## Recent Meta Plans
 

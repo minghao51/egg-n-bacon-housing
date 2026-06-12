@@ -56,7 +56,7 @@ Python checks:
 ```bash
 uv sync --dev
 uv run ruff check .
-uv run mypy src/egg_n_bacon_housing/components src/egg_n_bacon_housing/adapters src/egg_n_bacon_housing/utils/cache.py src/egg_n_bacon_housing/utils/contracts.py src/egg_n_bacon_housing/pipeline.py src/egg_n_bacon_housing/config.py tests
+uv run mypy
 uv run pytest
 uv run python scripts/tools/validate_docs_layout.py
 ```

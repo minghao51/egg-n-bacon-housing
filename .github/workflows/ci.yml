@@ -29,7 +29,7 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --dev
-      - run: uv run mypy src/egg_n_bacon_housing/components src/egg_n_bacon_housing/adapters src/egg_n_bacon_housing/utils/cache.py src/egg_n_bacon_housing/utils/contracts.py src/egg_n_bacon_housing/pipeline.py src/egg_n_bacon_housing/config.py tests
+      - run: uv run mypy
 
   security:
     runs-on: ubuntu-24.04

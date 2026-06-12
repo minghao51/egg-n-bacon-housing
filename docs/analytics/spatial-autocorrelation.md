@@ -118,7 +118,6 @@ This means appreciation is not randomly distributed. Nearby areas tend to share 
 
 The Moran's I of 0.766 with z=9.91 confirms that appreciation is far from randomly distributed; nearby areas share price momentum strongly. The HH cluster premium (12.7% YoY vs ~10-12% elsewhere) is modest but statistically robust. LH clusters (17 cells) represent the most analytically interesting group — potential catch-up opportunities, but also potential structural laggards requiring case-by-case assessment. The stronger spatial dependence in condos (78%) vs HDB (71%) vs EC (65%) suggests that condo pricing is more influenced by peer neighborhood performance. Key limitations: cluster labels summarize local context and do not override unit-specific factors; spatial patterns can shift with supply, policy, or infrastructure changes.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/spatial/analyze_spatial_autocorrelation.py` — Moran's I + LISA
-- `scripts/analytics/analysis/spatial/analyze_h3_clusters.py` — H3 cluster classification
+This article is maintained as published analysis content. The historical Python spatial-clustering scripts were retired from the supported repo surface; the canonical assets for this page now live under `app/public/data/analysis/`.

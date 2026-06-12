@@ -121,7 +121,7 @@ Town-level averages mask significant within-town variation. Buyers should check 
 
 ### Data Used
 
-- **Primary input**: `data/pipeline/04_platinum/housing_unified.parquet`
+- **Primary input**: `data/04_platinum/housing_unified.parquet`
 - **Sample**: HDB and condo transactions, 2015-2026, with valid coordinates and amenity features
 - **Amenity features**: Distance and threshold indicators for hawker, mall, park, supermarket, preschool, childcare at 500m, 1km, and 2km radii
 - **Spatial grid**: 500m x 500m cells for micro-neighborhood analysis, minimum 10 transactions per cell
@@ -146,7 +146,6 @@ Town-level averages mask significant within-town variation. Buyers should check 
 
 Amenity analysis reveals that Singapore HDB buyers price daily food access (hawker) far more strongly than transit access. Parks represent an underpriced premium driver that has strengthened since COVID. The data supports a shift in buyer heuristics from "near MRT" to "near a multi-amenity hub." Key limitation: amenity distances are straight-line (not walking path quality), and some amenities may serve as proxies for broader neighborhood quality rather than standalone value drivers.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/amenity/analyze_amenity_impact.py` — Temporal, within-town, and grid-based amenity analysis
-- `scripts/analytics/analysis/amenity/analyze_feature_importance.py` — XGBoost feature importance with SHAP for price, rental yield, and appreciation targets
+This article is maintained as published analysis content. The historical Python amenity-analysis scripts were retired from the supported repo surface; the canonical assets for this page now live under `app/public/data/analysis/`.

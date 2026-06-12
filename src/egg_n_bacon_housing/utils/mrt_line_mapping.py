@@ -18,7 +18,7 @@ def _load_json_config(filename: str) -> dict:
     """Load JSON reference file with fallback to empty dict.
 
     Args:
-        filename: Name of JSON file in data/pipeline/01_bronze/external/
+        filename: Name of JSON file in data/01_bronze/external/
 
     Returns:
         Parsed JSON data or empty dict if not found

@@ -123,6 +123,6 @@ Only **12 H3 cells** qualified as 99% confidence hotspots, which is a useful rem
 
 The Getis-Ord Gi\* analysis identifies a small, statistically selective set of rental hotspots concentrated around central and city-fringe locations, with coldspots in northern suburbs. The ~$1,350/month rent gap between hotspots and coldspots is economically significant. Persistence is moderate (58-62%), meaning hotspot status is sticky but not permanent — investors should not treat it as a guaranteed perpetual premium. The low non-significant→hotspot transition rate (8-10%) confirms that emerging hotspot narratives require strong fundamental evidence. Key limitations: hotspot analysis summarizes spatial pricing only, not full asset returns; acquisition price may already capitalize the rent premium; areas can shift with new transport links, supply additions, or policy changes.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/spatial/analyze_spatial_hotspots.py` — Getis-Ord Gi\* with KNN and Queen weights
+This article is maintained as published analysis content. The historical Python spatial-hotspot scripts were retired from the supported repo surface; the canonical assets for this page now live under `app/public/data/analysis/`.

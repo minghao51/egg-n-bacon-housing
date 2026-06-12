@@ -115,10 +115,10 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 - **OLS LinearRegression** controlling for `dist_to_nearest_mrt`, `floor_area_sqm`, `remaining_lease_months`
 - **XGBoost** (100 trees, max_depth=6, learning_rate=0.1) for non-linear patterns, with SHAP for explainability
-- **Hierarchical regression** via `scripts/analytics/analysis/spatial/analyze_cbd_mrt_decomposition.py`: CBD-only → CBD+MRT → Full model, to isolate incremental MRT contribution
+- **Hierarchical regression** was used to compare CBD-only, CBD+MRT, and full models and isolate incremental MRT contribution
 - **VIF analysis** to check multicollinearity between MRT and CBD distance
-- **Town-level OLS** in `scripts/analytics/analysis/mrt/analyze_mrt_heterogeneous.py`, minimum 500 transactions per town
-- **Cross-property comparison** in `scripts/analytics/analysis/mrt/analyze_mrt_by_property_type.py`, interaction terms for property type × MRT distance
+- **Town-level OLS** used a minimum of 500 transactions per town
+- **Cross-property comparison** used interaction terms for property type × MRT distance
 
 ### Technical Findings
 
@@ -133,9 +133,6 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 The technical evidence supports the headline finding: CBD proximity is the dominant location factor for HDB, and MRT adds only a marginal incremental contribution. The ~15× condo-vs-HDB sensitivity gap is robust across OLS and XGBoost specifications. Town-level heterogeneity is large enough that a single national MRT premium is misleading. Key limitations: distances are straight-line to nearest station (not walking path quality), and some town coefficients likely absorb omitted neighborhood factors.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/mrt/analyze_mrt_impact.py` — OLS + XGBoost + SHAP on H3 H8 grid
-- `scripts/analytics/analysis/mrt/analyze_mrt_heterogeneous.py` — Town-level, flat-type, price-tier stratification
-- `scripts/analytics/analysis/mrt/analyze_mrt_by_property_type.py` — HDB vs Condo comparison
-- `scripts/analytics/analysis/spatial/analyze_cbd_mrt_decomposition.py` — Hierarchical regression, VIF, PCA
+This article is maintained as published analysis content. The historical Python MRT-analysis scripts were retired from the supported repo surface; the canonical assets for this page now live under `app/public/data/analysis/`.

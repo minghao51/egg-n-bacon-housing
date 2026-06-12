@@ -1,7 +1,0 @@
-Simplified Backtesting Results (Naive Baseline)
-============================================================
-
-Regions Tested: 7
-Average RMSE: 30.89%
-Average MAE: 26.76%
-Average Directional Accuracy: 0.0%

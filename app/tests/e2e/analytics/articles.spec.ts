@@ -22,7 +22,9 @@ test.describe("Analytics Articles", () => {
 
     test(`should display sidebar on ${title} article`, async ({ page }) => {
       await page.goto(`/analytics/${slug}`);
-      await expect(page.getByText("Egg n Bacon Housing")).toBeVisible();
+      await expect(
+        page.getByRole("navigation", { name: "Main navigation" }),
+      ).toBeVisible();
     });
 
     test(`should not have critical errors on ${title} article`, async ({

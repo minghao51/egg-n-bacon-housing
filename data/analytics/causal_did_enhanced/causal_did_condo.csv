@@ -1,2 +1,0 @@
-treatment_region,control_region,policy_date,n_treatment_pre,n_treatment_post,n_control_pre,n_control_post,treatment_pre_price,treatment_post_price,control_pre_price,control_post_price,treatment_change,control_change,did_estimate,did_manual,std_error,ci_lower,ci_upper,p_value,significance,r_squared,n_total
-CCR,OCR,2022-09-01,15205,23433,37508,61556,1899000.0,2187000.0,1254695.0,1533000.0,288000.0,278305.0,-137742.5827084023,9695.0,57538.449156971576,-250516.8620675376,-24968.303349267022,0.016670604302664566,** (p < 0.05),0.009731400189414763,137702

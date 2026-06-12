@@ -8,43 +8,17 @@ dependencies = [
     "pandas>=2.0.0",
     "pyarrow>=15.0.0",
     "numpy>=1.24.0",
-    "seaborn",
     "scikit-learn",
     "pydantic>=2.0",
     "pydantic-settings>=2.0",
     "pyyaml>=6.0",
     "geopandas",
     "requests",
-    "ipywidgets",
-    "langchain>=0.3.0",
-    "langchain-google-genai==2.0.0",
-    "langchain-experimental==0.3.0",
-    "langgraph==0.2.32",
-    "langgraph-checkpoint==2.0.0",
-    "langchain-community",
-    "beautifulsoup4",
-    "h3==4.1.0b2",
     "boto3",
-    "pygwalker",
-    "supabase",
-    "tabulate==0.9.0",
-    "plotly>=6.5.2",
-    "cachetools>=6.2.4",
-    "statsmodels>=0.14.0",
     "rapidfuzz>=3.14.3",
-    "xgboost>=3.1.3",
-    "prophet>=1.2.1",
-    "libpysal>=4.6.0",
-    "esda>=1.5.0",
-    "lifelines>=0.27.0",
-    "marimo>=0.19.6",
     "scipy>=1.17.0",
-    "kaleido>=1.2.0",
-    "patsy>=1.0.2",
-    "shap>=0.49.1",
     "sf-hamilton>=1.0",
     "tenacity",
-    "polars>=1.40.0",
 ]
 
 [dependency-groups]
@@ -57,16 +31,42 @@ dev = [
     "pytest-asyncio>=0.21.0",
     "coverage[toml]>=7.0.0",
     "ruff>=0.3",
-    "libpysal>=4.14.1",
-    "esda>=2.8.1",
     "geopandas>=1.1.2",
     "shapely>=2.1.2",
-    "kaleido>=1.2.0",
     "playwright>=1.58.0",
     "pre-commit>=3.0.0",
     "mypy>=1.8.0",
     "pip-audit>=2.0.0",
     "hypothesis>=6.155.1",
+]
+
+analytics = [
+    "beautifulsoup4",
+    "cachetools>=6.2.4",
+    "esda>=2.8.1",
+    "h3==4.1.0b2",
+    "ipywidgets",
+    "kaleido>=1.2.0",
+    "langchain>=0.3.0",
+    "langchain-community",
+    "langchain-experimental==0.3.0",
+    "langchain-google-genai==2.0.0",
+    "langgraph==0.2.32",
+    "langgraph-checkpoint==2.0.0",
+    "libpysal>=4.14.1",
+    "lifelines>=0.27.0",
+    "marimo>=0.19.6",
+    "patsy>=1.0.2",
+    "plotly>=6.5.2",
+    "polars>=1.40.0",
+    "prophet>=1.2.1",
+    "pygwalker",
+    "seaborn",
+    "shap>=0.49.1",
+    "statsmodels>=0.14.0",
+    "supabase",
+    "tabulate==0.9.0",
+    "xgboost>=3.1.3",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -78,7 +78,7 @@ packages = ["src/egg_n_bacon_housing"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-extend-exclude = ["notebooks/*.ipynb", "src/egg_n_bacon_housing/analytics/"]
+extend-exclude = ["notebooks/*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP"]
@@ -87,7 +87,6 @@ ignore = ["E501"]
 [tool.ruff.lint.per-file-ignores]
 "notebooks/*.py" = ["E402", "E722", "F821", "F841"]
 "notebooks/**/*.py" = ["E402", "E722", "F821", "F841"]
-"src/egg_n_bacon_housing/analytics/**/*.py" = ["E402", "N806", "N803", "F401", "F821", "F841", "I001"]
 "src/egg_n_bacon_housing/components/*.py" = ["N999"]  # Numbered stage files like 01_ingestion.py
 
 [tool.pytest.ini_options]
@@ -139,6 +138,15 @@ exclude_lines = [
 # Mypy type checking configuration
 # Strategy: Gradual strict mode - start with basic checking, enable strict as type hints improve
 python_version = "3.12"
+files = [
+    "src/egg_n_bacon_housing/components",
+    "src/egg_n_bacon_housing/adapters",
+    "src/egg_n_bacon_housing/utils/cache.py",
+    "src/egg_n_bacon_housing/utils/contracts.py",
+    "src/egg_n_bacon_housing/pipeline.py",
+    "src/egg_n_bacon_housing/config.py",
+    "tests",
+]
 # strict = true  # TODO: Enable strict mode gradually as type hints are added
 ignore_missing_imports = true
 warn_unused_configs = true

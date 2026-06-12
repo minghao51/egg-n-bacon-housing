@@ -51,7 +51,7 @@ def _load_reference_data(filename: str) -> dict | None:
     """Load JSON reference data from bronze/external with fallback.
 
     Args:
-        filename: Name of JSON file in data/pipeline/01_bronze/external/
+        filename: Name of JSON file in data/01_bronze/external/
 
     Returns:
         Parsed JSON data or None if not found

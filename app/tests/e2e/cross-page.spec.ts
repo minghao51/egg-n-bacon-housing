@@ -79,7 +79,10 @@ test.describe("Responsive Behavior", () => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto("/");
     await expect(page).toHaveTitle(/Egg n Bacon/);
-    await expect(page.getByText("Egg n Bacon Housing")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Egg n Bacon/i }),
+    ).toBeVisible();
+    await expect(page.getByText("Live Dashboard")).toBeVisible();
   });
 
   test("should display correctly on tablet", async ({ page }) => {

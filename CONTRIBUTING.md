@@ -42,7 +42,7 @@ uv run python main.py --visualize
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .
-uv run mypy src/egg_n_bacon_housing/components src/egg_n_bacon_housing/adapters src/egg_n_bacon_housing/utils/cache.py src/egg_n_bacon_housing/utils/contracts.py src/egg_n_bacon_housing/pipeline.py src/egg_n_bacon_housing/config.py tests
+uv run mypy
 uv run python scripts/tools/validate_docs_layout.py
 ```
 
@@ -64,7 +64,7 @@ src/egg_n_bacon_housing/
 ├── adapters/     # External API clients
 ├── utils/        # Reusable helpers and loaders
 ├── config.py     # Pydantic settings
-└── analytics/    # Standalone exploratory scripts, not part of the DAG
+└── tests/        # Pipeline and adapter test suite
 
 app/              # Astro app
 docs/analytics/   # Analytics markdown loaded directly by Astro
@@ -76,7 +76,7 @@ tests/            # Python test suite
 - Run Python commands with `uv run`.
 - Run app commands from `app/` with Bun.
 - Treat `docs/analytics/*.md` as the editable analytics content source.
-- Do not reintroduce the retired pre-`main.py` pipeline runner, the old content-sync shell step, or the removed generated analytics content copy; those are no longer supported surfaces.
+- Do not reintroduce the retired standalone Python analytics package, pre-`main.py` pipeline runner, or old content-sync shell steps; those are no longer supported surfaces.
 - Keep pipeline changes aligned to the 5-stage `main.py` flow ending at `05_metrics`.
 
 ## Tests
@@ -93,6 +93,7 @@ Before opening a PR:
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .
+uv run mypy
 uv run python scripts/tools/validate_docs_layout.py
 ```
 

@@ -10,7 +10,7 @@ This guide covers the supported day-to-day workflow:
 - run the Hamilton pipeline through `main.py`
 - inspect pipeline outputs under `data/`
 - run the Astro app from `app/`
-- use standalone analytics scripts only when you explicitly need exploratory analysis
+- maintain published analytics through `docs/analytics/` and `app/public/data/`
 
 ## Setup
 
@@ -78,15 +78,6 @@ App-facing assets:
 
 ## Load Data in Python
 
-For metadata-backed parquet access, use [src/egg_n_bacon_housing/utils/data_helpers.py](../../src/egg_n_bacon_housing/utils/data_helpers.py).
-
-```python
-from egg_n_bacon_housing.utils.data_helpers import load_parquet
-
-df = load_parquet("L3_housing_unified")
-print(df.head())
-```
-
 For convenience loaders around common outputs, use [src/egg_n_bacon_housing/utils/data_loader.py](../../src/egg_n_bacon_housing/utils/data_loader.py).
 
 ```python
@@ -110,17 +101,13 @@ bun run dev
 
 The Astro app loads analytics markdown directly from `docs/analytics/` through `app/src/content.config.ts`.
 
-## Run Analytics Scripts
+The supported analytics publishing surface is:
 
-`src/egg_n_bacon_housing/analytics/` is exploratory, not part of the automated DAG. Use it when you intentionally want standalone analysis.
+- markdown source in `docs/analytics/`
+- app-consumed datasets in `app/public/data/`
+- app-served analytics images in `app/public/data/analysis/`
 
-Examples:
-
-```bash
-uv run python src/egg_n_bacon_housing/analytics/analysis/market_analyze_lease_decay.py
-uv run python src/egg_n_bacon_housing/analytics/analysis/spatial_analyze_spatial_hotspots.py
-uv run python -m egg_n_bacon_housing.analytics.pipelines.forecast_prices_pipeline
-```
+Historical analysis outputs under `data/analytics/` and `data/analysis/` are not part of the supported runtime surface.
 
 ## Main Quality Checks
 
@@ -128,7 +115,7 @@ uv run python -m egg_n_bacon_housing.analytics.pipelines.forecast_prices_pipelin
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .
-uv run mypy src/egg_n_bacon_housing/components src/egg_n_bacon_housing/adapters src/egg_n_bacon_housing/utils/cache.py src/egg_n_bacon_housing/utils/contracts.py src/egg_n_bacon_housing/pipeline.py src/egg_n_bacon_housing/config.py tests
+uv run mypy
 uv run python scripts/tools/validate_docs_layout.py
 ```
 

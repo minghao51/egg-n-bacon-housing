@@ -138,7 +138,6 @@ The same lease gap can price very differently across towns.
 
 The data confirms non-linear lease decay. The 70-80 yr band shows the steepest penalty (not the oldest flats), while the 60-70 yr band offers the deepest absolute discount with strong liquidity. The pure lease effect of +$54.75 PSF/year is robust after multivariate controls. Town-level heterogeneity is extreme: central mature towns penalize short leases heavily (Clementi -40.6%), while some suburban towns show minimal or even inverted discounts, likely due to location desirability offsetting lease age. Key limitations: renovation condition, HIP timing, and block-level maintenance are not fully captured; financing rules shrink the buyer pool for shorter leases.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/market/analyze_lease_decay.py` — Lease banding, price statistics, decay rates
-- `scripts/analytics/analysis/market/analyze_lease_decay_advanced.py` — Hedonic regression, Bala curve validation, spline arbitrage, policy thresholds
+This article is maintained as published analysis content. The old standalone Python lease-decay scripts were retired from the supported repo surface; the current canonical assets for this page are the markdown here plus the precomputed files served from `app/public/data/analysis/`.

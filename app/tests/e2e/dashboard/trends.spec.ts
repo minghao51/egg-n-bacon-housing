@@ -14,7 +14,9 @@ test.describe("Dashboard - Decision Tools", () => {
   });
 
   test("should display sidebar navigation", async ({ page }) => {
-    await expect(page.getByText("Egg n Bacon Housing")).toBeVisible();
+    await expect(
+      page.getByRole("navigation", { name: "Main navigation" }),
+    ).toBeVisible();
     await expect(
       page.getByRole("link", { name: /Overview/ }).first(),
     ).toBeVisible();

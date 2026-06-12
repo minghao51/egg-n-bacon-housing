@@ -124,12 +124,12 @@ The HDB rental market is less volatile than the sales market, making it a relati
 
 ### Data Used
 
-- **HDB rental transactions**: `data/pipeline/02_silver/housing_hdb_rental.parquet`
-- **HDB resale prices**: `data/pipeline/02_silver/housing_hdb_transaction.parquet`
-- **Rental yields**: `data/pipeline/03_gold/rental_yield.parquet`
-- **Top yield combinations**: `data/pipeline/04_platinum/rental_yield_top_combos.parquet`
-- **Household income**: `data/pipeline/02_silver/household_income_estimates.parquet`
-- **HDB median rent by town/flat type**: `data/pipeline/02_silver/housing_hdb_median_rent_by_town_flat_type.parquet`
+- **HDB rental transactions**: `data/02_silver/housing_hdb_rental.parquet`
+- **HDB resale prices**: `data/02_silver/housing_hdb_transaction.parquet`
+- **Rental yields**: `data/03_gold/rental_yield.parquet`
+- **Top yield combinations**: `data/04_platinum/rental_yield_top_combos.parquet`
+- **Household income**: `data/02_silver/household_income_estimates.parquet`
+- **HDB median rent by town/flat type**: `data/02_silver/housing_hdb_median_rent_by_town_flat_type.parquet`
 
 ### Methodology
 
@@ -153,9 +153,6 @@ The HDB rental market is less volatile than the sales market, making it a relati
 
 The HDB rental market offers stable, moderate yields that are broadly sustainable. The yield vs appreciation trade-off means investors must choose their strategy deliberately. Smaller flats in well-connected non-central areas offer the best yields, while larger flats in appreciating areas offer better total returns. Affordability metrics suggest the rental market is not overheated. Key limitation: rental yield calculations use median resale price as the denominator, which may differ from actual purchase price for individual units. Household income estimates are modeled rather than directly observed.
 
-### Scripts
+### Provenance
 
-- `scripts/analytics/analysis/market/analyze_hdb_rental_market.py` — HDB rental yield by town and flat type, affordability analysis, market dynamics
-- `scripts/analytics/price_appreciation_modeling/residual_analysis.py` — Yield vs appreciation correlation, investment scoring
-- `scripts/analytics/price_appreciation_modeling/residual_analysis_by_property_type.py` — Property type-specific residual analysis
-- `scripts/analytics/price_appreciation_modeling/residual_analysis_simple.py` — Simplified residual analysis
+This article is maintained as published analysis content. The historical Python rental-yield scripts were retired from the supported repo surface; the canonical assets for this page now live under `app/public/data/analysis/`.
