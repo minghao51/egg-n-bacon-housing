@@ -75,8 +75,6 @@ def setup_onemap_headers() -> dict[str, str]:
     if not access_token:
         return _request_new_token()
 
-    return {"Authorization": access_token}
-
 
 def _get_required_secret(secret_name: str) -> str:
     """Retrieve a secret from settings. Internal-use only — callers must not persist the value."""

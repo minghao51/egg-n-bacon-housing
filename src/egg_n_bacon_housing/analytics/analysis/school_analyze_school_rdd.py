@@ -34,7 +34,7 @@ import warnings
 import pandas as pd
 
 
-from egg_n_bacon_housing.analytics.analysis.school.utils.rdd_estimators import RDDEstimator
+from egg_n_bacon_housing.analytics.analysis.school_utils_rdd_estimators import RDDEstimator
 
 warnings.filterwarnings("ignore")
 # Setup paths

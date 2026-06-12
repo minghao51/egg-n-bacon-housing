@@ -22,7 +22,7 @@ import pandas as pd
 
 warnings.filterwarnings("ignore")
 
-from egg_n_bacon_housing.analytics.analysis.school.utils.spatial_validation import SpatialValidator
+from egg_n_bacon_housing.analytics.analysis.school_utils_spatial_validation import SpatialValidator
 
 # Setup logging
 logging.basicConfig(

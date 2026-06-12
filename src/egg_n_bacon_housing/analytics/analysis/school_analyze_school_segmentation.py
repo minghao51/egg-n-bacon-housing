@@ -26,7 +26,7 @@ import warnings
 import pandas as pd
 
 
-from egg_n_bacon_housing.analytics.analysis.school.utils.interaction_models import (
+from egg_n_bacon_housing.analytics.analysis.school_utils_interaction_models import (
     SegmentationAnalyzer,
 )
 

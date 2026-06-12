@@ -122,8 +122,10 @@ def calculate_affordability_metrics(
         affordability["median_price"] / affordability["estimated_median_monthly_income"]
     )
 
-    # Add affordability classification
-    def classify_affordability(ratio):
+    # Classify based on months-of-income ratio (different metric from
+    # price-to-income used in utils/metrics.classify_affordability, hence
+    # different thresholds: <3 Affordable, <5 Moderate, <7 Expensive).
+    def classify_months_of_income(ratio):
         if ratio < 3.0:
             return "Affordable"
         elif ratio < 5.0:
@@ -134,7 +136,7 @@ def calculate_affordability_metrics(
             return "Severely Unaffordable"
 
     affordability["affordability_class"] = affordability["affordability_ratio"].apply(
-        classify_affordability
+        classify_months_of_income
     )
 
     # Add average rental yield if available

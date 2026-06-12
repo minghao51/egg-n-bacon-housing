@@ -38,6 +38,14 @@ dmypy.json
 # Node.js
 node_modules/
 bun.lockb
+bun.lock
+package-lock.json
+
+# Security baselines
+.secrets.baseline
+
+# Planning docs (moved to .claude/planning/)
+.planning/
 
 # Pipeline data (medallion layers)
 data/pipeline/01_bronze/
