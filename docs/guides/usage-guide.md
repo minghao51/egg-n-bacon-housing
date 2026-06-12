@@ -1,15 +1,16 @@
 # Usage Guide
 
-**Last Updated**: 2026-04-22 | **Status**: Active
+**Last Updated**: 2026-06-12 | **Status**: Active
 
 ## Overview
 
-This guide covers the supported day-to-day workflow for the repository:
+This guide covers the supported day-to-day workflow:
 
-- Set up the local environment with `uv`
-- Run the Hamilton pipeline through `main.py`
-- Inspect pipeline outputs under `data/`
-- Run standalone analytics scripts from `src/egg_n_bacon_housing/analytics/`
+- set up the repo with `uv`
+- run the Hamilton pipeline through `main.py`
+- inspect pipeline outputs under `data/`
+- run the Astro app from `app/`
+- use standalone analytics scripts only when you explicitly need exploratory analysis
 
 ## Setup
 
@@ -21,34 +22,22 @@ cp .env.example .env
 dotenvx run -- uv run python scripts/00_sync_data.py
 ```
 
-Required environment variables:
-
-| Variable                | Required | Purpose               |
-| ----------------------- | -------- | --------------------- |
-| `ONEMAP_EMAIL`          | Yes      | OneMap authentication |
-| `ONEMAP_EMAIL_PASSWORD` | Yes      | OneMap authentication |
-| `GOOGLE_API_KEY`        | No       | Geocoding fallback    |
-| `R2_ACCESS_KEY_ID`      | Yes      | Manual data sync      |
-| `R2_SECRET_ACCESS_KEY`  | Yes      | Manual data sync      |
-| `R2_BUCKET`             | Yes      | Manual data sync      |
-| `R2_ENDPOINT`           | Yes      | Manual data sync      |
-
 Verification:
 
 ```bash
-uv run pytest
+uv run pytest --no-cov
 uv run python main.py --help
 ```
 
-## Run The Pipeline
+## Run the Pipeline
 
-Run the default end-to-end flow:
+Default end-to-end flow:
 
 ```bash
-uv run python main.py
+uv run python main.py --stage all
 ```
 
-Run a single stage:
+Single-stage runs:
 
 ```bash
 uv run python main.py --stage ingest
@@ -64,25 +53,13 @@ Generate a DAG image:
 uv run python main.py --visualize
 ```
 
-Run only selected outputs:
+Run selected outputs only:
 
 ```bash
 uv run python main.py --final-var unified_dataset --final-var dashboard_json
 ```
 
-## Stage Map
-
-| Stage      | Purpose                                    | Main outputs                                                                    |
-| ---------- | ------------------------------------------ | ------------------------------------------------------------------------------- |
-| `ingest`   | Fetch raw source data                      | `raw_hdb_resale_transactions`, `raw_condo_transactions`, `raw_hdb_rental`       |
-| `clean`    | Validate and standardize raw data          | `cleaned_hdb_transactions`, `cleaned_condo_transactions`, `geocoded_properties` |
-| `features` | Build model and analytics features         | `rental_yield`, `features_with_amenities`, `unified_features`                   |
-| `export`   | Produce app- and dashboard-facing datasets | `unified_dataset`, `dashboard_json`, `segments_data`                            |
-| `metrics`  | Compute summary metrics and rankings       | `price_metrics_by_area`, `rental_yield_by_area`, `affordability_metrics`        |
-
 ## Data Locations
-
-Pipeline outputs use a medallion layout rooted at `data/`:
 
 | Layer    | Path                |
 | -------- | ------------------- |
@@ -91,15 +68,15 @@ Pipeline outputs use a medallion layout rooted at `data/`:
 | Gold     | `data/03_gold/`     |
 | Platinum | `data/04_platinum/` |
 
-App-facing analytics content is synced to:
+App-facing assets:
 
-| Content               | Path                         |
-| --------------------- | ---------------------------- |
-| Analytics source docs | `docs/analytics/`            |
-| Synced MDX copies     | `app/src/content/analytics/` |
-| Analytics images      | `app/public/data/analysis/`  |
+| Content                            | Path                        |
+| ---------------------------------- | --------------------------- |
+| Analytics markdown source          | `docs/analytics/`           |
+| Analytics images and static assets | `app/public/data/analysis/` |
+| Dashboard JSON and gzipped data    | `app/public/data/`          |
 
-## Load Data In Python
+## Load Data in Python
 
 For metadata-backed parquet access, use [src/egg_n_bacon_housing/utils/data_helpers.py](../../src/egg_n_bacon_housing/utils/data_helpers.py).
 
@@ -123,49 +100,51 @@ planning_area_metrics = load_planning_area_metrics()
 print(market_summary.shape, planning_area_metrics.shape)
 ```
 
-## Run Analytics
+## Run the App
 
-Exploratory analytics are standalone scripts under `src/egg_n_bacon_housing/analytics/`. They are not wired into the automated Hamilton DAG.
+```bash
+cd app
+bun install
+bun run dev
+```
+
+The Astro app loads analytics markdown directly from `docs/analytics/` through `app/src/content.config.ts`.
+
+## Run Analytics Scripts
+
+`src/egg_n_bacon_housing/analytics/` is exploratory, not part of the automated DAG. Use it when you intentionally want standalone analysis.
 
 Examples:
 
 ```bash
-uv run python src/egg_n_bacon_housing/analytics/analysis/market/analyze_lease_decay.py
-uv run python src/egg_n_bacon_housing/analytics/analysis/spatial/analyze_spatial_hotspots.py
-uv run python src/egg_n_bacon_housing/analytics/pipelines/forecast_prices_pipeline.py
+uv run python src/egg_n_bacon_housing/analytics/analysis/market_analyze_lease_decay.py
+uv run python src/egg_n_bacon_housing/analytics/analysis/spatial_analyze_spatial_hotspots.py
+uv run python -m egg_n_bacon_housing.analytics.pipelines.forecast_prices_pipeline
 ```
 
-## Common Workflows
-
-Rebuild a stage after deleting an output:
-
-```bash
-rm data/02_silver/cleaned_hdb_transactions.parquet
-uv run python main.py --stage clean
-```
-
-Run the main quality checks:
+## Main Quality Checks
 
 ```bash
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .
+uv run mypy src/egg_n_bacon_housing/components src/egg_n_bacon_housing/adapters src/egg_n_bacon_housing/utils/cache.py src/egg_n_bacon_housing/utils/contracts.py src/egg_n_bacon_housing/pipeline.py src/egg_n_bacon_housing/config.py tests
 uv run python scripts/tools/validate_docs_layout.py
 ```
 
 ## Troubleshooting
 
-| Issue                                      | What to check                                                                                     |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `ModuleNotFoundError: egg_n_bacon_housing` | Run commands from the repo root with `uv run`                                                     |
-| Missing parquet outputs                    | Run the upstream pipeline stage again                                                             |
-| OneMap authentication failures             | Confirm `ONEMAP_EMAIL` and `ONEMAP_EMAIL_PASSWORD` in `.env`                                      |
-| Analytics page missing from app            | Verify the slug exists in `app/src/content/analytics/` and rerun app build                        |
-| Docs validator failure                     | Fix the referenced path or update the active-doc scope in `scripts/tools/validate_docs_layout.py` |
+| Issue                                      | What to check                                                                  |
+| ------------------------------------------ | ------------------------------------------------------------------------------ |
+| `ModuleNotFoundError: egg_n_bacon_housing` | Run commands from the repo root with `uv run`                                  |
+| Missing parquet outputs                    | Run the upstream stage again                                                   |
+| OneMap authentication failures             | Confirm `ONEMAP_EMAIL` and `ONEMAP_EMAIL_PASSWORD` in `.env`                   |
+| Analytics page missing from app            | Verify the markdown file exists in `docs/analytics/` and rerun `bun run build` |
+| Docs validator failure                     | Fix the referenced path or update the active-doc contract                      |
 
 ## Related Docs
 
 - [README.md](../../README.md)
-- [docs/architecture.md](../architecture.md)
-- [docs/README.md](../README.md)
-- [scripts/tools/validate_docs_layout.py](../../scripts/tools/validate_docs_layout.py)
+- [Architecture](../architecture.md)
+- [E2E Testing](./e2e-testing.md)
+- [R2 Sync Guide](./r2-sync-guide.md)

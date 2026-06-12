@@ -30,6 +30,7 @@ ACTIVE_REFERENCE_FILES = [
     REPO_ROOT / "docs" / "guides" / "quick-start.md",
     REPO_ROOT / "docs" / "guides" / "usage-guide.md",
     REPO_ROOT / "docs" / "guides" / "ci-cd-pipeline.md",
+    REPO_ROOT / "docs" / "guides" / "e2e-testing.md",
     REPO_ROOT / "app" / "README.md",
 ]
 
@@ -157,6 +158,26 @@ def check_analytics_frontmatter(results: ValidationResults) -> None:
             results.warn(f"Unknown status '{status_match.group(1)}' in {rel}")
 
 
+def check_analytics_loader_contract(results: ValidationResults) -> None:
+    content_config = REPO_ROOT / "app" / "src" / "content.config.ts"
+    analytics_index = REPO_ROOT / "app" / "src" / "pages" / "analytics" / "index.astro"
+    analytics_slug = REPO_ROOT / "app" / "src" / "pages" / "analytics" / "[slug].astro"
+
+    if not content_config.exists():
+        results.error("Missing app/src/content.config.ts")
+        return
+
+    config_text = content_config.read_text(encoding="utf-8", errors="ignore")
+    if 'base: "../docs/analytics"' not in config_text:
+        results.error("Astro analytics content loader no longer points at ../docs/analytics")
+
+    if not analytics_index.exists():
+        results.error("Missing app analytics index page: app/src/pages/analytics/index.astro")
+
+    if not analytics_slug.exists():
+        results.error("Missing app analytics article page: app/src/pages/analytics/[slug].astro")
+
+
 def main() -> int:
     results = ValidationResults()
     check_referenced_paths(results)
@@ -164,6 +185,7 @@ def main() -> int:
     check_docs_root(results)
     check_naming_conventions(results)
     check_analytics_frontmatter(results)
+    check_analytics_loader_contract(results)
 
     if results.errors:
         print("Errors:")

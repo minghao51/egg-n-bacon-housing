@@ -1,73 +1,70 @@
-# 🚀 Quick Start Guide
+# Quick Start
 
-**Get up and running in 5 minutes!**
+Get the supported pipeline and app surfaces running with the smallest setup path.
 
----
-
-## Step 1: Install uv (One-time, 30 seconds)
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-## Step 2: Install Dependencies (1 minute)
+## 1. Install dependencies
 
 ```bash
 cd egg-n-bacon-housing
 uv sync
 ```
 
-## Step 3: Setup API Keys (2 minutes)
+## 2. Configure secrets
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and add:
+Populate the values used by the core workflow:
 
-- `ONEMAP_EMAIL` - Register free at https://www.onemap.gov.sg/apidocs/register
-- `ONEMAP_EMAIL_PASSWORD` - Your OneMap password
-- `GOOGLE_API_KEY` - Optional, for agents
+- `ONEMAP_EMAIL`
+- `ONEMAP_EMAIL_PASSWORD`
+- `R2_ACCOUNT_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET`
+- `R2_ENDPOINT`
 
-## Step 4: Verify Setup (30 seconds)
+## 3. Sync manual source data
 
 ```bash
-uv run pytest
+dotenvx run -- uv run python scripts/00_sync_data.py
 ```
 
-All tests should pass! ✅
-
-## Step 5: Run the Pipeline (When ready)
+## 4. Verify the local setup
 
 ```bash
-# Fetch manual data from Cloudflare R2 (~100MB) - one time after clone
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run pytest --no-cov
+uv run python main.py --help
+```
 
-# Run the pipeline
+## 5. Run the pipeline
+
+```bash
 uv run python main.py --stage all
 ```
 
----
-
-## 📚 Documentation
-
-- **[R2 Sync Guide](docs/guides/r2-sync-guide.md)** - Manual data setup
-- **[Usage Guide](docs/20250120-usage-guide.md)** - Complete usage reference
-- **[Architecture](docs/20250120-architecture.md)** - System design
-- **[Pipeline Details](docs/20250120-data-pipeline.md)** - Data flow
-
-## 🎯 Common Commands
+Common stage-only runs:
 
 ```bash
-# Sync manual data from R2
-dotenvx run -- uv run python scripts/00_sync_data.py
-
-# Run tests
-uv run pytest
-
-# Run the pipeline
-uv run python main.py --stage all
-
-# Lint
-uv run ruff check .
+uv run python main.py --stage ingest
+uv run python main.py --stage clean
+uv run python main.py --stage features
+uv run python main.py --stage export
+uv run python main.py --stage metrics
 ```
+
+## 6. Run the app
+
+```bash
+cd app
+bun install
+bun run dev
+```
+
+## Docs
+
+- [README.md](README.md)
+- [Architecture](docs/architecture.md)
+- [Usage Guide](docs/guides/usage-guide.md)
+- [R2 Sync Guide](docs/guides/r2-sync-guide.md)

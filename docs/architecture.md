@@ -1,13 +1,13 @@
 # Architecture
 
-**Last Updated**: 2026-04-22 | **Status**: Active
+**Last Updated**: 2026-06-12 | **Status**: Active
 
 ## Overview
 
 `egg-n-bacon-housing` is a Python-first Singapore housing data platform with two distinct execution modes:
 
-- A Hamilton pipeline that moves data through bronze, silver, gold, and platinum layers
-- Standalone analytics scripts that read exported datasets and produce reports, charts, and app content
+- a Hamilton pipeline that moves data through bronze, silver, gold, and platinum layers
+- standalone analytics scripts that read exported datasets and produce reports, charts, and app-facing artifacts
 
 The Hamilton DAG is the automated system of record. Analytics modules are intentionally separate so they can evolve independently without changing pipeline orchestration.
 
@@ -24,7 +24,7 @@ data/pipeline/01_bronze -> 02_silver -> 03_gold -> 04_platinum
         |
         +--> app/public/data/
         |
-        +--> docs/analytics/ -> app/src/content/analytics/
+        +--> docs/analytics/ (loaded directly by Astro)
         |
         +--> src/egg_n_bacon_housing/analytics/
 ```
@@ -36,18 +36,19 @@ egg-n-bacon-housing/
 ├── app/                              # Astro web app
 ├── data/
 │   ├── analytics/                    # Analysis artifacts and charts
-│   ├── manual/                       # Manual source files and geojsons
+│   ├── manual/                       # Manual source files synced from R2
 │   └── pipeline/
 │       ├── 01_bronze/
 │       ├── 02_silver/
 │       ├── 03_gold/
 │       └── 04_platinum/
 ├── docs/
-│   ├── analytics/                    # Human-authored analytics markdown
+│   ├── analytics/                    # Analytics markdown loaded by Astro
 │   ├── guides/                       # Operational guides
 │   ├── plans/                        # Design and implementation plans
 │   └── archive/                      # Historical docs
 ├── scripts/
+│   ├── 00_sync_data.py               # R2 manual-data sync
 │   ├── 99_cleanup.py
 │   └── tools/validate_docs_layout.py
 ├── src/egg_n_bacon_housing/
@@ -65,7 +66,7 @@ egg-n-bacon-housing/
 
 ## Core Runtime Flow
 
-### 1. Configuration
+### Configuration
 
 [src/egg_n_bacon_housing/config.py](../src/egg_n_bacon_housing/config.py) loads:
 
@@ -81,30 +82,21 @@ Key path properties:
 - `settings.gold_dir`
 - `settings.platinum_dir`
 
-### 2. Pipeline Construction
+### Pipeline Construction
 
 [src/egg_n_bacon_housing/pipeline.py](../src/egg_n_bacon_housing/pipeline.py) imports the numbered component modules dynamically and builds a Hamilton `Driver`.
 
 Execution entrypoint:
 
-- [main.py](../main.py) for CLI-driven stage selection
+- [main.py](../main.py)
 
-### 3. Medallion Data Flow
+### Downstream Consumers
 
-| Layer    | Path                | Responsibility                             |
-| -------- | ------------------- | ------------------------------------------ |
-| Bronze   | `data/01_bronze/`   | Raw fetched source data                    |
-| Silver   | `data/02_silver/`   | Cleaned and validated datasets             |
-| Gold     | `data/03_gold/`     | Enriched feature tables                    |
-| Platinum | `data/04_platinum/` | Dashboard exports, metrics, final datasets |
-
-### 4. Downstream Consumers
-
-| Consumer          | Reads from                                       | Purpose                                       |
-| ----------------- | ------------------------------------------------ | --------------------------------------------- |
-| Astro app         | `app/public/data/`, `app/src/content/analytics/` | Dashboard and analytics publishing            |
-| Analytics scripts | `data/04_platinum/` and supporting layers        | On-demand research and forecasting            |
-| Utility loaders   | `src/egg_n_bacon_housing/utils/`                 | Reusable access patterns for Python workflows |
+| Consumer          | Reads from                                         | Purpose                                       |
+| ----------------- | -------------------------------------------------- | --------------------------------------------- |
+| Astro app         | `app/public/data/`, `docs/analytics/`              | Dashboard and analytics publishing            |
+| Analytics scripts | `data/pipeline/04_platinum/` and supporting layers | On-demand research and forecasting            |
+| Utility loaders   | `src/egg_n_bacon_housing/utils/`                   | Reusable access patterns for Python workflows |
 
 ## Pipeline Stages
 
@@ -116,27 +108,17 @@ Execution entrypoint:
 | Export    | `components/04_export.py`    | unified dataset, dashboard JSON, app exports              |
 | Metrics   | `components/05_metrics.py`   | area metrics, affordability, hotspots                     |
 
-## Analytics Publishing Flow
+## Content Publishing Flow
 
-Analytics content is authored in Markdown under `docs/analytics/` and rendered by the Astro app content system in `app/src/content/analytics/`.
+Analytics content is authored in `docs/analytics/` and loaded by Astro through [app/src/content.config.ts](../app/src/content.config.ts). There is no generated intermediate content-copy step in the supported repo shape.
 
 ## Important Boundaries
 
-### Pipeline vs Analytics
-
-- `src/egg_n_bacon_housing/components/` is production pipeline code
-- `src/egg_n_bacon_housing/analytics/` is exploratory and reporting code
-- Analytics code may consume pipeline outputs, but the automated pipeline should not depend on notebook-era assumptions or ad hoc research scripts
-
-### Docs Source vs App Copy
-
-- `docs/analytics/*.md` is the editable source of truth
-- `app/src/content/analytics/*.mdx` is generated content for the Astro app
-- [scripts/tools/validate_docs_layout.py](../scripts/tools/validate_docs_layout.py) checks that those two sets stay aligned
+- `src/egg_n_bacon_housing/components/` is supported pipeline code.
+- `src/egg_n_bacon_housing/analytics/` is exploratory and reporting code.
+- Analytics code may consume pipeline outputs, but the automated pipeline should not depend on notebook-era or ad hoc research assumptions.
 
 ## Developer Workflow
-
-Common commands:
 
 ```bash
 uv run python main.py
@@ -145,9 +127,3 @@ uv run python scripts/tools/validate_docs_layout.py
 uv run pytest
 uv run ruff check .
 ```
-
-## Related Docs
-
-- [README.md](../README.md)
-- [docs/guides/usage-guide.md](../docs/guides/usage-guide.md)
-- [docs/README.md](../docs/README.md)

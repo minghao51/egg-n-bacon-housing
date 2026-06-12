@@ -1,54 +1,27 @@
 # Analytics Scripts
 
-Standalone analysis scripts that consume data from the medallion pipeline.
-These are **not** wired to the Hamilton DAG — run them on-demand as standalone scripts.
+Standalone analysis scripts that consume pipeline outputs. These are not wired into the Hamilton DAG.
 
-> **See AGENTS.md** for the distinction between pipeline components (`components/`) and analytics modules.
+## Scope
 
-## Structure
+- `analysis/` contains domain-specific analyses
+- `pipelines/` contains standalone orchestration scripts
+- `models/`, `segmentation/`, and `viz/` hold supporting logic
 
-```
-analytics/
-├── analysis/          # Domain-specific analyses
-│   ├── amenity/       # Amenity impact on prices
-│   ├── appreciation/  # Price appreciation patterns
-│   ├── causal/        # Causal inference (DiD, RDD)
-│   ├── market/        # Lease decay, policy, segmentation
-│   ├── mrt/           # MRT proximity effects
-│   ├── policy/        # Policy impact findings
-│   ├── school/        # School quality effects
-│   └── spatial/       # Hotspots, autocorrelation, H3 clusters
-├── models/            # Reusable model classes (ARIMAX, VAR)
-├── pipelines/         # Orchestration scripts (forecasting, segmentation)
-├── segmentation/      # Market segmentation modules
-├── viz/               # Visualization utilities
-├── run_backtesting.py
-└── run_simple_backtest.py
-```
+The flattened file names under `analysis/` are intentional. Do not assume the older nested `analysis/<domain>/...` layout is still present.
 
 ## Running
 
-```bash
-# Example: run a pipeline script
-uv run python -m egg_n_bacon_housing.analytics.pipelines.forecast_prices_pipeline
+Examples:
 
-# Example: run an analysis script directly
-uv run python src/egg_n_bacon_housing/analytics/analysis/spatial/analyze_spatial_hotspots.py
+```bash
+uv run python src/egg_n_bacon_housing/analytics/analysis/market_analyze_lease_decay.py
+uv run python src/egg_n_bacon_housing/analytics/analysis/spatial_analyze_spatial_hotspots.py
+uv run python -m egg_n_bacon_housing.analytics.pipelines.forecast_prices_pipeline
 ```
 
-## Data Paths
+## Boundaries
 
-Scripts read from:
-
-- `data/pipeline/02_silver/` — cleaned data
-- `data/pipeline/03_gold/` — feature-enriched data
-- `data/pipeline/04_platinum/` — predictions, exports
-- `data/analytics/` — intermediate analytics outputs
-- `data/manual/` — reference data (URA, crosswalks)
-
-Scripts write to `data/analytics/`, `data/forecasts/`, or `data/pipeline/04_platinum/`.
-
-## Dependencies
-
-Core: `pandas`, `numpy`, `scikit-learn`, `statsmodels`, `plotly`
-Optional: `prophet`, `xgboost`, `shap`, `lifelines`, `h3`, `libpysal`, `esda`
+- Treat this tree as exploratory or report-generation code.
+- The supported automated pipeline surface lives in `src/egg_n_bacon_housing/components/`.
+- If you change paths here, update any active docs that mention concrete script paths.
