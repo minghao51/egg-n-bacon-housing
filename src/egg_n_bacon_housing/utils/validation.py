@@ -44,6 +44,10 @@ def validate_schema(
     valid_indices: list = []
     quarantine_records: list[dict] = []
     records = df_validate.to_dict(orient="records")
+    for record in records:
+        for key, value in record.items():
+            if isinstance(value, float) and pd.isna(value):
+                record[key] = None
     indices = df.index.tolist()
     chunk_size = 5000
 

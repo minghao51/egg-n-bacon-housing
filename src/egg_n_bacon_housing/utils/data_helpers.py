@@ -1,9 +1,11 @@
-"""
-Data helper functions for parquet file management with metadata tracking.
+"""Legacy parquet helpers with filesystem-first path resolution.
 
-This module provides a simple interface for loading and saving parquet files
-with automatic metadata tracking for reproducibility and lineage.
+The current pipeline writes directly to medallion-layer paths, so this module
+keeps `metadata.json` as optional lineage metadata rather than a required
+manifest.
 """
+
+from __future__ import annotations
 
 import hashlib
 import json
@@ -18,7 +20,6 @@ from egg_n_bacon_housing.utils.data_quality import monitor_data_quality
 
 logger = logging.getLogger(__name__)
 
-DATA_DIR = settings.data_dir
 PARQUETS_DIR = settings.data_dir / "pipeline"
 METADATA_FILE = settings.data_dir / "metadata.json"
 
@@ -26,44 +27,32 @@ METADATA_FILE = settings.data_dir / "metadata.json"
 def load_parquet(
     dataset_name: str, version: str | None = None, columns: list[str] | None = None
 ) -> pd.DataFrame:
-    """
-    Load a parquet file by dataset name with error handling.
+    """Load a parquet file by dataset name.
 
-    Args:
-        dataset_name: Key from metadata.json (e.g., 'raw_data', 'L1_ura_transactions')
-        version: Optional version string (defaults to latest)
-
-    Returns:
-        pandas DataFrame
-
-    Raises:
-        ValueError: If dataset not found or version mismatch
-        FileNotFoundError: If parquet file missing
-        RuntimeError: If file read fails
+    Metadata is consulted first when available, then the filesystem is searched
+    using the current medallion layout. This keeps older notebooks working
+    while no longer requiring `metadata.json` to be perfectly up to date.
     """
     metadata = _load_metadata()
+    dataset_info = metadata["datasets"].get(dataset_name)
+    parquet_path = _resolve_dataset_path(dataset_name, dataset_info)
 
-    if dataset_name not in metadata["datasets"]:
-        available = list(metadata["datasets"].keys())
-        raise ValueError(
-            f"Dataset '{dataset_name}' not found in metadata. Available datasets: {available}"
-        )
-
-    dataset_info = metadata["datasets"][dataset_name]
-
-    if version and dataset_info["version"] != version:
+    if dataset_info is not None and version and dataset_info["version"] != version:
         raise ValueError(
             f"Version mismatch: requested {version}, "
             f"but {dataset_name} has version {dataset_info['version']}"
         )
 
-    parquet_path = PARQUETS_DIR / dataset_info["path"]
-
     if not parquet_path.exists():
-        raise FileNotFoundError(
-            f"Parquet file not found: {parquet_path}\n"
-            f"Dataset may have been deleted. Run data pipeline to regenerate."
-        )
+        fallback = _find_dataset_path(dataset_name)
+        if fallback is None:
+            available = list(metadata["datasets"].keys())
+            raise FileNotFoundError(
+                "Parquet file not found: "
+                f"{parquet_path}\nDataset may have been deleted. "
+                f"Known datasets: {available if available else 'none'}"
+            )
+        parquet_path = fallback
 
     try:
         df = pd.read_parquet(parquet_path, columns=columns)
@@ -84,23 +73,7 @@ def save_parquet(
     compression: str | None = None,
     calculate_checksum: bool = False,
 ) -> None:
-    """
-    Save DataFrame to parquet with validation and error handling.
-
-    Args:
-        df: DataFrame to save
-        dataset_name: Unique identifier for this dataset
-        source: Source dataset or description (for lineage tracking)
-        version: Version string (defaults to current date)
-        mode: 'overwrite' to replace existing data, 'append' to add to it
-        partition_cols: Columns to partition by (e.g., ['year', 'month'])
-        compression: Compression codec (defaults to settings.pipeline.parquet_compression)
-        calculate_checksum: Whether to calculate MD5 checksum (default False for performance)
-
-    Raises:
-        ValueError: If df is empty or invalid mode
-        RuntimeError: If save operation fails
-    """
+    """Save DataFrame to parquet with lightweight lineage metadata."""
     if df.empty:
         raise ValueError(f"Cannot save empty DataFrame for {dataset_name}")
 
@@ -113,35 +86,19 @@ def save_parquet(
     if compression is None:
         compression = settings.pipeline.parquet_compression
 
-    path_parts = (
-        dataset_name.replace("L1_", "01_bronze/")
-        .replace("L2_", "03_gold/")
-        .replace("L3_", "04_platinum/")
-        .replace("L5_", "04_platinum/metrics/")
-        .replace("raw_data", "01_bronze/raw_data")
-    )
-
-    if partition_cols:
-        parquet_path = PARQUETS_DIR / path_parts
-    else:
-        parquet_path = PARQUETS_DIR / f"{path_parts}.parquet"
-
-    if partition_cols:
-        parquet_path.mkdir(parents=True, exist_ok=True)
-    else:
-        parquet_path.parent.mkdir(parents=True, exist_ok=True)
+    parquet_path = _resolve_dataset_path(dataset_name)
 
     if mode == "append" and parquet_path.exists():
         try:
             existing_df = pd.read_parquet(parquet_path)
             original_rows = len(existing_df)
             df = pd.concat([existing_df, df], ignore_index=True)
-            del existing_df
             logger.info("Appended %s rows to %s", len(df) - original_rows, dataset_name)
         except (OSError, ValueError) as e:
             raise RuntimeError(f"Failed to append to existing parquet: {e}") from e
 
     try:
+        parquet_path.parent.mkdir(parents=True, exist_ok=True)
         save_kwargs = {
             "index": settings.pipeline.parquet_index,
             "compression": compression,
@@ -149,6 +106,7 @@ def save_parquet(
         }
 
         if partition_cols:
+            parquet_path.mkdir(parents=True, exist_ok=True)
             df.to_parquet(parquet_path, partition_cols=partition_cols, **save_kwargs)
             logger.info(
                 "Saved %s rows to %s (partitioned by %s)", len(df), parquet_path, partition_cols
@@ -160,9 +118,9 @@ def save_parquet(
         raise RuntimeError(f"Failed to save parquet {parquet_path}: {e}") from e
 
     if not partition_cols and calculate_checksum:
-        logger.info("🔐 Calculating checksum...")
+        logger.info("Calculating checksum for %s", parquet_path)
         checksum = _calculate_checksum(parquet_path)
-        logger.info("✅ Checksum: %s", checksum)
+        logger.info("Checksum: %s", checksum)
     else:
         checksum = None
 
@@ -197,39 +155,66 @@ def save_parquet(
 
 
 def _load_metadata(metadata_file: Path | None = None) -> dict:
-    """
-    Load metadata.json, create if doesn't exist.
-
-    Args:
-        metadata_file: Optional path to metadata file (defaults to settings.data_dir / "metadata.json")
-
-    Returns:
-        Metadata dictionary
-    """
     if metadata_file is None:
         metadata_file = METADATA_FILE
 
     if not metadata_file.exists():
-        logger.info("Creating new metadata file at %s", metadata_file)
         return {"datasets": {}, "last_updated": None}
 
-    with open(metadata_file) as f:
-        return json.load(f)
+    with open(metadata_file, encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            logger.warning("Invalid metadata file at %s; ignoring it", metadata_file)
+            return {"datasets": {}, "last_updated": None}
 
 
 def _save_metadata(metadata: dict, metadata_file: Path | None = None) -> None:
-    """
-    Save metadata.json with pretty formatting.
-
-    Args:
-        metadata: Metadata dictionary to save
-        metadata_file: Optional path to metadata file (defaults to settings.data_dir / "metadata.json")
-    """
     if metadata_file is None:
         metadata_file = METADATA_FILE
 
-    with open(metadata_file, "w") as f:
+    metadata_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(metadata_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2)
+
+
+def _resolve_dataset_path(dataset_name: str, dataset_info: dict | None = None) -> Path:
+    if dataset_info and "path" in dataset_info:
+        return PARQUETS_DIR / dataset_info["path"]
+
+    direct_path = Path(dataset_name)
+    if direct_path.suffix == ".parquet":
+        return direct_path if direct_path.is_absolute() else PARQUETS_DIR / direct_path
+
+    if len(direct_path.parts) > 1:
+        return PARQUETS_DIR / direct_path.with_suffix(".parquet")
+
+    if dataset_name.startswith("L1_"):
+        return PARQUETS_DIR / "02_silver" / f"{dataset_name[3:]}.parquet"
+    if dataset_name.startswith("L2_"):
+        return PARQUETS_DIR / "03_gold" / f"{dataset_name[3:]}.parquet"
+    if dataset_name.startswith("L3_"):
+        return PARQUETS_DIR / "04_platinum" / f"{dataset_name[3:]}.parquet"
+    if dataset_name.startswith("L5_"):
+        return PARQUETS_DIR / "04_platinum" / "metrics" / f"{dataset_name[3:]}.parquet"
+
+    return PARQUETS_DIR / f"{dataset_name}.parquet"
+
+
+def _find_dataset_path(dataset_name: str) -> Path | None:
+    direct = _resolve_dataset_path(dataset_name)
+    if direct.exists():
+        return direct
+
+    stem = Path(dataset_name).stem
+    if stem.startswith(("L1_", "L2_", "L3_", "L5_")):
+        stem = stem[3:]
+
+    matches = [path for path in PARQUETS_DIR.rglob("*.parquet") if path.stem == stem]
+    if len(matches) == 1:
+        return matches[0]
+
+    return None
 
 
 def _calculate_checksum(file_path: Path) -> str:
