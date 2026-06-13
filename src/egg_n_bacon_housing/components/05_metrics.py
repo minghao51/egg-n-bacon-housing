@@ -10,26 +10,19 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.io_helpers import save_parquet
+from egg_n_bacon_housing.utils.layer_writer import LayerWriter
 from egg_n_bacon_housing.utils.metrics import classify_affordability
+from egg_n_bacon_housing.utils.time_index import ensure_month_column
 
 logger = logging.getLogger(__name__)
 
 
-def _ensure_month_column(df: pd.DataFrame) -> pd.DataFrame:
-    """Derive a month column from transaction_date, or return empty if impossible."""
-    if "month" not in df.columns and "transaction_date" in df.columns:
-        df["month"] = pd.to_datetime(df["transaction_date"]).dt.to_period("M").astype(str)
-
-    if "month" not in df.columns:
-        logger.error("No month or transaction_date column -- cannot compute metrics")
-        return pd.DataFrame()
-
-    return df
-
-
-def price_metrics_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
+def price_metrics_by_area(
+    unified_dataset: pd.DataFrame,
+    platinum_dir: Path,
+    writer: LayerWriter | None = None,
+) -> pd.DataFrame:
     """Compute price metrics by planning area and month.
 
     Args:
@@ -46,7 +39,7 @@ def price_metrics_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> 
         logger.warning("Missing required columns for price metrics")
         return pd.DataFrame()
 
-    df = _ensure_month_column(unified_dataset.copy())
+    df = ensure_month_column(unified_dataset.copy())
     if df.empty:
         return pd.DataFrame()
 
@@ -60,14 +53,21 @@ def price_metrics_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> 
 
     metrics = df.groupby(["planning_area", "month"]).agg(**agg_spec).reset_index()
 
-    save_parquet(
-        metrics, platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet", "price metrics"
-    )
+    if writer is not None:
+        writer.write(metrics, "L5_price_metrics_by_area", "platinum_metrics")
+    else:
+        save_parquet(
+            metrics, platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet", "price metrics"
+        )
 
     return metrics
 
 
-def rental_yield_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
+def rental_yield_by_area(
+    unified_dataset: pd.DataFrame,
+    platinum_dir: Path,
+    writer: LayerWriter | None = None,
+) -> pd.DataFrame:
     """Compute rental yield metrics by planning area.
 
     Args:
@@ -83,7 +83,7 @@ def rental_yield_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> p
         logger.warning("No rental yield data available")
         return pd.DataFrame()
 
-    df = _ensure_month_column(unified_dataset.copy())
+    df = ensure_month_column(unified_dataset.copy())
     if df.empty:
         return pd.DataFrame()
 
@@ -100,16 +100,24 @@ def rental_yield_by_area(unified_dataset: pd.DataFrame, platinum_dir: Path) -> p
         .reset_index()
     )
 
-    save_parquet(
-        metrics,
-        platinum_dir / "metrics" / "L5_rental_yield_by_area.parquet",
-        "rental yield metrics",
-    )
+    if writer is not None:
+        writer.write(metrics, "L5_rental_yield_by_area", "platinum_metrics")
+    else:
+        save_parquet(
+            metrics,
+            platinum_dir / "metrics" / "L5_rental_yield_by_area.parquet",
+            "rental yield metrics",
+        )
 
     return metrics
 
 
-def affordability_metrics(unified_dataset: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
+def affordability_metrics(
+    unified_dataset: pd.DataFrame,
+    platinum_dir: Path,
+    writer: LayerWriter | None = None,
+    median_household_income: int = 85000,
+) -> pd.DataFrame:
     """Compute affordability metrics by planning area.
 
     Args:
@@ -124,7 +132,7 @@ def affordability_metrics(unified_dataset: pd.DataFrame, platinum_dir: Path) -> 
     if "planning_area" not in unified_dataset.columns:
         return pd.DataFrame()
 
-    df = _ensure_month_column(unified_dataset.copy())
+    df = ensure_month_column(unified_dataset.copy())
     if df.empty:
         return pd.DataFrame()
 
@@ -137,21 +145,28 @@ def affordability_metrics(unified_dataset: pd.DataFrame, platinum_dir: Path) -> 
         .reset_index()
     )
 
-    estimated_income = settings.metrics.median_household_income
+    estimated_income = median_household_income
     metrics["affordability_ratio"] = metrics["median_price"] / estimated_income
 
     metrics["affordability_class"] = metrics["affordability_ratio"].apply(classify_affordability)
 
-    save_parquet(
-        metrics,
-        platinum_dir / "metrics" / "L5_affordability_by_area.parquet",
-        "affordability metrics",
-    )
+    if writer is not None:
+        writer.write(metrics, "L5_affordability_by_area", "platinum_metrics")
+    else:
+        save_parquet(
+            metrics,
+            platinum_dir / "metrics" / "L5_affordability_by_area.parquet",
+            "affordability metrics",
+        )
 
     return metrics
 
 
-def appreciation_hotspots(price_metrics_by_area: pd.DataFrame, platinum_dir: Path) -> pd.DataFrame:
+def appreciation_hotspots(
+    price_metrics_by_area: pd.DataFrame,
+    platinum_dir: Path,
+    writer: LayerWriter | None = None,
+) -> pd.DataFrame:
     """Identify price appreciation hotspots.
 
     Args:
@@ -201,10 +216,13 @@ def appreciation_hotspots(price_metrics_by_area: pd.DataFrame, platinum_dir: Pat
 
     hotspots = hotspots.sort_values("appreciation_3m_pct", ascending=False).head(20)
 
-    save_parquet(
-        hotspots,
-        platinum_dir / "metrics" / "L5_appreciation_hotspots.parquet",
-        "appreciation hotspots",
-    )
+    if writer is not None:
+        writer.write(hotspots, "L5_appreciation_hotspots", "platinum_metrics")
+    else:
+        save_parquet(
+            hotspots,
+            platinum_dir / "metrics" / "L5_appreciation_hotspots.parquet",
+            "appreciation hotspots",
+        )
 
     return hotspots

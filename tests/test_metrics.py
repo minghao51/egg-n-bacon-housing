@@ -1,7 +1,6 @@
 """Tests for components/05_metrics.py."""
 
 import importlib
-from types import SimpleNamespace
 
 import pandas as pd
 import pytest
@@ -81,20 +80,8 @@ class TestPriceMetrics:
 
 
 class TestAffordabilityMetrics:
-    def test_affordability_uses_config_income(self, tmp_path, monkeypatch):
+    def test_affordability_uses_config_income(self, tmp_path):
         metrics = _get_metrics_module()
-        monkeypatch.setattr(
-            metrics.settings,
-            "metrics",
-            SimpleNamespace(
-                median_household_income=100000,
-                affordability_thresholds={
-                    "affordable": 5.0,
-                    "moderate": 7.0,
-                    "expensive": 9.0,
-                },
-            ),
-        )
 
         df = pd.DataFrame(
             [
@@ -106,7 +93,11 @@ class TestAffordabilityMetrics:
             ]
         )
 
-        result = metrics.affordability_metrics(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.affordability_metrics(
+            df,
+            platinum_dir=tmp_path / "platinum",
+            median_household_income=100000,
+        )
 
         assert not result.empty
         assert result.loc[0, "affordability_ratio"] == pytest.approx(5.0)
@@ -120,20 +111,8 @@ class TestAffordabilityMetrics:
             (900000.0, "Severely Unaffordable"),
         ],
     )
-    def test_affordability_classification(self, tmp_path, monkeypatch, price, expected_class):
+    def test_affordability_classification(self, tmp_path, price, expected_class):
         metrics = _get_metrics_module()
-        monkeypatch.setattr(
-            metrics.settings,
-            "metrics",
-            SimpleNamespace(
-                median_household_income=85000,
-                affordability_thresholds={
-                    "affordable": 5.0,
-                    "moderate": 7.0,
-                    "expensive": 9.0,
-                },
-            ),
-        )
 
         df = pd.DataFrame(
             [
@@ -145,7 +124,11 @@ class TestAffordabilityMetrics:
             ]
         )
 
-        result = metrics.affordability_metrics(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.affordability_metrics(
+            df,
+            platinum_dir=tmp_path / "platinum",
+            median_household_income=85000,
+        )
 
         assert not result.empty
         assert result.loc[0, "affordability_class"] == expected_class
