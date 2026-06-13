@@ -415,6 +415,7 @@ def _create_unique_location_index(properties_df: pd.DataFrame) -> tuple[pd.DataF
         i: coord_to_idx[(row["lat"], row["lon"])] for i, row in unique_reset.iterrows()
     }
 
+    unique_coords = unique_reset
     return unique_coords, index_mapping
 
 
@@ -432,8 +433,7 @@ def calculate_school_features(
         DataFrame with school features added
     """
     properties_df = properties_df.copy()
-
-    # Load school quality tiers
+    properties_df = properties_df.reset_index(drop=True)
     primary_tiers, secondary_tiers = load_school_tiers()
 
     # Calculate quality scores for tiers

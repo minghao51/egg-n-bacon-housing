@@ -5,26 +5,19 @@ from silver data into the gold layer.
 """
 
 import logging
-from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.neighbors import BallTree
 
 from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction, HRentalYieldRecord
 from egg_n_bacon_housing.utils.contracts import require_columns
-from egg_n_bacon_housing.utils.io_helpers import save_parquet
-from egg_n_bacon_housing.utils.mrt_distance import calculate_nearest_mrt
+from egg_n_bacon_housing.utils.proximity import compute_proximity_features
 from egg_n_bacon_housing.utils.school_features import calculate_school_features
-from egg_n_bacon_housing.utils.validation import validate_schema
+from egg_n_bacon_housing.utils.time_index import ensure_month_column
+from egg_n_bacon_housing.utils.validation_gateway import validate_and_quarantine
 
 logger = logging.getLogger(__name__)
-
-
-def _quarantine_gold_path(gold_dir: Path, dataset_name: str) -> Path:
-    timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
-    return gold_dir / "_quarantine" / f"{dataset_name}_{timestamp}.parquet"
 
 
 _FLAT_TYPE_NORMALIZE_MAP: dict[str, str] = {}
@@ -67,50 +60,6 @@ def _normalize_hdb_flat_type(series: pd.Series) -> pd.Series:
     return upper.map(_FLAT_TYPE_NORMALIZE_MAP).fillna(upper)
 
 
-def _nearest_mall_features(
-    properties_df: pd.DataFrame,
-    malls_df: pd.DataFrame,
-) -> pd.DataFrame:
-    """Add nearest mall features when the source mall dataset has coordinates."""
-    df = properties_df.copy()
-
-    name_column = next(
-        (col for col in ["shopping_mall", "name", "mall_name"] if col in malls_df.columns),
-        None,
-    )
-    lat_column = next((col for col in ["lat", "latitude"] if col in malls_df.columns), None)
-    lon_column = next((col for col in ["lon", "longitude"] if col in malls_df.columns), None)
-
-    if not name_column or not lat_column or not lon_column:
-        logger.warning("Skipping mall distance features: mall coordinates are unavailable")
-        df["dist_to_nearest_mall"] = pd.NA
-        df["nearest_mall"] = pd.NA
-        return df
-
-    valid_malls = malls_df[[name_column, lat_column, lon_column]].copy()
-    valid_malls[lat_column] = pd.to_numeric(valid_malls[lat_column], errors="coerce")
-    valid_malls[lon_column] = pd.to_numeric(valid_malls[lon_column], errors="coerce")
-    valid_malls = valid_malls.dropna(subset=[lat_column, lon_column])
-
-    if valid_malls.empty:
-        logger.warning("Skipping mall distance features: no geocoded mall rows found")
-        df["dist_to_nearest_mall"] = pd.NA
-        df["nearest_mall"] = pd.NA
-        return df
-
-    property_coords = np.radians(df[["lat", "lon"]].astype(float).to_numpy())
-    mall_coords = np.radians(valid_malls[[lat_column, lon_column]].to_numpy())
-
-    tree = BallTree(mall_coords, metric="haversine")
-    distances_rad, nearest_indices = tree.query(property_coords, k=1)
-    distances_m = distances_rad[:, 0] * 6371000
-    nearest_indices_flat = nearest_indices[:, 0]
-
-    df["dist_to_nearest_mall"] = distances_m
-    df["nearest_mall"] = valid_malls.iloc[nearest_indices_flat][name_column].to_numpy()
-    return df
-
-
 def rental_yield(
     hdb_validated: pd.DataFrame,
     raw_hdb_rental: pd.DataFrame,
@@ -143,7 +92,7 @@ def rental_yield(
 
     sales["price"] = pd.to_numeric(sales["price"], errors="coerce")
     sales["transaction_date"] = pd.to_datetime(sales["transaction_date"], errors="coerce")
-    sales["month"] = sales["transaction_date"].dt.to_period("M").astype(str)
+    sales = ensure_month_column(sales)
     sales["town"] = sales["town"].astype(str).str.upper().str.strip()
     sales["flat_type"] = _normalize_hdb_flat_type(sales["flat_type"])
     sales = sales.dropna(subset=["price", "transaction_date", "town", "flat_type"])
@@ -153,7 +102,7 @@ def rental_yield(
     rents["rent_approval_date"] = pd.to_datetime(
         rents["rent_approval_date"], format="%Y-%m", errors="coerce"
     )
-    rents["month"] = rents["rent_approval_date"].dt.to_period("M").astype(str)
+    rents = ensure_month_column(rents, date_column="rent_approval_date")
     rents["town"] = rents["town"].astype(str).str.upper().str.strip()
     rents["flat_type"] = _normalize_hdb_flat_type(rents["flat_type"])
     rents = rents.dropna(subset=["monthly_rent", "rent_approval_date", "town", "flat_type"])
@@ -233,17 +182,48 @@ def rental_yield(
             how="left",
         )
 
-    valid_ry, quarantine_ry = validate_schema(df, HRentalYieldRecord, "rental_yield")
-    if not quarantine_ry.empty:
-        save_parquet(
-            quarantine_ry,
-            _quarantine_gold_path(gold_dir, "rental_yield"),
-            "quarantined rental yield",
-        )
-    df = valid_ry
+    df = validate_and_quarantine(
+        df,
+        HRentalYieldRecord,
+        "rental_yield",
+        layer_dir=gold_dir,
+        filename="rental_yield.parquet",
+    )
 
-    save_parquet(df, gold_dir / "rental_yield.parquet", "rental yield")
+    return df
 
+
+def _add_planning_area(df: pd.DataFrame) -> pd.DataFrame:
+    """Derive planning_area from lat/lon via point-in-polygon on unique coords."""
+    if "lat" not in df.columns or "lon" not in df.columns:
+        return df
+    if "planning_area" in df.columns and df["planning_area"].notna().any():
+        return df
+
+    try:
+        from egg_n_bacon_housing.utils.data_loader import get_planning_area_for_point
+    except ImportError:
+        logger.warning("data_loader not available — skipping planning_area derivation")
+        return df
+
+    unique_coords = df.drop_duplicates(subset=["lat", "lon"])[["lat", "lon"]]
+    if unique_coords.empty:
+        return df
+
+    logger.info("Deriving planning_area for %s unique coordinates", len(unique_coords))
+    pa_map: dict[tuple[float, float], str | None] = {}
+    for _, row in unique_coords.iterrows():
+        pa = get_planning_area_for_point(row["lat"], row["lon"])
+        pa_map[(row["lat"], row["lon"])] = pa
+
+    df["planning_area"] = df.apply(lambda r: pa_map.get((r["lat"], r["lon"])), axis=1)
+    matched = df["planning_area"].notna().sum()
+    logger.info(
+        "planning_area derived: %s/%s (%.1f%%)",
+        matched,
+        len(df),
+        matched / len(df) * 100 if len(df) else 0,
+    )
     return df
 
 
@@ -301,31 +281,27 @@ def features_with_amenities(
             df["dist_to_nearest_school"] = df[school_distance_cols].min(axis=1, skipna=True)
 
     try:
-        if not raw_mrt_stations.empty:
-            df = calculate_nearest_mrt(df, mrt_stations_df=raw_mrt_stations, show_progress=False)
-            if "nearest_mrt_distance" in df.columns:
-                df["dist_to_nearest_mrt"] = df["nearest_mrt_distance"]
-        else:
-            logger.warning("MRT station data is empty — skipping MRT feature enrichment")
-            df["dist_to_nearest_mrt"] = pd.NA
-            df["nearest_mrt_station"] = pd.NA
+        df = compute_proximity_features(
+            df,
+            mrt_stations=raw_mrt_stations if not raw_mrt_stations.empty else None,
+            malls=raw_shopping_malls if not raw_shopping_malls.empty else None,
+        )
     except (OSError, ValueError, KeyError, RuntimeError) as exc:
-        logger.warning("Skipping MRT feature enrichment: %s", exc)
+        logger.warning("Skipping proximity features: %s", exc)
         df["dist_to_nearest_mrt"] = pd.NA
         df["nearest_mrt_station"] = pd.NA
+        df["dist_to_nearest_mall"] = pd.NA
+        df["nearest_mall"] = pd.NA
 
-    df = _nearest_mall_features(df, raw_shopping_malls)
+    df = _add_planning_area(df)
 
-    valid_feat, quarantine_feat = validate_schema(df, HFeatureTransaction, "feature_transaction")
-    if not quarantine_feat.empty:
-        save_parquet(
-            quarantine_feat,
-            _quarantine_gold_path(gold_dir, "feature_transactions"),
-            "quarantined feature transactions",
-        )
-    df = valid_feat
-
-    save_parquet(df, gold_dir / "features_with_amenities.parquet", "feature records")
+    df = validate_and_quarantine(
+        df,
+        HFeatureTransaction,
+        "feature_transaction",
+        layer_dir=gold_dir,
+        filename="features_with_amenities.parquet",
+    )
 
     return df
 
@@ -351,11 +327,7 @@ def unified_features(
         rental_df = rental_yield.copy()
 
         if "transaction_date" in df.columns and "month" not in df.columns:
-            df["month"] = (
-                pd.to_datetime(df["transaction_date"], errors="coerce")
-                .dt.to_period("M")
-                .astype(str)
-            )
+            df = ensure_month_column(df)
 
         if "flat_type" in df.columns:
             df["flat_type"] = _normalize_hdb_flat_type(df["flat_type"])
@@ -386,15 +358,12 @@ def unified_features(
                 "Skipping rental yield join: missing required join keys between feature and yield datasets"
             )
 
-    valid_uni, quarantine_uni = validate_schema(df, HFeatureTransaction, "unified_feature")
-    if not quarantine_uni.empty:
-        save_parquet(
-            quarantine_uni,
-            _quarantine_gold_path(gold_dir, "unified_features"),
-            "quarantined unified features",
-        )
-    df = valid_uni
-
-    save_parquet(df, gold_dir / "unified_features.parquet", "unified features")
+    df = validate_and_quarantine(
+        df,
+        HFeatureTransaction,
+        "unified_feature",
+        layer_dir=gold_dir,
+        filename="unified_features.parquet",
+    )
 
     return df

@@ -133,14 +133,20 @@ class TestGoldLayer:
             enriched["nearest_schoolPRIMARY_name"] = "Test School"
             return enriched
 
-        def fake_calculate_nearest_mrt(properties_df, mrt_stations_df, show_progress):
+        def fake_compute_proximity_features(
+            properties_df, mrt_stations=None, schools=None, malls=None
+        ):
             enriched = properties_df.copy()
             enriched["nearest_mrt_distance"] = 456.0
             enriched["nearest_mrt_station"] = "Toa Payoh"
+            enriched["dist_to_nearest_mrt"] = 456.0
+            if malls is not None:
+                enriched["dist_to_nearest_mall"] = 789.0
+                enriched["nearest_mall"] = "Toa Payoh Mall"
             return enriched
 
         monkeypatch.setattr(features, "calculate_school_features", fake_school_features)
-        monkeypatch.setattr(features, "calculate_nearest_mrt", fake_calculate_nearest_mrt)
+        monkeypatch.setattr(features, "compute_proximity_features", fake_compute_proximity_features)
 
         result = features.features_with_amenities(
             geocoded_validated,
@@ -155,7 +161,7 @@ class TestGoldLayer:
         assert result.loc[0, "dist_to_nearest_mrt"] == pytest.approx(456.0)
         assert result.loc[0, "nearest_mrt_station"] == "Toa Payoh"
         assert result.loc[0, "nearest_mall"] == "Toa Payoh Mall"
-        assert result.loc[0, "dist_to_nearest_mall"] > 0
+        assert result.loc[0, "dist_to_nearest_mall"] == pytest.approx(789.0)
         assert result.loc[0, "psf"] == pytest.approx(500.0)
         assert result.loc[0, "remaining_lease_years"] == pytest.approx(80.0)
 
@@ -207,12 +213,13 @@ class TestGoldLayer:
         raw_school_directory = pd.DataFrame()
         raw_shopping_malls = pd.DataFrame([{"shopping_mall": "Name Only Mall"}])
 
+        def fake_proximity(properties_df, mrt_stations=None, schools=None, malls=None):
+            properties_df["dist_to_nearest_mall"] = pd.NA
+            properties_df["nearest_mall"] = pd.NA
+            return properties_df
+
         monkeypatch.setattr(features, "calculate_school_features", lambda props, schools: props)
-        monkeypatch.setattr(
-            features,
-            "calculate_nearest_mrt",
-            lambda properties_df, mrt_stations_df, show_progress: properties_df,
-        )
+        monkeypatch.setattr(features, "compute_proximity_features", fake_proximity)
 
         result = features.features_with_amenities(
             geocoded_validated,
