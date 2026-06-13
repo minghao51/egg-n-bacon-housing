@@ -57,10 +57,10 @@ class TestPipelineIntegration:
         pipeline.run_pipeline(data_path=str(tmp_path))
 
         assert captured["final_vars"] == pipeline.STAGE_VARS["all"]
-        assert "bronze_dir" in captured["inputs"]
-        assert "silver_dir" in captured["inputs"]
-        assert "gold_dir" in captured["inputs"]
-        assert "platinum_dir" in captured["inputs"]
+        assert captured["inputs"]["bronze_dir"] == tmp_path / "pipeline" / "01_bronze"
+        assert captured["inputs"]["silver_dir"] == tmp_path / "pipeline" / "02_silver"
+        assert captured["inputs"]["gold_dir"] == tmp_path / "pipeline" / "03_gold"
+        assert captured["inputs"]["platinum_dir"] == tmp_path / "pipeline" / "04_platinum"
 
     def test_run_pipeline_specific_stage(self, tmp_path, monkeypatch):
         """run_pipeline accepts a stage parameter to select output variables."""

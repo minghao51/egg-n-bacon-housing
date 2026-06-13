@@ -80,11 +80,12 @@ def build_pipeline(
     cache_dir: str | None = None,
 ) -> driver.Driver:
     """Build and return a configured Hamilton Driver."""
-    if data_path is None:
-        data_path = str(settings.data_path)
+    resolved_data_path = settings.resolve_data_path(data_path)
 
     builder = (
-        driver.Builder().with_modules(*_get_components()).with_config({"data_path": data_path})
+        driver.Builder()
+        .with_modules(*_get_components())
+        .with_config({"data_path": str(resolved_data_path)})
     )
 
     if _HAS_TRACKER:
@@ -99,7 +100,7 @@ def build_pipeline(
     if cache_dir:
         builder = builder.with_cache(path=cache_dir)
     elif settings.pipeline.use_caching:
-        builder = builder.with_cache(path=str(settings.data_dir / "cache" / "hamilton"))
+        builder = builder.with_cache(path=str(resolved_data_path / "cache" / "hamilton"))
 
     dr = builder.build()
     logger.info("Hamilton pipeline driver built successfully")
@@ -129,11 +130,14 @@ def run_pipeline(
     if dr is None:
         dr = build_pipeline(data_path=data_path)
 
+    resolved_data_path = settings.resolve_data_path(data_path)
     layer_inputs = {
-        "bronze_dir": settings.bronze_dir,
-        "silver_dir": settings.silver_dir,
-        "gold_dir": settings.gold_dir,
-        "platinum_dir": settings.platinum_dir,
-        "webapp_data_dir": settings.base_dir / "app" / "public" / "data",
+        "bronze_dir": settings.layer_dir("bronze", resolved_data_path),
+        "silver_dir": settings.layer_dir("silver", resolved_data_path),
+        "gold_dir": settings.layer_dir("gold", resolved_data_path),
+        "platinum_dir": settings.layer_dir("platinum", resolved_data_path),
+        "webapp_data_dir": settings.webapp_data_dir,
+        "min_coordinate_coverage": settings.geocoding.min_coordinate_coverage,
+        "median_household_income": settings.metrics.median_household_income,
     }
     return dr.execute(final_vars=final_vars, inputs=layer_inputs)

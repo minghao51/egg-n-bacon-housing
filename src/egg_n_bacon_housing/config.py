@@ -31,27 +31,6 @@ class MetricsConfig(BaseSettings):
     }
 
 
-_DEFAULT_URA_EC_FILES = [
-    "ECResidentialTransaction20260121003532",
-    "ECResidentialTransaction20260121003707",
-]
-
-_DEFAULT_URA_CONDO_FILES = [
-    "ResidentialTransaction20260121003944",
-    "ResidentialTransaction20260121004101",
-    "ResidentialTransaction20260121004213",
-    "ResidentialTransaction20260121004407",
-    "ResidentialTransaction20260121004517",
-    "ResidentialTransaction20260121005130",
-    "ResidentialTransaction20260121005233",
-    "ResidentialTransaction20260121005346",
-    "ResidentialTransaction20260121005450",
-    "ResidentialTransaction20260121005601",
-    "ResidentialTransaction20260121005715",
-    "ResidentialTransaction20260121005734",
-]
-
-
 class LoggingConfig(BaseSettings):
     level: str = "INFO"
     format: str = "%(asctime)s - %(levelname)s - %(message)s"
@@ -59,10 +38,10 @@ class LoggingConfig(BaseSettings):
 
 
 class LayerDirs(BaseSettings):
-    bronze: str = "data/01_bronze"
-    silver: str = "data/02_silver"
-    gold: str = "data/03_gold"
-    platinum: str = "data/04_platinum"
+    bronze: str = "data/pipeline/01_bronze"
+    silver: str = "data/pipeline/02_silver"
+    gold: str = "data/pipeline/03_gold"
+    platinum: str = "data/pipeline/04_platinum"
 
 
 class Settings(BaseSettings):
@@ -94,32 +73,62 @@ class Settings(BaseSettings):
     r2_secret_access_key: SecretStr = Field(default="", alias="R2_SECRET_ACCESS_KEY")
     r2_bucket: str = Field(default="egg-bacon-housing-data", alias="R2_BUCKET")
     r2_endpoint: str = Field(default="", alias="R2_ENDPOINT")
-    ura_ec_files: list[str] = _DEFAULT_URA_EC_FILES
-    ura_condo_files: list[str] = _DEFAULT_URA_CONDO_FILES
 
     @property
     def base_dir(self) -> Path:
         return Path(__file__).parent.parent.parent
 
+    def resolve_data_path(self, data_path: str | Path | None = None) -> Path:
+        if data_path is None:
+            data_path = self.data_path
+
+        path = Path(data_path)
+        return path if path.is_absolute() else self.base_dir / path
+
+    def layer_dir(self, layer: str, data_path: str | Path | None = None) -> Path:
+        pipeline_root = self.resolve_data_path(data_path) / "pipeline"
+        layer_name = Path(getattr(self.layer_dirs, layer)).name
+        return pipeline_root / layer_name
+
     @property
     def data_dir(self) -> Path:
-        return self.base_dir / self.data_path.removeprefix("./")
+        return self.resolve_data_path()
 
     @property
     def bronze_dir(self) -> Path:
-        return self.base_dir / self.layer_dirs.bronze
+        return self.layer_dir("bronze")
 
     @property
     def silver_dir(self) -> Path:
-        return self.base_dir / self.layer_dirs.silver
+        return self.layer_dir("silver")
 
     @property
     def gold_dir(self) -> Path:
-        return self.base_dir / self.layer_dirs.gold
+        return self.layer_dir("gold")
 
     @property
     def platinum_dir(self) -> Path:
-        return self.base_dir / self.layer_dirs.platinum
+        return self.layer_dir("platinum")
+
+    @property
+    def webapp_data_dir(self) -> Path:
+        return self.base_dir / "app" / "public" / "data"
+
+    @property
+    def manual_ura_dir(self) -> Path:
+        return self.data_dir / "manual" / "csv" / "ura"
+
+    @property
+    def ura_ec_files(self) -> list[str]:
+        return _discover_ura_csv_stems(self.manual_ura_dir, "ECResidentialTransaction")
+
+    @property
+    def ura_condo_files(self) -> list[str]:
+        return _discover_ura_csv_stems(self.manual_ura_dir, "ResidentialTransaction")
+
+
+def _discover_ura_csv_stems(ura_dir: Path, prefix: str) -> list[str]:
+    return sorted(path.stem for path in ura_dir.glob(f"{prefix}*.csv"))
 
 
 _settings: Settings | None = None

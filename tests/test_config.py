@@ -23,6 +23,13 @@ def test_medallion_dirs():
     assert settings.platinum_dir.name == "04_platinum"
 
 
+def test_resolve_data_path_and_layer_dir(tmp_path):
+    resolved = settings.resolve_data_path(tmp_path)
+
+    assert resolved == tmp_path
+    assert settings.layer_dir("bronze", tmp_path) == tmp_path / "pipeline" / "01_bronze"
+
+
 def test_legacy_dirs_removed():
     """Legacy paths removed in favor of layer_dirs."""
     with pytest.raises(AttributeError):
