@@ -4,13 +4,14 @@ This module provides Hamilton-compatible functions for cleaning and
 validating bronze data into the silver layer.
 """
 
+import hashlib
 import logging
-from datetime import UTC, datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import pandas as pd
-from hamilton.function_modifiers import check_output
 
+from egg_n_bacon_housing.adapters import onemap
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.schemas.clean_models import (
     GeocodedProperty,
@@ -19,9 +20,78 @@ from egg_n_bacon_housing.schemas.clean_models import (
 )
 from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.io_helpers import save_parquet
-from egg_n_bacon_housing.utils.validation import validate_schema
+from egg_n_bacon_housing.utils.validation_gateway import validate_and_quarantine
 
 logger = logging.getLogger(__name__)
+
+
+def _build_geocode_lookup(addresses: list[str], headers: dict[str, str]) -> pd.DataFrame:
+    """Bulk-geocode addresses: cache-first, then parallel API for misses.
+
+    Checks the OneMap cache by hashing each address and looking for the
+    corresponding parquet file. Cached results are read in bulk; only
+    uncached addresses hit the API in parallel.
+    """
+    cache_dir = settings.data_dir / "cache"
+    rows: list[dict] = []
+    uncached: list[str] = []
+
+    for addr in addresses:
+        cache_key = hashlib.sha256(f"onemap_search:{addr}".encode()).hexdigest()
+        cache_path = cache_dir / f"{cache_key}.parquet"
+        if cache_path.exists():
+            try:
+                cached = pd.read_parquet(cache_path)
+                if not cached.empty:
+                    first = cached.iloc[0]
+                    rows.append(
+                        {
+                            "address": addr,
+                            "lat": float(first.get("LATITUDE", 0)) or None,
+                            "lon": float(first.get("LONGITUDE", 0)) or None,
+                        }
+                    )
+                    continue
+            except Exception:
+                pass
+        uncached.append(addr)
+
+    logger.info(
+        "Geocode cache: %d/%d hits, %d API calls needed",
+        len(rows),
+        len(addresses),
+        len(uncached),
+    )
+
+    if uncached:
+        max_workers = settings.geocoding.max_workers
+
+        def _geocode_one(addr: str) -> dict | None:
+            try:
+                df = onemap.fetch_data_cached(addr, headers=headers, timeout=30)
+                if df is not None and not df.empty:
+                    first = df.iloc[0]
+                    return {
+                        "address": addr,
+                        "lat": float(first.get("LATITUDE", 0)) or None,
+                        "lon": float(first.get("LONGITUDE", 0)) or None,
+                    }
+            except Exception as exc:
+                logger.debug("Geocode failed for %s: %s", addr, exc)
+            return {"address": addr, "lat": None, "lon": None}
+
+        done = 0
+        with ThreadPoolExecutor(max_workers=max_workers) as pool:
+            futures = {pool.submit(_geocode_one, a): a for a in uncached}
+            for future in as_completed(futures):
+                result = future.result()
+                if result:
+                    rows.append(result)
+                done += 1
+                if done % 200 == 0:
+                    logger.info("API geocoding progress: %d/%d", done, len(uncached))
+
+    return pd.DataFrame(rows)
 
 
 def cleaned_hdb_transactions(
@@ -82,25 +152,15 @@ def cleaned_hdb_transactions(
     return df[df["price"] > 0]
 
 
-def _quarantine_path(silver_dir: Path, dataset_name: str) -> Path:
-    timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
-    return silver_dir / "_quarantine" / f"{dataset_name}_{timestamp}.parquet"
-
-
-@check_output(data_type=pd.DataFrame, importance="warn")
 def hdb_validated(cleaned_hdb_transactions: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate HDB transactions against schema."""
-    valid_df, quarantine_df = validate_schema(cleaned_hdb_transactions, HCleanHDBTransaction, "HDB")
-
-    save_parquet(
-        valid_df, silver_dir / "cleaned_hdb_transactions.parquet", "validated HDB transactions"
+    return validate_and_quarantine(
+        cleaned_hdb_transactions,
+        HCleanHDBTransaction,
+        "HDB",
+        layer_dir=silver_dir,
+        filename="cleaned_hdb_transactions.parquet",
     )
-
-    if not quarantine_df.empty:
-        q_path = _quarantine_path(silver_dir, "hdb_transactions")
-        save_parquet(quarantine_df, q_path, "quarantined HDB transactions")
-
-    return valid_df
 
 
 def cleaned_condo_transactions(
@@ -126,32 +186,58 @@ def cleaned_condo_transactions(
     if "price" in df.columns:
         df["price"] = pd.to_numeric(df["price"], errors="coerce")
 
+    if "area_sqft" in df.columns and "floor_area_sqft" not in df.columns:
+        df["floor_area_sqft"] = pd.to_numeric(df["area_sqft"], errors="coerce")
+
+    if "area_sqm" in df.columns and "floor_area_sqm" not in df.columns:
+        df["floor_area_sqm"] = pd.to_numeric(df["area_sqm"], errors="coerce")
+
+    if "postal_district" in df.columns:
+        df["postal_district"] = pd.to_numeric(df["postal_district"], errors="coerce").astype(
+            "Int64"
+        )
+
+    if "address" not in df.columns:
+        if "street_name" in df.columns:
+            df["address"] = df["street_name"].fillna("")
+        else:
+            df["address"] = ""
+
+    if "area" not in df.columns:
+        df["area"] = ""
+
+    if "project_name" not in df.columns:
+        df["project_name"] = ""
+
+    if "tenure" not in df.columns:
+        df["tenure"] = ""
+
     df = df.dropna(subset=["price", "transaction_date"])
     return df[df["price"] > 0]
 
 
-@check_output(data_type=pd.DataFrame, importance="warn")
 def condo_validated(cleaned_condo_transactions: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate condo transactions against schema."""
-    valid_df, quarantine_df = validate_schema(
-        cleaned_condo_transactions, HCleanCondoTransaction, "condo"
+    return validate_and_quarantine(
+        cleaned_condo_transactions,
+        HCleanCondoTransaction,
+        "condo",
+        layer_dir=silver_dir,
+        filename="cleaned_condo_transactions.parquet",
     )
-
-    save_parquet(
-        valid_df, silver_dir / "cleaned_condo_transactions.parquet", "validated condo transactions"
-    )
-
-    if not quarantine_df.empty:
-        q_path = _quarantine_path(silver_dir, "condo_transactions")
-        save_parquet(quarantine_df, q_path, "quarantined condo transactions")
-
-    return valid_df
 
 
 def geocoded_properties(
-    hdb_validated: pd.DataFrame, condo_validated: pd.DataFrame, silver_dir: Path
+    hdb_validated: pd.DataFrame,
+    condo_validated: pd.DataFrame,
+    silver_dir: Path,
+    min_coordinate_coverage: float = 0.7,
 ) -> pd.DataFrame:
-    """Merge geocoding data onto validated transactions.
+    """Merge validated transactions and geocode addresses via OneMap.
+
+    Uses a cache-first bulk lookup: hashes all unique addresses, reads
+    cached parquet files in bulk, then makes parallel API calls only
+    for uncached addresses.
 
     Args:
         hdb_validated: Validated HDB transactions.
@@ -174,41 +260,51 @@ def geocoded_properties(
 
     combined = pd.concat(dfs, ignore_index=True)
 
-    if "lat" not in combined.columns or "lon" not in combined.columns:
-        logger.warning(
-            "lat/lon columns missing from validated datasets — "
-            "geocoding must happen externally before coordinate coverage checks"
-        )
+    cached_path = silver_dir / "geocoded_properties.parquet"
+    if cached_path.exists():
+        existing = pd.read_parquet(cached_path)
+        if "lat" in existing.columns and existing["lat"].notna().any():
+            logger.info("Loading pre-geocoded properties from %s", cached_path)
+            return existing
+
+    address_col = "address" if "address" in combined.columns else None
+    if address_col is None:
         combined["lat"] = pd.NA
         combined["lon"] = pd.NA
-    else:
-        coordinate_coverage = combined[["lat", "lon"]].notna().all(axis=1).mean()
-        min_coverage = settings.geocoding.min_coordinate_coverage
-        if coordinate_coverage < min_coverage:
-            logger.warning(
-                "Geocoding coverage too low: %s (required >= %s) — proceeding without coordinate gate",
-                f"{coordinate_coverage:.1%}",
-                f"{min_coverage:.1%}",
-            )
+        logger.warning("No address column found — skipping geocoding")
+        save_parquet(combined, cached_path, "geocoded properties (no address)")
+        return combined
 
-    save_parquet(combined, silver_dir / "geocoded_properties.parquet", "geocoded properties")
+    unique_addresses = combined[address_col].dropna().astype(str).unique().tolist()
+    logger.info("Geocoding %s unique addresses...", len(unique_addresses))
 
+    headers = onemap.setup_onemap_headers()
+    lookup = _build_geocode_lookup(unique_addresses, headers)
+
+    coord_map = lookup.set_index("address")[["lat", "lon"]]
+    combined["lat"] = combined[address_col].map(coord_map["lat"])
+    combined["lon"] = combined[address_col].map(coord_map["lon"])
+
+    coverage = combined[["lat", "lon"]].notna().all(axis=1).mean()
+    logger.info("Geocoding coverage: %.1f%%", coverage * 100)
+
+    if coverage < min_coordinate_coverage:
+        logger.warning(
+            "Geocoding coverage %.1f%% below threshold %.1f%% — proceeding regardless",
+            coverage * 100,
+            min_coordinate_coverage * 100,
+        )
+
+    save_parquet(combined, cached_path, "geocoded properties")
     return combined
 
 
-@check_output(data_type=pd.DataFrame, importance="warn")
 def geocoded_validated(geocoded_properties: pd.DataFrame, silver_dir: Path) -> pd.DataFrame:
     """Validate geocoded properties against schema."""
-    valid_df, quarantine_df = validate_schema(geocoded_properties, GeocodedProperty, "geocoded")
-
-    save_parquet(
-        valid_df,
-        silver_dir / "validated_geocoded_properties.parquet",
-        "validated geocoded properties",
+    return validate_and_quarantine(
+        geocoded_properties,
+        GeocodedProperty,
+        "geocoded",
+        layer_dir=silver_dir,
+        filename="validated_geocoded_properties.parquet",
     )
-
-    if not quarantine_df.empty:
-        q_path = _quarantine_path(silver_dir, "geocoded_properties")
-        save_parquet(quarantine_df, q_path, "quarantined geocoded records")
-
-    return valid_df

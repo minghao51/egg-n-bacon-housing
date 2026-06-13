@@ -225,11 +225,9 @@ class TestGeocodedValidation:
         assert "lon" in result.columns
         assert pd.isna(result.loc[0, "lat"])
 
-    def test_geocoded_properties_warns_on_low_coordinate_coverage(self, tmp_path, monkeypatch):
+    def test_geocoded_properties_warns_on_low_coordinate_coverage(self, tmp_path):
         """Test geocoded_properties logs warning when coverage is low."""
         cleaning = _get_cleaning_module()
-
-        monkeypatch.setattr(cleaning.settings.geocoding, "min_coordinate_coverage", 0.8)
 
         hdb_validated = pd.DataFrame(
             [
@@ -239,7 +237,12 @@ class TestGeocodedValidation:
         )
         condo_validated = pd.DataFrame()
 
-        result = cleaning.geocoded_properties(hdb_validated, condo_validated, silver_dir=tmp_path)
+        result = cleaning.geocoded_properties(
+            hdb_validated,
+            condo_validated,
+            silver_dir=tmp_path,
+            min_coordinate_coverage=0.8,
+        )
 
         assert not result.empty
         assert len(result) == 2
@@ -299,7 +302,7 @@ class TestQuarantineIntegration:
 
         quarantine_dir = tmp_path / "_quarantine"
         assert quarantine_dir.exists()
-        quarantine_files = list(quarantine_dir.glob("hdb_transactions_*.parquet"))
+        quarantine_files = list(quarantine_dir.glob("HDB_*.parquet"))
         assert len(quarantine_files) == 1
 
         quarantine_df = pd.read_parquet(quarantine_files[0])

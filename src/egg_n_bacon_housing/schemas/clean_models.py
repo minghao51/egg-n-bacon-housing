@@ -77,14 +77,14 @@ class GeocodedProperty(BaseModel):
 
     @field_validator("lat")
     @classmethod
-    def _validate_lat(cls, v: float) -> float:
-        if not -90 <= v <= 90:
+    def _validate_lat(cls, v: float | None) -> float | None:
+        if v is not None and not -90 <= v <= 90:
             raise ValueError(f"Latitude must be between -90 and 90, got {v}")
         return v
 
     @field_validator("lon")
     @classmethod
-    def _validate_lon(cls, v: float) -> float:
-        if not -180 <= v <= 180:
+    def _validate_lon(cls, v: float | None) -> float | None:
+        if v is not None and not -180 <= v <= 180:
             raise ValueError(f"Longitude must be between -180 and 180, got {v}")
         return v
