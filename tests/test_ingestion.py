@@ -113,6 +113,21 @@ class TestBronzeLayer:
 
         assert result.to_dict(orient="records") == mrt_payload
 
+    def test_raw_mrt_stations_accepts_legacy_mapping_payload(self, tmp_path):
+        """Legacy station->line mapping payloads remain readable."""
+        ingestion = _get_ingestion_module()
+        external_dir = tmp_path / "external"
+        external_dir.mkdir(parents=True, exist_ok=True)
+        mrt_payload = {"TOA PAYOH": ["NSL"], "BISHAN": "CCL"}
+        (external_dir / "mrt_stations.json").write_text(json.dumps(mrt_payload))
+
+        result = ingestion.raw_mrt_stations(bronze_dir=tmp_path)
+
+        assert result.to_dict(orient="records") == [
+            {"name": "TOA PAYOH", "line": "NSL"},
+            {"name": "BISHAN", "line": "CCL"},
+        ]
+
     def test_raw_macro_data_returns_expected_keys(self, tmp_path, monkeypatch):
         """Test that macro loaders resolve files from bronze/external."""
         ingestion = _get_ingestion_module()
