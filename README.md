@@ -41,14 +41,14 @@ cp .env.example .env
 dotenvx run -- uv run python scripts/00_sync_data.py
 
 # Run full pipeline
-uv run python main.py --stage all
+dotenvx run -- uv run python main.py --stage all
 
 # Or run stage-by-stage
-uv run python main.py --stage ingest
-uv run python main.py --stage clean
-uv run python main.py --stage features
-uv run python main.py --stage export
-uv run python main.py --stage metrics
+dotenvx run -- uv run python main.py --stage ingest
+dotenvx run -- uv run python main.py --stage clean
+dotenvx run -- uv run python main.py --stage features
+dotenvx run -- uv run python main.py --stage export
+dotenvx run -- uv run python main.py --stage metrics
 ```
 
 > **Note on manual data**: ~100MB of CSV/GeoJSON source files (URA transactions, HDB resale, school directory, etc.) are stored in Cloudflare R2 rather than git. Run the sync script after cloning to populate `data/manual/`. See [R2 Sync Guide](docs/guides/r2-sync-guide.md) for details.
@@ -87,17 +87,17 @@ Run commands with `dotenvx run --` to decrypt and inject the env vars.
 
 ```bash
 # Run all stages
-uv run python main.py --stage all
+dotenvx run -- uv run python main.py --stage all
 
 # Run specific stage
-uv run python main.py --stage ingest    # Bronze: raw data collection
-uv run python main.py --stage clean     # Silver: validation & cleaning
-uv run python main.py --stage features  # Gold: feature engineering
-uv run python main.py --stage export    # Platinum: export & webapp data
-uv run python main.py --stage metrics   # Planning area metrics
+dotenvx run -- uv run python main.py --stage ingest    # Bronze: raw data collection
+dotenvx run -- uv run python main.py --stage clean     # Silver: validation & cleaning
+dotenvx run -- uv run python main.py --stage features  # Gold: feature engineering
+dotenvx run -- uv run python main.py --stage export    # Platinum: export & webapp data
+dotenvx run -- uv run python main.py --stage metrics   # Planning area metrics
 
 # Generate DAG visualization
-uv run python main.py --stage export --visualize
+dotenvx run -- uv run python main.py --stage export --visualize
 ```
 
 ### Python API
@@ -122,6 +122,8 @@ bun install
 bun run dev
 # Visit http://localhost:4321
 ```
+
+Use Bun as the only supported package manager for `app/`.
 
 ## Project Structure
 

@@ -16,23 +16,23 @@ dotenvx run -- uv run python scripts/00_sync_data.py
 
 ```bash
 uv run pytest --no-cov
-uv run python main.py --help
+dotenvx run -- uv run python main.py --help
 ```
 
 ## Run the Pipeline
 
 ```bash
-uv run python main.py --stage all
+dotenvx run -- uv run python main.py --stage all
 ```
 
 Common stage runs:
 
 ```bash
-uv run python main.py --stage ingest
-uv run python main.py --stage clean
-uv run python main.py --stage features
-uv run python main.py --stage export
-uv run python main.py --stage metrics
+dotenvx run -- uv run python main.py --stage ingest
+dotenvx run -- uv run python main.py --stage clean
+dotenvx run -- uv run python main.py --stage features
+dotenvx run -- uv run python main.py --stage export
+dotenvx run -- uv run python main.py --stage metrics
 ```
 
 ## Run the App
@@ -42,6 +42,8 @@ cd app
 bun install
 bun run dev
 ```
+
+Use Bun as the only supported package manager for `app/`.
 
 ## Quality Checks
 

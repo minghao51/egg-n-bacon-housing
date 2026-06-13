@@ -20,7 +20,7 @@ External APIs / manual files
 src/egg_n_bacon_housing/components/
         |
         v
-data/01_bronze -> 02_silver -> 03_gold -> 04_platinum
+data/pipeline/01_bronze -> 02_silver -> 03_gold -> 04_platinum
         |
         +--> app/public/data/
         |
@@ -113,6 +113,7 @@ Analytics content is authored in `docs/analytics/` and loaded by Astro through [
 - `src/egg_n_bacon_housing/components/` is supported pipeline code.
 - `docs/analytics/` and `app/public/data/` are the supported analytics publishing surface.
 - Historical analysis outputs under `data/analytics/` and `data/analysis/` were retired from the tracked supported surface and should be treated as reproducible archive material, not runtime inputs.
+- Medallion outputs live under `data/pipeline/01_bronze/` through `data/pipeline/04_platinum/`.
 
 ## Developer Workflow
 

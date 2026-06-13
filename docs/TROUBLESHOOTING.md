@@ -24,7 +24,7 @@ Fix:
 
 ```bash
 cd /path/to/egg-n-bacon-housing
-uv run python main.py --stage all
+dotenvx run -- uv run python main.py --stage all
 ```
 
 ## Missing Pipeline Outputs
@@ -32,11 +32,11 @@ uv run python main.py --stage all
 If an expected dataset is not present, re-run the upstream stage:
 
 ```bash
-uv run python main.py --stage ingest
-uv run python main.py --stage clean
-uv run python main.py --stage features
-uv run python main.py --stage export
-uv run python main.py --stage metrics
+dotenvx run -- uv run python main.py --stage ingest
+dotenvx run -- uv run python main.py --stage clean
+dotenvx run -- uv run python main.py --stage features
+dotenvx run -- uv run python main.py --stage export
+dotenvx run -- uv run python main.py --stage metrics
 ```
 
 You can inspect the most common outputs with:
@@ -95,6 +95,8 @@ bun install
 bun run build
 bun run test:e2e
 ```
+
+Use Bun as the only supported package manager for `app/`.
 
 If the preview-based suite fails, run:
 

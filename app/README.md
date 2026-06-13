@@ -15,6 +15,8 @@ Astro app for the dashboard and analytics browsing experience.
 bun install
 ```
 
+Use Bun as the only supported package manager for this app directory.
+
 ## Development
 
 ```bash

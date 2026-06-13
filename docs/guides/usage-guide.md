@@ -26,7 +26,7 @@ Verification:
 
 ```bash
 uv run pytest --no-cov
-uv run python main.py --help
+dotenvx run -- uv run python main.py --help
 ```
 
 ## Run the Pipeline
@@ -34,39 +34,39 @@ uv run python main.py --help
 Default end-to-end flow:
 
 ```bash
-uv run python main.py --stage all
+dotenvx run -- uv run python main.py --stage all
 ```
 
 Single-stage runs:
 
 ```bash
-uv run python main.py --stage ingest
-uv run python main.py --stage clean
-uv run python main.py --stage features
-uv run python main.py --stage export
-uv run python main.py --stage metrics
+dotenvx run -- uv run python main.py --stage ingest
+dotenvx run -- uv run python main.py --stage clean
+dotenvx run -- uv run python main.py --stage features
+dotenvx run -- uv run python main.py --stage export
+dotenvx run -- uv run python main.py --stage metrics
 ```
 
 Generate a DAG image:
 
 ```bash
-uv run python main.py --visualize
+dotenvx run -- uv run python main.py --visualize
 ```
 
 Run selected outputs only:
 
 ```bash
-uv run python main.py --final-var unified_dataset --final-var dashboard_json
+dotenvx run -- uv run python main.py --final-var unified_dataset --final-var dashboard_json
 ```
 
 ## Data Locations
 
-| Layer    | Path                |
-| -------- | ------------------- |
-| Bronze   | `data/01_bronze/`   |
-| Silver   | `data/02_silver/`   |
-| Gold     | `data/03_gold/`     |
-| Platinum | `data/04_platinum/` |
+| Layer    | Path                         |
+| -------- | ---------------------------- |
+| Bronze   | `data/pipeline/01_bronze/`   |
+| Silver   | `data/pipeline/02_silver/`   |
+| Gold     | `data/pipeline/03_gold/`     |
+| Platinum | `data/pipeline/04_platinum/` |
 
 App-facing assets:
 
@@ -100,6 +100,7 @@ bun run dev
 ```
 
 The Astro app loads analytics markdown directly from `docs/analytics/` through `app/src/content.config.ts`.
+Use Bun as the only supported package manager for `app/`.
 
 The supported analytics publishing surface is:
 
