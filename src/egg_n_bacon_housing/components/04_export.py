@@ -15,23 +15,23 @@ from egg_n_bacon_housing.utils.layer_writer import LayerWriter
 
 
 def unified_dataset(
-    unified_features: pd.DataFrame,
+    town_supply_enriched: pd.DataFrame,
     platinum_dir: Path,
     writer: LayerWriter | None = None,
 ) -> pd.DataFrame:
     """Create the unified dataset for platinum layer.
 
     Args:
-        unified_features: Output from 03_features unified_features.
+        town_supply_enriched: Output from 03_features town_supply_enriched.
 
     Returns:
         DataFrame ready for analysis and dashboards.
     """
-    if unified_features.empty:
+    if town_supply_enriched.empty:
         return pd.DataFrame()
 
-    df = unified_features.copy()
-    require_columns(df, {"price", "property_type", "transaction_date"}, "unified_features")
+    df = town_supply_enriched.copy()
+    require_columns(df, {"price", "property_type", "transaction_date"}, "town_supply_enriched")
 
     if writer is not None:
         writer.write(df, "unified_dataset", "platinum")

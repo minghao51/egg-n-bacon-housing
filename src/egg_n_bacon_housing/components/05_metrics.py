@@ -120,8 +120,12 @@ def affordability_metrics(
 ) -> pd.DataFrame:
     """Compute affordability metrics by planning area.
 
+    Uses per-planning-area median income from Census data if available,
+    falling back to the global median_household_income parameter.
+
     Args:
-        unified_dataset: Full unified dataset.
+        unified_dataset: Full unified dataset (includes median_monthly_income).
+        median_household_income: Fallback annual income (default 85000).
 
     Returns:
         DataFrame with affordability metrics.
@@ -136,17 +140,21 @@ def affordability_metrics(
     if df.empty:
         return pd.DataFrame()
 
-    metrics = (
-        df.groupby(["planning_area", "month"])
-        .agg(
-            median_price=("price", "median"),
-            transaction_count=("price", "count"),
-        )
-        .reset_index()
-    )
+    agg_spec = {
+        "median_price": ("price", "median"),
+        "transaction_count": ("price", "count"),
+    }
+    if "median_monthly_income" in df.columns:
+        agg_spec["median_monthly_income"] = ("median_monthly_income", "mean")
 
-    estimated_income = median_household_income
-    metrics["affordability_ratio"] = metrics["median_price"] / estimated_income
+    metrics = df.groupby(["planning_area", "month"]).agg(**agg_spec).reset_index()
+
+    if "median_monthly_income" in metrics.columns:
+        annual_income = metrics["median_monthly_income"] * 12
+        annual_income = annual_income.where(annual_income > 0, median_household_income)
+    else:
+        annual_income = median_household_income
+    metrics["affordability_ratio"] = metrics["median_price"] / annual_income
 
     metrics["affordability_class"] = metrics["affordability_ratio"].apply(classify_affordability)
 

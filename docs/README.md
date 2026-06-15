@@ -8,6 +8,7 @@ This directory keeps a small active operational path plus a larger archive of hi
 | ---------------- | ------------------------------------------------ |
 | Project overview | [README.md](../README.md)                        |
 | System structure | [architecture.md](./architecture.md)             |
+| Data sources     | [data-sources.md](./data-sources.md)             |
 | Daily workflow   | [guides/usage-guide.md](./guides/usage-guide.md) |
 | Guide index      | [guides/README.md](./guides/README.md)           |
 | Troubleshooting  | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)       |

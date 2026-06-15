@@ -26,10 +26,22 @@ def compute_proximity_features(
     mrt_stations: pd.DataFrame | None = None,
     schools: pd.DataFrame | None = None,
     malls: pd.DataFrame | None = None,
+    hawkers: pd.DataFrame | None = None,
+    supermarkets: pd.DataFrame | None = None,
+    parks: pd.DataFrame | None = None,
+    childcare: pd.DataFrame | None = None,
+    kindergartens: pd.DataFrame | None = None,
+    bus_stops: pd.DataFrame | None = None,
+    chas_clinics: pd.DataFrame | None = None,
+    sports_facilities: pd.DataFrame | None = None,
+    community_clubs: pd.DataFrame | None = None,
+    green_mark_buildings: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Compute all proximity features for a property dataset.
 
-    Adds columns for nearest MRT, school, and mall distances and names.
+    Adds columns for nearest MRT, school, mall, hawker, supermarket, park,
+    childcare, kindergarten, bus stop, CHAS clinic, sports facility,
+    community club, and green mark building distances and names.
     Gracefully handles missing POI datasets (skips those features).
 
     Args:
@@ -37,6 +49,16 @@ def compute_proximity_features(
         mrt_stations: DataFrame with name, lat, lon, plus MRT metadata.
         schools: DataFrame with school_name, latitude, longitude, mainlevel_code.
         malls: DataFrame with shopping_mall (or name), lat/latitude, lon/longitude.
+        hawkers: DataFrame with name, lat, lon.
+        supermarkets: DataFrame with name, lat, lon.
+        parks: DataFrame with name, lat, lon.
+        childcare: DataFrame with name, lat, lon.
+        kindergartens: DataFrame with name, lat, lon.
+        bus_stops: DataFrame with name, lat, lon.
+        chas_clinics: DataFrame with name, lat, lon.
+        sports_facilities: DataFrame with name, lat, lon.
+        community_clubs: DataFrame with name, lat, lon.
+        green_mark_buildings: DataFrame with name, lat, lon.
 
     Returns:
         Properties DataFrame with proximity feature columns added.
@@ -50,6 +72,22 @@ def compute_proximity_features(
 
     if malls is not None and not malls.empty:
         df = _compute_mall_proximity(df, malls)
+
+    generic_amenities = {
+        "hawker": hawkers,
+        "supermarket": supermarkets,
+        "park": parks,
+        "childcare": childcare,
+        "kindergarten": kindergartens,
+        "bus_stop": bus_stops,
+        "chas_clinic": chas_clinics,
+        "sports_facility": sports_facilities,
+        "community_club": community_clubs,
+        "green_mark_building": green_mark_buildings,
+    }
+    for label, poi_df in generic_amenities.items():
+        if poi_df is not None and not poi_df.empty:
+            df = _compute_generic_proximity(df, poi_df, label)
 
     return df
 
@@ -166,4 +204,58 @@ def _compute_mall_proximity(df: pd.DataFrame, malls: pd.DataFrame) -> pd.DataFra
     df.loc[~valid_mask, "dist_to_nearest_mall"] = pd.NA
     df.loc[~valid_mask, "nearest_mall"] = pd.NA
 
+    return df
+
+
+def _compute_generic_proximity(df: pd.DataFrame, poi_df: pd.DataFrame, label: str) -> pd.DataFrame:
+    """Add nearest amenity distance and name for a generic POI type.
+
+    Uses BallTree with haversine metric for accurate distance computation.
+
+    Args:
+        df: Properties DataFrame with lat/lon.
+        poi_df: POI DataFrame with name, lat, lon.
+        label: Amenity label (e.g. 'hawker', 'supermarket', 'park').
+    """
+    name_col = "name" if "name" in poi_df.columns else poi_df.columns[0]
+    valid_pois = poi_df[[name_col, "lat", "lon"]].copy()
+    valid_pois["lat"] = pd.to_numeric(valid_pois["lat"], errors="coerce")
+    valid_pois["lon"] = pd.to_numeric(valid_pois["lon"], errors="coerce")
+    valid_pois = valid_pois.dropna(subset=["lat", "lon"])
+
+    dist_col = f"dist_to_nearest_{label}"
+    name_out_col = f"nearest_{label}"
+
+    if valid_pois.empty:
+        df[dist_col] = pd.NA
+        df[name_out_col] = pd.NA
+        return df
+
+    valid_mask = df["lat"].notna() & df["lon"].notna()
+    valid_df = df.loc[valid_mask]
+
+    if valid_df.empty:
+        df[dist_col] = pd.NA
+        df[name_out_col] = pd.NA
+        return df
+
+    property_coords = np.radians(valid_df[["lat", "lon"]].astype(float).to_numpy())
+    poi_coords = np.radians(valid_pois[["lat", "lon"]].to_numpy())
+
+    tree = BallTree(poi_coords, metric="haversine")
+    distances_rad, nearest_indices = tree.query(property_coords, k=1)
+    distances_m = distances_rad[:, 0] * 6371000
+    nearest_indices_flat = nearest_indices[:, 0]
+
+    df.loc[valid_mask, dist_col] = distances_m
+    df.loc[valid_mask, name_out_col] = valid_pois.iloc[nearest_indices_flat][name_col].to_numpy()
+
+    df.loc[~valid_mask, dist_col] = pd.NA
+    df.loc[~valid_mask, name_out_col] = pd.NA
+
+    logger.info(
+        "%s proximity: median distance %sm",
+        label.capitalize(),
+        f"{pd.to_numeric(df.loc[valid_mask, dist_col], errors='coerce').median():.0f}",
+    )
     return df

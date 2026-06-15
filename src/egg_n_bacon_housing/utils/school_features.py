@@ -3,7 +3,7 @@
 
 import json
 import logging
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 from typing import Any
 
 import numpy as np
@@ -270,7 +270,7 @@ def fuzzy_match_schools(
 
 
 def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
-    """Geocode school addresses using OneMap API with concurrent requests."""
+    """Geocode school addresses using OneMap API with rate-limited requests."""
     schools_df["latitude"] = None
     schools_df["longitude"] = None
 
@@ -282,8 +282,8 @@ def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
 
     @retry(
         retry=retry_if_exception_type(requests.RequestException),
-        wait=wait_exponential(min=1, max=10),
-        stop=stop_after_attempt(3),
+        wait=wait_exponential(min=2, max=30),
+        stop=stop_after_attempt(5),
         before_sleep=lambda rs: logger.debug(
             "Retrying geocode (attempt %d): %s",
             rs.attempt_number,
@@ -308,23 +308,31 @@ def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
             if data.get("found", 0) > 0:
                 result = data["results"][0]
                 return (idx, float(result["LATITUDE"]), float(result["LONGITUDE"]))
-        except (requests.RequestException, ValueError, KeyError) as e:
-            logger.debug("Geocoding failed for %s: %s", postal_code, e)
+        except requests.HTTPError as e:
+            if e.response.status_code == 429:
+                logger.debug("OneMap rate limit (429) for postal %s — will retry", postal_code)
+                time.sleep(1)
+                raise
             raise
+        except (ValueError, KeyError) as e:
+            logger.debug("Geocoding failed for %s: %s", postal_code, e)
         return (idx, None, None)
 
     geocoded = 0
-    with ThreadPoolExecutor(max_workers=settings.geocoding.max_workers) as executor:
-        futures = {}
-        for _i, item in enumerate(rows_to_geocode):
-            futures[executor.submit(_geocode_one, item)] = item
+    for idx, postal_code in rows_to_geocode:
+        try:
+            _idx, lat, lon = _geocode_one((idx, postal_code))
+        except Exception as e:
+            logger.warning("Geocode failed for postal %s: %s", postal_code, e)
+            continue
+        if lat is not None:
+            schools_df.at[idx, "latitude"] = lat
+            schools_df.at[idx, "longitude"] = lon
+            geocoded += 1
+        time.sleep(0.3)
 
-        for future in as_completed(futures):
-            idx, lat, lon = future.result()
-            if lat is not None:
-                schools_df.at[idx, "latitude"] = lat
-                schools_df.at[idx, "longitude"] = lon
-                geocoded += 1
+    schools_df["latitude"] = pd.to_numeric(schools_df["latitude"], errors="coerce")
+    schools_df["longitude"] = pd.to_numeric(schools_df["longitude"], errors="coerce")
 
     logger.info("Geocoded %s/%s schools", geocoded, len(schools_df))
     return schools_df

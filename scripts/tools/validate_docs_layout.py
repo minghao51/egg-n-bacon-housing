@@ -26,6 +26,7 @@ ACTIVE_REFERENCE_FILES = [
     REPO_ROOT / "docs" / "README.md",
     REPO_ROOT / "docs" / "TROUBLESHOOTING.md",
     REPO_ROOT / "docs" / "architecture.md",
+    REPO_ROOT / "docs" / "data-sources.md",
     REPO_ROOT / "docs" / "guides" / "README.md",
     REPO_ROOT / "docs" / "guides" / "quick-start.md",
     REPO_ROOT / "docs" / "guides" / "usage-guide.md",
@@ -38,6 +39,7 @@ ALLOWED_DOCS_ROOT_MD = {
     "README.md",
     "architecture.md",
     "TROUBLESHOOTING.md",
+    "data-sources.md",
 }
 
 VALID_CATEGORIES = {
