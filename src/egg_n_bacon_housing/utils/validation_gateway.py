@@ -51,7 +51,7 @@ def vectorized_precheck(
                 pct = null_count / total * 100 if total else 0
                 issues.append(f"  {field_name}: {null_count} null ({pct:.1f}%) — required field")
 
-        bounds: dict[str, float] = {}
+        bounds: dict[str, Any] = {}
         for m in field_info.metadata:
             if isinstance(m, annotated_types.Gt):
                 bounds["gt"] = m.gt
