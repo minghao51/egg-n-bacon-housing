@@ -79,7 +79,7 @@ interface SpatialData {
 interface InteractiveToolsPanelProps {
   mrtCbdData: MrtCbdData;
   leaseDecayData: LeaseDecayData;
-  affordabilityData: AffordabilityData;
+  affordabilityData: AffordabilityData | null;
   hotspotsData: SpatialData;
   segmentsData: {
     segments: Array<{
@@ -155,6 +155,13 @@ export default function InteractiveToolsPanel({
           <LeaseDecayAnalyzer data={leaseDecayData} persona={selectedPersona} />
         );
       case "affordability":
+        if (!affordabilityData) {
+          return (
+            <div className="text-center text-gray-500 dark:text-gray-400 py-12">
+              Affordability calculator data is not available.
+            </div>
+          );
+        }
         return (
           <AffordabilityCalculator
             data={affordabilityData}

@@ -1,7 +1,7 @@
 """05_metrics: Planning area metrics computation (Hamilton DAG node).
 
 This module provides Hamilton-compatible functions for computing
-planning-area-level metrics from the platinum layer.
+planning-area-level metrics from the enriched transaction layer.
 """
 
 import logging
@@ -18,132 +18,50 @@ from egg_n_bacon_housing.utils.time_index import ensure_month_column
 logger = logging.getLogger(__name__)
 
 
-def price_metrics_by_area(
-    unified_dataset: pd.DataFrame,
+def pa_monthly_metrics(
+    transactions_enriched: pd.DataFrame,
     platinum_dir: Path,
     writer: LayerWriter | None = None,
+    median_household_income: int = 85000,
 ) -> pd.DataFrame:
-    """Compute price metrics by planning area and month.
+    """Compute a single PA x month time series with all metrics.
+
+    Replaces price_metrics_by_area, rental_yield_by_area, and
+    affordability_metrics with one unified aggregation.
 
     Args:
-        unified_dataset: Full unified dataset.
+        transactions_enriched: Full enriched transactions from 03_features.
+        median_household_income: Fallback annual income for affordability.
 
     Returns:
-        DataFrame with price metrics.
+        DataFrame with PA x month metrics (~5K rows).
     """
-    if unified_dataset.empty:
+    if transactions_enriched.empty:
         return pd.DataFrame()
 
-    required_cols = ["price", "planning_area"]
-    if not all(c in unified_dataset.columns for c in required_cols):
-        logger.warning("Missing required columns for price metrics")
+    if (
+        "planning_area" not in transactions_enriched.columns
+        or "price" not in transactions_enriched.columns
+    ):
+        logger.warning("pa_monthly_metrics: missing planning_area or price")
         return pd.DataFrame()
 
-    df = ensure_month_column(unified_dataset.copy())
+    df = ensure_month_column(transactions_enriched.copy())
     if df.empty:
         return pd.DataFrame()
 
-    agg_spec = {
+    df = df[df["planning_area"].notna()]
+
+    agg_spec: dict[str, tuple] = {
         "median_price": ("price", "median"),
         "mean_price": ("price", "mean"),
         "transaction_count": ("price", "count"),
     }
     if "psf" in df.columns:
         agg_spec["avg_psf"] = ("psf", "mean")
-
-    metrics = df.groupby(["planning_area", "month"]).agg(**agg_spec).reset_index()
-
-    if writer is not None:
-        writer.write(metrics, "L5_price_metrics_by_area", "platinum_metrics")
-    else:
-        save_parquet(
-            metrics, platinum_dir / "metrics" / "L5_price_metrics_by_area.parquet", "price metrics"
-        )
-
-    return metrics
-
-
-def rental_yield_by_area(
-    unified_dataset: pd.DataFrame,
-    platinum_dir: Path,
-    writer: LayerWriter | None = None,
-) -> pd.DataFrame:
-    """Compute rental yield metrics by planning area.
-
-    Args:
-        unified_dataset: Full unified dataset.
-
-    Returns:
-        DataFrame with rental yield metrics.
-    """
-    if unified_dataset.empty:
-        return pd.DataFrame()
-
-    if "rental_yield_pct" not in unified_dataset.columns:
-        logger.warning("No rental yield data available")
-        return pd.DataFrame()
-
-    df = ensure_month_column(unified_dataset.copy())
-    if df.empty:
-        return pd.DataFrame()
-
-    if "planning_area" not in df.columns:
-        return pd.DataFrame()
-
-    metrics = (
-        df.groupby(["planning_area", "month"])
-        .agg(
-            median_rental_yield=("rental_yield_pct", "median"),
-            avg_rental_yield=("rental_yield_pct", "mean"),
-            count=("rental_yield_pct", "count"),
-        )
-        .reset_index()
-    )
-
-    if writer is not None:
-        writer.write(metrics, "L5_rental_yield_by_area", "platinum_metrics")
-    else:
-        save_parquet(
-            metrics,
-            platinum_dir / "metrics" / "L5_rental_yield_by_area.parquet",
-            "rental yield metrics",
-        )
-
-    return metrics
-
-
-def affordability_metrics(
-    unified_dataset: pd.DataFrame,
-    platinum_dir: Path,
-    writer: LayerWriter | None = None,
-    median_household_income: int = 85000,
-) -> pd.DataFrame:
-    """Compute affordability metrics by planning area.
-
-    Uses per-planning-area median income from Census data if available,
-    falling back to the global median_household_income parameter.
-
-    Args:
-        unified_dataset: Full unified dataset (includes median_monthly_income).
-        median_household_income: Fallback annual income (default 85000).
-
-    Returns:
-        DataFrame with affordability metrics.
-    """
-    if unified_dataset.empty:
-        return pd.DataFrame()
-
-    if "planning_area" not in unified_dataset.columns:
-        return pd.DataFrame()
-
-    df = ensure_month_column(unified_dataset.copy())
-    if df.empty:
-        return pd.DataFrame()
-
-    agg_spec = {
-        "median_price": ("price", "median"),
-        "transaction_count": ("price", "count"),
-    }
+    if "rental_yield_pct" in df.columns:
+        agg_spec["median_rental_yield"] = ("rental_yield_pct", "median")
+        agg_spec["avg_rental_yield"] = ("rental_yield_pct", "mean")
     if "median_monthly_income" in df.columns:
         agg_spec["median_monthly_income"] = ("median_monthly_income", "mean")
 
@@ -153,40 +71,40 @@ def affordability_metrics(
         annual_income = metrics["median_monthly_income"] * 12
         annual_income = annual_income.where(annual_income > 0, median_household_income)
     else:
-        annual_income = median_household_income
+        annual_income = float(median_household_income)
     metrics["affordability_ratio"] = metrics["median_price"] / annual_income
-
     metrics["affordability_class"] = metrics["affordability_ratio"].apply(classify_affordability)
 
     if writer is not None:
-        writer.write(metrics, "L5_affordability_by_area", "platinum_metrics")
+        writer.write(metrics, "pa_monthly_metrics", "platinum_metrics")
     else:
         save_parquet(
             metrics,
-            platinum_dir / "metrics" / "L5_affordability_by_area.parquet",
-            "affordability metrics",
+            platinum_dir / "metrics" / "pa_monthly_metrics.parquet",
+            "PA monthly metrics",
         )
 
+    logger.info("pa_monthly_metrics: %s PA-month rows", len(metrics))
     return metrics
 
 
 def appreciation_hotspots(
-    price_metrics_by_area: pd.DataFrame,
+    pa_monthly_metrics: pd.DataFrame,
     platinum_dir: Path,
     writer: LayerWriter | None = None,
 ) -> pd.DataFrame:
-    """Identify price appreciation hotspots.
+    """Identify price appreciation hotspots from PA monthly metrics.
 
     Args:
-        price_metrics_by_area: Output from price_metrics_by_area.
+        pa_monthly_metrics: Output from pa_monthly_metrics.
 
     Returns:
-        DataFrame with appreciation hotspot rankings.
+        DataFrame with appreciation hotspot rankings (top 20).
     """
-    if price_metrics_by_area.empty:
+    if pa_monthly_metrics.empty:
         return pd.DataFrame()
 
-    df = price_metrics_by_area.copy()
+    df = pa_monthly_metrics.copy()
 
     if "median_price" not in df.columns:
         return pd.DataFrame()

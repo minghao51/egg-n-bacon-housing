@@ -33,7 +33,7 @@ def test_load_market_summary_prefers_platinum_metrics_path(tmp_path, monkeypatch
     legacy_dir.mkdir(parents=True)
 
     pd.DataFrame([{"marker": "new"}]).to_parquet(
-        metrics_dir / "L5_price_metrics_by_area.parquet",
+        metrics_dir / "pa_monthly_metrics.parquet",
         index=False,
     )
     pd.DataFrame([{"marker": "legacy"}]).to_parquet(
@@ -101,18 +101,14 @@ def test_load_unified_data_falls_back_to_legacy_path(tmp_path, monkeypatch):
     assert "transaction_date" in result.columns
 
 
-def test_load_planning_area_metrics_merges_price_and_affordability(tmp_path, monkeypatch):
-    """Should merge price and affordability datasets when both exist."""
+def test_load_planning_area_metrics_prefers_pa_monthly(tmp_path, monkeypatch):
+    """Should prefer pa_monthly_metrics when available."""
     settings = _DummySettings(tmp_path)
     metrics_dir = settings.platinum_dir / "metrics"
     metrics_dir.mkdir(parents=True)
 
     pd.DataFrame([{"planning_area": "Toa Payoh", "median_price": 500000}]).to_parquet(
-        metrics_dir / "L5_price_metrics_by_area.parquet",
-        index=False,
-    )
-    pd.DataFrame([{"planning_area": "Toa Payoh", "affordability_ratio": 0.6}]).to_parquet(
-        metrics_dir / "L5_affordability_by_area.parquet",
+        metrics_dir / "pa_monthly_metrics.parquet",
         index=False,
     )
 
@@ -123,17 +119,16 @@ def test_load_planning_area_metrics_merges_price_and_affordability(tmp_path, mon
 
     assert not result.empty
     assert "median_price" in result.columns
-    assert "affordability_ratio" in result.columns
 
 
-def test_load_planning_area_metrics_returns_single_file_when_one_missing(tmp_path, monkeypatch):
-    """Should return whichever file exists when only one platinum file is present."""
+def test_load_planning_area_metrics_falls_back_to_legacy(tmp_path, monkeypatch):
+    """Should fall back to legacy L3 path when platinum file is missing."""
     settings = _DummySettings(tmp_path)
-    metrics_dir = settings.platinum_dir / "metrics"
-    metrics_dir.mkdir(parents=True)
+    legacy_dir = settings.data_dir / "pipeline" / "L3"
+    legacy_dir.mkdir(parents=True)
 
     pd.DataFrame([{"planning_area": "Toa Payoh", "median_price": 500000}]).to_parquet(
-        metrics_dir / "L5_price_metrics_by_area.parquet",
+        legacy_dir / "planning_area_metrics.parquet",
         index=False,
     )
 

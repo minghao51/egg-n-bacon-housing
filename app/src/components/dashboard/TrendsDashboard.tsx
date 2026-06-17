@@ -4,7 +4,7 @@ import InteractiveToolsPanel from "./InteractiveToolsPanel";
 interface TrendsDashboardProps {
   mrtCbdData: any;
   leaseDecayData: any;
-  affordabilityData: any;
+  affordabilityData: any | null;
   hotspotsData: any;
   segmentsData: { segments: any[] } | null;
 }

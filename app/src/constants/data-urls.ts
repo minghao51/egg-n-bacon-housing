@@ -22,12 +22,6 @@ export const DATA_URLS = {
     feature: `${BASE_URL}data/analytics/feature_impact.json.gz`,
     predictive: `${BASE_URL}data/analytics/predictive_analytics.json.gz`,
   },
-  interactive: {
-    mrtCbd: `${BASE_URL}data/interactive_tools/mrt_cbd_impact.json.gz`,
-    spatialHotspots: `${BASE_URL}data/interactive_tools/spatial_hotspots.json.gz`,
-    leaseDecay: `${BASE_URL}data/interactive_tools/lease_decay_analysis.json.gz`,
-    affordability: `${BASE_URL}data/interactive_tools/affordability_metrics.json.gz`,
-  },
 } as const;
 
 export type AnalyticsType = "spatial" | "feature" | "predictive";

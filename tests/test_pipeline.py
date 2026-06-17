@@ -23,7 +23,7 @@ def test_build_pipeline_and_execute_minimal_graph(monkeypatch, tmp_path):
     exec(
         "import pandas as pd\n"
         "from pathlib import Path\n"
-        "def unified_features(platinum_dir: Path) -> pd.DataFrame:\n"
+        "def test_output(platinum_dir: Path) -> pd.DataFrame:\n"
         "    return pd.DataFrame([{'price': 1}])\n",
         module.__dict__,
     )
@@ -35,13 +35,13 @@ def test_build_pipeline_and_execute_minimal_graph(monkeypatch, tmp_path):
     try:
         dr = pipeline.build_pipeline(data_path=str(tmp_path))
         result = dr.execute(
-            final_vars=["unified_features"],
+            final_vars=["test_output"],
             inputs={"platinum_dir": tmp_path / "platinum"},
         )
 
-        assert "unified_features" in result
-        assert isinstance(result["unified_features"], pd.DataFrame)
-        assert len(result["unified_features"]) == 1
+        assert "test_output" in result
+        assert isinstance(result["test_output"], pd.DataFrame)
+        assert len(result["test_output"]) == 1
     finally:
         sys.modules.pop(module.__name__, None)
 

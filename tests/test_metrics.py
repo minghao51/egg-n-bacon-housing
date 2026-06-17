@@ -12,8 +12,8 @@ def _get_metrics_module():
     return importlib.import_module("egg_n_bacon_housing.components.05_metrics")
 
 
-class TestPriceMetrics:
-    def test_price_metrics_produces_expected_columns(self, tmp_path, monkeypatch):
+class TestPaMonthlyMetrics:
+    def test_pa_monthly_metrics_produces_expected_columns(self, tmp_path):
         metrics = _get_metrics_module()
         platinum_dir = tmp_path / "platinum"
 
@@ -34,33 +34,35 @@ class TestPriceMetrics:
             ]
         )
 
-        result = metrics.price_metrics_by_area(df, platinum_dir=platinum_dir)
+        result = metrics.pa_monthly_metrics(df, platinum_dir=platinum_dir)
 
         assert not result.empty
         assert "median_price" in result.columns
         assert "mean_price" in result.columns
         assert "transaction_count" in result.columns
         assert "avg_psf" in result.columns
+        assert "affordability_ratio" in result.columns
+        assert "affordability_class" in result.columns
         assert result.loc[0, "median_price"] == 510000.0
         assert result.loc[0, "avg_psf"] == pytest.approx(510.0)
 
-    def test_price_metrics_empty_input(self, tmp_path, monkeypatch):
+    def test_pa_monthly_metrics_empty_input(self, tmp_path):
         metrics = _get_metrics_module()
 
-        result = metrics.price_metrics_by_area(pd.DataFrame(), platinum_dir=tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(pd.DataFrame(), platinum_dir=tmp_path / "platinum")
 
         assert result.empty
 
-    def test_price_metrics_missing_month_and_date_returns_empty(self, tmp_path, monkeypatch):
+    def test_pa_monthly_metrics_missing_planning_area(self, tmp_path):
         metrics = _get_metrics_module()
 
-        df = pd.DataFrame([{"planning_area": "Toa Payoh", "price": 500000.0}])
+        df = pd.DataFrame([{"price": 500000.0, "transaction_date": pd.Timestamp("2024-01-15")}])
 
-        result = metrics.price_metrics_by_area(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, platinum_dir=tmp_path / "platinum")
 
         assert result.empty
 
-    def test_price_metrics_without_psf_omits_avg_psf(self, tmp_path, monkeypatch):
+    def test_pa_monthly_metrics_without_psf(self, tmp_path):
         metrics = _get_metrics_module()
 
         df = pd.DataFrame(
@@ -73,13 +75,32 @@ class TestPriceMetrics:
             ]
         )
 
-        result = metrics.price_metrics_by_area(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, platinum_dir=tmp_path / "platinum")
 
         assert not result.empty
         assert "avg_psf" not in result.columns
 
+    def test_pa_monthly_metrics_with_rental_yield(self, tmp_path):
+        metrics = _get_metrics_module()
 
-class TestAffordabilityMetrics:
+        df = pd.DataFrame(
+            [
+                {
+                    "planning_area": "Toa Payoh",
+                    "price": 500000.0,
+                    "transaction_date": pd.Timestamp("2024-01-15"),
+                    "rental_yield_pct": 3.5,
+                },
+            ]
+        )
+
+        result = metrics.pa_monthly_metrics(df, platinum_dir=tmp_path / "platinum")
+
+        assert not result.empty
+        assert "median_rental_yield" in result.columns
+
+
+class TestAffordabilityInPaMonthly:
     def test_affordability_uses_config_income(self, tmp_path):
         metrics = _get_metrics_module()
 
@@ -93,7 +114,7 @@ class TestAffordabilityMetrics:
             ]
         )
 
-        result = metrics.affordability_metrics(
+        result = metrics.pa_monthly_metrics(
             df,
             platinum_dir=tmp_path / "platinum",
             median_household_income=100000,
@@ -124,7 +145,7 @@ class TestAffordabilityMetrics:
             ]
         )
 
-        result = metrics.affordability_metrics(
+        result = metrics.pa_monthly_metrics(
             df,
             platinum_dir=tmp_path / "platinum",
             median_household_income=85000,

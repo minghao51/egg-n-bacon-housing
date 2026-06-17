@@ -10,9 +10,17 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction, HRentalYieldRecord
+from egg_n_bacon_housing.schemas.feature_models import (
+    BlockProfile,
+    HFeatureTransaction,
+    HRentalYieldRecord,
+    LocationDimRecord,
+    PlanningArea360,
+    Town360,
+)
 from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.proximity import compute_proximity_features
+from egg_n_bacon_housing.utils.regional_mapping import get_region_for_planning_area
 from egg_n_bacon_housing.utils.school_features import _geocode_schools, calculate_school_features
 from egg_n_bacon_housing.utils.time_index import ensure_month_column
 from egg_n_bacon_housing.utils.validation_gateway import validate_and_quarantine
@@ -227,11 +235,11 @@ def _add_planning_area(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def features_with_amenities(
+def location_dim(
     geocoded_validated: pd.DataFrame,
+    raw_mrt_stations: pd.DataFrame,
     raw_school_directory: pd.DataFrame,
     raw_shopping_malls: pd.DataFrame,
-    raw_mrt_stations: pd.DataFrame,
     raw_hawker_centres: pd.DataFrame,
     raw_supermarkets: pd.DataFrame,
     raw_parks: pd.DataFrame,
@@ -241,34 +249,20 @@ def features_with_amenities(
     raw_chas_clinics: pd.DataFrame,
     raw_sports_facilities: pd.DataFrame,
     raw_community_clubs: pd.DataFrame,
-    raw_green_mark_buildings: pd.DataFrame,
+    geocoded_green_mark_buildings: pd.DataFrame,
+    raw_hdb_property_info: pd.DataFrame,
     gold_dir: Path,
 ) -> pd.DataFrame:
-    """Compute amenity distance features.
+    """Build the location dimension table — one row per unique (lat, lon).
 
-    Args:
-        geocoded_validated: Geocoded transaction data.
-        raw_school_directory: School locations.
-        raw_mrt_stations: MRT station data (from 01_ingestion).
-        raw_hawker_centres: Hawker centre locations.
-        raw_supermarkets: Supermarket locations.
-        raw_parks: Park and nature reserve locations.
-        raw_childcare: Childcare centre locations.
-        raw_kindergartens: Kindergarten locations.
-        raw_bus_stops: Bus stop locations.
-        raw_chas_clinics: CHAS subsidised clinic locations.
-        raw_sports_facilities: SportSG facility locations.
-        raw_community_clubs: Community club locations.
-        raw_green_mark_buildings: BCA Green Mark certified buildings.
-
-    Returns:
-        DataFrame with computed features.
+    Computes ALL proximity features, school scores, block metadata, and
+    planning_area on ~10K unique locations instead of 1M transactions.
     """
     if geocoded_validated.empty:
         return pd.DataFrame()
 
     df = geocoded_validated.copy()
-    require_columns(df, {"lat", "lon", "price"}, "geocoded_validated")
+    require_columns(df, {"lat", "lon"}, "geocoded_validated")
     df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
     df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
     df = df.dropna(subset=["lat", "lon"])
@@ -276,24 +270,21 @@ def features_with_amenities(
     if df.empty:
         return pd.DataFrame()
 
-    if "price" in df.columns and "floor_area_sqft" in df.columns:
-        price = pd.to_numeric(df["price"], errors="coerce")
-        floor_area_sqft = pd.to_numeric(df["floor_area_sqft"], errors="coerce")
-        df["psf"] = np.where(floor_area_sqft > 0, price / floor_area_sqft, np.nan)
-    else:
-        df["psf"] = np.nan
+    carry_cols = [c for c in ("block", "street_name", "town") if c in df.columns]
+    loc = (
+        df.drop_duplicates(subset=["lat", "lon"], keep="first")[["lat", "lon", *carry_cols]]
+        .reset_index(drop=True)
+        .copy()
+    )
+    logger.info("location_dim: %s unique (lat, lon) pairs", len(loc))
 
-    if "remaining_lease_months" in df.columns:
-        df["remaining_lease_years"] = df["remaining_lease_months"] / 12
-
+    # --- School features ---
     if not raw_school_directory.empty:
-        if (
-            "latitude" not in raw_school_directory.columns
-            or raw_school_directory["latitude"].isna().all()
-        ):
+        schools = raw_school_directory
+        if "latitude" not in schools.columns or schools["latitude"].isna().all():
             logger.info("School directory lacks lat/lon — geocoding via OneMap...")
-            raw_school_directory = _geocode_schools(raw_school_directory)
-        df = calculate_school_features(df, raw_school_directory)
+            schools = _geocode_schools(schools)
+        loc = calculate_school_features(loc, schools)
         school_distance_cols = [
             col
             for col in [
@@ -301,54 +292,15 @@ def features_with_amenities(
                 "nearest_schoolSECONDARY_dist",
                 "nearest_schoolJUNIOR_dist",
             ]
-            if col in df.columns
+            if col in loc.columns
         ]
         if school_distance_cols:
-            df["dist_to_nearest_school"] = df[school_distance_cols].min(axis=1, skipna=True)
+            loc["dist_to_nearest_school"] = loc[school_distance_cols].min(axis=1, skipna=True)
 
-    green_mark_poi = raw_green_mark_buildings
-    if not green_mark_poi.empty and "postal_code" in green_mark_poi.columns:
-        unique_postals = green_mark_poi["postal_code"].drop_duplicates()
-        geocoded_map: dict[str, tuple[float | None, float | None]] = {}
-        if "lat" not in green_mark_poi.columns or green_mark_poi["lat"].isna().all():
-            logger.info("Geocoding %s unique Green Mark postal codes...", len(unique_postals))
-            import time
-
-            from egg_n_bacon_housing.adapters import onemap
-
-            headers = onemap.setup_onemap_headers()
-            for pc in unique_postals:
-                try:
-                    results = onemap.fetch_data(f"Singapore {pc}", headers, timeout=15)
-                    if results is not None and not results.empty:
-                        row = results.iloc[0]
-                        lat = pd.to_numeric(row.get("LATITUDE") or row.get("Y"), errors="coerce")
-                        lon = pd.to_numeric(row.get("LONGITUDE") or row.get("X"), errors="coerce")
-                        geocoded_map[str(pc)] = (lat, lon)
-                    else:
-                        geocoded_map[str(pc)] = (None, None)
-                except Exception:
-                    geocoded_map[str(pc)] = (None, None)
-                time.sleep(0.3)
-            green_mark_poi = green_mark_poi.copy()
-            green_mark_poi["lat"] = green_mark_poi["postal_code"].map(
-                lambda pc: geocoded_map.get(str(pc), (None, None))[0]
-            )
-            green_mark_poi["lon"] = green_mark_poi["postal_code"].map(
-                lambda pc: geocoded_map.get(str(pc), (None, None))[1]
-            )
-            green_mark_poi["name"] = green_mark_poi.get(
-                "Project_Name", green_mark_poi["postal_code"]
-            )
-            logger.info(
-                "Green Mark geocoded: %s/%s",
-                green_mark_poi["lat"].notna().sum(),
-                len(green_mark_poi),
-            )
-
+    # --- Proximity features (all 14 POI types) ---
     try:
-        df = compute_proximity_features(
-            df,
+        loc = compute_proximity_features(
+            loc,
             mrt_stations=raw_mrt_stations if not raw_mrt_stations.empty else None,
             malls=raw_shopping_malls if not raw_shopping_malls.empty else None,
             hawkers=raw_hawker_centres if not raw_hawker_centres.empty else None,
@@ -360,15 +312,16 @@ def features_with_amenities(
             chas_clinics=raw_chas_clinics if not raw_chas_clinics.empty else None,
             sports_facilities=raw_sports_facilities if not raw_sports_facilities.empty else None,
             community_clubs=raw_community_clubs if not raw_community_clubs.empty else None,
-            green_mark_buildings=green_mark_poi if not green_mark_poi.empty else None,
+            green_mark_buildings=(
+                geocoded_green_mark_buildings if not geocoded_green_mark_buildings.empty else None
+            ),
         )
     except (OSError, ValueError, KeyError, RuntimeError) as exc:
         logger.warning("Skipping proximity features: %s", exc)
-        df["dist_to_nearest_mrt"] = pd.NA
-        df["nearest_mrt_station"] = pd.NA
-        df["dist_to_nearest_mall"] = pd.NA
-        df["nearest_mall"] = pd.NA
+        loc["dist_to_nearest_mrt"] = pd.NA
+        loc["nearest_mrt_station"] = pd.NA
         for label in (
+            "mall",
             "hawker",
             "supermarket",
             "park",
@@ -380,108 +333,152 @@ def features_with_amenities(
             "community_club",
             "green_mark_building",
         ):
-            df[f"dist_to_nearest_{label}"] = pd.NA
-            df[f"nearest_{label}"] = pd.NA
+            loc[f"dist_to_nearest_{label}"] = pd.NA
+            loc[f"nearest_{label}"] = pd.NA
 
-    df = _add_planning_area(df)
+    # --- Block metadata from HDB Property Info ---
+    if not raw_hdb_property_info.empty and "block" in loc.columns and "street_name" in loc.columns:
+        prop = raw_hdb_property_info.copy()
+        prop["blk_no"] = prop["blk_no"].astype(str).str.strip().str.upper()
+        prop["street"] = prop["street"].astype(str).str.strip().str.upper()
 
-    df = validate_and_quarantine(
-        df,
-        HFeatureTransaction,
-        "feature_transaction",
+        loc["_join_block"] = loc["block"].astype(str).str.strip().str.upper()
+        loc["_join_street"] = loc["street_name"].astype(str).str.strip().str.upper()
+
+        prop_lookup = prop[
+            [
+                "blk_no",
+                "street",
+                "max_floor_lvl",
+                "year_completed",
+                "total_dwelling_units",
+                "residential",
+                "commercial",
+                "market_hawker",
+                "multistorey_carpark",
+            ]
+        ].copy()
+        prop_lookup = prop_lookup.rename(
+            columns={"blk_no": "_join_block", "street": "_join_street"}
+        )
+        for col in ("max_floor_lvl", "year_completed", "total_dwelling_units"):
+            if col in prop_lookup.columns:
+                prop_lookup[col] = pd.to_numeric(prop_lookup[col], errors="coerce")
+        prop_lookup = prop_lookup.drop_duplicates(
+            subset=["_join_block", "_join_street"], keep="first"
+        )
+
+        loc = loc.merge(prop_lookup, on=["_join_block", "_join_street"], how="left")
+        loc = loc.drop(columns=["_join_block", "_join_street"], errors="ignore")
+
+        matched = loc["year_completed"].notna().sum() if "year_completed" in loc.columns else 0
+        logger.info(
+            "location_dim block metadata: %s/%s (%.1f%%) matched",
+            matched,
+            len(loc),
+            matched / len(loc) * 100 if len(loc) else 0,
+        )
+
+    for col in (
+        "max_floor_lvl",
+        "year_completed",
+        "total_dwelling_units",
+        "residential",
+        "commercial",
+        "market_hawker",
+        "multistorey_carpark",
+    ):
+        if col not in loc.columns:
+            loc[col] = pd.NA
+
+    # --- Planning area + region ---
+    loc = _add_planning_area(loc)
+    if "planning_area" in loc.columns:
+        loc["region"] = loc["planning_area"].apply(
+            lambda pa: get_region_for_planning_area(str(pa)) if pd.notna(pa) else None
+        )
+
+    loc = validate_and_quarantine(
+        loc,
+        LocationDimRecord,
+        "location_dim",
         layer_dir=gold_dir,
-        filename="features_with_amenities.parquet",
+        filename="location_dim.parquet",
     )
 
-    return df
+    return loc
 
 
-def unified_features(
-    features_with_amenities: pd.DataFrame, rental_yield: pd.DataFrame, gold_dir: Path
+def transactions_enriched(
+    geocoded_validated: pd.DataFrame,
+    location_dim: pd.DataFrame,
+    rental_yield: pd.DataFrame,
+    raw_macro_data: dict[str, pd.DataFrame],
+    raw_dwelling_units_by_town: pd.DataFrame,
+    raw_hdb_resident_population: pd.DataFrame,
+    raw_median_annual_value: pd.DataFrame,
+    raw_income_by_planning_area: pd.DataFrame,
+    gold_dir: Path,
 ) -> pd.DataFrame:
-    """Merge rental yield onto feature data.
+    """Join location_dim onto transactions + merge macro + yield + supply.
 
-    Args:
-        features_with_amenities: Feature-enriched transactions.
-        rental_yield: Precomputed rental yields.
-
-    Returns:
-        Unified feature DataFrame.
+    Fast merge: location_dim (10K) → transactions (1M) by (lat, lon),
+    then macro indicators, rental yield, town supply, income, and annual value.
     """
-    if features_with_amenities.empty:
+    if geocoded_validated.empty:
         return pd.DataFrame()
 
-    df = features_with_amenities.copy()
+    df = geocoded_validated.copy()
+    require_columns(df, {"lat", "lon", "price"}, "geocoded_validated")
+    df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
+    df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
 
-    if not rental_yield.empty:
-        rental_df = rental_yield.copy()
+    # --- Derived columns ---
+    if "price" in df.columns and "floor_area_sqft" in df.columns:
+        price = pd.to_numeric(df["price"], errors="coerce")
+        floor_area_sqft = pd.to_numeric(df["floor_area_sqft"], errors="coerce")
+        df["psf"] = np.where(floor_area_sqft > 0, price / floor_area_sqft, np.nan)
+    else:
+        df["psf"] = np.nan
 
-        if "transaction_date" in df.columns and "month" not in df.columns:
-            df = ensure_month_column(df)
+    if "remaining_lease_months" in df.columns:
+        df["remaining_lease_years"] = df["remaining_lease_months"] / 12
 
+    # --- LEFT JOIN location_dim by (lat, lon) ---
+    if not location_dim.empty:
+        loc_join = location_dim.copy()
+        overlap = set(df.columns) & set(loc_join.columns) - {"lat", "lon"}
+        loc_join = loc_join.drop(columns=list(overlap))
+        df = df.merge(loc_join, on=["lat", "lon"], how="left")
+        logger.info("transactions_enriched: joined location_dim (%s cols)", len(loc_join.columns))
+
+    # --- Rental yield ---
+    if not rental_yield.empty and "rental_yield_pct" in rental_yield.columns:
+        df = ensure_month_column(df)
         if "flat_type" in df.columns:
             df["flat_type"] = _normalize_hdb_flat_type(df["flat_type"])
+
+        rental_df = rental_yield.copy()
         if "flat_type" in rental_df.columns:
             rental_df["flat_type"] = _normalize_hdb_flat_type(rental_df["flat_type"])
 
-        merge_priority = [
-            ["town", "month", "flat_type"],
-            ["town", "month"],
-        ]
+        merge_priority = [["town", "month", "flat_type"], ["town", "month"]]
         merge_keys: list[str] = []
         for keys in merge_priority:
             if all(k in df.columns for k in keys) and all(k in rental_df.columns for k in keys):
                 merge_keys = keys
                 break
 
-        if merge_keys and "rental_yield_pct" in rental_df.columns:
+        if merge_keys:
             rental_cols = [*merge_keys, "rental_yield_pct"]
             rental_lookup = rental_df[rental_cols].dropna(subset=["rental_yield_pct"])
             sort_col = next((c for c in merge_keys if "month" in c or "date" in c), merge_keys[0])
             rental_lookup = rental_lookup.sort_values(sort_col).drop_duplicates(
-                subset=merge_keys,
-                keep="last",
+                subset=merge_keys, keep="last"
             )
             df = df.merge(rental_lookup, on=merge_keys, how="left")
-        else:
-            logger.warning(
-                "Skipping rental yield join: missing required join keys between feature and yield datasets"
-            )
 
-    df = validate_and_quarantine(
-        df,
-        HFeatureTransaction,
-        "unified_feature",
-        layer_dir=gold_dir,
-        filename="unified_features.parquet",
-    )
-
-    return df
-
-
-def macro_enriched_features(
-    unified_features: pd.DataFrame,
-    raw_macro_data: dict[str, pd.DataFrame],
-    gold_dir: Path,
-) -> pd.DataFrame:
-    """Enrich unified features with macro economic indicators.
-
-    Merges CPI, SORA, bank rates (SORA 3M), unemployment, and GDP onto
-    transactions by matching date periods (monthly indicators by month,
-    quarterly by quarter).
-
-    Args:
-        unified_features: Output from unified_features().
-        raw_macro_data: Dict from raw_macro_data() with keys 'sora', 'cpi',
-            'gdp', 'unemployment', 'bank_rates'.
-
-    Returns:
-        DataFrame with macro indicator columns added.
-    """
-    if unified_features.empty:
-        return pd.DataFrame()
-
-    df = unified_features.copy()
+    # --- Macro indicators ---
     df = ensure_month_column(df)
     df["_month_ts"] = pd.to_datetime(df["month"], errors="coerce")
     df["_month"] = df["_month_ts"].dt.to_period("M").astype(str)
@@ -534,159 +531,123 @@ def macro_enriched_features(
 
     df = df.drop(columns=["_month", "_month_ts"], errors="ignore")
 
-    logger.info(
-        "Macro enrichment: cpi=%s, sora_rate=%s, sora_3m=%s, "
-        "unemployment_rate=%s, gdp=%s, hdb_rpi=%s, ura_ppi=%s, wage_growth=%s",
-        df["cpi"].notna().sum() if "cpi" in df.columns else 0,
-        df["sora_rate"].notna().sum() if "sora_rate" in df.columns else 0,
-        df["sora_3m"].notna().sum() if "sora_3m" in df.columns else 0,
-        df["unemployment_rate"].notna().sum() if "unemployment_rate" in df.columns else 0,
-        df["gdp"].notna().sum() if "gdp" in df.columns else 0,
-        df["hdb_rpi"].notna().sum() if "hdb_rpi" in df.columns else 0,
-        df["ura_ppi"].notna().sum() if "ura_ppi" in df.columns else 0,
-        df["wage_growth"].notna().sum() if "wage_growth" in df.columns else 0,
-    )
+    # --- Town supply, population, annual value ---
+    town_col = "town" if "town" in df.columns else None
+    if town_col:
+        df["_town_upper"] = df[town_col].astype(str).str.strip().str.upper()
+
+        if not raw_dwelling_units_by_town.empty:
+            dwell = raw_dwelling_units_by_town.copy()
+            if {
+                "town_or_estate",
+                "no_of_dwelling_units",
+                "financial_year",
+                "sold_or_rental",
+            }.issubset(dwell.columns):
+                dwell["financial_year"] = pd.to_numeric(dwell["financial_year"], errors="coerce")
+                latest_year = dwell["financial_year"].max()
+                dwell = dwell[dwell["financial_year"] == latest_year]
+                dwell = dwell[dwell["sold_or_rental"].astype(str).str.strip() == "Sold Units"]
+                dwell["no_of_dwelling_units"] = pd.to_numeric(
+                    dwell["no_of_dwelling_units"], errors="coerce"
+                )
+                dwell["_town_upper"] = dwell["town_or_estate"].astype(str).str.strip().str.upper()
+                dwell_lookup = (
+                    dwell.groupby("_town_upper")["no_of_dwelling_units"]
+                    .sum()
+                    .reset_index()
+                    .rename(columns={"no_of_dwelling_units": "dwelling_units_in_town"})
+                )
+                df = df.merge(dwell_lookup, on="_town_upper", how="left")
+
+        if "dwelling_units_in_town" not in df.columns:
+            df["dwelling_units_in_town"] = pd.NA
+
+        if not raw_hdb_resident_population.empty:
+            pop = raw_hdb_resident_population.copy()
+            if {"town_estate", "number", "shs_year"}.issubset(pop.columns):
+                pop["shs_year"] = pd.to_numeric(pop["shs_year"], errors="coerce")
+                latest_pop_year = pop["shs_year"].max()
+                pop = pop[pop["shs_year"] == latest_pop_year]
+                pop["number"] = pd.to_numeric(pop["number"], errors="coerce")
+                pop["_town_upper"] = pop["town_estate"].astype(str).str.strip().str.upper()
+                pop_lookup = pop[["_town_upper", "number"]].rename(
+                    columns={"number": "population_in_town"}
+                )
+                pop_lookup = pop_lookup.drop_duplicates(subset="_town_upper", keep="first")
+                df = df.merge(pop_lookup, on="_town_upper", how="left")
+
+        if "population_in_town" not in df.columns:
+            df["population_in_town"] = pd.NA
+
+        units = pd.to_numeric(df["dwelling_units_in_town"], errors="coerce")
+        pop_vals = pd.to_numeric(df["population_in_town"], errors="coerce")
+        df["population_per_dwelling"] = np.where(units > 0, pop_vals / units, pd.NA)
+
+        if not raw_median_annual_value.empty and "flat_type" in df.columns:
+            mav = raw_median_annual_value.copy()
+            if {
+                "type_of_hdb",
+                "median_annual_value",
+                "property_tax_collection",
+                "financial_year",
+            }.issubset(mav.columns):
+                mav["financial_year"] = pd.to_numeric(mav["financial_year"], errors="coerce")
+                latest_mav_year = mav["financial_year"].max()
+                mav = mav[mav["financial_year"] == latest_mav_year]
+                mav["median_annual_value"] = pd.to_numeric(
+                    mav["median_annual_value"], errors="coerce"
+                )
+                mav["property_tax_collection"] = pd.to_numeric(
+                    mav["property_tax_collection"], errors="coerce"
+                )
+                mav_lookup = mav[
+                    ["type_of_hdb", "median_annual_value", "property_tax_collection"]
+                ].rename(
+                    columns={
+                        "median_annual_value": "annual_value",
+                        "property_tax_collection": "property_tax",
+                    }
+                )
+                mav_lookup = mav_lookup.drop_duplicates(subset="type_of_hdb", keep="first")
+
+                df["_av_type"] = df["flat_type"].apply(_map_flat_type_for_annual_value)
+                df = df.merge(mav_lookup, left_on="_av_type", right_on="type_of_hdb", how="left")
+                df = df.drop(columns=["_av_type", "type_of_hdb"], errors="ignore")
+
+        df = df.drop(columns=["_town_upper"], errors="ignore")
+
+    # --- Income by planning area ---
+    if not raw_income_by_planning_area.empty and "planning_area" in df.columns:
+        income_lookup = raw_income_by_planning_area[
+            ["planning_area", "median_monthly_income"]
+        ].copy()
+        income_lookup["planning_area"] = income_lookup["planning_area"].astype(str).str.strip()
+        income_lookup = income_lookup.dropna(subset=["median_monthly_income"])
+        income_lookup = income_lookup.drop_duplicates(subset="planning_area", keep="first")
+
+        df["planning_area"] = df["planning_area"].astype(str).str.strip()
+        df = df.merge(income_lookup, on="planning_area", how="left")
+
+    for col in (
+        "dwelling_units_in_town",
+        "population_in_town",
+        "population_per_dwelling",
+        "annual_value",
+        "property_tax",
+        "wage_growth",
+        "median_monthly_income",
+    ):
+        if col not in df.columns:
+            df[col] = pd.NA
 
     df = validate_and_quarantine(
         df,
         HFeatureTransaction,
-        "macro_enriched_feature",
+        "transactions_enriched",
         layer_dir=gold_dir,
-        filename="macro_enriched_features.parquet",
-    )
-
-    return df
-
-
-def block_metadata_enriched(
-    macro_enriched_features: pd.DataFrame,
-    raw_hdb_property_info: pd.DataFrame,
-    gold_dir: Path,
-) -> pd.DataFrame:
-    """Enrich transactions with HDB block-level metadata.
-
-    Merges max_floor_lvl, year_completed, total_dwelling_units, and flat type
-    supply from HDB Property Information onto each transaction by matching
-    block number + street name.
-
-    Args:
-        macro_enriched_features: Output from macro_enriched_features().
-        raw_hdb_property_info: HDB Property Information from data.gov.sg.
-
-    Returns:
-        DataFrame with block metadata columns added.
-    """
-    if macro_enriched_features.empty or raw_hdb_property_info.empty:
-        return macro_enriched_features
-
-    df = macro_enriched_features.copy()
-
-    if "block" not in df.columns or "street_name" not in df.columns:
-        if "blk_no" not in df.columns:
-            logger.warning("block_metadata_enriched: missing block/street columns")
-            return df
-
-    prop = raw_hdb_property_info.copy()
-    prop["blk_no"] = prop["blk_no"].astype(str).str.strip().str.upper()
-    prop["street"] = prop["street"].astype(str).str.strip().str.upper()
-
-    block_col = "block" if "block" in df.columns else "blk_no"
-    street_col = "street_name" if "street_name" in df.columns else "street"
-
-    df["_join_block"] = df[block_col].astype(str).str.strip().str.upper()
-    df["_join_street"] = df[street_col].astype(str).str.strip().str.upper()
-
-    prop_lookup = prop[
-        [
-            "blk_no",
-            "street",
-            "max_floor_lvl",
-            "year_completed",
-            "total_dwelling_units",
-            "residential",
-            "commercial",
-            "market_hawker",
-            "multistorey_carpark",
-        ]
-    ].copy()
-    prop_lookup = prop_lookup.rename(
-        columns={
-            "blk_no": "_join_block",
-            "street": "_join_street",
-        }
-    )
-    for col in ("max_floor_lvl", "year_completed", "total_dwelling_units"):
-        if col in prop_lookup.columns:
-            prop_lookup[col] = pd.to_numeric(prop_lookup[col], errors="coerce")
-
-    prop_lookup = prop_lookup.drop_duplicates(subset=["_join_block", "_join_street"], keep="first")
-
-    df = df.merge(prop_lookup, on=["_join_block", "_join_street"], how="left")
-    df = df.drop(columns=["_join_block", "_join_street"], errors="ignore")
-
-    matched = df["year_completed"].notna().sum() if "year_completed" in df.columns else 0
-    logger.info(
-        "Block metadata enrichment: %s/%s (%.1f%%) matched",
-        matched,
-        len(df),
-        matched / len(df) * 100 if len(df) else 0,
-    )
-
-    df = validate_and_quarantine(
-        df,
-        HFeatureTransaction,
-        "block_metadata_feature",
-        layer_dir=gold_dir,
-        filename="block_metadata_enriched.parquet",
-    )
-
-    return df
-
-
-def income_enriched_features(
-    block_metadata_enriched: pd.DataFrame,
-    raw_income_by_planning_area: pd.DataFrame,
-    gold_dir: Path,
-) -> pd.DataFrame:
-    """Enrich transactions with median household income by planning area.
-
-    Args:
-        block_metadata_enriched: Output from block_metadata_enriched().
-        raw_income_by_planning_area: Income distribution by planning area.
-
-    Returns:
-        DataFrame with median_monthly_income column added.
-    """
-    if block_metadata_enriched.empty:
-        return pd.DataFrame()
-    df = block_metadata_enriched.copy()
-
-    if raw_income_by_planning_area.empty or "planning_area" not in df.columns:
-        df["median_monthly_income"] = pd.NA
-        return df
-
-    income_lookup = raw_income_by_planning_area[["planning_area", "median_monthly_income"]].copy()
-    income_lookup["planning_area"] = income_lookup["planning_area"].astype(str).str.strip()
-    income_lookup = income_lookup.dropna(subset=["median_monthly_income"])
-    income_lookup = income_lookup.drop_duplicates(subset="planning_area", keep="first")
-
-    df["planning_area"] = df["planning_area"].astype(str).str.strip()
-    df = df.merge(income_lookup, on="planning_area", how="left")
-
-    matched = df["median_monthly_income"].notna().sum()
-    logger.info(
-        "Income enrichment: %s/%s (%.1f%%) matched",
-        matched,
-        len(df),
-        matched / len(df) * 100 if len(df) else 0,
-    )
-
-    df = validate_and_quarantine(
-        df,
-        HFeatureTransaction,
-        "income_enriched_feature",
-        layer_dir=gold_dir,
-        filename="income_enriched_features.parquet",
+        filename="transactions_enriched.parquet",
+        sample_validation_size=10_000,
     )
 
     return df
@@ -708,53 +669,140 @@ def _map_flat_type_for_annual_value(flat_type: str) -> str:
     return ft
 
 
-def town_supply_enriched(
-    income_enriched_features: pd.DataFrame,
+def planning_area_360(
+    location_dim: pd.DataFrame,
+    transactions_enriched: pd.DataFrame,
+    raw_income_by_planning_area: pd.DataFrame,
+    raw_macro_data: dict[str, pd.DataFrame],
+    gold_dir: Path,
+) -> pd.DataFrame:
+    """Build the planning-area 360-degree profile table (~43 rows).
+
+    Aggregates spatial medians from location_dim, market stats from
+    transactions_enriched, and merges income + latest macro indicators.
+    """
+    if location_dim.empty or "planning_area" not in location_dim.columns:
+        return pd.DataFrame()
+
+    loc = location_dim[location_dim["planning_area"].notna()].copy()
+
+    dist_cols = [c for c in loc.columns if c.startswith("dist_to_nearest_")]
+    loc_spatial = loc.groupby("planning_area")[dist_cols].median().reset_index()
+    rename_map = {c: c.replace("dist_to_nearest_", "median_dist_to_") for c in dist_cols}
+    loc_spatial = loc_spatial.rename(columns=rename_map)
+
+    agg_map: dict[str, str] = {}
+    if "year_completed" in loc.columns:
+        agg_map["year_completed"] = "mean"
+    if "max_floor_lvl" in loc.columns:
+        agg_map["max_floor_lvl"] = "mean"
+    if "total_dwelling_units" in loc.columns:
+        agg_map["total_dwelling_units"] = "sum"
+    if agg_map:
+        block_profile = loc.groupby("planning_area").agg(agg_map).reset_index()
+        block_profile = block_profile.rename(
+            columns={
+                "year_completed": "avg_year_completed",
+                "max_floor_lvl": "avg_max_floor",
+            }
+        )
+        loc_spatial = loc_spatial.merge(block_profile, on="planning_area", how="left")
+
+    if "region" in loc.columns:
+        pa_region = loc.groupby("planning_area")["region"].first().reset_index()
+        loc_spatial = loc_spatial.merge(pa_region, on="planning_area", how="left")
+
+    result = loc_spatial
+
+    if not transactions_enriched.empty and "planning_area" in transactions_enriched.columns:
+        tx = transactions_enriched[transactions_enriched["planning_area"].notna()].copy()
+        agg_dict: dict[str, tuple] = {
+            "median_price": ("price", "median"),
+            "transaction_volume": ("price", "count"),
+        }
+        if "psf" in tx.columns:
+            agg_dict["median_psf"] = ("psf", "median")
+        if "rental_yield_pct" in tx.columns:
+            agg_dict["median_rental_yield_pct"] = ("rental_yield_pct", "median")
+
+        market = tx.groupby("planning_area").agg(**agg_dict).reset_index()
+        result = result.merge(market, on="planning_area", how="left")
+
+    if not raw_income_by_planning_area.empty:
+        income = raw_income_by_planning_area[["planning_area", "median_monthly_income"]].copy()
+        income["planning_area"] = income["planning_area"].astype(str).str.strip()
+        income = income.dropna(subset=["median_monthly_income"])
+        income = income.drop_duplicates(subset="planning_area", keep="first")
+        result = result.merge(income, on="planning_area", how="left")
+
+    for key in ("cpi", "bank_rates", "unemployment", "gdp"):
+        macro_df = raw_macro_data.get(key, pd.DataFrame())
+        if macro_df.empty:
+            continue
+        value_col = {
+            "cpi": "cpi",
+            "bank_rates": "sora_3m",
+            "unemployment": "unemployment_rate",
+            "gdp": "gdp",
+        }.get(key)
+        date_col = "date" if "date" in macro_df.columns else "quarter"
+        if value_col not in macro_df.columns or date_col not in macro_df.columns:
+            continue
+        latest_value = macro_df.sort_values(date_col)[value_col].iloc[-1]
+        result[value_col] = latest_value
+
+    result = validate_and_quarantine(
+        result,
+        PlanningArea360,
+        "planning_area_360",
+        layer_dir=gold_dir,
+        filename="planning_area_360.parquet",
+    )
+
+    logger.info("planning_area_360: %s planning areas", len(result))
+    return result
+
+
+def town_360(
+    transactions_enriched: pd.DataFrame,
     raw_dwelling_units_by_town: pd.DataFrame,
     raw_hdb_resident_population: pd.DataFrame,
     raw_median_annual_value: pd.DataFrame,
     gold_dir: Path,
 ) -> pd.DataFrame:
-    """Enrich transactions with town-level supply, population density, and tax values.
+    """Build the town 360-degree profile table (~27 rows).
 
-    Merges total dwelling units (sold), resident population, and IRAS annual
-    value onto each transaction by matching town name and flat type.
-
-    Args:
-        income_enriched_features: Output from income_enriched_features().
-        raw_dwelling_units_by_town: Dwelling units under HDB management by town.
-        raw_hdb_resident_population: HDB resident population by town.
-        raw_median_annual_value: IRAS median annual value + property tax.
-
-    Returns:
-        DataFrame with town-level supply, demographic, and tax columns added.
+    Aggregates market stats from transactions_enriched, merges supply,
+    population, and tax from external sources.
     """
-    if income_enriched_features.empty:
+    if transactions_enriched.empty or "town" not in transactions_enriched.columns:
         return pd.DataFrame()
 
-    df = income_enriched_features.copy()
+    tx = transactions_enriched.copy()
+    tx["_town_upper"] = tx["town"].astype(str).str.strip().str.upper()
 
-    town_col = "town" if "town" in df.columns else None
-    if town_col is None:
-        logger.warning("town_supply_enriched: no 'town' column — skipping enrichment")
-        for col in (
-            "dwelling_units_in_town",
-            "population_in_town",
-            "population_per_dwelling",
-            "annual_value",
-            "property_tax",
-        ):
-            df[col] = pd.NA
-        return df
+    agg_dict: dict[str, tuple] = {
+        "median_price": ("price", "median"),
+        "transaction_volume": ("price", "count"),
+    }
+    if "psf" in tx.columns:
+        agg_dict["median_psf"] = ("psf", "median")
 
-    df["_town_upper"] = df[town_col].astype(str).str.strip().str.upper()
+    result = (
+        tx.groupby("_town_upper")
+        .agg(**agg_dict)
+        .reset_index()
+        .rename(columns={"_town_upper": "town"})
+    )
 
-    # --- Dwelling units: filter to latest year + Sold Units, sum by town ---
     if not raw_dwelling_units_by_town.empty:
         dwell = raw_dwelling_units_by_town.copy()
-        if {"town_or_estate", "no_of_dwelling_units", "financial_year", "sold_or_rental"}.issubset(
-            dwell.columns
-        ):
+        if {
+            "town_or_estate",
+            "no_of_dwelling_units",
+            "financial_year",
+            "sold_or_rental",
+        }.issubset(dwell.columns):
             dwell["financial_year"] = pd.to_numeric(dwell["financial_year"], errors="coerce")
             latest_year = dwell["financial_year"].max()
             dwell = dwell[dwell["financial_year"] == latest_year]
@@ -767,23 +815,15 @@ def town_supply_enriched(
                 dwell.groupby("_town_upper")["no_of_dwelling_units"]
                 .sum()
                 .reset_index()
-                .rename(columns={"no_of_dwelling_units": "dwelling_units_in_town"})
+                .rename(
+                    columns={
+                        "no_of_dwelling_units": "dwelling_units_in_town",
+                        "_town_upper": "town",
+                    }
+                )
             )
-            df = df.merge(dwell_lookup, on="_town_upper", how="left")
-            matched = df["dwelling_units_in_town"].notna().sum()
-            logger.info(
-                "Town dwelling units (%s, Sold): %s/%s (%.1f%%) matched",
-                int(latest_year),
-                matched,
-                len(df),
-                matched / len(df) * 100 if len(df) else 0,
-            )
-        else:
-            logger.warning("Dwelling units schema mismatch — skipping")
-    if "dwelling_units_in_town" not in df.columns:
-        df["dwelling_units_in_town"] = pd.NA
+            result = result.merge(dwell_lookup, on="town", how="left")
 
-    # --- Population: filter to latest year, use number column ---
     if not raw_hdb_resident_population.empty:
         pop = raw_hdb_resident_population.copy()
         if {"town_estate", "number", "shs_year"}.issubset(pop.columns):
@@ -793,30 +833,17 @@ def town_supply_enriched(
             pop["number"] = pd.to_numeric(pop["number"], errors="coerce")
             pop["_town_upper"] = pop["town_estate"].astype(str).str.strip().str.upper()
             pop_lookup = pop[["_town_upper", "number"]].rename(
-                columns={"number": "population_in_town"}
+                columns={"number": "population_in_town", "_town_upper": "town"}
             )
-            pop_lookup = pop_lookup.drop_duplicates(subset="_town_upper", keep="first")
-            df = df.merge(pop_lookup, on="_town_upper", how="left")
-            matched_pop = df["population_in_town"].notna().sum()
-            logger.info(
-                "Town population (%s): %s/%s (%.1f%%) matched",
-                int(latest_pop_year),
-                matched_pop,
-                len(df),
-                matched_pop / len(df) * 100 if len(df) else 0,
-            )
-        else:
-            logger.warning("Population schema mismatch — skipping")
-    if "population_in_town" not in df.columns:
-        df["population_in_town"] = pd.NA
+            pop_lookup = pop_lookup.drop_duplicates(subset="town", keep="first")
+            result = result.merge(pop_lookup, on="town", how="left")
 
-    # --- Derived: population per dwelling ---
-    units = pd.to_numeric(df["dwelling_units_in_town"], errors="coerce")
-    pop_vals = pd.to_numeric(df["population_in_town"], errors="coerce")
-    df["population_per_dwelling"] = np.where(units > 0, pop_vals / units, pd.NA)
+    if "dwelling_units_in_town" in result.columns and "population_in_town" in result.columns:
+        units = pd.to_numeric(result["dwelling_units_in_town"], errors="coerce")
+        pop_vals = pd.to_numeric(result["population_in_town"], errors="coerce")
+        result["population_per_dwelling"] = np.where(units > 0, pop_vals / units, pd.NA)
 
-    # --- Annual value: filter to latest year, match by flat type ---
-    if not raw_median_annual_value.empty and "flat_type" in df.columns:
+    if not raw_median_annual_value.empty:
         mav = raw_median_annual_value.copy()
         if {
             "type_of_hdb",
@@ -831,49 +858,79 @@ def town_supply_enriched(
             mav["property_tax_collection"] = pd.to_numeric(
                 mav["property_tax_collection"], errors="coerce"
             )
-            mav_lookup = mav[
-                ["type_of_hdb", "median_annual_value", "property_tax_collection"]
-            ].rename(
-                columns={
-                    "median_annual_value": "annual_value",
-                    "property_tax_collection": "property_tax",
-                }
-            )
-            mav_lookup = mav_lookup.drop_duplicates(subset="type_of_hdb", keep="first")
-
-            df["_av_type"] = df["flat_type"].apply(_map_flat_type_for_annual_value)
-            df = df.merge(mav_lookup, left_on="_av_type", right_on="type_of_hdb", how="left")
-            df = df.drop(columns=["_av_type", "type_of_hdb"], errors="ignore")
-
-            matched_av = df["annual_value"].notna().sum() if "annual_value" in df.columns else 0
-            logger.info(
-                "Annual value (%s): %s/%s (%.1f%%) matched",
-                int(latest_mav_year),
-                matched_av,
-                len(df),
-                matched_av / len(df) * 100 if len(df) else 0,
-            )
-        else:
-            logger.warning("Annual value schema mismatch — skipping")
+            for ft in ("3 Room", "4 Room", "5 Room"):
+                row = mav[mav["type_of_hdb"] == ft]
+                if not row.empty:
+                    suffix = ft.lower().replace(" ", "_")
+                    result[f"annual_value_{suffix}"] = row.iloc[0]["median_annual_value"]
+                    result[f"property_tax_{suffix}"] = row.iloc[0]["property_tax_collection"]
 
     for col in (
         "dwelling_units_in_town",
         "population_in_town",
         "population_per_dwelling",
-        "annual_value",
-        "property_tax",
+        "annual_value_3_room",
+        "annual_value_4_room",
+        "annual_value_5_room",
+        "property_tax_3_room",
+        "property_tax_4_room",
+        "property_tax_5_room",
     ):
-        if col not in df.columns:
-            df[col] = pd.NA
+        if col not in result.columns:
+            result[col] = pd.NA
 
-    df = df.drop(columns=["_town_upper", "_av_type"], errors="ignore")
+    result["town"] = result["town"].str.title()
 
-    df = validate_and_quarantine(
-        df,
-        HFeatureTransaction,
-        "town_supply_feature",
+    result = validate_and_quarantine(
+        result,
+        Town360,
+        "town_360",
         layer_dir=gold_dir,
-        filename="town_supply_enriched.parquet",
+        filename="town_360.parquet",
     )
 
-    return df
+    logger.info("town_360: %s towns", len(result))
+    return result
+
+
+def block_profile(
+    transactions_enriched: pd.DataFrame,
+    gold_dir: Path,
+) -> pd.DataFrame:
+    """Build per-block transaction profile table (~10K rows).
+
+    Aggregates median price/PSF, transaction count, and average remaining
+    lease years by (block, street_name).
+    """
+    if transactions_enriched.empty:
+        return pd.DataFrame()
+
+    df = transactions_enriched.copy()
+
+    if "block" not in df.columns or "street_name" not in df.columns:
+        logger.warning("block_profile: missing block/street_name columns")
+        return pd.DataFrame()
+
+    agg_dict: dict[str, tuple] = {
+        "median_price": ("price", "median"),
+        "transaction_count": ("price", "count"),
+    }
+    if "psf" in df.columns:
+        agg_dict["median_psf"] = ("psf", "median")
+    if "remaining_lease_years" in df.columns:
+        agg_dict["avg_remaining_lease_years"] = ("remaining_lease_years", "mean")
+    if "town" in df.columns:
+        agg_dict["town"] = ("town", "first")
+
+    profile = df.groupby(["block", "street_name"]).agg(**agg_dict).reset_index()
+
+    result = validate_and_quarantine(
+        profile,
+        BlockProfile,
+        "block_profile",
+        layer_dir=gold_dir,
+        filename="block_profile.parquet",
+    )
+
+    logger.info("block_profile: %s blocks", len(result))
+    return result

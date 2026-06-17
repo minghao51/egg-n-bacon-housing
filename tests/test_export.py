@@ -20,7 +20,7 @@ class TestPlatinumLayer:
         """Test that unified_dataset returns a DataFrame."""
         export = _get_export_module()
 
-        unified_features = pd.DataFrame(
+        transactions_enriched = pd.DataFrame(
             [
                 {
                     "town": "TOA PAYOH",
@@ -33,7 +33,7 @@ class TestPlatinumLayer:
             ]
         )
 
-        result = export.unified_dataset(unified_features, platinum_dir=tmp_path / "platinum")
+        result = export.unified_dataset(transactions_enriched, platinum_dir=tmp_path / "platinum")
 
         assert isinstance(result, pd.DataFrame)
         if not result.empty:
@@ -44,9 +44,9 @@ class TestPlatinumLayer:
         """Test that unified_dataset handles empty input."""
         export = _get_export_module()
 
-        unified_features = pd.DataFrame()
+        transactions_enriched = pd.DataFrame()
 
-        result = export.unified_dataset(unified_features, platinum_dir=tmp_path / "platinum")
+        result = export.unified_dataset(transactions_enriched, platinum_dir=tmp_path / "platinum")
 
         assert isinstance(result, pd.DataFrame)
         assert result.empty
@@ -62,32 +62,33 @@ class TestPlatinumLayer:
         """Test that dashboard_json returns a dictionary."""
         export = _get_export_module()
 
-        unified_dataset = pd.DataFrame(
+        planning_area_360 = pd.DataFrame(
             [
                 {
-                    "town": "TOA PAYOH",
-                    "price": 500000.0,
-                    "property_type": "hdb",
+                    "planning_area": "Toa Payoh",
+                    "region": "RCR",
+                    "median_price": 500000.0,
+                    "median_psf": 500.0,
+                    "transaction_volume": 100,
                 }
             ]
         )
 
-        result = export.dashboard_json(unified_dataset, webapp_data_dir=tmp_path / "webapp")
+        result = export.dashboard_json(planning_area_360, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         if result:
-            assert "total_transactions" in result
-            assert "property_types" in result
-            assert "price_range" in result
+            assert "total_planning_areas" in result
             assert "generated_at" in result
+            assert "planning_areas" in result
 
     def test_dashboard_json_with_empty_input(self, tmp_path):
         """Test that dashboard_json handles empty input."""
         export = _get_export_module()
 
-        unified_dataset = pd.DataFrame()
+        planning_area_360 = pd.DataFrame()
 
-        result = export.dashboard_json(unified_dataset, webapp_data_dir=tmp_path / "webapp")
+        result = export.dashboard_json(planning_area_360, webapp_data_dir=tmp_path / "webapp")
 
         assert isinstance(result, dict)
         assert result == {}

@@ -50,6 +50,7 @@ STAGE_VARS: dict[str, list[str]] = {
         "raw_dwelling_units_by_town",
         "raw_median_annual_value",
         "raw_hdb_resident_population",
+        "geocoded_green_mark_buildings",
     ],
     "clean": [
         "cleaned_hdb_transactions",
@@ -61,12 +62,11 @@ STAGE_VARS: dict[str, list[str]] = {
     ],
     "features": [
         "rental_yield",
-        "features_with_amenities",
-        "unified_features",
-        "macro_enriched_features",
-        "block_metadata_enriched",
-        "income_enriched_features",
-        "town_supply_enriched",
+        "location_dim",
+        "transactions_enriched",
+        "planning_area_360",
+        "town_360",
+        "block_profile",
     ],
     "export": [
         "unified_dataset",
@@ -75,20 +75,19 @@ STAGE_VARS: dict[str, list[str]] = {
         "interactive_tools_data",
     ],
     "metrics": [
-        "price_metrics_by_area",
-        "rental_yield_by_area",
-        "affordability_metrics",
+        "pa_monthly_metrics",
         "appreciation_hotspots",
     ],
     "all": [
         "unified_dataset",
+        "planning_area_360",
+        "town_360",
+        "block_profile",
+        "pa_monthly_metrics",
+        "appreciation_hotspots",
         "dashboard_json",
         "segments_data",
         "interactive_tools_data",
-        "price_metrics_by_area",
-        "rental_yield_by_area",
-        "affordability_metrics",
-        "appreciation_hotspots",
     ],
 }
 

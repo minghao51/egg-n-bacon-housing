@@ -15,23 +15,23 @@ from egg_n_bacon_housing.utils.layer_writer import LayerWriter
 
 
 def unified_dataset(
-    town_supply_enriched: pd.DataFrame,
+    transactions_enriched: pd.DataFrame,
     platinum_dir: Path,
     writer: LayerWriter | None = None,
 ) -> pd.DataFrame:
     """Create the unified dataset for platinum layer.
 
     Args:
-        town_supply_enriched: Output from 03_features town_supply_enriched.
+        transactions_enriched: Output from 03_features transactions_enriched.
 
     Returns:
         DataFrame ready for analysis and dashboards.
     """
-    if town_supply_enriched.empty:
+    if transactions_enriched.empty:
         return pd.DataFrame()
 
-    df = town_supply_enriched.copy()
-    require_columns(df, {"price", "property_type", "transaction_date"}, "town_supply_enriched")
+    df = transactions_enriched.copy()
+    require_columns(df, {"price", "property_type", "transaction_date"}, "transactions_enriched")
 
     if writer is not None:
         writer.write(df, "unified_dataset", "platinum")
@@ -41,31 +41,27 @@ def unified_dataset(
     return df
 
 
-def dashboard_json(unified_dataset: pd.DataFrame, webapp_data_dir: Path) -> dict:
-    """Generate a lightweight dataset summary.
+def dashboard_json(planning_area_360: pd.DataFrame, webapp_data_dir: Path) -> dict:
+    """Generate a dashboard dataset summary from the PA 360 table.
 
     Args:
-        unified_dataset: Full unified dataset.
+        planning_area_360: Planning area 360-degree profile.
 
     Returns:
         Dictionary with dashboard summary data.
     """
-    if unified_dataset.empty:
+    if planning_area_360.empty:
         return {}
 
+    pa = planning_area_360
     summary = {
         "generated_at": pd.Timestamp.now().isoformat(),
-        "total_transactions": len(unified_dataset),
-        "property_types": unified_dataset["property_type"].value_counts().to_dict(),
-        "price_range": {
-            "min": float(unified_dataset["price"].min()),
-            "max": float(unified_dataset["price"].max()),
-            "median": float(unified_dataset["price"].median()),
-        },
+        "total_planning_areas": len(pa),
+        "median_price_overall": float(pa["median_price"].median())
+        if "median_price" in pa.columns
+        else None,
+        "planning_areas": pa.to_dict(orient="records"),
     }
-
-    if "planning_area" in unified_dataset.columns:
-        summary["by_planning_area"] = unified_dataset.groupby("planning_area").size().to_dict()
 
     return summary
 

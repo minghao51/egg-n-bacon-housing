@@ -978,6 +978,63 @@ def raw_green_mark_buildings(bronze_dir: Path) -> pd.DataFrame:
     return df
 
 
+def geocoded_green_mark_buildings(
+    bronze_dir: Path,
+    raw_green_mark_buildings: pd.DataFrame,
+) -> pd.DataFrame:
+    """Geocode Green Mark buildings via OneMap, cache as bronze parquet.
+
+    Extracts unique postal codes from the raw Green Mark dataset and geocodes
+    each one through OneMap's search API. Results are cached as bronze parquet
+    so this expensive (~11 min, ~4K calls) operation runs only once.
+    """
+    cache_path = bronze_dir / "raw_green_mark_buildings_geocoded.parquet"
+    if cache_path.exists():
+        logger.info("Loading geocoded green mark buildings from bronze: %s", cache_path)
+        return pd.read_parquet(cache_path)
+
+    df = raw_green_mark_buildings
+    if df.empty or "postal_code" not in df.columns:
+        logger.warning("Green Mark buildings empty or missing postal_code — returning as-is")
+        return df
+
+    unique_postals = df["postal_code"].drop_duplicates()
+    geocoded_map: dict[str, tuple[float | None, float | None]] = {}
+
+    logger.info("Geocoding %s unique Green Mark postal codes...", len(unique_postals))
+    import time
+
+    headers = onemap.setup_onemap_headers()
+    for pc in unique_postals:
+        try:
+            results = onemap.fetch_data(f"Singapore {pc}", headers, timeout=15)
+            if results is not None and not results.empty:
+                row = results.iloc[0]
+                lat = pd.to_numeric(row.get("LATITUDE") or row.get("Y"), errors="coerce")
+                lon = pd.to_numeric(row.get("LONGITUDE") or row.get("X"), errors="coerce")
+                geocoded_map[str(pc)] = (lat, lon)
+            else:
+                geocoded_map[str(pc)] = (None, None)
+        except Exception:
+            geocoded_map[str(pc)] = (None, None)
+        time.sleep(0.3)
+
+    df = df.copy()
+    df["lat"] = df["postal_code"].map(lambda pc: geocoded_map.get(str(pc), (None, None))[0])
+    df["lon"] = df["postal_code"].map(lambda pc: geocoded_map.get(str(pc), (None, None))[1])
+    df["name"] = df.get("Project_Name", df["postal_code"])
+
+    bronze_dir.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(cache_path, index=False)
+    logger.info(
+        "Geocoded Green Mark buildings: %s/%s saved to %s",
+        df["lat"].notna().sum(),
+        len(df),
+        cache_path,
+    )
+    return df
+
+
 def raw_chas_clinics(bronze_dir: Path) -> pd.DataFrame:
     """Load CHAS clinic locations from bronze/external GeoJSON.
 
