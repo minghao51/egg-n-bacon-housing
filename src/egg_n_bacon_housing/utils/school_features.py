@@ -3,18 +3,16 @@
 
 import json
 import logging
-import time
 from typing import Any
 
 import numpy as np
 import pandas as pd
-import requests
 from rapidfuzz import fuzz, process
 from scipy.spatial import cKDTree
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.geo import haversine_distance
+from egg_n_bacon_housing.utils.geocoding import Geocoder, build_default_geocoder
 
 # Constants
 DISTANCES = {
@@ -40,7 +38,7 @@ def load_schools() -> pd.DataFrame:
 
     # Geocode and save
     logger.info("Geocoding schools...")
-    schools_df = _geocode_schools(schools_df)
+    schools_df = _geocode_schools(schools_df, build_default_geocoder(settings))
     schools_df.to_parquet(school_path, compression="snappy", index=False)
     logger.info("Saved geocoded schools")
 
@@ -269,73 +267,25 @@ def fuzzy_match_schools(
     return tier_schools, mapping
 
 
-def _geocode_schools(schools_df: pd.DataFrame) -> pd.DataFrame:
-    """Geocode school addresses using OneMap API with rate-limited requests."""
-    schools_df["latitude"] = None
-    schools_df["longitude"] = None
+def _geocode_schools(schools_df: pd.DataFrame, geocoder: Geocoder) -> pd.DataFrame:
+    """Geocode schools by postal code, adding ``latitude``/``longitude`` columns.
 
-    rows_to_geocode = []
-    for idx, row in schools_df.iterrows():
-        postal_code = str(row.get("postal_code", "")).strip()
-        if len(postal_code) >= 6:
-            rows_to_geocode.append((idx, postal_code))
+    Delegates the actual geocoding (cache, API, rate limiting) to the injected
+    ``geocoder`` — tests pass an ``InMemoryGeocoder``.
+    """
+    if "postal_code" not in schools_df.columns:
+        df = schools_df.copy()
+        df["latitude"] = pd.NA
+        df["longitude"] = pd.NA
+        return df
 
-    @retry(
-        retry=retry_if_exception_type(requests.RequestException),
-        wait=wait_exponential(min=2, max=30),
-        stop=stop_after_attempt(5),
-        before_sleep=lambda rs: logger.debug(
-            "Retrying geocode (attempt %d): %s",
-            rs.attempt_number,
-            rs.outcome.exception() if rs.outcome else "unknown",
-        ),
-    )
-    def _geocode_one(args: tuple) -> tuple:
-        idx, postal_code = args
-        try:
-            response = requests.get(
-                "https://www.onemap.gov.sg/api/common/elastic/search",
-                params={
-                    "searchVal": postal_code,
-                    "returnGeom": "Y",
-                    "getAddrDetails": "Y",
-                    "pageNum": "1",
-                },
-                timeout=10,
-            )
-            response.raise_for_status()
-            data = response.json()
-            if data.get("found", 0) > 0:
-                result = data["results"][0]
-                return (idx, float(result["LATITUDE"]), float(result["LONGITUDE"]))
-        except requests.HTTPError as e:
-            if e.response.status_code == 429:
-                logger.debug("OneMap rate limit (429) for postal %s — will retry", postal_code)
-                time.sleep(1)
-                raise
-            raise
-        except (ValueError, KeyError) as e:
-            logger.debug("Geocoding failed for %s: %s", postal_code, e)
-        return (idx, None, None)
+    df = geocoder.geocode_dataframe(schools_df, "postal_code")
+    df = df.rename(columns={"lat": "latitude", "lon": "longitude"})
+    df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
+    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
 
-    geocoded = 0
-    for idx, postal_code in rows_to_geocode:
-        try:
-            _idx, lat, lon = _geocode_one((idx, postal_code))
-        except Exception as e:
-            logger.warning("Geocode failed for postal %s: %s", postal_code, e)
-            continue
-        if lat is not None:
-            schools_df.at[idx, "latitude"] = lat
-            schools_df.at[idx, "longitude"] = lon
-            geocoded += 1
-        time.sleep(0.3)
-
-    schools_df["latitude"] = pd.to_numeric(schools_df["latitude"], errors="coerce")
-    schools_df["longitude"] = pd.to_numeric(schools_df["longitude"], errors="coerce")
-
-    logger.info("Geocoded %s/%s schools", geocoded, len(schools_df))
-    return schools_df
+    logger.info("Geocoded %s/%s schools", df["latitude"].notna().sum(), len(df))
+    return df
 
 
 def _initialize_school_columns(df: pd.DataFrame, levels: list[str]) -> pd.DataFrame:

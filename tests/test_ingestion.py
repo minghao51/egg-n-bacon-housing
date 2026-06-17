@@ -172,8 +172,8 @@ class TestBronzeLayer:
 
         monkeypatch.setattr(
             ingestion,
-            "_geocode_shopping_malls",
-            lambda malls_df: pytest.fail("geocoding should not run when geocoded bronze exists"),
+            "build_default_geocoder",
+            lambda settings: pytest.fail("geocoding should not run when geocoded bronze exists"),
         )
 
         result = ingestion.raw_shopping_malls(bronze_dir=tmp_path)
@@ -190,37 +190,14 @@ class TestBronzeLayer:
             index=False,
         )
 
-        query_log = []
+        from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
 
-        monkeypatch.setattr(
-            ingestion.onemap, "setup_onemap_headers", lambda: {"Authorization": "x"}
-        )
-
-        def fake_fetch(search_string, headers, timeout):
-            query_log.append(search_string)
-            if search_string == "ION Orchard":
-                return pd.DataFrame()
-            return pd.DataFrame(
-                [
-                    {
-                        "SEARCHVAL": "ION ORCHARD",
-                        "LATITUDE": "1.3048",
-                        "LONGITUDE": "103.8318",
-                        "POSTAL": "238801",
-                        "ADDRESS": "2 ORCHARD TURN",
-                        "BUILDING": "ION ORCHARD",
-                        "search_result": 0,
-                    }
-                ]
-            )
-
-        monkeypatch.setattr(ingestion.onemap, "fetch_data_cached", fake_fetch)
+        geocoder = InMemoryGeocoder({"ION Orchard": (1.3048, 103.8318)})
+        monkeypatch.setattr(ingestion, "build_default_geocoder", lambda settings: geocoder)
 
         result = ingestion.raw_shopping_malls(bronze_dir=tmp_path)
 
-        assert query_log == ["ION Orchard", "ION Orchard Singapore"]
         assert result.loc[0, "shopping_mall"] == "ION Orchard"
-        assert result.loc[0, "matched_name"] == "ION ORCHARD"
         assert result.loc[0, "lat"] == pytest.approx(1.3048)
         assert result.loc[0, "lon"] == pytest.approx(103.8318)
         assert (tmp_path / "raw_wiki_shopping_mall_geocoded.parquet").exists()

@@ -16,8 +16,10 @@ import pandas as pd
 import requests
 from hamilton.function_modifiers import parameterize, value
 
-from egg_n_bacon_housing.adapters import datagovsg, onemap
+from egg_n_bacon_housing.adapters import datagovsg
+from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
+from egg_n_bacon_housing.utils.geocoding import build_default_geocoder
 
 logger = logging.getLogger(__name__)
 
@@ -532,71 +534,6 @@ def _standardize_geocoded_mall_columns(malls_df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _geocode_shopping_malls(malls_df: pd.DataFrame) -> pd.DataFrame:
-    """Geocode shopping mall names using OneMap search and cache the result."""
-    if malls_df.empty or "shopping_mall" not in malls_df.columns:
-        return malls_df
-
-    headers = onemap.setup_onemap_headers()
-    geocoded_rows: list[dict] = []
-
-    for mall_name in malls_df["shopping_mall"].dropna().astype(str).str.strip():
-        if not mall_name:
-            continue
-
-        query_candidates = [mall_name]
-        if "singapore" not in mall_name.lower():
-            query_candidates.append(f"{mall_name} Singapore")
-
-        best_match: dict | None = None
-        for query in query_candidates:
-            results = onemap.fetch_data_cached(query, headers=headers, timeout=30)
-            if results is None:
-                continue
-            if isinstance(results, pd.DataFrame):
-                if results.empty:
-                    continue
-            else:
-                continue
-
-            first = results.iloc[0].to_dict()
-            building = str(first.get("BUILDING", "")).strip().lower()
-            searchval = str(first.get("SEARCHVAL", "")).strip().lower()
-            best_match = {
-                "shopping_mall": mall_name,
-                "search_term": query,
-                "found": True,
-                "lat": first.get("LATITUDE") or first.get("Y"),
-                "lon": first.get("LONGITUDE") or first.get("X"),
-                "matched_name": first.get("SEARCHVAL") or first.get("BUILDING"),
-                "postal_code": first.get("POSTAL"),
-                "address": first.get("ADDRESS"),
-                "search_result": first.get("search_result"),
-            }
-            if mall_name.lower() in {building, searchval}:
-                break
-
-        if best_match is None:
-            geocoded_rows.append(
-                {
-                    "shopping_mall": mall_name,
-                    "search_term": query_candidates[-1],
-                    "found": False,
-                    "lat": pd.NA,
-                    "lon": pd.NA,
-                    "matched_name": pd.NA,
-                    "postal_code": pd.NA,
-                    "address": pd.NA,
-                    "search_result": pd.NA,
-                }
-            )
-            logger.warning("Could not geocode shopping mall: %s", mall_name)
-        else:
-            geocoded_rows.append(best_match)
-
-    return _standardize_geocoded_mall_columns(pd.DataFrame(geocoded_rows))
-
-
 def raw_shopping_malls(bronze_dir: Path) -> pd.DataFrame:
     """Load shopping mall data from bronze layer.
 
@@ -621,7 +558,10 @@ def raw_shopping_malls(bronze_dir: Path) -> pd.DataFrame:
             return _standardize_geocoded_mall_columns(malls_df)
 
         try:
-            geocoded_df = _geocode_shopping_malls(malls_df)
+            geocoder = build_default_geocoder(settings)
+            geocoded_df = _standardize_geocoded_mall_columns(
+                geocoder.geocode_dataframe(malls_df, "shopping_mall")
+            )
             if not geocoded_df.empty:
                 geocoded_path.parent.mkdir(parents=True, exist_ok=True)
                 geocoded_df.to_parquet(geocoded_path, index=False)
@@ -998,30 +938,14 @@ def geocoded_green_mark_buildings(
         logger.warning("Green Mark buildings empty or missing postal_code — returning as-is")
         return df
 
-    unique_postals = df["postal_code"].drop_duplicates()
-    geocoded_map: dict[str, tuple[float | None, float | None]] = {}
-
-    logger.info("Geocoding %s unique Green Mark postal codes...", len(unique_postals))
-    import time
-
-    headers = onemap.setup_onemap_headers()
-    for pc in unique_postals:
-        try:
-            results = onemap.fetch_data(f"Singapore {pc}", headers, timeout=15)
-            if results is not None and not results.empty:
-                row = results.iloc[0]
-                lat = pd.to_numeric(row.get("LATITUDE") or row.get("Y"), errors="coerce")
-                lon = pd.to_numeric(row.get("LONGITUDE") or row.get("X"), errors="coerce")
-                geocoded_map[str(pc)] = (lat, lon)
-            else:
-                geocoded_map[str(pc)] = (None, None)
-        except Exception:
-            geocoded_map[str(pc)] = (None, None)
-        time.sleep(0.3)
+    logger.info("Geocoding %s unique Green Mark postal codes...", df["postal_code"].nunique())
+    geocoder = build_default_geocoder(settings)
+    geocoded = geocoder.geocode(df["postal_code"].drop_duplicates())
+    coord_map = dict(zip(geocoded["input"], zip(geocoded["lat"], geocoded["lon"]), strict=False))
 
     df = df.copy()
-    df["lat"] = df["postal_code"].map(lambda pc: geocoded_map.get(str(pc), (None, None))[0])
-    df["lon"] = df["postal_code"].map(lambda pc: geocoded_map.get(str(pc), (None, None))[1])
+    df["lat"] = df["postal_code"].map(lambda pc: coord_map.get(str(pc), (None, None))[0])
+    df["lon"] = df["postal_code"].map(lambda pc: coord_map.get(str(pc), (None, None))[1])
     df["name"] = df.get("Project_Name", df["postal_code"])
 
     bronze_dir.mkdir(parents=True, exist_ok=True)
