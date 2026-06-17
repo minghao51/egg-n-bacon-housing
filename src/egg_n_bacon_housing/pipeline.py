@@ -6,6 +6,7 @@ import logging
 from hamilton import driver
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.layer_writer import build_writer
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +159,7 @@ def run_pipeline(
         "bronze_dir": settings.layer_dir("bronze", resolved_data_path),
         "silver_dir": settings.layer_dir("silver", resolved_data_path),
         "gold_dir": settings.layer_dir("gold", resolved_data_path),
-        "platinum_dir": settings.layer_dir("platinum", resolved_data_path),
+        "writer": build_writer(settings, resolved_data_path / "pipeline"),
         "webapp_data_dir": settings.webapp_data_dir,
         "min_coordinate_coverage": settings.geocoding.min_coordinate_coverage,
         "median_household_income": settings.metrics.median_household_income,

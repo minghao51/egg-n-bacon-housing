@@ -5,6 +5,8 @@ import importlib
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.utils.layer_writer import SimpleWriter
+
 pytestmark = pytest.mark.unit
 
 
@@ -33,7 +35,7 @@ class TestPlatinumLayer:
             ]
         )
 
-        result = export.unified_dataset(transactions_enriched, platinum_dir=tmp_path / "platinum")
+        result = export.unified_dataset(transactions_enriched, writer=SimpleWriter(tmp_path))
 
         assert isinstance(result, pd.DataFrame)
         if not result.empty:
@@ -46,7 +48,7 @@ class TestPlatinumLayer:
 
         transactions_enriched = pd.DataFrame()
 
-        result = export.unified_dataset(transactions_enriched, platinum_dir=tmp_path / "platinum")
+        result = export.unified_dataset(transactions_enriched, writer=SimpleWriter(tmp_path))
 
         assert isinstance(result, pd.DataFrame)
         assert result.empty
@@ -55,7 +57,7 @@ class TestPlatinumLayer:
         export = _get_export_module()
         with pytest.raises(ValueError, match="missing required columns"):
             export.unified_dataset(
-                pd.DataFrame([{"price": 500000.0}]), platinum_dir=tmp_path / "platinum"
+                pd.DataFrame([{"price": 500000.0}]), writer=SimpleWriter(tmp_path)
             )
 
     def test_dashboard_json_returns_dict(self, tmp_path):

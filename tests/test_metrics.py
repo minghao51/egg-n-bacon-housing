@@ -5,6 +5,8 @@ import importlib
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.utils.layer_writer import SimpleWriter
+
 pytestmark = pytest.mark.unit
 
 
@@ -15,7 +17,7 @@ def _get_metrics_module():
 class TestPaMonthlyMetrics:
     def test_pa_monthly_metrics_produces_expected_columns(self, tmp_path):
         metrics = _get_metrics_module()
-        platinum_dir = tmp_path / "platinum"
+        writer = SimpleWriter(tmp_path)
 
         df = pd.DataFrame(
             [
@@ -34,7 +36,7 @@ class TestPaMonthlyMetrics:
             ]
         )
 
-        result = metrics.pa_monthly_metrics(df, platinum_dir=platinum_dir)
+        result = metrics.pa_monthly_metrics(df, writer=writer)
 
         assert not result.empty
         assert "median_price" in result.columns
@@ -49,7 +51,7 @@ class TestPaMonthlyMetrics:
     def test_pa_monthly_metrics_empty_input(self, tmp_path):
         metrics = _get_metrics_module()
 
-        result = metrics.pa_monthly_metrics(pd.DataFrame(), platinum_dir=tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(pd.DataFrame(), writer=SimpleWriter(tmp_path))
 
         assert result.empty
 
@@ -58,7 +60,7 @@ class TestPaMonthlyMetrics:
 
         df = pd.DataFrame([{"price": 500000.0, "transaction_date": pd.Timestamp("2024-01-15")}])
 
-        result = metrics.pa_monthly_metrics(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, writer=SimpleWriter(tmp_path))
 
         assert result.empty
 
@@ -75,7 +77,7 @@ class TestPaMonthlyMetrics:
             ]
         )
 
-        result = metrics.pa_monthly_metrics(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, writer=SimpleWriter(tmp_path))
 
         assert not result.empty
         assert "avg_psf" not in result.columns
@@ -94,7 +96,7 @@ class TestPaMonthlyMetrics:
             ]
         )
 
-        result = metrics.pa_monthly_metrics(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, writer=SimpleWriter(tmp_path))
 
         assert not result.empty
         assert "median_rental_yield" in result.columns
@@ -116,7 +118,7 @@ class TestAffordabilityInPaMonthly:
 
         result = metrics.pa_monthly_metrics(
             df,
-            platinum_dir=tmp_path / "platinum",
+            writer=SimpleWriter(tmp_path),
             median_household_income=100000,
         )
 
@@ -147,7 +149,7 @@ class TestAffordabilityInPaMonthly:
 
         result = metrics.pa_monthly_metrics(
             df,
-            platinum_dir=tmp_path / "platinum",
+            writer=SimpleWriter(tmp_path),
             median_household_income=85000,
         )
 
@@ -172,7 +174,7 @@ class TestAppreciationHotspots:
 
         df = pd.DataFrame(rows)
 
-        result = metrics.appreciation_hotspots(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.appreciation_hotspots(df, writer=SimpleWriter(tmp_path))
 
         assert not result.empty
         assert "appreciation_3m_pct" in result.columns
@@ -195,7 +197,7 @@ class TestAppreciationHotspots:
 
         df = pd.DataFrame(rows)
 
-        result = metrics.appreciation_hotspots(df, platinum_dir=tmp_path / "platinum")
+        result = metrics.appreciation_hotspots(df, writer=SimpleWriter(tmp_path))
 
         if not result.empty:
             for _, row in result.iterrows():

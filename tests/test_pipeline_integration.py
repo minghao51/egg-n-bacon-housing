@@ -60,7 +60,8 @@ class TestPipelineIntegration:
         assert captured["inputs"]["bronze_dir"] == tmp_path / "pipeline" / "01_bronze"
         assert captured["inputs"]["silver_dir"] == tmp_path / "pipeline" / "02_silver"
         assert captured["inputs"]["gold_dir"] == tmp_path / "pipeline" / "03_gold"
-        assert captured["inputs"]["platinum_dir"] == tmp_path / "pipeline" / "04_platinum"
+        assert "writer" in captured["inputs"]
+        assert captured["inputs"]["writer"].data_dir == tmp_path / "pipeline"
 
     def test_run_pipeline_specific_stage(self, tmp_path, monkeypatch):
         """run_pipeline accepts a stage parameter to select output variables."""

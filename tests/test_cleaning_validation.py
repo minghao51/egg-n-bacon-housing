@@ -5,6 +5,8 @@ import importlib
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.utils.layer_writer import SimpleWriter
+
 pytestmark = pytest.mark.unit
 
 
@@ -218,7 +220,9 @@ class TestGeocodedValidation:
         hdb_validated = pd.DataFrame([{"town": "TOA PAYOH", "price": 500000.0}])
         condo_validated = pd.DataFrame()
 
-        result = cleaning.geocoded_properties(hdb_validated, condo_validated, silver_dir=tmp_path)
+        result = cleaning.geocoded_properties(
+            hdb_validated, condo_validated, silver_dir=tmp_path, writer=SimpleWriter(tmp_path)
+        )
 
         assert not result.empty
         assert "lat" in result.columns
@@ -241,6 +245,7 @@ class TestGeocodedValidation:
             hdb_validated,
             condo_validated,
             silver_dir=tmp_path,
+            writer=SimpleWriter(tmp_path),
             min_coordinate_coverage=0.8,
         )
 

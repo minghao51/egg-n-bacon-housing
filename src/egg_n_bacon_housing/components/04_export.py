@@ -10,14 +10,12 @@ from pathlib import Path
 import pandas as pd
 
 from egg_n_bacon_housing.utils.contracts import require_columns
-from egg_n_bacon_housing.utils.io_helpers import save_parquet
 from egg_n_bacon_housing.utils.layer_writer import LayerWriter
 
 
 def unified_dataset(
     transactions_enriched: pd.DataFrame,
-    platinum_dir: Path,
-    writer: LayerWriter | None = None,
+    writer: LayerWriter,
 ) -> pd.DataFrame:
     """Create the unified dataset for platinum layer.
 
@@ -33,10 +31,7 @@ def unified_dataset(
     df = transactions_enriched.copy()
     require_columns(df, {"price", "property_type", "transaction_date"}, "transactions_enriched")
 
-    if writer is not None:
-        writer.write(df, "unified_dataset", "platinum")
-    else:
-        save_parquet(df, platinum_dir / "unified_dataset.parquet", "unified dataset")
+    writer.write(df, "unified_dataset", "platinum")
 
     return df
 

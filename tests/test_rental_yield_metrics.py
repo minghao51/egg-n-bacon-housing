@@ -5,6 +5,8 @@ import importlib
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.utils.layer_writer import SimpleWriter
+
 pytestmark = pytest.mark.unit
 
 
@@ -15,7 +17,7 @@ def _get_metrics_module():
 class TestRentalYieldInPaMonthly:
     def test_computes_expected_columns(self, tmp_path):
         metrics = _get_metrics_module()
-        platinum_dir = tmp_path / "platinum"
+        writer = SimpleWriter(tmp_path)
 
         df = pd.DataFrame(
             [
@@ -34,7 +36,7 @@ class TestRentalYieldInPaMonthly:
             ]
         )
 
-        result = metrics.pa_monthly_metrics(df, platinum_dir)
+        result = metrics.pa_monthly_metrics(df, writer)
 
         assert not result.empty
         assert "median_rental_yield" in result.columns
@@ -45,7 +47,7 @@ class TestRentalYieldInPaMonthly:
     def test_empty_input(self, tmp_path):
         metrics = _get_metrics_module()
 
-        result = metrics.pa_monthly_metrics(pd.DataFrame(), tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(pd.DataFrame(), SimpleWriter(tmp_path))
         assert result.empty
 
     def test_without_rental_yield_column(self, tmp_path):
@@ -61,7 +63,7 @@ class TestRentalYieldInPaMonthly:
             ]
         )
 
-        result = metrics.pa_monthly_metrics(df, tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, SimpleWriter(tmp_path))
         assert not result.empty
         assert "median_rental_yield" not in result.columns
 
@@ -79,7 +81,7 @@ class TestRentalYieldInPaMonthly:
             ]
         )
 
-        result = metrics.pa_monthly_metrics(df, tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, SimpleWriter(tmp_path))
         assert len(result) == 1
         assert result.iloc[0]["median_rental_yield"] == pytest.approx(3.8)
 
@@ -109,7 +111,7 @@ class TestRentalYieldInPaMonthly:
             ]
         )
 
-        result = metrics.pa_monthly_metrics(df, tmp_path / "platinum")
+        result = metrics.pa_monthly_metrics(df, SimpleWriter(tmp_path))
         assert len(result) == 2
 
         tp = result[result["planning_area"] == "Toa Payoh"]
@@ -117,7 +119,7 @@ class TestRentalYieldInPaMonthly:
 
     def test_saves_parquet(self, tmp_path):
         metrics = _get_metrics_module()
-        platinum_dir = tmp_path / "platinum"
+        writer = SimpleWriter(tmp_path)
 
         df = pd.DataFrame(
             [
@@ -130,7 +132,7 @@ class TestRentalYieldInPaMonthly:
             ]
         )
 
-        metrics.pa_monthly_metrics(df, platinum_dir)
+        metrics.pa_monthly_metrics(df, writer)
 
-        out_path = platinum_dir / "metrics" / "pa_monthly_metrics.parquet"
+        out_path = writer.resolve_path("pa_monthly_metrics", "platinum_metrics", tmp_path)
         assert out_path.exists()

@@ -4,8 +4,7 @@ One interface, two adapters:
 - TrackedWriter (prod): path routing, quality monitoring, compression from settings.
 - SimpleWriter (tests): mkdir + to_parquet, no side effects.
 
-Replaces both io_helpers.save_parquet (path-based) and
-data_helpers.save_parquet (name-based) with a single deep interface.
+Replaces io_helpers.save_parquet with a single deep interface.
 """
 
 import logging
@@ -50,6 +49,11 @@ class LayerWriter(ABC):
         """Resolve a (name, layer) pair to a concrete file path."""
         layer_dir = LAYER_PATH_MAP.get(layer, layer)
         return data_dir / layer_dir / f"{name}.parquet"
+
+
+def build_writer(settings: Settings, data_dir: Path) -> LayerWriter:
+    """Construct the production LayerWriter from settings."""
+    return TrackedWriter(data_dir=data_dir, settings=settings)
 
 
 class SimpleWriter(LayerWriter):

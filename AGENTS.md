@@ -34,7 +34,7 @@ Source code lives in `src/egg_n_bacon_housing/`:
 - `components/` — DAG nodes (01_ingestion → 06_analytics)
 - `schemas/` — Pydantic models (raw, clean, feature)
 - `adapters/` — External API clients (onemap, datagovsg, geocoding)
-- `utils/` — Utilities (cache, data_helpers, metrics, etc.)
+- `utils/` — Utilities (cache, layer_writer, metrics, etc.)
 - `analytics/` — Standalone exploratory analysis scripts (not wired to DAG)
 
 **Manual data**: ~100MB of CSV/GeoJSON source files in `data/manual/` are stored in **Cloudflare R2** (gitignored). Fetch with `dotenvx run -- uv run python scripts/00_sync_data.py`. See `docs/guides/r2-sync-guide.md`.

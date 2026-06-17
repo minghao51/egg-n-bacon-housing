@@ -17,7 +17,7 @@ from egg_n_bacon_housing.schemas.clean_models import (
 )
 from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.geocoding import build_default_geocoder
-from egg_n_bacon_housing.utils.io_helpers import save_parquet
+from egg_n_bacon_housing.utils.layer_writer import LayerWriter
 from egg_n_bacon_housing.utils.validation_gateway import validate_and_quarantine
 
 logger = logging.getLogger(__name__)
@@ -160,6 +160,7 @@ def geocoded_properties(
     hdb_validated: pd.DataFrame,
     condo_validated: pd.DataFrame,
     silver_dir: Path,
+    writer: LayerWriter,
     min_coordinate_coverage: float = 0.7,
 ) -> pd.DataFrame:
     """Merge validated transactions and geocode addresses via OneMap.
@@ -201,7 +202,7 @@ def geocoded_properties(
         combined["lat"] = pd.NA
         combined["lon"] = pd.NA
         logger.warning("No address column found — skipping geocoding")
-        save_parquet(combined, cached_path, "geocoded properties (no address)")
+        writer.write(combined, "geocoded_properties", "silver")
         return combined
 
     unique_addresses = combined[address_col].dropna().astype(str).unique().tolist()
@@ -224,7 +225,7 @@ def geocoded_properties(
             min_coordinate_coverage * 100,
         )
 
-    save_parquet(combined, cached_path, "geocoded properties")
+    writer.write(combined, "geocoded_properties", "silver")
     return combined
 
 

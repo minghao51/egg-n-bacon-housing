@@ -5,12 +5,10 @@ planning-area-level metrics from the enriched transaction layer.
 """
 
 import logging
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from egg_n_bacon_housing.utils.io_helpers import save_parquet
 from egg_n_bacon_housing.utils.layer_writer import LayerWriter
 from egg_n_bacon_housing.utils.metrics import classify_affordability
 from egg_n_bacon_housing.utils.time_index import ensure_month_column
@@ -20,8 +18,7 @@ logger = logging.getLogger(__name__)
 
 def pa_monthly_metrics(
     transactions_enriched: pd.DataFrame,
-    platinum_dir: Path,
-    writer: LayerWriter | None = None,
+    writer: LayerWriter,
     median_household_income: int = 85000,
 ) -> pd.DataFrame:
     """Compute a single PA x month time series with all metrics.
@@ -75,14 +72,7 @@ def pa_monthly_metrics(
     metrics["affordability_ratio"] = metrics["median_price"] / annual_income
     metrics["affordability_class"] = metrics["affordability_ratio"].apply(classify_affordability)
 
-    if writer is not None:
-        writer.write(metrics, "pa_monthly_metrics", "platinum_metrics")
-    else:
-        save_parquet(
-            metrics,
-            platinum_dir / "metrics" / "pa_monthly_metrics.parquet",
-            "PA monthly metrics",
-        )
+    writer.write(metrics, "pa_monthly_metrics", "platinum_metrics")
 
     logger.info("pa_monthly_metrics: %s PA-month rows", len(metrics))
     return metrics
@@ -90,8 +80,7 @@ def pa_monthly_metrics(
 
 def appreciation_hotspots(
     pa_monthly_metrics: pd.DataFrame,
-    platinum_dir: Path,
-    writer: LayerWriter | None = None,
+    writer: LayerWriter,
 ) -> pd.DataFrame:
     """Identify price appreciation hotspots from PA monthly metrics.
 
@@ -142,13 +131,6 @@ def appreciation_hotspots(
 
     hotspots = hotspots.sort_values("appreciation_3m_pct", ascending=False).head(20)
 
-    if writer is not None:
-        writer.write(hotspots, "L5_appreciation_hotspots", "platinum_metrics")
-    else:
-        save_parquet(
-            hotspots,
-            platinum_dir / "metrics" / "L5_appreciation_hotspots.parquet",
-            "appreciation hotspots",
-        )
+    writer.write(hotspots, "L5_appreciation_hotspots", "platinum_metrics")
 
     return hotspots
