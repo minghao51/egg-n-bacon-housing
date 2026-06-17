@@ -5,7 +5,8 @@ import logging
 
 from hamilton import driver
 
-from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.config import Settings
+from egg_n_bacon_housing.utils.geocoding import Geocoder, build_default_geocoder
 from egg_n_bacon_housing.utils.layer_writer import build_writer
 
 logger = logging.getLogger(__name__)
@@ -100,6 +101,7 @@ def _get_components() -> list:
 
 
 def build_pipeline(
+    settings: Settings,
     data_path: str | None = None,
     cache_dir: str | None = None,
 ) -> driver.Driver:
@@ -132,10 +134,12 @@ def build_pipeline(
 
 
 def run_pipeline(
+    settings: Settings,
     data_path: str | None = None,
     final_vars: list[str] | None = None,
     stage: str | None = None,
     dr: driver.Driver | None = None,
+    geocoder: Geocoder | None = None,
 ) -> dict:
     """Run pipeline and return results.
 
@@ -152,7 +156,7 @@ def run_pipeline(
         final_vars = STAGE_VARS.get(stage) if stage else STAGE_VARS["all"]
 
     if dr is None:
-        dr = build_pipeline(data_path=data_path)
+        dr = build_pipeline(settings, data_path=data_path)
 
     resolved_data_path = settings.resolve_data_path(data_path)
     layer_inputs = {
@@ -160,6 +164,7 @@ def run_pipeline(
         "silver_dir": settings.layer_dir("silver", resolved_data_path),
         "gold_dir": settings.layer_dir("gold", resolved_data_path),
         "writer": build_writer(settings, resolved_data_path / "pipeline"),
+        "geocoder": geocoder or build_default_geocoder(settings),
         "webapp_data_dir": settings.webapp_data_dir,
         "min_coordinate_coverage": settings.geocoding.min_coordinate_coverage,
         "median_household_income": settings.metrics.median_household_income,

@@ -5,6 +5,7 @@ import importlib
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
 from egg_n_bacon_housing.utils.layer_writer import SimpleWriter
 
 pytestmark = pytest.mark.unit
@@ -221,7 +222,11 @@ class TestGeocodedValidation:
         condo_validated = pd.DataFrame()
 
         result = cleaning.geocoded_properties(
-            hdb_validated, condo_validated, silver_dir=tmp_path, writer=SimpleWriter(tmp_path)
+            hdb_validated,
+            condo_validated,
+            silver_dir=tmp_path,
+            writer=SimpleWriter(tmp_path),
+            geocoder=InMemoryGeocoder({}),
         )
 
         assert not result.empty
@@ -246,6 +251,7 @@ class TestGeocodedValidation:
             condo_validated,
             silver_dir=tmp_path,
             writer=SimpleWriter(tmp_path),
+            geocoder=InMemoryGeocoder({}),
             min_coordinate_coverage=0.8,
         )
 

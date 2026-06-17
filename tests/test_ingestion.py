@@ -150,7 +150,7 @@ class TestBronzeLayer:
         assert not result["cpi"].empty
         assert result["gdp"].empty
 
-    def test_raw_shopping_malls_prefers_geocoded_bronze_file(self, tmp_path, monkeypatch):
+    def test_raw_shopping_malls_prefers_geocoded_bronze_file(self, tmp_path):
         """Test that geocoded mall bronze output is preferred when present."""
         ingestion = _get_ingestion_module()
         geocoded = pd.DataFrame(
@@ -170,19 +170,15 @@ class TestBronzeLayer:
             index=False,
         )
 
-        monkeypatch.setattr(
-            ingestion,
-            "build_default_geocoder",
-            lambda settings: pytest.fail("geocoding should not run when geocoded bronze exists"),
-        )
+        from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
 
-        result = ingestion.raw_shopping_malls(bronze_dir=tmp_path)
+        result = ingestion.raw_shopping_malls(bronze_dir=tmp_path, geocoder=InMemoryGeocoder({}))
 
         assert result.loc[0, "shopping_mall"] == "ION Orchard"
         assert result.loc[0, "lat"] == pytest.approx(1.3048)
         assert result.loc[0, "lon"] == pytest.approx(103.8318)
 
-    def test_raw_shopping_malls_geocodes_name_only_dataset(self, tmp_path, monkeypatch):
+    def test_raw_shopping_malls_geocodes_name_only_dataset(self, tmp_path):
         """Test that name-only mall data is geocoded and persisted to bronze."""
         ingestion = _get_ingestion_module()
         pd.DataFrame([{"shopping_mall": "ION Orchard"}]).to_parquet(
@@ -193,9 +189,8 @@ class TestBronzeLayer:
         from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
 
         geocoder = InMemoryGeocoder({"ION Orchard": (1.3048, 103.8318)})
-        monkeypatch.setattr(ingestion, "build_default_geocoder", lambda settings: geocoder)
 
-        result = ingestion.raw_shopping_malls(bronze_dir=tmp_path)
+        result = ingestion.raw_shopping_malls(bronze_dir=tmp_path, geocoder=geocoder)
 
         assert result.loc[0, "shopping_mall"] == "ION Orchard"
         assert result.loc[0, "lat"] == pytest.approx(1.3048)

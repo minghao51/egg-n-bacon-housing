@@ -5,6 +5,8 @@ import importlib
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
+
 pytestmark = pytest.mark.unit
 
 
@@ -154,6 +156,7 @@ class TestLocationDim:
             raw_shopping_malls=pd.DataFrame(),
             raw_hdb_property_info=pd.DataFrame(),
             gold_dir=tmp_path / "gold",
+            geocoder=InMemoryGeocoder({}),
             **_empty_poi_args(),
         )
 
@@ -171,6 +174,7 @@ class TestLocationDim:
             raw_shopping_malls=pd.DataFrame(),
             raw_hdb_property_info=pd.DataFrame(),
             gold_dir=tmp_path / "gold",
+            geocoder=InMemoryGeocoder({}),
             **_empty_poi_args(),
         )
 
@@ -210,6 +214,7 @@ class TestLocationDim:
             raw_shopping_malls=pd.DataFrame(),
             raw_hdb_property_info=pd.DataFrame(),
             gold_dir=tmp_path / "gold",
+            geocoder=InMemoryGeocoder({}),
             **_empty_poi_args(),
         )
 
@@ -261,6 +266,7 @@ class TestLocationDim:
             raw_shopping_malls=pd.DataFrame(),
             raw_hdb_property_info=raw_hdb_property_info,
             gold_dir=tmp_path / "gold",
+            geocoder=InMemoryGeocoder({}),
             **_empty_poi_args(),
         )
 

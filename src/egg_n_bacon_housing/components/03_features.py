@@ -10,7 +10,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.schemas.feature_models import (
     BlockProfile,
     HFeatureTransaction,
@@ -20,7 +19,7 @@ from egg_n_bacon_housing.schemas.feature_models import (
     Town360,
 )
 from egg_n_bacon_housing.utils.contracts import require_columns
-from egg_n_bacon_housing.utils.geocoding import build_default_geocoder
+from egg_n_bacon_housing.utils.geocoding import Geocoder
 from egg_n_bacon_housing.utils.proximity import compute_proximity_features
 from egg_n_bacon_housing.utils.regional_mapping import get_region_for_planning_area
 from egg_n_bacon_housing.utils.school_features import _geocode_schools, calculate_school_features
@@ -254,6 +253,7 @@ def location_dim(
     geocoded_green_mark_buildings: pd.DataFrame,
     raw_hdb_property_info: pd.DataFrame,
     gold_dir: Path,
+    geocoder: Geocoder,
 ) -> pd.DataFrame:
     """Build the location dimension table — one row per unique (lat, lon).
 
@@ -285,7 +285,7 @@ def location_dim(
         schools = raw_school_directory
         if "latitude" not in schools.columns or schools["latitude"].isna().all():
             logger.info("School directory lacks lat/lon — geocoding via OneMap...")
-            schools = _geocode_schools(schools, build_default_geocoder(settings))
+            schools = _geocode_schools(schools, geocoder)
         loc = calculate_school_features(loc, schools)
         school_distance_cols = [
             col

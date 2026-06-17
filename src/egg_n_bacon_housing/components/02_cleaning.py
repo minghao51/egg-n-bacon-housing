@@ -9,14 +9,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.schemas.clean_models import (
     GeocodedProperty,
     HCleanCondoTransaction,
     HCleanHDBTransaction,
 )
 from egg_n_bacon_housing.utils.contracts import require_columns
-from egg_n_bacon_housing.utils.geocoding import build_default_geocoder
+from egg_n_bacon_housing.utils.geocoding import Geocoder
 from egg_n_bacon_housing.utils.layer_writer import LayerWriter
 from egg_n_bacon_housing.utils.validation_gateway import validate_and_quarantine
 
@@ -161,6 +160,7 @@ def geocoded_properties(
     condo_validated: pd.DataFrame,
     silver_dir: Path,
     writer: LayerWriter,
+    geocoder: Geocoder,
     min_coordinate_coverage: float = 0.7,
 ) -> pd.DataFrame:
     """Merge validated transactions and geocode addresses via OneMap.
@@ -208,7 +208,6 @@ def geocoded_properties(
     unique_addresses = combined[address_col].dropna().astype(str).unique().tolist()
     logger.info("Geocoding %s unique addresses...", len(unique_addresses))
 
-    geocoder = build_default_geocoder(settings)
     lookup = geocoder.geocode(pd.Series(unique_addresses, name=address_col))
 
     coord_map = lookup.set_index("input")[["lat", "lon"]]

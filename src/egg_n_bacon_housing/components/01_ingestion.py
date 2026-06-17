@@ -17,9 +17,8 @@ import requests
 from hamilton.function_modifiers import parameterize, value
 
 from egg_n_bacon_housing.adapters import datagovsg
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
-from egg_n_bacon_housing.utils.geocoding import build_default_geocoder
+from egg_n_bacon_housing.utils.geocoding import Geocoder
 
 logger = logging.getLogger(__name__)
 
@@ -534,7 +533,7 @@ def _standardize_geocoded_mall_columns(malls_df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def raw_shopping_malls(bronze_dir: Path) -> pd.DataFrame:
+def raw_shopping_malls(bronze_dir: Path, geocoder: Geocoder) -> pd.DataFrame:
     """Load shopping mall data from bronze layer.
 
     Returns:
@@ -558,7 +557,6 @@ def raw_shopping_malls(bronze_dir: Path) -> pd.DataFrame:
             return _standardize_geocoded_mall_columns(malls_df)
 
         try:
-            geocoder = build_default_geocoder(settings)
             geocoded_df = _standardize_geocoded_mall_columns(
                 geocoder.geocode_dataframe(malls_df, "shopping_mall")
             )
@@ -921,6 +919,7 @@ def raw_green_mark_buildings(bronze_dir: Path) -> pd.DataFrame:
 def geocoded_green_mark_buildings(
     bronze_dir: Path,
     raw_green_mark_buildings: pd.DataFrame,
+    geocoder: Geocoder,
 ) -> pd.DataFrame:
     """Geocode Green Mark buildings via OneMap, cache as bronze parquet.
 
@@ -939,7 +938,6 @@ def geocoded_green_mark_buildings(
         return df
 
     logger.info("Geocoding %s unique Green Mark postal codes...", df["postal_code"].nunique())
-    geocoder = build_default_geocoder(settings)
     geocoded = geocoder.geocode(df["postal_code"].drop_duplicates())
     coord_map = dict(zip(geocoded["input"], zip(geocoded["lat"], geocoded["lon"]), strict=False))
 

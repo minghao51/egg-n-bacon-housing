@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 
 from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
 
 pytestmark = pytest.mark.integration
 
@@ -33,7 +34,7 @@ def test_build_pipeline_and_execute_minimal_graph(monkeypatch, tmp_path):
     monkeypatch.setattr(settings.pipeline, "use_caching", False)
 
     try:
-        dr = pipeline.build_pipeline(data_path=str(tmp_path))
+        dr = pipeline.build_pipeline(settings, data_path=str(tmp_path))
         result = dr.execute(
             final_vars=["test_output"],
             inputs={"platinum_dir": tmp_path / "platinum"},
@@ -57,9 +58,9 @@ def test_run_pipeline_defaults_to_all_stage(monkeypatch):
             captured["inputs"] = inputs
             return {name: "ok" for name in final_vars}
 
-    monkeypatch.setattr(pipeline, "build_pipeline", lambda data_path=None: DummyDriver())
+    monkeypatch.setattr(pipeline, "build_pipeline", lambda settings, data_path=None: DummyDriver())
 
-    result = pipeline.run_pipeline()
+    result = pipeline.run_pipeline(settings, geocoder=InMemoryGeocoder({}))
 
     assert captured["final_vars"] == pipeline.STAGE_VARS["all"]
     assert set(result.keys()) == set(captured["final_vars"])

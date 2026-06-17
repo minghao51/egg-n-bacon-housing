@@ -52,7 +52,7 @@ def main():
 
     logger.info(f"Stage: {args.stage} | Data: {settings.data_dir}")
 
-    dr = build_pipeline()
+    dr = build_pipeline(settings)
 
     if args.visualize:
         logger.info(f"DAG nodes: {len(dr.list_available_variables())}")
@@ -66,7 +66,7 @@ def main():
         except Exception as e:
             logger.warning(f"DAG visualization failed: {e}")
 
-    results = run_pipeline(final_vars=args.final_vars, stage=args.stage, dr=dr)
+    results = run_pipeline(settings, final_vars=args.final_vars, stage=args.stage, dr=dr)
 
     logger.info(f"Pipeline complete. Results: {list(results.keys())}")
     _log_results(logger, results)

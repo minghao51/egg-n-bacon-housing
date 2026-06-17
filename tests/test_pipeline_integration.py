@@ -5,6 +5,9 @@ import importlib
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.config import settings
+from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
+
 pytestmark = pytest.mark.integration
 
 
@@ -22,7 +25,7 @@ class TestPipelineIntegration:
         pipeline = _get_pipeline_module()
 
         try:
-            dr = pipeline.build_pipeline(data_path=str(tmp_path))
+            dr = pipeline.build_pipeline(settings, data_path=str(tmp_path))
             assert dr is not None
         except ValueError as e:
             if "check_output" in str(e) and "BaseDefaultValidator" in str(e):
@@ -52,9 +55,11 @@ class TestPipelineIntegration:
                 captured["inputs"] = inputs
                 return {name: pd.DataFrame() for name in final_vars}
 
-        monkeypatch.setattr(pipeline, "build_pipeline", lambda data_path=None: FakeDriver())
+        monkeypatch.setattr(
+            pipeline, "build_pipeline", lambda settings, data_path=None: FakeDriver()
+        )
 
-        pipeline.run_pipeline(data_path=str(tmp_path))
+        pipeline.run_pipeline(settings, data_path=str(tmp_path), geocoder=InMemoryGeocoder({}))
 
         assert captured["final_vars"] == pipeline.STAGE_VARS["all"]
         assert captured["inputs"]["bronze_dir"] == tmp_path / "pipeline" / "01_bronze"
@@ -74,9 +79,13 @@ class TestPipelineIntegration:
                 captured["final_vars"] = final_vars
                 return {name: pd.DataFrame() for name in final_vars}
 
-        monkeypatch.setattr(pipeline, "build_pipeline", lambda data_path=None: FakeDriver())
+        monkeypatch.setattr(
+            pipeline, "build_pipeline", lambda settings, data_path=None: FakeDriver()
+        )
 
-        pipeline.run_pipeline(data_path=str(tmp_path), stage="ingest")
+        pipeline.run_pipeline(
+            settings, data_path=str(tmp_path), stage="ingest", geocoder=InMemoryGeocoder({})
+        )
 
         assert captured["final_vars"] == pipeline.STAGE_VARS["ingest"]
         assert "raw_hdb_resale_transactions" in captured["final_vars"]
