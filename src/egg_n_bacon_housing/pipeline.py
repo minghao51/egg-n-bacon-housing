@@ -1,10 +1,10 @@
 """Hamilton DAG driver for egg-n-bacon-housing medallion pipeline."""
 
-import importlib
 import logging
 
 from hamilton import driver
 
+from egg_n_bacon_housing.components import cleaning, export, features, ingestion, metrics
 from egg_n_bacon_housing.config import Settings
 from egg_n_bacon_housing.utils.geocoding import Geocoder, build_default_geocoder
 from egg_n_bacon_housing.utils.layer_writer import build_writer
@@ -19,13 +19,7 @@ except ImportError:
     _sdk_adapters = None
     _HAS_TRACKER = False
 
-_STAGE_MODULES = [
-    "egg_n_bacon_housing.components.01_ingestion",
-    "egg_n_bacon_housing.components.02_cleaning",
-    "egg_n_bacon_housing.components.03_features",
-    "egg_n_bacon_housing.components.04_export",
-    "egg_n_bacon_housing.components.05_metrics",
-]
+_STAGE_MODULES = [ingestion, cleaning, features, export, metrics]
 
 STAGE_VARS: dict[str, list[str]] = {
     "ingest": [
@@ -94,12 +88,6 @@ STAGE_VARS: dict[str, list[str]] = {
 }
 
 
-def _get_components() -> list:
-    if not hasattr(_get_components, "_cache"):
-        _get_components._cache = [importlib.import_module(m) for m in _STAGE_MODULES]  # type: ignore[attr-defined]
-    return _get_components._cache  # type: ignore[attr-defined]
-
-
 def build_pipeline(
     settings: Settings,
     data_path: str | None = None,
@@ -110,7 +98,7 @@ def build_pipeline(
 
     builder = (
         driver.Builder()
-        .with_modules(*_get_components())
+        .with_modules(*_STAGE_MODULES)
         .with_config({"data_path": str(resolved_data_path)})
     )
 
@@ -152,6 +140,8 @@ def run_pipeline(
     Returns:
         Dict of results keyed by variable name.
     """
+    from egg_n_bacon_housing.utils import cache, data_loader, mrt_line_mapping, school_features
+
     if final_vars is None:
         final_vars = STAGE_VARS.get(stage) if stage else STAGE_VARS["all"]
 
@@ -159,6 +149,18 @@ def run_pipeline(
         dr = build_pipeline(settings, data_path=data_path)
 
     resolved_data_path = settings.resolve_data_path(data_path)
+    bronze_dir = settings.layer_dir("bronze", resolved_data_path)
+
+    cache.configure(
+        cache_dir=settings.data_dir / "cache",
+        use_caching=settings.pipeline.use_caching,
+        allow_legacy_pickle=settings.pipeline.allow_legacy_pickle_cache,
+        cache_duration_hours=settings.pipeline.cache_duration_hours,
+    )
+    data_loader.configure(settings.data_dir)
+    mrt_line_mapping.configure(bronze_dir / "external")
+    school_features.configure(bronze_dir, settings.data_dir)
+
     layer_inputs = {
         "bronze_dir": settings.layer_dir("bronze", resolved_data_path),
         "silver_dir": settings.layer_dir("silver", resolved_data_path),
@@ -168,5 +170,6 @@ def run_pipeline(
         "webapp_data_dir": settings.webapp_data_dir,
         "min_coordinate_coverage": settings.geocoding.min_coordinate_coverage,
         "median_household_income": settings.metrics.median_household_income,
+        "affordability_thresholds": settings.metrics.affordability_thresholds,
     }
     return dr.execute(final_vars=final_vars, inputs=layer_inputs)

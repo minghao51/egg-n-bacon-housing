@@ -1,6 +1,5 @@
-"""Test 01_ingestion component."""
+"""Test ingestion component."""
 
-import importlib
 import json
 
 import pandas as pd
@@ -10,8 +9,10 @@ pytestmark = pytest.mark.unit
 
 
 def _get_ingestion_module():
-    """Get the 01_ingestion module."""
-    return importlib.import_module("egg_n_bacon_housing.components.01_ingestion")
+    """Get the ingestion module."""
+    from egg_n_bacon_housing.components import ingestion
+
+    return ingestion
 
 
 class TestBronzeLayer:
@@ -24,8 +25,10 @@ class TestBronzeLayer:
         (tmp_path / "raw_hdb_resale.parquet").parent.mkdir(parents=True, exist_ok=True)
         expected.to_parquet(tmp_path / "raw_hdb_resale.parquet", index=False)
 
+        from egg_n_bacon_housing.adapters import datagovsg
+
         monkeypatch.setattr(
-            ingestion.datagovsg,
+            datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pytest.fail("network fetch should not run when cache exists"),
         )
@@ -42,8 +45,10 @@ class TestBronzeLayer:
 
     def test_raw_hdb_resale_transactions_hard_fails_on_empty_fetch(self, tmp_path, monkeypatch):
         ingestion = _get_ingestion_module()
+        from egg_n_bacon_housing.adapters import datagovsg
+
         monkeypatch.setattr(
-            ingestion.datagovsg,
+            datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pd.DataFrame(),
         )
@@ -63,8 +68,10 @@ class TestBronzeLayer:
         expected = pd.DataFrame([{"quarter": "2024-Q1", "index": "100.0"}])
         expected.to_parquet(tmp_path / "raw_datagov_rental_index.parquet", index=False)
 
+        from egg_n_bacon_housing.adapters import datagovsg
+
         monkeypatch.setattr(
-            ingestion.datagovsg,
+            datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pytest.fail("network fetch should not run when cache exists"),
         )
@@ -85,8 +92,10 @@ class TestBronzeLayer:
         expected = pd.DataFrame([{"town": "TOA PAYOH", "monthly_rent": "3500"}])
         expected.to_parquet(tmp_path / "raw_datagov_hdb_rental.parquet", index=False)
 
+        from egg_n_bacon_housing.adapters import datagovsg
+
         monkeypatch.setattr(
-            ingestion.datagovsg,
+            datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pytest.fail("network fetch should not run when cache exists"),
         )
@@ -136,8 +145,10 @@ class TestBronzeLayer:
         pd.DataFrame([{"rate": 1.2}]).to_parquet(external_dir / "sora_rates.parquet", index=False)
         pd.DataFrame([{"value": 100}]).to_parquet(external_dir / "cpi.parquet", index=False)
 
+        from egg_n_bacon_housing.adapters import datagovsg
+
         monkeypatch.setattr(
-            ingestion.datagovsg,
+            datagovsg,
             "fetch_datagovsg_dataset",
             lambda *a, **kw: pd.DataFrame(),
         )

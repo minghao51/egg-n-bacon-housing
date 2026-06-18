@@ -3,6 +3,7 @@
 
 import json
 import logging
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -10,7 +11,6 @@ import pandas as pd
 from rapidfuzz import fuzz, process
 from scipy.spatial import cKDTree
 
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.geo import haversine_distance
 from egg_n_bacon_housing.utils.geocoding import Geocoder, build_default_geocoder
 
@@ -25,9 +25,22 @@ SCHOOL_LEVELS = ["PRIMARY", "SECONDARY (S1-S5)", "JUNIOR COLLEGE"]
 
 logger = logging.getLogger(__name__)
 
+_paths: dict[str, Path] = {}
+
+
+def configure(bronze_dir: Path, data_dir: Path) -> None:
+    """Set reference-data paths (call once at pipeline startup)."""
+    global _paths
+    _paths = {"bronze_dir": bronze_dir, "data_dir": data_dir}
+
 
 def load_schools() -> pd.DataFrame:
-    """Load schools, geocoding if necessary and saving results."""
+    """Load schools, geocoding if necessary and saving results.
+
+    Analytics entry point — imports settings locally.
+    """
+    from egg_n_bacon_housing.config import settings
+
     school_path = settings.bronze_dir / "raw_datagov_school_directory.parquet"
     schools_df = pd.read_parquet(school_path)
 
@@ -54,7 +67,7 @@ def _load_reference_data(filename: str) -> dict | None:
     Returns:
         Parsed JSON data or None if not found
     """
-    config_path = settings.bronze_dir / "external" / filename
+    config_path = _paths.get("bronze_dir", Path()) / "external" / filename
     if config_path.exists():
         with open(config_path) as f:
             return json.load(f)
@@ -81,7 +94,7 @@ def load_school_tiers() -> tuple[pd.DataFrame, pd.DataFrame]:
             logger.info("Loaded %s secondary school tiers from JSON", len(secondary_tiers))
         return primary_tiers, secondary_tiers
 
-    csv_dir = settings.data_dir / "manual" / "csv"
+    csv_dir = _paths.get("data_dir", Path()) / "manual" / "csv"
     primary_path = csv_dir / "school_tiers_primary.csv"
     secondary_path = csv_dir / "school_tiers_secondary.csv"
 
@@ -668,7 +681,12 @@ def calculate_school_features(
 
 
 def main():
-    """Main entry point for school features calculation."""
+    """Main entry point for school features calculation.
+
+    Analytics entry point — imports settings locally.
+    """
+    from egg_n_bacon_housing.config import settings
+
     logger.info("🚀 Calculating school features...")
 
     schools_df = load_schools()

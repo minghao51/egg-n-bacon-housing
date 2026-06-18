@@ -20,7 +20,6 @@ import requests
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from egg_n_bacon_housing.adapters.exceptions import CredentialError, OneMapAuthError
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
 
 logger = logging.getLogger(__name__)
@@ -35,8 +34,11 @@ def _retry_exception_message(retry_state) -> str:
     return str(exc) if exc is not None else "unknown error"
 
 
-def setup_onemap_headers() -> dict[str, str]:
+def setup_onemap_headers(settings) -> dict[str, str]:
     """Setup OneMap API authentication headers.
+
+    Args:
+        settings: Settings instance with OneMap credentials.
 
     Returns:
         Dict with Authorization header containing valid JWT token
@@ -73,10 +75,10 @@ def setup_onemap_headers() -> dict[str, str]:
             access_token = None
 
     if not access_token:
-        return _request_new_token()
+        return _request_new_token(settings)
 
 
-def _get_required_secret(secret_name: str) -> str:
+def _get_required_secret(settings, secret_name: str) -> str:
     """Retrieve a secret from settings. Internal-use only — callers must not persist the value."""
     value = getattr(settings, secret_name).get_secret_value().strip()
     if not value:
@@ -93,13 +95,13 @@ def _get_required_secret(secret_name: str) -> str:
         _retry_exception_message(retry_state),
     ),
 )
-def _request_new_token() -> dict[str, str]:
+def _request_new_token(settings) -> dict[str, str]:
     """Request a new OneMap API token with retry logic."""
     logger.info("Requesting new OneMap token")
     url = "https://www.onemap.gov.sg/api/auth/post/getToken"
     payload = {
-        "email": _get_required_secret("onemap_email"),
-        "password": _get_required_secret("onemap_password"),
+        "email": _get_required_secret(settings, "onemap_email"),
+        "password": _get_required_secret(settings, "onemap_password"),
     }
 
     response = requests.post(url, json=payload, timeout=30)
@@ -179,6 +181,4 @@ def fetch_data_cached(
     def _fetch_from_api():
         return fetch_data(search_string, headers, timeout)
 
-    return cached_call(
-        cache_id, _fetch_from_api, duration_hours=settings.geocoding.cache_duration_hours
-    )
+    return cached_call(cache_id, _fetch_from_api)

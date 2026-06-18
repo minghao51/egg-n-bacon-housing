@@ -20,6 +20,7 @@ def pa_monthly_metrics(
     transactions_enriched: pd.DataFrame,
     writer: LayerWriter,
     median_household_income: int = 85000,
+    affordability_thresholds: dict[str, float] | None = None,
 ) -> pd.DataFrame:
     """Compute a single PA x month time series with all metrics.
 
@@ -29,6 +30,7 @@ def pa_monthly_metrics(
     Args:
         transactions_enriched: Full enriched transactions from 03_features.
         median_household_income: Fallback annual income for affordability.
+        affordability_thresholds: Optional thresholds dict for classification.
 
     Returns:
         DataFrame with PA x month metrics (~5K rows).
@@ -70,7 +72,9 @@ def pa_monthly_metrics(
     else:
         annual_income = float(median_household_income)
     metrics["affordability_ratio"] = metrics["median_price"] / annual_income
-    metrics["affordability_class"] = metrics["affordability_ratio"].apply(classify_affordability)
+    metrics["affordability_class"] = metrics["affordability_ratio"].apply(
+        lambda r: classify_affordability(r, affordability_thresholds)
+    )
 
     writer.write(metrics, "pa_monthly_metrics", "platinum_metrics")
 

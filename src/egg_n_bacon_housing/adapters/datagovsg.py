@@ -21,7 +21,6 @@ from egg_n_bacon_housing.adapters.exceptions import (
     DatasetFetchError,
     IncompleteDatasetFetchError,
 )
-from egg_n_bacon_housing.config import settings
 from egg_n_bacon_housing.utils.cache import cached_call
 
 logger = logging.getLogger(__name__)
@@ -173,9 +172,6 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
 
         return pd.concat(response_agg, ignore_index=True)
 
-    if use_cache and settings.pipeline.use_caching:
-        cache_id = f"datagovsg:{dataset_id}"
-        return cached_call(
-            cache_id, _fetch_from_api, duration_hours=settings.pipeline.cache_duration_hours
-        )
+    if use_cache:
+        return cached_call(f"datagovsg:{dataset_id}", _fetch_from_api)
     return _fetch_from_api()

@@ -99,6 +99,7 @@ class TrackedWriter(LayerWriter):
         record_dataframe_quality(
             df,
             dataset_name=name,
+            db_path=self.settings.data_dir / "quality_metrics.db",
             source="layer_writer",
             stage=f"L_{layer}",
         )

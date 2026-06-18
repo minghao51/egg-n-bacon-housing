@@ -79,10 +79,12 @@ class TestOneMapGeocoderCacheLookup:
     def _geocoder(monkeypatch, cache: dict) -> OneMapGeocoder:
         import egg_n_bacon_housing.utils.cache as cache_mod
 
-        def fake_get(identifier, duration_hours=24):
+        cache_mod.configure(__import__("pathlib").Path("/tmp/test_cache"), use_caching=True)
+
+        def fake_get(identifier, duration_hours=None):
             return cache.get(identifier, _CACHE_MISS)
 
-        monkeypatch.setattr(cache_mod._cache_manager, "get", fake_get)
+        monkeypatch.setattr(cache_mod.get_cache_manager(), "get", fake_get)
         return OneMapGeocoder(headers={"Authorization": "x"})
 
     def test_cache_hit_returns_coords(self, monkeypatch):
@@ -134,10 +136,13 @@ class TestOneMapGeocoderCacheFirst:
         geocoder = OneMapGeocoder(
             headers={"Authorization": "x"}, max_workers=1, rate_limit_seconds=5
         )
+        from pathlib import Path
+
         import egg_n_bacon_housing.utils.cache as cache_mod
 
+        cache_mod.configure(Path("/tmp/test_cache"), use_caching=True)
         monkeypatch.setattr(
-            cache_mod._cache_manager,
+            cache_mod.get_cache_manager(),
             "get",
             lambda identifier, duration_hours=24: cache.get(identifier, _CACHE_MISS),
         )
@@ -156,10 +161,13 @@ class TestOneMapGeocoderCacheFirst:
         geocoder = OneMapGeocoder(
             headers={"Authorization": "x"}, max_workers=1, rate_limit_seconds=0.0
         )
+        from pathlib import Path
+
         import egg_n_bacon_housing.utils.cache as cache_mod
 
+        cache_mod.configure(Path("/tmp/test_cache"), use_caching=True)
         monkeypatch.setattr(
-            cache_mod._cache_manager,
+            cache_mod.get_cache_manager(),
             "get",
             lambda identifier, duration_hours=24: _CACHE_MISS,
         )
@@ -175,10 +183,13 @@ class TestOneMapGeocoderCacheFirst:
         geocoder = OneMapGeocoder(
             headers={"Authorization": "x"}, max_workers=1, rate_limit_seconds=3
         )
+        from pathlib import Path
+
         import egg_n_bacon_housing.utils.cache as cache_mod
 
+        cache_mod.configure(Path("/tmp/test_cache"), use_caching=True)
         monkeypatch.setattr(
-            cache_mod._cache_manager,
+            cache_mod.get_cache_manager(),
             "get",
             lambda identifier, duration_hours=24: _CACHE_MISS,
         )
@@ -193,10 +204,13 @@ class TestOneMapGeocoderCacheFirst:
 class TestOneMapGeocoderParallel:
     def test_parallel_geocode_resolves_all_via_api(self, monkeypatch):
         geocoder = OneMapGeocoder(headers={"Authorization": "x"}, max_workers=3)
+        from pathlib import Path
+
         import egg_n_bacon_housing.utils.cache as cache_mod
 
+        cache_mod.configure(Path("/tmp/test_cache"), use_caching=True)
         monkeypatch.setattr(
-            cache_mod._cache_manager,
+            cache_mod.get_cache_manager(),
             "get",
             lambda identifier, duration_hours=24: _CACHE_MISS,
         )
@@ -213,12 +227,16 @@ class TestOneMapGeocoderParallel:
 
     def test_parallel_preserves_input_order(self, monkeypatch):
         geocoder = OneMapGeocoder(headers={"Authorization": "x"}, max_workers=4)
+        from pathlib import Path
+
         import egg_n_bacon_housing.utils.cache as cache_mod
+
+        cache_mod.configure(Path("/tmp/test_cache"), use_caching=True)
 
         def fake_get(identifier, duration_hours=24):
             return _CACHE_MISS
 
-        monkeypatch.setattr(cache_mod._cache_manager, "get", fake_get)
+        monkeypatch.setattr(cache_mod.get_cache_manager(), "get", fake_get)
 
         def fake_fetch(search_string, headers, timeout):
             return pd.DataFrame(
@@ -237,7 +255,7 @@ class TestBuildDefaultGeocoder:
     def test_wires_settings_into_onemap_geocoder(self, monkeypatch):
         monkeypatch.setattr(
             "egg_n_bacon_housing.adapters.onemap.setup_onemap_headers",
-            lambda: {"Authorization": "token"},
+            lambda settings: {"Authorization": "token"},
         )
 
         class _Geo:

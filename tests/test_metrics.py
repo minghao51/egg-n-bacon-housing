@@ -1,7 +1,5 @@
 """Tests for components/05_metrics.py."""
 
-import importlib
-
 import pandas as pd
 import pytest
 
@@ -11,7 +9,9 @@ pytestmark = pytest.mark.unit
 
 
 def _get_metrics_module():
-    return importlib.import_module("egg_n_bacon_housing.components.05_metrics")
+    from egg_n_bacon_housing.components import metrics
+
+    return metrics
 
 
 class TestPaMonthlyMetrics:

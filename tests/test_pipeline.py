@@ -30,7 +30,7 @@ def test_build_pipeline_and_execute_minimal_graph(monkeypatch, tmp_path):
     )
     sys.modules[module.__name__] = module
 
-    monkeypatch.setattr(pipeline, "_get_components", lambda: [module])
+    monkeypatch.setattr(pipeline, "_STAGE_MODULES", [module])
     monkeypatch.setattr(settings.pipeline, "use_caching", False)
 
     try:

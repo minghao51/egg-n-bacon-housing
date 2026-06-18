@@ -92,7 +92,7 @@ class TestPipelineIntegration:
 
     def test_ingestion_components_load_bronze_data(self, tmp_path, monkeypatch):
         """Individual ingestion functions read bronze parquet and return DataFrames."""
-        ingestion = importlib.import_module("egg_n_bacon_housing.components.01_ingestion")
+        from egg_n_bacon_housing.components import ingestion
 
         hdb_rows = [
             {
@@ -142,7 +142,7 @@ class TestPipelineIntegration:
 
     def test_cleaning_produces_silver_output(self, tmp_path, monkeypatch):
         """Cleaning stage produces silver-layer parquet files."""
-        cleaning = importlib.import_module("egg_n_bacon_housing.components.02_cleaning")
+        from egg_n_bacon_housing.components import cleaning
 
         raw_data = pd.DataFrame(
             [

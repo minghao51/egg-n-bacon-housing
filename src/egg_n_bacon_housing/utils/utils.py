@@ -25,7 +25,6 @@ def add_project_to_path(file_path: Path | None = None) -> Path:
         >>> from egg_n_bacon_housing.utils.utils import add_project_to_path
         >>> from pathlib import Path
         >>> project_root = add_project_to_path(Path(__file__))
-        >>> from egg_n_bacon_housing.config import settings
     """
     if file_path is None:
         file_path = Path.cwd()

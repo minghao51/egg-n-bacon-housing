@@ -1,7 +1,5 @@
 """Test 03_features component."""
 
-import importlib
-
 import pandas as pd
 import pytest
 
@@ -12,7 +10,9 @@ pytestmark = pytest.mark.unit
 
 def _get_features_module():
     """Get the 03_features module."""
-    return importlib.import_module("egg_n_bacon_housing.components.03_features")
+    from egg_n_bacon_housing.components import features
+
+    return features
 
 
 def _make_mrt_stations():

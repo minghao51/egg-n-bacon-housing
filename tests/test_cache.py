@@ -13,10 +13,9 @@ def _get_cache_module():
 
 
 class TestCacheSentinel:
-    def test_cached_call_stores_falsy_empty_dataframe(self, tmp_path, monkeypatch):
+    def test_cached_call_stores_falsy_empty_dataframe(self, tmp_path):
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
+        cache.configure(tmp_path, use_caching=True)
 
         call_count = 0
 
@@ -33,10 +32,9 @@ class TestCacheSentinel:
         assert result2.empty
         assert call_count == 1
 
-    def test_cached_call_stores_none(self, tmp_path, monkeypatch):
+    def test_cached_call_stores_none(self, tmp_path):
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
+        cache.configure(tmp_path, use_caching=True)
 
         call_count = 0
 
@@ -53,10 +51,9 @@ class TestCacheSentinel:
         assert result2 is None
         assert call_count == 1
 
-    def test_cached_call_stores_zero(self, tmp_path, monkeypatch):
+    def test_cached_call_stores_zero(self, tmp_path):
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
+        cache.configure(tmp_path, use_caching=True)
 
         call_count = 0
 
@@ -75,11 +72,10 @@ class TestCacheSentinel:
 
 
 class TestCacheDuration:
-    def test_duration_hours_zero_means_no_cache(self, tmp_path, monkeypatch):
+    def test_duration_hours_zero_means_no_cache(self, tmp_path):
         """duration_hours=0 should not fall back to default — it means no caching."""
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
+        cache.configure(tmp_path, use_caching=True)
 
         call_count = 0
 
@@ -93,11 +89,9 @@ class TestCacheDuration:
 
         assert call_count == 2
 
-    def test_duration_hours_none_falls_back_to_default(self, tmp_path, monkeypatch):
+    def test_duration_hours_none_falls_back_to_default(self, tmp_path):
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
-        monkeypatch.setattr(cache.settings.pipeline, "cache_duration_hours", 24)
+        cache.configure(tmp_path, use_caching=True, cache_duration_hours=24)
 
         call_count = 0
 
@@ -116,36 +110,32 @@ class TestCacheDuration:
 
 
 class TestCacheSerialization:
-    def test_dataframe_cached_as_parquet(self, tmp_path, monkeypatch):
+    def test_dataframe_cached_as_parquet(self, tmp_path):
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
+        cache.configure(tmp_path, use_caching=True)
 
         df = pd.DataFrame([{"x": 1, "y": "a"}])
         cache.cached_call("df_cache", lambda: df, duration_hours=1)
 
-        key = cache._cache_manager._get_cache_key("df_cache")
+        key = cache.get_cache_manager()._get_cache_key("df_cache")
         assert (tmp_path / f"{key}.parquet").exists()
         assert not (tmp_path / f"{key}.pkl").exists()
 
-    def test_scalar_cached_as_json(self, tmp_path, monkeypatch):
+    def test_scalar_cached_as_json(self, tmp_path):
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
+        cache.configure(tmp_path, use_caching=True)
 
         cache.cached_call("scalar_cache", lambda: 42, duration_hours=1)
-        key = cache._cache_manager._get_cache_key("scalar_cache")
+        key = cache.get_cache_manager()._get_cache_key("scalar_cache")
 
         assert (tmp_path / f"{key}.json").exists()
         assert not (tmp_path / f"{key}.pkl").exists()
 
-    def test_legacy_pickle_ignored_when_disabled(self, tmp_path, monkeypatch):
+    def test_legacy_pickle_ignored_when_disabled(self, tmp_path):
         cache = _get_cache_module()
-        monkeypatch.setattr(cache._cache_manager, "cache_dir", tmp_path)
-        monkeypatch.setattr(cache.settings.pipeline, "use_caching", True)
-        monkeypatch.setattr(cache.settings.pipeline, "allow_legacy_pickle_cache", False)
+        cache.configure(tmp_path, use_caching=True, allow_legacy_pickle=False)
 
-        key = cache._cache_manager._get_cache_key("legacy_cache")
+        key = cache.get_cache_manager()._get_cache_key("legacy_cache")
         (tmp_path / f"{key}.pkl").write_bytes(b"legacy")
 
         result = cache.cached_call("legacy_cache", lambda: {"legacy": False}, duration_hours=1)

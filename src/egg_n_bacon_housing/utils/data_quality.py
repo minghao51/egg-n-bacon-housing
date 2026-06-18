@@ -8,12 +8,9 @@ import logging
 import sqlite3
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from functools import wraps
 from pathlib import Path
 
 import pandas as pd
-
-from egg_n_bacon_housing.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -76,17 +73,16 @@ class QualityBaseline:
     last_updated: str
 
 
-def get_collector(db_path: Path | None = None) -> "DataQualityCollector":
+def get_collector(db_path: Path) -> "DataQualityCollector":
     """Get or create global collector instance.
 
-    If ``db_path`` is provided, reuse the current collector only when it points
-    at the same database. This keeps tests isolated when they override the data
-    directory.
+    Reuses the current collector only when it points at the same database.
+    This keeps tests isolated when they override the data directory.
     """
     global _collector
     if _collector is None:
         _collector = DataQualityCollector(db_path)
-    elif db_path is not None and Path(_collector.db_path) != Path(db_path):
+    elif Path(_collector.db_path) != Path(db_path):
         _collector = DataQualityCollector(db_path)
     return _collector
 
@@ -115,9 +111,9 @@ def infer_quality_stage(dataset_name: str) -> str:
 def record_dataframe_quality(
     df: pd.DataFrame,
     dataset_name: str,
+    db_path: Path,
     source: str = "unknown",
     stage: str | None = None,
-    db_path: Path | None = None,
     input_rows: int | None = None,
 ) -> QualitySnapshot:
     """Record quality metrics for an already-persisted DataFrame."""
@@ -145,31 +141,6 @@ def record_dataframe_quality(
     _log_quality_summary(snapshot, anomalies)
 
     return snapshot
-
-
-def monitor_data_quality(func):
-    """Decorator for save_parquet to capture quality metrics."""
-
-    @wraps(func)
-    def wrapper(df: pd.DataFrame, dataset_name: str, *args, **kwargs):
-        input_rows = len(df)
-        stage = infer_quality_stage(dataset_name)
-
-        source = kwargs.get("source", "unknown")
-
-        result = func(df, dataset_name, *args, **kwargs)
-
-        record_dataframe_quality(
-            df,
-            dataset_name=dataset_name,
-            source=source,
-            stage=stage,
-            input_rows=input_rows,
-        )
-
-        return result
-
-    return wrapper
 
 
 def get_duplicate_status(dataset_name: str, duplicate_count: int) -> tuple[str, bool]:
@@ -231,9 +202,9 @@ def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> Non
 class DataQualityCollector:
     """Collects and analyzes data quality metrics."""
 
-    def __init__(self, db_path: Path | None = None):
+    def __init__(self, db_path: Path):
         """Initialize collector with SQLite database."""
-        self.db_path = db_path or (settings.data_dir / "quality_metrics.db")
+        self.db_path = db_path
         self._init_db()
 
     def _init_db(self) -> None:

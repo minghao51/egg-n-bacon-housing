@@ -1,9 +1,10 @@
-"""Tests for components/01_ingestion.py — raw_condo_transactions (via raw_dataset)."""
-
-import importlib
+"""Tests for ingestion — raw_condo_transactions (via raw_dataset)."""
 
 import pandas as pd
 import pytest
+
+from egg_n_bacon_housing.adapters import datagovsg
+from egg_n_bacon_housing.components.ingestion import datagov as datagov_nodes
 
 pytestmark = pytest.mark.unit
 
@@ -17,7 +18,9 @@ CONDO_PARAMS = dict(
 
 
 def _get_ingestion_module():
-    return importlib.import_module("egg_n_bacon_housing.components.01_ingestion")
+    from egg_n_bacon_housing.components import ingestion
+
+    return ingestion
 
 
 class TestRawCondoTransactions:
@@ -28,7 +31,7 @@ class TestRawCondoTransactions:
         expected.to_parquet(tmp_path / "raw_condo_transactions.parquet", index=False)
 
         monkeypatch.setattr(
-            ingestion.datagovsg,
+            datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pytest.fail("should not fetch when cache exists"),
         )
@@ -39,7 +42,7 @@ class TestRawCondoTransactions:
     def test_raises_on_empty_fetch(self, tmp_path, monkeypatch):
         ingestion = _get_ingestion_module()
         monkeypatch.setattr(
-            ingestion.datagovsg,
+            datagovsg,
             "fetch_datagovsg_dataset",
             lambda *args, **kwargs: pd.DataFrame(),
         )
@@ -51,10 +54,8 @@ class TestRawCondoTransactions:
         ingestion = _get_ingestion_module()
         fetched_data = pd.DataFrame([{"price": 900000, "date": "2024-03"}])
 
-        monkeypatch.setattr(
-            ingestion.datagovsg, "fetch_datagovsg_dataset", lambda *a, **kw: fetched_data
-        )
-        monkeypatch.setattr(ingestion, "cached_call", lambda cache_id, fn: fn())
+        monkeypatch.setattr(datagovsg, "fetch_datagovsg_dataset", lambda *a, **kw: fetched_data)
+        monkeypatch.setattr(datagov_nodes, "cached_call", lambda cache_id, fn: fn())
 
         result = ingestion.raw_dataset(bronze_dir=tmp_path, **CONDO_PARAMS)
         assert len(result) == 1
@@ -62,8 +63,8 @@ class TestRawCondoTransactions:
 
     def test_raises_on_none_fetch(self, tmp_path, monkeypatch):
         ingestion = _get_ingestion_module()
-        monkeypatch.setattr(ingestion.datagovsg, "fetch_datagovsg_dataset", lambda *a, **kw: None)
-        monkeypatch.setattr(ingestion, "cached_call", lambda cache_id, fn: fn())
+        monkeypatch.setattr(datagovsg, "fetch_datagovsg_dataset", lambda *a, **kw: None)
+        monkeypatch.setattr(datagov_nodes, "cached_call", lambda cache_id, fn: fn())
 
         with pytest.raises(RuntimeError, match="Core dataset fetch failed: condo_resale"):
             ingestion.raw_dataset(bronze_dir=tmp_path, **CONDO_PARAMS)
@@ -77,8 +78,8 @@ class TestRawCondoTransactions:
             calls.append(dataset_id)
             return fetched_data
 
-        monkeypatch.setattr(ingestion.datagovsg, "fetch_datagovsg_dataset", tracking_fetch)
-        monkeypatch.setattr(ingestion, "cached_call", lambda cache_id, fn: fn())
+        monkeypatch.setattr(datagovsg, "fetch_datagovsg_dataset", tracking_fetch)
+        monkeypatch.setattr(datagov_nodes, "cached_call", lambda cache_id, fn: fn())
 
         ingestion.raw_dataset(bronze_dir=tmp_path, **CONDO_PARAMS)
         assert calls[0] == CONDO_PARAMS["resource_id"]

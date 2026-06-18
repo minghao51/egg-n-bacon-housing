@@ -1,7 +1,5 @@
 """Test 04_export component."""
 
-import importlib
-
 import pandas as pd
 import pytest
 
@@ -12,7 +10,9 @@ pytestmark = pytest.mark.unit
 
 def _get_export_module():
     """Get the 04_export module."""
-    return importlib.import_module("egg_n_bacon_housing.components.04_export")
+    from egg_n_bacon_housing.components import export
+
+    return export
 
 
 class TestPlatinumLayer:

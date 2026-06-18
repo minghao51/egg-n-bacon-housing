@@ -1,7 +1,5 @@
 """Test schema validation in 02_cleaning.py."""
 
-import importlib
-
 import pandas as pd
 import pytest
 
@@ -13,7 +11,9 @@ pytestmark = pytest.mark.unit
 
 def _get_cleaning_module():
     """Get the 02_cleaning module."""
-    return importlib.import_module("egg_n_bacon_housing.components.02_cleaning")
+    from egg_n_bacon_housing.components import cleaning
+
+    return cleaning
 
 
 class TestHDBValidation:

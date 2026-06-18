@@ -19,8 +19,6 @@ from typing import Any
 
 import pandas as pd
 
-from egg_n_bacon_housing.config import settings
-
 logger = logging.getLogger(__name__)
 
 _CACHE_MISS = object()
@@ -29,26 +27,29 @@ _CACHE_MISS = object()
 class CacheManager:
     """File-based cache manager for API responses and computed results."""
 
-    def __init__(self, cache_dir: Path | None = None):
-        """
-        Initialize cache manager.
+    def __init__(
+        self,
+        cache_dir: Path,
+        use_caching: bool = True,
+        allow_legacy_pickle: bool = False,
+        cache_duration_hours: int = 24,
+    ):
+        """Initialize cache manager.
 
         Args:
-            cache_dir: Directory to store cache files (defaults to settings.data_dir / "cache")
+            cache_dir: Directory to store cache files.
+            use_caching: Whether caching is enabled.
+            allow_legacy_pickle: Whether to read legacy .pkl cache files.
+            cache_duration_hours: Default cache validity duration.
         """
-        self.cache_dir = cache_dir or settings.data_dir / "cache"
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self.cache_dir = cache_dir
+        self.use_caching = use_caching
+        self.allow_legacy_pickle = allow_legacy_pickle
+        self.cache_duration_hours = cache_duration_hours
+        if self.use_caching:
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def _get_cache_key(self, identifier: str) -> str:
-        """
-        Generate a cache key from an identifier.
-
-        Args:
-            identifier: String to generate key from (e.g., URL, function name + args)
-
-        Returns:
-            MD5 hash of the identifier
-        """
         return hashlib.sha256(identifier.encode()).hexdigest()
 
     def _cache_paths(self, cache_key: str) -> dict[str, Path]:
@@ -56,14 +57,14 @@ class CacheManager:
         return {
             "json": self.cache_dir / f"{cache_key}.json",
             "parquet": self.cache_dir / f"{cache_key}.parquet",
-            "pickle": self.cache_dir / f"{cache_key}.pkl",  # optional legacy fallback only
+            "pickle": self.cache_dir / f"{cache_key}.pkl",
         }
 
     def _get_existing_cache_path(self, cache_key: str) -> Path | None:
         """Return first existing cache path, preferring safe formats."""
         paths = self._cache_paths(cache_key)
         ordered_keys = ["json", "parquet"]
-        if settings.pipeline.allow_legacy_pickle_cache:
+        if self.allow_legacy_pickle:
             ordered_keys.append("pickle")
         for key in ordered_keys:
             path = paths[key]
@@ -72,41 +73,28 @@ class CacheManager:
         return None
 
     def _is_expired(self, cache_path: Path | None, duration_hours: int) -> bool:
-        """
-        Check if a cache file has expired.
-
-        Args:
-            cache_path: Path to cache file
-            duration_hours: Cache duration in hours
-
-        Returns:
-            True if cache is expired or doesn't exist
-        """
         if cache_path is None or not cache_path.exists():
             return True
-
         file_age = datetime.now(tz=UTC) - datetime.fromtimestamp(cache_path.stat().st_mtime, tz=UTC)
         return file_age > timedelta(hours=duration_hours)
 
-    def get(self, identifier: str, duration_hours: int = 24) -> Any:
-        """
-        Retrieve a cached value.
+    def get(self, identifier: str, duration_hours: int | None = None) -> Any:
+        """Retrieve a cached value.
 
-        Args:
-            identifier: Cache identifier (e.g., URL, function name + args)
-            duration_hours: How long cache is valid (default from settings.pipeline.cache_duration_hours)
-
-        Returns:
-            Cached value, or _CACHE_MISS sentinel if not found/expired
+        Returns ``_CACHE_MISS`` sentinel if not found, expired, or caching disabled.
         """
-        if not settings.pipeline.use_caching:
+        if not self.use_caching:
             logger.debug("Caching is disabled")
             return _CACHE_MISS
+
+        effective_duration = (
+            duration_hours if duration_hours is not None else self.cache_duration_hours
+        )
 
         cache_key = self._get_cache_key(identifier)
         cache_path = self._get_existing_cache_path(cache_key)
 
-        if self._is_expired(cache_path, duration_hours):
+        if self._is_expired(cache_path, effective_duration):
             logger.debug("Cache miss or expired: %s...", identifier[:100])
             return _CACHE_MISS
 
@@ -128,14 +116,8 @@ class CacheManager:
             return _CACHE_MISS
 
     def set(self, identifier: str, value: Any) -> None:
-        """
-        Store a value in cache.
-
-        Args:
-            identifier: Cache identifier
-            value: Value to cache (must be pickle-able)
-        """
-        if not settings.pipeline.use_caching:
+        """Store a value in cache."""
+        if not self.use_caching:
             return
 
         cache_key = self._get_cache_key(identifier)
@@ -145,7 +127,6 @@ class CacheManager:
 
         try:
             if hasattr(value, "to_parquet") and callable(value.to_parquet):
-                # DataFrame-like payloads: use parquet instead of pickle.
                 value.to_parquet(parquet_path, index=False)
             else:
                 with open(json_path, "w", encoding="utf-8") as f:
@@ -155,12 +136,7 @@ class CacheManager:
             logger.warning("Failed to cache value: %s", e)
 
     def clear(self, identifier: str | None = None) -> None:
-        """
-        Clear cache entries.
-
-        Args:
-            identifier: Specific cache entry to clear, or None to clear all
-        """
+        """Clear cache entries."""
         if identifier:
             cache_key = self._get_cache_key(identifier)
             paths = self._cache_paths(cache_key)
@@ -178,12 +154,7 @@ class CacheManager:
             logger.info("Cleared all cache files")
 
     def get_stats(self) -> dict:
-        """
-        Get cache statistics.
-
-        Returns:
-            Dictionary with cache stats (count, total size, oldest/newest)
-        """
+        """Get cache statistics."""
         cache_files: list[Path] = []
         for pattern in ("*.json", "*.parquet", "*.pkl"):
             cache_files.extend(self.cache_dir.glob(pattern))
@@ -202,7 +173,33 @@ class CacheManager:
         }
 
 
-_cache_manager = CacheManager()
+_cache_manager: CacheManager | None = None
+
+
+def configure(
+    cache_dir: Path,
+    use_caching: bool = True,
+    allow_legacy_pickle: bool = False,
+    cache_duration_hours: int = 24,
+) -> CacheManager:
+    """Set up the global cache manager (call once at startup)."""
+    global _cache_manager
+    _cache_manager = CacheManager(
+        cache_dir=cache_dir,
+        use_caching=use_caching,
+        allow_legacy_pickle=allow_legacy_pickle,
+        cache_duration_hours=cache_duration_hours,
+    )
+    return _cache_manager
+
+
+def get_cache_manager() -> CacheManager:
+    """Return the configured cache manager, raising if not yet configured."""
+    if _cache_manager is None:
+        raise RuntimeError(
+            "Cache not configured. Call egg_n_bacon_housing.utils.cache.configure() first."
+        )
+    return _cache_manager
 
 
 def cached_call(
@@ -210,52 +207,37 @@ def cached_call(
     func: Callable,
     duration_hours: int | None = None,
 ) -> Any:
-    """
-    Execute a function with caching.
+    """Execute a function with caching.
+
+    Falls back to direct execution (no caching) if the cache manager is not
+    configured. This allows callers to use ``cached_call`` without worrying
+    about configuration — tests and analytics scripts that don't call
+    ``configure()`` simply skip caching.
 
     Args:
         identifier: Cache identifier (e.g., URL, function name + args)
         func: Function to execute if cache miss
-        duration_hours: Cache duration (defaults to settings.pipeline.cache_duration_hours)
+        duration_hours: Cache duration (defaults to manager's configured value)
 
     Returns:
         Function result (from cache or freshly computed)
-
-    Example:
-        >>> result = cached_call("api_call_123", lambda: requests.get(url))
     """
-    duration = settings.pipeline.cache_duration_hours if duration_hours is None else duration_hours
-
-    cached_value = _cache_manager.get(identifier, duration)
+    if _cache_manager is None:
+        return func()
+    cached_value = _cache_manager.get(identifier, duration_hours)
     if cached_value is not _CACHE_MISS:
         return cached_value
 
     result = func()
-
     _cache_manager.set(identifier, result)
-
     return result
 
 
 def clear_cache(identifier: str | None = None) -> None:
-    """
-    Clear cache entries.
-
-    Args:
-        identifier: Specific entry to clear, or None to clear all
-
-    Example:
-        >>> clear_cache()  # Clear all
-        >>> clear_cache("api_call_123")  # Clear specific entry
-    """
-    _cache_manager.clear(identifier)
+    """Clear cache entries."""
+    get_cache_manager().clear(identifier)
 
 
 def get_cache_stats() -> dict:
-    """
-    Get cache statistics.
-
-    Returns:
-        Dictionary with cache stats
-    """
-    return _cache_manager.get_stats()
+    """Get cache statistics."""
+    return get_cache_manager().get_stats()

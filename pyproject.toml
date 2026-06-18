@@ -87,7 +87,6 @@ ignore = ["E501"]
 [tool.ruff.lint.per-file-ignores]
 "notebooks/*.py" = ["E402", "E722", "F821", "F841"]
 "notebooks/**/*.py" = ["E402", "E722", "F821", "F841"]
-"src/egg_n_bacon_housing/components/*.py" = ["N999"]  # Numbered stage files like 01_ingestion.py
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -163,11 +162,3 @@ plugins = ["pydantic.mypy"]
 disable_error_code = ["import-untyped"]
 
 # Known issues to address gradually:
-# 1. SecretStr fields in config.py - pydantic-settings compatibility with strict mode
-
-# Keep targeted overrides limited to modules that are still checked by our current mypy scope.
-# TODO: tighten this override once config.py gets proper type hints.
-
-[[tool.mypy.overrides]]
-module = "egg_n_bacon_housing.config"
-ignore_errors = true

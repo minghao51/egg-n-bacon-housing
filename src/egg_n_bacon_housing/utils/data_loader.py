@@ -14,12 +14,44 @@ from shapely import STRtree
 from shapely.geometry import Point, shape
 from shapely.prepared import prep
 
-from egg_n_bacon_housing.config import settings
-
 logger = logging.getLogger(__name__)
 
-DATA_DIR = settings.data_dir / "pipeline"
-RAW_DATA_DIR = settings.data_dir / "manual" / "geojsons"
+_paths: dict[str, Path] = {}
+
+
+def configure(data_dir: Path) -> None:
+    """Set data paths (call once at pipeline startup).
+
+    Args:
+        data_dir: Root data directory (e.g. ``settings.data_dir``).
+    """
+    global _paths
+    _paths = {
+        "data_dir": data_dir,
+        "pipeline_dir": data_dir / "pipeline",
+        "raw_data_dir": data_dir / "manual" / "geojsons",
+        "platinum_dir": data_dir / "pipeline" / "04_platinum",
+        "manual_dir": data_dir / "manual",
+    }
+
+
+def _get(key: str) -> Path:
+    """Get a configured path, falling back to settings if not configured."""
+    if key in _paths:
+        return _paths[key]
+    from egg_n_bacon_housing.config import settings
+
+    return {
+        "data_dir": settings.data_dir,
+        "pipeline_dir": settings.data_dir / "pipeline",
+        "raw_data_dir": settings.data_dir / "manual" / "geojsons",
+        "platinum_dir": settings.platinum_dir,
+        "manual_dir": settings.data_dir / "manual",
+    }[key]
+
+
+def _get_raw_data_dir() -> Path:
+    return _paths.get("raw_data_dir", Path())
 
 
 def _read_first_existing(*paths: Path) -> pd.DataFrame:
@@ -33,7 +65,7 @@ def _read_first_existing(*paths: Path) -> pd.DataFrame:
 
 @lru_cache(maxsize=1)
 def _load_planning_areas_raw() -> tuple[list[dict], list[tuple], STRtree | None, list[str]]:
-    geojson_path = RAW_DATA_DIR / "onemap_planning_area_polygon.geojson"
+    geojson_path = _get_raw_data_dir() / "onemap_planning_area_polygon.geojson"
 
     if not geojson_path.exists():
         logger.warning("Planning area GeoJSON not found at %s", geojson_path)
@@ -116,8 +148,8 @@ def load_market_summary() -> pd.DataFrame:
         DataFrame with aggregated market statistics
     """
     return _read_first_existing(
-        settings.platinum_dir / "metrics" / "pa_monthly_metrics.parquet",
-        DATA_DIR / "L3" / "market_summary.parquet",
+        _get("platinum_dir") / "metrics" / "pa_monthly_metrics.parquet",
+        _get("pipeline_dir") / "L3" / "market_summary.parquet",
     )
 
 
@@ -129,25 +161,21 @@ def load_planning_area_metrics() -> pd.DataFrame:
         DataFrame with metrics by planning area from pa_monthly_metrics.
     """
     return _read_first_existing(
-        settings.platinum_dir / "metrics" / "pa_monthly_metrics.parquet",
-        DATA_DIR / "L3" / "planning_area_metrics.parquet",
+        _get("platinum_dir") / "metrics" / "pa_monthly_metrics.parquet",
+        _get("pipeline_dir") / "L3" / "planning_area_metrics.parquet",
     )
 
 
 class CSVLoader:
-    """Load manual CSV data sources.
-
-    This class provides a consistent interface for loading CSV data from
-    manual downloads (URA, HDB resale, etc.). Uses settings path constants.
-    """
+    """Load manual CSV data sources."""
 
     def __init__(self, base_path: Path | None = None):
         """Initialize loader.
 
         Args:
-            base_path: Base path for CSV files (defaults to settings.data_dir / "manual")
+            base_path: Base path for CSV files (defaults to configured manual dir)
         """
-        self.base_path = base_path or settings.data_dir / "manual"
+        self.base_path = base_path or _get("manual_dir")
 
     def load_ura_data(self, base_path: Path | None = None) -> dict[str, pd.DataFrame]:
         """Load URA private property data.
@@ -198,15 +226,13 @@ class CSVLoader:
         resale_dir = base_path / "csv" / "ResaleFlatPrices"
 
         if not resale_dir.exists():
-            if settings.logging.verbose:
-                logger.warning("HDB resale directory not found: %s", resale_dir)
+            logger.warning("HDB resale directory not found: %s", resale_dir)
             return pd.DataFrame()
 
         files = list(resale_dir.glob("*.csv"))
 
         if not files:
-            if settings.logging.verbose:
-                logger.warning("No CSV files found in: %s", resale_dir)
+            logger.warning("No CSV files found in: %s", resale_dir)
             return pd.DataFrame()
 
         dfs = [pd.read_csv(f) for f in files]
@@ -230,8 +256,7 @@ class CSVLoader:
         path = base_path / filename
 
         if not path.exists():
-            if settings.logging.verbose:
-                logger.warning("CSV file not found: %s", path)
+            logger.warning("CSV file not found: %s", path)
             return pd.DataFrame()
 
         return pd.read_csv(path, **kwargs)
@@ -245,8 +270,8 @@ def load_unified_data() -> pd.DataFrame:
         DataFrame with all housing transactions and features
     """
     df = _read_first_existing(
-        settings.platinum_dir / "unified_dataset.parquet",
-        settings.data_dir / "pipeline" / "L3" / "housing_unified.parquet",
+        _get("platinum_dir") / "unified_dataset.parquet",
+        _get("pipeline_dir") / "L3" / "housing_unified.parquet",
     )
 
     if df.empty:

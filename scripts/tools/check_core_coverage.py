@@ -9,11 +9,11 @@ from pathlib import Path
 
 DEFAULT_MIN_COVERAGE = 60.0
 CORE_MODULES = [
-    "src/egg_n_bacon_housing/components/01_ingestion.py",
-    "src/egg_n_bacon_housing/components/02_cleaning.py",
-    "src/egg_n_bacon_housing/components/03_features.py",
-    "src/egg_n_bacon_housing/components/04_export.py",
-    "src/egg_n_bacon_housing/components/05_metrics.py",
+    "src/egg_n_bacon_housing/components/ingestion.py",
+    "src/egg_n_bacon_housing/components/cleaning.py",
+    "src/egg_n_bacon_housing/components/features.py",
+    "src/egg_n_bacon_housing/components/export.py",
+    "src/egg_n_bacon_housing/components/metrics.py",
 ]
 
 

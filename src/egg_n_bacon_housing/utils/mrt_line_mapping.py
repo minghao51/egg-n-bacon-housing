@@ -6,24 +6,38 @@ and assign importance scores based on line tier and interchange status.
 
 import json
 import logging
+from pathlib import Path
 
 import pandas as pd
 
-from egg_n_bacon_housing.config import settings
-
 logger = logging.getLogger(__name__)
+
+_config_dir: Path | None = None
+
+
+def configure(config_dir: Path) -> None:
+    """Set the directory for MRT config JSON files (bronze/external).
+
+    Called once at pipeline startup. When unset, the module falls back to
+    hardcoded defaults.
+    """
+    global _config_dir
+    _config_dir = config_dir
 
 
 def _load_json_config(filename: str) -> dict:
     """Load JSON reference file with fallback to empty dict.
 
     Args:
-        filename: Name of JSON file in data/01_bronze/external/
+        filename: Name of JSON file in config dir
 
     Returns:
         Parsed JSON data or empty dict if not found
     """
-    config_path = settings.bronze_dir / "external" / filename
+    if _config_dir is None:
+        logger.debug("MRT config dir not configured — using hardcoded defaults")
+        return {}
+    config_path = _config_dir / filename
     if config_path.exists():
         with open(config_path) as f:
             return json.load(f)

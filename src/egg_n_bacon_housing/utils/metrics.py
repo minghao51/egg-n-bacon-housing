@@ -13,22 +13,26 @@ from typing import Any
 
 import pandas as pd
 
-from egg_n_bacon_housing.config import settings
+_DEFAULT_AFFORDABILITY_THRESHOLDS: dict[str, float] = {
+    "affordable": 5.0,
+    "moderate": 7.0,
+    "expensive": 9.0,
+}
 
 
-def classify_affordability(ratio: float) -> str:
+def classify_affordability(ratio: float, thresholds: dict[str, float] | None = None) -> str:
     """Classify affordability based on ratio.
-
-    Singapore-specific thresholds based on housing market norms.
-    Thresholds are sourced from ``config.py`` MetricsConfig.
 
     Args:
         ratio: Affordability ratio
+        thresholds: Optional thresholds dict with keys 'affordable',
+            'moderate', 'expensive'. Defaults to standard Singapore thresholds.
 
     Returns:
         Classification string
     """
-    thresholds = settings.metrics.affordability_thresholds
+    if thresholds is None:
+        thresholds = _DEFAULT_AFFORDABILITY_THRESHOLDS
     if ratio < thresholds["affordable"]:
         return "Affordable"
     if ratio < thresholds["moderate"]:

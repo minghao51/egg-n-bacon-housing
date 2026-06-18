@@ -87,9 +87,9 @@ class OneMapGeocoder(Geocoder):
         no API call. Keeps the OneMap cache-key format inside this module
         instead of leaking it to callers.
         """
-        from egg_n_bacon_housing.utils.cache import _CACHE_MISS, _cache_manager
+        from egg_n_bacon_housing.utils.cache import _CACHE_MISS, get_cache_manager
 
-        cached = _cache_manager.get(
+        cached = get_cache_manager().get(
             f"onemap_search:{address}", duration_hours=self.cache_duration_hours
         )
         if cached is _CACHE_MISS or not isinstance(cached, pd.DataFrame) or cached.empty:
@@ -181,7 +181,7 @@ def build_default_geocoder(settings) -> Geocoder:
     from egg_n_bacon_housing.adapters.onemap import setup_onemap_headers
 
     return OneMapGeocoder(
-        headers=setup_onemap_headers(),
+        headers=setup_onemap_headers(settings),
         cache_duration_hours=settings.geocoding.cache_duration_hours,
         max_workers=settings.geocoding.max_workers,
         timeout=settings.geocoding.timeout_seconds,
