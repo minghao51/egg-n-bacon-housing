@@ -1,4 +1,4 @@
-"""02_cleaning: Silver layer cleaning and validation (Hamilton DAG node).
+"""Cleaning: Silver layer cleaning and validation (Hamilton DAG node).
 
 This module provides Hamilton-compatible functions for cleaning and
 validating bronze data into the silver layer.

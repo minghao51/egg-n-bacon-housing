@@ -1,7 +1,7 @@
 """ProximityEngine: unified amenity proximity computation.
 
 Absorbs school_features.py proximity logic
-and the inline _nearest_mall_features from 03_features.py.
+and the inline _nearest_mall_features from features.
 
 One function: compute_proximity_features(properties_df, poi_dfs) -> DataFrame.
 """

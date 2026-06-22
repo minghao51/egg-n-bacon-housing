@@ -1,7 +1,7 @@
 """ValidationGateway: validate, quarantine, and persist in one call.
 
 Absorbs the validate_schema + quarantine_path + save_parquet pattern
-that was repeated across 6 DAG nodes in 02_cleaning and 03_features.
+that was repeated across 6 DAG nodes in cleaning and features.
 """
 
 import logging

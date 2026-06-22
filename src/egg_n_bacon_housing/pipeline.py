@@ -1,6 +1,7 @@
 """Hamilton DAG driver for egg-n-bacon-housing medallion pipeline."""
 
 import logging
+from pathlib import Path
 
 from hamilton import driver
 
@@ -121,6 +122,25 @@ def build_pipeline(
     return dr
 
 
+def _configure_runtime(settings: Settings, bronze_dir: Path) -> None:
+    """Configure all module-level state once at pipeline startup.
+
+    Bundles the four ``configure()`` calls so the coupling is explicit
+    and the set of modules that need wiring is discoverable in one place.
+    """
+    from egg_n_bacon_housing.utils import cache, data_loader, mrt_line_mapping, school_features
+
+    cache.configure(
+        cache_dir=settings.data_dir / "cache",
+        use_caching=settings.pipeline.use_caching,
+        allow_legacy_pickle=settings.pipeline.allow_legacy_pickle_cache,
+        cache_duration_hours=settings.pipeline.cache_duration_hours,
+    )
+    data_loader.configure(settings.data_dir)
+    mrt_line_mapping.configure(bronze_dir / "external")
+    school_features.configure(bronze_dir, settings.data_dir)
+
+
 def run_pipeline(
     settings: Settings,
     data_path: str | None = None,
@@ -140,8 +160,6 @@ def run_pipeline(
     Returns:
         Dict of results keyed by variable name.
     """
-    from egg_n_bacon_housing.utils import cache, data_loader, mrt_line_mapping, school_features
-
     if final_vars is None:
         final_vars = STAGE_VARS.get(stage) if stage else STAGE_VARS["all"]
 
@@ -151,15 +169,7 @@ def run_pipeline(
     resolved_data_path = settings.resolve_data_path(data_path)
     bronze_dir = settings.layer_dir("bronze", resolved_data_path)
 
-    cache.configure(
-        cache_dir=settings.data_dir / "cache",
-        use_caching=settings.pipeline.use_caching,
-        allow_legacy_pickle=settings.pipeline.allow_legacy_pickle_cache,
-        cache_duration_hours=settings.pipeline.cache_duration_hours,
-    )
-    data_loader.configure(settings.data_dir)
-    mrt_line_mapping.configure(bronze_dir / "external")
-    school_features.configure(bronze_dir, settings.data_dir)
+    _configure_runtime(settings, bronze_dir)
 
     layer_inputs = {
         "bronze_dir": settings.layer_dir("bronze", resolved_data_path),

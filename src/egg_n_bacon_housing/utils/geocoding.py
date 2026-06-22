@@ -4,7 +4,7 @@ One interface, two adapters:
 - OneMapGeocoder: production geocoding via OneMap API
 - InMemoryGeocoder: test geocoding from a fixed lookup table
 
-Extracts geocoding logic that was duplicated across 01_ingestion
+Extracts geocoding logic that was duplicated across ingestion
 (_geocode_shopping_malls), school_features (_geocode_schools),
 and the onemap adapter.
 """
@@ -15,6 +15,8 @@ from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
+
+from egg_n_bacon_housing.config import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +173,7 @@ class OneMapGeocoder(Geocoder):
         return pd.DataFrame(rows)
 
 
-def build_default_geocoder(settings) -> Geocoder:
+def build_default_geocoder(settings: Settings) -> Geocoder:
     """Construct the production OneMap geocoder from settings.
 
     Reads ``settings`` once at the wiring point and returns a fully-wired

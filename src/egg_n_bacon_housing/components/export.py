@@ -1,4 +1,4 @@
-"""04_export: Platinum layer export and lightweight summaries.
+"""Export: Platinum layer export and lightweight summaries.
 
 This module keeps the Hamilton export stage focused on the platinum dataset
 and in-memory summaries. The published app assets are maintained separately
@@ -20,7 +20,7 @@ def unified_dataset(
     """Create the unified dataset for platinum layer.
 
     Args:
-        transactions_enriched: Output from 03_features transactions_enriched.
+        transactions_enriched: Output from features transactions_enriched.
 
     Returns:
         DataFrame ready for analysis and dashboards.

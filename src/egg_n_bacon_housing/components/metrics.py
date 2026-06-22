@@ -1,4 +1,4 @@
-"""05_metrics: Planning area metrics computation (Hamilton DAG node).
+"""Metrics: Planning area metrics computation (Hamilton DAG node).
 
 This module provides Hamilton-compatible functions for computing
 planning-area-level metrics from the enriched transaction layer.
@@ -28,7 +28,7 @@ def pa_monthly_metrics(
     affordability_metrics with one unified aggregation.
 
     Args:
-        transactions_enriched: Full enriched transactions from 03_features.
+        transactions_enriched: Full enriched transactions from features.
         median_household_income: Fallback annual income for affordability.
         affordability_thresholds: Optional thresholds dict for classification.
 

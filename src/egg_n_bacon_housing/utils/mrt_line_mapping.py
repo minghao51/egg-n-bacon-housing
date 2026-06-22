@@ -19,10 +19,13 @@ def configure(config_dir: Path) -> None:
     """Set the directory for MRT config JSON files (bronze/external).
 
     Called once at pipeline startup. When unset, the module falls back to
-    hardcoded defaults.
+    hardcoded defaults. Resets cached lookups so a reconfigure with a
+    different directory takes effect immediately.
     """
-    global _config_dir
+    global _config_dir, _MRT_LINES, _STATION_LINES
     _config_dir = config_dir
+    _MRT_LINES = None
+    _STATION_LINES = None
 
 
 def _load_json_config(filename: str) -> dict:

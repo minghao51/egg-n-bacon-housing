@@ -1,4 +1,4 @@
-"""03_features: Gold layer feature engineering (Hamilton DAG node).
+"""Features: Gold layer feature engineering (Hamilton DAG node).
 
 This module provides Hamilton-compatible functions for computing features
 from silver data into the gold layer.

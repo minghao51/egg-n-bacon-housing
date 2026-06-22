@@ -1,7 +1,7 @@
 """TimeIndex: shared month-period derivation for time-grouped operations.
 
 Deduplicates dt.to_period("M").astype(str) from 4 locations
-(03_features, 05_metrics) into one function.
+(features, metrics) into one function.
 """
 
 import logging
