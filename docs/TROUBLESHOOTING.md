@@ -143,7 +143,7 @@ data.gov.sg periodically restructures its datasets. If a pipeline stage fails wi
    curl -s "https://api-production.data.gov.sg/v2/public/api/datasets?page=1" | python3 -m json.tool
    ```
 
-3. Update the resource ID in `src/egg_n_bacon_housing/components/01_ingestion.py` and delete the stale bronze cache.
+3. Update the resource ID in the active ingestion modules under `src/egg_n_bacon_housing/components/ingestion/` and delete the stale bronze cache.
 
 See the [data.gov.sg Resource ID Migration guide](guides/datagovsg-resource-migration.md) for the full investigation process and the June 2026 migration details.
 
@@ -153,7 +153,7 @@ If `raw_macro_data` logs "Fetched CPI: 0 records" (or unemployment/GDP), the API
 
 ### Wrong label column in melt functions
 
-data.gov.sg pivot tables have an `_id` column (integers) followed by `DataSeries` (text labels like "All Items"). The melt helpers in `01_ingestion.py` must use `DataSeries` as the id column, not `df.columns[0]`:
+data.gov.sg pivot tables have an `_id` column (integers) followed by `DataSeries` (text labels like "All Items"). The melt helpers in `src/egg_n_bacon_housing/components/ingestion/macro.py` must use `DataSeries` as the id column, not `df.columns[0]`:
 
 ```python
 # WRONG — _id is integers, never matches string filters

@@ -107,8 +107,8 @@ from egg_n_bacon_housing.pipeline import build_pipeline, run_pipeline
 from egg_n_bacon_housing.config import settings
 
 # Build and run pipeline
-dr = build_pipeline()
-results = dr.execute(final_vars=["unified_dataset", "dashboard_json"])
+dr = build_pipeline(settings)
+results = run_pipeline(settings, dr=dr, final_vars=["unified_dataset"])
 
 # Inspect DAG
 dr.visualize_execution(final_vars=["unified_dataset"], output_file_path="dag.png")

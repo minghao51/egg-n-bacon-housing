@@ -56,7 +56,7 @@ dotenvx run -- uv run python main.py --visualize
 Run selected outputs only:
 
 ```bash
-dotenvx run -- uv run python main.py --final-var unified_dataset --final-var dashboard_json
+dotenvx run -- uv run python main.py --final-var unified_dataset
 ```
 
 ## Data Locations

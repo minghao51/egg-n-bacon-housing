@@ -75,12 +75,11 @@ All amenity GeoJSONs are loaded via `_load_geojson_amenities()` which handles bo
 
 The `STAGE_VARS["all"]` list was missing 4 terminal output nodes that were only computed when explicitly running `--stage export` or `--stage metrics`:
 
-| Node                     | Module          | Output                                 |
-| ------------------------ | --------------- | -------------------------------------- |
-| `interactive_tools_data` | `04_export.py`  | Planning-area aggregates for app tools |
-| `rental_yield_by_area`   | `05_metrics.py` | Rental yield metrics by planning area  |
-| `affordability_metrics`  | `05_metrics.py` | Affordability classifications          |
-| `appreciation_hotspots`  | `05_metrics.py` | Price appreciation rankings            |
+| Node                    | Module          | Output                                |
+| ----------------------- | --------------- | ------------------------------------- |
+| `rental_yield_by_area`  | `05_metrics.py` | Rental yield metrics by planning area |
+| `affordability_metrics` | `05_metrics.py` | Affordability classifications         |
+| `appreciation_hotspots` | `05_metrics.py` | Price appreciation rankings           |
 
 These are now included in `--stage all` so a full pipeline run produces all platinum artifacts.
 

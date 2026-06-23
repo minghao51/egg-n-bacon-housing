@@ -33,6 +33,7 @@ def configure(data_dir: Path) -> None:
         "platinum_dir": data_dir / "pipeline" / "04_platinum",
         "manual_dir": data_dir / "manual",
     }
+    _load_planning_areas_raw.cache_clear()
 
 
 def _get(key: str) -> Path:

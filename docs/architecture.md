@@ -101,7 +101,7 @@ Execution entrypoint:
 | Ingestion | `components/01_ingestion.py` | raw transactions, rental data, schools, malls, macro data |
 | Cleaning  | `components/02_cleaning.py`  | cleaned transaction sets, validation artifacts, geocoding |
 | Features  | `components/03_features.py`  | rental yield and amenity-enriched features                |
-| Export    | `components/04_export.py`    | unified dataset, dashboard JSON, app exports              |
+| Export    | `components/04_export.py`    | unified dataset                                           |
 | Metrics   | `components/05_metrics.py`   | area metrics, affordability, hotspots                     |
 
 ## Content Publishing Flow

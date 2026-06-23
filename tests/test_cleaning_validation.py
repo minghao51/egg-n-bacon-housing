@@ -125,6 +125,26 @@ class TestHDBValidation:
                 pd.DataFrame([{"resale_price": 500000.0}]), silver_dir=tmp_path
             )
 
+    def test_cleaned_hdb_transactions_derives_storey_and_address(self, tmp_path):
+        cleaning = _get_cleaning_module()
+        raw_data = pd.DataFrame(
+            [
+                {
+                    "month": "2024-01",
+                    "resale_price": 500000.0,
+                    "storey_range": "04 TO 06",
+                    "block": "123",
+                    "street_name": "TOA PAYOH LOR 1",
+                }
+            ]
+        )
+
+        result = cleaning.cleaned_hdb_transactions(raw_data, silver_dir=tmp_path)
+
+        assert result.loc[0, "storey_min"] == 4
+        assert result.loc[0, "storey_max"] == 6
+        assert result.loc[0, "address"] == "123 TOA PAYOH LOR 1"
+
 
 class TestCondoValidation:
     """Test condo transaction validation."""
@@ -165,6 +185,31 @@ class TestCondoValidation:
             cleaning.cleaned_condo_transactions(
                 pd.DataFrame([{"date": "2023-01-01", "project_name": "X"}]), silver_dir=tmp_path
             )
+
+    def test_cleaned_condo_transactions_fills_defaults_and_normalizes_types(self, tmp_path):
+        cleaning = _get_cleaning_module()
+        raw_data = pd.DataFrame(
+            [
+                {
+                    "price": "1500000",
+                    "date": "2024-01-15",
+                    "area_sqft": "1292",
+                    "area_sqm": "120",
+                    "postal_district": "9",
+                    "street_name": "ORCHARD ROAD",
+                }
+            ]
+        )
+
+        result = cleaning.cleaned_condo_transactions(raw_data, silver_dir=tmp_path)
+
+        assert result.loc[0, "price"] == pytest.approx(1500000.0)
+        assert result.loc[0, "floor_area_sqft"] == pytest.approx(1292.0)
+        assert result.loc[0, "floor_area_sqm"] == pytest.approx(120.0)
+        assert result.loc[0, "postal_district"] == 9
+        assert result.loc[0, "address"] == "ORCHARD ROAD"
+        assert result.loc[0, "area"] == ""
+        assert result.loc[0, "project_name"] == ""
 
 
 class TestGeocodedValidation:
@@ -257,6 +302,21 @@ class TestGeocodedValidation:
 
         assert not result.empty
         assert len(result) == 2
+
+    def test_geocoded_properties_returns_cached_geocoded_file(self, tmp_path):
+        cleaning = _get_cleaning_module()
+        cached = pd.DataFrame([{"address": "123 TOA PAYOH", "lat": 1.35, "lon": 103.8}])
+        cached.to_parquet(tmp_path / "geocoded_properties.parquet", index=False)
+
+        result = cleaning.geocoded_properties(
+            pd.DataFrame([{"address": "123 TOA PAYOH"}]),
+            pd.DataFrame(),
+            silver_dir=tmp_path,
+            writer=SimpleWriter(tmp_path),
+            geocoder=InMemoryGeocoder({}),
+        )
+
+        pd.testing.assert_frame_equal(result, cached)
 
 
 class TestQuarantineIntegration:

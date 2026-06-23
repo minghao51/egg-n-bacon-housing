@@ -67,9 +67,6 @@ STAGE_VARS: dict[str, list[str]] = {
     ],
     "export": [
         "unified_dataset",
-        "dashboard_json",
-        "segments_data",
-        "interactive_tools_data",
     ],
     "metrics": [
         "pa_monthly_metrics",
@@ -82,9 +79,6 @@ STAGE_VARS: dict[str, list[str]] = {
         "block_profile",
         "pa_monthly_metrics",
         "appreciation_hotspots",
-        "dashboard_json",
-        "segments_data",
-        "interactive_tools_data",
     ],
 }
 
@@ -122,7 +116,7 @@ def build_pipeline(
     return dr
 
 
-def _configure_runtime(settings: Settings, bronze_dir: Path) -> None:
+def _configure_runtime(settings: Settings, data_dir: Path, bronze_dir: Path) -> None:
     """Configure all module-level state once at pipeline startup.
 
     Bundles the four ``configure()`` calls so the coupling is explicit
@@ -131,14 +125,14 @@ def _configure_runtime(settings: Settings, bronze_dir: Path) -> None:
     from egg_n_bacon_housing.utils import cache, data_loader, mrt_line_mapping, school_features
 
     cache.configure(
-        cache_dir=settings.data_dir / "cache",
+        cache_dir=data_dir / "cache",
         use_caching=settings.pipeline.use_caching,
         allow_legacy_pickle=settings.pipeline.allow_legacy_pickle_cache,
         cache_duration_hours=settings.pipeline.cache_duration_hours,
     )
-    data_loader.configure(settings.data_dir)
+    data_loader.configure(data_dir)
     mrt_line_mapping.configure(bronze_dir / "external")
-    school_features.configure(bronze_dir, settings.data_dir)
+    school_features.configure(bronze_dir, data_dir)
 
 
 def run_pipeline(
@@ -169,7 +163,7 @@ def run_pipeline(
     resolved_data_path = settings.resolve_data_path(data_path)
     bronze_dir = settings.layer_dir("bronze", resolved_data_path)
 
-    _configure_runtime(settings, bronze_dir)
+    _configure_runtime(settings, resolved_data_path, bronze_dir)
 
     layer_inputs = {
         "bronze_dir": settings.layer_dir("bronze", resolved_data_path),
@@ -177,7 +171,6 @@ def run_pipeline(
         "gold_dir": settings.layer_dir("gold", resolved_data_path),
         "writer": build_writer(settings, resolved_data_path / "pipeline"),
         "geocoder": geocoder or build_default_geocoder(settings),
-        "webapp_data_dir": settings.webapp_data_dir,
         "min_coordinate_coverage": settings.geocoding.min_coordinate_coverage,
         "median_household_income": settings.metrics.median_household_income,
         "affordability_thresholds": settings.metrics.affordability_thresholds,

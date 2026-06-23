@@ -111,10 +111,6 @@ class Settings(BaseSettings):
         return self.layer_dir("platinum")
 
     @property
-    def webapp_data_dir(self) -> Path:
-        return self.base_dir / "app" / "public" / "data"
-
-    @property
     def manual_ura_dir(self) -> Path:
         return self.data_dir / "manual" / "csv" / "ura"
 

@@ -1,6 +1,7 @@
 """Integration test: build pipeline driver and verify DAG structure."""
 
 import importlib
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -67,6 +68,46 @@ class TestPipelineIntegration:
         assert captured["inputs"]["gold_dir"] == tmp_path / "pipeline" / "03_gold"
         assert "writer" in captured["inputs"]
         assert captured["inputs"]["writer"].data_dir == tmp_path / "pipeline"
+
+    def test_run_pipeline_reconfigures_helpers_to_override_data_path(self, tmp_path, monkeypatch):
+        pipeline = _get_pipeline_module()
+        from egg_n_bacon_housing.utils import cache, data_loader, mrt_line_mapping, school_features
+
+        class FakeDriver:
+            def execute(self, final_vars, inputs=None):
+                return {name: pd.DataFrame() for name in final_vars}
+
+        monkeypatch.setattr(
+            pipeline, "build_pipeline", lambda settings, data_path=None: FakeDriver()
+        )
+
+        captured: dict[str, Path | dict[str, object]] = {}
+
+        def fake_cache_configure(cache_dir, **kwargs):
+            captured["cache_dir"] = cache_dir
+
+        def fake_data_loader_configure(data_dir):
+            captured["data_loader_dir"] = data_dir
+
+        def fake_school_features_configure(bronze_dir, data_dir):
+            captured["school_bronze_dir"] = bronze_dir
+            captured["school_data_dir"] = data_dir
+
+        def fake_mrt_configure(config_dir):
+            captured["mrt_config_dir"] = config_dir
+
+        monkeypatch.setattr(cache, "configure", fake_cache_configure)
+        monkeypatch.setattr(data_loader, "configure", fake_data_loader_configure)
+        monkeypatch.setattr(school_features, "configure", fake_school_features_configure)
+        monkeypatch.setattr(mrt_line_mapping, "configure", fake_mrt_configure)
+
+        pipeline.run_pipeline(settings, data_path=str(tmp_path), geocoder=InMemoryGeocoder({}))
+
+        assert captured["cache_dir"] == tmp_path / "cache"
+        assert captured["data_loader_dir"] == tmp_path
+        assert captured["school_data_dir"] == tmp_path
+        assert captured["school_bronze_dir"] == tmp_path / "pipeline" / "01_bronze"
+        assert captured["mrt_config_dir"] == tmp_path / "pipeline" / "01_bronze" / "external"
 
     def test_run_pipeline_specific_stage(self, tmp_path, monkeypatch):
         """run_pipeline accepts a stage parameter to select output variables."""

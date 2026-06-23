@@ -75,3 +75,45 @@ class TestMrtProximity:
         props = pd.DataFrame([{"lat": 1.35, "lon": 103.82, "id": 1}])
         result = compute_proximity_features(props, mrt_stations=None)
         assert "nearest_mrt_station" not in result.columns
+
+
+class TestMallProximity:
+    def test_mall_proximity_accepts_latitude_longitude_columns(self):
+        props = pd.DataFrame([{"lat": 1.3049, "lon": 103.8319}])
+        malls = pd.DataFrame(
+            [{"shopping_mall": "ION Orchard", "latitude": 1.3048, "longitude": 103.8318}]
+        )
+
+        result = compute_proximity_features(props, malls=malls)
+
+        assert result.iloc[0]["nearest_mall"] == "ION Orchard"
+        assert result.iloc[0]["dist_to_nearest_mall"] >= 0
+
+    def test_mall_proximity_handles_missing_coordinate_columns(self):
+        props = pd.DataFrame([{"lat": 1.3049, "lon": 103.8319}])
+        malls = pd.DataFrame([{"shopping_mall": "ION Orchard"}])
+
+        result = compute_proximity_features(props, malls=malls)
+
+        assert pd.isna(result.iloc[0]["nearest_mall"])
+        assert pd.isna(result.iloc[0]["dist_to_nearest_mall"])
+
+
+class TestGenericAmenityProximity:
+    def test_generic_proximity_uses_first_column_as_name_fallback(self):
+        props = pd.DataFrame([{"lat": 1.33, "lon": 103.85}])
+        hawkers = pd.DataFrame([{"centre": "Toa Payoh Hawker", "lat": 1.331, "lon": 103.851}])
+
+        result = compute_proximity_features(props, hawkers=hawkers)
+
+        assert result.iloc[0]["nearest_hawker"] == "Toa Payoh Hawker"
+        assert result.iloc[0]["dist_to_nearest_hawker"] > 0
+
+    def test_generic_proximity_returns_na_when_all_pois_are_invalid(self):
+        props = pd.DataFrame([{"lat": 1.33, "lon": 103.85}])
+        parks = pd.DataFrame([{"name": "Invalid Park", "lat": "oops", "lon": None}])
+
+        result = compute_proximity_features(props, parks=parks)
+
+        assert pd.isna(result.iloc[0]["nearest_park"])
+        assert pd.isna(result.iloc[0]["dist_to_nearest_park"])

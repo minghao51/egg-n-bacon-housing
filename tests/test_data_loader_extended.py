@@ -92,6 +92,29 @@ class TestGetPlanningAreaForPoint:
         result = data_loader.get_planning_area_for_point(lat=1.35, lon=103.85)
         assert result == "LON_LAT_TEST"
 
+    def test_reconfigure_invalidates_cached_planning_areas(self, tmp_path_factory):
+        _clear_planning_cache()
+        first_root = tmp_path_factory.mktemp("planning-a")
+        second_root = tmp_path_factory.mktemp("planning-b")
+
+        first_geojson_dir = first_root / "manual" / "geojsons"
+        second_geojson_dir = second_root / "manual" / "geojsons"
+        first_geojson_dir.mkdir(parents=True)
+        second_geojson_dir.mkdir(parents=True)
+
+        (first_geojson_dir / "onemap_planning_area_polygon.geojson").write_text(
+            json.dumps(_make_geojson("AREA_ONE"))
+        )
+        (second_geojson_dir / "onemap_planning_area_polygon.geojson").write_text(
+            json.dumps(_make_geojson("AREA_TWO"))
+        )
+
+        data_loader.configure(first_root)
+        assert data_loader.load_planning_areas()[0]["name"] == "AREA_ONE"
+
+        data_loader.configure(second_root)
+        assert data_loader.load_planning_areas()[0]["name"] == "AREA_TWO"
+
 
 class TestCSVLoader:
     def test_load_csv_reads_existing_file(self, tmp_path):

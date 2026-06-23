@@ -6,7 +6,7 @@
 
 This repository uses `pytest` for core pipeline coverage under `tests/`.
 
-Current test files:
+Current test files include:
 
 - `tests/test_ingestion.py`
 - `tests/test_cleaning_validation.py`
@@ -19,6 +19,16 @@ Current test files:
 - `tests/test_data_loader.py`
 - `tests/test_config.py`
 - `tests/test_pipeline.py`
+- `tests/test_pipeline_integration.py`
+- `tests/test_condo_ingestion.py`
+- `tests/test_proximity.py`
+- `tests/test_data_loader_extended.py`
+- `tests/test_school_features.py`
+- `tests/test_rental_yield_metrics.py`
+- `tests/test_property_based.py`
+- `tests/test_validation_gateway.py`
+- `tests/test_geocoding.py`
+- `tests/test_configure.py`
 
 ## Run Tests
 
@@ -36,7 +46,7 @@ uv run pytest tests/test_datagovsg.py tests/test_onemap.py -v
 ## Coverage and CI Gates
 
 - Pytest coverage is configured in `pyproject.toml`.
-- CI enforces a minimum coverage floor for core component modules using:
+- CI enforces a minimum coverage floor for core component modules and the split ingestion submodules using:
   - `scripts/tools/check_core_coverage.py`
 
 Run locally:
