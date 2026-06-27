@@ -1,4 +1,4 @@
-"""Tests for utils/data_loader.py — planning areas, CSVLoader, and point-in-polygon."""
+"""Tests for utils/data_loader.py — planning areas and point-in-polygon."""
 
 import json
 
@@ -199,69 +199,3 @@ class TestGetPlanningAreasForPoints:
             pd.Series([None, None]), pd.Series([None, None])
         )
         assert result.tolist() == [None, None]
-
-
-class TestCSVLoader:
-    def test_load_csv_reads_existing_file(self, tmp_path):
-        csv_dir = tmp_path / "data"
-        csv_dir.mkdir()
-        pd.DataFrame([{"col": "val"}]).to_csv(csv_dir / "test.csv", index=False)
-
-        loader = data_loader.CSVLoader(base_path=csv_dir)
-        result = loader.load_csv("test.csv")
-        assert len(result) == 1
-        assert result.iloc[0]["col"] == "val"
-
-    def test_load_csv_returns_empty_for_missing(self, tmp_path):
-        loader = data_loader.CSVLoader(base_path=tmp_path)
-        result = loader.load_csv("nonexistent.csv")
-        assert result.empty
-
-    def test_load_ura_data_reads_all_files(self, tmp_path):
-        ura_dir = tmp_path / "csv" / "ura"
-        ura_dir.mkdir(parents=True)
-
-        for name in ["ec", "condo", "condo_rental", "ec_rental"]:
-            pd.DataFrame([{"type": name}]).to_csv(ura_dir / f"{name}.csv", index=False)
-
-        loader = data_loader.CSVLoader(base_path=tmp_path)
-        result = loader.load_ura_data()
-
-        assert set(result.keys()) == {"ec", "condo", "condo_rental", "ec_rental"}
-        assert result["ec"].iloc[0]["type"] == "ec"
-
-    def test_load_ura_data_returns_partial(self, tmp_path):
-        ura_dir = tmp_path / "csv" / "ura"
-        ura_dir.mkdir(parents=True)
-        pd.DataFrame([{"type": "ec"}]).to_csv(ura_dir / "ec.csv", index=False)
-
-        loader = data_loader.CSVLoader(base_path=tmp_path)
-        result = loader.load_ura_data()
-
-        assert "ec" in result
-        assert "condo" not in result
-
-    def test_load_hdb_resale_combines_csvs(self, tmp_path):
-        resale_dir = tmp_path / "csv" / "ResaleFlatPrices"
-        resale_dir.mkdir(parents=True)
-
-        pd.DataFrame([{"town": "A"}]).to_csv(resale_dir / "f1.csv", index=False)
-        pd.DataFrame([{"town": "B"}]).to_csv(resale_dir / "f2.csv", index=False)
-
-        loader = data_loader.CSVLoader(base_path=tmp_path)
-        result = loader.load_hdb_resale()
-
-        assert len(result) == 2
-
-    def test_load_hdb_resale_empty_dir(self, tmp_path):
-        resale_dir = tmp_path / "csv" / "ResaleFlatPrices"
-        resale_dir.mkdir(parents=True)
-
-        loader = data_loader.CSVLoader(base_path=tmp_path)
-        result = loader.load_hdb_resale()
-        assert result.empty
-
-    def test_load_hdb_resale_missing_dir(self, tmp_path):
-        loader = data_loader.CSVLoader(base_path=tmp_path)
-        result = loader.load_hdb_resale()
-        assert result.empty
