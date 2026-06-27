@@ -32,12 +32,13 @@ Source code lives in `src/egg_n_bacon_housing/`:
 - `config.py` — pydantic-settings configuration
 - `pipeline.py` — Hamilton DAG driver
 - `components/` — DAG nodes (01_ingestion → 06_analytics)
-- `schemas/` — Pydantic models (raw, clean, feature)
+- `schemas/` — Pydantic models (clean, feature)
 - `adapters/` — External API clients (onemap, datagovsg, geocoding)
 - `utils/` — Utilities (cache, layer_writer, metrics, etc.)
-- `analytics/` — Standalone exploratory analysis scripts (not wired to DAG)
 
 **Manual data**: ~100MB of CSV/GeoJSON source files in `data/manual/` are stored in **Cloudflare R2** (gitignored). Fetch with `dotenvx run -- uv run python scripts/00_sync_data.py`. See `docs/guides/r2-sync-guide.md`.
+
+**Maintenance scripts**: `scripts/generate_catalog.py` regenerates the data catalog (drives `check_catalog.py` in CI). `scripts/99_cleanup.py` logs cache stats + clears the pipeline cache (`dotenvx run -- uv run python scripts/99_cleanup.py`).
 
 **Env vars**: Encrypted via `dotenvx` — run commands as `dotenvx run -- uv run <cmd>`.
 
