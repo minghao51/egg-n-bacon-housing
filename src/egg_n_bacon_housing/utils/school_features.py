@@ -12,7 +12,7 @@ from rapidfuzz import fuzz, process
 from scipy.spatial import cKDTree
 
 from egg_n_bacon_housing.utils.geo import haversine_distance
-from egg_n_bacon_housing.utils.geocoding import Geocoder, build_default_geocoder
+from egg_n_bacon_housing.utils.geocoding import Geocoder
 
 # Constants
 DISTANCES = {
@@ -32,30 +32,6 @@ def configure(bronze_dir: Path, data_dir: Path) -> None:
     """Set reference-data paths (call once at pipeline startup)."""
     global _paths
     _paths = {"bronze_dir": bronze_dir, "data_dir": data_dir}
-
-
-def load_schools() -> pd.DataFrame:
-    """Load schools, geocoding if necessary and saving results.
-
-    Analytics entry point — imports settings locally.
-    """
-    from egg_n_bacon_housing.config import settings
-
-    school_path = settings.bronze_dir / "raw_datagov_school_directory.parquet"
-    schools_df = pd.read_parquet(school_path)
-
-    # Check if already geocoded
-    if "latitude" in schools_df.columns and schools_df["latitude"].notna().sum() > 100:
-        logger.info("Loaded %s pre-geocoded schools", schools_df["latitude"].notna().sum())
-        return schools_df
-
-    # Geocode and save
-    logger.info("Geocoding schools...")
-    schools_df = _geocode_schools(schools_df, build_default_geocoder(settings))
-    schools_df.to_parquet(school_path, compression="snappy", index=False)
-    logger.info("Saved geocoded schools")
-
-    return schools_df
 
 
 def _load_reference_data(filename: str) -> dict | None:
@@ -678,63 +654,3 @@ def calculate_school_features(
                 properties_df.at[orig_idx, col] = unique_features.at[unique_idx, col]
 
     return properties_df
-
-
-def main():
-    """Main entry point for school features calculation.
-
-    Analytics entry point — imports settings locally.
-    """
-    from egg_n_bacon_housing.config import settings
-
-    logger.info("🚀 Calculating school features...")
-
-    schools_df = load_schools()
-    logger.info("Loaded %s schools", len(schools_df))
-
-    property_path = settings.platinum_dir / "unified_dataset.parquet"
-    properties_df = pd.read_parquet(property_path)
-    logger.info("Loaded %s properties", len(properties_df))
-
-    properties_df = calculate_school_features(properties_df, schools_df)
-    properties_df.to_parquet(property_path, compression="snappy", index=False)
-    logger.info("✅ Saved updated data")
-
-    # Print statistics
-    logger.info("\n📊 School Distance Statistics (meters):")
-    for level in ["PRIMARY", "SECONDARY", "JUNIOR"]:
-        col = f"nearest_school{level}_dist"
-        if col in properties_df.columns:
-            dist = properties_df[col].dropna()
-            logger.info(
-                "  %s: mean=%sm, median=%sm, min=%sm, max=%sm",
-                level,
-                f"{dist.mean():.0f}",
-                f"{dist.median():.0f}",
-                f"{dist.min():.0f}",
-                f"{dist.max():.0f}",
-            )
-
-    # Print quality score statistics
-    logger.info("\n📊 School Quality Score Statistics:")
-    for col, label in [
-        ("school_accessibility_score", "Overall Accessibility"),
-        ("school_primary_quality_score", "Primary School Quality"),
-        ("school_secondary_quality_score", "Secondary School Quality"),
-        ("school_primary_dist_score", "Primary Distance-Weighted"),
-        ("school_secondary_dist_score", "Secondary Distance-Weighted"),
-    ]:
-        if col in properties_df.columns:
-            scores = properties_df[col]
-            logger.info(
-                "  %s:\n    mean=%s, median=%s, min=%s, max=%s",
-                label,
-                f"{scores.mean():.2f}",
-                f"{scores.median():.2f}",
-                f"{scores.min():.2f}",
-                f"{scores.max():.2f}",
-            )
-
-
-if __name__ == "__main__":
-    main()

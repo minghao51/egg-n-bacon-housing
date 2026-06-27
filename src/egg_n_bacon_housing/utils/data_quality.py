@@ -87,16 +87,6 @@ def get_collector(db_path: Path) -> "DataQualityCollector":
     return _collector
 
 
-def reset_collector() -> None:
-    """Reset the global collector instance.
-
-    Intended for tests that need a fresh collector after monkeypatching
-    configuration paths.
-    """
-    global _collector
-    _collector = None
-
-
 def infer_quality_stage(dataset_name: str) -> str:
     """Infer pipeline stage from the dataset name."""
     stage_prefixes = {"L0", "L1", "L2", "L3", "L4", "L5"}
