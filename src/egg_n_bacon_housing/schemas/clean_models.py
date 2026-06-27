@@ -1,7 +1,7 @@
 """Cleaned data schemas (Silver layer - validated with pydantic at boundary)."""
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, ClassVar
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -29,6 +29,8 @@ class HCleanHDBTransaction(HCleanTransactionBase):
     remaining_lease_months can be computed from lease_commence_date if missing.
     """
 
+    catalog_dataset_id: ClassVar[str] = "hdb_validated"
+
     town: str
     flat_type: str
     block: str
@@ -43,6 +45,8 @@ class HCleanHDBTransaction(HCleanTransactionBase):
 
 class HCleanCondoTransaction(HCleanTransactionBase):
     """Validated condo transaction."""
+
+    catalog_dataset_id: ClassVar[str] = "condo_validated"
 
     project_name: str
     area: str
@@ -67,6 +71,8 @@ class HCleanECTransaction(HCleanTransactionBase):
 
 class GeocodedProperty(BaseModel):
     """Validated geocoded property record."""
+
+    catalog_dataset_id: ClassVar[str] = "geocoded_validated"
 
     address: str | None = None
     lat: Annotated[float, Field(ge=-90, le=90)] | None = None

@@ -1,0 +1,87 @@
+---
+import type { CatalogDataset } from "@/types/catalog";
+import { humanSize, LAYER_COLORS } from "@/types/catalog";
+
+interface Props {
+  dataset: CatalogDataset;
+  baseUrl: string;
+}
+
+const { dataset, baseUrl } = Astro.props;
+
+const STATUS_COLORS: Record<string, string> = {
+  available: "bg-green-900/20 text-green-400 border-green-700",
+  missing: "bg-amber-900/20 text-amber-400 border-amber-700",
+  error: "bg-red-900/20 text-red-400 border-red-700",
+};
+
+const layerColor = LAYER_COLORS[dataset.layer] || "#b45309";
+const statusClass = STATUS_COLORS[dataset.status] || STATUS_COLORS.missing;
+---
+
+<div class="space-y-4">
+  <nav class="text-sm text-muted-foreground">
+    <a href={baseUrl} class="hover:text-foreground">Data Catalog</a>
+    <span class="mx-2">/</span>
+    <a href={`${baseUrl}${dataset.layer}`} class="hover:text-foreground">
+      {dataset.layer.charAt(0).toUpperCase() + dataset.layer.slice(1)}
+    </a>
+    <span class="mx-2">/</span>
+    <span class="text-foreground">{dataset.label}</span>
+  </nav>
+
+  <div class="flex flex-wrap items-start gap-3">
+    <div
+      class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border"
+      style={`border-color: ${layerColor}; color: ${layerColor}; background-color: ${layerColor}15`}
+    >
+      {dataset.layer}
+    </div>
+    <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${statusClass}`}>
+      {dataset.status}
+    </span>
+  </div>
+
+  <div>
+    <h1 class="text-3xl font-bold text-foreground">{dataset.label}</h1>
+    {dataset.description && (
+      <p class="mt-2 text-muted-foreground">{dataset.description}</p>
+    )}
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-lg border border-border bg-card">
+    <div>
+      <div class="text-sm text-muted-foreground">Rows</div>
+      <div class="text-lg font-bold text-foreground tabular-nums">
+        {dataset.parquet ? dataset.parquet.row_count.toLocaleString() : "—"}
+      </div>
+    </div>
+    <div>
+      <div class="text-sm text-muted-foreground">Columns</div>
+      <div class="text-lg font-bold text-foreground tabular-nums">
+        {dataset.parquet ? dataset.parquet.column_count : "—"}
+      </div>
+    </div>
+    <div>
+      <div class="text-sm text-muted-foreground">File Size</div>
+      <div class="text-lg font-bold text-foreground tabular-nums">
+        {dataset.parquet ? humanSize(dataset.parquet.file_size_bytes) : "—"}
+      </div>
+    </div>
+    <div>
+      <div class="text-sm text-muted-foreground">Source</div>
+      <div class="text-lg font-bold text-foreground">
+        {dataset.source || "—"}
+      </div>
+    </div>
+  </div>
+
+  {dataset.schema && (
+    <div class="text-sm text-muted-foreground">
+      Schema model:{" "}
+      <code class="text-foreground bg-muted px-1.5 py-0.5 rounded text-xs">
+        {dataset.schema.model}
+      </code>
+    </div>
+  )}
+</div>

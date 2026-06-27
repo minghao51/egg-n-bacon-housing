@@ -1,7 +1,7 @@
 """Feature data schemas (Gold layer - business-level enriched features)."""
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, ClassVar
 
 from pydantic import BaseModel, Field
 
@@ -12,6 +12,8 @@ class LocationDimRecord(BaseModel):
     Contains all spatial features (proximity, school scores, block metadata,
     planning area) computed on ~10K unique locations.
     """
+
+    catalog_dataset_id: ClassVar[str] = "location_dim"
 
     lat: Annotated[float, Field(ge=-90, le=90)]
     lon: Annotated[float, Field(ge=-180, le=180)]
@@ -58,6 +60,8 @@ class LocationDimRecord(BaseModel):
 
 class HFeatureTransaction(BaseModel):
     """Transaction enriched with features (Gold layer)."""
+
+    catalog_dataset_id: ClassVar[str] = "transactions_enriched"
 
     transaction_date: datetime
     price: Annotated[float, Field(gt=0)]
@@ -143,6 +147,8 @@ class HFeatureTransaction(BaseModel):
 class HRentalYieldRecord(BaseModel):
     """Precomputed rental yield record."""
 
+    catalog_dataset_id: ClassVar[str] = "rental_yield"
+
     planning_area: str | None = None
     town: str | None = None
     property_type: str
@@ -157,6 +163,8 @@ class HRentalYieldRecord(BaseModel):
 
 class PlanningArea360(BaseModel):
     """Planning area 360-degree profile (~43 rows)."""
+
+    catalog_dataset_id: ClassVar[str] = "planning_area_360"
 
     planning_area: str
     region: str | None = None
@@ -195,6 +203,8 @@ class PlanningArea360(BaseModel):
 class Town360(BaseModel):
     """Town 360-degree profile (~27 rows)."""
 
+    catalog_dataset_id: ClassVar[str] = "town_360"
+
     town: str
 
     median_price: float | None = None
@@ -215,6 +225,8 @@ class Town360(BaseModel):
 
 class BlockProfile(BaseModel):
     """Per-block transaction profile (~10K rows)."""
+
+    catalog_dataset_id: ClassVar[str] = "block_profile"
 
     block: str
     street_name: str

@@ -1,0 +1,401 @@
+# Human-maintained field descriptions for the data catalog.
+# Only add fields where the name isn't self-explanatory.
+# Auto-generated info (type, constraints) comes from Pydantic/parquet.
+# Re-generate catalog after editing: uv run python scripts/generate_catalog.py
+
+datasets:
+  raw_hdb_resale_transactions:
+    label: "HDB Resale Transactions"
+    description: "All HDB resale transactions from data.gov.sg (1990-present). Includes town, flat type, floor area, lease commencement, and resale price."
+    source: "data.gov.sg API + historical CSVs"
+
+  raw_condo_transactions:
+    label: "Condo & EC Transactions"
+    description: "Private residential and executive condominium transactions from URA. Includes project name, district, tenure, area, and transacted price."
+    source: "URA bulk download"
+
+  raw_hdb_rental:
+    label: "HDB Rental Transactions"
+    description: "HDB rental transactions from data.gov.sg. Used for rental yield computation in the gold layer."
+    source: "data.gov.sg"
+
+  raw_rental_index:
+    label: "Rental Index"
+    description: "Quarterly rental price index from data.gov.sg."
+    source: "data.gov.sg"
+
+  raw_school_directory:
+    label: "School Directory"
+    description: "Ministry of Education school directory with addresses, lat/lon, and tier classification."
+    source: "data.gov.sg + manual tier classification"
+    fields:
+      school_name: "Official school name"
+      url_address: "School website URL"
+      telephone_no: "Main contact number"
+      principal_name: "Principal's name"
+      first_vp_name: "First Vice-Principal's name"
+      dgp_code: "MOE DGP (Discipline Grouping & Planning) code"
+      zone_code: "MOE zone (e.g., North, South, East, West)"
+      type_code: "School type code (e.g., Primary, Secondary, Mixed Level)"
+      nature_code: "School nature (Government, Government-Aided, Independent, Specialised)"
+      session_code: "Session type (Single Session, Double Session)"
+      mainlevel_code: "Main education level (Primary, Secondary, JC, Mixed)"
+      sap_ind: "Special Assistance Programme flag (Y/N) — bilingual programme"
+      autonomous_ind: "Autonomous school flag (Y/N)"
+      gifted_ind: "Gifted Education Programme flag (Y/N)"
+      ip_ind: "Integrated Programme flag (Y/N) — 6-year through-train"
+      mothertongue1_code: "First mother-tongue language offered"
+      mothertongue2_code: "Second mother-tongue language offered"
+      mothertongue3_code: "Third mother-tongue language offered"
+      mrt_desc: "Nearest MRT station description"
+      bus_desc: "Bus services serving the school"
+
+  raw_shopping_malls:
+    label: "Shopping Malls"
+    description: "Wikipedia-extracted shopping mall list, geocoded with OneMap."
+    source: "Wikipedia + OneMap geocoding"
+
+  raw_wiki_shopping_mall:
+    label: "Shopping Malls (Wikipedia raw)"
+    description: "Raw Wikipedia list of Singapore shopping malls before geocoding."
+    source: "Wikipedia"
+
+  raw_wiki_shopping_mall_geocoded:
+    label: "Shopping Malls (Geocoded)"
+    description: "Wikipedia shopping mall list enriched with lat/lon via OneMap geocoding."
+    source: "Wikipedia + OneMap geocoding"
+    fields:
+      shopping_mall: "Shopping mall name (as scraped from Wikipedia)"
+      search_term: "Query string submitted to the OneMap geocoder"
+      found: "Whether OneMap returned a match (Y/N)"
+      matched_name: "Name returned by OneMap (may differ from input)"
+      search_result: "Raw OneMap response payload"
+
+  raw_mrt_stations:
+    label: "MRT Stations"
+    description: "MRT and LRT station locations from OpenStreetMap GeoJSON export."
+    source: "OpenStreetMap"
+
+  raw_hawker_centres:
+    label: "Hawker Centres"
+    description: "Hawker centre locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_supermarkets:
+    label: "Supermarkets"
+    description: "Supermarket locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_parks:
+    label: "Parks"
+    description: "Park and green space locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_childcare:
+    label: "Childcare Centres"
+    description: "Childcare centre locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_kindergartens:
+    label: "Kindergartens"
+    description: "Kindergarten locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_bus_stops:
+    label: "Bus Stops"
+    description: "Bus stop locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_chas_clinics:
+    label: "CHAS Clinics"
+    description: "CHAS (Community Health Assist Scheme) clinic locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_sports_facilities:
+    label: "Sports Facilities"
+    description: "Public sports facility locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_community_clubs:
+    label: "Community Clubs"
+    description: "Community club locations from data.gov.sg GeoJSON."
+    source: "data.gov.sg"
+
+  raw_hdb_property_info:
+    label: "HDB Property Info"
+    description: "HDB property-level metadata: year completed, max floor level, total dwelling units."
+    source: "data.gov.sg"
+    fields:
+      bldg_contract_town: "Town/estate code for the building contract"
+      residential: "Whether the building is residential (Y/N)"
+      commercial: "Whether the building has commercial units (Y/N)"
+      market_hawker: "Whether the building has a market/hawker centre (Y/N)"
+      miscellaneous: "Whether the building has miscellaneous use units (Y/N)"
+      precint_parks: "Whether the building has a precinct park (Y/N)"
+      multistorey_carpark: "Whether the building has a multi-storey carpark (Y/N)"
+      precinct_carpark: "Whether the building has a precinct carpark (Y/N)"
+      bus_stop: "Whether the building is served by a bus stop (Y/N)"
+
+  raw_income_by_planning_area:
+    label: "Income by Planning Area"
+    description: "Median monthly household income per planning area."
+    source: "data.gov.sg"
+
+  raw_green_mark_buildings:
+    label: "Green Mark Buildings"
+    description: "BCA Green Mark certified building list, geocoded."
+    source: "BCA + OneMap geocoding"
+    fields:
+      Reference_No: "BCA Green Mark certification reference number"
+      Actual_Project_Name: "Official project / building name"
+      Project_Name: "Submitted project name (may differ from actual)"
+      SLE_ZE_PE: "Super Low Energy / Zero Energy / Positive Energy badge"
+      CN: "Carbon Neutral badge"
+      HW: "Health & Wellbeing badge"
+      IN: "Integration badge"
+      MT: "Maintainability badge"
+      RE: "Renewable Energy badge"
+      Prov_Letter: "Provisional letter issued (Y/N)"
+      e_cert: "Electronic certificate ID / URL"
+      Expiry: "Certification expiry date"
+      Project_Type: "Building category (e.g., Commercial, Residential, Mixed Use)"
+      Re_Certification: "Recertification date"
+      Previous_GM_Cert_Reference_No: "Prior Green Mark certificate reference"
+      GM_Version: "Green Mark assessment version (e.g., GM v4.1, GM 2021)"
+
+  raw_dwelling_units_by_town:
+    label: "Dwelling Units by Town"
+    description: "Total HDB dwelling units per town."
+    source: "data.gov.sg"
+
+  raw_median_annual_value:
+    label: "Median Annual Value"
+    description: "Median annual value of HDB flats by town and flat type."
+    source: "data.gov.sg"
+
+  raw_hdb_resident_population:
+    label: "HDB Resident Population"
+    description: "HDB resident population per town."
+    source: "data.gov.sg"
+
+  geocoded_green_mark_buildings:
+    label: "Geocoded Green Mark Buildings"
+    description: "Green Mark buildings with lat/lon from OneMap geocoding."
+    source: "BCA + OneMap"
+
+  raw_macro_data:
+    label: "Macro-Economic Data"
+    description: "Bundle of macro indicators: SORA rates, CPI, GDP, unemployment, bank rates, HDB RPI, URA PPI, supply pipeline, wage growth."
+    source: "SingStat, MAS, data.gov.sg"
+
+  # --- Silver Layer ---
+
+  cleaned_hdb_transactions:
+    label: "Cleaned HDB Transactions"
+    description: "Validated and cleaned HDB transactions with standardized types and parsed fields."
+    fields:
+      remaining_lease_months: "Months remaining on the 99-year lease (computed from lease_commence_date if missing in source)"
+      storey_min: "Lower bound of storey range (parsed from 'storey_range' field)"
+      storey_max: "Upper bound of storey range (parsed from 'storey_range' field)"
+      floor_area_sqm: "Floor area in square meters"
+      floor_area_sqft: "Floor area in square feet"
+
+  cleaned_condo_transactions:
+    label: "Cleaned Condo Transactions"
+    description: "Validated and cleaned condo/EC transactions with standardized types."
+    fields:
+      postal_district: "Singapore postal district number (1-28)"
+      tenure: "Property tenure type (e.g., Freehold, 99-year leasehold)"
+      floor_area_sqm: "Floor area in square meters"
+      floor_area_sqft: "Floor area in square feet"
+
+  hdb_validated:
+    label: "HDB Validated"
+    description: "Schema-validated HDB transactions (enforced via HCleanHDBTransaction model). Invalid rows quarantined."
+
+  condo_validated:
+    label: "Condo Validated"
+    description: "Schema-validated condo transactions (enforced via HCleanCondoTransaction model). Invalid rows quarantined."
+
+  geocoded_properties:
+    label: "Geocoded Properties"
+    description: "Merged HDB + condo properties with lat/lon from OneMap geocoding."
+
+  geocoded_validated:
+    label: "Geocoded Validated"
+    description: "Schema-validated geocoded properties (enforced via GeocodedProperty model). Quality-filtered by coordinate coverage threshold."
+
+  # --- Gold Layer ---
+
+  rental_yield:
+    label: "Rental Yields"
+    description: "Precomputed rental yield by planning area / town / property type / flat type / month."
+
+  location_dim:
+    label: "Location Dimension"
+    description: "One row per unique (lat, lon) pair (~10K locations). Contains all spatial proximity features, block metadata, and planning area mapping."
+
+  transactions_enriched:
+    label: "Enriched Transactions"
+    description: "Full transaction dataset (~1M rows) enriched with spatial proximity, macro-economic, supply/population, and rental yield features. The core gold-layer dataset."
+    fields:
+      psf: "Price per square foot (SGD)"
+      h3_cell: "Uber H3 hexagonal cell identifier (resolution 9)"
+      price_stratum: "Price tier classification (e.g., Budget, Mid-Range, Premium, Luxury)"
+      mrt_line: "MRT line name for the nearest station"
+      school_tier: "School tier classification (Tier 1, Tier 2, etc.) based on academic performance"
+      remaining_lease_years: "Remaining lease in years (converted from months)"
+      dwelling_units_in_town: "Total HDB dwelling units in the property's town"
+      population_in_town: "HDB resident population in the property's town"
+      population_per_dwelling: "Population-to-dwelling ratio in the property's town"
+      annual_value: "Annual value used for property tax computation"
+      property_tax: "Estimated property tax"
+
+  planning_area_360:
+    label: "Planning Area Profiles"
+    description: "Aggregated 360-degree profile per URA planning area (~43 rows). Contains median proximity distances, market stats, income, and macro indicators."
+
+  town_360:
+    label: "Town Profiles"
+    description: "Aggregated 360-degree profile per HDB town (~27 rows). Contains market stats, supply/population, annual value, and property tax by flat type."
+
+  block_profile:
+    label: "Block Profiles"
+    description: "Per-block transaction summary (~10K rows). Contains median price, PSF, transaction count, and average remaining lease."
+
+  # --- Platinum Layer ---
+
+  unified_dataset:
+    label: "Unified Dataset"
+    description: "Final export dataset — same as transactions_enriched, written to platinum layer for consumption by analytics and the Astro dashboard."
+
+  pa_monthly_metrics:
+    label: "PA Monthly Metrics"
+    description: "Planning area × month time series with median price, PSF, rental yield, affordability ratios, and appreciation metrics."
+
+  appreciation_hotspots:
+    label: "Appreciation Hotspots"
+    description: "Statistically significant price appreciation clusters (top 20 planning areas by YoY growth)."
+
+# Shared field descriptions — applied to any dataset containing these fields.
+# Define once, used everywhere. Add new shared fields here as the pipeline evolves.
+
+shared_fields:
+  transaction_date: "Date of the transaction"
+  price: "Transaction price in SGD"
+  lat: "Latitude coordinate (WGS84)"
+  lon: "Longitude coordinate (WGS84)"
+  property_type: "Property type (HDB, Condominium, Executive Condominium)"
+  town: "HDB town name"
+  block: "HDB block number"
+  street_name: "Street name"
+  flat_type: "HDB flat type (e.g., 3-Room, 4-Room, 5-Room, Executive)"
+  floor_area_sqm: "Floor area in square meters"
+  floor_area_sqft: "Floor area in square feet"
+  address: "Full address string"
+  postal_code: "6-digit Singapore postal code"
+  search_confidence: "OneMap geocoding confidence score (0.0–1.0)"
+  planning_area: "URA planning area name"
+  region: "URA region (CCR, RCR, OCR)"
+
+  # Proximity features
+  dist_to_nearest_mrt: "Haversine distance to nearest MRT/LRT station (km)"
+  nearest_mrt_station: "Name of nearest MRT/LRT station"
+  nearest_mrt_score: "Composite MRT score based on line connectivity and interchange status"
+  dist_to_nearest_school: "Haversine distance to nearest primary school (km)"
+  nearest_school: "Name of nearest primary school"
+  dist_to_nearest_mall: "Haversine distance to nearest shopping mall (km)"
+  nearest_mall: "Name of nearest shopping mall"
+  dist_to_nearest_hawker: "Haversine distance to nearest hawker centre (km)"
+  nearest_hawker: "Name of nearest hawker centre"
+  dist_to_nearest_supermarket: "Haversine distance to nearest supermarket (km)"
+  nearest_supermarket: "Name of nearest supermarket"
+  dist_to_nearest_park: "Haversine distance to nearest park/green space (km)"
+  nearest_park: "Name of nearest park"
+  dist_to_nearest_childcare: "Haversine distance to nearest childcare centre (km)"
+  nearest_childcare: "Name of nearest childcare centre"
+  dist_to_nearest_kindergarten: "Haversine distance to nearest kindergarten (km)"
+  nearest_kindergarten: "Name of nearest kindergarten"
+  dist_to_nearest_bus_stop: "Haversine distance to nearest bus stop (km)"
+  nearest_bus_stop: "Name/ID of nearest bus stop"
+  dist_to_nearest_chas_clinic: "Haversine distance to nearest CHAS clinic (km)"
+  nearest_chas_clinic: "Name of nearest CHAS clinic"
+  dist_to_nearest_sports_facility: "Haversine distance to nearest sports facility (km)"
+  nearest_sports_facility: "Name of nearest sports facility"
+  dist_to_nearest_community_club: "Haversine distance to nearest community club (km)"
+  nearest_community_club: "Name of nearest community club"
+  dist_to_nearest_green_mark_building: "Haversine distance to nearest Green Mark certified building (km)"
+  nearest_green_mark_building: "Name of nearest Green Mark building"
+
+  # Block metadata
+  max_floor_lvl: "Maximum floor level of the HDB block"
+  year_completed: "Year the building was completed"
+  total_dwelling_units: "Total dwelling units in the property/block"
+
+  # Macro indicators
+  cpi: "Consumer Price Index (base year 2019=100)"
+  sora_rate: "Singapore Overnight Rate Average (%)"
+  sora_3m: "3-month compounded SORA rate (%)"
+  unemployment_rate: "National unemployment rate (%)"
+  gdp: "GDP year-on-year growth rate (%)"
+  hdb_rpi: "HDB Resale Price Index"
+  ura_ppi: "URA Private Property Price Index"
+  median_monthly_income: "Median monthly household income in planning area (SGD)"
+  wage_growth: "Year-on-year wage growth rate (%)"
+
+  # Rental yield
+  median_price: "Median transaction price (SGD)"
+  median_rent: "Median monthly rent (SGD)"
+  rental_yield_pct: "Gross rental yield percentage (annual rent / price × 100)"
+  sample_size: "Number of observations for this aggregate"
+  month: "Year-month identifier (YYYY-MM)"
+
+  # Aggregated metrics
+  median_psf: "Median price per square foot (SGD)"
+  transaction_volume: "Number of transactions"
+  transaction_count: "Number of transactions"
+  avg_remaining_lease_years: "Average remaining lease in years"
+
+  # --- Bronze / raw-source fields (shared across multiple raw_* datasets) ---
+  _id: "Source-system row identifier (data.gov.sg)"
+  resale_price: "HDB resale transaction price in SGD"
+  lease_commence_date: "Year the HDB 99-year lease commenced"
+  storey_range: "Storey range as a string (e.g., '10 TO 12')"
+  flat_model: "HDB flat model (e.g., Improved, Model A, Premium Apartment)"
+  remaining_lease: "Remaining lease as a string (e.g., '61 years 04 months')"
+  remaining_lease_months: "Remaining lease duration in months (numeric)"
+  monthly_rent: "Approved monthly rental rate in SGD"
+  rent_approval_date: "HDB rental approval date (YYYY-MM-DD)"
+  project_name: "Private residential project name"
+  area_sqft: "Floor area in square feet (raw source column)"
+  area_sqm: "Floor area in square meters (raw source column)"
+  unit_price_psf: "Price per square foot in SGD"
+  unit_price_psm: "Price per square meter in SGD"
+  nett_price: "Nett price after discounts/rebates in SGD"
+  type_of_sale: "Sale type (New Sale, Sub Sale, Resale)"
+  type_of_area: "Area type (Strata, Land)"
+  number_of_units: "Number of units in the transaction"
+  tenure: "Property tenure (e.g., Freehold, 99-year leasehold)"
+  postal_district: "Singapore postal district number (1–28)"
+  market_segment: "URA market segment (CCR, RCR, OCR)"
+  floor_level: "Floor level range as a string (e.g., '01 TO 05')"
+  sale_date: "Date of sale for URA private transactions"
+  quarter: "Quarter identifier (e.g., '2024-Q1')"
+  financial_year: "Singapore financial year (FY)"
+  shs_year: "Singapore Household Survey year"
+  no_of_cases: "Number of observations behind the aggregate"
+  median_annual_value: "Median annual value used for property tax (SGD)"
+  property_tax_collection: "Total property tax collected (SGD)"
+  no_of_dwelling_units: "Number of dwelling units in the aggregate"
+  no_of_units: "Number of units (supply pipeline / development)"
+  sold_or_rental: "Whether the HDB dwelling unit is sold or rental"
+  town_or_estate: "HDB town or estate name"
+  town_estate: "HDB town or estate (as recorded by household survey)"
+  index: "Price index value (base period = 100)"
+  locality: "Geographic locality for the index series"
+  development_status: "Supply pipeline development stage (e.g., Planned, Under Construction)"
+  type_of_property: "Property type for the supply pipeline series"
+  sale_status: "Sale status (e.g., Launched, Sold, Unsold)"
+  units: "Number of transaction units in the aggregate"
+  rating: "BCA Green Mark rating (e.g., Platinum, GoldPlus, Gold)"
+  gfa: "Gross Floor Area (sqm) for Green Mark certification"

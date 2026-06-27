@@ -111,6 +111,9 @@ app/test-results/
 # app/public/data/*.json  # COMMENTED OUT - we track these
 !app/public/data/.gitkeep
 
+# Catalog gzipped copy (source JSONL in data/catalog/ is tracked)
+app/public/data/catalog.jsonl.gz
+
 # Export data (temporary)
 data/exports/
 

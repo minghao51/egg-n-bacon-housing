@@ -1,0 +1,86 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import DatasetTable from "@/components/catalog/DatasetTable";
+import { loadCatalog } from "@/utils/catalog";
+import { humanSize, LAYER_BG_COLORS, LAYER_BORDER_COLORS } from "@/types/catalog";
+
+export function getStaticPaths() {
+  return [
+    { params: { layer: "bronze" } },
+    { params: { layer: "silver" } },
+    { params: { layer: "gold" } },
+    { params: { layer: "platinum" } },
+  ];
+}
+
+const { layer } = Astro.params;
+
+const catalog = loadCatalog();
+const layerData = catalog?.layerMap.get(layer);
+
+// Fall back to the bare layer name if the catalog is unavailable; the layer's
+// canonical label + description live in the JSONL (see descriptions.yml).
+const layerLabel = layerData?.label || layer;
+const layerDescription = layerData?.description || "";
+
+const datasets = catalog?.datasets.filter((ds) => ds.layer === layer) || [];
+const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
+
+const bgClass = LAYER_BG_COLORS[layer] || "bg-card";
+const borderClass = LAYER_BORDER_COLORS[layer] || "border-border";
+---
+
+<Layout title={`${layerLabel} — Data Catalog`}>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-muted-foreground mb-6">
+        <a href={`${import.meta.env.BASE_URL}catalog/`} class="hover:text-foreground">
+          Data Catalog
+        </a>
+        <span class="mx-2">/</span>
+        <span class="text-foreground">{layerLabel}</span>
+      </nav>
+
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-foreground">{layerLabel}</h1>
+        <p class="text-muted-foreground mt-2">{layerDescription}</p>
+      </header>
+
+      {
+        catalog ? (
+          <>
+            <!-- Stats bar -->
+            {
+              layerData && (
+                <div class={`grid grid-cols-3 gap-4 p-4 rounded-lg border mb-8 ${borderClass} ${bgClass}`}>
+                  <div>
+                    <div class="text-sm text-muted-foreground">Datasets</div>
+                    <div class="text-xl font-bold text-foreground tabular-nums">{layerData.dataset_count}</div>
+                  </div>
+                  <div>
+                    <div class="text-sm text-muted-foreground">Total Rows</div>
+                    <div class="text-xl font-bold text-foreground tabular-nums">{layerData.total_rows.toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <div class="text-sm text-muted-foreground">Total Size</div>
+                    <div class="text-xl font-bold text-foreground tabular-nums">{humanSize(layerData.total_size_bytes)}</div>
+                  </div>
+                </div>
+              )
+            }
+
+            <DatasetTable client:visible datasets={datasets} baseUrl={baseUrl} />
+          </>
+        ) : (
+          <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
+            Catalog data not available.
+          </div>
+        )
+      }
+    </div>
+  </main>
+</Layout>

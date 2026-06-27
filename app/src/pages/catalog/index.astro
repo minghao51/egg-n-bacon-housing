@@ -1,0 +1,68 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import LayerCard from "@/components/catalog/LayerCard";
+import DagGraph from "@/components/catalog/DagGraph";
+import DatasetTable from "@/components/catalog/DatasetTable";
+import { loadCatalog } from "@/utils/catalog";
+
+const catalog = loadCatalog();
+
+const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
+---
+
+<Layout title="Data Catalog">
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-foreground">Data Catalog</h1>
+        <p class="text-muted-foreground mt-2">
+          A searchable inventory of every dataset in the pipeline — from raw ingestion through cleaned, feature-enriched, and unified exports. Auto-generated from Pydantic schemas, parquet metadata, and Hamilton DAG lineage.
+        </p>
+      </header>
+
+      {
+        catalog ? (
+          <>
+            <!-- Layer Cards -->
+            <section class="mb-10">
+              <h2 class="text-xl font-semibold text-foreground mb-4">Pipeline Layers</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {catalog.layers.map((layer) => (
+                  <LayerCard layer={layer} baseUrl={baseUrl} />
+                ))}
+              </div>
+            </section>
+
+            <!-- DAG Graph -->
+            <section class="mb-10">
+              <h2 class="text-xl font-semibold text-foreground mb-4">Pipeline Lineage</h2>
+              <DagGraph
+                client:load
+                datasets={catalog.datasets}
+                edges={catalog.edges}
+                baseUrl={baseUrl}
+              />
+            </section>
+
+            <!-- All Datasets (global search) -->
+            <section>
+              <h2 class="text-xl font-semibold text-foreground mb-4">All Datasets</h2>
+              <DatasetTable
+                client:visible
+                datasets={catalog.datasets}
+                baseUrl={baseUrl}
+              />
+            </section>
+          </>
+        ) : (
+          <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
+            Catalog data not available. Run <code class="text-foreground">uv run python scripts/generate_catalog.py</code> to generate.
+          </div>
+        )
+      }
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,142 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import DatasetHeader from "@/components/catalog/DatasetHeader.astro";
+import SchemaTable from "@/components/catalog/SchemaTable";
+import { loadCatalog } from "@/utils/catalog";
+import { type CatalogData, datasetIdToSlug, slugToDatasetId } from "@/types/catalog";
+
+export function getStaticPaths() {
+  const catalog = loadCatalog();
+  if (!catalog) return [];
+
+  // Use [...dataset] rest param so external datasets get nested URLs
+  // (e.g. `external__cpi` -> `external/cpi` instead of `external__cpi`).
+  return catalog.datasets.map((ds) => ({
+    params: { layer: ds.layer, dataset: datasetIdToSlug(ds.id) },
+  }));
+}
+
+const { dataset: datasetParam } = Astro.params;
+const datasetId = slugToDatasetId(datasetParam!);
+
+const catalog: CatalogData | undefined = loadCatalog() ?? undefined;
+
+const dataset = catalog?.datasetMap.get(datasetId);
+const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
+
+const upstreamLinks = dataset
+  ? dataset.lineage.upstream.flatMap((id) => {
+      const ds = catalog?.datasetMap.get(id);
+      return ds
+        ? [{ id, slug: datasetIdToSlug(id), label: ds.label, layer: ds.layer }]
+        : [];
+    })
+  : [];
+
+const downstreamLinks = dataset
+  ? dataset.lineage.downstream.flatMap((id) => {
+      const ds = catalog?.datasetMap.get(id);
+      return ds
+        ? [{ id, slug: datasetIdToSlug(id), label: ds.label, layer: ds.layer }]
+        : [];
+    })
+  : [];
+---
+
+<Layout title={dataset ? `${dataset.label} — Data Catalog` : "Dataset — Data Catalog"}>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      {
+        dataset ? (
+          <>
+            <DatasetHeader dataset={dataset} baseUrl={baseUrl} />
+
+            <!-- Schema Table -->
+            {
+              (dataset.schema || dataset.parquet?.columns) && (
+                <section class="mt-8">
+                  <h2 class="text-xl font-semibold text-foreground mb-4">Schema</h2>
+                  <SchemaTable
+                    client:visible
+                    schemaFields={dataset.schema?.fields || null}
+                    parquetColumns={dataset.parquet?.columns || null}
+                  />
+                </section>
+              )
+            }
+
+            <!-- Lineage -->
+            <section class="mt-8">
+              <h2 class="text-xl font-semibold text-foreground mb-4">Lineage</h2>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Upstream -->
+                <div class="p-4 rounded-lg border border-border bg-card">
+                  <h3 class="text-sm font-semibold text-muted-foreground mb-3">
+                    Upstream ({upstreamLinks.length})
+                  </h3>
+                  {
+                    upstreamLinks.length > 0 ? (
+                      <ul class="space-y-1">
+                        {upstreamLinks.map((link: { id: string; slug: string; label: string; layer: string }) => (
+                          <li>
+                            <a
+                              href={`${baseUrl}${link.layer}/${link.slug}`}
+                              class="text-sm text-primary hover:underline"
+                            >
+                              {link.label}
+                            </a>
+                            <span class="text-xs text-muted-foreground ml-2">{link.layer}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p class="text-sm text-muted-foreground italic">
+                        No upstream dependencies (source dataset).
+                      </p>
+                    )
+                  }
+                </div>
+
+                <!-- Downstream -->
+                <div class="p-4 rounded-lg border border-border bg-card">
+                  <h3 class="text-sm font-semibold text-muted-foreground mb-3">
+                    Downstream ({downstreamLinks.length})
+                  </h3>
+                  {
+                    downstreamLinks.length > 0 ? (
+                      <ul class="space-y-1">
+                        {downstreamLinks.map((link: { id: string; slug: string; label: string; layer: string }) => (
+                          <li>
+                            <a
+                              href={`${baseUrl}${link.layer}/${link.slug}`}
+                              class="text-sm text-primary hover:underline"
+                            >
+                              {link.label}
+                            </a>
+                            <span class="text-xs text-muted-foreground ml-2">{link.layer}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p class="text-sm text-muted-foreground italic">
+                        No downstream consumers.
+                      </p>
+                    )
+                  }
+                </div>
+              </div>
+            </section>
+          </>
+        ) : (
+          <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
+            Dataset not found: <code class="text-foreground">{datasetId}</code>
+          </div>
+        )
+      }
+    </div>
+  </main>
+</Layout>
