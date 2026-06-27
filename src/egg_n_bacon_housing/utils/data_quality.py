@@ -145,7 +145,7 @@ def get_duplicate_status(dataset_name: str, duplicate_count: int) -> tuple[str, 
         return "✅ OK (expected duplicates)", False
 
     if mode == ALLOW_THRESHOLD_DUPLICATES:
-        threshold = policy.get("threshold", 0)
+        threshold = int(policy.get("threshold", 0))
         if duplicate_count <= threshold:
             return f"✅ OK (<= {threshold} duplicates expected)", False
         return f"⚠️  {duplicate_count} duplicates (> {threshold} expected)", True

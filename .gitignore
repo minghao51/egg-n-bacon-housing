@@ -42,9 +42,6 @@ bun.lockb
 bun.lock
 package-lock.json
 
-# Security baselines
-.secrets.baseline
-
 # Planning docs (moved to .claude/planning/)
 .planning/
 
