@@ -4,7 +4,7 @@ One interface, two adapters:
 - TrackedWriter (prod): path routing, quality monitoring, compression from settings.
 - SimpleWriter (tests): mkdir + to_parquet, no side effects.
 
-Replaces io_helpers.save_parquet with a single deep interface.
+Single deep interface for all DAG layer persistence.
 """
 
 import logging

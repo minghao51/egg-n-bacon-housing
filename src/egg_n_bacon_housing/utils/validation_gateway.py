@@ -1,6 +1,6 @@
 """ValidationGateway: validate, quarantine, and persist in one call.
 
-Absorbs the validate_schema + quarantine_path + save_parquet pattern
+Absorbs the validate_schema + quarantine_path + parquet-persist pattern
 that was repeated across 6 DAG nodes in cleaning and features.
 """
 
@@ -12,10 +12,21 @@ from typing import Any
 import annotated_types
 import pandas as pd
 
-from egg_n_bacon_housing.utils.io_helpers import save_parquet
 from egg_n_bacon_housing.utils.validation import validate_schema
 
 logger = logging.getLogger(__name__)
+
+
+def _save_parquet(df: pd.DataFrame, path: Path, description: str = "") -> Path:
+    """Write DataFrame to parquet, creating parent dirs as needed. Skip if empty."""
+    if df.empty:
+        logger.debug("Skipping parquet write for empty DataFrame: %s", description or path.name)
+        return path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(path, index=False)
+    label = description or path.stem
+    logger.info("Saved %s %s records to %s/", len(df), label, path.parent.name)
+    return path
 
 
 def vectorized_precheck(
@@ -131,7 +142,7 @@ def validate_and_quarantine(
             model_cls,
             f"{entity_name} (sample)",
         )
-        save_parquet(df, layer_dir / filename, f"validated {entity_name}")
+        _save_parquet(df, layer_dir / filename, f"validated {entity_name}")
         if not quarantine_sample.empty:
             logger.warning(
                 "Sample validation quarantined %s/%s rows for %s — "
@@ -143,17 +154,17 @@ def validate_and_quarantine(
             timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
             q_dir = layer_dir / "_quarantine"
             q_path = q_dir / f"{entity_name}_sample_{timestamp}.parquet"
-            save_parquet(quarantine_sample, q_path, f"quarantined {entity_name} (sample)")
+            _save_parquet(quarantine_sample, q_path, f"quarantined {entity_name} (sample)")
         return df
 
     valid_df, quarantine_df = validate_schema(df, model_cls, entity_name)
 
-    save_parquet(valid_df, layer_dir / filename, f"validated {entity_name}")
+    _save_parquet(valid_df, layer_dir / filename, f"validated {entity_name}")
 
     if not quarantine_df.empty:
         timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
         q_dir = layer_dir / "_quarantine"
         q_path = q_dir / f"{entity_name}_{timestamp}.parquet"
-        save_parquet(quarantine_df, q_path, f"quarantined {entity_name}")
+        _save_parquet(quarantine_df, q_path, f"quarantined {entity_name}")
 
     return valid_df
