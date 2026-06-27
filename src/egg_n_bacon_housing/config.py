@@ -55,10 +55,6 @@ class Settings(BaseSettings):
 
     onemap_email: SecretStr = Field(default=SecretStr(""), alias="ONEMAP_EMAIL")
     onemap_password: SecretStr = Field(default=SecretStr(""), alias="ONEMAP_EMAIL_PASSWORD")
-    google_api_key: SecretStr = Field(default=SecretStr(""), alias="GOOGLE_API_KEY")
-    supabase_url: SecretStr = Field(default=SecretStr(""), alias="SUPABASE_URL")
-    supabase_key: SecretStr = Field(default=SecretStr(""), alias="SUPABASE_KEY")
-    jina_ai: SecretStr = Field(default=SecretStr(""), alias="JINA_AI")
 
     r2_account_id: str = Field(default="", alias="R2_ACCOUNT_ID")
     r2_access_key_id: SecretStr = Field(default=SecretStr(""), alias="R2_ACCESS_KEY_ID")

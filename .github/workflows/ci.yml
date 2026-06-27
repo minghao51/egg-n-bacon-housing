@@ -64,11 +64,7 @@ jobs:
         run: |
           cat > .env << EOF
           ONEMAP_EMAIL=test@example.com
-          GOOGLE_API_KEY=test-api-key
           ONEMAP_EMAIL_PASSWORD=test-password
-          SUPABASE_URL=https://test.supabase.co
-          SUPABASE_KEY=test-key
-          JINA_AI=test-jina-key
           LOG_LEVEL=DEBUG
           EOF
 

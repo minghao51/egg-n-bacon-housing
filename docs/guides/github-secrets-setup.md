@@ -4,7 +4,7 @@ This document describes how to configure the required GitHub Repository Secrets 
 
 ## Required Secrets
 
-The deployment workflow (`.github/workflows/deploy-app.yml`) requires two API keys to generate dashboard data:
+The deployment workflow (`.github/workflows/deploy-app.yml`) requires one API key to generate dashboard data:
 
 ### 1. ONEMAP_EMAIL
 
@@ -17,23 +17,6 @@ The deployment workflow (`.github/workflows/deploy-app.yml`) requires two API ke
 3. The email is used to generate an access token automatically
 
 **Value**: Your email address (e.g., `your-email@example.com`)
-
-### 2. GOOGLE_API_KEY
-
-**Purpose**: API key for Google Maps Geocoding API (fallback when OneMap fails).
-
-**How to obtain**:
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Navigate to **APIs & Services** → **Credentials**
-4. Click **Create Credentials** → **API Key**
-5. Restrict the API key:
-   - **Application restrictions**: None (or add GitHub Actions IP ranges if needed)
-   - **API restrictions**: Only enable **Geocoding API**
-6. Copy the API key
-
-**Value**: Your Google Maps API key (e.g., `AIzaSy...`)
 
 ## Setup Instructions
 
@@ -50,19 +33,11 @@ The deployment workflow (`.github/workflows/deploy-app.yml`) requires two API ke
 3. Value: Your email address
 4. Click **Add secret**
 
-### Step 3: Add GOOGLE_API_KEY Secret
+### Step 3: Verify Secrets
 
-1. Click **New repository secret**
-2. Name: `GOOGLE_API_KEY`
-3. Value: Your Google Maps API key
-4. Click **Add secret**
-
-### Step 4: Verify Secrets
-
-After adding both secrets, you should see:
+After adding the secret, you should see:
 
 - ✅ `ONEMAP_EMAIL`
-- ✅ `GOOGLE_API_KEY`
 
 ## Troubleshooting
 
@@ -84,13 +59,7 @@ Error: Input required and not supplied: ONEMAP_EMAIL
 
 If the data generation fails with API errors:
 
-1. **For Google API Key**:
-
-   - Verify the Geocoding API is enabled
-   - Check if the API key has quotas/restrictions
-   - Ensure billing is enabled (free tier should be sufficient)
-
-2. **For OneMap**:
+1. **For OneMap**:
    - Verify the email address is valid
    - Check if OneMap service is available
    - Review error logs in GitHub Actions
@@ -116,14 +85,12 @@ If this succeeds, your secrets are valid and ready for GitHub.
 
 1. **Never commit secrets to git** - Always use environment variables or GitHub Secrets
 2. **Restrict API keys** - Only enable the specific APIs you need
-3. **Monitor usage** - Check Google Cloud Console for unusual API usage
-4. **Rotate keys periodically** - Update secrets if a key is compromised
-5. **Use separate keys** - Don't reuse the same API key across multiple projects
+3. **Rotate keys periodically** - Update secrets if a key is compromised
+4. **Use separate keys** - Don't reuse the same API key across multiple projects
 
 ## Related Documentation
 
 - [GitHub Actions Secrets Documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
-- [Google Maps Geocoding API Documentation](https://developers.google.com/maps/documentation/geocoding/overview)
 - [OneMap API Documentation](https://www.onemap.gov.sg/docs/)
 
 ## Workflow Usage

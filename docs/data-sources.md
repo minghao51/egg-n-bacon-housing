@@ -149,7 +149,7 @@ OneMap credentials (email + password) are managed via encrypted environment vari
 | --------------------- | ----------------------------------------- | ---------------------------------------------------- |
 | `data/raw/documents/` | 26 markdown articles + `master_index.csv` | **Orphaned** — not consumed by pipeline or analytics |
 
-These articles were likely scraped via JINA AI Reader from property portals (99.co, StackedHomes, PropertyReviewSG, etc.) and cover condo reviews and property-buying guides. A `JINA_AI` API key is defined in config but never used in code. These files represent an unrealised NLP/sentiment analysis capability.
+These articles were likely scraped from property portals (99.co, StackedHomes, PropertyReviewSG, etc.) and cover condo reviews and property-buying guides. These files represent an unrealised NLP/sentiment analysis capability.
 
 ### Wikipedia Shopping Mall Scrape (active)
 
