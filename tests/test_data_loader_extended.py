@@ -116,6 +116,91 @@ class TestGetPlanningAreaForPoint:
         assert data_loader.load_planning_areas()[0]["name"] == "AREA_TWO"
 
 
+def _make_multi_polygon_geojson():
+    def square(name, lon0, lon1, lat0, lat1):
+        return {
+            "type": "Feature",
+            "properties": {"pln_area_n": name},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [lon0, lat0],
+                        [lon1, lat0],
+                        [lon1, lat1],
+                        [lon0, lat1],
+                        [lon0, lat0],
+                    ]
+                ],
+            },
+        }
+
+    return {
+        "type": "FeatureCollection",
+        "features": [
+            square("AREA_A", 103.80, 103.90, 1.30, 1.40),
+            square("AREA_B", 104.00, 104.10, 1.50, 1.60),
+        ],
+    }
+
+
+class TestGetPlanningAreasForPoints:
+    """Differential tests: the batch spatial join must match the row-wise oracle."""
+
+    def _setup_polygons(self, tmp_path):
+        _clear_planning_cache()
+        geojson_dir = tmp_path / "geojsons"
+        geojson_dir.mkdir(parents=True)
+        (geojson_dir / "onemap_planning_area_polygon.geojson").write_text(
+            json.dumps(_make_multi_polygon_geojson())
+        )
+        data_loader._paths["raw_data_dir"] = geojson_dir
+
+    def test_matches_row_wise_oracle(self, tmp_path):
+        self._setup_polygons(tmp_path)
+        lats = pd.Series([1.35, 1.55, 1.50, 1.20, 1.38, None])
+        lons = pd.Series([103.85, 104.05, 103.85, 103.80, 103.88, 103.80])
+
+        batch = data_loader.get_planning_areas_for_points(lats, lons)
+        oracle = pd.Series(
+            [
+                None
+                if (pd.isna(lat) or pd.isna(lon))
+                else data_loader.get_planning_area_for_point(lat, lon)
+                for lat, lon in zip(lats, lons)
+            ]
+        )
+
+        assert list(batch.index) == list(lats.index)
+        assert batch.tolist() == oracle.tolist()
+        assert batch.tolist()[0] == "AREA_A"
+        assert batch.tolist()[1] == "AREA_B"
+        assert batch.tolist()[2] is None
+        assert batch.tolist()[5] is None
+
+    def test_returns_none_when_no_polygons(self, tmp_path):
+        _clear_planning_cache()
+        data_loader._paths["raw_data_dir"] = tmp_path / "nonexistent"
+        result = data_loader.get_planning_areas_for_points(
+            pd.Series([1.35, 1.55]), pd.Series([103.85, 104.05])
+        )
+        assert result.tolist() == [None, None]
+
+    def test_empty_series(self, tmp_path):
+        self._setup_polygons(tmp_path)
+        result = data_loader.get_planning_areas_for_points(
+            pd.Series([], dtype=float), pd.Series([], dtype=float)
+        )
+        assert len(result) == 0
+
+    def test_all_nan_coords(self, tmp_path):
+        self._setup_polygons(tmp_path)
+        result = data_loader.get_planning_areas_for_points(
+            pd.Series([None, None]), pd.Series([None, None])
+        )
+        assert result.tolist() == [None, None]
+
+
 class TestCSVLoader:
     def test_load_csv_reads_existing_file(self, tmp_path):
         csv_dir = tmp_path / "data"

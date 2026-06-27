@@ -9,12 +9,28 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+import requests
 
 from egg_n_bacon_housing.adapters import datagovsg
+from egg_n_bacon_housing.adapters.exceptions import DatasetFetchError
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["raw_macro_data"]
+
+# Exceptions that represent expected, retrieable data-fetch/shape problems from
+# data.gov.sg (network blips, adapter fetch failures, schema/shape drift in the
+# returned frame). Programming bugs (TypeError/AttributeError/RuntimeError) and
+# credential/config problems (CredentialError etc.) are intentionally NOT here
+# -- they must propagate so they surface immediately instead of degrading the
+# run to silent NaNs. See "macro.py narrow + visible" fix.
+_RETRIEVABLE_EXCEPTIONS: tuple[type[BaseException], ...] = (
+    requests.RequestException,
+    DatasetFetchError,
+    KeyError,
+    IndexError,
+    ValueError,
+)
 
 DATAGOVSG_API_BASE_URL = "https://data.gov.sg/api/action/datastore_search?resource_id="
 
@@ -107,6 +123,7 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
     external_dir = bronze_dir / "external"
     external_dir.mkdir(parents=True, exist_ok=True)
     result: dict[str, pd.DataFrame] = {}
+    failures: list[str] = []
 
     sora_path = external_dir / "sora_rates.parquet"
     if sora_path.exists():
@@ -128,8 +145,8 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
             result["cpi"] = _melt_pivot_monthly(raw, "All Items", "cpi")
             result["cpi"].to_parquet(cpi_path, index=False)
             logger.info("Fetched CPI: %s records -> %s", len(result["cpi"]), cpi_path)
-        except Exception as exc:
-            logger.warning("Failed to fetch CPI: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"cpi: {exc.__class__.__name__}: {exc}")
             result["cpi"] = pd.DataFrame()
 
     unemployment_path = external_dir / "unemployment.parquet"
@@ -150,8 +167,8 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
                 len(result["unemployment"]),
                 unemployment_path,
             )
-        except Exception as exc:
-            logger.warning("Failed to fetch unemployment: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"unemployment: {exc.__class__.__name__}: {exc}")
             result["unemployment"] = pd.DataFrame()
 
     gdp_path = external_dir / "gdp.parquet"
@@ -170,8 +187,8 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
                 result["gdp"] = _melt_pivot_quarterly(raw, first_series, "gdp")
             result["gdp"].to_parquet(gdp_path, index=False)
             logger.info("Fetched GDP: %s records -> %s", len(result["gdp"]), gdp_path)
-        except Exception as exc:
-            logger.warning("Failed to fetch GDP: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"gdp: {exc.__class__.__name__}: {exc}")
             result["gdp"] = pd.DataFrame()
 
     bank_rates_path = external_dir / "bank_rates.parquet"
@@ -192,8 +209,8 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
                 len(result["bank_rates"]),
                 bank_rates_path,
             )
-        except Exception as exc:
-            logger.warning("Failed to fetch bank rates: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"bank_rates: {exc.__class__.__name__}: {exc}")
             result["bank_rates"] = pd.DataFrame()
 
     hdb_rpi_path = external_dir / "hdb_rpi.parquet"
@@ -213,8 +230,8 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
             result["hdb_rpi"] = rpi.rename(columns={"index": "hdb_rpi"})
             result["hdb_rpi"].to_parquet(hdb_rpi_path, index=False)
             logger.info("Fetched HDB RPI: %s records -> %s", len(result["hdb_rpi"]), hdb_rpi_path)
-        except Exception as exc:
-            logger.warning("Failed to fetch HDB RPI: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"hdb_rpi: {exc.__class__.__name__}: {exc}")
             result["hdb_rpi"] = pd.DataFrame()
 
     ura_ppi_path = external_dir / "ura_ppi.parquet"
@@ -234,8 +251,8 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
             result["ura_ppi"] = ppi[["quarter", "index"]].rename(columns={"index": "ura_ppi"})
             result["ura_ppi"].to_parquet(ura_ppi_path, index=False)
             logger.info("Fetched URA PPI: %s records -> %s", len(result["ura_ppi"]), ura_ppi_path)
-        except Exception as exc:
-            logger.warning("Failed to fetch URA PPI: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"ura_ppi: {exc.__class__.__name__}: {exc}")
             result["ura_ppi"] = pd.DataFrame()
 
     supply_path = external_dir / "supply_pipeline.parquet"
@@ -259,8 +276,8 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
                 len(result["supply_pipeline"]),
                 supply_path,
             )
-        except Exception as exc:
-            logger.warning("Failed to fetch supply pipeline: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"supply_pipeline: {exc.__class__.__name__}: {exc}")
             result["supply_pipeline"] = pd.DataFrame()
 
     wage_path = external_dir / "wage_growth.parquet"
@@ -302,8 +319,15 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
                 len(result["wage_growth"]),
                 wage_path,
             )
-        except Exception as exc:
-            logger.warning("Failed to fetch wage growth: %s", exc)
+        except _RETRIEVABLE_EXCEPTIONS as exc:
+            failures.append(f"wage_growth: {exc.__class__.__name__}: {exc}")
             result["wage_growth"] = pd.DataFrame()
+
+    if failures:
+        logger.warning(
+            "Macro ingestion: %d indicator(s) failed and degraded to empty -- %s",
+            len(failures),
+            "; ".join(failures),
+        )
 
     return result

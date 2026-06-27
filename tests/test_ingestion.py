@@ -1,9 +1,11 @@
 """Test ingestion component."""
 
 import json
+import logging
 
 import pandas as pd
 import pytest
+import requests
 
 pytestmark = pytest.mark.unit
 
@@ -233,6 +235,86 @@ class TestBronzeLayer:
         assert len(result["wage_growth"]) == 4
         assert result["wage_growth"]["wage_growth"].tolist() == [4.5, 4.5, 4.5, 4.5]
         assert (external_dir / "wage_growth.parquet").exists()
+
+    def test_raw_macro_data_degrades_on_network_error_and_logs_summary(
+        self, tmp_path, monkeypatch, caplog
+    ):
+        """Network failures degrade each indicator to empty and emit ONE summary.
+
+        Previously each failure emitted a scattered warning that was easy to
+        miss (the "silent NaN" problem). The narrowed handler now records each
+        failure and logs a single consolidated summary at the end.
+        """
+        ingestion = _get_ingestion_module()
+        external_dir = tmp_path / "external"
+        external_dir.mkdir(parents=True, exist_ok=True)
+
+        from egg_n_bacon_housing.adapters import datagovsg
+
+        def raise_network(*a, **kw):
+            raise requests.ConnectionError("boom")
+
+        monkeypatch.setattr(datagovsg, "fetch_datagovsg_dataset", raise_network)
+
+        with caplog.at_level(logging.WARNING, logger=ingestion.macro.logger.name):
+            result = ingestion.raw_macro_data(bronze_dir=tmp_path)
+
+        assert isinstance(result, dict)
+        for key in (
+            "cpi",
+            "unemployment",
+            "gdp",
+            "bank_rates",
+            "hdb_rpi",
+            "ura_ppi",
+            "supply_pipeline",
+            "wage_growth",
+        ):
+            assert result[key].empty, f"{key} should degrade to empty on network error"
+
+        summary_records = [r for r in caplog.records if "Macro ingestion" in r.getMessage()]
+        assert len(summary_records) == 1, "exactly one consolidated summary should be logged"
+        msg = summary_records[0].getMessage()
+        assert "8 indicator" in msg
+        assert "cpi:" in msg and "wage_growth:" in msg
+        assert "ConnectionError" in msg
+
+    def test_raw_macro_data_propagates_unexpected_error(self, tmp_path, monkeypatch):
+        """Programming bugs (RuntimeError etc.) must NOT be swallowed -- they
+        indicate a real fault, not transient data-fetch trouble, and must
+        surface immediately instead of degrading to silent NaNs."""
+        ingestion = _get_ingestion_module()
+        external_dir = tmp_path / "external"
+        external_dir.mkdir(parents=True, exist_ok=True)
+
+        from egg_n_bacon_housing.adapters import datagovsg
+
+        def raise_bug(*a, **kw):
+            raise RuntimeError("a real programming bug")
+
+        monkeypatch.setattr(datagovsg, "fetch_datagovsg_dataset", raise_bug)
+
+        with pytest.raises(RuntimeError, match="a real programming bug"):
+            ingestion.raw_macro_data(bronze_dir=tmp_path)
+
+    def test_raw_macro_data_degrades_on_schema_keyerror(self, tmp_path, monkeypatch):
+        """Schema drift surfacing as KeyError still degrades gracefully (and
+        is captured in the summary) rather than aborting the whole run."""
+        ingestion = _get_ingestion_module()
+        external_dir = tmp_path / "external"
+        external_dir.mkdir(parents=True, exist_ok=True)
+
+        from egg_n_bacon_housing.adapters import datagovsg
+
+        def raise_schema(*a, **kw):
+            raise KeyError("DataSeries")
+
+        monkeypatch.setattr(datagovsg, "fetch_datagovsg_dataset", raise_schema)
+
+        result = ingestion.raw_macro_data(bronze_dir=tmp_path)
+
+        for key in ("cpi", "gdp", "hdb_rpi"):
+            assert result[key].empty
 
     def test_raw_shopping_malls_prefers_geocoded_bronze_file(self, tmp_path):
         """Test that geocoded mall bronze output is preferred when present."""

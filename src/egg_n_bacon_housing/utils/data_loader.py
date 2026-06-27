@@ -141,6 +141,71 @@ def get_planning_area_for_point(lat: float, lon: float) -> str | None:
     return None
 
 
+def get_planning_areas_for_points(lat: pd.Series, lon: pd.Series) -> pd.Series:
+    """Batch point-in-polygon lookup for many coordinates at once.
+
+    Single vectorized ``geopandas.sjoin`` over the planning-area polygons -- far
+    faster than calling :func:`get_planning_area_for_point` per row when there
+    are many coordinates (e.g. the ~10k unique coords derived in
+    ``location_dim``). Mirrors the single-point function's first-match-wins and
+    miss-returns-None semantics.
+
+    Args:
+        lat: Latitudes (Series, any index).
+        lon: Longitudes (Series, same length as ``lat``).
+
+    Returns:
+        Series of planning-area names aligned to ``lat.index``; ``None`` for
+        misses (point outside every polygon, or NaN coordinates) and when the
+        planning-area polygons are unavailable.
+    """
+    import geopandas as gpd
+
+    miss = pd.Series([None] * len(lat), index=lat.index, dtype=object)
+
+    polys = load_planning_areas()
+    if not polys:
+        return miss
+
+    valid = [
+        (p["name"], p["geometry"])
+        for p in polys
+        if p.get("geometry") is not None and not p["geometry"].is_empty
+    ]
+    if not valid:
+        return miss
+
+    poly_gdf = gpd.GeoDataFrame(
+        {"planning_area": [name for name, _ in valid]},
+        geometry=[geom for _, geom in valid],
+        crs="EPSG:4326",
+    )
+
+    pts_lat = pd.to_numeric(pd.Series(lat), errors="coerce")
+    pts_lon = pd.to_numeric(pd.Series(lon), errors="coerce")
+    mask = pts_lat.notna() & pts_lon.notna()
+    if not mask.any():
+        return miss
+
+    points = gpd.GeoDataFrame(
+        {"_idx": pts_lat[mask].index.to_numpy()},
+        geometry=gpd.points_from_xy(pts_lon[mask].to_numpy(), pts_lat[mask].to_numpy()),
+        crs="EPSG:4326",
+    )
+
+    joined = gpd.sjoin(points, poly_gdf, how="left", predicate="within")
+    # Sliver overlaps can match multiple polygons; keep the first to mirror
+    # get_planning_area_for_point's first-candidate-wins behaviour, then drop
+    # the left-join misses (planning_area is NaN for points outside everything).
+    joined = joined.drop_duplicates(subset="_idx", keep="first")
+    joined = joined.dropna(subset=["planning_area"])
+
+    result = miss.copy()
+    if not joined.empty:
+        result.loc[joined["_idx"].tolist()] = joined["planning_area"].tolist()
+    return result
+
+
 def load_market_summary() -> pd.DataFrame:
     """
     Load precomputed market summary table.

@@ -202,3 +202,30 @@ class TestAppreciationHotspots:
         if not result.empty:
             for _, row in result.iterrows():
                 assert row["appreciation_3m_pct"] > 0
+
+    def test_multiple_planning_areas_ranked_and_capped(self, tmp_path):
+        """Vectorized concat across planning areas still ranks by appreciation and
+        caps at the top 20 rows (regression for the inner-loop vectorization)."""
+        metrics = _get_metrics_module()
+
+        rows = []
+        for pa, base, step in [("ANG MO KIO", 500000.0, 10000.0), ("BISHAN", 400000.0, 15000.0)]:
+            for i in range(13):
+                month = f"2024-{i + 1:02d}" if i < 12 else "2025-01"
+                rows.append(
+                    {
+                        "planning_area": pa,
+                        "month": month,
+                        "median_price": base + i * step,
+                    }
+                )
+
+        df = pd.DataFrame(rows)
+        result = metrics.appreciation_hotspots(df, writer=SimpleWriter(tmp_path))
+
+        assert not result.empty
+        assert set(result["planning_area"]).issubset({"ANG MO KIO", "BISHAN"})
+        # Faster-appreciating (higher %) PA dominates the top of the ranking.
+        assert result.iloc[0]["planning_area"] == "BISHAN"
+        assert "is_declining" in result.columns
+        assert len(result) <= 20

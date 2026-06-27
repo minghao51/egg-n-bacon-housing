@@ -32,6 +32,10 @@ from egg_n_bacon_housing.components.ingestion.geojson import (
 from egg_n_bacon_housing.components.ingestion.macro import raw_macro_data
 from egg_n_bacon_housing.components.ingestion.ura_csv import raw_condo_transactions
 
+# NOTE: raw_rental_index, raw_hdb_rental, and raw_school_directory are
+# @parameterize-generated nodes (see datagov.py). They are Hamilton DAG node
+# names, not importable attributes, so Hamilton discovers them via module
+# introspection -- intentionally omitted from __all__.
 __all__ = [
     "geocoded_green_mark_buildings",
     "raw_bus_stops",

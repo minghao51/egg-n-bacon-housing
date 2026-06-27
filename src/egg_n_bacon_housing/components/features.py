@@ -29,9 +29,6 @@ from egg_n_bacon_housing.utils.validation_gateway import validate_and_quarantine
 logger = logging.getLogger(__name__)
 
 
-_FLAT_TYPE_NORMALIZE_MAP: dict[str, str] = {}
-
-
 def _build_flat_type_map() -> dict[str, str]:
     canonical = [
         ("1-ROOM", "1-ROOM"),
@@ -61,7 +58,7 @@ def _build_flat_type_map() -> dict[str, str]:
     return m
 
 
-_FLAT_TYPE_NORMALIZE_MAP = _build_flat_type_map()
+_FLAT_TYPE_NORMALIZE_MAP: dict[str, str] = _build_flat_type_map()
 
 
 def _normalize_hdb_flat_type(series: pd.Series) -> pd.Series:
@@ -210,7 +207,7 @@ def _add_planning_area(df: pd.DataFrame) -> pd.DataFrame:
         return df
 
     try:
-        from egg_n_bacon_housing.utils.data_loader import get_planning_area_for_point
+        from egg_n_bacon_housing.utils.data_loader import get_planning_areas_for_points
     except ImportError:
         logger.warning("data_loader not available — skipping planning_area derivation")
         return df
@@ -220,12 +217,15 @@ def _add_planning_area(df: pd.DataFrame) -> pd.DataFrame:
         return df
 
     logger.info("Deriving planning_area for %s unique coordinates", len(unique_coords))
-    pa_map: dict[tuple[float, float], str | None] = {}
-    for _, row in unique_coords.iterrows():
-        pa = get_planning_area_for_point(row["lat"], row["lon"])
-        pa_map[(row["lat"], row["lon"])] = pa
 
-    df["planning_area"] = df.apply(lambda r: pa_map.get((r["lat"], r["lon"])), axis=1)
+    # Single batched spatial join over the unique coordinates (vectorized)
+    # instead of a per-row iterrows() + apply() loop.
+    pa_names = get_planning_areas_for_points(unique_coords["lat"], unique_coords["lon"])
+    lookup = unique_coords.assign(planning_area=pa_names.to_numpy())
+
+    df = df.drop(columns=["planning_area"], errors="ignore")
+    df = df.merge(lookup, on=["lat", "lon"], how="left")
+
     matched = df["planning_area"].notna().sum()
     logger.info(
         "planning_area derived: %s/%s (%.1f%%)",
@@ -481,6 +481,12 @@ def transactions_enriched(
             df = df.merge(rental_lookup, on=merge_keys, how="left")
 
     # --- Macro indicators ---
+    # Combine per-indicator lookups into ONE monthly frame and ONE quarterly
+    # frame, then left-merge each onto the ~1M-row transactions frame a single
+    # time (previously 8 sequential merges, each a full pass). The indicator
+    # value columns are mutually distinct and do not pre-exist on df, so a
+    # plain left-merge is exactly equivalent to the old per-indicator
+    # suffix/coalesce approach -- verified by an equivalence test.
     df = ensure_month_column(df)
     df["_month_ts"] = pd.to_datetime(df["month"], errors="coerce")
     df["_month"] = df["_month_ts"].dt.to_period("M").astype(str)
@@ -490,21 +496,27 @@ def transactions_enriched(
         "sora": ("date", "sora_rate"),
         "bank_rates": ("date", "sora_3m"),
     }
+    monthly_lookups: list[pd.DataFrame] = []
+    monthly_present: set[str] = set()
     for key, (date_col, value_col) in monthly_indicators.items():
         macro_df = raw_macro_data.get(key, pd.DataFrame())
         if macro_df.empty or date_col not in macro_df.columns:
-            df[value_col] = pd.NA
             continue
         lookup = macro_df[[date_col, value_col]].copy()
         lookup[date_col] = pd.to_datetime(lookup[date_col], errors="coerce")
         lookup["_month"] = lookup[date_col].dt.to_period("M").astype(str)
         lookup = lookup.dropna(subset=["_month", value_col])
         lookup = lookup.sort_values("_month").drop_duplicates(subset="_month", keep="last")
-        df = df.merge(
-            lookup[["_month", value_col]], on="_month", how="left", suffixes=("", f"_{key}")
-        )
-        if f"{value_col}_{key}" in df.columns:
-            df[value_col] = df[value_col].fillna(df.pop(f"{value_col}_{key}"))
+        monthly_lookups.append(lookup[["_month", value_col]])
+        monthly_present.add(value_col)
+
+    if monthly_lookups:
+        monthly_combined = monthly_lookups[0]
+        for nxt in monthly_lookups[1:]:
+            monthly_combined = monthly_combined.merge(nxt, on="_month", how="outer")
+        df = df.merge(monthly_combined, on="_month", how="left")
+    for value_col in (v for _, v in monthly_indicators.values() if v not in monthly_present):
+        df[value_col] = pd.NA
 
     quarterly_indicators = {
         "unemployment": ("quarter", "unemployment_rate"),
@@ -513,25 +525,30 @@ def transactions_enriched(
         "ura_ppi": ("quarter", "ura_ppi"),
         "wage_growth": ("quarter", "wage_growth"),
     }
+    df["_quarter"] = df["_month_ts"].dt.to_period("Q")
+    quarterly_lookups: list[pd.DataFrame] = []
+    quarterly_present: set[str] = set()
     for key, (qtr_col, value_col) in quarterly_indicators.items():
         macro_df = raw_macro_data.get(key, pd.DataFrame())
         if macro_df.empty or qtr_col not in macro_df.columns:
-            df[value_col] = pd.NA
             continue
         lookup = macro_df[[qtr_col, value_col]].copy()
         lookup[qtr_col] = pd.to_datetime(lookup[qtr_col], errors="coerce")
         lookup["_quarter"] = lookup[qtr_col].dt.to_period("Q")
         lookup = lookup.dropna(subset=["_quarter", value_col])
         lookup = lookup.sort_values("_quarter").drop_duplicates(subset="_quarter", keep="last")
-        df["_quarter"] = df["_month_ts"].dt.to_period("Q")
-        df = df.merge(
-            lookup[["_quarter", value_col]], on="_quarter", how="left", suffixes=("", f"_{key}")
-        )
-        if f"{value_col}_{key}" in df.columns:
-            df[value_col] = df[value_col].fillna(df.pop(f"{value_col}_{key}"))
-        df = df.drop(columns=["_quarter"])
+        quarterly_lookups.append(lookup[["_quarter", value_col]])
+        quarterly_present.add(value_col)
 
-    df = df.drop(columns=["_month", "_month_ts"], errors="ignore")
+    if quarterly_lookups:
+        quarterly_combined = quarterly_lookups[0]
+        for nxt in quarterly_lookups[1:]:
+            quarterly_combined = quarterly_combined.merge(nxt, on="_quarter", how="outer")
+        df = df.merge(quarterly_combined, on="_quarter", how="left")
+    for value_col in (v for _, v in quarterly_indicators.values() if v not in quarterly_present):
+        df[value_col] = pd.NA
+
+    df = df.drop(columns=["_month", "_month_ts", "_quarter"], errors="ignore")
 
     # --- Town supply, population, annual value ---
     town_col = "town" if "town" in df.columns else None

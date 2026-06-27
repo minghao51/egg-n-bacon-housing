@@ -19,6 +19,12 @@ logger = logging.getLogger(__name__)
 
 DATAGOVSG_API_BASE_URL = "https://data.gov.sg/api/action/datastore_search?resource_id="
 
+# NOTE: raw_rental_index, raw_hdb_rental, and raw_school_directory are produced
+# by @parameterize on raw_dataset below. They are Hamilton DAG node *names*
+# (graph metadata), not module attributes -- the decorated object keeps the
+# name raw_dataset. Hamilton discovers them by introspecting this module, so
+# they are intentionally omitted from __all__ (adding them would break
+# `from ...datagov import *` with AttributeError and aid nothing).
 __all__ = [
     "raw_dataset",
     "raw_hdb_resale_transactions",

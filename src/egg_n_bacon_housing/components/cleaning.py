@@ -158,16 +158,19 @@ def condo_validated(cleaned_condo_transactions: pd.DataFrame, silver_dir: Path) 
 def geocoded_properties(
     hdb_validated: pd.DataFrame,
     condo_validated: pd.DataFrame,
-    silver_dir: Path,
     writer: LayerWriter,
     geocoder: Geocoder,
     min_coordinate_coverage: float = 0.7,
 ) -> pd.DataFrame:
     """Merge validated transactions and geocode addresses via OneMap.
 
-    Uses a cache-first bulk lookup: hashes all unique addresses, reads
-    cached parquet files in bulk, then makes parallel API calls only
-    for uncached addresses.
+    Always geocodes the full unique-address set; the geocoder itself is
+    cache-first (OneMap address cache, ``utils/geocoding.py``), so repeat
+    runs only hit the API for addresses not seen before. The silver parquet
+    written here is a pure output snapshot -- it is never used as a gate to
+    skip geocoding, so re-ingestion with new transactions always geocodes
+    them (regression: a stale-parquet short-circuit previously suppressed
+    re-geocoding until the file was manually deleted).
 
     Args:
         hdb_validated: Validated HDB transactions.
@@ -189,13 +192,6 @@ def geocoded_properties(
         return pd.DataFrame()
 
     combined = pd.concat(dfs, ignore_index=True)
-
-    cached_path = silver_dir / "geocoded_properties.parquet"
-    if cached_path.exists():
-        existing = pd.read_parquet(cached_path)
-        if "lat" in existing.columns and existing["lat"].notna().any():
-            logger.info("Loading pre-geocoded properties from %s", cached_path)
-            return existing
 
     address_col = "address" if "address" in combined.columns else None
     if address_col is None:

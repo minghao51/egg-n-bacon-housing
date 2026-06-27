@@ -269,7 +269,6 @@ class TestGeocodedValidation:
         result = cleaning.geocoded_properties(
             hdb_validated,
             condo_validated,
-            silver_dir=tmp_path,
             writer=SimpleWriter(tmp_path),
             geocoder=InMemoryGeocoder({}),
         )
@@ -294,7 +293,6 @@ class TestGeocodedValidation:
         result = cleaning.geocoded_properties(
             hdb_validated,
             condo_validated,
-            silver_dir=tmp_path,
             writer=SimpleWriter(tmp_path),
             geocoder=InMemoryGeocoder({}),
             min_coordinate_coverage=0.8,
@@ -303,20 +301,33 @@ class TestGeocodedValidation:
         assert not result.empty
         assert len(result) == 2
 
-    def test_geocoded_properties_returns_cached_geocoded_file(self, tmp_path):
+    def test_geocoded_properties_reruns_geocoding_not_stale_parquet(self, tmp_path):
+        """Re-ingestion must re-geocode via the geocoder, not return a stale silver parquet.
+
+        Regression: a non-null cached parquet previously short-circuited the
+        node, so new transactions added on re-ingestion were never geocoded
+        until the parquet was manually deleted. The geocoder's own address
+        cache is what makes repeat runs cheap; the silver parquet is now a
+        pure output snapshot.
+        """
         cleaning = _get_cleaning_module()
-        cached = pd.DataFrame([{"address": "123 TOA PAYOH", "lat": 1.35, "lon": 103.8}])
-        cached.to_parquet(tmp_path / "geocoded_properties.parquet", index=False)
+
+        stale = pd.DataFrame([{"address": "OLD ADDRESS", "lat": 1.1, "lon": 103.1}])
+        stale.to_parquet(tmp_path / "geocoded_properties.parquet", index=False)
+
+        hdb_validated = pd.DataFrame([{"address": "NEW ADDRESS", "price": 500000.0}])
 
         result = cleaning.geocoded_properties(
-            pd.DataFrame([{"address": "123 TOA PAYOH"}]),
+            hdb_validated,
             pd.DataFrame(),
-            silver_dir=tmp_path,
             writer=SimpleWriter(tmp_path),
-            geocoder=InMemoryGeocoder({}),
+            geocoder=InMemoryGeocoder({"NEW ADDRESS": (1.4, 103.9)}),
         )
 
-        pd.testing.assert_frame_equal(result, cached)
+        assert "NEW ADDRESS" in set(result["address"])
+        assert "OLD ADDRESS" not in set(result["address"])
+        assert result.loc[result.index[0], "lat"] == 1.4
+        assert result.loc[result.index[0], "lon"] == 103.9
 
 
 class TestQuarantineIntegration:

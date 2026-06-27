@@ -389,6 +389,86 @@ class TestTransactionsEnriched:
         assert not result.empty
         assert result.loc[0, "rental_yield_pct"] == pytest.approx(4.5)
 
+    def test_transactions_enriched_merges_macro_indicators(self, tmp_path):
+        """Batched macro merge: monthly + quarterly indicators resolve per row,
+        partial-quarter coverage yields NA, and indicators with no data degrade
+        to all-NA columns. Regression for the 8-merge -> 2-merge batching."""
+        features = _get_features_module()
+
+        geocoded_validated = pd.DataFrame(
+            [
+                {
+                    "lat": 1.35,
+                    "lon": 103.8,
+                    "price": 500000.0,
+                    "property_type": "hdb",
+                    "transaction_date": pd.Timestamp("2024-01-15"),
+                },
+                {
+                    "lat": 1.36,
+                    "lon": 103.81,
+                    "price": 600000.0,
+                    "property_type": "hdb",
+                    "transaction_date": pd.Timestamp("2024-04-15"),
+                },
+            ]
+        )
+
+        macro = {
+            "cpi": pd.DataFrame(
+                [
+                    {"date": pd.Timestamp("2024-01-01"), "cpi": 100.0},
+                    {"date": pd.Timestamp("2024-04-01"), "cpi": 101.0},
+                ]
+            ),
+            "bank_rates": pd.DataFrame(
+                [
+                    {"date": pd.Timestamp("2024-01-01"), "sora_3m": 3.0},
+                    {"date": pd.Timestamp("2024-04-01"), "sora_3m": 3.5},
+                ]
+            ),
+            # 'sora' intentionally absent -> sora_rate must be an all-NA column.
+            "gdp": pd.DataFrame(
+                [
+                    {"quarter": pd.Timestamp("2024-03-31"), "gdp": 1000.0},
+                    {"quarter": pd.Timestamp("2024-06-30"), "gdp": 1010.0},
+                ]
+            ),
+            "unemployment": pd.DataFrame(
+                [{"quarter": pd.Timestamp("2024-03-31"), "unemployment_rate": 2.0}]
+            ),
+            # 'hdb_rpi', 'ura_ppi', 'wage_growth' absent -> all-NA columns.
+        }
+
+        result = features.transactions_enriched(
+            geocoded_validated,
+            location_dim=pd.DataFrame(),
+            rental_yield=pd.DataFrame(),
+            raw_macro_data=macro,
+            raw_dwelling_units_by_town=pd.DataFrame(),
+            raw_hdb_resident_population=pd.DataFrame(),
+            raw_median_annual_value=pd.DataFrame(),
+            raw_income_by_planning_area=pd.DataFrame(),
+            gold_dir=tmp_path / "gold",
+        )
+
+        assert len(result) == 2
+        # Monthly indicators resolve per month.
+        assert result.loc[0, "cpi"] == pytest.approx(100.0)
+        assert result.loc[1, "cpi"] == pytest.approx(101.0)
+        assert result.loc[0, "sora_3m"] == pytest.approx(3.0)
+        assert result.loc[1, "sora_3m"] == pytest.approx(3.5)
+        # Quarterly indicators resolve per quarter.
+        assert result.loc[0, "gdp"] == pytest.approx(1000.0)
+        assert result.loc[1, "gdp"] == pytest.approx(1010.0)
+        # unemployment only has Q1 data -> the Q2 row is NA.
+        assert result.loc[0, "unemployment_rate"] == pytest.approx(2.0)
+        assert pd.isna(result.loc[1, "unemployment_rate"])
+        # Indicators with no data degrade to NA columns (not missing columns).
+        for na_col in ("sora_rate", "hdb_rpi", "ura_ppi", "wage_growth"):
+            assert na_col in result.columns, f"{na_col} should exist as an NA column"
+            assert result[na_col].isna().all(), f"{na_col} should be all-NA"
+
 
 class TestPlanningArea360:
     """Test the planning_area_360 entity table."""

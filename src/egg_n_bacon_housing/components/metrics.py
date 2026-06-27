@@ -6,7 +6,6 @@ planning-area-level metrics from the enriched transaction layer.
 
 import logging
 
-import numpy as np
 import pandas as pd
 
 from egg_n_bacon_housing.utils.layer_writer import LayerWriter
@@ -106,30 +105,36 @@ def appreciation_hotspots(
     df = df.sort_values(["planning_area", "month_period"])
 
     all_months = pd.period_range(df["month_period"].min(), df["month_period"].max(), freq="M")
-    records = []
+    # Per planning area, construct the output frame straight from the reindexed
+    # / pct-change Series with a boolean mask, instead of appending one dict per
+    # period with Series.get() lookups (~5k PA-month rows). The per-PA groupby
+    # stays because each area is reindexed+ffilled against the full month range.
+    parts: list[pd.DataFrame] = []
     for pa, group in df.groupby("planning_area"):
         reindexed = group.set_index("month_period")["median_price"].reindex(all_months).ffill()
         if len(reindexed.dropna()) < 2:
             continue
         pct_3m = reindexed.pct_change(3) * 100
         pct_12m = reindexed.pct_change(12) * 100
-        for period in reindexed.index:
-            if pd.isna(pct_3m.get(period, np.nan)):
-                continue
-            records.append(
+        keep = pct_3m.notna()
+        if not keep.any():
+            continue
+        parts.append(
+            pd.DataFrame(
                 {
                     "planning_area": pa,
-                    "month": str(period),
-                    "median_price": reindexed.get(period),
-                    "appreciation_3m_pct": pct_3m.get(period),
-                    "appreciation_12m_pct": pct_12m.get(period),
+                    "month": [str(p) for p in reindexed.index[keep]],
+                    "median_price": reindexed[keep].to_numpy(),
+                    "appreciation_3m_pct": pct_3m[keep].to_numpy(),
+                    "appreciation_12m_pct": pct_12m[keep].to_numpy(),
                 }
             )
+        )
 
-    if not records:
+    if not parts:
         return pd.DataFrame()
 
-    hotspots = pd.DataFrame(records)
+    hotspots = pd.concat(parts, ignore_index=True)
     hotspots = hotspots.dropna(subset=["appreciation_3m_pct"])
     hotspots["is_declining"] = hotspots["appreciation_3m_pct"] < 0
 
