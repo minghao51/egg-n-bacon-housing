@@ -8,7 +8,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class PipelineConfig(BaseSettings):
     parquet_compression: str = "snappy"
-    parquet_index: bool = False
     use_caching: bool = True
     cache_duration_hours: int = 24
     allow_legacy_pickle_cache: bool = False
@@ -31,12 +30,6 @@ class MetricsConfig(BaseSettings):
     }
 
 
-class LoggingConfig(BaseSettings):
-    level: str = "INFO"
-    format: str = "%(asctime)s - %(levelname)s - %(message)s"
-    verbose: bool = True
-
-
 class LayerDirs(BaseSettings):
     bronze: str = "data/pipeline/01_bronze"
     silver: str = "data/pipeline/02_silver"
@@ -57,7 +50,6 @@ class Settings(BaseSettings):
 
     pipeline: PipelineConfig = Field(default_factory=PipelineConfig)
     geocoding: GeocodingConfig = Field(default_factory=GeocodingConfig)
-    logging: LoggingConfig = Field(default_factory=LoggingConfig)
     layer_dirs: LayerDirs = Field(default_factory=LayerDirs)
     metrics: MetricsConfig = Field(default_factory=MetricsConfig)
 
@@ -110,36 +102,5 @@ class Settings(BaseSettings):
     def platinum_dir(self) -> Path:
         return self.layer_dir("platinum")
 
-    @property
-    def manual_ura_dir(self) -> Path:
-        return self.data_dir / "manual" / "csv" / "ura"
 
-    @property
-    def ura_ec_files(self) -> list[str]:
-        return _discover_ura_csv_stems(self.manual_ura_dir, "ECResidentialTransaction")
-
-    @property
-    def ura_condo_files(self) -> list[str]:
-        return _discover_ura_csv_stems(self.manual_ura_dir, "ResidentialTransaction")
-
-
-def _discover_ura_csv_stems(ura_dir: Path, prefix: str) -> list[str]:
-    return sorted(path.stem for path in ura_dir.glob(f"{prefix}*.csv"))
-
-
-_settings: Settings | None = None
-
-
-def get_settings() -> Settings:
-    global _settings
-    if _settings is None:
-        _settings = Settings()
-    return _settings
-
-
-def reset_settings() -> None:
-    global _settings
-    _settings = None
-
-
-settings = get_settings()
+settings = Settings()
