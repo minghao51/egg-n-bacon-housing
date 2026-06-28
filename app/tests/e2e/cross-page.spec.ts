@@ -15,7 +15,7 @@ test.describe("Cross-Page Navigation", () => {
     await page.goto("/dashboard");
     await page.getByText("Analytics Index").click();
     await expect(page).toHaveURL(/analytics/);
-    await page.getByText("Overview").click();
+    await page.getByRole("link", { name: /Overview Quick market/ }).click();
     await expect(page).toHaveURL(/dashboard/);
   });
 

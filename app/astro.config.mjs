@@ -7,14 +7,14 @@ import tailwind from "@astrojs/tailwind";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
-const isProduction = process.env.CI === "true";
+const isPagesDeploy = process.env.ASTRO_PAGES === "true";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function remarkFixImagePaths() {
   return function (tree) {
     const visit = (node) => {
       if (node.type === "image") {
-        if (!isProduction && node.url.startsWith("/egg-n-bacon-housing/")) {
+        if (!isPagesDeploy && node.url.startsWith("/egg-n-bacon-housing/")) {
           node.url = node.url.replace("/egg-n-bacon-housing/", "/");
         }
       }
@@ -37,10 +37,10 @@ export default defineConfig({
     remarkPlugins: [remarkMath, remarkFixImagePaths],
     rehypePlugins: [rehypeKatex],
   },
-  site: isProduction
+  site: isPagesDeploy
     ? "https://minghao51.github.io/egg-n-bacon-housing"
     : "http://localhost:4321",
-  base: isProduction ? "/egg-n-bacon-housing/" : "/",
+  base: isPagesDeploy ? "/egg-n-bacon-housing/" : "/",
   trailingSlash: "ignore",
   build: {
     format: "directory",

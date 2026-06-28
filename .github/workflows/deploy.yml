@@ -66,6 +66,8 @@ jobs:
 
       - name: Build with Astro
         working-directory: ./app
+        env:
+          ASTRO_PAGES: "true"
         run: bun run build
 
       - name: Verify build output
