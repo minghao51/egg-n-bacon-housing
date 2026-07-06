@@ -144,7 +144,6 @@ files = [
     "src/egg_n_bacon_housing/utils/contracts.py",
     "src/egg_n_bacon_housing/utils/geocoding.py",
     "src/egg_n_bacon_housing/utils/layer_writer.py",
-    "src/egg_n_bacon_housing/utils/metrics.py",
     "src/egg_n_bacon_housing/utils/proximity.py",
     "src/egg_n_bacon_housing/utils/time_index.py",
     "src/egg_n_bacon_housing/utils/validation_gateway.py",

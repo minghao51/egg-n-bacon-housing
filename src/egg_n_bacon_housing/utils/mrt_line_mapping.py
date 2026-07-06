@@ -297,19 +297,6 @@ def get_station_tier(station_name: str) -> int:
     return min_tier
 
 
-def is_interchange(station_name: str) -> bool:
-    """Check if station is an interchange (serves 2+ lines).
-
-    Args:
-        station_name: Name of MRT station
-
-    Returns:
-        True if interchange, False otherwise
-    """
-    lines = get_station_lines(station_name)
-    return len(lines) >= 2
-
-
 def get_station_score(station_name: str, distance_m: float) -> float:
     """Calculate overall station score considering line tier and distance.
 
@@ -342,54 +329,3 @@ def get_station_score(station_name: str, distance_m: float) -> float:
         distance_m = 1
 
     return (tier_score * 1000) / distance_m
-
-
-def get_line_color(line_code: str) -> str:
-    """Get color hex code for MRT line.
-
-    Args:
-        line_code: MRT line code (e.g., 'NSL', 'EWL')
-
-    Returns:
-        Hex color string
-    """
-    return get_mrt_lines().get(line_code, {}).get("color", "#CCCCCC")
-
-
-def get_line_name(line_code: str) -> str:
-    """Get full name for MRT line.
-
-    Args:
-        line_code: MRT line code (e.g., 'NSL', 'EWL')
-
-    Returns:
-        Full line name
-    """
-    return get_mrt_lines().get(line_code, {}).get("name", "Unknown Line")
-
-
-if __name__ == "__main__":
-    test_stations = [
-        "DHOBY GHAUT INTERCHANGE",
-        "ANG MO KIO INTERCHANGE",
-        "CLEMENTI",
-        "PUNGGOL",
-        "BUKIT PANJANG",
-    ]
-
-    print("MRT Line Mapping Test")
-    print("=" * 60)
-
-    for station in test_stations:
-        lines = get_station_lines(station)
-        tier = get_station_tier(station)
-        is_interch = is_interchange(station)
-
-        line_names = [get_line_name(line) for line in lines]
-        colors = [get_line_color(line) for line in lines]
-
-        print(f"\nStation: {station}")
-        print(f"  Lines: {', '.join(line_names)}")
-        print(f"  Tier: {tier}")
-        print(f"  Interchange: {is_interch}")
-        print(f"  Score (500m): {get_station_score(station, 500):.2f}")

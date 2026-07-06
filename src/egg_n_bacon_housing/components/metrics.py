@@ -9,10 +9,37 @@ import logging
 import pandas as pd
 
 from egg_n_bacon_housing.utils.layer_writer import LayerWriter
-from egg_n_bacon_housing.utils.metrics import classify_affordability
 from egg_n_bacon_housing.utils.time_index import ensure_month_column
 
 logger = logging.getLogger(__name__)
+
+_DEFAULT_AFFORDABILITY_THRESHOLDS: dict[str, float] = {
+    "affordable": 5.0,
+    "moderate": 7.0,
+    "expensive": 9.0,
+}
+
+
+def _classify_affordability(ratio: float, thresholds: dict[str, float] | None = None) -> str:
+    """Classify affordability based on ratio.
+
+    Args:
+        ratio: Affordability ratio
+        thresholds: Optional thresholds dict with keys 'affordable',
+            'moderate', 'expensive'. Defaults to standard Singapore thresholds.
+
+    Returns:
+        Classification string
+    """
+    if thresholds is None:
+        thresholds = _DEFAULT_AFFORDABILITY_THRESHOLDS
+    if ratio < thresholds["affordable"]:
+        return "Affordable"
+    if ratio < thresholds["moderate"]:
+        return "Moderate"
+    if ratio < thresholds["expensive"]:
+        return "Expensive"
+    return "Severely Unaffordable"
 
 
 def pa_monthly_metrics(
@@ -72,7 +99,7 @@ def pa_monthly_metrics(
         annual_income = float(median_household_income)
     metrics["affordability_ratio"] = metrics["median_price"] / annual_income
     metrics["affordability_class"] = metrics["affordability_ratio"].apply(
-        lambda r: classify_affordability(r, affordability_thresholds)
+        lambda r: _classify_affordability(r, affordability_thresholds)
     )
 
     writer.write(metrics, "pa_monthly_metrics", "platinum_metrics")

@@ -104,7 +104,7 @@ def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(name)
 
 
-def get_logger_level_from_env() -> int:
+def _get_logger_level_from_env() -> int:
     """Get logging level from environment variable.
 
     Reads LOG_LEVEL environment variable and converts to logging level.
@@ -112,15 +112,6 @@ def get_logger_level_from_env() -> int:
 
     Returns:
         Logging level constant
-
-    Example:
-        >>> import os
-        >>> from egg_n_bacon_housing.utils.logging_config import get_logger_level_from_env
-        >>>
-        >>> # Set in .env or environment
-        >>> # LOG_LEVEL=DEBUG
-        >>> level = get_logger_level_from_env()
-        >>> setup_logging(level=level)
     """
     level_str = os.getenv("LOG_LEVEL", "INFO").upper()
     return LEVEL_MAP.get(level_str, logging.INFO)
@@ -141,5 +132,5 @@ def setup_logging_from_env(log_file: Path | None = None) -> None:
         >>> from egg_n_bacon_housing.utils.logging_config import setup_logging_from_env
         >>> setup_logging_from_env()
     """
-    level = get_logger_level_from_env()
+    level = _get_logger_level_from_env()
     setup_logging(level=level, log_file=log_file)

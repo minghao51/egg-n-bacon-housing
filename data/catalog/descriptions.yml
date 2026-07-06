@@ -131,10 +131,7 @@ datasets:
       commercial: "Whether the building has commercial units (Y/N)"
       market_hawker: "Whether the building has a market/hawker centre (Y/N)"
       miscellaneous: "Whether the building has miscellaneous use units (Y/N)"
-      precint_parks: "Whether the building has a precinct park (Y/N)"
       multistorey_carpark: "Whether the building has a multi-storey carpark (Y/N)"
-      precinct_carpark: "Whether the building has a precinct carpark (Y/N)"
-      bus_stop: "Whether the building is served by a bus stop (Y/N)"
 
   raw_income_by_planning_area:
     label: "Income by Planning Area"

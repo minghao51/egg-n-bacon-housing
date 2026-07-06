@@ -4,6 +4,7 @@ import json
 
 import pandas as pd
 import pytest
+from shapely.geometry import Point
 
 from egg_n_bacon_housing.utils import data_loader
 
@@ -23,6 +24,31 @@ def _make_geojson(area_name="TEST_AREA"):
         "type": "FeatureCollection",
         "features": [{"properties": {"pln_area_n": area_name}, "geometry": polygon}],
     }
+
+
+def _reference_get_planning_area_for_point(lat: float, lon: float) -> str | None:
+    """Row-wise point-in-polygon oracle (former production single-point fn).
+
+    Kept here as the differential-test reference for the vectorized batch
+    ``get_planning_areas_for_points``. Uses the same STRtree + prepared-geom
+    first-match-wins semantics as the deleted source function; intentionally
+    row-wise so it remains an independent oracle for the batch path.
+    """
+    _, prepared_list, tree, name_list = data_loader._load_planning_areas_raw()
+
+    if tree is None or not prepared_list:
+        return None
+
+    point = Point(lon, lat)
+
+    candidate_indices = tree.query(point)
+    for idx in candidate_indices:
+        name = name_list[idx]
+        _, prepared_geom = prepared_list[idx]
+        if prepared_geom.contains(point):
+            return name
+
+    return None
 
 
 @pytest.fixture(autouse=True)
@@ -55,7 +81,15 @@ class TestLoadPlanningAreas:
         assert result == []
 
 
-class TestGetPlanningAreaForPoint:
+class TestPlanningAreaPointOracle:
+    """Sanity-check the row-wise oracle used by the differential test.
+
+    These tests verify the local ``_reference_get_planning_area_for_point``
+    helper (the former production single-point fn, now the independent oracle
+    for the vectorized batch path) and the ``Point(lon, lat)`` convention,
+    which also exercises ``data_loader._load_planning_areas_raw``.
+    """
+
     def test_point_inside_polygon(self, tmp_path):
         _clear_planning_cache()
         geojson_dir = tmp_path / "geojsons"
@@ -65,7 +99,7 @@ class TestGetPlanningAreaForPoint:
         )
         data_loader._paths["raw_data_dir"] = geojson_dir
 
-        result = data_loader.get_planning_area_for_point(1.35, 103.85)
+        result = _reference_get_planning_area_for_point(1.35, 103.85)
         assert result == "INSIDE_AREA"
 
     def test_point_outside_all_polygons(self, tmp_path):
@@ -77,7 +111,7 @@ class TestGetPlanningAreaForPoint:
         )
         data_loader._paths["raw_data_dir"] = geojson_dir
 
-        result = data_loader.get_planning_area_for_point(1.5, 104.0)
+        result = _reference_get_planning_area_for_point(1.5, 104.0)
         assert result is None
 
     def test_uses_lon_lat_order_for_point(self, tmp_path):
@@ -89,7 +123,7 @@ class TestGetPlanningAreaForPoint:
         )
         data_loader._paths["raw_data_dir"] = geojson_dir
 
-        result = data_loader.get_planning_area_for_point(lat=1.35, lon=103.85)
+        result = _reference_get_planning_area_for_point(lat=1.35, lon=103.85)
         assert result == "LON_LAT_TEST"
 
     def test_reconfigure_invalidates_cached_planning_areas(self, tmp_path_factory):
@@ -166,7 +200,7 @@ class TestGetPlanningAreasForPoints:
             [
                 None
                 if (pd.isna(lat) or pd.isna(lon))
-                else data_loader.get_planning_area_for_point(lat, lon)
+                else _reference_get_planning_area_for_point(lat, lon)
                 for lat, lon in zip(lats, lons)
             ]
         )

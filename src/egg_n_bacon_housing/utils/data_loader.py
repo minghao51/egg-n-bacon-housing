@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 from shapely import STRtree
-from shapely.geometry import Point, shape
+from shapely.geometry import shape
 from shapely.prepared import prep
 
 logger = logging.getLogger(__name__)
@@ -110,45 +110,13 @@ def load_planning_areas() -> list[dict]:
     return _load_planning_areas_raw()[0]
 
 
-def get_planning_area_for_point(lat: float, lon: float) -> str | None:
-    """
-    Get the planning area name for a given lat/lon coordinate.
-
-    Uses STRtree spatial index for candidate filtering, then prepared
-    geometries for exact point-in-polygon tests.
-
-    Args:
-        lat: Latitude
-        lon: Longitude
-
-    Returns:
-        Planning area name or None if not found
-    """
-    _, prepared_list, tree, name_list = _load_planning_areas_raw()
-
-    if tree is None or not prepared_list:
-        return None
-
-    point = Point(lon, lat)
-
-    candidate_indices = tree.query(point)
-    for idx in candidate_indices:
-        name = name_list[idx]
-        _, prepared_geom = prepared_list[idx]
-        if prepared_geom.contains(point):
-            return name
-
-    return None
-
-
 def get_planning_areas_for_points(lat: pd.Series, lon: pd.Series) -> pd.Series:
     """Batch point-in-polygon lookup for many coordinates at once.
 
     Single vectorized ``geopandas.sjoin`` over the planning-area polygons -- far
-    faster than calling :func:`get_planning_area_for_point` per row when there
-    are many coordinates (e.g. the ~10k unique coords derived in
-    ``location_dim``). Mirrors the single-point function's first-match-wins and
-    miss-returns-None semantics.
+    faster than a row-wise point-in-polygon loop when there are many coordinates
+    (e.g. the ~10k unique coords derived in ``location_dim``). Preserves
+    first-match-wins and miss-returns-None semantics.
 
     Args:
         lat: Latitudes (Series, any index).
@@ -194,8 +162,8 @@ def get_planning_areas_for_points(lat: pd.Series, lon: pd.Series) -> pd.Series:
     )
 
     joined = gpd.sjoin(points, poly_gdf, how="left", predicate="within")
-    # Sliver overlaps can match multiple polygons; keep the first to mirror
-    # get_planning_area_for_point's first-candidate-wins behaviour, then drop
+    # Sliver overlaps can match multiple polygons; keep the first to preserve
+    # first-candidate-wins behaviour, then drop
     # the left-join misses (planning_area is NaN for points outside everything).
     joined = joined.drop_duplicates(subset="_idx", keep="first")
     joined = joined.dropna(subset=["planning_area"])
