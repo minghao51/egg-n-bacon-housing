@@ -641,11 +641,13 @@ def transactions_enriched(
         income_lookup = raw_income_by_planning_area[
             ["planning_area", "median_monthly_income"]
         ].copy()
-        income_lookup["planning_area"] = income_lookup["planning_area"].astype(str).str.strip()
+        income_lookup["planning_area"] = (
+            income_lookup["planning_area"].astype(str).str.strip().str.upper()
+        )
         income_lookup = income_lookup.dropna(subset=["median_monthly_income"])
         income_lookup = income_lookup.drop_duplicates(subset="planning_area", keep="first")
 
-        df["planning_area"] = df["planning_area"].astype(str).str.strip()
+        df["planning_area"] = df["planning_area"].astype(str).str.strip().str.upper()
         df = df.merge(income_lookup, on="planning_area", how="left")
 
     for col in (
@@ -749,9 +751,10 @@ def planning_area_360(
 
     if not raw_income_by_planning_area.empty:
         income = raw_income_by_planning_area[["planning_area", "median_monthly_income"]].copy()
-        income["planning_area"] = income["planning_area"].astype(str).str.strip()
+        income["planning_area"] = income["planning_area"].astype(str).str.strip().str.upper()
         income = income.dropna(subset=["median_monthly_income"])
         income = income.drop_duplicates(subset="planning_area", keep="first")
+        result["planning_area"] = result["planning_area"].astype(str).str.upper()
         result = result.merge(income, on="planning_area", how="left")
 
     for key in ("cpi", "bank_rates", "unemployment", "gdp"):

@@ -27,6 +27,9 @@ logger = logging.getLogger(__name__)
 
 DATAGOVSG_BASE_URL = "https://data.gov.sg/api/action/datastore_search"
 
+_DEFAULT_PAGE_SIZE = 2000
+_MIN_PAGE_SIZE = 250
+
 
 def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -> pd.DataFrame:
     """Fetch data from data.gov.sg API with pagination support.
@@ -63,10 +66,20 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         response_agg = []
         offset_value = 0
         total_records = 0
+        page_size = _DEFAULT_PAGE_SIZE
         request_url = f"{url}{dataset_id}"
         if "datastore_search" in request_url and "limit=" not in request_url:
-            request_url = f"{request_url}&limit=10000"
+            request_url = f"{request_url}&limit={page_size}"
         retry_attempts = 0
+
+        def _shrink_page_size() -> str:
+            cur_offset = 0
+            match = re.search(r"offset=(\d+)", request_url)
+            if match:
+                cur_offset = int(match.group(1))
+            base = f"{url}{dataset_id}"
+            sep = "&" if "?" in base else "?"
+            return f"{base}{sep}limit={page_size}&offset={cur_offset}"
 
         while True:
             try:
@@ -103,6 +116,18 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
 
             except requests.HTTPError as e:
                 status = e.response.status_code if e.response is not None else None
+                if status == 413 and page_size > _MIN_PAGE_SIZE:
+                    prev = page_size
+                    page_size = max(page_size // 2, _MIN_PAGE_SIZE)
+                    request_url = _shrink_page_size()
+                    logger.warning(
+                        "data.gov.sg 413 for dataset %s at limit=%d; retrying at limit=%d (url=%s)",
+                        dataset_id,
+                        prev,
+                        page_size,
+                        request_url,
+                    )
+                    continue
                 if status == 429 and retry_attempts < max_retry_attempts:
                     retry_after = 0
                     if e.response is not None:

@@ -95,7 +95,7 @@ def _melt_pivot_quarterly(df: pd.DataFrame, value_filter: str, value_col: str) -
 
 def _parse_datagov_quarter(series: pd.Series) -> pd.Series:
     """Parse data.gov.sg quarter strings into quarter-end timestamps."""
-    series_str = series.astype(str).str.strip()
+    series_str = series.astype(str).str.strip().str.replace("-", "", regex=False)
     parsed = pd.Series(pd.NaT, index=series.index, dtype="datetime64[ns]")
 
     def _quarter_end(year: int, quarter: int) -> pd.Timestamp:
@@ -214,8 +214,9 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
             result["bank_rates"] = pd.DataFrame()
 
     hdb_rpi_path = external_dir / "hdb_rpi.parquet"
-    if hdb_rpi_path.exists():
-        result["hdb_rpi"] = pd.read_parquet(hdb_rpi_path)
+    _cached_rpi = pd.read_parquet(hdb_rpi_path) if hdb_rpi_path.exists() else None
+    if _cached_rpi is not None and not _cached_rpi.empty:
+        result["hdb_rpi"] = _cached_rpi
     else:
         try:
             logger.info("Fetching HDB Resale Price Index from data.gov.sg...")
@@ -235,8 +236,9 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
             result["hdb_rpi"] = pd.DataFrame()
 
     ura_ppi_path = external_dir / "ura_ppi.parquet"
-    if ura_ppi_path.exists():
-        result["ura_ppi"] = pd.read_parquet(ura_ppi_path)
+    _cached_ppi = pd.read_parquet(ura_ppi_path) if ura_ppi_path.exists() else None
+    if _cached_ppi is not None and not _cached_ppi.empty:
+        result["ura_ppi"] = _cached_ppi
     else:
         try:
             logger.info("Fetching URA Property Price Index from data.gov.sg...")
