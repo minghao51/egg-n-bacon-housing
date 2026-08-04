@@ -4,8 +4,8 @@ import json
 import logging
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
+from shapely.geometry import shape
 
 logger = logging.getLogger(__name__)
 
@@ -21,18 +21,6 @@ __all__ = [
     "raw_sports_facilities",
     "raw_community_clubs",
 ]
-
-
-def _flatten_coord(coords: list) -> list[list[float]]:
-    """Recursively flatten nested coordinate lists into [lon, lat] pairs."""
-    if not coords:
-        return []
-    if isinstance(coords[0], int | float):
-        return [coords[:2]]
-    result = []
-    for item in coords:
-        result.extend(_flatten_coord(item))
-    return result
 
 
 def _load_geojson_amenities(
@@ -64,13 +52,16 @@ def _load_geojson_amenities(
                 break
 
         lat, lon = None, None
-        if geom_type == "Point":
+        if geom_type == "Point" and len(coords) >= 2:
             lon, lat = coords[0], coords[1]
-        elif coords:
-            flat = _flatten_coord(coords)
-            if flat:
-                lon = float(np.mean([c[0] for c in flat]))
-                lat = float(np.mean([c[1] for c in flat]))
+        elif geom:
+            try:
+                geom_shape = shape(geom)
+                if not geom_shape.is_empty:
+                    centroid = geom_shape.centroid
+                    lon, lat = float(centroid.x), float(centroid.y)
+            except Exception as e:
+                logger.warning("Failed to parse geometry for centroid calculation: %s", e)
 
         if lat and lon:
             rows.append({"name": name, "lat": lat, "lon": lon, "amenity_type": amenity_type})
@@ -93,15 +84,16 @@ def _load_mrt_geojson(geojson_path: Path) -> pd.DataFrame:
         coords = geom.get("coordinates", [])
 
         lat, lon = None, None
-        if geom_type == "Point":
+        if geom_type == "Point" and len(coords) >= 2:
             lon, lat = coords[0], coords[1]
-        elif coords:
-            flat = _flatten_coord(coords)
-            if flat:
-                lons = [c[0] for c in flat]
-                lats = [c[1] for c in flat]
-                lon = float(np.mean(lons))
-                lat = float(np.mean(lats))
+        elif geom:
+            try:
+                geom_shape = shape(geom)
+                if not geom_shape.is_empty:
+                    centroid = geom_shape.centroid
+                    lon, lat = float(centroid.x), float(centroid.y)
+            except Exception as e:
+                logger.warning("Failed to parse geometry for centroid calculation: %s", e)
 
         if name and lat and lon:
             rows.append({"name": name, "lat": lat, "lon": lon})

@@ -2,7 +2,7 @@
 
 ## Summary
 
-On June 13, 2026, a data freshness audit revealed that **all four** data.gov.sg API resource IDs used by `01_ingestion.py` are broken. Three were permanently deleted (404) and one was silently swapped to a different dataset. The pipeline continued to work only because bronze-layer parquet caches masked the problem.
+On June 13, 2026, a data freshness audit revealed that **all four** data.gov.sg API resource IDs used by `components/ingestion/datagov.py` are broken. Three were permanently deleted (404) and one was silently swapped to a different dataset. The pipeline continued to work only because bronze-layer parquet caches masked the problem.
 
 ## How the Issue Was Discovered
 
@@ -75,11 +75,11 @@ All amenity GeoJSONs are loaded via `_load_geojson_amenities()` which handles bo
 
 The `STAGE_VARS["all"]` list was missing 4 terminal output nodes that were only computed when explicitly running `--stage export` or `--stage metrics`:
 
-| Node                    | Module          | Output                                |
-| ----------------------- | --------------- | ------------------------------------- |
-| `rental_yield_by_area`  | `05_metrics.py` | Rental yield metrics by planning area |
-| `affordability_metrics` | `05_metrics.py` | Affordability classifications         |
-| `appreciation_hotspots` | `05_metrics.py` | Price appreciation rankings           |
+| Node                    | Module                  | Output                                |
+| ----------------------- | ----------------------- | ------------------------------------- |
+| `rental_yield_by_area`  | `components/metrics.py` | Rental yield metrics by planning area |
+| `affordability_metrics` | `components/metrics.py` | Affordability classifications         |
+| `appreciation_hotspots` | `components/metrics.py` | Price appreciation rankings           |
 
 These are now included in `--stage all` so a full pipeline run produces all platinum artifacts.
 
@@ -87,7 +87,7 @@ These are now included in `--stage all` so a full pipeline run produces all plat
 
 ### School Directory (New)
 
-The new dataset (`d_688b934f82c1059ed0a6993d2a829089`) has the same field names as the old one **but no `latitude`/`longitude` columns**. The pipeline geocodes schools via OneMap postal code lookup in `features_with_amenities` (`03_features.py`). Geocoded results are cached back to the bronze parquet so subsequent runs skip re-geocoding.
+The new dataset (`d_688b934f82c1059ed0a6993d2a829089`) has the same field names as the old one **but no `latitude`/`longitude` columns**. The pipeline geocodes schools via OneMap postal code lookup in `features_with_amenities` (`components/features.py`). Geocoded results are cached back to the bronze parquet so subsequent runs skip re-geocoding.
 
 **OneMap rate limiting**: OneMap aggressively returns 429 Too Many Requests. The `_geocode_schools()` function uses sequential requests with 0.3s delay. First-time geocoding of 337 schools takes ~5 minutes. If rate-limited, wait 60s and re-run — the cached parquet will have partial results and only missing schools are re-geocoded.
 
@@ -109,7 +109,7 @@ Three new data.gov.sg datasets were wired into the pipeline for macro enrichment
 | Unemployment | `d_b0da22a41f952764376a2b7b5b0f2533` | Quarterly pivot (`20261Q`) | `DataSeries == "Total Unemployment Rate"`       | 137     |
 | GDP          | `d_a5ff719648a0e6d4b4c623ee383ab686` | Quarterly pivot (`20261Q`) | `DataSeries == "GDP In Chained (2015) Dollars"` | 201     |
 
-These datasets arrive as **wide pivot tables** (DataSeries rows × time period columns). The `_melt_pivot_monthly()` and `_melt_pivot_quarterly()` helpers in `01_ingestion.py` melt them to long format with proper date parsing.
+These datasets arrive as **wide pivot tables** (DataSeries rows × time period columns). The `_melt_pivot_monthly()` and `_melt_pivot_quarterly()` helpers in `components/ingestion/macro.py` melt them to long format with proper date parsing.
 
 **Key implementation details:**
 

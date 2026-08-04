@@ -123,6 +123,7 @@ data/metadata.json.bak
 .worktrees/
 .claude/
 .context7/
+.opencode/
 
 # Generated pipeline visualization
 dag.png

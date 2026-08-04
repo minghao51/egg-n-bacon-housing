@@ -132,7 +132,7 @@ egg-n-bacon-housing/
 ├── src/egg_n_bacon_housing/   # Source package
 │   ├── config.py              # pydantic-settings config
 │   ├── pipeline.py           # Hamilton DAG driver
-│   ├── components/           # Hamilton modules (01_ingestion → 05_metrics) — core pipeline
+│   ├── components/           # Hamilton modules (ingestion → metrics) — core pipeline
 │   ├── schemas/               # Pydantic models (raw, clean, feature)
 │   ├── adapters/              # External API adapters (onemap, datagovsg, geocoding)
 │   └── utils/                 # Utilities (cache, loaders, metrics, etc.)

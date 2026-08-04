@@ -44,6 +44,7 @@ uv run ruff check .
 uv run ruff format --check .
 uv run mypy
 uv run python scripts/tools/validate_docs_layout.py
+uv run python scripts/tools/validate_agent_skills.py
 ```
 
 ### Web app
@@ -74,10 +75,12 @@ tests/            # Python test suite
 ## Working Conventions
 
 - Run Python commands with `uv run`.
+- Read and follow the matching repository skill under `.agents/skills/` before
+  changing the Hamilton pipeline or data-ingestion surfaces.
 - Run app commands from `app/` with Bun.
 - Treat `docs/analytics/*.md` as the editable analytics content source.
 - Do not reintroduce the retired standalone Python analytics package, pre-`main.py` pipeline runner, or old content-sync shell steps; those are no longer supported surfaces.
-- Keep pipeline changes aligned to the 5-stage `main.py` flow ending at `05_metrics`.
+- Keep pipeline changes aligned to the 5-stage `main.py` flow ending at `metrics`.
 
 ## Tests
 
@@ -95,6 +98,7 @@ uv run ruff check .
 uv run ruff format --check .
 uv run mypy
 uv run python scripts/tools/validate_docs_layout.py
+uv run python scripts/tools/validate_agent_skills.py
 ```
 
 For app-facing changes, also run:

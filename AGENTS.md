@@ -4,7 +4,7 @@
 
 - **Analyze first** — Understand code, imports, patterns before changes.
 - **Minimal scope** — Only what's needed. No scope-creep refactors.
-- **Check skills** — Before any task, check + follow matching skill.
+- **Check skills** — Before any task, check + follow the matching repository skill in `.agents/skills/`.
 - **Verify** — Lint + type-check after changes. Ask user for command.
 - **No commits** — Never commit unless explicitly asked.
 
@@ -31,7 +31,7 @@ Source code lives in `src/egg_n_bacon_housing/`:
 
 - `config.py` — pydantic-settings configuration
 - `pipeline.py` — Hamilton DAG driver
-- `components/` — DAG nodes (01_ingestion → 06_analytics)
+- `components/` — Hamilton DAG nodes (ingestion → cleaning → features → export → metrics)
 - `schemas/` — Pydantic models (clean, feature)
 - `adapters/` — External API clients (onemap, datagovsg, geocoding)
 - `utils/` — Utilities (cache, layer_writer, metrics, etc.)
@@ -42,7 +42,7 @@ Source code lives in `src/egg_n_bacon_housing/`:
 
 **Env vars**: Encrypted via `dotenvx` — run commands as `dotenvx run -- uv run <cmd>`.
 
-**Pipeline vs Analytics**: The Hamilton DAG (`components/`) runs the core automated pipeline from bronze to platinum. Analytics modules are run on-demand as standalone scripts that consume exported datasets from the platinum layer. They are not part of the automated pipeline.
+**Pipeline vs Analytics**: The Hamilton DAG (`components/`) runs the core automated pipeline from bronze to platinum. Published analytics are maintained in `docs/analytics/` and served with precomputed assets from `app/public/data/`; the retired standalone Python analytics package is not a supported surface.
 
 Data lives in `data/pipeline/` with medallion layers:
 
@@ -50,6 +50,21 @@ Data lives in `data/pipeline/` with medallion layers:
 - `02_silver/` — validated, cleaned data
 - `03_gold/` — feature-enriched data
 - `04_platinum/` — predictions, exports, metrics
+
+## Repository Agent Skills
+
+Before changing the Hamilton DAG or its persistence and validation boundaries, read
+`.agents/skills/change-hamilton-pipeline/SKILL.md`. Before changing external or
+manual-file ingestion, adapters, caching, geocoding, or bronze nodes, read
+`.agents/skills/change-data-ingestion/SKILL.md`. If a change spans both areas,
+read both skills and apply both checklists.
+
+Pipeline changes must use the supported `main.py` entrypoint, `build_pipeline()`,
+`run_pipeline()`, and dependency injection. Use `LayerWriter` for new
+silver/gold/platinum outputs; bronze source caches and the validation gateway
+retain their existing persistence paths until a dedicated migration. Do not add
+a parallel production runner or an ad-hoc persistence path. Changes must keep
+`STAGE_VARS`, medallion ownership, schemas, docs, and focused tests aligned.
 
 ## Analytics Doc Charting
 

@@ -69,6 +69,7 @@ uv run mypy
 
 ## Notes
 
-- Core pipeline is validated via Hamilton component tests (`01_ingestion` through `05_metrics`).
+- Core pipeline is validated via Hamilton component tests for ingestion,
+  cleaning, features, export, and metrics.
 - Analytics publishing is validated through docs layout checks, `bun run build`, and the Playwright suite in `app/tests/e2e/`.
 - The retired standalone Python analytics package is no longer part of the supported test surface.

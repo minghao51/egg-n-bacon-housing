@@ -30,6 +30,8 @@ ACTIVE_REFERENCE_FILES = [
     REPO_ROOT / "docs" / "guides" / "README.md",
     REPO_ROOT / "docs" / "guides" / "quick-start.md",
     REPO_ROOT / "docs" / "guides" / "usage-guide.md",
+    REPO_ROOT / "docs" / "guides" / "pipeline-development.md",
+    REPO_ROOT / "docs" / "guides" / "data-ingestion-development.md",
     REPO_ROOT / "docs" / "guides" / "ci-cd-pipeline.md",
     REPO_ROOT / "docs" / "guides" / "e2e-testing.md",
     REPO_ROOT / "app" / "README.md",

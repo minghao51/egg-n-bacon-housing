@@ -81,7 +81,7 @@ Key path properties:
 
 ### Pipeline Construction
 
-[src/egg_n_bacon_housing/pipeline.py](../src/egg_n_bacon_housing/pipeline.py) imports the numbered component modules dynamically and builds a Hamilton `Driver`.
+[src/egg_n_bacon_housing/pipeline.py](../src/egg_n_bacon_housing/pipeline.py) imports the five stage modules and builds a Hamilton `Driver`.
 
 Execution entrypoint:
 
@@ -96,13 +96,13 @@ Execution entrypoint:
 
 ## Pipeline Stages
 
-| Stage     | Module family                | Typical outputs                                           |
-| --------- | ---------------------------- | --------------------------------------------------------- |
-| Ingestion | `components/01_ingestion.py` | raw transactions, rental data, schools, malls, macro data |
-| Cleaning  | `components/02_cleaning.py`  | cleaned transaction sets, validation artifacts, geocoding |
-| Features  | `components/03_features.py`  | rental yield and amenity-enriched features                |
-| Export    | `components/04_export.py`    | unified dataset                                           |
-| Metrics   | `components/05_metrics.py`   | area metrics, affordability, hotspots                     |
+| Stage     | Module family            | Typical outputs                                           |
+| --------- | ------------------------ | --------------------------------------------------------- |
+| Ingestion | `components/ingestion/`  | raw transactions, rental data, schools, malls, macro data |
+| Cleaning  | `components/cleaning.py` | cleaned transaction sets, validation artifacts, geocoding |
+| Features  | `components/features.py` | rental yield and amenity-enriched features                |
+| Export    | `components/export.py`   | unified dataset                                           |
+| Metrics   | `components/metrics.py`  | area metrics, affordability, hotspots                     |
 
 ## Content Publishing Flow
 

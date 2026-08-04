@@ -391,11 +391,12 @@ class DataQualityCollector:
         anomalies = []
 
         if baseline.std_rows > 0.01:
-            z_score = abs(snapshot.output_rows - baseline.mean_rows) / baseline.std_rows
+            std_dev = baseline.std_rows**0.5
+            z_score = abs(snapshot.output_rows - baseline.mean_rows) / std_dev
             if z_score > 3:
                 anomalies.append(
                     f"Row count: {snapshot.output_rows} "
-                    f"(baseline: {baseline.mean_rows:.0f}±{baseline.std_rows:.0f})"
+                    f"(baseline: {baseline.mean_rows:.0f}±{std_dev:.0f})"
                 )
         else:
             if baseline.mean_rows > 0:
@@ -407,11 +408,12 @@ class DataQualityCollector:
                     )
 
         if baseline.std_null_pct > 0.01:
-            z_score = abs(snapshot.null_percentage - baseline.mean_null_pct) / baseline.std_null_pct
+            std_dev_null = baseline.std_null_pct**0.5
+            z_score = abs(snapshot.null_percentage - baseline.mean_null_pct) / std_dev_null
             if z_score > 3:
                 anomalies.append(
                     f"Null %: {snapshot.null_percentage:.2f}% "
-                    f"(baseline: {baseline.mean_null_pct:.2f}±{baseline.std_null_pct:.2f})"
+                    f"(baseline: {baseline.mean_null_pct:.2f}±{std_dev_null:.2f})"
                 )
 
         return anomalies
