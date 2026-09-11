@@ -7,9 +7,10 @@
 > The status above reflects the remaining audit backlog, not the current DAG
 > implementation state. The four-work-order Hamilton sequence has been applied
 > and verified in the working tree. Use
-> `docs/plans/2026-09-10-hamilton-dag-next-thread-handoff.md` as the resume point;
-> treat the phases below as candidates to validate or finish, not as an
-> instruction to redo completed changes.
+> `docs/plans/2026-09-11-code-audit-remediation-handoff.md` as the resume
+> point — it lists the items verified done on 2026-09-11 (e.g. items 8, 14,
+> 25, 26 and the Phase 6 renames) plus subagent-ready briefs for the rest;
+> treat the phases below as the detailed spec for those briefs.
 
 ## Relationship to Prior Plans
 
