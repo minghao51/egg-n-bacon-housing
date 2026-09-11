@@ -13,6 +13,7 @@ Operational guides for the current repository layout.
 | [pipeline-development.md](./pipeline-development.md)             | Hamilton stages, layers, and node changes             |
 | [data-ingestion-development.md](./data-ingestion-development.md) | Source onboarding and ingestion changes               |
 | [ops-scheduling.md](./ops-scheduling.md)                         | Local scheduled refresh of rolling bronze sources     |
+| [operations-runbook.md](./operations-runbook.md)                 | Verified prod-run sequence, timings, cache rules, known issues |
 
 ## Common Commands
 

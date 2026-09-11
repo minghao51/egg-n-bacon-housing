@@ -18,7 +18,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --dev
+      - run: uv sync --dev --locked
       - uses: pre-commit/action@v3.0.1
 
   typecheck:
@@ -28,7 +28,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --dev
+      - run: uv sync --dev --locked
       - run: uv run mypy
 
   security:
@@ -38,7 +38,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --dev
+      - run: uv sync --dev --locked
       - run: uv run pip-audit --skip-editable
 
   catalog:
@@ -48,7 +48,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --dev
+      - run: uv sync --dev --locked
       - name: Validate committed catalog (consistency + descriptions)
         run: uv run python scripts/tools/check_catalog.py
 

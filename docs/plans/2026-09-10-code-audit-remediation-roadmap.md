@@ -13,7 +13,7 @@
 
 ## Relationship to Prior Plans
 
-Already done — do NOT re-plan (verified against `src-audit-improvement-program.md` status block and current code):
+Already done — do NOT re-plan (verified against `2026-09-07-src-audit-improvement-program.md` status block and current code):
 
 - Gateway `persist=False`, annual-value join, datagovsg Retry-After/regional mapping, empty-bronze-cache=miss at the 3 datagov sites, token/auth repairs, silent-loss logging, proximity hardening, validation vectorization (owner decision: **keep FULL per-row pydantic** — WO-9), macro/datagov/features/proximity DRY collapse, school-tier rewiring via `school_reference` DI, `DATAGOVSG_BASE_URL` constant import (WO-12).
 - DI repositories (`MrtReferenceRepository`, `SpatialReferenceRepository`, `SchoolReferenceRepository`) are wired as Hamilton factories in `pipeline.py` — the audit's "repository shims" are the compatibility leftovers the 2026-09-03 handoff deferred to a later release; **this roadmap is that release**.
@@ -34,7 +34,7 @@ Effort: S ≤2h · M half-day · L 1day+.
 ## Phase 0 — Plan bookkeeping (S)
 
 1. This document. · no skill · S.
-2. Mark `docs/plans/2026-04-28-code-audit-findings.md` `Status: Superseded` (→ src-audit program; modules it cites no longer exist) and `docs/plans/src-audit-improvement-program.md` `Status: Completed` (note the one deferred item: quarantine-only persist mode). · no skill · S.
+2. Mark `docs/plans/2026-04-28-code-audit-findings.md` `Status: Superseded` (→ src-audit program; modules it cites no longer exist) and `docs/plans/2026-09-07-src-audit-improvement-program.md` `Status: Completed` (note the one deferred item: quarantine-only persist mode). · no skill · S.
 3. Add a status note to `docs/plans/2026-09-03-runtime-dependency-injection-handoff.md`: repository injection landed; compatibility-wrapper removal is scheduled here (Phases 2–3). · no skill · S.
 4. **Capture pre-Phase-1 baseline** of published output row counts × columns for the Phase 7 equivalence check. · no skill · S.
 
@@ -105,7 +105,7 @@ Effort: S ≤2h · M half-day · L 1day+.
 - `.github/workflows/ci.yml` — coverage floor bump (P4)
 - `.gitignore` — artifacts (P6)
 - `docs/guides/{pipeline-development,data-ingestion-development}.md`, `docs/data-sources.md`, `.agents/skills/change-data-ingestion/SKILL.md` — doc alignment
-- `docs/plans/{2026-04-28-code-audit-findings.md, src-audit-improvement-program.md, 2026-09-03-runtime-dependency-injection-handoff.md, README.md}` — status bookkeeping (P0/P7)
+- `docs/plans/{2026-04-28-code-audit-findings.md, 2026-09-07-src-audit-improvement-program.md, 2026-09-03-runtime-dependency-injection-handoff.md, README.md}` — status bookkeeping (P0/P7)
 
 ## New Files
 

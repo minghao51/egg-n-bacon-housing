@@ -20,7 +20,14 @@ pins the wiring contracts instead:
 - WS16 per-type geocoding coverage thresholds flow from ``Settings``;
 - WS13 hotspot volume floor flows from ``Settings``;
 - no quarantine files on the happy path (quarantine = fixture bug);
-- ``bronze_manifest.json`` exists with fetch entries.
+- ``bronze_manifest.json`` exists with fetch entries;
+- ``main.py --stage all`` drives the SAME graph through the real CLI entry
+  point (main -> build_pipeline -> run_pipeline -> Hamilton Driver) and all
+  12 published outputs materialize. This closes the regression gap that let a
+  main.py stage-collapse bug (materialization narrowed to the 6 terminal
+  frames) ship through a green suite that only called ``run_pipeline()`
+  directly; argument-level pinning with a mocked ``run_pipeline`` lives in
+  ``TestMainCLIStagePassthrough`` (tests/test_pipeline_integration.py).
 
 Hermetic: no network (any unexpected external URL fails loudly), no repo
 ``data/`` dependency, no external environment-wrapper requirement — every behavior-relevant
@@ -73,6 +80,7 @@ from egg_n_bacon_housing.config import (
 from egg_n_bacon_housing.pipeline import STAGE_VARS, run_pipeline
 from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
 from egg_n_bacon_housing.utils.layer_writer import PUBLISHED_LAYERS
+from egg_n_bacon_housing.utils.output_registry import TERMINAL_OUTPUTS
 
 pytestmark = pytest.mark.integration
 
@@ -630,3 +638,76 @@ def test_full_dag_end_to_end(hermetic_dag: tuple[Settings, Path]) -> None:
     assert len(manifest) >= 1
     assert (pipeline_root / "01_bronze" / "raw_hdb_resale.parquet").exists()
     assert (pipeline_root / "01_bronze" / "raw_condo_transactions.parquet").exists()
+
+
+# --- CLI-level smoke test (main.py entry point) --------------------------------
+
+
+def test_main_cli_stage_all_end_to_end(
+    hermetic_dag: tuple[Settings, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``main.main()`` with ``--stage all`` executes the real entrypoint path:
+    argument parsing -> build_pipeline -> run_pipeline -> Hamilton Driver ->
+    companion materializers, over the hermetic tree.
+
+    Unlike ``TestMainCLIStagePassthrough`` (mocked ``run_pipeline``, argument
+    contract only), this test must catch behavioral main.py regressions: the
+    stage-collapse bug passed argument checks while materializing 6/12
+    outputs. Hence the assertions here are on persisted artifacts (all 12
+    published parquets) and the returned terminal frames, not just call args.
+    """
+    import sys
+
+    from hamilton import driver as hamilton_driver
+
+    settings, data_root = hermetic_dag
+
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parent.parent))
+    import main as main_module
+
+    # main() resolves every path through its module-global settings singleton;
+    # point it at the hermetic tree (the fixture already faked HTTP transport).
+    monkeypatch.setattr(main_module, "settings", settings)
+
+    # run_pipeline constructs the production OneMap geocoder lazily; swap the
+    # factory so no OneMap client or credential flow is ever built.
+    from egg_n_bacon_housing import pipeline as pipeline_module
+
+    monkeypatch.setattr(
+        pipeline_module,
+        "build_default_geocoder",
+        lambda settings, cache_manager: InMemoryGeocoder(GEOCODE_LOOKUP),
+    )
+
+    # Transparent spy: forward to the REAL run_pipeline and record the CLI
+    # contract plus the returned terminal frames. No behavior is mocked.
+    real_run_pipeline = main_module.run_pipeline
+    captured: dict[str, object] = {}
+    returned: dict[str, pd.DataFrame] = {}
+
+    def spy_run_pipeline(run_settings: Settings, **kwargs: object) -> dict:
+        captured["final_vars"] = kwargs.get("final_vars")
+        captured["stage"] = kwargs.get("stage")
+        captured["dr"] = kwargs.get("dr")
+        results = real_run_pipeline(run_settings, **kwargs)  # type: ignore[arg-type]
+        returned.update(results)
+        return results
+
+    monkeypatch.setattr(main_module, "run_pipeline", spy_run_pipeline)
+    monkeypatch.setattr(sys, "argv", ["main.py", "--stage", "all"])
+
+    main_module.main()  # must exit without exception
+
+    # Stage passed through uncollapsed, with the REAL driver attached — the
+    # wiring whose absence narrowed materialization to the terminal frames.
+    assert captured["final_vars"] is None
+    assert captured["stage"] == "all"
+    assert isinstance(captured["dr"], hamilton_driver.Driver)
+
+    # The six terminal frames came back through the real driver.
+    assert set(returned) == set(TERMINAL_OUTPUTS)
+    assert all(isinstance(frame, pd.DataFrame) for frame in returned.values())
+
+    # The regression tripwire: all 12 published outputs materialized, not
+    # just the 6 terminal frames that stage-collapse would persist.
+    _assert_published_files(settings, data_root)

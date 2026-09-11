@@ -87,6 +87,33 @@ Credentials loaded from the local ignored `.env` (OneMap token obtained fresh; n
   them as archival history (active docs clean; archive READMEs already frame
   them as superseded). No edits needed.
 
+## Parallel-execution gate (isolated benchmark, 2026-09-11)
+
+Warm-cache, in-process benchmark via `run_pipeline()` on a builder mirroring
+`build_pipeline()` (same modules/validator/cache+disable set):
+
+| Variant | Wall clock (repeated trials) |
+| --- | --- |
+| v1 production (serial) | 87.95s / 23.82s / 34.86s |
+| v2 driver, serial | 55.33s / 29.44s / 25.56s |
+| v2 + MultiThreadingExecutor(4) | 40.95s |
+| v2 + MultiThreadingExecutor(8) | 34.62s / 39.19s |
+
+Run-to-run variance within a single variant is larger than any
+between-variant delta: materialization rewrites ~12 parquet outputs
+(incl. 1.2M×97 unified_dataset) each run, so the warm workload is I/O-bound
+and page-cache state dominates. An initial 2.4× "parallel speedup" was a
+run-order warm-up artifact. Parallel also requires
+`enable_dynamic_execution(allow_experimental_mode=True)` (Hamilton 1.89
+flags this experimental). Determinism held: all runs returned identical
+frame shapes and byte-identical published parquets (town_360 sha256
+`3acf640a…` stable across every serial and parallel run).
+
+**Decision: the ≥20% stable end-to-end improvement gate is NOT met — serial
+execution remains the default.** Revisit only after (a) Hamilton promotes
+the V2 driver out of experimental, and (b) materialization I/O is separated
+from compute in any future benchmark.
+
 ## Remaining caveats
 
 - ~~The `uv sync` packaging gap~~ — **resolved 2026-09-11:** the checkout lacked
