@@ -12,28 +12,6 @@ from egg_n_bacon_housing.utils.layer_writer import TrackedWriter
 pytestmark = pytest.mark.unit
 
 
-def test_get_duplicate_status():
-    # STRICT default policy
-    status, warn = data_quality.get_duplicate_status("unknown_dataset", 0)
-    assert not warn
-    assert "OK" in status
-
-    status, warn = data_quality.get_duplicate_status("unknown_dataset", 10)
-    assert warn
-    assert "duplicates" in status
-
-    # ALLOW_ANY policy
-    status, warn = data_quality.get_duplicate_status("L3_property", 50)
-    assert not warn
-    assert "expected" in status
-
-
-def test_infer_quality_stage():
-    assert data_quality.infer_quality_stage("L2_housing") == "L2"
-    assert data_quality.infer_quality_stage("raw_mrt_stations") == "L0"
-    assert data_quality.infer_quality_stage("something_else") == "unknown"
-
-
 def test_collector_init_and_recording(tmp_path):
     db_path = tmp_path / "quality_metrics.db"
     collector = data_quality.get_collector(db_path)
@@ -95,10 +73,10 @@ def test_welford_incremental_baseline(tmp_path):
     assert baseline is not None
     assert baseline.sample_count == 3
     assert baseline.mean_rows == pytest.approx(100.0)
-    # std deviation of sample: sqrt(((100-100)^2 + (110-100)^2 + (90-100)^2) / 2)
-    # wait, sample variance/std or population? Welford computes sample stats.
-    # Welford computes standard variance.
-    assert baseline.std_rows > 0
+    # Sample std of [100, 110, 90]: sqrt(((0)^2 + (10)^2 + (10)^2) / 2) = 10.
+    # The std_* columns must hold the standard deviation itself, not the
+    # variance (the historical trap: sqrt was applied at read time instead).
+    assert baseline.std_rows == pytest.approx(10.0)
 
 
 def test_anomaly_detection(tmp_path):
@@ -204,6 +182,22 @@ def test_anomaly_detection(tmp_path):
     assert any("Null %: 50.00%" in a for a in anomalies_null)
 
 
+def test_duplicate_logging_is_strict(tmp_path, caplog):
+    """Any duplicate warns — no per-dataset exceptions remain."""
+    df = pd.DataFrame({"a": [1, 1, 2]})
+    with caplog.at_level("INFO", logger="egg_n_bacon_housing.utils.data_quality"):
+        snapshot = data_quality.record_dataframe_quality(
+            df,
+            dataset_name="strict_duplicates",
+            db_path=tmp_path / "quality_metrics.db",
+        )
+
+    # No stage supplied — the snapshot defaults to "unknown".
+    assert snapshot.stage == "unknown"
+    assert snapshot.duplicate_count == 1
+    assert any("1 duplicates" in record.getMessage() for record in caplog.records)
+
+
 def test_tracked_writer_integration(tmp_path):
     # Configure settings with temp directory as data_dir
     settings = Settings(data_path=str(tmp_path))
@@ -226,3 +220,37 @@ def test_tracked_writer_integration(tmp_path):
     assert baseline is not None
     assert baseline.sample_count == 1
     assert baseline.mean_rows == 3
+
+
+def test_duplicate_scan_samples_above_row_limit(tmp_path, caplog):
+    """Above _DUPLICATE_SCAN_ROW_LIMIT the duplicate scan uses a deterministic
+    head sample (flagged on the snapshot); below it the count stays exact."""
+    limit = data_quality._DUPLICATE_SCAN_ROW_LIMIT
+    n = limit + 10
+    # Rows repeat every 1000; the head-scan sees (limit - 1000) duplicates.
+    df = pd.DataFrame({"a": pd.Series(range(n)) % 1000})
+
+    with caplog.at_level("INFO", logger="egg_n_bacon_housing.utils.data_quality"):
+        snapshot = data_quality.record_dataframe_quality(
+            df,
+            dataset_name="sampled_duplicates",
+            db_path=tmp_path / "quality_metrics.db",
+        )
+
+    assert snapshot.duplicate_count_sampled is True
+    assert snapshot.duplicate_count == limit - 1000
+    assert snapshot.output_rows == n
+    assert any("head-sampled" in r.getMessage() for r in caplog.records)
+
+
+def test_duplicate_scan_exact_below_row_limit(tmp_path):
+    small = pd.DataFrame({"a": [1, 1, 2]})
+
+    snapshot = data_quality.record_dataframe_quality(
+        small,
+        dataset_name="exact_duplicates",
+        db_path=tmp_path / "quality_metrics.db",
+    )
+
+    assert snapshot.duplicate_count_sampled is False
+    assert snapshot.duplicate_count == 1

@@ -9,37 +9,37 @@ git clone <repo-url>
 cd egg-n-bacon-housing
 uv sync
 cp .env.example .env
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run python scripts/00_sync_data.py
 ```
 
 ## Verify
 
 ```bash
 uv run pytest --no-cov
-dotenvx run -- uv run python main.py --help
+uv run python main.py --help
 ```
 
 ## Run the Pipeline
 
 ```bash
-dotenvx run -- uv run python main.py --stage all
+uv run python main.py --stage all
 ```
 
 Common stage runs:
 
 ```bash
-dotenvx run -- uv run python main.py --stage ingest
-dotenvx run -- uv run python main.py --stage clean
-dotenvx run -- uv run python main.py --stage features
-dotenvx run -- uv run python main.py --stage export
-dotenvx run -- uv run python main.py --stage metrics
+uv run python main.py --stage ingest
+uv run python main.py --stage clean
+uv run python main.py --stage features
+uv run python main.py --stage export
+uv run python main.py --stage metrics
 ```
 
 ## Run the App
 
 ```bash
 cd app
-bun install
+bun install --frozen-lockfile
 bun run dev
 ```
 

@@ -106,7 +106,6 @@ class TestSchemaRoundTrip:
             lon=lon,
             property_type=property_type,
             postal_code="123456",
-            search_confidence=0.9,
         )
 
         as_dict = original.model_dump()

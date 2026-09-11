@@ -1,8 +1,8 @@
 # Data Sources
 
-**Last Updated**: 2026-06-15 | **Status**: Active
+**Last Updated**: 2026-09-01 (post full-refresh) | **Status**: Active
 
-A complete inventory of every dataset, API, and manual file that powers the Egg-n-Bacon Housing platform.
+A complete inventory of every dataset, API, and manual file that powers the Egg-n-Bacon Housing platform. Numbers reflect the 2026-09-01 full pipeline refresh.
 
 ---
 
@@ -10,110 +10,112 @@ A complete inventory of every dataset, API, and manual file that powers the Egg-
 
 The core of the platform — historical property transactions across HDB and private residential markets.
 
-| Dataset                              | Source                            | Coverage            | Records  | Automation                            |
-| ------------------------------------ | --------------------------------- | ------------------- | -------- | ------------------------------------- |
-| HDB Resale Transactions              | data.gov.sg API + historical CSVs | Jan 1990 – Jun 2026 | ~970,000 | API (2017+) + manual CSVs (1990–2016) |
-| HDB Rental Median                    | data.gov.sg API                   | Jan 2021 – May 2026 | 200,000+ | Fully automated                       |
-| URA Private Residential Transactions | URA website (manual download)     | Quarterly batches   | ~40,000  | Manual — CAPTCHA-gated                |
-| URA Rental Index                     | data.gov.sg API                   | 2004-Q1 – 2026-Q1   | 515      | Fully automated                       |
+| Dataset                              | Source                                   | Coverage            | Records    | Automation                                    |
+| ------------------------------------ | ---------------------------------------- | ------------------- | ---------- | --------------------------------------------- |
+| HDB Resale Transactions              | data.gov.sg API + historical CSVs        | Jan 1990 – Aug 2026 | 985,670    | API (2017+, automated) + manual CSVs (1990–2016) |
+| URA Private Residential Transactions | **Live URA Data Service API** + R2 CSV history | through Aug 2026 | ~225K merged | Automated — API (rolling 5y) merged with pre-window CSVs |
+| HDB Rental Median                    | data.gov.sg API                          | rolling             | automated  | Fully automated                               |
+| URA Rental Index                     | data.gov.sg API                          | through 2026-Q1     | 515        | Fully automated                               |
 
-**HDB Resale**: The data.gov.sg API covers January 2017 onwards. Pre-2017 records (1990–2016) are loaded from five historical CSV files stored in Cloudflare R2 and merged at ingestion time, producing a continuous 36-year transaction history.
+**HDB Resale**: The data.gov.sg API covers January 2017 onwards (239,467 records fetched per refresh). Pre-2017 records (1990–2016) are loaded from historical CSV files stored in Cloudflare R2 and merged at ingestion, producing a continuous 36-year transaction history.
 
-**URA Transactions**: URA requires CAPTCHA verification for bulk downloads, so these CSVs are fetched manually from the [URA bulk download portal](https://www.ura.gov.sg/property-market-information/transaction-bulk-download) on a quarterly cadence.
+**URA Private Transactions (current state)**: Row-level private residential transactions come from manual CSV exports of the URA bulk-download portal, synced via R2 (`data/manual/csv/ura/ResidentialTransaction*.csv` and `ECResidentialTransaction*.csv`). Both private-residential and Executive Condominium files are ingested. The stable `property_type="condo"` asset class is retained for downstream compatibility, while URA's actual type is preserved in `property_subtype`.
+
+### URA Data Service API — WIRED (live since 2026-09-02)
+
+URA operates an official REST API that returns **row-level** private residential transactions — the same data as the manual CSVs, without CAPTCHA:
+
+| Item        | Detail                                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------ |
+| Token       | `GET https://eservice.ura.gov.sg/uraDataService/insertNewToken/v1` with `AccessKey` header (daily token)      |
+| Transactions | `invokeUraDS?service=PMI_Resi_Transaction` — row-level sales incl. sale type; **rolling 5-year window**; `batch=1..4` (postal-district split) |
+| Rental contracts | `service=PMI_Resi_Rental` with `refPeriod` (qqyy)                                                       |
+| Registration | Free at https://eservice.ura.gov.sg/maps/api/reg.html — AccessKey sent by email                              |
+| Verified    | Token endpoint live as of 2026-09-01 (rejects invalid keys with `{"Status":"Error","Message":"Invalid Access Key"}`); full adapter + bronze node live-verified 2026-09-02 (133,942 API rows, window 2021-08 → 2026-08) |
+
+Live notes: the Layer7 bot wall requires browser-like ``User-Agent``/``Accept``/``Referer`` on a session (else an HTML JS challenge is served); the token lives under ``Result``; ``contractDate`` is MMYY; ``area`` is sqft for Strata and sqm for Land; API ``propertyType`` is preserved as ``property_subtype``. Adapter: ``adapters/ura.py`` (token cached 8h, one refresh-retry on auth failure); node: ``raw_condo_transactions`` merges API rows plus Residential and EC CSV history, deduped on the natural key (CSV rows win in the overlap). Quarterly aggregates on data.gov.sg (`d_7c69c943d5f0d89d6a9a773d2b51f337`, `d_1a7823f3d31e7db4b426833833762bab`) are **not** a substitute — they are pre-aggregated unit counts, not row-level records.
 
 ---
 
 ## Amenity & Spatial Data
 
-Proximity to amenities is computed for every transaction record using haversine distance via BallTree.
+Proximity to amenities is computed for every transaction using haversine distance via BallTree/cKDTree.
 
-### Core Amenities (GeoJSON)
+### Core Amenities
 
-| Amenity                    | Source File                          | Locations | Median Distance | Automation                                 |
-| -------------------------- | ------------------------------------ | --------- | --------------- | ------------------------------------------ |
-| MRT Stations               | MRTStations.geojson                  | 180+      | 513 m           | Manual download                            |
-| Hawker Centres             | HawkerCentresGEOJSON.geojson         | 129       | 596 m           | Manual download                            |
-| Supermarkets               | SupermarketsGEOJSON.geojson          | 526       | 290 m           | Manual download                            |
-| Parks & Nature Reserves    | NParksParksandNatureReserves.geojson | 450       | 622 m           | Manual download                            |
-| Childcare Centres          | ChildCareServices.geojson            | 1,925     | 126 m           | Manual download                            |
-| Preschools / Kindergartens | PreSchoolsLocation.geojson           | 2,290     | 125 m           | Manual download                            |
-| Shopping Malls             | Wikipedia + OneMap geocoding         | 112       | —               | Semi-automated (notebook scrape → geocode) |
-| Bus Stops                  | BusStops.geojson                     | —         | —               | Manual download (LTA)                      |
-| CHAS Clinics               | CHASClinics.geojson                  | —         | —               | Manual download                            |
-| SportSG Facilities         | SportSGFacilities.geojson            | —         | —               | Manual download                            |
-| Community Clubs            | CommunityClubs.geojson               | —         | —               | Manual download                            |
+| Amenity                    | Source (dataset ID)                                              | Locations | Automation                        |
+| -------------------------- | ---------------------------------------------------------------- | --------- | --------------------------------- |
+| MRT/LRT Stations           | LTA "MRT Station Exit (GEOJSON)" `d_b39d3a0871985372d7e1637193335da5` + "Train Station Chinese Names" `d_d312a5b127e1ae74299b8ae664cedd4e` | 190 stations | **Live fetch** per bronze miss; station→line mapping auto-refreshed (`mrt_stations.json`, 181 entries) |
+| Shopping Malls             | URA MP25 layer `d_65a0bf22c15ef49e9a21b8bcf8c04c87` (CLASSIFCTN = MALL) | 294 sites | **Live fetch** per bronze miss    |
+| Bus Stops                  | LTA `d_3f172c6feb3f4f92a2f47d93eed2908a`                          | 5,205     | R2-seeded (auto-uploaded)         |
+| CHAS Clinics               | MOH `d_548c33ea2d99e29ec63a7cc9edcccedc`                          | 1,193     | R2-seeded; names parsed from KML Description HTML |
+| SportSG Facilities         | SportSG `d_9b87bab59d036a60fad2a91530e10773`                      | 45        | R2-seeded                         |
+| Community Clubs            | PA `d_9de02d3fb33d96da1855f4fbef549a0f`                           | 128       | R2-seeded                         |
+| Hawker Centres             | `HawkerCentresGEOJSON.geojson` (manual bundle)                     | 129       | Manual bundle                     |
+| Supermarkets               | `SupermarketsGEOJSON.geojson` (manual bundle)                      | 526       | Manual bundle                     |
+| Parks & Nature Reserves    | `NParksParksandNatureReserves.geojson` (manual bundle)             | 450       | Manual bundle                     |
+| Childcare Centres          | `ChildCareServices.geojson` (manual bundle)                        | 1,925     | Manual bundle                     |
+| Preschools / Kindergartens | `PreSchoolsLocation.geojson` (manual bundle)                       | 2,290     | Manual bundle                     |
 
-All amenity GeoJSON files originate from data.gov.sg and are stored in Cloudflare R2. Shopping mall names are scraped from Wikipedia and then geocoded via OneMap to obtain coordinates.
+Notes:
 
-### Green Mark Buildings (CSV + geocoding)
+- MP25 mall polygons are centroid-ed to points; the layer carries **no mall names** (`nearest_mall` stays empty — distances are correct). The legacy Wikipedia-scrape mall list (`notebooks/L0_wiki.ipynb`) is a deprecated fallback.
+- LTA's station-codes dataset has no Thomson-East Coast Line rows yet; a static supplement in `components/ingestion/geojson.py` (`_STATION_LINE_SUPPLEMENT`) fills TEL + Punggol Coast until LTA catches up. Trim it when the live data covers them.
+- The 2019 static `MRTStations.geojson` seed remains only as an offline fallback.
 
-| Amenity                  | Source                                                 | Records                   | Geocoding                    | Automation                           |
-| ------------------------ | ------------------------------------------------------ | ------------------------- | ---------------------------- | ------------------------------------ |
-| BCA Green Mark Buildings | data.gov.sg API (`d_c4bd082b48fa7611713f39e23d250c27`) | 3,941 (with postal codes) | OneMap postal code → lat/lon | API fetch + features-layer geocoding |
+### Green Mark Buildings
 
-Green Mark buildings include commercial, residential, institutional, and industrial properties certified under BCA's Green Mark scheme (Platinum, Gold, GoldPlus, Certified). Postal codes are geocoded via OneMap in the features layer on first pipeline run, then cached.
+| Dataset                  | Source                                                 | Records | Geocoding                    |
+| ------------------------ | ------------------------------------------------------ | ------- | ---------------------------- |
+| BCA Green Mark Buildings | data.gov.sg API (`d_c4bd082b48fa7611713f39e23d250c27`) | 3,941   | OneMap postal code → lat/lon |
 
 ---
 
 ## Macro Economic Indicators
 
-Macroeconomic context is merged into the unified dataset at the feature engineering stage.
+All fetched live from data.gov.sg on each refresh (2026-09-01 verified record counts in parentheses).
 
-### Core Indicators
+| Indicator                       | Frequency | Records (2026-09-01) |
+| ------------------------------- | --------- | -------------------- |
+| Consumer Price Index (CPI)      | Monthly   | 787                  |
+| GDP (Chained 2015 Dollars)      | Quarterly | 201                  |
+| Unemployment Rate               | Quarterly | 138                  |
+| SORA 3M (Compounded, bank rates)| Monthly   | 462                  |
+| HDB Resale Price Index          | Quarterly | 146                  |
+| URA Property Price Index        | Quarterly | automated            |
+| Private Housing Supply Pipeline | Quarterly | automated            |
+| SORA (pre-built parquet, R2)    | Monthly   | 60 (static seed)     |
 
-| Indicator                       | Source            | Frequency | Coverage          | Records |
-| ------------------------------- | ----------------- | --------- | ----------------- | ------- |
-| Consumer Price Index (CPI)      | data.gov.sg API   | Monthly   | 1961 – Apr 2026   | 784     |
-| GDP (Chained 2015 Dollars)      | data.gov.sg API   | Quarterly | 1976 – 2026-Q1    | 201     |
-| Unemployment Rate               | data.gov.sg API   | Quarterly | 1992 – 2026-Q1    | 137     |
-| SORA (Swap Offer Rate)          | Pre-built parquet | Monthly   | 2021 – 2025       | 60      |
-| SORA 3M (Compounded)            | data.gov.sg API   | Monthly   | 2007 – Apr 2026   | ~200    |
-| HDB Resale Price Index          | data.gov.sg API   | Quarterly | 1990-Q1 – 2026-Q1 | 145     |
-| URA Property Price Index        | data.gov.sg API   | Quarterly | 1975-Q1 – 2026-Q1 | 615     |
-| Private Housing Supply Pipeline | data.gov.sg API   | Quarterly | 2014-Q1 – 2026-Q1 | 152     |
-
-CPI, GDP, unemployment, SORA 3M, and bank rates arrive as wide pivot tables from data.gov.sg and are melted into long-format time series at ingestion. SORA rates are a pre-built dataset. HDB RPI and URA PPI are quarterly time series with quarter + index columns.
-
-**SORA 3M** (3-month compounded SORA) is the primary mortgage benchmark rate in Singapore, directly determining floating-rate home loan pricing.
-
-**HDB RPI** and **URA PPI** provide official government price benchmarks for model validation — our model's price predictions can be compared against these indices.
-
-**Supply Pipeline** tracks private residential units by development status (Under Construction, Planned — Written Permission, Planned — Provisional Permission) — useful as a forward supply pressure indicator.
+**SORA 3M** is the primary mortgage benchmark; **HDB RPI / URA PPI** are official price benchmarks used for model validation; **Supply Pipeline** is a forward supply-pressure indicator.
 
 ---
 
 ## Block-Level Property Metadata
 
-| Dataset                  | Source                                                 | Records       | Key Fields                                                                                |
-| ------------------------ | ------------------------------------------------------ | ------------- | ----------------------------------------------------------------------------------------- |
-| HDB Property Information | data.gov.sg API (`d_17f5382f26140b1fdae0ba2ef6239d2f`) | 13,289 blocks | max_floor_lvl, year_completed, total_dwelling_units, flat type breakdown, mixed-use flags |
-
-Block-level metadata is merged onto transactions by matching block number + street name, adding building age, floor count, dwelling density, and mixed-use indicators.
+| Dataset                  | Source                                                 | Records       | Key Fields                                                                 |
+| ------------------------ | ------------------------------------------------------ | ------------- | -------------------------------------------------------------------------- |
+| HDB Property Information | data.gov.sg API (`d_17f5382f26140b1fdae0ba2ef6239d2f`) | ~13k blocks   | max_floor_lvl, year_completed, total_dwelling_units, flat types, mixed-use |
+| Dwelling Units by Town   | data.gov.sg API (HDB)                                  | 4,940         | financial_year through 2021 (HDB census-type snapshot)                     |
 
 ---
 
 ## School Data
 
-School proximity and quality tier features are computed for every transaction.
-
-| Dataset                | Source                | Records      | Notes                                                |
-| ---------------------- | --------------------- | ------------ | ---------------------------------------------------- |
-| School Directory       | data.gov.sg API       | 337 schools  | Current snapshot with names, addresses, postal codes |
-| School Geocoding       | OneMap API            | 261 geocoded | Postal code → lat/lon via sequential OneMap lookup   |
-| Primary School Tiers   | Manual classification | Tier data    | JSON file in bronze/external                         |
-| Secondary School Tiers | Manual classification | Tier data    | JSON file in bronze/external                         |
-
-The school directory from data.gov.sg does not include coordinates. Schools are geocoded via OneMap on first pipeline run and cached — subsequent runs skip re-geocoding.
+| Dataset                | Source          | Records      | Notes                                             |
+| ---------------------- | --------------- | ------------ | ------------------------------------------------- |
+| School Directory       | data.gov.sg API | 337 schools  | Names, addresses, postal codes (no coordinates)   |
+| School Geocoding       | OneMap API      | cached       | OneMap on first run, cached thereafter            |
+| Primary/Secondary Tiers| Manual + CSV    | tier data    | In-code fallbacks + R2 CSVs                       |
 
 ---
 
 ## Demographic & Income Data
 
-| Dataset                              | Source                                                 | Records            | Key Fields                                                    |
-| ------------------------------------ | ------------------------------------------------------ | ------------------ | ------------------------------------------------------------- |
-| Income Distribution by Planning Area | data.gov.sg API (`d_bb771c5189ce18007621533dd36142bb`) | ~30 planning areas | Income bracket distribution (15 brackets, Below $1K to $12K+) |
+| Dataset                              | Source                                                 | Records            | Key Fields                                          |
+| ------------------------------------ | ------------------------------------------------------ | ------------------ | --------------------------------------------------- |
+| Income Distribution by Planning Area | data.gov.sg API (`d_bb771c5189ce18007621533dd36142bb`) | ~30 planning areas | 15 income brackets → weighted median income per area |
 
-Source: General Household Survey 2015 (SingStat). The pipeline computes a weighted median monthly income per planning area from 15 income brackets. This replaces a previously hardcoded $85,000/year affordability assumption with data-driven, area-specific income levels.
+Source: General Household Survey 2015 (SingStat) — static snapshot by design.
 
 ---
 
@@ -121,103 +123,71 @@ Source: General Household Survey 2015 (SingStat). The pipeline computes a weight
 
 | Dataset                    | Source      | Purpose                                                            |
 | -------------------------- | ----------- | ------------------------------------------------------------------ |
-| Planning Area Polygons     | OneMap API  | Point-in-polygon assignment of each transaction to a planning area |
-| MRT Station → Line Mapping | Manual JSON | Maps each station to its MRT line(s) (NSL, EWL, CCL, etc.)         |
+| Planning Area Polygons     | OneMap API (R2 bundle) | Point-in-polygon planning-area assignment               |
+| MRT Station → Line Mapping | Live LTA + static supplement | `bronze/external/mrt_stations.json` auto-refreshed by the MRT node; consumed by `utils/mrt_line_mapping.py` |
 
 ---
 
 ## Geocoding
 
-All address-to-coordinate conversion uses the **OneMap API** — Singapore's official geospatial service.
+All address-to-coordinate conversion uses the **OneMap API** (`adapters/onemap.py` + `utils/geocoding.py`).
 
-| What                 | Method                               | Records Geocoded           |
-| -------------------- | ------------------------------------ | -------------------------- |
-| HDB Blocks           | OneMap search by block + street name | ~12,000 unique blocks      |
-| Schools              | OneMap search by postal code         | 261 of 337 schools         |
-| Shopping Malls       | OneMap search by mall name           | 112 malls                  |
-| Green Mark Buildings | OneMap search by postal code         | ~3,900 unique postal codes |
-
-OneMap credentials (email + password) are managed via encrypted environment variables. API rate limiting (429) is handled with sequential requests and exponential backoff.
+- ~13.3k unique addresses/postals geocoded per full refresh; 98.9% coverage (HDB 98.8%, condo 100%).
+- Hardened 2026-09-01: 429/`Retry-After` honored, transient-only retries (3×), typed auth errors with **mid-run token refresh**, thread-safe global rate limiting (`api_delay_seconds`) across sequential and parallel paths; cache hits are never paced.
+- Credentials via `ONEMAP_EMAIL` / `ONEMAP_EMAIL_PASSWORD` (or pre-issued `ONEMAP_TOKEN`); failures are never cached.
 
 ---
 
-## Unstructured Data
+## Unstructured / Potential Sources (not wired)
 
-### Scraped Property Articles (not wired to pipeline)
+| Source                               | Potential Use                                  | Status     |
+| ------------------------------------ | ---------------------------------------------- | ---------- |
+| PropertyGuru / 99.co listings        | Asking prices, days-on-market                  | Not integrated |
+| Reddit / news feeds / Google reviews | Sentiment, POI quality                         | Not integrated |
+| URA GLS tender results               | Developer land-bid sentiment                   | Not integrated |
+| SportSG DUS `d_7ff555dfb7104533494b23a60188a044` | Dual-use school sport facilities    | Not integrated (deliberate) |
 
-| Location              | Content                                   | Status                                               |
-| --------------------- | ----------------------------------------- | ---------------------------------------------------- |
-| `data/raw/documents/` | 26 markdown articles + `master_index.csv` | **Orphaned** — not consumed by pipeline or analytics |
-
-These articles were likely scraped from property portals (99.co, StackedHomes, PropertyReviewSG, etc.) and cover condo reviews and property-buying guides. These files represent an unrealised NLP/sentiment analysis capability.
-
-### Wikipedia Shopping Mall Scrape (active)
-
-| Location                  | Content                                            | Status                                       |
-| ------------------------- | -------------------------------------------------- | -------------------------------------------- |
-| `notebooks/L0_wiki.ipynb` | Scrapes Wikipedia list of Singapore shopping malls | **Active** — feeds `raw_shopping_malls` node |
-
-The notebook scrapes mall names via BeautifulSoup, then the pipeline geocodes them via OneMap. Output is immediately structured into a parquet — this is the only active web-scraping workflow.
-
-### Potential Unstructured Sources (not yet integrated)
-
-| Source                               | Potential Use                                  | Access Method         |
-| ------------------------------------ | ---------------------------------------------- | --------------------- |
-| PropertyGuru / 99.co listings        | Asking prices, days-on-market, listing volume  | Web scraping or API   |
-| Reddit r/singaporefi, r/askSingapore | Buyer sentiment, area preferences              | Reddit API            |
-| Google Maps reviews                  | POI quality scores, amenity ratings            | Google Places API     |
-| ST/CNA property news articles        | Market sentiment, policy event detection       | RSS feeds or news API |
-| HDB BTO launch announcements         | Future supply at specific locations            | HDB website scraping  |
-| MAS cooling measures timeline        | Policy event features for price shock analysis | MAS website           |
-| URA GLS tender results               | Developer land bid sentiment                   | URA website scraping  |
+The Wikipedia mall-scrape notebook is deprecated (superseded by the live URA MP25 layer).
 
 ---
 
 ## Data Storage
 
-| Layer               | Location                                 | Content                                                    |
-| ------------------- | ---------------------------------------- | ---------------------------------------------------------- |
-| Manual source files | Cloudflare R2 (`egg-bacon-housing-data`) | ~100 MB of CSVs and GeoJSONs (gitignored)                  |
-| Bronze (raw)        | `data/pipeline/01_bronze/`               | Immutable raw data from APIs and manual files              |
-| Silver (cleaned)    | `data/pipeline/02_silver/`               | Validated, type-checked, deduplicated                      |
-| Gold (features)     | `data/pipeline/03_gold/`                 | Feature-enriched with amenity proximity + macro indicators |
-| Platinum (outputs)  | `data/pipeline/04_platinum/`             | Unified dataset, metrics, dashboard exports                |
+| Layer               | Location                                 | Content                                       |
+| ------------------- | ---------------------------------------- | --------------------------------------------- |
+| Manual source files | Cloudflare R2 (`egg-bacon-housing-data`) | ~124 MB CSVs/GeoJSONs (gitignored)            |
+| Bronze (raw)        | `data/pipeline/01_bronze/`               | Immutable raw data; external seeds auto-copied |
+| Silver (cleaned)    | `data/pipeline/02_silver/`               | Validated, type-checked, deduplicated         |
+| Gold (features)     | `data/pipeline/03_gold/`                 | Proximity + macro features                    |
+| Platinum (outputs)  | `data/pipeline/04_platinum/`             | Unified dataset (1,095,759 × 139), metrics    |
 
-Manual source files are synced from R2 via:
-
-```bash
-dotenvx run -- uv run python scripts/00_sync_data.py
-```
-
-See the [R2 sync guide](guides/r2-sync-guide.md) for details.
+Sync via `scripts/00_sync_data.py` (see the [R2 sync guide](guides/r2-sync-guide.md)). `main.py --refresh --stage all` clears bronze + DAG + API caches and re-fetches everything (cold ≈ 2¼ h, dominated by OneMap geocoding; warm ≈ minutes).
 
 ---
 
 ## Refresh Cadence
 
-| Data Source                                     | Frequency | Automation                            |
-| ----------------------------------------------- | --------- | ------------------------------------- |
-| HDB Resale (API)                                | Monthly   | Automated — data.gov.sg API           |
-| HDB Resale (historical CSVs)                    | Static    | One-time manual load                  |
-| HDB Rental                                      | Monthly   | Automated — data.gov.sg API           |
-| URA Rental Index                                | Quarterly | Automated — data.gov.sg API           |
-| URA Transactions                                | Quarterly | **Manual** — URA website CAPTCHA      |
-| CPI / SORA 3M                                   | Monthly   | Automated — data.gov.sg API           |
-| GDP / Unemployment / HDB RPI / URA PPI / Supply | Quarterly | Automated — data.gov.sg API           |
-| SORA                                            | Static    | Pre-built parquet                     |
-| HDB Property Info                               | On demand | Automated — data.gov.sg API           |
-| Income by Planning Area                         | Static    | GHS 2015 snapshot                     |
-| Green Mark Buildings                            | On demand | Automated — data.gov.sg API           |
-| Amenity GeoJSONs                                | On demand | Manual — re-download from data.gov.sg |
-| School Directory                                | On demand | Automated — data.gov.sg API           |
-| Planning Area Polygons                          | Static    | One-time fetch from OneMap            |
+| Data Source                      | Frequency | Automation                              |
+| -------------------------------- | --------- | --------------------------------------- |
+| HDB Resale (2017+)               | Monthly   | Automated — data.gov.sg API             |
+| HDB Resale (1990–2016 CSVs)      | Static    | One-time manual load (R2)               |
+| URA Private Transactions         | On refresh| **Automated — URA Data Service API** + CSV history merge |
+| HDB Rental / Rental Index        | M / Q     | Automated                               |
+| Macro indicators (CPI, GDP, unemployment, SORA 3M, RPI, PPI, supply) | M / Q | Automated — data.gov.sg API |
+| MRT stations + line mapping      | On refresh| Automated — LTA live sources            |
+| Shopping malls                   | On refresh| Automated — URA MP25 via data.gov.sg    |
+| Green Mark / Property Info       | On demand | Automated — data.gov.sg API             |
+| Bus stops / CHAS / SportSG / CC  | On demand | R2-seeded (upload once, auto-seed)      |
+| Other amenity GeoJSONs           | On demand | Manual bundle (slow-changing)           |
+| Income by planning area          | Static    | GHS 2015 snapshot                       |
+| Planning area polygons           | Static    | One-time OneMap fetch (R2)              |
 
 ---
 
 ## Further Reading
 
-- [data.gov.sg Resource Migration Guide](guides/datagovsg-resource-migration.md) — Resource IDs, schema changes, and API details
-- [Singapore Open Datasets Research](research/singapore-open-datasets.md) — Full catalog of 150+ datasets scanned from data.gov.sg
-- [External Data Setup Guide](guides/external-data-setup.md) — Manual download instructions for URA and amenity files
+- [Source onboarding records](guides/data-ingestion-development.md) — per-source contracts, cache & failure policy
+- [data.gov.sg Resource Migration Guide](guides/datagovsg-resource-migration.md) — Resource IDs, schema changes
+- [Singapore Open Datasets Research](research/singapore-open-datasets.md) — Catalog of 150+ scanned datasets
 - [Architecture Overview](architecture.md) — Pipeline structure and medallion layers
-- [Troubleshooting](TROUBLESHOOTING.md) — Common data source issues and fixes
+- [Pipeline refresh handoff](plans/2026-09-01-pipeline-refresh-handoff.md) — 2026-09-01 refresh run log

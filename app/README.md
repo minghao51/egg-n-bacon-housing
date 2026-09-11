@@ -12,7 +12,7 @@ Astro app for the dashboard and analytics browsing experience.
 ## Install
 
 ```bash
-bun install
+bun install --frozen-lockfile
 ```
 
 Use Bun as the only supported package manager for this app directory.

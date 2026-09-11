@@ -60,19 +60,15 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Create test environment file
-        run: |
-          cat > .env << EOF
-          ONEMAP_EMAIL=test@example.com
-          ONEMAP_EMAIL_PASSWORD=test-password
-          LOG_LEVEL=DEBUG
-          EOF
-
       - name: Create test data directories
         run: |
           mkdir -p data/pipeline/{01_bronze,02_silver,03_gold,04_platinum} data/{cache,manual,analysis}
 
       - name: Run tests with coverage
+        env:
+          ONEMAP_EMAIL: test@example.com
+          ONEMAP_EMAIL_PASSWORD: test-password
+          LOG_LEVEL: DEBUG
         run: uv run pytest tests/ -v --tb=short --cov=egg_n_bacon_housing --cov-report=xml --cov-report=term-missing:skip-covered
 
       - name: Enforce core module coverage floor
@@ -107,11 +103,11 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: '1.2.23'
 
       - name: Install dependencies
         working-directory: ./app
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Install Playwright browsers
         working-directory: ./app

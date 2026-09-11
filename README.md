@@ -33,22 +33,22 @@ git clone <repo-url>
 cd egg-n-bacon-housing
 uv sync
 
-# Configure API keys (encrypted via dotenvx)
+# Configure API keys in the local, git-ignored .env file
 cp .env.example .env
 # Edit .env with your OneMap, Google AI, and R2 keys
 
 # Fetch manual data files from Cloudflare R2 (~100MB)
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run python scripts/00_sync_data.py
 
 # Run full pipeline
-dotenvx run -- uv run python main.py --stage all
+uv run python main.py --stage all
 
 # Or run stage-by-stage
-dotenvx run -- uv run python main.py --stage ingest
-dotenvx run -- uv run python main.py --stage clean
-dotenvx run -- uv run python main.py --stage features
-dotenvx run -- uv run python main.py --stage export
-dotenvx run -- uv run python main.py --stage metrics
+uv run python main.py --stage ingest
+uv run python main.py --stage clean
+uv run python main.py --stage features
+uv run python main.py --stage export
+uv run python main.py --stage metrics
 ```
 
 > **Note on manual data**: ~100MB of CSV/GeoJSON source files (URA transactions, HDB resale, school directory, etc.) are stored in Cloudflare R2 rather than git. Run the sync script after cloning to populate `data/manual/`. See [R2 Sync Guide](docs/guides/r2-sync-guide.md) for details.
@@ -63,7 +63,7 @@ dotenvx run -- uv run python main.py --stage metrics
 
 ### Environment Variables
 
-Create `.env` in project root (encrypted with dotenvx):
+Create `.env` in the project root. It is git-ignored and loaded automatically:
 
 ```bash
 # Required for geocoding
@@ -79,7 +79,8 @@ R2_BUCKET=egg-bacon-housing-data
 R2_ENDPOINT=https://<account_id>.r2.cloudflarestorage.com
 ```
 
-Run commands with `dotenvx run --` to decrypt and inject the env vars.
+Run commands directly; Pydantic Settings loads `.env`, while exported
+environment variables take precedence.
 
 ## Usage
 
@@ -87,17 +88,17 @@ Run commands with `dotenvx run --` to decrypt and inject the env vars.
 
 ```bash
 # Run all stages
-dotenvx run -- uv run python main.py --stage all
+uv run python main.py --stage all
 
 # Run specific stage
-dotenvx run -- uv run python main.py --stage ingest    # Bronze: raw data collection
-dotenvx run -- uv run python main.py --stage clean     # Silver: validation & cleaning
-dotenvx run -- uv run python main.py --stage features  # Gold: feature engineering
-dotenvx run -- uv run python main.py --stage export    # Platinum: export & webapp data
-dotenvx run -- uv run python main.py --stage metrics   # Planning area metrics
+uv run python main.py --stage ingest    # Bronze: raw data collection
+uv run python main.py --stage clean     # Silver: validation & cleaning
+uv run python main.py --stage features  # Gold: feature engineering
+uv run python main.py --stage export    # Platinum: export & webapp data
+uv run python main.py --stage metrics   # Planning area metrics
 
 # Generate DAG visualization
-dotenvx run -- uv run python main.py --stage export --visualize
+uv run python main.py --stage export --visualize
 ```
 
 ### Python API
@@ -118,7 +119,7 @@ dr.visualize_execution(final_vars=["unified_dataset"], output_file_path="dag.png
 
 ```bash
 cd app
-bun install
+bun install --frozen-lockfile
 bun run dev
 # Visit http://localhost:4321
 ```

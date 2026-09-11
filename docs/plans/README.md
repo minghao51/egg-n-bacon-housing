@@ -25,6 +25,8 @@ Include a header block near the top with:
 ## Recent Meta Plans
 
 - `docs/plans/2026-02-24-scripts-docs-simplification-plan.md` - scripts/docs organization conventions and migration steps
+- `docs/plans/2026-09-10-hamilton-dag-next-thread-handoff.md` - current resume point for the completed Hamilton/DAG improvement sequence
+- `docs/plans/2026-09-10-code-audit-remediation-roadmap.md` - remaining audit follow-ups and final end-to-end validation backlog
 
 ## Audit Reports
 

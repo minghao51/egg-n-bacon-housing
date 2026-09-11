@@ -28,7 +28,7 @@ Populate the values used by the core workflow:
 ## 3. Sync manual source data
 
 ```bash
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run python scripts/00_sync_data.py
 ```
 
 ## 4. Verify the local setup

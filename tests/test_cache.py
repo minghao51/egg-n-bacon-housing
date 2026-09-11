@@ -1,142 +1,97 @@
-"""Tests for utils/cache.py."""
+"""Tests for the explicit-injection file cache."""
 
-import importlib
+import os
+import time
 
 import pandas as pd
 import pytest
 
+from egg_n_bacon_housing.utils.cache import CacheManager, cached_call
+
 pytestmark = pytest.mark.unit
 
 
-def _get_cache_module():
-    return importlib.import_module("egg_n_bacon_housing.utils.cache")
+def test_explicit_managers_do_not_share_roots(tmp_path):
+    first = CacheManager(tmp_path / "first")
+    second = CacheManager(tmp_path / "second")
+    assert cached_call("same", lambda: "first", cache_manager=first) == "first"
+    assert cached_call("same", lambda: "second", cache_manager=second) == "second"
 
 
-class TestCacheSentinel:
-    def test_cached_call_stores_falsy_empty_dataframe(self, tmp_path):
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True)
-
-        call_count = 0
-
-        def returns_empty():
-            nonlocal call_count
-            call_count += 1
-            return pd.DataFrame()
-
-        result1 = cache.cached_call("test_empty_df", returns_empty, duration_hours=1)
-        assert result1.empty
-        assert call_count == 1
-
-        result2 = cache.cached_call("test_empty_df", returns_empty, duration_hours=1)
-        assert result2.empty
-        assert call_count == 1
-
-    def test_cached_call_stores_none(self, tmp_path):
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True)
-
-        call_count = 0
-
-        def returns_none():
-            nonlocal call_count
-            call_count += 1
-            return None
-
-        result1 = cache.cached_call("test_none", returns_none, duration_hours=1)
-        assert result1 is None
-        assert call_count == 1
-
-        result2 = cache.cached_call("test_none", returns_none, duration_hours=1)
-        assert result2 is None
-        assert call_count == 1
-
-    def test_cached_call_stores_zero(self, tmp_path):
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True)
-
-        call_count = 0
-
-        def returns_zero():
-            nonlocal call_count
-            call_count += 1
-            return 0
-
-        result1 = cache.cached_call("test_zero", returns_zero, duration_hours=1)
-        assert result1 == 0
-        assert call_count == 1
-
-        result2 = cache.cached_call("test_zero", returns_zero, duration_hours=1)
-        assert result2 == 0
-        assert call_count == 1
+def test_manager_configuration_is_immutable(tmp_path):
+    manager = CacheManager(tmp_path)
+    with pytest.raises(AttributeError, match="configuration is immutable"):
+        manager.cache_dir = tmp_path / "elsewhere"
 
 
-class TestCacheDuration:
-    def test_duration_hours_zero_means_no_cache(self, tmp_path):
-        """duration_hours=0 should not fall back to default — it means no caching."""
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True)
+@pytest.mark.parametrize("value", [pd.DataFrame(), None, 0])
+def test_cached_call_stores_falsy_values(tmp_path, value):
+    manager = CacheManager(tmp_path)
+    calls = 0
 
-        call_count = 0
+    def produce():
+        nonlocal calls
+        calls += 1
+        return value
 
-        def returns_value():
-            nonlocal call_count
-            call_count += 1
-            return "value"
-
-        cache.cached_call("test_zero_dur", returns_value, duration_hours=0)
-        cache.cached_call("test_zero_dur", returns_value, duration_hours=0)
-
-        assert call_count == 2
-
-    def test_duration_hours_none_falls_back_to_default(self, tmp_path):
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True, cache_duration_hours=24)
-
-        call_count = 0
-
-        def returns_value():
-            nonlocal call_count
-            call_count += 1
-            return "value"
-
-        result = cache.cached_call("test_none_dur", returns_value, duration_hours=None)
-        assert result == "value"
-        assert call_count == 1
-
-        result2 = cache.cached_call("test_none_dur", returns_value, duration_hours=None)
-        assert result2 == "value"
-        assert call_count == 1
+    first = cached_call("value", produce, cache_manager=manager)
+    second = cached_call("value", produce, cache_manager=manager)
+    if isinstance(value, pd.DataFrame):
+        assert first.empty and second.empty
+    else:
+        assert first == second == value
+    assert calls == 1
 
 
-class TestCacheSerialization:
-    def test_dataframe_cached_as_parquet(self, tmp_path):
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True)
+def test_duration_zero_always_misses(tmp_path):
+    manager = CacheManager(tmp_path)
+    calls = 0
 
-        df = pd.DataFrame([{"x": 1, "y": "a"}])
-        cache.cached_call("df_cache", lambda: df, duration_hours=1)
+    def produce():
+        nonlocal calls
+        calls += 1
+        return "value"
 
-        key = cache.get_cache_manager()._get_cache_key("df_cache")
-        assert (tmp_path / f"{key}.parquet").exists()
-        assert not (tmp_path / f"{key}.pkl").exists()
+    cached_call("zero", produce, duration_hours=0, cache_manager=manager)
+    cached_call("zero", produce, duration_hours=0, cache_manager=manager)
+    assert calls == 2
 
-    def test_scalar_cached_as_json(self, tmp_path):
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True)
 
-        cache.cached_call("scalar_cache", lambda: 42, duration_hours=1)
-        key = cache.get_cache_manager()._get_cache_key("scalar_cache")
+def test_dataframe_and_scalar_serialization(tmp_path):
+    manager = CacheManager(tmp_path)
+    manager.set("df", pd.DataFrame([{"x": 1}]))
+    manager.set("scalar", {"answer": 42})
+    assert isinstance(manager.get("df"), pd.DataFrame)
+    assert manager.get("scalar") == {"answer": 42}
+    assert any(tmp_path.glob("*.parquet"))
+    assert any(tmp_path.glob("*.json"))
 
-        assert (tmp_path / f"{key}.json").exists()
-        assert not (tmp_path / f"{key}.pkl").exists()
 
-    def test_legacy_pickle_ignored_when_disabled(self, tmp_path):
-        cache = _get_cache_module()
-        cache.configure(tmp_path, use_caching=True, allow_legacy_pickle=False)
+def test_legacy_pickle_files_are_never_read(tmp_path):
+    manager = CacheManager(tmp_path)
+    key = manager._get_cache_key("legacy")
+    (tmp_path / f"{key}.pkl").write_bytes(b"legacy")
+    result = cached_call("legacy", lambda: {"fresh": True}, cache_manager=manager)
+    assert result == {"fresh": True}
 
-        key = cache.get_cache_manager()._get_cache_key("legacy_cache")
-        (tmp_path / f"{key}.pkl").write_bytes(b"legacy")
 
-        result = cache.cached_call("legacy_cache", lambda: {"legacy": False}, duration_hours=1)
-        assert result == {"legacy": False}
+def test_atomic_writes_remove_temporary_files_and_sibling_formats(tmp_path):
+    manager = CacheManager(tmp_path)
+    manager.set("same", {"old": True})
+    manager.set("same", pd.DataFrame([{"x": 1}]))
+    assert not list(tmp_path.glob("*.tmp"))
+    key = manager._get_cache_key("same")
+    assert (tmp_path / f"{key}.parquet").exists()
+    assert not (tmp_path / f"{key}.json").exists()
+
+
+def test_expired_entry_is_unlinked(tmp_path):
+    manager = CacheManager(tmp_path)
+    manager.set("expiring", "stale")
+    key = manager._get_cache_key("expiring")
+    path = tmp_path / f"{key}.json"
+    stale = time.time() - 2 * 3600
+    os.utime(path, (stale, stale))
+    result = manager.get("expiring", duration_hours=1)
+    assert result is not None
+    assert not path.exists()

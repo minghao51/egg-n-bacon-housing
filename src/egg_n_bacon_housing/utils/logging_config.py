@@ -46,7 +46,10 @@ def setup_logging(
         level: Logging level (default: INFO)
         format_string: Custom format string (default: DEFAULT_FORMAT)
         date_format: Custom date format (default: DEFAULT_DATE_FORMAT)
-        log_file: Optional path to log file for file output
+        log_file: Optional path to log file for file output. Console
+            routing: records at INFO and below go to stdout only; records at
+            WARNING and above go to stderr (mirrored on stdout). File
+            handlers receive everything at or above ``level``.
 
     Example:
         >>> import logging
@@ -65,7 +68,15 @@ def setup_logging(
     fmt = format_string or DEFAULT_FORMAT
     date_fmt = date_format or DEFAULT_DATE_FORMAT
 
-    handlers: list[logging.Handler] = [logging.StreamHandler(sys.stdout)]
+    # Console routing: INFO-and-below traffic goes to stdout, while
+    # WARNING/ERROR/CRITICAL are additionally mirrored to stderr so failures
+    # are visible even when stdout is piped to a file or a downstream tool.
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setLevel(min(level, logging.INFO))
+    stderr_handler = logging.StreamHandler(sys.stderr)
+    stderr_handler.setLevel(logging.WARNING)
+
+    handlers: list[logging.Handler] = [stdout_handler, stderr_handler]
 
     if log_file:
         log_file.parent.mkdir(parents=True, exist_ok=True)

@@ -144,6 +144,6 @@ data.gov.sg periodically restructures its datasets. Resource IDs are not permane
 
 ## Related Docs
 
-- [External Data Setup Guide](./external-data-setup.md)
-- [CSV Download Guide](./csv-download-guide.md)
+- [Data Sources Inventory](../data-sources.md)
+- [Source Onboarding Records](./data-ingestion-development.md)
 - [Troubleshooting Guide](../TROUBLESHOOTING.md)

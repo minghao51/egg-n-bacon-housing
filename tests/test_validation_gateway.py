@@ -1,133 +1,77 @@
-"""Test validate_and_quarantine including the sample_validation_size branch."""
+"""Pure validation-gateway contract tests."""
 
 import logging
 
 import pandas as pd
 import pytest
 
-from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction, Town360
+from egg_n_bacon_housing.schemas.platinum_models import HUnifiedRecord
 from egg_n_bacon_housing.utils.validation_gateway import (
+    empty_extracted,
     validate_and_quarantine,
-    vectorized_precheck,
 )
 
 pytestmark = pytest.mark.unit
 
 
-class TestSampleValidation:
-    """Test the sample_validation_size branch (G1)."""
+def _row(**overrides):
+    row = {
+        "town": "TOA PAYOH",
+        "lat": 1.35,
+        "lon": 103.8,
+        "price": 500_000.0,
+        "property_type": "hdb",
+        "transaction_date": pd.Timestamp("2024-01-01"),
+    }
+    row.update(overrides)
+    return row
 
-    def test_large_table_triggers_sampling(self, tmp_path):
-        """Large table returns all rows even though only a sample is validated."""
-        df = pd.DataFrame({"town": [f"Town {i}" for i in range(15_000)]})
 
+def test_validation_result_preserves_valid_source_values_and_columns():
+    source = pd.DataFrame([_row(price="500000")])
+    result = validate_and_quarantine(source, HUnifiedRecord, "unified_dataset")
+    assert set(result) == {"valid", "rejected"}
+    assert list(result["valid"].columns) == list(source.columns)
+    assert result["valid"].loc[0, "price"] == "500000"
+    assert result["rejected"].empty
+
+
+def test_invalid_rows_keep_source_identity_and_reason():
+    source = pd.DataFrame([_row(), _row(price=-1.0)])
+    result = validate_and_quarantine(source, HUnifiedRecord, "unified_dataset")
+    assert len(result["valid"]) == 1
+    rejected = result["rejected"]
+    assert list(rejected["_source_index"]) == [1]
+    assert rejected.iloc[0]["_rejection_reason"]
+    assert set(source.columns).issubset(rejected.columns)
+
+
+def test_sample_policy_returns_full_source_and_quarantines_sampled_rows(caplog):
+    source = pd.DataFrame([_row(price=500_000 + i) for i in range(10)] + [_row(price=-1)])
+    with caplog.at_level(logging.WARNING):
         result = validate_and_quarantine(
-            df,
-            Town360,
-            "test_large",
-            layer_dir=tmp_path,
-            filename="test_large.parquet",
-            sample_validation_size=10_000,
+            source,
+            HUnifiedRecord,
+            "unified_dataset",
+            sample_validation_size=5,
+            large_table_policy="sample",
+        )
+    assert len(result["valid"]) == len(source)
+    assert "left 6/11 rows unvalidated" in caplog.text
+
+
+def test_fail_policy_raises_for_vectorized_or_schema_violations():
+    source = pd.DataFrame([_row(price=-1.0)])
+    with pytest.raises(ValueError, match="validation failed"):
+        validate_and_quarantine(
+            source, HUnifiedRecord, "unified_dataset", large_table_policy="fail"
         )
 
-        assert len(result) == 15_000
-        assert (tmp_path / "test_large.parquet").exists()
 
-    def test_small_table_uses_full_validation(self, tmp_path):
-        """Table below threshold goes through full validation path."""
-        df = pd.DataFrame({"town": [f"Town {i}" for i in range(500)]})
-
-        result = validate_and_quarantine(
-            df,
-            Town360,
-            "test_small",
-            layer_dir=tmp_path,
-            filename="test_small.parquet",
-            sample_validation_size=10_000,
-        )
-
-        assert len(result) == 500
-        assert (tmp_path / "test_small.parquet").exists()
-        assert not (tmp_path / "_quarantine").exists()
-
-    def test_sample_with_bad_rows_quarantines(self, tmp_path):
-        """Large table with invalid rows: full table saved, sample quarantine written."""
-        rows = [{"town": f"Town {i}", "annual_value_3_room": 5000.0} for i in range(500)]
-        rows += [{"town": f"Bad {i}", "annual_value_3_room": -1.0} for i in range(14_500)]
-        df = pd.DataFrame(rows)
-
-        result = validate_and_quarantine(
-            df,
-            Town360,
-            "test_bad",
-            layer_dir=tmp_path,
-            filename="test_bad.parquet",
-            sample_validation_size=10_000,
-        )
-
-        assert len(result) == 15_000
-        assert (tmp_path / "test_bad.parquet").exists()
-        q_files = list((tmp_path / "_quarantine").glob("test_bad_sample_*.parquet"))
-        assert len(q_files) == 1
-
-
-class TestVectorizedPrecheck:
-    """Test the vectorized_precheck function (O1)."""
-
-    def test_detects_null_required_fields(self):
-        """Null values in required fields are flagged."""
-        df = pd.DataFrame({"town": ["A", None, "C"], "annual_value_3_room": [100.0, 200.0, 300.0]})
-        issues = vectorized_precheck(df, Town360, "test")
-        assert len(issues) == 1
-        assert "town" in issues[0]
-        assert "null" in issues[0]
-
-    def test_detects_constraint_violations(self):
-        """Values violating ge/gt/le/lt bounds are flagged."""
-        df = pd.DataFrame(
-            {
-                "transaction_date": [pd.Timestamp("2024-01-01")] * 3,
-                "price": [100.0, -50.0, 200.0],
-                "lat": [1.35, 95.0, -95.0],
-                "lon": [103.8, 103.8, 103.8],
-                "property_type": ["hdb", "hdb", "hdb"],
-            }
-        )
-        issues = vectorized_precheck(df, HFeatureTransaction, "test")
-        issue_text = "\n".join(issues)
-        assert "price" in issue_text
-        assert "gt 0" in issue_text
-        assert "lat" in issue_text
-
-    def test_clean_data_no_issues(self):
-        """Clean data produces no issues."""
-        df = pd.DataFrame({"town": ["A", "B", "C"], "annual_value_3_room": [100.0, 200.0, 300.0]})
-        issues = vectorized_precheck(df, Town360, "test")
-        assert issues == []
-
-    def test_skips_missing_columns(self):
-        """Columns not in DataFrame are silently skipped."""
-        df = pd.DataFrame({"town": ["A", "B"]})
-        issues = vectorized_precheck(df, Town360, "test")
-        assert issues == []
-
-    def test_precheck_integrated_in_sample_path(self, tmp_path, caplog):
-        """Precheck runs and logs warnings during sample validation."""
-        rows = [{"town": f"Town {i}", "annual_value_3_room": -1.0} for i in range(15_000)]
-        df = pd.DataFrame(rows)
-
-        with caplog.at_level(
-            logging.WARNING, logger="egg_n_bacon_housing.utils.validation_gateway"
-        ):
-            result = validate_and_quarantine(
-                df,
-                Town360,
-                "test_precheck",
-                layer_dir=tmp_path,
-                filename="test_precheck.parquet",
-                sample_validation_size=10_000,
-            )
-
-        assert len(result) == 15_000
-        assert any("pre-check" in r.message.lower() for r in caplog.records)
-        assert any("annual_value_3_room" in r.message for r in caplog.records)
+def test_empty_extracted_retains_source_schema_and_quarantine_columns():
+    source = pd.DataFrame(columns=["town", "price"])
+    result = empty_extracted(source, "valid_rows", "rejected_rows")
+    assert list(result["valid_rows"].columns) == ["town", "price"]
+    assert {"town", "price", "_source_index", "_rejection_reason"} == set(
+        result["rejected_rows"].columns
+    )

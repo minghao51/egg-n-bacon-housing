@@ -3,7 +3,7 @@ and Hamilton DAG lineage.
 
 Usage:
     uv run python scripts/generate_catalog.py              # from project root
-    dotenvx run -- uv run python scripts/generate_catalog.py
+    uv run python scripts/generate_catalog.py
 """
 
 import gzip
@@ -14,6 +14,7 @@ from importlib.metadata import version as _pkg_version
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -78,19 +79,24 @@ def _is_nullable(field: Any) -> bool:
     return False
 
 
-def _extract_constraints(field: Any) -> dict[str, float]:
-    """Extract numeric constraints (gt, ge, lt, le) from a Field in Annotated."""
-    constraints: dict[str, float] = {}
+def _extract_constraints(field: Any) -> dict[str, float | str]:
+    """Extract numeric constraints (gt, ge, lt, le) from a Field in Annotated.
+
+    Datetime bounds (e.g. ``Field(ge=Timestamp("1990-01-01"))`` on
+    ``transaction_date``) are stringified to ISO format so the catalog stays
+    JSON-serializable.
+    """
+    constraints: dict[str, float | str] = {}
     metadata = getattr(field, "metadata", [])
     for item in metadata:
-        if hasattr(item, "gt") and item.gt is not None:
-            constraints["gt"] = item.gt
-        if hasattr(item, "ge") and item.ge is not None:
-            constraints["ge"] = item.ge
-        if hasattr(item, "lt") and item.lt is not None:
-            constraints["lt"] = item.lt
-        if hasattr(item, "le") and item.le is not None:
-            constraints["le"] = item.le
+        for op in ("gt", "ge", "lt", "le"):
+            value = getattr(item, op, None)
+            if value is None:
+                continue
+            if isinstance(value, datetime | pd.Timestamp):
+                constraints[op] = value.isoformat()
+            else:
+                constraints[op] = value
     return constraints
 
 

@@ -16,22 +16,135 @@ import time
 import pandas as pd
 import requests
 from requests import RequestException
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
+from egg_n_bacon_housing.adapters._http import parse_retry_after
 from egg_n_bacon_housing.adapters.exceptions import (
     DatasetFetchError,
     IncompleteDatasetFetchError,
 )
-from egg_n_bacon_housing.utils.cache import cached_call
+from egg_n_bacon_housing.utils.cache import CacheManager, cached_call
 
 logger = logging.getLogger(__name__)
 
 DATAGOVSG_BASE_URL = "https://data.gov.sg/api/action/datastore_search"
+_DATAGOVSG_API_OPEN_BASE = "https://api-open.data.gov.sg/v1/public/api/datasets"
 
 _DEFAULT_PAGE_SIZE = 2000
 _MIN_PAGE_SIZE = 250
 
+# Ceiling for Retry-After sleeps on 429 (parity with onemap's
+# MAX_RETRY_AFTER_WAIT): a hostile or misconfigured gateway sending
+# ``Retry-After: 3600`` must not stall the run for an hour.
+MAX_RETRY_AFTER_WAIT = 60.0
 
-def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -> pd.DataFrame:
+# Module-level session shared by all request paths: datagovsg nodes are
+# single-threaded, so one session reuses TLS connections across paginated calls.
+_SESSION = requests.Session()
+
+
+@retry(
+    wait=wait_exponential(multiplier=2, min=2, max=30),
+    stop=stop_after_attempt(4),
+    retry=retry_if_exception_type(RequestException),
+    reraise=True,
+    before_sleep=lambda retry_state: logger.warning(
+        "Retrying data.gov.sg initiate-download (%d/4) after error: %s",
+        retry_state.attempt_number,
+        retry_state.outcome.exception() if retry_state.outcome else "unknown error",
+    ),
+)
+def _initiate_download(dataset_id: str) -> None:
+    """Kick off a dataset download job, retrying transient rate limits."""
+    response = _SESSION.get(
+        f"{_DATAGOVSG_API_OPEN_BASE}/{dataset_id}/initiate-download",
+        params={"geometry": "true"},
+        timeout=30,
+    )
+    response.raise_for_status()
+
+
+def fetch_datagovsg_geojson(
+    dataset_id: str,
+    use_cache: bool = True,
+    poll_attempts: int = 10,
+    poll_interval_seconds: float = 1.0,
+    *,
+    cache_manager: CacheManager | None = None,
+) -> dict:
+    """Download a GEOJSON-format dataset from data.gov.sg.
+
+    GEOJSON datasets are not served by the datastore_search API; they use the
+    three-step download flow: initiate-download -> poll-download (returns a
+    presigned S3 URL) -> GET the presigned URL.
+
+    Args:
+        dataset_id: Dataset ID (e.g. "d_65a0bf22c15ef49e9a21b8bcf8c04c87").
+        use_cache: Whether to cache the parsed GeoJSON via ``cached_call``.
+        poll_attempts: How many times to poll for the presigned URL.
+        poll_interval_seconds: Seconds between polls.
+
+    Returns:
+        Parsed GeoJSON dict (``{"type": "FeatureCollection", "features": [...]}``).
+
+    Raises:
+        DatasetFetchError: On initiate/poll/download failure or malformed payload.
+    """
+
+    def _fetch() -> dict:
+        try:
+            _initiate_download(dataset_id)
+        except RequestException as exc:
+            raise DatasetFetchError(f"Failed to initiate download for {dataset_id}: {exc}") from exc
+
+        url: str | None = None
+        for attempt in range(1, poll_attempts + 1):
+            try:
+                poll = _SESSION.get(
+                    f"{_DATAGOVSG_API_OPEN_BASE}/{dataset_id}/poll-download",
+                    timeout=30,
+                )
+                poll.raise_for_status()
+                payload = poll.json()
+            except (RequestException, ValueError) as exc:
+                raise DatasetFetchError(f"Poll download failed for {dataset_id}: {exc}") from exc
+            url = (payload.get("data") or {}).get("url")
+            if url:
+                break
+            logger.debug("Poll %s/%s for %s: no URL yet", attempt, poll_attempts, dataset_id)
+            time.sleep(poll_interval_seconds)
+
+        if not url:
+            raise DatasetFetchError(
+                f"Download for {dataset_id} never became ready after {poll_attempts} polls"
+            )
+
+        try:
+            blob = _SESSION.get(url, timeout=120)
+            blob.raise_for_status()
+            return blob.json()
+        except (RequestException, ValueError) as exc:
+            raise DatasetFetchError(f"Failed to download GeoJSON for {dataset_id}: {exc}") from exc
+
+    if use_cache:
+        if cache_manager is None:
+            raise ValueError("cache_manager is required when data.gov.sg caching is enabled")
+        return cached_call(f"datagovsg_geojson:{dataset_id}", _fetch, cache_manager=cache_manager)
+    return _fetch()
+
+
+def fetch_datagovsg_dataset(
+    url: str,
+    dataset_id: str,
+    use_cache: bool = True,
+    *,
+    cache_manager: CacheManager | None = None,
+) -> pd.DataFrame:
     """Fetch data from data.gov.sg API with pagination support.
 
     Args:
@@ -83,7 +196,7 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
 
         while True:
             try:
-                response = requests.get(request_url, timeout=60)
+                response = _SESSION.get(request_url, timeout=60)
                 response.raise_for_status()
                 response_text = response.json()
                 retry_attempts = 0
@@ -129,10 +242,17 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
                     )
                     continue
                 if status == 429 and retry_attempts < max_retry_attempts:
-                    retry_after = 0
+                    retry_after = 0.0
                     if e.response is not None:
-                        retry_after = int(e.response.headers.get("Retry-After", "0") or 0)
+                        # Retry-After may be delta-seconds or an HTTP-date (RFC 7231);
+                        # unparseable/missing headers fall back to exponential backoff.
+                        retry_after = parse_retry_after(
+                            e.response.headers.get("Retry-After"), default=0.0
+                        )
                     retry_attempts += 1
+                    # Cap at 60s (MAX_RETRY_AFTER_WAIT, same as onemap) so a
+                    # hostile/misconfigured gateway cannot stall the run.
+                    retry_after = min(retry_after, MAX_RETRY_AFTER_WAIT)
                     sleep_seconds = retry_after or min(2**retry_attempts, 30)
                     logger.warning(
                         "Rate limited fetching dataset %s (attempt %s/%s, sleeping %ss, url=%s)",
@@ -198,5 +318,7 @@ def fetch_datagovsg_dataset(url: str, dataset_id: str, use_cache: bool = True) -
         return pd.concat(response_agg, ignore_index=True)
 
     if use_cache:
-        return cached_call(f"datagovsg:{dataset_id}", _fetch_from_api)
+        if cache_manager is None:
+            raise ValueError("cache_manager is required when data.gov.sg caching is enabled")
+        return cached_call(f"datagovsg:{dataset_id}", _fetch_from_api, cache_manager=cache_manager)
     return _fetch_from_api()

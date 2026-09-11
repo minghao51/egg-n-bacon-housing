@@ -6,10 +6,10 @@ The pipeline needs ~100MB of manual source data (URA transactions, HDB resale pr
 
 ```bash
 # Fetch all manual data from R2 (~100MB)
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run python scripts/00_sync_data.py
 
 # Verify local matches R2
-dotenvx run -- uv run python scripts/00_sync_data.py --verify
+uv run python scripts/00_sync_data.py --verify
 ```
 
 The script is **idempotent** — it skips files that already exist with matching size. Safe to re-run.
@@ -28,6 +28,15 @@ The script is **idempotent** — it skips files that already exist with matching
 | `data/manual/csv/`                  | School tiers, scoring methodology                        | <1MB        |
 
 `*.md` files in `data/manual/` are tracked in git directly (documentation, not data).
+
+## Bronze Seeding
+
+Static reference files the pipeline expects under `data/pipeline/01_bronze/external/`
+(amenity GeoJSONs, `mrt_stations.json`, `mrt_lines.json`, `school_tiers.json`,
+`sora_rates.parquet`) are **seeded automatically at pipeline startup** from
+`data/manual/` and git-tracked `data/raw/` (`utils/bronze.seed_bronze_external`).
+Files missing from every source directory are logged as errors at startup —
+upload them to R2 (`data/manual/...`) and re-sync to distribute them.
 
 ## One-Time R2 Bucket Setup
 
@@ -68,7 +77,7 @@ aws s3 sync data/manual/ s3://egg-bacon-housing-data/manual/ \
 The script's `--dry-run --upload` flag shows what would be uploaded without doing it:
 
 ```bash
-dotenvx run -- uv run python scripts/00_sync_data.py --dry-run --upload
+uv run python scripts/00_sync_data.py --dry-run --upload
 ```
 
 ## Script Reference
@@ -90,10 +99,10 @@ Add the sync step to your CI pipeline before running the pipeline:
 
 ```yaml
 - name: Sync manual data
-  run: dotenvx run -- uv run python scripts/00_sync_data.py
+  run: uv run python scripts/00_sync_data.py
 
 - name: Run pipeline
-  run: dotenvx run -- uv run python main.py --stage all
+  run: uv run python main.py --stage all
 ```
 
 ## Troubleshooting

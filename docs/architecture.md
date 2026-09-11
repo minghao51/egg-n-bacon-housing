@@ -81,7 +81,7 @@ Key path properties:
 
 ### Pipeline Construction
 
-[src/egg_n_bacon_housing/pipeline.py](../src/egg_n_bacon_housing/pipeline.py) imports the five stage modules and builds a Hamilton `Driver`.
+[src/egg_n_bacon_housing/pipeline.py](../src/egg_n_bacon_housing/pipeline.py) imports the stage modules and builds a Hamilton `Driver` before resolving only the runtime services required by the requested subgraph.
 
 Execution entrypoint:
 
@@ -104,6 +104,11 @@ Execution entrypoint:
 | Export    | `components/export.py`   | unified dataset                                           |
 | Metrics   | `components/metrics.py`  | area metrics, affordability, hotspots                     |
 
+Published output metadata is centralized in
+`src/egg_n_bacon_housing/utils/output_registry.py`. A full run materializes all
+12 registry entries and returns six terminal frames; rejected rows are kept in
+run-specific `_quarantine/<dataset>/<run_id>.parquet` artifacts.
+
 ## Content Publishing Flow
 
 Analytics content is authored in `docs/analytics/` and loaded by Astro through [app/src/content.config.ts](../app/src/content.config.ts). App-consumed analytics data lives under `app/public/data/`. There is no supported Python script runner or generated intermediate content-copy step in the current repo shape.
@@ -114,6 +119,8 @@ Analytics content is authored in `docs/analytics/` and loaded by Astro through [
 - `docs/analytics/` and `app/public/data/` are the supported analytics publishing surface.
 - Historical analysis outputs under `data/analytics/` and `data/analysis/` were retired from the tracked supported surface and should be treated as reproducible archive material, not runtime inputs.
 - Medallion outputs live under `data/pipeline/01_bronze/` through `data/pipeline/04_platinum/`.
+- App data remains precomputed under `app/public/data/`; its committed
+  `manifest.json` is validated before every Astro build and in CI.
 
 ## Developer Workflow
 

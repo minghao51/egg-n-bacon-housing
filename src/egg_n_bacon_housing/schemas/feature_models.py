@@ -9,8 +9,8 @@ from pydantic import BaseModel, Field
 class LocationDimRecord(BaseModel):
     """Location dimension record — one row per unique (lat, lon) pair.
 
-    Contains all spatial features (proximity, school scores, block metadata,
-    planning area) computed on ~10K unique locations.
+    Contains all spatial features (proximity, school distances, block
+    metadata, planning area) computed on ~10K unique locations.
     """
 
     catalog_dataset_id: ClassVar[str] = "location_dim"
@@ -24,9 +24,14 @@ class LocationDimRecord(BaseModel):
 
     dist_to_nearest_mrt: float | None = Field(ge=0, default=None)
     nearest_mrt_station: str | None = None
+    nearest_mrt_tier: int | None = None
+    nearest_mrt_is_interchange: bool | None = None
     nearest_mrt_score: float | None = None
 
     dist_to_nearest_school: float | None = Field(ge=0, default=None)
+    nearest_top_primary_school_dist: float | None = Field(ge=0, default=None)
+    nearest_top_secondary_school_dist: float | None = Field(ge=0, default=None)
+    school_accessibility_score: float | None = Field(ge=0, le=2, default=None)
     dist_to_nearest_mall: float | None = Field(ge=0, default=None)
     nearest_mall: str | None = None
     dist_to_nearest_hawker: float | None = Field(ge=0, default=None)
@@ -68,6 +73,9 @@ class HFeatureTransaction(BaseModel):
     lat: Annotated[float, Field(ge=-90, le=90)]
     lon: Annotated[float, Field(ge=-180, le=180)]
     property_type: str
+    property_subtype: str | None = None
+    property_segment: str | None = None
+    is_ec: bool = False
     planning_area: str | None = None
     town: str | None = None
 
@@ -77,11 +85,8 @@ class HFeatureTransaction(BaseModel):
 
     dist_to_nearest_mrt: float | None = Field(ge=0, default=None)
     nearest_mrt_station: str | None = None
-    mrt_line: str | None = None
 
     dist_to_nearest_school: float | None = Field(ge=0, default=None)
-    nearest_school: str | None = None
-    school_tier: str | None = None
 
     dist_to_nearest_mall: float | None = Field(ge=0, default=None)
     nearest_mall: str | None = None
@@ -139,8 +144,6 @@ class HFeatureTransaction(BaseModel):
     property_tax: float | None = Field(ge=0, default=None)
     wage_growth: float | None = None
 
-    h3_cell: str | None = None
-
     price_stratum: str | None = None
 
 
@@ -157,7 +160,7 @@ class HRentalYieldRecord(BaseModel):
     median_price: Annotated[float, Field(gt=0)]
     median_rent: Annotated[float, Field(gt=0)]
     rental_yield_pct: Annotated[float, Field(ge=0, le=20)]
-    sample_size: int
+    sample_size: Annotated[int, Field(ge=1)]
     month: str
 
 
@@ -183,8 +186,8 @@ class PlanningArea360(BaseModel):
     median_dist_to_community_club: float | None = None
     median_dist_to_green_mark_building: float | None = None
 
-    median_price: float | None = None
-    median_psf: float | None = None
+    median_price: float | None = Field(default=None, gt=0)
+    median_psf: float | None = Field(default=None, gt=0)
     transaction_volume: int | None = None
     median_rental_yield_pct: float | None = None
 
@@ -207,8 +210,8 @@ class Town360(BaseModel):
 
     town: str
 
-    median_price: float | None = None
-    median_psf: float | None = None
+    median_price: float | None = Field(default=None, gt=0)
+    median_psf: float | None = Field(default=None, gt=0)
     transaction_volume: int | None = None
 
     dwelling_units_in_town: float | None = None
@@ -232,7 +235,7 @@ class BlockProfile(BaseModel):
     street_name: str
     town: str | None = None
 
-    median_price: float | None = None
-    median_psf: float | None = None
+    median_price: float | None = Field(default=None, gt=0)
+    median_psf: float | None = Field(default=None, gt=0)
     transaction_count: int | None = None
     avg_remaining_lease_years: float | None = None

@@ -2,79 +2,91 @@
 """
 Regional mapping configuration for Singapore planning areas.
 
-Groups 50+ planning areas into 7 regions for VAR modeling:
+Maps all 55 official OneMap planning areas (the ``pln_area_n`` values in
+``data/manual/geojsons/onemap_planning_area_polygon.geojson``) to the three
+coarse URA market segments used by ``location_dim.region`` and the app's
+region filter:
+
 - CCR (Core Central Region)
 - RCR (Rest of Central Region)
-- OCR East, North-East, North, West, Central
+- OCR (Outside Central Region)
+
+Every mapping value is exactly one of ``"CCR"``, ``"RCR"``, or ``"OCR"``,
+keeping ``location_dim.region`` in parity with the app's ``Region`` type
+(``app/src/types/segments.ts``), which exact-match filters on those three
+strings. A legacy fine-grained convention (``"OCR East"`` / ``"OCR North-
+East"`` / ``"OCR North"`` / ``"OCR West"`` / ``"OCR Central"``) was retired:
+those values never matched the app's coarse filter. The former sub-region
+groupings survive only as comments below for geographic context.
 """
 
-# Regional mapping dictionary
-_PLANNING_AREA_TO_REGION_BASE = {
-    "Downtown": "CCR",
-    "Newton": "CCR",
-    "Orchard": "CCR",
-    "Marina Bay": "CCR",
-    "Tanglin": "CCR",
-    "River Valley": "CCR",
-    "Bukit Merah": "CCR",
-    "Downtown Core": "CCR",
-    "Museum": "CCR",
-    "Queenstown": "RCR",
-    "Geylang": "RCR",
-    "Kallang": "RCR",
-    "Bishan": "RCR",
-    "Toa Payoh": "RCR",
-    "Marine Parade": "RCR",
-    "Rochor": "RCR",
-    "Outram": "RCR",
-    "Alexandra": "RCR",
-    "Bukit Timah": "RCR",
-    "Marina South": "RCR",
-    "Singapore River": "RCR",
-    "Straits View": "RCR",
-    "Lavender": "RCR",
-    "Farrer Park": "RCR",
-    "Little India": "RCR",
-    "Jalan Besar": "RCR",
-    "Bugis": "RCR",
-    "Bedok": "OCR East",
-    "Pasir Ris": "OCR East",
-    "Tampines": "OCR East",
-    "Changi": "OCR East",
-    "Simei": "OCR East",
-    "Loyang": "OCR East",
-    "Changi Bay": "OCR East",
-    "Expo": "OCR East",
-    "Ang Mo Kio": "OCR North-East",
-    "Serangoon": "OCR North-East",
-    "Hougang": "OCR North-East",
-    "Sengkang": "OCR North-East",
-    "Punggol": "OCR North-East",
-    "Woodlands": "OCR North",
-    "Yishun": "OCR North",
-    "Sembawang": "OCR North",
-    "Khatib": "OCR North",
-    "Yio Chu Kang": "OCR North",
-    "Mandai": "OCR North",
-    "Jurong": "OCR West",
-    "Jurong East": "OCR West",
-    "Jurong West": "OCR West",
-    "Bukit Batok": "OCR West",
-    "Bukit Panjang": "OCR West",
-    "Choa Chu Kang": "OCR West",
-    "Clementi": "OCR West",
-    "Tengah": "OCR West",
-    "Boon Lay": "OCR West",
-    "Central": "OCR Central",
-    "Novena": "OCR Central",
-    "Thomson": "OCR Central",
-    "Balestier": "OCR Central",
-    "Whampoa": "OCR Central",
-    "MacPherson": "OCR Central",
-    "Potong Pasir": "OCR Central",
+# Keys are the exact uppercase `pln_area_n` values published by OneMap, so the
+# table can be validated 1:1 against the official planning-area GeoJSON.
+PLANNING_AREA_TO_REGION = {
+    # --- CCR (Core Central Region) ---
+    "DOWNTOWN CORE": "CCR",
+    "NEWTON": "CCR",
+    "ORCHARD": "CCR",
+    "TANGLIN": "CCR",
+    "RIVER VALLEY": "CCR",
+    "BUKIT MERAH": "CCR",
+    "MUSEUM": "CCR",
+    "MARINA EAST": "CCR",
+    "SOUTHERN ISLANDS": "CCR",  # Sentosa
+    # --- RCR (Rest of Central Region) ---
+    "QUEENSTOWN": "RCR",
+    "GEYLANG": "RCR",
+    "KALLANG": "RCR",
+    "BISHAN": "RCR",
+    "TOA PAYOH": "RCR",
+    "MARINE PARADE": "RCR",
+    "ROCHOR": "RCR",
+    "OUTRAM": "RCR",
+    "BUKIT TIMAH": "RCR",
+    "MARINA SOUTH": "RCR",
+    "SINGAPORE RIVER": "RCR",
+    "STRAITS VIEW": "RCR",
+    "PAYA LEBAR": "RCR",
+    # --- OCR (former sub-region: East) ---
+    "BEDOK": "OCR",
+    "PASIR RIS": "OCR",
+    "TAMPINES": "OCR",
+    "CHANGI": "OCR",
+    "CHANGI BAY": "OCR",
+    # --- OCR (former sub-region: North-East) ---
+    "ANG MO KIO": "OCR",
+    "SERANGOON": "OCR",
+    "HOUGANG": "OCR",
+    "SENGKANG": "OCR",
+    "PUNGGOL": "OCR",
+    # --- OCR (former sub-region: North) ---
+    "WOODLANDS": "OCR",
+    "YISHUN": "OCR",
+    "SEMBAWANG": "OCR",
+    "MANDAI": "OCR",
+    # --- OCR (former sub-region: West) ---
+    "JURONG EAST": "OCR",
+    "JURONG WEST": "OCR",
+    "BUKIT BATOK": "OCR",
+    "BUKIT PANJANG": "OCR",
+    "CHOA CHU KANG": "OCR",
+    "CLEMENTI": "OCR",
+    "TENGAH": "OCR",
+    "BOON LAY": "OCR",
+    # --- OCR (former sub-region: Central) ---
+    "NOVENA": "OCR",
+    # --- OCR (never had a sub-region) ---
+    "CENTRAL WATER CATCHMENT": "OCR",
+    "LIM CHU KANG": "OCR",
+    "NORTH-EASTERN ISLANDS": "OCR",
+    "PIONEER": "OCR",
+    "SELETAR": "OCR",
+    "SIMPANG": "OCR",
+    "SUNGEI KADUT": "OCR",
+    "TUAS": "OCR",
+    "WESTERN ISLANDS": "OCR",
+    "WESTERN WATER CATCHMENT": "OCR",
 }
-
-PLANNING_AREA_TO_REGION = {k.upper(): v for k, v in _PLANNING_AREA_TO_REGION_BASE.items()}
 
 
 def get_region_for_planning_area(planning_area: str) -> str | None:

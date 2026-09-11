@@ -1,13 +1,7 @@
-"""ValidationGateway: validate, quarantine, and persist in one call.
-
-Absorbs the validate_schema + quarantine_path + parquet-persist pattern
-that was repeated across 6 DAG nodes in cleaning and features.
-"""
+"""Pure validation gateway used by Hamilton validation boundaries."""
 
 import logging
-from datetime import UTC, datetime
-from pathlib import Path
-from typing import Any
+from typing import Any, Literal, TypedDict
 
 import annotated_types
 import pandas as pd
@@ -17,78 +11,67 @@ from egg_n_bacon_housing.utils.validation import validate_schema
 logger = logging.getLogger(__name__)
 
 
-def _save_parquet(df: pd.DataFrame, path: Path, description: str = "") -> Path:
-    """Write DataFrame to parquet, creating parent dirs as needed. Skip if empty."""
-    if df.empty:
-        logger.debug("Skipping parquet write for empty DataFrame: %s", description or path.name)
-        return path
-    path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(path, index=False)
-    label = description or path.stem
-    logger.info("Saved %s %s records to %s/", len(df), label, path.parent.name)
-    return path
+class ValidationResult(TypedDict):
+    """Validated rows and rejected rows produced by one boundary."""
+
+    valid: pd.DataFrame
+    rejected: pd.DataFrame
 
 
-def vectorized_precheck(
-    df: pd.DataFrame,
-    model_cls: type[Any],
-    entity_name: str,
-) -> list[str]:
-    """Run fast vectorized checks against Pydantic model constraints.
+def extracted_validation(
+    result: ValidationResult, valid_name: str, rejected_name: str
+) -> dict[str, pd.DataFrame]:
+    """Map the pure result to boundary-specific Hamilton extracted fields."""
+    if not result["rejected"].empty:
+        logger.warning("%s: %s row(s) quarantined", valid_name, len(result["rejected"]))
+    return {valid_name: result["valid"], rejected_name: result["rejected"]}
 
-    Scans the full DataFrame with pandas (no per-row Pydantic validation)
-    to surface systemic data-quality issues before sampling.
 
-    Args:
-        df: DataFrame to check.
-        model_cls: Pydantic model class with field constraints.
-        entity_name: Human-readable name for log messages.
+def empty_extracted(
+    df: pd.DataFrame, valid_name: str, rejected_name: str
+) -> dict[str, pd.DataFrame]:
+    """Build correctly named empty fields while retaining the input schema."""
+    empty = df.iloc[0:0].copy()
+    rejected = empty.copy()
+    rejected["_source_index"] = pd.Series(index=rejected.index, dtype="object")
+    rejected["_rejection_reason"] = pd.Series(index=rejected.index, dtype="string")
+    return {valid_name: empty, rejected_name: rejected}
 
-    Returns:
-        List of human-readable issue descriptions (empty if clean).
-    """
+
+def vectorized_precheck(df: pd.DataFrame, model_cls: type[Any], entity_name: str) -> list[str]:
+    """Run inexpensive vectorized checks for useful diagnostics."""
     issues: list[str] = []
     total = len(df)
-
     for field_name, field_info in model_cls.model_fields.items():
         if field_name not in df.columns:
             continue
-
         series = df[field_name]
-
         if field_info.is_required():
             null_count = int(series.isna().sum())
             if null_count:
                 pct = null_count / total * 100 if total else 0
                 issues.append(f"  {field_name}: {null_count} null ({pct:.1f}%) — required field")
-
         bounds: dict[str, Any] = {}
-        for m in field_info.metadata:
-            if isinstance(m, annotated_types.Gt):
-                bounds["gt"] = m.gt
-            elif isinstance(m, annotated_types.Ge):
-                bounds["ge"] = m.ge
-            elif isinstance(m, annotated_types.Lt):
-                bounds["lt"] = m.lt
-            elif isinstance(m, annotated_types.Le):
-                bounds["le"] = m.le
-
+        for metadata in field_info.metadata:
+            if isinstance(metadata, annotated_types.Gt):
+                bounds["gt"] = metadata.gt
+            elif isinstance(metadata, annotated_types.Ge):
+                bounds["ge"] = metadata.ge
+            elif isinstance(metadata, annotated_types.Lt):
+                bounds["lt"] = metadata.lt
+            elif isinstance(metadata, annotated_types.Le):
+                bounds["le"] = metadata.le
         if bounds and pd.api.types.is_numeric_dtype(series):
             non_null = series.dropna()
             for op, bound in bounds.items():
-                if op == "gt":
-                    bad = int((non_null <= bound).sum())
-                elif op == "ge":
-                    bad = int((non_null < bound).sum())
-                elif op == "lt":
-                    bad = int((non_null >= bound).sum())
-                elif op == "le":
-                    bad = int((non_null > bound).sum())
-                else:
-                    continue
+                bad = {
+                    "gt": (non_null <= bound).sum,
+                    "ge": (non_null < bound).sum,
+                    "lt": (non_null >= bound).sum,
+                    "le": (non_null > bound).sum,
+                }[op]()
                 if bad:
-                    issues.append(f"  {field_name}: {bad} values violate {op} {bound}")
-
+                    issues.append(f"  {field_name}: {int(bad)} values violate {op} {bound}")
     return issues
 
 
@@ -96,75 +79,52 @@ def validate_and_quarantine(
     df: pd.DataFrame,
     model_cls: type[Any],
     entity_name: str,
-    layer_dir: Path,
-    filename: str,
     sample_validation_size: int | None = None,
-) -> pd.DataFrame:
-    """Validate DataFrame against schema, quarantine failures, persist both.
+    large_table_policy: Literal["sample", "full", "fail"] = "full",
+) -> ValidationResult:
+    """Validate rows without persistence or mutation.
 
-    Args:
-        df: DataFrame to validate.
-        model_cls: Pydantic model class to validate against.
-        entity_name: Human-readable name for logging (e.g. "HDB").
-        layer_dir: Directory for valid output and quarantine subdirectory.
-        filename: Output parquet filename (e.g. "cleaned_hdb_transactions.parquet").
-        sample_validation_size: When set and df exceeds this row count,
-            validate only a random sample to catch schema violations while
-            saving all rows. Use for large fact tables (~1M rows).
-
-    Returns:
-        Full validation: valid DataFrame with all original columns.
-        Sample validation: the original unvalidated DataFrame (all rows),
-        since only a random sample was schema-checked.
+    The returned ``valid`` frame retains all source columns and values. The
+    ``rejected`` frame retains source columns and adds ``_source_index`` and
+    ``_rejection_reason``. Persistence belongs exclusively to Hamilton
+    materializers.
     """
+    if large_table_policy not in {"sample", "full", "fail"}:
+        raise ValueError(f"Unknown large_table_policy: {large_table_policy}")
+
     if df.empty:
-        logger.warning("Empty DataFrame passed to validation for %s", entity_name)
-        return df
+        valid, rejected = validate_schema(df, model_cls, entity_name)
+        return {"valid": valid, "rejected": rejected}
 
-    if sample_validation_size is not None and len(df) > sample_validation_size:
-        logger.info(
-            "Large table detected (%s rows) — sampling %s for %s validation",
-            len(df),
-            sample_validation_size,
-            entity_name,
-        )
-        precheck_issues = vectorized_precheck(df, model_cls, entity_name)
-        if precheck_issues:
-            logger.warning(
-                "Vectorized pre-check for %s found %s issue(s):\n%s",
-                entity_name,
-                len(precheck_issues),
-                "\n".join(precheck_issues),
+    if large_table_policy == "fail":
+        issues = vectorized_precheck(df, model_cls, entity_name)
+        if issues:
+            raise ValueError(f"Vectorized validation failed for {entity_name}: {'; '.join(issues)}")
+        valid, rejected = validate_schema(df, model_cls, entity_name)
+        if not rejected.empty:
+            raise ValueError(
+                f"Full schema validation failed for {entity_name}: "
+                f"{len(rejected)}/{len(df)} invalid rows"
             )
+        return {"valid": valid, "rejected": rejected}
+
+    if (
+        large_table_policy == "sample"
+        and sample_validation_size is not None
+        and len(df) > sample_validation_size
+    ):
+        issues = vectorized_precheck(df, model_cls, entity_name)
+        if issues:
+            logger.warning("Vectorized pre-check for %s found issues: %s", entity_name, issues)
         sample = df.sample(n=sample_validation_size, random_state=42)
-        valid_sample, quarantine_sample = validate_schema(
-            sample,
-            model_cls,
-            f"{entity_name} (sample)",
+        _valid_sample, rejected = validate_schema(sample, model_cls, f"{entity_name} (sample)")
+        logger.warning(
+            "Sample validation for %s left %s/%s rows unvalidated",
+            entity_name,
+            len(df) - sample_validation_size,
+            len(df),
         )
-        _save_parquet(df, layer_dir / filename, f"validated {entity_name}")
-        if not quarantine_sample.empty:
-            logger.warning(
-                "Sample validation quarantined %s/%s rows for %s — "
-                "full table saved but may contain invalid records",
-                len(quarantine_sample),
-                sample_validation_size,
-                entity_name,
-            )
-            timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
-            q_dir = layer_dir / "_quarantine"
-            q_path = q_dir / f"{entity_name}_sample_{timestamp}.parquet"
-            _save_parquet(quarantine_sample, q_path, f"quarantined {entity_name} (sample)")
-        return df
+        return {"valid": df, "rejected": rejected}
 
-    valid_df, quarantine_df = validate_schema(df, model_cls, entity_name)
-
-    _save_parquet(valid_df, layer_dir / filename, f"validated {entity_name}")
-
-    if not quarantine_df.empty:
-        timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
-        q_dir = layer_dir / "_quarantine"
-        q_path = q_dir / f"{entity_name}_{timestamp}.parquet"
-        _save_parquet(quarantine_df, q_path, f"quarantined {entity_name}")
-
-    return valid_df
+    valid, rejected = validate_schema(df, model_cls, entity_name)
+    return {"valid": valid, "rejected": rejected}

@@ -19,19 +19,26 @@ main.py -> build_pipeline() -> run_pipeline() -> Hamilton Driver
 
 Use the existing driver and inject runtime dependencies through Hamilton inputs.
 Do not create a second production runner or import global settings into nodes.
-Use `LayerWriter` for new silver, gold, and platinum outputs. Existing bronze
-source caches and `ValidationGateway` persistence are legacy exceptions; do not
-extend those exceptions without a dedicated migration.
+Use `LayerWriter` for new silver, gold, and platinum outputs: every published
+output is persisted by exactly one companion `materialize_<node>` node in
+`components/materialization.py`, registered in `_MATERIALIZER_MAP`. Computing
+nodes are side-effect-free — validation-gateway calls run with `persist=False`
+— so the legacy `ValidationGateway` `persist=True` inline-persistence regime is
+retired from production code; the parameter remains available-but-unused in the
+gateway, and it must not be reintroduced into nodes without a dedicated
+migration. Existing bronze source caches retain their established self-managed
+paths as a legacy exception; do not extend that exception without a dedicated
+migration.
 
 The five stages and their module ownership are:
 
-| Stage      | Modules                  | Layer responsibility                          |
-| ---------- | ------------------------ | --------------------------------------------- |
-| `ingest`   | `components/ingestion/`  | Acquire and normalize source data into bronze |
-| `clean`    | `components/cleaning.py` | Validate, clean, and quarantine into silver   |
-| `features` | `components/features.py` | Build reusable entities and features in gold  |
-| `export`   | `components/export.py`   | Write stable and app-facing platinum outputs  |
-| `metrics`  | `components/metrics.py`  | Write analytical platinum metrics             |
+| Stage      | Modules                                                                                                                          | Layer responsibility                          |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `ingest`   | `components/ingestion/`                                                                                                          | Acquire and normalize source data into bronze |
+| `clean`    | `components/cleaning.py`                                                                                                         | Validate, clean, and quarantine into silver   |
+| `features` | `components/features.py`, `components/feature_rental.py`, `components/feature_transactions.py`, `components/feature_profiles.py` | Build reusable entities and features in gold  |
+| `export`   | `components/export.py`                                                                                                           | Write stable and app-facing platinum outputs  |
+| `metrics`  | `components/metrics.py`                                                                                                          | Write analytical platinum metrics             |
 
 ## Required workflow
 

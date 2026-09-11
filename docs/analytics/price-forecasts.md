@@ -88,7 +88,7 @@ The directional hit rate remains high even when confidence intervals are too wid
 ### Data Used
 
 - **Primary input**: `data/parquets/L3/housing_unified.parquet` (2021-2026)
-- **Train/test split**: `L5_price_appreciation_train.parquet` / `L5_price_appreciation_test.parquet`
+- **Train/test split**: `price_appreciation_train.parquet` / `price_appreciation_test.parquet`
 - **Forecast horizon**: 6 months (ARIMA), annual (XGBoost ensemble)
 - **Feature selection**: numeric only, max 20% missing values allowed
 

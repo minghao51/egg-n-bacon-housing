@@ -6,6 +6,9 @@ SORA is loaded from a pre-built parquet in bronze/external.
 """
 
 import logging
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
 
 import pandas as pd
@@ -13,6 +16,7 @@ import requests
 
 from egg_n_bacon_housing.adapters import datagovsg
 from egg_n_bacon_housing.adapters.exceptions import DatasetFetchError
+from egg_n_bacon_housing.utils.bronze import read_bronze_cache, write_bronze_cache
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +36,9 @@ _RETRIEVABLE_EXCEPTIONS: tuple[type[BaseException], ...] = (
     ValueError,
 )
 
-DATAGOVSG_API_BASE_URL = "https://data.gov.sg/api/action/datastore_search?resource_id="
+# Request prefix built from the adapter's canonical base URL so the endpoint
+# is single-sourced (components/ingestion/datagov.py builds the same prefix).
+DATAGOVSG_API_BASE_URL = f"{datagovsg.DATAGOVSG_BASE_URL}?resource_id="
 
 CPI_RESOURCE_ID = "d_bdaff844e3ef89d39fceb962ff8f0791"
 GDP_RESOURCE_ID = "d_a5ff719648a0e6d4b4c623ee383ab686"
@@ -43,10 +49,227 @@ SUPPLY_PIPELINE_RESOURCE_ID = "d_baa848bbdbf4af7b4d709f147fcf3c9b"
 BANK_RATES_RESOURCE_ID = "d_5fe5a4bb4a1ecc4d8a56a095832e2b24"
 WAGE_GROWTH_RESOURCE_ID = "d_64f98475cef1e94300362cb400a50012"
 
+GDP_PREFERRED_SERIES = "GDP In Chained (2015) Dollars"
 
-def _melt_pivot_monthly(df: pd.DataFrame, value_filter: str, value_col: str) -> pd.DataFrame:
+
+# --- Per-indicator transforms (pure functions of the raw API frame) ---------
+
+
+def _label_column(df: pd.DataFrame, context: str) -> str:
+    """Resolve the series-label column of a data.gov.sg pivot frame.
+
+    ONE documented fallback rule for every pivot-shaped macro source (CPI,
+    unemployment, GDP, SORA, wage growth): the canonical layout is an ``_id``
+    key column followed by a ``DataSeries`` label column and period columns.
+    When the ``DataSeries`` header is absent (schema drift), the label column
+    is assumed to be the first non-``_id`` column (position 1) — the dominant
+    pre-existing behavior — and a warning names the expected header, the
+    column actually used, and all available columns.
+    """
+    if "DataSeries" in df.columns:
+        return "DataSeries"
+    fallback = str(df.columns[1])
+    logger.warning(
+        "%s: pivot frame lacks the 'DataSeries' label column — falling back to "
+        "%r (available columns: %s)",
+        context,
+        fallback,
+        [str(col) for col in df.columns],
+    )
+    return fallback
+
+
+def _transform_cpi(raw: pd.DataFrame) -> pd.DataFrame:
+    return _melt_pivot_monthly(raw, "All Items", "cpi")
+
+
+def _transform_unemployment(raw: pd.DataFrame) -> pd.DataFrame:
+    return _melt_pivot_quarterly(raw, "Total Unemployment Rate", "unemployment_rate")
+
+
+def _transform_gdp(raw: pd.DataFrame) -> pd.DataFrame:
+    label_col = _label_column(raw, "gdp")
+    gdp = _melt_pivot_quarterly(raw, GDP_PREFERRED_SERIES, "gdp", label_col=label_col)
+    if gdp.empty:
+        # Schema drift fallback: melt whatever the first row's series is.
+        used_series = str(raw[label_col].iloc[0]).strip()
+        available = sorted(raw[label_col].astype(str).str.strip().unique().tolist())
+        logger.warning(
+            "gdp: preferred series %r not found in pivot labels — melting the "
+            "first series %r instead (available labels: %s)",
+            GDP_PREFERRED_SERIES,
+            used_series,
+            available,
+        )
+        gdp = _melt_pivot_quarterly(raw, used_series, "gdp", label_col=label_col)
+    return gdp
+
+
+def _transform_bank_rates(raw: pd.DataFrame) -> pd.DataFrame:
+    return _melt_pivot_monthly(
+        raw,
+        "Compounded Singapore Overnight Rate Average (SORA) - 3 Month",
+        "sora_3m",
+    )
+
+
+def _transform_hdb_rpi(raw: pd.DataFrame) -> pd.DataFrame:
+    rpi = raw[["quarter", "index"]].copy()
+    rpi["index"] = pd.to_numeric(rpi["index"], errors="coerce")
+    rpi = rpi.dropna(subset=["index"])
+    rpi["quarter"] = _parse_datagov_quarter(rpi["quarter"])
+    rpi = rpi.dropna(subset=["quarter"]).sort_values("quarter").reset_index(drop=True)
+    return rpi.rename(columns={"index": "hdb_rpi"})
+
+
+def _transform_ura_ppi(raw: pd.DataFrame) -> pd.DataFrame:
+    ppi = raw[raw["property_type"].astype(str).str.strip() == "All Residential"].copy()
+    ppi["index"] = pd.to_numeric(ppi["index"], errors="coerce")
+    ppi = ppi.dropna(subset=["index"])
+    ppi["quarter"] = _parse_datagov_quarter(ppi["quarter"])
+    ppi = ppi.dropna(subset=["quarter"]).sort_values("quarter").reset_index(drop=True)
+    return ppi[["quarter", "index"]].rename(columns={"index": "ura_ppi"})
+
+
+def _transform_supply_pipeline(raw: pd.DataFrame) -> pd.DataFrame:
+    supply = raw.copy()
+    supply["no_of_units"] = pd.to_numeric(supply["no_of_units"], errors="coerce")
+    supply["quarter"] = _parse_datagov_quarter(supply["quarter"])
+    return (
+        supply.dropna(subset=["quarter", "no_of_units"])
+        .sort_values("quarter")
+        .reset_index(drop=True)
+    )
+
+
+def _transform_wage_growth(raw: pd.DataFrame) -> pd.DataFrame:
+    label_col = _label_column(raw, "wage_growth")
+    melted = raw.melt(id_vars=[label_col], var_name="year", value_name="wage_growth")
+    melted = melted[melted[label_col].astype(str).str.strip() == "Overall Economy"]
+    melted["wage_growth"] = pd.to_numeric(melted["wage_growth"], errors="coerce")
+    melted["year"] = pd.to_numeric(melted["year"], errors="coerce")
+    melted = melted.dropna(subset=["year", "wage_growth"])
+
+    quarterly_rows = []
+    for _, row in melted.iterrows():
+        year = int(row["year"])
+        for q in range(1, 5):
+            quarter_date = pd.Timestamp(year=year, month=q * 3, day=1) + pd.offsets.QuarterEnd(0)
+            quarterly_rows.append({"quarter": quarter_date, "wage_growth": row["wage_growth"]})
+    if not quarterly_rows:
+        raise DatasetFetchError("wage growth pivot matched no 'Overall Economy' rows")
+    return pd.DataFrame(quarterly_rows).sort_values("quarter").reset_index(drop=True)
+
+
+@dataclass(frozen=True)
+class _MacroSource:
+    """Declarative spec for one data.gov.sg macro indicator."""
+
+    key: str
+    filename: str
+    resource_id: str
+    transform: Callable[[pd.DataFrame], pd.DataFrame]
+    label: str
+
+
+_MACRO_SOURCES: tuple[_MacroSource, ...] = (
+    _MacroSource("cpi", "cpi.parquet", CPI_RESOURCE_ID, _transform_cpi, "CPI"),
+    _MacroSource(
+        "unemployment",
+        "unemployment.parquet",
+        UNEMPLOYMENT_RESOURCE_ID,
+        _transform_unemployment,
+        "unemployment",
+    ),
+    _MacroSource("gdp", "gdp.parquet", GDP_RESOURCE_ID, _transform_gdp, "GDP"),
+    _MacroSource(
+        "bank_rates",
+        "bank_rates.parquet",
+        BANK_RATES_RESOURCE_ID,
+        _transform_bank_rates,
+        "bank interest rates",
+    ),
+    _MacroSource(
+        "hdb_rpi",
+        "hdb_rpi.parquet",
+        HDB_RPI_RESOURCE_ID,
+        _transform_hdb_rpi,
+        "HDB Resale Price Index",
+    ),
+    _MacroSource(
+        "ura_ppi",
+        "ura_ppi.parquet",
+        URA_PPI_RESOURCE_ID,
+        _transform_ura_ppi,
+        "URA Property Price Index",
+    ),
+    _MacroSource(
+        "supply_pipeline",
+        "supply_pipeline.parquet",
+        SUPPLY_PIPELINE_RESOURCE_ID,
+        _transform_supply_pipeline,
+        "private housing supply pipeline",
+    ),
+    _MacroSource(
+        "wage_growth",
+        "wage_growth.parquet",
+        WAGE_GROWTH_RESOURCE_ID,
+        _transform_wage_growth,
+        "wage growth",
+    ),
+)
+
+# Concurrency bound for the macro fetch pool. Each source is a full paginated
+# data.gov.sg round trip with retries, so fetching all 8 serially made the
+# macro stage's wall time the sum of all eight. Four workers cut that roughly
+# in half while capping the aggregate request rate against the shared API for
+# rate-limit safety; pagination *within* a source stays serial (TLS/rate-limit
+# tradeoff, see adapters/datagovsg.py).
+_MACRO_FETCH_WORKERS = 4
+
+
+def _load_macro_source(
+    bronze_dir: Path, external_dir: Path, source: _MacroSource
+) -> tuple[pd.DataFrame, str | None]:
+    """Bronze-cache-first load of one macro indicator; empty on retrievable failure.
+
+    Returns the loaded frame plus a failure record (``"<key>: <ExcType>: <msg>"``)
+    when the source degraded to empty, or ``None`` when it loaded cleanly.
+    Returning the failure instead of appending to a shared list keeps this
+    worker free of cross-thread shared state: it runs concurrently, once per
+    source, inside :func:`raw_macro_data`.
+    """
+    path = external_dir / source.filename
+    cached = read_bronze_cache(bronze_dir, source.filename, subdir="external")
+    if cached is not None:
+        if cached.empty:
+            # An empty cache file (e.g. left behind by an older run after upstream
+            # schema drift) must never be treated as valid data -- it would
+            # silently poison the indicator with NaNs on every subsequent run.
+            logger.warning("Ignoring empty bronze cache: %s", path)
+        else:
+            return cached, None
+    try:
+        logger.info("Fetching %s from data.gov.sg...", source.label)
+        raw = datagovsg.fetch_datagovsg_dataset(
+            DATAGOVSG_API_BASE_URL, source.resource_id, use_cache=False
+        )
+        result = source.transform(raw)
+        # Empty frames are never cached (helper empty-guard), so an empty parse
+        # degrades to empty without seeding a poisoning 0-row cache file.
+        write_bronze_cache(bronze_dir, result, source.filename, "datagov_api", subdir="external")
+        logger.info("Fetched %s: %d records -> %s", source.label, len(result), path)
+        return result, None
+    except _RETRIEVABLE_EXCEPTIONS as exc:
+        return pd.DataFrame(), f"{source.key}: {exc.__class__.__name__}: {exc}"
+
+
+def _melt_pivot_monthly(
+    df: pd.DataFrame, value_filter: str, value_col: str, label_col: str | None = None
+) -> pd.DataFrame:
     """Melt a data.gov.sg pivot table with monthly columns (e.g. '2026Apr') into long format."""
-    label_col = "DataSeries" if "DataSeries" in df.columns else df.columns[1]
+    if label_col is None:
+        label_col = _label_column(df, value_col)
     melted = df.melt(id_vars=[label_col], var_name="period", value_name=value_col)
     melted = melted[melted[label_col].astype(str).str.strip() == value_filter]
     melted["date"] = pd.to_datetime(melted["period"], format="%Y%b", errors="coerce")
@@ -59,9 +282,12 @@ def _melt_pivot_monthly(df: pd.DataFrame, value_filter: str, value_col: str) -> 
     )
 
 
-def _melt_pivot_quarterly(df: pd.DataFrame, value_filter: str, value_col: str) -> pd.DataFrame:
+def _melt_pivot_quarterly(
+    df: pd.DataFrame, value_filter: str, value_col: str, label_col: str | None = None
+) -> pd.DataFrame:
     """Melt a data.gov.sg pivot table with quarterly columns (e.g. '20261Q') into long format."""
-    label_col = "DataSeries" if "DataSeries" in df.columns else df.columns[1]
+    if label_col is None:
+        label_col = _label_column(df, value_col)
     melted = df.melt(id_vars=[label_col], var_name="period", value_name=value_col)
     melted = melted[melted[label_col].astype(str).str.strip() == value_filter]
     melted[value_col] = pd.to_numeric(melted[value_col], errors="coerce")
@@ -125,205 +351,43 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
     result: dict[str, pd.DataFrame] = {}
     failures: list[str] = []
 
-    sora_path = external_dir / "sora_rates.parquet"
-    if sora_path.exists():
-        result["sora"] = pd.read_parquet(sora_path)
-        logger.info("Loaded SORA: %s records", len(result["sora"]))
+    sora_df = read_bronze_cache(bronze_dir, "sora_rates.parquet", subdir="external")
+    if sora_df is not None:
+        result["sora"] = sora_df
+        logger.info("Loaded SORA: %s records", len(sora_df))
     else:
         logger.warning("SORA data not found in bronze/external")
         result["sora"] = pd.DataFrame()
 
-    cpi_path = external_dir / "cpi.parquet"
-    if cpi_path.exists():
-        result["cpi"] = pd.read_parquet(cpi_path)
-    else:
-        try:
-            logger.info("Fetching CPI from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, CPI_RESOURCE_ID, use_cache=False
-            )
-            result["cpi"] = _melt_pivot_monthly(raw, "All Items", "cpi")
-            result["cpi"].to_parquet(cpi_path, index=False)
-            logger.info("Fetched CPI: %s records -> %s", len(result["cpi"]), cpi_path)
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"cpi: {exc.__class__.__name__}: {exc}")
-            result["cpi"] = pd.DataFrame()
+    # Fetch the 8 macro sources concurrently (see _MACRO_FETCH_WORKERS for the
+    # bound rationale). Failure semantics match the former serial loop
+    # exactly: retrievable failures are captured inside the worker and degrade
+    # only their source, while programming defects escape the worker -- those
+    # are collected here and re-raised after the pool drains so they surface
+    # immediately instead of being swallowed into the failure list.
+    outcomes: list[tuple[pd.DataFrame, str | None]] = []
+    defect: BaseException | None = None
+    with ThreadPoolExecutor(max_workers=_MACRO_FETCH_WORKERS) as executor:
+        futures = [
+            executor.submit(_load_macro_source, bronze_dir, external_dir, source)
+            for source in _MACRO_SOURCES
+        ]
+        # Harvest futures in submission order (= source order), not completion
+        # order, so result keys and the failure summary stay deterministic
+        # regardless of which fetch finishes first.
+        for future in futures:
+            exc = future.exception()
+            if exc is None:
+                outcomes.append(future.result())
+            elif defect is None:
+                defect = exc
+    if defect is not None:
+        raise defect
 
-    unemployment_path = external_dir / "unemployment.parquet"
-    if unemployment_path.exists():
-        result["unemployment"] = pd.read_parquet(unemployment_path)
-    else:
-        try:
-            logger.info("Fetching unemployment from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, UNEMPLOYMENT_RESOURCE_ID, use_cache=False
-            )
-            result["unemployment"] = _melt_pivot_quarterly(
-                raw, "Total Unemployment Rate", "unemployment_rate"
-            )
-            result["unemployment"].to_parquet(unemployment_path, index=False)
-            logger.info(
-                "Fetched unemployment: %s records -> %s",
-                len(result["unemployment"]),
-                unemployment_path,
-            )
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"unemployment: {exc.__class__.__name__}: {exc}")
-            result["unemployment"] = pd.DataFrame()
-
-    gdp_path = external_dir / "gdp.parquet"
-    if gdp_path.exists():
-        result["gdp"] = pd.read_parquet(gdp_path)
-    else:
-        try:
-            logger.info("Fetching GDP from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, GDP_RESOURCE_ID, use_cache=False
-            )
-            result["gdp"] = _melt_pivot_quarterly(raw, "GDP In Chained (2015) Dollars", "gdp")
-            if result["gdp"].empty:
-                label_col = "DataSeries" if "DataSeries" in raw.columns else raw.columns[1]
-                first_series = str(raw.iloc[0][label_col]).strip()
-                result["gdp"] = _melt_pivot_quarterly(raw, first_series, "gdp")
-            result["gdp"].to_parquet(gdp_path, index=False)
-            logger.info("Fetched GDP: %s records -> %s", len(result["gdp"]), gdp_path)
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"gdp: {exc.__class__.__name__}: {exc}")
-            result["gdp"] = pd.DataFrame()
-
-    bank_rates_path = external_dir / "bank_rates.parquet"
-    if bank_rates_path.exists():
-        result["bank_rates"] = pd.read_parquet(bank_rates_path)
-    else:
-        try:
-            logger.info("Fetching bank interest rates from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, BANK_RATES_RESOURCE_ID, use_cache=False
-            )
-            result["bank_rates"] = _melt_pivot_monthly(
-                raw, "Compounded Singapore Overnight Rate Average (SORA) - 3 Month", "sora_3m"
-            )
-            result["bank_rates"].to_parquet(bank_rates_path, index=False)
-            logger.info(
-                "Fetched bank rates (SORA 3M): %s records -> %s",
-                len(result["bank_rates"]),
-                bank_rates_path,
-            )
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"bank_rates: {exc.__class__.__name__}: {exc}")
-            result["bank_rates"] = pd.DataFrame()
-
-    hdb_rpi_path = external_dir / "hdb_rpi.parquet"
-    _cached_rpi = pd.read_parquet(hdb_rpi_path) if hdb_rpi_path.exists() else None
-    if _cached_rpi is not None and not _cached_rpi.empty:
-        result["hdb_rpi"] = _cached_rpi
-    else:
-        try:
-            logger.info("Fetching HDB Resale Price Index from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, HDB_RPI_RESOURCE_ID, use_cache=False
-            )
-            rpi = raw[["quarter", "index"]].copy()
-            rpi["index"] = pd.to_numeric(rpi["index"], errors="coerce")
-            rpi = rpi.dropna(subset=["index"])
-            rpi["quarter"] = _parse_datagov_quarter(rpi["quarter"])
-            rpi = rpi.dropna(subset=["quarter"]).sort_values("quarter").reset_index(drop=True)
-            result["hdb_rpi"] = rpi.rename(columns={"index": "hdb_rpi"})
-            result["hdb_rpi"].to_parquet(hdb_rpi_path, index=False)
-            logger.info("Fetched HDB RPI: %s records -> %s", len(result["hdb_rpi"]), hdb_rpi_path)
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"hdb_rpi: {exc.__class__.__name__}: {exc}")
-            result["hdb_rpi"] = pd.DataFrame()
-
-    ura_ppi_path = external_dir / "ura_ppi.parquet"
-    _cached_ppi = pd.read_parquet(ura_ppi_path) if ura_ppi_path.exists() else None
-    if _cached_ppi is not None and not _cached_ppi.empty:
-        result["ura_ppi"] = _cached_ppi
-    else:
-        try:
-            logger.info("Fetching URA Property Price Index from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, URA_PPI_RESOURCE_ID, use_cache=False
-            )
-            ppi = raw[raw["property_type"].astype(str).str.strip() == "All Residential"].copy()
-            ppi["index"] = pd.to_numeric(ppi["index"], errors="coerce")
-            ppi = ppi.dropna(subset=["index"])
-            ppi["quarter"] = _parse_datagov_quarter(ppi["quarter"])
-            ppi = ppi.dropna(subset=["quarter"]).sort_values("quarter").reset_index(drop=True)
-            result["ura_ppi"] = ppi[["quarter", "index"]].rename(columns={"index": "ura_ppi"})
-            result["ura_ppi"].to_parquet(ura_ppi_path, index=False)
-            logger.info("Fetched URA PPI: %s records -> %s", len(result["ura_ppi"]), ura_ppi_path)
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"ura_ppi: {exc.__class__.__name__}: {exc}")
-            result["ura_ppi"] = pd.DataFrame()
-
-    supply_path = external_dir / "supply_pipeline.parquet"
-    if supply_path.exists():
-        result["supply_pipeline"] = pd.read_parquet(supply_path)
-    else:
-        try:
-            logger.info("Fetching private housing supply pipeline from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, SUPPLY_PIPELINE_RESOURCE_ID, use_cache=False
-            )
-            supply = raw.copy()
-            supply["no_of_units"] = pd.to_numeric(supply["no_of_units"], errors="coerce")
-            supply["quarter"] = _parse_datagov_quarter(supply["quarter"])
-            supply = supply.dropna(subset=["quarter", "no_of_units"])
-            supply = supply.dropna(subset=["quarter"]).sort_values("quarter").reset_index(drop=True)
-            result["supply_pipeline"] = supply
-            result["supply_pipeline"].to_parquet(supply_path, index=False)
-            logger.info(
-                "Fetched supply pipeline: %s records -> %s",
-                len(result["supply_pipeline"]),
-                supply_path,
-            )
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"supply_pipeline: {exc.__class__.__name__}: {exc}")
-            result["supply_pipeline"] = pd.DataFrame()
-
-    wage_path = external_dir / "wage_growth.parquet"
-    if wage_path.exists():
-        result["wage_growth"] = pd.read_parquet(wage_path)
-        if result["wage_growth"].empty:
-            wage_path.unlink()
-    if "wage_growth" not in result or result["wage_growth"].empty:
-        try:
-            logger.info("Fetching wage growth from data.gov.sg...")
-            raw = datagovsg.fetch_datagovsg_dataset(
-                DATAGOVSG_API_BASE_URL, WAGE_GROWTH_RESOURCE_ID, use_cache=False
-            )
-            label_col = "DataSeries" if "DataSeries" in raw.columns else raw.columns[-1]
-            melted = raw.melt(id_vars=[label_col], var_name="year", value_name="wage_growth")
-            melted = melted[melted[label_col].astype(str).str.strip() == "Overall Economy"]
-            melted["wage_growth"] = pd.to_numeric(melted["wage_growth"], errors="coerce")
-            melted["year"] = pd.to_numeric(melted["year"], errors="coerce")
-            melted = melted.dropna(subset=["year", "wage_growth"])
-
-            quarterly_rows = []
-            for _, row in melted.iterrows():
-                year = int(row["year"])
-                for q in range(1, 5):
-                    quarter_date = pd.Timestamp(
-                        year=year, month=q * 3, day=1
-                    ) + pd.offsets.QuarterEnd(0)
-                    quarterly_rows.append(
-                        {"quarter": quarter_date, "wage_growth": row["wage_growth"]}
-                    )
-            result["wage_growth"] = (
-                pd.DataFrame(quarterly_rows).sort_values("quarter").reset_index(drop=True)
-            )
-
-            result["wage_growth"].to_parquet(wage_path, index=False)
-            logger.info(
-                "Fetched wage growth: %s annual records -> %s quarterly -> %s",
-                len(melted),
-                len(result["wage_growth"]),
-                wage_path,
-            )
-        except _RETRIEVABLE_EXCEPTIONS as exc:
-            failures.append(f"wage_growth: {exc.__class__.__name__}: {exc}")
-            result["wage_growth"] = pd.DataFrame()
+    for source, (frame, failure) in zip(_MACRO_SOURCES, outcomes, strict=True):
+        result[source.key] = frame
+        if failure is not None:
+            failures.append(failure)
 
     if failures:
         logger.warning(

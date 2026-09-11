@@ -24,45 +24,15 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install uv
-        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+          bun-version: '1.2.23'
 
       - name: Install dependencies
         working-directory: ./app
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Verify dashboard data files
         working-directory: ./app
-        run: |
-          required_files=(
-            "public/data/dashboard_overview.json.gz"
-            "public/data/dashboard_trends.json.gz"
-            "public/data/dashboard_segments.json.gz"
-            "public/data/dashboard_leaderboard.json.gz"
-            "public/data/map_metrics.json.gz"
-            "public/data/hotspots.json.gz"
-            "public/data/amenity_summary.json.gz"
-            "public/data/interactive_tools/mrt_cbd_impact.json.gz"
-            "public/data/interactive_tools/lease_decay_analysis.json.gz"
-            "public/data/interactive_tools/affordability_metrics.json.gz"
-            "public/data/interactive_tools/spatial_hotspots.json.gz"
-          )
-
-          for file in "${required_files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "❌ Missing required data file: $file"
-              exit 1
-            fi
-          done
-
-          echo "✅ All dashboard data files verified"
+        run: bun run validate-data
 
       - name: Build with Astro
         working-directory: ./app

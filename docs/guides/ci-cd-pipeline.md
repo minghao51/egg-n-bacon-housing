@@ -42,7 +42,7 @@ The deploy workflow:
 
 1. checks out the repo
 2. installs Bun and Python
-3. installs app dependencies with `bun install`
+3. installs app dependencies with `bun install --frozen-lockfile`
 4. verifies the required dashboard data files under `app/public/data/`
 5. builds the Astro app with `bun run build`
 6. uploads `app/dist/`
@@ -65,7 +65,7 @@ App checks:
 
 ```bash
 cd app
-bun install
+bun install --frozen-lockfile
 bun run build
 bun run test:e2e
 ```

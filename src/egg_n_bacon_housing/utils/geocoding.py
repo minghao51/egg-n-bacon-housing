@@ -10,15 +10,48 @@ and the onemap adapter.
 """
 
 import logging
+import threading
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
 
 from egg_n_bacon_housing.config import Settings
+from egg_n_bacon_housing.utils.cache import CacheManager
 
 logger = logging.getLogger(__name__)
+
+
+class _RateLimiter:
+    """Thread-safe minimum-interval pacer for outbound API calls.
+
+    Hands out slots at least ``interval`` apart across all threads; the first
+    caller goes through immediately, later callers sleep for the remainder of
+    their slot. Never paces cache hits — callers must check the cache first.
+    """
+
+    def __init__(self, min_interval_seconds: float):
+        self._interval = max(0.0, float(min_interval_seconds))
+        self._lock = threading.Lock()
+        self._next_slot = 0.0
+
+    @property
+    def interval(self) -> float:
+        """Configured minimum spacing between outbound calls, in seconds."""
+        return self._interval
+
+    def wait(self) -> None:
+        """Block until the caller's slot (no-op when pacing is disabled)."""
+        if self._interval <= 0:
+            return
+        with self._lock:
+            now = time.monotonic()
+            delay = max(0.0, self._next_slot - now)
+            self._next_slot = now + self._interval
+        if delay:
+            time.sleep(delay)
 
 
 class Geocoder(ABC):
@@ -71,16 +104,21 @@ class OneMapGeocoder(Geocoder):
     def __init__(
         self,
         headers: dict[str, str],
+        cache_manager: CacheManager,
         cache_duration_hours: int = 24,
         max_workers: int = 5,
         timeout: int = 30,
         rate_limit_seconds: float = 0.0,
+        on_auth_expired: Callable[[], dict[str, str]] | None = None,
     ):
         self.headers = headers
         self.cache_duration_hours = cache_duration_hours
         self.max_workers = max_workers
         self.timeout = timeout
-        self.rate_limit_seconds = rate_limit_seconds
+        self._limiter = _RateLimiter(rate_limit_seconds)
+        self._on_auth_expired = on_auth_expired
+        self._auth_lock = threading.Lock()
+        self._cache_manager = cache_manager
 
     def query_geocode_cache(self, address: str) -> tuple[float, float] | None:
         """Read-only lookup of the OneMap cache for one address.
@@ -89,11 +127,12 @@ class OneMapGeocoder(Geocoder):
         no API call. Keeps the OneMap cache-key format inside this module
         instead of leaking it to callers.
         """
-        from egg_n_bacon_housing.utils.cache import _CACHE_MISS, get_cache_manager
+        from egg_n_bacon_housing.utils.cache import _CACHE_MISS
 
-        cached = get_cache_manager().get(
-            f"onemap_search:{address}", duration_hours=self.cache_duration_hours
-        )
+        if self._cache_manager is None:
+            raise RuntimeError("OneMapGeocoder requires an injected CacheManager")
+        manager = self._cache_manager
+        cached = manager.get(f"onemap_search:{address}", duration_hours=self.cache_duration_hours)
         if cached is _CACHE_MISS or not isinstance(cached, pd.DataFrame) or cached.empty:
             return None
         return self._coords_from_row(cached.iloc[0])
@@ -132,15 +171,54 @@ class OneMapGeocoder(Geocoder):
             "address": str(addr),
         }
 
-    def _geocode_via_api(self, addr: str) -> dict:
-        from egg_n_bacon_housing.adapters.onemap import fetch_data_cached
+    def _refresh_headers(self, stale_headers: dict[str, str]) -> bool:
+        """Obtain fresh OneMap headers mid-run. Thread-safe; False on failure.
 
+        Single-flight: callers pass the headers object their failing request
+        used. If another thread already swapped in a replacement, the network
+        refresh is skipped and the caller retries with the new headers — a
+        mid-run expiry across ``max_workers`` threads costs one refresh, not
+        one per worker.
+        """
+        if self._on_auth_expired is None:
+            return False
         try:
-            df = fetch_data_cached(addr, headers=self.headers, timeout=self.timeout)
-            return self._row_from_result(addr, df)
+            with self._auth_lock:
+                if self.headers is not stale_headers:
+                    return True
+                self.headers = self._on_auth_expired()
+            return True
         except Exception as exc:
-            logger.warning("Geocoding failed for %s: %s", addr, exc)
-            return self._empty_row(addr)
+            logger.warning("OneMap token refresh failed: %s", exc)
+            return False
+
+    def _geocode_via_api(self, addr: str) -> dict:
+        from egg_n_bacon_housing.adapters.onemap import OneMapAuthError, fetch_data_cached
+
+        cached = self.query_geocode_cache(addr)
+        if cached is not None:
+            return {**self._empty_row(addr), "lat": cached[0], "lon": cached[1]}
+        self._limiter.wait()
+        for attempt in (1, 2):
+            try:
+                headers = self.headers
+                df = fetch_data_cached(
+                    addr,
+                    headers=headers,
+                    timeout=self.timeout,
+                    cache_manager=self._cache_manager,
+                    duration_hours=self.cache_duration_hours,
+                )
+                return self._row_from_result(addr, df)
+            except OneMapAuthError as exc:
+                if attempt == 2 or not self._refresh_headers(headers):
+                    logger.warning("Geocoding failed after auth refresh for %s: %s", addr, exc)
+                    break
+                logger.info("OneMap token expired mid-run; refreshed headers, retrying once")
+            except Exception as exc:
+                logger.warning("Geocoding failed for %s: %s", addr, exc)
+                break
+        return self._empty_row(addr)
 
     def geocode(self, addresses: pd.Series) -> pd.DataFrame:
         addrs = [str(a) for a in addresses]
@@ -153,16 +231,7 @@ class OneMapGeocoder(Geocoder):
         return self._geocode_sequential(addrs)
 
     def _geocode_sequential(self, addrs: list[str]) -> pd.DataFrame:
-        rows = []
-        for addr in addrs:
-            cached = self.query_geocode_cache(addr)
-            if cached is not None:
-                rows.append({**self._empty_row(addr), "lat": cached[0], "lon": cached[1]})
-                continue
-            rows.append(self._geocode_via_api(addr))
-            if self.rate_limit_seconds:
-                time.sleep(self.rate_limit_seconds)
-        return pd.DataFrame(rows)
+        return pd.DataFrame([self._geocode_via_api(addr) for addr in addrs])
 
     def _geocode_parallel(self, addrs: list[str]) -> pd.DataFrame:
         rows: list[dict] = [self._empty_row(a) for a in addrs]
@@ -173,7 +242,7 @@ class OneMapGeocoder(Geocoder):
         return pd.DataFrame(rows)
 
 
-def build_default_geocoder(settings: Settings) -> Geocoder:
+def build_default_geocoder(settings: Settings, cache_manager: CacheManager) -> Geocoder:
     """Construct the production OneMap geocoder from settings.
 
     Reads ``settings`` once at the wiring point and returns a fully-wired
@@ -188,6 +257,8 @@ def build_default_geocoder(settings: Settings) -> Geocoder:
         max_workers=settings.geocoding.max_workers,
         timeout=settings.geocoding.timeout_seconds,
         rate_limit_seconds=settings.geocoding.api_delay_seconds,
+        on_auth_expired=lambda: setup_onemap_headers(settings),
+        cache_manager=cache_manager,
     )
 
 

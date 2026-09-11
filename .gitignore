@@ -1,5 +1,6 @@
 # Environment
 .env
+# Local secret key file; never commit it.
 .env.keys
 
 # Python
@@ -127,3 +128,6 @@ data/metadata.json.bak
 
 # Generated pipeline visualization
 dag.png
+
+# Local pipeline refresh transcripts
+refresh_*.log

@@ -3,7 +3,12 @@
 import argparse
 
 from egg_n_bacon_housing.config import settings
-from egg_n_bacon_housing.pipeline import STAGE_VARS, build_pipeline, run_pipeline
+from egg_n_bacon_housing.pipeline import (
+    STAGE_VARS,
+    build_pipeline,
+    resolve_final_vars,
+    run_pipeline,
+)
 from egg_n_bacon_housing.utils.logging_config import LEVEL_MAP, get_logger, setup_logging
 
 
@@ -34,6 +39,19 @@ def main():
         help="Specific output variable(s) to compute (overrides --stage)",
     )
     parser.add_argument(
+        "--refresh",
+        nargs="?",
+        const="all",
+        default=None,
+        metavar="PATTERN",
+        help=(
+            "Invalidate caches before running so sources are re-fetched: "
+            "no value = everything (bronze parquets + DAG + API caches); "
+            "otherwise a glob matched against bronze paths, e.g. raw_hdb_resale "
+            "or 'external/*'"
+        ),
+    )
+    parser.add_argument(
         "--log-level",
         choices=list(LEVEL_MAP),
         default="INFO",
@@ -50,23 +68,34 @@ def main():
     setup_logging(level=level)
     logger = get_logger(__name__)
 
+    if args.refresh is not None:
+        from egg_n_bacon_housing.utils.bronze import refresh_all, refresh_bronze
+
+        if args.refresh == "all":
+            removed = refresh_all(settings)
+            logger.info("Refresh: cleared all caches (%d bronze parquets)", len(removed))
+        else:
+            removed = refresh_bronze(settings, pattern=args.refresh)
+            logger.info("Refresh: cleared %d bronze parquets for '%s'", len(removed), args.refresh)
+
     logger.info(f"Stage: {args.stage} | Data: {settings.data_dir}")
+
+    final_vars = resolve_final_vars(args.final_vars, args.stage)
 
     dr = build_pipeline(settings)
 
     if args.visualize:
         logger.info(f"DAG nodes: {len(dr.list_available_variables())}")
-        viz_vars = args.final_vars or STAGE_VARS.get(args.stage)
         try:
             dr.visualize_execution(
-                final_vars=viz_vars or ["unified_dataset"],
+                final_vars=final_vars,
                 output_file_path="dag.png",
             )
             logger.info("DAG visualization saved to dag.png")
         except Exception as e:
             logger.warning(f"DAG visualization failed: {e}")
 
-    results = run_pipeline(settings, final_vars=args.final_vars, stage=args.stage, dr=dr)
+    results = run_pipeline(settings, final_vars=final_vars, dr=dr)
 
     logger.info(f"Pipeline complete. Results: {list(results.keys())}")
     _log_results(logger, results)

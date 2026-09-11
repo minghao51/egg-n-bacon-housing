@@ -16,31 +16,15 @@ logger = logging.getLogger(__name__)
 
 _collector = None
 
-STRICT_DUPLICATES = "STRICT"
-ALLOW_ANY_DUPLICATES = "ALLOW_ANY"
-ALLOW_THRESHOLD_DUPLICATES = "ALLOW_THRESHOLD"
 MIN_BASELINE_SAMPLES = 3
 
-DATASET_DUPLICATE_POLICIES = {
-    "L3_property_nearby_facilities": {
-        "mode": ALLOW_ANY_DUPLICATES,
-    },
-    "L3_private_property_facilities": {
-        "mode": ALLOW_ANY_DUPLICATES,
-    },
-    "L3_property": {
-        "mode": ALLOW_ANY_DUPLICATES,
-    },
-    "L3_property_transactions_sales": {
-        "mode": ALLOW_ANY_DUPLICATES,
-    },
-    "L3_property_listing_sales": {
-        "mode": ALLOW_ANY_DUPLICATES,
-    },
-    "L2_housing_per_type_amenity_features": {
-        "mode": ALLOW_ANY_DUPLICATES,
-    },
-}
+# Full-row duplicate detection hashes every row across every column, so its
+# cost grows with rows x cols (the large fact tables are ~1M x 60). Above
+# this deterministic row limit the duplicate scan samples the head of the
+# frame instead of hashing all of it; frames at or below the limit keep the
+# exact full-frame count. ``QualitySnapshot.duplicate_count_sampled`` flags
+# which kind of count a snapshot carries (not persisted to run_snapshots).
+_DUPLICATE_SCAN_ROW_LIMIT = 50_000
 
 
 @dataclass
@@ -57,11 +41,19 @@ class QualitySnapshot:
     data_types: dict[str, str]
     source: str
     stage: str
+    # True when duplicate_count was measured on a deterministic head sample
+    # (frames above _DUPLICATE_SCAN_ROW_LIMIT) instead of the full frame.
+    # Companion flag for the duplicate_count metric.
+    duplicate_count_sampled: bool = False
 
 
 @dataclass
 class QualityBaseline:
-    """Historical baseline for adaptive thresholds."""
+    """Historical baseline for adaptive thresholds.
+
+    The ``std_rows``/``std_null_pct`` fields hold the sample *standard
+    deviation* (matching their names and the database columns).
+    """
 
     dataset_name: str
     stage: str
@@ -87,70 +79,52 @@ def get_collector(db_path: Path) -> "DataQualityCollector":
     return _collector
 
 
-def infer_quality_stage(dataset_name: str) -> str:
-    """Infer pipeline stage from the dataset name."""
-    stage_prefixes = {"L0", "L1", "L2", "L3", "L4", "L5"}
-    prefix = dataset_name.split("_", 1)[0]
-    if prefix in stage_prefixes:
-        return prefix
-    if dataset_name.startswith("raw_"):
-        return "L0"
-    return "unknown"
-
-
 def record_dataframe_quality(
     df: pd.DataFrame,
     dataset_name: str,
     db_path: Path,
     source: str = "unknown",
-    stage: str | None = None,
+    stage: str = "unknown",
     input_rows: int | None = None,
 ) -> QualitySnapshot:
     """Record quality metrics for an already-persisted DataFrame."""
+    # Null scan: isnull().sum().sum() is a single vectorized pass per column
+    # (each column's isna runs once in C; the only intermediate is the bool
+    # frame) — no cheaper exact formulation exists, so this stays as-is.
     null_percentage = 0.0
     if df.size > 0:
         null_percentage = round((df.isnull().sum().sum() / df.size) * 100, 2)
+
+    if len(df) <= _DUPLICATE_SCAN_ROW_LIMIT:
+        duplicate_count = int(df.duplicated().sum())
+        duplicate_count_sampled = False
+    else:
+        # Deterministic head sample (no RNG): duplicate_count reflects the
+        # scanned prefix only, flagged via duplicate_count_sampled so
+        # baselines and anomaly reads can tell sampled from exact counts.
+        duplicate_count = int(df.iloc[:_DUPLICATE_SCAN_ROW_LIMIT].duplicated().sum())
+        duplicate_count_sampled = True
 
     snapshot = QualitySnapshot(
         timestamp=datetime.now(tz=UTC).strftime("%Y-%m-%d %H:%M:%S"),
         dataset_name=dataset_name,
         input_rows=len(df) if input_rows is None else input_rows,
         output_rows=len(df),
-        duplicate_count=int(df.duplicated().sum()),
+        duplicate_count=duplicate_count,
         null_percentage=null_percentage,
         columns=df.columns.tolist(),
         data_types={col: str(dtype) for col, dtype in df.dtypes.items()},
         source=source,
-        stage=stage or infer_quality_stage(dataset_name),
+        stage=stage,
+        duplicate_count_sampled=duplicate_count_sampled,
     )
 
     collector = get_collector(db_path)
-    collector.record_snapshot(snapshot)
-
     anomalies = collector.check_anomaly(snapshot)
+    collector.record_snapshot(snapshot)
     _log_quality_summary(snapshot, anomalies)
 
     return snapshot
-
-
-def get_duplicate_status(dataset_name: str, duplicate_count: int) -> tuple[str, bool]:
-    """Return a human-readable duplicate status and whether it should warn."""
-    if duplicate_count == 0:
-        return "✅ OK", False
-
-    policy = DATASET_DUPLICATE_POLICIES.get(dataset_name, {"mode": STRICT_DUPLICATES})
-    mode = policy["mode"]
-
-    if mode == ALLOW_ANY_DUPLICATES:
-        return "✅ OK (expected duplicates)", False
-
-    if mode == ALLOW_THRESHOLD_DUPLICATES:
-        threshold = int(policy.get("threshold", 0))
-        if duplicate_count <= threshold:
-            return f"✅ OK (<= {threshold} duplicates expected)", False
-        return f"⚠️  {duplicate_count} duplicates (> {threshold} expected)", True
-
-    return f"⚠️  {duplicate_count} duplicates", True
 
 
 def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> None:
@@ -159,18 +133,15 @@ def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> Non
     row_change = snapshot.output_rows - snapshot.input_rows
     row_change_pct = (row_change / snapshot.input_rows * 100) if snapshot.input_rows > 0 else 0
 
-    duplicate_status, duplicate_warning = get_duplicate_status(
-        snapshot.dataset_name, snapshot.duplicate_count
-    )
-
     if anomalies:
         status = "⚠️  ANOMALIES DETECTED"
         level = logger.warning
-    elif duplicate_warning:
-        status = duplicate_status
+    elif snapshot.duplicate_count > 0:
+        sample_note = " (head-sampled)" if snapshot.duplicate_count_sampled else ""
+        status = f"⚠️  {snapshot.duplicate_count} duplicates{sample_note}"
         level = logger.warning
     else:
-        status = duplicate_status
+        status = "✅ OK"
         level = logger.info
 
     message = "Data Quality: {} | {} rows ({} ({}%)) | {} duplicates | {}% nulls | {}".format(
@@ -221,6 +192,12 @@ class DataQualityCollector:
         """
         )
 
+        columns = {row[1] for row in cursor.execute("PRAGMA table_info(run_snapshots)").fetchall()}
+        if "duplicate_count_sampled" not in columns:
+            cursor.execute(
+                "ALTER TABLE run_snapshots ADD COLUMN duplicate_count_sampled INTEGER NOT NULL DEFAULT 0"
+            )
+
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS idx_dataset_stage ON run_snapshots(dataset_name, stage)"
         )
@@ -257,8 +234,8 @@ class DataQualityCollector:
             """
             INSERT INTO run_snapshots
             (timestamp, dataset_name, stage, input_rows, output_rows,
-             duplicate_count, null_percentage, column_count, source)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+             duplicate_count, duplicate_count_sampled, null_percentage, column_count, source)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 snapshot.timestamp,
@@ -267,6 +244,7 @@ class DataQualityCollector:
                 snapshot.input_rows,
                 snapshot.output_rows,
                 snapshot.duplicate_count,
+                int(snapshot.duplicate_count_sampled),
                 snapshot.null_percentage,
                 len(snapshot.columns),
                 snapshot.source,
@@ -281,7 +259,13 @@ class DataQualityCollector:
         logger.debug("Recorded quality snapshot for %s", snapshot.dataset_name)
 
     def _update_baseline(self, cursor: sqlite3.Cursor, snapshot: QualitySnapshot) -> None:
-        """Update baseline using incremental algorithm (Welford's method)."""
+        """Update baseline using Welford's incremental method.
+
+        The recurrence runs on the sample *variance*; the ``std_rows`` and
+        ``std_null_pct`` columns store its square root, so they hold the
+        sample standard deviation directly (consumed as-is by
+        ``check_anomaly``).
+        """
         cursor.execute(
             "SELECT mean_rows, std_rows, mean_null_pct, std_null_pct, sample_count "
             "FROM historical_baselines "
@@ -316,14 +300,14 @@ class DataQualityCollector:
             n_new = n + 1
             delta = snapshot.output_rows - mean_rows
             mean_rows_new = mean_rows + delta / n_new
-            std_rows_new = (
-                std_rows * (n - 1) / n + (delta * (snapshot.output_rows - mean_rows_new)) / n
+            var_rows_new = (
+                std_rows**2 * (n - 1) / n + (delta * (snapshot.output_rows - mean_rows_new)) / n
             )
 
             delta_null = snapshot.null_percentage - mean_null_pct
             mean_null_pct_new = mean_null_pct + delta_null / n_new
-            std_null_pct_new = (
-                std_null_pct * (n - 1) / n
+            var_null_pct_new = (
+                std_null_pct**2 * (n - 1) / n
                 + (delta_null * (snapshot.null_percentage - mean_null_pct_new)) / n
             )
 
@@ -336,9 +320,9 @@ class DataQualityCollector:
             """,
                 (
                     mean_rows_new,
-                    std_rows_new,
+                    var_rows_new**0.5,
                     mean_null_pct_new,
-                    std_null_pct_new,
+                    var_null_pct_new**0.5,
                     n_new,
                     snapshot.timestamp,
                     snapshot.dataset_name,
@@ -391,7 +375,7 @@ class DataQualityCollector:
         anomalies = []
 
         if baseline.std_rows > 0.01:
-            std_dev = baseline.std_rows**0.5
+            std_dev = baseline.std_rows
             z_score = abs(snapshot.output_rows - baseline.mean_rows) / std_dev
             if z_score > 3:
                 anomalies.append(
@@ -408,7 +392,7 @@ class DataQualityCollector:
                     )
 
         if baseline.std_null_pct > 0.01:
-            std_dev_null = baseline.std_null_pct**0.5
+            std_dev_null = baseline.std_null_pct
             z_score = abs(snapshot.null_percentage - baseline.mean_null_pct) / std_dev_null
             if z_score > 3:
                 anomalies.append(

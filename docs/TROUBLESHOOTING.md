@@ -7,10 +7,10 @@ Solutions for the supported pipeline and app workflows.
 | Issue                       | Quick Fix                                                  |
 | --------------------------- | ---------------------------------------------------------- |
 | `ModuleNotFoundError`       | Run from the repo root with `uv run`                       |
-| Missing manual source files | Run `dotenvx run -- uv run python scripts/00_sync_data.py` |
+| Missing manual source files | Run `uv run python scripts/00_sync_data.py` |
 | Pipeline stage failure      | Re-run the prerequisite stage with `main.py --stage ...`   |
 | Docs validator failure      | Update the active docs path or remove stale references     |
-| App test/build issue        | Reinstall in `app/` with `bun install`                     |
+| App test/build issue        | Reinstall in `app/` with `bun install --frozen-lockfile`   |
 
 ## Python Import Errors
 
@@ -24,7 +24,7 @@ Fix:
 
 ```bash
 cd /path/to/egg-n-bacon-housing
-dotenvx run -- uv run python main.py --stage all
+uv run python main.py --stage all
 ```
 
 ## Missing Pipeline Outputs
@@ -32,23 +32,22 @@ dotenvx run -- uv run python main.py --stage all
 If an expected dataset is not present, re-run the upstream stage:
 
 ```bash
-dotenvx run -- uv run python main.py --stage ingest
-dotenvx run -- uv run python main.py --stage clean
-dotenvx run -- uv run python main.py --stage features
-dotenvx run -- uv run python main.py --stage export
-dotenvx run -- uv run python main.py --stage metrics
+uv run python main.py --stage ingest
+uv run python main.py --stage clean
+uv run python main.py --stage features
+uv run python main.py --stage export
+uv run python main.py --stage metrics
 ```
 
 You can inspect the most common outputs with:
 
 ```python
-from egg_n_bacon_housing.utils.data_loader import (
-    load_market_summary,
-    load_planning_area_metrics,
-)
+import pandas as pd
 
-print(load_market_summary().shape)
-print(load_planning_area_metrics().shape)
+transactions = pd.read_parquet("data/pipeline/03_gold/transactions_enriched.parquet")
+unified = pd.read_parquet("data/pipeline/04_platinum/unified_dataset.parquet")
+print(transactions.shape)
+print(unified.shape)
 ```
 
 ## OneMap Credential Problems
@@ -68,7 +67,7 @@ The repo does not keep the full manual CSV and GeoJSON bundle in git.
 Sync it with:
 
 ```bash
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run python scripts/00_sync_data.py
 ```
 
 ## Docs Validator Failures
@@ -91,7 +90,7 @@ Run commands from `app/`:
 
 ```bash
 cd app
-bun install
+bun install --frozen-lockfile
 bun run build
 bun run test:e2e
 ```
@@ -212,7 +211,10 @@ The file `data/pipeline/01_bronze/external/Kindergartens.geojson` is misnamed â€
 
 ## Pipeline Stage Runs But `--stage all` Skips Nodes
 
-`STAGE_VARS["all"]` defines which nodes are computed during a full pipeline run. If a node is in `STAGE_VARS["metrics"]` or `STAGE_VARS["export"]` but not in `STAGE_VARS["all"]`, it will only execute when you explicitly run that stage. Check `pipeline.py` and add any missing terminal output nodes to the `all` list.
+The output registry defines the full-run contract: all 12 published outputs
+are materialized, while `run_pipeline(stage="all")` returns the six terminal
+frames. If a published file is missing, inspect its registry entry and
+cache-disabled companion materializer rather than adding an ad-hoc stage list.
 
 ## Related Docs
 

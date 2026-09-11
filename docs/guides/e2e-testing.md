@@ -23,7 +23,7 @@ Run commands from `app/`:
 
 ```bash
 cd app
-bun install
+bun install --frozen-lockfile
 bunx playwright install chromium
 ```
 

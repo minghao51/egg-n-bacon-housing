@@ -7,12 +7,21 @@ not exposed in production.
 
 This module provides a simple file-based caching system to speed up development
 and reduce API quota usage.
+
+Versioning convention (go-forward): embed a caller-owned version in cache
+identifiers, e.g. ``cached_call("datagovsg:v2:{dataset_id}", ...)``. Bump the
+version segment whenever the parse/transform behavior of the producing code
+changes, so stale entries written under the old shape are never read back.
+Existing identifiers are NOT being renamed retroactively — mass invalidation
+without a behavioral change is not justified.
 """
 
 import hashlib
 import json
 import logging
+import os
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -24,30 +33,35 @@ logger = logging.getLogger(__name__)
 _CACHE_MISS = object()
 
 
+@dataclass
 class CacheManager:
     """File-based cache manager for API responses and computed results."""
 
-    def __init__(
-        self,
-        cache_dir: Path,
-        use_caching: bool = True,
-        allow_legacy_pickle: bool = False,
-        cache_duration_hours: int = 24,
-    ):
+    cache_dir: Path
+    use_caching: bool = True
+    cache_duration_hours: int = 24
+    _configuration_locked: bool = field(default=False, init=False, repr=False)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in {
+            "cache_dir",
+            "use_caching",
+            "cache_duration_hours",
+        } and getattr(self, "_configuration_locked", False):
+            raise AttributeError(f"CacheManager configuration is immutable: {name}")
+        super().__setattr__(name, value)
+
+    def __post_init__(self) -> None:
         """Initialize cache manager.
 
         Args:
             cache_dir: Directory to store cache files.
             use_caching: Whether caching is enabled.
-            allow_legacy_pickle: Whether to read legacy .pkl cache files.
             cache_duration_hours: Default cache validity duration.
         """
-        self.cache_dir = cache_dir
-        self.use_caching = use_caching
-        self.allow_legacy_pickle = allow_legacy_pickle
-        self.cache_duration_hours = cache_duration_hours
         if self.use_caching:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self._configuration_locked = True
 
     def _get_cache_key(self, identifier: str) -> str:
         return hashlib.sha256(identifier.encode()).hexdigest()
@@ -57,17 +71,11 @@ class CacheManager:
         return {
             "json": self.cache_dir / f"{cache_key}.json",
             "parquet": self.cache_dir / f"{cache_key}.parquet",
-            "pickle": self.cache_dir / f"{cache_key}.pkl",
         }
 
     def _get_existing_cache_path(self, cache_key: str) -> Path | None:
         """Return first existing cache path, preferring safe formats."""
-        paths = self._cache_paths(cache_key)
-        ordered_keys = ["json", "parquet"]
-        if self.allow_legacy_pickle:
-            ordered_keys.append("pickle")
-        for key in ordered_keys:
-            path = paths[key]
+        for path in self._cache_paths(cache_key).values():
             if path.exists():
                 return path
         return None
@@ -78,10 +86,19 @@ class CacheManager:
         file_age = datetime.now(tz=UTC) - datetime.fromtimestamp(cache_path.stat().st_mtime, tz=UTC)
         return file_age > timedelta(hours=duration_hours)
 
+    @staticmethod
+    def _unlink_best_effort(path: Path) -> None:
+        """Remove ``path`` if present; stale-cache cleanup must never raise."""
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            logger.debug("Could not remove cache file: %s", path)
+
     def get(self, identifier: str, duration_hours: int | None = None) -> Any:
         """Retrieve a cached value.
 
         Returns ``_CACHE_MISS`` sentinel if not found, expired, or caching disabled.
+        Expired entries are unlinked (best-effort) so they cannot shadow future writes.
         """
         if not self.use_caching:
             logger.debug("Caching is disabled")
@@ -96,6 +113,8 @@ class CacheManager:
 
         if self._is_expired(cache_path, effective_duration):
             logger.debug("Cache miss or expired: %s...", identifier[:100])
+            if cache_path is not None:
+                self._unlink_best_effort(cache_path)
             return _CACHE_MISS
 
         assert cache_path is not None
@@ -107,7 +126,7 @@ class CacheManager:
             elif cache_path.suffix == ".parquet":
                 value = pd.read_parquet(cache_path)
             else:
-                logger.warning("Legacy pickle cache disabled: %s", cache_path)
+                logger.warning("Unsupported cache format: %s", cache_path)
                 return _CACHE_MISS
             logger.info("Cache hit: %s...", identifier[:100])
             return value
@@ -116,7 +135,13 @@ class CacheManager:
             return _CACHE_MISS
 
     def set(self, identifier: str, value: Any) -> None:
-        """Store a value in cache."""
+        """Store a value in cache.
+
+        Writes are atomic (temp file + ``os.replace``) so a crash mid-write can
+        never leave a truncated entry that reads as a permanent miss. The
+        sibling-format path for the same key is removed to prevent a stale
+        json/parquet shadowing the fresh entry.
+        """
         if not self.use_caching:
             return
 
@@ -127,13 +152,40 @@ class CacheManager:
 
         try:
             if hasattr(value, "to_parquet") and callable(value.to_parquet):
-                value.to_parquet(parquet_path, index=False)
+                self._atomic_write(parquet_path, lambda p: value.to_parquet(p, index=False))
+                self._unlink_best_effort(json_path)
             else:
-                with open(json_path, "w", encoding="utf-8") as f:
-                    json.dump(value, f)
+
+                def _write_json(path: Path) -> None:
+                    with open(path, "w", encoding="utf-8") as f:
+                        json.dump(value, f)
+
+                self._atomic_write(json_path, _write_json)
+                self._unlink_best_effort(parquet_path)
             logger.info("Cached: %s...", identifier[:100])
         except (OSError, TypeError, ValueError) as e:
             logger.warning("Failed to cache value: %s", e)
+
+    @staticmethod
+    def _atomic_write(path: Path, write: Callable[[Path], None]) -> None:
+        """Write through a ``.tmp`` sibling, then atomically replace ``path``."""
+        tmp_path = path.with_name(path.name + ".tmp")
+        write(tmp_path)
+        os.replace(tmp_path, path)
+
+    def cached_call(
+        self,
+        identifier: str,
+        func: Callable,
+        duration_hours: int | None = None,
+    ) -> Any:
+        """Execute ``func`` on a cache miss using this manager."""
+        cached_value = self.get(identifier, duration_hours)
+        if cached_value is not _CACHE_MISS:
+            return cached_value
+        result = func()
+        self.set(identifier, result)
+        return result
 
     def clear(self, identifier: str | None = None) -> None:
         """Clear cache entries."""
@@ -148,6 +200,8 @@ class CacheManager:
             if deleted_any:
                 logger.info("Cleared cache: %s...", identifier[:100])
         else:
+            # *.pkl is kept in the sweep so legacy pickle files from removed
+            # behavior are still cleaned up, even though they are never read.
             for pattern in ("*.json", "*.parquet", "*.pkl"):
                 for cache_file in self.cache_dir.glob(pattern):
                     cache_file.unlink()
@@ -173,71 +227,23 @@ class CacheManager:
         }
 
 
-_cache_manager: CacheManager | None = None
-
-
-def configure(
-    cache_dir: Path,
-    use_caching: bool = True,
-    allow_legacy_pickle: bool = False,
-    cache_duration_hours: int = 24,
-) -> CacheManager:
-    """Set up the global cache manager (call once at startup)."""
-    global _cache_manager
-    _cache_manager = CacheManager(
-        cache_dir=cache_dir,
-        use_caching=use_caching,
-        allow_legacy_pickle=allow_legacy_pickle,
-        cache_duration_hours=cache_duration_hours,
-    )
-    return _cache_manager
-
-
-def get_cache_manager() -> CacheManager:
-    """Return the configured cache manager, raising if not yet configured."""
-    if _cache_manager is None:
-        raise RuntimeError(
-            "Cache not configured. Call egg_n_bacon_housing.utils.cache.configure() first."
-        )
-    return _cache_manager
-
-
 def cached_call(
     identifier: str,
     func: Callable,
     duration_hours: int | None = None,
+    *,
+    cache_manager: CacheManager,
 ) -> Any:
-    """Execute a function with caching.
-
-    Falls back to direct execution (no caching) if the cache manager is not
-    configured. This allows callers to use ``cached_call`` without worrying
-    about configuration — tests and analytics scripts that don't call
-    ``configure()`` simply skip caching.
+    """Execute a function with the explicitly injected cache manager.
 
     Args:
-        identifier: Cache identifier (e.g., URL, function name + args)
+        identifier: Cache identifier (e.g., URL, function name + args). See the
+            module docstring for the versioning convention
+            (e.g. ``"datagovsg:v2:{dataset_id}"``).
         func: Function to execute if cache miss
         duration_hours: Cache duration (defaults to manager's configured value)
 
     Returns:
         Function result (from cache or freshly computed)
     """
-    if _cache_manager is None:
-        return func()
-    cached_value = _cache_manager.get(identifier, duration_hours)
-    if cached_value is not _CACHE_MISS:
-        return cached_value
-
-    result = func()
-    _cache_manager.set(identifier, result)
-    return result
-
-
-def clear_cache(identifier: str | None = None) -> None:
-    """Clear cache entries."""
-    get_cache_manager().clear(identifier)
-
-
-def get_cache_stats() -> dict:
-    """Get cache statistics."""
-    return get_cache_manager().get_stats()
+    return cache_manager.cached_call(identifier, func, duration_hours)

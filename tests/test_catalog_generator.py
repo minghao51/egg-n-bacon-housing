@@ -197,6 +197,9 @@ class TestDiscoverCatalogModels:
         "planning_area_360",
         "town_360",
         "block_profile",
+        "unified_dataset",
+        "pa_monthly_metrics",
+        "appreciation_hotspots",
     }
 
     def test_finds_all_catalog_models(self, gen):

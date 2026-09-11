@@ -36,11 +36,11 @@ Source code lives in `src/egg_n_bacon_housing/`:
 - `adapters/` — External API clients (onemap, datagovsg, geocoding)
 - `utils/` — Utilities (cache, layer_writer, metrics, etc.)
 
-**Manual data**: ~100MB of CSV/GeoJSON source files in `data/manual/` are stored in **Cloudflare R2** (gitignored). Fetch with `dotenvx run -- uv run python scripts/00_sync_data.py`. See `docs/guides/r2-sync-guide.md`.
+**Manual data**: ~100MB of CSV/GeoJSON source files in `data/manual/` are stored in **Cloudflare R2** (gitignored). Fetch with `uv run python scripts/00_sync_data.py`; credentials are loaded from the local ignored `.env` or the process environment. See `docs/guides/r2-sync-guide.md`.
 
-**Maintenance scripts**: `scripts/generate_catalog.py` regenerates the data catalog (drives `check_catalog.py` in CI). `scripts/99_cleanup.py` logs cache stats + clears the pipeline cache (`dotenvx run -- uv run python scripts/99_cleanup.py`).
+**Maintenance scripts**: `scripts/generate_catalog.py` regenerates the data catalog (drives `check_catalog.py` in CI). `scripts/99_cleanup.py` logs cache stats + clears the pipeline cache (`uv run python scripts/99_cleanup.py`).
 
-**Env vars**: Encrypted via `dotenvx` — run commands as `dotenvx run -- uv run <cmd>`.
+**Env vars**: Copy `.env.example` to the local, git-ignored `.env`. Pydantic Settings loads it automatically; exported environment variables override values in the file. Never commit or print `.env` or other secret files.
 
 **Pipeline vs Analytics**: The Hamilton DAG (`components/`) runs the core automated pipeline from bronze to platinum. Published analytics are maintained in `docs/analytics/` and served with precomputed assets from `app/public/data/`; the retired standalone Python analytics package is not a supported surface.
 

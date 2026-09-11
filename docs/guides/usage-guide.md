@@ -1,6 +1,6 @@
 # Usage Guide
 
-**Last Updated**: 2026-06-12 | **Status**: Active
+**Last Updated**: 2026-09-04 | **Status**: Active
 
 ## Overview
 
@@ -19,14 +19,14 @@ git clone <repo-url>
 cd egg-n-bacon-housing
 uv sync
 cp .env.example .env
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run python scripts/00_sync_data.py
 ```
 
 Verification:
 
 ```bash
 uv run pytest --no-cov
-dotenvx run -- uv run python main.py --help
+uv run python main.py --help
 ```
 
 ## Run the Pipeline
@@ -34,30 +34,46 @@ dotenvx run -- uv run python main.py --help
 Default end-to-end flow:
 
 ```bash
-dotenvx run -- uv run python main.py --stage all
+uv run python main.py --stage all
 ```
 
 Single-stage runs:
 
 ```bash
-dotenvx run -- uv run python main.py --stage ingest
-dotenvx run -- uv run python main.py --stage clean
-dotenvx run -- uv run python main.py --stage features
-dotenvx run -- uv run python main.py --stage export
-dotenvx run -- uv run python main.py --stage metrics
+uv run python main.py --stage ingest
+uv run python main.py --stage clean
+uv run python main.py --stage features
+uv run python main.py --stage export
+uv run python main.py --stage metrics
 ```
 
 Generate a DAG image:
 
 ```bash
-dotenvx run -- uv run python main.py --visualize
+uv run python main.py --visualize
 ```
 
 Run selected outputs only:
 
 ```bash
-dotenvx run -- uv run python main.py --final-var unified_dataset
+uv run python main.py --final-var unified_dataset
 ```
+
+## Refresh Data
+
+Bronze parquets never expire on their own — ingestion nodes short-circuit when
+the file exists. Use `--refresh` to force re-fetching:
+
+```bash
+# Full refresh: clear ALL bronze parquets + DAG + API caches, then run
+uv run python main.py --refresh --stage all
+
+# Re-fetch a specific dataset (glob matched against bronze paths)
+uv run python main.py --refresh 'raw_hdb_*' --stage all
+```
+
+Note: targeted `--refresh <pattern>` clears bronze files only; the 24h API
+response cache is only cleared by the full form.
 
 ## Data Locations
 
@@ -78,24 +94,34 @@ App-facing assets:
 
 ## Load Data in Python
 
-For convenience loaders around common outputs, use [src/egg_n_bacon_housing/utils/data_loader.py](../../src/egg_n_bacon_housing/utils/data_loader.py).
+Published outputs are parquet files — read them directly with pandas:
 
 ```python
-from egg_n_bacon_housing.utils.data_loader import (
-    load_market_summary,
-    load_planning_area_metrics,
-)
+import pandas as pd
 
-market_summary = load_market_summary()
-planning_area_metrics = load_planning_area_metrics()
-print(market_summary.shape, planning_area_metrics.shape)
+unified = pd.read_parquet("data/pipeline/04_platinum/unified_dataset.parquet")
+pa_metrics = pd.read_parquet("data/pipeline/04_platinum/metrics/pa_monthly_metrics.parquet")
+print(unified.shape, pa_metrics.shape)
+```
+
+For planning-area spatial lookups (point-in-polygon assignment for arbitrary
+coordinates), use the `SpatialReferenceRepository` in
+[src/egg_n_bacon_housing/utils/data_loader.py](../../src/egg_n_bacon_housing/utils/data_loader.py):
+
+```python
+from pathlib import Path
+
+from egg_n_bacon_housing.utils.data_loader import SpatialReferenceRepository
+
+spatial = SpatialReferenceRepository(Path("data/manual/geojsons"))
+planning_area = spatial.planning_areas_for_points(lat=pd.Series([1.3521]), lon=pd.Series([103.8198]))
 ```
 
 ## Run the App
 
 ```bash
 cd app
-bun install
+bun install --frozen-lockfile
 bun run dev
 ```
 

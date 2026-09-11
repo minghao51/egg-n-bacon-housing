@@ -26,14 +26,6 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
 
-  # Python linting with Ruff
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.7
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-      - id: ruff-format
-
   # Lockfile validation
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.6.14
@@ -68,12 +60,17 @@ repos:
         always_run: true
         require_serial: true
 
-      - id: dotenvx-precommit
-        name: dotenvx precommit
-        entry: dotenvx ext precommit .
+      - id: ruff
+        name: ruff
+        entry: uv run ruff check
         language: system
-        pass_filenames: false
-        stages: [manual]
+        pass_filenames: true
+
+      - id: ruff-format
+        name: ruff-format
+        entry: uv run ruff format --check
+        language: system
+        pass_filenames: true
 
       - id: pip-audit
         name: pip-audit

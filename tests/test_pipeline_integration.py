@@ -1,7 +1,6 @@
 """Integration test: build pipeline driver and verify DAG structure."""
 
 import importlib
-from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -33,6 +32,16 @@ class TestPipelineIntegration:
                 pytest.skip("Hamilton @check_output does not support DataFrame validator")
             raise
 
+    def test_materializers_disabled_and_nothing_recomputed_with_cache(self, tmp_path):
+        """Single persistence regime: computing nodes are cacheable; only the
+        companion materializers are cache-disabled (inline recompute hack gone)."""
+        pipeline = _get_pipeline_module()
+        dr = pipeline.build_pipeline(settings, data_path=str(tmp_path))
+
+        assert dr.cache is not None
+        assert set(pipeline._MATERIALIZER_MAP.values()).issubset(set(dr.cache._disable))
+        assert not dr.cache._recompute
+
     def test_pipeline_stage_vars_defined(self):
         """STAGE_VARS dict has expected stage keys."""
         pipeline = _get_pipeline_module()
@@ -43,6 +52,24 @@ class TestPipelineIntegration:
         assert "features" in pipeline.STAGE_VARS
         assert "export" in pipeline.STAGE_VARS
         assert "metrics" in pipeline.STAGE_VARS
+
+    def test_runtime_service_dependencies_are_discoverable(self, tmp_path):
+        pipeline = _get_pipeline_module()
+        dr = pipeline.build_pipeline(settings, data_path=str(tmp_path))
+        expected = {
+            "raw_condo_transactions": {"cache_manager"},
+            "raw_mrt_stations": {"mrt_reference"},
+            "validate_location_dim": {"mrt_reference", "spatial_reference", "school_reference"},
+        }
+
+        for node_name, service_inputs in expected.items():
+            assert service_inputs.issubset(dr.graph.nodes[node_name].input_types)
+
+        # Bronze is the only cache layer under the parameterized datagov nodes
+        # (WO-5): they must not declare the per-run cache_manager input, so
+        # --refresh cannot be shadowed by the 24h API-response cache.
+        for node_name in ("raw_rental_index", "raw_hdb_rental", "raw_school_directory"):
+            assert "cache_manager" not in dr.graph.nodes[node_name].input_types
 
     def test_run_pipeline_with_mocked_driver(self, tmp_path, monkeypatch):
         """run_pipeline delegates to driver.execute with correct layer inputs."""
@@ -64,50 +91,29 @@ class TestPipelineIntegration:
 
         assert captured["final_vars"] == pipeline.STAGE_VARS["all"]
         assert captured["inputs"]["bronze_dir"] == tmp_path / "pipeline" / "01_bronze"
-        assert captured["inputs"]["silver_dir"] == tmp_path / "pipeline" / "02_silver"
-        assert captured["inputs"]["gold_dir"] == tmp_path / "pipeline" / "03_gold"
         assert "writer" in captured["inputs"]
         assert captured["inputs"]["writer"].data_dir == tmp_path / "pipeline"
 
-    def test_run_pipeline_reconfigures_helpers_to_override_data_path(self, tmp_path, monkeypatch):
+    def test_run_pipeline_injects_isolated_runtime_services(self, tmp_path, monkeypatch):
         pipeline = _get_pipeline_module()
-        from egg_n_bacon_housing.utils import cache, data_loader, mrt_line_mapping, school_features
 
         class FakeDriver:
             def execute(self, final_vars, inputs=None):
+                captured.update(inputs or {})
                 return {name: pd.DataFrame() for name in final_vars}
 
         monkeypatch.setattr(
             pipeline, "build_pipeline", lambda settings, data_path=None: FakeDriver()
         )
 
-        captured: dict[str, Path | dict[str, object]] = {}
-
-        def fake_cache_configure(cache_dir, **kwargs):
-            captured["cache_dir"] = cache_dir
-
-        def fake_data_loader_configure(data_dir):
-            captured["data_loader_dir"] = data_dir
-
-        def fake_school_features_configure(bronze_dir, data_dir):
-            captured["school_bronze_dir"] = bronze_dir
-            captured["school_data_dir"] = data_dir
-
-        def fake_mrt_configure(config_dir):
-            captured["mrt_config_dir"] = config_dir
-
-        monkeypatch.setattr(cache, "configure", fake_cache_configure)
-        monkeypatch.setattr(data_loader, "configure", fake_data_loader_configure)
-        monkeypatch.setattr(school_features, "configure", fake_school_features_configure)
-        monkeypatch.setattr(mrt_line_mapping, "configure", fake_mrt_configure)
+        captured: dict[str, object] = {}
 
         pipeline.run_pipeline(settings, data_path=str(tmp_path), geocoder=InMemoryGeocoder({}))
 
-        assert captured["cache_dir"] == tmp_path / "cache"
-        assert captured["data_loader_dir"] == tmp_path
-        assert captured["school_data_dir"] == tmp_path
-        assert captured["school_bronze_dir"] == tmp_path / "pipeline" / "01_bronze"
-        assert captured["mrt_config_dir"] == tmp_path / "pipeline" / "01_bronze" / "external"
+        # A driver without a Hamilton graph cannot expose its required inputs;
+        # runtime services are intentionally lazy in this case.
+        assert "cache_manager" not in captured
+        assert "mrt_reference" not in captured
 
     def test_run_pipeline_specific_stage(self, tmp_path, monkeypatch):
         """run_pipeline accepts a stage parameter to select output variables."""
@@ -163,7 +169,6 @@ class TestPipelineIntegration:
         hdb_result = ingestion.raw_dataset(
             bronze_dir=tmp_path,
             resource_id="d_5785799d63a9da091f4e0b456291eeb8",
-            cache_id="bronze_hdb_resale_raw",
             cache_filenames=("raw_hdb_resale.parquet",),
             display_name="HDB resale",
             error_name="hdb_resale",
@@ -171,7 +176,6 @@ class TestPipelineIntegration:
         condo_result = ingestion.raw_dataset(
             bronze_dir=tmp_path,
             resource_id="d_2fd959a62c2d04c67a5a7c7538c53ddd",
-            cache_id="bronze_condo_raw",
             cache_filenames=("raw_condo_transactions.parquet",),
             display_name="condo",
             error_name="condo_resale",
@@ -201,9 +205,18 @@ class TestPipelineIntegration:
             ]
         )
 
-        silver_dir = tmp_path / "silver"
-        result = cleaning.cleaned_hdb_transactions(raw_data, silver_dir=silver_dir)
+        result = cleaning.cleaned_hdb_transactions(raw_data)
 
         assert not result.empty
         assert "price" in result.columns
         assert result.loc[0, "price"] == 500000.0
+
+
+class TestStageValidation:
+    """run_pipeline rejects unknown stages instead of computing everything."""
+
+    def test_unknown_stage_raises_value_error(self, tmp_path):
+        from egg_n_bacon_housing.pipeline import run_pipeline
+
+        with pytest.raises(ValueError, match="Unknown stage"):
+            run_pipeline(settings=settings, data_path=str(tmp_path), stage="bogus")

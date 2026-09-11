@@ -12,6 +12,7 @@ Operational guides for the current repository layout.
 | [e2e-testing.md](./e2e-testing.md)                               | Astro app end-to-end testing                          |
 | [pipeline-development.md](./pipeline-development.md)             | Hamilton stages, layers, and node changes             |
 | [data-ingestion-development.md](./data-ingestion-development.md) | Source onboarding and ingestion changes               |
+| [ops-scheduling.md](./ops-scheduling.md)                         | Local scheduled refresh of rolling bronze sources     |
 
 ## Common Commands
 

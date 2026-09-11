@@ -9,10 +9,17 @@ from pathlib import Path
 
 DEFAULT_MIN_COVERAGE = 60.0
 CORE_MODULES = [
+    "src/egg_n_bacon_housing/pipeline.py",
     "src/egg_n_bacon_housing/components/cleaning.py",
+    "src/egg_n_bacon_housing/components/feature_rental.py",
+    "src/egg_n_bacon_housing/components/feature_transactions.py",
+    "src/egg_n_bacon_housing/components/feature_profiles.py",
     "src/egg_n_bacon_housing/components/features.py",
     "src/egg_n_bacon_housing/components/export.py",
     "src/egg_n_bacon_housing/components/metrics.py",
+    "src/egg_n_bacon_housing/components/materialization.py",
+    "src/egg_n_bacon_housing/utils/validation.py",
+    "src/egg_n_bacon_housing/utils/validation_gateway.py",
     "src/egg_n_bacon_housing/components/ingestion/datagov.py",
     "src/egg_n_bacon_housing/components/ingestion/geojson.py",
     "src/egg_n_bacon_housing/components/ingestion/macro.py",

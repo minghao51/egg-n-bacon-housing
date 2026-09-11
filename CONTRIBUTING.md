@@ -19,7 +19,7 @@ cp .env.example .env
 If you need the manual source bundle:
 
 ```bash
-dotenvx run -- uv run python scripts/00_sync_data.py
+uv run python scripts/00_sync_data.py
 ```
 
 ## Core Commands

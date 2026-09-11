@@ -13,6 +13,10 @@ class OneMapAuthError(AdapterError):
     """Raised when OneMap authentication fails."""
 
 
+class URAAuthError(AdapterError):
+    """Raised when URA Data Service authentication fails (bad key/token)."""
+
+
 class DatasetFetchError(AdapterError):
     """Raised when a dataset fetch fails."""
 

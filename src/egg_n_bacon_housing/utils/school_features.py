@@ -3,39 +3,105 @@
 
 import json
 import logging
+import threading
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd
-from rapidfuzz import fuzz, process
 from scipy.spatial import cKDTree
 
-from egg_n_bacon_housing.utils.geo import haversine_distance
 from egg_n_bacon_housing.utils.geocoding import Geocoder
-
-# Constants
-DISTANCES = {
-    "500m": 500,
-    "1km": 1000,
-    "2km": 2000,
-}
+from egg_n_bacon_housing.utils.runtime import SchoolReference
 
 SCHOOL_LEVELS = ["PRIMARY", "SECONDARY (S1-S5)", "JUNIOR COLLEGE"]
 
+#: Columns emitted by :func:`calculate_school_quality_features` on every call.
+QUALITY_FEATURE_COLUMNS = (
+    "nearest_top_primary_school_dist",
+    "nearest_top_secondary_school_dist",
+    "school_accessibility_score",
+)
+
+#: Methodology weight for the overall blend (secondary-weighted, see
+#: data/manual/csv/school_scoring_methodology.md "Aggregate School Features").
+_PRIMARY_BLEND_WEIGHT = 0.4
+_SECONDARY_BLEND_WEIGHT = 0.6
+
+#: Distance decay: half-value at 500m, negligible at 2km (methodology).
+_ACCESSIBILITY_DECAY_RANGE_M = 2000.0
+
 logger = logging.getLogger(__name__)
 
-_paths: dict[str, Path] = {}
+
+@dataclass(frozen=True)
+class SchoolReferenceRepository:
+    """School tiers rooted at immutable bronze and manual directories."""
+
+    bronze_dir: Path
+    data_dir: Path
+    _lock: threading.RLock = field(
+        default_factory=threading.RLock, init=False, repr=False, compare=False
+    )
+    _tiers_cache: tuple[pd.DataFrame, pd.DataFrame] | None = field(
+        default=None, init=False, repr=False
+    )
+
+    def load_json(self, filename: str) -> dict | None:
+        config_path = self.bronze_dir / "external" / filename
+        if config_path.exists():
+            try:
+                with open(config_path) as f:
+                    data = json.load(f)
+                return data if isinstance(data, dict) else None
+            except (OSError, json.JSONDecodeError, TypeError):
+                logger.warning("Invalid school reference file: %s", config_path)
+                return None
+        logger.warning("Reference data file not found: %s", config_path)
+        return None
+
+    def load_school_tiers(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        with self._lock:
+            if self._tiers_cache is None:
+                object.__setattr__(self, "_tiers_cache", self._load_school_tiers())
+            assert self._tiers_cache is not None
+            return self._tiers_cache[0].copy(deep=True), self._tiers_cache[1].copy(deep=True)
+
+    def _load_school_tiers(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        primary_tiers = pd.DataFrame()
+        secondary_tiers = pd.DataFrame()
+        json_data = self.load_json("school_tiers.json")
+        if json_data:
+            if "primary" in json_data:
+                primary_tiers = pd.DataFrame(json_data["primary"])
+                logger.info("Loaded %s primary school tiers from JSON", len(primary_tiers))
+            if "secondary" in json_data:
+                secondary_tiers = pd.DataFrame(json_data["secondary"])
+                logger.info("Loaded %s secondary school tiers from JSON", len(secondary_tiers))
+            return primary_tiers, secondary_tiers
+
+        csv_dir = self.data_dir / "manual" / "csv"
+        primary_path = csv_dir / "school_tiers_primary.csv"
+        secondary_path = csv_dir / "school_tiers_secondary.csv"
+        if primary_path.exists():
+            primary_tiers = pd.read_csv(primary_path)
+            logger.info("Loaded %s primary school tiers from CSV", len(primary_tiers))
+        else:
+            logger.warning("Primary school tiers not found: %s", primary_path)
+        if secondary_path.exists():
+            secondary_tiers = pd.read_csv(secondary_path)
+            logger.info("Loaded %s secondary school tiers from CSV", len(secondary_tiers))
+        else:
+            logger.warning("Secondary school tiers not found: %s", secondary_path)
+        return primary_tiers, secondary_tiers
 
 
-def configure(bronze_dir: Path, data_dir: Path) -> None:
-    """Set reference-data paths (call once at pipeline startup)."""
-    global _paths
-    _paths = {"bronze_dir": bronze_dir, "data_dir": data_dir}
+def _repository(repository: SchoolReferenceRepository) -> SchoolReferenceRepository:
+    return repository
 
 
-def _load_reference_data(filename: str) -> dict | None:
-    """Load JSON reference data from bronze/external with fallback.
+def _load_reference_data(filename: str, repository: SchoolReferenceRepository) -> dict | None:
+    """Load JSON reference data from an explicitly injected repository.
 
     Args:
         filename: Name of JSON file in data/01_bronze/external/
@@ -43,217 +109,328 @@ def _load_reference_data(filename: str) -> dict | None:
     Returns:
         Parsed JSON data or None if not found
     """
-    config_path = _paths.get("bronze_dir", Path()) / "external" / filename
-    if config_path.exists():
-        with open(config_path) as f:
-            return json.load(f)
-    logger.warning("Reference data file not found: %s", config_path)
-    return None
+    return _repository(repository).load_json(filename)
 
 
-def load_school_tiers() -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_school_tiers(
+    repository: SchoolReference,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load school tier data from JSON with CSV fallback.
 
     Returns:
         Tuple of (primary_tiers, secondary_tiers) DataFrames
     """
-    primary_tiers = pd.DataFrame()
-    secondary_tiers = pd.DataFrame()
+    return repository.load_school_tiers()
 
-    json_data = _load_reference_data("school_tiers.json")
-    if json_data:
-        if "primary" in json_data:
-            primary_tiers = pd.DataFrame(json_data["primary"])
-            logger.info("Loaded %s primary school tiers from JSON", len(primary_tiers))
-        if "secondary" in json_data:
-            secondary_tiers = pd.DataFrame(json_data["secondary"])
-            logger.info("Loaded %s secondary school tiers from JSON", len(secondary_tiers))
-        return primary_tiers, secondary_tiers
 
-    csv_dir = _paths.get("data_dir", Path()) / "manual" / "csv"
-    primary_path = csv_dir / "school_tiers_primary.csv"
-    secondary_path = csv_dir / "school_tiers_secondary.csv"
+def _school_key(series: pd.Series) -> pd.Series:
+    """Normalized school-name join key (tier CSVs and the MOE directory
+    both use uppercase names; normalize defensively)."""
+    return series.astype("string").str.strip().str.upper()
 
-    if primary_path.exists():
-        primary_tiers = pd.read_csv(primary_path)
-        logger.info("Loaded %s primary school tiers from CSV", len(primary_tiers))
+
+def _yes_no(series: pd.Series) -> pd.Series:
+    """Yes/No column to float indicator (anything non-"Yes" is 0)."""
+    return (series.astype("string").str.strip().str.lower() == "yes").astype(float)
+
+
+def _tier_terms(tier: pd.Series) -> pd.Series:
+    """tier_1/2/3 indicator terms (3.0 / 2.0 / 1.0 per methodology weights)."""
+    tier_num = pd.to_numeric(tier, errors="coerce")
+    return (tier_num == 1) * 3.0 + (tier_num == 2) * 2.0 + (tier_num == 3) * 1.0
+
+
+def _popularity_score(series: pd.Series) -> pd.Series:
+    """Phase 2B popularity ratio / 3, capped at 1.0.
+
+    ``"High"`` markers carry no numeric ratio; the methodology caps the
+    score at 1.0 anyway, so map them to the cap rather than dropping the
+    signal. Other non-numeric values score 0.
+    """
+    normalized = series.astype("string").str.strip().str.lower()
+    numeric = pd.to_numeric(series, errors="coerce") / 3.0
+    numeric = numeric.clip(lower=0.0, upper=1.0)
+    numeric = numeric.where(~(normalized == "high"), 1.0)
+    return numeric.fillna(0.0)
+
+
+def _cutoff_quality(series: pd.Series) -> pd.Series:
+    """IP cut-off quality: (10 - midpoint) / 6 * 1.5, clipped at [0, 1.5].
+
+    Cut-offs are PSLE aggregate ranges like ``"4-6"``; the midpoint of the
+    range is used. Unparseable values score 0.
+    """
+    text = series.astype("string").str.strip()
+    parts = text.str.extract(r"^(\d+)\s*-\s*(\d+)$")
+    midpoint = (
+        pd.to_numeric(parts[0], errors="coerce") + pd.to_numeric(parts[1], errors="coerce")
+    ) / 2.0
+    single = pd.to_numeric(text, errors="coerce")
+    midpoint = midpoint.fillna(single)
+    return ((10.0 - midpoint) / 6.0 * 1.5).clip(lower=0.0, upper=1.5).fillna(0.0)
+
+
+def _quality_formula(terms: pd.Series) -> pd.Series:
+    """terms + MIN(1.0, sum_of_terms) base bonus, clipped to the 0-10 scale.
+
+    The methodology's ``MIN(1.0, sum_all_weights)`` is read literally as a
+    participation bonus equal to the applied weighted terms capped at 1.0.
+    """
+    return (terms + terms.clip(upper=1.0)).clip(lower=0.0, upper=10.0)
+
+
+def calculate_school_quality_scores(
+    primary_tiers: pd.DataFrame, secondary_tiers: pd.DataFrame
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Compute 0-10 school quality scores per the published methodology.
+
+    Implements the primary and secondary formulas from
+    ``data/manual/csv/school_scoring_methodology.md``. Deviations from the
+    literal formulas, all forced by the available data:
+
+    - ``academic_awards`` is 0 for every school — the ``awards`` column is
+      descriptive text ("Premier girls school"), not a count.
+    - ``popularity_p2b`` markers of ``"High"`` map to the capped max (1.0);
+      other non-numeric values score 0.
+    - IP cut-off ranges use their midpoint.
+
+    Returns:
+        Tuple of (primary, secondary) frames with ``school_name``
+        (normalized join key) and ``quality_score``; empty-in → empty-out
+        with the same columns.
+    """
+    if primary_tiers.empty:
+        primary = pd.DataFrame(columns=["school_name", "quality_score"])
     else:
-        logger.warning("Primary school tiers not found: %s", primary_path)
-
-    if secondary_path.exists():
-        secondary_tiers = pd.read_csv(secondary_path)
-        logger.info("Loaded %s secondary school tiers from CSV", len(secondary_tiers))
-    else:
-        logger.warning("Secondary school tiers not found: %s", secondary_path)
-
-    return primary_tiers, secondary_tiers
-
-
-def calculate_primary_quality_score(row: pd.Series) -> float:
-    """Calculate quality score for primary schools (0-10 scale).
-
-    Args:
-        row: School tier data row
-
-    Returns:
-        Quality score from 0-10
-    """
-    score = 0.0
-
-    # GEP programme
-    if str(row.get("gep", "No")).upper() == "YES":
-        score += 2.5
-
-    # SAP status
-    if str(row.get("sap", "No")).upper() == "YES":
-        score += 2.0
-
-    # Tier classification
-    tier = int(row.get("tier", 3))
-    if tier == 1:
-        score += 3.0
-    elif tier == 2:
-        score += 2.0
-    elif tier == 3:
-        score += 1.0
-
-    # Popularity (Phase 2B applicants per vacancy)
-    popularity = row.get("popularity_p2b", None)
-    if pd.notna(popularity) and popularity != "High":
-        try:
-            pop_val = float(popularity)
-            score += min(pop_val / 3 * 0.5, 0.5)
-        except (ValueError, TypeError):
-            pass
-    elif popularity == "High":
-        score += 0.5
-
-    return min(score, 10.0)
-
-
-def calculate_secondary_quality_score(row: pd.Series) -> float:
-    """Calculate quality score for secondary schools (0-10 scale).
-
-    Args:
-        row: School tier data row
-
-    Returns:
-        Quality score from 0-10
-    """
-    score = 0.0
-
-    # IP track
-    if str(row.get("ip", "No")).upper() == "YES":
-        score += 3.0
-
-    # SAP status
-    if str(row.get("sap", "No")).upper() == "YES":
-        score += 2.0
-
-    # Autonomous status
-    if str(row.get("autonomous", "No")).upper() == "YES":
-        score += 1.5
-
-    # Tier classification
-    tier = int(row.get("tier", 3))
-    if tier == 1:
-        score += 3.0
-    elif tier == 2:
-        score += 2.0
-    elif tier == 3:
-        score += 1.0
-
-    # IP cut-off quality (inverse - lower is better)
-    cutoff_str = row.get("ip_cutoff_2026", None)
-    if pd.notna(cutoff_str) and cutoff_str != "":
-        try:
-            # Parse range like "4-6" or "7(M)"
-            if "-" in str(cutoff_str):
-                cutoff = float(str(cutoff_str).split("-")[0])
-            else:
-                cutoff = float("".join(filter(str.isdigit, str(cutoff_str)[:2])))
-            # Quality score: lower cutoff = higher quality
-            cutoff_quality = max(0, (10 - cutoff) / 6 * 1.5)
-            score += cutoff_quality
-        except (ValueError, TypeError, IndexError):
-            pass
-
-    return min(score, 10.0)
-
-
-def calculate_accessibility_score(distance_m: float, quality_score: float) -> float:
-    """Calculate distance-weighted accessibility score.
-
-    Uses exponential decay: quality score decreases with distance.
-
-    Args:
-        distance_m: Distance to school in meters
-        quality_score: School quality score (0-10)
-
-    Returns:
-        Accessibility score from 0-1
-    """
-    if distance_m <= 0:
-        return quality_score / 10.0
-
-    # Distance decay: negligible beyond 2km
-    distance_factor = max(0, 1 - (distance_m / 2000))
-
-    # Quality amplification: better schools have wider catchment
-    quality_amplification = 1 + (quality_score / 10)
-
-    return distance_factor * quality_amplification * (quality_score / 10)
-
-
-def fuzzy_match_schools(
-    tier_schools: pd.DataFrame, official_schools: pd.DataFrame, min_score: int = 85
-) -> tuple[pd.DataFrame, dict[str, str]]:
-    """Fuzzy match tier CSV school names to official school names.
-
-    Args:
-        tier_schools: DataFrame with school_name column from CSV
-        official_schools: DataFrame with school_name column from parquet
-        min_score: Minimum similarity score (0-100) to accept match
-
-    Returns:
-        Tuple of (tier_schools with matched names, mapping dict)
-    """
-    official_names = official_schools["school_name"].unique().tolist()
-    official_names_normalized = [name.lower().strip() for name in official_names]
-
-    mapping = {}
-    matched_count = 0
-
-    for tier_name in tier_schools["school_name"]:
-        tier_name_normalized = tier_name.lower().strip()
-
-        # Try exact match first
-        if tier_name_normalized in official_names_normalized:
-            idx = official_names_normalized.index(tier_name_normalized)
-            mapping[tier_name] = official_names[idx]
-            matched_count += 1
-            continue
-
-        # Try fuzzy match
-        result = process.extractOne(
-            tier_name_normalized, official_names_normalized, scorer=fuzz.WRatio
+        terms = (
+            _yes_no(primary_tiers["gep"]) * 2.5
+            + _yes_no(primary_tiers["sap"]) * 2.0
+            + _tier_terms(primary_tiers["tier"])
+            + _popularity_score(primary_tiers["popularity_p2b"]) * 0.5
+        )
+        primary = pd.DataFrame(
+            {
+                "school_name": _school_key(primary_tiers["school_name"]),
+                "quality_score": _quality_formula(terms),
+            }
         )
 
-        if result and result[1] >= min_score:
-            idx = official_names_normalized.index(result[0])
-            mapping[tier_name] = official_names[idx]
-            matched_count += 1
-        else:
-            mapping[tier_name] = None
+    if secondary_tiers.empty:
+        secondary = pd.DataFrame(columns=["school_name", "quality_score"])
+    else:
+        # No award-count data exists in the source CSV — see docstring.
+        terms = (
+            _yes_no(secondary_tiers["ip"]) * 3.0
+            + _yes_no(secondary_tiers["sap"]) * 2.0
+            + _yes_no(secondary_tiers["autonomous"]) * 1.5
+            + _tier_terms(secondary_tiers["tier"])
+            + _cutoff_quality(secondary_tiers["ip_cutoff_2026"])
+        )
+        secondary = pd.DataFrame(
+            {
+                "school_name": _school_key(secondary_tiers["school_name"]),
+                "quality_score": _quality_formula(terms),
+            }
+        )
 
-    logger.info(
-        "Fuzzy matched %s/%s schools (%s)",
-        matched_count,
-        len(tier_schools),
-        f"{matched_count / len(tier_schools) * 100:.1f}%",
+    return primary, secondary
+
+
+def _nearest_with_metadata(
+    unique_coords: pd.DataFrame,
+    candidates: pd.DataFrame,
+    value_columns: list[str],
+) -> dict[str, pd.Series]:
+    """Per-unique-coordinate nearest candidate values via KD-tree.
+
+    ``candidates`` needs ``latitude``/``longitude`` plus ``value_columns``;
+    returned Series are indexed like ``unique_coords``.
+    """
+    tree = cKDTree(np.radians(candidates[["latitude", "longitude"]].to_numpy(dtype=float)))
+    _chord, nearest_idx = tree.query(
+        np.radians(unique_coords[["lat", "lon"]].to_numpy(dtype=float)), k=1
+    )
+    nearest = candidates.iloc[nearest_idx]
+    out: dict[str, pd.Series] = {}
+    for col in value_columns:
+        values = nearest[col].to_numpy()
+        out[col] = pd.Series(
+            values, index=unique_coords.index, dtype=object if values.dtype == object else None
+        )
+    # Haversine distance to the chosen nearest candidate.
+    out["__dist_m"] = pd.Series(
+        _haversine_metres(
+            unique_coords["lat"].to_numpy(dtype=float),
+            unique_coords["lon"].to_numpy(dtype=float),
+            pd.to_numeric(nearest["latitude"], errors="coerce").to_numpy(dtype=float),
+            pd.to_numeric(nearest["longitude"], errors="coerce").to_numpy(dtype=float),
+        ),
+        index=unique_coords.index,
+    )
+    return out
+
+
+def _map_back(
+    properties_df: pd.DataFrame, unique_coords: pd.DataFrame, column: str, values: pd.Series
+) -> None:
+    """Assign unique-location ``values`` back onto every property row (1:many)."""
+    lookup_index = pd.MultiIndex.from_frame(unique_coords[["lat", "lon"]])
+    target_index = pd.MultiIndex.from_frame(properties_df[["lat", "lon"]])
+    lookup = pd.Series(values.to_numpy(), index=lookup_index)
+    properties_df[column] = lookup.reindex(target_index).to_numpy()
+
+
+def _resolve_tier(pool_keys: pd.Series, tiers: pd.DataFrame, scores: pd.DataFrame) -> pd.DataFrame:
+    """Resolve each directory school name to tier quality + tier-1 flag.
+
+    Exact normalized-name match first. Fallback: longest prefix match, which
+    handles the two known MOE-directory naming drifts (tier "NANYANG GIRLS'
+    HIGH" vs directory "NANYANG GIRLS' HIGH SCHOOL"; tier "RAFFLES GIRLS'
+    SCHOOL" vs directory "RAFFLES GIRLS' SCHOOL (SECONDARY)"). Unresolved
+    schools score 0 and are never tier-1.
+    """
+    score_map = dict(zip(scores["school_name"], scores["quality_score"], strict=True))
+    tier_num = (
+        pd.to_numeric(tiers["tier"], errors="coerce")
+        if "tier" in tiers.columns
+        else pd.Series(dtype=float)
+    )
+    tier1_keys = (
+        set(_school_key(tiers.loc[tier_num == 1, "school_name"])) if not tier_num.empty else set()
     )
 
-    return tier_schools, mapping
+    def _resolve(key: str) -> tuple[float, bool]:
+        if key in score_map:
+            return float(score_map[key]), key in tier1_keys
+        candidates = [t for t in score_map if t.startswith(key) or key.startswith(t)]
+        if candidates:
+            best = max(candidates, key=len)
+            return float(score_map[best]), best in tier1_keys
+        return 0.0, False
+
+    resolved = pool_keys.map(_resolve)
+    return pd.DataFrame(
+        {
+            "quality": [r[0] for r in resolved],
+            "is_tier1": [r[1] for r in resolved],
+        },
+        index=pool_keys.index,
+    )
+
+
+def calculate_school_quality_features(
+    properties_df: pd.DataFrame,
+    schools_df: pd.DataFrame,
+    primary_tiers: pd.DataFrame,
+    secondary_tiers: pd.DataFrame,
+) -> pd.DataFrame:
+    """Add tier-weighted school quality features to a property DataFrame.
+
+    Adds the three :data:`QUALITY_FEATURE_COLUMNS` per the methodology:
+
+    - ``nearest_top_primary_school_dist`` / ``nearest_top_secondary_school_dist``
+      — haversine metres to the nearest tier-1 school of that level (NA
+      when no tier-1 school of the level has coordinates).
+    - ``school_accessibility_score`` — 0.4 * primary + 0.6 * secondary blend
+      of per-level scores ``max(0, 1 - d/2000) * (1 + q/10) * q/10``, where
+      d is the distance to the nearest school of the level and q its
+      quality score (0 when the school is not in the tier tables). A level
+      with no geocoded schools contributes 0.
+
+    The secondary pool spans all MOE level codes admitting at S1 —
+    ``SECONDARY (S1-S5)``, ``SECONDARY (S1-S4)`` (girls' schools), and
+    ``MIXED LEVEL (S1-JC2)`` (6-year IP schools like Raffles Institution) —
+    since the tier tables classify IP schools as secondary. Directory-name
+    to tier-name matching is exact first, then longest-prefix (MOE appends
+    "SCHOOL"/"(SECONDARY)" to some names).
+
+    Args:
+        properties_df: DataFrame with ``lat``/``lon`` columns.
+        schools_df: School directory with ``school_name``, ``latitude``,
+            ``longitude``, ``mainlevel_code``.
+        primary_tiers / secondary_tiers: Raw tier frames from
+            :class:`SchoolReferenceRepository` (CSV/JSON columns).
+
+    Returns:
+        DataFrame with the quality columns added (always present; NA where
+        not computable).
+    """
+    properties_df = properties_df.copy().reset_index(drop=True)
+    for col in QUALITY_FEATURE_COLUMNS:
+        properties_df[col] = pd.NA
+
+    if not {"latitude", "longitude", "school_name", "mainlevel_code"}.issubset(schools_df.columns):
+        logger.warning(
+            "School directory lacks coordinate/name columns — school quality features stay NA"
+        )
+        return properties_df
+    schools_geo = schools_df.dropna(subset=["latitude", "longitude"]).copy()
+    if schools_geo.empty:
+        logger.warning("No geocoded schools available — school quality features stay NA")
+        return properties_df
+    schools_geo["_key"] = _school_key(schools_geo["school_name"])
+
+    primary_scores, secondary_scores = calculate_school_quality_scores(
+        primary_tiers, secondary_tiers
+    )
+
+    props_with_coords = properties_df[properties_df["lat"].notna() & properties_df["lon"].notna()]
+    if props_with_coords.empty:
+        logger.warning("No property coordinates available — school quality features stay NA")
+        return properties_df
+    unique_coords = props_with_coords[["lat", "lon"]].drop_duplicates().reset_index(drop=True)
+
+    level_scores: dict[str, pd.Series] = {}
+    level_specs = {
+        "PRIMARY": ("nearest_top_primary_school_dist", primary_tiers, primary_scores),
+        "SECONDARY (S1-S5)": (
+            "nearest_top_secondary_school_dist",
+            secondary_tiers,
+            secondary_scores,
+        ),
+    }
+    for level, (top_col, tiers, scores) in level_specs.items():
+        if level == "SECONDARY (S1-S5)":
+            # Secondary pool spans the MOE level codes that admit at S1:
+            # standalone secondaries, S1-S4 girls' schools, and 6-year IP
+            # schools (RI, Hwa Chong, ACS(I)…) coded MIXED LEVEL.
+            level_schools = schools_geo[
+                schools_geo["mainlevel_code"].str.startswith("SECONDARY")
+                | (schools_geo["mainlevel_code"] == "MIXED LEVEL (S1-JC2)")
+            ]
+        else:
+            level_schools = schools_geo[schools_geo["mainlevel_code"] == level]
+        if level_schools.empty:
+            logger.warning("No schools found for level %r — quality score contributes 0", level)
+            continue
+
+        resolved = _resolve_tier(level_schools["_key"], tiers, scores)
+        level_schools = level_schools.assign(
+            _quality=resolved["quality"].to_numpy(), _is_tier1=resolved["is_tier1"].to_numpy()
+        )
+
+        nearest = _nearest_with_metadata(unique_coords, level_schools, ["_quality"])
+        quality = pd.Series(nearest["_quality"], index=unique_coords.index).fillna(0.0)
+        decay = (1.0 - nearest["__dist_m"] / _ACCESSIBILITY_DECAY_RANGE_M).clip(lower=0.0)
+        level_scores[level] = decay * (1.0 + quality / 10.0) * quality / 10.0
+
+        top_schools = level_schools[level_schools["_is_tier1"]]
+        if top_schools.empty:
+            logger.warning("No tier-1 %s schools with coordinates — %s stays NA", level, top_col)
+        else:
+            top_nearest = _nearest_with_metadata(unique_coords, top_schools, ["_key"])
+            _map_back(properties_df, unique_coords, top_col, top_nearest["__dist_m"])
+
+    overall = pd.Series(0.0, index=unique_coords.index)
+    for level, weight in (
+        ("PRIMARY", _PRIMARY_BLEND_WEIGHT),
+        ("SECONDARY (S1-S5)", _SECONDARY_BLEND_WEIGHT),
+    ):
+        if level in level_scores:
+            overall = overall + weight * level_scores[level]
+    _map_back(properties_df, unique_coords, "school_accessibility_score", overall)
+
+    return properties_df
 
 
 def _geocode_schools(schools_df: pd.DataFrame, geocoder: Geocoder) -> pd.DataFrame:
@@ -277,380 +454,105 @@ def _geocode_schools(schools_df: pd.DataFrame, geocoder: Geocoder) -> pd.DataFra
     return df
 
 
-def _initialize_school_columns(df: pd.DataFrame, levels: list[str]) -> pd.DataFrame:
-    """Initialize all school-related columns with defaults."""
-    # Nearest school columns (NULL)
-    for level in levels:
-        level_code = level.split()[0]  # PRIMARY, SECONDARY, JUNIOR
-        for suffix in [
-            "_dist",
-            "_name",
-            "_type",
-            "_dgp",
-            "_zone",
-            "_nature",
-            "_mrt_desc",
-            "_sap",
-            "_autonomous",
-            "_gifted",
-            "_ip",
-        ]:
-            df[f"nearest_school{level_code}{suffix}"] = None
-
-    # School count columns (0)
-    for level in levels:
-        level_code = level.split()[0]
-        for label in DISTANCES:
-            df[f"school{level_code}_count{label}"] = 0
-
-    # Aggregate school counts
-    for label in DISTANCES:
-        df[f"school_within_{label}"] = 0
-
-    # Quality-weighted columns (0)
-    df["school_accessibility_score"] = 0.0
-    df["school_primary_quality_score"] = 0.0
-    df["school_secondary_quality_score"] = 0.0
-    df["school_primary_dist_score"] = 0.0
-    df["school_secondary_dist_score"] = 0.0
-    df["school_density_score"] = 0.0
-
-    return df
+_EARTH_RADIUS_M = 6_371_000
 
 
-def _get_school_attributes(school: pd.Series) -> dict[str, Any]:
-    """Extract school attributes as a dictionary."""
-    return {
-        "dist": None,  # Calculated separately
-        "name": school.get("school_name"),
-        "type": school.get("type_code"),
-        "dgp": school.get("dgp_code"),
-        "zone": school.get("zone_code"),
-        "nature": school.get("nature_code"),
-        "mrt_desc": school.get("mrt_desc"),
-        "sap": (school.get("sap_ind") == "Yes") if pd.notna(school.get("sap_ind")) else None,
-        "autonomous": (school.get("autonomous_ind") == "Yes")
-        if pd.notna(school.get("autonomous_ind"))
-        else None,
-        "gifted": (school.get("gifted_ind") == "Yes")
-        if pd.notna(school.get("gifted_ind"))
-        else None,
-        "ip": (school.get("ip_ind") == "Yes") if pd.notna(school.get("ip_ind")) else None,
-    }
+def _haversine_metres(
+    lat1: np.ndarray, lon1: np.ndarray, lat2: np.ndarray, lon2: np.ndarray
+) -> np.ndarray:
+    """Vectorized haversine distance in metres (same formula as utils.geo)."""
+    lat1, lon1, lat2, lon2 = (
+        np.radians(np.asarray(a, dtype=float)) for a in (lat1, lon1, lat2, lon2)
+    )
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
+    return 2 * np.arcsin(np.sqrt(a)) * _EARTH_RADIUS_M
 
 
-def _create_unique_location_index(properties_df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
-    """Create unique location index and mapping back to original indices.
-
-    Args:
-        properties_df: DataFrame with 'lat', 'lon' columns
-
-    Returns:
-        Tuple of (unique_locations_df, index_mapping)
-        - unique_locations_df: DataFrame with unique lat/lon pairs
-        - index_mapping: Dict mapping unique_idx -> list of original indices
-    """
-    unique_coords = properties_df[["lat", "lon"]].drop_duplicates()
-
-    coord_groups = properties_df.groupby(["lat", "lon"]).groups
-    coord_to_idx: dict[tuple[float, float], list[int]] = {
-        (lat, lon): list(indices) for (lat, lon), indices in coord_groups.items()
-    }
-
-    unique_reset = unique_coords.reset_index(drop=True)
-    index_mapping = {
-        i: coord_to_idx[(row["lat"], row["lon"])] for i, row in unique_reset.iterrows()
-    }
-
-    unique_coords = unique_reset
-    return unique_coords, index_mapping
+def _level_dist_column(level: str) -> str:
+    """Distance column name for a school level (first word is the level code)."""
+    return f"nearest_school{level.split()[0]}_dist"
 
 
 def calculate_school_features(
-    properties_df: pd.DataFrame, schools_df: pd.DataFrame, levels: list[str] = SCHOOL_LEVELS
+    properties_df: pd.DataFrame,
+    schools_df: pd.DataFrame,
+    levels: list[str] = SCHOOL_LEVELS,
 ) -> pd.DataFrame:
-    """Calculate school features using KDTree for efficient nearest-neighbor search.
+    """Add the nearest-school distance per level to a property DataFrame.
+
+    Computes only what downstream consumers read: the
+    ``nearest_school<LEVEL>_dist`` columns (PRIMARY, SECONDARY, JUNIOR) that
+    ``components.features`` reduces to ``dist_to_nearest_school``. Distance
+    quality/count/score columns were pruned — nothing consumed them.
+
+    Distances are haversine metres to the nearest school of each level,
+    found via a per-level KD-tree queried in one batch over unique property
+    locations, then mapped back onto every row with a vectorized lookup.
 
     Args:
-        properties_df: DataFrame with property data (must have 'lat', 'lon' columns)
-        schools_df: DataFrame with school data (must have 'latitude', 'longitude', 'mainlevel_code')
-        levels: List of school levels to process
+        properties_df: DataFrame with 'lat', 'lon' columns.
+        schools_df: DataFrame with 'latitude', 'longitude', 'mainlevel_code'.
+        levels: List of school levels to process.
 
     Returns:
-        DataFrame with school features added
+        DataFrame with school distance features added.
     """
-    properties_df = properties_df.copy()
-    properties_df = properties_df.reset_index(drop=True)
-    primary_tiers, secondary_tiers = load_school_tiers()
+    properties_df = properties_df.copy().reset_index(drop=True)
+    dist_columns = [_level_dist_column(level) for level in levels]
 
-    # Calculate quality scores for tiers
-    if not primary_tiers.empty:
-        primary_tiers["quality_score"] = primary_tiers.apply(
-            calculate_primary_quality_score, axis=1
-        )
-        logger.info(
-            "Primary school quality scores: mean=%s",
-            f"{primary_tiers['quality_score'].mean():.2f}",
-        )
-
-    if not secondary_tiers.empty:
-        secondary_tiers["quality_score"] = secondary_tiers.apply(
-            calculate_secondary_quality_score, axis=1
-        )
-        logger.info(
-            "Secondary school quality scores: mean=%s",
-            f"{secondary_tiers['quality_score'].mean():.2f}",
-        )
-
-    # Merge quality scores with schools data using fuzzy matching
-    schools_with_quality = schools_df.copy()
-
-    if not primary_tiers.empty:
-        # Use fuzzy matching to match tier CSV names to official names
-        _primary_tiers_matched, primary_mapping = fuzzy_match_schools(primary_tiers, schools_df)
-
-        # Create mapping from official name to quality score
-        official_to_quality = {}
-        for tier_name, official_name in primary_mapping.items():
-            if official_name:
-                tier_row = primary_tiers[primary_tiers["school_name"] == tier_name].iloc[0]
-                official_to_quality[official_name] = {
-                    "quality_score": tier_row["quality_score"],
-                    "gep": tier_row.get("gep", "No"),
-                    "sap": tier_row.get("sap", "No"),
-                    "tier": tier_row.get("tier", 3),
-                }
-
-        # Map quality scores using official school names
-        schools_with_quality["primary_quality"] = schools_with_quality["school_name"].map(
-            lambda x: official_to_quality.get(x, {}).get("quality_score") if x else None
-        )
-
-    if not secondary_tiers.empty:
-        # Use fuzzy matching for secondary schools too
-        _secondary_tiers_matched, secondary_mapping = fuzzy_match_schools(
-            secondary_tiers, schools_df
-        )
-
-        # Create mapping from official name to quality score
-        official_to_secondary_quality = {}
-        for tier_name, official_name in secondary_mapping.items():
-            if official_name:
-                tier_row = secondary_tiers[secondary_tiers["school_name"] == tier_name].iloc[0]
-                official_to_secondary_quality[official_name] = tier_row["quality_score"]
-
-        # Map quality scores using official school names
-        schools_with_quality["secondary_quality"] = schools_with_quality["school_name"].map(
-            official_to_secondary_quality
-        )
-
-    # Combine quality scores (prefer primary, fall back to secondary)
-    if (
-        "primary_quality" in schools_with_quality.columns
-        and "secondary_quality" in schools_with_quality.columns
-    ):
-        schools_with_quality["quality_score"] = schools_with_quality["primary_quality"].fillna(
-            schools_with_quality["secondary_quality"]
-        )
-    elif "primary_quality" in schools_with_quality.columns:
-        schools_with_quality["quality_score"] = schools_with_quality["primary_quality"]
-    elif "secondary_quality" in schools_with_quality.columns:
-        schools_with_quality["quality_score"] = schools_with_quality["secondary_quality"]
-    else:
-        schools_with_quality["quality_score"] = None
-
-    # Filter and prepare school data
-    schools_geo = schools_with_quality.dropna(subset=["latitude", "longitude"]).copy()
+    schools_geo = schools_df.dropna(subset=["latitude", "longitude"])
     if schools_geo.empty:
         logger.warning("No geocoded schools available")
         return properties_df
 
-    # Fill missing quality scores with 0
-    if "quality_score" not in schools_geo.columns:
-        schools_geo["quality_score"] = 0.0
-    else:
-        schools_geo["quality_score"] = schools_geo["quality_score"].where(
-            schools_geo["quality_score"].notna(), 0.0
-        )
+    for col in dist_columns:
+        properties_df[col] = np.nan
 
-    # Build KD-trees for each school level (convert to radians for distance queries)
-    schools_by_level = {}
+    props_with_coords = properties_df[properties_df["lat"].notna() & properties_df["lon"].notna()]
+    if props_with_coords.empty:
+        logger.warning("No property coordinates available — school distances stay NA")
+        return properties_df
+
+    unique_coords = props_with_coords[["lat", "lon"]].drop_duplicates().reset_index(drop=True)
+    logger.info(
+        "Computing school distances for %s unique locations from %s total records",
+        len(unique_coords),
+        len(props_with_coords),
+    )
+    unique_rad = np.radians(unique_coords[["lat", "lon"]].to_numpy(dtype=float))
+
+    level_summary: list[str] = []
     for level in levels:
+        col = _level_dist_column(level)
         level_schools = schools_geo[schools_geo["mainlevel_code"] == level]
         if level_schools.empty:
+            logger.warning("No schools found for level %r", level)
             continue
 
-        coords = np.column_stack(
-            [
-                np.radians(level_schools["latitude"].values),
-                np.radians(level_schools["longitude"].values),
-            ]
+        schools_rad = np.radians(level_schools[["latitude", "longitude"]].to_numpy(dtype=float))
+        tree = cKDTree(schools_rad)
+        _chord, nearest_idx = tree.query(unique_rad, k=1)
+        nearest = level_schools.iloc[nearest_idx]
+        unique_coords[col] = _haversine_metres(
+            unique_coords["lat"].to_numpy(dtype=float),
+            unique_coords["lon"].to_numpy(dtype=float),
+            nearest["latitude"].to_numpy(dtype=float),
+            nearest["longitude"].to_numpy(dtype=float),
         )
+        level_summary.append(f"{level[:3]}({len(level_schools)})")
 
-        schools_by_level[level] = {
-            "tree": cKDTree(coords),
-            "data": level_schools.reset_index(drop=True),
-            "coords": coords,
-        }
+    logger.info("Schools by level: %s", ", ".join(level_summary))
 
-    # Build combined tree for aggregate counts (convert to radians for distance queries)
-    all_coords = np.column_stack(
-        [np.radians(schools_geo["latitude"].values), np.radians(schools_geo["longitude"].values)]
-    )
-    all_tree = cKDTree(all_coords)
-
-    level_summary = ", ".join(
-        [f"{k[:3]}({v['data'].shape[0]})" for k, v in schools_by_level.items()]
-    )
-    logger.info("Schools by level: %s", level_summary)
-
-    # Initialize columns (including new quality columns)
-    properties_df = _initialize_school_columns(properties_df, levels)
-
-    # Initialize quality-weighted columns
-    properties_df["school_accessibility_score"] = 0.0
-    properties_df["school_primary_quality_score"] = 0.0
-    properties_df["school_secondary_quality_score"] = 0.0
-    properties_df["school_primary_dist_score"] = 0.0
-    properties_df["school_secondary_dist_score"] = 0.0
-    properties_df["school_density_score"] = 0.0
-
-    # Create unique location index to avoid redundant calculations
-    props_with_coords = properties_df.dropna(subset=["lat", "lon"])
-    total_original = len(props_with_coords)
-
-    unique_coords, index_mapping = _create_unique_location_index(props_with_coords)
-    logger.info(
-        "Reduced to %s unique locations from %s total records",
-        len(unique_coords),
-        total_original,
-    )
-
-    # Initialize a DataFrame to store calculated features for unique locations
-    unique_features = pd.DataFrame(index=unique_coords.index)
-
-    # Initialize all feature columns in unique_features
-    for level in levels:
-        level_code = level.split()[0]
-        for suffix in [
-            "_dist",
-            "_name",
-            "_type",
-            "_dgp",
-            "_zone",
-            "_nature",
-            "_mrt_desc",
-            "_sap",
-            "_autonomous",
-            "_gifted",
-            "_ip",
-        ]:
-            unique_features[f"nearest_school{level_code}{suffix}"] = None
-
-    for level in levels:
-        level_code = level.split()[0]
-        for label in DISTANCES:
-            unique_features[f"school{level_code}_count{label}"] = 0
-
-    for label in DISTANCES:
-        unique_features[f"school_within_{label}"] = 0
-
-    unique_features["school_accessibility_score"] = 0.0
-    unique_features["school_primary_quality_score"] = 0.0
-    unique_features["school_secondary_quality_score"] = 0.0
-    unique_features["school_primary_dist_score"] = 0.0
-    unique_features["school_secondary_dist_score"] = 0.0
-    unique_features["school_density_score"] = 0.0
-
-    # Process UNIQUE locations only (not all properties)
-    for idx, (unique_idx, coord_row) in enumerate(unique_coords.iterrows(), 1):
-        prop_lat, prop_lon = float(coord_row["lat"]), float(coord_row["lon"])
-
-        # Calculate school density (schools within 1km)
-        radius_radians = 1000 / 6371000
-        nearby_schools = all_tree.query_ball_point(
-            [np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians
-        )
-        unique_features.at[unique_idx, "school_density_score"] = min(len(nearby_schools) / 10, 1.0)
-
-        # Aggregate school counts
-        for col_suffix, radius_m in DISTANCES.items():
-            radius_radians = radius_m / 6371000
-            count = all_tree.query_ball_point(
-                [np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians
-            )
-            unique_features.at[unique_idx, f"school_within_{col_suffix}"] = len(count)
-
-        # Per-level features with quality scores
-        primary_accessibility = 0.0
-        secondary_accessibility = 0.0
-
-        for level, school_data in schools_by_level.items():
-            level_code = level.split()[0]
-            tree = school_data["tree"]
-            level_df = school_data["data"]
-
-            # Find nearest school (query in radians)
-            _dist_radians, nearest_idx = tree.query(
-                [np.radians(prop_lat), np.radians(prop_lon)], k=1
-            )
-            nearest_school = level_df.iloc[nearest_idx]
-
-            # Calculate true haversine distance
-            true_dist = haversine_distance(
-                prop_lat, prop_lon, nearest_school["latitude"], nearest_school["longitude"]
-            )
-            unique_features.at[unique_idx, f"nearest_school{level_code}_dist"] = true_dist
-
-            # Get school quality score
-            quality_score = nearest_school.get("quality_score", 0.0)
-            if pd.isna(quality_score):
-                quality_score = 0.0
-
-            # Store quality scores
-            if level == "PRIMARY":
-                unique_features.at[unique_idx, "school_primary_quality_score"] = quality_score
-                dist_score = calculate_accessibility_score(true_dist, quality_score) * 10
-                unique_features.at[unique_idx, "school_primary_dist_score"] = dist_score
-                primary_accessibility = calculate_accessibility_score(true_dist, quality_score)
-            elif level == "SECONDARY (S1-S5)":
-                unique_features.at[unique_idx, "school_secondary_quality_score"] = quality_score
-                dist_score = calculate_accessibility_score(true_dist, quality_score) * 10
-                unique_features.at[unique_idx, "school_secondary_dist_score"] = dist_score
-                secondary_accessibility = calculate_accessibility_score(true_dist, quality_score)
-
-            # Get and assign school attributes
-            attrs = _get_school_attributes(nearest_school)
-            for key, value in attrs.items():
-                if key != "dist":
-                    unique_features.at[unique_idx, f"nearest_school{level_code}_{key}"] = value
-
-            # Level-specific school counts (query in radians)
-            for col_suffix, radius_m in DISTANCES.items():
-                radius_radians = radius_m / 6371000
-                count = tree.query_ball_point(
-                    [np.radians(prop_lat), np.radians(prop_lon)], r=radius_radians
-                )
-                unique_features.at[unique_idx, f"school{level_code}_count{col_suffix}"] = len(count)
-
-        # Overall accessibility: weighted combination (40% primary, 60% secondary)
-        unique_features.at[unique_idx, "school_accessibility_score"] = (
-            0.4 * primary_accessibility + 0.6 * secondary_accessibility
-        )
-
-        if idx % 1000 == 0:
-            logger.info("Processed %s/%s unique locations...", idx, len(unique_coords))
-
-    # Map calculated features back to all original records
-    logger.info("Mapping features back to all records...")
-
-    # Get feature columns (exclude coordinate columns if they exist)
-    feature_columns = [col for col in unique_features.columns if col not in ["lat", "lon"]]
-
-    # Map features from unique locations back to all original indices
-    for unique_idx, orig_indices in index_mapping.items():
-        for orig_idx in orig_indices:
-            for col in feature_columns:
-                properties_df.at[orig_idx, col] = unique_features.at[unique_idx, col]
+    # Map unique-location distances back onto every original row (1:many) with
+    # a vectorized reindex — no per-row loops.
+    lookup_index = pd.MultiIndex.from_frame(unique_coords[["lat", "lon"]])
+    target_index = pd.MultiIndex.from_frame(properties_df[["lat", "lon"]])
+    for col in dist_columns:
+        if col not in unique_coords.columns:
+            continue
+        lookup = pd.Series(unique_coords[col].to_numpy(dtype=float), index=lookup_index)
+        properties_df[col] = lookup.reindex(target_index).to_numpy()
 
     return properties_df

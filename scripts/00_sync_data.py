@@ -1,9 +1,9 @@
 """Sync manual data files between local disk and Cloudflare R2.
 
 Usage:
-    dotenvx run -- uv run python scripts/00_sync_data.py          # download (default)
-    dotenvx run -- uv run python scripts/00_sync_data.py --upload  # upload local to R2
-    dotenvx run -- uv run python scripts/00_sync_data.py --verify  # verify local vs R2
+    uv run python scripts/00_sync_data.py          # download (default)
+    uv run python scripts/00_sync_data.py --upload  # upload local to R2
+    uv run python scripts/00_sync_data.py --verify  # verify local vs R2
 """
 
 import argparse
@@ -160,7 +160,8 @@ def main():
 
     if not settings.r2_account_id or not settings.r2_access_key_id.get_secret_value():
         print(
-            "Error: R2 credentials not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY in .env"
+            "Error: R2 credentials not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, "
+            "and R2_SECRET_ACCESS_KEY in the environment or local .env"
         )
         sys.exit(1)
 

@@ -16,7 +16,12 @@ geocoding, adapter, cache, or bronze-layer behavior.
   bronze persistence in `components/ingestion/`.
 - Keep credentials in settings/environment configuration; never hard-code them.
 - Use the existing cache utilities and bronze paths. A valid existing cache must
-  not be replaced by an empty or partial source response.
+  not be replaced by an empty or partial source response. Bronze parquets are
+  the only cache layer under datagov fetch nodes: an empty (0-row) bronze cache
+  is treated as a miss (warn + refetch) at the three datagov sites
+  (`_load_or_fetch_dataset`, `raw_hdb_resale_transactions`, the wiki-mall branch
+  of `raw_shopping_malls`), and the parameterized datagov nodes keep no
+  API-response (`cached_call`) layer under bronze so `--refresh` re-fetches.
 - Distinguish expected source failures (availability, authentication, malformed
   payloads, rate limits) from programming defects. Handle only the former at the
   source boundary and preserve actionable context in logs and exceptions.
