@@ -95,7 +95,11 @@ def main():
         except Exception as e:
             logger.warning(f"DAG visualization failed: {e}")
 
-    results = run_pipeline(settings, final_vars=final_vars, dr=dr)
+    # Pass the stage through so run_pipeline can materialize every published
+    # output for stage="all"; pre-resolving final_vars here would narrow
+    # materialization to only the terminal frames. Explicit --final-var still
+    # overrides the stage end-to-end.
+    results = run_pipeline(settings, final_vars=args.final_vars, stage=args.stage, dr=dr)
 
     logger.info(f"Pipeline complete. Results: {list(results.keys())}")
     _log_results(logger, results)

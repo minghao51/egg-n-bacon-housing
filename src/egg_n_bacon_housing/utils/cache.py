@@ -20,6 +20,7 @@ import hashlib
 import json
 import logging
 import os
+import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
@@ -83,7 +84,13 @@ class CacheManager:
     def _is_expired(self, cache_path: Path | None, duration_hours: int) -> bool:
         if cache_path is None or not cache_path.exists():
             return True
-        file_age = datetime.now(tz=UTC) - datetime.fromtimestamp(cache_path.stat().st_mtime, tz=UTC)
+        try:
+            mtime = cache_path.stat().st_mtime
+        except FileNotFoundError:
+            # A concurrent writer may replace/remove the entry between the
+            # exists() probe and this stat; a vanished file is a miss.
+            return True
+        file_age = datetime.now(tz=UTC) - datetime.fromtimestamp(mtime, tz=UTC)
         return file_age > timedelta(hours=duration_hours)
 
     @staticmethod
@@ -168,10 +175,19 @@ class CacheManager:
 
     @staticmethod
     def _atomic_write(path: Path, write: Callable[[Path], None]) -> None:
-        """Write through a ``.tmp`` sibling, then atomically replace ``path``."""
-        tmp_path = path.with_name(path.name + ".tmp")
-        write(tmp_path)
-        os.replace(tmp_path, path)
+        """Write through a ``.tmp`` sibling, then atomically replace ``path``.
+
+        The tmp name is unique per process/thread so concurrent writers of the
+        same key cannot consume each other's temp file before the atomic
+        ``os.replace`` (last writer wins, readers never see partial content).
+        """
+        tmp_path = path.with_name(f"{path.name}.{os.getpid()}-{threading.get_ident()}.tmp")
+        try:
+            write(tmp_path)
+            os.replace(tmp_path, path)
+        except BaseException:
+            CacheManager._unlink_best_effort(tmp_path)
+            raise
 
     def cached_call(
         self,

@@ -220,3 +220,57 @@ class TestStageValidation:
 
         with pytest.raises(ValueError, match="Unknown stage"):
             run_pipeline(settings=settings, data_path=str(tmp_path), stage="bogus")
+
+
+class TestMainCLIStagePassthrough:
+    """main.py must pass the stage through so --stage all materializes all
+    published outputs, instead of pre-collapsing final_vars (which narrowed
+    materialization to only the terminal frames)."""
+
+    def test_stage_all_passes_stage_not_precollapsed_vars(self, monkeypatch, caplog):
+        import sys
+        from pathlib import Path
+
+        monkeypatch.syspath_prepend(str(Path(__file__).resolve().parent.parent))
+        import main as main_module
+
+        captured: dict[str, object] = {}
+
+        def fake_run_pipeline(settings, data_path=None, final_vars=None, stage=None, dr=None):
+            captured["final_vars"] = final_vars
+            captured["stage"] = stage
+            return {"unified_dataset": pd.DataFrame()}
+
+        monkeypatch.setattr(main_module, "build_pipeline", lambda settings: object())
+        monkeypatch.setattr(main_module, "run_pipeline", fake_run_pipeline)
+        monkeypatch.setattr(sys, "argv", ["main.py", "--stage", "all"])
+
+        main_module.main()
+
+        assert captured["final_vars"] is None
+        assert captured["stage"] == "all"
+
+    def test_explicit_final_vars_override_stage(self, monkeypatch):
+        import sys
+        from pathlib import Path
+
+        monkeypatch.syspath_prepend(str(Path(__file__).resolve().parent.parent))
+        import main as main_module
+
+        captured: dict[str, object] = {}
+
+        def fake_run_pipeline(settings, data_path=None, final_vars=None, stage=None, dr=None):
+            captured["final_vars"] = final_vars
+            captured["stage"] = stage
+            return {"some_var": pd.DataFrame()}
+
+        monkeypatch.setattr(main_module, "build_pipeline", lambda settings: object())
+        monkeypatch.setattr(main_module, "run_pipeline", fake_run_pipeline)
+        monkeypatch.setattr(
+            sys, "argv", ["main.py", "--stage", "features", "--final-var", "rental_yield"]
+        )
+
+        main_module.main()
+
+        assert captured["final_vars"] == ["rental_yield"]
+        assert captured["stage"] == "features"

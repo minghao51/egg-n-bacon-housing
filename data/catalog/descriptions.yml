@@ -230,17 +230,18 @@ datasets:
 
   location_dim:
     label: "Location Dimension"
-    description: "One row per unique (lat, lon) pair (~10K locations). Contains all spatial proximity features, block metadata, and planning area mapping."
+    description: "One row per unique (lat, lon) pair (~10K locations). Contains all spatial proximity features, school quality features, block metadata, and planning area mapping."
+    fields:
+      nearest_top_primary_school_dist: "Haversine metres to the nearest tier-1 primary school (see data/manual/csv/school_scoring_methodology.md)"
+      nearest_top_secondary_school_dist: "Haversine metres to the nearest tier-1 secondary school"
+      school_accessibility_score: "0.4*primary + 0.6*secondary blend of distance-decayed school quality scores (0-2 scale, half-value at 500m, negligible beyond 2km)"
 
   transactions_enriched:
     label: "Enriched Transactions"
     description: "Full transaction dataset (~1M rows) enriched with spatial proximity, macro-economic, supply/population, and rental yield features. The core gold-layer dataset."
     fields:
       psf: "Price per square foot (SGD)"
-      h3_cell: "Uber H3 hexagonal cell identifier (resolution 9)"
-      price_stratum: "Price tier classification (e.g., Budget, Mid-Range, Premium, Luxury)"
-      mrt_line: "MRT line name for the nearest station"
-      school_tier: "School tier classification (Tier 1, Tier 2, etc.) based on academic performance"
+      price_stratum: "Population quintile of transaction price at enrichment time (Q1 cheapest through Q5 most expensive)"
       remaining_lease_years: "Remaining lease in years (converted from months)"
       dwelling_units_in_town: "Total HDB dwelling units in the property's town"
       population_in_town: "HDB resident population in the property's town"

@@ -1,7 +1,10 @@
 """Tests for the explicit-injection file cache."""
 
+import errno
 import os
+import threading
 import time
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -95,3 +98,41 @@ def test_expired_entry_is_unlinked(tmp_path):
     result = manager.get("expiring", duration_hours=1)
     assert result is not None
     assert not path.exists()
+
+
+def test_is_expired_survives_file_vanishing_between_probe_and_stat(tmp_path, monkeypatch):
+    """A concurrently removed entry must read as a miss, not crash ``get()``."""
+    manager = CacheManager(tmp_path)
+    vanished = tmp_path / "vanished.parquet"
+    vanished.touch()
+    real_exists, real_stat = Path.exists, Path.stat
+
+    def fake_exists(self):
+        return True if self == vanished else real_exists(self)
+
+    def fake_stat(self, **kwargs):
+        if self == vanished:
+            raise FileNotFoundError(errno.ENOENT, "vanished concurrently", str(self))
+        return real_stat(self, **kwargs)
+
+    monkeypatch.setattr(Path, "exists", fake_exists)
+    monkeypatch.setattr(Path, "stat", fake_stat)
+    assert manager._is_expired(vanished, duration_hours=24) is True
+
+
+def test_concurrent_writers_of_same_key_do_not_collide(tmp_path, caplog):
+    """Parallel ``set()`` calls on one key must all succeed without warnings."""
+    import logging as _logging
+
+    manager = CacheManager(tmp_path)
+    frame = pd.DataFrame({"x": range(10)})
+    with caplog.at_level(_logging.WARNING, logger="egg_n_bacon_housing.utils.cache"):
+        threads = [threading.Thread(target=manager.set, args=("shared", frame)) for _ in range(8)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+    assert not [record for record in caplog.records if record.levelname == "WARNING"]
+    assert not list(tmp_path.glob("*.tmp"))
+    assert len(pd.read_parquet(next(tmp_path.glob("*.parquet")))) == 10

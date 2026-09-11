@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "provenance": "docs/analytics/README.md",
+  "assets": [
+    {"path": "dashboard_overview.json.gz", "logicalSource": "platinum/dashboard_overview", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["metadata", "stats", "distributions"]},
+    {"path": "dashboard_trends.json.gz", "logicalSource": "platinum/dashboard_trends", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "array"},
+    {"path": "dashboard_segments.json.gz", "logicalSource": "platinum/dashboard_segments", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["whole"]},
+    {"path": "dashboard_leaderboard.json.gz", "logicalSource": "platinum/dashboard_leaderboard", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "array"},
+    {"path": "map_metrics.json.gz", "logicalSource": "platinum/map_metrics", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["whole"]},
+    {"path": "hotspots.json.gz", "logicalSource": "platinum/appreciation_hotspots", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object"},
+    {"path": "segments_enhanced.json.gz", "logicalSource": "research/segments_enhanced", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["segments", "planningAreas"]},
+    {"path": "amenity_summary.json.gz", "logicalSource": "research/amenity_summary", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "array"},
+    {"path": "interactive_tools/mrt_cbd_impact.json.gz", "logicalSource": "research/mrt_cbd_impact", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["property_type_multipliers"]},
+    {"path": "interactive_tools/lease_decay_analysis.json.gz", "logicalSource": "research/lease_decay_analysis", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["bands"]},
+    {"path": "interactive_tools/affordability_metrics.json.gz", "logicalSource": "research/affordability_metrics", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["median_household_income"]},
+    {"path": "interactive_tools/spatial_hotspots.json.gz", "logicalSource": "research/spatial_hotspots", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["towns"]},
+    {"path": "analytics/spatial_analysis.json.gz", "logicalSource": "research/spatial_analysis", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["metadata", "planning_areas"]},
+    {"path": "analytics/feature_impact.json.gz", "logicalSource": "research/feature_impact", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["metadata", "planning_areas"]},
+    {"path": "analytics/predictive_analytics.json.gz", "logicalSource": "research/predictive_analytics", "schemaVersion": 1, "provenance": "docs/analytics/README.md", "shape": "object", "requiredKeys": ["metadata", "planning_areas"]},
+    {"path": "planning_areas.geojson", "logicalSource": "gold/location_dim", "schemaVersion": 1, "provenance": "docs/guides/pipeline-development.md", "shape": "geojson"},
+    {"path": "planning_areas.geojson.gz", "logicalSource": "gold/location_dim", "schemaVersion": 1, "provenance": "docs/guides/pipeline-development.md", "shape": "geojson"},
+    {"path": "catalog.jsonl.gz", "logicalSource": "catalog/data-catalog", "schemaVersion": 1, "provenance": "data/catalog/catalog.jsonl", "shape": "jsonl"},
+    {"path": "README.md", "logicalSource": "app-data-manifest", "schemaVersion": 1, "provenance": "app/public/data/README.md", "shape": "file"}
+  ]
+}
