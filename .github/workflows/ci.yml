@@ -67,7 +67,7 @@ jobs:
       - name: Run tests with coverage
         env:
           ONEMAP_EMAIL: test@example.com
-          ONEMAP_EMAIL_PASSWORD: test-password
+          ONEMAP_EMAIL_PASSWORD: test-password  # pragma: allowlist secret
           LOG_LEVEL: DEBUG
         run: uv run pytest tests/ -v --tb=short --cov=egg_n_bacon_housing --cov-report=xml --cov-report=term-missing:skip-covered
 

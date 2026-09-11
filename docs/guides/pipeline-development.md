@@ -8,13 +8,13 @@ start at `main.py` and use `build_pipeline()` and `run_pipeline()` from
 
 ## Stages and ownership
 
-| CLI stage  | Component                | Responsibility                                   | Output boundary                                         |
-| ---------- | ------------------------ | ------------------------------------------------ | ------------------------------------------------------- |
-| `ingest`   | `components/ingestion/`  | Acquire source data and normalize it into bronze | `data/pipeline/01_bronze/`                              |
-| `clean`    | `components/cleaning.py` | Clean, validate, and quarantine invalid records  | `data/pipeline/02_silver/`                              |
+| CLI stage  | Component                 | Responsibility                                   | Output boundary                                         |
+| ---------- | ------------------------- | ------------------------------------------------ | ------------------------------------------------------- |
+| `ingest`   | `components/ingestion/`   | Acquire source data and normalize it into bronze | `data/pipeline/01_bronze/`                              |
+| `clean`    | `components/cleaning.py`  | Clean, validate, and quarantine invalid records  | `data/pipeline/02_silver/`                              |
 | `features` | `components/feature_*.py` | Build reusable entities and derived features     | `data/pipeline/03_gold/`                                |
-| `export`   | `components/export.py`   | Produce stable and app-facing datasets           | `data/pipeline/04_platinum/` and configured app outputs |
-| `metrics`  | `components/metrics.py`  | Produce analytical metrics and summaries         | `data/pipeline/04_platinum/metrics/`                    |
+| `export`   | `components/export.py`    | Produce stable and app-facing datasets           | `data/pipeline/04_platinum/` and configured app outputs |
+| `metrics`  | `components/metrics.py`   | Produce analytical metrics and summaries         | `data/pipeline/04_platinum/metrics/`                    |
 
 The published contract is declared once in `utils/output_registry.py` via
 `PublishedOutputSpec`. The registry drives stage selection, layer ownership,

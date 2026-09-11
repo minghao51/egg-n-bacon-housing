@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-01
 **Status:** Historical refresh record — superseded by the current continuation handoff
-  (`docs/plans/2026-09-10-hamilton-dag-next-thread-handoff.md`)
+(`docs/plans/2026-09-10-hamilton-dag-next-thread-handoff.md`)
 **Scope:** Audit-driven fixes, refresh infra, live data sources, OneMap hardening, and the full data refresh (executed 2026-09-01)
 
 > This document preserves the September 1 refresh evidence and source-history

@@ -1,6 +1,6 @@
 # Runtime Dependency Injection Handoff
 
-**Date:** 2026-09-03  
+**Date:** 2026-09-03
 **Status:** Core migration landed; historical proposal retained for context
 **Priority:** Medium — architectural hardening after the Hamilton DAG correctness work
 **Scope:** Replace mutable process-global runtime configuration in cache, spatial data loading, school features, and MRT mapping with injected immutable dependencies.

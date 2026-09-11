@@ -4,13 +4,13 @@ Solutions for the supported pipeline and app workflows.
 
 ## Quick Fixes
 
-| Issue                       | Quick Fix                                                  |
-| --------------------------- | ---------------------------------------------------------- |
-| `ModuleNotFoundError`       | Run from the repo root with `uv run`                       |
-| Missing manual source files | Run `uv run python scripts/00_sync_data.py` |
-| Pipeline stage failure      | Re-run the prerequisite stage with `main.py --stage ...`   |
-| Docs validator failure      | Update the active docs path or remove stale references     |
-| App test/build issue        | Reinstall in `app/` with `bun install --frozen-lockfile`   |
+| Issue                       | Quick Fix                                                |
+| --------------------------- | -------------------------------------------------------- |
+| `ModuleNotFoundError`       | Run from the repo root with `uv run`                     |
+| Missing manual source files | Run `uv run python scripts/00_sync_data.py`              |
+| Pipeline stage failure      | Re-run the prerequisite stage with `main.py --stage ...` |
+| Docs validator failure      | Update the active docs path or remove stale references   |
+| App test/build issue        | Reinstall in `app/` with `bun install --frozen-lockfile` |
 
 ## Python Import Errors
 

@@ -11,14 +11,14 @@ Credentials loaded from the local ignored `.env` (OneMap token obtained fresh; n
 
 ## Run inventory
 
-| Run | Label | Exit | Wall clock | Notes |
-| --- | --- | --- | --- | --- |
-| RUN1 (23:18–00:15) | resumed-cold attempt | 1 | 27:48.01 | crashed in `CacheManager.get()` TOCTOU; cache retained |
-| RUN1b | resumed-cold | 0 | 4:14.70 | geocoding cache mostly warm; **pre-fix CLI**: only 7/12 outputs |
-| RUN1c | first-warm (post-fix) | 0 | 3:09.96 | **all 12 outputs**; first fully correct E2E |
-| WARM2 | second-warm | 0 | 1:13.90 | all 12 outputs |
-| WARM3 | third-warm | 0 | 1:12.18 | all 12 outputs |
-| RECREATE | deletion-recovery | 0 | 1:12.47 | town_360.parquet deleted pre-run; recreated |
+| Run                | Label                 | Exit | Wall clock | Notes                                                           |
+| ------------------ | --------------------- | ---- | ---------- | --------------------------------------------------------------- |
+| RUN1 (23:18–00:15) | resumed-cold attempt  | 1    | 27:48.01   | crashed in `CacheManager.get()` TOCTOU; cache retained          |
+| RUN1b              | resumed-cold          | 0    | 4:14.70    | geocoding cache mostly warm; **pre-fix CLI**: only 7/12 outputs |
+| RUN1c              | first-warm (post-fix) | 0    | 3:09.96    | **all 12 outputs**; first fully correct E2E                     |
+| WARM2              | second-warm           | 0    | 1:13.90    | all 12 outputs                                                  |
+| WARM3              | third-warm            | 0    | 1:12.18    | all 12 outputs                                                  |
+| RECREATE           | deletion-recovery     | 0    | 1:12.47    | town_360.parquet deleted pre-run; recreated                     |
 
 ## Fixes made during this thread
 
@@ -67,7 +67,7 @@ Credentials loaded from the local ignored `.env` (OneMap token obtained fresh; n
   not cleared.
 - **Catalog follow-up (item 5):** fresh `rental_yield.parquet` physical schema
   is `[town, month, median_price, median_rent, rental_yield_pct, sample_size,
-  property_type, flat_type, rental_index]` — no `flat_type_count`. Regenerated
+property_type, flat_type, rental_index]` — no `flat_type_count`. Regenerated
   `data/catalog/catalog.jsonl` has zero `flat_type_count` rows;
   `scripts/tools/check_catalog.py` passes (4 layers, 2333 edges). Three
   orphaned old-named silver artifacts (`cleaned_hdb_transactions`,
@@ -92,12 +92,12 @@ Credentials loaded from the local ignored `.env` (OneMap token obtained fresh; n
 Warm-cache, in-process benchmark via `run_pipeline()` on a builder mirroring
 `build_pipeline()` (same modules/validator/cache+disable set):
 
-| Variant | Wall clock (repeated trials) |
-| --- | --- |
-| v1 production (serial) | 87.95s / 23.82s / 34.86s |
-| v2 driver, serial | 55.33s / 29.44s / 25.56s |
-| v2 + MultiThreadingExecutor(4) | 40.95s |
-| v2 + MultiThreadingExecutor(8) | 34.62s / 39.19s |
+| Variant                        | Wall clock (repeated trials) |
+| ------------------------------ | ---------------------------- |
+| v1 production (serial)         | 87.95s / 23.82s / 34.86s     |
+| v2 driver, serial              | 55.33s / 29.44s / 25.56s     |
+| v2 + MultiThreadingExecutor(4) | 40.95s                       |
+| v2 + MultiThreadingExecutor(8) | 34.62s / 39.19s              |
 
 Run-to-run variance within a single variant is larger than any
 between-variant delta: materialization rewrites ~12 parquet outputs

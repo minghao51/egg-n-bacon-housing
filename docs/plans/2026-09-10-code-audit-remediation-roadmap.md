@@ -1,7 +1,7 @@
 # Code Audit Remediation Roadmap
 
-**Date:** 2026-09-10  
-**Status:** Continuation backlog — core four-work-order implementation landed; audit follow-ups remain  
+**Date:** 2026-09-10
+**Status:** Continuation backlog — core four-work-order implementation landed; audit follow-ups remain
 **Scope:** Phased remediation of the 2026-09 scout/reviewer code audit (1 critical, dead code, DRY, optimization, gaps/hygiene), extended with test/CI hardening, docs/plans bookkeeping, and a final end-to-end validation pass.
 
 > The status above reflects the remaining audit backlog, not the current DAG

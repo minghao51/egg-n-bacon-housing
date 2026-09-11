@@ -1,7 +1,7 @@
 # Hamilton DAG Improvement — Next-Thread Handoff
 
-**Date:** 2026-09-10  
-**Status:** Ready for continuation — implementation is uncommitted  
+**Date:** 2026-09-10
+**Status:** Ready for continuation — implementation is uncommitted
 **Baseline:** Current working tree; preserve unrelated user changes and do not reset or commit.
 
 ## Current state

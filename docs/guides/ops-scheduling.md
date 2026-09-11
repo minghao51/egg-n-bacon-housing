@@ -113,10 +113,10 @@ log files.
 The single source of truth for which sources roll and when they count as stale
 is `STALE_WARN_DAYS` in `src/egg_n_bacon_housing/utils/bronze.py`:
 
-| Key (bronze parquet stem) | Threshold (days) | Source | Why it rolls |
-|---|---|---|---|
-| `raw_condo_transactions` | 35 | URA API (+ manual CSV fallback) | API serves a rolling ~5-year window |
-| `raw_hdb_resale` | 35 | data.gov.sg API | API serves Jan 2017+ only |
+| Key (bronze parquet stem) | Threshold (days) | Source                          | Why it rolls                        |
+| ------------------------- | ---------------- | ------------------------------- | ----------------------------------- |
+| `raw_condo_transactions`  | 35               | URA API (+ manual CSV fallback) | API serves a rolling ~5-year window |
+| `raw_hdb_resale`          | 35               | data.gov.sg API                 | API serves Jan 2017+ only           |
 
 The same keys drive:
 
