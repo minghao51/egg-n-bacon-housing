@@ -41,6 +41,21 @@ features; freshness = agency-driven updates (check `FMEL_UPD_D` field).
 | `SportSGFacilities.geojson` | SportSG Sport Facilities `d_9b87bab59d036a60fad2a91530e10773` (~45; excludes DUS schools) | `VENUE`                          | `raw_sports_facilities` | `location_dim` |
 | `CommunityClubs.geojson`    | Community Club / PAssion WaVe Outlet (PA) `d_9de02d3fb33d96da1855f4fbef549a0f` (~128)     | `NAME`                           | `raw_community_clubs`   | `location_dim` |
 
+Amenity parse cache (storage): the raw GeoJSONs above are the immutable
+source of truth and are parsed once into derived cache parquets at
+`bronze/external/<stem>.parquet` (name/lat/lon/amenity_type — the same
+parquet-under-external convention as `sora_rates.parquet`, written via
+`write_bronze_cache`: atomic tmp+os.replace, empty-guarded, manifest upsert
+with source `r2_external` keyed by the parquet filename). Nodes read the
+parquet on subsequent runs; the cache is re-derived when it is missing (e.g.
+cleared by `main.py --refresh 'external/*'`), empty, or older than a
+re-seeded raw GeoJSON (mtime comparison). Failure policy is unchanged: a
+missing/malformed raw GeoJSON with no cache warns and degrades to empty
+proximity features, a valid cache is never replaced by an empty/partial
+parse, and a re-parse failure serves the existing cache. Deleting a raw
+GeoJSON after a successful parse does not invalidate its cache — restore the
+seed instead (`scripts/00_sync_data.py`) if a re-parse is wanted.
+
 MRT station/line JSONs (`mrt_stations.json`, `mrt_lines.json`) and
 `school_tiers.json` are not seed sources: they have in-code fallbacks, and
 `mrt_stations.json` is now regenerated from the live LTA sources below.
@@ -114,6 +129,12 @@ analysis should use `property_segment` rather than the broad `property_type`.
 | Storage       | Responses cached per search string (`onemap_search:<address>`) via `utils/cache.py` under `geocoding.cache_duration_hours` for both reads and writes; failures are never cached. A 200 payload missing the `results` key is treated as malformed (`DatasetFetchError`, retried then surfaced — never cached), while `found: 0` with `results: []` is a valid cached empty success |
 | Failure       | Addresses that still fail return null-coordinate rows (pipeline continues, coverage logged by the silver validation gateway)                                                                                                                                                                                                                                                      |
 
+### Retired sources
+
+| Source                                                         | Resource ID                          | Former storage                                                 | Retirement                                                                                                                     |
+| -------------------------------------------------------------- | ------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Private Housing Supply Pipeline (data.gov.sg quarterly supply) | `d_baa848bbdbf4af7b4d709f147fcf3c9b` | bronze `external/supply_pipeline.parquet` via `raw_macro_data` | Retired 2026-09-11 — no downstream consumers (gold/platinum lineage empty); bronze node entry, transform, and artifact deleted |
+
 ## Code placement
 
 - `adapters/` owns HTTP/CSV transport, authentication, pagination, retries,
@@ -138,7 +159,7 @@ analysis should use `property_segment` rather than the broad `property_type`.
 - MRT ingestion receives `mrt_reference` explicitly. Its line and station caches
   are independent so a live station fetch can refresh `mrt_stations.json` before
   downstream location features first read the station mapping.
-- Macro ingestion (`components/ingestion/macro.py`) fetches its 8 data.gov.sg
+- Macro ingestion (`components/ingestion/macro.py`) fetches its 7 data.gov.sg
   indicators through a bounded thread pool (4 workers; rate-limit safety —
   pagination within a source stays serial, see `adapters/datagovsg.py`). Results
   and the failure summary are ordered by source, and failure semantics match the

@@ -83,10 +83,15 @@ All fetched live from data.gov.sg on each refresh (2026-09-01 verified record co
 | SORA 3M (Compounded, bank rates) | Monthly   | 462                  |
 | HDB Resale Price Index           | Quarterly | 146                  |
 | URA Property Price Index         | Quarterly | automated            |
-| Private Housing Supply Pipeline  | Quarterly | automated            |
 | SORA (pre-built parquet, R2)     | Monthly   | 60 (static seed)     |
 
-**SORA 3M** is the primary mortgage benchmark; **HDB RPI / URA PPI** are official price benchmarks used for model validation; **Supply Pipeline** is a forward supply-pressure indicator.
+**SORA 3M** is the primary mortgage benchmark; **HDB RPI / URA PPI** are official price benchmarks used for model validation.
+
+> Retired (2026-09-11): the Private Housing Supply Pipeline indicator
+> (data.gov.sg `d_baa848bbdbf4af7b4d709f147fcf3c9b`, bronze
+> `external/supply_pipeline.parquet`) is no longer fetched — it had no
+> downstream consumers. See the retired-sources record in
+> [guides/data-ingestion-development.md](guides/data-ingestion-development.md).
 
 ---
 
@@ -167,20 +172,20 @@ Sync via `scripts/00_sync_data.py` (see the [R2 sync guide](guides/r2-sync-guide
 
 ## Refresh Cadence
 
-| Data Source                                                          | Frequency  | Automation                                               |
-| -------------------------------------------------------------------- | ---------- | -------------------------------------------------------- |
-| HDB Resale (2017+)                                                   | Monthly    | Automated — data.gov.sg API                              |
-| HDB Resale (1990–2016 CSVs)                                          | Static     | One-time manual load (R2)                                |
-| URA Private Transactions                                             | On refresh | **Automated — URA Data Service API** + CSV history merge |
-| HDB Rental / Rental Index                                            | M / Q      | Automated                                                |
-| Macro indicators (CPI, GDP, unemployment, SORA 3M, RPI, PPI, supply) | M / Q      | Automated — data.gov.sg API                              |
-| MRT stations + line mapping                                          | On refresh | Automated — LTA live sources                             |
-| Shopping malls                                                       | On refresh | Automated — URA MP25 via data.gov.sg                     |
-| Green Mark / Property Info                                           | On demand  | Automated — data.gov.sg API                              |
-| Bus stops / CHAS / SportSG / CC                                      | On demand  | R2-seeded (upload once, auto-seed)                       |
-| Other amenity GeoJSONs                                               | On demand  | Manual bundle (slow-changing)                            |
-| Income by planning area                                              | Static     | GHS 2015 snapshot                                        |
-| Planning area polygons                                               | Static     | One-time OneMap fetch (R2)                               |
+| Data Source                                                  | Frequency  | Automation                                               |
+| ------------------------------------------------------------ | ---------- | -------------------------------------------------------- |
+| HDB Resale (2017+)                                           | Monthly    | Automated — data.gov.sg API                              |
+| HDB Resale (1990–2016 CSVs)                                  | Static     | One-time manual load (R2)                                |
+| URA Private Transactions                                     | On refresh | **Automated — URA Data Service API** + CSV history merge |
+| HDB Rental / Rental Index                                    | M / Q      | Automated                                                |
+| Macro indicators (CPI, GDP, unemployment, SORA 3M, RPI, PPI) | M / Q      | Automated — data.gov.sg API                              |
+| MRT stations + line mapping                                  | On refresh | Automated — LTA live sources                             |
+| Shopping malls                                               | On refresh | Automated — URA MP25 via data.gov.sg                     |
+| Green Mark / Property Info                                   | On demand  | Automated — data.gov.sg API                              |
+| Bus stops / CHAS / SportSG / CC                              | On demand  | R2-seeded (upload once, auto-seed)                       |
+| Other amenity GeoJSONs                                       | On demand  | Manual bundle (slow-changing)                            |
+| Income by planning area                                      | Static     | GHS 2015 snapshot                                        |
+| Planning area polygons                                       | Static     | One-time OneMap fetch (R2)                               |
 
 ---
 

@@ -5,6 +5,8 @@ All transport is mocked — no test here talks to the live URA API.
 
 import importlib
 import json
+import time
+from email.utils import formatdate
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -12,7 +14,7 @@ import pytest
 import requests
 from requests import RequestException
 
-from egg_n_bacon_housing.adapters import ura
+from egg_n_bacon_housing.adapters import _http, ura
 from egg_n_bacon_housing.adapters.exceptions import (
     CredentialError,
     DatasetFetchError,
@@ -329,7 +331,10 @@ class TestNormalizeUraApiRows:
         row = df.iloc[0]
         assert row["area_sqft"] == 100.0
         assert row["area_sqm"] == pytest.approx(100 / 10.7639)
-        assert row["unit_price_psf"] == pytest.approx(10000.0)
+        assert row["price"] == 1_000_000.0
+        # unit_price_psf/psm were pruned as dead columns (no consumers).
+        assert "unit_price_psf" not in df.columns
+        assert "unit_price_psm" not in df.columns
 
     def test_land_area_maps_to_sqm(self):
         df = _normalize_ura_api_rows([self._entry(typeOfArea="Land", area="257")])
@@ -547,3 +552,119 @@ class TestRawCondoTransactionsLiveMerge:
                 bronze, manual_dir=tmp_path / "manual", ura_api_access_key=ACCESS_KEY
             )
         assert list(result["project_name"]) == ["OLD CONDO"]
+
+
+class TestUraRequestRetryPolicy:
+    """`_ura_request` adopts the shared transient-only `_http` policy.
+
+    Permanent 4xx must fail fast (exactly one attempt, no sleep); 429 must
+    retry honoring `Retry-After` (both RFC 7231 forms, capped at
+    `MAX_RETRY_AFTER_WAIT`); network errors retry with backoff. All sleeps
+    are intercepted so the tests never actually wait.
+    """
+
+    def _ok_response(self):
+        response = MagicMock()
+        response.raise_for_status.return_value = None
+        response.json.return_value = {"Status": "Success", "Result": []}
+        return response
+
+    def _http_error(self, status: int, headers: dict | None = None):
+        response = MagicMock()
+        response.status_code = status
+        response.headers = headers or {}
+        return requests.HTTPError(f"HTTP {status}", response=response)
+
+    def _session(self, side_effects):
+        session = MagicMock()
+        session.get.side_effect = side_effects
+        return session
+
+    def _patch_sleep(self, monkeypatch, sleeps):
+        def _record(seconds):
+            sleeps.append(seconds)
+
+        monkeypatch.setattr(time, "sleep", _record)
+
+    def test_permanent_4xx_fails_fast(self, monkeypatch):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        session = self._session([self._http_error(404)])
+        with pytest.raises(requests.HTTPError):
+            ura._ura_request(session, "https://ura.test/x", headers={})
+        assert session.get.call_count == 1
+        assert sleeps == []
+
+    @pytest.mark.parametrize("status", [400, 401, 403, 404])
+    def test_permanent_statuses_never_retry(self, monkeypatch, status):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        session = self._session([self._http_error(status)] * 4)
+        with pytest.raises(requests.HTTPError):
+            ura._ura_request(session, "https://ura.test/x", headers={})
+        assert session.get.call_count == 1
+
+    def test_429_retries_honoring_retry_after_seconds(self, monkeypatch):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        session = self._session([self._http_error(429, {"Retry-After": "2"}), self._ok_response()])
+        result = ura._ura_request(session, "https://ura.test/x", headers={})
+        assert result["Status"] == "Success"
+        assert session.get.call_count == 2
+        assert sleeps == [2.0]
+
+    def test_429_retry_after_capped_at_max(self, monkeypatch):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        session = self._session(
+            [self._http_error(429, {"Retry-After": "3600"}), self._ok_response()]
+        )
+        ura._ura_request(session, "https://ura.test/x", headers={})
+        assert sleeps == [_http.MAX_RETRY_AFTER_WAIT]
+
+    def test_429_retry_after_http_date_past_clamps_to_zero(self, monkeypatch):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        session = self._session(
+            [
+                self._http_error(429, {"Retry-After": "Wed, 21 Oct 2015 07:28:00 GMT"}),
+                self._ok_response(),
+            ]
+        )
+        ura._ura_request(session, "https://ura.test/x", headers={})
+        assert sleeps == [0.0]
+
+    def test_429_retry_after_http_date_future(self, monkeypatch):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        header = formatdate(time.time() + 30, usegmt=True)
+        session = self._session(
+            [self._http_error(429, {"Retry-After": header}), self._ok_response()]
+        )
+        ura._ura_request(session, "https://ura.test/x", headers={})
+        assert len(sleeps) == 1
+        assert 20.0 <= sleeps[0] <= 30.0
+
+    def test_network_error_retries_with_backoff(self, monkeypatch):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        session = self._session(
+            [
+                requests.ConnectionError("down"),
+                requests.ConnectionError("down"),
+                self._ok_response(),
+            ]
+        )
+        result = ura._ura_request(session, "https://ura.test/x", headers={})
+        assert result["Status"] == "Success"
+        assert session.get.call_count == 3
+        assert len(sleeps) == 2
+        assert all(s > 0 for s in sleeps)
+
+    def test_gives_up_after_four_attempts(self, monkeypatch):
+        sleeps: list[float] = []
+        self._patch_sleep(monkeypatch, sleeps)
+        session = self._session([self._http_error(429, {"Retry-After": "0"})] * 4)
+        with pytest.raises(requests.HTTPError):
+            ura._ura_request(session, "https://ura.test/x", headers={})
+        assert session.get.call_count == 4

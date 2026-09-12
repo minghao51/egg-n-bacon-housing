@@ -226,6 +226,72 @@ class TestLiveFetchLineTripwire:
         assert not [r for r in caplog.records if "no line assignment" in r.getMessage()]
 
 
+class TestPointOrCentroidHelper:
+    """Roadmap 13c: one shared Point/centroid extraction for both loaders."""
+
+    def test_mrt_loader_handles_polygon_centroids(self, tmp_path, caplog):
+        """The MRT loader takes the same centroid path as the amenity loader."""
+        geojson = _geojson_module()
+        path = tmp_path / "MRTStations.geojson"
+        path.write_text(
+            json.dumps(
+                {
+                    "features": [
+                        {
+                            "properties": {"NAME": "POLY STATION"},
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [
+                                    [[103.8, 1.3], [103.82, 1.3], [103.82, 1.32], [103.8, 1.32]]
+                                ],
+                            },
+                        }
+                    ]
+                }
+            )
+        )
+
+        with caplog.at_level(logging.WARNING, logger=_GEOJSON_LOGGER):
+            result = geojson._load_mrt_geojson(path)
+
+        assert len(result) == 1
+        assert result.loc[0, "name"] == "POLY STATION"
+        assert result.loc[0, "lat"] == pytest.approx(1.31)
+        assert result.loc[0, "lon"] == pytest.approx(103.81)
+
+    def test_unparseable_geometry_warns_and_degrades(self, tmp_path, caplog):
+        geojson = _geojson_module()
+        path = tmp_path / "amenity.geojson"
+        path.write_text(
+            json.dumps(
+                {
+                    "features": [
+                        {
+                            "properties": {"NAME": "Broken"},
+                            "geometry": {"type": "MultiPolygon", "coordinates": "not-a-list"},
+                        }
+                    ]
+                }
+            )
+        )
+
+        with caplog.at_level(logging.WARNING, logger=_GEOJSON_LOGGER):
+            result = geojson._load_geojson_amenities(path, ["NAME"], "test")
+
+        assert result.empty
+        warnings = [r for r in caplog.records if "centroid calculation" in r.getMessage()]
+        assert len(warnings) == 1, caplog.text
+
+    def test_helper_direct_point_and_empty_geom(self):
+        geojson = _geojson_module()
+
+        lat, lon = geojson._point_or_centroid({"type": "Point", "coordinates": [103.85, 1.33]})
+        assert (lat, lon) == (1.33, 103.85)
+
+        # Empty geometry dict: silent (None, None), no warning path.
+        assert geojson._point_or_centroid({}) == (None, None)
+
+
 class TestCoordinateValidity:
     """WS12: 0.0 is a valid coordinate; None/NaN are not (falsy-zero fix)."""
 
@@ -345,6 +411,31 @@ class TestCoordinateValidity:
             geojson._load_geojson_amenities(path, ["NAME"], "test")
 
         assert not [r for r in caplog.records if "coordinates" in r.getMessage()]
+
+    def test_malformed_geojson_degrades_to_empty_with_warning(self, tmp_path, caplog):
+        """A truncated/corrupt export is an expected source failure: warn +
+        empty frame, never a crash (the parse cache upstream decides whether
+        an existing cache still serves)."""
+        geojson = _geojson_module()
+        path = tmp_path / "amenity.geojson"
+        path.write_text("{truncated json")
+
+        with caplog.at_level(logging.WARNING, logger=_GEOJSON_LOGGER):
+            result = geojson._load_geojson_amenities(path, ["NAME"], "test")
+
+        assert result.empty
+        assert any("Unreadable" in r.getMessage() for r in caplog.records)
+
+    def test_non_object_geojson_degrades_to_empty_with_warning(self, tmp_path, caplog):
+        geojson = _geojson_module()
+        path = tmp_path / "amenity.geojson"
+        path.write_text(json.dumps(["not", "a", "feature", "collection"]))
+
+        with caplog.at_level(logging.WARNING, logger=_GEOJSON_LOGGER):
+            result = geojson._load_geojson_amenities(path, ["NAME"], "test")
+
+        assert result.empty
+        assert any("unexpected shape" in r.getMessage() for r in caplog.records)
 
     def test_nameless_mrt_features_dropped_with_count_warning(self, tmp_path, caplog):
         geojson = _geojson_module()

@@ -42,7 +42,7 @@ def _normalize_ura_api_rows(rows: list[dict]) -> pd.DataFrame:
     """Flatten raw URA API property rows to the condo bronze contract.
 
     Produces the same normalized columns as the manual-CSV path:
-    project_name, street_name, price, area_sqft/area_sqm, unit_price_psf/psm,
+    project_name, street_name, price, area_sqft/area_sqm,
     transaction_date, type_of_sale, property_type (asset class: "condo"),
     property_subtype (URA's source property type),
     number_of_units, tenure, postal_district, market_segment, floor_level,
@@ -87,8 +87,6 @@ def _normalize_ura_api_rows(rows: list[dict]) -> pd.DataFrame:
                     "price": price,
                     "area_sqft": area_sqft,
                     "area_sqm": area_sqm,
-                    "unit_price_psf": (price / area_sqft if price and area_sqft else None),
-                    "unit_price_psm": (price / area_sqm if price and area_sqm else None),
                     "transaction_date": pd.to_datetime(
                         str(tx.get("contractDate") or ""), format="%m%y", errors="coerce"
                     ),
@@ -135,8 +133,6 @@ _CSV_RENAME_MAP = {
     "Transacted Price ($)": "price",
     "Area (SQFT)": "area_sqft",
     "Area (SQM)": "area_sqm",
-    "Unit Price ($ PSF)": "unit_price_psf",
-    "Unit Price ($ PSM)": "unit_price_psm",
     "Sale Date": "sale_date",
     "Project Name": "project_name",
     "Street Name": "street_name",
@@ -163,7 +159,7 @@ def _normalize_ura_csvs(
         df["price"] = df["price"].astype(str).str.replace(",", "", regex=False)
         df["price"] = pd.to_numeric(df["price"], errors="coerce")
 
-    for col in ["area_sqft", "area_sqm", "unit_price_psf", "unit_price_psm"]:
+    for col in ["area_sqft", "area_sqm"]:
         if col in df.columns:
             df[col] = pd.to_numeric(
                 df[col].astype(str).str.replace(",", "", regex=False), errors="coerce"

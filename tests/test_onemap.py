@@ -427,23 +427,29 @@ class TestRetryPolicy:
     """fetch_data retries only transient failures and honors Retry-After."""
 
     def test_parse_retry_after_delta_seconds(self):
+        from egg_n_bacon_housing.adapters import _http
+
         onemap = _get_onemap_module()
 
-        assert onemap._parse_retry_after("5") == 5.0
-        assert onemap._parse_retry_after(" 12 ") == 12.0
-        assert onemap._parse_retry_after(None) is None
-        assert onemap._parse_retry_after("") is None
-        assert onemap._parse_retry_after("soon") is None
+        # OneMap parses Retry-After via the shared _http policy.
+        assert _http.parse_retry_after("5") == 5.0
+        assert _http.parse_retry_after(" 12 ") == 12.0
+        assert _http.parse_retry_after(None) is None
+        assert _http.parse_retry_after("") is None
+        assert _http.parse_retry_after("soon") is None
+        assert onemap._wait_after_error is not None
 
     def test_parse_retry_after_http_date(self):
         import datetime as dt
         import email.utils
 
-        onemap = _get_onemap_module()
+        from egg_n_bacon_housing.adapters import _http
+
+        _get_onemap_module()
         future = dt.datetime.now(dt.UTC) + dt.timedelta(seconds=30)
         header = email.utils.format_datetime(future)
 
-        wait = onemap._parse_retry_after(header)
+        wait = _http.parse_retry_after(header)
 
         assert wait is not None
         assert 25 <= wait <= 30
@@ -463,6 +469,8 @@ class TestRetryPolicy:
     def test_wait_honors_retry_after_on_429(self):
         from types import SimpleNamespace
 
+        from egg_n_bacon_housing.adapters import _http
+
         onemap = _get_onemap_module()
         outcome = SimpleNamespace(exception=lambda: _http_error(429, retry_after="7"))
         retry_state = SimpleNamespace(outcome=outcome)
@@ -472,7 +480,7 @@ class TestRetryPolicy:
         capped = SimpleNamespace(
             outcome=SimpleNamespace(exception=lambda: _http_error(429, retry_after="3600"))
         )
-        assert onemap._wait_after_error(capped) == onemap.MAX_RETRY_AFTER_WAIT
+        assert onemap._wait_after_error(capped) == _http.MAX_RETRY_AFTER_WAIT
 
     def test_401_raises_auth_error_without_retry(self):
         """401 is an auth problem for the caller to refresh, not a retry."""

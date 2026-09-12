@@ -18,12 +18,18 @@ import requests
 from requests import RequestException
 from tenacity import (
     retry,
-    retry_if_exception_type,
+    retry_if_exception,
     stop_after_attempt,
     wait_exponential,
 )
 
-from egg_n_bacon_housing.adapters._http import parse_retry_after
+from egg_n_bacon_housing.adapters._http import (
+    MAX_RETRY_AFTER_WAIT,
+    is_retryable_exception,
+    is_transient_status,
+    parse_retry_after,
+    retry_after_wait,
+)
 from egg_n_bacon_housing.adapters.exceptions import (
     DatasetFetchError,
     IncompleteDatasetFetchError,
@@ -38,10 +44,16 @@ _DATAGOVSG_API_OPEN_BASE = "https://api-open.data.gov.sg/v1/public/api/datasets"
 _DEFAULT_PAGE_SIZE = 2000
 _MIN_PAGE_SIZE = 250
 
-# Ceiling for Retry-After sleeps on 429 (parity with onemap's
-# MAX_RETRY_AFTER_WAIT): a hostile or misconfigured gateway sending
-# ``Retry-After: 3600`` must not stall the run for an hour.
-MAX_RETRY_AFTER_WAIT = 60.0
+
+def resource_url(resource_id: str) -> str:
+    """Canonical datastore_search request URL for one dataset/resource id.
+
+    Single-sources the ``?resource_id=`` construction shared by the datagov
+    fetch nodes; the result is accepted directly by
+    :func:`fetch_datagovsg_dataset`.
+    """
+    return f"{DATAGOVSG_BASE_URL}?resource_id={resource_id}"
+
 
 # Module-level session shared by all request paths: datagovsg nodes are
 # single-threaded, so one session reuses TLS connections across paginated calls.
@@ -49,9 +61,9 @@ _SESSION = requests.Session()
 
 
 @retry(
-    wait=wait_exponential(multiplier=2, min=2, max=30),
+    wait=retry_after_wait(wait_exponential(multiplier=2, min=2, max=30)),
     stop=stop_after_attempt(4),
-    retry=retry_if_exception_type(RequestException),
+    retry=retry_if_exception(is_retryable_exception),
     reraise=True,
     before_sleep=lambda retry_state: logger.warning(
         "Retrying data.gov.sg initiate-download (%d/4) after error: %s",
@@ -60,7 +72,9 @@ _SESSION = requests.Session()
     ),
 )
 def _initiate_download(dataset_id: str) -> None:
-    """Kick off a dataset download job, retrying transient rate limits."""
+    """Kick off a dataset download job, retrying transient failures only
+    (429/5xx/network via the shared `_http` policy; `Retry-After` on 429s is
+    honored and capped at `MAX_RETRY_AFTER_WAIT`; permanent 4xx fail fast)."""
     response = _SESSION.get(
         f"{_DATAGOVSG_API_OPEN_BASE}/{dataset_id}/initiate-download",
         params={"geometry": "true"},
@@ -148,7 +162,9 @@ def fetch_datagovsg_dataset(
     """Fetch data from data.gov.sg API with pagination support.
 
     Args:
-        url: Base URL for the API request
+        url: Request URL — the canonical :func:`resource_url` result or the
+            legacy ``...?resource_id=`` prefix; the dataset id is joined
+            exactly once either way
         dataset_id: Dataset ID to fetch
         use_cache: Whether to use caching (default: True)
 
@@ -157,7 +173,7 @@ def fetch_datagovsg_dataset(
 
     Example:
         >>> df = fetch_datagovsg_dataset(
-        ...     "https://data.gov.sg/api/action/datastore_search?resource_id=",
+        ...     resource_url("d_5785799d63a9da091f4e0b456291eeb8"),
         ...     "d_5785799d63a9da091f4e0b456291eeb8"
         ... )
     """
@@ -180,7 +196,10 @@ def fetch_datagovsg_dataset(
         offset_value = 0
         total_records = 0
         page_size = _DEFAULT_PAGE_SIZE
-        request_url = f"{url}{dataset_id}"
+        # Accept either resource_url(dataset_id) or the legacy
+        # "...?resource_id=" prefix; the id is joined exactly once.
+        base_url = url if url.endswith(f"resource_id={dataset_id}") else f"{url}{dataset_id}"
+        request_url = base_url
         if "datastore_search" in request_url and "limit=" not in request_url:
             request_url = f"{request_url}&limit={page_size}"
         retry_attempts = 0
@@ -190,9 +209,8 @@ def fetch_datagovsg_dataset(
             match = re.search(r"offset=(\d+)", request_url)
             if match:
                 cur_offset = int(match.group(1))
-            base = f"{url}{dataset_id}"
-            sep = "&" if "?" in base else "?"
-            return f"{base}{sep}limit={page_size}&offset={cur_offset}"
+            sep = "&" if "?" in base_url else "?"
+            return f"{base_url}{sep}limit={page_size}&offset={cur_offset}"
 
         while True:
             try:
@@ -250,8 +268,8 @@ def fetch_datagovsg_dataset(
                             e.response.headers.get("Retry-After"), default=0.0
                         )
                     retry_attempts += 1
-                    # Cap at 60s (MAX_RETRY_AFTER_WAIT, same as onemap) so a
-                    # hostile/misconfigured gateway cannot stall the run.
+                    # Cap at the shared MAX_RETRY_AFTER_WAIT so a hostile
+                    # gateway cannot stall the run.
                     retry_after = min(retry_after, MAX_RETRY_AFTER_WAIT)
                     sleep_seconds = retry_after or min(2**retry_attempts, 30)
                     logger.warning(
@@ -266,7 +284,7 @@ def fetch_datagovsg_dataset(
                     continue
                 if (
                     status is not None
-                    and 500 <= status < 600
+                    and is_transient_status(status)
                     and retry_attempts < max_retry_attempts
                 ):
                     retry_attempts += 1

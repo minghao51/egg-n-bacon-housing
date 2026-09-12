@@ -24,8 +24,9 @@ import hashlib
 import logging
 
 import requests
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
+from egg_n_bacon_housing.adapters._http import is_retryable_exception, retry_after_wait
 from egg_n_bacon_housing.adapters.exceptions import CredentialError, DatasetFetchError, URAAuthError
 from egg_n_bacon_housing.utils.cache import (
     CacheManager,
@@ -69,9 +70,9 @@ def _get_session() -> requests.Session:
 
 
 @retry(
-    wait=wait_exponential(multiplier=2, min=2, max=30),
+    wait=retry_after_wait(wait_exponential(multiplier=2, min=2, max=30)),
     stop=stop_after_attempt(4),
-    retry=retry_if_exception_type(requests.RequestException),
+    retry=retry_if_exception(is_retryable_exception),
     reraise=True,
     before_sleep=lambda rs: logger.warning(
         "Retrying URA request (%d/4) after error: %s",
@@ -86,7 +87,9 @@ def _ura_request(
     params: dict[str, str] | None = None,
     timeout: int = 30,
 ) -> dict:
-    """GET a URA endpoint and return parsed JSON, retrying transient failures."""
+    """GET a URA endpoint and return parsed JSON, retrying transient failures
+    only (429/5xx/network via the shared `_http` policy; `Retry-After` on 429s
+    is honored and capped at `MAX_RETRY_AFTER_WAIT`; permanent 4xx fail fast)."""
     response = session.get(url, headers=headers, params=params, timeout=timeout)
     response.raise_for_status()
     try:

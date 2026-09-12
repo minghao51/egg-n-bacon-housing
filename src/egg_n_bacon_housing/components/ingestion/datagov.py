@@ -32,11 +32,6 @@ from egg_n_bacon_housing.utils.geocoding import Geocoder
 
 logger = logging.getLogger(__name__)
 
-# Request prefix built from the adapter's canonical base URL so the endpoint
-# is single-sourced (components/ingestion/geojson.py builds the same prefix
-# for the station-codes dataset).
-DATAGOVSG_API_BASE_URL = f"{datagovsg.DATAGOVSG_BASE_URL}?resource_id="
-
 # NOTE: raw_rental_index, raw_hdb_rental, and raw_school_directory are produced
 # by @parameterize on raw_dataset below. They are Hamilton DAG node *names*
 # (graph metadata), not module attributes -- the decorated object keeps the
@@ -112,7 +107,9 @@ def _load_or_fetch_dataset(
         logger.info("Loading %s from bronze: %s", display_name, bronze_dir / name)
         return cached
 
-    df = datagovsg.fetch_datagovsg_dataset(DATAGOVSG_API_BASE_URL, resource_id, use_cache=False)
+    df = datagovsg.fetch_datagovsg_dataset(
+        datagovsg.resource_url(resource_id), resource_id, use_cache=False
+    )
     if df is None or df.empty:
         if required:
             raise RuntimeError(f"Core dataset fetch failed: {key}")
@@ -182,7 +179,7 @@ def raw_hdb_resale_transactions(bronze_dir: Path, manual_dir: Path) -> pd.DataFr
             return cached
 
     api_df = datagovsg.fetch_datagovsg_dataset(
-        DATAGOVSG_API_BASE_URL, HDB_RESALE_RESOURCE_ID, use_cache=False
+        datagovsg.resource_url(HDB_RESALE_RESOURCE_ID), HDB_RESALE_RESOURCE_ID, use_cache=False
     )
     if api_df is None or api_df.empty:
         raise RuntimeError("Core dataset fetch failed: hdb_resale")

@@ -335,7 +335,6 @@ class TestBronzeLayer:
             "bank_rates",
             "hdb_rpi",
             "ura_ppi",
-            "supply_pipeline",
             "wage_growth",
         ):
             assert result[key].empty, f"{key} should degrade to empty on network error"
@@ -343,7 +342,7 @@ class TestBronzeLayer:
         summary_records = [r for r in caplog.records if "Macro ingestion" in r.getMessage()]
         assert len(summary_records) == 1, "exactly one consolidated summary should be logged"
         msg = summary_records[0].getMessage()
-        assert "8 indicator" in msg
+        assert "7 indicator" in msg
         assert "cpi:" in msg and "wage_growth:" in msg
         assert "ConnectionError" in msg
 
@@ -404,8 +403,6 @@ class TestBronzeLayer:
             return pd.DataFrame(
                 [{"property_type": "All Residential", "quarter": "2026Q1", "index": "200.0"}]
             )
-        if resource_id == ingestion.macro.SUPPLY_PIPELINE_RESOURCE_ID:
-            return pd.DataFrame([{"quarter": "2026Q1", "no_of_units": "1234"}])
         if resource_id == ingestion.macro.WAGE_GROWTH_RESOURCE_ID:
             return pd.DataFrame([{"DataSeries": "Overall Economy", "2025": "4.5"}])
         return pd.DataFrame([{"DataSeries": "All Items", "2026Jan": "101.0"}])  # cpi
@@ -456,7 +453,6 @@ class TestBronzeLayer:
         assert len(result["bank_rates"]) == 1
         assert len(result["hdb_rpi"]) == 1
         assert len(result["ura_ppi"]) == 1
-        assert len(result["supply_pipeline"]) == 1
         assert len(result["wage_growth"]) == 4
         # Exactly one consolidated summary naming the failed source.
         summary_records = [r for r in caplog.records if "Macro ingestion" in r.getMessage()]
@@ -472,7 +468,6 @@ class TestBronzeLayer:
             "bank_rates.parquet",
             "hdb_rpi.parquet",
             "ura_ppi.parquet",
-            "supply_pipeline.parquet",
             "wage_growth.parquet",
         ):
             assert filename in manifest
@@ -714,6 +709,16 @@ class TestMacroHelpers:
         assert result.iloc[0] == pd.Timestamp("2026-03-31")
         assert result.iloc[1] == pd.Timestamp("2026-06-30")
         assert pd.isna(result.iloc[2])
+
+    def test_quarterly_melt_malformed_quarter_is_nat_not_year_202(self):
+        """Roadmap 13b regression: '2024Q' must NOT parse to year 202."""
+        macro = _get_macro_module()
+        raw = pd.DataFrame([{"_id": 1, "DataSeries": "Total Unemployment Rate", "2024Q": "9.9"}])
+
+        result = macro._melt_pivot_quarterly(raw, "Total Unemployment Rate", "unemployment_rate")
+
+        # The malformed row is dropped (empty result), never parsed to 202-12-31.
+        assert result.empty
 
 
 class TestGeojsonHelpers:
@@ -1305,7 +1310,6 @@ class TestMacroSourceSpec:
             "bank_rates",
             "hdb_rpi",
             "ura_ppi",
-            "supply_pipeline",
             "wage_growth",
         ]
         # every resource id present and filenames unique
@@ -1504,7 +1508,9 @@ class TestBronzeFetchMetadataWiring:
         result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
 
         assert len(result) == 1
-        entry = _read_bronze_manifest(tmp_path)["HawkerCentresGEOJSON.geojson"]
+        # The manifest key is the derived parse cache parquet (the
+        # fetch-and-write artifact), not the raw GeoJSON seed.
+        entry = _read_bronze_manifest(tmp_path)["HawkerCentresGEOJSON.parquet"]
         assert entry["source"] == "r2_external"
         assert entry["rows"] == 1
 
@@ -1605,6 +1611,190 @@ def _spy_write_bronze_cache(monkeypatch, module) -> list[str]:
 
     monkeypatch.setattr(module, "write_bronze_cache", spy)
     return calls
+
+
+def _seed_hawker_geojson(
+    external_dir: Path, names: tuple[str, ...] = ("Maxwell", "Tiong Bahru")
+) -> Path:
+    """Write a minimal seeded HawkerCentresGEOJSON.geojson into external_dir."""
+    external_dir.mkdir(parents=True, exist_ok=True)
+    path = external_dir / "HawkerCentresGEOJSON.geojson"
+    path.write_text(
+        json.dumps(
+            {
+                "features": [
+                    {
+                        "properties": {"NAME": name},
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [103.8 + i * 0.01, 1.28 + i * 0.01],
+                        },
+                    }
+                    for i, name in enumerate(names)
+                ]
+            }
+        )
+    )
+    return path
+
+
+def _spy_amenity_parser(monkeypatch, geojson) -> list[str]:
+    """Wrap _load_geojson_amenities, recording each raw-GeoJSON parse."""
+    real = geojson._load_geojson_amenities
+    calls: list[str] = []
+
+    def spy(geojson_path, name_props, amenity_type):
+        calls.append(geojson_path.name)
+        return real(geojson_path, name_props, amenity_type)
+
+    monkeypatch.setattr(geojson, "_load_geojson_amenities", spy)
+    return calls
+
+
+class TestAmenityParseCache:
+    """Amenity GeoJSONs parse once into external/<stem>.parquet caches.
+
+    Raw GeoJSONs stay the immutable source of truth; the parquets are derived
+    parse caches with the standard bronze invariants (atomic, empty-guarded,
+    manifest recorded only at the parse-and-write point).
+    """
+
+    CACHE_NAME = "HawkerCentresGEOJSON.parquet"
+
+    def test_first_run_parses_geojson_into_parse_cache(self, tmp_path):
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        _seed_hawker_geojson(external)
+
+        result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        cache_path = external / self.CACHE_NAME
+        assert len(result) == 2
+        assert cache_path.exists()
+        cached = pd.read_parquet(cache_path)
+        assert list(cached.columns) == ["name", "lat", "lon", "amenity_type"]
+        assert (cached["amenity_type"] == "hawker").all()
+        entry = _read_bronze_manifest(tmp_path)[self.CACHE_NAME]
+        assert entry["source"] == "r2_external"
+        assert entry["rows"] == 2
+
+    def test_second_run_serves_cache_without_reparsing(self, tmp_path, monkeypatch):
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        _seed_hawker_geojson(external)
+        geojson.raw_hawker_centres(bronze_dir=tmp_path)
+        cache_path = external / self.CACHE_NAME
+        mtime_before = cache_path.stat().st_mtime_ns
+        fetched_at_before = _read_bronze_manifest(tmp_path)[self.CACHE_NAME]["fetched_at"]
+
+        def _boom(*_a, **_kw):
+            raise AssertionError("cache hit must not re-parse the raw GeoJSON")
+
+        monkeypatch.setattr(geojson, "_load_geojson_amenities", _boom)
+        result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert len(result) == 2
+        assert cache_path.stat().st_mtime_ns == mtime_before
+        assert _read_bronze_manifest(tmp_path)[self.CACHE_NAME]["fetched_at"] == (fetched_at_before)
+
+    def test_missing_cache_reparses_and_rewrites(self, tmp_path, monkeypatch):
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        _seed_hawker_geojson(external)
+        geojson.raw_hawker_centres(bronze_dir=tmp_path)
+        calls = _spy_amenity_parser(monkeypatch, geojson)
+        (external / self.CACHE_NAME).unlink()
+
+        result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert len(result) == 2
+        assert calls == ["HawkerCentresGEOJSON.geojson"]
+        assert (external / self.CACHE_NAME).exists()
+
+    def test_empty_parse_never_replaces_valid_cache(self, tmp_path, caplog):
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        _seed_hawker_geojson(external)
+        geojson.raw_hawker_centres(bronze_dir=tmp_path)
+        cache_path = external / self.CACHE_NAME
+        mtime_before = cache_path.stat().st_mtime_ns
+
+        # Re-seeded raw file parses to 0 rows: the cache must survive intact.
+        _seed_hawker_geojson(external, names=())
+        with caplog.at_level(logging.WARNING, logger=geojson.__name__):
+            result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert len(result) == 2  # existing cache served instead
+        assert cache_path.stat().st_mtime_ns == mtime_before
+        assert any("yielded 0 rows" in r.getMessage() for r in caplog.records)
+
+    def test_empty_parse_writes_no_cache(self, tmp_path):
+        geojson = _get_geojson_module()
+        _seed_hawker_geojson(tmp_path / "external", names=())
+
+        result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert result.empty
+        assert not (tmp_path / "external" / self.CACHE_NAME).exists()
+        # Nothing was ever written, so not even the manifest exists.
+        assert not (tmp_path / "bronze_manifest.json").exists()
+
+    def test_malformed_geojson_degrades_to_empty_without_caching(self, tmp_path, caplog):
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        external.mkdir(parents=True)
+        (external / "HawkerCentresGEOJSON.geojson").write_text("{truncated json")
+
+        with caplog.at_level(logging.WARNING, logger=geojson.__name__):
+            result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert result.empty  # warn + empty, no crash
+        assert not (external / self.CACHE_NAME).exists()
+        assert any("Unreadable" in r.getMessage() for r in caplog.records)
+
+    def test_missing_raw_geojson_serves_existing_cache(self, tmp_path):
+        """A deleted raw seed must not lose data: the cache still serves."""
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        _seed_hawker_geojson(external)
+        geojson.raw_hawker_centres(bronze_dir=tmp_path)
+        (external / "HawkerCentresGEOJSON.geojson").unlink()
+        fetched_at_before = _read_bronze_manifest(tmp_path)[self.CACHE_NAME]["fetched_at"]
+
+        result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert len(result) == 2
+        assert _read_bronze_manifest(tmp_path)[self.CACHE_NAME]["fetched_at"] == (fetched_at_before)
+
+    def test_empty_bronze_cache_is_treated_as_a_miss(self, tmp_path, monkeypatch):
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        _seed_hawker_geojson(external)
+        pd.DataFrame(columns=["name", "lat", "lon", "amenity_type"]).to_parquet(
+            external / self.CACHE_NAME, index=False
+        )
+        calls = _spy_amenity_parser(monkeypatch, geojson)
+
+        result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert len(result) == 2
+        assert calls == ["HawkerCentresGEOJSON.geojson"]  # 0-row cache re-derived
+        assert len(pd.read_parquet(external / self.CACHE_NAME)) == 2
+
+    def test_reseeded_newer_geojson_reparses_cache(self, tmp_path, monkeypatch):
+        """A newer raw GeoJSON (mtime) invalidates the parse cache."""
+        geojson = _get_geojson_module()
+        external = tmp_path / "external"
+        _seed_hawker_geojson(external)
+        geojson.raw_hawker_centres(bronze_dir=tmp_path)
+        calls = _spy_amenity_parser(monkeypatch, geojson)
+        _seed_hawker_geojson(external, names=("Chinatown Complex",))  # newer mtime
+
+        result = geojson.raw_hawker_centres(bronze_dir=tmp_path)
+
+        assert result["name"].tolist() == ["Chinatown Complex"]
+        assert calls == ["HawkerCentresGEOJSON.geojson"]
+        assert len(pd.read_parquet(external / self.CACHE_NAME)) == 1
 
 
 class TestCentralizedBronzeCacheHelpers:

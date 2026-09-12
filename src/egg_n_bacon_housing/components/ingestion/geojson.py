@@ -16,7 +16,6 @@ from egg_n_bacon_housing.adapters import datagovsg
 from egg_n_bacon_housing.adapters.exceptions import DatasetFetchError
 from egg_n_bacon_housing.utils.bronze import (
     read_bronze_cache,
-    record_bronze_fetch,
     write_bronze_cache,
 )
 from egg_n_bacon_housing.utils.mrt_line_mapping import MrtReferenceRepository
@@ -79,6 +78,30 @@ def _name_from_description(props: dict, name_props: list[str]) -> str:
     return ""
 
 
+def _point_or_centroid(geom: dict) -> tuple:
+    """(lat, lon) from a GeoJSON geometry: Point coords directly, otherwise
+    the shape centroid.
+
+    Returns ``(None, None)`` for an empty geometry dict or an empty shape;
+    unparseable geometries log the shared centroid warning and return
+    ``(None, None)``. Callers validate the returned values with
+    :func:`_valid_coord`.
+    """
+    if not geom:
+        return None, None
+    if geom.get("type", "") == "Point" and len(geom.get("coordinates", [])) >= 2:
+        coords = geom["coordinates"]
+        return coords[1], coords[0]
+    try:
+        geom_shape = shape(geom)
+        if not geom_shape.is_empty:
+            centroid = geom_shape.centroid
+            return float(centroid.y), float(centroid.x)
+    except Exception as e:
+        logger.warning("Failed to parse geometry for centroid calculation: %s", e)
+    return None, None
+
+
 def _load_geojson_amenities(
     geojson_path: Path, name_props: list[str], amenity_type: str
 ) -> pd.DataFrame:
@@ -90,16 +113,29 @@ def _load_geojson_amenities(
         logger.warning("%s GeoJSON not found: %s", amenity_type, geojson_path)
         return pd.DataFrame()
 
-    with open(geojson_path, encoding="utf-8", errors="replace") as f:
-        data = json.load(f)
+    # A truncated/corrupt export is an expected source failure (like a failed
+    # fetch), not a programming defect: warn and degrade to an empty frame
+    # instead of crashing the DAG. A valid parse cache upstream of this point
+    # still takes precedence (see _load_external_amenity).
+    try:
+        with open(geojson_path, encoding="utf-8", errors="replace") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("Unreadable %s GeoJSON %s: %s", amenity_type, geojson_path.name, exc)
+        return pd.DataFrame()
+    if not isinstance(data, dict):
+        logger.warning(
+            "%s GeoJSON %s has an unexpected shape (expected an object) — ignoring it",
+            amenity_type,
+            geojson_path.name,
+        )
+        return pd.DataFrame()
 
     rows: list[dict] = []
     dropped_bad_coords = 0
     for feature in data.get("features", []):
         props = feature.get("properties", {})
         geom = feature.get("geometry", {})
-        geom_type = geom.get("type", "")
-        coords = geom.get("coordinates", [])
 
         name = ""
         for prop_name in name_props:
@@ -111,17 +147,7 @@ def _load_geojson_amenities(
         if not name:
             name = _name_from_description(props, name_props)
 
-        lat, lon = None, None
-        if geom_type == "Point" and len(coords) >= 2:
-            lon, lat = coords[0], coords[1]
-        elif geom:
-            try:
-                geom_shape = shape(geom)
-                if not geom_shape.is_empty:
-                    centroid = geom_shape.centroid
-                    lon, lat = float(centroid.x), float(centroid.y)
-            except Exception as e:
-                logger.warning("Failed to parse geometry for centroid calculation: %s", e)
+        lat, lon = _point_or_centroid(geom)
 
         if _valid_coord(lat) and _valid_coord(lon):
             rows.append({"name": name, "lat": lat, "lon": lon, "amenity_type": amenity_type})
@@ -152,20 +178,8 @@ def _load_mrt_geojson(geojson_path: Path) -> pd.DataFrame:
         props = feature.get("properties", {})
         geom = feature.get("geometry", {})
         name = props.get("NAME", "")
-        geom_type = geom.get("type", "")
-        coords = geom.get("coordinates", [])
 
-        lat, lon = None, None
-        if geom_type == "Point" and len(coords) >= 2:
-            lon, lat = coords[0], coords[1]
-        elif geom:
-            try:
-                geom_shape = shape(geom)
-                if not geom_shape.is_empty:
-                    centroid = geom_shape.centroid
-                    lon, lat = float(centroid.x), float(centroid.y)
-            except Exception as e:
-                logger.warning("Failed to parse geometry for centroid calculation: %s", e)
+        lat, lon = _point_or_centroid(geom)
 
         if name and _valid_coord(lat) and _valid_coord(lon):
             rows.append({"name": name, "lat": lat, "lon": lon})
@@ -391,7 +405,7 @@ def _fetch_live_mrt_stations(
 
     try:
         codes = datagovsg.fetch_datagovsg_dataset(
-            f"{datagovsg.DATAGOVSG_BASE_URL}?resource_id=",
+            datagovsg.resource_url(TRAIN_STATION_CODES_DATASET_ID),
             TRAIN_STATION_CODES_DATASET_ID,
             use_cache=False,
         )
@@ -509,20 +523,80 @@ def raw_mrt_stations(bronze_dir: Path, mrt_reference: MrtReference | None = None
     return legacy
 
 
+def _cache_is_stale(raw_path: Path, cache_path: Path) -> bool:
+    """True when a re-seeded raw GeoJSON is newer than the parsed cache parquet.
+
+    seed_bronze_external copies with ``shutil.copy2``, so the raw file's mtime
+    tracks its source snapshot; a newer raw file means the cache was derived
+    from an older export and must be re-parsed.
+    """
+    if not raw_path.exists() or not cache_path.exists():
+        return False
+    return raw_path.stat().st_mtime > cache_path.stat().st_mtime
+
+
 def _load_external_amenity(
     bronze_dir: Path, filename: str, name_props: list[str], amenity_type: str
 ) -> pd.DataFrame:
-    """Load one seeded amenity GeoJSON from bronze/external, recording the read.
+    """Load one seeded amenity GeoJSON from bronze/external, parsing it once.
 
-    These files have no fetch-and-write path of their own (they are seeded by
-    seed_bronze_external from R2-synced data/manual/), so the load IS the
-    acquisition point: each successful read is recorded in the bronze manifest
-    with source "r2_external" for freshness observability.
+    The raw GeoJSON (seeded by seed_bronze_external from R2-synced
+    data/manual/) stays the immutable source of truth and is parsed ONCE into
+    a derived cache parquet at ``bronze/external/<stem>.parquet`` — the same
+    parquet-under-external convention as ``sora_rates.parquet``, written via
+    ``write_bronze_cache`` (atomic tmp+os.replace, empty-guarded, manifest
+    upsert with source "r2_external" keyed by the parquet filename). Later
+    runs read the parquet; the cache is re-derived only when it is missing
+    (e.g. cleared by ``main.py --refresh 'external/*'``), empty, or older
+    than a re-seeded raw GeoJSON (mtime comparison, see
+    :func:`_cache_is_stale`).
+
+    Bronze-cache invariants (utils/bronze.py): an empty or partial parse is
+    never cached and never replaces a valid cache — when a re-parse fails or
+    yields 0 rows, the existing valid cache is served instead. A
+    missing/malformed raw GeoJSON with no cache degrades to warn + empty
+    frame exactly as before the cache existed. The cache-hit path never
+    touches the bronze manifest: record_bronze_fetch fires at the
+    parse-and-write point only, so manifest entries keep meaning "when was
+    this file derived-and-written".
     """
-    path = bronze_dir / "external" / filename
-    df = _load_geojson_amenities(path, name_props, amenity_type)
-    if path.exists():
-        record_bronze_fetch(bronze_dir, filename, "r2_external", len(df))
+    raw_path = bronze_dir / "external" / filename
+    cache_name = f"{Path(filename).stem}.parquet"
+    cache_path = bronze_dir / "external" / cache_name
+
+    cached = read_bronze_cache(bronze_dir, cache_name, subdir="external")
+    if cached is not None:
+        if cached.empty:
+            logger.warning("Ignoring empty amenity bronze cache: %s", cache_path)
+        elif not _cache_is_stale(raw_path, cache_path):
+            logger.info(
+                "Loaded %d %s locations from bronze parse cache: %s",
+                len(cached),
+                amenity_type,
+                cache_path,
+            )
+            return cached
+
+    df = _load_geojson_amenities(raw_path, name_props, amenity_type)
+    if df.empty:
+        if cached is not None and not cached.empty:
+            logger.warning(
+                "Re-parse of %s yielded 0 rows — serving the existing bronze "
+                "parse cache %s (%d rows)",
+                raw_path.name,
+                cache_path,
+                len(cached),
+            )
+            return cached
+        return df  # _load_geojson_amenities already warned
+
+    if write_bronze_cache(bronze_dir, df, cache_name, "r2_external", subdir="external"):
+        logger.info(
+            "Parsed %s -> bronze parse cache %s (%d rows)",
+            raw_path.name,
+            cache_path,
+            len(df),
+        )
     return df
 
 

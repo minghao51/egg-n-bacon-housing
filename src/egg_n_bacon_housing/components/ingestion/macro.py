@@ -1,6 +1,6 @@
 """Macro economic indicator nodes for bronze layer.
 
-Fetches CPI, GDP, unemployment, bank rates, HDB RPI, URA PPI, supply pipeline,
+Fetches CPI, GDP, unemployment, bank rates, HDB RPI, URA PPI,
 and wage growth from data.gov.sg pivot tables and melts them to long format.
 SORA is loaded from a pre-built parquet in bronze/external.
 """
@@ -36,16 +36,11 @@ _RETRIEVABLE_EXCEPTIONS: tuple[type[BaseException], ...] = (
     ValueError,
 )
 
-# Request prefix built from the adapter's canonical base URL so the endpoint
-# is single-sourced (components/ingestion/datagov.py builds the same prefix).
-DATAGOVSG_API_BASE_URL = f"{datagovsg.DATAGOVSG_BASE_URL}?resource_id="
-
 CPI_RESOURCE_ID = "d_bdaff844e3ef89d39fceb962ff8f0791"
 GDP_RESOURCE_ID = "d_a5ff719648a0e6d4b4c623ee383ab686"
 UNEMPLOYMENT_RESOURCE_ID = "d_b0da22a41f952764376a2b7b5b0f2533"
 HDB_RPI_RESOURCE_ID = "d_14f63e595975691e7c24a27ae4c07c79"
 URA_PPI_RESOURCE_ID = "d_97f8a2e995022d311c6c68cfda6d034c"
-SUPPLY_PIPELINE_RESOURCE_ID = "d_baa848bbdbf4af7b4d709f147fcf3c9b"
 BANK_RATES_RESOURCE_ID = "d_5fe5a4bb4a1ecc4d8a56a095832e2b24"
 WAGE_GROWTH_RESOURCE_ID = "d_64f98475cef1e94300362cb400a50012"
 
@@ -131,17 +126,6 @@ def _transform_ura_ppi(raw: pd.DataFrame) -> pd.DataFrame:
     return ppi[["quarter", "index"]].rename(columns={"index": "ura_ppi"})
 
 
-def _transform_supply_pipeline(raw: pd.DataFrame) -> pd.DataFrame:
-    supply = raw.copy()
-    supply["no_of_units"] = pd.to_numeric(supply["no_of_units"], errors="coerce")
-    supply["quarter"] = _parse_datagov_quarter(supply["quarter"])
-    return (
-        supply.dropna(subset=["quarter", "no_of_units"])
-        .sort_values("quarter")
-        .reset_index(drop=True)
-    )
-
-
 def _transform_wage_growth(raw: pd.DataFrame) -> pd.DataFrame:
     label_col = _label_column(raw, "wage_growth")
     melted = raw.melt(id_vars=[label_col], var_name="year", value_name="wage_growth")
@@ -204,13 +188,6 @@ _MACRO_SOURCES: tuple[_MacroSource, ...] = (
         "URA Property Price Index",
     ),
     _MacroSource(
-        "supply_pipeline",
-        "supply_pipeline.parquet",
-        SUPPLY_PIPELINE_RESOURCE_ID,
-        _transform_supply_pipeline,
-        "private housing supply pipeline",
-    ),
-    _MacroSource(
         "wage_growth",
         "wage_growth.parquet",
         WAGE_GROWTH_RESOURCE_ID,
@@ -252,7 +229,7 @@ def _load_macro_source(
     try:
         logger.info("Fetching %s from data.gov.sg...", source.label)
         raw = datagovsg.fetch_datagovsg_dataset(
-            DATAGOVSG_API_BASE_URL, source.resource_id, use_cache=False
+            datagovsg.resource_url(source.resource_id), source.resource_id, use_cache=False
         )
         result = source.transform(raw)
         # Empty frames are never cached (helper empty-guard), so an empty parse
@@ -285,32 +262,19 @@ def _melt_pivot_monthly(
 def _melt_pivot_quarterly(
     df: pd.DataFrame, value_filter: str, value_col: str, label_col: str | None = None
 ) -> pd.DataFrame:
-    """Melt a data.gov.sg pivot table with quarterly columns (e.g. '20261Q') into long format."""
+    """Melt a data.gov.sg pivot table with quarterly columns (e.g. '20261Q') into long format.
+
+    Quarter parsing goes through the strict module-level
+    :func:`_parse_datagov_quarter` (same parser as the hdb_rpi/ura_ppi
+    transforms): malformed period headers such as ``"2024Q"`` become NaT and
+    their rows are dropped, instead of silently parsing to garbage years.
+    """
     if label_col is None:
         label_col = _label_column(df, value_col)
     melted = df.melt(id_vars=[label_col], var_name="period", value_name=value_col)
     melted = melted[melted[label_col].astype(str).str.strip() == value_filter]
     melted[value_col] = pd.to_numeric(melted[value_col], errors="coerce")
-
-    def _parse_quarter(p: str) -> pd.Timestamp | None:
-        p = str(p)
-        if len(p) >= 5 and p[-1] == "Q":
-            try:
-                year = int(p[:-2])
-                qtr = int(p[-2])
-                return pd.Timestamp(year=year, month=qtr * 3, day=1) + pd.offsets.QuarterEnd(0)
-            except (ValueError, IndexError):
-                return None
-        if len(p) >= 6 and p[4] == "Q":
-            try:
-                year = int(p[:4])
-                qtr = int(p[5])
-                return pd.Timestamp(year=year, month=qtr * 3, day=1) + pd.offsets.QuarterEnd(0)
-            except (ValueError, IndexError):
-                return None
-        return None
-
-    melted["quarter"] = melted["period"].apply(_parse_quarter)
+    melted["quarter"] = _parse_datagov_quarter(melted["period"])
     return (
         melted[["quarter", value_col]]
         .dropna(subset=["quarter"])
@@ -320,7 +284,14 @@ def _melt_pivot_quarterly(
 
 
 def _parse_datagov_quarter(series: pd.Series) -> pd.Series:
-    """Parse data.gov.sg quarter strings into quarter-end timestamps."""
+    """Parse data.gov.sg quarter strings into quarter-end timestamps.
+
+    Accepts exactly the two data.gov.sg layouts — ``"20261Q"`` (quarter
+    suffix) and ``"2026Q1"`` / ``"2026-Q1"`` (separator stripped first).
+    Anything else is NaT: malformed values must degrade to dropped rows,
+    never to a silently wrong year (the retired lenient parser turned
+    ``"2024Q"`` into year 202).
+    """
     series_str = series.astype(str).str.strip().str.replace("-", "", regex=False)
     parsed = pd.Series(pd.NaT, index=series.index, dtype="datetime64[ns]")
 
@@ -344,7 +315,7 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
 
     Returns:
         Dictionary with keys: 'sora', 'cpi', 'gdp', 'unemployment',
-        'bank_rates', 'hdb_rpi', 'ura_ppi', 'supply_pipeline', 'wage_growth'.
+        'bank_rates', 'hdb_rpi', 'ura_ppi', 'wage_growth'.
     """
     external_dir = bronze_dir / "external"
     external_dir.mkdir(parents=True, exist_ok=True)
@@ -359,7 +330,7 @@ def raw_macro_data(bronze_dir: Path) -> dict[str, pd.DataFrame]:
         logger.warning("SORA data not found in bronze/external")
         result["sora"] = pd.DataFrame()
 
-    # Fetch the 8 macro sources concurrently (see _MACRO_FETCH_WORKERS for the
+    # Fetch the 7 macro sources concurrently (see _MACRO_FETCH_WORKERS for the
     # bound rationale). Failure semantics match the former serial loop
     # exactly: retrievable failures are captured inside the worker and degrade
     # only their source, while programming defects escape the worker -- those

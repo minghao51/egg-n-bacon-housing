@@ -25,7 +25,10 @@ from tenacity import (
     wait_exponential,
 )
 
-from egg_n_bacon_housing.adapters._http import parse_retry_after as _parse_retry_after
+from egg_n_bacon_housing.adapters._http import (
+    is_retryable_exception,
+    retry_after_wait,
+)
 from egg_n_bacon_housing.adapters.exceptions import (
     CredentialError,
     DatasetFetchError,
@@ -150,41 +153,27 @@ def _request_new_token(settings: Settings) -> dict[str, str]:
 
 INITIAL_BACKOFF = 1
 MAX_BACKOFF = 32
-MAX_RETRY_AFTER_WAIT = 60.0
 
-# _parse_retry_after is imported from adapters/_http.py (shared with datagovsg).
+# Exponential backoff between retries of transient failures; a 429 instead
+# sleeps the server's Retry-After (both forms, capped at the shared
+# MAX_RETRY_AFTER_WAIT) via the shared _http wait strategy.
+_BACKOFF_WAIT = wait_exponential(multiplier=1, min=INITIAL_BACKOFF, max=MAX_BACKOFF)
+_wait_after_error = retry_after_wait(_BACKOFF_WAIT)
 
 
 def _is_retryable_exception(exc: BaseException) -> bool:
-    """True only for transient failures: 429/5xx statuses, network errors, and
-    malformed-but-200 payloads.
+    """OneMap's parameters over the shared transient-only retry predicate.
 
-    Auth and credential errors are permanent for a given call and are handled
-    by the caller (token refresh) instead of blind retries.
+    Only transient failures retry: 429/5xx statuses, network errors, and
+    malformed-but-200 payloads (DatasetFetchError). Auth and credential
+    errors are permanent for a given call and are handled by the caller
+    (token refresh) instead of blind retries.
     """
-    if isinstance(exc, (CredentialError, OneMapAuthError)):
-        return False
-    if isinstance(exc, DatasetFetchError):
-        return True
-    if isinstance(exc, requests.HTTPError):
-        status = exc.response.status_code if exc.response is not None else 0
-        return status == 429 or status >= 500
-    return isinstance(exc, requests.RequestException)
-
-
-def _wait_after_error(retry_state) -> float:
-    """Honor ``Retry-After`` on 429 responses; otherwise exponential backoff."""
-    outcome = retry_state.outcome
-    exc = outcome.exception() if outcome is not None else None
-    if (
-        isinstance(exc, requests.HTTPError)
-        and exc.response is not None
-        and exc.response.status_code == 429
-    ):
-        retry_after = _parse_retry_after(exc.response.headers.get("Retry-After"))
-        if retry_after is not None:
-            return min(retry_after, MAX_RETRY_AFTER_WAIT)
-    return wait_exponential(multiplier=1, min=INITIAL_BACKOFF, max=MAX_BACKOFF)(retry_state)
+    return is_retryable_exception(
+        exc,
+        permanent=(CredentialError, OneMapAuthError),
+        retryable=(DatasetFetchError,),
+    )
 
 
 @retry(

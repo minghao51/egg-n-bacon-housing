@@ -138,3 +138,70 @@ class TestLabelColumnFallback:
         series_fallbacks = [r for r in caplog.records if "not found" in r.getMessage()]
         assert len(fallbacks) == 1
         assert len(series_fallbacks) == 1
+
+
+class TestStrictQuarterParsing:
+    """Roadmap 13b regression fixture: the retired lenient parser turned
+    malformed quarter headers like ``"2024Q"`` into year 202. The strict
+    parser must return NaT instead, and the quarterly melt must drop those
+    rows rather than crash."""
+
+    @pytest.mark.parametrize(
+        ("value", "description"),
+        [
+            ("2024Q", "missing quarter digit (formerly parsed to year 202)"),
+            ("Q12024", "quarter first, year last"),
+            ("2024Q5", "out-of-range quarter"),
+            ("2024QQ", "double Q"),
+            ("24Q1", "two-digit year"),
+            ("2024", "bare year"),
+            ("2026Apr", "monthly header leaked into a quarterly frame"),
+            ("", "empty string"),
+            ("junk", "free text"),
+        ],
+    )
+    def test_malformed_quarters_parse_to_nat(self, value, description):
+        result = macro._parse_datagov_quarter(pd.Series([value]))
+        assert pd.isna(result.iloc[0]), description
+
+    def test_both_supported_layouts_still_parse(self):
+        result = macro._parse_datagov_quarter(pd.Series(["20261Q", "2026Q2", "2026-Q3"]))
+
+        assert result.iloc[0] == pd.Timestamp("2026-03-31")
+        assert result.iloc[1] == pd.Timestamp("2026-06-30")
+        assert result.iloc[2] == pd.Timestamp("2026-09-30")
+
+    def test_quarterly_melt_drops_malformed_quarters_without_crashing(self, caplog):
+        """A '2024Q' column melts to a dropped row (NOT year 202); the
+        well-formed columns next to it survive."""
+        raw = pd.DataFrame(
+            [
+                {
+                    "_id": 0,
+                    "DataSeries": "Total Unemployment Rate",
+                    "20261Q": "2.0",
+                    "2024Q": "9.9",
+                    "20262Q": "2.1",
+                }
+            ]
+        )
+
+        with caplog.at_level(logging.WARNING, logger=_MACRO_LOGGER):
+            result = macro._melt_pivot_quarterly(
+                raw, "Total Unemployment Rate", "unemployment_rate"
+            )
+
+        assert result["quarter"].dt.strftime("%Y-%m-%d").tolist() == [
+            "2026-03-31",
+            "2026-06-30",
+        ]
+        assert result["unemployment_rate"].tolist() == [2.0, 2.1]
+        assert not (result["quarter"].dt.year == 202).any()
+
+    def test_quarterly_melt_all_malformed_degrades_to_empty(self):
+        raw = pd.DataFrame([{"_id": 0, "DataSeries": "Total Unemployment Rate", "2024Q": "9.9"}])
+
+        result = macro._melt_pivot_quarterly(raw, "Total Unemployment Rate", "unemployment_rate")
+
+        assert result.empty
+        assert list(result.columns) == ["quarter", "unemployment_rate"]
