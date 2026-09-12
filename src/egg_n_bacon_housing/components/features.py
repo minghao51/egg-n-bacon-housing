@@ -18,9 +18,9 @@ from egg_n_bacon_housing.utils.regional_mapping import PLANNING_AREA_TO_REGION
 from egg_n_bacon_housing.utils.runtime import MrtReference, SchoolReference, SpatialReference
 from egg_n_bacon_housing.utils.school_features import (
     QUALITY_FEATURE_COLUMNS,
-    _geocode_schools,
     calculate_school_features,
     calculate_school_quality_features,
+    geocode_schools,
 )
 from egg_n_bacon_housing.utils.validation_gateway import (
     empty_extracted,
@@ -162,7 +162,7 @@ def validate_location_dim(
         schools = raw_school_directory
         if "latitude" not in schools.columns or schools["latitude"].isna().all():
             logger.info("School directory lacks lat/lon — geocoding via OneMap...")
-            schools = _geocode_schools(schools, geocoder)
+            schools = geocode_schools(schools, geocoder)
         loc = calculate_school_features(loc, schools)
         school_distance_cols = [
             col

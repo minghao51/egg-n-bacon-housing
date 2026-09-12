@@ -12,8 +12,9 @@ Two responsibilities:
 - Bronze fetch metadata: every fetch-and-write point upserts into a single
   ``bronze_manifest.json`` per bronze directory (``record_bronze_fetch``), and
   rolling-window datasets warn on the cache-hit path when their last fetch is
-  too old (``warn_if_stale`` + ``STALE_WARN_DAYS``). Observability only — the
-  manifest never invalidates anything; ``--refresh`` stays the only mechanism.
+  too old (``manifest_age_days`` + ``warn_if_stale`` + ``STALE_WARN_DAYS``).
+  Observability only — the manifest never invalidates anything; ``--refresh``
+  stays the only mechanism.
 - Shared bronze cache I/O (``read_bronze_cache`` / ``write_bronze_cache``):
   the single choke point every ingestion node uses for its parquet cache.
   Writes are empty-guarded (an empty or partial source response must never
@@ -68,15 +69,28 @@ _MANIFEST_LOCK = threading.Lock()
 
 # Opt-in staleness warnings for rolling-window bronze datasets. Keys are
 # bronze parquet stems (not node names) so each warning's `main.py --refresh
-# <name>` hint matches what clear_bronze actually deletes:
-# - raw_condo_transactions: URA API serves a rolling ~5-year window
+# <name>` hint matches what clear_bronze actually deletes. Thresholds follow
+# each source's update cadence (docs/data-sources.md, "Refresh Cadence"):
+# - raw_condo_transactions (35d): URA API serves a rolling ~5-year window
 #   (node raw_condo_transactions).
-# - raw_hdb_resale: data.gov.sg API serves Jan 2017+ only (node
+# - raw_hdb_resale (35d): data.gov.sg API serves Jan 2017+ only (node
 #   raw_hdb_resale_transactions; parquet stem differs from the node name).
-# Everything else is a static reference and never warns.
+# - raw_hdb_rental (35d): data.gov.sg HDB rental medians update monthly
+#   (raw_dataset node, resource d_c9f57187485a850908655db0e8cfe651) — same
+#   monthly-rolling regime as raw_hdb_resale, so the same threshold.
+# - raw_rental_index (100d): quarterly URA rental index via data.gov.sg
+#   (raw_dataset node, resource d_8e4c50283fb7052a391dfb746a05c853;
+#   docs/data-sources.md: coverage "through 2026-Q1"). A quarterly series
+#   is only ever up to ~one quarter old at fetch time, so the threshold is
+#   one quarter (~92d) plus headroom rather than the monthly 35d.
+# Datasets absent from this map (static references seeded under external/,
+# snapshots like income-by-planning-area or the planning-area polygons) are
+# never stale-gated and never warn.
 STALE_WARN_DAYS: dict[str, int] = {
     "raw_condo_transactions": 35,
     "raw_hdb_resale": 35,
+    "raw_hdb_rental": 35,
+    "raw_rental_index": 100,
 }
 
 _SECONDS_PER_DAY = 86400.0
@@ -119,13 +133,42 @@ def record_bronze_fetch(bronze_dir: Path, name: str, source: str, rows: int) -> 
             logger.warning("Could not update bronze manifest %s: %s", path, exc)
 
 
+def manifest_age_days(bronze_dir: Path, name: str) -> float | None:
+    """Age in days of a bronze dataset's last fetch, or ``None`` when unknown.
+
+    Reads ``bronze_manifest.json`` in ``bronze_dir`` and returns how long ago
+    ``name``'s ``fetched_at`` timestamp is, in (fractional) days. Returns
+    ``None`` when the age is unknown: the dataset has no manifest entry (its
+    data predates the manifest) or its ``fetched_at`` is unreadable.
+
+    Shared staleness arithmetic for ``warn_if_stale`` (the pipeline's
+    cache-hit warnings) and ``scripts/40_refresh_rolling.py``'s
+    ``--stale-only`` selection, so the two can never drift apart.
+
+    Args:
+        bronze_dir: Bronze directory holding ``<name>.parquet`` and the manifest.
+        name: Bronze parquet stem.
+
+    Returns:
+        Age in days, or ``None`` when the manifest carries no readable timestamp.
+    """
+    entry = _load_manifest(bronze_dir).get(name)
+    if entry is None:
+        return None
+    fetched_at = _parse_fetched_at(str(entry.get("fetched_at", "")))
+    if fetched_at is None:
+        return None
+    return (datetime.now(UTC) - fetched_at).total_seconds() / _SECONDS_PER_DAY
+
+
 def warn_if_stale(bronze_dir: Path, name: str, max_age_days: int) -> None:
     """Warn (observability only) when a bronze dataset was fetched too long ago.
 
-    Reads ``bronze_manifest.json`` in ``bronze_dir``: if ``fetched_at`` is
-    older than ``max_age_days``, or the entry is missing while the parquet
-    exists (data predates the manifest), logs a single warning with the name,
-    age, source, and the refresh command. Never invalidates anything.
+    Reads ``bronze_manifest.json`` in ``bronze_dir``: if ``fetched_at`` (via
+    the shared ``manifest_age_days`` helper) is older than ``max_age_days``,
+    or the entry is missing while the parquet exists (data predates the
+    manifest), logs a single warning with the name, age, source, and the
+    refresh command. Never invalidates anything.
 
     Args:
         bronze_dir: Bronze directory holding ``<name>.parquet`` and the manifest.
@@ -144,8 +187,8 @@ def warn_if_stale(bronze_dir: Path, name: str, max_age_days: int) -> None:
             )
         return
 
-    fetched_at = _parse_fetched_at(str(entry.get("fetched_at", "")))
-    if fetched_at is None:
+    age_days = manifest_age_days(bronze_dir, name)
+    if age_days is None:
         logger.warning(
             "Bronze dataset '%s' has an unreadable fetched_at in %s — refresh to "
             "re-record: main.py --refresh %s",
@@ -155,7 +198,6 @@ def warn_if_stale(bronze_dir: Path, name: str, max_age_days: int) -> None:
         )
         return
 
-    age_days = (datetime.now(UTC) - fetched_at).total_seconds() / _SECONDS_PER_DAY
     if age_days > max_age_days:
         logger.warning(
             "Bronze dataset '%s' is stale: last fetched %.0f day(s) ago from '%s' "
@@ -344,9 +386,16 @@ def clear_bronze(bronze_dir: Path, pattern: str = "*") -> list[Path]:
 
     Matches against the path relative to ``bronze_dir`` using fnmatch, so
     both exact stems (``raw_hdb_resale``) and globs (``raw_macro_*``,
-    ``external/*``) work. Only ``.parquet`` files are removed; seeded static
-    sources under ``external/`` can be targeted explicitly (``external/*``)
-    and are re-seeded at the next startup.
+    ``external/*``) work. Only ``.parquet`` files are removed, so the
+    GeoJSON/JSON seeds under ``external/`` stay untouched no matter the
+    pattern. Deletable parquets under ``external/`` are ``sora_rates.parquet``
+    and the nine amenity parse caches (``<stem>.parquet`` derived from the
+    raw GeoJSONs), which are safely re-derived from the immutable raw
+    sources on the next run. A deleted seed is re-copied by ``seed_bronze_external`` on the
+    next ``run_pipeline`` call, but only when a source copy still exists in
+    the local seed directories (``_SEED_SOURCE_DIRS`` under ``data/``,
+    populated by the R2 sync); without it the file stays missing and the
+    next run logs a seeding error instead of restoring it.
 
     Returns:
         Sorted list of removed paths.

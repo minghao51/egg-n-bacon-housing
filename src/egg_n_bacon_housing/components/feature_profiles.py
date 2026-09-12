@@ -8,10 +8,8 @@ from hamilton.function_modifiers import extract_fields, hamilton_exclude
 from egg_n_bacon_housing.schemas.feature_models import BlockProfile, PlanningArea360, Town360
 from egg_n_bacon_housing.utils.hdb_lookups import (
     annual_value_lookup,
-    dwelling_units_lookup,
     merge_median_income,
-    population_lookup,
-    population_per_dwelling,
+    merge_town_context,
 )
 from egg_n_bacon_housing.utils.validation_gateway import (
     empty_extracted,
@@ -172,19 +170,14 @@ def validate_town_360(
         .rename(columns={"_town_upper": "town"})
     )
 
-    dwell_lookup = dwelling_units_lookup(raw_dwelling_units_by_town)
-    if not dwell_lookup.empty:
-        dwell_lookup = dwell_lookup.rename(columns={"_town_upper": "town"})
-        result = result.merge(dwell_lookup, on="town", how="left")
+    result = merge_town_context(
+        result,
+        raw_dwelling_units_by_town=raw_dwelling_units_by_town,
+        raw_hdb_resident_population=raw_hdb_resident_population,
+    )
 
-    pop_lookup = population_lookup(raw_hdb_resident_population)
-    if not pop_lookup.empty:
-        pop_lookup = pop_lookup.rename(columns={"_town_upper": "town"})
-        result = result.merge(pop_lookup, on="town", how="left")
-
-    if "dwelling_units_in_town" in result.columns and "population_in_town" in result.columns:
-        result["population_per_dwelling"] = population_per_dwelling(result)
-
+    # Per-flat-type annual-value broadcast is town_360-specific; the shared
+    # merge_town_context covers only the dwelling/population core.
     mav_lookup = annual_value_lookup(raw_median_annual_value)
     if not mav_lookup.empty:
         for ft in ("3 Room", "4 Room", "5 Room"):

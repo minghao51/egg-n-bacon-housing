@@ -26,6 +26,30 @@ or commit `.env` or any secret.
 | URA live condo fetch (optional) | `URA_API_ACCESS_KEY`                                                                    |
 | Cloudflare R2 manual data       | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT` |
 
+## Large-table validation policy
+
+`PIPELINE__LARGE_TABLE_VALIDATION_POLICY` selects how the ~1M-row gold
+(`transactions_enriched`) and platinum (`unified_dataset`) boundaries validate
+rows against their pydantic contracts:
+
+| Policy   | Behavior                                                                                                                                                                                                                                                                                                                    |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sample` | **Default.** A 100%-coverage vectorized pre-check (required-field nulls, numeric/datetime bounds, string min-length — all read from the pydantic models) plus a deterministic 10k-row pydantic spot-check. Sampled rejects are quarantined and dropped from the published frame; the exact unvalidated row count is logged. |
+| `full`   | Every row validated in deterministic chunks; rejects quarantined with per-row reasons. Proves the whole table against the contract.                                                                                                                                                                                         |
+| `fail`   | Like `full`, but the run raises on any invalid row instead of persisting. Strictest option.                                                                                                                                                                                                                                 |
+
+Quarantine writes are run-scoped
+(`<layer>/_quarantine/<dataset>/<run_id>.parquet`) and excluded from quality
+baselines under every policy, so switching policies never silences rejects —
+it only changes whether unsampled rows go through pydantic.
+
+Cold runs and CI should prove the full contract: set `full` (or `fail` for a
+hard gate) before running, e.g.
+`PIPELINE__LARGE_TABLE_VALIDATION_POLICY=fail uv run python main.py --stage all`.
+The warm default `sample` trades unsampled-row pydantic validation for the
+vectorized pre-check; its quarantine volumes can legitimately differ from a
+`full` run, so do not compare quarantine counts across policies.
+
 ## Execution contract: serial by default
 
 Serial Hamilton execution is deliberate, not incidental. Warm-cache in-process

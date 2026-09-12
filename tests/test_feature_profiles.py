@@ -240,3 +240,46 @@ class TestTown360SharedLookups:
         assert result.loc["Toa Payoh", "population_per_dwelling"] == pytest.approx(3.0)
         # Zero dwelling units -> NA ratio, not division-by-zero.
         assert pd.isna(result.loc["Bedok", "population_per_dwelling"])
+
+
+class TestTown360MergeTownContextRefactor:
+    """Roadmap item 15: town_360 uses the shared merge_town_context; pin the
+    output shape and row order the retired inline block produced."""
+
+    def test_output_shape_row_order_and_no_key_leak(self):
+        tx = pd.DataFrame(
+            [
+                {"town": "BEDOK", "price": 400_000.0, "psf": 400.0},
+                {"town": "TOA PAYOH", "price": 500_000.0, "psf": 500.0},
+                {"town": " toa payoh ", "price": 510_000.0, "psf": 510.0},
+            ]
+        )
+        dwell = pd.DataFrame(
+            [
+                {
+                    "town_or_estate": "TOA PAYOH",
+                    "no_of_dwelling_units": 150,
+                    "financial_year": 2024,
+                    "sold_or_rental": "Sold Units",
+                }
+            ]
+        )
+        population = pd.DataFrame([{"town_estate": "TOA PAYOH", "number": 450, "shs_year": 2023}])
+
+        result = feature_profiles.town_360(
+            tx,
+            raw_dwelling_units_by_town=dwell,
+            raw_hdb_resident_population=population,
+            raw_median_annual_value=pd.DataFrame(),
+        )
+
+        # One row per normalized town, input order of first appearance.
+        assert result["town"].tolist() == ["Bedok", "Toa Payoh"]
+        assert result.loc[result["town"] == "Toa Payoh", "dwelling_units_in_town"].iloc[
+            0
+        ] == pytest.approx(150.0)
+        assert result.loc[result["town"] == "Toa Payoh", "population_per_dwelling"].iloc[
+            0
+        ] == pytest.approx(3.0)
+        assert pd.isna(result.loc[result["town"] == "Bedok", "population_per_dwelling"].iloc[0])
+        assert "_town_upper" not in result.columns

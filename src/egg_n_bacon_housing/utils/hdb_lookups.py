@@ -101,6 +101,55 @@ def population_per_dwelling(df: pd.DataFrame) -> pd.Series:
     return pd.Series(np.where(units > 0, pop_vals / units, pd.NA), index=df.index)
 
 
+def merge_town_context(
+    df: pd.DataFrame,
+    raw_dwelling_units_by_town: pd.DataFrame,
+    raw_hdb_resident_population: pd.DataFrame,
+) -> pd.DataFrame:
+    """Left-join town supply + population context onto ``df`` by normalized town.
+
+    Single implementation of the town-merge orchestration previously
+    duplicated between ``validate_transactions_enriched`` (per-transaction
+    rows) and ``validate_town_360`` (one row per town):
+
+    - normalize ``town`` into a temporary ``_town_upper`` join key
+      (strip + upper, dropped from the result);
+    - left-join :func:`dwelling_units_lookup` and :func:`population_lookup`
+      when their sources are usable;
+    - guarantee the ``dwelling_units_in_town`` / ``population_in_town``
+      columns exist (NA where the source degraded);
+    - derive ``population_per_dwelling``.
+
+    Returns ``df`` unchanged (no ``_town_upper`` leak, no new columns) when
+    it has no ``town`` column. The frame's row order and all other columns
+    are preserved. Annual-value handling is intentionally NOT shared here:
+    the transactions node joins per-row IRAS categories via ``flat_type``,
+    while ``town_360`` broadcasts per-flat-type columns — genuinely distinct
+    call-site logic over the shared :func:`annual_value_lookup`.
+    """
+    if "town" not in df.columns:
+        return df
+
+    result = df.copy()
+    town_key = "_town_upper"
+    result[town_key] = result["town"].astype(str).str.strip().str.upper()
+
+    dwell_lookup = dwelling_units_lookup(raw_dwelling_units_by_town)
+    if not dwell_lookup.empty:
+        result = result.merge(dwell_lookup, on=town_key, how="left")
+    if "dwelling_units_in_town" not in result.columns:
+        result["dwelling_units_in_town"] = pd.NA
+
+    pop_lookup = population_lookup(raw_hdb_resident_population)
+    if not pop_lookup.empty:
+        result = result.merge(pop_lookup, on=town_key, how="left")
+    if "population_in_town" not in result.columns:
+        result["population_in_town"] = pd.NA
+
+    result["population_per_dwelling"] = population_per_dwelling(result)
+    return result.drop(columns=[town_key])
+
+
 def merge_median_income(
     df: pd.DataFrame, raw_income_by_planning_area: pd.DataFrame
 ) -> pd.DataFrame:

@@ -218,7 +218,11 @@ class CacheManager:
         else:
             # *.pkl is kept in the sweep so legacy pickle files from removed
             # behavior are still cleaned up, even though they are never read.
-            for pattern in ("*.json", "*.parquet", "*.pkl"):
+            # *.tmp sweeps atomic-write orphans: legacy fixed-name
+            # ``<key>.json.tmp`` files and pid-unique ``<key>.json.<pid>-<tid>.tmp``
+            # leftovers from crashed writers. A full clear is an intentional
+            # wipe (scripts/99_cleanup.py); it does not race live writers.
+            for pattern in ("*.json", "*.parquet", "*.pkl", "*.tmp"):
                 for cache_file in self.cache_dir.glob(pattern):
                     cache_file.unlink()
             logger.info("Cleared all cache files")

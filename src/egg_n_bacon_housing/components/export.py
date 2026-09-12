@@ -26,7 +26,7 @@ def unified_dataset(*args, **kwargs) -> pd.DataFrame:
 @extract_fields({"unified_dataset": pd.DataFrame, "unified_dataset_quarantine": pd.DataFrame})
 def validate_unified_dataset(
     transactions_enriched: pd.DataFrame,
-    large_table_validation_policy: Literal["sample", "full", "fail"] = "full",
+    large_table_validation_policy: Literal["sample", "full", "fail"] = "sample",
     sample_validation_size: int = 10_000,
 ) -> dict[str, pd.DataFrame]:
     """Create the unified dataset for platinum layer.
@@ -34,6 +34,14 @@ def validate_unified_dataset(
     Every row is validated against the platinum contract (``HUnifiedRecord``),
     respecting the injected large-table policy. Invalid rows are returned to
     the quarantine materializer and dropped from the published frame.
+
+    Re-validating gold-validated rows at the platinum boundary is deliberate
+    (roadmap item 22d): the platinum quarantine trail is a published contract
+    (``materialize_unified_dataset_quarantine``), so this boundary routes
+    through the same gateway as gold rather than trusting the upstream frame.
+    No defensive copy is taken — the gateway never mutates its input, and
+    copying the ~1.2M-row frame just to hand it to a read-only validator was
+    the largest avoidable cost of this node.
 
     Args:
         transactions_enriched: Output from features transactions_enriched.
@@ -48,12 +56,15 @@ def validate_unified_dataset(
             transactions_enriched, "unified_dataset", "unified_dataset_quarantine"
         )
 
-    df = transactions_enriched.copy()
-    require_columns(df, {"price", "property_type", "transaction_date"}, "transactions_enriched")
+    require_columns(
+        transactions_enriched,
+        {"price", "property_type", "transaction_date"},
+        "transactions_enriched",
+    )
 
     return extracted_validation(
         validate_and_quarantine(
-            df,
+            transactions_enriched,
             HUnifiedRecord,
             "unified_dataset",
             sample_validation_size=sample_validation_size,

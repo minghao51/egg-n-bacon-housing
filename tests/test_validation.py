@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 from pydantic import BaseModel
 
-from egg_n_bacon_housing.utils.validation import _is_null_scalar, validate_schema
+from egg_n_bacon_housing.utils.validation import validate_schema
 
 pytestmark = pytest.mark.unit
 
@@ -260,6 +260,16 @@ class TestVectorizedNullScrub:
         valid_new, quarantine_new = validate_schema(df, self._TypesRecord, "test")
 
         # Reference path: the retired per-cell scrub, then the same call.
+        # Local copy of the predicate that used to live in
+        # utils/validation.py (`_is_null_scalar`): null scalars -> None,
+        # container cells (lists/dicts/arrays) count as non-null.
+        container_types = (list, tuple, set, frozenset, dict, np.ndarray, pd.Series)
+
+        def _is_null_scalar(value: object) -> bool:
+            if isinstance(value, container_types):
+                return False
+            return bool(pd.isna(value))
+
         records = df.to_dict(orient="records")
         for record in records:
             for key, value in record.items():

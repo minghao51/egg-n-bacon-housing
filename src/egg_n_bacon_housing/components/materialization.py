@@ -1,196 +1,170 @@
-"""Explicit, non-cached persistence nodes for published datasets."""
+"""Explicit, non-cached persistence nodes for published datasets.
+
+Every entry in ``utils/output_registry.PUBLISHED_OUTPUTS`` is persisted by
+exactly two Hamilton nodes, expanded by ``@parameterize`` straight from the
+registry so the materialization surface can never drift from it:
+
+- ``materialize_<dataset>`` (``spec.materializer``): writes the computing
+  node's frame into ``spec.layer`` through the injected ``LayerWriter``.
+- ``materialize_<boundary>_quarantine`` (``spec.quarantine_materializer``):
+  writes that boundary's rejected rows under
+  ``<layer>/_quarantine/<dataset>/<pipeline_run_id>`` (excluded from quality
+  tracking), or nothing at all when the frame is empty.
+
+Adding a published output means adding one registry spec; both companions
+follow automatically. The per-output names are DAG node *names* (graph
+metadata), not module-level functions — the decorated functions keep their
+generic names — and tests/test_materialization.py pins the emitted names
+byte-for-byte.
+
+For callers that invoke a materializer directly (node-level tests), module
+``__getattr__`` resolves the per-output names to one-shot callables bound to
+the same shared write bodies — a compatibility surface only; the DAG nodes
+above remain the single production persistence path.
+"""
 
 import logging
+from collections.abc import Callable
 from pathlib import Path
 
 import pandas as pd
+from hamilton.function_modifiers import parameterize, source, value
 
 from egg_n_bacon_housing.utils.layer_writer import LayerWriter
+from egg_n_bacon_housing.utils.output_registry import PUBLISHED_OUTPUTS, PublishedOutputSpec
 
 logger = logging.getLogger(__name__)
 
+# Per-node expansion for published outputs: the frame comes from the
+# same-named computing node, the write target from the registry spec.
+_MATERIALIZER_PARAMS = {
+    spec.materializer: {
+        "frame": source(spec.name),
+        "dataset_name": value(spec.name),
+        "layer": value(spec.layer),
+    }
+    for spec in PUBLISHED_OUTPUTS
+}
 
-def materialize_unified_dataset(unified_dataset: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist the unified platinum dataset and return its path."""
-    return writer.write(unified_dataset, "unified_dataset", "platinum")
+# Companion expansion for rejected rows: the upstream quarantine frame is
+# named after the validation boundary (hdb_validated -> hdb_quarantine), the
+# quarantine directory after the published dataset.
+_QUARANTINE_PARAMS = {
+    spec.quarantine_materializer: {
+        "frame": source(f"{spec.name.removesuffix('_validated')}_quarantine"),
+        "dataset_name": value(spec.name),
+        "layer": value(spec.layer),
+    }
+    for spec in PUBLISHED_OUTPUTS
+}
+
+_DIRECT_CALL_MATERIALIZERS: dict[str, PublishedOutputSpec] = {
+    spec.materializer: spec for spec in PUBLISHED_OUTPUTS
+}
+_DIRECT_CALL_QUARANTINE_MATERIALIZERS: dict[str, PublishedOutputSpec] = {
+    spec.quarantine_materializer: spec for spec in PUBLISHED_OUTPUTS
+}
 
 
-def materialize_pa_monthly_metrics(pa_monthly_metrics: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist planning-area monthly metrics."""
-    return writer.write(pa_monthly_metrics, "pa_monthly_metrics", "platinum_metrics")
-
-
-def materialize_appreciation_hotspots(
-    appreciation_hotspots: pd.DataFrame, writer: LayerWriter
+def _write_published(
+    frame: pd.DataFrame, dataset_name: str, layer: str, writer: LayerWriter
 ) -> Path:
-    """Persist hotspots."""
-    return writer.write(appreciation_hotspots, "appreciation_hotspots", "platinum_metrics")
+    """Persist one published output under its registry name and layer.
 
-
-def materialize_planning_area_360(planning_area_360: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist planning-area profile output."""
-    return writer.write(planning_area_360, "planning_area_360", "gold")
-
-
-def materialize_town_360(town_360: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist town profile output."""
-    return writer.write(town_360, "town_360", "gold")
-
-
-def materialize_block_profile(block_profile: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist block profile output."""
-    return writer.write(block_profile, "block_profile", "gold")
-
-
-def materialize_hdb_validated(hdb_validated: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist validated HDB transactions to the silver layer."""
-    return writer.write(hdb_validated, "hdb_validated", "silver")
-
-
-def materialize_condo_validated(condo_validated: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist validated condo transactions to the silver layer."""
-    return writer.write(condo_validated, "condo_validated", "silver")
-
-
-def materialize_geocoded_validated(geocoded_validated: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist validated geocoded properties to the silver layer."""
-    return writer.write(geocoded_validated, "geocoded_validated", "silver")
-
-
-def materialize_rental_yield(rental_yield: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist rental yield metrics to the gold layer."""
-    return writer.write(rental_yield, "rental_yield", "gold")
-
-
-def materialize_location_dim(location_dim: pd.DataFrame, writer: LayerWriter) -> Path:
-    """Persist the location dimension table to the gold layer."""
-    return writer.write(location_dim, "location_dim", "gold")
-
-
-def materialize_transactions_enriched(
-    transactions_enriched: pd.DataFrame, writer: LayerWriter
-) -> Path:
-    """Persist enriched transactions to the gold layer."""
-    return writer.write(transactions_enriched, "transactions_enriched", "gold")
+    The single write body behind the ``materialize_published`` @parameterize
+    family and the direct-call compat surface below.
+    """
+    return writer.write(frame, dataset_name, layer)
 
 
 def _write_quarantine(
-    frame: pd.DataFrame, dataset: str, layer: str, writer: LayerWriter, pipeline_run_id: str
-) -> Path:
-    """Persist one run's rejected rows without quality-baseline tracking."""
+    frame: pd.DataFrame,
+    dataset_name: str,
+    layer: str,
+    writer: LayerWriter,
+    pipeline_run_id: str,
+) -> Path | None:
+    """Persist one run's rejected rows without quality-baseline tracking.
+
+    The single write body behind the ``materialize_quarantine`` @parameterize
+    family and the direct-call compat surface below; a no-op (``None``) when
+    the frame is empty, so a clean run quarantines nothing.
+    """
+    if frame.empty:
+        return None
     return writer.write(
         frame,
-        f"_quarantine/{dataset}/{pipeline_run_id}",
+        f"_quarantine/{dataset_name}/{pipeline_run_id}",
         layer,
         track_quality=False,
     )
 
 
-def _materialize_quarantine(
-    frame: pd.DataFrame, dataset: str, layer: str, writer: LayerWriter, pipeline_run_id: str
+@parameterize(**_MATERIALIZER_PARAMS)
+def materialize_published(
+    frame: pd.DataFrame, dataset_name: str, layer: str, writer: LayerWriter
+) -> Path:
+    """Persist one published output through the injected writer.
+
+    Emitted once per ``PUBLISHED_OUTPUTS`` entry as ``materialize_<dataset>``.
+    """
+    return _write_published(frame, dataset_name, layer, writer)
+
+
+@parameterize(**_QUARANTINE_PARAMS)
+def materialize_quarantine(
+    frame: pd.DataFrame,
+    dataset_name: str,
+    layer: str,
+    writer: LayerWriter,
+    pipeline_run_id: str,
 ) -> Path | None:
-    if frame.empty:
-        return None
-    return _write_quarantine(frame, dataset, layer, writer, pipeline_run_id)
+    """Persist one run's rejected rows without quality-baseline tracking.
+
+    Emitted once per ``PUBLISHED_OUTPUTS`` entry as
+    ``materialize_<boundary>_quarantine``; a no-op (``None``) when the frame
+    is empty, so a clean run quarantines nothing.
+    """
+    return _write_quarantine(frame, dataset_name, layer, writer, pipeline_run_id)
 
 
-def materialize_hdb_quarantine(
-    hdb_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        hdb_quarantine, "hdb_validated", "silver", writer, pipeline_run_id
-    )
+def __getattr__(name: str) -> Callable[..., Path | None]:
+    """Resolve per-output materializer names to direct-call bound writers.
 
+    PEP 562 compatibility surface: the parameterized families emit
+    ``materialize_<dataset>`` / ``materialize_<boundary>_quarantine`` as DAG
+    node names only, so importers that call a materializer directly get a
+    one-shot callable bound to the same spec (name + layer) and write body.
+    """
+    spec = _DIRECT_CALL_MATERIALIZERS.get(name)
+    if spec is not None:
 
-def materialize_condo_quarantine(
-    condo_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        condo_quarantine, "condo_validated", "silver", writer, pipeline_run_id
-    )
+        def _materialize(frame: pd.DataFrame, writer: LayerWriter) -> Path:
+            return _write_published(frame, spec.name, spec.layer, writer)
 
+        _materialize.__name__ = name
+        _materialize.__doc__ = (
+            f"Direct-call form of ``{name}``: persist ``{spec.name}`` to the "
+            f"{spec.layer} layer (the DAG node comes from the @parameterize family)."
+        )
+        return _materialize
 
-def materialize_geocoded_quarantine(
-    geocoded_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        geocoded_quarantine, "geocoded_validated", "silver", writer, pipeline_run_id
-    )
+    quarantine_spec = _DIRECT_CALL_QUARANTINE_MATERIALIZERS.get(name)
+    if quarantine_spec is not None:
 
+        def _materialize_quarantine(
+            frame: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
+        ) -> Path | None:
+            return _write_quarantine(
+                frame, quarantine_spec.name, quarantine_spec.layer, writer, pipeline_run_id
+            )
 
-def materialize_rental_yield_quarantine(
-    rental_yield_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        rental_yield_quarantine, "rental_yield", "gold", writer, pipeline_run_id
-    )
+        _materialize_quarantine.__name__ = name
+        _materialize_quarantine.__doc__ = (
+            f"Direct-call form of ``{name}``: persist rejected ``{quarantine_spec.name}`` "
+            f"rows under the {quarantine_spec.layer} quarantine path (the DAG node comes "
+            "from the @parameterize family)."
+        )
+        return _materialize_quarantine
 
-
-def materialize_location_dim_quarantine(
-    location_dim_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        location_dim_quarantine, "location_dim", "gold", writer, pipeline_run_id
-    )
-
-
-def materialize_transactions_enriched_quarantine(
-    transactions_enriched_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        transactions_enriched_quarantine, "transactions_enriched", "gold", writer, pipeline_run_id
-    )
-
-
-def materialize_planning_area_360_quarantine(
-    planning_area_360_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        planning_area_360_quarantine, "planning_area_360", "gold", writer, pipeline_run_id
-    )
-
-
-def materialize_town_360_quarantine(
-    town_360_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(town_360_quarantine, "town_360", "gold", writer, pipeline_run_id)
-
-
-def materialize_block_profile_quarantine(
-    block_profile_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        block_profile_quarantine, "block_profile", "gold", writer, pipeline_run_id
-    )
-
-
-def materialize_unified_dataset_quarantine(
-    unified_dataset_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        unified_dataset_quarantine, "unified_dataset", "platinum", writer, pipeline_run_id
-    )
-
-
-def materialize_pa_monthly_metrics_quarantine(
-    pa_monthly_metrics_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        pa_monthly_metrics_quarantine,
-        "pa_monthly_metrics",
-        "platinum_metrics",
-        writer,
-        pipeline_run_id,
-    )
-
-
-def materialize_appreciation_hotspots_quarantine(
-    appreciation_hotspots_quarantine: pd.DataFrame, writer: LayerWriter, pipeline_run_id: str
-) -> Path | None:
-    return _materialize_quarantine(
-        appreciation_hotspots_quarantine,
-        "appreciation_hotspots",
-        "platinum_metrics",
-        writer,
-        pipeline_run_id,
-    )
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

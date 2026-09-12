@@ -1,6 +1,8 @@
 """Integration test: build pipeline driver and verify DAG structure."""
 
 import importlib
+import sys
+import types
 
 import pandas as pd
 import pytest
@@ -93,6 +95,45 @@ class TestPipelineIntegration:
         assert captured["inputs"]["bronze_dir"] == tmp_path / "pipeline" / "01_bronze"
         assert "writer" in captured["inputs"]
         assert captured["inputs"]["writer"].data_dir == tmp_path / "pipeline"
+
+    def test_run_pipeline_final_var_real_driver_without_writer(self, tmp_path, monkeypatch):
+        """End-to-end regression: a real Hamilton Driver executing a
+        --final-var-style subgraph whose upstream contains a published output
+        runs WITHOUT a writer input and persists nothing. Before the quarantine
+        gate, the appended quarantine companions demanded ``writer`` and the
+        run crashed with a 24-node ValueError."""
+        pipeline = _get_pipeline_module()
+
+        module = types.ModuleType("test_component_final_var")
+        exec(
+            "import pandas as pd\n"
+            "from pathlib import Path\n"
+            "def hdb_validated(bronze_dir: Path) -> pd.DataFrame:\n"
+            "    return pd.DataFrame([{'price': 1}])\n"
+            "def geocoded_properties(hdb_validated: pd.DataFrame) -> pd.DataFrame:\n"
+            "    return hdb_validated\n",
+            module.__dict__,
+        )
+        sys.modules[module.__name__] = module
+        monkeypatch.setattr(pipeline, "_STAGE_MODULES", [module])
+        monkeypatch.setattr(settings.pipeline, "use_caching", False)
+
+        try:
+            dr = pipeline.build_pipeline(settings, data_path=str(tmp_path))
+            result = pipeline.run_pipeline(
+                settings,
+                data_path=str(tmp_path),
+                final_vars=["geocoded_properties"],
+                dr=dr,
+            )
+        finally:
+            sys.modules.pop(module.__name__, None)
+
+        assert set(result) == {"geocoded_properties"}
+        assert isinstance(result["geocoded_properties"], pd.DataFrame)
+        assert len(result["geocoded_properties"]) == 1
+        # No published output materialized, no cache recompute: no parquet anywhere.
+        assert not list(tmp_path.rglob("*.parquet"))
 
     def test_run_pipeline_injects_isolated_runtime_services(self, tmp_path, monkeypatch):
         pipeline = _get_pipeline_module()

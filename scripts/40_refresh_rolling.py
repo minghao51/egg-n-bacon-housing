@@ -35,7 +35,6 @@ Exit codes: 0 success, 1 refresh/pipeline failure, 2 CLI usage error.
 import argparse
 import fnmatch
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -44,19 +43,17 @@ from egg_n_bacon_housing.config import Settings
 from egg_n_bacon_housing.config import settings as app_settings
 from egg_n_bacon_housing.pipeline import run_pipeline
 
-# _load_manifest/_parse_fetched_at are the same manifest readers warn_if_stale
-# uses, so --stale-only selection can never drift from the warnings the
-# pipeline itself emits.
+# manifest_age_days is the same age arithmetic warn_if_stale uses, so
+# --stale-only selection can never drift from the warnings the pipeline itself
+# emits; _load_manifest only discriminates the no-entry case in is_stale.
 from egg_n_bacon_housing.utils.bronze import (  # noqa: E402
     STALE_WARN_DAYS,
     _load_manifest,
-    _parse_fetched_at,
+    manifest_age_days,
     refresh_all,
     refresh_bronze,
 )
 from egg_n_bacon_housing.utils.logging_config import LEVEL_MAP, get_logger, setup_logging
-
-_SECONDS_PER_DAY = 86400.0
 
 logger = get_logger(__name__)
 
@@ -81,14 +78,15 @@ def is_stale(bronze_dir: Path, name: str, max_age_days: int) -> bool:
     exactly this case); an unreadable ``fetched_at`` counts as stale so the
     next refresh re-records it.
     """
-    entry = _load_manifest(bronze_dir).get(name)
-    if entry is None:
+    age_days = manifest_age_days(bronze_dir, name)
+    if age_days is not None:
+        return age_days > max_age_days
+    if _load_manifest(bronze_dir).get(name) is None:
+        # No manifest entry: stale only when the parquet exists (data predates
+        # the manifest — warn_if_stale warns for exactly this case).
         return (bronze_dir / f"{name}.parquet").exists()
-    fetched_at = _parse_fetched_at(str(entry.get("fetched_at", "")))
-    if fetched_at is None:
-        return True
-    age_days = (datetime.now(UTC) - fetched_at).total_seconds() / _SECONDS_PER_DAY
-    return age_days > max_age_days
+    # Unreadable fetched_at: stale so the next refresh re-records it.
+    return True
 
 
 def stale_names(bronze_dir: Path) -> list[str]:
@@ -113,10 +111,9 @@ def _age_description(bronze_dir: Path, name: str) -> str:
     entry = _load_manifest(bronze_dir).get(name)
     if entry is None:
         return "no manifest entry (fetched before fetch metadata was tracked)"
-    fetched_at = _parse_fetched_at(str(entry.get("fetched_at", "")))
-    if fetched_at is None:
+    age_days = manifest_age_days(bronze_dir, name)
+    if age_days is None:
         return "unreadable manifest fetched_at"
-    age_days = (datetime.now(UTC) - fetched_at).total_seconds() / _SECONDS_PER_DAY
     source = entry.get("source", "unknown")
     return f"fetched {age_days:.0f} day(s) ago from '{source}'"
 

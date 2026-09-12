@@ -1,5 +1,6 @@
 """Test 04_export component."""
 
+import inspect
 import logging
 
 import pandas as pd
@@ -135,10 +136,13 @@ class TestUnifiedDatasetPlatinumContract:
         assert len(result) == 1
         assert "unified_dataset: 1 row(s) quarantined" in caplog.text
 
-    def test_sample_policy_path_returns_all_rows(self, tmp_path):
+    def test_sample_policy_drops_sampled_rejects_from_published_frame(self, tmp_path):
+        """Item 22b/22c: the sample default quarantines sampled rejects exactly
+        once and drops them from the published frame (no double-count)."""
         export = _get_export_module()
-        rows = [_unified_row(price=500000.0 + i) for i in range(11)]
-        rows.append(_unified_row(price=-1.0))
+        rows = [_unified_row(price=500000.0 + i) for i in range(12)]
+        # random_state=42 samples positions [10, 9, 0, 8, 5] from 12 rows.
+        rows[10] = _unified_row(price=-1.0)
         df = pd.DataFrame(rows)
 
         result = export.unified_dataset(
@@ -147,8 +151,51 @@ class TestUnifiedDatasetPlatinumContract:
             sample_validation_size=5,
         )
 
-        # Sample policy saves the full table; invalid rows are only reported.
-        assert len(result) == 12
+        # The poisoned row is in the sample, so it is gone from the published
+        # frame — not published AND quarantined.
+        assert len(result) == 11
+        assert not (result["price"] < 0).any()
+        assert 10 not in result.index
+
+    def test_default_policy_is_sample(self, tmp_path):
+        """Item 22c: the node default flipped from "full" to "sample"; the
+        pipeline injects the setting, the signature is the fallback contract."""
+        export = _get_export_module()
+
+        default = (
+            inspect.signature(export.validate_unified_dataset)
+            .parameters["large_table_validation_policy"]
+            .default
+        )
+        assert default == "sample"
+
+    def test_sample_policy_quarantines_sampled_rejects_exactly_once(self, tmp_path):
+        export = _get_export_module()
+        rows = [_unified_row(price=500000.0 + i) for i in range(12)]
+        # random_state=42 samples positions [10, 9, 0, 8, 5] from 12 rows.
+        rows[10] = _unified_row(price=-1.0)
+
+        result = export.validate_unified_dataset(
+            pd.DataFrame(rows),
+            large_table_validation_policy="sample",
+            sample_validation_size=5,
+        )
+
+        assert len(result["unified_dataset"]) == 11
+        assert list(result["unified_dataset_quarantine"]["_source_index"]) == [10]
+
+    def test_node_validates_without_copying_input(self, tmp_path):
+        """Item 22d: the platinum boundary routes through the same gateway
+        without a defensive full-frame copy — and must not mutate its input."""
+        export = _get_export_module()
+        df = pd.DataFrame([_unified_row(), _unified_row(price=-1.0)])
+        expected = df.copy()
+
+        result = export.validate_unified_dataset(df)
+
+        pd.testing.assert_frame_equal(df, expected)
+        assert len(result["unified_dataset"]) == 1
+        assert len(result["unified_dataset_quarantine"]) == 1
 
     def test_schema_rejects_negative_price(self):
         with pytest.raises(ValidationError):

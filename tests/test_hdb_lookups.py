@@ -1,5 +1,6 @@
 """Tests for utils/hdb_lookups.py — the shared gold feature lookup module."""
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -8,6 +9,7 @@ from egg_n_bacon_housing.utils.hdb_lookups import (
     annual_value_lookup,
     dwelling_units_lookup,
     merge_median_income,
+    merge_town_context,
     normalize_hdb_flat_type,
     population_lookup,
     population_per_dwelling,
@@ -150,6 +152,47 @@ class TestPopulationPerDwelling:
         assert result.iloc[0] == pytest.approx(3.0)
         assert pd.isna(result.iloc[1])
         assert pd.isna(result.iloc[2])
+
+
+class TestMergeTownContext:
+    def test_joins_lookups_by_normalized_town_and_drops_key(self):
+        df = pd.DataFrame(
+            [{"town": " Toa Payoh ", "price": 1.0}, {"town": "UNKNOWN", "price": 2.0}]
+        )
+        dwell = pd.DataFrame(
+            [
+                {
+                    "town_or_estate": "TOA PAYOH",
+                    "no_of_dwelling_units": 100,
+                    "financial_year": 2024,
+                    "sold_or_rental": "Sold Units",
+                }
+            ]
+        )
+        population = pd.DataFrame([{"town_estate": "TOA PAYOH", "number": 300, "shs_year": 2023}])
+
+        result = merge_town_context(df, dwell, population)
+
+        np.testing.assert_allclose(result["dwelling_units_in_town"].astype(float), [100.0, np.nan])
+        np.testing.assert_allclose(result["population_in_town"].astype(float), [300.0, np.nan])
+        assert result["population_per_dwelling"].iloc[0] == pytest.approx(3.0)
+        assert pd.isna(result["population_per_dwelling"].iloc[1])
+        assert "_town_upper" not in result.columns
+        assert result["town"].tolist() == [" Toa Payoh ", "UNKNOWN"]
+
+    def test_empty_lookups_fill_na_columns_and_ratio(self):
+        df = pd.DataFrame([{"town": "BEDOK", "price": 1.0}])
+
+        result = merge_town_context(df, pd.DataFrame(), pd.DataFrame())
+
+        assert result["dwelling_units_in_town"].isna().all()
+        assert result["population_in_town"].isna().all()
+        assert result["population_per_dwelling"].isna().all()
+
+    def test_no_town_column_returns_frame_unchanged(self):
+        df = pd.DataFrame([{"price": 1.0}])
+
+        assert merge_town_context(df, pd.DataFrame(), pd.DataFrame()) is df
 
 
 class TestMergeMedianIncome:

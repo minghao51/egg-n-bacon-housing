@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar
 
 from pydantic import BaseModel, Field
 
+from egg_n_bacon_housing.schemas.clean_models import _DATASET_EARLIEST_TRANSACTION
+
 
 class LocationDimRecord(BaseModel):
     """Location dimension record — one row per unique (lat, lon) pair.
@@ -68,11 +70,16 @@ class HFeatureTransaction(BaseModel):
 
     catalog_dataset_id: ClassVar[str] = "transactions_enriched"
 
-    transaction_date: datetime
+    # Same dataset floor as the silver boundary (HDB resale records begin
+    # 1990-01): gold/platinum carry the constraint so the validation gateway's
+    # vectorized pre-check can cover it in every policy, not only in prose.
+    transaction_date: Annotated[datetime, Field(ge=_DATASET_EARLIEST_TRANSACTION)]
     price: Annotated[float, Field(gt=0)]
     lat: Annotated[float, Field(ge=-90, le=90)]
     lon: Annotated[float, Field(ge=-180, le=180)]
-    property_type: str
+    # Non-empty at the silver boundary (HCleanTransactionBase); carried here
+    # for the same pre-check coverage reason.
+    property_type: Annotated[str, Field(min_length=1)]
     property_subtype: str | None = None
     property_segment: str | None = None
     is_ec: bool = False

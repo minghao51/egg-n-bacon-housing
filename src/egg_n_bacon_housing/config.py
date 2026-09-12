@@ -20,7 +20,11 @@ class PipelineConfig(BaseSettings):
     parquet_compression: str = "snappy"
     use_caching: bool = True
     cache_duration_hours: int = 24
-    large_table_validation_policy: Literal["sample", "full", "fail"] = "full"
+    # Pydantic-boundary policy for the ~1M-row gold/platinum tables (env:
+    # PIPELINE__LARGE_TABLE_VALIDATION_POLICY). "sample" (default) pairs a
+    # 100%-coverage vectorized pre-check with a 10k-row pydantic spot-check;
+    # "full" validates every row; "fail" raises on any invalid row.
+    large_table_validation_policy: Literal["sample", "full", "fail"] = "sample"
     max_transaction_age_days: int | None = Field(default=120, ge=0)
     quarantine_retention_days: int = Field(default=90, ge=1)
 

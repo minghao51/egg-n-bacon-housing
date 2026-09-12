@@ -92,10 +92,6 @@ _STAGE_MODULES = [
     materialization,
 ]
 
-# Node -> layer metadata lives in utils.output_registry so it is importable
-# without pulling the pipeline driver; aliased here for internal references.
-_PUBLISHED_LAYERS = PUBLISHED_LAYERS
-
 _MATERIALIZER_MAP = MATERIALIZER_MAP
 
 # Every published output is persisted by exactly one companion materializer
@@ -282,9 +278,13 @@ def run_pipeline(
     if hasattr(dr, "list_available_variables"):
         execution_vars.extend(_MATERIALIZER_MAP[name] for name in materialization_targets)
         upstream = {node.name for node in dr.what_is_upstream_of(*final_vars)}
-        for name in PUBLISHED_NAMES:
-            if name in upstream:
-                execution_vars.append(_QUARANTINE_MAP[name])
+        # Quarantine companions persist rejected rows through the writer. A
+        # narrow --final-var execution that materializes no published output
+        # has no writer, so it must not request them.
+        if writer is not None:
+            for name in PUBLISHED_NAMES:
+                if name in upstream:
+                    execution_vars.append(_QUARANTINE_MAP[name])
 
         required = upstream | set(execution_vars)
         cache_manager = CacheManager(

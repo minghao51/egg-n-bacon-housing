@@ -15,7 +15,11 @@ geocoding, adapter, cache, or bronze-layer behavior.
 - Put Hamilton node assembly, bronze normalization, source-to-node wiring, and
   bronze persistence in `components/ingestion/`.
 - Keep credentials in settings/environment configuration; never hard-code them.
-- Use the existing cache utilities and bronze paths. A valid existing cache must
+- Use the existing cache utilities and bronze paths: `read_bronze_cache` /
+  `write_bronze_cache` in `src/egg_n_bacon_housing/utils/bronze.py` are the
+  shared bronze-cache helpers, and `manifest_age_days` (same module) is the
+  shared bronze-manifest age reader for staleness checks — do not re-implement
+  either. A valid existing cache must
   not be replaced by an empty or partial source response. Bronze parquets are
   the only cache layer under datagov fetch nodes: an empty (0-row) bronze cache
   is treated as a miss (warn + refetch) at the three datagov sites

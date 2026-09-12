@@ -12,13 +12,10 @@ from egg_n_bacon_housing.schemas.feature_models import HFeatureTransaction
 from egg_n_bacon_housing.utils.contracts import require_columns
 from egg_n_bacon_housing.utils.hdb_lookups import (
     annual_value_lookup,
-    dwelling_units_lookup,
     merge_median_income,
+    merge_town_context,
     normalize_hdb_flat_type,
-    population_lookup,
-    population_per_dwelling,
 )
-from egg_n_bacon_housing.utils.time_index import ensure_month_column
 from egg_n_bacon_housing.utils.validation_gateway import (
     empty_extracted,
     extracted_validation,
@@ -86,7 +83,14 @@ def _annual_value_type_series(flat_type: pd.Series) -> pd.Series:
 def _enforce_transaction_time_contract(
     df: pd.DataFrame, max_transaction_age_days: int | None, pipeline_as_of_date: date
 ) -> pd.DataFrame:
-    """Require valid dates/months and optionally enforce source freshness."""
+    """Require valid dates/months and optionally enforce source freshness.
+
+    This is the single month-derivation site for the node (roadmap item 23):
+    ``month`` is derived once from the parsed dates as the canonical
+    ``Period("M")`` string (``YYYY-MM``) and every later consumer — the
+    rental and macro monthly merge keys, the quarterly key — reuses it
+    instead of re-parsing or re-copying the ~1M-row frame.
+    """
     require_columns(df, {"transaction_date"}, "geocoded_validated")
     result = df.copy()
     dates = pd.to_datetime(result["transaction_date"], errors="coerce")
@@ -133,7 +137,7 @@ def validate_transactions_enriched(
     raw_median_annual_value: pd.DataFrame,
     raw_income_by_planning_area: pd.DataFrame,
     pipeline_as_of_date: date,
-    large_table_validation_policy: Literal["sample", "full", "fail"] = "full",
+    large_table_validation_policy: Literal["sample", "full", "fail"] = "sample",
     max_transaction_age_days: int | None = None,
 ) -> dict[str, pd.DataFrame]:
     """Join location_dim onto transactions + merge macro + yield + supply.
@@ -183,9 +187,10 @@ def validate_transactions_enriched(
         df["flat_type"] = normalize_hdb_flat_type(df["flat_type"])
 
     # --- Rental yield ---
+    # ``month`` is guaranteed canonical (YYYY-MM string) by the time contract
+    # above, so it is reused directly as the merge key — no ensure_month_column
+    # round trip (which would deep-copy and re-parse the ~1M-row frame).
     if not rental_yield.empty and "rental_yield_pct" in rental_yield.columns:
-        df = ensure_month_column(df)
-
         rental_df = rental_yield.copy()
         if "flat_type" in rental_df.columns:
             rental_df["flat_type"] = normalize_hdb_flat_type(rental_df["flat_type"])
@@ -220,10 +225,15 @@ def validate_transactions_enriched(
     # value columns are mutually distinct and do not pre-exist on df, so a
     # plain left-merge is exactly equivalent to the old per-indicator
     # suffix/coalesce approach -- verified by an equivalence test.
-    df = ensure_month_column(df)
-    df["_month_ts"] = pd.to_datetime(df["month"], errors="coerce")
-    df["_month"] = df["_month_ts"].dt.to_period("M").astype(str)
-
+    #
+    # Month is derived exactly once, in ``_enforce_transaction_time_contract``:
+    # the canonical ``month`` string column is reused directly as the monthly
+    # merge key (lookup keys are cast to the same "string" dtype so the merge
+    # cannot upcast month), and the quarterly key derives from the
+    # already-parsed datetime ``transaction_date``. The previous
+    # ``ensure_month_column`` calls deep-copied and re-parsed the ~1M-row
+    # frame twice for identical values, and the ``_month_ts``/``_month``
+    # columns round-tripped month → datetime → period → string → datetime.
     monthly_indicators = {
         "cpi": ("date", "cpi"),
         "sora": ("date", "sora_rate"),
@@ -237,17 +247,17 @@ def validate_transactions_enriched(
             continue
         lookup = macro_df[[date_col, value_col]].copy()
         lookup[date_col] = pd.to_datetime(lookup[date_col], errors="coerce")
-        lookup["_month"] = lookup[date_col].dt.to_period("M").astype(str)
-        lookup = lookup.dropna(subset=["_month", value_col])
-        lookup = lookup.sort_values("_month").drop_duplicates(subset="_month", keep="last")
-        monthly_lookups.append(lookup[["_month", value_col]])
+        lookup["month"] = lookup[date_col].dt.to_period("M").astype("string")
+        lookup = lookup.dropna(subset=["month", value_col])
+        lookup = lookup.sort_values("month").drop_duplicates(subset="month", keep="last")
+        monthly_lookups.append(lookup[["month", value_col]])
         monthly_present.add(value_col)
 
     if monthly_lookups:
         monthly_combined = monthly_lookups[0]
         for nxt in monthly_lookups[1:]:
-            monthly_combined = monthly_combined.merge(nxt, on="_month", how="outer")
-        df = df.merge(monthly_combined, on="_month", how="left")
+            monthly_combined = monthly_combined.merge(nxt, on="month", how="outer")
+        df = df.merge(monthly_combined, on="month", how="left")
     for value_col in (v for _, v in monthly_indicators.values() if v not in monthly_present):
         df[value_col] = pd.NA
 
@@ -258,7 +268,7 @@ def validate_transactions_enriched(
         "ura_ppi": ("quarter", "ura_ppi"),
         "wage_growth": ("quarter", "wage_growth"),
     }
-    df["_quarter"] = df["_month_ts"].dt.to_period("Q")
+    df["_quarter"] = df["transaction_date"].dt.to_period("Q")
     quarterly_lookups: list[pd.DataFrame] = []
     quarterly_present: set[str] = set()
     for key, (qtr_col, value_col) in quarterly_indicators.items():
@@ -281,36 +291,24 @@ def validate_transactions_enriched(
     for value_col in (v for _, v in quarterly_indicators.values() if v not in quarterly_present):
         df[value_col] = pd.NA
 
-    df = df.drop(columns=["_month", "_month_ts", "_quarter"], errors="ignore")
+    df = df.drop(columns=["_quarter"], errors="ignore")
 
     # --- Town supply, population, annual value ---
-    town_col = "town" if "town" in df.columns else None
-    if town_col:
-        df["_town_upper"] = df[town_col].astype(str).str.strip().str.upper()
-
-        dwell_lookup = dwelling_units_lookup(raw_dwelling_units_by_town)
-        if not dwell_lookup.empty:
-            df = df.merge(dwell_lookup, on="_town_upper", how="left")
-
-        if "dwelling_units_in_town" not in df.columns:
-            df["dwelling_units_in_town"] = pd.NA
-
-        pop_lookup = population_lookup(raw_hdb_resident_population)
-        if not pop_lookup.empty:
-            df = df.merge(pop_lookup, on="_town_upper", how="left")
-
-        if "population_in_town" not in df.columns:
-            df["population_in_town"] = pd.NA
-
-        df["population_per_dwelling"] = population_per_dwelling(df)
+    # merge_town_context is the shared town-merge orchestration (normalized
+    # town key + dwelling/population lookups + population_per_dwelling);
+    # the per-row IRAS annual-value join below stays transaction-specific.
+    if "town" in df.columns:
+        df = merge_town_context(
+            df,
+            raw_dwelling_units_by_town=raw_dwelling_units_by_town,
+            raw_hdb_resident_population=raw_hdb_resident_population,
+        )
 
         mav_lookup = annual_value_lookup(raw_median_annual_value)
         if not mav_lookup.empty and "flat_type" in df.columns:
             df["_av_type"] = _annual_value_type_series(df["flat_type"])
             df = df.merge(mav_lookup, left_on="_av_type", right_on="type_of_hdb", how="left")
             df = df.drop(columns=["_av_type", "type_of_hdb"], errors="ignore")
-
-        df = df.drop(columns=["_town_upper"], errors="ignore")
 
     # --- Income by planning area ---
     df = merge_median_income(df, raw_income_by_planning_area)

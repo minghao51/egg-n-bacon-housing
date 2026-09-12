@@ -27,14 +27,16 @@ all 12 registered outputs and returns only the six terminal frames. Use
 - Bronze is source-owned and reproducible. Do not apply business rules or
   silently overwrite a valid cache with an empty response.
 - Silver is the primary validation boundary.
-  `pipeline.large_table_validation_policy` (default `full`) selects the
-  behavior: `full` validates every row in deterministic chunks and quarantines
+  `pipeline.large_table_validation_policy` (default `sample`) selects the
+  behavior: `sample` runs the vectorized pre-check over **every** row
+  (numeric bounds, datetime bounds, string `min_length` — all constraints
+  derived from the pydantic models) plus a 10k-row pydantic spot-check;
+  sampled rejects are quarantined and **dropped from the published frame**;
+  `full` validates every row in deterministic chunks and quarantines
   schema failures, including rows failing required-field checks (they are
   quarantined with a per-row reason, never silently dropped); `fail` runs the
   same full validation and raises instead of persisting when any row is
-  invalid; `sample` is a diagnostic compatibility option that validates a
-  random sample, persists the entire frame, and logs the exact unvalidated row
-  count. Quarantine files are written once per run under
+  invalid. Quarantine files are written once per run under
   `<layer>/_quarantine/<dataset>/<UTC-timestamp>_<uuid>.parquet` with
   `track_quality=False`, keeping their timestamped names out of the quality
   baselines. `scripts/99_cleanup.py` removes only files older than
@@ -67,9 +69,12 @@ all 12 registered outputs and returns only the six terminal frames. Use
   enabled tracking without the extra fails immediately with an actionable
   installation message.
 - Nodes receive settings, paths, geocoders, and writers through dependency
-  injection. Published outputs are persisted in exactly one place: a companion
-  `materialize_<node>` node in `components/materialization.py` writes each
-  registry entry through `LayerWriter`, so every layer output gets
+  injection. Published outputs are persisted in exactly one place:
+  `components/materialization.py` expands two `@parameterize` families from
+  `utils/output_registry.PUBLISHED_OUTPUTS` — one `materialize_<node>` node
+  per registry entry plus one `materialize_<boundary>_quarantine` companion
+  per validation boundary — and both write each registry entry through
+  `LayerWriter`, so every layer output gets
   the same compression and quality tracking. Computing nodes are
   side-effect-free — validation-gateway calls run with `persist=False` — and
   are therefore safely cacheable; the companion materializers are excluded
@@ -135,7 +140,11 @@ all 12 registered outputs and returns only the six terminal frames. Use
    `pipeline.py`.
 4. Add the output to the registry when it is a supported published output;
    `PublishedOutputSpec` supplies its stage, layer, terminal status, and
-   companion materializer. Computing nodes never write layer files themselves.
+   companion materializer. The materialization module expands both companions
+   (`materialize_<name>` and its quarantine writer) from the spec via
+   `@parameterize`, so adding a published output means adding one
+   `PublishedOutputSpec` entry — no hand-written materializer nodes.
+   Computing nodes never write layer files themselves.
 5. Update schemas, source/lineage documentation, and downstream readers.
 6. Add focused tests for the node contract, failure behavior, and persistence.
 7. Run the pipeline, ingestion, docs, lint, formatting, type, and agent-skill

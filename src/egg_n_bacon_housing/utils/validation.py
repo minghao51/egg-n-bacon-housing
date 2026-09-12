@@ -3,31 +3,10 @@
 import logging
 from typing import Any
 
-import numpy as np
 import pandas as pd
 from pydantic import TypeAdapter, ValidationError
 
 logger = logging.getLogger(__name__)
-
-# pd.isna vectorizes over list-likes (returning an array), so containers must
-# be excluded before the scalar null check.
-_CONTAINER_TYPES = (list, tuple, set, frozenset, dict, np.ndarray, pd.Series)
-
-
-def _is_null_scalar(value: Any) -> bool:
-    """Return True when ``value`` is a null scalar (None, NaN, pd.NA).
-
-    Handles pandas/numpy nulls (``float('nan')``, ``np.float32(np.nan)``,
-    ``pd.NA``, ``pd.NaT``) that pydantic would otherwise treat as valid
-    values (NaN is a legitimate float). Containers are left untouched.
-
-    Retained for scalar null checks; ``validate_schema`` scrubs nulls with a
-    single vectorized ``notna()``/``where`` pass that matches this predicate
-    (containers non-null, everything else via pandas' missing-value logic).
-    """
-    if isinstance(value, _CONTAINER_TYPES):
-        return False
-    return bool(pd.isna(value))
 
 
 def validate_schema(

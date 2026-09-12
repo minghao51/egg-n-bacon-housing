@@ -38,8 +38,34 @@ def empty_extracted(
     return {valid_name: empty, rejected_name: rejected}
 
 
+def _ordering_bound_issues(
+    field_name: str, non_null: pd.Series, bounds: dict[str, Any]
+) -> list[str]:
+    """Count ordering-bound (gt/ge/lt/le) violations on non-null values."""
+    issues: list[str] = []
+    for op, bound in bounds.items():
+        bad = {
+            "gt": (non_null <= bound).sum,
+            "ge": (non_null < bound).sum,
+            "lt": (non_null >= bound).sum,
+            "le": (non_null > bound).sum,
+        }[op]()
+        if bad:
+            issues.append(f"  {field_name}: {int(bad)} values violate {op} {bound}")
+    return issues
+
+
 def vectorized_precheck(df: pd.DataFrame, model_cls: type[Any], entity_name: str) -> list[str]:
-    """Run inexpensive vectorized checks for useful diagnostics."""
+    """Run inexpensive vectorized checks for useful diagnostics.
+
+    Covers every constraint family the pydantic models express that can be
+    checked without materializing rows: required-field nulls, numeric and
+    datetime ordering bounds (``gt``/``ge``/``lt``/``le`` read from the
+    models' ``Field`` metadata), and string ``min_length``. Sample mode leans
+    on this for 100%-coverage diagnostics — only the sampled spot-check rows
+    go through pydantic — so bounds that exist only on the models must be
+    declared as ``Field`` constraints to be seen here.
+    """
     issues: list[str] = []
     total = len(df)
     for field_name, field_info in model_cls.model_fields.items():
@@ -52,6 +78,7 @@ def vectorized_precheck(df: pd.DataFrame, model_cls: type[Any], entity_name: str
                 pct = null_count / total * 100 if total else 0
                 issues.append(f"  {field_name}: {null_count} null ({pct:.1f}%) — required field")
         bounds: dict[str, Any] = {}
+        min_length: int | None = None
         for metadata in field_info.metadata:
             if isinstance(metadata, annotated_types.Gt):
                 bounds["gt"] = metadata.gt
@@ -61,17 +88,23 @@ def vectorized_precheck(df: pd.DataFrame, model_cls: type[Any], entity_name: str
                 bounds["lt"] = metadata.lt
             elif isinstance(metadata, annotated_types.Le):
                 bounds["le"] = metadata.le
-        if bounds and pd.api.types.is_numeric_dtype(series):
-            non_null = series.dropna()
-            for op, bound in bounds.items():
-                bad = {
-                    "gt": (non_null <= bound).sum,
-                    "ge": (non_null < bound).sum,
-                    "lt": (non_null >= bound).sum,
-                    "le": (non_null > bound).sum,
-                }[op]()
-                if bad:
-                    issues.append(f"  {field_name}: {int(bad)} values violate {op} {bound}")
+            elif isinstance(metadata, annotated_types.MinLen):
+                min_length = metadata.min_length
+        if bounds and (
+            pd.api.types.is_numeric_dtype(series) or pd.api.types.is_datetime64_any_dtype(series)
+        ):
+            issues.extend(_ordering_bound_issues(field_name, series.dropna(), bounds))
+        elif min_length is not None and (
+            pd.api.types.is_object_dtype(series) or pd.api.types.is_string_dtype(series)
+        ):
+            # Non-string cells yield NaN lengths and are ignored here; the
+            # sampled pydantic spot-check still catches type errors.
+            lengths = series.dropna().str.len()
+            short = int((lengths < min_length).sum())
+            if short:
+                issues.append(
+                    f"  {field_name}: {short} values shorter than min_length {min_length}"
+                )
     return issues
 
 
@@ -88,6 +121,18 @@ def validate_and_quarantine(
     ``rejected`` frame retains source columns and adds ``_source_index`` and
     ``_rejection_reason``. Persistence belongs exclusively to Hamilton
     materializers.
+
+    Policies:
+        - "full": every row is validated in deterministic chunks; rejects are
+          quarantined and dropped from ``valid``.
+        - "fail": like "full", but any invalid row raises instead of
+          returning frames.
+        - "sample": for frames larger than ``sample_validation_size``, a
+          deterministic random sample goes through pydantic as a spot-check
+          while ``vectorized_precheck`` covers every row for the constraints
+          the models express. Sampled rejects are quarantined and dropped
+          from ``valid`` (a row is never published and quarantined at the
+          same time); the exact unvalidated row count is logged.
     """
     if large_table_policy not in {"sample", "full", "fail"}:
         raise ValueError(f"Unknown large_table_policy: {large_table_policy}")
@@ -124,7 +169,15 @@ def validate_and_quarantine(
             len(df) - sample_validation_size,
             len(df),
         )
-        return {"valid": df, "rejected": rejected}
+        # Quarantined sampled rejects must not also ride in the published
+        # frame (roadmap item 22b double-count fix). ``_source_index`` holds
+        # the boundary frame's index labels — the same row-identity contract
+        # as full mode — so an ``isin`` mask drops exactly the rejected rows
+        # while preserving source order.
+        valid = df
+        if not rejected.empty:
+            valid = df[~df.index.isin(rejected["_source_index"])]
+        return {"valid": valid, "rejected": rejected}
 
     valid, rejected = validate_schema(df, model_cls, entity_name)
     return {"valid": valid, "rejected": rejected}

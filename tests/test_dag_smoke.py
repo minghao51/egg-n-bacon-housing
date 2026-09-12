@@ -10,7 +10,7 @@ The rental-yield join defect (Batch 1 WS2) was invisible to node-level tests
 because fixtures exercised node shapes production never produces. This test
 pins the wiring contracts instead:
 
-- every published output in ``utils.layer_writer.PUBLISHED_LAYERS`` is
+- every published output in ``utils.output_registry.PUBLISHED_LAYERS`` is
   materialized by its companion node into the right layer directory;
 - ``rental_yield_pct`` is non-null on ``transactions_enriched`` rows — the
   original critical bug, pinned at graph level;
@@ -64,7 +64,6 @@ from egg_n_bacon_housing.components.ingestion.macro import (
     CPI_RESOURCE_ID,
     GDP_RESOURCE_ID,
     HDB_RPI_RESOURCE_ID,
-    SUPPLY_PIPELINE_RESOURCE_ID,
     UNEMPLOYMENT_RESOURCE_ID,
     URA_PPI_RESOURCE_ID,
     WAGE_GROWTH_RESOURCE_ID,
@@ -79,8 +78,7 @@ from egg_n_bacon_housing.config import (
 )
 from egg_n_bacon_housing.pipeline import STAGE_VARS, run_pipeline
 from egg_n_bacon_housing.utils.geocoding import InMemoryGeocoder
-from egg_n_bacon_housing.utils.layer_writer import PUBLISHED_LAYERS
-from egg_n_bacon_housing.utils.output_registry import TERMINAL_OUTPUTS
+from egg_n_bacon_housing.utils.output_registry import PUBLISHED_LAYERS, TERMINAL_OUTPUTS
 
 pytestmark = pytest.mark.integration
 
@@ -260,7 +258,6 @@ def _macro_rows() -> dict[str, list[dict]]:
         URA_PPI_RESOURCE_ID: [
             {"property_type": "All Residential", "quarter": "2024-Q1", "index": "140.0"}
         ],
-        SUPPLY_PIPELINE_RESOURCE_ID: [{"quarter": "2024-Q1", "no_of_units": "5000"}],
         WAGE_GROWTH_RESOURCE_ID: [{"DataSeries": "Overall Economy", "2024": "4.0"}],
     }
 

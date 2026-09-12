@@ -18,10 +18,11 @@ from pathlib import Path
 import pandas as pd
 
 from egg_n_bacon_housing.config import LayerDirs, Settings
-from egg_n_bacon_housing.utils.output_registry import PUBLISHED_LAYERS as _PUBLISHED_LAYERS
+from egg_n_bacon_housing.utils.output_registry import (
+    PUBLISHED_LAYERS as PUBLISHED_LAYERS,
+)
 
 logger = logging.getLogger(__name__)
-PUBLISHED_LAYERS = _PUBLISHED_LAYERS
 
 _LAYER_KEYS: tuple[str, ...] = (
     "bronze",

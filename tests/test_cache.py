@@ -136,3 +136,26 @@ def test_concurrent_writers_of_same_key_do_not_collide(tmp_path, caplog):
     assert not [record for record in caplog.records if record.levelname == "WARNING"]
     assert not list(tmp_path.glob("*.tmp"))
     assert len(pd.read_parquet(next(tmp_path.glob("*.parquet")))) == 10
+
+
+def test_clear_all_sweeps_atomic_write_tmp_orphans(tmp_path):
+    """A full clear() removes every cache file, including tmp orphans.
+
+    Covers both the legacy fixed-name ``<key>.json.tmp`` form and the
+    pid+thread-unique ``<key>.json.<pid>-<tid>.tmp`` form left behind by
+    crashed writers (roadmap item 25 remainder).
+    """
+    manager = CacheManager(tmp_path)
+    legacy_orphan = tmp_path / "some-key.json.tmp"
+    legacy_orphan.write_text("{}")
+    crashed_orphan = tmp_path / "other-key.json.99999-123.tmp"
+    crashed_orphan.write_text("{}")
+    live_entry = tmp_path / "real.json"
+    live_entry.write_text("{}")
+
+    manager.clear()
+
+    assert not legacy_orphan.exists()
+    assert not crashed_orphan.exists()
+    assert not live_entry.exists()
+    assert list(tmp_path.glob("*.tmp")) == []

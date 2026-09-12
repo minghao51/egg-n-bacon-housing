@@ -3,6 +3,7 @@
 import importlib
 import sys
 import types
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -147,11 +148,11 @@ def test_run_pipeline_injects_manual_dir(monkeypatch, tmp_path):
 
 
 def test_every_published_output_has_exactly_one_materializer():
-    """_MATERIALIZED_NAMES == set(_PUBLISHED_LAYERS): one materializer each."""
+    """MATERIALIZER_MAP covers exactly PUBLISHED_LAYERS: one materializer each."""
     pipeline = _get_pipeline_module()
 
-    assert set(pipeline._MATERIALIZER_MAP) == set(pipeline._PUBLISHED_LAYERS)
-    assert len(pipeline._MATERIALIZER_MAP) == len(pipeline._PUBLISHED_LAYERS)
+    assert set(pipeline._MATERIALIZER_MAP) == set(pipeline.PUBLISHED_LAYERS)
+    assert len(pipeline._MATERIALIZER_MAP) == len(pipeline.PUBLISHED_LAYERS)
 
 
 def test_persisted_vars_recompute_hack_is_gone():
@@ -273,3 +274,115 @@ def test_run_pipeline_rejects_unknown_stage(monkeypatch):
 
     with pytest.raises(ValueError, match="Unknown stage"):
         pipeline.run_pipeline(settings, stage="bogus_stage", geocoder=InMemoryGeocoder({}))
+
+
+# ----------------------------------------------------------------------------
+# Graph-aware driver stub: production Drivers expose the Hamilton graph, and
+# run_pipeline() uses it to append companion materializer nodes. The plain
+# DummyDriver classes above intentionally lack those methods (legacy lazy
+# path); these tests drive the graph-aware crash path.
+# ----------------------------------------------------------------------------
+
+
+class _NodeStub:
+    """Node-like object: run_pipeline() only reads ``.name``."""
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+
+class GraphStubDriver:
+    """DummyDriver plus the two Hamilton graph methods run_pipeline() uses.
+
+    ``upstream_names`` simulates what ``what_is_upstream_of`` reports for the
+    requested final vars. Defaults to the clean-stage published outputs (all
+    entries of PUBLISHED_NAMES) so the quarantine-companion gate is exercised.
+    """
+
+    def __init__(
+        self,
+        upstream_names: tuple[str, ...] = (
+            "hdb_validated",
+            "condo_validated",
+            "geocoded_validated",
+        ),
+    ) -> None:
+        self.upstream_names = upstream_names
+        self.captured: dict[str, Any] = {}
+
+    def list_available_variables(self) -> list[str]:
+        return []
+
+    def what_is_upstream_of(self, *final_vars: str) -> list[_NodeStub]:
+        return [_NodeStub(name) for name in self.upstream_names]
+
+    def execute(self, final_vars: list[str], inputs: dict | None = None) -> dict:
+        self.captured["final_vars"] = final_vars
+        self.captured["inputs"] = inputs or {}
+        return {name: "ok" for name in final_vars}
+
+
+def test_run_pipeline_final_var_without_writer_no_companions(monkeypatch, tmp_path):
+    """Regression: a narrow --final-var run whose upstream contains published
+    outputs must not request quarantine/materializer companions — they demand
+    a ``writer`` input and crashed the run with a 24-node ValueError."""
+    pipeline = _get_pipeline_module()
+    dr = GraphStubDriver()
+    monkeypatch.setattr(pipeline, "build_pipeline", lambda settings, data_path=None: dr)
+
+    result = pipeline.run_pipeline(
+        settings,
+        data_path=str(tmp_path),
+        final_vars=["geocoded_properties"],
+        geocoder=InMemoryGeocoder({}),
+    )
+
+    assert result == {"geocoded_properties": "ok"}
+    assert dr.captured["final_vars"] == ["geocoded_properties"]
+    executed = set(dr.captured["final_vars"])
+    assert not executed & set(pipeline._QUARANTINE_MAP.values())
+    assert not executed & set(pipeline._MATERIALIZER_MAP.values())
+    assert "writer" not in dr.captured["inputs"]
+    assert not list(tmp_path.rglob("*.parquet"))
+
+
+def test_run_pipeline_without_writer_still_injects_lazy_inputs(monkeypatch, tmp_path):
+    """The lazy factory/credential logic must still run when no writer exists:
+    raw_condo_transactions upstream injects the URA key, never the writer."""
+    pipeline = _get_pipeline_module()
+    dr = GraphStubDriver(upstream_names=("hdb_validated", "raw_condo_transactions"))
+    monkeypatch.setattr(pipeline, "build_pipeline", lambda settings, data_path=None: dr)
+
+    pipeline.run_pipeline(
+        settings,
+        data_path=str(tmp_path),
+        final_vars=["geocoded_properties"],
+        geocoder=InMemoryGeocoder({}),
+    )
+
+    assert "writer" not in dr.captured["inputs"]
+    assert (
+        dr.captured["inputs"]["ura_api_access_key"]
+        == settings.ura_api_access_key.get_secret_value()
+    )
+
+
+def test_run_pipeline_with_writer_requests_companions(monkeypatch, tmp_path):
+    """Positive control: with a published final var the writer is injected and
+    both companion kinds are requested, so the gate is pinned on both sides."""
+    pipeline = _get_pipeline_module()
+    dr = GraphStubDriver()
+    monkeypatch.setattr(pipeline, "build_pipeline", lambda settings, data_path=None: dr)
+
+    pipeline.run_pipeline(
+        settings,
+        data_path=str(tmp_path),
+        final_vars=["hdb_validated"],
+        geocoder=InMemoryGeocoder({}),
+    )
+
+    assert dr.captured["inputs"]["writer"].data_dir == tmp_path / "pipeline"
+    executed = set(dr.captured["final_vars"])
+    assert "materialize_hdb_validated" in executed
+    # Registry-derived quarantine companion: boundary strips the _validated suffix.
+    assert "materialize_hdb_quarantine" in executed

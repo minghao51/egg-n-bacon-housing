@@ -404,7 +404,7 @@ class TestLocationDim:
                 }
             ]
         )
-        # No postal_code -> _geocode_schools adds all-NA latitude/longitude
+        # No postal_code -> geocode_schools adds all-NA latitude/longitude
         # without calling the geocoder, and calculate_school_features then
         # takes its no-geocoded-schools early return (utils/school_features.py).
         raw_school_directory = pd.DataFrame(

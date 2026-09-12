@@ -15,6 +15,7 @@ from egg_n_bacon_housing.utils.bronze import (
     MANIFEST_FILENAME,
     STALE_WARN_DAYS,
     clear_bronze,
+    manifest_age_days,
     record_bronze_fetch,
     refresh_all,
     refresh_bronze,
@@ -386,13 +387,84 @@ class TestWarnIfStale:
 
         assert any("unreadable fetched_at" in r.getMessage() for r in caplog.records)
 
-    def test_stale_warn_days_maps_exactly_the_two_rolling_sources(self):
+
+class TestManifestAgeDays:
+    """Shared manifest-age arithmetic behind warn_if_stale and 40_refresh_rolling."""
+
+    def test_readable_entry_returns_fractional_days(self, tmp_path):
+        old = datetime.now(UTC) - timedelta(days=40, hours=12)
+        _write_manifest(
+            tmp_path,
+            {"raw_condo_transactions": {"fetched_at": old.isoformat(), "source": "x", "rows": 1}},
+        )
+
+        age = manifest_age_days(tmp_path, "raw_condo_transactions")
+
+        assert age is not None
+        assert 40.4 < age < 40.6
+
+    def test_missing_entry_returns_none(self, tmp_path):
+        assert manifest_age_days(tmp_path, "raw_absent") is None
+
+    def test_unreadable_fetched_at_returns_none(self, tmp_path):
+        _write_manifest(
+            tmp_path,
+            {"raw_condo_transactions": {"fetched_at": "not-a-date", "source": "ura_api"}},
+        )
+
+        assert manifest_age_days(tmp_path, "raw_condo_transactions") is None
+
+    def test_stale_warning_threshold_matches_helper_age(self, tmp_path, caplog):
+        """warn_if_stale warns exactly when the shared helper's age exceeds the threshold."""
+        age_days = 40
+        old = datetime.now(UTC) - timedelta(days=age_days)
+        _write_manifest(
+            tmp_path,
+            {"raw_condo_transactions": {"fetched_at": old.isoformat(), "source": "x", "rows": 1}},
+        )
+        helper_age = manifest_age_days(tmp_path, "raw_condo_transactions")
+
+        with caplog.at_level(logging.WARNING, logger="egg_n_bacon_housing.utils.bronze"):
+            warn_if_stale(tmp_path, "raw_condo_transactions", max_age_days=35)
+
+        assert helper_age is not None and helper_age > 35
+        assert any("is stale" in r.getMessage() for r in caplog.records)
+
+        caplog.clear()
+        with caplog.at_level(logging.WARNING, logger="egg_n_bacon_housing.utils.bronze"):
+            warn_if_stale(tmp_path, "raw_condo_transactions", max_age_days=int(age_days) + 5)
+
+        assert caplog.records == []
+
+
+class TestStaleWarnDaysGates:
+    """STALE_WARN_DAYS defines which bronze datasets are staleness-gated.
+
+    Keys are bronze parquet stems (what ``--refresh`` matches), not node
+    names. Thresholds follow each source's update cadence (docs/data-sources.md,
+    "Refresh Cadence"): monthly rolling sources at 35d, the quarterly rental
+    index at 100d.
+    """
+
+    _GATED_STEMS = {
+        "raw_condo_transactions": 35,
+        "raw_hdb_resale": 35,
+        "raw_hdb_rental": 35,
+        "raw_rental_index": 100,
+    }
+
+    def test_stale_warn_days_maps_exactly_the_rolling_sources(self):
         import egg_n_bacon_housing.components.ingestion.datagov as datagov
         import egg_n_bacon_housing.components.ingestion.ura_csv as ura_csv
 
-        # Keys are bronze parquet stems (what --refresh matches), not node names.
-        assert STALE_WARN_DAYS == {"raw_condo_transactions": 35, "raw_hdb_resale": 35}
-        # Every mapped name must correspond to a bronze parquet its ingestion
+        # Exact dict: the gated set must not silently grow to static
+        # references (see _GATED_STEMS above for the expected membership).
+        assert STALE_WARN_DAYS == self._GATED_STEMS
+        # Cadence-consistent thresholds: the quarterly index gets more
+        # headroom than the monthly-rolling sources.
+        assert STALE_WARN_DAYS["raw_rental_index"] > STALE_WARN_DAYS["raw_hdb_rental"]
+
+        # Every mapped name must correspond to a bronze parquet an ingestion
         # node actually reads/writes through the centralized bronze cache
         # helpers — keeps the warning's refresh hint actionable.
         ura_src = Path(ura_csv.__file__).read_text(encoding="utf-8")
@@ -404,6 +476,51 @@ class TestWarnIfStale:
             assert re.search(rf"(?:read|write)_bronze_cache\([^()]*\"{name}\"", source_text), (
                 f"{name} is no longer read/written via a bronze cache helper"
             )
+        # raw_hdb_rental / raw_rental_index are produced by @parameterize on
+        # the raw_dataset node: their bronze parquet stems are wired through
+        # the node's cache_filenames, not a literal cache-helper call.
+        for name in ("raw_hdb_rental", "raw_rental_index"):
+            assert f'"{name}.parquet"' in datagov_src, (
+                f"{name} is no longer a bronze cache filename in the datagov nodes"
+            )
+
+    @pytest.mark.parametrize("name", sorted(STALE_WARN_DAYS))
+    def test_gated_stem_warns_at_its_threshold(self, tmp_path, caplog, name):
+        threshold = STALE_WARN_DAYS[name]
+        old = datetime.now(UTC) - timedelta(days=threshold + 5)
+        _write_manifest(tmp_path, {name: {"fetched_at": old.isoformat(), "source": "x", "rows": 1}})
+
+        with caplog.at_level(logging.WARNING, logger="egg_n_bacon_housing.utils.bronze"):
+            warn_if_stale(tmp_path, name, STALE_WARN_DAYS[name])
+
+        stale = [r for r in caplog.records if "is stale" in r.getMessage()]
+        assert len(stale) == 1
+        message = stale[0].getMessage()
+        assert name in message
+        assert f"threshold {threshold} days" in message
+        assert f"main.py --refresh {name}" in message
+
+    @pytest.mark.parametrize("name", sorted(STALE_WARN_DAYS))
+    def test_gated_stem_is_silent_when_fresh(self, tmp_path, caplog, name):
+        record_bronze_fetch(tmp_path, name, "datagov_api", 1)
+
+        with caplog.at_level(logging.WARNING, logger="egg_n_bacon_housing.utils.bronze"):
+            warn_if_stale(tmp_path, name, STALE_WARN_DAYS[name])
+
+        assert caplog.records == []
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "raw_school_directory",
+            "raw_hdb_property_info",
+            "raw_income_by_planning_area",
+            "sora_rates",
+        ],
+    )
+    def test_non_gated_static_references_are_not_staleness_gated(self, name):
+        """Static/snapshot references carry no cadence and never enter the gate."""
+        assert name not in STALE_WARN_DAYS
 
 
 class TestExternalFileRegistry:

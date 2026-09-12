@@ -72,8 +72,26 @@ def test_legacy_dirs_removed():
 def test_pipeline_cache_settings():
     assert settings.pipeline.use_caching is True
     assert settings.pipeline.parquet_compression == "snappy"
-    assert settings.pipeline.large_table_validation_policy == "full"
+    # Item 22c: sample is the production default (vectorized 100% pre-check +
+    # a 10k-row pydantic spot-check); full/fail stay env-selectable.
+    assert settings.pipeline.large_table_validation_policy == "sample"
     assert settings.pipeline.max_transaction_age_days == 120
+
+
+def test_large_table_validation_policy_env_override(monkeypatch):
+    """full/fail remain selectable via PIPELINE__LARGE_TABLE_VALIDATION_POLICY."""
+    monkeypatch.setenv("PIPELINE__LARGE_TABLE_VALIDATION_POLICY", "full")
+    assert Settings().pipeline.large_table_validation_policy == "full"
+
+    monkeypatch.setenv("PIPELINE__LARGE_TABLE_VALIDATION_POLICY", "fail")
+    assert Settings().pipeline.large_table_validation_policy == "fail"
+
+    monkeypatch.setenv("PIPELINE__LARGE_TABLE_VALIDATION_POLICY", "sample")
+    assert Settings().pipeline.large_table_validation_policy == "sample"
+
+    with pytest.raises(ValidationError):
+        monkeypatch.setenv("PIPELINE__LARGE_TABLE_VALIDATION_POLICY", "nope")
+        Settings()
 
 
 def test_geocoding_coverage_threshold_setting():

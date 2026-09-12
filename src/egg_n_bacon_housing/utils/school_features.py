@@ -11,8 +11,8 @@ import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
 
+from egg_n_bacon_housing.utils.geo import haversine_metres
 from egg_n_bacon_housing.utils.geocoding import Geocoder
-from egg_n_bacon_housing.utils.runtime import SchoolReference
 
 SCHOOL_LEVELS = ["PRIMARY", "SECONDARY (S1-S5)", "JUNIOR COLLEGE"]
 
@@ -94,33 +94,6 @@ class SchoolReferenceRepository:
         else:
             logger.warning("Secondary school tiers not found: %s", secondary_path)
         return primary_tiers, secondary_tiers
-
-
-def _repository(repository: SchoolReferenceRepository) -> SchoolReferenceRepository:
-    return repository
-
-
-def _load_reference_data(filename: str, repository: SchoolReferenceRepository) -> dict | None:
-    """Load JSON reference data from an explicitly injected repository.
-
-    Args:
-        filename: Name of JSON file in data/01_bronze/external/
-
-    Returns:
-        Parsed JSON data or None if not found
-    """
-    return _repository(repository).load_json(filename)
-
-
-def load_school_tiers(
-    repository: SchoolReference,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load school tier data from JSON with CSV fallback.
-
-    Returns:
-        Tuple of (primary_tiers, secondary_tiers) DataFrames
-    """
-    return repository.load_school_tiers()
 
 
 def _school_key(series: pd.Series) -> pd.Series:
@@ -259,7 +232,7 @@ def _nearest_with_metadata(
         )
     # Haversine distance to the chosen nearest candidate.
     out["__dist_m"] = pd.Series(
-        _haversine_metres(
+        haversine_metres(
             unique_coords["lat"].to_numpy(dtype=float),
             unique_coords["lon"].to_numpy(dtype=float),
             pd.to_numeric(nearest["latitude"], errors="coerce").to_numpy(dtype=float),
@@ -433,7 +406,7 @@ def calculate_school_quality_features(
     return properties_df
 
 
-def _geocode_schools(schools_df: pd.DataFrame, geocoder: Geocoder) -> pd.DataFrame:
+def geocode_schools(schools_df: pd.DataFrame, geocoder: Geocoder) -> pd.DataFrame:
     """Geocode schools by postal code, adding ``latitude``/``longitude`` columns.
 
     Delegates the actual geocoding (cache, API, rate limiting) to the injected
@@ -452,22 +425,6 @@ def _geocode_schools(schools_df: pd.DataFrame, geocoder: Geocoder) -> pd.DataFra
 
     logger.info("Geocoded %s/%s schools", df["latitude"].notna().sum(), len(df))
     return df
-
-
-_EARTH_RADIUS_M = 6_371_000
-
-
-def _haversine_metres(
-    lat1: np.ndarray, lon1: np.ndarray, lat2: np.ndarray, lon2: np.ndarray
-) -> np.ndarray:
-    """Vectorized haversine distance in metres (same formula as utils.geo)."""
-    lat1, lon1, lat2, lon2 = (
-        np.radians(np.asarray(a, dtype=float)) for a in (lat1, lon1, lat2, lon2)
-    )
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
-    return 2 * np.arcsin(np.sqrt(a)) * _EARTH_RADIUS_M
 
 
 def _level_dist_column(level: str) -> str:
@@ -535,7 +492,7 @@ def calculate_school_features(
         tree = cKDTree(schools_rad)
         _chord, nearest_idx = tree.query(unique_rad, k=1)
         nearest = level_schools.iloc[nearest_idx]
-        unique_coords[col] = _haversine_metres(
+        unique_coords[col] = haversine_metres(
             unique_coords["lat"].to_numpy(dtype=float),
             unique_coords["lon"].to_numpy(dtype=float),
             nearest["latitude"].to_numpy(dtype=float),

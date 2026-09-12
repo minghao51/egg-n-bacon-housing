@@ -5,7 +5,7 @@ One interface, two adapters:
 - InMemoryGeocoder: test geocoding from a fixed lookup table
 
 Extracts geocoding logic that was duplicated across ingestion
-(_geocode_shopping_malls), school_features (_geocode_schools),
+(_geocode_shopping_malls), school_features (geocode_schools),
 and the onemap adapter.
 """
 

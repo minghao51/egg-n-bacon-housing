@@ -12,25 +12,11 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import BallTree
 
+from egg_n_bacon_housing.utils.geo import haversine_metres
 from egg_n_bacon_housing.utils.mrt_line_mapping import station_score_basis
 from egg_n_bacon_housing.utils.runtime import MrtReference
 
 logger = logging.getLogger(__name__)
-
-_EARTH_RADIUS_M = 6_371_000
-
-
-def _haversine_metres(
-    lat1: np.ndarray, lon1: np.ndarray, lat2: np.ndarray, lon2: np.ndarray
-) -> np.ndarray:
-    """Vectorized haversine distance in metres (same formula as utils.geo)."""
-    lat1, lon1, lat2, lon2 = (
-        np.radians(np.asarray(a, dtype=float)) for a in (lat1, lon1, lat2, lon2)
-    )
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
-    return 2 * np.arcsin(np.sqrt(a)) * _EARTH_RADIUS_M
 
 
 def compute_proximity_features(
@@ -163,10 +149,10 @@ def _compute_mrt_proximity(
     else:
         df.loc[valid_mask, "nearest_mrt_is_interchange"] = False
 
-    # Vectorized haversine over the matched station coordinates — same formula
-    # and earth radius as utils.geo.haversine_distance, computed once per frame
-    # instead of a per-row Python loop.
-    distances = _haversine_metres(
+    # Vectorized haversine over the matched station coordinates — the shared
+    # utils.geo implementation, computed once per frame instead of a per-row
+    # Python loop.
+    distances = haversine_metres(
         valid_df["lat"].to_numpy(dtype=float),
         valid_df["lon"].to_numpy(dtype=float),
         nearest["lat"].to_numpy(dtype=float),

@@ -317,15 +317,13 @@ class TestMrtVectorizationEquivalence:
             scalar = haversine_distance(row["lat"], row["lon"], station["lat"], station["lon"])
             assert row["dist_to_nearest_mrt"] == pytest.approx(scalar, abs=1e-9)
 
-    def test_scores_match_scalar_station_score_reference(self, result, mrt_frame, monkeypatch):
-        """Cached per-station score basis reproduces station_score per row."""
-        from egg_n_bacon_housing.utils.mrt_line_mapping import get_station_score
-
+    def test_scores_match_scalar_station_score_reference(self, result, mrt_frame):
+        """The repository scalar score reproduces the vectorized scores per row."""
+        repository = MrtReferenceRepository(None)
         for _, row in result[result["dist_to_nearest_mrt"].notna()].iterrows():
-            scalar = get_station_score(
+            scalar = repository.station_score(
                 row["nearest_mrt_station"],
                 row["dist_to_nearest_mrt"],
-                MrtReferenceRepository(None),
             )
             assert row["nearest_mrt_score"] == pytest.approx(scalar, abs=1e-9)
 
