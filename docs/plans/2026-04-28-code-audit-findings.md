@@ -1,5 +1,7 @@
 # Code Audit Findings — 2026-04-28
 
+**Status:** Superseded (2026-09-11) → `docs/plans/2026-09-07-src-audit-improvement-program.md` (src/ audit improvement program); the modules cited below no longer exist in the tree.
+
 Scope: commits `4dde6da`..`3241b8a` (last 5 commits), covering the Hamilton DAG refactor, HDB rental ingestion, mall geocoding, rental yield rewrite, schema relaxation, and data loader migration.
 
 ## Summary

@@ -126,3 +126,52 @@ from compute in any future benchmark.
 - Quarantine/retention/atomic-write/anomaly-ordering/`pipeline_as_of_date`
   invalidation behaviors are demonstrated by the hermetic test suite
   (752 passing), not re-proven individually in the credentialed run.
+
+---
+
+## Closeout run — code-audit remediation final wave (2026-09-12)
+
+All remediation-roadmap waves (1–3 + final) landed; this run re-baselined the
+published outputs on the final tree (`994` tests passing, coverage floor 70).
+
+**Run configuration:** `uv run python main.py --stage all` — a full DAG
+recompute, not a warm cache-hit run: the targeted refresh smoke (item 28)
+cleared the Hamilton result cache and all four rolling bronze sources
+(pre-manifest bronze counts as stale), so the run re-fetched rolling data and
+re-executed the geocoding loop against warm OneMap API caches.
+`/usr/bin/time -v`: **wall 1:22:53, peak RSS ≈ 5.8 GiB, exit 0**, six terminal
+frames (shapes logged by `main.py`).
+
+**Fresh rolling fetches (vs. the 2026-09-11 baseline bronze):**
+raw_hdb_resale 986,548 (+878) · raw_condo_transactions 247,050 (+15,411) ·
+raw_hdb_rental 209,852 · raw_rental_index 520 · `external/BusStops` re-parsed
+(5,205) via `--refresh external/BusStops`.
+
+**Published outputs (rows × cols; cols unchanged everywhere):**
+
+| Output                         | 2026-09-11 baseline | 2026-09-12 closeout | Delta                                       |
+| ------------------------------ | ------------------- | ------------------- | ------------------------------------------- |
+| silver/hdb_validated           | 985,670 × 17        | 986,548 × 17        | +878 (fresh resale)                         |
+| silver/condo_validated         | 231,639 × 26        | 247,050 × 26        | +15,411 (fresh URA window)                  |
+| silver/geocoded_validated      | 1,217,309 × 37      | 1,233,598 × 37      | +16,289 (= 986,548 + 247,050)               |
+| gold/transactions_enriched     | 1,205,504 × 97      | 1,233,496 × 97      | +27,992 (fresh data − 102 precheck rejects) |
+| gold/location_dim              | 11,454 × 48         | 11,457 × 48         | +3                                          |
+| gold/rental_yield              | 3,473 × 9           | 3,498 × 9           | +25 (fresh rental data)                     |
+| gold/block_profile             | 9,866 × 6           | 10,007 × 6          | +141                                        |
+| gold/planning_area_360         | 44 × 27             | 44 × 27             | 0                                           |
+| gold/town_360                  | 28 × 13             | 28 × 13             | 0                                           |
+| platinum/unified_dataset       | 1,205,504 × 97      | 1,233,405 × 97      | +27,901 (= enriched − 91 rejects)           |
+| platinum/pa_monthly_metrics    | 13,244 × 11         | 13,285 × 11         | +41                                         |
+| platinum/appreciation_hotspots | 20 × 6              | 20 × 6              | 0                                           |
+
+All deltas reconcile arithmetically: fresh upstream data plus the **sampled
+validation flip** (roadmap item 22) — quarantine volumes are now the
+vectorized-precheck rejects (gold 102 rows; platinum unified 91 rows) instead
+of the full-pydantic rejects (~11.8k in the baseline era), and sampled rejects
+are dropped from published frames. This row-count set is the new baseline.
+
+**Closeout gates (all green):** `pytest -q --no-cov` 994 passed · coverage 95%
+total, CI floor raised 60→70 · ruff/format/mypy clean · docs-layout +
+agent-skills validators clean · catalog regenerated (4 layers, 125 datasets,
+2,333 edges) + `check_catalog.py` · `pre-commit run --all-files` all hooks
+passed · `pip-audit --skip-editable` no vulnerabilities.

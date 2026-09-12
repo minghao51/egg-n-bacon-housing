@@ -1,5 +1,7 @@
 # src/ Audit → Improvement Program
 
+**Status:** Completed (2026-09-11). One deferred item remains: quarantine-only persist mode for the validation gateway (decision 4 — see "Remaining deferred item" in the STATUS block below).
+
 Three parallel read-only audits (pipeline core, ingestion, cross-cutting) were run against the
 current tree. All Critical/Warning findings below were independently re-verified against code
 (file:line checked, not trusted from docs). No code was modified during the audit.
