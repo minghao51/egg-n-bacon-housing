@@ -1,6 +1,6 @@
 # R2 Manual Data Sync Guide
 
-The pipeline needs ~100MB of manual source data (URA transactions, HDB resale prices, school directory, planning area geojson, etc.) that lives in `data/manual/`. To keep the git repo lean, these files are stored in **Cloudflare R2** and fetched on demand.
+The pipeline needs ~100MB of manual source data (URA transactions, HDB resale prices, school directory, planning area geojson, etc.) that lives in `data/manual/`. To keep the git repo lean, these files are stored in **Cloudflare R2** and fetched on demand. The same script also backs up the **OneMap geocode cache** (flat `data/cache/` entries) under a separate `geocache/` prefix.
 
 ## Quick Start
 
@@ -12,11 +12,15 @@ uv run python scripts/00_sync_data.py
 uv run python scripts/00_sync_data.py --verify
 ```
 
-The script is **idempotent** — it skips files that already exist with matching size. Safe to re-run.
+The script is **idempotent** — it skips files that already exist with matching size, in both directions. Safe to re-run.
 
 ## What Gets Synced
 
-48 files, ~141MB across these subdirectories:
+Two sync sets, each mapped to its own R2 prefix.
+
+### `manual/` ↔ `data/manual/`
+
+52 files, ~123MB across these subdirectories:
 
 | Directory                           | Contents                                                 | Approx Size |
 | ----------------------------------- | -------------------------------------------------------- | ----------- |
@@ -28,6 +32,31 @@ The script is **idempotent** — it skips files that already exist with matching
 | `data/manual/csv/`                  | School tiers, scoring methodology                        | <1MB        |
 
 `*.md` files in `data/manual/` are tracked in git directly (documentation, not data).
+
+### `geocache/` ↔ `data/cache/` (flat entries only)
+
+The flat `data/cache/*.parquet` / `*.json` files are OneMap geocode results
+(`onemap_search:{address}` entries — ~14k entries, ~92MB). Cold re-geocoding
+them costs ~4.7h of rate-limited OneMap API calls, and
+`scripts/99_cleanup.py` (or any cache clear) wipes them, so they are backed
+up to R2. The Hamilton node cache under `data/cache/hamilton/` (~4.3GB) is
+**deliberately excluded** — it is keyed by code/config fingerprints,
+invalidated by any code change, and fully regenerable.
+
+Notes:
+
+- Cache TTL is mtime-based (`GEOCODING__CACHE_DURATION_HOURS`, default 24h).
+  Set a long TTL (`.env.example` suggests 8760 = 1 year) so restored entries
+  survive reads; address→coordinate results are effectively immutable.
+- Downloads reset file mtimes to "now", which conveniently refreshes the TTL
+  window on restore.
+
+Restore after a cache wipe (e.g. `scripts/99_cleanup.py`) or on a new
+machine:
+
+```bash
+uv run python scripts/00_sync_data.py --only geocache
+```
 
 ## Bronze Seeding
 
@@ -84,13 +113,15 @@ uv run python scripts/00_sync_data.py --dry-run --upload
 
 ```bash
 scripts/00_sync_data.py [-h] [--upload] [--download] [--verify] [--dry-run]
+                        [--only {manual,geocache}]
 ```
 
 | Flag        | Action                                                                                      |
 | ----------- | ------------------------------------------------------------------------------------------- |
 | _(none)_    | Download from R2 (default). Skips files that already exist locally with matching size.      |
-| `--upload`  | Upload local `data/manual/` to R2. Use after adding new data files.                         |
-| `--verify`  | Compare local vs R2. Reports OK / missing locally / missing in R2 / size mismatches.        |
+| `--upload`  | Upload local files to R2. Skips remote objects that already match by size.                  |
+| `--verify`  | Compare local vs R2 across both prefixes. Reports OK / missing locally / missing in R2 / size mismatches. |
+| `--only`    | Restrict the operation to one sync set (`manual` or `geocache`). Default: both.             |
 | `--dry-run` | Show what would happen without transferring files. Combine with `--upload` or `--download`. |
 
 ## CI/CD
@@ -99,11 +130,14 @@ Add the sync step to your CI pipeline before running the pipeline:
 
 ```yaml
 - name: Sync manual data
-  run: uv run python scripts/00_sync_data.py
+  run: uv run python scripts/00_sync_data.py --only manual
 
 - name: Run pipeline
   run: uv run python main.py --stage all
 ```
+
+(`--only manual` keeps CI lean — the geocache only helps warm local runs;
+CI refetches anyway since Hamilton node fingerprints differ per code state.)
 
 ## Troubleshooting
 

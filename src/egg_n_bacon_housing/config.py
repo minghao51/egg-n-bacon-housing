@@ -33,6 +33,12 @@ class GeocodingConfig(BaseSettings):
     max_workers: int = 5
     api_delay_seconds: float = 1.2
     timeout_seconds: int = 30
+    # Hours an onemap_search:{address} cache entry stays valid, judged by
+    # file mtime on read (env: GEOCODING__CACHE_DURATION_HOURS). Address
+    # coordinates are effectively immutable; a long TTL (e.g. 8760 = 1 year)
+    # keeps flat cache entries alive so the R2 geocache backup
+    # (scripts/00_sync_data.py) restores usefully instead of expiring on
+    # first read.
     cache_duration_hours: int = 24
     # Legacy single-threshold coverage gate. Retained as the fallback for
     # property-type segments without a dedicated threshold (env:
