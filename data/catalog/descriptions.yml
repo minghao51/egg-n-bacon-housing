@@ -121,6 +121,55 @@ datasets:
     description: "Community club locations from data.gov.sg GeoJSON."
     source: "data.gov.sg"
 
+  # Bronze parse-cache parquets (bronze/external/<stem>.parquet) derived once
+  # from the amenity GeoJSONs; each row is one amenity location feeding the
+  # dist_to_nearest_* spatial features.
+
+  external__BusStops:
+    label: "Bus Stops (Parse Cache)"
+    description: "Bronze parse cache of LTA bus stop locations (R2-seeded GeoJSON): one row per bus stop with name and lat/lon. Feeds the dist_to_nearest_bus_stop spatial feature."
+    source: "LTA via data.gov.sg"
+
+  external__CHASClinics:
+    label: "CHAS Clinics (Parse Cache)"
+    description: "Bronze parse cache of MOH Community Health Assist Scheme (CHAS) clinic locations (R2-seeded GeoJSON; names parsed from KML Description HTML): one row per clinic with name and lat/lon. Feeds the dist_to_nearest_chas_clinic spatial feature."
+    source: "MOH via data.gov.sg"
+
+  external__ChildCareServices:
+    label: "Childcare Centres (Parse Cache)"
+    description: "Bronze parse cache of licensed childcare service locations (manual GeoJSON bundle): one row per centre with name and lat/lon. Feeds the dist_to_nearest_childcare spatial feature."
+    source: "Manual bundle (R2-synced)"
+
+  external__CommunityClubs:
+    label: "Community Clubs (Parse Cache)"
+    description: "Bronze parse cache of People's Association community club locations (R2-seeded GeoJSON): one row per club with name and lat/lon. Feeds the dist_to_nearest_community_club spatial feature."
+    source: "People's Association via data.gov.sg"
+
+  external__HawkerCentresGEOJSON:
+    label: "Hawker Centres (Parse Cache)"
+    description: "Bronze parse cache of hawker centre locations (manual GeoJSON bundle): one row per centre with name and lat/lon. Feeds the dist_to_nearest_hawker spatial feature."
+    source: "Manual bundle (R2-synced)"
+
+  external__NParksParksandNatureReserves:
+    label: "Parks & Nature Reserves (Parse Cache)"
+    description: "Bronze parse cache of NParks park and nature reserve locations (manual GeoJSON bundle): one row per park/reserve with name and lat/lon. Feeds the dist_to_nearest_park spatial feature."
+    source: "NParks, manual bundle (R2-synced)"
+
+  external__PreSchoolsLocation:
+    label: "Preschools / Kindergartens (Parse Cache)"
+    description: "Bronze parse cache of preschool locations (manual GeoJSON bundle): one row per preschool with name and lat/lon. Serves as the kindergarten amenity source for the dist_to_nearest_kindergarten spatial feature."
+    source: "Manual bundle (R2-synced)"
+
+  external__SportSGFacilities:
+    label: "Sports Facilities (Parse Cache)"
+    description: "Bronze parse cache of SportSG facility locations (R2-seeded GeoJSON): one row per venue with name and lat/lon. Feeds the dist_to_nearest_sports_facility spatial feature."
+    source: "SportSG via data.gov.sg"
+
+  external__SupermarketsGEOJSON:
+    label: "Supermarkets (Parse Cache)"
+    description: "Bronze parse cache of supermarket locations (manual GeoJSON bundle): one row per licensed supermarket with name and lat/lon. Feeds the dist_to_nearest_supermarket spatial feature."
+    source: "Manual bundle (R2-synced)"
+
   raw_hdb_property_info:
     label: "HDB Property Info"
     description: "HDB property-level metadata: year completed, max floor level, total dwelling units."
