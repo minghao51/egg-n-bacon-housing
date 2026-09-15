@@ -27,6 +27,7 @@ Include a header block near the top with:
 - `docs/plans/2026-02-24-scripts-docs-simplification-plan.md` - scripts/docs organization conventions and migration steps
 - `docs/plans/2026-09-10-hamilton-dag-next-thread-handoff.md` - current resume point for the completed Hamilton/DAG improvement sequence
 - `docs/plans/2026-09-10-code-audit-remediation-roadmap.md` - **Completed 2026-09-12** — all audit follow-ups landed and verified; closeout evidence in `2026-09-11-hamilton-dag-e2e-evidence.md`
+- `docs/plans/2026-09-12-remediation-followups-handoff.md` - **Closed 2026-09-12** — amenity catalog descriptions added, pip-audit verified clean; remaining items are standing decisions/notes (incl. 2026-09-12 published-output baseline + pip-audit recipe)
 
 ## Audit Reports
 
