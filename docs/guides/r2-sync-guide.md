@@ -58,6 +58,26 @@ machine:
 uv run python scripts/00_sync_data.py --only geocache
 ```
 
+Back up new entries after a pipeline run. Any ingestion that geocodes
+addresses not seen before — a new month of transactions, or a change to the
+geocode query itself — writes flat cache files that exist only on that machine
+until they are pushed. The upload compares sizes and skips matches, so it
+transfers only what is new:
+
+```bash
+uv run python scripts/00_sync_data.py --upload --only geocache
+```
+
+Check the backup state without transferring anything:
+
+```bash
+uv run python scripts/00_sync_data.py --verify
+```
+
+The steady state is a summary line of `N OK, 0 missing locally, 0 missing in
+R2, 0 size mismatches`; a non-zero "missing in R2" count is geocoding work
+that a cache wipe would have to redo.
+
 ## Bronze Seeding
 
 Static reference files the pipeline expects under `data/pipeline/01_bronze/external/`

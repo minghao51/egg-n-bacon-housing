@@ -61,6 +61,19 @@ Weekly refresh every Monday 07:00 local time:
 - Monthly full-window rebuild instead: replace `--stale-only` with nothing
   (refreshes both rolling sources unconditionally). Avoid scheduling `--all`.
 
+Back up the OneMap geocode cache after the refresh, so newly geocoded addresses
+are not stranded on one machine. Run it an hour later (or as a second line) —
+the upload is size-diff idempotent, so weeks that geocoded nothing new transfer
+nothing:
+
+```cron
+0 8 * * 1 cd /path/to/egg-n-bacon-housing && uv run python scripts/00_sync_data.py --upload --only geocache >> data/logs/r2-geocache.log 2>&1
+```
+
+This needs the `R2_*` credentials in `.env` (same file the refresh job loads).
+`uv run python scripts/00_sync_data.py --verify` reports the backup state
+without transferring; see [r2-sync-guide.md](r2-sync-guide.md).
+
 ## launchd recipe (macOS)
 
 Save as `~/Library/LaunchAgents/com.eggnbacon.housing-refresh.plist`, then run
