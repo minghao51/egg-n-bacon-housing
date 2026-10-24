@@ -24,6 +24,7 @@ from egg_n_bacon_housing.components.ingestion.ura_csv import (
     _normalize_ura_api_rows,
     raw_condo_transactions,
 )
+from egg_n_bacon_housing.utils.hdb_lookups import SQFT_PER_SQM
 
 pytestmark = pytest.mark.unit
 
@@ -326,11 +327,13 @@ class TestNormalizeUraApiRows:
             "transaction": [tx],
         }
 
-    def test_strata_area_maps_to_sqft(self):
+    def test_strata_area_is_sqm_converted_to_sqft(self):
         df = _normalize_ura_api_rows([self._entry()])
         row = df.iloc[0]
-        assert row["area_sqft"] == 100.0
-        assert row["area_sqm"] == pytest.approx(100 / 10.7639)
+        # URA API reports 'area' in sqm for BOTH Strata and Land entries;
+        # regressed once (Strata treated as sqft) which inflated psf 10.76x.
+        assert row["area_sqm"] == 100.0
+        assert row["area_sqft"] == pytest.approx(100 * 10.7639)
         assert row["price"] == 1_000_000.0
         # unit_price_psf/psm were pruned as dead columns (no consumers).
         assert "unit_price_psf" not in df.columns
@@ -419,14 +422,18 @@ class TestRawCondoTransactionsLiveMerge:
     def _write_csv(self, tmp_path, price="1,000,000", sale_date="Jan-25"):
         csv_path = tmp_path / "manual" / "csv" / "ura"
         csv_path.mkdir(parents=True, exist_ok=True)
+        # 93 sqm unit — same deal as the overlapping API row in _api_rows.
+        # area_sqft must be the exact float product the parser computes so
+        # the natural-key dedupe matches.
+        area_sqft = repr(93 * SQFT_PER_SQM)
         (csv_path / "ResidentialTransaction2025.csv").write_text(
             "Project Name,Transacted Price ($),Area (SQFT),Sale Date,Street Name,"
             "Type of Sale,Number of Units,Tenure,Postal District,Market Segment,"
             "Floor Level,Type of Area,Area (SQM),Unit Price ($ PSF),Unit Price ($ PSM),"
             "Nett Price($),Property Type\n"
-            f'OLD CONDO,"{price}",1000,{sale_date},OLD STREET,Resale,1,'
+            f'OLD CONDO,"{price}",{area_sqft},{sale_date},OLD STREET,Resale,1,'
             "99 yrs lease commencing from 2007,19,Outside Central Region,01 to 03,"
-            "Strata,92.9,1000,10764,-,Condominium\n"
+            "Strata,93,1000,10764,-,Condominium\n"
         )
 
     def _write_ec_csv(self, tmp_path):
@@ -447,7 +454,7 @@ class TestRawCondoTransactionsLiveMerge:
                 "marketSegment": "OCR",
                 "transaction": [
                     {
-                        "area": "1000",
+                        "area": "93",
                         "contractDate": "0125",
                         "price": "1000000",
                         "typeOfArea": "Strata",

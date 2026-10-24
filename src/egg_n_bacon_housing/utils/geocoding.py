@@ -10,6 +10,7 @@ and the onemap adapter.
 """
 
 import logging
+import re
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -22,6 +23,148 @@ from egg_n_bacon_housing.config import Settings
 from egg_n_bacon_housing.utils.cache import CacheManager
 
 logger = logging.getLogger(__name__)
+
+
+def normalize_name_tokens(value: str) -> list[str]:
+    """Lowercase a name and split it into alphanumeric tokens (punctuation dropped)."""
+    return re.sub(r"[^0-9a-z]+", " ", str(value).casefold()).split()
+
+
+# Filler words that never identify a project on their own. Tokens shorter
+# than 4 characters ("THE", "AT", ...) are already insignificant by length;
+# the longer entries are building-type and country filler that OneMap freely
+# appends to or drops from name variants ("PARC ROSEWOOD CONDOMINIUM",
+# "... SINGAPORE 088568"). "TOWER"/"TOWERS" is deliberately NOT filler:
+# sibling projects are distinguished by exactly such words ("THE TRELLIS" vs
+# "TRELLIS TOWERS"), so they stay significant and demand explanation.
+_GENERIC_NAME_TOKENS = frozenset(
+    {
+        "the",
+        "parc",
+        "residence",
+        "residences",
+        "condominium",
+        "condo",
+        "apartment",
+        "apartments",
+        "court",
+        "heights",
+        "villa",
+        "villas",
+        "singapore",
+    }
+)
+
+# Minimum length for a token to (a) be significant enough to identify a
+# project and (b) match another token as a prefix (so "18" never "18"~"180").
+_MIN_SIGNIFICANT_TOKEN_LEN = 4
+
+
+def _significant_tokens(tokens: list[str]) -> list[str]:
+    """Tokens that can identify a project: >= 4 chars, non-filler, non-numeric.
+
+    Purely numeric tokens (block numbers, postal codes — "18 ... SINGAPORE
+    088568") never reject a candidate, matching the filler semantics.
+    """
+    return [
+        token
+        for token in tokens
+        if len(token) >= _MIN_SIGNIFICANT_TOKEN_LEN
+        and token not in _GENERIC_NAME_TOKENS
+        and not token.isdigit()
+    ]
+
+
+def _variant_token_match(token: str, candidate_token: str) -> bool:
+    """Equal tokens, or one starts with the other and the shorter has >= 4 chars."""
+    if token == candidate_token:
+        return True
+    shorter, longer = sorted((token, candidate_token), key=len)
+    return len(shorter) >= _MIN_SIGNIFICANT_TOKEN_LEN and longer.startswith(shorter)
+
+
+def _is_variant_subsequence(needles: list[str], haystack: list[str]) -> bool:
+    """Whether every needle matches, in order, as a subsequence of ``haystack``."""
+    remaining = iter(haystack)
+    return all(
+        any(_variant_token_match(needle, token) for token in remaining) for needle in needles
+    )
+
+
+def plausible_project_match(
+    project_name: str,
+    matched_name: str | None,
+    matched_address: str | None = None,
+    street_name: str | None = None,
+) -> bool:
+    """Decide whether a geocode result plausibly belongs to ``project_name``.
+
+    Both sides are normalized (casefold + punctuation-to-space + whitespace
+    split). A token is *significant* when it has at least 4 characters and is
+    not in ``_GENERIC_NAME_TOKENS`` — filler such as "THE", "PARC",
+    "CONDOMINIUM" or "SINGAPORE" is what OneMap freely adds to or drops from
+    name variants (digits are likewise never significant). Token matching is
+    *variant-tolerant*: two tokens match when equal, or when one starts with
+    the other and the shorter side has >= 4 characters (TERRACE~TERRACES,
+    ROSE~ROSEWOOD), so legitimate OneMap name variants no longer force a
+    useless street-only fallback.
+
+    Acceptance requires ALL of:
+
+    1. **Name containment** — every significant project token matches, in
+       order, a (not necessarily contiguous) subsequence of the matched
+       name's OR matched address's tokens, e.g. "THE TERRACE" ⊂ "THE TERRACES
+       AT PUNGGOL".
+    2. **Street corroboration** (weak-name guard) — at least one
+       ``street_name`` token appears in the matched address. Required for
+       every acceptance: a lone significant token ("SPOTTISWOODE", or the
+       ROSE in "PARC ROSE") would otherwise match any similarly named
+       project anywhere. The pass-1 query embeds the street, so true matches
+       normally satisfy this.
+    3. **No unexplained significant tokens** (sibling guard) — every
+       significant token of the matched name/address must itself be
+       explained: variant-matched by a significant project token, contained
+       in ``street_name``, or filler/numeric. Sibling projects sharing all
+       project tokens and a street ("THE TRELLIS" vs "TRELLIS TOWERS")
+       therefore cannot both pass.
+
+    Projects with no significant token (all filler) cannot be verified at all
+    and are rejected, as are blank names, blank streets, and results without
+    a usable matched address. Blank project names are never plausible
+    (callers geocode those without a project query). Rejection is always
+    safe: callers fall back to street-only geocoding.
+    """
+    project_tokens = normalize_name_tokens(project_name)
+    if not project_tokens:
+        return False
+    significant = _significant_tokens(project_tokens)
+    if not significant:
+        return False
+    if street_name is None or pd.isna(street_name) or not str(street_name):
+        return False
+    street_tokens = normalize_name_tokens(street_name)
+
+    name_token_lists: list[list[str]] = []
+    address_tokens: list[str] = []
+    for candidate, is_address in ((matched_name, False), (matched_address, True)):
+        if candidate is None or pd.isna(candidate) or not str(candidate):
+            continue
+        tokens = normalize_name_tokens(candidate)
+        name_token_lists.append(tokens)
+        if is_address:
+            address_tokens = tokens
+    if not any(_is_variant_subsequence(significant, tokens) for tokens in name_token_lists):
+        return False
+    if not any(street_token in address_tokens for street_token in street_tokens):
+        return False
+    candidate_significant = [
+        token for tokens in name_token_lists for token in _significant_tokens(tokens)
+    ]
+    return all(
+        any(_variant_token_match(project_token, token) for project_token in significant)
+        or token in street_tokens
+        for token in candidate_significant
+    )
 
 
 class _RateLimiter:

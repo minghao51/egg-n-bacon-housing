@@ -16,7 +16,7 @@ from egg_n_bacon_housing.schemas.clean_models import (
     HCleanHDBTransaction,
 )
 from egg_n_bacon_housing.utils.contracts import require_columns
-from egg_n_bacon_housing.utils.geocoding import Geocoder
+from egg_n_bacon_housing.utils.geocoding import Geocoder, plausible_project_match
 from egg_n_bacon_housing.utils.hdb_lookups import SQFT_PER_SQM
 from egg_n_bacon_housing.utils.validation_gateway import (
     extracted_validation,
@@ -291,9 +291,27 @@ def geocoded_properties(
 ) -> pd.DataFrame:
     """Merge validated transactions and geocode addresses via OneMap.
 
-    Always geocodes the full unique-address set; the geocoder itself is
+    HDB rows geocode exactly as before: the persisted ``block + street``
+    address column is both the geocode query and the cache key, in a single
+    pass. Condo rows (no postal codes, street-only addresses) use a two-pass
+    strategy:
+
+    1. Pass 1 geocodes project-aware queries ``"{project_name} {address}
+       Singapore"`` and accepts only plausibility-checked results (variant-
+       tolerant project-token containment of the matched name/address plus
+       street-name corroboration of the matched address; see
+       ``plausible_project_match``) — road-name queries otherwise collapse
+       whole projects onto a point ON the road.
+    2. Pass 2 re-geocodes everything still missing (project misses,
+       implausible matches, rows without a project name) with the legacy
+       street-only address string and fills from that.
+
+    The project-aware string is a geocode QUERY only: the persisted
+    ``address`` column values are never modified (schema stability).
+
+    Always geocodes the full unique-query set; the geocoder itself is
     cache-first (OneMap address cache, ``utils/geocoding.py``), so repeat
-    runs only hit the API for addresses not seen before. This node returns
+    runs only hit the API for queries not seen before. This node returns
     an in-memory frame only; persistence happens once, in
     ``materialize_geocoded_validated``.
 
@@ -337,14 +355,24 @@ def geocoded_properties(
         logger.warning("No address column found — skipping geocoding")
         return combined
 
-    unique_addresses = combined[address_col].dropna().astype(str).unique().tolist()
-    logger.info("Geocoding %s unique addresses...", len(unique_addresses))
+    combined["lat"] = float("nan")
+    combined["lon"] = float("nan")
 
-    lookup = geocoder.geocode(pd.Series(unique_addresses, name=address_col))
+    is_hdb = combined["property_type"].eq("hdb")
+    hdb_rows = combined.index[is_hdb]
+    if len(hdb_rows):
+        unique_addresses = (
+            combined.loc[hdb_rows, address_col].dropna().astype(str).unique().tolist()
+        )
+        logger.info("Geocoding %s unique HDB addresses...", len(unique_addresses))
+        lookup = geocoder.geocode(pd.Series(unique_addresses, name=address_col))
+        coord_map = lookup.set_index("input")[["lat", "lon"]]
+        combined.loc[hdb_rows, "lat"] = combined.loc[hdb_rows, address_col].map(coord_map["lat"])
+        combined.loc[hdb_rows, "lon"] = combined.loc[hdb_rows, address_col].map(coord_map["lon"])
 
-    coord_map = lookup.set_index("input")[["lat", "lon"]]
-    combined["lat"] = combined[address_col].map(coord_map["lat"])
-    combined["lon"] = combined[address_col].map(coord_map["lon"])
+    condo_rows = combined.index[combined["property_type"].eq("condo")]
+    if len(condo_rows):
+        _geocode_condo_two_pass(combined, condo_rows, address_col, geocoder)
 
     coverage = combined[["lat", "lon"]].notna().all(axis=1).mean()
     logger.info("Geocoding coverage: %.1f%%", coverage * 100)
@@ -378,6 +406,98 @@ def geocoded_properties(
             )
 
     return combined
+
+
+def _accept_plausible_project_coords(
+    lookup: pd.DataFrame, query_project: dict[str, tuple[str, str]]
+) -> dict[str, tuple[float, float]]:
+    """Keep pass-1 condo project-query results that plausibly match the project.
+
+    OneMap's first hit for a bare road-name query is a point ON the road, so a
+    project query answered with e.g. "BUKIT TIMAH ROAD" must not be trusted. A
+    result is accepted only when its ``matched_name`` or ``address`` contains
+    the queried project's name tokens variant-tolerantly AND its address
+    corroborates the transaction's street name (see
+    ``plausible_project_match``); null-coordinate and implausible results are
+    treated as misses for pass 2.
+    """
+    coord_map = lookup.set_index("input")
+    accepted: dict[str, tuple[float, float]] = {}
+    for query, (project, street) in query_project.items():
+        if query not in coord_map.index:
+            continue
+        row = coord_map.loc[query]
+        if pd.isna(row.get("lat")) or pd.isna(row.get("lon")):
+            continue
+        if plausible_project_match(
+            project, row.get("matched_name"), row.get("address"), street_name=street
+        ):
+            accepted[query] = (float(row["lat"]), float(row["lon"]))
+    return accepted
+
+
+def _geocode_condo_two_pass(
+    combined: pd.DataFrame,
+    condo_rows: pd.Index,
+    address_col: str,
+    geocoder: Geocoder,
+) -> None:
+    """Fill lat/lon for condo rows in place via a two-pass strategy.
+
+    Condo transactions have no postal codes, so the persisted ``address`` is
+    street-only and OneMap's first hit for a street-only query is a point on
+    the road. Pass 1 therefore geocodes a project-aware query,
+    ``"{project_name} {address} Singapore"``, and keeps only plausibility-
+    checked results (``_accept_plausible_project_coords``). Pass 2 re-geocodes
+    everything still missing — project misses, implausible matches, and rows
+    without a project name — with the legacy street-only string and fills
+    from that.
+
+    The project-aware string is a geocode QUERY only: the persisted
+    ``address`` column keeps its schema-stable street-only value.
+    """
+    condo = combined.loc[condo_rows]
+    street = condo[address_col].fillna("").astype(str)
+    projects = (
+        condo["project_name"].fillna("").astype(str)
+        if "project_name" in condo.columns
+        else pd.Series("", index=condo.index)
+    )
+    has_project = projects.str.strip().ne("")
+
+    if has_project.any():
+        query_rows = condo.index[has_project]
+        project_query = (projects + " " + street + " Singapore").str.strip()
+        query_project: dict[str, tuple[str, str]] = {}
+        for label in query_rows:
+            query_project.setdefault(
+                project_query.at[label], (projects.at[label], street.at[label])
+            )
+        logger.info("Geocoding %s unique condo project queries...", len(query_project))
+        lookup = geocoder.geocode(pd.Series(list(query_project), name="project_query"))
+        accepted = _accept_plausible_project_coords(lookup, query_project)
+        lat_map = {query: coords[0] for query, coords in accepted.items()}
+        lon_map = {query: coords[1] for query, coords in accepted.items()}
+        combined.loc[query_rows, "lat"] = project_query.loc[query_rows].map(lat_map)
+        combined.loc[query_rows, "lon"] = project_query.loc[query_rows].map(lon_map)
+
+    still_missing = combined.loc[condo_rows, "lat"].isna()
+    missing_rows = still_missing.index[still_missing]
+    if len(missing_rows):
+        unique_fallback = (
+            combined.loc[missing_rows, address_col].dropna().astype(str).unique().tolist()
+        )
+        logger.info("Geocoding %s unique condo street fallbacks...", len(unique_fallback))
+        lookup = geocoder.geocode(pd.Series(unique_fallback, name=address_col))
+        # to_numeric coerces geocoder None misses to NaN so the assignments
+        # below never write None into the float coordinate columns.
+        coord_map = lookup.set_index("input")[["lat", "lon"]].apply(pd.to_numeric, errors="coerce")
+        combined.loc[missing_rows, "lat"] = combined.loc[missing_rows, address_col].map(
+            coord_map["lat"]
+        )
+        combined.loc[missing_rows, "lon"] = combined.loc[missing_rows, address_col].map(
+            coord_map["lon"]
+        )
 
 
 @extract_fields({"geocoded_validated": pd.DataFrame, "geocoded_quarantine": pd.DataFrame})

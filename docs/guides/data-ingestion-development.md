@@ -101,7 +101,7 @@ layer) to switch sources.
 | Identity   | URA Data Service API, `https://eservice.ura.gov.sg/uraDataService` — `insertNewToken/v1` + `invokeUraDS/v1?service=PMI_Resi_Transaction&batch=1..4`, via `adapters.ura`                                                                                                                                                                                                                                                                                                                                                  |
 | Operations | Rolling 5-year window, refreshed every pipeline run (data through the current month); grain = one transaction row                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Access     | `URA_API_ACCESS_KEY` (free registration at eservice.ura.gov.sg/maps/api/reg.html). Layer7 bot wall: browser-like `User-Agent`/`Accept`/`Referer` on a `requests.Session` required, else an HTML challenge is served. Token: daily validity, cached 8h under a per-access-key cache id (`ura_api_token:<key-hash>`); one refresh-retry on auth failure per fetch, and the force-refreshed token is written back to the token cache so the next run within the TTL reuses it instead of repeating the reject+refresh cycle |
-| Contract   | Nested per-property rows (`project`/`street`/`marketSegment` + `transaction[]` list) are exploded; `contractDate` MMYY → `transaction_date`; `area` unit follows `typeOfArea` (Strata=sqft, Land=sqm); `typeOfSale` 1/2/3 → New/Sub Sale/Resale; `marketSegment` CCR/RCR/OCR → full region names; `property_type="condo"` is the normalized asset class while URA's actual `propertyType` is preserved as `property_subtype`                                                                                             |
+| Contract   | Nested per-property rows (`project`/`street`/`marketSegment` + `transaction[]` list) are exploded; `contractDate` MMYY → `transaction_date`; `area` is always square metres in the API (both Strata and Land; verified transaction-level against the manual CSVs) and is converted to `area_sqft` via `SQFT_PER_SQM`; `typeOfSale` 1/2/3 → New/Sub Sale/Resale; `marketSegment` CCR/RCR/OCR → full region names; `property_type="condo"` is the normalized asset class while URA's actual `propertyType` is preserved as `property_subtype`                                                                                             |
 | Storage    | Node `raw_condo_transactions` → bronze `raw_condo_transactions.parquet`; API rows merged with the manual R2 CSV history (pre-window years), deduped on the natural key (project, street, month, price, area, sale type, floor, units) — CSV rows win in the overlap. Fetches are recorded in `01_bronze/bronze_manifest.json` (source + timestamp + row count); rolling-window bronze caches (`raw_condo_transactions`, `raw_hdb_resale`) emit a stale warning past `STALE_WARN_DAYS` (see `utils/bronze.py`)            |
 | Failure    | Optional — API failure (auth, rate limit, malformed) warns and falls back to CSVs-only; no CSVs and no usable API raises `RuntimeError` (core dataset); empty/partial API responses never replace a valid cache                                                                                                                                                                                                                                                                                                          |
 | Lineage    | `cleaned_condo_transactions` → `condo_validated` → `geocoded_validated` → `transactions_enriched` → analytics                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -117,6 +117,39 @@ analytical `property_segment` (`condominium`, `apartment`, `ec`, landed-house
 segments, or an explicit other/unspecified value) and `is_ec`. The original
 `property_subtype` remains unchanged for source fidelity; pricing and market
 analysis should use `property_segment` rather than the broad `property_type`.
+
+Condo geocoding in `geocoded_properties` is project-aware (two passes):
+
+1. **Pass 1 — project query.** Condo rows with a plausible `project_name`
+   are geocoded with `"{project_name} {address} Singapore"`. A pass-1 result
+   is accepted only when `utils/geocoding.plausible_project_match` passes:
+   case-insensitive, punctuation-stripped tokens; a project token matches a
+   candidate token when equal or prefix-related (shorter side >= 4 chars, so
+   TERRACE~TERRACES); all significant project tokens must appear as a
+   subsequence of the matched name/address tokens; single/weak-token
+   projects additionally require a street-name token in the matched address
+   (street corroboration); and symmetrically every significant token of the
+   matched name/address must itself be explained — variant-matched by a
+   project token, contained in the street name, or belonging to the filler
+   set (`the`, `parc`, `residence(s)`, `condo(niminum)`, `apartment(s)`,
+   `court`, `heights`, `villa(s)`, `singapore`; digits are never
+   significant) — so sibling projects sharing all project tokens and a
+   street ("THE TRELLIS" vs "TRELLIS TOWERS") reject to pass 2 instead of
+   hijacking the coordinates. This rejects road-only hijacks (e.g. a "BUKIT
+   TIMAH ROAD" point answering a project query), unrelated same-token
+   projects, and sibling-named ones. Null-coordinate or implausible results
+   are treated as misses.
+2. **Pass 2 — legacy street-only fallback.** Everything still missing
+   (project misses, implausible matches, rows without a project name) is
+   re-geocoded with the street-only `address` string and filled from that.
+
+The project-aware string is a geocode query only: the persisted `address`
+column keeps its street-only value (schema stability). The HDB path is a
+single pass over the persisted `block + street` address, unchanged. Because
+the geocoder caches per query string, project queries are new cache keys —
+the first rerun after this change makes roughly one new API call per unique
+condo project+street combination (~3.9k for the current corpus); existing
+street-only and block+street cache entries remain valid.
 
 ### OneMap geocoding (auth/retry hardening)
 

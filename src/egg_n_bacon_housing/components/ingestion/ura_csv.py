@@ -70,12 +70,13 @@ def _normalize_ura_api_rows(rows: list[dict]) -> pd.DataFrame:
                 price = None
 
             area_sqft = area_sqm = None
-            # URA API 'area' unit follows typeOfArea: Strata=sqft, Land=sqm.
+            # URA API 'area' is ALWAYS square metres, regardless of
+            # typeOfArea (Strata/Land). Verified transaction-level against
+            # the manual CSVs (same projects: API 91 vs CSV 980 sqft ≈
+            # SQFT_PER_SQM ratio). The historical Strata=sqft assumption
+            # inflated psf ~10.76x for all API-sourced rows.
             if area is not None and area > 0:
-                if type_of_area.lower() == "land":
-                    area_sqm, area_sqft = area, area * SQFT_PER_SQM
-                else:
-                    area_sqft, area_sqm = area, area / SQFT_PER_SQM
+                area_sqm, area_sqft = area, area * SQFT_PER_SQM
 
             floor_range = str(tx.get("floorRange") or "").strip()
             if "-" in floor_range and floor_range != "-":
