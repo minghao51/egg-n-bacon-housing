@@ -15,6 +15,7 @@ import {
 import ClientChart from "@/components/charts/ClientChart";
 import PriceTrendsChart from "./PriceTrendsChart";
 import TransactionVolumeChart from "./TransactionVolumeChart";
+import DeltaBadge from "./DeltaBadge";
 
 interface TrendRecord {
   date: string;
@@ -27,7 +28,17 @@ interface OverviewHighlights {
     previous: number;
     change: number;
   } | null;
+  recentPriceDeltaYoY?: {
+    current: number;
+    previous: number;
+    change: number;
+  } | null;
   recentVolumeDelta?: {
+    current: number;
+    previous: number;
+    change: number;
+  } | null;
+  recentVolumeDeltaYoY?: {
     current: number;
     previous: number;
     change: number;
@@ -101,6 +112,25 @@ export default function MarketOverviewDashboard({
       : (`${temporalFilter}_${propertyTypeFilter}` as keyof typeof data.stats);
   const currentStats = data.stats[dataKey];
 
+  // Trailing-12-month price delta badge, only for recent-period filters
+  const showKpiDelta =
+    temporalFilter === "recent" || temporalFilter === "year_2025";
+  const priceSeriesKey =
+    propertyTypeFilter === "all"
+      ? "Overall Price"
+      : propertyTypeFilter === "hdb"
+        ? "HDB Price"
+        : propertyTypeFilter === "ec"
+          ? "EC Price"
+          : "Condominium Price";
+  const kpiDelta = showKpiDelta
+    ? computeRolling12mDelta(trendsData, priceSeriesKey)
+    : null;
+  const kpiDeltaBadge =
+    kpiDelta !== null ? (
+      <DeltaBadge value={kpiDelta} size="sm" label="vs prior 12m" />
+    ) : undefined;
+
   // Prepare chart data
   const propertyTypeData = Object.entries(data.distributions.property_type).map(
     ([name, value]) => ({ name, value }),
@@ -131,25 +161,47 @@ export default function MarketOverviewDashboard({
         <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <HighlightCard
             title="Median Price"
-            value={formatDelta(
-              overviewHighlights?.recentPriceDelta?.change,
-              "%",
-            )}
+            value={
+              <span className="flex flex-wrap items-center gap-2">
+                <DeltaBadge
+                  value={
+                    overviewHighlights?.recentPriceDeltaYoY?.change ?? null
+                  }
+                  label="YoY"
+                />
+                <DeltaBadge
+                  value={overviewHighlights?.recentPriceDelta?.change ?? null}
+                  label="MoM"
+                  size="sm"
+                />
+              </span>
+            }
             description={
-              overviewHighlights?.recentPriceDelta
-                ? `From $${overviewHighlights.recentPriceDelta.previous.toLocaleString()} to $${overviewHighlights.recentPriceDelta.current.toLocaleString()}`
+              overviewHighlights?.recentPriceDeltaYoY
+                ? `From $${overviewHighlights.recentPriceDeltaYoY.previous.toLocaleString()} to $${overviewHighlights.recentPriceDeltaYoY.current.toLocaleString()} — monthly averages, latest month vs a year ago`
                 : "Recent delta unavailable"
             }
           />
           <HighlightCard
             title="Transaction Volume"
-            value={formatDelta(
-              overviewHighlights?.recentVolumeDelta?.change,
-              "%",
-            )}
+            value={
+              <span className="flex flex-wrap items-center gap-2">
+                <DeltaBadge
+                  value={
+                    overviewHighlights?.recentVolumeDeltaYoY?.change ?? null
+                  }
+                  label="YoY"
+                />
+                <DeltaBadge
+                  value={overviewHighlights?.recentVolumeDelta?.change ?? null}
+                  label="MoM"
+                  size="sm"
+                />
+              </span>
+            }
             description={
-              overviewHighlights?.recentVolumeDelta
-                ? `From ${overviewHighlights.recentVolumeDelta.previous.toLocaleString()} to ${overviewHighlights.recentVolumeDelta.current.toLocaleString()} deals`
+              overviewHighlights?.recentVolumeDeltaYoY
+                ? `From ${overviewHighlights.recentVolumeDeltaYoY.previous.toLocaleString()} to ${overviewHighlights.recentVolumeDeltaYoY.current.toLocaleString()} deals — monthly totals, latest month vs a year ago`
                 : "Recent delta unavailable"
             }
           />
@@ -172,9 +224,24 @@ export default function MarketOverviewDashboard({
             }
             description={
               overviewHighlights?.strongestAreaTrend &&
-              overviewHighlights?.weakestAreaTrend
-                ? `${overviewHighlights.strongestAreaTrend[1].yoy_change_pct.toFixed(1)}% vs ${overviewHighlights.weakestAreaTrend[1].yoy_change_pct.toFixed(1)}% YoY`
-                : "Area momentum unavailable"
+              overviewHighlights?.weakestAreaTrend ? (
+                <span className="flex flex-wrap items-center gap-2">
+                  <DeltaBadge
+                    value={
+                      overviewHighlights.strongestAreaTrend[1].yoy_change_pct
+                    }
+                    label="YoY"
+                  />
+                  <DeltaBadge
+                    value={
+                      overviewHighlights.weakestAreaTrend[1].yoy_change_pct
+                    }
+                    label="YoY"
+                  />
+                </span>
+              ) : (
+                "Area momentum unavailable"
+              )
             }
           />
         </div>
@@ -253,11 +320,13 @@ export default function MarketOverviewDashboard({
           title="Median Price"
           value={`$${currentStats.median_price.toLocaleString()}`}
           subtext="SGD"
+          delta={kpiDeltaBadge}
         />
         <KpiCard
           title="Median PSF"
           value={`$${currentStats.median_psf.toLocaleString()}`}
           subtext="Per Sq Ft"
+          delta={kpiDeltaBadge}
         />
         <KpiCard
           title="Date Range"
@@ -395,13 +464,29 @@ export default function MarketOverviewDashboard({
   );
 }
 
-function formatDelta(value?: number | null, suffix: string = ""): string {
-  if (value === null || value === undefined || Number.isNaN(value)) {
-    return "N/A";
+function computeRolling12mDelta(
+  records: TrendRecord[] | undefined,
+  key: string,
+): number | null {
+  if (!records || records.length < 24) return null;
+
+  // Fail closed: every one of the last 24 monthly positions must hold a usable
+  // value, so the trailing-12m windows stay position-contiguous (gaps in the
+  // series yield no badge instead of a misleading delta).
+  const values: number[] = [];
+  for (let index = records.length - 24; index < records.length; index += 1) {
+    const value = records[index]?.[key];
+    if (typeof value !== "number" || Number.isNaN(value)) return null;
+    values.push(value);
   }
 
-  const prefix = value > 0 ? "+" : "";
-  return `${prefix}${value.toFixed(1)}${suffix}`;
+  const average = (slice: number[]) =>
+    slice.reduce((sum, entry) => sum + entry, 0) / slice.length;
+  const recent = average(values.slice(12));
+  const previous = average(values.slice(0, 12));
+  if (previous === 0) return null;
+
+  return ((recent - previous) / previous) * 100;
 }
 
 function HighlightCard({
@@ -410,8 +495,8 @@ function HighlightCard({
   description,
 }: {
   title: string;
-  value: string;
-  description: string;
+  value: React.ReactNode;
+  description: React.ReactNode;
 }) {
   return (
     <div className="rounded-2xl border border-border bg-background p-4">
@@ -448,18 +533,27 @@ function KpiCard({
   title,
   value,
   subtext,
+  delta,
 }: {
   title: string;
   value: string;
   subtext?: string;
+  delta?: React.ReactNode;
 }) {
   return (
-    <div className="bg-card p-6 rounded-lg border border-border shadow-sm">
+    <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
       <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">
         {title}
       </h3>
       <div className="text-3xl font-bold text-foreground mb-1">{value}</div>
-      {subtext && <p className="text-xs text-muted-foreground">{subtext}</p>}
+      {(delta || subtext) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {delta}
+          {subtext && (
+            <p className="text-xs text-muted-foreground">{subtext}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

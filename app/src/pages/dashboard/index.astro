@@ -74,18 +74,73 @@ function computeDelta(records, key) {
   return null;
 }
 
+function monthDistance(fromDate: string | undefined, toDate: string | undefined): number | null {
+  const from = fromDate ? /^(\d{4})-(\d{2})$/.exec(fromDate) : null;
+  const to = toDate ? /^(\d{4})-(\d{2})$/.exec(toDate) : null;
+  const fromMonth = from ? Number(from[2]) : 0;
+  const toMonth = to ? Number(to[2]) : 0;
+  if (!from || !to || fromMonth < 1 || fromMonth > 12 || toMonth < 1 || toMonth > 12) {
+    return null;
+  }
+  return (
+    Number(to[1]) * 12 + toMonth -
+    (Number(from[1]) * 12 + fromMonth)
+  );
+}
+
+function computeDeltaWithLag(
+  records: Record<string, unknown>[],
+  key: string,
+  lag: number,
+): { current: number; previous: number; change: number } | null {
+  const latest = findLastTrend(records, key);
+  if (!latest) return null;
+
+  const previousIndex = latest.index - lag;
+  // Fail closed: lag must be a true calendar distance in months, not just an
+  // array offset, so gap-compressed series never fake a YoY comparison.
+  const prevRecord = records[previousIndex];
+  const latestRecord = records[latest.index];
+  const calendarLag = monthDistance(
+    typeof prevRecord?.date === 'string' ? prevRecord.date : undefined,
+    typeof latestRecord?.date === 'string' ? latestRecord.date : undefined,
+  );
+  if (calendarLag !== lag) return null;
+
+  const previous = records[previousIndex]?.[key];
+  if (typeof previous === 'number' && previous !== 0) {
+    const change = ((latest.value - previous) / previous) * 100;
+    return { current: latest.value, previous, change };
+  }
+
+  return null;
+}
+
+function computeYoYDelta(
+  records: Record<string, unknown>[],
+  key: string,
+): { current: number; previous: number; change: number } | null {
+  return computeDeltaWithLag(records, key, 12);
+}
+
+function computeVolumeTotals(records: Record<string, unknown>[]): Record<string, unknown>[] {
+  return records.map((record) => ({
+    date: record.date,
+    TotalVolume:
+      (typeof record['HDB Volume'] === 'number' ? record['HDB Volume'] : 0) +
+      (typeof record['Condominium Volume'] === 'number'
+        ? record['Condominium Volume']
+        : 0) +
+      (typeof record['EC Volume'] === 'number' ? record['EC Volume'] : 0),
+  }));
+}
+
+const volumeTotals = trendsData ? computeVolumeTotals(trendsData) : null;
+
 const recentPriceDelta = trendsData ? computeDelta(trendsData, 'Overall Price') : null;
-const recentVolumeDelta = trendsData
-  ? (() => {
-      const totals = trendsData.map((record) => ({
-        TotalVolume:
-          (typeof record['HDB Volume'] === 'number' ? record['HDB Volume'] : 0) +
-          (typeof record['Condominium Volume'] === 'number' ? record['Condominium Volume'] : 0) +
-          (typeof record['EC Volume'] === 'number' ? record['EC Volume'] : 0),
-      }));
-      return computeDelta(totals, 'TotalVolume');
-    })()
-  : null;
+const recentPriceDeltaYoY = trendsData ? computeYoYDelta(trendsData, 'Overall Price') : null;
+const recentVolumeDelta = volumeTotals ? computeDelta(volumeTotals, 'TotalVolume') : null;
+const recentVolumeDeltaYoY = volumeTotals ? computeYoYDelta(volumeTotals, 'TotalVolume') : null;
 
 const strongestPropertyType =
   dashboardData?.distributions?.property_type &&
@@ -102,7 +157,9 @@ const strongestAreaTrend = recentAreaMoves?.[recentAreaMoves.length - 1] ?? null
 
 const overviewHighlights = {
   recentPriceDelta,
+  recentPriceDeltaYoY,
   recentVolumeDelta,
+  recentVolumeDeltaYoY,
   strongestPropertyType,
   strongestAreaTrend,
   weakestAreaTrend,
