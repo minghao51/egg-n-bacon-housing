@@ -116,13 +116,13 @@ scripts/00_sync_data.py [-h] [--upload] [--download] [--verify] [--dry-run]
                         [--only {manual,geocache}]
 ```
 
-| Flag        | Action                                                                                      |
-| ----------- | ------------------------------------------------------------------------------------------- |
-| _(none)_    | Download from R2 (default). Skips files that already exist locally with matching size.      |
-| `--upload`  | Upload local files to R2. Skips remote objects that already match by size.                  |
+| Flag        | Action                                                                                                    |
+| ----------- | --------------------------------------------------------------------------------------------------------- |
+| _(none)_    | Download from R2 (default). Skips files that already exist locally with matching size.                    |
+| `--upload`  | Upload local files to R2. Skips remote objects that already match by size.                                |
 | `--verify`  | Compare local vs R2 across both prefixes. Reports OK / missing locally / missing in R2 / size mismatches. |
-| `--only`    | Restrict the operation to one sync set (`manual` or `geocache`). Default: both.             |
-| `--dry-run` | Show what would happen without transferring files. Combine with `--upload` or `--download`. |
+| `--only`    | Restrict the operation to one sync set (`manual` or `geocache`). Default: both.                           |
+| `--dry-run` | Show what would happen without transferring files. Combine with `--upload` or `--download`.               |
 
 ## CI/CD
 
