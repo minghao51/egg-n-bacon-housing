@@ -21,6 +21,14 @@ first, and only once all seven exist and are non-empty are they swapped in via
 ``os.replace``. Atomicity is therefore per file — the window in which a reader
 could see a mixed generation is narrowed to the seven replaces, not eliminated.
 
+The same run also publishes ``dashboard-release.json``: a self-describing
+release manifest (schema version, content-derived generation id, observation
+range, period definitions, inclusion rules, input-parquet identities and a
+per-asset sha256/size/scope record). It is swapped in *after* the seven payload
+files, so a build step or client can detect a mixed release by verifying the
+recorded hashes. The manifest is additive: every existing file keeps its name
+and shape.
+
 Inputs (Hamilton platinum outputs, read-only):
 
     data/pipeline/04_platinum/unified_dataset.parquet
@@ -50,6 +58,7 @@ Exit codes: 0 success, 1 export/validation failure, 2 CLI usage error.
 
 import argparse
 import gzip
+import hashlib
 import json
 import math
 import os
@@ -116,6 +125,74 @@ NON_RESIDENTIAL_AREAS = frozenset(
 # noise — a 3-transaction area would outrank a 20,000-transaction town. Such
 # areas stay in the payload but sort after every qualified area.
 MIN_RANKING_VOLUME = 150
+
+# The seven dashboard assets this exporter owns (all gzipped JSON).
+DASHBOARD_FILES: tuple[str, ...] = (
+    "dashboard_overview.json.gz",
+    "dashboard_trends.json.gz",
+    "dashboard_segments.json.gz",
+    "dashboard_leaderboard.json.gz",
+    "map_metrics.json.gz",
+    "hotspots.json.gz",
+    "amenity_summary.json.gz",
+)
+
+# Publication compatibility metadata written alongside the seven payloads.
+RELEASE_MANIFEST_NAME = "dashboard-release.json"
+RELEASE_SCHEMA_VERSION = "1.0.0"
+
+# Approved metric scopes each asset carries (narrow, contract-level labels).
+ASSET_METRIC_SCOPES: dict[str, tuple[str, ...]] = {
+    "dashboard_overview.json.gz": (
+        "median_price",
+        "median_psf",
+        "volume",
+        "by_property_type",
+        "by_time_period",
+    ),
+    "dashboard_trends.json.gz": (
+        "median_price",
+        "volume",
+        "by_property_type",
+        "by_time_period",
+    ),
+    "dashboard_segments.json.gz": (
+        "median_psf",
+        "rental_yield",
+        "volume",
+        "by_property_type",
+        "by_time_period",
+    ),
+    "dashboard_leaderboard.json.gz": (
+        "median_price",
+        "median_psf",
+        "rental_yield",
+        "volume",
+        "by_property_type",
+        "by_time_period",
+        "spatial_hotspots",
+        "affordability",
+    ),
+    "map_metrics.json.gz": (
+        "median_price",
+        "median_psf",
+        "volume",
+        "rental_yield",
+        "affordability",
+        "by_property_type",
+        "by_time_period",
+    ),
+    "hotspots.json.gz": ("spatial_hotspots", "appreciation_growth"),
+    "amenity_summary.json.gz": ("amenity",),
+}
+
+# ERA_FILTERS rendered in literal words for the release manifest.
+PERIOD_LITERALS: dict[str, str] = {
+    "whole": "all history (no period filter)",
+    "pre_covid": "through 2021 (year <= 2021)",
+    "recent": "2022 onward (year >= 2022)",
+    "year_2025": "2025 complete year (year == 2025)",
+}
 
 # Old mortgage assumptions (scripts/core/metrics.py): 20% down, 3.5% interest,
 # 25-year loan — used for mortgage_to_income_pct only.
@@ -217,14 +294,294 @@ def stage_json_gzip(payload, filepath: Path) -> Path:
 
 
 # ---------------------------------------------------------------------------
+# Release manifest (publication compatibility metadata)
+# ---------------------------------------------------------------------------
+
+
+def sha256_bytes(payload: bytes) -> str:
+    """SHA-256 hex of an in-memory byte string."""
+    return hashlib.sha256(payload).hexdigest()
+
+
+def sha256_gzip_content(path: Path) -> str:
+    """SHA-256 of the *decompressed* JSON text, encoded as UTF-8.
+
+    HTTP clients cannot always see a ``.gz`` file's raw bytes: hosts such as
+    GitHub Pages send ``Content-Encoding: gzip`` for these assets, so the
+    browser receives the decompressed JSON. Recording the content hash lets a
+    browser verify what it actually downloaded, while ``sha256`` still pins the
+    published file byte-for-byte at build time.
+    """
+    with gzip.open(path, "rt", encoding="utf-8") as handle:
+        return sha256_bytes(handle.read().encode("utf-8"))
+
+
+def sha256_file(path: Path) -> str:
+    """Streamed SHA-256 hex digest of a file (never reads the whole file)."""
+    digest = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _repo_relative(path: Path) -> str:
+    """Repo-root-relative POSIX path when possible, absolute otherwise."""
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def input_source_paths() -> tuple[Path, Path]:
+    """The two platinum parquets the export reads (same paths as load_inputs)."""
+    return (
+        settings.platinum_dir / "unified_dataset.parquet",
+        settings.layer_dir("platinum_metrics") / "pa_monthly_metrics.parquet",
+    )
+
+
+def describe_source_identities(
+    unified: pd.DataFrame, pa_metrics: pd.DataFrame
+) -> list[dict[str, object]]:
+    """Source identity of the two input parquets: path, sha256, bytes, rows, columns.
+
+    Built from the frames ``load_inputs`` already returned so the loader's
+    return type and existing callers stay unchanged.
+    """
+    unified_path, pa_metrics_path = input_source_paths()
+    identities: list[dict[str, object]] = []
+    for name, frame, path in (
+        ("unified_dataset", unified, unified_path),
+        ("pa_monthly_metrics", pa_metrics, pa_metrics_path),
+    ):
+        identities.append(
+            {
+                "name": name,
+                "path": _repo_relative(path),
+                "sha256": sha256_file(path),
+                "bytes": int(path.stat().st_size),
+                "rows": int(len(frame)),
+                "columns": [str(column) for column in frame.columns],
+                # The pipeline does not record when the source published this
+                # data, so the field is explicit rather than inferred from
+                # file mtime or the export time.
+                "sourcePublishedAt": None,
+            }
+        )
+    return identities
+
+
+def count_excluded_transactions(df: pd.DataFrame) -> int:
+    """Rows the area-level surfaces drop via NON_RESIDENTIAL_AREAS."""
+    if "planning_area" not in df.columns:
+        return 0
+    return int(df["planning_area"].astype(str).str.upper().isin(NON_RESIDENTIAL_AREAS).sum())
+
+
+def _observation_range(payloads: dict[str, object]) -> dict[str, object]:
+    """Published month coverage, derived from the frames (never from today)."""
+    months: list[str] = []
+    trends = payloads.get("dashboard_trends.json.gz")
+    if isinstance(trends, list):
+        months = sorted(
+            {
+                row["date"]
+                for row in trends
+                if isinstance(row, dict)
+                and isinstance(row.get("date"), str)
+                and re.fullmatch(r"\d{4}-\d{2}", row["date"])
+            }
+        )
+    if not months:
+        overview = payloads.get("dashboard_overview.json.gz")
+        metadata = overview.get("metadata") if isinstance(overview, dict) else None
+        date_range = metadata.get("date_range") if isinstance(metadata, dict) else None
+        if isinstance(date_range, dict):
+            start, end = date_range.get("start"), date_range.get("end")
+            if isinstance(start, str) and isinstance(end, str):
+                months = sorted({start[:7], end[:7]})
+
+    months_per_year: dict[int, int] = {}
+    for month in months:
+        year = int(month[:4])
+        months_per_year[year] = months_per_year.get(year, 0) + 1
+    complete_years = [year for year, count in months_per_year.items() if count == 12]
+    return {
+        "startMonth": months[0] if months else None,
+        "endMonth": months[-1] if months else None,
+        "completeYear": max(complete_years) if complete_years else None,
+    }
+
+
+def _period_definitions() -> dict[str, dict[str, str]]:
+    """ERA_FILTERS in literal words, so clients can label a period honestly."""
+    return {
+        era: {"label": PERIOD_LITERALS.get(era, era), "filter": rule}
+        for era, rule in ERA_FILTERS.items()
+    }
+
+
+def release_generation(manifest: dict) -> str:
+    """Deterministic generation id over the manifest content.
+
+    ``generation`` itself and ``generatedAt`` are excluded so the id is a pure
+    function of the published contract (assets, provenance, rules) and never of
+    wall-clock time.
+    """
+    content = {
+        key: value for key, value in manifest.items() if key not in {"generation", "generatedAt"}
+    }
+    canonical = json.dumps(
+        sanitize_for_json(content),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def build_release_manifest(
+    payloads: dict[str, object],
+    asset_hashes: dict[str, dict[str, int | str]],
+    source_identities: list[dict[str, object]],
+    *,
+    generated_at: datetime,
+    excluded_transactions: int | None = None,
+) -> dict:
+    """Build the self-describing release manifest for the seven dashboard assets.
+
+    ``excluded_transactions`` is the row count the area surfaces drop; only the
+    prepared frame knows it, so the caller supplies it. Omitting it records
+    ``null`` rather than inventing a number.
+    """
+    generated_utc = (
+        generated_at if generated_at.tzinfo is not None else generated_at.replace(tzinfo=UTC)
+    )
+    assets = [
+        {
+            "path": filename,
+            "sha256": str(asset_hashes[filename]["sha256"]),
+            "contentSha256": str(asset_hashes[filename]["contentSha256"]),
+            "bytes": int(asset_hashes[filename]["bytes"]),
+            "shape": "array" if isinstance(payloads[filename], list) else "object",
+            "metricScopes": list(ASSET_METRIC_SCOPES[filename]),
+        }
+        for filename in DASHBOARD_FILES
+    ]
+    manifest: dict = {
+        "schemaVersion": RELEASE_SCHEMA_VERSION,
+        "generation": "",
+        "generatedAt": generated_utc.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "observationRange": _observation_range(payloads),
+        "periodDefinitions": _period_definitions(),
+        "inclusionRules": {
+            "globalAggregates": "keeps every transaction row, including non-residential areas",
+            "areaSurfaces": "drops transactions in NON_RESIDENTIAL_AREAS (no residential zoning)",
+            "areaSurfaceFiles": [
+                "dashboard_leaderboard.json.gz",
+                "dashboard_segments.json.gz",
+                "map_metrics.json.gz",
+                "hotspots.json.gz",
+                "amenity_summary.json.gz",
+            ],
+            "excludedAreas": sorted(NON_RESIDENTIAL_AREAS),
+            "excludedTransactions": None
+            if excluded_transactions is None
+            else int(excluded_transactions),
+        },
+        "provenance": {"sources": [dict(identity) for identity in source_identities]},
+        "assets": assets,
+    }
+    manifest["generation"] = release_generation(manifest)
+    return manifest
+
+
+def stage_release_manifest(manifest: dict, filepath: Path) -> Path:
+    """Serialize the release manifest to a ``.tmp`` sibling; target untouched."""
+    tmp_path = filepath.with_name(filepath.name + ".tmp")
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(sanitize_for_json(manifest), f, indent=2, sort_keys=True)
+    return tmp_path
+
+
+def verify_release_manifest(
+    manifest: dict,
+    root: Path,
+    *,
+    path_overrides: dict[str, Path] | None = None,
+) -> list[str]:
+    """Return mismatch descriptions between a release manifest and its files.
+
+    Pure reads: nothing is written or mutated. An empty list means the seven
+    assets on disk are exactly the ones the manifest records.
+
+    ``path_overrides`` maps an asset filename to the file that should be read
+    for it, so an export can verify the staged ``.tmp`` bytes before any
+    published file is replaced.
+    """
+    problems: list[str] = []
+    if not isinstance(manifest, dict):
+        return ["release manifest is not a JSON object"]
+    if manifest.get("schemaVersion") != RELEASE_SCHEMA_VERSION:
+        problems.append(
+            f"schemaVersion {manifest.get('schemaVersion')!r} != {RELEASE_SCHEMA_VERSION!r}"
+        )
+
+    entries = manifest.get("assets")
+    if not isinstance(entries, list):
+        return problems + ["release manifest has no assets array"]
+    if len(entries) != len(DASHBOARD_FILES):
+        problems.append(f"asset count {len(entries)} != expected {len(DASHBOARD_FILES)}")
+
+    recorded: dict[str, dict] = {}
+    for entry in entries:
+        if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
+            problems.append("asset entry without a path")
+            continue
+        recorded[entry["path"]] = entry
+
+    for filename in DASHBOARD_FILES:
+        entry = recorded.get(filename)
+        if entry is None:
+            problems.append(f"missing asset entry: {filename}")
+            continue
+        path = (path_overrides or {}).get(filename) or (root / filename)
+        if not path.exists():
+            problems.append(f"missing asset file: {filename}")
+            continue
+        actual_sha = sha256_file(path)
+        if entry.get("sha256") != actual_sha:
+            problems.append(f"hash mismatch: {filename}")
+        recorded_content = entry.get("contentSha256")
+        if recorded_content is not None:
+            try:
+                actual_content = sha256_gzip_content(path)
+            except (OSError, gzip.BadGzipFile):
+                problems.append(f"content hash unreadable: {filename}")
+            else:
+                if recorded_content != actual_content:
+                    problems.append(f"content hash mismatch: {filename}")
+        actual_bytes = path.stat().st_size
+        if entry.get("bytes") != actual_bytes:
+            problems.append(
+                f"size mismatch: {filename} (recorded {entry.get('bytes')}, actual {actual_bytes})"
+            )
+
+    for filename in recorded:
+        if filename not in DASHBOARD_FILES:
+            problems.append(f"unexpected asset: {filename}")
+    return problems
+
+
+# ---------------------------------------------------------------------------
 # Data loading and derived columns
 # ---------------------------------------------------------------------------
 
 
 def load_inputs() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load the platinum parquets the export depends on; exit 1 if unusable."""
-    unified_path = settings.platinum_dir / "unified_dataset.parquet"
-    pa_metrics_path = settings.layer_dir("platinum_metrics") / "pa_monthly_metrics.parquet"
+    unified_path, pa_metrics_path = input_source_paths()
 
     missing = [str(p) for p in (unified_path, pa_metrics_path) if not p.exists()]
     if missing:
@@ -1164,6 +1521,8 @@ def validate_payloads(payloads: dict[str, object]) -> None:
 def export_app_data(output_dir: Path) -> None:
     """Generate, validate, then atomically write all seven dashboard files."""
     unified, pa_metrics = load_inputs()
+    # Identity of the exact parquet bytes this release was derived from.
+    source_identities = describe_source_identities(unified, pa_metrics)
     df = prepare_unified(unified)
 
     # Area-level surfaces exclude non-residential planning areas (nature
@@ -1200,6 +1559,10 @@ def export_app_data(output_dir: Path) -> None:
         raise SystemExit(1) from exc
 
     output_dir.mkdir(parents=True, exist_ok=True)
+    manifest_path = output_dir / RELEASE_MANIFEST_NAME
+    # Pre-computed so a failure while staging the manifest cannot leave its
+    # ``.tmp`` sibling behind (the finally block always removes it).
+    release_tmp = manifest_path.with_name(manifest_path.name + ".tmp")
     staged: list[tuple[Path, Path]] = []
     try:
         # Stage all seven payloads first so a serialization failure cannot leave
@@ -1210,13 +1573,53 @@ def export_app_data(output_dir: Path) -> None:
         empty = [str(tmp_path) for tmp_path, _ in staged if tmp_path.stat().st_size == 0]
         if empty:
             raise ValueError(f"staged payload(s) empty: {', '.join(empty)}")
+
+        # Manifest over the staged bytes, so it records exactly what is published.
+        asset_hashes: dict[str, dict[str, int | str]] = {
+            final_path.name: {
+                "sha256": sha256_file(tmp_path),
+                "contentSha256": sha256_gzip_content(tmp_path),
+                "bytes": int(tmp_path.stat().st_size),
+            }
+            for tmp_path, final_path in staged
+        }
+        manifest = build_release_manifest(
+            payloads,
+            asset_hashes,
+            source_identities,
+            generated_at=datetime.now(UTC),
+            excluded_transactions=count_excluded_transactions(df),
+        )
+        stage_release_manifest(manifest, manifest_path)
+
+        # Prove the manifest describes exactly what is staged before swapping
+        # anything: the hashes are taken from the same bytes that will be
+        # published, so a mismatch here means the export itself is wrong.
+        # This narrows (but cannot eliminate) the mixed window: the seven
+        # payload replaces below are individually atomic, still not a single
+        # transaction, so the published hashes remain the mixed-release detector.
+        problems = verify_release_manifest(
+            manifest,
+            output_dir,
+            path_overrides={final_path.name: tmp_path for tmp_path, final_path in staged},
+        )
+        if problems:
+            raise ValueError(
+                "release manifest does not match staged assets: " + "; ".join(problems)
+            )
+
+        # Swap the seven payloads, then the release manifest LAST: any failure
+        # before the first replace leaves the previous release untouched.
         for tmp_path, final_path in staged:
             os.replace(tmp_path, final_path)
             logger.info("Saved: %s", final_path)
+        os.replace(release_tmp, manifest_path)
+        logger.info("Saved: %s", manifest_path)
     finally:
         for tmp_path, _ in staged:
             tmp_path.unlink(missing_ok=True)
-    logger.info("Export complete: %d files written to %s", len(payloads), output_dir)
+        release_tmp.unlink(missing_ok=True)
+    logger.info("Export complete: %d files written to %s", len(payloads) + 1, output_dir)
 
 
 def main() -> None:

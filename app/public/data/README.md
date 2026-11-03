@@ -17,6 +17,27 @@ uv run python scripts/export_app_data.py   # export dashboard JSON assets
 cd app && bun run validate-data            # enforce the manifest contract
 ```
 
+Alongside the seven payloads the exporter writes `dashboard-release.json`, a
+publication-compatibility manifest: schema version, content-derived
+generation id, UTC export time, observation range, literal period definitions,
+national-vs-area inclusion rules, both input-parquet identities (repo-relative
+path, SHA-256, bytes, rows, columns) and per-asset SHA-256/bytes/shape/metric
+scopes. Each entry records both `sha256` (the published `.gz` file bytes, used
+at build time) and `contentSha256` (the decompressed JSON text). Hosts that send
+`Content-Encoding: gzip` for `.gz` assets hand the browser the decoded body, so
+a browser verifies `contentSha256`; `validate-data` and the exporter verify both.
+It is staged after the payloads and swapped in **last**, so a failure before
+the first swap leaves the previous release intact. The seven payload swaps are
+individually atomic but not one transaction, so an interruption inside that
+short window can still publish new payloads beside an older manifest;
+`validate-data` recomputes the hashes and the generation id, and reports that
+mixed state instead of trusting the files. `validate-data` also rejects a
+missing, extra, resized or re-hashed asset, a wrong schema version, and a
+malformed manifest. The manifest describes one exporter generation
+only: research (`segments_enhanced`, `interactive_tools/*`, `analytics/*`),
+`planning_areas*` and `catalog.jsonl.gz` are not covered and keep their own
+vintages. `generatedAt` is the export time, never source freshness.
+
 `scripts/export_app_data.py` reads `data/pipeline/04_platinum/unified_dataset.parquet`
 and `data/pipeline/04_platinum/metrics/pa_monthly_metrics.parquet` (plus the
 planning-area GeoJSON under `data/manual/geojsons/` for leaderboard
