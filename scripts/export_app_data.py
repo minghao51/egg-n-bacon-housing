@@ -41,16 +41,27 @@ mortgage-based ``mortgage_to_income_pct`` are derived here with the same
 formulas the retired web exporter used, so the frontend semantics are
 unchanged. The monthly growth series is built from ``pa_monthly_metrics``
 (the pipeline's own planning-area x month median-price table) instead of
-re-aggregating raw transactions. The current calendar month is treated as
-partial and dropped before any growth/trends math, so published growth and
-the trends series end at the last completed month; year-bucketed leaderboard
-growth pairs completed years only. Affordability ratio/class use the
+re-aggregating raw transactions. Months after the last *complete* month are
+dropped before any growth/trends math, so published growth and the trends
+series end at the last completed month; year-bucketed leaderboard growth
+pairs completed years only. Affordability ratio/class use the
 pipeline-configured income and thresholds instead of the retired exporter's
 hardcoded values — see "Affordability semantics" in app/public/data/README.md.
 
+The published-month boundary is the one input the parquets cannot answer:
+transaction dates are month-truncated, so a partial trailing month is
+indistinguishable from a quiet one, and month volume varies too much (0.56x to
+1.66x of the trailing median in 2025) for a coverage heuristic to be safe.
+Pass it explicitly — ``--last-complete-month YYYY-MM`` — and the run is
+reproducible; omit it and the boundary falls back to the UTC clock, which is
+recorded in the manifest as ``trailingMonth.resolvedFrom: "utc-clock"``. The
+same parquet exported before and after a month rollover therefore publishes a
+different trailing month, which is exactly the mixed-generation risk the
+manifest exists to catch.
+
 Refresh flow: run after ``main.py --stage all``, then validate:
 
-    uv run python scripts/export_app_data.py
+    uv run python scripts/export_app_data.py --last-complete-month 2026-09
     cd app && bun scripts/validate-data.mjs
 
 Exit codes: 0 success, 1 export/validation failure, 2 CLI usage error.
@@ -64,6 +75,7 @@ import math
 import os
 import re
 import sys
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
 
@@ -286,11 +298,92 @@ def sanitize_for_json(obj):
 
 
 def stage_json_gzip(payload, filepath: Path) -> Path:
-    """Serialize gzipped JSON to a ``.tmp`` sibling; target is untouched."""
+    """Serialize gzipped JSON to a ``.tmp`` sibling; target is untouched.
+
+    The gzip header is written with ``mtime=0`` so identical payloads produce
+    identical bytes: a re-export of unchanged data must not dirty the published
+    asset just because the header stamped a new timestamp. The one payload that
+    legitimately changes between runs is ``dashboard_overview.json.gz``, whose
+    own ``metadata.generated_at`` records the export time.
+    """
     tmp_path = filepath.with_name(filepath.name + ".tmp")
-    with gzip.open(tmp_path, "wt", encoding="utf-8") as f:
-        json.dump(sanitize_for_json(payload), f, indent=2)
+    text = json.dumps(sanitize_for_json(payload), indent=2)
+    tmp_path.write_bytes(gzip.compress(text.encode("utf-8"), mtime=0))
     return tmp_path
+
+
+# ---------------------------------------------------------------------------
+# Published-month boundary (declared, never inferred from the wall clock)
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class MonthPolicy:
+    """Which month a release publishes through, and where that came from.
+
+    ``as_of`` is the date the completed-bucket rules are evaluated at: the day
+    after ``last_complete_month`` for a declared boundary, the wall clock
+    otherwise. Deriving one date keeps every existing ``today``-accepting
+    helper (trailing-month drop, completed-year pairing, rolling volume
+    window) consistent with the declared boundary.
+    """
+
+    last_complete_month: pd.Period
+    as_of: date
+    resolved_from: str
+
+    def manifest_block(self) -> dict:
+        return {
+            "lastCompleteMonth": str(self.last_complete_month),
+            "resolvedFrom": self.resolved_from,
+        }
+
+
+def parse_last_complete_month(raw: str) -> pd.Period:
+    """Parse a declared ``YYYY-MM`` boundary (argparse type)."""
+    text = raw.strip()
+    if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", text):
+        raise ValueError(f"expected YYYY-MM, got {raw!r}")
+    return pd.Period(text, freq="M")
+
+
+def resolve_month_policy(
+    latest_source_month: pd.Period,
+    last_complete_month: pd.Period | str | None = None,
+    *,
+    today: date | None = None,
+) -> MonthPolicy:
+    """Resolve the published-month boundary, preferring an explicit declaration.
+
+    A declared month must exist in the source: claiming a month the parquet does
+    not contain would publish nothing for it while asserting completeness. The
+    UTC-clock fallback is kept for one-off local runs and is flagged by the
+    caller, because it makes the same inputs publish different months on
+    different days.
+    """
+    if last_complete_month is not None:
+        month = (
+            last_complete_month
+            if isinstance(last_complete_month, pd.Period)
+            else parse_last_complete_month(str(last_complete_month))
+        )
+        month = pd.Period(month, freq="M")
+        if month > latest_source_month:
+            raise ValueError(
+                f"declared last complete month {month} is after the latest source month "
+                f"{latest_source_month}"
+            )
+        return MonthPolicy(
+            last_complete_month=month,
+            as_of=(month + 1).to_timestamp().date(),
+            resolved_from="declared",
+        )
+    as_of = today if today is not None else datetime.now(UTC).date()
+    return MonthPolicy(
+        last_complete_month=pd.Period(as_of, freq="M") - 1,
+        as_of=as_of,
+        resolved_from="utc-clock",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -448,12 +541,16 @@ def build_release_manifest(
     *,
     generated_at: datetime,
     excluded_transactions: int | None = None,
+    month_policy: MonthPolicy | None = None,
 ) -> dict:
     """Build the self-describing release manifest for the seven dashboard assets.
 
     ``excluded_transactions`` is the row count the area surfaces drop; only the
     prepared frame knows it, so the caller supplies it. Omitting it records
-    ``null`` rather than inventing a number.
+    ``null`` rather than inventing a number. ``month_policy`` records which
+    month the release publishes through and whether that boundary was declared
+    or read off the wall clock, so a consumer can tell a reproducible release
+    from a clock-dependent one.
     """
     generated_utc = (
         generated_at if generated_at.tzinfo is not None else generated_at.replace(tzinfo=UTC)
@@ -493,6 +590,8 @@ def build_release_manifest(
         "provenance": {"sources": [dict(identity) for identity in source_identities]},
         "assets": assets,
     }
+    if month_policy is not None:
+        manifest["trailingMonth"] = month_policy.manifest_block()
     manifest["generation"] = release_generation(manifest)
     return manifest
 
@@ -654,14 +753,18 @@ def type_subset(df: pd.DataFrame, prop: str | None) -> pd.DataFrame:
 def drop_incomplete_trailing_month(
     df: pd.DataFrame, month_col: str, today: date | None = None
 ) -> pd.DataFrame:
-    """Drop monthly buckets in the current calendar month (UTC) or later.
+    """Drop monthly buckets in ``today``'s calendar month or later.
 
     The latest source month is typically partial (publishers release it
     progressively), so a trailing partial bucket would pollute every trailing
     snapshot: MoM/YoY/momentum math, hotspot YoY means, and the trends series
     all key off the last bucket. A bucket is kept only when its month is
-    strictly before ``today``'s calendar month; ``today`` is injectable for
-    tests.
+    strictly before ``today``'s calendar month.
+
+    ``today`` is what carries the published-month decision, so callers pass
+    ``MonthPolicy.as_of`` (the day after a declared ``--last-complete-month``)
+    rather than letting the wall clock decide; the default exists only for
+    standalone use. See ``resolve_month_policy``.
     """
     if today is None:
         today = datetime.now(UTC).date()
@@ -1518,19 +1621,46 @@ def validate_payloads(payloads: dict[str, object]) -> None:
 # ---------------------------------------------------------------------------
 
 
-def export_app_data(output_dir: Path) -> None:
-    """Generate, validate, then atomically write all seven dashboard files."""
+def export_app_data(
+    output_dir: Path, *, last_complete_month: pd.Period | str | None = None
+) -> None:
+    """Generate, validate, then atomically write all seven dashboard files.
+
+    ``last_complete_month`` pins the published-month boundary so a re-export of
+    the same parquet reproduces the same assets. When it is omitted the
+    boundary comes from the UTC clock and the manifest says so.
+    """
     unified, pa_metrics = load_inputs()
     # Identity of the exact parquet bytes this release was derived from.
     source_identities = describe_source_identities(unified, pa_metrics)
     df = prepare_unified(unified)
+
+    latest_source_month = pd.PeriodIndex(pd.to_datetime(df["month"]), freq="M").max()
+    try:
+        month_policy = resolve_month_policy(latest_source_month, last_complete_month)
+    except ValueError as exc:
+        logger.error("%s", exc)
+        raise SystemExit(1) from exc
+    if month_policy.resolved_from == "utc-clock":
+        logger.warning(
+            "No --last-complete-month given: publishing through %s from the UTC clock. "
+            "The same inputs publish a different month after a rollover; pass the month "
+            "explicitly for a reproducible release.",
+            month_policy.last_complete_month,
+        )
+    else:
+        logger.info(
+            "Publishing through declared last complete month %s",
+            month_policy.last_complete_month,
+        )
+    today = month_policy.as_of
 
     # Area-level surfaces exclude non-residential planning areas (nature
     # reserves / industrial land); global aggregates keep the full frame.
     area_df = drop_non_residential(df)
 
     # Shared derived tables.
-    growth = build_growth_table(pa_metrics)
+    growth = build_growth_table(pa_metrics, today=today)
     latest_growth = latest_growth_by_area(growth)
     whole_yield = yield_lookup(df, ["mean", "median", "std"])
     recent_yield = yield_lookup(df[df["year"] >= 2022], ["mean", "median", "std"])
@@ -1540,10 +1670,16 @@ def export_app_data(output_dir: Path) -> None:
 
     payloads: dict[str, object] = {
         "dashboard_overview.json.gz": generate_overview_data(df),
-        "dashboard_trends.json.gz": generate_trends_data(df),
+        "dashboard_trends.json.gz": generate_trends_data(df, today=today),
         "dashboard_segments.json.gz": generate_filtered_segments_data(area_df),
         "dashboard_leaderboard.json.gz": generate_leaderboard_data(
-            area_df, latest_growth, recent_yield, affordability, hotspots, area_metadata
+            area_df,
+            latest_growth,
+            recent_yield,
+            affordability,
+            hotspots,
+            area_metadata,
+            today=today,
         ),
         "map_metrics.json.gz": generate_map_data(
             area_df, latest_growth, whole_yield, affordability
@@ -1589,6 +1725,7 @@ def export_app_data(output_dir: Path) -> None:
             source_identities,
             generated_at=datetime.now(UTC),
             excluded_transactions=count_excluded_transactions(df),
+            month_policy=month_policy,
         )
         stage_release_manifest(manifest, manifest_path)
 
@@ -1622,9 +1759,29 @@ def export_app_data(output_dir: Path) -> None:
     logger.info("Export complete: %d files written to %s", len(payloads) + 1, output_dir)
 
 
+def _last_complete_month_arg(raw: str) -> pd.Period:
+    """argparse type: reject malformed ``--last-complete-month`` as a usage error."""
+    try:
+        return parse_last_complete_month(raw)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Export Hamilton pipeline outputs to app/public/data dashboard JSON assets."
+    )
+    parser.add_argument(
+        "--last-complete-month",
+        type=_last_complete_month_arg,
+        metavar="YYYY-MM",
+        default=None,
+        help=(
+            "Publish through this month and drop anything later (e.g. 2026-09). "
+            "Required for a reproducible release; without it the boundary comes "
+            "from the UTC clock and the same parquet publishes a different "
+            "trailing month after a rollover."
+        ),
     )
     parser.add_argument(
         "--output-dir",
@@ -1635,7 +1792,7 @@ def main() -> None:
     args = parser.parse_args()
 
     setup_logging()
-    export_app_data(args.output_dir)
+    export_app_data(args.output_dir, last_complete_month=args.last_complete_month)
 
 
 if __name__ == "__main__":

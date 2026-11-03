@@ -67,6 +67,60 @@ class TestDropIncompleteTrailingMonth:
         assert export_mod.last_completed_year(date(2027, 1, 1)) == 2026
 
 
+class TestMonthPolicy:
+    """The published-month boundary is declared, not read off the clock.
+
+    The same parquet exported on 2026-10-24 and again on 2026-11-03 used to
+    publish different trailing months, because the drop rule asked the wall
+    clock whether October was complete. A declared month removes that.
+    """
+
+    def test_parses_declared_month(self, export_mod):
+        assert export_mod.parse_last_complete_month("2026-09") == pd.Period("2026-09", freq="M")
+        assert export_mod.parse_last_complete_month(" 2026-01 ") == pd.Period("2026-01", freq="M")
+
+    @pytest.mark.parametrize("raw", ["2026-9", "2026-13", "2026-00", "26-09", "", "2026-09-01"])
+    def test_rejects_malformed_month(self, export_mod, raw):
+        with pytest.raises(ValueError):
+            export_mod.parse_last_complete_month(raw)
+
+    def test_declared_policy_maps_to_first_of_following_month(self, export_mod):
+        policy = export_mod.resolve_month_policy(
+            pd.Period("2026-10", freq="M"), "2026-09", today=date(2026, 11, 3)
+        )
+        assert policy.last_complete_month == pd.Period("2026-09", freq="M")
+        assert policy.as_of == date(2026, 10, 1)
+        assert policy.resolved_from == "declared"
+
+    def test_declared_policy_is_clock_independent(self, export_mod):
+        latest = pd.Period("2026-10", freq="M")
+        early = export_mod.resolve_month_policy(latest, "2026-09", today=date(2026, 10, 24))
+        late = export_mod.resolve_month_policy(latest, "2026-09", today=date(2027, 3, 2))
+        assert early == late
+
+    def test_declared_month_after_source_is_rejected(self, export_mod):
+        with pytest.raises(ValueError, match="after the latest source month"):
+            export_mod.resolve_month_policy(pd.Period("2026-09", freq="M"), "2026-10")
+
+    def test_clock_fallback_is_labelled(self, export_mod):
+        policy = export_mod.resolve_month_policy(
+            pd.Period("2026-10", freq="M"), today=date(2026, 11, 3)
+        )
+        assert policy.last_complete_month == pd.Period("2026-10", freq="M")
+        assert policy.as_of == date(2026, 11, 3)
+        assert policy.resolved_from == "utc-clock"
+        assert policy.manifest_block() == {
+            "lastCompleteMonth": "2026-10",
+            "resolvedFrom": "utc-clock",
+        }
+
+    def test_declared_policy_drops_later_months(self, export_mod):
+        policy = export_mod.resolve_month_policy(pd.Period("2026-10", freq="M"), "2026-09")
+        df = pd.DataFrame({"month": ["2026-08", "2026-09", "2026-10"]})
+        result = export_mod.drop_incomplete_trailing_month(df, "month", today=policy.as_of)
+        assert list(result["month"]) == ["2026-08", "2026-09"]
+
+
 class TestGrowthKeysOffCompletedMonths:
     def test_yoy_snapshot_uses_last_completed_month(self, export_mod):
         """After the drop the latest growth row is the last COMPLETED month.
@@ -415,6 +469,63 @@ class TestReleaseManifestContent:
         assert not [value for value in _walk(manifest) if isinstance(value, float)]
         # No numpy/pandas scalar leakage: strict dumps would reject them.
         assert json.dumps(manifest, allow_nan=False)
+
+    def test_manifest_records_trailing_month_policy(self, export_mod, tmp_path):
+        payloads = _synthetic_payloads()
+        hashes = _publish_payloads(tmp_path, payloads)
+        policy = export_mod.resolve_month_policy(pd.Period("2026-10", freq="M"), "2026-09")
+
+        manifest = export_mod.build_release_manifest(
+            payloads,
+            hashes,
+            _SOURCE_IDENTITIES,
+            generated_at=datetime(2026, 11, 3, 12, 0, tzinfo=UTC),
+            month_policy=policy,
+        )
+
+        assert manifest["trailingMonth"] == {
+            "lastCompleteMonth": "2026-09",
+            "resolvedFrom": "declared",
+        }
+        # The policy feeds the generation id: a clock-derived release must not
+        # be able to claim the identity of a declared one.
+        clock_manifest = export_mod.build_release_manifest(
+            payloads,
+            hashes,
+            _SOURCE_IDENTITIES,
+            generated_at=datetime(2026, 11, 3, 12, 0, tzinfo=UTC),
+            month_policy=export_mod.resolve_month_policy(
+                pd.Period("2026-10", freq="M"), today=date(2026, 11, 3)
+            ),
+        )
+        assert clock_manifest["generation"] != manifest["generation"]
+
+    def test_manifest_omits_trailing_month_when_no_policy_given(self, export_mod, tmp_path):
+        payloads = _synthetic_payloads()
+        hashes = _publish_payloads(tmp_path, payloads)
+
+        manifest = _manifest(export_mod, payloads, hashes)
+
+        assert "trailingMonth" not in manifest
+
+    def test_staged_gzip_bytes_are_stable_across_runs(self, export_mod, tmp_path):
+        """Unchanged payloads must stage byte-identical files.
+
+        ``gzip.open`` stamps the write time into the header, which dirtied
+        every published asset on re-export even when the data was unchanged.
+        """
+        payload = _synthetic_payloads()["hotspots.json.gz"]
+        first = export_mod.stage_json_gzip(payload, tmp_path / "hotspots.json.gz")
+        digest_one = hashlib.sha256(first.read_bytes()).hexdigest()
+        first.unlink()
+
+        second = export_mod.stage_json_gzip(payload, tmp_path / "hotspots.json.gz")
+        assert hashlib.sha256(second.read_bytes()).hexdigest() == digest_one
+
+        import gzip
+
+        with gzip.open(second, "rt", encoding="utf-8") as handle:
+            assert json.load(handle) == payload
 
     def test_observation_range_is_derived_from_frame_months(self, export_mod, tmp_path):
         payloads = _synthetic_payloads()

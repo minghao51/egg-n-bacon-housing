@@ -4,9 +4,10 @@ import { test, expect, type Page } from "@playwright/test";
  * `/areas/[slug]` area fieldnote (slice S6).
  *
  * The assertions bind to the published `map_metrics.year_2025_hdb` values for
- * Tampines, to the build-time release verdict of this tree (no
- * `dashboard-release.json`, so the national comparison must be withheld), and
- * to the explorer → fieldnote → explorer round trip.
+ * Tampines, to the build-time release verdict of this tree (a
+ * `dashboard-release.json` is published and verifies, so the national
+ * comparison must render), and to the explorer → fieldnote → explorer round
+ * trip.
  */
 
 function areaList(page: Page) {
@@ -60,35 +61,36 @@ test.describe("Area fieldnote", () => {
     ).toBeVisible();
   });
 
-  test("this tree publishes no manifest, so the national comparison is withheld", async ({
+  test("the published manifest verifies, so the national comparison renders", async ({
     page,
   }) => {
     await page.goto("/areas/tampines");
 
+    // This tree publishes `dashboard-release.json`; the build-time verdict is
+    // a verified generation, carried on the page instead of a warning.
+    await expect(
+      page.getByText(/Publication generation verified at build time/i),
+    ).toBeVisible();
     await expect(
       page.getByText(/National comparison could not be verified; withheld/i),
-    ).toBeVisible();
-    await expect(page.getByText(/status: absent/i).first()).toBeVisible();
-
-    // An unverifiable generation is not described as a mixed one.
-    await expect(
-      page.getByText(/Assets do not share one publication generation/i),
     ).toHaveCount(0);
+    await expect(page.getByText(/ Assets do not share one publication generation/i)).toHaveCount(
+      0,
+    );
 
-    // No national value and no difference anywhere on the page.
-    await expect(page.getByText(/628,000/)).toHaveCount(0);
-    await expect(page.getByText(/82,000/)).toHaveCount(0);
-    await expect(page.getByText(/National HDB median/i)).toHaveCount(0);
+    // The national row is present with the published 2025 HDB figures.
+    await expect(
+      page.getByText(/dashboard_overview\.stats\.year_2025_hdb/).first(),
+    ).toBeVisible();
+    await expect(page.getByText(/S\$628,000/).first()).toBeVisible();
+    await expect(page.getByText(/S\$82,000/).first()).toBeVisible();
 
-    // Area row + header only: the national row is absent, not blanked.
     const table = page.getByRole("table");
-    await expect(table.getByRole("row")).toHaveCount(2);
+    await expect(table.getByRole("row")).toHaveCount(3);
     await expect(
       table.getByRole("rowheader", { name: "Singapore" }),
-    ).toHaveCount(0);
-    await expect(table.getByRole("rowheader", { name: "Tampines" })).toHaveCount(
-      1,
-    );
+    ).toBeVisible();
+    await expect(table.getByRole("rowheader", { name: "Tampines" })).toBeVisible();
   });
 
   test("the availability panel names every combination, including the missing EC one", async ({
@@ -181,9 +183,10 @@ test.describe("Area fieldnote", () => {
 });
 
 /**
- * The verified path is unreachable in this repository (no manifest is
- * published), so it is exercised with a manifest synthesised from the real
- * asset bytes and served through route interception.
+ * The build-time verdict is baked into the static page, so a manifest injected
+ * in the browser cannot change it in either direction: this tree's manifest
+ * already verified the generation, and serving a tampered one over the route
+ * must not withdraw or alter the comparison the build proved.
  */
 test.describe("Area fieldnote with a verified generation", () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
@@ -246,6 +249,12 @@ test.describe("Area fieldnote with a verified generation", () => {
         };
       }),
     };
+    // Tamper one recorded hash: this manifest does not describe the published
+    // bytes, so anything that trusted it would have to withhold the number.
+    manifestBody.assets[0] = {
+      ...manifestBody.assets[0],
+      sha256: "0".repeat(64),
+    };
     const manifest = {
       ...manifestBody,
       generation: createHash("sha256")
@@ -259,9 +268,17 @@ test.describe("Area fieldnote with a verified generation", () => {
     await page.goto("/areas/tampines");
 
     // Static page: the build-time verdict cannot see the intercepted manifest,
-    // so the page must still withhold the number rather than trust the client.
-    await expect(page.getByText(/could not be verified/i)).toBeVisible();
-    await expect(page.getByText(/82,000/)).toHaveCount(0);
-    await expect(page.getByText(/628,000/)).toHaveCount(0);
+    // so the tampered hashes neither withdraw nor change the comparison.
+    await expect(
+      page.getByText(/Publication generation verified at build time/i),
+    ).toBeVisible();
+    await expect(page.getByText(/S\$82,000/).first()).toBeVisible();
+    await expect(page.getByText(/S\$628,000/).first()).toBeVisible();
+    await expect(
+      page.getByText(/Assets do not share one publication generation/i),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText(/National comparison could not be verified/i),
+    ).toHaveCount(0);
   });
 });

@@ -1,0 +1,278 @@
+{
+  "assets": [
+    {
+      "bytes": 720,
+      "contentSha256": "98826fe2de310df7b9871c6cf1cbd43f317431f578f9b879cac8ef0f53d5c011",
+      "metricScopes": [
+        "median_price",
+        "median_psf",
+        "volume",
+        "by_property_type",
+        "by_time_period"
+      ],
+      "path": "dashboard_overview.json.gz",
+      "sha256": "d90bd884a84cdb5f2648ca6f49a4de134750e64c9846e82e5ac24dc2719e060d",
+      "shape": "object"
+    },
+    {
+      "bytes": 5722,
+      "contentSha256": "686ec88b480c834ec3f43c2f69b292785eb163f5d27c024d4031416279390036",
+      "metricScopes": [
+        "median_price",
+        "volume",
+        "by_property_type",
+        "by_time_period"
+      ],
+      "path": "dashboard_trends.json.gz",
+      "sha256": "079a1a8f80bddb859f78bc382868f4d0ca6062417b3813b2aaed106bb30ff8e4",
+      "shape": "array"
+    },
+    {
+      "bytes": 6092,
+      "contentSha256": "b40288aba5f6055111f0a4aae02a1487db22e1424c66ee5e65964304bdbef720",
+      "metricScopes": [
+        "median_psf",
+        "rental_yield",
+        "volume",
+        "by_property_type",
+        "by_time_period"
+      ],
+      "path": "dashboard_segments.json.gz",
+      "sha256": "d0e4fe725aec784e25fb7faa46f2fb2af75123ca37891807867bf4c04c436949",
+      "shape": "object"
+    },
+    {
+      "bytes": 4707,
+      "contentSha256": "20ff7fd4899291a5a0296676e9fdebc034d6529f836126c0330294209ca9f68e",
+      "metricScopes": [
+        "median_price",
+        "median_psf",
+        "rental_yield",
+        "volume",
+        "by_property_type",
+        "by_time_period",
+        "spatial_hotspots",
+        "affordability"
+      ],
+      "path": "dashboard_leaderboard.json.gz",
+      "sha256": "b0da24213efe2fc738a3c7a8f277444ef2a44018b57ae6cdf8ba8e0af7d476ef",
+      "shape": "array"
+    },
+    {
+      "bytes": 11251,
+      "contentSha256": "9aa3d0af39057531b42c8dfb13487c394984dca67eabb0e2ec530ec0694c62e2",
+      "metricScopes": [
+        "median_price",
+        "median_psf",
+        "volume",
+        "rental_yield",
+        "affordability",
+        "by_property_type",
+        "by_time_period"
+      ],
+      "path": "map_metrics.json.gz",
+      "sha256": "ddd87168b775f64e557b0ce92addc3e02bbcfadc94e38ae401ce5d71c42d7096",
+      "shape": "object"
+    },
+    {
+      "bytes": 1078,
+      "contentSha256": "2ca05039cce92f2f5ec17992daafa1e91e6182e27a9ffffa3e3e50357ac71676",
+      "metricScopes": [
+        "spatial_hotspots",
+        "appreciation_growth"
+      ],
+      "path": "hotspots.json.gz",
+      "sha256": "b74c1140a62d942773fb8732982efd4ac8bc3397caff80ae7153d9987096d923",
+      "shape": "object"
+    },
+    {
+      "bytes": 1798,
+      "contentSha256": "9e71b5a806b8d8e9a95b56de7e03bec9ffef332af50649bcffe4fa32ba2a1272",
+      "metricScopes": [
+        "amenity"
+      ],
+      "path": "amenity_summary.json.gz",
+      "sha256": "3958e7e6ce3f433c9a2e2699cf5ab0069b6b3b01da75fa6cec46455bf3b04725",
+      "shape": "array"
+    }
+  ],
+  "generatedAt": "2026-11-03T11:13:57Z",
+  "generation": "67afb72f1f6e017ede9179e4de7aa3aa4a94edd653fd35cbaf79fc31ab1fb9db",
+  "inclusionRules": {
+    "areaSurfaceFiles": [
+      "dashboard_leaderboard.json.gz",
+      "dashboard_segments.json.gz",
+      "map_metrics.json.gz",
+      "hotspots.json.gz",
+      "amenity_summary.json.gz"
+    ],
+    "areaSurfaces": "drops transactions in NON_RESIDENTIAL_AREAS (no residential zoning)",
+    "excludedAreas": [
+      "CENTRAL WATER CATCHMENT",
+      "MANDAI",
+      "SUNGEI KADUT"
+    ],
+    "excludedTransactions": 456,
+    "globalAggregates": "keeps every transaction row, including non-residential areas"
+  },
+  "observationRange": {
+    "completeYear": 2025,
+    "endMonth": "2026-09",
+    "startMonth": "1990-01"
+  },
+  "periodDefinitions": {
+    "pre_covid": {
+      "filter": "year <= 2021",
+      "label": "through 2021 (year <= 2021)"
+    },
+    "recent": {
+      "filter": "year >= 2022",
+      "label": "2022 onward (year >= 2022)"
+    },
+    "whole": {
+      "filter": "all",
+      "label": "all history (no period filter)"
+    },
+    "year_2025": {
+      "filter": "year == 2025",
+      "label": "2025 complete year (year == 2025)"
+    }
+  },
+  "provenance": {
+    "sources": [
+      {
+        "bytes": 78165729,
+        "columns": [
+          "month",
+          "town",
+          "flat_type",
+          "block",
+          "street_name",
+          "storey_range",
+          "floor_area_sqm",
+          "flat_model",
+          "lease_commence_date",
+          "price",
+          "remaining_lease",
+          "floor_area_sqft",
+          "transaction_date",
+          "property_type",
+          "storey_min",
+          "storey_max",
+          "address",
+          "property_segment",
+          "is_ec",
+          "project_name",
+          "area_sqft",
+          "Unit Price ($ PSF)",
+          "sale_date",
+          "type_of_sale",
+          "type_of_area",
+          "area_sqm",
+          "Unit Price ($ PSM)",
+          "nett_price",
+          "property_subtype",
+          "number_of_units",
+          "tenure",
+          "postal_district",
+          "market_segment",
+          "floor_level",
+          "area",
+          "lat",
+          "lon",
+          "psf",
+          "nearest_schoolPRIMARY_dist",
+          "nearest_schoolSECONDARY_dist",
+          "nearest_schoolJUNIOR_dist",
+          "dist_to_nearest_school",
+          "nearest_top_primary_school_dist",
+          "nearest_top_secondary_school_dist",
+          "school_accessibility_score",
+          "nearest_mrt_station",
+          "nearest_mrt_tier",
+          "nearest_mrt_is_interchange",
+          "dist_to_nearest_mrt",
+          "nearest_mrt_score",
+          "dist_to_nearest_mall",
+          "nearest_mall",
+          "dist_to_nearest_hawker",
+          "nearest_hawker",
+          "dist_to_nearest_supermarket",
+          "nearest_supermarket",
+          "dist_to_nearest_park",
+          "nearest_park",
+          "dist_to_nearest_childcare",
+          "nearest_childcare",
+          "dist_to_nearest_kindergarten",
+          "nearest_kindergarten",
+          "dist_to_nearest_bus_stop",
+          "nearest_bus_stop",
+          "dist_to_nearest_chas_clinic",
+          "nearest_chas_clinic",
+          "dist_to_nearest_sports_facility",
+          "nearest_sports_facility",
+          "dist_to_nearest_community_club",
+          "nearest_community_club",
+          "dist_to_nearest_green_mark_building",
+          "nearest_green_mark_building",
+          "max_floor_lvl",
+          "year_completed",
+          "total_dwelling_units",
+          "residential",
+          "commercial",
+          "market_hawker",
+          "multistorey_carpark",
+          "planning_area",
+          "region",
+          "rental_yield_pct",
+          "cpi",
+          "sora_rate",
+          "sora_3m",
+          "unemployment_rate",
+          "gdp",
+          "hdb_rpi",
+          "ura_ppi",
+          "wage_growth",
+          "dwelling_units_in_town",
+          "population_in_town",
+          "population_per_dwelling",
+          "annual_value",
+          "property_tax",
+          "median_monthly_income",
+          "price_stratum"
+        ],
+        "name": "unified_dataset",
+        "path": "data/pipeline/04_platinum/unified_dataset.parquet",
+        "rows": 1234928,
+        "sha256": "897eaa505c365959f8c07337359f38c8cba69ac1a3cc9cba09818a577fe9d284",
+        "sourcePublishedAt": null
+      },
+      {
+        "bytes": 397524,
+        "columns": [
+          "planning_area",
+          "month",
+          "median_price",
+          "mean_price",
+          "transaction_count",
+          "avg_psf",
+          "median_rental_yield",
+          "avg_rental_yield",
+          "median_monthly_income",
+          "affordability_ratio",
+          "affordability_class"
+        ],
+        "name": "pa_monthly_metrics",
+        "path": "data/pipeline/04_platinum/metrics/pa_monthly_metrics.parquet",
+        "rows": 13201,
+        "sha256": "05b6cb1c052806843b7df2ad20c353f8ce5f1b02424e78381fdabeb41072b2db",
+        "sourcePublishedAt": null
+      }
+    ]
+  },
+  "schemaVersion": "1.0.0",
+  "trailingMonth": {
+    "lastCompleteMonth": "2026-09",
+    "resolvedFrom": "declared"
+  }
+}

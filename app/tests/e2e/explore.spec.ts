@@ -34,20 +34,20 @@ test.describe("Explore workspace", () => {
     await expect(list.getByText("971").first()).toBeVisible();
     await expect(page.getByText(/^Page 1 of \d+$/).first()).toBeVisible();
 
-    // This repository publishes no release manifest, so the honest state is a
-    // withheld baseline with an explicit reason. The national number must be
-    // absent, and the copy must not claim the assets are incompatible when the
-    // real cause is an unverifiable generation.
+    // This repository publishes a verified release manifest, so the national
+    // baseline is shown rather than withheld, and it carries its own section
+    // identity instead of a bare number.
     await expect(
-      page.getByText(/National comparison could not be verified; withheld/i),
+      page.getByText(/National HDB median transaction price: S\$628,000/),
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(
+      page.getByText(/dashboard_overview\.stats\.year_2025_hdb/).first(),
     ).toBeVisible();
-    await expect(page.getByText(/status: absent/i).first()).toBeVisible();
+    await expect(
+      page.getByText(/National comparison could not be verified/i),
+    ).toHaveCount(0);
     await expect(
       page.getByText(/Assets do not share one publication generation/i),
-    ).toHaveCount(0);
-    await expect(page.getByText(/628,000/)).toHaveCount(0);
-    await expect(
-      page.getByText(/National HDB median transaction price:/i),
     ).toHaveCount(0);
   });
 
@@ -180,11 +180,11 @@ test.describe("Explore workspace", () => {
 });
 
 /**
- * The verified-baseline path cannot be exercised against the repository, which
- * publishes no `dashboard-release.json`. These tests synthesise a manifest from
- * the real asset bytes and serve it through route interception, so the gate is
- * tested in both directions: matching hashes must reveal the national number,
- * a tampered hash must withhold it with the incompatibility wording.
+ * The baseline gate is runtime-verified against `dashboard-release.json`. These
+ * tests synthesise manifests from the real asset bytes and serve them through
+ * route interception, so both directions stay covered: matching hashes reveal
+ * the national number, a tampered hash withholds it with the incompatibility
+ * wording.
  */
 test.describe("Explore baseline gate", () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
