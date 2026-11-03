@@ -1,0 +1,420 @@
+{
+  "svgs": [
+    {
+      "file": "00-design-system.svg",
+      "xml": "pass",
+      "unique_ids": 8,
+      "text_elements": 77,
+      "viewBox": "0 0 1440 1420"
+    },
+    {
+      "file": "01-overview-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 8,
+      "text_elements": 71,
+      "viewBox": "0 0 1440 1520"
+    },
+    {
+      "file": "02-explorer-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 8,
+      "text_elements": 103,
+      "viewBox": "0 0 1440 1260"
+    },
+    {
+      "file": "03-detail-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 8,
+      "text_elements": 59,
+      "viewBox": "0 0 1440 1290"
+    },
+    {
+      "file": "04-overview-mobile.svg",
+      "xml": "pass",
+      "unique_ids": 6,
+      "text_elements": 39,
+      "viewBox": "0 0 390 1540"
+    },
+    {
+      "file": "05-explorer-mobile.svg",
+      "xml": "pass",
+      "unique_ids": 5,
+      "text_elements": 39,
+      "viewBox": "0 0 390 1280"
+    },
+    {
+      "file": "06-interaction-and-states.svg",
+      "xml": "pass",
+      "unique_ids": 12,
+      "text_elements": 68,
+      "viewBox": "0 0 1440 1460"
+    },
+    {
+      "file": "07-information-architecture.svg",
+      "xml": "pass",
+      "unique_ids": 3,
+      "text_elements": 48,
+      "viewBox": "0 0 1440 1180"
+    },
+    {
+      "file": "08-data-methods-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 6,
+      "text_elements": 53,
+      "viewBox": "0 0 1440 1340"
+    },
+    {
+      "file": "09-map-and-overlays-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 62,
+      "text_elements": 50,
+      "viewBox": "0 0 1440 1440"
+    },
+    {
+      "file": "10-trends-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 6,
+      "text_elements": 66,
+      "viewBox": "0 0 1440 1370"
+    },
+    {
+      "file": "11-segment-discovery-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 11,
+      "text_elements": 76,
+      "viewBox": "0 0 1440 1380"
+    },
+    {
+      "file": "12-segment-investigation-comparison.svg",
+      "xml": "pass",
+      "unique_ids": 7,
+      "text_elements": 78,
+      "viewBox": "0 0 1440 1520"
+    },
+    {
+      "file": "13-tools-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 7,
+      "text_elements": 83,
+      "viewBox": "0 0 1440 1540"
+    },
+    {
+      "file": "14-research-library-and-article.svg",
+      "xml": "pass",
+      "unique_ids": 6,
+      "text_elements": 60,
+      "viewBox": "0 0 1440 1510"
+    },
+    {
+      "file": "15-catalog-lineage-desktop.svg",
+      "xml": "pass",
+      "unique_ids": 5,
+      "text_elements": 51,
+      "viewBox": "0 0 1440 1330"
+    },
+    {
+      "file": "16-trends-and-research-mobile.svg",
+      "xml": "pass",
+      "unique_ids": 4,
+      "text_elements": 37,
+      "viewBox": "0 0 390 1500"
+    },
+    {
+      "file": "17-research-map-controls.svg",
+      "xml": "pass",
+      "unique_ids": 62,
+      "text_elements": 54,
+      "viewBox": "0 0 1440 1470"
+    },
+    {
+      "file": "18-lease-and-mrt-model-tools.svg",
+      "xml": "pass",
+      "unique_ids": 7,
+      "text_elements": 64,
+      "viewBox": "0 0 1440 1490"
+    },
+    {
+      "file": "19-tools-mobile.svg",
+      "xml": "pass",
+      "unique_ids": 4,
+      "text_elements": 33,
+      "viewBox": "0 0 390 1550"
+    },
+    {
+      "file": "20-segment-investigation-mobile.svg",
+      "xml": "pass",
+      "unique_ids": 4,
+      "text_elements": 35,
+      "viewBox": "0 0 390 1560"
+    }
+  ],
+  "chart_geometry": "pass: all primary price bars, explorer dots, mobile bars checked against source values",
+  "cross_screen_arithmetic": "pass",
+  "local_markdown_links_checked": 109,
+  "contrast": [
+    {
+      "foreground": "#172E33",
+      "background": "#F6F3EC",
+      "ratio": 12.85
+    },
+    {
+      "foreground": "#172E33",
+      "background": "#FFFEFA",
+      "ratio": 14.11
+    },
+    {
+      "foreground": "#172E33",
+      "background": "#E5EFEB",
+      "ratio": 12.12
+    },
+    {
+      "foreground": "#172E33",
+      "background": "#F8E8CC",
+      "ratio": 11.8
+    },
+    {
+      "foreground": "#526368",
+      "background": "#F6F3EC",
+      "ratio": 5.67
+    },
+    {
+      "foreground": "#526368",
+      "background": "#FFFEFA",
+      "ratio": 6.22
+    },
+    {
+      "foreground": "#526368",
+      "background": "#E5EFEB",
+      "ratio": 5.35
+    },
+    {
+      "foreground": "#526368",
+      "background": "#F8E8CC",
+      "ratio": 5.21
+    },
+    {
+      "foreground": "#006B65",
+      "background": "#F6F3EC",
+      "ratio": 5.76
+    },
+    {
+      "foreground": "#006B65",
+      "background": "#FFFEFA",
+      "ratio": 6.32
+    },
+    {
+      "foreground": "#006B65",
+      "background": "#E5EFEB",
+      "ratio": 5.43
+    },
+    {
+      "foreground": "#006B65",
+      "background": "#F8E8CC",
+      "ratio": 5.29
+    },
+    {
+      "foreground": "#B64426",
+      "background": "#F6F3EC",
+      "ratio": 4.93
+    },
+    {
+      "foreground": "#B64426",
+      "background": "#FFFEFA",
+      "ratio": 5.41
+    },
+    {
+      "foreground": "#B64426",
+      "background": "#E5EFEB",
+      "ratio": 4.65
+    },
+    {
+      "foreground": "#B64426",
+      "background": "#F8E8CC",
+      "ratio": 4.53
+    },
+    {
+      "foreground": "#66508A",
+      "background": "#F6F3EC",
+      "ratio": 6.15
+    },
+    {
+      "foreground": "#66508A",
+      "background": "#FFFEFA",
+      "ratio": 6.76
+    },
+    {
+      "foreground": "#66508A",
+      "background": "#E5EFEB",
+      "ratio": 5.81
+    },
+    {
+      "foreground": "#66508A",
+      "background": "#F8E8CC",
+      "ratio": 5.65
+    },
+    {
+      "foreground": "#FFFEFA",
+      "background": "#172E33",
+      "ratio": 14.11
+    },
+    {
+      "foreground": "#D6B764",
+      "background": "#172E33",
+      "ratio": 7.33
+    },
+    {
+      "foreground": "#7A8583",
+      "background": "#FFFEFA",
+      "ratio": 3.78,
+      "role": "control boundary"
+    },
+    {
+      "foreground": "#7A8583",
+      "background": "#F6F3EC",
+      "ratio": 3.44,
+      "role": "control boundary"
+    }
+  ],
+  "expanded_chart_geometry": "pass: 12 desktop/mobile monthly points, 12 volume bars, five amortization bars, 12 signed lease intervals",
+  "actual_geometry": "pass: 55 polygons, 25 observed eligible joins with correct bins, neutral research-map gate",
+  "snapshot_reconciliation": "pass: national/area independently match local platinum; exclusion count2; no production generation identity implied",
+  "application_baseline": {
+    "astro_check": {
+      "errors": 109,
+      "warnings": 0,
+      "hints": 45,
+      "files": 112
+    },
+    "validate_data": "pass:19 assets",
+    "spatial_tool_runtime": "confirmed flatMap failure",
+    "legacy_map_url": "confirmed default overwrite before incoming filter hydration"
+  },
+  "native_browser_renders": [
+    {
+      "file": "00-design-system.svg",
+      "width": 1440,
+      "height": 1420,
+      "overflow": []
+    },
+    {
+      "file": "01-overview-desktop.svg",
+      "width": 1440,
+      "height": 1520,
+      "overflow": []
+    },
+    {
+      "file": "02-explorer-desktop.svg",
+      "width": 1440,
+      "height": 1260,
+      "overflow": []
+    },
+    {
+      "file": "03-detail-desktop.svg",
+      "width": 1440,
+      "height": 1290,
+      "overflow": []
+    },
+    {
+      "file": "04-overview-mobile.svg",
+      "width": 390,
+      "height": 1540,
+      "overflow": []
+    },
+    {
+      "file": "05-explorer-mobile.svg",
+      "width": 390,
+      "height": 1280,
+      "overflow": []
+    },
+    {
+      "file": "06-interaction-and-states.svg",
+      "width": 1440,
+      "height": 1460,
+      "overflow": []
+    },
+    {
+      "file": "07-information-architecture.svg",
+      "width": 1440,
+      "height": 1180,
+      "overflow": []
+    },
+    {
+      "file": "08-data-methods-desktop.svg",
+      "width": 1440,
+      "height": 1340,
+      "overflow": []
+    },
+    {
+      "file": "09-map-and-overlays-desktop.svg",
+      "width": 1440,
+      "height": 1440,
+      "overflow": []
+    },
+    {
+      "file": "10-trends-desktop.svg",
+      "width": 1440,
+      "height": 1370,
+      "overflow": []
+    },
+    {
+      "file": "11-segment-discovery-desktop.svg",
+      "width": 1440,
+      "height": 1380,
+      "overflow": []
+    },
+    {
+      "file": "12-segment-investigation-comparison.svg",
+      "width": 1440,
+      "height": 1520,
+      "overflow": []
+    },
+    {
+      "file": "13-tools-desktop.svg",
+      "width": 1440,
+      "height": 1540,
+      "overflow": []
+    },
+    {
+      "file": "14-research-library-and-article.svg",
+      "width": 1440,
+      "height": 1510,
+      "overflow": []
+    },
+    {
+      "file": "15-catalog-lineage-desktop.svg",
+      "width": 1440,
+      "height": 1330,
+      "overflow": []
+    },
+    {
+      "file": "16-trends-and-research-mobile.svg",
+      "width": 390,
+      "height": 1500,
+      "overflow": []
+    },
+    {
+      "file": "17-research-map-controls.svg",
+      "width": 1440,
+      "height": 1470,
+      "overflow": []
+    },
+    {
+      "file": "18-lease-and-mrt-model-tools.svg",
+      "width": 1440,
+      "height": 1490,
+      "overflow": []
+    },
+    {
+      "file": "19-tools-mobile.svg",
+      "width": 390,
+      "height": 1550,
+      "overflow": []
+    },
+    {
+      "file": "20-segment-investigation-mobile.svg",
+      "width": 390,
+      "height": 1560,
+      "overflow": []
+    }
+  ]
+}

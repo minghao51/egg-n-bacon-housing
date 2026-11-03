@@ -5,7 +5,8 @@
 - **Analyze first** — Understand code, imports, patterns before changes.
 - **Minimal scope** — Only what's needed. No scope-creep refactors.
 - **Check skills** — Before any task, check + follow the matching repository skill in `.agents/skills/`.
-- **Verify** — Lint + type-check after changes. Ask user for command.
+- **Verify** — Lint + type-check after changes. Frontend: `cd app && bun run test:unit && bun run astro check` (astro-check baseline is 26 errors / 0 warnings / 41 hints; touched files must add none). Data boundary: `uv run pytest tests/test_export_app_data.py --no-cov -q` and `uv run ruff check`.
+- **Restore generated data** — `cd app && bun run build` rewrites `app/public/data/catalog.jsonl.gz`; revert it with `git checkout -- app/public/data/catalog.jsonl.gz` unless a data refresh is authorised.
 - **No commits** — Never commit unless explicitly asked.
 
 ## Stack
@@ -41,6 +42,8 @@ Source code lives in `src/egg_n_bacon_housing/`:
 **Maintenance scripts**: `scripts/generate_catalog.py` regenerates the data catalog (drives `check_catalog.py` in CI). `scripts/99_cleanup.py` logs cache stats + clears the pipeline cache (`uv run python scripts/99_cleanup.py`).
 
 **Env vars**: Copy `.env.example` to the local, git-ignored `.env`. Pydantic Settings loads it automatically; exported environment variables override values in the file. Never commit or print `.env` or other secret files.
+
+**Implementation ledger**: frontend slices, invariants and commands live in `docs/implementation/` (start with `README.md`). Production now includes `/explore`, `/research/trends` and `/areas/[slug]` alongside the legacy dashboard routes.
 
 **Pipeline vs Analytics**: The Hamilton DAG (`components/`) runs the core automated pipeline from bronze to platinum. Published analytics are maintained in `docs/analytics/` and served with precomputed assets from `app/public/data/`; the retired standalone Python analytics package is not a supported surface.
 

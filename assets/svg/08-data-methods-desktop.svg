@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1340" viewBox="0 0 1440 1340" role="img" aria-labelledby="title desc">
+<title id="title">Data and methods — evidence ledger and differing data vintages</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1440" height="1340" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="1440" height="85" rx="0" fill="#172E33"/>
+<text x="56" y="36" font-size="24" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="57" y="59" font-size="11" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="465" y="47" font-size="16" class="" style="fill:#FFFEFA">Overview</text>
+<text x="605" y="47" font-size="16" class="" style="fill:#FFFEFA">Explore</text>
+<text x="725" y="47" font-size="16" class="" style="fill:#FFFEFA">Research</text>
+<text x="860" y="47" font-size="16" class="bold" style="fill:#FFFEFA">Data &amp; methods</text>
+<line x1="860" y1="66" x2="945" y2="66" stroke="#D6B764" stroke-width="3"/>
+<text x="1190" y="47" font-size="14" class="" style="fill:#FFFEFA">A housing field guide</text>
+</g>
+<text x="56" y="126" font-size="12" class="label" style="fill:#B64426">DATA &amp; METHODS / PROPOSED GUIDE</text>
+<text x="56" y="182" font-size="48" class="serif">Know what you’re comparing.</text>
+<text x="56" y="219" font-size="18" class="muted">Observed transactions, derived indicators and research models are different kinds of evidence.</text>
+<rect x="56" y="247" width="176" height="25" rx="2" fill="#F8E8CC"/>
+<text x="65" y="264" font-size="11" class="bold" style="fill:#172E33">New provenance guide</text>
+<text x="256" y="265" font-size="15" class="muted">Existing assets; proposed cross-asset metadata contract</text>
+<line x1="56" y1="292" x2="1384" y2="292" stroke="#CDD2CA" stroke-width="1"/>
+<g id="evidence-ledger">
+<text x="56" y="338" font-size="28" class="serif">Three clocks, not one “last updated”.</text>
+<text x="56" y="375" font-size="17" class="muted">Export time describes a file. Coverage describes included observations. Source freshness needs its own record.</text>
+<text x="56" y="425" font-size="12" class="label">EVIDENCE</text>
+<text x="530" y="425" font-size="12" class="label">OBSERVATIONS / COVERAGE</text>
+<text x="958" y="425" font-size="12" class="label">EXPORT / STATUS</text>
+<line x1="56" y1="451" x2="1384" y2="451" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="478" font-size="19" class="bold">Annual national comparison</text>
+<text x="56" y="506" font-size="14" class="muted">dashboard_overview · price medians</text>
+<text x="530" y="478" font-size="16" class="">2025 · 78,796 transactions</text>
+<text x="958" y="478" font-size="16" class="">24 Oct 2026</text>
+<text x="958" y="506" font-size="14" class="bold" style="fill:#006B65">Observed aggregate</text>
+<line x1="56" y1="552" x2="1384" y2="552" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="579" font-size="19" class="bold">Area comparison</text>
+<text x="56" y="607" font-size="14" class="muted">map_metrics.year_2025_hdb</text>
+<text x="530" y="579" font-size="16" class="">2025 · 31 HDB planning areas</text>
+<text x="958" y="579" font-size="16" class="">Timestamp not embedded</text>
+<text x="958" y="607" font-size="14" class="bold" style="fill:#006B65">Observed aggregate</text>
+<line x1="56" y1="653" x2="1384" y2="653" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="680" font-size="19" class="bold">Monthly trend series</text>
+<text x="56" y="708" font-size="14" class="muted">dashboard_trends</text>
+<text x="530" y="680" font-size="16" class="">Jan 1990–Sep 2026 · 441 months</text>
+<text x="958" y="680" font-size="16" class="">No embedded export timestamp</text>
+<text x="958" y="708" font-size="14" class="bold" style="fill:#006B65">Completed-month series</text>
+<line x1="56" y1="754" x2="1384" y2="754" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="781" font-size="19" class="bold">Spatial / predictive research</text>
+<text x="56" y="809" font-size="14" class="muted">analytics/*.json.gz</text>
+<text x="530" y="781" font-size="16" class="">Coverage varies by research asset</text>
+<text x="958" y="781" font-size="16" class="">19 Feb 2026</text>
+<text x="958" y="809" font-size="14" class="bold" style="fill:#006B65">Separate research generation</text>
+<rect x="56" y="887" width="1328" height="67" rx="3" fill="#F8E8CC"/>
+<text x="76" y="914" font-size="12" class="label">SOURCE FRESHNESS IS NOT FULLY RECORDED</text>
+<text x="76" y="939" font-size="15" class="">Do not infer market completeness from generation dates. Missing planning areas and model vintages affect comparability.</text>
+</g>
+<g id="definitions-and-lineage">
+<text x="56" y="1002" font-size="25" class="serif">Definitions beside every claim</text>
+<text x="56" y="1040" font-size="16" class="">Median: ordered-price midpoint; average two central values if even.</text>
+<text x="56" y="1069" font-size="16" class="">Median PSF: median of each sale’s price / floor area in square feet.</text>
+<text x="56" y="1098" font-size="16" class="">Sample: included transaction rows, not independent buyers or listings.</text>
+<text x="56" y="1127" font-size="16" class="">150-sale display rule: proposed caution threshold, not a confidence test.</text>
+<text x="786" y="1002" font-size="25" class="serif">Trace the published data</text>
+<text x="786" y="1040" font-size="16" class="">Government / manual sources → bronze → silver</text>
+<text x="786" y="1069" font-size="16" class="">→ gold features → platinum → maintenance export</text>
+<text x="786" y="1098" font-size="16" class="">→ compressed app assets → static pages / React islands</text>
+<text x="786" y="1164" font-size="16" class="bold" style="fill:#006B65">Open data catalog →</text>
+</g>
+<text x="56" y="1239" font-size="15" class="muted">Before publishing research: audit units, model dates, synthetic yield fallbacks and reproducibility. See the handoff.</text>
+<g id="provenance-footer">
+<line x1="56" y1="1280" x2="1384" y2="1280" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1308" font-size="12" class="label">EGG n BACON HOUSING</text>
+<text x="445" y="1308" font-size="13" class="muted">Snapshot · Overview export: 24 Oct 2026 · Not live listings or a valuation</text>
+<text x="1240" y="1308" font-size="13" class="bold">Data &amp; methods →</text>
+</g>
+</svg>

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1330" viewBox="0 0 1440 1330" role="img" aria-labelledby="title desc">
+<title id="title">Catalog dataset detail — schema, nullability and lineage with snapshot discrepancy</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1440" height="1330" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="1440" height="85" rx="0" fill="#172E33"/>
+<text x="56" y="36" font-size="24" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="57" y="59" font-size="11" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="465" y="47" font-size="16" class="" style="fill:#FFFEFA">Overview</text>
+<text x="605" y="47" font-size="16" class="" style="fill:#FFFEFA">Explore</text>
+<text x="725" y="47" font-size="16" class="" style="fill:#FFFEFA">Research</text>
+<text x="860" y="47" font-size="16" class="bold" style="fill:#FFFEFA">Data &amp; methods</text>
+<line x1="860" y1="66" x2="945" y2="66" stroke="#D6B764" stroke-width="3"/>
+<text x="1190" y="47" font-size="14" class="" style="fill:#FFFEFA">A housing field guide</text>
+</g>
+<text x="56" y="126" font-size="12" class="label" style="fill:#B64426">DATA &amp; METHODS / CATALOG / PLATINUM</text>
+<text x="56" y="182" font-size="43" class="serif">Understand the dataset behind the chart.</text>
+<text x="56" y="219" font-size="17" class="muted">Retain dataset and nested external-source routes; preserve schema and upstream/downstream inspection.</text>
+<rect x="56" y="254" width="240" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="70" y="281" font-size="14" class="" style="fill:#172E33">← Platinum datasets</text>
+<rect x="1030" y="254" width="170" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="1044" y="281" font-size="14" class="" style="fill:#172E33">Search catalog</text>
+<rect x="1212" y="254" width="172" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="1226" y="281" font-size="14" class="" style="fill:#172E33">Open full DAG →</text>
+<text x="56" y="357" font-size="34" class="serif">Unified Dataset</text>
+<text x="56" y="397" font-size="19" class="bold">Catalog reports 1,233,405 rows · 97 columns · available</text>
+<rect x="56" y="430" width="1328" height="78" rx="4" fill="#F8E8CC"/>
+<text x="72" y="457" font-size="14" class="">Snapshot discrepancy: the inspected platinum file contains 1,234,928 rows. Catalog metadata is a separate generation.</text>
+<text x="72" y="481" font-size="14" class="">Keep counts source-labeled. “Available” means present in the catalog snapshot, not fully validated or current.</text>
+<g id="catalog-schema-table">
+<text x="56" y="568" font-size="26" class="serif">Schema / selected fields</text>
+<text x="900" y="537" font-size="13" class="bold">Find a field</text>
+<rect x="900" y="550" width="484" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="913" y="579" font-size="16" class="num">price, psf, planning_area…</text>
+<text x="56" y="636" font-size="12" class="label">FIELD</text>
+<text x="414" y="636" font-size="12" class="label">STORAGE TYPE</text>
+<text x="665" y="636" font-size="12" class="label">MEANING / UNIT</text>
+<line x1="56" y1="654" x2="1384" y2="654" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="680" font-size="17" class="bold">month</text>
+<text x="414" y="680" font-size="16" class="">string</text>
+<text x="665" y="680" font-size="16" class="">Year-month label · YYYY-MM</text>
+<line x1="56" y1="700" x2="1384" y2="700" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="726" font-size="17" class="bold">price</text>
+<text x="414" y="726" font-size="16" class="">double</text>
+<text x="665" y="726" font-size="16" class="">Transaction price · SGD</text>
+<line x1="56" y1="746" x2="1384" y2="746" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="772" font-size="17" class="bold">floor_area_sqft</text>
+<text x="414" y="772" font-size="16" class="">double</text>
+<text x="665" y="772" font-size="16" class="">Floor area · square feet</text>
+<line x1="56" y1="792" x2="1384" y2="792" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="818" font-size="17" class="bold">psf</text>
+<text x="414" y="818" font-size="16" class="">double</text>
+<text x="665" y="818" font-size="16" class="">Transaction price / square feet</text>
+<line x1="56" y1="838" x2="1384" y2="838" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="864" font-size="17" class="bold">planning_area</text>
+<text x="414" y="864" font-size="16" class="">string</text>
+<text x="665" y="864" font-size="16" class="">URA planning-area key; missing values exist</text>
+<line x1="56" y1="884" x2="1384" y2="884" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="910" font-size="17" class="bold">lat / lon</text>
+<text x="414" y="910" font-size="16" class="">double</text>
+<text x="665" y="910" font-size="16" class="">Degrees; schema requirements ≠ full-frame guarantee</text>
+</g>
+<line x1="56" y1="970" x2="1384" y2="970" stroke="#CDD2CA" stroke-width="1"/>
+<g id="catalog-conceptual-lineage">
+<text x="56" y="1013" font-size="27" class="serif">Trace upstream and downstream</text>
+<text x="56" y="1045" font-size="14" class="muted">Conceptual path; open the full DAG or named dependency lists for exact edges.</text>
+<rect x="56" y="1076" width="410" height="62" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="73" y="1114" font-size="19" class="bold">transactions_enriched</text>
+<rect x="503" y="1076" width="410" height="62" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="520" y="1114" font-size="19" class="bold">validate_unified_dataset</text>
+<rect x="950" y="1076" width="410" height="62" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="967" y="1114" font-size="19" class="bold">unified_dataset</text>
+<text x="475" y="1113" font-size="20" class="bold" style="fill:#006B65">→</text>
+<text x="922" y="1113" font-size="20" class="bold" style="fill:#006B65">→</text>
+<text x="56" y="1186" font-size="16" class="muted">Schema constraint vs artifact null counts: show both, with separate labels and per-snapshot timestamps.</text>
+</g>
+<line x1="56" y1="1270" x2="1384" y2="1270" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1298" font-size="13" class="muted">Source: catalog.jsonl.gz → unified_dataset · P: snapshot discrepancy banner and clearer evidence semantics</text>
+<text x="1210" y="1298" font-size="13" class="bold" style="fill:#006B65">Data &amp; methods →</text>
+</svg>

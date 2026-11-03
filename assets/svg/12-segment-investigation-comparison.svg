@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1520" viewBox="0 0 1440 1520" role="img" aria-labelledby="title desc">
+<title id="title">Segment investigation and comparison — linked area evidence and two-segment comparison</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1440" height="1520" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="1440" height="85" rx="0" fill="#172E33"/>
+<text x="56" y="36" font-size="24" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="57" y="59" font-size="11" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="465" y="47" font-size="16" class="" style="fill:#FFFEFA">Overview</text>
+<text x="605" y="47" font-size="16" class="" style="fill:#FFFEFA">Explore</text>
+<text x="725" y="47" font-size="16" class="bold" style="fill:#FFFEFA">Research</text>
+<line x1="725" y1="66" x2="810" y2="66" stroke="#D6B764" stroke-width="3"/>
+<text x="860" y="47" font-size="16" class="" style="fill:#FFFEFA">Data &amp; methods</text>
+<text x="1190" y="47" font-size="14" class="" style="fill:#FFFEFA">A housing field guide</text>
+</g>
+<g id="research-subnavigation">
+<rect x="0" y="85" width="1440" height="54" rx="0" fill="#FFFEFA"/>
+<text x="56" y="119" font-size="15" class="" style="fill:#526368">Studies</text>
+<text x="198" y="119" font-size="15" class="" style="fill:#526368">Trends</text>
+<text x="333" y="119" font-size="15" class="bold" style="fill:#006B65">Segments</text>
+<line x1="333" y1="137" x2="428" y2="137" stroke="#006B65" stroke-width="3"/>
+<text x="490" y="119" font-size="15" class="" style="fill:#526368">Tools</text>
+<text x="610" y="119" font-size="15" class="" style="fill:#526368">Research map</text>
+</g>
+<text x="56" y="180" font-size="12" class="label" style="fill:#B64426">RESEARCH / SEGMENTS / TWO WORKFLOW STATES</text>
+<text x="56" y="236" font-size="43" class="serif">From a segment name to the source rows.</text>
+<text x="56" y="273" font-size="17" class="muted">Retain selected segment, area and comparison set across discover, investigate and compare.</text>
+<rect x="56" y="302" width="180" height="25" rx="2" fill="#F8E8CC"/>
+<text x="65" y="319" font-size="11" class="bold" style="fill:#172E33">A / Investigate state</text>
+<text x="255" y="320" font-size="15" class="muted">Selected: Large Size Stable · research extract updated 19 Apr 2026</text>
+<rect x="56" y="351" width="170" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="70" y="378" font-size="14" class="" style="fill:#172E33">← Discover</text>
+<rect x="238" y="351" width="220" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="252" y="378" font-size="14" class="bold" style="fill:#006B65">Investigate selected</text>
+<rect x="470" y="351" width="210" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="484" y="378" font-size="14" class="" style="fill:#172E33">Compare set (2)</text>
+<rect x="1100" y="351" width="284" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="1114" y="378" font-size="14" class="" style="fill:#172E33">Sort: stored avg PSF ↓ ▾</text>
+<g id="investigation-area-evidence">
+<text x="56" y="457" font-size="25" class="serif">Linked areas</text>
+<text x="56" y="489" font-size="14" class="muted">All 10 linked areas fit S$400–1,000 PSF; no additional region/class restriction.</text>
+<text x="56" y="532" font-size="12" class="label">AREA</text>
+<text x="365" y="532" font-size="12" class="label">STORED AVG PSF</text>
+<text x="610" y="532" font-size="12" class="label">MARKET SEGMENT</text>
+<rect x="56" y="552" width="745" height="47" rx="0" fill="#E5EFEB"/>
+<text x="73" y="580" font-size="17" class="bold">Bishan</text>
+<text x="365" y="580" font-size="17" class="num">S$644</text>
+<text x="610" y="580" font-size="15" class="">RCR</text>
+<line x1="56" y1="597" x2="801" y2="597" stroke="#CDD2CA" stroke-width="1"/>
+<text x="73" y="631" font-size="17" class="">Serangoon</text>
+<text x="365" y="631" font-size="17" class="num">S$566</text>
+<text x="610" y="631" font-size="15" class="">RCR</text>
+<line x1="56" y1="648" x2="801" y2="648" stroke="#CDD2CA" stroke-width="1"/>
+<text x="73" y="682" font-size="17" class="">Bukit Timah</text>
+<text x="365" y="682" font-size="17" class="num">S$500</text>
+<text x="610" y="682" font-size="15" class="">CCR</text>
+<line x1="56" y1="699" x2="801" y2="699" stroke="#CDD2CA" stroke-width="1"/>
+<text x="73" y="733" font-size="17" class="">Marina South</text>
+<text x="365" y="733" font-size="17" class="num">S$500</text>
+<text x="610" y="733" font-size="15" class="">CCR</text>
+<line x1="56" y1="750" x2="801" y2="750" stroke="#CDD2CA" stroke-width="1"/>
+<text x="73" y="784" font-size="17" class="">Newton</text>
+<text x="365" y="784" font-size="17" class="num">S$500</text>
+<text x="610" y="784" font-size="15" class="">RCR</text>
+<line x1="56" y1="801" x2="801" y2="801" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="862" font-size="14" class="bold" style="fill:#006B65">Showing 5 of 10 · Next linked areas →</text>
+<rect x="837" y="427" width="547" height="459" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="859" y="466" font-size="24" class="serif">Bishan / selected research area</text>
+<text x="859" y="508" font-size="16" class="">Stored avg PSF: S$644</text>
+<text x="859" y="539" font-size="16" class="">Cluster label: HH · stored confidence label: 99%</text>
+<text x="859" y="570" font-size="16" class="">No sample count or observation period is supplied.</text>
+<rect x="859" y="619" width="503" height="102" rx="4" fill="#F8E8CC"/>
+<text x="875" y="646" font-size="14" class="">Forecast, yield and persistence numbers are not shown</text>
+<text x="875" y="670" font-size="14" class="">as current recommendations. Validate their definitions</text>
+<text x="875" y="694" font-size="14" class="">and reproducibility before activating those metrics.</text>
+<rect x="859" y="764" width="503" height="44" rx="4" fill="#172E33" stroke="#7A8583"/>
+<text x="873" y="791" font-size="14" class="bold" style="fill:#FFFEFA">Open observed HDB comparison →</text>
+<text x="859" y="851" font-size="14" class="muted">Switching evidence context must be explicit.</text>
+</g>
+<line x1="56" y1="930" x2="1384" y2="930" stroke="#CDD2CA" stroke-width="1"/>
+<rect x="56" y="960" width="170" height="25" rx="2" fill="#F8E8CC"/>
+<text x="65" y="977" font-size="11" class="bold" style="fill:#172E33">B / Compare state</text>
+<text x="56" y="1030" font-size="29" class="serif">Two segments, one research vocabulary.</text>
+<text x="56" y="1064" font-size="16" class="muted">Different segment cohorts may overlap; counts are not additive and are not market coverage.</text>
+<g id="segment-comparison-table">
+<text x="56" y="1120" font-size="18" class="bold">STORED FIELD</text>
+<text x="530" y="1120" font-size="18" class="bold">Large Size Stable</text>
+<text x="964" y="1120" font-size="18" class="bold">High Growth Recent</text>
+<line x1="56" y1="1145" x2="1384" y2="1145" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1169" font-size="16" class="">Average PSF</text>
+<text x="530" y="1169" font-size="17" class="bold">S$570</text>
+<text x="964" y="1169" font-size="17" class="bold">S$509</text>
+<line x1="56" y1="1191" x2="1384" y2="1191" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1215" font-size="16" class="">Linked planning areas</text>
+<text x="530" y="1215" font-size="17" class="">10</text>
+<text x="964" y="1215" font-size="17" class="">10</text>
+<line x1="56" y1="1237" x2="1384" y2="1237" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1261" font-size="16" class="">Property types</text>
+<text x="530" y="1261" font-size="17" class="">HDB / Condominium</text>
+<text x="964" y="1261" font-size="17" class="">HDB / Condominium</text>
+<line x1="56" y1="1283" x2="1384" y2="1283" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1307" font-size="16" class="">Reported cohort count</text>
+<text x="530" y="1307" font-size="17" class="">114,700</text>
+<text x="964" y="1307" font-size="17" class="">300,872</text>
+<line x1="56" y1="1329" x2="1384" y2="1329" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1353" font-size="16" class="">Observation period</text>
+<text x="530" y="1353" font-size="17" class="">Not supplied</text>
+<text x="964" y="1353" font-size="17" class="">Not supplied</text>
+</g>
+<g id="comparison-set-actions">
+<rect x="56" y="1380" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/><text x="70" y="1407" font-size="14">Add another segment · 2 slots available</text>
+<rect x="530" y="1380" width="240" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/><text x="544" y="1407" font-size="14">Remove Large Size Stable</text>
+<rect x="964" y="1380" width="300" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/><text x="978" y="1407" font-size="14">Remove High Growth Recent</text>
+</g>
+<text x="56" y="1442" font-size="15" class="muted">Minimum 2 / maximum 4. Removing one retains the other selection and explains the two-segment minimum.</text>
+<line x1="56" y1="1460" x2="1384" y2="1460" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1488" font-size="13" class="muted">Source: segments_enhanced segments + planningAreas · P: evidence gate, accessible selection and comparison UI</text>
+<text x="1210" y="1488" font-size="13" class="bold" style="fill:#006B65">Data &amp; methods →</text>
+</svg>

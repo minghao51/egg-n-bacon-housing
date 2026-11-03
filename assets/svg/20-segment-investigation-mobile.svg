@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1560" viewBox="0 0 390 1560" role="img" aria-labelledby="title desc">
+<title id="title">Mobile segment investigation — research context, selected area and comparison state</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="390" height="1560" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="390" height="70" rx="0" fill="#172E33"/>
+<text x="20" y="30" font-size="17" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="20" y="51" font-size="10" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="328" y="39" font-size="14" class="bold" style="fill:#FFFEFA">Menu</text>
+<line x1="20" y1="70" x2="370" y2="70" stroke="#CDD2CA" stroke-width="1"/>
+</g>
+<text x="20" y="107" font-size="11" class="label" style="fill:#B64426">RESEARCH / SEGMENTS</text>
+<text x="20" y="152" font-size="30" class="serif">Inspect the segment.</text>
+<text x="20" y="189" font-size="30" class="serif">Keep its context.</text>
+<rect x="20" y="226" width="180" height="25" rx="2" fill="#F8E8CC"/>
+<text x="29" y="243" font-size="11" class="bold" style="fill:#172E33">Archive: 19 Apr 2026</text>
+<rect x="20" y="280" width="108" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="307" font-size="14" class="" style="fill:#172E33">Discover</text>
+<rect x="137" y="280" width="112" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="151" y="307" font-size="14" class="bold" style="fill:#006B65">Inspect</text>
+<rect x="258" y="280" width="112" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="272" y="307" font-size="14" class="" style="fill:#172E33">Compare 2</text>
+<text x="20" y="374" font-size="28" class="serif">Large Size Stable</text>
+<text x="20" y="408" font-size="14" class="muted">10 linked areas · stored research cohort.</text>
+<text x="20" y="432" font-size="14" class="muted">Not a 2025 property-specific market view.</text>
+<rect x="20" y="476" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="503" font-size="14" class="" style="fill:#172E33">PSF 400–1,000 · all classes · Filters</text>
+<rect x="20" y="534" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="561" font-size="14" class="" style="fill:#172E33">Sort: stored avg PSF ↓ ▾</text>
+<g id="mobile-linked-area-rows">
+<rect x="20" y="611" width="350" height="85" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="35" y="641" font-size="20" class="bold">✓ Bishan</text>
+<text x="35" y="670" font-size="13" class="muted">Stored avg PSF</text>
+<text x="355" y="670" font-size="20" class="bold num" text-anchor="end">S$644</text>
+<rect x="20" y="715" width="350" height="85" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="35" y="745" font-size="20" class="bold">Serangoon</text>
+<text x="35" y="774" font-size="13" class="muted">Stored avg PSF</text>
+<text x="355" y="774" font-size="20" class="bold num" text-anchor="end">S$566</text>
+<rect x="20" y="819" width="350" height="85" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="35" y="849" font-size="20" class="bold">Bukit Timah</text>
+<text x="35" y="878" font-size="13" class="muted">Stored avg PSF</text>
+<text x="355" y="878" font-size="20" class="bold num" text-anchor="end">S$500</text>
+</g>
+<text x="20" y="964" font-size="14" class="bold" style="fill:#006B65">Showing 3 of 10 · Next linked areas →</text>
+<rect x="20" y="1001" width="350" height="102" rx="4" fill="#F8E8CC"/>
+<text x="36" y="1028" font-size="14" class="">Bishan / selected research area</text>
+<text x="36" y="1052" font-size="14" class="">Observation period and sample not supplied.</text>
+<text x="36" y="1076" font-size="14" class="">Yield / forecast outputs are definition-gated.</text>
+<rect x="20" y="1134" width="350" height="44" rx="4" fill="#172E33" stroke="#7A8583"/>
+<text x="34" y="1161" font-size="14" class="bold" style="fill:#FFFEFA">Open observed HDB comparison →</text>
+<text x="20" y="1214" font-size="14" class="muted">This switches to observed HDB / 2025.</text>
+<text x="20" y="1239" font-size="14" class="muted">It does not reinterpret S$644 as that median.</text>
+<rect x="20" y="1310" width="350" height="95" rx="4" fill="#E5EFEB"/>
+<text x="35" y="1342" font-size="18" class="bold">Comparison set: 2 of 4</text>
+<text x="35" y="1373" font-size="13" class="">Large Size Stable · High Growth Recent</text>
+<rect x="20" y="1432" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="1459" font-size="14" class="" style="fill:#172E33">Compare the two research cohorts →</text>
+<text x="20" y="1522" font-size="12" class="muted">Source: segments_enhanced · proposed mobile layout</text>
+</svg>

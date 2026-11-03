@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1420" viewBox="0 0 1440 1420" role="img" aria-labelledby="title desc">
+<title id="title">Design system — Fieldnotes, an original housing editorial identity</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1440" height="1420" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="1440" height="85" rx="0" fill="#172E33"/>
+<text x="56" y="36" font-size="24" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="57" y="59" font-size="11" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="465" y="47" font-size="16" class="bold" style="fill:#FFFEFA">Overview</text>
+<line x1="465" y1="66" x2="550" y2="66" stroke="#D6B764" stroke-width="3"/>
+<text x="605" y="47" font-size="16" class="" style="fill:#FFFEFA">Explore</text>
+<text x="725" y="47" font-size="16" class="" style="fill:#FFFEFA">Research</text>
+<text x="860" y="47" font-size="16" class="" style="fill:#FFFEFA">Data &amp; methods</text>
+<text x="1190" y="47" font-size="14" class="" style="fill:#FFFEFA">A housing field guide</text>
+</g>
+<text x="56" y="126" font-size="12" class="label" style="fill:#B64426">VISUAL SPECIFICATION / 00</text>
+<text x="56" y="182" font-size="48" class="serif">Fieldnotes for a housing market</text>
+<text x="56" y="219" font-size="18" class="muted">Warm paper. Sharp questions. Evidence before recommendations. Original identity; no FiveThirtyEight branding.</text>
+<g id="palette">
+<text x="56" y="280" font-size="13" class="label">01 / PALETTE</text>
+<rect x="56" y="302" width="200" height="76" rx="0" fill="#F6F3EC" stroke="#CDD2CA"/>
+<text x="56" y="404" font-size="15" class="bold">Paper</text>
+<text x="56" y="429" font-size="14" class="muted">#F6F3EC</text>
+<rect x="278" y="302" width="200" height="76" rx="0" fill="#172E33" stroke="#CDD2CA"/>
+<text x="278" y="404" font-size="15" class="bold">Ink</text>
+<text x="278" y="429" font-size="14" class="muted">#172E33</text>
+<rect x="500" y="302" width="200" height="76" rx="0" fill="#006B65" stroke="#CDD2CA"/>
+<text x="500" y="404" font-size="15" class="bold">Teal / HDB</text>
+<text x="500" y="429" font-size="14" class="muted">#006B65</text>
+<rect x="722" y="302" width="200" height="76" rx="0" fill="#B64426" stroke="#CDD2CA"/>
+<text x="722" y="404" font-size="15" class="bold">Rust / EC</text>
+<text x="722" y="429" font-size="14" class="muted">#B64426</text>
+<rect x="944" y="302" width="200" height="76" rx="0" fill="#66508A" stroke="#CDD2CA"/>
+<text x="944" y="404" font-size="15" class="bold">Plum / Condo</text>
+<text x="944" y="429" font-size="14" class="muted">#66508A</text>
+<rect x="1166" y="302" width="200" height="76" rx="0" fill="#526368" stroke="#CDD2CA"/>
+<text x="1166" y="404" font-size="15" class="bold">Secondary text</text>
+<text x="1166" y="429" font-size="14" class="muted">#526368</text>
+</g>
+<line x1="56" y1="463" x2="1384" y2="463" stroke="#CDD2CA" stroke-width="1"/>
+<g id="typography">
+<text x="56" y="500" font-size="13" class="label">02 / TYPOGRAPHY</text>
+<text x="56" y="556" font-size="40" class="serif">What does a home cost here?</text>
+<text x="56" y="597" font-size="14" class="muted">Georgia / 48 desktop · 34 mobile · regular</text>
+<text x="56" y="644" font-size="24" class="bold">Compare the same market, not mixed periods.</text>
+<text x="56" y="680" font-size="16" class="">Arial / 24 section · 18 body · 14 labels · 12 source minimum</text>
+<text x="56" y="720" font-size="25" class="bold num">S$710,000     1,921 sales     +13.1%</text>
+<text x="56" y="751" font-size="14" class="muted">Tabular numerals; full currency on first reference. PSF = S$ per sq ft.</text>
+<text x="56" y="775" font-size="13" class="muted">13.1% is a median-level difference, not annual growth.</text>
+</g>
+<g id="grid">
+<text x="865" y="500" font-size="13" class="label">03 / SPACE &amp; GRID</text>
+<rect x="865" y="551" width="38" height="4" rx="0" fill="#006B65"/>
+<text x="865" y="580" font-size="13" class="muted">4</text>
+<rect x="929" y="547" width="38" height="8" rx="0" fill="#006B65"/>
+<text x="929" y="580" font-size="13" class="muted">8</text>
+<rect x="993" y="543" width="38" height="12" rx="0" fill="#006B65"/>
+<text x="993" y="580" font-size="13" class="muted">12</text>
+<rect x="1057" y="539" width="38" height="16" rx="0" fill="#006B65"/>
+<text x="1057" y="580" font-size="13" class="muted">16</text>
+<rect x="1121" y="531" width="38" height="24" rx="0" fill="#006B65"/>
+<text x="1121" y="580" font-size="13" class="muted">24</text>
+<rect x="1185" y="523" width="38" height="32" rx="0" fill="#006B65"/>
+<text x="1185" y="580" font-size="13" class="muted">32</text>
+<rect x="1249" y="507" width="38" height="48" rx="0" fill="#006B65"/>
+<text x="1249" y="580" font-size="13" class="muted">48</text>
+<rect x="1313" y="491" width="38" height="64" rx="0" fill="#006B65"/>
+<text x="1313" y="580" font-size="13" class="muted">64</text>
+<text x="865" y="623" font-size="16" class="">Desktop: 1,440 frame / 56 gutters / 24 gaps.</text>
+<text x="865" y="653" font-size="16" class="">12 columns within 1,328 px content width.</text>
+<text x="865" y="683" font-size="16" class="">Mobile: 390 frame / 20 gutters / 16 gaps.</text>
+<text x="865" y="713" font-size="16" class="">Text column: 60–75 characters maximum.</text>
+<text x="865" y="743" font-size="16" class="">Borders 1 px · radius 4 px · no ornamental shadows.</text>
+</g>
+<line x1="56" y1="790" x2="1384" y2="790" stroke="#CDD2CA" stroke-width="1"/>
+<g id="controls-and-focus">
+<text x="56" y="829" font-size="13" class="label">04 / CONTROLS &amp; STATES</text>
+<rect x="56" y="855" width="112" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="70" y="882" font-size="14" class="bold" style="fill:#006B65">HDB</text>
+<rect x="180" y="855" width="110" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="194" y="882" font-size="14" class="" style="fill:#172E33">EC</text>
+<rect x="302" y="855" width="160" height="44" rx="4" fill="#172E33" stroke="#7A8583"/>
+<text x="316" y="882" font-size="14" class="bold" style="fill:#FFFEFA">Explore areas →</text>
+<rect x="53" y="852" width="118" height="50" rx="6" fill="none" stroke="#66508A"/>
+<text x="56" y="930" font-size="14" class="muted">Selected + keyboard focus</text>
+<rect x="56" y="955" width="408" height="48" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="72" y="985" font-size="16" class="muted">Search planning areas</text>
+<text x="436" y="985" font-size="22" class="">⌕</text>
+<rect x="56" y="1022" width="160" height="25" rx="2" fill="#F8E8CC"/>
+<text x="65" y="1039" font-size="11" class="bold" style="fill:#172E33">Proposed interaction</text>
+<rect x="230" y="1022" width="120" height="25" rx="2" fill="#E5EFEB"/>
+<text x="239" y="1039" font-size="11" class="bold" style="fill:#172E33">Existing data</text>
+<text x="56" y="1088" font-size="15" class="">44 px minimum targets · visible focus ring.</text>
+<text x="56" y="1115" font-size="15" class="">Selected states use text/icon, not color alone.</text>
+<text x="56" y="1142" font-size="15" class="">Disabled: explain why; missing values are “—”.</text>
+</g>
+<g id="chart-grammar">
+<text x="555" y="829" font-size="13" class="label">05 / CHART GRAMMAR</text>
+<text x="555" y="868" font-size="23" class="bold">Direct labels beat detached legends</text>
+<text x="555" y="897" font-size="15" class="muted">2025 median transaction price · SGD</text>
+<line x1="650" y1="924" x2="650" y2="1053" stroke="#CDD2CA" stroke-width="1"/>
+<text x="650" y="1077" font-size="12" class="muted" text-anchor="middle">0</text>
+<line x1="775" y1="924" x2="775" y2="1053" stroke="#CDD2CA" stroke-width="1"/>
+<text x="775" y="1077" font-size="12" class="muted" text-anchor="middle">500k</text>
+<line x1="900" y1="924" x2="900" y2="1053" stroke="#CDD2CA" stroke-width="1"/>
+<text x="900" y="1077" font-size="12" class="muted" text-anchor="middle">1m</text>
+<line x1="1025" y1="924" x2="1025" y2="1053" stroke="#CDD2CA" stroke-width="1"/>
+<text x="1025" y="1077" font-size="12" class="muted" text-anchor="middle">1.5m</text>
+<line x1="1150" y1="924" x2="1150" y2="1053" stroke="#CDD2CA" stroke-width="1"/>
+<text x="1150" y="1077" font-size="12" class="muted" text-anchor="middle">2m</text>
+<text x="555" y="948" font-size="14" class="bold">HDB</text>
+<rect x="650" y="932" width="157.0" height="20" rx="0" fill="#006B65"/>
+<text x="817.0" y="948" font-size="13" class="bold">628,000</text>
+<text x="555" y="991" font-size="14" class="bold">EC</text>
+<rect x="650" y="975" width="394.5" height="20" rx="0" fill="#B64426"/>
+<text x="1054.5" y="991" font-size="13" class="bold">1,578,000</text>
+<text x="555" y="1034" font-size="14" class="bold">Condo</text>
+<rect x="650" y="1018" width="484.738" height="20" rx="0" fill="#66508A"/>
+<text x="1144.738" y="1034" font-size="13" class="bold">1,938,952</text>
+<text x="555" y="1125" font-size="14" class="muted">Zero baseline for bars · no fabricated confidence bands.</text>
+<text x="555" y="1153" font-size="14" class="muted">Nulls break lines. Show data table, source, period and sample.</text>
+</g>
+<line x1="56" y1="1200" x2="1384" y2="1200" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1240" font-size="13" class="label">06 / IMPLEMENTATION RULE</text>
+<text x="56" y="1274" font-size="16" class="">These SVGs are specifications, not the rendering architecture. Build navigation, forms, tables and disclosures as semantic HTML.</text>
+<text x="56" y="1304" font-size="16" class="">Use React/Recharts for interactive plots; Leaflet only when Map is chosen. Provide a textual summary and accessible table for every chart.</text>
+<text x="56" y="1334" font-size="16" class="">Color contrast: all normal text pairs ≥ 4.5:1; chart fills against paper ≥ 3:1. Do not use pale rules as control boundaries without context.</text>
+</svg>

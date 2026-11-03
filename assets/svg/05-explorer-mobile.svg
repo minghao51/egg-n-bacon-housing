@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1280" viewBox="0 0 390 1280" role="img" aria-labelledby="title desc">
+<title id="title">Mobile explorer — filter summary and readable area list</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="390" height="1280" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="390" height="70" rx="0" fill="#172E33"/>
+<text x="20" y="30" font-size="17" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="20" y="51" font-size="10" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="328" y="39" font-size="14" class="bold" style="fill:#FFFEFA">Menu</text>
+<line x1="20" y1="70" x2="370" y2="70" stroke="#CDD2CA" stroke-width="1"/>
+</g>
+<text x="20" y="107" font-size="11" class="label" style="fill:#B64426">EXPLORE / PLANNING AREAS</text>
+<text x="20" y="151" font-size="33" class="serif">Same year.</text>
+<text x="20" y="190" font-size="33" class="serif">Same housing type.</text>
+<rect x="20" y="223" width="168" height="25" rx="2" fill="#F8E8CC"/>
+<text x="29" y="240" font-size="11" class="bold" style="fill:#172E33">New unified workflow</text>
+<rect x="20" y="268" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="295" font-size="14" class="" style="fill:#172E33">HDB · 2025 · ≥150 sales       Filters (3)</text>
+<rect x="20" y="324" width="110" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="34" y="351" font-size="14" class="bold" style="fill:#006B65">Chart + list</text>
+<rect x="138" y="324" width="93" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="152" y="351" font-size="14" class="" style="fill:#172E33">Map</text>
+<rect x="239" y="324" width="131" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="253" y="351" font-size="14" class="" style="fill:#172E33">Table</text>
+<rect x="20" y="388" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="415" font-size="15" class="muted">Search planning areas</text>
+<g id="mobile-sort-control">
+<rect x="20" y="441" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="469" font-size="16" class="bold">25 areas · median price ↑ ▾</text>
+</g>
+<text x="20" y="506" font-size="13" class="muted">6 thin-sample areas hidden · Change filters</text>
+<rect x="20" y="519" width="350" height="55" rx="3" fill="#E5EFEB"/>
+<text x="34" y="543" font-size="14" class="bold" style="fill:#006B65">National HDB median: S$628,000</text>
+<text x="34" y="563" font-size="12" class="muted">2025 · transaction price, not asking price</text>
+<g id="mobile-area-list">
+<text x="20" y="608" font-size="19" class="bold">Ang Mo Kio</text>
+<text x="370" y="608" font-size="18" class="bold num" text-anchor="end">S$499,000</text>
+<text x="20" y="634" font-size="14" class="muted">971 sales · 2025 HDB</text>
+<text x="357" y="634" font-size="18" class="bold" style="fill:#006B65">→</text>
+<rect x="20" y="649" width="174.65" height="7" rx="0" fill="#006B65"/>
+<line x1="239.8" y1="644" x2="239.8" y2="661" stroke="#172E33" stroke-width="2"/>
+<line x1="20" y1="682" x2="370" y2="682" stroke="#CDD2CA" stroke-width="1"/>
+<text x="20" y="711" font-size="19" class="bold">Jurong East</text>
+<text x="370" y="711" font-size="18" class="bold num" text-anchor="end">S$524,000</text>
+<text x="20" y="737" font-size="14" class="muted">482 sales · 2025 HDB</text>
+<text x="357" y="737" font-size="18" class="bold" style="fill:#006B65">→</text>
+<rect x="20" y="752" width="183.4" height="7" rx="0" fill="#006B65"/>
+<line x1="239.8" y1="747" x2="239.8" y2="764" stroke="#172E33" stroke-width="2"/>
+<line x1="20" y1="785" x2="370" y2="785" stroke="#CDD2CA" stroke-width="1"/>
+<text x="20" y="814" font-size="19" class="bold">Marine Parade</text>
+<text x="370" y="814" font-size="18" class="bold num" text-anchor="end">S$539,750</text>
+<text x="20" y="840" font-size="14" class="muted">162 sales · 2025 HDB</text>
+<text x="357" y="840" font-size="18" class="bold" style="fill:#006B65">→</text>
+<rect x="20" y="855" width="188.9125" height="7" rx="0" fill="#006B65"/>
+<line x1="239.8" y1="850" x2="239.8" y2="867" stroke="#172E33" stroke-width="2"/>
+<line x1="20" y1="888" x2="370" y2="888" stroke="#CDD2CA" stroke-width="1"/>
+<text x="20" y="917" font-size="19" class="bold">Yishun</text>
+<text x="370" y="917" font-size="18" class="bold num" text-anchor="end">S$547,000</text>
+<text x="20" y="943" font-size="14" class="muted">1,703 sales · 2025 HDB</text>
+<text x="357" y="943" font-size="18" class="bold" style="fill:#006B65">→</text>
+<rect x="20" y="958" width="191.45000000000002" height="7" rx="0" fill="#006B65"/>
+<line x1="239.8" y1="953" x2="239.8" y2="970" stroke="#172E33" stroke-width="2"/>
+<line x1="20" y1="991" x2="370" y2="991" stroke="#CDD2CA" stroke-width="1"/>
+</g>
+<text x="20" y="1039" font-size="12" class="muted">Mini-bars share a S$0–1m scale.</text>
+<text x="20" y="1061" font-size="12" class="muted">Black marker = national median.</text>
+<rect x="20" y="1089" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="1116" font-size="14" class="" style="fill:#172E33">Page 1 of 7 · Next 4 areas →</text>
+<text x="20" y="1169" font-size="13" class="muted">Proposed: filters open as a full-height sheet.</text>
+<text x="20" y="1191" font-size="13" class="muted">See 06 for draft, apply and cancel behavior.</text>
+<text x="20" y="1223" font-size="12" class="muted">Source: map_metrics.year_2025_hdb</text>
+<text x="20" y="1254" font-size="12" class="muted">Baseline: reconciled snapshot; release-gated.</text>
+</svg>

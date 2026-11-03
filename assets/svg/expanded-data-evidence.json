@@ -1,0 +1,528 @@
+{
+  "reconciled_design_snapshot": {
+    "verification": "National and area price/count pairs recalculated from one local platinum frame; not a production generation guarantee",
+    "national_2025_hdb": {
+      "count": 25084,
+      "median_price": 628000.0,
+      "raw_median_psf": 603.8703443919026,
+      "published_truncated_psf": 603,
+      "missing_planning_area": 0
+    },
+    "tampines_2025_hdb": {
+      "count": 1921,
+      "median_price": 710000.0,
+      "raw_median_psf": 620.8430315863495,
+      "published_truncated_psf": 620
+    },
+    "area_map_count_sum": 25082,
+    "excluded_from_area_map": {
+      "SUNGEI KADUT": 2
+    }
+  },
+  "monthly_2025": [
+    {
+      "date": "2025-01",
+      "Overall Price": 1409000,
+      "HDB Price": 612888,
+      "HDB Volume": 2313,
+      "EC Price": 1438000,
+      "EC Volume": 317,
+      "Condominium Price": 1950000,
+      "Condominium Volume": 3850
+    },
+    {
+      "date": "2025-02",
+      "Overall Price": 1492000,
+      "HDB Price": 620000,
+      "HDB Volume": 2091,
+      "EC Price": 1461000,
+      "EC Volume": 350,
+      "Condominium Price": 1900000,
+      "Condominium Volume": 4447
+    },
+    {
+      "date": "2025-03",
+      "Overall Price": 1515000,
+      "HDB Price": 625000,
+      "HDB Volume": 1899,
+      "EC Price": 1622000,
+      "EC Volume": 1425,
+      "Condominium Price": 1818909,
+      "Condominium Volume": 4165
+    },
+    {
+      "date": "2025-04",
+      "Overall Price": 1317500,
+      "HDB Price": 630000,
+      "HDB Volume": 2297,
+      "EC Price": 1483000,
+      "EC Volume": 588,
+      "Condominium Price": 1873526,
+      "Condominium Volume": 3864
+    },
+    {
+      "date": "2025-05",
+      "Overall Price": 1180000,
+      "HDB Price": 635000,
+      "HDB Volume": 2266,
+      "EC Price": 1578444,
+      "EC Volume": 412,
+      "Condominium Price": 1793717,
+      "Condominium Volume": 2838
+    },
+    {
+      "date": "2025-06",
+      "Overall Price": 1192000,
+      "HDB Price": 632400,
+      "HDB Volume": 2260,
+      "EC Price": 1470000,
+      "EC Volume": 395,
+      "Condominium Price": 1880000,
+      "Condominium Volume": 2784
+    },
+    {
+      "date": "2025-07",
+      "Overall Price": 1508000,
+      "HDB Price": 628000,
+      "HDB Volume": 2562,
+      "EC Price": 1660000,
+      "EC Volume": 779,
+      "Condominium Price": 2106000,
+      "Condominium Volume": 4246
+    },
+    {
+      "date": "2025-08",
+      "Overall Price": 1610694,
+      "HDB Price": 622000,
+      "HDB Volume": 2202,
+      "EC Price": 1644500,
+      "EC Volume": 644,
+      "Condominium Price": 1894510,
+      "Condominium Volume": 6296
+    },
+    {
+      "date": "2025-09",
+      "Overall Price": 1230000,
+      "HDB Price": 645000,
+      "HDB Volume": 2174,
+      "EC Price": 1502000,
+      "EC Volume": 320,
+      "Condominium Price": 1830000,
+      "Condominium Volume": 3083
+    },
+    {
+      "date": "2025-10",
+      "Overall Price": 1962000,
+      "HDB Price": 620000,
+      "HDB Volume": 1338,
+      "EC Price": 1573000,
+      "EC Volume": 330,
+      "Condominium Price": 2181000,
+      "Condominium Volume": 6838
+    },
+    {
+      "date": "2025-11",
+      "Overall Price": 1368000,
+      "HDB Price": 618000,
+      "HDB Volume": 1658,
+      "EC Price": 1540000,
+      "EC Volume": 351,
+      "Condominium Price": 1970000,
+      "Condominium Volume": 2736
+    },
+    {
+      "date": "2025-12",
+      "Overall Price": 1169000,
+      "HDB Price": 635000,
+      "HDB Volume": 2024,
+      "EC Price": 1630000,
+      "EC Volume": 298,
+      "Condominium Price": 1868444,
+      "Condominium Volume": 2356
+    }
+  ],
+  "research_segments": {
+    "lastUpdated": "2026-04-19T23:23:07.521202",
+    "version": "1.0.0",
+    "segments": [
+      {
+        "id": "large_size_stable",
+        "name": "Large Size Stable",
+        "metrics": {
+          "avgPricePsf": 570,
+          "avgYield": 5.54,
+          "yoyGrowth": 12.0,
+          "transactionCount": 114700,
+          "marketShare": 0.126
+        },
+        "propertyTypes": [
+          "HDB",
+          "Condominium"
+        ],
+        "planningAreas": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Bukit Timah",
+          "Orchard",
+          "Marina South",
+          "Tanglin",
+          "Newton",
+          "River Valley"
+        ]
+      },
+      {
+        "id": "high_growth_recent",
+        "name": "High Growth Recent",
+        "metrics": {
+          "avgPricePsf": 509,
+          "avgYield": 5.2,
+          "yoyGrowth": 24.4,
+          "transactionCount": 300872,
+          "marketShare": 0.33
+        },
+        "propertyTypes": [
+          "HDB",
+          "Condominium"
+        ],
+        "planningAreas": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Newton",
+          "River Valley",
+          "Clementi",
+          "Ang Mo Kio",
+          "Bukit Merah",
+          "Kallang"
+        ]
+      },
+      {
+        "id": "speculator_hotspots",
+        "name": "Speculator Hotspots",
+        "metrics": {
+          "avgPricePsf": 550,
+          "avgYield": 4.8,
+          "yoyGrowth": 83.9,
+          "transactionCount": 51957,
+          "marketShare": 0.057
+        },
+        "propertyTypes": [
+          "Condominium",
+          "HDB"
+        ],
+        "planningAreas": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Bukit Timah",
+          "Orchard",
+          "Marina South",
+          "Tanglin",
+          "Newton",
+          "River Valley"
+        ]
+      },
+      {
+        "id": "declining_areas",
+        "name": "Declining Areas",
+        "metrics": {
+          "avgPricePsf": 564,
+          "avgYield": 5.0,
+          "yoyGrowth": -3.6,
+          "transactionCount": 112943,
+          "marketShare": 0.124
+        },
+        "propertyTypes": [
+          "HDB",
+          "Condominium"
+        ],
+        "planningAreas": [
+          "Woodlands",
+          "Yishun",
+          "Sembawang",
+          "Punggol",
+          "Sengkang",
+          "Choa Chu Kang",
+          "Jurong West",
+          "Tampines",
+          "Pasir Ris",
+          "Hougang"
+        ]
+      },
+      {
+        "id": "mid_tier_value",
+        "name": "Mid-Tier Value",
+        "metrics": {
+          "avgPricePsf": 463,
+          "avgYield": 6.36,
+          "yoyGrowth": 8.5,
+          "transactionCount": 230685,
+          "marketShare": 0.253
+        },
+        "propertyTypes": [
+          "HDB"
+        ],
+        "planningAreas": [
+          "Lim Chu Kang"
+        ]
+      },
+      {
+        "id": "premium_new_units",
+        "name": "Premium New Units",
+        "metrics": {
+          "avgPricePsf": 826,
+          "avgYield": 3.8,
+          "yoyGrowth": 12.3,
+          "transactionCount": 100297,
+          "marketShare": 0.11
+        },
+        "propertyTypes": [
+          "Condominium",
+          "EC"
+        ],
+        "planningAreas": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Bukit Timah",
+          "Orchard",
+          "Marina South",
+          "Tanglin",
+          "Newton",
+          "River Valley"
+        ]
+      }
+    ],
+    "selected_area_bishan": {
+      "name": "Bishan",
+      "region": "RCR",
+      "spatialCluster": "HH",
+      "hotspotConfidence": "99%",
+      "persistenceProbability": 0.6,
+      "mrtPremium": 5.88,
+      "mrtSensitivity": "moderate",
+      "cbdDistance": 4.2,
+      "schoolTier": "mixed",
+      "schoolPremium": -23.67,
+      "forecast6m": 4.94,
+      "avgPricePsf": 644,
+      "avgYield": 4.95,
+      "segments": [
+        "large_size_stable",
+        "high_growth_recent",
+        "speculator_hotspots",
+        "premium_new_units"
+      ]
+    }
+  },
+  "lease_bands": [
+    {
+      "lease_age_band": "0-5",
+      "min_lease_years": 94,
+      "max_lease_years": 99,
+      "discount_percent": 0.0,
+      "annual_decay_rate": 0.0,
+      "volume_category": "low",
+      "risk_zone": "cliff",
+      "transaction_count": 17565
+    },
+    {
+      "lease_age_band": "5-10",
+      "min_lease_years": 89,
+      "max_lease_years": 94,
+      "discount_percent": -11.02,
+      "annual_decay_rate": -0.12,
+      "volume_category": "medium",
+      "risk_zone": "cliff",
+      "transaction_count": 27909
+    },
+    {
+      "lease_age_band": "10-15",
+      "min_lease_years": 84,
+      "max_lease_years": 89,
+      "discount_percent": -18.58,
+      "annual_decay_rate": -0.215,
+      "volume_category": "low",
+      "risk_zone": "cliff",
+      "transaction_count": 10266
+    },
+    {
+      "lease_age_band": "15-20",
+      "min_lease_years": 79,
+      "max_lease_years": 84,
+      "discount_percent": 25.49,
+      "annual_decay_rate": 0.313,
+      "volume_category": "low",
+      "risk_zone": "cliff",
+      "transaction_count": 17482
+    },
+    {
+      "lease_age_band": "20-25",
+      "min_lease_years": 74,
+      "max_lease_years": 79,
+      "discount_percent": 19.1,
+      "annual_decay_rate": 0.25,
+      "volume_category": "medium",
+      "risk_zone": "cliff",
+      "transaction_count": 29913
+    },
+    {
+      "lease_age_band": "25-30",
+      "min_lease_years": 69,
+      "max_lease_years": 74,
+      "discount_percent": 15.55,
+      "annual_decay_rate": 0.218,
+      "volume_category": "medium",
+      "risk_zone": "cliff",
+      "transaction_count": 26647
+    },
+    {
+      "lease_age_band": "30-35",
+      "min_lease_years": 64,
+      "max_lease_years": 69,
+      "discount_percent": 21.94,
+      "annual_decay_rate": 0.33,
+      "volume_category": "medium",
+      "risk_zone": "cliff",
+      "transaction_count": 28115
+    },
+    {
+      "lease_age_band": "35-40",
+      "min_lease_years": 59,
+      "max_lease_years": 64,
+      "discount_percent": 12.93,
+      "annual_decay_rate": 0.21,
+      "volume_category": "medium",
+      "risk_zone": "cliff",
+      "transaction_count": 39089
+    },
+    {
+      "lease_age_band": "40-45",
+      "min_lease_years": 54,
+      "max_lease_years": 59,
+      "discount_percent": 11.27,
+      "annual_decay_rate": 0.2,
+      "volume_category": "medium",
+      "risk_zone": "cliff",
+      "transaction_count": 30901
+    },
+    {
+      "lease_age_band": "45-50",
+      "min_lease_years": 49,
+      "max_lease_years": 54,
+      "discount_percent": 2.21,
+      "annual_decay_rate": 0.043,
+      "volume_category": "medium",
+      "risk_zone": "cliff",
+      "transaction_count": 26761
+    },
+    {
+      "lease_age_band": "50-55",
+      "min_lease_years": 44,
+      "max_lease_years": 49,
+      "discount_percent": 7.13,
+      "annual_decay_rate": 0.153,
+      "volume_category": "low",
+      "risk_zone": "cliff",
+      "transaction_count": 3749
+    },
+    {
+      "lease_age_band": "55-60",
+      "min_lease_years": 39,
+      "max_lease_years": 44,
+      "discount_percent": 3.76,
+      "annual_decay_rate": 0.091,
+      "volume_category": "low",
+      "risk_zone": "cliff",
+      "transaction_count": 580
+    },
+    {
+      "lease_age_band": "90-95",
+      "min_lease_years": 4,
+      "max_lease_years": 9,
+      "discount_percent": 28.07,
+      "annual_decay_rate": 4.319,
+      "volume_category": "medium",
+      "risk_zone": "safe",
+      "transaction_count": 29397
+    }
+  ],
+  "research_layers": {
+    "geometry_features": 55,
+    "spatial_areas": 41,
+    "uniform_zero_z_one_p_stable": true,
+    "spatial_metadata": {
+      "generated_at": "2026-02-19T17:23:01.143214",
+      "data_version": "L3_unified_dataset",
+      "methodology": "Getis-Ord Gi* hotspot analysis, LISA clustering, Moran's I"
+    },
+    "forecast_metadata": {
+      "generated_at": "2026-02-19T17:23:03.558034",
+      "forecast_horizon": "6_months",
+      "model_r2": 0.89,
+      "last_training_date": "2025-01-01"
+    },
+    "forecast_targets": [
+      "2025-07-01"
+    ],
+    "spatial_tool_keys": [
+      "towns",
+      "town_clusters",
+      "cluster_descriptions",
+      "portfolio_allocation"
+    ],
+    "expected_clusters_present": false
+  },
+  "catalog_snapshot": {
+    "row_count": 1233405,
+    "column_count": 97,
+    "local_platinum_rows": 1234928
+  },
+  "financing_scenario": {
+    "status": "Illustrative user assumptions, not observed household records or a loan offer",
+    "reference_price_sgd": 710000,
+    "annual_income_sgd": 120000,
+    "down_payment_fraction": 0.3,
+    "years": 25,
+    "loan_principal_sgd": 497000,
+    "rate_sensitivity": [
+      {
+        "annual_rate": 0.02,
+        "unrounded_monthly_payment": 2106.556063061008,
+        "display_payment": 2107
+      },
+      {
+        "annual_rate": 0.03,
+        "unrounded_monthly_payment": 2356.830229872669,
+        "display_payment": 2357
+      },
+      {
+        "annual_rate": 0.04,
+        "unrounded_monthly_payment": 2623.349096279918,
+        "display_payment": 2623
+      },
+      {
+        "annual_rate": 0.05,
+        "unrounded_monthly_payment": 2905.4125062946614,
+        "display_payment": 2905
+      },
+      {
+        "annual_rate": 0.06,
+        "unrounded_monthly_payment": 3202.1779653830067,
+        "display_payment": 3202
+      }
+    ]
+  },
+  "source_checksums": {
+    "app/public/data/segments_enhanced.json.gz": "76979cc5fdc4e7fff27847147b70520f896c3f344d701f4ef702c252dd571d56",
+    "app/public/data/dashboard_trends.json.gz": "2857e6247c449babad44a8d69f2e40fd2fe5496a21145588399d26e93d774139",
+    "app/public/data/catalog.jsonl.gz": "bdc8fc1d7b1adf5020ca2f373e85cc77cb220e58fc869e7b6d88e3b31ac338f5",
+    "app/public/data/planning_areas.geojson": "f23856251b467089f788d0fff72ef5a38e753f21aa69b4352401d7ed50d380cc",
+    "app/public/data/interactive_tools/lease_decay_analysis.json.gz": "09da6d774759e1f25c44fd38d02d854e421130d7258a0c521e065fa6ee0aac69"
+  }
+}

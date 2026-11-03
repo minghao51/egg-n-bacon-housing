@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1500" viewBox="0 0 390 1500" role="img" aria-labelledby="title desc">
+<title id="title">Mobile research navigation and trends — complete journeys without desktop-only controls</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="390" height="1500" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="390" height="70" rx="0" fill="#172E33"/>
+<text x="20" y="30" font-size="17" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="20" y="51" font-size="10" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="328" y="39" font-size="14" class="bold" style="fill:#FFFEFA">Menu</text>
+<line x1="20" y1="70" x2="370" y2="70" stroke="#CDD2CA" stroke-width="1"/>
+</g>
+<text x="20" y="106" font-size="11" class="label" style="fill:#B64426">RESEARCH</text>
+<text x="20" y="151" font-size="31" class="serif">Choose your question.</text>
+<text x="20" y="189" font-size="16" class="muted">Observed history and archived research</text>
+<text x="20" y="214" font-size="16" class="muted">are separate reading paths.</text>
+<rect x="20" y="250" width="350" height="58" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="272" font-size="16" class="bold">Trends</text>
+<text x="34" y="295" font-size="13" class="muted">Prices + sales over time →</text>
+<rect x="20" y="319" width="350" height="58" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="341" font-size="16" class="bold">Segments</text>
+<text x="34" y="364" font-size="13" class="muted">Discover / investigate / compare →</text>
+<rect x="20" y="388" width="350" height="58" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="410" font-size="16" class="bold">Tools</text>
+<text x="34" y="433" font-size="13" class="muted">Financing / lease / MRT / spatial →</text>
+<rect x="20" y="457" width="350" height="58" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="479" font-size="16" class="bold">Studies &amp; research map</text>
+<text x="34" y="502" font-size="13" class="muted">Reports / dated layer controls →</text>
+<line x1="20" y1="552" x2="370" y2="552" stroke="#CDD2CA" stroke-width="1"/>
+<rect x="20" y="576" width="178" height="25" rx="2" fill="#E5EFEB"/>
+<text x="29" y="593" font-size="11" class="bold" style="fill:#172E33">Trends / opened state</text>
+<text x="20" y="644" font-size="25" class="serif">HDB prices through 2025</text>
+<rect x="20" y="670" width="169" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="34" y="697" font-size="14" class="bold" style="fill:#006B65">HDB ▾</text>
+<rect x="201" y="670" width="169" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="215" y="697" font-size="14" class="bold" style="fill:#006B65">2025 ▾</text>
+<text x="20" y="752" font-size="14" class="bold">Monthly median · nominal SGD</text>
+<text x="20" y="777" font-size="13" class="muted">Zoomed axis: S$600k–660k</text>
+<g id="mobile-monthly-line">
+<line x1="63" y1="992.0" x2="342" y2="992.0" stroke="#CDD2CA" stroke-width="1"/>
+<text x="53" y="996.0" font-size="11" class="muted" text-anchor="end">600k</text>
+<line x1="63" y1="903.5" x2="342" y2="903.5" stroke="#CDD2CA" stroke-width="1"/>
+<text x="53" y="907.5" font-size="11" class="muted" text-anchor="end">630k</text>
+<line x1="63" y1="815.0" x2="342" y2="815.0" stroke="#CDD2CA" stroke-width="1"/>
+<text x="53" y="819.0" font-size="11" class="muted" text-anchor="end">660k</text>
+<path d="M 63.00,953.98 L 88.36,933.00 L 113.73,918.25 L 139.09,903.50 L 164.45,888.75 L 189.82,896.42 L 215.18,909.40 L 240.55,927.10 L 265.91,859.25 L 291.27,933.00 L 316.64,938.90 L 342.00,888.75" fill="none" stroke="#006B65" stroke-width="2.5"/>
+<circle cx="63.0" cy="953.9804" r="3" fill="#006B65"/>
+<circle cx="88.36363636363636" cy="933.0" r="3" fill="#006B65"/>
+<circle cx="113.72727272727272" cy="918.25" r="3" fill="#006B65"/>
+<circle cx="139.0909090909091" cy="903.5" r="3" fill="#006B65"/>
+<circle cx="164.45454545454544" cy="888.75" r="3" fill="#006B65"/>
+<circle cx="189.8181818181818" cy="896.42" r="3" fill="#006B65"/>
+<circle cx="215.1818181818182" cy="909.4" r="3" fill="#006B65"/>
+<circle cx="240.54545454545453" cy="927.1" r="3" fill="#006B65"/>
+<circle cx="265.9090909090909" cy="859.25" r="3" fill="#006B65"/>
+<circle cx="291.27272727272725" cy="933.0" r="3" fill="#006B65"/>
+<circle cx="316.6363636363636" cy="938.9" r="3" fill="#006B65"/>
+<circle cx="342.0" cy="888.75" r="3" fill="#006B65"/>
+<text x="63.0" y="1020" font-size="12" class="muted" text-anchor="middle">Jan</text>
+<text x="189.8181818181818" y="1020" font-size="12" class="muted" text-anchor="middle">Jun</text>
+<text x="342.0" y="1020" font-size="12" class="muted" text-anchor="middle">Dec</text>
+</g>
+<text x="20" y="1074" font-size="14" class="">December: S$635,000 · 2,024 sales</text>
+<text x="20" y="1099" font-size="14" class="">Full year: 25,084 HDB transactions.</text>
+<text x="20" y="1124" font-size="14" class="">Monthly medians are not an adjusted index.</text>
+<rect x="20" y="1181" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="1208" font-size="14" class="" style="fill:#172E33">Read all monthly prices &amp; counts →</text>
+<text x="20" y="1267" font-size="14" class="muted">Tabular alternative preserves every month,</text>
+<text x="20" y="1292" font-size="14" class="muted">price and sample without chart gestures.</text>
+<text x="20" y="1317" font-size="14" class="muted">Null months remain unavailable, not zero.</text>
+<text x="20" y="1393" font-size="12" class="muted">Source: dashboard_trends · 2025 HDB</text>
+<text x="20" y="1415" font-size="12" class="muted">Series coverage ends Sep 2026.</text>
+<text x="20" y="1437" font-size="12" class="muted">P: this research navigation and mobile layout.</text>
+</svg>
