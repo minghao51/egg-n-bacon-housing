@@ -1,8 +1,8 @@
 {
   "assets": [
     {
-      "bytes": 720,
-      "contentSha256": "98826fe2de310df7b9871c6cf1cbd43f317431f578f9b879cac8ef0f53d5c011",
+      "bytes": 718,
+      "contentSha256": "47ff2c1fd394caf7f1342f74bfbcf337d277cd87fd45da1b654b7f091b96b8d5",
       "metricScopes": [
         "median_price",
         "median_psf",
@@ -11,12 +11,12 @@
         "by_time_period"
       ],
       "path": "dashboard_overview.json.gz",
-      "sha256": "d90bd884a84cdb5f2648ca6f49a4de134750e64c9846e82e5ac24dc2719e060d",
+      "sha256": "022471a97e4ba6b2caae4d21077fd6e04a86ef6f1b81b110d5de1d52a5659709",
       "shape": "object"
     },
     {
-      "bytes": 5722,
-      "contentSha256": "686ec88b480c834ec3f43c2f69b292785eb163f5d27c024d4031416279390036",
+      "bytes": 5728,
+      "contentSha256": "6ccef02a3977f138d72ef0faf925f9f9f344a4feac9a192b4c7ffb5abc6ae377",
       "metricScopes": [
         "median_price",
         "volume",
@@ -24,12 +24,12 @@
         "by_time_period"
       ],
       "path": "dashboard_trends.json.gz",
-      "sha256": "079a1a8f80bddb859f78bc382868f4d0ca6062417b3813b2aaed106bb30ff8e4",
+      "sha256": "b47ac8b5f43632eb338b8338affda7f650d5020f1cf8c7a8f1a575229879e783",
       "shape": "array"
     },
     {
-      "bytes": 6092,
-      "contentSha256": "b40288aba5f6055111f0a4aae02a1487db22e1424c66ee5e65964304bdbef720",
+      "bytes": 6080,
+      "contentSha256": "1b076f19eb8591ac39fd8924dd9210a0c3e862c5bac7e2d88ce2ca40d59f5043",
       "metricScopes": [
         "median_psf",
         "rental_yield",
@@ -38,12 +38,12 @@
         "by_time_period"
       ],
       "path": "dashboard_segments.json.gz",
-      "sha256": "d0e4fe725aec784e25fb7faa46f2fb2af75123ca37891807867bf4c04c436949",
+      "sha256": "69d7a3d266452811d8153f009c1df0baa4e6b91bc48ec3bc78d7ffe745373a24",
       "shape": "object"
     },
     {
-      "bytes": 4707,
-      "contentSha256": "20ff7fd4899291a5a0296676e9fdebc034d6529f836126c0330294209ca9f68e",
+      "bytes": 4720,
+      "contentSha256": "8dac11ef3dfebede5ccfebee7595bd47cc8eab0e012f9732196c3aef5fcd0726",
       "metricScopes": [
         "median_price",
         "median_psf",
@@ -55,12 +55,12 @@
         "affordability"
       ],
       "path": "dashboard_leaderboard.json.gz",
-      "sha256": "b0da24213efe2fc738a3c7a8f277444ef2a44018b57ae6cdf8ba8e0af7d476ef",
+      "sha256": "be99ba6b610b36fee108e64544d370acb52fcbe47fc491db2677f1807518419b",
       "shape": "array"
     },
     {
-      "bytes": 11251,
-      "contentSha256": "9aa3d0af39057531b42c8dfb13487c394984dca67eabb0e2ec530ec0694c62e2",
+      "bytes": 11293,
+      "contentSha256": "1eea89d67685f6d24425e1a8eaf69a746c4f65bea4b0782187e8376dad5db088",
       "metricScopes": [
         "median_price",
         "median_psf",
@@ -71,33 +71,33 @@
         "by_time_period"
       ],
       "path": "map_metrics.json.gz",
-      "sha256": "ddd87168b775f64e557b0ce92addc3e02bbcfadc94e38ae401ce5d71c42d7096",
+      "sha256": "8cc21cb3af698d02a53d214b7a5c6e9cb6a1f7acf4ab71a47f76db64a7d4b43a",
       "shape": "object"
     },
     {
-      "bytes": 1078,
-      "contentSha256": "2ca05039cce92f2f5ec17992daafa1e91e6182e27a9ffffa3e3e50357ac71676",
+      "bytes": 1090,
+      "contentSha256": "c4bb5d0833a73a177a0381c41745041287ea00b7e210df33cceb56e845ad4090",
       "metricScopes": [
         "spatial_hotspots",
         "appreciation_growth"
       ],
       "path": "hotspots.json.gz",
-      "sha256": "b74c1140a62d942773fb8732982efd4ac8bc3397caff80ae7153d9987096d923",
+      "sha256": "7b68e505f1743e2f887a95984a8d9c85c191185b92e77923d2edf63a73371f34",
       "shape": "object"
     },
     {
-      "bytes": 1798,
-      "contentSha256": "9e71b5a806b8d8e9a95b56de7e03bec9ffef332af50649bcffe4fa32ba2a1272",
+      "bytes": 1789,
+      "contentSha256": "be46bc88107e254f5755db1d39a52498bb780f3318278c8fe196ac61b382a094",
       "metricScopes": [
         "amenity"
       ],
       "path": "amenity_summary.json.gz",
-      "sha256": "3958e7e6ce3f433c9a2e2699cf5ab0069b6b3b01da75fa6cec46455bf3b04725",
+      "sha256": "80530f355a149a963143cfbe99af65daafa0dd8883602f0b5920c269240e21e2",
       "shape": "array"
     }
   ],
-  "generatedAt": "2026-11-03T11:13:57Z",
-  "generation": "67afb72f1f6e017ede9179e4de7aa3aa4a94edd653fd35cbaf79fc31ab1fb9db",
+  "generatedAt": "2026-11-03T14:27:33Z",
+  "generation": "0e1013ee485fe085874f2ef53ece8eb5f4f47305985ba991eda5fc753e4e0c27",
   "inclusionRules": {
     "areaSurfaceFiles": [
       "dashboard_leaderboard.json.gz",
@@ -112,12 +112,12 @@
       "MANDAI",
       "SUNGEI KADUT"
     ],
-    "excludedTransactions": 456,
+    "excludedTransactions": 454,
     "globalAggregates": "keeps every transaction row, including non-residential areas"
   },
   "observationRange": {
     "completeYear": 2025,
-    "endMonth": "2026-09",
+    "endMonth": "2026-10",
     "startMonth": "1990-01"
   },
   "periodDefinitions": {
@@ -141,7 +141,7 @@
   "provenance": {
     "sources": [
       {
-        "bytes": 78165729,
+        "bytes": 78333301,
         "columns": [
           "month",
           "town",
@@ -243,12 +243,12 @@
         ],
         "name": "unified_dataset",
         "path": "data/pipeline/04_platinum/unified_dataset.parquet",
-        "rows": 1234928,
-        "sha256": "897eaa505c365959f8c07337359f38c8cba69ac1a3cc9cba09818a577fe9d284",
+        "rows": 1234854,
+        "sha256": "883ebc92e8352eb87edaf3ff5e6e358f0ec7bbb89538a42ba06e1ff09516f0cb",
         "sourcePublishedAt": null
       },
       {
-        "bytes": 397524,
+        "bytes": 446365,
         "columns": [
           "planning_area",
           "month",
@@ -264,15 +264,15 @@
         ],
         "name": "pa_monthly_metrics",
         "path": "data/pipeline/04_platinum/metrics/pa_monthly_metrics.parquet",
-        "rows": 13201,
-        "sha256": "05b6cb1c052806843b7df2ad20c353f8ce5f1b02424e78381fdabeb41072b2db",
+        "rows": 13228,
+        "sha256": "f80d377a6ff97cde3856155cc1febff135d840e0c85678fd34e9616ca89933b7",
         "sourcePublishedAt": null
       }
     ]
   },
   "schemaVersion": "1.0.0",
   "trailingMonth": {
-    "lastCompleteMonth": "2026-09",
+    "lastCompleteMonth": "2026-10",
     "resolvedFrom": "declared"
   }
 }

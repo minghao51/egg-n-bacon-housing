@@ -98,7 +98,7 @@ test.describe("Explore workspace", () => {
     const list = areaList(page);
     await expect(list.getByRole("listitem")).toHaveCount(1);
     await expect(list.getByText("Tampines").first()).toBeVisible();
-    await expect(list.getByText("8,206 sales").first()).toBeVisible();
+    await expect(list.getByText("8,203 sales").first()).toBeVisible();
     await expect(
       page.getByText("map_metrics.whole_condo").first(),
     ).toBeVisible();

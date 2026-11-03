@@ -100,8 +100,8 @@ const SCOPED_TYPES = [
   {
     section: "year_2025_condo",
     label: "Condominium",
-    median: 1_938_952,
-    sales: 47_503,
+    median: 1_938_976,
+    sales: 47_506,
   },
 ] as const;
 

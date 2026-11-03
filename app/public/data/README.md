@@ -13,7 +13,7 @@ Regenerate the seven dashboard files (`dashboard_overview`, `dashboard_trends`,
 
 ```bash
 uv run python main.py --stage all          # materialize platinum parquets
-uv run python scripts/export_app_data.py --last-complete-month 2026-09
+uv run python scripts/export_app_data.py --last-complete-month 2026-10
 cd app && bun run validate-data            # enforce the manifest contract
 ```
 

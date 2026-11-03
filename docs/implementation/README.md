@@ -55,14 +55,14 @@ cd app && LD_LIBRARY_PATH=/tmp/qna-browser-libs/root/usr/lib/x86_64-linux-gnu \
 uv run pytest tests/test_export_app_data.py --no-cov -q
 uv run ruff check scripts/export_app_data.py tests/test_export_app_data.py
 uv run ruff format --check scripts/export_app_data.py tests/test_export_app_data.py
-uv run python scripts/export_app_data.py --last-complete-month 2026-09 --output-dir /tmp/exp-check
+uv run python scripts/export_app_data.py --last-complete-month 2026-10 --output-dir /tmp/exp-check
 ```
 
 ## Published-month boundary
 
 `--last-complete-month` is mandatory for a reproducible release: without it the
 exporter's completed-bucket rules read the UTC clock, so the same parquet
-publishes a different trailing month after a rollover. `2026-09` is the current
+publishes a different trailing month after a rollover. `2026-10` is the current
 published boundary — `app/public/data/dashboard-release.json` records it under
 `trailingMonth`. Raising it needs a pipeline refresh that actually contains the
 complete month (`uv run python main.py --stage all`), not just a later export;

@@ -73,9 +73,9 @@ test.describe("Research trends", () => {
 
     await page.getByRole("radio", { name: "All history" }).check();
 
-    await expect(tableRows(page)).toHaveCount(441);
+    await expect(tableRows(page)).toHaveCount(442);
     await expect(tableRows(page).first()).toContainText("1990-01");
-    await expect(tableRows(page).last()).toContainText("2026-09");
+    await expect(tableRows(page).last()).toContainText("2026-10");
     expect(new URL(page.url()).searchParams.get("window")).toBe("all");
 
     // The asset's last month is stated in the source footer, not inferred from
@@ -84,7 +84,7 @@ test.describe("Research trends", () => {
       page.getByText(/Last month actually present in the asset/i).first(),
     ).toBeVisible();
     await expect(
-      page.locator("footer").getByText("2026-09", { exact: true }),
+      page.locator("footer").getByText("2026-10", { exact: true }),
     ).toBeVisible();
   });
 

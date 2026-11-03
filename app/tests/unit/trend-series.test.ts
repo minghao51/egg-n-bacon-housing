@@ -6,7 +6,7 @@
  *   windows, partial-window flag, malformed payloads, incomplete-year sums);
  * - the published `public/data/dashboard_trends.json.gz`, read once, for the
  *   values the design and the S4 acceptance criteria name: a 2025 HDB volume sum
- *   of 25,084, December 2025 at 635,000 / 2,024, and a series that ends 2026-09.
+ *   of 25,084, December 2025 at 635,000 / 2,024, and a series that ends 2026-10.
  *
  * The published asset is read because those numbers are the contract; every
  * other case uses synthetic fixtures so the rules stay testable independently.
@@ -92,13 +92,13 @@ const published: unknown = JSON.parse(
 );
 
 describe("published dashboard_trends payload", () => {
-  test("builds 441 monthly HDB points from 1990-01 to 2026-09", () => {
+  test("builds 442 monthly HDB points from 1990-01 to 2026-10", () => {
     const series = buildTrendSeries(published, "hdb");
     if (series === null) throw new Error("HDB series unusable");
 
-    expect(series.points).toHaveLength(441);
+    expect(series.points).toHaveLength(442);
     expect(series.points[0].month).toBe("1990-01");
-    expect(series.points[series.points.length - 1].month).toBe("2026-09");
+    expect(series.points[series.points.length - 1].month).toBe("2026-10");
   });
 
   test("2025 HDB is twelve points whose volumes sum to 25,084", () => {
@@ -123,15 +123,15 @@ describe("published dashboard_trends payload", () => {
     expect(december.volume).toBe(2024);
   });
 
-  test("the latest published month is 2026-09, not the end of 2025", () => {
+  test("the latest published month is 2026-10, not the end of 2025", () => {
     const series = buildTrendSeries(published, "hdb");
     if (series === null) throw new Error("HDB series unusable");
 
     const all = summarize(filterWindow(series, "all"), "all");
-    expect(all.endMonth).toBe("2026-09");
-    expect(all.months).toBe(441);
+    expect(all.endMonth).toBe("2026-10");
+    expect(all.months).toBe(442);
     expect(all.isPartialWindow).toBe(false);
-    // The 2025 window ends in 2025 while the asset runs to 2026-09.
+    // The 2025 window ends in 2025 while the asset runs to 2026-10.
     expect(summarize(filterWindow(series, "year_2025"), "year_2025").endMonth).toBe(
       "2025-12",
     );
@@ -143,7 +143,7 @@ describe("published dashboard_trends payload", () => {
 
     // Never dropped: the 1990–2020 months exist as null points, so nothing
     // shifts and the table can show N/A for them.
-    expect(ec.points).toHaveLength(441);
+    expect(ec.points).toHaveLength(442);
     expect(ec.points[0].month).toBe("1990-01");
     const firstPublished = ec.points.find((entry) => entry.price !== null);
     expect(firstPublished?.month).toBe("2021-01");
@@ -155,7 +155,7 @@ describe("published dashboard_trends payload", () => {
     expect(allWindow.points[0].month).toBe("2021-01");
     const all = summarize(allWindow, "all");
     expect(all.nullPriceMonths).toBe(0);
-    expect(all.endMonth).toBe("2026-09");
+    expect(all.endMonth).toBe("2026-10");
     expect(allWindow.coverageStart).toBe("2021-01");
 
     // 2025 is fully covered for EC even though 2021 and earlier are not.
@@ -169,7 +169,7 @@ describe("published dashboard_trends payload", () => {
     const all = buildTrendSeries(published, "all");
     if (all === null) throw new Error("combined series unusable");
 
-    expect(all.points).toHaveLength(441);
+    expect(all.points).toHaveLength(442);
     expect(all.points.every((entry) => entry.volume === null)).toBe(true);
     expect(yearSum(all.points, "2025", "volume")).toBeNull();
     expect(
