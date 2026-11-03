@@ -1,0 +1,58 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import ExplorerWorkspace from '@/components/explorer/ExplorerWorkspace';
+import { DATA_URLS } from '@/constants/data-urls';
+
+// The workspace is a client island: the selection lives in the address bar, so
+// parsing and history handling must happen in the browser (same pattern as
+// /dashboard/map). Everything below is readable without it.
+const manifestUrl = `${import.meta.env.BASE_URL}data/dashboard-release.json`;
+---
+
+<Layout
+  title="Explore planning areas - Egg n Bacon Housing"
+  description="Compare observed HDB, EC and condo transaction prices by planning area and period. Published sale records, not asking prices or a valuation."
+>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-8">
+      <header class="max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]">
+          Explore / Planning areas
+        </p>
+        <h1 class="mt-3 text-4xl font-bold text-foreground sm:text-5xl">Same year. Same housing type.</h1>
+        <p class="mt-4 text-lg text-muted-foreground">
+          Compare observed transaction prices by planning area &mdash; a record of what sold, not a
+          promise of what your next home will cost.
+        </p>
+      </header>
+
+      <noscript>
+        <div class="mt-6 rounded-lg border border-border bg-card p-5 text-sm text-foreground">
+          <p class="font-bold">This workspace needs JavaScript.</p>
+          <p class="mt-2 text-muted-foreground">
+            Reading the selected property type, period, metric and page from the address bar, and
+            keeping them there as you change them, is done in the browser. The same figures are
+            published in the dashboard data assets
+            (<code class="font-mono">map_metrics</code> for planning areas and
+            <code class="font-mono">dashboard_overview</code> for the national value), and remain
+            readable on the dashboard pages and in the data catalogue.
+          </p>
+        </div>
+      </noscript>
+
+      <ExplorerWorkspace
+        client:only="react"
+        mapMetricsUrl={DATA_URLS.mapMetrics}
+        overviewUrl={DATA_URLS.overview}
+        manifestUrl={manifestUrl}
+      >
+        <p slot="fallback" class="mt-8 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
+          Loading the observed comparison workspace&hellip;
+        </p>
+      </ExplorerWorkspace>
+    </div>
+  </main>
+</Layout>

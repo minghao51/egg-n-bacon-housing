@@ -6,8 +6,9 @@ import fs from 'fs';
 import path from 'path';
 import zlib from 'zlib';
 
-// Read data at build time
-function gunzip(data) {
+// Read the published assets at build time and hand the result to the island as
+// initial data, so the overview renders its numbers without a client fetch.
+function gunzip(data: Buffer) {
   return zlib.gunzipSync(data).toString('utf-8');
 }
 
@@ -22,7 +23,8 @@ try {
   console.error("Failed to load dashboard data:", error);
 }
 
-// Load trends data
+// The monthly series are a separate published asset; the page never mixes
+// their figures with the annual overview medians.
 const trendsPath = path.resolve('public/data/dashboard_trends.json.gz');
 let trendsData;
 
@@ -33,149 +35,26 @@ try {
 } catch (error) {
   console.error("Failed to load trends data:", error);
 }
-
-const mapMetricsPath = path.resolve('public/data/map_metrics.json.gz');
-let mapMetrics;
-
-try {
-  const rawData = fs.readFileSync(mapMetricsPath);
-  const decompressed = gunzip(rawData);
-  mapMetrics = JSON.parse(decompressed);
-} catch (error) {
-  console.error("Failed to load map metrics data:", error);
-}
-
-function findLastTrend(records, key) {
-  for (let index = records.length - 1; index >= 0; index -= 1) {
-    const value = records[index]?.[key];
-    if (typeof value === 'number') {
-      return { index, value };
-    }
-  }
-  return null;
-}
-
-function computeDelta(records, key) {
-  const latest = findLastTrend(records, key);
-  if (!latest) return null;
-
-  for (let index = latest.index - 1; index >= 0; index -= 1) {
-    const previous = records[index]?.[key];
-    if (typeof previous === 'number' && previous !== 0) {
-      const change = ((latest.value - previous) / previous) * 100;
-      return {
-        current: latest.value,
-        previous,
-        change,
-      };
-    }
-  }
-
-  return null;
-}
-
-function monthDistance(fromDate: string | undefined, toDate: string | undefined): number | null {
-  const from = fromDate ? /^(\d{4})-(\d{2})$/.exec(fromDate) : null;
-  const to = toDate ? /^(\d{4})-(\d{2})$/.exec(toDate) : null;
-  const fromMonth = from ? Number(from[2]) : 0;
-  const toMonth = to ? Number(to[2]) : 0;
-  if (!from || !to || fromMonth < 1 || fromMonth > 12 || toMonth < 1 || toMonth > 12) {
-    return null;
-  }
-  return (
-    Number(to[1]) * 12 + toMonth -
-    (Number(from[1]) * 12 + fromMonth)
-  );
-}
-
-function computeDeltaWithLag(
-  records: Record<string, unknown>[],
-  key: string,
-  lag: number,
-): { current: number; previous: number; change: number } | null {
-  const latest = findLastTrend(records, key);
-  if (!latest) return null;
-
-  const previousIndex = latest.index - lag;
-  // Fail closed: lag must be a true calendar distance in months, not just an
-  // array offset, so gap-compressed series never fake a YoY comparison.
-  const prevRecord = records[previousIndex];
-  const latestRecord = records[latest.index];
-  const calendarLag = monthDistance(
-    typeof prevRecord?.date === 'string' ? prevRecord.date : undefined,
-    typeof latestRecord?.date === 'string' ? latestRecord.date : undefined,
-  );
-  if (calendarLag !== lag) return null;
-
-  const previous = records[previousIndex]?.[key];
-  if (typeof previous === 'number' && previous !== 0) {
-    const change = ((latest.value - previous) / previous) * 100;
-    return { current: latest.value, previous, change };
-  }
-
-  return null;
-}
-
-function computeYoYDelta(
-  records: Record<string, unknown>[],
-  key: string,
-): { current: number; previous: number; change: number } | null {
-  return computeDeltaWithLag(records, key, 12);
-}
-
-function computeVolumeTotals(records: Record<string, unknown>[]): Record<string, unknown>[] {
-  return records.map((record) => ({
-    date: record.date,
-    TotalVolume:
-      (typeof record['HDB Volume'] === 'number' ? record['HDB Volume'] : 0) +
-      (typeof record['Condominium Volume'] === 'number'
-        ? record['Condominium Volume']
-        : 0) +
-      (typeof record['EC Volume'] === 'number' ? record['EC Volume'] : 0),
-  }));
-}
-
-const volumeTotals = trendsData ? computeVolumeTotals(trendsData) : null;
-
-const recentPriceDelta = trendsData ? computeDelta(trendsData, 'Overall Price') : null;
-const recentPriceDeltaYoY = trendsData ? computeYoYDelta(trendsData, 'Overall Price') : null;
-const recentVolumeDelta = volumeTotals ? computeDelta(volumeTotals, 'TotalVolume') : null;
-const recentVolumeDeltaYoY = volumeTotals ? computeYoYDelta(volumeTotals, 'TotalVolume') : null;
-
-const strongestPropertyType =
-  dashboardData?.distributions?.property_type &&
-  Object.entries(dashboardData.distributions.property_type).sort((a, b) => b[1] - a[1])[0];
-
-const recentAreaMoves =
-  mapMetrics?.recent &&
-  Object.entries(mapMetrics.recent)
-    .filter(([, metrics]) => typeof metrics?.yoy_change_pct === 'number')
-    .sort((a, b) => a[1].yoy_change_pct - b[1].yoy_change_pct);
-
-const weakestAreaTrend = recentAreaMoves?.[0] ?? null;
-const strongestAreaTrend = recentAreaMoves?.[recentAreaMoves.length - 1] ?? null;
-
-const overviewHighlights = {
-  recentPriceDelta,
-  recentPriceDeltaYoY,
-  recentVolumeDelta,
-  recentVolumeDeltaYoY,
-  strongestPropertyType,
-  strongestAreaTrend,
-  weakestAreaTrend,
-};
 ---
 
-<Layout title="Overview - Dashboard">
+<Layout
+  title="Dashboard overview - Egg n Bacon Housing"
+  description="What the published Singapore resale snapshot shows: 2025 median prices and transaction counts by property type, and where to compare areas, trends and segments."
+>
   <Sidebar currentPath={Astro.url.pathname} />
 
-  <main class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
+  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
       {/* Header */}
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold text-foreground">Overview</h1>
-        <p class="text-muted-foreground mt-2">
-          Use this page to get a 15-second read on market direction before moving into maps, rankings, or segment discovery.
+      <header class="mb-8 max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]">
+          The Singapore housing field guide
+        </p>
+        <h1 class="mt-3 text-3xl font-bold text-foreground">Overview</h1>
+        <p class="mt-2 text-muted-foreground">
+          Published observations of past sales, each labelled with the property type, the
+          period and the asset section it came from. Start with the kind of home, then compare
+          areas on the same terms in the observed explorer.
         </p>
       </header>
 
@@ -183,13 +62,13 @@ const overviewHighlights = {
       {dashboardData ? (
         <MarketOverviewDashboard
           client:load
-          data={dashboardData}
+          initialData={dashboardData}
           trendsData={trendsData}
-          overviewHighlights={overviewHighlights}
         />
       ) : (
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
-          Data not available. Please run the export script.
+          The published overview asset could not be loaded, so this page shows no market
+          figures. Re-run the dashboard export to publish <code class="font-mono">dashboard_overview.json.gz</code>.
         </div>
       )}
     </div>

@@ -21,6 +21,7 @@ import {
   getForecastSignalColor,
   getPolicyRiskColor,
 } from "../../../../utils/colorScales";
+import { planningAreaName } from "../../../../utils/geometry";
 
 interface PredictiveAnalyticsOverlayProps {
   active: boolean;
@@ -37,8 +38,8 @@ function getForecastStyle(
   feature: GeoJSONFeature,
   data: PredictiveAnalyticsData,
 ) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.price_forecast) {
     return {
@@ -52,7 +53,7 @@ function getForecastStyle(
   }
 
   const { price_forecast } = areaData;
-  const projectedChange = price_forecast.projected_change_pct || 0;
+  const projectedChange = price_forecast.projected_change_pct;
 
   // Diverging scale: -10% to +10%
   const color = divergingScale(projectedChange, -10, 10);
@@ -74,8 +75,8 @@ function getPolicyRiskStyle(
   feature: GeoJSONFeature,
   data: PredictiveAnalyticsData,
 ) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.policy_risk) {
     return {
@@ -89,7 +90,17 @@ function getPolicyRiskStyle(
   }
 
   const { policy_risk } = areaData;
-  const riskLevel = policy_risk.risk_level || "MODERATE";
+  const riskLevel = policy_risk.risk_level;
+  if (riskLevel === null) {
+    return {
+      fillColor: "#cccccc",
+      weight: 2,
+      opacity: 1,
+      color: "white",
+      dashArray: "3",
+      fillOpacity: 0.3,
+    };
+  }
 
   return {
     fillColor: getPolicyRiskColor(riskLevel),
@@ -108,8 +119,8 @@ function getLeaseArbitrageStyle(
   feature: GeoJSONFeature,
   data: PredictiveAnalyticsData,
 ) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.lease_arbitrage) {
     return {
@@ -123,7 +134,7 @@ function getLeaseArbitrageStyle(
   }
 
   const { lease_arbitrage } = areaData;
-  const arbitragePct = lease_arbitrage.arbitrage_pct || 0;
+  const arbitragePct = lease_arbitrage.arbitrage_pct;
 
   // Diverging scale: -50% to +50%
   const color = divergingScale(arbitragePct, -50, 50);
@@ -145,18 +156,19 @@ function createForecastTooltip(
   feature: GeoJSONFeature,
   data: PredictiveAnalyticsData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.price_forecast) {
-    return `<b>${areaName}</b><br>No forecast data available`;
+    return `<b>${areaLabel}</b><br>No forecast data available`;
   }
 
   const { price_forecast } = areaData;
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">Price Forecast</h4>
       <p><b>6-Month Projection:</b> ${price_forecast.projected_change_pct?.toFixed(1) || "N/A"}%</p>
       <p><b>Confidence Interval:</b> ${price_forecast.confidence_interval_lower?.toFixed(1) || "N/A"}% to ${price_forecast.confidence_interval_upper?.toFixed(1) || "N/A"}%</p>
@@ -174,20 +186,21 @@ function createPolicyRiskTooltip(
   feature: GeoJSONFeature,
   data: PredictiveAnalyticsData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.policy_risk) {
-    return `<b>${areaName}</b><br>No policy risk data available`;
+    return `<b>${areaLabel}</b><br>No policy risk data available`;
   }
 
   const { policy_risk } = areaData;
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">Policy Risk</h4>
-      <p><b>Cooling Measure Sensitivity:</b> $${Math.abs(policy_risk.cooling_measure_sensitivity || 0).toLocaleString()}</p>
+      <p><b>Cooling Measure Sensitivity:</b> ${policy_risk.cooling_measure_sensitivity === null ? "N/A" : `$${Math.abs(policy_risk.cooling_measure_sensitivity).toLocaleString()}`}</p>
       <p><b>Market Segment:</b> ${policy_risk.market_segment}</p>
       <p><b>Elasticity:</b> ${policy_risk.elasticity?.toFixed(2) || "N/A"}</p>
       <p><b>Risk Level:</b> <span style="color: ${getPolicyRiskColor(policy_risk.risk_level)}">${policy_risk.risk_level}</span></p>
@@ -202,21 +215,22 @@ function createLeaseArbitrageTooltip(
   feature: GeoJSONFeature,
   data: PredictiveAnalyticsData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.lease_arbitrage) {
-    return `<b>${areaName}</b><br>No lease arbitrage data available`;
+    return `<b>${areaLabel}</b><br>No lease arbitrage data available`;
   }
 
   const { lease_arbitrage } = areaData;
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">Lease Arbitrage (30-year)</h4>
-      <p><b>Theoretical Value:</b> $${(lease_arbitrage.theoretical_value_30yr || 0).toLocaleString()}</p>
-      <p><b>Market Value:</b> $${(lease_arbitrage.market_value_30yr || 0).toLocaleString()}</p>
+      <p><b>Theoretical Value:</b> ${lease_arbitrage.theoretical_value_30yr === null ? "N/A" : `$${lease_arbitrage.theoretical_value_30yr.toLocaleString()}`}</p>
+      <p><b>Market Value:</b> ${lease_arbitrage.market_value_30yr === null ? "N/A" : `$${lease_arbitrage.market_value_30yr.toLocaleString()}`}</p>
       <p><b>Arbitrage:</b> ${lease_arbitrage.arbitrage_pct?.toFixed(1) || "N/A"}%</p>
       <p><b>Recommendation:</b> <span style="color: ${getForecastSignalColor(lease_arbitrage.recommendation)}">${lease_arbitrage.recommendation}</span></p>
     </div>

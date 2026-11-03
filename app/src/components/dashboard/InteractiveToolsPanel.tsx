@@ -1,10 +1,17 @@
-import { useMemo, useState } from "react";
+import {
+  Component,
+  Fragment,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Persona } from "./PersonaSelector";
 import ToolTabs, { type ToolTab } from "./ToolTabs";
 import MrtCbdCalculator from "./tools/MrtCbdCalculator";
 import LeaseDecayAnalyzer from "./tools/LeaseDecayAnalyzer";
 import AffordabilityCalculator from "./tools/AffordabilityCalculator";
 import SpatialHotspotExplorer from "./tools/SpatialHotspotExplorer";
+import type { SpatialHotspotsData } from "../../types/spatial-hotspots";
 
 interface MrtCbdData {
   property_type_multipliers: {
@@ -63,32 +70,82 @@ interface AffordabilityData {
   }>;
 }
 
-interface SpatialData {
-  clusters: Array<{
-    cluster_type: "HH" | "LH" | "HL" | "LL";
-    towns: string[];
-    avg_appreciation_5y: number;
-    avg_price_psf: number;
-    persistence_probability: number;
-    risk_level: "Low" | "Medium" | "High";
-  }>;
-  analysis_date: string;
-  methodology: string;
-}
-
 interface InteractiveToolsPanelProps {
   mrtCbdData: MrtCbdData;
   leaseDecayData: LeaseDecayData;
   affordabilityData: AffordabilityData | null;
-  hotspotsData: SpatialData;
+  hotspotsData: SpatialHotspotsData;
   segmentsData: {
     segments: Array<{
       id: string;
       name: string;
       description: string;
-      implications: any;
+      implications: unknown;
     }>;
   } | null;
+}
+
+interface ToolErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ToolErrorBoundaryState {
+  failed: boolean;
+  attempt: number;
+}
+
+/**
+ * Local error boundary for a single decision tool.
+ *
+ * A tool that throws (for example because its published asset is missing or
+ * malformed) is contained here instead of unmounting the whole workspace. The
+ * boundary never renders or logs the thrown error, because its message can
+ * contain user-entered input.
+ */
+class ToolErrorBoundary extends Component<
+  ToolErrorBoundaryProps,
+  ToolErrorBoundaryState
+> {
+  state: ToolErrorBoundaryState = { failed: false, attempt: 0 };
+
+  static getDerivedStateFromError(): Partial<ToolErrorBoundaryState> {
+    return { failed: true };
+  }
+
+  private handleRetry = () => {
+    this.setState((previous) => ({
+      failed: false,
+      attempt: previous.attempt + 1,
+    }));
+  };
+
+  render() {
+    if (this.state.failed) {
+      return (
+        <div
+          role="alert"
+          className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+        >
+          <p className="font-semibold">This tool could not be displayed.</p>
+          <p className="mt-2">
+            Its published data could not be read, so the results are hidden
+            rather than shown incorrectly. The other tools in this workspace
+            still work — switch tools above, or retry this one.
+          </p>
+          <button
+            type="button"
+            onClick={this.handleRetry}
+            className="mt-3 rounded-xl border border-red-300 bg-white px-3 py-2 font-medium text-red-800 transition-colors hover:bg-red-100 dark:border-red-700 dark:bg-gray-900 dark:text-red-200 dark:hover:bg-red-900/40"
+          >
+            Retry this tool
+          </button>
+        </div>
+      );
+    }
+
+    // Remount only this tool on retry so its state is rebuilt from scratch.
+    return <Fragment key={this.state.attempt}>{this.props.children}</Fragment>;
+  }
 }
 
 export default function InteractiveToolsPanel({
@@ -279,7 +336,9 @@ export default function InteractiveToolsPanel({
       </div>
 
       {/* Active Tool */}
-      <div className="mt-6">{renderTool()}</div>
+      <div className="mt-6">
+        <ToolErrorBoundary key={activeTab}>{renderTool()}</ToolErrorBoundary>
+      </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <a

@@ -7,7 +7,17 @@ interface Props {
   currentPath?: string;
 }
 
-const { currentPath = '' } = Astro.props;
+const { currentPath: rawCurrentPath = '' } = Astro.props;
+
+// `Astro.url.pathname` includes the deployment base (for example
+// `/egg-n-bacon-housing/dashboard/map`), while the link hrefs below are built
+// with it. Strip it once here so active-state and `aria-current` matching work
+// at the root and under any configured base path.
+const basePath = import.meta.env.BASE_URL;
+const currentPath =
+  rawCurrentPath.length > 0 && rawCurrentPath.startsWith(basePath)
+    ? `/${rawCurrentPath.slice(basePath.length)}`
+    : rawCurrentPath;
 
 // Get all analytics docs dynamically
 const allDocs = await getCollection('analytics');
@@ -21,16 +31,39 @@ const analyticsDocs = allDocs
 
 function isActive(path: string, href: string): boolean {
   if (!path) return false;
-  // Strip BASE_URL from href for comparison (path doesn't include it)
-  const baseHref = href.replace(import.meta.env.BASE_URL, '/');
+  // Strip BASE_URL from href for comparison (path is base-stripped above).
+  // A base without a trailing slash must not produce a doubled `//` path.
+  const rawBase = import.meta.env.BASE_URL;
+  const baseHref =
+    rawBase !== "/" && href.startsWith(rawBase)
+      ? "/" + href.slice(rawBase.length)
+      : href.replace(rawBase, "/");
+  const normalizedPath = path.replace(/\/+$/, '') || '/';
 
   if (baseHref.includes('/dashboard/')) {
-    const normalizedPath = path.replace(/\/$/, '') || '/dashboard';
     const normalizedHref = baseHref.replace(/\/$/, '') || '/dashboard';
     return normalizedPath === normalizedHref;
   }
-  // Prefix match for analytics
-  return path.startsWith(baseHref);
+  // Prefix match for analytics/catalog sections, tolerant of a missing
+  // trailing slash on either side (`trailingSlash: "ignore"`).
+  const sectionHref = baseHref.replace(/\/+$/, '') || '/';
+  return normalizedPath === sectionHref || normalizedPath.startsWith(`${sectionHref}/`);
+}
+
+/**
+ * `isActive` also matches section roots: `analytics/`, `catalog/` and the
+ * dashboard href `/dashboard` all prefix-match their child pages, so more than
+ * one link can carry the active visual treatment. Only the page's own
+ * destination may carry `aria-current="page"`, so section roots pass
+ * `exactOnly = true` while deeper destinations keep the prefix rule (a dataset
+ * page under `/catalog/<layer>/…` still belongs to its layer link).
+ */
+function isCurrentPage(path: string, href: string, exactOnly = false): boolean {
+  if (!isActive(path, href)) return false;
+  if (!exactOnly) return true;
+  const baseHref = href.replace(import.meta.env.BASE_URL, '/').replace(/\/+$/, '') || '/';
+  const normalizedPath = path.replace(/\/+$/, '') || '/';
+  return normalizedPath === baseHref;
 }
 ---
 
@@ -107,6 +140,7 @@ function isActive(path: string, href: string): boolean {
               <li>
                 <a
                   href={href}
+                  aria-current={isCurrentPage(currentPath, href, true) ? "page" : undefined}
                   class:list={[
                     "block rounded-lg px-3 py-2 transition-colors",
                     isActive(currentPath, href)
@@ -137,6 +171,11 @@ function isActive(path: string, href: string): boolean {
         <li>
           <a
             href={`${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`}
+            aria-current={
+              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`)
+                ? "page"
+                : undefined
+            }
             class:list={[
               "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
               isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`)
@@ -151,6 +190,11 @@ function isActive(path: string, href: string): boolean {
         <li>
           <a
             href={`${import.meta.env.BASE_URL}analytics/personas/investor`}
+            aria-current={
+              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`)
+                ? "page"
+                : undefined
+            }
             class:list={[
               "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
               isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`)
@@ -165,6 +209,11 @@ function isActive(path: string, href: string): boolean {
         <li>
           <a
             href={`${import.meta.env.BASE_URL}analytics/personas/upgrader`}
+            aria-current={
+              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`)
+                ? "page"
+                : undefined
+            }
             class:list={[
               "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
               isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`)
@@ -192,6 +241,9 @@ function isActive(path: string, href: string): boolean {
         <li>
           <a
             href={`${import.meta.env.BASE_URL}analytics/`}
+            aria-current={
+              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/`, true) ? "page" : undefined
+            }
             class:list={[
               "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
               isActive(currentPath, `${import.meta.env.BASE_URL}analytics/`)
@@ -207,6 +259,11 @@ function isActive(path: string, href: string): boolean {
             <li>
               <a
                 href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
+                aria-current={
+                  isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`)
+                    ? "page"
+                    : undefined
+                }
                 class:list={[
                   "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   isActive(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`)
@@ -235,6 +292,9 @@ function isActive(path: string, href: string): boolean {
         <li>
           <a
             href={`${import.meta.env.BASE_URL}catalog/`}
+            aria-current={
+              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}catalog/`, true) ? "page" : undefined
+            }
             class:list={[
               "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
               isActive(currentPath, `${import.meta.env.BASE_URL}catalog/`)
@@ -250,6 +310,9 @@ function isActive(path: string, href: string): boolean {
             <li>
               <a
                 href={`${import.meta.env.BASE_URL}catalog/${layer}`}
+                aria-current={
+                  isCurrentPage(currentPath, `${import.meta.env.BASE_URL}catalog/${layer}`) ? "page" : undefined
+                }
                 class:list={[
                   "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   isActive(currentPath, `${import.meta.env.BASE_URL}catalog/${layer}`)
@@ -273,29 +336,135 @@ function isActive(path: string, href: string): boolean {
   const backdrop = document.getElementById('mobile-backdrop');
   const drawer = document.getElementById('sidebar-drawer');
 
+  // From `lg` up the drawer is permanently visible and must stay reachable.
+  // Below `lg` it is a slide-out that is inert (and therefore not tabbable)
+  // whenever it is closed.
+  const desktopQuery = window.matchMedia('(min-width: 1024px)');
+  const FOCUSABLE =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  let isOpen = false;
+  let lastFocused: HTMLElement | null = null;
+
+  function focusableItems(): HTMLElement[] {
+    if (!drawer) return [];
+    return Array.from(drawer.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+      (el) => el.offsetParent !== null,
+    );
+  }
+
+  function setDrawerInert(shouldBeInert: boolean) {
+    if (!drawer) return;
+    if (shouldBeInert) drawer.setAttribute('inert', '');
+    else drawer.removeAttribute('inert');
+  }
+
+  // While the drawer covers the page, the covered content stays out of the
+  // accessibility tree as well as out of the tab order.
+  function setBackgroundInert(shouldBeInert: boolean) {
+    const container = drawer?.parentElement;
+    if (!container) return;
+    for (const sibling of Array.from(container.children)) {
+      if (sibling === drawer) continue;
+      // The backdrop is `aria-hidden` already and must stay clickable, since
+      // click-outside-to-close is one of the documented ways out of the drawer.
+      if (sibling.id === 'mobile-backdrop') continue;
+      if (shouldBeInert) sibling.setAttribute('inert', '');
+      else sibling.removeAttribute('inert');
+    }
+  }
+
   function openDrawer() {
-    drawer?.classList.remove('-translate-x-full');
-    drawer?.classList.add('translate-x-0');
+    if (!drawer || isOpen) return;
+    lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    isOpen = true;
+    setDrawerInert(false);
+    drawer.classList.remove('-translate-x-full');
+    drawer.classList.add('translate-x-0');
     backdrop?.classList.remove('hidden');
     toggle?.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
+    setBackgroundInert(true);
+    // Start the focus trap inside the drawer.
+    close?.focus();
   }
 
-  function closeDrawer() {
-    drawer?.classList.add('-translate-x-full');
-    drawer?.classList.remove('translate-x-0');
+  function closeDrawer(restoreFocus = true) {
+    if (!drawer) return;
+    const wasOpen = isOpen;
+    isOpen = false;
+    drawer.classList.add('-translate-x-full');
+    drawer.classList.remove('translate-x-0');
     backdrop?.classList.add('hidden');
     toggle?.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
+    setBackgroundInert(false);
+    setDrawerInert(!desktopQuery.matches);
+    if (restoreFocus && wasOpen) {
+      // `document.body` is not focusable; fall back to the toggle so closing
+      // never drops the keyboard user at the top of the document.
+      const target =
+        lastFocused && lastFocused !== document.body ? lastFocused : toggle;
+      target?.focus();
+    }
+    lastFocused = null;
   }
 
-  toggle?.addEventListener('click', openDrawer);
-  close?.addEventListener('click', closeDrawer);
-  backdrop?.addEventListener('click', closeDrawer);
+  function syncDrawerState() {
+    if (desktopQuery.matches) {
+      // Full silent close: crossing the breakpoint must not leave the backdrop,
+      // the translated drawer or a stale aria-expanded behind.
+      closeDrawer(false);
+      setDrawerInert(false);
+      return;
+    }
+    setDrawerInert(!isOpen);
+  }
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeDrawer();
+  function trapFocus(event: KeyboardEvent) {
+    if (!isOpen || !drawer) return;
+    const items = focusableItems();
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (!first || !last) return;
+
+    const active = document.activeElement;
+    const inside = drawer.contains(active);
+
+    if (event.shiftKey) {
+      if (!inside || active === first) {
+        event.preventDefault();
+        last.focus();
+      }
+      return;
+    }
+    if (!inside || active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  toggle?.addEventListener('click', () => {
+    if (isOpen) closeDrawer();
+    else openDrawer();
   });
+  close?.addEventListener('click', () => closeDrawer());
+  backdrop?.addEventListener('click', () => closeDrawer());
+
+  document.addEventListener('keydown', (event) => {
+    if (!isOpen) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeDrawer();
+      return;
+    }
+    if (event.key === 'Tab') trapFocus(event);
+  });
+
+  desktopQuery.addEventListener('change', syncDrawerState);
+
+  // Apply the closed-drawer inert state on load (mobile only).
+  syncDrawerState();
 </script>
 
 <style>

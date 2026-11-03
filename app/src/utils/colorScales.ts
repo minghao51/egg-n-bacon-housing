@@ -69,7 +69,7 @@ export const LISA_CLUSTER_COLORS: Record<LISAClusterType, string> = {
  * @returns Hex color string
  */
 export function divergingScale(
-  value: number,
+  value: number | null | undefined,
   min: number,
   max: number,
   colors: string[] = DIVERGING_COLORS.hotspot,
@@ -95,7 +95,7 @@ export function divergingScale(
  * @returns Hex color string
  */
 export function sequentialScale(
-  value: number,
+  value: number | null | undefined,
   min: number,
   max: number,
   colorStart: string = "#ffffcc",

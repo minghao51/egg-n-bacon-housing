@@ -19,6 +19,8 @@ import {
   getHotspotColor,
   LISA_CLUSTER_COLORS,
 } from "../../../../utils/colorScales";
+import { planningAreaName } from "../../../../utils/geometry";
+import { formatNumber, formatPercent } from "../../../../utils/format";
 
 interface SpatialAnalysisOverlayProps {
   active: boolean;
@@ -32,8 +34,8 @@ interface SpatialAnalysisOverlayProps {
  * Get hotspot style function
  */
 function getHotspotStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.hotspot) {
     return {
@@ -46,7 +48,7 @@ function getHotspotStyle(feature: GeoJSONFeature, data: SpatialAnalyticsData) {
     };
   }
 
-  const zScore = areaData.hotspot.z_score || 0;
+  const zScore = areaData.hotspot.z_score;
   const color = getHotspotColor(zScore);
 
   return {
@@ -66,8 +68,8 @@ function getLISAClusterStyle(
   feature: GeoJSONFeature,
   data: SpatialAnalyticsData,
 ) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.lisa_cluster) {
     return {
@@ -100,8 +102,8 @@ function getNeighborhoodStyle(
   feature: GeoJSONFeature,
   data: SpatialAnalyticsData,
 ) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.neighborhood_effect) {
     return {
@@ -114,8 +116,17 @@ function getNeighborhoodStyle(
     };
   }
 
-  const multiplier =
-    areaData.neighborhood_effect.neighborhood_multiplier || 1.0;
+  const multiplier = areaData.neighborhood_effect.neighborhood_multiplier;
+  if (multiplier === null) {
+    return {
+      fillColor: "#cccccc",
+      weight: 2,
+      opacity: 1,
+      color: "white",
+      dashArray: "3",
+      fillOpacity: 0.3,
+    };
+  }
   // Color gradient from blue (low multiplier) to red (high multiplier)
   const intensity = Math.min(1, Math.max(0, (multiplier - 0.8) / 0.4));
   const r = Math.round(intensity * 255);
@@ -139,18 +150,19 @@ function createHotspotTooltip(
   feature: GeoJSONFeature,
   data: SpatialAnalyticsData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.hotspot) {
-    return `<b>${areaName}</b><br>No hotspot data available`;
+    return `<b>${areaLabel}</b><br>No hotspot data available`;
   }
 
   const { z_score, p_value, confidence, classification } = areaData.hotspot;
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">Hotspot Analysis</h4>
       <p><b>Z-Score:</b> ${z_score?.toFixed(2) || "N/A"}</p>
       <p><b>P-Value:</b> ${p_value?.toFixed(4) || "N/A"}</p>
@@ -167,11 +179,12 @@ function createLISATooltip(
   feature: GeoJSONFeature,
   data: SpatialAnalyticsData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.lisa_cluster) {
-    return `<b>${areaName}</b><br>No LISA data available`;
+    return `<b>${areaLabel}</b><br>No LISA data available`;
   }
 
   const { type, yoy_appreciation, persistence_rate, transition_probabilities } =
@@ -179,12 +192,12 @@ function createLISATooltip(
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">LISA Cluster</h4>
       <p><b>Type:</b> ${type}</p>
-      <p><b>YoY Appreciation:</b> ${yoy_appreciation?.toFixed(1) || "N/A"}%</p>
-      <p><b>Persistence Rate:</b> ${(persistence_rate * 100).toFixed(1) || "N/A"}%</p>
-      <p><b>Transition to Hotspot:</b> ${(transition_probabilities.to_hotspot * 100).toFixed(1) || "N/A"}%</p>
+      <p><b>YoY Appreciation:</b> ${formatNumber(yoy_appreciation) === "N/A" ? "N/A" : `${formatNumber(yoy_appreciation)}%`}</p>
+      <p><b>Persistence Rate:</b> ${formatPercent(persistence_rate)}</p>
+      <p><b>Transition to Hotspot:</b> ${formatPercent(transition_probabilities.to_hotspot)}</p>
     </div>
   `;
 }
@@ -196,11 +209,12 @@ function createNeighborhoodTooltip(
   feature: GeoJSONFeature,
   data: SpatialAnalyticsData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.neighborhood_effect) {
-    return `<b>${areaName}</b><br>No neighborhood data available`;
+    return `<b>${areaLabel}</b><br>No neighborhood data available`;
   }
 
   const { moran_i_local, spatial_lag, neighborhood_multiplier } =
@@ -208,7 +222,7 @@ function createNeighborhoodTooltip(
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">Neighborhood Effect</h4>
       <p><b>Local Moran's I:</b> ${moran_i_local?.toFixed(3) || "N/A"}</p>
       <p><b>Spatial Lag:</b> $${spatial_lag?.toLocaleString() || "N/A"}</p>

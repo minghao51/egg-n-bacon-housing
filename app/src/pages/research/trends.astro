@@ -1,0 +1,58 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import TrendsWorkspace from '@/components/trends/TrendsWorkspace';
+import { DATA_URLS } from '@/constants/data-urls';
+
+// The workspace is a client island: the series/window selection lives in the
+// address bar, so parsing and history handling must happen in the browser (the
+// same pattern as /explore). One published asset feeds every number below.
+const trendsUrl = DATA_URLS.trends;
+---
+
+<Layout
+  title="Monthly price and volume trends - Egg n Bacon Housing"
+  description="Monthly median transaction prices and transaction counts for HDB, EC and condominium resales in Singapore, with every month listed. Observed sale records, not an adjusted price index."
+>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-8">
+      <header class="max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]">
+          Research / Trends
+        </p>
+        <h1 class="mt-3 text-4xl font-bold text-foreground sm:text-5xl">
+          A year of prices, with the sales behind them.
+        </h1>
+        <p class="mt-4 text-lg text-muted-foreground">
+          These are monthly medians of observed transactions &mdash; the middle
+          price of what actually sold each month, next to how many sales stand
+          behind it. A monthly median is <em>not</em> an adjusted price index: it
+          does not correct for which flats or units happened to change hands, so
+          the mix can move the line as much as the market does. Dates are calendar
+          months, missing values stay missing, and nothing here is an asking price
+          or a valuation.
+        </p>
+        <p class="mt-4 inline-block rounded-sm bg-[hsl(var(--secondary))] px-2 py-1 text-xs font-bold text-foreground">
+          Observed monthly aggregates
+        </p>
+      </header>
+
+      <noscript>
+        <div class="mt-6 rounded-lg border border-border bg-card p-5 text-sm text-foreground">
+          <p class="font-bold">This workspace needs JavaScript.</p>
+          <p class="mt-2 text-muted-foreground">
+            Reading the selected property type and window from the address bar,
+            and keeping them there as you change them, is done in the browser. The
+            same monthly medians and counts are published in the dashboard data
+            asset <code class="font-mono">dashboard_trends</code>; its schema and
+            provenance are documented in the data catalogue.
+          </p>
+        </div>
+      </noscript>
+
+      <TrendsWorkspace client:only="react" trendsUrl={trendsUrl} />
+    </div>
+  </main>
+</Layout>

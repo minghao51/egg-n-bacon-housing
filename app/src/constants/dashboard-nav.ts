@@ -1,5 +1,5 @@
 export interface DashboardNavItem {
-  key: "overview" | "map" | "tools" | "segments" | "leaderboard";
+  key: "overview" | "explore" | "trends" | "map" | "tools" | "segments" | "leaderboard";
   label: string;
   shortLabel: string;
   description: string;
@@ -13,6 +13,22 @@ export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
     shortLabel: "Overview",
     description: "Quick market snapshot and where to go next.",
     path: "dashboard",
+  },
+  {
+    key: "explore",
+    label: "Observed explorer",
+    shortLabel: "Explore",
+    description:
+      "Compare planning areas on the same year and property type, with sales counts.",
+    path: "explore",
+  },
+  {
+    key: "trends",
+    label: "Monthly trends",
+    shortLabel: "Trends",
+    description:
+      "Monthly medians and sales counts, with the months that are missing left visible.",
+    path: "research/trends",
   },
   {
     key: "map",
