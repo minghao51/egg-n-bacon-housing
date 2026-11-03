@@ -102,7 +102,9 @@ test.describe("S1 evidence boundary", () => {
       page.getByText(/snapshot publishes cluster allocations/i),
     ).toBeVisible();
     await expect(page.getByText(/Minimize LL exposure/)).toHaveCount(0);
-    await expect(page.getByText(/pioneers for upside potential/)).toHaveCount(0);
+    await expect(page.getByText(/pioneers for upside potential/)).toHaveCount(
+      0,
+    );
 
     // The old failure mode unmounted the entire tools workspace.
     await expect(

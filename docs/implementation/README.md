@@ -6,20 +6,20 @@ Branch: `design/sol-editorial-spec`. Slices S0–S6 are committed on this branch
 
 ## Slice status
 
-| Slice | Scope | Status | Report |
-|---|---|---|---|
-| S0 | Baseline, reproductions, route/query inventory | done | [s0-baseline.md](s0-baseline.md) |
-| S1 | Evidence boundary: joint-section adapter, fetch lifecycle, map URL state, overlay keys, tool containment | done | [s1-report.md](s1-report.md) |
-| S2 | Publication compatibility manifest (`dashboard-release.json`) + build verification | done | [s2-report.md](s2-report.md) |
-| S3 | Fieldnotes tokens, skip link, `aria-current`, mobile drawer accessibility | done | [s3-report.md](s3-report.md) |
-| S4 | Honest dashboard overview + `/research/trends` monthly destination | done | [s4-report.md](s4-report.md) |
-| S5 | `/explore`: joint selection, list, threshold, pagination, URL state | done | [s5-report.md](s5-report.md) |
-| S5c | `/explore`: SVG choropleth map + table view | done | [s5c-report.md](s5c-report.md) |
-| S6 | `/areas/[slug]` fieldnote with build-time generation gate | done | [s6-report.md](s6-report.md) |
-| S7 | Segment discovery/investigation/comparison migration | **not started** | — |
-| S8 | Four-tool workspace with safe output states | **not started** | — |
-| S9 | Research-map archive, studies, catalog detail | **not started** | — |
-| S10 | Integration, regression, release readiness | **not started** | — |
+| Slice | Scope                                                                                                    | Status          | Report                           |
+| ----- | -------------------------------------------------------------------------------------------------------- | --------------- | -------------------------------- |
+| S0    | Baseline, reproductions, route/query inventory                                                           | done            | [s0-baseline.md](s0-baseline.md) |
+| S1    | Evidence boundary: joint-section adapter, fetch lifecycle, map URL state, overlay keys, tool containment | done            | [s1-report.md](s1-report.md)     |
+| S2    | Publication compatibility manifest (`dashboard-release.json`) + build verification                       | done            | [s2-report.md](s2-report.md)     |
+| S3    | Fieldnotes tokens, skip link, `aria-current`, mobile drawer accessibility                                | done            | [s3-report.md](s3-report.md)     |
+| S4    | Honest dashboard overview + `/research/trends` monthly destination                                       | done            | [s4-report.md](s4-report.md)     |
+| S5    | `/explore`: joint selection, list, threshold, pagination, URL state                                      | done            | [s5-report.md](s5-report.md)     |
+| S5c   | `/explore`: SVG choropleth map + table view                                                              | done            | [s5c-report.md](s5c-report.md)   |
+| S6    | `/areas/[slug]` fieldnote with build-time generation gate                                                | done            | [s6-report.md](s6-report.md)     |
+| S7    | Segment discovery/investigation/comparison migration                                                     | **not started** | —                                |
+| S8    | Four-tool workspace with safe output states                                                              | **not started** | —                                |
+| S9    | Research-map archive, studies, catalog detail                                                            | **not started** | —                                |
+| S10   | Integration, regression, release readiness                                                               | **not started** | —                                |
 
 ## Shipped surfaces
 

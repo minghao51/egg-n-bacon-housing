@@ -6,17 +6,17 @@ Captured on branch `design/sol-editorial-spec`, commit `a881ec0fa3f018db220b791d
 
 SHA-256 (first 16 hex characters) of the assets this slice touches:
 
-| Asset | Hash prefix |
-|---|---|
-| `dashboard_overview.json.gz` | `b49a518d260d2db6` |
-| `dashboard_leaderboard.json.gz` | `937a7db9e5216467` |
-| `dashboard_trends.json.gz` | `2857e6247c449bab` |
-| `dashboard_segments.json.gz` | `e19390376e5f14d1` |
-| `map_metrics.json.gz` | `0a2b8a0de2274a9c` |
-| `segments_enhanced.json.gz` | `76979cc5fdc4e7ff` |
+| Asset                                        | Hash prefix        |
+| -------------------------------------------- | ------------------ |
+| `dashboard_overview.json.gz`                 | `b49a518d260d2db6` |
+| `dashboard_leaderboard.json.gz`              | `937a7db9e5216467` |
+| `dashboard_trends.json.gz`                   | `2857e6247c449bab` |
+| `dashboard_segments.json.gz`                 | `e19390376e5f14d1` |
+| `map_metrics.json.gz`                        | `0a2b8a0de2274a9c` |
+| `segments_enhanced.json.gz`                  | `76979cc5fdc4e7ff` |
 | `interactive_tools/spatial_hotspots.json.gz` | `12ff7464b188e8bd` |
-| `analytics/spatial_analysis.json.gz` | `e3ff620242187ba9` |
-| `planning_areas.geojson` | `f23856251b467089` |
+| `analytics/spatial_analysis.json.gz`         | `e3ff620242187ba9` |
+| `planning_areas.geojson`                     | `f23856251b467089` |
 
 There is still **no manifest field that proves these nine files came from one exporter run**, so cross-file numeric comparison remains unproven in production. `manifest.json` does not contain per-asset hashes or a generation identity.
 
@@ -28,16 +28,16 @@ Baseline error count must not increase. Touched files must reach zero new errors
 
 ## 3. Route and query inventory
 
-| Route | Component | Query/state read today |
-|---|---|---|
-| `/` | `pages/index.astro` | none |
-| `/dashboard` | `dashboard/index.astro` | `?persona=` via persona header |
-| `/dashboard/leaderboard` | `dashboard/leaderboard.astro` → `LeaderboardDashboard` | `propertyType`, `timeBasis`, `sort`, `search`, `area`, `minSales` |
-| `/dashboard/map` | `dashboard/map.astro` → `PriceMap` | `metric`, `timeBasis`, `propertyType`, `area`, `layers` |
-| `/dashboard/segments` | segment workspace | `persona`, `tab`, `segment`, `segments`, `area` |
-| `/dashboard/trends` | `InteractiveToolsPanel` | `tool` (implied by tab state) |
-| `/analytics`, `/analytics/[slug]`, `/analytics/personas/[persona]` | research pages | `persona` |
-| `/catalog`, `/catalog/[layer]`, `/catalog/[layer]/[...dataset]` | catalog | path segments only |
+| Route                                                              | Component                                              | Query/state read today                                            |
+| ------------------------------------------------------------------ | ------------------------------------------------------ | ----------------------------------------------------------------- |
+| `/`                                                                | `pages/index.astro`                                    | none                                                              |
+| `/dashboard`                                                       | `dashboard/index.astro`                                | `?persona=` via persona header                                    |
+| `/dashboard/leaderboard`                                           | `dashboard/leaderboard.astro` → `LeaderboardDashboard` | `propertyType`, `timeBasis`, `sort`, `search`, `area`, `minSales` |
+| `/dashboard/map`                                                   | `dashboard/map.astro` → `PriceMap`                     | `metric`, `timeBasis`, `propertyType`, `area`, `layers`           |
+| `/dashboard/segments`                                              | segment workspace                                      | `persona`, `tab`, `segment`, `segments`, `area`                   |
+| `/dashboard/trends`                                                | `InteractiveToolsPanel`                                | `tool` (implied by tab state)                                     |
+| `/analytics`, `/analytics/[slug]`, `/analytics/personas/[persona]` | research pages                                         | `persona`                                                         |
+| `/catalog`, `/catalog/[layer]`, `/catalog/[layer]/[...dataset]`    | catalog                                                | path segments only                                                |
 
 `DASHBOARD_NAV_ITEMS` (`src/constants/dashboard-nav.ts`) defines five destinations; all exist. The label "Decision Tools" maps to path `dashboard/trends`, so route name and destination do not agree with user expectations.
 

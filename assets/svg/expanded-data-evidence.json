@@ -155,10 +155,7 @@
           "transactionCount": 114700,
           "marketShare": 0.126
         },
-        "propertyTypes": [
-          "HDB",
-          "Condominium"
-        ],
+        "propertyTypes": ["HDB", "Condominium"],
         "planningAreas": [
           "Bishan",
           "Toa Payoh",
@@ -182,10 +179,7 @@
           "transactionCount": 300872,
           "marketShare": 0.33
         },
-        "propertyTypes": [
-          "HDB",
-          "Condominium"
-        ],
+        "propertyTypes": ["HDB", "Condominium"],
         "planningAreas": [
           "Bishan",
           "Toa Payoh",
@@ -209,10 +203,7 @@
           "transactionCount": 51957,
           "marketShare": 0.057
         },
-        "propertyTypes": [
-          "Condominium",
-          "HDB"
-        ],
+        "propertyTypes": ["Condominium", "HDB"],
         "planningAreas": [
           "Bishan",
           "Toa Payoh",
@@ -236,10 +227,7 @@
           "transactionCount": 112943,
           "marketShare": 0.124
         },
-        "propertyTypes": [
-          "HDB",
-          "Condominium"
-        ],
+        "propertyTypes": ["HDB", "Condominium"],
         "planningAreas": [
           "Woodlands",
           "Yishun",
@@ -263,12 +251,8 @@
           "transactionCount": 230685,
           "marketShare": 0.253
         },
-        "propertyTypes": [
-          "HDB"
-        ],
-        "planningAreas": [
-          "Lim Chu Kang"
-        ]
+        "propertyTypes": ["HDB"],
+        "planningAreas": ["Lim Chu Kang"]
       },
       {
         "id": "premium_new_units",
@@ -280,10 +264,7 @@
           "transactionCount": 100297,
           "marketShare": 0.11
         },
-        "propertyTypes": [
-          "Condominium",
-          "EC"
-        ],
+        "propertyTypes": ["Condominium", "EC"],
         "planningAreas": [
           "Bishan",
           "Toa Payoh",
@@ -467,9 +448,7 @@
       "model_r2": 0.89,
       "last_training_date": "2025-01-01"
     },
-    "forecast_targets": [
-      "2025-07-01"
-    ],
+    "forecast_targets": ["2025-07-01"],
     "spatial_tool_keys": [
       "towns",
       "town_clusters",

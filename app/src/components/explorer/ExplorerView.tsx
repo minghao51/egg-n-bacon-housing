@@ -13,7 +13,10 @@
  */
 
 import { useRef, type KeyboardEvent } from "react";
-import type { ExplorerMetric, ExplorerSelection } from "@/utils/explorer-selection";
+import type {
+  ExplorerMetric,
+  ExplorerSelection,
+} from "@/utils/explorer-selection";
 import type { ExplorerDataset, ExplorerRow } from "@/utils/observed-rows";
 import { areaHref } from "@/utils/area-links";
 import ExplorerList, { type ExplorerListProps } from "./ExplorerList";
@@ -66,9 +69,7 @@ export function parseExplorerView(value: string | null): ExplorerViewKind {
 }
 
 /** The value to write into the address bar, or `null` for the default. */
-export function serializeExplorerView(
-  view: ExplorerViewKind,
-): string | null {
+export function serializeExplorerView(view: ExplorerViewKind): string | null {
   return view === EXPLORER_VIEW_DEFAULT ? null : view;
 }
 
@@ -156,7 +157,9 @@ function ExplorerTable({
               dataset.period,
             )} · `}
             <code className="font-mono">map_metrics.{dataset.section}</code>
-            {". N/A means the section does not publish that value for the area."}
+            {
+              ". N/A means the section does not publish that value for the area."
+            }
           </caption>
           <thead>
             <tr className="border-b border-border text-left">
@@ -208,8 +211,8 @@ function ExplorerTable({
 
       {rows.length === 0 ? (
         <p className="mt-4 rounded border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-          No planning areas match these settings, so the table has no rows. Widen
-          the period, clear the search or lower the sample threshold.
+          No planning areas match these settings, so the table has no rows.
+          Widen the period, clear the search or lower the sample threshold.
         </p>
       ) : null}
     </div>

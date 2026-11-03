@@ -24,10 +24,11 @@ export default function TrendsTable({ series, id }: TrendsTableProps) {
         Every month in the selected window
       </h2>
       <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-        Monthly median transaction price in nominal SGD and the count of included
-        transactions. <span className="font-bold text-foreground">N/A</span> means
-        the published asset carries no value for that month; it is not a zero and
-        it is not an estimate. Months are never skipped, so a gap in the series
+        Monthly median transaction price in nominal SGD and the count of
+        included transactions.{" "}
+        <span className="font-bold text-foreground">N/A</span> means the
+        published asset carries no value for that month; it is not a zero and it
+        is not an estimate. Months are never skipped, so a gap in the series
         stays visible as a gap.
       </p>
 

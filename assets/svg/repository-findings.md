@@ -23,17 +23,18 @@
 
 ## Architecture and actual routes
 
-| Layer | Verified implementation | Important constraint |
-|---|---|---|
-| Python runtime | `main.py` → `build_pipeline` / `run_pipeline`, [pipeline.py](../../src/egg_n_bacon_housing/pipeline.py):101,163,215 | Hamilton stages ingest/clean/features/export/metrics; dependency injection |
-| Persistence | [output_registry.py](../../src/egg_n_bacon_housing/utils/output_registry.py):23,54; companion materializers | Bronze exceptions and validation boundaries must follow repository skills; no second runner |
-| Published dataset | [export.py](../../src/egg_n_bacon_housing/components/export.py):21,27 | Unified platinum validation defaults to sampling 10,000 rows; schema ≠ complete validation guarantee |
-| App export | [export_app_data.py](../../scripts/export_app_data.py):224,536,563,622,763 | Separate maintenance step reads platinum; seven gzipped dashboard outputs; per-file atomic swaps, not a release-wide transaction |
-| Site | [astro.config.mjs](../../app/astro.config.mjs), [content.config.ts](../../app/src/content.config.ts):6 | Static Astro, React 19 islands, Tailwind 3; Bun 1.2.23; GitHub Pages base path supported |
-| Interactive UI | Recharts, Leaflet/react-leaflet, TanStack Table; [useGzipJson.ts](../../app/src/hooks/useGzipJson.ts):1–124 | Browser decompression, abort/reload, five-minute memory cache; compile-time types are not runtime validation |
-| Research | Markdown in [docs/analytics](../../docs/analytics), precomputed research assets | Separate generation/vintage; retired standalone analytics package is unsupported |
+| Layer             | Verified implementation                                                                                             | Important constraint                                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Python runtime    | `main.py` → `build_pipeline` / `run_pipeline`, [pipeline.py](../../src/egg_n_bacon_housing/pipeline.py):101,163,215 | Hamilton stages ingest/clean/features/export/metrics; dependency injection                                                       |
+| Persistence       | [output_registry.py](../../src/egg_n_bacon_housing/utils/output_registry.py):23,54; companion materializers         | Bronze exceptions and validation boundaries must follow repository skills; no second runner                                      |
+| Published dataset | [export.py](../../src/egg_n_bacon_housing/components/export.py):21,27                                               | Unified platinum validation defaults to sampling 10,000 rows; schema ≠ complete validation guarantee                             |
+| App export        | [export_app_data.py](../../scripts/export_app_data.py):224,536,563,622,763                                          | Separate maintenance step reads platinum; seven gzipped dashboard outputs; per-file atomic swaps, not a release-wide transaction |
+| Site              | [astro.config.mjs](../../app/astro.config.mjs), [content.config.ts](../../app/src/content.config.ts):6              | Static Astro, React 19 islands, Tailwind 3; Bun 1.2.23; GitHub Pages base path supported                                         |
+| Interactive UI    | Recharts, Leaflet/react-leaflet, TanStack Table; [useGzipJson.ts](../../app/src/hooks/useGzipJson.ts):1–124         | Browser decompression, abort/reload, five-minute memory cache; compile-time types are not runtime validation                     |
+| Research          | Markdown in [docs/analytics](../../docs/analytics), precomputed research assets                                     | Separate generation/vintage; retired standalone analytics package is unsupported                                                 |
 
 Routes verified in source:
+
 - `/`: marketing entry, animated transaction count, hardcoded milestones and highlighted research.
 - `/dashboard`: overview; `/dashboard/map`: area maps/tools; `/dashboard/trends`: trends/tools.
 - `/dashboard/leaderboard`: area comparison/ranking, map + table, search, filters, mobile drawer.
@@ -47,21 +48,21 @@ References: [app pages](../../app/src/pages), [SegmentsDashboard.tsx](../../app/
 
 Counts are local artifacts at inspection, not promises of complete market coverage. Public snapshot checksums and exact representative values are in [data-evidence.json](data-evidence.json).
 
-| Data | Verified local coverage / grain | Source / use |
-|---|---|---|
-| HDB resale bronze | 989,703 rows; Jan 1990–Oct 2026; transaction | data.gov.sg/manual acquisition, then cleaning/geocoding |
-| Private/EC bronze | 245,393 rows; Jan 2021–Oct 2026; transaction | manual URA extracts; different start date from HDB |
-| HDB rental bronze | 212,597 rows; Jan 2021–Sep 2026; approved rental | Rental-yield construction, not a private-property rental source |
-| Unified platinum | 1,234,928 rows, 97 columns | `data/pipeline/04_platinum/unified_dataset.parquet` |
-| Planning-area monthly metrics | 13,201 area × month rows through Oct 2026 | `data/pipeline/04_platinum/metrics/pa_monthly_metrics.parquet` |
-| National overview | 1,234,928 rows summarized; generated 2026-10-24T21:26:26; Jan 1990–Oct 2026 | [dashboard_overview](../../app/public/data/dashboard_overview.json.gz); era × property aggregate blocks |
-| National trends | 441 monthly rows, Jan 1990–Sep 2026 | [dashboard_trends](../../app/public/data/dashboard_trends.json.gz); median price and count per property; nulls before coverage |
-| Area map metrics | 19 sections; 41 areas in whole view; 31 in 2025 HDB | [map_metrics](../../app/public/data/map_metrics.json.gz); exact joint era/type subsets |
-| Leaderboard | 40 planning areas, mixed breakdowns | [dashboard_leaderboard](../../app/public/data/dashboard_leaderboard.json.gz); not a reliable joint year/type source |
-| Segments | dashboard scatter + separate enhanced research extract | Observed and modeled yields must be distinguished |
-| Geography/amenities | planning-area polygons, centroids, mean amenity distances | GeoJSON keys join uppercase planning-area names; preserve attribution |
-| Research | spatial, feature-impact, predictive JSON; interactive tools | Analytics JSON generated 19 Feb 2026; predictive training date field is 1 Jan 2025; not refreshed by seven-file exporter |
-| Catalog | compressed JSONL plus generated reference assets | Independent generation; contains metadata, not necessarily public raw downloads |
+| Data                          | Verified local coverage / grain                                             | Source / use                                                                                                                   |
+| ----------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| HDB resale bronze             | 989,703 rows; Jan 1990–Oct 2026; transaction                                | data.gov.sg/manual acquisition, then cleaning/geocoding                                                                        |
+| Private/EC bronze             | 245,393 rows; Jan 2021–Oct 2026; transaction                                | manual URA extracts; different start date from HDB                                                                             |
+| HDB rental bronze             | 212,597 rows; Jan 2021–Sep 2026; approved rental                            | Rental-yield construction, not a private-property rental source                                                                |
+| Unified platinum              | 1,234,928 rows, 97 columns                                                  | `data/pipeline/04_platinum/unified_dataset.parquet`                                                                            |
+| Planning-area monthly metrics | 13,201 area × month rows through Oct 2026                                   | `data/pipeline/04_platinum/metrics/pa_monthly_metrics.parquet`                                                                 |
+| National overview             | 1,234,928 rows summarized; generated 2026-10-24T21:26:26; Jan 1990–Oct 2026 | [dashboard_overview](../../app/public/data/dashboard_overview.json.gz); era × property aggregate blocks                        |
+| National trends               | 441 monthly rows, Jan 1990–Sep 2026                                         | [dashboard_trends](../../app/public/data/dashboard_trends.json.gz); median price and count per property; nulls before coverage |
+| Area map metrics              | 19 sections; 41 areas in whole view; 31 in 2025 HDB                         | [map_metrics](../../app/public/data/map_metrics.json.gz); exact joint era/type subsets                                         |
+| Leaderboard                   | 40 planning areas, mixed breakdowns                                         | [dashboard_leaderboard](../../app/public/data/dashboard_leaderboard.json.gz); not a reliable joint year/type source            |
+| Segments                      | dashboard scatter + separate enhanced research extract                      | Observed and modeled yields must be distinguished                                                                              |
+| Geography/amenities           | planning-area polygons, centroids, mean amenity distances                   | GeoJSON keys join uppercase planning-area names; preserve attribution                                                          |
+| Research                      | spatial, feature-impact, predictive JSON; interactive tools                 | Analytics JSON generated 19 Feb 2026; predictive training date field is 1 Jan 2025; not refreshed by seven-file exporter       |
+| Catalog                       | compressed JSONL plus generated reference assets                            | Independent generation; contains metadata, not necessarily public raw downloads                                                |
 
 Sources and adapters live under [adapters](../../src/egg_n_bacon_housing/adapters) and [ingestion](../../src/egg_n_bacon_housing/components/ingestion). Manual files are R2-managed, ignored, and must not be embedded in the redesign.
 
@@ -83,6 +84,7 @@ Additional macro series exist (not new UI promises): CPI through Jul 2026, GDP t
 ## Data quality and metric risks
 
 ### Independently checked by Sol
+
 - 11,637 unified rows (0.94%) have missing coordinates and planning area. All-history national totals include rows that cannot appear in area comparisons. Revision 2 isolated 2025 HDB: zero missing areas, but national 25,084 versus area-map 25,082 because 2 Sungei Kadut records are excluded. Do not apply the all-history missingness rate to this year. This is a **local artifact/schema discrepancy**, not proof of the exact upstream failure mechanism.
 - Only 152,951 rows (12.4%) have non-null rental yield; all are HDB. No observed private/EC yields are present in this platinum snapshot.
 - 2025 national figures: HDB S$628,000 / 25,084 sales; EC S$1,578,000 / 6,209; condominium S$1,938,952 / 47,503. Sum = 78,796.
@@ -95,6 +97,7 @@ Additional macro series exist (not new UI promises): CPI through Jul 2026, GDP t
 - [manifest.json](../../app/public/data/manifest.json) references `docs/analytics/README.md`, which is missing. Validation passes despite this unresolved provenance pointer.
 
 ### DeepSeek investigation; recheck before remediation
+
 - Raw HDB contains 1,929 exact duplicate rows; identical transaction attributes are not sufficient evidence that sales should be deleted. Define natural-key semantics first.
 - Geocoded coverage ≈99.04%; gold/platinum quarantine counts vary by run. Do not present one run's row loss as a stable validation rate.
 - `appreciation_hotspots` sorts all months then takes 20, not the latest-month top 20 ([metrics.py](../../src/egg_n_bacon_housing/components/metrics.py):233).
@@ -117,6 +120,7 @@ Retain Astro static publishing, BASE_URL handling, article collection/math/table
 Replace the sidebar-heavy IA, marketing/dashboard split, sprawling map-first comparison, unlabeled model fallbacks, misleading period labels, mixed-grain rankings and fragmented metric help.
 
 Accessibility gaps from frontend inspection:
+
 - Sidebar mobile script lacks evident focus trap/restore/Escape and active links lack consistent aria-current ([Sidebar.astro](../../app/src/components/Sidebar.astro):108–118,275–300).
 - Clickable table rows and metric-help dialogs need keyboard/focus checks.
 - Charts/maps lack a uniform text/table alternative.

@@ -65,7 +65,10 @@ export interface ReleaseCheck {
 export const RELEASE_SCHEMA_VERSION = "1.0.0";
 
 /** Top-level fields excluded from the generation id (wall-clock free by design). */
-const GENERATION_EXCLUDED_KEYS: readonly string[] = ["generation", "generatedAt"];
+const GENERATION_EXCLUDED_KEYS: readonly string[] = [
+  "generation",
+  "generatedAt",
+];
 
 /** Narrow an `unknown` payload to a plain object (not an array, not null). */
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -82,7 +85,9 @@ function isNonNegativeInteger(value: unknown): value is number {
 
 function toByteView(bytes: ArrayBuffer | Uint8Array): Uint8Array<ArrayBuffer> {
   // Copy into a fresh view so a subarray offset can never change the digest.
-  return bytes instanceof Uint8Array ? new Uint8Array(bytes) : new Uint8Array(bytes);
+  return bytes instanceof Uint8Array
+    ? new Uint8Array(bytes)
+    : new Uint8Array(bytes);
 }
 
 function toHex(buffer: ArrayBuffer): string {
@@ -166,7 +171,8 @@ export function parseReleaseManifest(raw: unknown): ReleaseManifest | null {
   const startMonth = range["startMonth"];
   const endMonth = range["endMonth"];
   const completeYear = range["completeYear"];
-  if (typeof startMonth !== "string" || typeof endMonth !== "string") return null;
+  if (typeof startMonth !== "string" || typeof endMonth !== "string")
+    return null;
   if (completeYear !== null && !isNonNegativeInteger(completeYear)) return null;
 
   const rawPeriods = raw["periodDefinitions"];
@@ -305,7 +311,10 @@ export async function verifyReleaseAssets(
     // verify the content hash the manifest records for the decoded text.
     if (entry.contentSha256 !== undefined) {
       const content = await decodedContent(view);
-      if (content !== null && (await sha256Hex(content)) === entry.contentSha256) {
+      if (
+        content !== null &&
+        (await sha256Hex(content)) === entry.contentSha256
+      ) {
         continue;
       }
     }
@@ -449,7 +458,9 @@ export async function loadReleaseCheck(options: {
       try {
         const response = await doFetch(url);
         if (!response.ok) {
-          fetchProblems.push(`could not fetch ${path} (HTTP ${response.status})`);
+          fetchProblems.push(
+            `could not fetch ${path} (HTTP ${response.status})`,
+          );
           continue;
         }
         supplied[path] = await response.arrayBuffer();

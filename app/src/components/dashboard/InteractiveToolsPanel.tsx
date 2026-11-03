@@ -1,10 +1,4 @@
-import {
-  Component,
-  Fragment,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { Component, Fragment, useMemo, useState, type ReactNode } from "react";
 import type { Persona } from "./PersonaSelector";
 import ToolTabs, { type ToolTab } from "./ToolTabs";
 import MrtCbdCalculator from "./tools/MrtCbdCalculator";

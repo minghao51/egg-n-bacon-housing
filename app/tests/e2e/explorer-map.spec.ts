@@ -62,7 +62,9 @@ test.describe("Explore map view", () => {
     const binnedFills = await mapFigure(page)
       .locator('path[data-area-state="binned"]')
       .evaluateAll((nodes) =>
-        Array.from(new Set(nodes.map((node) => node.getAttribute("fill") ?? ""))),
+        Array.from(
+          new Set(nodes.map((node) => node.getAttribute("fill") ?? "")),
+        ),
       );
     expect(binnedFills.length).toBeGreaterThan(1);
     for (const fill of binnedFills) {
@@ -90,7 +92,9 @@ test.describe("Explore map view", () => {
     await expect(
       legend.getByText("Hidden by the current filters: 6 areas"),
     ).toBeVisible();
-    await expect(legend.getByText("Outside this selection: 24 areas")).toBeVisible();
+    await expect(
+      legend.getByText("Outside this selection: 24 areas"),
+    ).toBeVisible();
     await expect(
       mapFigure(page).getByText(
         /Bins are quantiles of the 25 areas currently shown, not a scientific classification/,
@@ -143,7 +147,9 @@ test.describe("Explore map view", () => {
     await page.getByRole("tab", { name: "List" }).click();
 
     await expect(page.getByRole("radio", { name: "Condo" })).toBeChecked();
-    await expect(page.getByRole("radio", { name: "All history" })).toBeChecked();
+    await expect(
+      page.getByRole("radio", { name: "All history" }),
+    ).toBeChecked();
     const params = new URL(page.url()).searchParams;
     expect(params.get("property")).toBe("condo");
     expect(params.get("period")).toBe("whole");
@@ -176,9 +182,9 @@ test.describe("Explore map view", () => {
   }) => {
     await page.goto("/explore?view=map&search=zzzz");
 
-    await expect(
-      mapFigure(page).getByText(/nothing to map/i),
-    ).toBeVisible({ timeout: MAP_TIMEOUT });
+    await expect(mapFigure(page).getByText(/nothing to map/i)).toBeVisible({
+      timeout: MAP_TIMEOUT,
+    });
     await expect(mapFigure(page).locator("svg")).toHaveCount(0);
   });
 
@@ -252,7 +258,9 @@ test.describe("Explore table view", () => {
       table.getByRole("columnheader", { name: "Transactions" }),
     ).toBeVisible();
 
-    await expect(table.getByRole("rowheader", { name: "Ang Mo Kio" })).toBeVisible();
+    await expect(
+      table.getByRole("rowheader", { name: "Ang Mo Kio" }),
+    ).toBeVisible();
     await expect(table.getByRole("cell", { name: "S$499,000" })).toBeVisible();
     await expect(table.getByRole("cell", { name: "971" })).toBeVisible();
     await expect(table.locator("tbody tr")).toHaveCount(25);

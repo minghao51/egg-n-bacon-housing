@@ -216,7 +216,9 @@ describe("projectPlanningAreas — published asset", () => {
     // Singapore's bbox: lon 103.6057–104.0885, lat 1.1587–1.4708.
     const expected =
       ((104.08848306516335 - 103.60570070513404) *
-        Math.cos((((1.1586987006322145 + 1.4707748320860872) / 2) * Math.PI) / 180)) /
+        Math.cos(
+          (((1.1586987006322145 + 1.4707748320860872) / 2) * Math.PI) / 180,
+        )) /
       (1.4707748320860872 - 1.1586987006322145);
     expect(projected).toBeCloseTo(expected, 2);
   });
@@ -419,8 +421,16 @@ describe("projectPlanningAreas — fixtures", () => {
     const map = projectPlanningAreas({
       type: "FeatureCollection",
       features: [
-        { type: "Feature", properties: { PLN_AREA_N: "TAMPINES" }, geometry: polygon },
-        { type: "Feature", properties: { pln_area_n: "tampines" }, geometry: polygon },
+        {
+          type: "Feature",
+          properties: { PLN_AREA_N: "TAMPINES" },
+          geometry: polygon,
+        },
+        {
+          type: "Feature",
+          properties: { pln_area_n: "tampines" },
+          geometry: polygon,
+        },
       ],
     });
     expect(map.areas).toHaveLength(1);
@@ -455,15 +465,19 @@ describe("projectPlanningAreas — fixtures", () => {
 describe("quantileBins", () => {
   test("returns no bins for empty or entirely unusable input", () => {
     expect(quantileBins([])).toEqual([]);
-    expect(quantileBins([Number.NaN, Number.POSITIVE_INFINITY, -1, -500])).toEqual(
-      [],
-    );
+    expect(
+      quantileBins([Number.NaN, Number.POSITIVE_INFINITY, -1, -500]),
+    ).toEqual([]);
   });
 
   test("yields a single bin for one value", () => {
     const bins = quantileBins([499000]);
     expect(bins).toHaveLength(1);
-    expect(bins[0]).toMatchObject({ min: 499000, max: 499000, label: "499000" });
+    expect(bins[0]).toMatchObject({
+      min: 499000,
+      max: 499000,
+      label: "499000",
+    });
   });
 
   test("yields a single bin when every value is identical", () => {
@@ -501,7 +515,9 @@ describe("quantileBins", () => {
     expect(bins).toHaveLength(5);
     expect(bins[0]?.min).toBe(1000);
     expect(bins[4]?.max).toBe(30000);
-    expect(bins.map((bin) => bin.min)).toEqual([1000, 7000, 13000, 19000, 25000]);
+    expect(bins.map((bin) => bin.min)).toEqual([
+      1000, 7000, 13000, 19000, 25000,
+    ]);
     for (let index = 0; index + 1 < bins.length; index += 1) {
       const bin = bins[index];
       const next = bins[index + 1];
@@ -544,7 +560,14 @@ describe("quantileBins", () => {
   });
 
   test("ignores negative and non-finite values before binning", () => {
-    const bins = quantileBins([Number.NaN, -5, 10, 20, 30, Number.POSITIVE_INFINITY]);
+    const bins = quantileBins([
+      Number.NaN,
+      -5,
+      10,
+      20,
+      30,
+      Number.POSITIVE_INFINITY,
+    ]);
     expect(bins[0]?.min).toBe(10);
     expect(bins[bins.length - 1]?.max).toBe(30);
   });

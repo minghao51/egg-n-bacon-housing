@@ -227,7 +227,8 @@ test.describe("Explore baseline gate", () => {
         .digest("hex");
       return {
         path,
-        sha256: tamper && path === "map_metrics.json.gz" ? "0".repeat(64) : sha256,
+        sha256:
+          tamper && path === "map_metrics.json.gz" ? "0".repeat(64) : sha256,
         contentSha256:
           tamper && path === "map_metrics.json.gz"
             ? "0".repeat(64)
@@ -277,7 +278,9 @@ test.describe("Explore baseline gate", () => {
     ).toHaveCount(0);
   });
 
-  test("a tampered manifest withholds the national baseline", async ({ page }) => {
+  test("a tampered manifest withholds the national baseline", async ({
+    page,
+  }) => {
     const manifest = await buildManifest(true);
     await page.route("**/data/dashboard-release.json", (route) =>
       route.fulfill({ json: manifest }),

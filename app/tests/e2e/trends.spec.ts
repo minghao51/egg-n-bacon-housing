@@ -136,15 +136,15 @@ test.describe("Research trends", () => {
       page.getByText(/does not start at zero/i).first(),
     ).toBeVisible();
     await expect(page.getByText(/Zero-based axis:/i).first()).toBeVisible();
-    await expect(page.getByText(/the scale starts at 0/i).first()).toBeVisible();
+    await expect(
+      page.getByText(/the scale starts at 0/i).first(),
+    ).toBeVisible();
 
     // The published minimum and maximum of the window are stated, not implied.
     await expect(
       page.getByText(/published minimum S\$612,888/i).first(),
     ).toBeVisible();
-    await expect(
-      page.getByText(/maximum S\$645,000/i).first(),
-    ).toBeVisible();
+    await expect(page.getByText(/maximum S\$645,000/i).first()).toBeVisible();
   });
 
   test("the combined series publishes no invented transaction count", async ({

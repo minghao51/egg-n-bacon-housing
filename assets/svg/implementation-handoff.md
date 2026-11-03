@@ -13,6 +13,7 @@ Start with [README.md](README.md), [repository-findings.md](repository-findings.
 ## 1. Product outcomes and journeys
 
 Outcomes:
+
 - A reader understands the selected housing type, period, currency and included sample.
 - The primary comparison never combines year-specific prices with property-only or all-history metrics without explicit labeling.
 - Method/source caveats are close to each claim.
@@ -20,6 +21,7 @@ Outcomes:
 - Existing research, tools and catalog capabilities remain discoverable.
 
 Journeys:
+
 1. Overview national comparison → HDB explorer → area fieldnote → limitations/source.
 2. Direct explorer entry → period/type/sample → sort/search → map/table equivalent → area.
 3. Research claim → report methodology → provenance guide → catalog/schema/lineage.
@@ -28,15 +30,15 @@ Proposed user validation: ask buyers/upgraders/researchers to identify what S$71
 
 ## 2. Retain / refactor / replace / retire
 
-| Action | Scope |
-|---|---|
-| Retain | Hamilton runtime, medallion persistence, supported CLI, maintenance export boundary; Astro static build; BASE_URL; React/Recharts/Leaflet; Bun |
-| Retain | Markdown reports/math, opt-in article charts, persona links, catalog nested routes and schema/DAG views |
-| Reuse with audit | DATA_URLS and useGzipJson lifecycle; existing table/map primitives; segment matching/investigation and calculators |
-| Refactor | Joint-selection adapter; runtime contract checks; provenance metadata; nullable metrics; filter URL state; accessible dialogs and navigation |
-| Replace | Sidebar-dominated primary shell, separate marketing vs dashboard entry, giant map-first rankings, KPI/pie-card hierarchy |
+| Action                        | Scope                                                                                                                                              |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Retain                        | Hamilton runtime, medallion persistence, supported CLI, maintenance export boundary; Astro static build; BASE_URL; React/Recharts/Leaflet; Bun     |
+| Retain                        | Markdown reports/math, opt-in article charts, persona links, catalog nested routes and schema/DAG views                                            |
+| Reuse with audit              | DATA_URLS and useGzipJson lifecycle; existing table/map primitives; segment matching/investigation and calculators                                 |
+| Refactor                      | Joint-selection adapter; runtime contract checks; provenance metadata; nullable metrics; filter URL state; accessible dialogs and navigation       |
+| Replace                       | Sidebar-dominated primary shell, separate marketing vs dashboard entry, giant map-first rankings, KPI/pie-card hierarchy                           |
 | Retire only after replacement | Misleading “Pre-COVID” label for ≤2021; unqualified “best town”/growth/causal teasers; opaque private-yield fallbacks in primary decision surfaces |
-| Do not retire silently | Segment investigation, trends, interactive tools, persona pages, research URLs or catalog paths |
+| Do not retire silently        | Segment investigation, trends, interactive tools, persona pages, research URLs or catalog paths                                                    |
 
 No evidence supports replacing Astro with another framework now. A rebuild would add migration cost without repairing data semantics.
 
@@ -56,6 +58,7 @@ Data contracts are in screen-data-map.md. Keep canonical planningArea keys separ
 ## 4. Backend/data work to plan
 
 ### Required for a trustworthy initial release
+
 - Validate joint subset sections and approved fields (price/PSF/count). Do not use property-first/period-second leaderboard fallback.
 - Add compatibility metadata or a release manifest with generation ID, per-asset export timestamps, supported periods, observation ranges and evidence kinds. The existing manifest is shape-level only.
 - Decide a safe behavior for mismatched generations; prefer omit difference over display an unverified baseline.
@@ -65,6 +68,7 @@ Data contracts are in screen-data-map.md. Keep canonical planningArea keys separ
 - Preserve matched metric nullability and forbid zero/fallback values from masquerading as observations.
 
 ### Required before promoting advanced claims
+
 - Label/remove formula-generated private/EC yields, distinguish HDB observed town/month rent ratios from net investor returns.
 - Separate time/property scopes of affordability and yields. Fixed national income, mortgage assumptions and all-time enrichment must remain visible.
 - Resolve administrative-region vs CCR/RCR/OCR mapping.
@@ -76,17 +80,17 @@ If modifying DAG/ingestion/persistence, read the matching repository skills and 
 
 ## 5. Suggested implementation slices
 
-| Slice | Dependencies / work | Acceptance criteria |
-|---|---|---|
-| A. Revalidate evidence | Current public assets, exporter, adapters, production build baseline; inventory routes/tests | Reproduce medians/counts/nulls and joint-filter issue; record baseline failures separately; approve metric contract |
-| B. Data correctness seam | A; typed joint-selection adapter, runtime checks, provenance/compatibility metadata | 2025 HDB Tampines = 710000/620/1921; national = 628000/603/25084; missing subset never falls back; incompatible baseline omitted |
-| C. Tokens and shell | A; shared HTML components, responsive accessible navigation | 320/390/768/1440px usable; focus, skip link, aria-current, mobile dialog; existing deep links preserved |
-| D. Editorial overview | B+C; SVG 01/04 | Exact three medians and counts, 78,796 total; source/period prominent; clear HDB action; no fake live state or hardcoded growth claim |
-| E. Explorer list/table | B+C; SVG 02/05/06; URL filters/sort/pagination | 31 HDB areas, 25 eligible at ≥150, 6 thin; correct ascending rows/ties; mobile draft/apply/cancel; keyboard area links; empty/error scenarios |
-| F. Optional map integration | E; existing polygons, audited joins/provider | Same subset/selection/scale as table; works when tiles fail; attribution; skip-map route; no client secret exposure |
-| G. Area fieldnote | B+E; SVG 03 | Proposed route handles type/year, direct deep links and unavailable areas; 82000/13.1% arithmetic; no “premium” claim; back restores state |
-| H. Methods/research migration | B+C; SVG 08/07 | Three clocks; unknown timestamps preserved; catalog/article/persona/tool URLs still work; modeled values labeled or withheld |
-| I. Migration and release gates | All relevant slices | Root and Pages BASE_URL, redirect compatibility, accessibility, mobile, data-contract and production smoke tests; no dropped workflow |
+| Slice                          | Dependencies / work                                                                          | Acceptance criteria                                                                                                                           |
+| ------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| A. Revalidate evidence         | Current public assets, exporter, adapters, production build baseline; inventory routes/tests | Reproduce medians/counts/nulls and joint-filter issue; record baseline failures separately; approve metric contract                           |
+| B. Data correctness seam       | A; typed joint-selection adapter, runtime checks, provenance/compatibility metadata          | 2025 HDB Tampines = 710000/620/1921; national = 628000/603/25084; missing subset never falls back; incompatible baseline omitted              |
+| C. Tokens and shell            | A; shared HTML components, responsive accessible navigation                                  | 320/390/768/1440px usable; focus, skip link, aria-current, mobile dialog; existing deep links preserved                                       |
+| D. Editorial overview          | B+C; SVG 01/04                                                                               | Exact three medians and counts, 78,796 total; source/period prominent; clear HDB action; no fake live state or hardcoded growth claim         |
+| E. Explorer list/table         | B+C; SVG 02/05/06; URL filters/sort/pagination                                               | 31 HDB areas, 25 eligible at ≥150, 6 thin; correct ascending rows/ties; mobile draft/apply/cancel; keyboard area links; empty/error scenarios |
+| F. Optional map integration    | E; existing polygons, audited joins/provider                                                 | Same subset/selection/scale as table; works when tiles fail; attribution; skip-map route; no client secret exposure                           |
+| G. Area fieldnote              | B+E; SVG 03                                                                                  | Proposed route handles type/year, direct deep links and unavailable areas; 82000/13.1% arithmetic; no “premium” claim; back restores state    |
+| H. Methods/research migration  | B+C; SVG 08/07                                                                               | Three clocks; unknown timestamps preserved; catalog/article/persona/tool URLs still work; modeled values labeled or withheld                  |
+| I. Migration and release gates | All relevant slices                                                                          | Root and Pages BASE_URL, redirect compatibility, accessibility, mobile, data-contract and production smoke tests; no dropped workflow         |
 
 Keep slices independently reviewable. The next planner should refine dependencies and file ownership; avoid editing all dashboards in one uncontrolled migration.
 

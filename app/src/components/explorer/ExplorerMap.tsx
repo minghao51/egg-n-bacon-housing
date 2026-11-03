@@ -284,8 +284,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
   )} ${metricOption.noun}`;
 
   const geometryLoading = geometry.loading && geometry.data === null;
-  const geometryError =
-    geometry.error ?? projection.error ?? null;
+  const geometryError = geometry.error ?? projection.error ?? null;
 
   let body: ReactNode;
   if (dataset.filtered.length === 0) {
@@ -362,7 +361,14 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
               patternTransform="rotate(45)"
             >
               <rect width="6" height="6" fill={MAP_NO_DATA_FILL} />
-              <line x1="0" y1="0" x2="0" y2="6" stroke="#7A8583" strokeWidth="1" />
+              <line
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="6"
+                stroke="#7A8583"
+                strokeWidth="1"
+              />
             </pattern>
           </defs>
 
@@ -381,7 +387,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
                 d={shape.path}
                 fillRule="evenodd"
                 fill={
-                  (shape.state === "no-value" || shape.state === "filtered")
+                  shape.state === "no-value" || shape.state === "filtered"
                     ? `url(#${NO_VALUE_PATTERN_ID})`
                     : shape.fill
                 }

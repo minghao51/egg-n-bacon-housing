@@ -472,9 +472,7 @@ export function quantileBins(
   values: number[],
   binCount = DEFAULT_BIN_COUNT,
 ): Bin[] {
-  const usable = values.filter(
-    (value) => Number.isFinite(value) && value >= 0,
-  );
+  const usable = values.filter((value) => Number.isFinite(value) && value >= 0);
   if (usable.length === 0) {
     return [];
   }
@@ -491,7 +489,12 @@ export function quantileBins(
   if (only !== undefined && largest !== undefined && only === largest) {
     // Every observation is the same value: one bin, inclusive at both ends.
     return [
-      { min: only, max: largest, label: binLabel(only, largest), upperInclusive: true },
+      {
+        min: only,
+        max: largest,
+        label: binLabel(only, largest),
+        upperInclusive: true,
+      },
     ];
   }
   const edges: number[] = [sorted[0]];

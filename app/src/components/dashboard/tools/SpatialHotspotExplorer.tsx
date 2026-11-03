@@ -99,9 +99,7 @@ function isHorizon(value: string): value is keyof typeof INVESTMENT_HORIZONS {
   return Object.prototype.hasOwnProperty.call(INVESTMENT_HORIZONS, value);
 }
 
-function isRiskTolerance(
-  value: string,
-): value is keyof typeof RISK_TOLERANCE {
+function isRiskTolerance(value: string): value is keyof typeof RISK_TOLERANCE {
   return Object.prototype.hasOwnProperty.call(RISK_TOLERANCE, value);
 }
 
@@ -233,8 +231,9 @@ export default function SpatialHotspotExplorer({
           </h3>
           <ul className="text-sm text-purple-800 dark:text-purple-200 space-y-1">
             <li>
-              • {clusterSummaries.length} cluster types across {data.towns.length}{" "}
-              published town records (Moran's I classification)
+              • {clusterSummaries.length} cluster types across{" "}
+              {data.towns.length} published town records (Moran's I
+              classification)
             </li>
             <li>
               • HH = Hotspots (high appreciation), LL = Coldspots (low
@@ -353,7 +352,9 @@ export default function SpatialHotspotExplorer({
                   Persistence Probability
                 </div>
                 <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  {(selectedTownRecord.persistence_probability * 100).toFixed(0)}
+                  {(selectedTownRecord.persistence_probability * 100).toFixed(
+                    0,
+                  )}
                   %
                 </div>
               </div>

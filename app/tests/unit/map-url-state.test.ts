@@ -40,9 +40,9 @@ describe("parseMapSelection", () => {
     expect(selection.layers).toEqual(["spatial.lisa"]);
     expect(selection).toEqual(FULL_SELECTION);
 
-    expect(parseMapSelection(serializeMapSelection(selection).toString())).toEqual(
-      FULL_SELECTION,
-    );
+    expect(
+      parseMapSelection(serializeMapSelection(selection).toString()),
+    ).toEqual(FULL_SELECTION);
   });
 
   test("drops values that are not accepted instead of substituting another value", () => {
@@ -189,9 +189,9 @@ describe("mergeMapSelection", () => {
     expect(mergeMapSelection(FULL_SELECTION, { metric: "volume" }).metric).toBe(
       "volume",
     );
-    expect(
-      mergeMapSelection(FULL_SELECTION, { layers: [] }).layers,
-    ).toEqual([]);
+    expect(mergeMapSelection(FULL_SELECTION, { layers: [] }).layers).toEqual(
+      [],
+    );
     expect(
       mergeMapSelection(FULL_SELECTION, { layers: ["feature.mrt"] }).layers,
     ).toEqual(["feature.mrt"]);

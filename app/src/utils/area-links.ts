@@ -36,10 +36,7 @@ export interface AreaHrefSelection {
  * page can offer a return link. Unknown filter values are dropped rather than
  * echoed into the URL.
  */
-export function areaHref(
-  slug: string,
-  selection?: AreaHrefSelection,
-): string {
+export function areaHref(slug: string, selection?: AreaHrefSelection): string {
   const params = new URLSearchParams();
   params.set("from", "explore");
 

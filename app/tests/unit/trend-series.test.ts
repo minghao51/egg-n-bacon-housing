@@ -132,9 +132,9 @@ describe("published dashboard_trends payload", () => {
     expect(all.months).toBe(442);
     expect(all.isPartialWindow).toBe(false);
     // The 2025 window ends in 2025 while the asset runs to 2026-10.
-    expect(summarize(filterWindow(series, "year_2025"), "year_2025").endMonth).toBe(
-      "2025-12",
-    );
+    expect(
+      summarize(filterWindow(series, "year_2025"), "year_2025").endMonth,
+    ).toBe("2025-12");
   });
 
   test("EC keeps the calendar and leaves pre-2021 months unpublished", () => {
@@ -333,10 +333,7 @@ describe("summarize", () => {
     ]);
     expect(summarize(lateStart, "recent").isPartialWindow).toBe(true);
 
-    const complete = seriesOf([
-      point("2025-01", 1, 1),
-      point("2025-12", 2, 2),
-    ]);
+    const complete = seriesOf([point("2025-01", 1, 1), point("2025-12", 2, 2)]);
     expect(summarize(complete, "year_2025").isPartialWindow).toBe(false);
   });
 
@@ -364,9 +361,13 @@ describe("yearSum", () => {
     const volumes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     expect(yearSum(points2025(volumes), "2025", "volume")).toBe(78);
     expect(yearSum(points2025(volumes), "2025", "price")).toBe(635000 * 12);
-    expect(yearSum(points2025([0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), "2025", "volume")).toBe(
-      0.5,
-    );
+    expect(
+      yearSum(
+        points2025([0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        "2025",
+        "volume",
+      ),
+    ).toBe(0.5);
   });
 
   test("returns null when the year is incomplete", () => {
@@ -418,7 +419,6 @@ describe("selection constants", () => {
     expect(TREND_WINDOWS).toContain(TREND_QUERY_DEFAULTS.window);
   });
 });
-
 
 describe("yearSum calendar integrity", () => {
   test("rejects an out-of-range month instead of counting it as a month", () => {

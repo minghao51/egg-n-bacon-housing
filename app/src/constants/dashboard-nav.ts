@@ -1,5 +1,12 @@
 export interface DashboardNavItem {
-  key: "overview" | "explore" | "trends" | "map" | "tools" | "segments" | "leaderboard";
+  key:
+    | "overview"
+    | "explore"
+    | "trends"
+    | "map"
+    | "tools"
+    | "segments"
+    | "leaderboard";
   label: string;
   shortLabel: string;
   description: string;

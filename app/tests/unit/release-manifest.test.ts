@@ -55,7 +55,8 @@ function decodeManifest(json: string): Record<string, unknown> {
 
 function requireManifest(raw: unknown): ReleaseManifest {
   const manifest = parseReleaseManifest(raw);
-  if (manifest === null) throw new Error("expected a parseable release manifest");
+  if (manifest === null)
+    throw new Error("expected a parseable release manifest");
   return manifest;
 }
 
@@ -101,7 +102,7 @@ const SYNTHETIC_MANIFEST: Record<string, unknown> = {
     nested: {
       Zeta: 1,
       alpha: [1, 2, { z: "kept", y: null, x: [] }],
-      "Émile": {},
+      Émile: {},
       empty: [],
     },
   },
@@ -298,12 +299,12 @@ describe("verifyReleaseAssets", () => {
       "b.json.gz": new TextEncoder().encode("abd"),
     };
 
-    expect(await verifyReleaseAssets(manifest, tampered, ["a.json.gz"])).toHaveLength(
-      0,
-    );
-    expect(await verifyReleaseAssets(manifest, tampered, ["b.json.gz"])).toHaveLength(
-      1,
-    );
+    expect(
+      await verifyReleaseAssets(manifest, tampered, ["a.json.gz"]),
+    ).toHaveLength(0);
+    expect(
+      await verifyReleaseAssets(manifest, tampered, ["b.json.gz"]),
+    ).toHaveLength(1);
     expect(await verifyReleaseAssets(manifest, tampered)).toHaveLength(1);
   });
 
@@ -387,7 +388,10 @@ describe("loadReleaseCheck", () => {
     expect(check.status).toBe("verified");
     expect(check.mismatches).toHaveLength(0);
     expect(check.manifest?.generation).toBe(SYNTHETIC_GENERATION);
-    expect(calls).toEqual([MANIFEST_URL, "https://example.test/data/a.json.gz"]);
+    expect(calls).toEqual([
+      MANIFEST_URL,
+      "https://example.test/data/a.json.gz",
+    ]);
   });
 
   test("reports mismatch when the manifest content was edited after publication", async () => {
@@ -444,7 +448,9 @@ describe("loadReleaseCheck", () => {
     // status is "unverified" rather than "mismatch".
     expect(missingUrl.status).toBe("unverified");
     expect(missingUrl.mismatches).toHaveLength(1);
-    expect(missingUrl.mismatches[0]).toContain("no asset URL provided for b.json.gz");
+    expect(missingUrl.mismatches[0]).toContain(
+      "no asset URL provided for b.json.gz",
+    );
 
     const unfetchable = await loadReleaseCheck({
       manifestUrl: MANIFEST_URL,

@@ -22,20 +22,20 @@ Implementation outcome: observed transactions are directly comparable; research 
 
 ## 2. Routing and architecture decisions
 
-| Destination | Decision | Migration acceptance |
-|---|---|---|
-| `/` | New editorial annual overview | All three type medians/counts from one overview asset; safe without cross-file compatibility |
-| `/dashboard` | Compatibility entry to Overview | Preserve base path and useful navigation; move old trend capability to a named destination |
-| `/explore` | One joint-selection React workspace with list/map/table | Type × period shared across representations; no leaderboard fallback metrics |
-| `/dashboard/leaderboard` | Compatibility wrapper/translation to observed explorer | Map only understood settings; explicitly notify unsupported legacy metric rather than replacing it silently |
-| `/areas/[slug]` | New static area route, shared approved adapter | Canonical slug map; correct unavailable states; return context preserved |
-| `/research/trends` | New home for monthly price/volume charts | Do not alias this to the existing tools component by name alone |
-| `/research/segments` and `/dashboard/segments` | Same segment workspace and state parser under new shell | Preserve persona/tab/segment/segments/area; add constraint URL state with versioned parsing |
-| `/research/tools` and `/dashboard/trends` | Same four-tool workspace | Legacy route stays valid. Isolate broken/unavailable tool, preserve working siblings |
-| `/research/map` and `/dashboard/map` | Same legacy research-map workspace, explicitly archived/model-gated | Preserve metric/timeBasis/propertyType/area/layers query; normalize IDs without losing valid state |
-| `/analytics/*` and persona children | Existing URLs retained | No content-route churn; improve library/article shell and evidence notes |
-| `/data` | New methods/source guide | Link to catalog; not a duplicate raw-download endpoint |
-| `/catalog/*` | Existing routes/slug conversion retained | Schema, DAG and dependency links remain usable, including external nested IDs |
+| Destination                                    | Decision                                                            | Migration acceptance                                                                                        |
+| ---------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `/`                                            | New editorial annual overview                                       | All three type medians/counts from one overview asset; safe without cross-file compatibility                |
+| `/dashboard`                                   | Compatibility entry to Overview                                     | Preserve base path and useful navigation; move old trend capability to a named destination                  |
+| `/explore`                                     | One joint-selection React workspace with list/map/table             | Type × period shared across representations; no leaderboard fallback metrics                                |
+| `/dashboard/leaderboard`                       | Compatibility wrapper/translation to observed explorer              | Map only understood settings; explicitly notify unsupported legacy metric rather than replacing it silently |
+| `/areas/[slug]`                                | New static area route, shared approved adapter                      | Canonical slug map; correct unavailable states; return context preserved                                    |
+| `/research/trends`                             | New home for monthly price/volume charts                            | Do not alias this to the existing tools component by name alone                                             |
+| `/research/segments` and `/dashboard/segments` | Same segment workspace and state parser under new shell             | Preserve persona/tab/segment/segments/area; add constraint URL state with versioned parsing                 |
+| `/research/tools` and `/dashboard/trends`      | Same four-tool workspace                                            | Legacy route stays valid. Isolate broken/unavailable tool, preserve working siblings                        |
+| `/research/map` and `/dashboard/map`           | Same legacy research-map workspace, explicitly archived/model-gated | Preserve metric/timeBasis/propertyType/area/layers query; normalize IDs without losing valid state          |
+| `/analytics/*` and persona children            | Existing URLs retained                                              | No content-route churn; improve library/article shell and evidence notes                                    |
+| `/data`                                        | New methods/source guide                                            | Link to catalog; not a duplicate raw-download endpoint                                                      |
+| `/catalog/*`                                   | Existing routes/slug conversion retained                            | Schema, DAG and dependency links remain usable, including external nested IDs                               |
 
 All links and fetches resolve with `import.meta.env.BASE_URL`. Static compatibility must work under root and `/egg-n-bacon-housing/`. Prefer shared rendering/wrappers over server-only redirects or two separate state implementations. Do not embed arbitrary return URLs; serialize validated internal state only.
 
@@ -204,18 +204,18 @@ Parallel owners must not edit shared route/navigation/contracts at once. Use an 
 
 ## 6. Decision register / safe defaults
 
-| Decision | Safe default now | Requires owner confirmation before expansion |
-|---|---|---|
-| Complete year | Fixed verified2025 | Source-specific completeness rules and dynamic periods |
-| Comparison identity | Withhold incompatible baseline | Additive publication manifest or immutable-generation strategy |
-| 150-sale rule | Explicit proposed selected-subset caution, user can reveal thin samples | Product validation; not a confidence threshold |
-| Research numerics | Archive inspection, no current recommendation/fill | Reproducible model/generator, units and approved validity status |
-| Lease bins | Preserve archival first-match with warning until repaired | Half-open canonical bands and reconciled insights |
-| MRT units/direction | Withhold total-dollar estimate | Coefficients, baseline, distance cap and area scaling |
-| Financial scenario | Deterministic arithmetic, no approval classifications | Financial/regulatory advice or policy claims |
-| Geography | Planning areas for observed comparison | Validated market-segment taxonomy; never equate CCR with administrative region |
-| Catalog | Keep source-snapshot metadata and flag discrepancy | Approved refresh/release workflow |
-| Dark mode | No claim of validation from light specs | Separate accessible palette/chart test matrix |
+| Decision            | Safe default now                                                        | Requires owner confirmation before expansion                                   |
+| ------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Complete year       | Fixed verified2025                                                      | Source-specific completeness rules and dynamic periods                         |
+| Comparison identity | Withhold incompatible baseline                                          | Additive publication manifest or immutable-generation strategy                 |
+| 150-sale rule       | Explicit proposed selected-subset caution, user can reveal thin samples | Product validation; not a confidence threshold                                 |
+| Research numerics   | Archive inspection, no current recommendation/fill                      | Reproducible model/generator, units and approved validity status               |
+| Lease bins          | Preserve archival first-match with warning until repaired               | Half-open canonical bands and reconciled insights                              |
+| MRT units/direction | Withhold total-dollar estimate                                          | Coefficients, baseline, distance cap and area scaling                          |
+| Financial scenario  | Deterministic arithmetic, no approval classifications                   | Financial/regulatory advice or policy claims                                   |
+| Geography           | Planning areas for observed comparison                                  | Validated market-segment taxonomy; never equate CCR with administrative region |
+| Catalog             | Keep source-snapshot metadata and flag discrepancy                      | Approved refresh/release workflow                                              |
+| Dark mode           | No claim of validation from light specs                                 | Separate accessible palette/chart test matrix                                  |
 
 ## 7. Immediate starting point
 

@@ -89,7 +89,8 @@ const TIME_BASIS_LOOKUP: ReadonlyMap<string, MapTimeBasis> =
   buildLookup(MAP_TIME_BASES);
 const PROPERTY_TYPE_LOOKUP: ReadonlyMap<string, MapPropertyType> =
   buildLookup(MAP_PROPERTY_TYPES);
-const LAYER_LOOKUP: ReadonlyMap<string, MapLayerId> = buildLookup(MAP_LAYER_IDS);
+const LAYER_LOOKUP: ReadonlyMap<string, MapLayerId> =
+  buildLookup(MAP_LAYER_IDS);
 
 function toSearchParams(search: string): URLSearchParams {
   // `URLSearchParams` never throws on malformed percent-encoding (it leaves the
@@ -144,7 +145,10 @@ export function parseMapSelection(search: string): MapSelection {
   return {
     metric: readAccepted(METRIC_LOOKUP, params.get("metric")),
     timeBasis: readAccepted(TIME_BASIS_LOOKUP, params.get("timeBasis")),
-    propertyType: readAccepted(PROPERTY_TYPE_LOOKUP, params.get("propertyType")),
+    propertyType: readAccepted(
+      PROPERTY_TYPE_LOOKUP,
+      params.get("propertyType"),
+    ),
     area: readArea(params.get("area")),
     layers: readLayers(params.get("layers")),
   };

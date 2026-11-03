@@ -11,19 +11,19 @@
 
 ## 2. Verification
 
-| Check | Result |
-|---|---|
-| `bun run test:unit` | **141 pass** (15 area-page tests + return-link contract test) |
-| `bun run astro check` | **36 errors / 0 warnings / 43 hints / 141 files** — unchanged; none in the new files |
-| `bun run build` | passes; **41** area pages generated (all areas published in any joint section, not just the 31 with 2025 HDB) |
-| Playwright | **118 pass** (5 area tests added) |
-| `/areas/tampines` | S$710,000 · S$620 psf · 1,921; `map_metrics.year_2025_hdb`; national withheld with `status: absent`; no `628,000`, no `82,000`, no `S$0` |
-| `/areas/bedok` | 2025 EC row says "Not published — no transactions published in this joint section"; no zero |
-| `/areas/lim-chu-kang` | anchored on `whole_hdb` (no 2025 block) and the headline says "HDB resale · All history", not "Jan–Dec 2025" |
-| `/areas/newton`, `/areas/river-valley` | 200 — the areas that only appear for condominiums now have pages |
-| Mobile | 390px, no horizontal overflow; the table becomes a stacked definition list below `sm` |
-| Compatible path | proven with a throwaway copy of the app and a manifest computed from the real asset bytes: the built page renders `S$628,000`, `S$82,000`, `13.1%` and "verified at build time" |
-| Client-injected manifest | the static page still withholds, because the verdict is build-time; asserted in `areas.spec.ts` |
+| Check                                  | Result                                                                                                                                                                          |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run test:unit`                    | **141 pass** (15 area-page tests + return-link contract test)                                                                                                                   |
+| `bun run astro check`                  | **36 errors / 0 warnings / 43 hints / 141 files** — unchanged; none in the new files                                                                                            |
+| `bun run build`                        | passes; **41** area pages generated (all areas published in any joint section, not just the 31 with 2025 HDB)                                                                   |
+| Playwright                             | **118 pass** (5 area tests added)                                                                                                                                               |
+| `/areas/tampines`                      | S$710,000 · S$620 psf · 1,921; `map_metrics.year_2025_hdb`; national withheld with `status: absent`; no `628,000`, no `82,000`, no `S$0`                                        |
+| `/areas/bedok`                         | 2025 EC row says "Not published — no transactions published in this joint section"; no zero                                                                                     |
+| `/areas/lim-chu-kang`                  | anchored on `whole_hdb` (no 2025 block) and the headline says "HDB resale · All history", not "Jan–Dec 2025"                                                                    |
+| `/areas/newton`, `/areas/river-valley` | 200 — the areas that only appear for condominiums now have pages                                                                                                                |
+| Mobile                                 | 390px, no horizontal overflow; the table becomes a stacked definition list below `sm`                                                                                           |
+| Compatible path                        | proven with a throwaway copy of the app and a manifest computed from the real asset bytes: the built page renders `S$628,000`, `S$82,000`, `13.1%` and "verified at build time" |
+| Client-injected manifest               | the static page still withholds, because the verdict is build-time; asserted in `areas.spec.ts`                                                                                 |
 
 ## 3. Review-driven corrections
 
@@ -32,7 +32,7 @@
 - **Copy accuracy:** the headline scope, table scope and method sentence were hardcoded to "Jan–Dec 2025"; they now derive from the section actually read.
 - **Difference copy:** equal medians no longer render "S$0 level".
 - **Robustness:** a manifest entry pointing at a directory or unreadable file reports `unverified`/`mismatch` instead of throwing.
-- **Return link:** keys *and* values are allow-listed; the Astro list is pinned to `AREA_RETURN_PARAMETERS` by a test.
+- **Return link:** keys _and_ values are allow-listed; the Astro list is pinned to `AREA_RETURN_PARAMETERS` by a test.
 
 ## 4. Gaps
 

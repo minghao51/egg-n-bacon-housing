@@ -109,7 +109,11 @@ export default function ExplorerWorkspace({
       })
       .catch(() => {
         if (!cancelled) {
-          setReleaseCheck({ status: "unverified", manifest: null, mismatches: [] });
+          setReleaseCheck({
+            status: "unverified",
+            manifest: null,
+            mismatches: [],
+          });
         }
       });
 

@@ -17,16 +17,16 @@ Publication order: stage seven payloads → hash the staged bytes → build and 
 
 ## 2. Verification
 
-| Check | Result |
-|---|---|
-| `uv run pytest tests/test_export_app_data.py --no-cov -q` | **29 pass** (14 pre-existing + 12 manifest + 3 contract-sync) |
-| `uv run ruff check` / `ruff format --check` | clean |
-| Real export to `/tmp/s2/out2` (`--output-dir`) | exit 0, 8 files, log now reports 8 |
-| `verify_release_manifest` on that export | `[]` |
-| Node `validate-data.mjs` against that export (`/tmp/s2/check2`) | `Validated 19 app data assets` + `Verified dashboard release 9330505655cd (7 assets)` |
-| Node rejection paths | tampered hash, missing asset, extra asset, wrong schema version, wrong generation, `assets: 7` malformed → all fail closed with a descriptive error |
-| Generation determinism | `generatedAt` alone does not change the id; an asset hash change does; Python and Node recompute the same id from real files |
-| Repository `cd app && bun run validate-data` | passes, warns that no release manifest is published in this tree yet |
+| Check                                                           | Result                                                                                                                                              |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `uv run pytest tests/test_export_app_data.py --no-cov -q`       | **29 pass** (14 pre-existing + 12 manifest + 3 contract-sync)                                                                                       |
+| `uv run ruff check` / `ruff format --check`                     | clean                                                                                                                                               |
+| Real export to `/tmp/s2/out2` (`--output-dir`)                  | exit 0, 8 files, log now reports 8                                                                                                                  |
+| `verify_release_manifest` on that export                        | `[]`                                                                                                                                                |
+| Node `validate-data.mjs` against that export (`/tmp/s2/check2`) | `Validated 19 app data assets` + `Verified dashboard release 9330505655cd (7 assets)`                                                               |
+| Node rejection paths                                            | tampered hash, missing asset, extra asset, wrong schema version, wrong generation, `assets: 7` malformed → all fail closed with a descriptive error |
+| Generation determinism                                          | `generatedAt` alone does not change the id; an asset hash change does; Python and Node recompute the same id from real files                        |
+| Repository `cd app && bun run validate-data`                    | passes, warns that no release manifest is published in this tree yet                                                                                |
 
 The manifest is **not** committed here: it is a generated artifact. It will appear the next time the maintenance exporter runs against real platinum data.
 

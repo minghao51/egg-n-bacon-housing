@@ -13,18 +13,18 @@ Dark mode is deliberately untouched and explicitly unreviewed; it is not claimed
 
 ## 2. Verification
 
-| Check | Result |
-|---|---|
-| `cd app && bun run astro check` | **36 errors / 0 warnings / 43 hints / 125 files** — identical to the 36-error baseline, zero diagnostics in the touched files |
-| `bun run build` (root base) | passes |
-| `ASTRO_PAGES=true bun run build` (Pages base) | passes; exactly one `aria-current="page"` per page, hrefs prefixed `/egg-n-bacon-housing/` |
-| Playwright suite | **103 pass** (unchanged count, no label/route regressions) |
-| Browser: tokens | body `rgb(246,243,236)` on `rgb(23,46,51)` → 12.85:1; Arial body, Georgia `h1` |
-| Browser: skip link | first tab stop on `/` and `/dashboard`; Enter moves focus to `main#main-content` |
-| Browser: aria-current | exactly one per route on `/dashboard`, `/dashboard/map`, `/dashboard/leaderboard`, `/analytics/lease-decay`, `/catalog` |
-| Browser: drawer | `inert` when closed; focus starts inside and stays inside across 40 Tab presses; Escape restores focus to the toggle; backdrop click closes it; background content is `inert` while open and cleared afterwards |
-| Browser: breakpoint | open drawer → widen to 1400px → shrink to 390px leaves no backdrop, no stale translation, no stale `aria-expanded` and no stuck `inert` |
-| Browser: reduced motion | page-margin transition duration `1e-05s` under `prefers-reduced-motion: reduce` |
+| Check                                         | Result                                                                                                                                                                                                          |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cd app && bun run astro check`               | **36 errors / 0 warnings / 43 hints / 125 files** — identical to the 36-error baseline, zero diagnostics in the touched files                                                                                   |
+| `bun run build` (root base)                   | passes                                                                                                                                                                                                          |
+| `ASTRO_PAGES=true bun run build` (Pages base) | passes; exactly one `aria-current="page"` per page, hrefs prefixed `/egg-n-bacon-housing/`                                                                                                                      |
+| Playwright suite                              | **103 pass** (unchanged count, no label/route regressions)                                                                                                                                                      |
+| Browser: tokens                               | body `rgb(246,243,236)` on `rgb(23,46,51)` → 12.85:1; Arial body, Georgia `h1`                                                                                                                                  |
+| Browser: skip link                            | first tab stop on `/` and `/dashboard`; Enter moves focus to `main#main-content`                                                                                                                                |
+| Browser: aria-current                         | exactly one per route on `/dashboard`, `/dashboard/map`, `/dashboard/leaderboard`, `/analytics/lease-decay`, `/catalog`                                                                                         |
+| Browser: drawer                               | `inert` when closed; focus starts inside and stays inside across 40 Tab presses; Escape restores focus to the toggle; backdrop click closes it; background content is `inert` while open and cleared afterwards |
+| Browser: breakpoint                           | open drawer → widen to 1400px → shrink to 390px leaves no backdrop, no stale translation, no stale `aria-expanded` and no stuck `inert`                                                                         |
+| Browser: reduced motion                       | page-margin transition duration `1e-05s` under `prefers-reduced-motion: reduce`                                                                                                                                 |
 
 ## 3. Known limits
 

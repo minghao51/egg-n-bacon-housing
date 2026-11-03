@@ -206,7 +206,9 @@ function readGzipJson(filePath: string): unknown {
   try {
     text = gunzipSync(readFileSync(filePath)).toString("utf8");
   } catch (error) {
-    throw new Error(`could not decompress ${filePath}: ${describeError(error)}`);
+    throw new Error(
+      `could not decompress ${filePath}: ${describeError(error)}`,
+    );
   }
   try {
     return JSON.parse(text) as unknown;
@@ -327,7 +329,9 @@ export async function verifyBaselineAtBuild(
     if (asset.contentSha256 !== undefined) {
       try {
         const content = gunzipSync(bytes);
-        const contentSha256 = createHash("sha256").update(content).digest("hex");
+        const contentSha256 = createHash("sha256")
+          .update(content)
+          .digest("hex");
         if (contentSha256 !== asset.contentSha256) {
           problems.push(
             `${asset.path}: decompressed content hash does not match`,

@@ -181,9 +181,8 @@ export interface TrendsWorkspaceProps {
 }
 
 export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
-  const [selection, setSelection] = useState<TrendSelection>(
-    readSelectionFromUrl,
-  );
+  const [selection, setSelection] =
+    useState<TrendSelection>(readSelectionFromUrl);
   const trends = useGzipJson<unknown>(
     trendsUrl,
     "research-trends:dashboard_trends",
@@ -316,8 +315,8 @@ export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
 
         <p className="mt-4 text-sm text-muted-foreground">
           A type or window choice never implies coverage: each series starts the
-          month the asset first publishes it, and months before that are shown as{" "}
-          <span className="font-bold text-foreground">N/A</span>, not zero.
+          month the asset first publishes it, and months before that are shown
+          as <span className="font-bold text-foreground">N/A</span>, not zero.
         </p>
 
         <a
@@ -367,8 +366,8 @@ export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
           </p>
           <p className="mt-2 text-muted-foreground">
             No monthly series is shown, because rendering a partial one would
-            misstate coverage. The asset is expected to be a list of monthly rows
-            keyed <code className="font-mono">date</code> (
+            misstate coverage. The asset is expected to be a list of monthly
+            rows keyed <code className="font-mono">date</code> (
             <code className="font-mono">YYYY-MM</code>) with one price and one
             count per property type.
           </p>
@@ -382,7 +381,10 @@ export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
         </div>
       ) : null}
 
-      {full !== null && filtered !== null && summary !== null && coverage !== null ? (
+      {full !== null &&
+      filtered !== null &&
+      summary !== null &&
+      coverage !== null ? (
         <>
           <section
             aria-labelledby="trend-latest-heading"
@@ -485,10 +487,10 @@ export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
 
           <footer className="mt-10 border-t border-border pt-4 text-xs text-muted-foreground">
             <p>
-              Source: <code className="font-mono">dashboard_trends</code> &mdash;
-              one row per month with a median transaction price and a count of
-              included transactions per property type. Last month actually present
-              in the asset:{" "}
+              Source: <code className="font-mono">dashboard_trends</code>{" "}
+              &mdash; one row per month with a median transaction price and a
+              count of included transactions per property type. Last month
+              actually present in the asset:{" "}
               <span className="font-bold text-foreground">
                 {full.points[full.points.length - 1].month}
               </span>
@@ -496,10 +498,10 @@ export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
             </p>
             <p className="mt-1">
               These are monthly medians of observed transactions in nominal SGD,
-              not an adjusted price index, not asking prices and not a valuation.
-              The price axis is zoomed to the window's own range and says so; the
-              volume axis always starts at zero. The asset embeds no export
-              timestamp, so this page does not claim one.
+              not an adjusted price index, not asking prices and not a
+              valuation. The price axis is zoomed to the window's own range and
+              says so; the volume axis always starts at zero. The asset embeds
+              no export timestamp, so this page does not claim one.
             </p>
           </footer>
         </>

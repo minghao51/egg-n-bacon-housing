@@ -294,8 +294,8 @@ export default function MarketOverviewDashboard({
           One market. Very different price tags.
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Median transaction price and transaction count by property type,
-          2025 complete year, read from the one published overview asset.
+          Median transaction price and transaction count by property type, 2025
+          complete year, read from the one published overview asset.
         </p>
 
         <ul
@@ -346,7 +346,9 @@ export default function MarketOverviewDashboard({
         </ul>
 
         <p className="mt-4 text-sm text-foreground">
-          <span className="font-bold">All property types, 2025 complete year:</span>{" "}
+          <span className="font-bold">
+            All property types, 2025 complete year:
+          </span>{" "}
           {allTypes2025Summary}{" "}
           <span className="text-muted-foreground">
             &middot; from{" "}
@@ -436,7 +438,9 @@ export default function MarketOverviewDashboard({
           <span className="font-bold">Scope:</span> {eraLabel(era)} &middot;{" "}
           {PROPERTY_TYPE_LABELS[propertyType]} &middot; {snapshotCount} &middot;
           from{" "}
-          <code className="font-mono">dashboard_overview.stats.{scopeSection}</code>
+          <code className="font-mono">
+            dashboard_overview.stats.{scopeSection}
+          </code>
         </p>
 
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-4">
@@ -534,26 +538,32 @@ export default function MarketOverviewDashboard({
               View as a table
             </summary>
             <table className="mt-2 w-full text-sm">
-            <caption className="sr-only">
-              Published record counts by property type, all history
-            </caption>
-            <thead className="sr-only">
-              <tr>
-                <th scope="col">Property type</th>
-                <th scope="col">Records</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {propertyTypeData.map((entry) => (
-                <tr key={entry.name}>
-                  <th scope="row" className="py-2 text-left font-normal text-foreground">
-                    {entry.name}
-                  </th>
-                  <td className="py-2 text-right text-foreground" data-numeric>
-                    {entry.value.toLocaleString("en-US")}
-                  </td>
+              <caption className="sr-only">
+                Published record counts by property type, all history
+              </caption>
+              <thead className="sr-only">
+                <tr>
+                  <th scope="col">Property type</th>
+                  <th scope="col">Records</th>
                 </tr>
-              ))}
+              </thead>
+              <tbody className="divide-y divide-border">
+                {propertyTypeData.map((entry) => (
+                  <tr key={entry.name}>
+                    <th
+                      scope="row"
+                      className="py-2 text-left font-normal text-foreground"
+                    >
+                      {entry.name}
+                    </th>
+                    <td
+                      className="py-2 text-right text-foreground"
+                      data-numeric
+                    >
+                      {entry.value.toLocaleString("en-US")}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </details>
@@ -608,27 +618,33 @@ export default function MarketOverviewDashboard({
               View as a table
             </summary>
             <table className="mt-2 w-full text-sm">
-            <caption className="sr-only">
-              Published record counts for the ten planning areas with the most
-              transactions, all history
-            </caption>
-            <thead className="sr-only">
-              <tr>
-                <th scope="col">Planning area</th>
-                <th scope="col">Records</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {planningAreaData.map((entry) => (
-                <tr key={entry.name}>
-                  <th scope="row" className="py-2 text-left font-normal text-foreground">
-                    {entry.name}
-                  </th>
-                  <td className="py-2 text-right text-foreground" data-numeric>
-                    {entry.value.toLocaleString("en-US")}
-                  </td>
+              <caption className="sr-only">
+                Published record counts for the ten planning areas with the most
+                transactions, all history
+              </caption>
+              <thead className="sr-only">
+                <tr>
+                  <th scope="col">Planning area</th>
+                  <th scope="col">Records</th>
                 </tr>
-              ))}
+              </thead>
+              <tbody className="divide-y divide-border">
+                {planningAreaData.map((entry) => (
+                  <tr key={entry.name}>
+                    <th
+                      scope="row"
+                      className="py-2 text-left font-normal text-foreground"
+                    >
+                      {entry.name}
+                    </th>
+                    <td
+                      className="py-2 text-right text-foreground"
+                      data-numeric
+                    >
+                      {entry.value.toLocaleString("en-US")}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </details>
@@ -637,7 +653,10 @@ export default function MarketOverviewDashboard({
 
       {/* Monthly series */}
       {trendsData && (
-        <section aria-labelledby="overview-monthly-heading" className="space-y-6">
+        <section
+          aria-labelledby="overview-monthly-heading"
+          className="space-y-6"
+        >
           <div>
             <h2
               id="overview-monthly-heading"
@@ -647,9 +666,10 @@ export default function MarketOverviewDashboard({
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Monthly medians and volumes from the companion asset{" "}
-              <code className="font-mono">dashboard_trends</code> &mdash; monthly
-              figures, not the annual medians above. The price chart plots 2022
-              onward; the volume chart plots the whole published series.
+              <code className="font-mono">dashboard_trends</code> &mdash;
+              monthly figures, not the annual medians above. The price chart
+              plots 2022 onward; the volume chart plots the whole published
+              series.
             </p>
           </div>
           <PriceTrendsChart data={trendsData} />

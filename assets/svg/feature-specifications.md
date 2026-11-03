@@ -4,19 +4,19 @@ This document closes the first edition's feature-depth gaps. Every layout is pro
 
 ## Routing and capability map
 
-| Capability | Canonical proposed destination | Existing path to preserve | Visual |
-|---|---|---|---|
-| Annual overview | / | /dashboard compatibility entry | 01 / 04 |
-| Joint area comparison | /explore | /dashboard/leaderboard | 02 / 05 |
-| Observed price map | /explore?view=map | New joint-selection map; not a complete legacy-map replacement | 09 |
-| Area fieldnote | /areas/[slug] | New route | 03 |
-| Monthly trends | /research/trends | Move current overview chart capability here; old /dashboard/trends is tools | 10 / 16 |
-| Research segments | /research/segments | /dashboard/segments | 11 / 12 |
-| Decision tools | /research/tools | /dashboard/trends | 13 / 18 |
-| Research map | /research/map | /dashboard/map, including existing metric/layer query | 17 |
-| Studies and personas | /analytics and existing children | All existing article/persona URLs | 14 |
-| Methods | /data | New guide, not a catalog replacement | 08 |
-| Catalog / lineage | /catalog and existing children | Keep current nested external dataset URLs | 15 |
+| Capability            | Canonical proposed destination   | Existing path to preserve                                                   | Visual  |
+| --------------------- | -------------------------------- | --------------------------------------------------------------------------- | ------- |
+| Annual overview       | /                                | /dashboard compatibility entry                                              | 01 / 04 |
+| Joint area comparison | /explore                         | /dashboard/leaderboard                                                      | 02 / 05 |
+| Observed price map    | /explore?view=map                | New joint-selection map; not a complete legacy-map replacement              | 09      |
+| Area fieldnote        | /areas/[slug]                    | New route                                                                   | 03      |
+| Monthly trends        | /research/trends                 | Move current overview chart capability here; old /dashboard/trends is tools | 10 / 16 |
+| Research segments     | /research/segments               | /dashboard/segments                                                         | 11 / 12 |
+| Decision tools        | /research/tools                  | /dashboard/trends                                                           | 13 / 18 |
+| Research map          | /research/map                    | /dashboard/map, including existing metric/layer query                       | 17      |
+| Studies and personas  | /analytics and existing children | All existing article/persona URLs                                           | 14      |
+| Methods               | /data                            | New guide, not a catalog replacement                                        | 08      |
+| Catalog / lineage     | /catalog and existing children   | Keep current nested external dataset URLs                                   | 15      |
 
 Research secondary nav is always visible on desktop: **Studies / Trends / Segments / Tools / Research map**. On mobile, Menu exposes every destination and the Research hub supplies named entry links (16). New route names are proposals; implement aliases sharing one workspace, not divergent copies.
 
@@ -35,6 +35,7 @@ Data: `map_metrics.year_2025_hdb` and actual `planning_areas.geojson` geometry. 
 ## Research layers / 17
 
 Retain exact nine IDs:
+
 - Spatial: `spatial.hotspot`, `spatial.lisa`, `spatial.neighborhood`.
 - Features: `feature.mrt`, `feature.school`, `feature.amenity`.
 - Predictive: `predictive.policy`, `predictive.lease`, `predictive.forecast`.
@@ -78,6 +79,7 @@ Source: `segments_enhanced`, version 1.0.0, lastUpdated 19 Apr 2026; six archety
 ## Tools / 13, 18 and 19
 
 ### Financing / existing affordability capability, proposed aligned scenario
+
 Reference price can be copied explicitly from the observed explorer/detail selection. Inputs are user-specified assumptions, not private household records. Default example: S$710,000; annual income S$120,000; 30% down; 25 years; 3% nominal annual interest.
 
 Formula: principal = price × (1−downPayment); monthly r = annualRate/12; n = years×12; payment = P×r/[1−(1+r)^−n]. At r=0 use P/n. Compute with unrounded values, round only display.
@@ -89,19 +91,23 @@ Proposed editable validation: price >0, income >0, down 0–100%, years >0 withi
 The current calculator instead reads a separate period-unknown extract, uses fixed 30%/25yr/3%, calls the average of area medians a national average, and has different thresholds from published pipeline affordability. Do not carry those automatic categories/loan-approval assertions into the new scenario.
 
 ### Lease bands
+
 Retain 40–99 remaining-year input and source-band inspection. At 75: stored remaining interval 74–79, discount_percent 19.1, annual_decay_rate .25, transaction_count 29,913. Display as a stored statistic with unknown extract date/period, not a forecasted loss.
 
 SVG 18 uses signed interval marks, sorted by remaining years, not a smoothed fitted curve. Negative discount means premium. Existing inclusive shared endpoints require a documented half-open bin policy after source reconciliation; do not silently change outcomes during UI migration. Preserve archive lookup behavior if needed, with disclosure. Inconsistent safe/cliff labels and fixed advice remain withheld.
 
 ### MRT/CBD
+
 Retain type, canonical town, MRT metres, CBD km; propose explicit square feet instead of hidden ×1,000. Withhold total-price output until coefficient units, baseline/proximity direction and the 500m cap are resolved. The new floor-area control is **P**, not an existing input.
 
 Normalize title-case/uppercase keys; do not allow fallback coefficients to masquerade as matched area data. Show the supplied coefficient and formula with units. No 7×/15× boilerplate or unsupported causal assertions.
 
 ### Spatial patterns
+
 Current towns[] vs expected clusters[] crashes; isolate with runtime schema validation and a tool-specific error boundary. Do not fabricate missing five-year or PSF fields from total prices. Initially permit dated label inspection only; return simulations and allocation recommendations require a reviewed source/model contract. Do not compound an undefined-period change as annual appreciation.
 
 ### Responsive tool and segment states
+
 SVG19 shows the complete financing form/result on mobile; fields retain units, no hidden desktop-only assumptions, income stays local, and the sensitivity table opens inline. Tool selection is a native dropdown exposing all four tools. On narrow screens, model-review panels follow inputs/results in reading order rather than floating to the side.
 
 SVG20 shows selected-segment investigation with readable area cards, selected-area evidence, an explicit observed-context handoff and comparison-set status. Constraints open an accessible draft/apply sheet using the same lifecycle as Explorer, but with research PSF/type/market-segment/class controls—not the observed 150-sale gate. Mobile comparison shows one named metric row across two selected cohorts or stacked definition groups; source labels and independent remove controls remain available. At three/four cohorts a labeled local table scroller is permitted with a two-cohort comparison alternative, never body-wide overflow.

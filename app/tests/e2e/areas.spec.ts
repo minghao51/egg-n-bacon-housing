@@ -74,9 +74,9 @@ test.describe("Area fieldnote", () => {
     await expect(
       page.getByText(/National comparison could not be verified; withheld/i),
     ).toHaveCount(0);
-    await expect(page.getByText(/ Assets do not share one publication generation/i)).toHaveCount(
-      0,
-    );
+    await expect(
+      page.getByText(/ Assets do not share one publication generation/i),
+    ).toHaveCount(0);
 
     // The national row is present with the published 2025 HDB figures.
     await expect(
@@ -90,7 +90,9 @@ test.describe("Area fieldnote", () => {
     await expect(
       table.getByRole("rowheader", { name: "Singapore" }),
     ).toBeVisible();
-    await expect(table.getByRole("rowheader", { name: "Tampines" })).toBeVisible();
+    await expect(
+      table.getByRole("rowheader", { name: "Tampines" }),
+    ).toBeVisible();
   });
 
   test("the availability panel names every combination, including the missing EC one", async ({
@@ -110,7 +112,9 @@ test.describe("Area fieldnote", () => {
       page.getByText("2025 complete year · EC").first(),
     ).toBeVisible();
     await expect(
-      page.getByText(/no transactions published in this joint section/i).first(),
+      page
+        .getByText(/no transactions published in this joint section/i)
+        .first(),
     ).toBeVisible();
     // Missing is not zero: the EC row never renders a S$0 median.
     await expect(page.getByText(/S\$0\b/)).toHaveCount(0);
@@ -161,10 +165,10 @@ test.describe("Area fieldnote", () => {
 
     await backLink(page).click();
     await expect(page).toHaveURL(/\/explore/);
+    await expect(areaList(page).getByText("Ang Mo Kio").first()).toBeVisible();
     await expect(
-      areaList(page).getByText("Ang Mo Kio").first(),
+      page.getByText("map_metrics.year_2025_hdb").first(),
     ).toBeVisible();
-    await expect(page.getByText("map_metrics.year_2025_hdb").first()).toBeVisible();
   });
 
   test("a direct visit returns to the plain explorer route", async ({

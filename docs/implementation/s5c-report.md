@@ -11,16 +11,16 @@ The explorer now has three views over one dataset: **list**, **map** (a tile-fre
 
 ## 2. Verification
 
-| Check | Result |
-|---|---|
-| `bun run test:unit` | **201 pass** (32 geo-projection tests) |
-| `bun run astro check` | **26 errors / 0 warnings / 41 hints / 154 files** — unchanged baseline, none in new files |
-| `bun run build` | passes |
-| Playwright | **143 pass** (10 map/table tests) |
-| Browser, default map | 55 paths, 25 coloured across 5 rank-quantile bins, 31 fieldnote links, 390px no overflow |
-| Browser, legend | `S$499,000 to under S$568,000` … `S$761,500 to S$849,000`, five areas per bin; `Hidden by the current filters: 6`, `No value for this metric: 0`, `Outside this selection: 24` (55 = 25 + 6 + 24) |
-| Browser, table | 25 rows, `Ang Mo Kio`, `S$499,000`, `971`, links preserved |
-| Failure paths | geometry HTTP 500 falls back to a message while the table stays usable; empty selection shows the empty state |
+| Check                 | Result                                                                                                                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run test:unit`   | **201 pass** (32 geo-projection tests)                                                                                                                                                            |
+| `bun run astro check` | **26 errors / 0 warnings / 41 hints / 154 files** — unchanged baseline, none in new files                                                                                                         |
+| `bun run build`       | passes                                                                                                                                                                                            |
+| Playwright            | **143 pass** (10 map/table tests)                                                                                                                                                                 |
+| Browser, default map  | 55 paths, 25 coloured across 5 rank-quantile bins, 31 fieldnote links, 390px no overflow                                                                                                          |
+| Browser, legend       | `S$499,000 to under S$568,000` … `S$761,500 to S$849,000`, five areas per bin; `Hidden by the current filters: 6`, `No value for this metric: 0`, `Outside this selection: 24` (55 = 25 + 6 + 24) |
+| Browser, table        | 25 rows, `Ang Mo Kio`, `S$499,000`, `971`, links preserved                                                                                                                                        |
+| Failure paths         | geometry HTTP 500 falls back to a message while the table stays usable; empty selection shows the empty state                                                                                     |
 
 ## 3. Review-driven corrections
 

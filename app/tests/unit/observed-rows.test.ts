@@ -186,7 +186,9 @@ describe("buildExplorerDataset — published 2025 HDB section", () => {
   test("threshold 150 hides exactly the thin areas and counts them", () => {
     expect(dataset.thinCount).toBe(6);
     expect(dataset.filtered).toHaveLength(25);
-    expect(dataset.totalAreas - dataset.filtered.length).toBe(dataset.thinCount);
+    expect(dataset.totalAreas - dataset.filtered.length).toBe(
+      dataset.thinCount,
+    );
 
     for (const areaId of THIN_2025_HDB) {
       expect(ids(dataset.filtered)).not.toContain(areaId);

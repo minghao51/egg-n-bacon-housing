@@ -135,7 +135,12 @@ export function buildExplorerDataset(input: {
       if (areaId === "" || seen.has(areaId)) continue;
       seen.add(areaId);
 
-      const observation = readAreaObservation(mapMetrics, period, property, key);
+      const observation = readAreaObservation(
+        mapMetrics,
+        period,
+        property,
+        key,
+      );
       if (observation === null) continue;
 
       const volume = metricValue(observation, "volume");
@@ -159,17 +164,14 @@ export function buildExplorerDataset(input: {
     }
   }
 
-  const ordered = [...rows].sort((a, b) =>
-    compareRows(a, b, sort, direction),
-  );
+  const ordered = [...rows].sort((a, b) => compareRows(a, b, sort, direction));
 
   const threshold = minSales;
   const thinCount =
     threshold === null
       ? 0
-      : ordered.filter(
-          (row) => row.volume !== null && row.volume < threshold,
-        ).length;
+      : ordered.filter((row) => row.volume !== null && row.volume < threshold)
+          .length;
   const afterSample =
     threshold === null
       ? ordered
@@ -179,9 +181,7 @@ export function buildExplorerDataset(input: {
   const filtered =
     query === ""
       ? afterSample
-      : afterSample.filter((row) =>
-          row.areaName.toLowerCase().includes(query),
-        );
+      : afterSample.filter((row) => row.areaName.toLowerCase().includes(query));
 
   const national = baselineCompatible
     ? readNationalBaseline(overviewStats, period, property)

@@ -169,7 +169,9 @@ describe("parseExplorerSelection", () => {
   });
 
   test("area is trimmed and uppercased, or null", () => {
-    expect(parseExplorerSelection("?area=%20tampines%20").area).toBe("TAMPINES");
+    expect(parseExplorerSelection("?area=%20tampines%20").area).toBe(
+      "TAMPINES",
+    );
     expect(parseExplorerSelection("?area=").area).toBeNull();
     expect(parseExplorerSelection("?area=%20%20").area).toBeNull();
     expect(EXPLORER_DEFAULTS.area).toBeNull();

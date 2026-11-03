@@ -44,7 +44,11 @@ function statBlock(section: string): StatBlock | null {
   if (!isRecord(block)) return null;
   const { median_price: medianPrice, volume, count } = block;
   const sales =
-    typeof volume === "number" ? volume : typeof count === "number" ? count : NaN;
+    typeof volume === "number"
+      ? volume
+      : typeof count === "number"
+        ? count
+        : NaN;
   if (typeof medianPrice !== "number" || !Number.isFinite(sales)) return null;
   return { median_price: medianPrice, volume: sales };
 }
@@ -87,7 +91,9 @@ function formatPublishedDate(iso: unknown): string | null {
     "Dec",
   ];
   const month = months[Number(match[2]) - 1];
-  return month === undefined ? null : `${Number(match[3])} ${month} ${match[1]}`;
+  return month === undefined
+    ? null
+    : `${Number(match[3])} ${month} ${match[1]}`;
 }
 
 /**
@@ -153,7 +159,9 @@ test.describe("Dashboard overview - published 2025 medians", () => {
     await expect(
       page.getByText(/2025 medians of observed sales/i),
     ).toBeVisible();
-    await expect(page.getByText(/not an index and not\s+a forecast/i)).toBeVisible();
+    await expect(
+      page.getByText(/not an index and not\s+a forecast/i),
+    ).toBeVisible();
   });
 
   test("the snapshot scope note names the period, type, count and asset section", async ({
@@ -185,16 +193,16 @@ test.describe("Dashboard overview - published 2025 medians", () => {
     await expect(scope).toContainText(
       formatSales(requiredStatBlock("year_2025_hdb").volume),
     );
-    await expect(scope).toContainText(
-      "dashboard_overview.stats.year_2025_hdb",
-    );
+    await expect(scope).toContainText("dashboard_overview.stats.year_2025_hdb");
 
     // The KPI cards follow the same scope, so an unfiltered median cannot sit
     // beside a type-specific label.
     await expect(
-      page.getByText(formatSgd(requiredStatBlock("year_2025_hdb").median_price), {
-        exact: true,
-      }).first(),
+      page
+        .getByText(formatSgd(requiredStatBlock("year_2025_hdb").median_price), {
+          exact: true,
+        })
+        .first(),
     ).toBeVisible();
   });
 
@@ -217,8 +225,9 @@ test.describe("Dashboard overview - published 2025 medians", () => {
 
     const exportDate = formatPublishedDate(METADATA["generated_at"]);
     if (exportDate !== null) {
-      await expect(page.getByText(new RegExp(`exported ${exportDate}`)).first())
-        .toBeVisible();
+      await expect(
+        page.getByText(new RegExp(`exported ${exportDate}`)).first(),
+      ).toBeVisible();
     }
   });
 
@@ -260,8 +269,9 @@ test.describe("Dashboard overview - published 2025 medians", () => {
     await expect(
       page.getByText(/monthly averages, latest month vs a year ago/i),
     ).toHaveCount(0);
-    await expect(page.getByText(/monthly totals, latest month vs a year ago/i))
-      .toHaveCount(0);
+    await expect(
+      page.getByText(/monthly totals, latest month vs a year ago/i),
+    ).toHaveCount(0);
     await expect(page.getByText(/records in the current dataset/i)).toHaveCount(
       0,
     );
@@ -277,7 +287,9 @@ test.describe("Dashboard overview - published 2025 medians", () => {
     await expect(headings).toHaveText("Overview");
   });
 
-  test("the overview loads without console or page errors", async ({ page }) => {
+  test("the overview loads without console or page errors", async ({
+    page,
+  }) => {
     await expectPageToLoadWithoutErrors(page, "/dashboard");
   });
 });

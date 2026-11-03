@@ -244,7 +244,10 @@ function windowBounds(
   // "2022 onward" ends at the series' own coverage, not at today.
   const start = monthIndex(RECENT_START_MONTH);
   const last = series.points[series.points.length - 1];
-  return { start, end: last === undefined ? start - 1 : monthIndex(last.month) };
+  return {
+    start,
+    end: last === undefined ? start - 1 : monthIndex(last.month),
+  };
 }
 
 /**
@@ -268,8 +271,7 @@ export function filterWindow(
 
   // "All history" means all *published* history: a series that starts in 2021
   // must not present 1990–2020 as blank rows. Internal gaps are preserved.
-  const trimmed =
-    window === "all" ? trimToCoverage(points) : points;
+  const trimmed = window === "all" ? trimToCoverage(points) : points;
 
   return {
     id: series.id,
@@ -355,7 +357,10 @@ export function yearSum(
   if (!YEAR_PATTERN.test(year)) return null;
 
   const expected = new Set(
-    Array.from({ length: 12 }, (_, index) => `${year}-${String(index + 1).padStart(2, "0")}`),
+    Array.from(
+      { length: 12 },
+      (_, index) => `${year}-${String(index + 1).padStart(2, "0")}`,
+    ),
   );
   const values = new Map<string, number | null>();
 

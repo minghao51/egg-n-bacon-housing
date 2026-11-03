@@ -317,7 +317,9 @@ function section(
 describe("area page sections", () => {
   test("covers the full joint-section matrix in reading order", () => {
     expect(AREA_PAGE_COMBINATIONS).toHaveLength(16);
-    expect(AREA_PAGE_COMBINATIONS.slice(0, 4).map((entry) => entry.label)).toEqual([
+    expect(
+      AREA_PAGE_COMBINATIONS.slice(0, 4).map((entry) => entry.label),
+    ).toEqual([
       "2025 complete year · HDB",
       "2025 complete year · EC",
       "2025 complete year · Condominium",
@@ -377,7 +379,9 @@ describe("area page sections", () => {
 
     expect(primary.section).toBe("year_2025_hdb");
     expect(primary.area?.section).toBe("year_2025_hdb");
-    expect(metricOf(primary.area?.metrics ?? null, "median_price")).toBe(710000);
+    expect(metricOf(primary.area?.metrics ?? null, "median_price")).toBe(
+      710000,
+    );
     expect(metricOf(primary.area?.metrics ?? null, "median_psf")).toBe(620);
     expect(metricOf(primary.area?.metrics ?? null, "volume")).toBe(1921);
 
@@ -394,8 +398,16 @@ describe("area page sections", () => {
     // The fixture's `hdb` / `year_2025` blocks carry Tampines values; they are
     // never read for a joint section.
     expect(primary.area).toBeNull();
-    expect(section(page(pages, "TAMPINES"), "year_2025", "hdb").area).not.toBeNull();
-    expect(metricOf(section(page(pages, "TAMPINES"), "year_2025", "hdb").area?.metrics ?? null, "median_price")).toBe(710000);
+    expect(
+      section(page(pages, "TAMPINES"), "year_2025", "hdb").area,
+    ).not.toBeNull();
+    expect(
+      metricOf(
+        section(page(pages, "TAMPINES"), "year_2025", "hdb").area?.metrics ??
+          null,
+        "median_price",
+      ),
+    ).toBe(710000);
   });
 
   test("an area without EC transactions has a null EC record, not a zero", async () => {
@@ -406,20 +418,30 @@ describe("area page sections", () => {
     expect(ec.section).toBe("year_2025_ec");
     expect(ec.area).toBeNull();
     // The same area does publish 2025 HDB, so the page can still show a price.
-    expect(metricOf(section(bedok, "year_2025", "hdb").area?.metrics ?? null, "volume")).toBe(1208);
+    expect(
+      metricOf(
+        section(bedok, "year_2025", "hdb").area?.metrics ?? null,
+        "volume",
+      ),
+    ).toBe(1208);
     // ... and the EC baseline is still available for that combination.
     expect(metricOf(ec.national, "median_price")).toBe(1578000);
 
     // Tengah is the mirror case: 2025 EC published, 2025 HDB absent.
     const tengah = page(pages, "TENGAH");
     expect(
-      metricOf(section(tengah, "year_2025", "ec").area?.metrics ?? null, "median_price"),
+      metricOf(
+        section(tengah, "year_2025", "ec").area?.metrics ?? null,
+        "median_price",
+      ),
     ).toBe(1659000);
     expect(section(tengah, "year_2025", "hdb").area).toBeNull();
   });
 
   test("a combination with no national block keeps national null", async () => {
-    const pages = await loadAreaPages(writeFixture({ omitNational: "recent_hdb" }));
+    const pages = await loadAreaPages(
+      writeFixture({ omitNational: "recent_hdb" }),
+    );
     const tampines = page(pages, "TAMPINES");
 
     const recent = section(tampines, "recent", "hdb");
@@ -429,8 +451,16 @@ describe("area page sections", () => {
     // borrowed from a different section.
     for (const candidate of tampines.sections) {
       if (candidate.national === null) continue;
-      expect(candidate.national.every((metric) => metric.source.section === candidate.section)).toBe(true);
-      expect(candidate.national.every((metric) => metric.source.asset === "dashboard_overview")).toBe(true);
+      expect(
+        candidate.national.every(
+          (metric) => metric.source.section === candidate.section,
+        ),
+      ).toBe(true);
+      expect(
+        candidate.national.every(
+          (metric) => metric.source.asset === "dashboard_overview",
+        ),
+      ).toBe(true);
     }
   });
 });
@@ -508,7 +538,9 @@ describe("baseline verdict at build time", () => {
     const pages = await loadAreaPages(writeFixture({ manifest: true }));
 
     expect(pages.every((entry) => entry.baselineCompatible)).toBe(true);
-    expect(pages.every((entry) => entry.baselineStatus === "verified")).toBe(true);
+    expect(pages.every((entry) => entry.baselineStatus === "verified")).toBe(
+      true,
+    );
     expect(new Set(pages.map((entry) => entry.generation)).size).toBe(1);
   });
 });
@@ -536,7 +568,6 @@ describe("areaHref", () => {
     ).toBe("/areas/tampines?from=explore");
   });
 });
-
 
 describe("return-link contract", () => {
   test("the area page inline allow-list matches the exported constant", () => {

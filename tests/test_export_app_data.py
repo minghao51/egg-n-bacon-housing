@@ -727,8 +727,31 @@ class TestReleaseContractSync:
         assert "median_price" not in scopes
         assert "by_time_period" not in scopes
 
-    def test_source_identities_mark_publication_time_unknown(self, export_mod):
-        ids = export_mod.describe_source_identities(
-            pd.DataFrame({"a": [1]}), pd.DataFrame({"b": [1]})
+    def test_source_identities_mark_publication_time_unknown(
+        self, export_mod, tmp_path, monkeypatch
+    ):
+        """Identities carry the parquet bytes and never a publication time.
+
+        Hermetic: CI has no platinum data, so the two source paths are pointed
+        at parquets written here instead of the 78MB pipeline outputs.
+        """
+        unified_path = tmp_path / "unified_dataset.parquet"
+        pa_metrics_path = tmp_path / "pa_monthly_metrics.parquet"
+        pd.DataFrame({"a": [1]}).to_parquet(unified_path)
+        pd.DataFrame({"b": [1, 2]}).to_parquet(pa_metrics_path)
+        monkeypatch.setattr(
+            export_mod, "input_source_paths", lambda: (unified_path, pa_metrics_path)
         )
+
+        ids = export_mod.describe_source_identities(
+            pd.DataFrame({"a": [1]}), pd.DataFrame({"b": [1, 2]})
+        )
+
         assert all(identity["sourcePublishedAt"] is None for identity in ids)
+        assert [identity["rows"] for identity in ids] == [1, 2]
+        assert [identity["name"] for identity in ids] == [
+            "unified_dataset",
+            "pa_monthly_metrics",
+        ]
+        assert all(len(str(identity["sha256"])) == 64 for identity in ids)
+        assert all(int(identity["bytes"]) > 0 for identity in ids)

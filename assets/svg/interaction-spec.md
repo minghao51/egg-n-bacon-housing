@@ -7,6 +7,7 @@ All behavior below describes the **proposed redesign**, unless explicitly called
 Primary navigation: Overview, Explore, Research, Data & methods. Logo returns to Overview; active destination uses aria-current, visual underline and weight. Skip link goes to main. Mobile Menu opens an accessible navigation dialog, not an unmanaged sidebar.
 
 Proposed URLs (base-path aware):
+
 - `/`: overview.
 - `/explore?type=hdb&period=2025&minSales=150&metric=median_price&dir=asc&view=list`.
 - `/areas/tampines?type=hdb&period=2025`: area fieldnote, with a validated return-to explorer context.
@@ -30,7 +31,9 @@ Legacy /dashboard, map, leaderboard, trends and segments links must still reach 
 ## Explorer
 
 ### Committed settings
+
 Default: HDB, 2025, ≥150 sales, median_price ascending, chart/list.
+
 - Property is a single selection: HDB / EC / Condo.
 - Period menu: 2025 complete year; 2022 onward (through observed coverage); through 2021; all history. Display actual start/end alongside any open-ended period.
 - Call “through 2021” literally; do not use “pre-COVID”.
@@ -43,6 +46,7 @@ Default: HDB, 2025, ≥150 sales, median_price ascending, chart/list.
 - Reset returns to defaults, clears search, starts first page and announces change.
 
 ### Pagination and responsive identity
+
 - Desktop: 12 rows/page. 25 eligible areas → 3 pages.
 - Mobile: 4 rows/page. Same 25 → 7 pages. SVG 05 shows the same first four records as SVG 02.
 - Show Previous/Next and page position; hide or disable at ends with proper semantics. Desktop first-page SVG only illustrates Next.
@@ -52,6 +56,7 @@ Default: HDB, 2025, ≥150 sales, median_price ascending, chart/list.
 - Do not introduce accounts or persistent shortlist state.
 
 ### Chart/list, Map and Table
+
 - These are one dataset and selection state with three representations; no separate filter defaults.
 - Chart/list desktop: shared 0–S$1m dotplot in the illustrated HDB state, exact values and samples beside it. National median = S$628,000, dashed vertical line and textual label.
 - Mobile: exact price plus sales first; aligned mini-bars share 0–S$1m, national marker labeled in text. Do not autoscale each row.
@@ -78,6 +83,7 @@ Default: HDB, 2025, ≥150 sales, median_price ascending, chart/list.
 Three distinct clocks: observation period, asset export time, source publication time. Label unknowns. Do not call an old export “source-stale” based solely on its generation date.
 
 Evidence labels:
+
 - Observed aggregate.
 - Derived estimate / formula + assumptions.
 - Research model + training/publication vintage.
@@ -90,6 +96,7 @@ Research index retains reports, segment investigation, trends and calculators. K
 ## Mobile filter sheet
 
 Illustrated in SVG 06; apply to a full-height mobile dialog, not a fixed 530px content container.
+
 1. Filters opens a draft copy of committed settings; focus dialog title/first meaningful control; background becomes inert.
 2. Controls change draft only. Prospective result count updates from loaded data, politely, without moving focus.
 3. Sticky Apply footer remains reachable above browser/keyboard safe area. If preview data is unavailable, label Apply without a numeric count.
@@ -99,17 +106,17 @@ Illustrated in SVG 06; apply to a full-height mobile dialog, not a fixed 530px c
 
 ## States and recovery
 
-| State | What remains / action | Accessibility |
-|---|---|---|
-| Loading | Question + settings stay; neutral non-numeric skeleton; no zero-price placeholder | aria-busy region; one polite loading announcement; reduced-motion static alternative |
-| No search results | Preserve query/settings; Clear search | Announce 0 matches, keep input focus |
-| Empty subset | “No records for this combination”; explicit change type/period | Distinguish from network failure, no silent widening |
-| First-load failure | Clear error, Retry; no fabricated empty market | role=alert once; keyboard retry |
-| Failed refresh with cache | Retain last successful data, timestamp/unknowns and Retry update | Status associated with displayed result; avoid repeated alerts |
-| Mixed asset generations | Omit national difference/reference until compatible; explain | Do not render stale baseline as current |
-| Thin sample included | Visible sales count and caution; allow exclude | Badge text, not just orange color |
-| Selected area | Name, marker/icon, selected text, detail link | Announce selection; focus is not lost to rerender |
-| Invalid deep link | Unknown area or unsupported combination; link back to Explorer | Proper not-found/unavailable page and unique H1 |
+| State                     | What remains / action                                                             | Accessibility                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Loading                   | Question + settings stay; neutral non-numeric skeleton; no zero-price placeholder | aria-busy region; one polite loading announcement; reduced-motion static alternative |
+| No search results         | Preserve query/settings; Clear search                                             | Announce 0 matches, keep input focus                                                 |
+| Empty subset              | “No records for this combination”; explicit change type/period                    | Distinguish from network failure, no silent widening                                 |
+| First-load failure        | Clear error, Retry; no fabricated empty market                                    | role=alert once; keyboard retry                                                      |
+| Failed refresh with cache | Retain last successful data, timestamp/unknowns and Retry update                  | Status associated with displayed result; avoid repeated alerts                       |
+| Mixed asset generations   | Omit national difference/reference until compatible; explain                      | Do not render stale baseline as current                                              |
+| Thin sample included      | Visible sales count and caution; allow exclude                                    | Badge text, not just orange color                                                    |
+| Selected area             | Name, marker/icon, selected text, detail link                                     | Announce selection; focus is not lost to rerender                                    |
+| Invalid deep link         | Unknown area or unsupported combination; link back to Explorer                    | Proper not-found/unavailable page and unique H1                                      |
 
 Retry scope is the affected static asset, not “rerun the pipeline” for public users. Prevent duplicate in-flight retries and preserve existing data on background failure.
 
