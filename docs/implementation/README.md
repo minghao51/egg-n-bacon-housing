@@ -2,7 +2,7 @@
 
 Status of the redesign defined in [`assets/svg/implementation-plan.md`](../../assets/svg/implementation-plan.md). Read this first; the plan is the contract, this file is the ledger.
 
-Branch: `design/sol-editorial-spec`. Slices S0–S6 are committed on this branch; S7–S10 are not started. Published data assets are untouched (`app/public/data/*.json.gz` except `README.md`).
+Branch: `main` — slices S0–S6 are merged (PR #2, merge commit `8ab248a`); S7–S10 are not started. Published data assets were regenerated through **2026-10** in that merge (`app/public/data/*.json.gz` plus `dashboard-release.json`, generation `0e1013ee485f`).
 
 ## Slice status
 
