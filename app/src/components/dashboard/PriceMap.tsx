@@ -6,6 +6,15 @@ import {
   Tooltip as LeafletTooltip,
 } from "react-leaflet";
 import { decompressGzip } from "@/utils/gzip";
+import {
+  EMPTY_MAP_SELECTION,
+  MAP_LAYER_IDS,
+  MAP_SELECTION_KEYS,
+  isSameMapSelection,
+  parseMapSelection,
+  serializeMapSelection,
+  type MapSelection,
+} from "@/utils/map-url-state";
 import "leaflet/dist/leaflet.css";
 
 // Import analytics components
@@ -20,7 +29,6 @@ import {
   useFeatureImpact,
   usePredictiveAnalytics,
 } from "../../hooks/useAnalyticsData";
-import { LAYER_METADATA } from "../../types/analytics";
 import type {
   GeoJSONFeatureCollection,
   GeoJSONFeature,
@@ -76,57 +84,49 @@ const MAP_PRESETS = [
   },
 ];
 
+/** Read the incoming map selection once, before the first render commit. */
+function readMapSelectionFromUrl(): MapSelection {
+  if (typeof window === "undefined") {
+    // SSR renders the defaults; the client initialises from the real URL.
+    return EMPTY_MAP_SELECTION;
+  }
+  return parseMapSelection(window.location.search);
+}
+
+/** Expand the parsed layer ids into the toggle record `LayerControl` expects. */
+function layersFromSelection(
+  layerIds: readonly LayerId[],
+): Record<LayerId, boolean> {
+  const layers = {} as Record<LayerId, boolean>;
+  MAP_LAYER_IDS.forEach((layerId) => {
+    layers[layerId] = layerIds.includes(layerId);
+  });
+  return layers;
+}
+
 export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   const [geoJsonData, setGeoJsonData] =
     useState<GeoJSONFeatureCollection | null>(null);
   const [allMetrics, setAllMetrics] = useState<MapData | null>(null);
 
-  // Existing filters
-  const [temporalFilter, setTemporalFilter] = useState<TemporalFilter>("whole");
+  // Existing filters — initialised from the incoming URL on the client so the
+  // first commit already reflects a shared link. SSR keeps the defaults.
+  const [initialSelection] = useState<MapSelection>(readMapSelectionFromUrl);
+  const [temporalFilter, setTemporalFilter] = useState<TemporalFilter>(
+    () => initialSelection.timeBasis ?? "whole",
+  );
   const [propertyTypeFilter, setPropertyTypeFilter] =
-    useState<PropertyTypeFilter>("all");
-  const [metric, setMetric] = useState<MetricType>("median_price");
-  const [selectedArea, setSelectedArea] = useState<string | null>(null);
+    useState<PropertyTypeFilter>(() => initialSelection.propertyType ?? "all");
+  const [metric, setMetric] = useState<MetricType>(
+    () => initialSelection.metric ?? "median_price",
+  );
+  const [selectedArea, setSelectedArea] = useState<string | null>(
+    () => initialSelection.area,
+  );
 
-  // NEW: Analytics layers state
+  // NEW: Analytics layers state — also initialised from the URL
   const [activeLayers, setActiveLayers] = useState<Record<LayerId, boolean>>(
-    () => {
-      // Initialize from URL params using native URL API
-      if (typeof window !== "undefined") {
-        const urlParams = new URLSearchParams(window.location.search);
-        const layersParam = urlParams.get("layers");
-        const initialLayers: Record<LayerId, boolean> = {} as Record<
-          LayerId,
-          boolean
-        >;
-
-        // Initialize all layers to false
-        Object.keys(LAYER_METADATA).forEach((layerId) => {
-          initialLayers[layerId as LayerId] = false;
-        });
-
-        if (layersParam) {
-          const requestedLayers = layersParam.split(",");
-          requestedLayers.forEach((layerId) => {
-            if (layerId in LAYER_METADATA) {
-              initialLayers[layerId as LayerId] = true;
-            }
-          });
-        }
-
-        return initialLayers;
-      }
-
-      // Default state for SSR
-      const initialLayers: Record<LayerId, boolean> = {} as Record<
-        LayerId,
-        boolean
-      >;
-      Object.keys(LAYER_METADATA).forEach((layerId) => {
-        initialLayers[layerId as LayerId] = false;
-      });
-      return initialLayers;
-    },
+    () => layersFromSelection(initialSelection.layers),
   );
 
   // Load analytics data (lazy loading with caching)
@@ -152,74 +152,61 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
     loadingLayers.add("predictive.forecast");
   }
 
-  // Sync active layers to URL
+  // Sync the selection to the URL. State is initialised from the URL above, so
+  // the first run is a no-op for a shared link and never overwrites it; the
+  // guard also avoids redundant history writes. Params owned by other features
+  // are preserved.
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    const nextSelection: MapSelection = {
+      metric,
+      timeBasis: temporalFilter,
+      propertyType: propertyTypeFilter,
+      area: selectedArea,
+      layers: MAP_LAYER_IDS.filter((layerId) => activeLayers[layerId]),
+    };
+
+    if (
+      isSameMapSelection(
+        parseMapSelection(window.location.search),
+        nextSelection,
+      )
+    ) {
+      return;
+    }
+
+    const serialized = serializeMapSelection(nextSelection);
     const url = new URL(window.location.href);
-    const activeLayerIds = Object.entries(activeLayers)
-      .filter(([_, active]) => active)
-      .map(([layerId, _]) => layerId);
-
-    url.searchParams.set("metric", metric);
-    url.searchParams.set("timeBasis", temporalFilter);
-    url.searchParams.set("propertyType", propertyTypeFilter);
-
-    if (activeLayerIds.length > 0) {
-      url.searchParams.set("layers", activeLayerIds.join(","));
-    } else {
-      url.searchParams.delete("layers");
-    }
-
-    if (selectedArea) {
-      url.searchParams.set("area", selectedArea);
-    } else {
-      url.searchParams.delete("area");
-    }
+    MAP_SELECTION_KEYS.forEach((key) => {
+      const value = serialized.get(key);
+      if (value === null) {
+        url.searchParams.delete(key);
+      } else {
+        url.searchParams.set(key, value);
+      }
+    });
 
     // Update URL without page reload
     window.history.replaceState({}, "", url.toString());
   }, [activeLayers, metric, propertyTypeFilter, selectedArea, temporalFilter]);
 
+  // Browser back/forward: the URL is the source of truth, so re-apply it.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const metricParam = urlParams.get("metric");
-    const timeBasisParam = urlParams.get("timeBasis");
-    const propertyTypeParam = urlParams.get("propertyType");
-    const areaParam = urlParams.get("area");
+    const handlePopState = () => {
+      const selection = parseMapSelection(window.location.search);
 
-    if (
-      metricParam &&
-      [
-        "median_price",
-        "median_psf",
-        "volume",
-        "rental_yield_median",
-        "yoy_change_pct",
-        "affordability_ratio",
-      ].includes(metricParam)
-    ) {
-      setMetric(metricParam as MetricType);
-    }
+      setMetric(selection.metric ?? "median_price");
+      setTemporalFilter(selection.timeBasis ?? "whole");
+      setPropertyTypeFilter(selection.propertyType ?? "all");
+      setSelectedArea(selection.area);
+      setActiveLayers(layersFromSelection(selection.layers));
+    };
 
-    if (
-      timeBasisParam &&
-      ["whole", "pre_covid", "recent", "year_2025"].includes(timeBasisParam)
-    ) {
-      setTemporalFilter(timeBasisParam as TemporalFilter);
-    }
-
-    if (
-      propertyTypeParam &&
-      ["all", "hdb", "ec", "condo"].includes(propertyTypeParam)
-    ) {
-      setPropertyTypeFilter(propertyTypeParam as PropertyTypeFilter);
-    }
-
-    if (areaParam) {
-      setSelectedArea(areaParam.toUpperCase());
-    }
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   useEffect(() => {

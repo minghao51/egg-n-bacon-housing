@@ -26,6 +26,13 @@ const {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   </head>
   <body class="min-h-screen bg-background">
+    <!-- First focusable element: hidden until focused, then pinned above the shell. -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:border focus:border-input focus:bg-card focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-foreground"
+    >
+      Skip to main content
+    </a>
     <div class="flex flex-col min-h-screen">
       <slot />
     </div>

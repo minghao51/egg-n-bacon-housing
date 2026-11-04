@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1540" viewBox="0 0 1440 1540" role="img" aria-labelledby="title desc">
+<title id="title">Decision tools — explicit scenario inputs, amortization and legacy model limitations</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1440" height="1540" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="1440" height="85" rx="0" fill="#172E33"/>
+<text x="56" y="36" font-size="24" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="57" y="59" font-size="11" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="465" y="47" font-size="16" class="" style="fill:#FFFEFA">Overview</text>
+<text x="605" y="47" font-size="16" class="" style="fill:#FFFEFA">Explore</text>
+<text x="725" y="47" font-size="16" class="bold" style="fill:#FFFEFA">Research</text>
+<line x1="725" y1="66" x2="810" y2="66" stroke="#D6B764" stroke-width="3"/>
+<text x="860" y="47" font-size="16" class="" style="fill:#FFFEFA">Data &amp; methods</text>
+<text x="1190" y="47" font-size="14" class="" style="fill:#FFFEFA">A housing field guide</text>
+</g>
+<g id="research-subnavigation">
+<rect x="0" y="85" width="1440" height="54" rx="0" fill="#FFFEFA"/>
+<text x="56" y="119" font-size="15" class="" style="fill:#526368">Studies</text>
+<text x="198" y="119" font-size="15" class="" style="fill:#526368">Trends</text>
+<text x="333" y="119" font-size="15" class="" style="fill:#526368">Segments</text>
+<text x="490" y="119" font-size="15" class="bold" style="fill:#006B65">Tools</text>
+<line x1="490" y1="137" x2="585" y2="137" stroke="#006B65" stroke-width="3"/>
+<text x="610" y="119" font-size="15" class="" style="fill:#526368">Research map</text>
+</g>
+<text x="56" y="180" font-size="12" class="label" style="fill:#B64426">RESEARCH / TOOLS</text>
+<text x="56" y="236" font-size="43" class="serif">Make the assumptions editable.</text>
+<text x="56" y="273" font-size="17" class="muted">Retain all four existing tools. Separate arithmetic scenarios from unverified model claims.</text>
+<rect x="56" y="302" width="270" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="70" y="329" font-size="14" class="bold" style="fill:#006B65">Financing scenario</text>
+<rect x="338" y="302" width="210" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="352" y="329" font-size="14" class="" style="fill:#172E33">Lease bands</text>
+<rect x="560" y="302" width="210" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="574" y="329" font-size="14" class="" style="fill:#172E33">MRT / CBD</text>
+<rect x="782" y="302" width="230" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="796" y="329" font-size="14" class="" style="fill:#172E33">Spatial patterns</text>
+<rect x="1075" y="310" width="200" height="25" rx="2" fill="#F8E8CC"/>
+<text x="1084" y="327" font-size="11" class="bold" style="fill:#172E33">Proposed aligned inputs</text>
+<g id="scenario-inputs">
+<text x="56" y="407" font-size="29" class="serif">Scenario: Tampines HDB at the 2025 median</text>
+<text x="56" y="443" font-size="16" class="muted">Price is observed aggregate data. Income and loan assumptions below are illustrative user inputs.</text>
+<text x="56" y="494" font-size="13" class="bold">Reference price / SGD</text>
+<rect x="56" y="507" width="300" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="69" y="536" font-size="16" class="num">710,000</text>
+<text x="56" y="587" font-size="13" class="bold">Annual household income / SGD</text>
+<rect x="56" y="600" width="300" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="69" y="629" font-size="16" class="num">120,000</text>
+<text x="56" y="680" font-size="13" class="bold">Down payment / percent</text>
+<rect x="56" y="693" width="300" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="69" y="722" font-size="16" class="num">30%</text>
+<text x="56" y="773" font-size="13" class="bold">Loan term / years</text>
+<rect x="56" y="786" width="300" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="69" y="815" font-size="16" class="num">25</text>
+<text x="56" y="866" font-size="13" class="bold">Annual interest / percent</text>
+<rect x="56" y="879" width="300" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="69" y="908" font-size="16" class="num">3.0%</text>
+<text x="56" y="978" font-size="15" class="bold" style="fill:#006B65">Reset scenario</text>
+</g>
+<g id="scenario-results">
+<text x="409" y="509" font-size="36" class="bold">S$2,357 / month</text>
+<text x="409" y="546" font-size="17" class="muted">Illustrative principal + interest</text>
+<text x="409" y="596" font-size="17" class="">S$213,000 down payment · S$497,000 loan</text>
+<text x="409" y="627" font-size="17" class="">Monthly income: S$10,000 · payment / income: 23.6%</text>
+<text x="409" y="658" font-size="17" class="">Price / annual income: 5.92×</text>
+<text x="409" y="729" font-size="23" class="serif">What if interest changes?</text>
+<text x="409" y="761" font-size="14" class="muted">Monthly payment · same principal and 25-year term</text>
+<g id="mortgage-sensitivity-bars">
+<text x="409" y="811" font-size="14" class="bold">2%</text>
+<rect x="461" y="793" width="310.7170193014987" height="21" rx="0" fill="#526368"/>
+<text x="785.7170193014987" y="810" font-size="15" class="bold num">S$2,107</text>
+<text x="409" y="851" font-size="14" class="bold">3%</text>
+<rect x="461" y="833" width="347.6324589062187" height="21" rx="0" fill="#006B65"/>
+<text x="822.6324589062187" y="850" font-size="15" class="bold num">S$2,357</text>
+<text x="409" y="891" font-size="14" class="bold">4%</text>
+<rect x="461" y="873" width="386.9439917012879" height="21" rx="0" fill="#526368"/>
+<text x="861.9439917012879" y="890" font-size="15" class="bold num">S$2,623</text>
+<text x="409" y="931" font-size="14" class="bold">5%</text>
+<rect x="461" y="913" width="428.54834467846257" height="21" rx="0" fill="#526368"/>
+<text x="903.5483446784626" y="930" font-size="15" class="bold num">S$2,905</text>
+<text x="409" y="971" font-size="14" class="bold">6%</text>
+<rect x="461" y="953" width="472.32124989399347" height="21" rx="0" fill="#526368"/>
+<text x="947.3212498939935" y="970" font-size="15" class="bold num">S$3,202</text>
+<text x="461.0" y="1031" font-size="12" class="muted" text-anchor="middle">0</text>
+<text x="608.5" y="1031" font-size="12" class="muted" text-anchor="middle">1k</text>
+<text x="756.0" y="1031" font-size="12" class="muted" text-anchor="middle">2k</text>
+<text x="903.5" y="1031" font-size="12" class="muted" text-anchor="middle">3k</text>
+<text x="1051.0" y="1031" font-size="12" class="muted" text-anchor="middle">4k</text>
+</g>
+</g>
+<rect x="1120" y="494" width="264" height="174" rx="4" fill="#F8E8CC"/>
+<text x="1136" y="521" font-size="14" class="">Not a loan offer.</text>
+<text x="1136" y="545" font-size="14" class="">Not an eligibility check.</text>
+<text x="1136" y="569" font-size="14" class="">Excludes fees, insurance,</text>
+<text x="1136" y="593" font-size="14" class="">taxes and grants.</text>
+<text x="1136" y="617" font-size="14" class="">No CPF / TDSR / MSR</text>
+<text x="1136" y="641" font-size="14" class="">determination is made.</text>
+<line x1="56" y1="1070" x2="1384" y2="1070" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1116" font-size="27" class="serif">Three research tools remain distinct.</text>
+<text x="56" y="1164" font-size="23" class="serif">Lease bands</text>
+<text x="56" y="1204" font-size="15" class="muted">Input: remaining years (40–99).</text>
+<text x="56" y="1231" font-size="15" class="muted">At 75: stored 74–79-year band.</text>
+<text x="56" y="1258" font-size="15" class="muted">19.1% band statistic; not a price forecast.</text>
+<text x="56" y="1285" font-size="15" class="muted">Resolve overlapping bin endpoints.</text>
+<text x="56" y="1341" font-size="15" class="bold" style="fill:#006B65">Open tool &amp; assumptions →</text>
+<text x="506" y="1164" font-size="23" class="serif">MRT / CBD</text>
+<text x="506" y="1204" font-size="15" class="muted">Inputs: type, town, MRT m, CBD km.</text>
+<text x="506" y="1231" font-size="15" class="muted">Units and distance direction conflict</text>
+<text x="506" y="1258" font-size="15" class="muted">in current formulas. Keep outputs</text>
+<text x="506" y="1285" font-size="15" class="muted">in an audit-gated model archive.</text>
+<text x="506" y="1341" font-size="15" class="bold" style="fill:#006B65">Open tool &amp; assumptions →</text>
+<text x="956" y="1164" font-size="23" class="serif">Spatial patterns</text>
+<text x="956" y="1204" font-size="15" class="muted">Filter: cluster class and persistence.</text>
+<text x="956" y="1231" font-size="15" class="muted">Show stored town labels, sample/date</text>
+<text x="956" y="1258" font-size="15" class="muted">unknowns and method. No portfolio</text>
+<text x="956" y="1285" font-size="15" class="muted">allocation or BUY/SELL guidance.</text>
+<text x="956" y="1341" font-size="15" class="bold" style="fill:#006B65">Open tool &amp; assumptions →</text>
+<text x="56" y="1428" font-size="15" class="muted">P: editable financing assumptions and aligned 2025 price. Existing calculator default is 30% down, 25 years, 3%.</text>
+<line x1="56" y1="1480" x2="1384" y2="1480" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1508" font-size="13" class="muted">Actual 2025 reference price + illustrative inputs · standard amortization, no financial recommendation</text>
+<text x="1210" y="1508" font-size="13" class="bold" style="fill:#006B65">Data &amp; methods →</text>
+</svg>

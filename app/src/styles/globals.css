@@ -3,29 +3,70 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * Fieldnotes palette — light theme.
+   * Every value is an HSL triplet so the existing `hsl(var(--token))` scheme
+   * (and Tailwind's `hsl(var(--token) / <alpha>)`) keeps working unchanged.
+   * Sources (hex -> HSL triplet -> hex round trip):
+   *   paper          #F6F3EC -> 42 35.7% 94.5%       assets/svg/00-design-system.svg
+   *   ink            #172E33 -> 190.7 37.8% 14.5%    assets/svg/00-design-system.svg
+   *   teal           #006B65 -> 176.6 100% 21%       assets/svg/00-design-system.svg
+   *   rust           #B64426 -> 12.5 65.5% 43.1%     assets/svg/00-design-system.svg
+   *   plum           #66508A -> 262.8 26.6% 42.7%    assets/svg/00-design-system.svg
+   *   muted ink      #526368 -> 193.6 11.8% 36.5%    assets/svg/00-design-system.svg
+   *   control border #7A8583 -> 169.1 4.3% 50%       assets/svg/00-design-system.svg
+   *   card           #FFFEFA -> 48 100% 99%          assets/svg/00-design-system.svg
+   *   hairline       #CDD2CA -> 97.5 8.2% 80.8%      assets/svg/design-rationale.md (separator)
+   *   selected fill  #E5EFEB -> 156 23.8% 91.8%      assets/svg/design-rationale.md (selected)
+   *   review note    #F8E8CC -> 38.2 75.9% 88.6%     assets/svg/design-rationale.md (note)
+   *   muted surface  #ECE7DB -> 42.4 30.9% 89.2%     DERIVED: ink at 6% over paper,
+   *                                                  not a designed token — revisit
+   *                                                  before using it as a brand colour.
+   */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Named Fieldnotes tokens (use as hsl(var(--paper)) etc.) */
+    --paper: 42 35.7% 94.5%; /* #F6F3EC */
+    --ink: 190.7 37.8% 14.5%; /* #172E33 */
+    --teal: 176.6 100% 21%; /* #006B65 */
+    --rust: 12.5 65.5% 43.1%; /* #B64426 */
+    --plum: 262.8 26.6% 42.7%; /* #66508A */
+    --muted-ink: 193.6 11.8% 36.5%; /* #526368 */
+    --control-border: 169.1 4.3% 50%; /* #7A8583 */
+    --note: 38.2 75.9% 88.6%; /* #F8E8CC */
+
+    /* Local font stacks — no external font requests. */
+    --font-display: Georgia, "Times New Roman", serif;
+    --font-body: Arial, Helvetica, system-ui, sans-serif;
+
+    /* Semantic mappings */
+    --background: 42 35.7% 94.5%; /* paper #F6F3EC */
+    --foreground: 190.7 37.8% 14.5%; /* ink #172E33 */
+    --card: 48 100% 99%; /* card #FFFEFA */
+    --card-foreground: 190.7 37.8% 14.5%; /* ink #172E33 */
+    --popover: 48 100% 99%; /* card #FFFEFA */
+    --popover-foreground: 190.7 37.8% 14.5%; /* ink #172E33 */
+    --primary: 190.7 37.8% 14.5%; /* ink #172E33 */
+    --primary-foreground: 42 35.7% 94.5%; /* paper #F6F3EC */
+    --secondary: 156 23.8% 91.8%; /* selected fill #E5EFEB */
+    --secondary-foreground: 190.7 37.8% 14.5%; /* ink #172E33 */
+    --muted: 42.4 30.9% 89.2%; /* derived surface #ECE7DB (see header) */
+    --muted-foreground: 193.6 11.8% 36.5%; /* muted ink #526368 */
+    --accent: 156 23.8% 91.8%; /* selected fill #E5EFEB */
+    --accent-foreground: 190.7 37.8% 14.5%; /* ink #172E33 */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 97.5 8.2% 80.8%; /* hairline #CDD2CA */
+    --input: 169.1 4.3% 50%; /* control border #7A8583 */
+    --ring: 176.6 100% 21%; /* teal #006B65 */
     --radius: 0.5rem;
   }
 
+  /*
+   * Dark palette: the core surface tokens remain the pre-existing values and
+   * are not design-reviewed. The named Fieldnotes tokens below are overridden
+   * only so text placed on them stays readable when the system prefers dark;
+   * chart colours are still unreviewed in dark mode.
+   */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -46,6 +87,16 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* Readable dark overrides for the named tokens used as text backgrounds. */
+    --paper: 222.2 84% 4.9%;
+    --ink: 210 40% 98%;
+    --teal: 176 60% 62%;
+    --rust: 12 70% 62%;
+    --plum: 262 40% 72%;
+    --muted-ink: 193 12% 68%;
+    --control-border: 169 6% 62%;
+    --note: 38 55% 22%;
   }
 }
 
@@ -55,6 +106,54 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  /* Editorial headings use the local serif stack with tightened tracking. */
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  /* Numbers align in columns without an external font. */
+  table,
+  [data-numeric],
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * Visible keyboard focus boundary (teal ring, 2px offset).
+   * `!important` is deliberate: existing controls carry `focus:outline-none` /
+   * `outline-none` utilities and vendor styles that would otherwise erase the
+   * only focus indicator on form controls. `[tabindex]` stays non-important so
+   * canvas widgets (React Flow graph nodes) keep their own focus styling.
+   */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid hsl(var(--ring)) !important;
+    outline-offset: 2px !important;
+  }
+
+  [tabindex]:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * Motion: the mobile drawer and the page-margin transition respect the
+ * user's reduced-motion preference; nothing else in the shell animates.
+ */
+@media (prefers-reduced-motion: reduce) {
+  #sidebar-drawer,
+  main[class*="transition"] {
+    transition-duration: 0.01ms !important;
   }
 }
 

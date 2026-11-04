@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1460" viewBox="0 0 1440 1460" role="img" aria-labelledby="title desc">
+<title id="title">Interaction specification — honest states and accessible mobile filters</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1440" height="1460" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="1440" height="85" rx="0" fill="#172E33"/>
+<text x="56" y="36" font-size="24" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="57" y="59" font-size="11" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="465" y="47" font-size="16" class="bold" style="fill:#FFFEFA">Overview</text>
+<line x1="465" y1="66" x2="550" y2="66" stroke="#D6B764" stroke-width="3"/>
+<text x="605" y="47" font-size="16" class="" style="fill:#FFFEFA">Explore</text>
+<text x="725" y="47" font-size="16" class="" style="fill:#FFFEFA">Research</text>
+<text x="860" y="47" font-size="16" class="" style="fill:#FFFEFA">Data &amp; methods</text>
+<text x="1190" y="47" font-size="14" class="" style="fill:#FFFEFA">A housing field guide</text>
+</g>
+<text x="56" y="126" font-size="12" class="label" style="fill:#B64426">INTERACTION SPECIFICATION / 06</text>
+<text x="56" y="182" font-size="48" class="serif">Keep the question visible, even when data fails.</text>
+<text x="56" y="219" font-size="18" class="muted">Proposed UI states. State examples are scenarios, not claims about the current export.</text>
+<g id="state-loading">
+<rect x="56" y="274" width="420" height="252" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="76" y="306" font-size="12" class="label" style="fill:#B64426">01 / LOADING</text>
+<text x="76" y="349" font-size="20" class="bold">Preparing the area comparison</text>
+<text x="76" y="383" font-size="14" class="muted">HDB · 2025 · settings remain visible.</text>
+<text x="76" y="408" font-size="14" class="muted">Announce “Loading area data” once.</text>
+<rect x="76" y="440" width="300" height="8" rx="2" fill="#CDD2CA"/>
+<rect x="76" y="458" width="260" height="8" rx="2" fill="#CDD2CA"/>
+<rect x="76" y="476" width="180" height="8" rx="2" fill="#CDD2CA"/>
+</g>
+<g id="state-none">
+<rect x="510" y="274" width="420" height="252" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="530" y="306" font-size="12" class="label" style="fill:#B64426">02 / NO MATCHES</text>
+<text x="530" y="349" font-size="20" class="bold">No areas match “zzzz”</text>
+<text x="530" y="383" font-size="14" class="muted">Keep filters and the typed search.</text>
+<text x="530" y="408" font-size="14" class="muted">Clear search; don’t silently widen the data.</text>
+<rect x="530" y="446" width="190" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="544" y="473" font-size="14" class="" style="fill:#172E33">Clear search</text>
+</g>
+<g id="state-empty">
+<rect x="964" y="274" width="420" height="252" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="984" y="306" font-size="12" class="label" style="fill:#B64426">03 / NO SOURCE DATA</text>
+<text x="984" y="349" font-size="20" class="bold">No EC records for this area</text>
+<text x="984" y="383" font-size="14" class="muted">Missing is not zero, and not a flat price.</text>
+<text x="984" y="408" font-size="14" class="muted">Offer another type without auto-switching.</text>
+<rect x="984" y="446" width="190" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="998" y="473" font-size="14" class="" style="fill:#172E33">Change property type</text>
+</g>
+<g id="state-error">
+<rect x="56" y="566" width="420" height="252" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="76" y="598" font-size="12" class="label" style="fill:#B64426">04 / FIRST-LOAD ERROR</text>
+<text x="76" y="641" font-size="20" class="bold">We couldn’t load area data</text>
+<text x="76" y="675" font-size="14" class="muted">No cached snapshot is available.</text>
+<text x="76" y="700" font-size="14" class="muted">Retry the asset; never display zero prices.</text>
+<rect x="76" y="738" width="190" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="90" y="765" font-size="14" class="" style="fill:#172E33">Retry loading</text>
+</g>
+<g id="state-stale">
+<rect x="510" y="566" width="420" height="252" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="530" y="598" font-size="12" class="label" style="fill:#B64426">05 / REFRESH FAILED</text>
+<text x="530" y="641" font-size="20" class="bold">Showing the previous snapshot</text>
+<text x="530" y="675" font-size="14" class="muted">Last successful export: 24 Oct 2026.</text>
+<text x="530" y="700" font-size="14" class="muted">Newer data could not be checked.</text>
+<rect x="530" y="738" width="190" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="544" y="765" font-size="14" class="" style="fill:#172E33">Retry update</text>
+</g>
+<g id="state-thin">
+<rect x="964" y="566" width="420" height="252" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="984" y="598" font-size="12" class="label" style="fill:#B64426">06 / THIN SAMPLE</text>
+<text x="984" y="641" font-size="20" class="bold">Changi · 8 HDB sales in 2025</text>
+<text x="984" y="675" font-size="14" class="muted">Median S$360,000 · interpret cautiously.</text>
+<text x="984" y="700" font-size="14" class="muted">Shown only after “Include small samples”.</text>
+<rect x="984" y="738" width="190" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="998" y="765" font-size="14" class="" style="fill:#172E33">Exclude small samples</text>
+</g>
+<g id="mobile-filter-sheet">
+<rect x="56" y="866" width="390" height="530" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="76" y="901" font-size="21" class="bold">Comparison settings</text>
+<text x="400" y="901" font-size="25" class="">×</text>
+<text x="76" y="935" font-size="13" class="muted">Draft changes · not yet applied</text>
+<line x1="76" y1="955" x2="426" y2="955" stroke="#CDD2CA" stroke-width="1"/>
+<text x="76" y="986" font-size="14" class="bold">Property type</text>
+<rect x="76" y="1003" width="100" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="90" y="1030" font-size="14" class="bold" style="fill:#006B65">HDB</text>
+<rect x="184" y="1003" width="90" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="198" y="1030" font-size="14" class="" style="fill:#172E33">EC</text>
+<rect x="282" y="1003" width="125" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="296" y="1030" font-size="14" class="" style="fill:#172E33">Condo</text>
+<text x="76" y="1080" font-size="14" class="bold">Period</text>
+<rect x="76" y="1097" width="330" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="90" y="1124" font-size="14" class="bold" style="fill:#006B65">2025 complete year ▾</text>
+<text x="76" y="1174" font-size="16" class="bold">✓  At least 150 sales</text>
+<text x="76" y="1203" font-size="13" class="muted">Threshold is for the selected year/type.</text>
+<text x="76" y="1226" font-size="13" class="muted">6 additional areas have smaller samples.</text>
+<line x1="56" y1="1282" x2="446" y2="1282" stroke="#CDD2CA" stroke-width="1"/>
+<rect x="76" y="1305" width="100" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="90" y="1332" font-size="14" class="" style="fill:#172E33">Cancel</text>
+<rect x="192" y="1305" width="214" height="44" rx="4" fill="#172E33" stroke="#7A8583"/>
+<text x="206" y="1332" font-size="14" class="bold" style="fill:#FFFEFA">Apply · show 25 areas</text>
+</g>
+<g id="selection-and-behavior-notes">
+<text x="494" y="910" font-size="12" class="label" style="fill:#B64426">07 / SELECTION &amp; FOCUS</text>
+<rect x="494" y="939" width="890" height="76" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="514" y="972" font-size="21" class="bold">✓ Tampines</text>
+<text x="740" y="972" font-size="17" class="">S$710,000 · 1,921 sales · 2025 HDB</text>
+<text x="514" y="998" font-size="14" class="muted">Selected area is synchronized across map, list and detail link.</text>
+<text x="494" y="1064" font-size="16" class="">Area name → semantic link to /areas/tampines?type=hdb&amp;period=2025.</text>
+<text x="494" y="1096" font-size="16" class="">Back returns to the same search, sorting, pagination and scroll position.</text>
+<text x="494" y="1128" font-size="16" class="">Filter sheet: focus title → controls → Apply. Trap focus; Escape cancels.</text>
+<text x="494" y="1160" font-size="16" class="">Apply commits draft to URL, closes sheet and announces “25 areas”.</text>
+<text x="494" y="1192" font-size="16" class="">Cancel discards draft and restores focus to Filters. Background is inert.</text>
+<text x="494" y="1224" font-size="16" class="">Charts: keyboard-readable table and persistent labels; no hover-only facts.</text>
+<text x="494" y="1256" font-size="16" class="">Reduced motion: static loading shapes, no shimmer required.</text>
+<text x="494" y="1288" font-size="16" class="">Stale-source age cannot be inferred from export time. Say “freshness unknown”</text>
+<text x="494" y="1320" font-size="16" class="">until a source-aware freshness contract exists. Never call these live prices.</text>
+</g>
+<g id="incompatible-generation-state">
+<rect x="494" y="1360" width="890" height="62" rx="4" fill="#F8E8CC"/>
+<text x="510" y="1385" font-size="16" class="bold">Incompatible generations → national comparison withheld</text>
+<text x="510" y="1408" font-size="14">Keep the area’s own metrics visible. Do not guess a compatible baseline or show a fake zero.</text>
+</g>
+</svg>

@@ -1,0 +1,573 @@
+---
+/**
+ * `/areas/[slug]` — static area fieldnote (slice S6).
+ *
+ * One page per planning area, rendered at build time from the published assets
+ * through `src/utils/area-page.ts`. There is no client island: the numbers, the
+ * availability states and the withheld-baseline notice are all in the HTML.
+ *
+ * The only browser code is the inline return-link enhancer below. A static
+ * build cannot read the incoming query string, so a JS-disabled reader gets the
+ * documented `/explore` fallback while everyone else gets the same validated
+ * explorer query back. It copies allow-listed query keys only — never an
+ * arbitrary URL.
+ */
+import Layout from "@/layouts/Layout.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import {
+  AREA_PAGE_COMBINATIONS,
+  AREA_PRIMARY_PREFERENCE,
+  areaEraScope,
+  areaSectionScope,
+  loadAreaPages,
+  type AreaPageData,
+  type AreaPageSection,
+} from "@/utils/area-page";
+import {
+  compareWithBaseline,
+  type ObservedMetric,
+  type ObservedObservation,
+} from "@/utils/observed-data";
+import { fileURLToPath } from "node:url";
+
+export async function getStaticPaths() {
+  // `astro build` runs from `app/`, and this file lives at
+  // `app/src/pages/areas/[slug].astro`, so three levels up is the app root.
+  const rootDir = fileURLToPath(new URL("../../../", import.meta.url));
+  const areas = await loadAreaPages(rootDir);
+  return areas.map((area) => ({
+    params: { slug: area.slug },
+    props: { area },
+  }));
+}
+
+interface Props {
+  area: AreaPageData;
+}
+
+const { area } = Astro.props;
+
+/** Deployment base without its trailing slash ("" at the root path). */
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const exploreHref = `${base}/explore`;
+
+const primary =
+  AREA_PRIMARY_PREFERENCE.map((preference) =>
+    area.sections.find(
+      (section) =>
+        section.era === preference.era &&
+        section.property === preference.property &&
+        section.area !== null,
+    ),
+  ).find((section) => section !== undefined) ?? null;
+
+const primarySectionName = primary?.section ?? "year_2025_hdb";
+
+function metricValue(
+  observations: ObservedObservation[] | null | undefined,
+  metric: ObservedMetric,
+): number | null {
+  if (observations === null || observations === undefined) return null;
+  const found = observations.find((entry) => entry.metric === metric);
+  return found === undefined ? null : found.value;
+}
+
+function areaMetric(
+  section: AreaPageSection | null,
+  metric: ObservedMetric,
+): number | null {
+  return metricValue(section?.area?.metrics, metric);
+}
+
+function formatCount(value: number | null): string {
+  return value === null
+    ? "Not published"
+    : Math.round(value).toLocaleString("en-US");
+}
+
+function formatPrice(value: number | null): string {
+  return value === null
+    ? "Not published"
+    : `S$${Math.round(value).toLocaleString("en-US")}`;
+}
+
+function formatPsf(value: number | null): string {
+  return value === null
+    ? "Not published"
+    : `S$${Math.round(value).toLocaleString("en-US")} psf`;
+}
+
+const areaPrice = areaMetric(primary, "median_price");
+const areaPsf = areaMetric(primary, "median_psf");
+const areaVolume = areaMetric(primary, "volume");
+
+const areaPriceObservation =
+  primary?.area?.metrics.find((entry) => entry.metric === "median_price") ??
+  null;
+const nationalPriceObservation =
+  primary?.national?.find((entry) => entry.metric === "median_price") ?? null;
+
+// The national row and the difference exist only when the build-time release
+// check proves both assets come from one publication generation.
+const comparison =
+  area.baselineCompatible &&
+  areaPriceObservation !== null &&
+  nationalPriceObservation !== null
+    ? compareWithBaseline(areaPriceObservation, nationalPriceObservation)
+    : null;
+
+const nationalPrice = metricValue(primary?.national, "median_price");
+const nationalPsf = metricValue(primary?.national, "median_psf");
+const nationalVolume = metricValue(primary?.national, "volume");
+
+const priceNote =
+  areaPrice === null
+    ? "No transaction-price median is published for this area in this section."
+    : `The middle sale was ${formatPrice(areaPrice)}.`;
+
+const kicker = `Area fieldnote / ${area.areaName}`;
+// The headline scope must describe the section that was actually read: an area
+// published only in a wider window is anchored on that window, not on 2025.
+const headlineScope = primary
+  ? areaSectionScope(primary.era, primary.property)
+  : "Not published";
+const scopeSentence = primary ? areaEraScope(primary.era) : "the published data";
+const subtitle =
+  areaVolume === null
+    ? `${headlineScope} · no transactions published in ${primarySectionName}`
+    : `${headlineScope} · ${formatCount(areaVolume)} observed transactions`;
+
+const availabilityRows = AREA_PAGE_COMBINATIONS.map((combination) => {
+  const section =
+    area.sections.find(
+      (entry) =>
+        entry.era === combination.era &&
+        entry.property === combination.property,
+    ) ?? null;
+  return {
+    label: combination.label,
+    sectionName: section?.section ?? "not published",
+    price: areaMetric(section, "median_price"),
+    psf: areaMetric(section, "median_psf"),
+    volume: areaMetric(section, "volume"),
+  };
+});
+
+const generationShort =
+  area.generation === null ? null : area.generation.slice(0, 12);
+---
+
+<Layout
+  title={`${area.areaName} — Area fieldnote - Egg n Bacon Housing`}
+  description={`Observed resale transaction prices and counts published for ${area.areaName}. A record of what sold, not a valuation or a prediction.`}
+>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main
+    id="main-content"
+    tabindex="-1"
+    class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300"
+  >
+    <div class="mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-8">
+      <a
+        id="area-return"
+        href={exploreHref}
+        data-explore-href={exploreHref}
+        class="text-sm font-bold text-[hsl(var(--teal))] underline-offset-4 hover:underline"
+      >
+        <span aria-hidden="true">← </span>Back to Explore
+      </a>
+
+      <header class="mt-6">
+        <p
+          class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]"
+        >
+          {kicker}
+        </p>
+        <h1 class="mt-3 text-4xl font-bold text-foreground sm:text-5xl">
+          {area.areaName}
+        </h1>
+        <p class="mt-3 text-lg text-muted-foreground">{subtitle}</p>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Section <code class="font-mono">map_metrics.{primarySectionName}</code>
+        </p>
+      </header>
+
+      <hr class="mt-6 border-border" />
+
+      <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <section aria-labelledby="area-comparison-heading" class="min-w-0">
+          <h2
+            id="area-comparison-heading"
+            class="text-2xl font-bold text-foreground"
+          >
+            What this area sold for
+          </h2>
+          <p class="mt-3 text-lg text-foreground">{priceNote}</p>
+
+          <dl class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="rounded-lg border border-border bg-card p-4">
+              <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
+                Median price
+              </dt>
+              <dd class="mt-1 text-2xl font-bold text-foreground" data-numeric>
+                {formatPrice(areaPrice)}
+              </dd>
+            </div>
+            <div class="rounded-lg border border-border bg-card p-4">
+              <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
+                Median PSF
+              </dt>
+              <dd class="mt-1 text-2xl font-bold text-foreground" data-numeric>
+                {formatPsf(areaPsf)}
+              </dd>
+            </div>
+            <div class="rounded-lg border border-border bg-card p-4">
+              <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
+                Transactions
+              </dt>
+              <dd class="mt-1 text-2xl font-bold text-foreground" data-numeric>
+                {formatCount(areaVolume)}
+              </dd>
+            </div>
+          </dl>
+
+          {
+            comparison !== null && nationalPrice !== null ? (
+              <div class="mt-6 rounded-lg border border-border bg-card p-5">
+                <p class="text-xl font-bold text-foreground">
+                  {comparison.difference === 0
+                    ? "At the national median. Not a like-for-like comparison."
+                    : comparison.difference > 0
+                      ? "Above the national median. Not a like-for-like premium."
+                      : "Below the national median. Not a like-for-like discount."}
+                </p>
+                <p class="mt-3 text-base text-foreground">
+                  The {area.areaName} median transaction price was{" "}
+                  <span data-numeric>
+                    {formatPrice(Math.abs(comparison.difference))}
+                  </span>{" "}
+                  {comparison.difference > 0
+                    ? "higher"
+                    : comparison.difference < 0
+                      ? "lower"
+                      : "level"}{" "}
+                  than the national HDB median in 2025
+                  {comparison.percentOfBaseline === 0
+                    ? "."
+                    : ` — a ${Math.abs(comparison.percentOfBaseline).toFixed(1)}% difference.`}
+                </p>
+                <p class="mt-2 text-sm text-muted-foreground">
+                  This difference may reflect the homes that sold, not location
+                  alone. The national figure counts transactions the area map
+                  excludes (for example Sungei Kadut), so area counts need not
+                  sum to it.
+                </p>
+              </div>
+            ) : null
+          }
+
+          {
+            area.baselineStatus === "mismatch" ? (
+              <div class="mt-6 rounded-lg border border-border bg-muted px-4 py-3 text-sm">
+                <p class="font-bold text-foreground">
+                  Assets do not share one publication generation; national
+                  comparison withheld
+                </p>
+                <p class="mt-1 text-muted-foreground">
+                  The area figures above are published for{" "}
+                  <code class="font-mono">map_metrics.{primarySectionName}</code>{" "}
+                  and are shown as they are. No national figure is shown, and
+                  none is computed from these area values.
+                </p>
+              </div>
+            ) : !area.baselineCompatible ? (
+              <div class="mt-6 rounded-lg border border-border bg-muted px-4 py-3 text-sm">
+                <p class="font-bold text-foreground">
+                  National comparison could not be verified; withheld
+                </p>
+                <p class="mt-1 text-muted-foreground">
+                  This snapshot publishes no verified publication manifest for{" "}
+                  <code class="font-mono">map_metrics.{primarySectionName}</code>{" "}
+                  and{" "}
+                  <code class="font-mono">
+                    dashboard_overview.stats.{primarySectionName}
+                  </code>{" "}
+                  (status: {area.baselineStatus}). The area figures above are
+                  shown as published; no national figure and no difference is
+                  drawn from them.
+                </p>
+              </div>
+            ) : null
+          }
+
+          <h3 class="mt-8 text-xl font-bold text-foreground">
+            The numbers behind this fieldnote
+          </h3>
+          <p class="mt-1 text-sm text-muted-foreground">
+            {headlineScope} only ·{" "}
+            <code class="font-mono">map_metrics.{primarySectionName}</code>
+          </p>
+          <div class="mt-4 rounded-lg border border-border bg-card sm:hidden">
+            <dl class="divide-y divide-border">
+              <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+                <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
+                  Median price
+                </dt>
+                <dd class="text-lg font-bold text-foreground" data-numeric>
+                  {formatPrice(areaPrice)}
+                </dd>
+              </div>
+              <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+                <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
+                  Median PSF
+                </dt>
+                <dd class="text-lg font-bold text-foreground" data-numeric>
+                  {formatPsf(areaPsf)}
+                </dd>
+              </div>
+              <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+                <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
+                  Transactions
+                </dt>
+                <dd class="text-lg font-bold text-foreground" data-numeric>
+                  {formatCount(areaVolume)}
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div
+            class="mt-4 hidden overflow-x-auto rounded-lg border border-border bg-card sm:block"
+            role="region"
+            aria-label={`Observed medians for ${area.areaName} and the national baseline`}
+            tabindex="0"
+          >
+            <table class="w-full border-collapse text-left text-sm">
+              <caption class="sr-only">
+                Observed medians for {area.areaName} in{" "}
+                {primarySectionName} and the national baseline
+              </caption>
+              <thead>
+                <tr class="border-b border-border">
+                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Area</th>
+                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Median price</th>
+                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Median PSF</th>
+                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Transactions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-border">
+                  <th scope="row" class="px-4 py-3 font-bold text-foreground">
+                    {area.areaName}
+                  </th>
+                  <td class="px-4 py-3 text-foreground" data-numeric>
+                    {formatPrice(areaPrice)}
+                  </td>
+                  <td class="px-4 py-3 text-foreground" data-numeric>
+                    {formatPsf(areaPsf)}
+                  </td>
+                  <td class="px-4 py-3 text-foreground" data-numeric>
+                    {formatCount(areaVolume)}
+                  </td>
+                </tr>
+                {
+                  area.baselineCompatible && comparison !== null ? (
+                    <tr>
+                      <th scope="row" class="px-4 py-3 font-bold text-foreground">
+                        Singapore
+                      </th>
+                      <td class="px-4 py-3 text-foreground" data-numeric>
+                        {formatPrice(nationalPrice)}
+                      </td>
+                      <td class="px-4 py-3 text-foreground" data-numeric>
+                        {formatPsf(nationalPsf)}
+                      </td>
+                      <td class="px-4 py-3 text-foreground" data-numeric>
+                        {formatCount(nationalVolume)}
+                      </td>
+                    </tr>
+                  ) : null
+                }
+              </tbody>
+            </table>
+          </div>
+          {
+            area.baselineCompatible && comparison !== null ? (
+              <p class="mt-3 text-sm text-muted-foreground">
+                {comparison.difference === 0 ? (
+                  <>This area’s median is the same as the national median.</>
+                ) : (
+                  <>
+                    Difference to the national median:{" "}
+                    <span class="font-bold text-foreground" data-numeric>
+                      {formatPrice(Math.abs(comparison.difference))}
+                    </span>{" "}
+                    ({`${comparison.percentOfBaseline > 0 ? "+" : "−"}${Math.abs(comparison.percentOfBaseline).toFixed(1)}%`}{" "}
+                    of the national median).
+                  </>
+                )}
+              </p>
+            ) : null
+          }
+        </section>
+
+        <aside
+          aria-labelledby="area-limits-heading"
+          class="min-w-0 rounded-lg bg-[hsl(var(--accent))] p-5"
+        >
+          <h2
+            id="area-limits-heading"
+            class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--teal))]"
+          >
+            What this doesn’t say
+          </h2>
+          <p class="mt-3 text-xl font-bold text-foreground">
+            Not a valuation of an individual flat.
+          </p>
+          <ul class="mt-4 space-y-3 text-sm text-foreground">
+            <li>
+              No flat-type, floor, lease or size filters are available in this
+              aggregate view — the median pools every home sold in the area.
+            </li>
+            <li>No confidence interval is published in this asset.</li>
+            <li>
+              Counts describe included records, not complete market capture, and
+              nothing here is a live listing or asking price.
+            </li>
+          </ul>
+        </aside>
+      </div>
+
+      <hr class="mt-10 border-border" />
+
+      <section aria-labelledby="area-availability-heading" class="mt-8 min-w-0">
+        <h2
+          id="area-availability-heading"
+          class="text-2xl font-bold text-foreground"
+        >
+          What else is published for {area.areaName}
+        </h2>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Four joint combinations are in scope for a fieldnote. A combination
+          with no published block is not a zero and is not a flat price.
+        </p>
+        <ul class="mt-4 divide-y divide-border rounded-lg border border-border bg-card">
+          {
+            availabilityRows.map((row) => (
+              <li class="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-baseline sm:justify-between">
+                <p class="text-base font-bold text-foreground">
+                  {row.label}
+                  <span class="ml-2 font-mono text-xs font-normal text-muted-foreground">
+                    {row.sectionName}
+                  </span>
+                </p>
+                {row.price === null ? (
+                  <p class="text-sm text-muted-foreground">
+                    Not published — no transactions published in this joint section
+                  </p>
+                ) : (
+                  <p class="text-sm text-foreground" data-numeric>
+                    {formatPrice(row.price)} · {formatPsf(row.psf)} ·{" "}
+                    {formatCount(row.volume)}
+                  </p>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section
+        aria-labelledby="area-source-heading"
+        class="mt-8 rounded-lg border border-border bg-card p-5"
+      >
+        <h2
+          id="area-source-heading"
+          class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]"
+        >
+          Source &amp; method
+        </h2>
+        <ul class="mt-3 space-y-2 break-words text-sm text-foreground">
+          <li>
+            Area: <code class="font-mono">map_metrics.{primarySectionName}.</code>
+            {area.areaId} · National:{" "}
+            <code class="font-mono">
+              dashboard_overview.stats.{primarySectionName}
+            </code>.
+          </li>
+          <li>
+            Both are medians of observed nominal transaction prices for{" "}
+            {scopeSentence}. No property-only or period-only block is
+            substituted for a missing joint section.
+          </li>
+          <li>
+            Transaction-price median and PSF median are computed independently
+            from different distributions; do not divide one by the other.
+          </li>
+          {
+            area.baselineCompatible && generationShort !== null ? (
+              <li>
+                Publication generation verified at build time:{" "}
+                <code class="font-mono">{generationShort}</code>.
+              </li>
+            ) : (
+              <li>
+                Publication generation not verified, so no cross-asset national
+                comparison is shown.
+              </li>
+            )
+          }
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <script is:inline>
+    // Return-link enhancer only. A static build cannot see the incoming query,
+    // so the anchor renders the plain `/explore` fallback and this script adds
+    // the allow-listed explorer keys when the reader arrived from `/explore`.
+    (() => {
+      const link = document.getElementById("area-return");
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const target = link.dataset.exploreHref;
+      if (typeof target !== "string" || target === "") return;
+
+      const current = new URLSearchParams(window.location.search);
+      if (current.get("from") !== "explore") return;
+
+      const allowed = [
+        "from",
+        "property",
+        "period",
+        "metric",
+        "sort",
+        "direction",
+        "minSales",
+        "search",
+        "area",
+        "page",
+      ];
+      const vocabularies = {
+        property: ["all", "hdb", "ec", "condo"],
+        period: ["whole", "pre_covid", "recent", "year_2025"],
+        metric: ["median_price", "median_psf", "volume"],
+        sort: ["median_price", "median_psf", "volume"],
+        direction: ["asc", "desc"],
+      };
+      const query = new URLSearchParams();
+      for (const key of allowed) {
+        const value = current.get(key);
+        if (value === null || value === "") continue;
+        const vocabulary = vocabularies[key];
+        if (vocabulary && !vocabulary.includes(value)) continue;
+        if (key === "minSales" && value !== "all" && !/^\d{1,6}$/.test(value)) continue;
+        if (key === "page" && !/^\d{1,4}$/.test(value)) continue;
+        if (value.length > 80) continue;
+        query.set(key, value);
+      }
+
+      const qs = query.toString();
+      link.href = qs === "" ? target : target + "?" + qs;
+    })();
+  </script>
+</Layout>

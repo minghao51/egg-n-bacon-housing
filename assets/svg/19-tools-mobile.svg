@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1550" viewBox="0 0 390 1550" role="img" aria-labelledby="title desc">
+<title id="title">Mobile financing tool — explicit assumptions, outputs and privacy</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="390" height="1550" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="390" height="70" rx="0" fill="#172E33"/>
+<text x="20" y="30" font-size="17" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="20" y="51" font-size="10" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="328" y="39" font-size="14" class="bold" style="fill:#FFFEFA">Menu</text>
+<line x1="20" y1="70" x2="370" y2="70" stroke="#CDD2CA" stroke-width="1"/>
+</g>
+<text x="20" y="107" font-size="11" class="label" style="fill:#B64426">RESEARCH / TOOLS</text>
+<text x="20" y="153" font-size="33" class="serif">Make assumptions</text>
+<text x="20" y="191" font-size="33" class="serif">visible.</text>
+<rect x="20" y="225" width="350" height="44" rx="4" fill="#E5EFEB" stroke="#006B65"/>
+<text x="34" y="252" font-size="14" class="bold" style="fill:#006B65">Financing scenario ▾</text>
+<text x="20" y="307" font-size="15" class="">Tampines HDB · 2025 reference</text>
+<text x="20" y="332" font-size="15" class="">S$710,000 observed median.</text>
+<text x="20" y="357" font-size="15" class="">All loan/income inputs are illustrative.</text>
+<rect x="20" y="395" width="192" height="25" rx="2" fill="#F8E8CC"/>
+<text x="29" y="412" font-size="11" class="bold" style="fill:#172E33">Proposed aligned inputs</text>
+<text x="20" y="456" font-size="13" class="bold">Reference price / SGD</text>
+<rect x="20" y="469" width="350" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="33" y="498" font-size="16" class="num">710,000</text>
+<text x="20" y="551" font-size="13" class="bold">Annual household income / SGD</text>
+<rect x="20" y="564" width="350" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="33" y="593" font-size="16" class="num">120,000</text>
+<text x="20" y="646" font-size="13" class="bold">Down payment / percent</text>
+<rect x="20" y="659" width="350" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="33" y="688" font-size="16" class="num">30%</text>
+<text x="20" y="741" font-size="13" class="bold">Loan term / years</text>
+<rect x="20" y="754" width="350" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="33" y="783" font-size="16" class="num">25</text>
+<text x="20" y="836" font-size="13" class="bold">Annual interest / percent</text>
+<rect x="20" y="849" width="350" height="46" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="33" y="878" font-size="16" class="num">3.0%</text>
+<g id="mobile-scenario-result">
+<rect x="20" y="929" width="350" height="178" rx="4" fill="#E5EFEB"/>
+<text x="36" y="966" font-size="29" class="bold">S$2,357 / month</text>
+<text x="36" y="1001" font-size="14" class="muted">Principal + interest · illustrative</text>
+<text x="36" y="1034" font-size="14" class="">Loan: S$497,000 · down: S$213,000</text>
+<text x="36" y="1071" font-size="14" class="bold">23.6% of illustrative monthly income</text>
+</g>
+<rect x="20" y="1138" width="350" height="44" rx="4" fill="#FFFEFA" stroke="#7A8583"/>
+<text x="34" y="1165" font-size="14" class="" style="fill:#172E33">Show interest-rate sensitivity →</text>
+<rect x="20" y="1228" width="350" height="102" rx="4" fill="#F8E8CC"/>
+<text x="36" y="1255" font-size="14" class="">Not a loan offer or eligibility decision.</text>
+<text x="36" y="1279" font-size="14" class="">Excludes fees, insurance, taxes and grants.</text>
+<text x="36" y="1303" font-size="14" class="">No CPF / MSR / TDSR assessment.</text>
+<text x="20" y="1385" font-size="13" class="muted">Keep income local: no URL or analytics logging.</text>
+<text x="20" y="1408" font-size="13" class="muted">Invalid input withholds results; explain the field.</text>
+<text x="20" y="1431" font-size="13" class="muted">Other tools: lease, MRT/CBD, spatial archive.</text>
+<text x="20" y="1503" font-size="12" class="muted">Actual price + illustrative inputs · see desktop 13.</text>
+</svg>

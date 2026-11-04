@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1290" viewBox="0 0 1440 1290" role="img" aria-labelledby="title desc">
+<title id="title">Area detail desktop — Tampines HDB evidence page, proposed route</title><desc id="desc">Sol design specification for Egg n Bacon Housing. Proposed interface, repository aggregate values. See accompanying screen-data-map.md for provenance and implementation status.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172E33}.serif{font-family:Georgia,serif}.muted{fill:#526368}.bold{font-weight:700}.label{font-weight:700;letter-spacing:1.6px}.num{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1440" height="1290" rx="0" fill="#F6F3EC"/>
+<g id="global-navigation">
+<rect x="0" y="0" width="1440" height="85" rx="0" fill="#172E33"/>
+<text x="56" y="36" font-size="24" class="bold" style="fill:#FFFEFA">EGG n BACON</text>
+<text x="57" y="59" font-size="11" class="label" style="fill:#FFFEFA">HOUSING / SINGAPORE</text>
+<text x="465" y="47" font-size="16" class="" style="fill:#FFFEFA">Overview</text>
+<text x="605" y="47" font-size="16" class="bold" style="fill:#FFFEFA">Explore</text>
+<line x1="605" y1="66" x2="690" y2="66" stroke="#D6B764" stroke-width="3"/>
+<text x="725" y="47" font-size="16" class="" style="fill:#FFFEFA">Research</text>
+<text x="860" y="47" font-size="16" class="" style="fill:#FFFEFA">Data &amp; methods</text>
+<text x="1190" y="47" font-size="14" class="" style="fill:#FFFEFA">A housing field guide</text>
+</g>
+<text x="56" y="123" font-size="15" class="bold" style="fill:#006B65">← Back to Explore · HDB / 2025</text>
+<rect x="1130" y="105" width="171" height="25" rx="2" fill="#F8E8CC"/>
+<text x="1139" y="122" font-size="11" class="bold" style="fill:#172E33">New area detail route</text>
+<text x="56" y="177" font-size="12" class="label" style="fill:#B64426">AREA FIELDNOTE / TAMPINES</text>
+<text x="56" y="240" font-size="48" class="serif">The middle sale was S$710,000.</text>
+<text x="56" y="282" font-size="19" class="muted">Tampines · HDB resale · Jan–Dec 2025 · 1,921 observed transactions</text>
+<line x1="56" y1="313" x2="1384" y2="313" stroke="#CDD2CA" stroke-width="1"/>
+<g id="area-comparison">
+<text x="56" y="359" font-size="27" class="bold">Above the national median. Not a like-for-like premium.</text>
+<text x="56" y="397" font-size="18" class="">Tampines’ median was S$82,000 higher than the national HDB median in 2025.</text>
+<text x="56" y="426" font-size="18" class="">This 13.1% difference may reflect the homes sold, not location alone.</text>
+<text x="56" y="452" font-size="12" class="muted">Reconciled design snapshot. National includes 2 Sungei Kadut sales excluded from the area map; production baseline is release-gated.</text>
+<line x1="260" y1="476" x2="260" y2="656" stroke="#CDD2CA" stroke-width="1"/>
+<text x="260" y="683" font-size="13" class="muted" text-anchor="middle">S$0</text>
+<line x1="412" y1="476" x2="412" y2="656" stroke="#CDD2CA" stroke-width="1"/>
+<text x="412" y="683" font-size="13" class="muted" text-anchor="middle">200k</text>
+<line x1="564" y1="476" x2="564" y2="656" stroke="#CDD2CA" stroke-width="1"/>
+<text x="564" y="683" font-size="13" class="muted" text-anchor="middle">400k</text>
+<line x1="716" y1="476" x2="716" y2="656" stroke="#CDD2CA" stroke-width="1"/>
+<text x="716" y="683" font-size="13" class="muted" text-anchor="middle">600k</text>
+<line x1="868" y1="476" x2="868" y2="656" stroke="#CDD2CA" stroke-width="1"/>
+<text x="868" y="683" font-size="13" class="muted" text-anchor="middle">800k</text>
+<line x1="1020" y1="476" x2="1020" y2="656" stroke="#CDD2CA" stroke-width="1"/>
+<text x="1020" y="683" font-size="13" class="muted" text-anchor="middle">1000k</text>
+<text x="56" y="524" font-size="18" class="bold">Singapore HDB</text>
+<rect x="260" y="498" width="477.28000000000003" height="34" rx="0" fill="#526368"/>
+<text x="752.28" y="523" font-size="20" class="bold">S$628,000</text>
+<text x="56" y="615" font-size="18" class="bold">Tampines HDB</text>
+<rect x="260" y="589" width="539.6" height="34" rx="0" fill="#006B65"/>
+<text x="814.6" y="614" font-size="20" class="bold">S$710,000</text>
+<text x="56" y="732" font-size="21" class="bold">Median PSF: S$620 / sq ft</text>
+<text x="488" y="732" font-size="18" class="muted">National HDB: S$603 / sq ft</text>
+<text x="56" y="766" font-size="14" class="muted">Transaction-price median and PSF median are computed independently; do not divide one by the other.</text>
+</g>
+<g id="evidence-sidebar">
+<rect x="1110" y="359" width="274" height="427" rx="4" fill="#E5EFEB"/>
+<text x="1130" y="392" font-size="12" class="label" style="fill:#006B65">WHAT THIS DOESN’T SAY</text>
+<text x="1130" y="431" font-size="23" class="serif">Not a valuation</text>
+<text x="1130" y="462" font-size="23" class="serif">of an individual flat.</text>
+<text x="1130" y="523" font-size="16" class="">No flat-type, floor, lease</text>
+<text x="1130" y="550" font-size="16" class="">or size filters are available</text>
+<text x="1130" y="577" font-size="16" class="">in this aggregate view.</text>
+<text x="1130" y="604" font-size="16" class="">No confidence interval</text>
+<text x="1130" y="631" font-size="16" class="">is published in this asset.</text>
+<text x="1130" y="734" font-size="15" class="bold" style="fill:#006B65">Definitions &amp; source ↓</text>
+</g>
+<line x1="56" y1="815" x2="1384" y2="815" stroke="#CDD2CA" stroke-width="1"/>
+<g id="area-underlying-data">
+<text x="56" y="861" font-size="28" class="serif">The numbers behind this fieldnote</text>
+<text x="56" y="902" font-size="14" class="bold" style="fill:#006B65">2025 · HDB only</text>
+<text x="56" y="946" font-size="12" class="label">AREA</text>
+<text x="475" y="946" font-size="12" class="label">MEDIAN PRICE</text>
+<text x="775" y="946" font-size="12" class="label">MEDIAN PSF</text>
+<text x="1110" y="946" font-size="12" class="label">TRANSACTIONS</text>
+<line x1="56" y1="965" x2="1384" y2="965" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="993" font-size="17" class="bold">Tampines</text>
+<text x="475" y="993" font-size="18" class="num">S$710,000</text>
+<text x="775" y="993" font-size="17" class="num">S$620 / sq ft</text>
+<text x="1110" y="993" font-size="17" class="num">1,921</text>
+<line x1="56" y1="1013" x2="1384" y2="1013" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1041" font-size="17" class="bold">Singapore</text>
+<text x="475" y="1041" font-size="18" class="num">S$628,000</text>
+<text x="775" y="1041" font-size="17" class="num">S$603 / sq ft</text>
+<text x="1110" y="1041" font-size="17" class="num">25,084</text>
+</g>
+<g id="methodology">
+<rect x="56" y="1082" width="1328" height="120" rx="4" fill="#FFFEFA" stroke="#CDD2CA"/>
+<text x="76" y="1114" font-size="12" class="label" style="fill:#B64426">SOURCE &amp; METHOD</text>
+<text x="76" y="1144" font-size="15" class="">Area: map_metrics.year_2025_hdb.TAMPINES · National: dashboard_overview.stats.year_2025_hdb.</text>
+<text x="76" y="1168" font-size="15" class="">Median of observed nominal transaction prices. Counts describe included records, not complete market capture.</text>
+<text x="76" y="1192" font-size="15" class="">Local platinum recalculation matches both price/count pairs. Production still requires compatible generation metadata.</text>
+</g>
+<g id="provenance-footer">
+<line x1="56" y1="1230" x2="1384" y2="1230" stroke="#CDD2CA" stroke-width="1"/>
+<text x="56" y="1258" font-size="12" class="label">EGG n BACON HOUSING</text>
+<text x="445" y="1258" font-size="13" class="muted">Snapshot · Overview export: 24 Oct 2026 · Not live listings or a valuation</text>
+<text x="1240" y="1258" font-size="13" class="bold">Data &amp; methods →</text>
+</g>
+</svg>

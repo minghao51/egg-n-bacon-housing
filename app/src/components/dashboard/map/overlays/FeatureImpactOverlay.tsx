@@ -16,6 +16,8 @@ import type {
   GeoJSONFeatureCollection,
 } from "../../../../types/analytics";
 import { sequentialScale } from "../../../../utils/colorScales";
+import { planningAreaName } from "../../../../utils/geometry";
+import { formatNumber, formatPercent } from "../../../../utils/format";
 
 interface FeatureImpactOverlayProps {
   active: boolean;
@@ -34,8 +36,8 @@ function getMRTStyle(
   data: FeatureImpactData,
   propertyType: "hdb" | "condo" = "hdb",
 ) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.mrt_impact) {
     return {
@@ -48,11 +50,11 @@ function getMRTStyle(
     };
   }
 
-  // Use property-type-specific sensitivity
+  // Use property-type-specific sensitivity; a missing value is not an impact.
   const sensitivity =
     propertyType === "condo"
-      ? areaData.mrt_impact.condo_sensitivity_psf_per_100m || -20
-      : areaData.mrt_impact.hdb_sensitivity_psf_per_100m || -5;
+      ? areaData.mrt_impact.condo_sensitivity_psf_per_100m
+      : areaData.mrt_impact.hdb_sensitivity_psf_per_100m;
 
   // Color scale: -50 to 0 (more negative = higher impact)
   const color = sequentialScale(sensitivity, -50, 0, "#fee090", "#d73027");
@@ -71,8 +73,8 @@ function getMRTStyle(
  * Get school quality style function
  */
 function getSchoolStyle(feature: GeoJSONFeature, data: FeatureImpactData) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.school_quality) {
     return {
@@ -85,7 +87,7 @@ function getSchoolStyle(feature: GeoJSONFeature, data: FeatureImpactData) {
     };
   }
 
-  const score = areaData.school_quality.weighted_score || 5;
+  const score = areaData.school_quality.weighted_score;
   // Color scale: 0 to 10
   const color = sequentialScale(score, 0, 10, "#ffffcc", "#006837");
 
@@ -103,8 +105,8 @@ function getSchoolStyle(feature: GeoJSONFeature, data: FeatureImpactData) {
  * Get amenity score style function
  */
 function getAmenityStyle(feature: GeoJSONFeature, data: FeatureImpactData) {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
 
   if (!areaData?.amenity_score) {
     return {
@@ -117,7 +119,7 @@ function getAmenityStyle(feature: GeoJSONFeature, data: FeatureImpactData) {
     };
   }
 
-  const score = areaData.amenity_score.optimal_combination_score || 5;
+  const score = areaData.amenity_score.optimal_combination_score;
   // Color scale: 0 to 10
   const color = sequentialScale(score, 0, 10, "#ffffcc", "#006837");
 
@@ -139,27 +141,32 @@ function createMRTTooltip(
   data: FeatureImpactData,
   propertyType: "hdb" | "condo" = "hdb",
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.mrt_impact) {
-    return `<b>${areaName}</b><br>No MRT impact data available`;
+    return `<b>${areaLabel}</b><br>No MRT impact data available`;
   }
 
   const { mrt_impact } = areaData;
-  const sensitivity =
+  const rawSensitivity =
     propertyType === "condo"
-      ? mrt_impact.condo_sensitivity_psf_per_100m || -20
-      : mrt_impact.hdb_sensitivity_psf_per_100m || -5;
+      ? mrt_impact.condo_sensitivity_psf_per_100m
+      : mrt_impact.hdb_sensitivity_psf_per_100m;
+  const sensitivityLabel =
+    rawSensitivity === null || rawSensitivity === undefined
+      ? "N/A"
+      : `${rawSensitivity.toFixed(1)} PSF/100m`;
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">MRT Impact (${propertyType.toUpperCase()})</h4>
-      <p><b>Sensitivity:</b> ${sensitivity.toFixed(1)} PSF/100m</p>
-      <p><b>CBD Distance:</b> ${mrt_impact.cbd_distance_km?.toFixed(1) || "N/A"} km</p>
-      <p><b>CBD Explains Variance:</b> ${(mrt_impact.cbd_explains_variance * 100).toFixed(1) || "N/A"}%</p>
-      <p><b>MRT vs CBD Ratio:</b> ${(mrt_impact.mrt_vs_cbd_ratio * 100).toFixed(1) || "N/A"}%</p>
+      <p><b>Sensitivity:</b> ${sensitivityLabel}</p>
+      <p><b>CBD Distance:</b> ${formatNumber(mrt_impact.cbd_distance_km, 1) === "N/A" ? "N/A" : `${formatNumber(mrt_impact.cbd_distance_km, 1)} km`}</p>
+      <p><b>CBD Explains Variance:</b> ${formatPercent(mrt_impact.cbd_explains_variance)}</p>
+      <p><b>MRT vs CBD Ratio:</b> ${formatPercent(mrt_impact.mrt_vs_cbd_ratio)}</p>
     </div>
   `;
 }
@@ -171,24 +178,25 @@ function createSchoolTooltip(
   feature: GeoJSONFeature,
   data: FeatureImpactData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.school_quality) {
-    return `<b>${areaName}</b><br>No school quality data available`;
+    return `<b>${areaLabel}</b><br>No school quality data available`;
   }
 
   const { school_quality } = areaData;
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">School Quality</h4>
       <p><b>Primary School Score:</b> ${school_quality.primary_school_score?.toFixed(1) || "N/A"}/10</p>
       <p><b>Secondary School Score:</b> ${school_quality.secondary_school_score?.toFixed(1) || "N/A"}/10</p>
       <p><b>Weighted Score:</b> ${school_quality.weighted_score?.toFixed(1) || "N/A"}/10</p>
-      <p><b>Top Tier Schools:</b> ${school_quality.num_top_tier_schools || 0}</p>
-      <p><b>Predictive Power:</b> ${(school_quality.predictive_power * 100).toFixed(1) || "N/A"}%</p>
+      <p><b>Top Tier Schools:</b> ${school_quality.num_top_tier_schools ?? "N/A"}</p>
+      <p><b>Predictive Power:</b> ${formatPercent(school_quality.predictive_power)}</p>
     </div>
   `;
 }
@@ -200,18 +208,19 @@ function createAmenityTooltip(
   feature: GeoJSONFeature,
   data: FeatureImpactData,
 ): string {
-  const areaName = feature.properties?.pln_area_n;
-  const areaData = data?.planning_areas?.[areaName];
+  const areaName = planningAreaName(feature.properties);
+  const areaData = areaName ? data?.planning_areas?.[areaName] : undefined;
+  const areaLabel = areaName ?? "Unknown planning area";
 
   if (!areaData?.amenity_score) {
-    return `<b>${areaName}</b><br>No amenity score data available`;
+    return `<b>${areaLabel}</b><br>No amenity score data available`;
   }
 
   const { amenity_score } = areaData;
 
   return `
     <div class="text-sm">
-      <h3 class="font-bold">${areaName}</h3>
+      <h3 class="font-bold">${areaLabel}</h3>
       <h4 class="font-semibold mt-2">Amenity Scores</h4>
       <p><b>Hawker Accessibility:</b> ${amenity_score.hawker_center_accessibility?.toFixed(1) || "N/A"}/10</p>
       <p><b>Mall Accessibility:</b> ${amenity_score.mall_accessibility?.toFixed(1) || "N/A"}/10</p>

@@ -1,0 +1,208 @@
+{
+  "inspection": "Local aggregate-only inspection; no source records copied",
+  "unified_rows": 1234928,
+  "missing_coordinates": 11637,
+  "missing_planning_area": 11637,
+  "nonnull_yield_rows": 152951,
+  "nonnull_yield_by_type": {
+    "hdb": 152951
+  },
+  "dashboard_overview_sha256": "b49a518d260d2db655c2e0c12b20a23d6eecf429448e9ae0f552ba8de2d102eb",
+  "dashboard_trends_sha256": "2857e6247c449babad44a8d69f2e40fd2fe5496a21145588399d26e93d774139",
+  "map_metrics_sha256": "0a2b8a0de2274a9cc6dabe3587be208f88f44aebc2ea6c2187045fb04ed0b9fa",
+  "overview_metadata": {
+    "generated_at": "2026-10-24T21:26:26.831603",
+    "total_records": 1234928,
+    "date_range": {
+      "start": "1990-01-01",
+      "end": "2026-10-01"
+    }
+  },
+  "national_2025": {
+    "year_2025": {
+      "count": 78796,
+      "median_price": 1465000,
+      "median_psf": 1632,
+      "volume": 78796
+    },
+    "year_2025_hdb": {
+      "count": 25084,
+      "median_price": 628000,
+      "median_psf": 603,
+      "volume": 25084
+    },
+    "year_2025_ec": {
+      "count": 6209,
+      "median_price": 1578000,
+      "median_psf": 1530,
+      "volume": 6209
+    },
+    "year_2025_condo": {
+      "count": 47503,
+      "median_price": 1938952,
+      "median_psf": 2116,
+      "volume": 47503
+    }
+  },
+  "area_2025_hdb": {
+    "ANG MO KIO": {
+      "median_price": 499000,
+      "median_psf": 583,
+      "volume": 971
+    },
+    "BEDOK": {
+      "median_price": 548000,
+      "median_psf": 591,
+      "volume": 1208
+    },
+    "BISHAN": {
+      "median_price": 849000,
+      "median_psf": 756,
+      "volume": 376
+    },
+    "BUKIT BATOK": {
+      "median_price": 600000,
+      "median_psf": 599,
+      "volume": 1304
+    },
+    "BUKIT MERAH": {
+      "median_price": 785000,
+      "median_psf": 810,
+      "volume": 933
+    },
+    "BUKIT PANJANG": {
+      "median_price": 610000,
+      "median_psf": 580,
+      "volume": 798
+    },
+    "BUKIT TIMAH": {
+      "median_price": 945500,
+      "median_psf": 821,
+      "volume": 60
+    },
+    "CHANGI": {
+      "median_price": 360000,
+      "median_psf": 502,
+      "volume": 8
+    },
+    "CHOA CHU KANG": {
+      "median_price": 592888,
+      "median_psf": 513,
+      "volume": 1027
+    },
+    "CLEMENTI": {
+      "median_price": 590000,
+      "median_psf": 621,
+      "volume": 551
+    },
+    "DOWNTOWN CORE": {
+      "median_price": 812500,
+      "median_psf": 920,
+      "volume": 6
+    },
+    "GEYLANG": {
+      "median_price": 570000,
+      "median_psf": 621,
+      "volume": 638
+    },
+    "HOUGANG": {
+      "median_price": 615000,
+      "median_psf": 611,
+      "volume": 1311
+    },
+    "JURONG EAST": {
+      "median_price": 524000,
+      "median_psf": 545,
+      "volume": 482
+    },
+    "JURONG WEST": {
+      "median_price": 568000,
+      "median_psf": 521,
+      "volume": 1591
+    },
+    "KALLANG": {
+      "median_price": 761500,
+      "median_psf": 742,
+      "volume": 588
+    },
+    "MARINE PARADE": {
+      "median_price": 539750,
+      "median_psf": 685,
+      "volume": 162
+    },
+    "NOVENA": {
+      "median_price": 630000,
+      "median_psf": 652,
+      "volume": 201
+    },
+    "OUTRAM": {
+      "median_price": 808000,
+      "median_psf": 927,
+      "volume": 105
+    },
+    "PASIR RIS": {
+      "median_price": 715000,
+      "median_psf": 555,
+      "volume": 626
+    },
+    "PUNGGOL": {
+      "median_price": 672000,
+      "median_psf": 686,
+      "volume": 1538
+    },
+    "QUEENSTOWN": {
+      "median_price": 816888,
+      "median_psf": 920,
+      "volume": 599
+    },
+    "ROCHOR": {
+      "median_price": 572500,
+      "median_psf": 705,
+      "volume": 62
+    },
+    "SEMBAWANG": {
+      "median_price": 620000,
+      "median_psf": 631,
+      "volume": 1191
+    },
+    "SENGKANG": {
+      "median_price": 660888,
+      "median_psf": 641,
+      "volume": 1905
+    },
+    "SERANGOON": {
+      "median_price": 669444,
+      "median_psf": 657,
+      "volume": 404
+    },
+    "TAMPINES": {
+      "median_price": 710000,
+      "median_psf": 620,
+      "volume": 1921
+    },
+    "TANGLIN": {
+      "median_price": 810000,
+      "median_psf": 694,
+      "volume": 2
+    },
+    "TOA PAYOH": {
+      "median_price": 785000,
+      "median_psf": 727,
+      "volume": 1063
+    },
+    "WOODLANDS": {
+      "median_price": 590000,
+      "median_psf": 531,
+      "volume": 1748
+    },
+    "YISHUN": {
+      "median_price": 547000,
+      "median_psf": 577,
+      "volume": 1703
+    }
+  },
+  "eligible_areas_at_150": 25,
+  "thin_areas": 6,
+  "tampines_vs_national_price_difference_sgd": 82000,
+  "tampines_vs_national_price_difference_pct": 13.05732484076434
+}

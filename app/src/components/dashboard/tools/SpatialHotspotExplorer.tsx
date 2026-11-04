@@ -1,29 +1,38 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { Persona } from "../PersonaSelector";
 import TrendsMap from "../TrendsMap";
-
-interface Cluster {
-  cluster_type: "HH" | "LH" | "HL" | "LL";
-  towns: string[];
-  avg_appreciation_5y: number;
-  avg_price_psf: number;
-  persistence_probability: number;
-  risk_level: "Low" | "Medium" | "High";
-}
-
-interface SpatialData {
-  clusters: Cluster[];
-  analysis_date: string;
-  methodology: string;
-  town_clusters?: Record<string, string>; // town -> cluster type (HH, LH, HL, LL)
-}
+import type {
+  HotspotClusterType,
+  HotspotPortfolioPersona,
+  SpatialHotspotsData,
+  SpatialHotspotTown,
+} from "../../../types/spatial-hotspots";
 
 interface SpatialHotspotExplorerProps {
-  data: SpatialData;
+  data: SpatialHotspotsData;
   persona: Persona;
 }
 
-const CLUSTER_CONFIG = {
+const NOT_AVAILABLE = "Not available in this published snapshot";
+
+const CLUSTER_TYPES: HotspotClusterType[] = ["HH", "HL", "LH", "LL"];
+
+const PORTFOLIO_PERSONAS: HotspotPortfolioPersona[] = [
+  "investor",
+  "first-time-buyer",
+  "upgrader",
+];
+
+interface ClusterConfig {
+  label: string;
+  color: string;
+  textColor: string;
+  badgeColor: string;
+  description: string;
+  icon: string;
+}
+
+const CLUSTER_CONFIG: Record<HotspotClusterType, ClusterConfig> = {
   HH: {
     label: "High-High",
     color:
@@ -78,6 +87,50 @@ const RISK_TOLERANCE = {
   high: { label: "High", adjustFactor: 1.3 },
 };
 
+function isClusterType(value: unknown): value is HotspotClusterType {
+  return CLUSTER_TYPES.some((type) => type === value);
+}
+
+function isPortfolioPersona(value: string): value is HotspotPortfolioPersona {
+  return PORTFOLIO_PERSONAS.some((persona) => persona === value);
+}
+
+function isHorizon(value: string): value is keyof typeof INVESTMENT_HORIZONS {
+  return Object.prototype.hasOwnProperty.call(INVESTMENT_HORIZONS, value);
+}
+
+function isRiskTolerance(value: string): value is keyof typeof RISK_TOLERANCE {
+  return Object.prototype.hasOwnProperty.call(RISK_TOLERANCE, value);
+}
+
+/** Read a town's cluster from `town_clusters`, falling back to its town record. */
+function clusterTypeForTown(
+  data: SpatialHotspotsData,
+  town: string,
+): HotspotClusterType | null {
+  const fromMap = data.town_clusters[town];
+  if (isClusterType(fromMap)) {
+    return fromMap;
+  }
+  const record = data.towns.find((entry) => entry.town === town);
+  if (record && isClusterType(record.cluster)) {
+    return record.cluster;
+  }
+  return null;
+}
+
+function formatRiskLevel(level: string): string {
+  return level.length > 0 ? level.charAt(0).toUpperCase() + level.slice(1) : "";
+}
+
+function NotAvailable() {
+  return (
+    <span className="text-xs text-gray-500 dark:text-gray-400">
+      {NOT_AVAILABLE}
+    </span>
+  );
+}
+
 export default function SpatialHotspotExplorer({
   data,
   persona,
@@ -88,103 +141,71 @@ export default function SpatialHotspotExplorer({
   const [riskTolerance, setRiskTolerance] =
     useState<keyof typeof RISK_TOLERANCE>("medium");
 
-  // Get all towns
+  // Get all towns from the published `towns` records
   const towns = useMemo(() => {
-    const allTowns = data.clusters.flatMap((c) => c.towns);
+    const allTowns = data.towns
+      .map((record) => record.town)
+      .filter((town) => town.trim().length > 0);
     const uniqueTowns = Array.from(new Set(allTowns)).sort();
     return ["All Towns", ...uniqueTowns];
-  }, [data.clusters]);
+  }, [data.towns]);
 
-  // Filter clusters by town
-  const filteredClusters = useMemo(() => {
-    if (selectedTown === "All Towns") {
-      return data.clusters;
-    }
-    return data.clusters.filter((c) => c.towns.includes(selectedTown));
-  }, [data.clusters, selectedTown]);
+  const selectedTownRecord = useMemo<SpatialHotspotTown | null>(() => {
+    if (selectedTown === "All Towns") return null;
+    return data.towns.find((record) => record.town === selectedTown) ?? null;
+  }, [data.towns, selectedTown]);
 
   // Get selected town's cluster
-  const selectedCluster = useMemo(() => {
+  const selectedClusterType = useMemo<HotspotClusterType | null>(() => {
     if (selectedTown === "All Towns") return null;
-    return data.clusters.find((c) => c.towns.includes(selectedTown)) || null;
-  }, [data.clusters, selectedTown]);
+    return clusterTypeForTown(data, selectedTown);
+  }, [data, selectedTown]);
 
-  // Calculate expected returns
+  // Cluster membership, grouped from the published town records
+  const clusterSummaries = useMemo(() => {
+    return CLUSTER_TYPES.map((type) => ({
+      type,
+      townCount: data.towns.filter((record) => record.cluster === type).length,
+    })).filter((summary) => summary.townCount > 0);
+  }, [data.towns]);
+
+  const visibleClusterSummaries = useMemo(() => {
+    if (selectedTown === "All Towns") return clusterSummaries;
+    if (!selectedClusterType) return [];
+    return clusterSummaries.filter(
+      (summary) => summary.type === selectedClusterType,
+    );
+  }, [clusterSummaries, selectedClusterType, selectedTown]);
+
+  // Calculate expected returns from the published appreciation rate
   const calculateExpectedReturn = (
-    cluster: Cluster,
+    appreciationRate: number,
     years: number,
     riskFactor: number,
   ) => {
-    const adjustedRate = cluster.avg_appreciation_5y * riskFactor;
+    const adjustedRate = appreciationRate * riskFactor;
     const totalReturn = Math.pow(1 + adjustedRate / 100, years) - 1;
     return { adjustedRate, totalReturn };
   };
 
-  // Get portfolio allocation by persona
-  const getPortfolioAllocation = () => {
-    const riskFactor = RISK_TOLERANCE[riskTolerance].adjustFactor;
-    const years = INVESTMENT_HORIZONS[horizon].years;
-
-    if (persona === "investor") {
-      return {
-        HH: 50,
-        HL: 30,
-        LH: 15,
-        LL: 5,
-        reasoning:
-          "Focus on HH hotspots for growth, HL pioneers for upside potential. Minimize LL exposure.",
-      };
-    } else if (persona === "first-time-buyer") {
-      return {
-        HH: 30,
-        HL: 20,
-        LH: 35,
-        LL: 15,
-        reasoning:
-          "Balanced approach: LH coldspots near hotspots offer affordability with future upside. Prioritize stability over maximum growth.",
-      };
-    } else if (persona === "all") {
-      return {
-        HH: 35,
-        HL: 25,
-        LH: 25,
-        LL: 15,
-        reasoning:
-          "Use this as a neutral starting mix: keep exposure across stable hotspots, transition zones, and value pockets before choosing a narrower strategy.",
-      };
-    } else {
-      return {
-        HH: 40,
-        HL: 25,
-        LH: 25,
-        LL: 10,
-        reasoning:
-          "Upgrade strategy: Target HH for appreciation, HL for value-add opportunities. Limited LL exposure for diversification.",
-      };
+  // Get portfolio allocation by persona from the published asset
+  const portfolioAllocation = useMemo(() => {
+    if (!isPortfolioPersona(persona)) {
+      return null;
     }
-  };
-
-  const portfolio = getPortfolioAllocation();
-
-  // Calculate cluster summary stats
-  const clusterSummary = useMemo(() => {
-    return filteredClusters.map((cluster) => {
-      const { adjustedRate, totalReturn } = calculateExpectedReturn(
-        cluster,
-        INVESTMENT_HORIZONS[horizon].years,
-        RISK_TOLERANCE[riskTolerance].adjustFactor,
-      );
-      return {
-        type: cluster.cluster_type,
-        avgAppreciation: cluster.avg_appreciation_5y,
-        townCount: cluster.towns.length,
-        adjustedRate,
-        totalReturn,
-        persistence: cluster.persistence_probability,
-        risk: cluster.risk_level,
-      };
-    });
-  }, [filteredClusters, horizon, riskTolerance]);
+    const allocation = data.portfolio_allocation[persona];
+    if (!allocation) {
+      return null;
+    }
+    const entries = CLUSTER_TYPES.map((type) => ({
+      type,
+      value: allocation[type],
+    })).filter(
+      (entry): entry is { type: HotspotClusterType; value: number } =>
+        typeof entry.value === "number",
+    );
+    return entries.length > 0 ? entries : null;
+  }, [data.portfolio_allocation, persona]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -193,7 +214,7 @@ export default function SpatialHotspotExplorer({
         <h4 className="font-medium mb-3">Spatial Clusters by Town</h4>
         <div className="h-[calc(100%-2rem)] border border-border rounded-lg overflow-hidden">
           <TrendsMap
-            metricData={data.town_clusters || {}}
+            metricData={data.town_clusters}
             metricLabel="Cluster Type"
             colorScale="diverging"
             showLegend={true}
@@ -210,8 +231,9 @@ export default function SpatialHotspotExplorer({
           </h3>
           <ul className="text-sm text-purple-800 dark:text-purple-200 space-y-1">
             <li>
-              • {data.clusters.length} clusters identified using Moran's I
-              spatial autocorrelation
+              • {clusterSummaries.length} cluster types across{" "}
+              {data.towns.length} published town records (Moran's I
+              classification)
             </li>
             <li>
               • HH = Hotspots (high appreciation), LL = Coldspots (low
@@ -245,7 +267,9 @@ export default function SpatialHotspotExplorer({
             </label>
             <select
               value={horizon}
-              onChange={(e) => setHorizon(e.target.value as any)}
+              onChange={(e) => {
+                if (isHorizon(e.target.value)) setHorizon(e.target.value);
+              }}
               className="w-full px-3 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600"
             >
               {Object.entries(INVESTMENT_HORIZONS).map(([key, { label }]) => (
@@ -262,7 +286,10 @@ export default function SpatialHotspotExplorer({
             </label>
             <select
               value={riskTolerance}
-              onChange={(e) => setRiskTolerance(e.target.value as any)}
+              onChange={(e) => {
+                if (isRiskTolerance(e.target.value))
+                  setRiskTolerance(e.target.value);
+              }}
               className="w-full px-3 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600"
             >
               {Object.entries(RISK_TOLERANCE).map(([key, { label }]) => (
@@ -275,47 +302,48 @@ export default function SpatialHotspotExplorer({
         </div>
 
         {/* Selected Town Details */}
-        {selectedCluster && (
+        {selectedTownRecord && selectedClusterType && (
           <div
             className={`border rounded-lg p-4 ${
-              CLUSTER_CONFIG[selectedCluster.cluster_type].color
+              CLUSTER_CONFIG[selectedClusterType].color
             }`}
           >
             <div className="flex items-start justify-between mb-3">
               <div>
                 <div className="text-sm font-medium mb-1">
-                  {selectedTown} -{" "}
-                  {CLUSTER_CONFIG[selectedCluster.cluster_type].label} Cluster
+                  {selectedTownRecord.town} -{" "}
+                  {CLUSTER_CONFIG[selectedClusterType].label} Cluster
                 </div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">
-                  {CLUSTER_CONFIG[selectedCluster.cluster_type].description}
+                  {selectedTownRecord.cluster_description ??
+                    CLUSTER_CONFIG[selectedClusterType].description}
                 </div>
               </div>
               <div className="text-3xl">
-                {CLUSTER_CONFIG[selectedCluster.cluster_type].icon}
+                {CLUSTER_CONFIG[selectedClusterType].icon}
               </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                  5-Year Appreciation
+                  Appreciation Rate
                 </div>
                 <div
                   className={`text-xl font-bold ${
-                    CLUSTER_CONFIG[selectedCluster.cluster_type].textColor
+                    CLUSTER_CONFIG[selectedClusterType].textColor
                   }`}
                 >
-                  {selectedCluster.avg_appreciation_5y.toFixed(1)}%
+                  {selectedTownRecord.appreciation_rate.toFixed(1)}%
                 </div>
               </div>
 
               <div>
                 <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                  Avg Price PSF
+                  Median Price
                 </div>
                 <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  ${selectedCluster.avg_price_psf.toLocaleString()}
+                  ${selectedTownRecord.median_price.toLocaleString()}
                 </div>
               </div>
 
@@ -324,7 +352,10 @@ export default function SpatialHotspotExplorer({
                   Persistence Probability
                 </div>
                 <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  {(selectedCluster.persistence_probability * 100).toFixed(0)}%
+                  {(selectedTownRecord.persistence_probability * 100).toFixed(
+                    0,
+                  )}
+                  %
                 </div>
               </div>
 
@@ -333,7 +364,7 @@ export default function SpatialHotspotExplorer({
                   Risk Level
                 </div>
                 <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  {selectedCluster.risk_level}
+                  {formatRiskLevel(selectedTownRecord.risk_level)}
                 </div>
               </div>
             </div>
@@ -351,7 +382,7 @@ export default function SpatialHotspotExplorer({
                   </div>
                   <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
                     {calculateExpectedReturn(
-                      selectedCluster,
+                      selectedTownRecord.appreciation_rate,
                       INVESTMENT_HORIZONS[horizon].years,
                       RISK_TOLERANCE[riskTolerance].adjustFactor,
                     ).adjustedRate.toFixed(2)}
@@ -365,7 +396,7 @@ export default function SpatialHotspotExplorer({
                   <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
                     {(
                       calculateExpectedReturn(
-                        selectedCluster,
+                        selectedTownRecord.appreciation_rate,
                         INVESTMENT_HORIZONS[horizon].years,
                         RISK_TOLERANCE[riskTolerance].adjustFactor,
                       ).totalReturn * 100
@@ -374,6 +405,16 @@ export default function SpatialHotspotExplorer({
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Selected town without a published cluster assignment */}
+        {selectedTown !== "All Towns" && !selectedClusterType && (
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div className="text-sm font-medium mb-1">{selectedTown}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400">
+              This town has no cluster assignment in the published snapshot.
             </div>
           </div>
         )}
@@ -391,35 +432,45 @@ export default function SpatialHotspotExplorer({
                       : "Upgraders"
                 }`}
           </h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-            {Object.entries(portfolio).map(([key, value]) =>
-              typeof value === "number" ? (
-                <div
-                  key={key}
-                  className={`p-3 rounded-lg border-2 ${
-                    key === "HH"
-                      ? "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/10"
-                      : key === "HL"
-                        ? "border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/10"
-                        : key === "LH"
-                          ? "border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/10"
-                          : "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/10"
-                  }`}
-                >
-                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                    {key}{" "}
-                    {CLUSTER_CONFIG[key as keyof typeof CLUSTER_CONFIG].label}
+          {portfolioAllocation ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                {portfolioAllocation.map(({ type, value }) => (
+                  <div
+                    key={type}
+                    className={`p-3 rounded-lg border-2 ${
+                      type === "HH"
+                        ? "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/10"
+                        : type === "HL"
+                          ? "border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/10"
+                          : type === "LH"
+                            ? "border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/10"
+                            : "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/10"
+                    }`}
+                  >
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                      {type} {CLUSTER_CONFIG[type].label}
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      {value}%
+                    </div>
                   </div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {value}%
-                  </div>
-                </div>
-              ) : null,
-            )}
-          </div>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            <span className="font-medium">Strategy:</span> {portfolio.reasoning}
-          </p>
+                ))}
+              </div>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-medium">Allocation:</span> published for
+                this persona in the current snapshot. The snapshot does not
+                publish a rationale for these weights, so none is shown.
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="font-medium">Strategy:</span> {NOT_AVAILABLE}.
+              This snapshot publishes cluster allocations for the investor,
+              first-time-buyer and upgrader personas only, so no neutral mix is
+              shown here.
+            </p>
+          )}
         </div>
 
         {/* Cluster Summary Table */}
@@ -449,7 +500,7 @@ export default function SpatialHotspotExplorer({
                 </tr>
               </thead>
               <tbody>
-                {clusterSummary.map((summary) => (
+                {visibleClusterSummaries.map((summary) => (
                   <tr
                     key={summary.type}
                     className={`border-b border-gray-100 dark:border-gray-800 ${
@@ -463,38 +514,50 @@ export default function SpatialHotspotExplorer({
                           {summary.type} {CLUSTER_CONFIG[summary.type].label}
                         </span>
                       </div>
+                      {data.cluster_descriptions[summary.type] ? (
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          {data.cluster_descriptions[summary.type]}
+                        </div>
+                      ) : null}
                     </td>
                     <td className="text-right py-2 px-3">
                       {summary.townCount}
                     </td>
                     <td className="text-right py-2 px-3">
-                      {summary.avgAppreciation.toFixed(1)}%
+                      <NotAvailable />
                     </td>
                     <td className="text-right py-2 px-3">
-                      {summary.adjustedRate.toFixed(2)}%
-                    </td>
-                    <td className="text-right py-2 px-3 font-medium">
-                      {(summary.totalReturn * 100).toFixed(1)}%
+                      <NotAvailable />
                     </td>
                     <td className="text-right py-2 px-3">
-                      {(summary.persistence * 100).toFixed(0)}%
+                      <NotAvailable />
                     </td>
-                    <td className="text-right py-2 px-3">{summary.risk}</td>
+                    <td className="text-right py-2 px-3">
+                      <NotAvailable />
+                    </td>
+                    <td className="text-right py-2 px-3">
+                      <NotAvailable />
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            This snapshot publishes town-level cluster assignments only. Cluster
+            averages for appreciation, persistence and risk are{" "}
+            {NOT_AVAILABLE.toLowerCase()}.
+          </p>
         </div>
 
         {/* Methodology Note */}
         <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           <h4 className="font-medium mb-2">📊 Methodology</h4>
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            {data.methodology}
+            Methodology notes are not available in this published snapshot.
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            Analysis date: {data.analysis_date}
+            Analysis date: not available in this published snapshot.
           </p>
         </div>
       </div>
