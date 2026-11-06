@@ -1,6 +1,6 @@
 # S10 implementation report — integration, regression and release readiness
 
-S10 closes the shipping path: the Pages-base build is exercised under its real prefix, the remaining type debt is cleared, charts/tables that had no empty state do, modal dialogs share one keyboard contract, and a failed background refresh can no longer hide published data. An independent S8–S10 audit then tightened the evidence wording, the payload measurement and the release smoke checks. Nothing is committed or deployed; the release gate below is evidence for the current working tree only.
+S10 closes the shipping path: the Pages-base build is exercised under its real prefix, the remaining type debt is cleared, charts/tables that had no empty state do, modal dialogs share one keyboard contract, and a failed background refresh can no longer hide published data. An independent S8–S10 audit then tightened the evidence wording, the payload measurement and the release smoke checks. The work is committed and pushed to `main` (`52c901b`, ignore follow-up `6aef15a`); deployment/CDN verification was not performed from this environment.
 
 ## 1. Defects fixed
 
@@ -86,7 +86,7 @@ The catalog index is the outlier: its table island receives every dataset row as
 | `uv run pytest tests/test_export_app_data.py --no-cov -q`  | **44 passed** (no exporter change)                                                                  |
 | `uv run ruff check`                                        | clean                                                                                               |
 | Prettier                                                   | applied to every changed JS/TS/TSX/JSON/Markdown/workflow file; `.astro` remains outside the hook   |
-| `git status`                                               | no published asset or `bun.lock` change; nothing committed                                          |
+| `git status`                                               | no published asset or `bun.lock` change; work committed and pushed, worktree clean                  |
 
 Deliberate non-claims: the production GitHub Pages CDN, live map-tile availability and the deployed workflow itself were not exercised from this environment. Their local prerequisites (Pages build, prefixed assets, deploy greps) were verified. The report's pass counts are local run results, not committed logs.
 
@@ -106,6 +106,7 @@ Resolved by S10 and its audit pass: the remaining `astro check` debt, S8-F5 (`Pe
 
 ## 7. Release stance
 
-- All planned slices (S0–S10) are implemented in the working tree; **nothing is committed, deployed, or regenerated**.
+- All planned slices (S0–S10) are implemented and pushed to `main` (`52c901b`, ignore follow-up `6aef15a`).
+- No deployment/CDN verification and no data/model regeneration were performed from this environment.
 - No scoring, eligibility, recommendation or model-definition boundary changed.
-- The next actions require explicit approval: commit/PR, GitHub Pages deployment, or a data/model refresh.
+- The next actions require explicit approval: GitHub Pages deployment verification, or a data/model refresh.

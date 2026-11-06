@@ -2,7 +2,7 @@
 
 Status of the redesign defined in [`assets/svg/implementation-plan.md`](../../assets/svg/implementation-plan.md). Read this first; the plan is the contract, this file is the ledger.
 
-Branch: `main` — slices S0–S6 are merged (PR #2, merge commit `8ab248a`); S7–S10 are implemented on the working tree and nothing is committed or deployed. Release evidence is in [s10-report.md](s10-report.md). Published data assets were regenerated through **2026-10** in that merge (`app/public/data/*.json.gz` plus `dashboard-release.json`, generation `0e1013ee485f`).
+Branch: `main` — slices S0–S6 are merged (PR #2, merge commit `8ab248a`); S7–S10 are implemented and pushed (`52c901b`, ignore follow-up `6aef15a`). GitHub Pages deployment is triggered by the push but has not been independently verified from this environment. Release evidence is in [s10-report.md](s10-report.md). Published data assets were regenerated through **2026-10** in that merge (`app/public/data/*.json.gz` plus `dashboard-release.json`, generation `0e1013ee485f`).
 
 ## Slice status
 
@@ -140,16 +140,17 @@ The S9 implementation report lists these in `§4 Gaps`. None blocks S10.
 
 The S10 implementation report lists these in `§6`. None of them is a failing release check.
 
-| ID     | Task                                                               | Suggested owner   | Notes                                                                                                                     |
-| ------ | ------------------------------------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| S10-F1 | Catalog index sends 825 kB of SSR island props (every dataset row) | frontend          | Server-render the table or pass only visible rows; needs a pagination/filter contract, not a silent shrink.               |
-| S10-F2 | No per-route JS budget; `/dashboard` static graph is 181.8 kB gzip | performance       | Measure before adding another chart library or island.                                                                    |
-| S10-F3 | Full Playwright suite still runs only at the root base             | integration       | The Pages-base spec covers assets, hydration, links and deep links; a base-aware `goto` fixture would allow the full run. |
-| S10-F4 | GitHub Actions are referenced by mutable tags                      | CI / supply chain | Pin to reviewed commit SHAs; do not invent them.                                                                          |
-| S10-F5 | `refreshError` is only rendered by the leaderboard                 | frontend          | It is the only SSR-backed fetching surface; new ones must adopt the same banner.                                          |
-| S10-F6 | The deployed Pages smoke step cannot be run locally                | release owner     | The workflow's greps and base-asset check pass against the local Pages build.                                             |
+| ID     | Task                                                               | Suggested owner   | Notes                                                                                                                                       |
+| ------ | ------------------------------------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| S10-F1 | Catalog index sends 825 kB of SSR island props (every dataset row) | frontend          | Server-render the table or pass only visible rows; needs a pagination/filter contract, not a silent shrink.                                 |
+| S10-F2 | No per-route JS budget; `/dashboard` static graph is 181.8 kB gzip | performance       | Measure before adding another chart library or island.                                                                                      |
+| S10-F3 | Full Playwright suite still runs only at the root base             | integration       | The Pages-base spec covers assets, hydration, links and deep links; a base-aware `goto` fixture would allow the full run.                   |
+| S10-F4 | GitHub Actions are referenced by mutable tags                      | CI / supply chain | Pin to reviewed commit SHAs; do not invent them.                                                                                            |
+| S10-F5 | `refreshError` is only rendered by the leaderboard                 | frontend          | It is the only SSR-backed fetching surface; new ones must adopt the same banner.                                                            |
+| S10-F6 | The deployed Pages smoke step cannot be run locally                | release owner     | The workflow's greps and base-asset check pass against the local Pages build.                                                               |
+| S10-F7 | The catalog audit observation is a recorded constant               | data boundary     | `app/tests/unit/catalog-audit.test.ts` pins both visible counts, so regenerating either side fails until the constant and copy are updated. |
 
-Resolved by S10: the 3 remaining `astro check` errors and S8-F5 (`PersonaHeader.tsx`).
+Resolved by S10 and its audit pass: the 3 remaining `astro check` errors, S8-F5 (`PersonaHeader.tsx`), reference-asset failure conflation, MRT/CBD term disclosure, the spatial-warning predicate, payload byte/lazy accuracy, deep-route smoke coverage, the root-relative no-JS link, server path containment, filtered schema state and `aria-sort`.
 
 ## Remaining slices — entry points
 
@@ -163,7 +164,7 @@ Shipped as `/research/map` + `/dashboard/map` wrapper over `components/research-
 
 ### S10 — integration, regression and release readiness (delivered)
 
-Root and Pages-base previews, the full root Playwright suite (198 pass, 8 Pages-base skips) and the focused Pages-base suite (8 pass). S10 cleared the remaining `astro check` errors (0/0/22), fixed stale deploy/CI smoke checks, added the frontend CI job, a shared modal keyboard contract with a dialog stack, a visible failed-refresh state for SSR-backed data, and a filtered-empty schema state. An independent S8–S10 audit then fixed reference-asset failure wording, the MRT/CBD CBD term, the spatial-warning predicate, payload byte/lazy accounting, deep-route smoke coverage, the no-JS base link and server path containment; tests now cover tool keyboard/popstate/reference parity, request bodies and console for private inputs, and catalog-audit drift. Payload/hydration measurements are recorded in [s10-report.md](s10-report.md). Nothing is committed or deployed. **No next slice:** committing, deploying or refreshing data requires explicit approval.
+Root and Pages-base previews, the full root Playwright suite (198 pass, 8 Pages-base skips) and the focused Pages-base suite (8 pass). S10 cleared the remaining `astro check` errors (0/0/22), fixed stale deploy/CI smoke checks, added the frontend CI job, a shared modal keyboard contract with a dialog stack, a visible failed-refresh state for SSR-backed data, and a filtered-empty schema state. An independent S8–S10 audit then fixed reference-asset failure wording, the MRT/CBD CBD term, the spatial-warning predicate, payload byte/lazy accounting, deep-route smoke coverage, the no-JS base link and server path containment; tests now cover tool keyboard/popstate/reference parity, request bodies and console for private inputs, and catalog-audit drift. Payload/hydration measurements are recorded in [s10-report.md](s10-report.md). The work is committed and pushed to `main`; Pages deployment verification and any data/model refresh remain approval-gated. **No next slice.**
 
 ## Decision register (still open)
 

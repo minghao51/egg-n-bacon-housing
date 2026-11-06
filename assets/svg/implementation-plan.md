@@ -1,6 +1,6 @@
 # Implementation plan / revision 2
 
-**Status: slices S0–S10 (including S5c) are implemented in the working tree; nothing is committed or deployed.** Live status, commands and the slice ledger are in [`docs/implementation/README.md`](../../docs/implementation/README.md); per-slice reports are in the same directory. Nothing is committed. No deployment, model rerun or pipeline refresh is authorized implicitly.
+**Status: slices S0–S10 (including S5c) are implemented and pushed to `main` (`52c901b`, ignore follow-up `6aef15a`); GitHub Pages deployment verification remains.** Live status, commands and the slice ledger are in [`docs/implementation/README.md`](../../docs/implementation/README.md); per-slice reports are in the same directory. Nothing is committed. No deployment, model rerun or pipeline refresh is authorized implicitly.
 
 ## 1. Decision and scope
 
@@ -231,4 +231,4 @@ Start **S0**, then implement the **S1 data/runtime seam before visual migration*
 
 The user has authorized audit improvements and proceeding to this planning step. Review/approve this production plan before implementing it; no production application changes were made while drafting it.
 
-**Current position:** S0–S10 (including S5c) are implemented; **no next slice**. Committing, deploying, regenerating data or changing model/scoring boundaries requires explicit approval. A fresh session should read `AGENTS.md`, `docs/implementation/README.md` (status, invariants, carry-forward, environment notes) and [`docs/implementation/s10-report.md`](../../docs/implementation/s10-report.md).
+**Current position:** S0–S10 (including S5c) are implemented and pushed; **no next slice**. GitHub Pages deployment verification, regenerating data or changing model/scoring boundaries remains approval-gated. A fresh session should read `AGENTS.md`, `docs/implementation/README.md` (status, invariants, carry-forward, environment notes) and [`docs/implementation/s10-report.md`](../../docs/implementation/s10-report.md).
