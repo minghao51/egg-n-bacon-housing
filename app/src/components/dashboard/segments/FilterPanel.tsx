@@ -1,4 +1,11 @@
 // app/src/components/dashboard/segments/FilterPanel.tsx
+/**
+ * Visible constraints for the segment workspace.
+ *
+ * Copy only: ranges are PSF (not total budget), the spatial class is a hard
+ * filter, and the weighted fit is explained from the real weights in
+ * `useSegmentMatching`. No archive model claim is repeated as fact here.
+ */
 import type { ReactNode } from "react";
 import type {
   FilterState,
@@ -6,6 +13,10 @@ import type {
   Region,
   SpatialCluster,
 } from "@/types/segments";
+import {
+  SEGMENT_MATCH_RULE_NOTES,
+  SEGMENT_MATCH_WEIGHTS,
+} from "@/hooks/useSegmentMatching";
 
 interface FilterPanelProps {
   filters: FilterState;
@@ -17,10 +28,10 @@ interface FilterPanelProps {
   activeFilterCount: number;
 }
 
-const PROPERTY_TYPES: { value: PropertyType; label: string; note: string }[] = [
-  { value: "HDB", label: "HDB", note: "MRT impact minimal ~$5/100m" },
-  { value: "Condominium", label: "Condominium", note: "15x MRT sensitive" },
-  { value: "EC", label: "EC", note: "Volatile post-COVID" },
+const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
+  { value: "HDB", label: "HDB" },
+  { value: "Condominium", label: "Condominium" },
+  { value: "EC", label: "EC" },
 ];
 
 const REGIONS: { value: Region; label: string }[] = [
@@ -29,41 +40,35 @@ const REGIONS: { value: Region; label: string }[] = [
   { value: "OCR", label: "Outside Central Region" },
 ];
 
-const HOTSPOT_OPTIONS: {
+const SPATIAL_OPTIONS: {
   value: SpatialCluster | "all";
   label: string;
-  icon: string;
   description: string;
 }[] = [
   {
     value: "all",
-    label: "All Areas",
-    icon: "🌐",
-    description: "Show all segments",
+    label: "All classes",
+    description: "Every segment whose other criteria fit",
   },
   {
     value: "HH",
-    label: "Hotspots Only",
-    icon: "🔥",
-    description: "High-price clusters (58-62% persistence)",
+    label: "HH",
+    description: "Stored high-price / high-growth label",
   },
   {
     value: "LL",
-    label: "Coldspots Only",
-    icon: "❄️",
-    description: "Low-price clusters (value opportunities)",
+    label: "LL",
+    description: "Stored low-price / low-growth label",
   },
   {
     value: "HL",
-    label: "Pioneers",
-    icon: "⚡",
-    description: "High prices in low-price areas",
+    label: "HL",
+    description: "Stored high-price / low-growth label",
   },
   {
     value: "LH",
-    label: "Transitions",
-    icon: "🔄",
-    description: "Low prices near high-price areas",
+    label: "LH",
+    description: "Stored low-price / high-growth label",
   },
 ];
 
@@ -76,29 +81,58 @@ export default function FilterPanel({
   return (
     <div className="w-full lg:w-80 flex-shrink-0 space-y-5 rounded-2xl border border-border bg-card p-5">
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <h3 className="text-lg font-semibold text-foreground">Constraints</h3>
           <button
             onClick={onReset}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Reset {activeFilterCount > 0 && `(${activeFilterCount})`}
+            Reset to persona settings
+            {activeFilterCount > 0 && ` (${activeFilterCount})`}
           </button>
         </div>
         <div className="rounded-xl border border-border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
           {activeFilterCount > 0
-            ? `${activeFilterCount} active filter${activeFilterCount > 1 ? "s" : ""} shaping the shortlist`
-            : "No constraints applied. All compatible segments are shown."}
+            ? `${activeFilterCount} active filter${activeFilterCount > 1 ? "s" : ""} shaping the shortlist.`
+            : "No constraints applied. All compatible segments are shown."}{" "}
+          Ranges are PSF, not total budget.
         </div>
+        <p className="text-sm text-muted-foreground">
+          Current matching is weighted: a partial match may remain. The
+          spatial-class filter is hard.
+        </p>
+        <details className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
+          <summary className="cursor-pointer font-medium text-foreground">
+            Explain match calculation
+          </summary>
+          <ul className="mt-2 space-y-1">
+            <li>
+              Investment goal &middot; {SEGMENT_MATCH_WEIGHTS.investmentGoal}{" "}
+              points (only when a goal is set)
+            </li>
+            <li>PSF range &middot; {SEGMENT_MATCH_WEIGHTS.budget} points</li>
+            <li>
+              Property type &middot; {SEGMENT_MATCH_WEIGHTS.propertyType} points
+            </li>
+            <li>Region &middot; {SEGMENT_MATCH_WEIGHTS.location} points</li>
+            <li>
+              Time horizon &middot; {SEGMENT_MATCH_WEIGHTS.timeHorizon} points
+              (only when set)
+            </li>
+          </ul>
+          <p className="mt-2">{SEGMENT_MATCH_RULE_NOTES.hardFilter}</p>
+          <p className="mt-1">{SEGMENT_MATCH_RULE_NOTES.optional}</p>
+          <p className="mt-1">{SEGMENT_MATCH_RULE_NOTES.rounding}</p>
+        </details>
       </div>
 
-      <FilterSection title="Budget Range (Price PSF)">
+      <FilterSection title="Price PSF range">
         <div className="space-y-3">
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Min PSF</span>
               <span className="text-foreground font-medium">
-                ${filters.budgetRange[0]}
+                S${filters.budgetRange[0]}
               </span>
             </div>
             <input
@@ -107,6 +141,7 @@ export default function FilterPanel({
               max="1500"
               step="50"
               value={filters.budgetRange[0]}
+              aria-label="Minimum price per square foot"
               onChange={(e) => {
                 const newMin = parseInt(e.target.value);
                 if (newMin < filters.budgetRange[1]) {
@@ -125,8 +160,8 @@ export default function FilterPanel({
               <span className="text-muted-foreground">Max PSF</span>
               <span className="text-foreground font-medium">
                 {filters.budgetRange[1] >= 1500
-                  ? "$1500+"
-                  : `$${filters.budgetRange[1]}`}
+                  ? "S$1500+"
+                  : `S$${filters.budgetRange[1]}`}
               </span>
             </div>
             <input
@@ -135,6 +170,7 @@ export default function FilterPanel({
               max="1500"
               step="50"
               value={filters.budgetRange[1]}
+              aria-label="Maximum price per square foot"
               onChange={(e) => {
                 const newMax = parseInt(e.target.value);
                 if (newMax > filters.budgetRange[0]) {
@@ -152,14 +188,14 @@ export default function FilterPanel({
             <div className="text-xs text-center text-muted-foreground">
               Current range:{" "}
               <span className="text-foreground font-medium">
-                ${filters.budgetRange[0]} - ${filters.budgetRange[1]}+ PSF
+                S${filters.budgetRange[0]} to S${filters.budgetRange[1]}+ PSF
               </span>
             </div>
           </div>
         </div>
       </FilterSection>
 
-      <FilterSection title="Property Type">
+      <FilterSection title="Property type">
         <div className="space-y-2">
           {PROPERTY_TYPES.map((type) => (
             <label
@@ -186,14 +222,13 @@ export default function FilterPanel({
               />
               <div>
                 <div className="font-medium text-sm">{type.label}</div>
-                <div className="text-xs text-muted-foreground">{type.note}</div>
               </div>
             </label>
           ))}
         </div>
       </FilterSection>
 
-      <FilterSection title="Location">
+      <FilterSection title="Region">
         <div className="space-y-2">
           {REGIONS.map((region) => (
             <label
@@ -224,9 +259,9 @@ export default function FilterPanel({
         </div>
       </FilterSection>
 
-      <FilterSection title="Spatial Hotspot">
+      <FilterSection title="Spatial class">
         <div className="space-y-2">
-          {HOTSPOT_OPTIONS.map((option) => (
+          {SPATIAL_OPTIONS.map((option) => (
             <label
               key={option.value}
               className={`
@@ -252,16 +287,17 @@ export default function FilterPanel({
                 className="mt-1 mr-3"
               />
               <div>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">{option.icon}</span>
-                  <div className="font-medium text-sm">{option.label}</div>
-                </div>
+                <div className="font-medium text-sm">{option.label}</div>
                 <div className="text-xs text-muted-foreground">
                   {option.description}
                 </div>
               </div>
             </label>
           ))}
+          <p className="text-xs text-muted-foreground">
+            Class labels are stored archive labels, not verified hotspot
+            probabilities.
+          </p>
         </div>
       </FilterSection>
     </div>

@@ -1,3 +1,11 @@
+/**
+ * Segment investigation tab.
+ *
+ * Shows the segment's declared planning areas and their stored archive values.
+ * The observed market surface lives behind an explicit link, never a merge: the
+ * archive is not part of the dashboard release generation (see
+ * `lib/segment-evidence.ts`).
+ */
 import { useMemo, useState } from "react";
 import type {
   FilterState,
@@ -8,6 +16,12 @@ import type {
   SegmentInvestigationMetric,
 } from "@/types/segments";
 import { buildSegmentAreaRows } from "@/components/dashboard/segments/lib/buildSegmentAreaRows";
+import {
+  formatSegmentMetric,
+  SEGMENT_GATED_NOTE,
+  SEGMENT_INVESTIGATION_METRICS,
+  segmentMetricEvidence,
+} from "@/components/dashboard/segments/lib/segment-evidence";
 import SegmentAreaMap from "./SegmentAreaMap";
 import SegmentAreaTable from "./SegmentAreaTable";
 
@@ -16,22 +30,13 @@ interface InvestigateTabProps {
   planningAreas: Record<string, PlanningArea>;
   filters: FilterState;
   persona: Persona;
+  archiveLabel: string;
+  baseUrl: string;
   selectedArea: string | null;
   onAreaChange: (area: string | null) => void;
   onChangeSegment: () => void;
   onOpenMetricGuide: () => void;
 }
-
-const INVESTIGATION_METRICS: Array<{
-  key: SegmentInvestigationMetric;
-  label: string;
-}> = [
-  { key: "avgPricePsf", label: "Avg PSF" },
-  { key: "avgYield", label: "Avg Yield" },
-  { key: "forecast6m", label: "6M Forecast" },
-  { key: "mrtPremium", label: "MRT Premium" },
-  { key: "persistenceProbability", label: "Persistence" },
-];
 
 const BADGE_STYLES: Record<string, string> = {
   HH: "border-red-200 bg-red-50 text-red-700",
@@ -73,6 +78,8 @@ export function InvestigateTab({
   planningAreas,
   filters,
   persona,
+  archiveLabel,
+  baseUrl,
   selectedArea,
   onAreaChange,
   onChangeSegment,
@@ -80,18 +87,20 @@ export function InvestigateTab({
 }: InvestigateTabProps) {
   const [selectedMetric, setSelectedMetric] =
     useState<SegmentInvestigationMetric>("avgPricePsf");
-  const riskFactors = segment.riskFactors ?? [];
-  const opportunities = segment.opportunities ?? [];
 
   const rows = useMemo(
     () => buildSegmentAreaRows(segment, planningAreas, filters, selectedMetric),
     [filters, planningAreas, segment, selectedMetric],
   );
-
+  const declaredAreas = segment.planningAreas.length;
   const activeArea = useMemo(
     () => rows.find((row) => row.areaKey === selectedArea) ?? rows[0] ?? null,
     [rows, selectedArea],
   );
+  const activeMetric = segmentMetricEvidence(selectedMetric);
+  const observedHref = `${baseUrl}explore${
+    activeArea ? `?area=${encodeURIComponent(activeArea.areaKey)}` : ""
+  }`;
 
   return (
     <div className="space-y-6">
@@ -99,26 +108,22 @@ export function InvestigateTab({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
-                {segment.investmentType}
+              <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Selected: {segment.name}
               </span>
               <span
                 className={`rounded-full border px-3 py-1 text-xs font-semibold ${BADGE_STYLES[segment.spatialClassification] ?? "border-border"}`}
               >
-                {segment.spatialClassification} cluster
+                {segment.spatialClassification} cluster label
               </span>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">
-                {segment.name}
-              </h2>
-              <p className="mt-1 text-muted-foreground">
-                {segment.description}
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Research extract updated {archiveLabel} &middot; observation
+              period unspecified.
+            </p>
             <p className="max-w-3xl rounded-xl bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">
-                {personaLabel(persona)} takeaway:
+                {personaLabel(persona)} archive note:
               </span>{" "}
               {personaImplication(segment, persona)}
             </p>
@@ -127,31 +132,28 @@ export function InvestigateTab({
             onClick={onChangeSegment}
             className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
           >
-            Change Segment
+            ← Discover
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3 xl:grid-cols-5">
+        <div className="mt-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
           <StatCard
-            label="Avg PSF"
-            value={`$${segment.metrics.avgPricePsf.toFixed(0)}`}
+            label="Stored avg PSF"
+            value={
+              Number.isFinite(segment.metrics.avgPricePsf)
+                ? `S$${segment.metrics.avgPricePsf.toFixed(0)}`
+                : "N/A"
+            }
           />
           <StatCard
-            label="Yield"
-            value={`${segment.metrics.avgYield.toFixed(1)}%`}
+            label="Declared linked areas"
+            value={String(declaredAreas)}
           />
           <StatCard
-            label="YoY Growth"
-            value={`+${segment.metrics.yoyGrowth.toFixed(1)}%`}
+            label="Property types"
+            value={segment.propertyTypes.join(", ")}
           />
-          <StatCard
-            label="Transactions"
-            value={segment.metrics.transactionCount.toLocaleString()}
-          />
-          <StatCard
-            label="Persistence"
-            value={`${(segment.persistenceProbability * 100).toFixed(0)}%`}
-          />
+          <StatCard label="Regions" value={segment.regions.join(", ")} />
         </div>
       </section>
 
@@ -159,46 +161,62 @@ export function InvestigateTab({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h3 className="text-lg font-semibold text-foreground">
-              Investigation Lens
+              Investigation lens
             </h3>
             <p className="text-sm text-muted-foreground">
-              Re-rank the segment&apos;s matching areas by the metric most
-              relevant to the next step.
+              Re-rank the segment&apos;s declared areas by a stored archive
+              field. This does not recompute any value.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="flex flex-wrap gap-2">
-              {INVESTIGATION_METRICS.map((metric) => (
-                <button
-                  key={metric.key}
-                  onClick={() => setSelectedMetric(metric.key)}
-                  className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                    selectedMetric === metric.key
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {metric.label}
-                </button>
-              ))}
+              {SEGMENT_INVESTIGATION_METRICS.map((metric) => {
+                const evidence = segmentMetricEvidence(metric);
+                return (
+                  <button
+                    key={metric}
+                    onClick={() => setSelectedMetric(metric)}
+                    aria-pressed={selectedMetric === metric}
+                    className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                      selectedMetric === metric
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {evidence.label}
+                    {evidence.gated ? " †" : ""}
+                  </button>
+                );
+              })}
             </div>
             <button
               onClick={onOpenMetricGuide}
               className="rounded-full border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
             >
-              Metrics Guide
+              Metrics guide
             </button>
           </div>
+        </div>
+
+        <div className="mt-4 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+          <p className="font-semibold text-foreground">
+            Sorting by {activeMetric.label}
+          </p>
+          <p className="mt-1">{activeMetric.caveat}</p>
+          {activeMetric.gated && <p className="mt-2">{SEGMENT_GATED_NOTE}</p>}
         </div>
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <div className="overflow-hidden rounded-2xl border border-border bg-card">
           <div className="border-b p-4">
-            <h3 className="text-lg font-semibold">Geographic Match Map</h3>
+            <h3 className="text-lg font-semibold">
+              Declared areas on the planning-area map
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Only areas inside this segment are emphasized; everything else is
-              muted.
+              Only areas the archive declares for this segment are emphasized;
+              the rest is muted. Fill colours come from stored archive values,
+              not from observed transactions.
             </p>
           </div>
           <div className="h-[500px]">
@@ -208,6 +226,7 @@ export function InvestigateTab({
               highlightedArea={activeArea?.areaKey ?? null}
               onAreaHover={onAreaChange}
               onAreaClick={onAreaChange}
+              baseUrl={baseUrl}
             />
           </div>
         </div>
@@ -220,91 +239,70 @@ export function InvestigateTab({
               highlightedArea={activeArea?.areaKey ?? null}
               onRowHover={onAreaChange}
               onRowClick={onAreaChange}
+              declaredAreaCount={declaredAreas}
             />
           </div>
-          {activeArea && <AreaEvidencePanel area={activeArea} />}
+          {activeArea && (
+            <AreaEvidencePanel area={activeArea} observedHref={observedHref} />
+          )}
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl border border-border bg-card p-4 lg:col-span-1">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">
-            Geographic Distribution
-          </h3>
-          <div className="grid grid-cols-3 gap-3">
-            {(["CCR", "RCR", "OCR"] as const).map((region) => {
-              const count = rows.filter((row) => row.region === region).length;
-              return (
-                <div
-                  key={region}
-                  className="rounded-xl border border-border bg-muted/30 p-3 text-center"
-                >
-                  <div className="text-2xl font-bold text-foreground">
-                    {count}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {region} Areas
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {rows.map((row) => (
-              <span
-                key={row.areaKey}
-                className="rounded-full bg-muted px-3 py-1 text-sm text-foreground"
-              >
-                {row.planningArea}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <h3 className="mb-3 text-lg font-semibold text-foreground">
-            Risk Signals
-          </h3>
-          {riskFactors.length > 0 ? (
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <h3 className="text-lg font-semibold text-foreground">
+          Stored archive notes
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Risk and opportunity strings come from the same archive. They are not
+          current advice and are not a recommendation.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <h4 className="mb-2 text-sm font-semibold text-foreground">
+              Risk signals
+            </h4>
             <ul className="space-y-2">
-              {riskFactors.map((risk) => (
+              {(segment.riskFactors ?? []).map((risk) => (
                 <li
                   key={risk}
                   className="flex items-start gap-2 text-sm text-muted-foreground"
                 >
-                  <span className="mt-0.5 text-rose-500">•</span>
+                  <span aria-hidden="true" className="mt-0.5 text-rose-500">
+                    •
+                  </span>
                   <span>{risk}</span>
                 </li>
               ))}
+              {(segment.riskFactors ?? []).length === 0 && (
+                <li className="text-sm text-muted-foreground">
+                  No risk notes supplied in the archive for this segment.
+                </li>
+              )}
             </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              No major risk flags supplied for this segment.
-            </p>
-          )}
-        </div>
-
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <h3 className="mb-3 text-lg font-semibold text-foreground">
-            Opportunity Signals
-          </h3>
-          {opportunities.length > 0 ? (
+          </div>
+          <div>
+            <h4 className="mb-2 text-sm font-semibold text-foreground">
+              Opportunity signals
+            </h4>
             <ul className="space-y-2">
-              {opportunities.map((opportunity) => (
+              {(segment.opportunities ?? []).map((opportunity) => (
                 <li
                   key={opportunity}
                   className="flex items-start gap-2 text-sm text-muted-foreground"
                 >
-                  <span className="mt-0.5 text-emerald-500">•</span>
+                  <span aria-hidden="true" className="mt-0.5 text-emerald-500">
+                    •
+                  </span>
                   <span>{opportunity}</span>
                 </li>
               ))}
+              {(segment.opportunities ?? []).length === 0 && (
+                <li className="text-sm text-muted-foreground">
+                  No opportunity notes supplied in the archive for this segment.
+                </li>
+              )}
             </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              No distinct opportunity notes supplied for this segment.
-            </p>
-          )}
+          </div>
         </div>
       </section>
     </div>
@@ -322,21 +320,48 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-function AreaEvidencePanel({ area }: { area: SegmentAreaRow }) {
+function AreaEvidencePanel({
+  area,
+  observedHref,
+}: {
+  area: SegmentAreaRow;
+  observedHref: string;
+}) {
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
-      <h3 className="text-lg font-semibold text-foreground">Area Evidence</h3>
-      <p className="mt-1 text-sm text-muted-foreground">
-        {area.planningArea} is currently selected for closer investigation.
-      </p>
+      <h3 className="text-lg font-semibold text-foreground">
+        {area.planningArea} / selected research area
+      </h3>
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
         <EvidenceItem
-          label="Hotspot Confidence"
-          value={area.hotspotConfidence}
+          label="Stored avg PSF"
+          value={formatSegmentMetric(area.avgPricePsf, "avgPricePsf")}
         />
-        <EvidenceItem label="Spatial Cluster" value={area.spatialCluster} />
-        <EvidenceItem label="MRT Sensitivity" value={area.mrtSensitivity} />
-        <EvidenceItem label="School Tier" value={area.schoolTier} />
+        <EvidenceItem label="Region" value={area.region} />
+        <EvidenceItem
+          label="Cluster label"
+          value={`${area.spatialCluster} · stored confidence label ${area.hotspotConfidence}`}
+        />
+        <EvidenceItem label="School tier" value={area.schoolTier} />
+      </div>
+      <div className="mt-4 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+        <p>
+          No sample count or observation period is supplied for{" "}
+          {area.planningArea}. Forecast, yield, MRT-premium and persistence
+          values are not shown as current recommendations; validate their
+          definitions and reproducibility before activating those metrics.
+        </p>
+        <a
+          href={observedHref}
+          className="mt-3 inline-block rounded-xl border border-border bg-card px-3 py-2 font-medium text-foreground transition-colors hover:bg-muted/40"
+        >
+          Open observed comparison →
+        </a>
+        <p className="mt-2 text-xs">
+          This switches to observed transactions (2025 HDB by default). It does
+          not reinterpret the stored{" "}
+          {formatSegmentMetric(area.avgPricePsf, "avgPricePsf")} as that median.
+        </p>
       </div>
     </div>
   );

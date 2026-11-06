@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  GeoJSON,
-  Tooltip as LeafletTooltip,
-} from "react-leaflet";
+import React, { useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { decompressGzip } from "@/utils/gzip";
 import {
   EMPTY_MAP_SELECTION,
@@ -17,11 +12,15 @@ import {
 } from "@/utils/map-url-state";
 import "leaflet/dist/leaflet.css";
 
-// Import analytics components
-import LayerControl from "./map/LayerControl";
-import SpatialAnalysisOverlay from "./map/overlays/SpatialAnalysisOverlay";
-import FeatureImpactOverlay from "./map/overlays/FeatureImpactOverlay";
-import PredictiveAnalyticsOverlay from "./map/overlays/PredictiveAnalyticsOverlay";
+// Archive layer controls and inspection (S9). Analytical fills are withheld:
+// the observed transaction metric remains the map's single fill.
+import ArchiveLayerControl from "./map/ArchiveLayerControl";
+import ArchiveInspector from "./map/ArchiveInspector";
+import {
+  archiveLayerStatuses,
+  inspectArchiveArea,
+  observedLegend,
+} from "@/utils/map-archive";
 
 // Import analytics hooks and types
 import {
@@ -50,9 +49,9 @@ interface LeafletLayerEvent {
 interface PriceMapProps {
   geoJsonUrl: string;
   metricsUrl: string;
+  /** Deployment base path, resolved once by the Astro shell. */
+  baseUrl: string;
 }
-
-const MAX_ACTIVE_LAYERS = 5;
 const MAP_PRESETS = [
   {
     id: "expensive",
@@ -74,7 +73,7 @@ const MAP_PRESETS = [
   },
   {
     id: "forward-signals",
-    label: "Show forecast / policy / lease overlays",
+    label: "Inspect archived forecast / policy / lease",
     metric: "yoy_change_pct" as MetricType,
     layers: [
       "predictive.forecast",
@@ -104,10 +103,16 @@ function layersFromSelection(
   return layers;
 }
 
-export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
+export default function PriceMap({
+  geoJsonUrl,
+  metricsUrl,
+  baseUrl,
+}: PriceMapProps) {
   const [geoJsonData, setGeoJsonData] =
     useState<GeoJSONFeatureCollection | null>(null);
   const [allMetrics, setAllMetrics] = useState<MapData | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   // Existing filters — initialised from the incoming URL on the client so the
   // first commit already reflects a shared link. SSR keeps the defaults.
@@ -129,28 +134,21 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
     () => layersFromSelection(initialSelection.layers),
   );
 
-  // Load analytics data (lazy loading with caching)
+  // Load analytics data (lazy loading with caching). Each group is independent:
+  // one source failure marks only its own layers, never the observed map.
   const spatialData = useSpatialAnalytics();
   const featureData = useFeatureImpact();
   const predictiveData = usePredictiveAnalytics();
 
-  // Track which layers are currently loading
-  const loadingLayers = new Set<LayerId>();
-  if (spatialData.loading) {
-    loadingLayers.add("spatial.hotspot");
-    loadingLayers.add("spatial.lisa");
-    loadingLayers.add("spatial.neighborhood");
-  }
-  if (featureData.loading) {
-    loadingLayers.add("feature.mrt");
-    loadingLayers.add("feature.school");
-    loadingLayers.add("feature.amenity");
-  }
-  if (predictiveData.loading) {
-    loadingLayers.add("predictive.policy");
-    loadingLayers.add("predictive.lease");
-    loadingLayers.add("predictive.forecast");
-  }
+  const archiveStatuses = useMemo(
+    () =>
+      archiveLayerStatuses({
+        spatial: spatialData,
+        feature: featureData,
+        predictive: predictiveData,
+      }),
+    [spatialData, featureData, predictiveData],
+  );
 
   // Sync the selection to the URL. State is initialised from the URL above, so
   // the first run is a no-op for a shared link and never overwrites it; the
@@ -210,7 +208,9 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadData() {
+      setLoadError(null);
       try {
         const [geo, met] = await Promise.all([
           fetch(geoJsonUrl).then((res) => res.json()),
@@ -224,42 +224,66 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
             return JSON.parse(sanitized);
           }),
         ]);
+        if (cancelled) return;
         setGeoJsonData(geo);
         setAllMetrics(met);
       } catch (error) {
+        if (cancelled) return;
         console.error("Failed to load map data:", error);
-      }
-    }
-    loadData();
-  }, [geoJsonUrl, metricsUrl]);
-
-  // Handle layer toggle
-  const handleToggleLayer = (layerId: LayerId) => {
-    // Check if we're activating a new layer
-    if (!activeLayers[layerId]) {
-      // Count currently active layers
-      const activeCount = Object.values(activeLayers).filter(Boolean).length;
-
-      // Limit to MAX_ACTIVE_LAYERS
-      if (activeCount >= MAX_ACTIVE_LAYERS) {
-        alert(
-          `Maximum ${MAX_ACTIVE_LAYERS} layers allowed. Please disable a layer first.`,
+        setLoadError(
+          "The observed map data could not be loaded. The archive layer list stays available, and no transaction value is invented.",
         );
-        return;
       }
     }
+    void loadData();
+    return () => {
+      cancelled = true;
+    };
+  }, [geoJsonUrl, metricsUrl, loadAttempt]);
 
-    // Toggle the layer
+  // Layer selection is inspection-only, so there is no fill-count limit and no
+  // modal interruption. Every selected layer is listed in the inspector.
+  const handleToggleLayer = (layerId: LayerId) => {
     setActiveLayers((prev) => ({
       ...prev,
       [layerId]: !prev[layerId],
     }));
   };
 
+  const handleClearLayers = () => {
+    setActiveLayers(layersFromSelection([]));
+  };
+
+  const inspectedLayers = MAP_LAYER_IDS.filter(
+    (layerId) => activeLayers[layerId],
+  );
+
   if (!geoJsonData || !allMetrics) {
     return (
-      <div className="h-[500px] flex items-center justify-center bg-muted/20">
-        Loading Map Data...
+      <div className="rounded-2xl border border-border bg-card p-6">
+        {loadError ? (
+          <div role="alert" className="text-sm">
+            <p className="font-bold text-foreground">
+              The observed map could not be loaded
+            </p>
+            <p className="mt-2 text-muted-foreground">{loadError}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setGeoJsonData(null);
+                setAllMetrics(null);
+                setLoadAttempt((attempt) => attempt + 1);
+              }}
+              className="mt-3 rounded border border-input px-3 py-2 font-bold text-foreground hover:bg-muted"
+            >
+              Try again
+            </button>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Loading the observed map data and the archive layer list…
+          </p>
+        )}
       </div>
     );
   }
@@ -294,13 +318,17 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
   const min = validValues.length > 0 ? Math.min(...validValues) : 0;
   const max = Math.max(...values);
 
+  const hasObservedValue = (val: unknown): val is number =>
+    typeof val === "number" &&
+    Number.isFinite(val) &&
+    // The exporter writes an all-zero block when a subset has no rows, and this
+    // asset carries no separate empty marker, so zero is rendered as "no
+    // observed value" rather than as a lowest-bin observation. A genuine zero
+    // count cannot be distinguished from an empty block here.
+    (val !== 0 || metric === "yoy_change_pct");
+
   const getColor = (val: number | undefined) => {
-    if (
-      val === undefined ||
-      val === null ||
-      (metric !== "yoy_change_pct" && val === 0)
-    )
-      return "#FFEDA0";
+    if (!hasObservedValue(val)) return "#cccccc";
 
     // Simple normalization for now
     const normalized = (val - min) / (max - min);
@@ -322,15 +350,17 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
                 : "#FFEDA0";
   };
 
-  const style = (feature: GeoJSONFeature) => {
-    // FIX: GeoJSON uses 'pln_area_n' (lowercase) but we were looking for 'PLN_AREA_N'
-    // Also normalize to uppercase for the metrics lookup just in case
-    const rawName =
-      feature.properties.pln_area_n || feature.properties.PLN_AREA_N;
+  // Leaflet's style callback receives its own (wider) feature type or
+  // `undefined`, so accept `unknown` and narrow locally. S9 touched this file;
+  // this removes one pre-existing baseline error without changing behaviour.
+  const style = (feature?: unknown) => {
+    // GeoJSON uses 'pln_area_n' (lowercase); normalize to uppercase for lookup.
+    const properties = (feature as GeoJSONFeature | undefined)?.properties;
+    const rawName = properties?.pln_area_n ?? properties?.PLN_AREA_N;
     const name = rawName ? String(rawName).toUpperCase() : "";
 
     const data = currentMetrics[name];
-    const value = data ? data[metric] : 0;
+    const value = data ? data[metric] : undefined;
     const isSelected = selectedArea === name;
 
     return {
@@ -373,22 +403,22 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
           </div>
           <div class="grid grid-cols-2 gap-x-4 gap-y-1">
             <span class="text-muted-foreground">Price:</span>
-            <span class="font-medium text-right">$${data.median_price.toLocaleString()}</span>
+            <span class="font-medium text-right">${formatTooltipValue(data.median_price, "sgd")}</span>
 
             <span class="text-muted-foreground">PSF:</span>
-            <span class="font-medium text-right">$${data.median_psf.toLocaleString()}</span>
+            <span class="font-medium text-right">${formatTooltipValue(data.median_psf, "sgd")}</span>
 
             <span class="text-muted-foreground">Volume:</span>
-            <span class="font-medium text-right">${data.volume.toLocaleString()}</span>
+            <span class="font-medium text-right">${formatTooltipValue(data.volume, "count")}</span>
 
             <span class="text-muted-foreground">Rental Yield:</span>
-            <span class="font-medium text-right">${data.rental_yield_median ? data.rental_yield_median + "%" : "-"}</span>
+            <span class="font-medium text-right">${formatTooltipValue(data.rental_yield_median, "pct")}</span>
 
             <span class="text-muted-foreground">YoY Growth:</span>
-            <span class="font-medium text-right ${growthColor}">${data.yoy_change_pct ? data.yoy_change_pct + "%" : "-"}</span>
+            <span class="font-medium text-right ${growthColor}">${formatTooltipValue(data.yoy_change_pct, "pct")}</span>
 
             <span class="text-muted-foreground">Affordability:</span>
-            <span class="font-medium text-right">${data.affordability_ratio ? data.affordability_ratio + "x" : "-"}</span>
+            <span class="font-medium text-right">${formatTooltipValue(data.affordability_ratio, "ratio")}</span>
           </div>
 
           ${
@@ -481,6 +511,39 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
       return next;
     });
   };
+
+  const inspectedPropertyType: "hdb" | "condo" =
+    propertyTypeFilter === "condo" ? "condo" : "hdb";
+
+  // Computed directly rather than with `useMemo`: it sits after the map's
+  // loading early-return, and a conditional hook would break the render order.
+  const archiveInspection = inspectArchiveArea({
+    spatial: spatialData.data,
+    feature: featureData.data,
+    predictive: predictiveData.data,
+    selectedArea,
+    activeLayers: inspectedLayers,
+    propertyType: inspectedPropertyType,
+    mapFeatureCount: geoJsonData.features?.length ?? 0,
+  });
+
+  const periodLabel: Record<TemporalFilter, string> = {
+    whole: "All history",
+    pre_covid: "Through 2021",
+    recent: "2022 onward",
+    year_2025: "2025 complete year",
+  };
+  const propertyLabel: Record<PropertyTypeFilter, string> = {
+    all: "All property types",
+    hdb: "HDB",
+    ec: "EC",
+    condo: "Condominium",
+  };
+  const observedLegendValues = observedLegend(
+    metric,
+    periodLabel[temporalFilter],
+    propertyLabel[propertyTypeFilter],
+  );
 
   const selectedAreaSummary =
     selectedArea && selectedAreaMetrics
@@ -599,11 +662,11 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
         </div>
       </div>
 
-      {/* NEW: Analytics Layer Control */}
-      <LayerControl
+      <ArchiveLayerControl
         activeLayers={activeLayers}
         onToggleLayer={handleToggleLayer}
-        loadingLayers={loadingLayers}
+        onClearLayers={handleClearLayers}
+        statuses={archiveStatuses}
       />
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -624,82 +687,23 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
               style={style}
               onEachFeature={onEachFeature}
             />
-
-            <SpatialAnalysisOverlay
-              active={activeLayers["spatial.hotspot"]}
-              data={spatialData.data}
-              loading={spatialData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="spatial.hotspot"
-            />
-            <SpatialAnalysisOverlay
-              active={activeLayers["spatial.lisa"]}
-              data={spatialData.data}
-              loading={spatialData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="spatial.lisa"
-            />
-            <SpatialAnalysisOverlay
-              active={activeLayers["spatial.neighborhood"]}
-              data={spatialData.data}
-              loading={spatialData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="spatial.neighborhood"
-            />
-
-            <FeatureImpactOverlay
-              active={activeLayers["feature.mrt"]}
-              data={featureData.data}
-              loading={featureData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="feature.mrt"
-              propertyType={
-                propertyTypeFilter === "all" ? "hdb" : propertyTypeFilter
-              }
-            />
-            <FeatureImpactOverlay
-              active={activeLayers["feature.school"]}
-              data={featureData.data}
-              loading={featureData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="feature.school"
-            />
-            <FeatureImpactOverlay
-              active={activeLayers["feature.amenity"]}
-              data={featureData.data}
-              loading={featureData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="feature.amenity"
-            />
-
-            <PredictiveAnalyticsOverlay
-              active={activeLayers["predictive.forecast"]}
-              data={predictiveData.data}
-              loading={predictiveData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="predictive.forecast"
-            />
-            <PredictiveAnalyticsOverlay
-              active={activeLayers["predictive.policy"]}
-              data={predictiveData.data}
-              loading={predictiveData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="predictive.policy"
-            />
-            <PredictiveAnalyticsOverlay
-              active={activeLayers["predictive.lease"]}
-              data={predictiveData.data}
-              loading={predictiveData.loading}
-              planningAreasGeoJSON={geoJsonData}
-              layerId="predictive.lease"
-            />
           </MapContainer>
 
-          <div className="absolute bottom-4 right-4 bg-background/90 backdrop-blur p-3 rounded-lg border border-border text-xs z-[1000] shadow-lg">
-            <div className="font-semibold mb-2 capitalize">
-              {metric.replace(/_/g, " ")}
+          <div className="absolute bottom-4 right-4 max-w-[260px] bg-background/95 backdrop-blur p-3 rounded-lg border border-border text-xs z-[1000] shadow-lg">
+            <div className="font-semibold text-foreground">
+              {observedLegendValues.quantity}
             </div>
-            <div className="flex flex-col gap-1">
+            <p className="mt-1 text-muted-foreground">
+              Unit: {observedLegendValues.unit}
+            </p>
+            <p className="text-muted-foreground">
+              Period: {observedLegendValues.period}
+            </p>
+            <p className="text-muted-foreground">
+              Evidence: {observedLegendValues.status} ·{" "}
+              <code className="font-mono">map_metrics</code>
+            </p>
+            <div className="mt-2 flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <span className="w-4 h-4 rounded bg-[#800026]"></span>
                 <span>High</span>
@@ -711,6 +715,10 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
               <div className="flex items-center gap-2">
                 <span className="w-4 h-4 rounded bg-[#FFEDA0]"></span>
                 <span>Low</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded bg-[#cccccc] border border-border"></span>
+                <span>No observed value</span>
               </div>
             </div>
           </div>
@@ -766,16 +774,16 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
               </div>
               <div className="grid gap-2">
                 <a
-                  href={`${import.meta.env.BASE_URL}dashboard/leaderboard?area=${encodeURIComponent(selectedArea ?? "")}&metric=${encodeURIComponent(metric)}`}
+                  href={`${baseUrl}explore?area=${encodeURIComponent(selectedArea ?? "")}&metric=${encodeURIComponent(metric)}`}
                   className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
                 >
-                  Open in compare areas
+                  Open observed comparison
                 </a>
                 <a
-                  href={`${import.meta.env.BASE_URL}dashboard/segments?area=${encodeURIComponent(selectedArea ?? "")}`}
+                  href={`${baseUrl}research/segments?area=${encodeURIComponent(selectedArea ?? "")}`}
                   className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
                 >
-                  Open in discover segments
+                  Open research segments
                 </a>
               </div>
             </div>
@@ -787,8 +795,25 @@ export default function PriceMap({ geoJsonUrl, metricsUrl }: PriceMapProps) {
           )}
         </aside>
       </div>
+
+      <ArchiveInspector
+        inspection={archiveInspection}
+        activeLayerCount={inspectedLayers.length}
+        baseUrl={baseUrl}
+      />
     </div>
   );
+}
+
+function formatTooltipValue(
+  value: number | null | undefined,
+  kind: "sgd" | "count" | "pct" | "ratio",
+): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "N/A";
+  if (kind === "sgd") return `S$${value.toLocaleString("en-SG")}`;
+  if (kind === "count") return value.toLocaleString("en-SG");
+  if (kind === "ratio") return `${value.toFixed(2)}×`;
+  return `${value.toFixed(1)}%`;
 }
 
 function formatInspectorValue(

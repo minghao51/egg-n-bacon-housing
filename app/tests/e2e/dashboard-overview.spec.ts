@@ -244,7 +244,8 @@ test.describe("Dashboard overview - published 2025 medians", () => {
       { href: "/research/trends", label: "Monthly trends" },
       { href: "/areas/tampines", label: "Tampines fieldnote" },
       { href: "/dashboard/leaderboard", label: "Compare Areas" },
-      { href: "/dashboard/trends", label: "Decision Tools" },
+      { href: "/research/tools", label: "Decision Tools" },
+      { href: "/research/segments", label: "Discover Segments" },
     ];
 
     for (const destination of destinations) {
@@ -253,9 +254,12 @@ test.describe("Dashboard overview - published 2025 medians", () => {
       await expect(link).toHaveAttribute("href", destination.href);
     }
 
-    // `/research/segments` is not published in this repository yet, so it must
-    // not be linked from here.
-    await expect(strip.locator('a[href*="/research/segments"]')).toHaveCount(0);
+    // S7 published the segment workspace at the research destination; the strip
+    // must point there rather than at the legacy wrapper.
+    await expect(strip.locator('a[href$="/dashboard/segments"]')).toHaveCount(
+      0,
+    );
+    await expect(strip.locator('a[href$="/research/segments"]')).toHaveCount(1);
   });
 
   test("the old unscoped highlights and their claims are gone", async ({

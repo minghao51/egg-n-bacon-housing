@@ -3,6 +3,10 @@ import type {
   SegmentAreaRow,
   SegmentInvestigationMetric,
 } from "@/types/segments";
+import {
+  formatSegmentMetric,
+  segmentMetricEvidence,
+} from "@/components/dashboard/segments/lib/segment-evidence";
 
 interface SegmentAreaMapProps {
   rows: SegmentAreaRow[];
@@ -10,6 +14,8 @@ interface SegmentAreaMapProps {
   highlightedArea: string | null;
   onAreaHover: (area: string | null) => void;
   onAreaClick: (area: string) => void;
+  /** Deployment base path, resolved once by the Astro shell. */
+  baseUrl: string;
 }
 
 interface GeoJSONFeature {
@@ -69,47 +75,13 @@ async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
 
 const COLORS = ["#e0f2fe", "#93c5fd", "#60a5fa", "#2563eb", "#1d4ed8"];
 
-function metricLabel(metric: SegmentInvestigationMetric): string {
-  switch (metric) {
-    case "avgPricePsf":
-      return "Average Price PSF";
-    case "avgYield":
-      return "Average Yield";
-    case "forecast6m":
-      return "6M Forecast";
-    case "mrtPremium":
-      return "MRT Premium";
-    case "persistenceProbability":
-      return "Persistence Probability";
-    default:
-      return metric;
-  }
-}
-
-function formatMetricValue(
-  value: number,
-  metric: SegmentInvestigationMetric,
-): string {
-  switch (metric) {
-    case "avgPricePsf":
-    case "mrtPremium":
-      return `$${value.toFixed(0)}`;
-    case "avgYield":
-    case "forecast6m":
-      return `${value.toFixed(1)}%`;
-    case "persistenceProbability":
-      return `${(value * 100).toFixed(1)}%`;
-    default:
-      return value.toFixed(1);
-  }
-}
-
 export default function SegmentAreaMap({
   rows,
   selectedMetric,
   highlightedArea,
   onAreaHover,
   onAreaClick,
+  baseUrl,
 }: SegmentAreaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [MapContainer, setMapContainer] = useState<any>(null);
@@ -126,9 +98,7 @@ export default function SegmentAreaMap({
       setGeoJSON(() => modules.GeoJSON);
     });
 
-    import("leaflet/dist/leaflet.css");
-
-    fetch(`${import.meta.env.BASE_URL}data/planning_areas.geojson.gz`)
+    fetch(`${baseUrl}data/planning_areas.geojson.gz`)
       .then((response) => response.arrayBuffer())
       .then((buffer) => decompressGzip(buffer))
       .then((text) => JSON.parse(text))
@@ -136,7 +106,7 @@ export default function SegmentAreaMap({
       .catch((error) =>
         console.error("Failed to load planning area map:", error),
       );
-  }, []);
+  }, [baseUrl]);
 
   const rowsByArea = useMemo(() => {
     const lookup: Record<string, SegmentAreaRow> = {};
@@ -211,8 +181,8 @@ export default function SegmentAreaMap({
             <div class="grid grid-cols-2 gap-x-3 gap-y-1">
               <span class="text-muted-foreground">Region</span>
               <span class="text-right font-medium">${row.region}</span>
-              <span class="text-muted-foreground">${metricLabel(selectedMetric)}</span>
-              <span class="text-right font-medium">${formatMetricValue(row[selectedMetric], selectedMetric)}</span>
+              <span class="text-muted-foreground">${segmentMetricEvidence(selectedMetric).label}</span>
+              <span class="text-right font-medium">${formatSegmentMetric(row[selectedMetric], selectedMetric)}</span>
               <span class="text-muted-foreground">Hotspot Confidence</span>
               <span class="text-right font-medium">${row.hotspotConfidence}</span>
             </div>
@@ -294,11 +264,16 @@ export default function SegmentAreaMap({
       </MapContainer>
 
       <div className="absolute bottom-4 right-4 z-[1000] rounded-2xl border border-border bg-background/95 p-3 text-xs shadow-lg backdrop-blur">
-        <div className="mb-2 font-semibold">{metricLabel(selectedMetric)}</div>
+        <div className="mb-2 font-semibold">
+          {segmentMetricEvidence(selectedMetric).label}
+        </div>
+        <div className="mb-2 text-[11px] text-muted-foreground">
+          Stored archive values, not observed transactions
+        </div>
         <div className="space-y-1">
           <LegendRow
             color={COLORS[COLORS.length - 1]}
-            label={`High (${formatMetricValue(maxValue, selectedMetric)})`}
+            label={`High (${formatSegmentMetric(maxValue, selectedMetric)})`}
           />
           <LegendRow
             color={COLORS[Math.floor(COLORS.length / 2)]}
@@ -306,7 +281,7 @@ export default function SegmentAreaMap({
           />
           <LegendRow
             color={COLORS[0]}
-            label={`Low (${formatMetricValue(minValue, selectedMetric)})`}
+            label={`Low (${formatSegmentMetric(minValue, selectedMetric)})`}
           />
           <LegendRow color="#e5e7eb" label="Outside segment" />
         </div>

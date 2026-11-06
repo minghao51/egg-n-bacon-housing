@@ -10,6 +10,25 @@ import rehypeKatex from "rehype-katex";
 const isPagesDeploy = process.env.ASTRO_PAGES === "true";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/**
+ * Remove the document's leading level-1 heading.
+ *
+ * Every study in `docs/analytics` starts with `# Title`, and the article shell
+ * already renders the title as the page's only `<h1>`. Leaving both produced
+ * two H1s on every study page (S9). The heading is stripped from the rendered
+ * body — not hidden with CSS — so the accessibility tree and the TOC agree.
+ */
+function remarkStripLeadingH1() {
+  return function (tree) {
+    // Only a genuinely leading H1 is removed. A later depth-1 heading is part
+    // of the document body and keeps its anchor and TOC entry.
+    const first = tree.children[0];
+    if (first?.type === "heading" && first.depth === 1) {
+      tree.children.shift();
+    }
+  };
+}
+
 function remarkFixImagePaths() {
   return function (tree) {
     const visit = (node) => {
@@ -34,7 +53,7 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    remarkPlugins: [remarkMath, remarkFixImagePaths],
+    remarkPlugins: [remarkMath, remarkStripLeadingH1, remarkFixImagePaths],
     rehypePlugins: [rehypeKatex],
   },
   site: isPagesDeploy

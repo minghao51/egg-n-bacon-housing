@@ -51,13 +51,13 @@ const statusClass = STATUS_COLORS[dataset.status] || STATUS_COLORS.missing;
 
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-lg border border-border bg-card">
     <div>
-      <div class="text-sm text-muted-foreground">Rows</div>
+      <div class="text-sm text-muted-foreground">Rows (catalog snapshot)</div>
       <div class="text-lg font-bold text-foreground tabular-nums">
         {dataset.parquet ? dataset.parquet.row_count.toLocaleString() : "—"}
       </div>
     </div>
     <div>
-      <div class="text-sm text-muted-foreground">Columns</div>
+      <div class="text-sm text-muted-foreground">Columns (catalog snapshot)</div>
       <div class="text-lg font-bold text-foreground tabular-nums">
         {dataset.parquet ? dataset.parquet.column_count : "—"}
       </div>

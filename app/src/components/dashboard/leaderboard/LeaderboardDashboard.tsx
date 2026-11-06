@@ -17,6 +17,7 @@ import LeaderboardControls from "./LeaderboardControls";
 import LeaderboardMap from "./LeaderboardMap";
 import LeaderboardTable from "./LeaderboardTable";
 import MetricHelpModal, { METRICS } from "./MetricHelpModal";
+import { useModalDialog } from "@/hooks/useModalDialog";
 
 interface LeaderboardDashboardProps {
   initialData?: LeaderboardEntry[];
@@ -59,7 +60,11 @@ export default function LeaderboardDashboard({
   const [mobileView, setMobileView] = useState<"map" | "rankings">("map");
   const [isInteractiveReady, setIsInteractiveReady] = useState(false);
 
-  const { data, loading, error, reload } = useLeaderboardData(
+  const mobileFiltersRef = useModalDialog(isMobileFiltersOpen, () =>
+    setIsMobileFiltersOpen(false),
+  );
+
+  const { data, loading, error, refreshError, reload } = useLeaderboardData(
     controls,
     initialData,
   );
@@ -241,7 +246,7 @@ export default function LeaderboardDashboard({
     );
   }
 
-  if (error) {
+  if (error && data.length === 0) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="max-w-md space-y-4 text-center">
@@ -264,6 +269,24 @@ export default function LeaderboardDashboard({
       className="min-h-screen bg-background"
       data-interactive-ready={isInteractiveReady ? "true" : "false"}
     >
+      {refreshError ? (
+        <div
+          role="alert"
+          className="border-b border-amber-600/40 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+        >
+          <p className="font-bold">
+            Refresh failed &mdash; showing the last published leaderboard.
+          </p>
+          <p className="mt-1">{refreshError}</p>
+          <button
+            type="button"
+            onClick={reload}
+            className="mt-2 rounded border border-current px-3 py-1.5 font-bold"
+          >
+            Try again
+          </button>
+        </div>
+      ) : null}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto space-y-4 px-4 py-4">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -504,10 +527,22 @@ export default function LeaderboardDashboard({
 
       {isMobileFiltersOpen && (
         <div className="fixed inset-0 z-50 flex items-end bg-black/50 lg:hidden">
-          <div className="max-h-[85vh] w-full overflow-y-auto rounded-t-3xl bg-background p-4">
+          <div
+            ref={mobileFiltersRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="leaderboard-filters-title"
+            tabIndex={-1}
+            className="max-h-[85vh] w-full overflow-y-auto rounded-t-3xl bg-background p-4"
+          >
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold">Leaderboard Filters</h2>
+                <h2
+                  id="leaderboard-filters-title"
+                  className="text-lg font-semibold"
+                >
+                  Leaderboard Filters
+                </h2>
                 <p className="text-sm text-muted-foreground">
                   Adjust filters, then close to return to the page.
                 </p>

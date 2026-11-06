@@ -1,0 +1,173 @@
+---
+/**
+ * Shared shell for the decision-tools workspace.
+ *
+ * `/research/tools` is the research destination; `/dashboard/trends` is the
+ * compatibility wrapper that renders the same island under the legacy path.
+ *
+ * All four archive payloads and the observed reference-price table are read
+ * here, at build time, and passed to the island as props. The island therefore
+ * contains no `import.meta` usage and no asset fetch: the only browser state is
+ * the tool selection and the financing inputs (which stay local).
+ *
+ * The reference table is built through the joint-section observed adapter
+ * (`map_metrics.year_2025_hdb` etc.). `affordability_metrics.json.gz` is
+ * deliberately not read: it is a separate period-unknown extract whose
+ * automatic categories and loan-approval thresholds S8 replaces with explicit
+ * illustrative arithmetic.
+ */
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { gunzipSync } from "node:zlib";
+
+import Layout from "@/layouts/Layout.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import ToolsWorkspace from "@/components/tools/ToolsWorkspace";
+import {
+  buildReferencePriceTable,
+  referenceSourceStatus,
+  type ReferencePriceTable,
+} from "@/components/tools/lib/tool-reference";
+import type { ToolsReleaseInfo } from "@/components/tools/FinancingScenario";
+
+interface Props {
+  title: string;
+  description: string;
+  headline: string;
+  intro: string;
+  legacyNote?: string;
+}
+
+const { title, description, headline, intro, legacyNote } = Astro.props;
+
+function readJsonGz(relativePath: string): unknown | null {
+  try {
+    const fullPath = resolve(relativePath);
+    return JSON.parse(gunzipSync(readFileSync(fullPath)).toString("utf-8"));
+  } catch (error) {
+    console.error(`Failed to load ${relativePath}:`, error);
+    return null;
+  }
+}
+
+const lease = readJsonGz("public/data/interactive_tools/lease_decay_analysis.json.gz");
+const mrt = readJsonGz("public/data/interactive_tools/mrt_cbd_impact.json.gz");
+const spatial = readJsonGz("public/data/interactive_tools/spatial_hotspots.json.gz");
+const mapMetrics = readJsonGz("public/data/map_metrics.json.gz");
+
+const referenceTable: ReferencePriceTable = buildReferencePriceTable(mapMetrics);
+const referenceSource = referenceSourceStatus(mapMetrics);
+
+interface RawReleaseManifest {
+  generation?: unknown;
+  observationRange?: { endMonth?: unknown };
+  assets?: Array<{ path?: unknown }>;
+}
+
+let release: ToolsReleaseInfo = {
+  generation: "unverified",
+  trailingMonth: "not recorded",
+  assets: [],
+};
+try {
+  const raw = JSON.parse(
+    readFileSync(resolve("public/data/dashboard-release.json"), "utf-8"),
+  ) as RawReleaseManifest;
+  release = {
+    generation:
+      typeof raw.generation === "string" && raw.generation !== ""
+        ? raw.generation
+        : "unverified",
+    trailingMonth:
+      typeof raw.observationRange?.endMonth === "string"
+        ? raw.observationRange.endMonth
+        : "not recorded",
+    assets: Array.isArray(raw.assets)
+      ? raw.assets
+          .map((asset) => asset.path)
+          .filter((path): path is string => typeof path === "string")
+      : [],
+  };
+} catch (error) {
+  console.error("Failed to read dashboard-release.json:", error);
+}
+
+// Resolved once here (the Astro-native place for `import.meta.env`) and passed
+// to the island, so every link inside the workspace uses the deployment base.
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<Layout title={title} description={description}>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-8">
+      <header class="max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]">
+          Research / Tools
+        </p>
+        <h1 class="mt-3 text-4xl font-bold text-foreground sm:text-5xl">{headline}</h1>
+        <p class="mt-4 text-lg text-muted-foreground">{intro}</p>
+        <p class="mt-4 inline-block rounded-sm bg-[hsl(var(--secondary))] px-2 py-1 text-xs font-bold text-foreground">
+          Illustrative arithmetic &middot; archived models gated
+        </p>
+      </header>
+
+      {
+        legacyNote && (
+          <p class="mt-4 max-w-3xl rounded-lg border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+            {legacyNote}
+          </p>
+        )
+      }
+
+      <noscript>
+        <div class="mt-6 rounded-lg border border-border bg-card p-5 text-sm text-foreground">
+          <p class="font-bold">This workspace needs JavaScript.</p>
+          <p class="mt-2 text-muted-foreground">
+            The financing scenario computes its amortization in the browser and
+            keeps your inputs local, so it cannot run without JavaScript. The
+            three research tools are archive inspections of published files:
+            <code class="font-mono">lease_decay_analysis.json.gz</code>,
+            <code class="font-mono">mrt_cbd_impact.json.gz</code> and
+            <code class="font-mono">spatial_hotspots.json.gz</code>, none of
+            which is part of the dashboard release manifest. The observed 2025
+            reference prices come from the joint sections of
+            <code class="font-mono">map_metrics.json.gz</code>, which is.
+          </p>
+        </div>
+      </noscript>
+
+      <div data-tools-generations={release.assets.join(",")}>
+        <ToolsWorkspace
+          client:only="react"
+          baseUrl={baseUrl}
+          referenceTable={referenceTable}
+          referenceSource={referenceSource}
+          release={release}
+          lease={lease}
+          mrt={mrt}
+          spatial={spatial}
+        />
+      </div>
+
+      <footer class="mt-10 border-t border-border pt-4 text-xs text-muted-foreground">
+        <p>
+          Financing reference: <code class="font-mono">map_metrics.{referenceTable.sections.join(" / ")}</code>
+          &mdash; observed 2025 medians from one published generation (release
+          generation {release.generation.slice(0, 12)}&hellip;, published through {release.trailingMonth}).
+          Loan and income inputs are yours and are never serialised or logged.
+        </p>
+        <p class="mt-1">
+          Research tool assets: <code class="font-mono">lease_decay_analysis</code>,
+          <code class="font-mono">mrt_cbd_impact</code> and
+          <code class="font-mono">spatial_hotspots</code>. They are archives: their
+          observation period, sample and model definitions are not supplied, and they are
+          not compared with dashboard medians or counts. See the
+          <a class="font-bold text-foreground underline" href={`${baseUrl}catalog/`}>data catalogue</a>
+          for asset metadata.
+        </p>
+      </footer>
+    </div>
+  </main>
+</Layout>

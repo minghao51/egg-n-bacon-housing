@@ -1,5 +1,5 @@
 // app/src/components/dashboard/segments/TabNavigation.tsx
-import clsx from "clsx";
+import { clsx } from "clsx";
 
 type TabId = "discover" | "investigate" | "compare";
 
@@ -7,6 +7,8 @@ interface TabNavigationProps {
   activeTab: TabId;
   onTabChange: (tab: TabId) => void;
   disabledTabs?: TabId[];
+  /** Size of the comparison shortlist, shown on the compare tab. */
+  comparisonCount?: number;
 }
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
@@ -19,16 +21,22 @@ export default function TabNavigation({
   activeTab,
   onTabChange,
   disabledTabs = [],
+  comparisonCount = 0,
 }: TabNavigationProps) {
   return (
     <div className="flex space-x-1 bg-muted p-1 rounded-lg">
       {TABS.map((tab) => {
         const isDisabled = disabledTabs.includes(tab.id);
+        const label =
+          tab.id === "compare" && comparisonCount > 0
+            ? `${tab.label} (${comparisonCount})`
+            : tab.label;
         return (
           <button
             key={tab.id}
             onClick={() => !isDisabled && onTabChange(tab.id)}
             disabled={isDisabled}
+            aria-current={activeTab === tab.id ? "true" : undefined}
             className={clsx(
               "flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2",
               activeTab === tab.id && "bg-background text-foreground shadow-sm",
@@ -38,8 +46,8 @@ export default function TabNavigation({
               isDisabled && "opacity-50 cursor-not-allowed",
             )}
           >
-            <span>{tab.icon}</span>
-            <span>{tab.label}</span>
+            <span aria-hidden="true">{tab.icon}</span>
+            <span>{label}</span>
           </button>
         );
       })}

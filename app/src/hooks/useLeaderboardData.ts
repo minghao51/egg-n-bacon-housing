@@ -222,12 +222,14 @@ export function useLeaderboardData(
   data: LeaderboardDisplayRow[];
   loading: boolean;
   error: string | null;
+  refreshError: string | null;
   reload: () => void;
 } {
   const {
     data: rawData,
     loading,
     error,
+    refreshError,
     reload,
   } = useGzipJson<LeaderboardEntry[]>(
     DATA_URLS.leaderboard,
@@ -245,5 +247,5 @@ export function useLeaderboardData(
     return sortRows(filtered, controls);
   }, [rawData, controls]);
 
-  return { data, loading, error, reload };
+  return { data, loading, error, refreshError, reload };
 }

@@ -1,6 +1,6 @@
 // app/src/components/dashboard/leaderboard/MetricHelpModal.tsx
-import React, { useEffect } from "react";
-import type { LeaderboardMetric, MetricMeta } from "@/types/leaderboard";
+import { useModalDialog } from "@/hooks/useModalDialog";
+import type { MetricMeta } from "@/types/leaderboard";
 
 interface MetricHelpModalProps {
   isOpen: boolean;
@@ -40,30 +40,7 @@ export default function MetricHelpModal({
   isOpen,
   onClose,
 }: MetricHelpModalProps) {
-  // Handle ESC key press
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
-
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+  const panelRef = useModalDialog(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -73,12 +50,19 @@ export default function MetricHelpModal({
       onClick={onClose}
     >
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="metric-help-title"
+        tabIndex={-1}
         className="bg-background rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold">Metric Definitions</h2>
+          <h2 id="metric-help-title" className="text-2xl font-bold">
+            Metric Definitions
+          </h2>
           <button
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-md hover:bg-muted"

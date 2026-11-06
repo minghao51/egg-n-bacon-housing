@@ -2,6 +2,31 @@
 import { useMemo } from "react";
 import type { Segment, FilterState } from "@/types/segments";
 
+/**
+ * Scoring weights, unchanged since before S7.
+ *
+ * Exported so the UI can *explain* the fit without restating (and drifting
+ * from) the implementation. Changing a weight is an owner decision on the
+ * segment model, not a UI change — see the decision register in
+ * `assets/svg/implementation-plan.md` §6.
+ */
+export const SEGMENT_MATCH_WEIGHTS = {
+  investmentGoal: 30,
+  budget: 25,
+  propertyType: 20,
+  location: 15,
+  timeHorizon: 10,
+} as const;
+
+export const SEGMENT_MATCH_RULE_NOTES = {
+  hardFilter:
+    "The spatial-class filter is hard: a segment in a different class is dropped before scoring.",
+  optional:
+    "Investment goal and time horizon are only part of the denominator when they are set; this is why a partial match can still score highly.",
+  rounding:
+    "The score is score ÷ applicable weights, rounded to a whole percent. It is a weighted fit, not a return probability.",
+} as const;
+
 export function useSegmentMatching(segments: Segment[], filters: FilterState) {
   const scoredSegments = useMemo(() => {
     return segments
@@ -33,7 +58,7 @@ function calculateMatchScore(segment: Segment, filters: FilterState): number {
     return 0;
   }
 
-  // Investment goal (30% weight)
+  // Investment goal
   if (filters.investmentGoal) {
     if (
       (filters.investmentGoal === "yield" && segment.metrics.avgYield >= 4) ||
@@ -44,33 +69,33 @@ function calculateMatchScore(segment: Segment, filters: FilterState): number {
       (filters.investmentGoal === "balanced" &&
         segment.investmentType === "balanced")
     ) {
-      score += 30;
+      score += SEGMENT_MATCH_WEIGHTS.investmentGoal;
     }
-    maxScore += 30;
+    maxScore += SEGMENT_MATCH_WEIGHTS.investmentGoal;
   }
 
-  // Budget fit (25% weight)
+  // Budget fit
   if (
     segment.metrics.avgPricePsf >= filters.budgetRange[0] &&
     segment.metrics.avgPricePsf <= filters.budgetRange[1]
   ) {
-    score += 25;
+    score += SEGMENT_MATCH_WEIGHTS.budget;
   }
-  maxScore += 25;
+  maxScore += SEGMENT_MATCH_WEIGHTS.budget;
 
-  // Property type match (20% weight)
+  // Property type match
   if (filters.propertyTypes.some((t) => segment.propertyTypes.includes(t))) {
-    score += 20;
+    score += SEGMENT_MATCH_WEIGHTS.propertyType;
   }
-  maxScore += 20;
+  maxScore += SEGMENT_MATCH_WEIGHTS.propertyType;
 
-  // Location match (15% weight)
+  // Location match
   if (filters.locations.some((loc) => segment.regions.includes(loc))) {
-    score += 15;
+    score += SEGMENT_MATCH_WEIGHTS.location;
   }
-  maxScore += 15;
+  maxScore += SEGMENT_MATCH_WEIGHTS.location;
 
-  // Time horizon fit (10% weight)
+  // Time horizon fit
   if (filters.timeHorizon) {
     if (
       (filters.timeHorizon === "short" &&
@@ -78,9 +103,9 @@ function calculateMatchScore(segment: Segment, filters: FilterState): number {
       (filters.timeHorizon === "long" &&
         segment.characteristics.volatility === "low")
     ) {
-      score += 10;
+      score += SEGMENT_MATCH_WEIGHTS.timeHorizon;
     }
-    maxScore += 10;
+    maxScore += SEGMENT_MATCH_WEIGHTS.timeHorizon;
   }
 
   return maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;

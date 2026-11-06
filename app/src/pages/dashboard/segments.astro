@@ -1,15 +1,11 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import Sidebar from '@/components/Sidebar.astro';
-import SegmentsDashboard from '@/components/dashboard/segments/SegmentsDashboard';
+import SegmentsSurface from '@/components/segments/SegmentsSurface.astro';
 ---
 
-<Layout title="Market Segments - Dashboard">
-  <Sidebar currentPath={Astro.url.pathname} />
-
-  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-      <SegmentsDashboard client:load />
-    </div>
-  </main>
-</Layout>
+<SegmentsSurface
+  title="Market segments - Egg n Bacon Housing"
+  description="Compatibility route for the stored research segments workspace. Research averages, not observed transaction medians."
+  headline="Find an archetype. Then inspect its evidence."
+  intro="Six stored research segments; names describe the archive, not a current investment recommendation. Matching is a weighted fit against your constraints, and the archive does not publish an observation period or sample size."
+  legacyNote="Compatibility route: this URL keeps working, and every query parameter (persona, tab, segment, segments, area) is preserved. The research destination for this workspace is /research/segments."
+/>

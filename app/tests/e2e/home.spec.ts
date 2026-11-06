@@ -43,7 +43,9 @@ test.describe("Home Page", () => {
     await page.getByText("Analytics Reports").click();
     await expect(page).toHaveURL(/analytics\/?$/);
     await expect(
-      page.getByRole("heading", { name: "Analytics" }),
+      page.getByRole("heading", {
+        name: "Stories with a visible evidence trail.",
+      }),
     ).toBeVisible();
   });
 

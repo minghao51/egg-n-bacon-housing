@@ -5,10 +5,13 @@ import LayerCard from "@/components/catalog/LayerCard";
 import DagGraph from "@/components/catalog/DagGraph";
 import DatasetTable from "@/components/catalog/DatasetTable";
 import { loadCatalog } from "@/utils/catalog";
+import { catalogGeneratedLabel } from "@/constants/catalog-audit";
 
 const catalog = loadCatalog();
 
 const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
+const catalogGenerated = catalogGeneratedLabel(catalog?.metadata?.generated_at);
+const pipelineVersion = catalog?.metadata?.pipeline_version ?? "not supplied";
 ---
 
 <Layout title="Data Catalog">
@@ -21,6 +24,15 @@ const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
         <p class="text-muted-foreground mt-2">
           A searchable inventory of every dataset in the pipeline — from raw ingestion through cleaned, feature-enriched, and unified exports. Auto-generated from Pydantic schemas, parquet metadata, and Hamilton DAG lineage.
         </p>
+        <div class="mt-4 rounded-xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+          <p class="font-bold text-foreground">Catalog snapshot, not a live run</p>
+          <p class="mt-1">
+            Generated {catalogGenerated} (pipeline {pipelineVersion}). Counts, sizes and null
+            percentages describe the artifacts present at that generation. “Available” means
+            present in this catalog snapshot — not fully validated or current. A dataset page
+            shows when the catalog and a separately inspected artifact disagree.
+          </p>
+        </div>
       </header>
 
       {

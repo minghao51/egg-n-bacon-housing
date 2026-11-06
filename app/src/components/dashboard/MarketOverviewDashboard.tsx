@@ -188,14 +188,17 @@ function yearOf(value: string | undefined): string | null {
 export default function MarketOverviewDashboard({
   initialData,
   trendsData,
+  baseUrl,
 }: {
   initialData: MarketOverviewDashboardData;
   trendsData?: TrendRecord[];
+  /** Deployment base path, resolved once by the Astro page. */
+  baseUrl: string;
 }) {
   const [era, setEra] = useState<EraId>("whole");
   const [propertyType, setPropertyType] = useState<PropertyTypeId>("all");
 
-  const base = import.meta.env.BASE_URL;
+  const base = baseUrl;
 
   // Every snapshot figure comes from the joint `era_property` stats block of
   // the loaded asset, so the period and the type can never drift apart.

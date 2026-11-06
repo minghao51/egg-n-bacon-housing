@@ -1,6 +1,6 @@
 # Implementation plan / revision 2
 
-**Status: slices S0–S6 (including S5c) are implemented in the working tree; S7–S10 are not started.** Live status, commands and the slice ledger are in [`docs/implementation/README.md`](../../docs/implementation/README.md); per-slice reports are in the same directory. Nothing is committed. No deployment, model rerun or pipeline refresh is authorized implicitly.
+**Status: slices S0–S10 (including S5c) are implemented in the working tree; nothing is committed or deployed.** Live status, commands and the slice ledger are in [`docs/implementation/README.md`](../../docs/implementation/README.md); per-slice reports are in the same directory. Nothing is committed. No deployment, model rerun or pipeline refresh is authorized implicitly.
 
 ## 1. Decision and scope
 
@@ -164,6 +164,8 @@ Implement SVG11/12/20 visual structure without rewriting scoring silently. Expos
 
 **Exit:** all six segments discoverable; each investigation links only declared areas; Bishan644 storedPSF context explicit; selected segment independent from comparison set; min2/max4, remove/replace/fifth-limit/unknown-ID/no-result paths and keyboard behavior tested; no summed overlapping cohort claim.
 
+**Delivered** — see [`docs/implementation/s7-report.md`](../../docs/implementation/s7-report.md). Scoring untouched. Deferred items are tracked as `S7-F1` … `S7-F5` in the ledger's _S7 carry-forward_ table (investigation pagination, stored-PSF comparison chart, `investmentGoal`/`timeHorizon` URL decision, dead `segments/details/*` components, and the owner-only scoring decision).
+
 ### S8 — Four-tool workspace with safe output states
 
 **Owner:** tools. **Depends:** S1+S3; chosen observed reference via S5/S6. **Files:** InteractiveToolsPanel and four tool components, new research tools alias, legacy `dashboard/trends` wrapper.
@@ -172,7 +174,9 @@ Build SVG13/18/19. Financing gets explicit hypothetical assumptions and standard
 
 **Exit:** example497,000 principal/25yr/3%=2356.830…; rounding2357, payment/income23.6%, ratio5.92; rate sensitivity values match specification; invalid/blank/zero-income inputs withhold outputs; no loan-approval advice, undefined-period compounding or hidden floor-area scaling.
 
-**Separate approval required:** regenerating lease/MRT/spatial models, setting new financial eligibility policies, or promoting recommendations. A UI implementer cannot invent these fixes.
+**Delivered** — see [`docs/implementation/s8-report.md`](../../docs/implementation/s8-report.md). `/research/tools` and the `/dashboard/trends` wrapper share one shell; the financing reference price comes from joint 2025 `map_metrics` sections, lease signals are signed with the endpoint policy surfaced, MRT totals are withheld behind an explicit model-review state, and spatial is label inspection only. The superseded tool components, their panel/tabs, `TrendsDashboard` and `TrendsMap` were deleted; the nav item moved to `research/tools`. Deferred items are tracked as `S8-F1` … `S8-F5` in the ledger's _S8 carry-forward_ table.
+
+**Separate approval required:** regenerating lease/MRT/spatial models, setting new financial eligibility policies, or promoting recommendations. A UI implementer cannot invent these fixes. None of these was done.
 
 ### S9 — Research-map archive, studies and catalog detail
 
@@ -186,6 +190,8 @@ Catalog: SVG15; preserve existing IDs/slugs/schema/DAG/dependency links; source-
 
 **Exit:** all article/persona/catalog links and exact map query IDs survive; invalid layer/source failure isolated; required chart markers remain opt-in; schema search and dependency links keyboard usable; differing vintages visible.
 
+**Delivered** — see [`docs/implementation/s9-report.md`](../../docs/implementation/s9-report.md). `/research/map` retains nine layer IDs and five query groups but draws no analytical fill; archived fields are inspectable per area with uniform-placeholder and historical-forecast warnings, and a failed source disables only its own layers. The studies library filters by text/topic/audience, articles render one H1, and the lease study's chart is withheld for a unit review. The catalog shows its snapshot generation beside the inspected artifact count and separates declared requiredness from observed nullness. Deferred items are tracked as `S9-F1` … `S9-F5` in the ledger's _S9 carry-forward_ table.
+
 ### S10 — Integration, regression and release readiness
 
 **Owner:** integration/test coordinator. **Depends:** all shipping slices. Complete only after approval of preceding changes.
@@ -195,6 +201,8 @@ Run production build/static preview and E2E at root and Pages base. Add route/qu
 Run relevant Python focused exporter tests and Ruff/type checks only if those files change, following skills. Run frontend type-check and distinguish old baseline diagnostics from touched-file failures; target full recovery where feasible without unrelated refactoring. Do not weaken existing smoke assertions merely to rename a button.
 
 **Exit:** no new attributable failures, all critical data/runtime defects in shipping paths fixed or explicitly gated, no lost capability/URL, accessible/mobile journeys verified, measured payload/hydration costs recorded. Remaining global debt has an explicit owner; no unverified “all checks pass” claim.
+
+**Delivered** — see [`docs/implementation/s10-report.md`](../../docs/implementation/s10-report.md). Astro check is clean (0/0/22); the deploy/CI smoke checks now match the shipped headings and research routes, and CI runs the frontend checks. The Pages build is exercised under `/egg-n-bacon-housing/` with a prefix-mounted static server (8 focused tests). A shared modal hook gives all three overlays focus-in/trap/Escape/restore; failed refreshes of server-rendered data get a labelled retry banner instead of silently passing as fresh; schema search has a filtered-zero state. Root Playwright is 198 passed / 8 skipped (Pages-base), unit is 310 passed, payload/hydration is measured per route. An independent S8–S10 audit then tightened the reference-asset failure state, MRT/CBD term disclosure, spatial-warning predicate, payload measurement, deploy deep routes and server containment. Deferred items are `S10-F1` … `S10-F6` in the ledger's _S10 carry-forward_ table.
 
 ## 5. Dependencies and parallelism
 
@@ -222,3 +230,5 @@ Parallel owners must not edit shared route/navigation/contracts at once. Use an 
 Start **S0**, then implement the **S1 data/runtime seam before visual migration**. The existing hotspot crash and mixed-scope adapter are concrete blockers; a polished shell must not amplify them. S3 can proceed independently once route ownership is reserved. Do not begin by replacing every dashboard or introducing a new framework.
 
 The user has authorized audit improvements and proceeding to this planning step. Review/approve this production plan before implementing it; no production application changes were made while drafting it.
+
+**Current position:** S0–S10 (including S5c) are implemented; **no next slice**. Committing, deploying, regenerating data or changing model/scoring boundaries requires explicit approval. A fresh session should read `AGENTS.md`, `docs/implementation/README.md` (status, invariants, carry-forward, environment notes) and [`docs/implementation/s10-report.md`](../../docs/implementation/s10-report.md).

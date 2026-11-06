@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import zlib from 'zlib';
 
-function gunzip(data) {
+function gunzip(data: Buffer): string {
   return zlib.gunzipSync(data).toString('utf-8');
 }
 

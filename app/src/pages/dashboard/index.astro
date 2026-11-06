@@ -64,6 +64,7 @@ try {
           client:load
           initialData={dashboardData}
           trendsData={trendsData}
+          baseUrl={import.meta.env.BASE_URL}
         />
       ) : (
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">

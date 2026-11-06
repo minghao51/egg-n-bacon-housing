@@ -14,6 +14,8 @@ interface DiscoverTabProps {
   onInvestigateSegment: (segment: Segment) => void;
   onAddToCompare: (segment: Segment) => void;
   comparisonSet: Set<string>;
+  comparisonLimitReached: boolean;
+  baseUrl: string;
 }
 
 type SortOption = "relevance" | "yield" | "growth" | "value";
@@ -35,6 +37,8 @@ export function DiscoverTab({
   onInvestigateSegment,
   onAddToCompare,
   comparisonSet,
+  comparisonLimitReached,
+  baseUrl,
 }: DiscoverTabProps) {
   const [sortBy, setSortBy] = useState<SortOption>("relevance");
   const matchedCount = scoredSegments.length;
@@ -50,10 +54,10 @@ export function DiscoverTab({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-foreground">
-              {matchedCount} Segment{matchedCount !== 1 ? "s" : ""} Ready To
-              Review
+              {matchedCount} of 6 archetypes match (weighted fit)
             </h2>
             <p className="text-sm text-muted-foreground">
+              A partial match may remain; the spatial-class filter is hard.
               Choose a segment first, then move into the investigation
               workspace.
             </p>
@@ -94,7 +98,7 @@ export function DiscoverTab({
       {relevantInsights.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {relevantInsights.slice(0, 2).map((insight) => (
-            <InsightCard key={insight.id} insight={insight} />
+            <InsightCard key={insight.id} insight={insight} baseUrl={baseUrl} />
           ))}
         </div>
       )}
@@ -102,19 +106,27 @@ export function DiscoverTab({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h3 className="text-lg font-semibold text-foreground">
-            Segment Selection Board
+            Segment selection board
           </h3>
           <p className="text-sm text-muted-foreground">
-            Investigate opens the area shortlist. Compare keeps a side-by-side
-            cross-check set.
+            Investigate opens the segment&apos;s declared areas. Comparison
+            keeps a two-to-four shortlist that is independent of the selected
+            segment.
           </p>
         </div>
         {selectedSegmentId && (
           <div className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            Active Segment Selected
+            Active segment selected
           </div>
         )}
       </div>
+
+      {comparisonLimitReached && (
+        <p className="rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+          Comparison set is full (4 of 4). Remove a segment - in the comparison
+          tab or with its own button - before adding another.
+        </p>
+      )}
 
       <SegmentGrid
         scoredSegments={scoredSegments}
@@ -123,6 +135,7 @@ export function DiscoverTab({
         onAddToCompare={onAddToCompare}
         selectedSegmentId={selectedSegmentId}
         comparisonSet={comparisonSet}
+        comparisonLimitReached={comparisonLimitReached}
       />
     </div>
   );

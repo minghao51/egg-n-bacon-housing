@@ -1,3 +1,10 @@
+/**
+ * Catalog dataset table (slice S9, SVG 15).
+ *
+ * Counts and sizes are labelled as catalog-snapshot values, never as a live
+ * pipeline read. Sorting and the dataset filter are keyboard operable.
+ */
+
 import { useMemo, useState } from "react";
 import {
   useReactTable,
@@ -17,6 +24,14 @@ interface DatasetTableProps {
 }
 
 const columnHelper = createColumnHelper<CatalogDataset>();
+
+function ariaSort(
+  sorted: false | "asc" | "desc",
+): "ascending" | "descending" | "none" {
+  if (sorted === "asc") return "ascending";
+  if (sorted === "desc") return "descending";
+  return "none";
+}
 
 export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
   const [globalFilter, setGlobalFilter] = useState("");
@@ -38,33 +53,44 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
           );
         },
       }),
-      columnHelper.accessor((row) => row.parquet?.row_count ?? 0, {
+      columnHelper.accessor((row) => row.parquet?.row_count ?? null, {
         id: "rows",
-        header: "Rows",
-        cell: (info) => (
-          <span className="text-sm tabular-nums">
-            {info.getValue().toLocaleString()}
-          </span>
-        ),
+        header: "Rows (snapshot)",
+        cell: (info) => {
+          const value = info.getValue();
+          return (
+            <span className="text-sm tabular-nums">
+              {value === null ? "not observed" : value.toLocaleString("en-SG")}
+            </span>
+          );
+        },
       }),
-      columnHelper.accessor((row) => row.parquet?.column_count ?? 0, {
+      columnHelper.accessor((row) => row.parquet?.column_count ?? null, {
         id: "columns",
-        header: "Columns",
-        cell: (info) => (
-          <span className="text-sm tabular-nums">{info.getValue()}</span>
-        ),
+        header: "Columns (snapshot)",
+        cell: (info) => {
+          const value = info.getValue();
+          return (
+            <span className="text-sm tabular-nums">
+              {value === null ? "not observed" : value}
+            </span>
+          );
+        },
       }),
-      columnHelper.accessor((row) => row.parquet?.file_size_bytes ?? 0, {
+      columnHelper.accessor((row) => row.parquet?.file_size_bytes ?? null, {
         id: "size",
-        header: "Size",
-        cell: (info) => (
-          <span className="text-sm tabular-nums">
-            {humanSize(info.getValue())}
-          </span>
-        ),
+        header: "Size (snapshot)",
+        cell: (info) => {
+          const value = info.getValue();
+          return (
+            <span className="text-sm tabular-nums">
+              {value === null ? "not observed" : humanSize(value)}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("schema", {
-        header: "Schema",
+        header: "Declared schema",
         cell: (info) =>
           info.getValue() ? (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-900/20 text-green-400 border border-green-700">
@@ -75,7 +101,7 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
           ),
       }),
       columnHelper.accessor("status", {
-        header: "Status",
+        header: "Artifact presence",
         cell: (info) => {
           const status = info.getValue();
           const colors: Record<string, string> = {
@@ -109,50 +135,71 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
+      <p className="text-sm text-muted-foreground">
+        Counts and sizes are from the catalog snapshot. “Available” means the
+        artifact was present when the catalog was generated — not that it is
+        correct or current.
+      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <label htmlFor="catalog-dataset-search" className="sr-only">
+          Search datasets
+        </label>
         <input
-          type="text"
+          id="catalog-dataset-search"
+          type="search"
           value={globalFilter ?? ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search datasets..."
+          placeholder="Search datasets…"
           className="px-3 py-2 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring w-64"
         />
         <span className="text-sm text-muted-foreground">
           {table.getFilteredRowModel().rows.length} datasets
         </span>
       </div>
-      <div className="border border-border rounded-md overflow-hidden">
+      <div className="border border-border rounded-md overflow-x-auto">
         <table className="w-full border-collapse">
+          <caption className="sr-only">
+            Catalog datasets with snapshot row, column and size counts
+          </caption>
           <thead className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="px-4 py-3 text-left text-xs font-semibold text-foreground border-b border-border whitespace-nowrap"
-                  >
-                    {header.isPlaceholder ? null : (
-                      <div
-                        className={
-                          header.column.getCanSort()
-                            ? "cursor-pointer select-none flex items-center gap-1 hover:text-foreground"
-                            : ""
-                        }
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        {flexRender(
+                {headerGroup.headers.map((header) => {
+                  const sorted = header.column.getIsSorted();
+                  const canSort = header.column.getCanSort();
+                  return (
+                    <th
+                      key={header.id}
+                      aria-sort={ariaSort(sorted)}
+                      className="px-4 py-3 text-left text-xs font-semibold text-foreground border-b border-border whitespace-nowrap"
+                    >
+                      {header.isPlaceholder ? null : canSort ? (
+                        <button
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                          className="flex items-center gap-1 text-left text-xs font-semibold text-foreground"
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                          <span aria-hidden="true">
+                            {sorted === "asc"
+                              ? "▲"
+                              : sorted === "desc"
+                                ? "▼"
+                                : ""}
+                          </span>
+                        </button>
+                      ) : (
+                        flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
-                        )}
-                        {header.column.getIsSorted() === "asc"
-                          ? " ▲"
-                          : header.column.getIsSorted() === "desc"
-                            ? " ▼"
-                            : ""}
-                      </div>
-                    )}
-                  </th>
-                ))}
+                        )
+                      )}
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>

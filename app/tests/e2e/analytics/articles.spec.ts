@@ -50,4 +50,51 @@ test.describe("Analytics Articles", () => {
       failOnConsoleWarnings: true,
     });
   });
+
+  test("renders exactly one level-1 heading on a study page", async ({
+    page,
+  }) => {
+    await page.goto("/analytics/lease-decay");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Lease Decay Impact",
+    );
+    // The stripped markdown H1 must not survive as a hidden duplicate.
+    await expect(
+      page.locator("article").getByRole("heading", { level: 1 }),
+    ).toHaveCount(0);
+  });
+
+  test("withholds the lease study chart and states the unit review", async ({
+    page,
+  }) => {
+    await page.goto("/analytics/lease-decay");
+    await expect(
+      page.getByText("Unit review required", { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText(/per-square-metre statistic/)).toBeVisible();
+    await expect(
+      page.getByText(/Charts are withheld on this study/),
+    ).toBeVisible();
+    // The opt-in markers still exist in the source tables; no chart is drawn.
+    await page.waitForTimeout(1_000);
+    await expect(page.locator(".chart-container")).toHaveCount(0);
+    // The source tables remain readable.
+    await expect(page.locator("article table").first()).toBeVisible();
+  });
+
+  test("still renders opt-in charts on a study without a unit review", async ({
+    page,
+  }) => {
+    await page.goto("/analytics/findings");
+    await expect(
+      page.getByText("Published research", { exact: false }).first(),
+    ).toBeVisible();
+    await expect
+      .poll(async () => page.locator(".chart-container").count(), {
+        timeout: 15_000,
+      })
+      .toBeGreaterThan(0);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  });
 });

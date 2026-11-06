@@ -20,6 +20,8 @@ interface UseGzipJsonResult<T> {
   data: T | null;
   loading: boolean;
   error: string | null;
+  /** A background refresh failed while published data stays on screen. */
+  refreshError: string | null;
   reload: (options?: { mode?: LoadMode }) => Promise<void>;
 }
 
@@ -65,6 +67,7 @@ export function useGzipJson<T>(
   const [data, setData] = useState<T | null>(initialData ?? null);
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
 
   const dataRef = useRef<T | null>(initialData ?? null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -116,6 +119,9 @@ export function useGzipJson<T>(
       if (intent.surfaceError) {
         setError(null);
       }
+      if (!hasData) {
+        setRefreshError(null);
+      }
 
       try {
         const result = await fetchGzipJson<T>(url, controller.signal);
@@ -136,6 +142,7 @@ export function useGzipJson<T>(
         setData(result);
         setLoading(false);
         setError(null);
+        setRefreshError(null);
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
           return;
@@ -153,6 +160,9 @@ export function useGzipJson<T>(
         }
         if (intent.surfaceError) {
           setError(message);
+        }
+        if (mode === "refresh" && hasData) {
+          setRefreshError(message);
         }
         setLoading(false);
       }
@@ -182,7 +192,7 @@ export function useGzipJson<T>(
     [load],
   );
 
-  return { data, loading, error, reload };
+  return { data, loading, error, refreshError, reload };
 }
 
 /**

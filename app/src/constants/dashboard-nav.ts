@@ -39,26 +39,26 @@ export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
   },
   {
     key: "map",
-    label: "Explore Areas",
+    label: "Research map",
     shortLabel: "Map",
     description:
-      "Spatial exploration for hotspots, value pockets, and overlays.",
-    path: "dashboard/map",
+      "Observed transaction fill beside nine archived model layers, with per-layer source and status.",
+    path: "research/map",
   },
   {
     key: "tools",
     label: "Decision Tools",
     shortLabel: "Tools",
     description:
-      "Scenario calculators for commute, lease, and affordability tradeoffs.",
-    path: "dashboard/trends",
+      "An illustrative financing scenario, stored lease bands and model-gated MRT and spatial inspections.",
+    path: "research/tools",
   },
   {
     key: "segments",
     label: "Discover Segments",
     shortLabel: "Segments",
     description: "Guided segment discovery, investigation, and comparison.",
-    path: "dashboard/segments",
+    path: "research/segments",
   },
   {
     key: "leaderboard",

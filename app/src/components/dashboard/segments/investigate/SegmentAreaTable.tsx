@@ -2,6 +2,10 @@ import type {
   SegmentAreaRow,
   SegmentInvestigationMetric,
 } from "@/types/segments";
+import {
+  formatSegmentMetric,
+  segmentMetricEvidence,
+} from "@/components/dashboard/segments/lib/segment-evidence";
 
 interface SegmentAreaTableProps {
   rows: SegmentAreaRow[];
@@ -9,42 +13,8 @@ interface SegmentAreaTableProps {
   highlightedArea: string | null;
   onRowHover: (area: string | null) => void;
   onRowClick: (area: string) => void;
-}
-
-function formatMetricValue(
-  value: number,
-  metric: SegmentInvestigationMetric,
-): string {
-  switch (metric) {
-    case "avgPricePsf":
-      return `$${value.toFixed(0)}`;
-    case "avgYield":
-    case "forecast6m":
-      return `${value.toFixed(1)}%`;
-    case "persistenceProbability":
-      return `${(value * 100).toFixed(1)}%`;
-    case "mrtPremium":
-      return `$${value.toFixed(0)}`;
-    default:
-      return value.toFixed(1);
-  }
-}
-
-function metricLabel(metric: SegmentInvestigationMetric): string {
-  switch (metric) {
-    case "avgPricePsf":
-      return "Avg PSF";
-    case "avgYield":
-      return "Avg Yield";
-    case "forecast6m":
-      return "6M Forecast";
-    case "mrtPremium":
-      return "MRT Premium";
-    case "persistenceProbability":
-      return "Persistence";
-    default:
-      return metric;
-  }
+  /** Areas the segment declares before the current constraints are applied. */
+  declaredAreaCount: number;
 }
 
 export default function SegmentAreaTable({
@@ -53,15 +23,25 @@ export default function SegmentAreaTable({
   highlightedArea,
   onRowHover,
   onRowClick,
+  declaredAreaCount,
 }: SegmentAreaTableProps) {
+  const selected = segmentMetricEvidence(selectedMetric);
+  const showSelectedColumn = selectedMetric !== "avgPricePsf";
+
   if (rows.length === 0) {
     return (
       <div className="rounded-2xl bg-muted/20 py-12 text-center">
+        <h3 className="mb-2 text-lg font-semibold text-foreground">
+          No declared areas fit these constraints
+        </h3>
         <p className="mb-2 text-muted-foreground">
-          No candidate areas match the current constraints.
+          {declaredAreaCount} linked area
+          {declaredAreaCount === 1 ? "" : "s"} are declared for this segment;
+          none match the current PSF range, region and spatial-class filters.
         </p>
         <p className="text-sm text-muted-foreground">
           Widen the price, region, or hotspot filters to restore the shortlist.
+          Nothing has been added or substituted.
         </p>
       </div>
     );
@@ -69,27 +49,37 @@ export default function SegmentAreaTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">
-          Matching Areas
-        </h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-semibold text-foreground">Linked areas</h3>
         <p className="text-sm text-muted-foreground">
-          Sorted by {metricLabel(selectedMetric)}
+          Showing {rows.length} of {declaredAreaCount} &middot; sorted by{" "}
+          {selected.label}
         </p>
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-border">
         <table className="min-w-full text-left text-sm">
+          <caption className="sr-only">
+            Declared planning areas for this research segment with stored
+            archive averages. These are not observed 2025 transaction medians.
+          </caption>
           <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-3 py-3 font-semibold">Planning Area</th>
-              <th className="px-3 py-3 font-semibold">Region</th>
-              <th className="px-3 py-3 font-semibold">Avg PSF</th>
-              <th className="px-3 py-3 font-semibold">Avg Yield</th>
-              <th className="px-3 py-3 font-semibold">6M Forecast</th>
-              <th className="px-3 py-3 font-semibold">MRT Premium</th>
-              <th className="px-3 py-3 font-semibold">Hotspot Confidence</th>
-              <th className="px-3 py-3 font-semibold">Persistence</th>
+              <th scope="col" className="px-3 py-3 font-semibold">
+                Planning area
+              </th>
+              <th scope="col" className="px-3 py-3 font-semibold">
+                Market segment
+              </th>
+              <th scope="col" className="px-3 py-3 font-semibold">
+                Stored avg PSF
+              </th>
+              {showSelectedColumn && (
+                <th scope="col" className="px-3 py-3 font-semibold">
+                  {selected.label}
+                  {selected.gated ? " †" : ""}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -115,32 +105,24 @@ export default function SegmentAreaTable({
                     {row.region}
                   </td>
                   <td className="px-3 py-3 text-foreground">
-                    {formatMetricValue(row.avgPricePsf, "avgPricePsf")}
+                    {formatSegmentMetric(row.avgPricePsf, "avgPricePsf")}
                   </td>
-                  <td className="px-3 py-3 text-foreground">
-                    {formatMetricValue(row.avgYield, "avgYield")}
-                  </td>
-                  <td className="px-3 py-3 text-foreground">
-                    {formatMetricValue(row.forecast6m, "forecast6m")}
-                  </td>
-                  <td className="px-3 py-3 text-foreground">
-                    {formatMetricValue(row.mrtPremium, "mrtPremium")}
-                  </td>
-                  <td className="px-3 py-3 text-foreground">
-                    {row.hotspotConfidence}
-                  </td>
-                  <td className="px-3 py-3 text-foreground">
-                    {formatMetricValue(
-                      row.persistenceProbability,
-                      "persistenceProbability",
-                    )}
-                  </td>
+                  {showSelectedColumn && (
+                    <td className="px-3 py-3 text-foreground">
+                      {formatSegmentMetric(row[selectedMetric], selectedMetric)}
+                    </td>
+                  )}
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        † Stored archive field: definition, units, sample and observation period
+        are not supplied. Inspectable, not a current recommendation.
+      </p>
     </div>
   );
 }

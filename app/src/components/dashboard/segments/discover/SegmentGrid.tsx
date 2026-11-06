@@ -10,9 +10,8 @@ interface SegmentGridProps {
   onAddToCompare: (segment: Segment) => void;
   selectedSegmentId?: string | null;
   comparisonSet: Set<string>;
+  comparisonLimitReached?: boolean;
 }
-
-type SortOption = "relevance" | "yield" | "growth" | "value";
 
 export function SegmentGrid({
   scoredSegments,
@@ -21,6 +20,7 @@ export function SegmentGrid({
   onAddToCompare,
   selectedSegmentId,
   comparisonSet,
+  comparisonLimitReached = false,
 }: SegmentGridProps) {
   const sortedSegments = useMemo(() => {
     const sorted = [...scoredSegments];
@@ -70,6 +70,7 @@ export function SegmentGrid({
           onAddToCompare={onAddToCompare}
           isActive={selectedSegmentId === segment.id}
           isSelectedForCompare={comparisonSet.has(segment.id)}
+          compareDisabled={comparisonLimitReached}
         />
       ))}
     </div>

@@ -24,7 +24,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.2.23'
+          bun-version: "1.2.23"
 
       - name: Install dependencies
         working-directory: ./app
@@ -49,15 +49,22 @@ jobs:
           fi
           echo "Build successful: dist/index.html exists"
 
-      - name: Smoke check built dashboard headings
+      - name: Smoke check built routes and headings
         working-directory: ./app
         run: |
           grep -q "Overview" dist/dashboard/index.html
-          grep -q "Explore Areas" dist/dashboard/map/index.html
-          grep -q "Decision Tools" dist/dashboard/trends/index.html
-          grep -q "Discover Segments" dist/dashboard/segments/index.html
+          grep -q "A layer is a claim" dist/dashboard/map/index.html
+          grep -q "Make the assumptions editable" dist/dashboard/trends/index.html
+          grep -q "Find an archetype" dist/dashboard/segments/index.html
           grep -q "Compare Areas" dist/dashboard/leaderboard/index.html
-          echo "✅ Built dashboard pages contain the expected headings"
+          grep -q "Same year. Same housing type." dist/explore/index.html
+          grep -q "A year of prices, with the sales behind them" dist/research/trends/index.html
+          grep -q "A layer is a claim" dist/research/map/index.html
+          grep -q "Make the assumptions editable" dist/research/tools/index.html
+          grep -q "Find an archetype" dist/research/segments/index.html
+          grep -q "Stories with a visible evidence trail" dist/analytics/index.html
+          grep -q "Data Catalog" dist/catalog/index.html
+          echo "✅ Built routes contain the expected headings"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -79,8 +86,10 @@ jobs:
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          for path in "" "/dashboard/" "/dashboard/map/" "/dashboard/trends/" "/dashboard/segments/" "/dashboard/leaderboard/"; do
-            url="${PAGE_URL%/}${path}"
+          base_path="$(printf '%s' "$PAGE_URL" | sed -E 's#https?://[^/]+##; s#/$##')"
+          origin="$(printf '%s' "$PAGE_URL" | sed -E 's#(https?://[^/]+).*#\1#')"
+          for path in "" "/dashboard/" "/dashboard/map/" "/dashboard/trends/" "/dashboard/segments/" "/dashboard/leaderboard/" "/explore/" "/research/trends/" "/research/map/" "/research/tools/" "/research/segments/" "/analytics/" "/analytics/lease-decay/" "/analytics/personas/investor/" "/catalog/" "/catalog/platinum/unified_dataset/" "/areas/bishan/"; do
+            url="${origin}${base_path}${path}"
             echo "Checking $url"
             curl -fsSL "$url" > page.html
             case "$path" in
@@ -90,18 +99,53 @@ jobs:
               "/dashboard/")
                 grep -q "Overview" page.html
                 ;;
-              "/dashboard/map/")
-                grep -q "Explore Areas" page.html
+              "/dashboard/map/" | "/research/map/")
+                grep -q "A layer is a claim" page.html
                 ;;
-              "/dashboard/trends/")
-                grep -q "Decision Tools" page.html
+              "/dashboard/trends/" | "/research/tools/")
+                grep -q "Make the assumptions editable" page.html
                 ;;
-              "/dashboard/segments/")
-                grep -q "Discover Segments" page.html
+              "/dashboard/segments/" | "/research/segments/")
+                grep -q "Find an archetype" page.html
                 ;;
               "/dashboard/leaderboard/")
                 grep -q "Compare Areas" page.html
                 ;;
+              "/explore/")
+                grep -q "Same year. Same housing type." page.html
+                ;;
+              "/research/trends/")
+                grep -q "A year of prices, with the sales behind them" page.html
+                ;;
+              "/analytics/")
+                grep -q "Stories with a visible evidence trail" page.html
+                ;;
+              "/analytics/lease-decay/")
+                grep -q "Lease Decay Impact" page.html
+                ;;
+              "/analytics/personas/investor/")
+                grep -q "Property Investor" page.html
+                ;;
+              "/catalog/")
+                grep -q "Data Catalog" page.html
+                ;;
+              "/catalog/platinum/unified_dataset/")
+                grep -q "Unified Dataset" page.html
+                ;;
+              "/areas/bishan/")
+                grep -q "Bishan" page.html
+                ;;
             esac
           done
+
+          # The Pages base path must also prefix the hashed assets, or every
+          # island fails to hydrate on the deployed site.
+          curl -fsSL "${origin}${base_path}/" > home.html
+          asset="$(grep -o "${base_path}/_astro/[^\"]*\.css" home.html | head -1)"
+          if [ -z "$asset" ]; then
+            echo "No base-prefixed CSS asset found on the home page"
+            exit 1
+          fi
+          echo "Checking asset $asset"
+          curl -fsSL "${origin}${asset}" > /dev/null
           echo "✅ Deployed Pages smoke checks passed"

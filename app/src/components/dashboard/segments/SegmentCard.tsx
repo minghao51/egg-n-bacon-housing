@@ -1,6 +1,14 @@
 // app/src/components/dashboard/segments/SegmentCard.tsx
+/**
+ * Segment card for the discover board.
+ *
+ * Only the stored average PSF, the declared cohorts and the weighted fit are
+ * shown. Yield, growth, forecast and persistence stay out of the card because
+ * their definitions, periods and samples are not supplied by the archive (see
+ * `lib/segment-evidence.ts`).
+ */
 import type { Segment } from "@/types/segments";
-import clsx from "clsx";
+import { clsx } from "clsx";
 
 interface SegmentCardProps {
   segment: Segment;
@@ -9,53 +17,9 @@ interface SegmentCardProps {
   onAddToCompare: (segment: Segment) => void;
   isActive?: boolean;
   isSelectedForCompare?: boolean;
+  /** True when the comparison set is full and this card is not in it. */
+  compareDisabled?: boolean;
 }
-
-const SEGMENT_ICONS: Record<string, string> = {
-  large_size_stable: "🏢",
-  high_growth_recent: "🔥",
-  speculator_hotspots: "⚡",
-  declining_areas: "📉",
-  mid_tier_value: "💎",
-  premium_new_units: "🌟",
-};
-
-const RISK_COLORS = {
-  low: "text-green-600 bg-green-50 dark:bg-green-900/20",
-  medium: "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20",
-  high: "text-orange-600 bg-orange-50 dark:bg-orange-900/20",
-  very_high: "text-red-600 bg-red-50 dark:bg-red-900/20",
-};
-
-const HOTSPOT_BADGES: Record<
-  string,
-  { icon: string; label: string; className: string }
-> = {
-  HH: {
-    icon: "🔥",
-    label: "Hotspot",
-    className:
-      "text-red-700 bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800",
-  },
-  LL: {
-    icon: "❄️",
-    label: "Coldspot",
-    className:
-      "text-blue-700 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800",
-  },
-  HL: {
-    icon: "⚡",
-    label: "Pioneer",
-    className:
-      "text-orange-700 bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800",
-  },
-  LH: {
-    icon: "🔄",
-    label: "Transition",
-    className:
-      "text-purple-700 bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800",
-  },
-};
 
 export default function SegmentCard({
   segment,
@@ -64,121 +28,84 @@ export default function SegmentCard({
   onAddToCompare,
   isActive = false,
   isSelectedForCompare = false,
+  compareDisabled = false,
 }: SegmentCardProps) {
-  const icon = SEGMENT_ICONS[segment.id] || "📊";
-  const riskColor = RISK_COLORS[segment.characteristics.riskLevel];
+  const linkedAreas = segment.planningAreas.length;
 
   return (
     <div
       className={clsx(
-        "bg-card border rounded-2xl p-4 transition-all hover:shadow-md",
+        "rounded-2xl border bg-card p-4 transition-all hover:shadow-md",
         isActive && "border-primary ring-2 ring-primary/20 shadow-md",
         !isActive && isSelectedForCompare && "border-primary/60",
         !isActive && !isSelectedForCompare && "border-border",
       )}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{icon}</span>
-          <div>
-            <h3 className="font-semibold text-foreground">{segment.name}</h3>
-            <p className="text-xs text-muted-foreground line-clamp-2">
-              {segment.description}
-            </p>
-          </div>
-        </div>
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <h3 className="font-semibold text-foreground">{segment.name}</h3>
         <div className="text-right">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Match
+            Weighted fit
           </div>
-          <div className="text-2xl font-bold text-primary">{matchScore}%</div>
+          <div className="text-xl font-bold text-primary">{matchScore}%</div>
+          <div className="text-[11px] text-muted-foreground">
+            not a return probability
+          </div>
         </div>
       </div>
 
-      <div className="mb-3 flex items-center gap-2 flex-wrap">
-        <span
-          className={clsx(
-            "inline-block px-2 py-1 text-xs font-medium rounded-full",
-            riskColor,
-          )}
-        >
-          {segment.characteristics.riskLevel.replace("_", " ").toUpperCase()}{" "}
-          RISK
-        </span>
-        {segment.spatialClassification &&
-          HOTSPOT_BADGES[segment.spatialClassification] && (
-            <span
-              className={clsx(
-                "inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border",
-                HOTSPOT_BADGES[segment.spatialClassification].className,
-              )}
-            >
-              {HOTSPOT_BADGES[segment.spatialClassification].icon}{" "}
-              {HOTSPOT_BADGES[segment.spatialClassification].label}
-            </span>
-          )}
-      </div>
-
-      <div className="mb-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Selection Snapshot
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <MetricItem
-          label="Price PSF"
-          value={`$${segment.metrics.avgPricePsf.toFixed(0)}`}
-        />
-        <MetricItem
-          label="Yield"
-          value={`${segment.metrics.avgYield.toFixed(1)}%`}
-        />
-        <MetricItem
-          label="YoY Growth"
-          value={`+${segment.metrics.yoyGrowth.toFixed(1)}%`}
-        />
-        <MetricItem
-          label="Transactions"
-          value={segment.metrics.transactionCount.toLocaleString()}
-        />
-      </div>
-
-      {segment.persistenceProbability > 0 && (
-        <div className="mb-4 p-2 bg-muted/50 rounded text-xs">
-          <span className="text-muted-foreground">Persistence: </span>
-          <span className="font-medium">
-            {(segment.persistenceProbability * 100).toFixed(0)}%
-          </span>
+      <dl className="mb-3 space-y-1 text-sm">
+        <div className="flex items-baseline justify-between gap-3">
+          <dt className="text-muted-foreground">Stored avg PSF</dt>
+          <dd className="font-semibold text-foreground">
+            {Number.isFinite(segment.metrics.avgPricePsf)
+              ? `S$${segment.metrics.avgPricePsf.toFixed(0)}`
+              : "N/A"}
+          </dd>
         </div>
-      )}
+        <div className="flex items-baseline justify-between gap-3">
+          <dt className="text-muted-foreground">Linked areas</dt>
+          <dd className="font-medium text-foreground">
+            {linkedAreas} &middot; {segment.propertyTypes.join(", ")}
+          </dd>
+        </div>
+      </dl>
+
+      <p className="mb-4 rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+        Period / yield provenance require review. Stored average, not a 2025
+        transaction median.
+      </p>
 
       <div className="flex gap-2">
         <button
           onClick={() => onInvestigate(segment)}
-          className="flex-1 px-3 py-2 text-sm font-medium text-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          className="flex-1 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          aria-label={`Investigate ${segment.name}`}
         >
           {isActive ? "Investigating" : "Investigate"}
         </button>
         <button
           onClick={() => onAddToCompare(segment)}
+          disabled={compareDisabled && !isSelectedForCompare}
+          aria-pressed={isSelectedForCompare}
+          aria-label={
+            isSelectedForCompare
+              ? `Remove ${segment.name} from comparison`
+              : `Add ${segment.name} to comparison`
+          }
           className={clsx(
-            "px-3 py-2 text-sm font-medium rounded-md border transition-colors",
+            "rounded-md border px-3 py-2 text-sm font-medium transition-colors",
             isSelectedForCompare
               ? "border-primary bg-primary/10 text-primary"
               : "border-border hover:border-primary hover:text-primary",
+            compareDisabled &&
+              !isSelectedForCompare &&
+              "cursor-not-allowed opacity-50 hover:border-border hover:text-foreground",
           )}
         >
-          {isSelectedForCompare ? "In Compare" : "Compare"}
+          {isSelectedForCompare ? "✓ In comparison" : "Add to comparison"}
         </button>
       </div>
-    </div>
-  );
-}
-
-function MetricItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="text-sm font-semibold text-foreground">{value}</div>
     </div>
   );
 }

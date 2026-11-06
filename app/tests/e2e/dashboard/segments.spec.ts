@@ -1,118 +1,77 @@
 import { test, expect, type Page } from "@playwright/test";
 import { expectPageToLoadWithoutErrors } from "../utils/pageHealth";
 
-async function gotoSegments(page: Page) {
-  await page.goto("/dashboard/segments");
-  await expect(
-    page.getByRole("heading", { name: "Discover Segments", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Discover/ }).first(),
-  ).toBeVisible();
-}
+/**
+ * Legacy `/dashboard/segments` wrapper.
+ *
+ * The workspace moved to `/research/segments`; this route must keep working and
+ * keep every query ID. The behaviour suite lives in
+ * `tests/e2e/research/segments.spec.ts` — this file only pins compatibility.
+ */
 
-async function openFirstInvestigation(page: Page) {
-  await gotoSegments(page);
-  const investigateCtas = page.getByRole("button", { name: "Investigate" });
-  await expect(investigateCtas.last()).toBeVisible();
-  await investigateCtas.last().click();
+const H1 = "Find an archetype. Then inspect its evidence.";
+
+async function openLegacy(page: Page, query = "") {
+  await page.goto(`/dashboard/segments${query}`);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(H1);
   await expect(
-    page.getByRole("button", { name: "Change Segment" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Investigation Lens" }),
+    page.getByRole("heading", { name: "Six stored research segments" }),
   ).toBeVisible();
 }
 
-test.describe("Dashboard - Discover Segments", () => {
-  test("loads the redesigned segments shell", async ({ page }) => {
-    await gotoSegments(page);
-    await expect(page).toHaveURL(/dashboard\/segments/);
-    await expect(
-      page.getByRole("button", { name: "Metrics Guide" }),
-    ).toBeVisible();
-    await expect(page.getByText("Selected Segment").first()).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Investigate/ }).first(),
-    ).toBeDisabled();
-    await expect(
-      page.getByRole("heading", { name: "Constraints" }),
-    ).toBeVisible();
-  });
-
-  test("selecting a segment unlocks the investigation workspace", async ({
+test.describe("Dashboard - segments wrapper", () => {
+  test("still renders the workspace and says it is a compatibility route", async ({
     page,
   }) => {
-    await openFirstInvestigation(page);
+    await openLegacy(page);
+
+    await expect(page.getByText(/Compatibility route:/)).toBeVisible();
+    await expect(page.getByText("Research / Segments").first()).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /Investigate/ }).first(),
-    ).toBeEnabled();
-    await expect(
-      page.getByRole("heading", { name: "Geographic Match Map" }),
+      page.getByText(/archetypes match \(weighted fit\)/),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Matching Areas" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Area Evidence" }),
+      page.getByText(/not listed in the dashboard release manifest/i),
     ).toBeVisible();
   });
 
-  test("investigation metric controls update the shortlist ordering label", async ({
+  test("preserves persona, segment and area from a legacy deep link", async ({
     page,
   }) => {
-    await openFirstInvestigation(page);
+    await openLegacy(
+      page,
+      "?persona=upgrader&tab=investigate&segment=mid_tier_value&area=lim%20chu%20kang",
+    );
 
-    const sortLabel = page.getByText(/Sorted by /).first();
-    await expect(sortLabel).toContainText("Avg PSF");
+    await expect
+      .poll(() => new URL(page.url()).searchParams.get("area"))
+      .toBe("LIM CHU KANG");
+    const params = new URL(page.url()).searchParams;
+    expect(params.get("segment")).toBe("mid_tier_value");
+    expect(params.get("persona")).toBe("upgrader");
+    expect(params.get("tab")).toBe("investigate");
 
-    await page.getByRole("button", { name: "Avg Yield" }).click();
-    await expect(sortLabel).toContainText("Avg Yield");
-
-    await page.getByRole("button", { name: "Persistence" }).click();
-    await expect(sortLabel).toContainText("Persistence");
+    await expect(
+      page.getByRole("heading", {
+        name: "Lim Chu Kang / selected research area",
+      }),
+    ).toBeVisible();
   });
 
-  test("clicking a shortlist row updates the area evidence panel", async ({
+  test("the same workspace is reachable at the research route", async ({
     page,
   }) => {
-    await openFirstInvestigation(page);
-
-    const firstRow = page.locator("tbody tr").first();
-    const firstAreaName = (
-      await firstRow.locator("td").first().textContent()
-    )?.trim();
-    expect(firstAreaName).toBeTruthy();
-
-    await firstRow.click();
-    await expect(
-      page.getByRole("heading", { name: "Area Evidence" }),
-    ).toBeVisible();
-    await expect(
-      page.getByText(new RegExp(`${firstAreaName} is currently selected`, "i")),
-    ).toBeVisible();
+    await openLegacy(page);
+    const navLink = page
+      .getByRole("link", { name: /Discover Segments/ })
+      .first();
+    await expect(navLink).toHaveAttribute("href", /\/research\/segments$/);
+    await navLink.click();
+    await expect(page).toHaveURL(/\/research\/segments/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(H1);
   });
 
-  test("constraints can narrow the investigation to an explicit empty state", async ({
-    page,
-  }) => {
-    await openFirstInvestigation(page);
-
-    await page.getByLabel("Core Central Region").uncheck();
-    await page.getByLabel("Rest of Central Region").uncheck();
-
-    await expect(
-      page.getByText("No candidate areas match the current constraints."),
-    ).toBeVisible();
-  });
-
-  test("should have working navigation back to overview", async ({ page }) => {
-    await gotoSegments(page);
-    await page.getByRole("link", { name: "Overview" }).first().click();
-    await expect(page).toHaveURL(/dashboard$/);
-  });
-
-  test("should not have critical console errors", async ({ page }) => {
+  test("should not have console errors", async ({ page }) => {
     await expectPageToLoadWithoutErrors(page, "/dashboard/segments", {
       ignoreConsoleErrors: ["does not provide an export", "SyntaxError"],
       ignorePageErrors: ["does not provide an export", "SyntaxError"],

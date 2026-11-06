@@ -19,7 +19,7 @@ test.describe("Dashboard - Market Overview", () => {
       page.getByRole("link", { name: /Overview/ }).first(),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /Explore Areas/ }).first(),
+      page.getByRole("link", { name: /Research map/ }).first(),
     ).toBeVisible();
     await expect(
       page.getByRole("link", { name: /Decision Tools/ }).first(),
@@ -32,24 +32,24 @@ test.describe("Dashboard - Market Overview", () => {
 
   test("should have working navigation links in sidebar", async ({ page }) => {
     await page
-      .getByRole("link", { name: /Explore Areas/ })
+      .getByRole("link", { name: /Research map/ })
       .first()
       .click();
-    await expect(page).toHaveURL(/dashboard\/map/);
+    await expect(page).toHaveURL(/research\/map/);
     await page.goBack();
 
     await page
       .getByRole("link", { name: /Decision Tools/ })
       .first()
       .click();
-    await expect(page).toHaveURL(/dashboard\/trends/);
+    await expect(page).toHaveURL(/research\/tools/);
     await page.goBack();
 
     await page
       .getByRole("link", { name: /Discover Segments/ })
       .first()
       .click();
-    await expect(page).toHaveURL(/dashboard\/segments/);
+    await expect(page).toHaveURL(/research\/segments/);
   });
 
   test("should navigate to analytics section", async ({ page }) => {

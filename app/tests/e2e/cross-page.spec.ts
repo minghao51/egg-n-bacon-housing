@@ -38,22 +38,22 @@ test.describe("Cross-Page Navigation", () => {
     await page.goto("/dashboard");
 
     await page
-      .getByRole("link", { name: /Explore Areas/ })
+      .getByRole("link", { name: /Research map/ })
       .first()
       .click();
-    await expect(page).toHaveURL(/dashboard\/map/);
+    await expect(page).toHaveURL(/research\/map/);
 
     await page
       .getByRole("link", { name: /Decision Tools/ })
       .first()
       .click();
-    await expect(page).toHaveURL(/dashboard\/trends/);
+    await expect(page).toHaveURL(/research\/tools/);
 
     await page
       .getByRole("link", { name: /Discover Segments/ })
       .first()
       .click();
-    await expect(page).toHaveURL(/dashboard\/segments/);
+    await expect(page).toHaveURL(/research\/segments/);
 
     await page
       .getByRole("link", { name: /Compare Areas/ })
@@ -109,7 +109,7 @@ test.describe("Data Loading", () => {
   test("should load analytics index data", async ({ page }) => {
     await page.goto("/analytics/");
     await page.waitForLoadState("networkidle");
-    await expect(page.getByText("Total Reports")).toBeVisible();
+    await expect(page.getByText("Published studies")).toBeVisible();
   });
 });
 
@@ -118,7 +118,7 @@ test.describe("Accessibility", () => {
     const pages = [
       { url: "/", title: "Egg n Bacon" },
       { url: "/dashboard", title: "Dashboard" },
-      { url: "/analytics/", title: "Analytics" },
+      { url: "/analytics/", title: "Studies" },
     ];
 
     for (const { url, title } of pages) {

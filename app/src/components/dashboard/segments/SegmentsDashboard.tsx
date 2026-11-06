@@ -1,5 +1,17 @@
 // app/src/components/dashboard/segments/SegmentsDashboard.tsx
-import { useEffect, useRef, useState } from "react";
+/**
+ * Segment workspace island (shared by `/research/segments` and the legacy
+ * `/dashboard/segments` wrapper).
+ *
+ * Evidence boundary: this surface reads `segments_enhanced.json.gz` only. That
+ * asset is not part of `dashboard-release.json`, so no number here is compared
+ * with a dashboard median or count — see `lib/segment-evidence.ts`.
+ *
+ * State: the address bar is read once, before the first commit (the island is
+ * client-only), and written back with `replaceState`. Only the query keys this
+ * workspace owns are touched, so parameters owned by other surfaces survive.
+ */
+import { useEffect, useState } from "react";
 import { HelpCircle } from "lucide-react";
 import { useSegmentsData } from "@/hooks/useSegmentsData";
 import { useFilterState } from "@/hooks/useFilterState";
@@ -12,8 +24,27 @@ import { DiscoverTab } from "./discover/DiscoverTab";
 import { CompareTab } from "./compare/CompareTab";
 import { InvestigateTab } from "./investigate/InvestigateTab";
 import SegmentMetricGuideModal from "./investigate/SegmentMetricGuideModal";
+import {
+  SEGMENT_ARCHIVE_NOTE,
+  SEGMENT_NOT_COMPARABLE_NOTE,
+} from "./lib/segment-evidence";
+import {
+  applySegmentQuery,
+  parseSegmentQuery,
+  SEGMENT_COMPARISON_MAX,
+  SEGMENT_COMPARISON_MIN,
+  type SegmentQueryState,
+  type SegmentTab,
+} from "./lib/segment-url-state";
 
-type TabId = "discover" | "investigate" | "compare";
+/** Read the selection once, before the first commit. */
+function readInitialQueryState(): SegmentQueryState {
+  if (typeof window === "undefined") {
+    // The island is client-only; this branch only guards a stray server render.
+    return parseSegmentQuery("");
+  }
+  return parseSegmentQuery(window.location.search);
+}
 
 function personaLabel(persona: Persona): string {
   switch (persona) {
@@ -30,8 +61,33 @@ function personaLabel(persona: Persona): string {
   }
 }
 
-export default function SegmentsDashboard() {
-  const { data, loading, error } = useSegmentsData();
+/** "2026-04-19T23:23:07.52Z" → "19 Apr 2026" (extraction, not observation). */
+export function archiveExtractionLabel(
+  lastUpdated: string | undefined,
+): string {
+  if (!lastUpdated) {
+    return "not supplied";
+  }
+  const parsed = new Date(lastUpdated);
+  if (Number.isNaN(parsed.getTime())) {
+    return "not supplied";
+  }
+  return parsed.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+interface SegmentsDashboardProps {
+  /** Deployment base path, resolved once by the Astro shell. */
+  baseUrl: string;
+}
+
+export default function SegmentsDashboard({ baseUrl }: SegmentsDashboardProps) {
+  const { data, loading, error, reload } = useSegmentsData();
+  const [initialState] = useState<SegmentQueryState>(readInitialQueryState);
   const {
     filters,
     debouncedFilters,
@@ -40,111 +96,72 @@ export default function SegmentsDashboard() {
     updateFilter,
     resetFilters,
     activeFilterCount,
-  } = useFilterState("all", { countVisibleFiltersOnly: true });
-  const [activeTab, setActiveTab] = useState<TabId>("discover");
-  const [selectedSegment, setSelectedSegment] = useState<Segment | null>(null);
-  const [comparisonSet, setComparisonSet] = useState<Set<string>>(new Set());
-  const [selectedArea, setSelectedArea] = useState<string | null>(null);
+  } = useFilterState(initialState.persona, {
+    countVisibleFiltersOnly: true,
+    initialFilters: initialState.filters,
+  });
+  const [activeTab, setActiveTab] = useState<SegmentTab>(initialState.tab);
+  const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(
+    initialState.segmentId,
+  );
+  const [comparisonIds, setComparisonIds] = useState<string[]>(
+    initialState.comparisonIds,
+  );
+  const [selectedArea, setSelectedArea] = useState<string | null>(
+    initialState.area,
+  );
   const [showMetricGuide, setShowMetricGuide] = useState(false);
-  const hasHydratedFromUrl = useRef(false);
 
+  const segments = data?.segments ?? [];
   const { matchedSegments, scoredSegments } = useSegmentMatching(
-    data?.segments ?? [],
+    segments,
     debouncedFilters,
   );
 
+  // IDs — not objects — are the state, so an unknown or stale ID simply falls
+  // back to "nothing selected" instead of holding a stale segment.
+  const selectedSegment =
+    segments.find((segment) => segment.id === selectedSegmentId) ?? null;
+  const comparisonSegments = comparisonIds
+    .map((id) => segments.find((segment) => segment.id === id))
+    .filter((segment): segment is Segment => Boolean(segment));
+  const comparisonLimitReached =
+    comparisonSegments.length >= SEGMENT_COMPARISON_MAX;
+  // A stable key for the effect below: `comparisonSegments` is re-derived on
+  // every render, but the IDs only change when the selection does.
+  const comparisonKey = comparisonSegments
+    .map((segment) => segment.id)
+    .join(",");
+
+  // Write the address bar back. Runs after the first commit, when the state
+  // above is already the parsed selection, so no deep link is overwritten. It
+  // waits for the archive before writing: until then an incoming segment ID
+  // cannot be validated, and serialising would prune it out of the URL and then
+  // restore it, which is exactly the kind of transient rewrite S7 removed.
   useEffect(() => {
-    if (typeof window === "undefined" || hasHydratedFromUrl.current || !data) {
+    if (typeof window === "undefined" || !data) {
       return;
     }
-
-    const params = new URLSearchParams(window.location.search);
-    const personaParam = params.get("persona");
-    const segmentParam = params.get("segment");
-    const comparisonParam = params.get("segments");
-    const areaParam = params.get("area");
-    const tabParam = params.get("tab");
-
-    if (
-      personaParam === "all" ||
-      personaParam === "investor" ||
-      personaParam === "first-time-buyer" ||
-      personaParam === "upgrader"
-    ) {
-      setPersona(personaParam);
+    const next = applySegmentQuery(window.location.href, {
+      persona,
+      tab: activeTab,
+      segmentId: selectedSegment?.id ?? null,
+      comparisonIds: comparisonKey === "" ? [] : comparisonKey.split(","),
+      area: selectedArea,
+      filters,
+    });
+    if (next !== window.location.href) {
+      window.history.replaceState({}, "", next);
     }
-
-    if (segmentParam) {
-      const nextSegment = data.segments.find(
-        (segment) => segment.id === segmentParam,
-      );
-      if (nextSegment) {
-        setSelectedSegment(nextSegment);
-      }
-    }
-
-    if (comparisonParam) {
-      const nextSet = new Set(
-        comparisonParam
-          .split(",")
-          .filter(Boolean)
-          .slice(0, 4)
-          .filter((segmentId) =>
-            data.segments.some((segment) => segment.id === segmentId),
-          ),
-      );
-      setComparisonSet(nextSet);
-    }
-
-    if (areaParam) {
-      setSelectedArea(areaParam.toUpperCase());
-    }
-
-    if (
-      tabParam === "discover" ||
-      tabParam === "investigate" ||
-      tabParam === "compare"
-    ) {
-      setActiveTab(tabParam);
-    }
-
-    hasHydratedFromUrl.current = true;
-  }, [data, setPersona]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const url = new URL(window.location.href);
-    url.searchParams.set("persona", persona);
-
-    if (activeTab !== "discover") {
-      url.searchParams.set("tab", activeTab);
-    } else {
-      url.searchParams.delete("tab");
-    }
-
-    if (selectedSegment) {
-      url.searchParams.set("segment", selectedSegment.id);
-    } else {
-      url.searchParams.delete("segment");
-    }
-
-    if (comparisonSet.size > 0) {
-      url.searchParams.set("segments", Array.from(comparisonSet).join(","));
-    } else {
-      url.searchParams.delete("segments");
-    }
-
-    if (selectedArea) {
-      url.searchParams.set("area", selectedArea);
-    } else {
-      url.searchParams.delete("area");
-    }
-
-    window.history.replaceState({}, "", url.toString());
-  }, [activeTab, comparisonSet, persona, selectedArea, selectedSegment]);
+  }, [
+    activeTab,
+    comparisonKey,
+    data,
+    filters,
+    persona,
+    selectedArea,
+    selectedSegment,
+  ]);
 
   if (loading) {
     return (
@@ -162,12 +179,15 @@ export default function SegmentsDashboard() {
       <div className="flex h-64 items-center justify-center">
         <div className="max-w-md text-center">
           <div className="mb-4 text-6xl">⚠️</div>
-          <h3 className="mb-2 text-lg font-semibold text-foreground">
-            Failed to load data
-          </h3>
+          <h2 className="mb-2 text-lg font-semibold text-foreground">
+            Failed to load the segment archive
+          </h2>
           <p className="mb-4 text-muted-foreground">{error}</p>
+          <p className="mb-4 text-sm text-muted-foreground">
+            No segment numbers are shown while the archive is unavailable.
+          </p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => void reload()}
             className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
           >
             Retry
@@ -182,26 +202,37 @@ export default function SegmentsDashboard() {
   }
 
   const handleInvestigateSegment = (segment: Segment) => {
-    setSelectedSegment(segment);
+    setSelectedSegmentId(segment.id);
     setSelectedArea(null);
     setActiveTab("investigate");
   };
 
   const handleAddToCompare = (segment: Segment) => {
-    setComparisonSet((prev) => {
-      const next = new Set(prev);
-      if (next.has(segment.id)) {
-        next.delete(segment.id);
-      } else if (next.size < 4) {
-        next.add(segment.id);
+    setComparisonIds((prev) => {
+      if (prev.includes(segment.id)) {
+        return prev.filter((id) => id !== segment.id);
       }
-      return next;
+      if (prev.length >= SEGMENT_COMPARISON_MAX) {
+        return prev;
+      }
+      return [...prev, segment.id];
     });
   };
 
-  const comparisonSegments = data.segments.filter((segment) =>
-    comparisonSet.has(segment.id),
-  );
+  const handleRemoveFromCompare = (segmentId: string) => {
+    setComparisonIds((prev) => prev.filter((id) => id !== segmentId));
+  };
+
+  const handleAddFromCompare = (segmentId: string) => {
+    if (segmentId === "") return;
+    setComparisonIds((prev) =>
+      prev.includes(segmentId) || prev.length >= SEGMENT_COMPARISON_MAX
+        ? prev
+        : [...prev, segmentId],
+    );
+  };
+
+  const archiveLabel = archiveExtractionLabel(data.lastUpdated);
   const selectedSegmentArea =
     selectedArea ?? selectedSegment?.planningAreas?.[0]?.toUpperCase() ?? null;
 
@@ -210,12 +241,18 @@ export default function SegmentsDashboard() {
       <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div>
-            <h1 className="mb-2 text-3xl font-bold text-foreground">
-              Discover Segments
-            </h1>
+            <h2 className="mb-2 text-2xl font-bold text-foreground">
+              Six stored research segments
+            </h2>
             <p className="max-w-3xl text-muted-foreground">
-              Use this page to match segment archetypes to your goal, then
-              investigate where the strongest candidates are concentrated.
+              Weighted fit ranks the archive against your constraints; it is not
+              a return probability and not a current investment recommendation.
+            </p>
+            <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                Archive: {archiveLabel}
+              </span>{" "}
+              &middot; {SEGMENT_ARCHIVE_NOTE}
             </p>
           </div>
           <button
@@ -223,7 +260,7 @@ export default function SegmentsDashboard() {
             className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             <HelpCircle className="h-4 w-4" />
-            <span>Metrics Guide</span>
+            <span>Metrics guide</span>
           </button>
         </div>
 
@@ -232,7 +269,7 @@ export default function SegmentsDashboard() {
           <StatusPill label="Filters" value={`${activeFilterCount} active`} />
           <StatusPill
             label="Matched Segments"
-            value={String(matchedSegments.length)}
+            value={`${matchedSegments.length} of ${segments.length}`}
           />
           <StatusPill
             label="Selected Segment"
@@ -248,9 +285,12 @@ export default function SegmentsDashboard() {
       <TabNavigation
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        comparisonCount={comparisonSegments.length}
         disabledTabs={[
           ...(selectedSegment ? [] : ["investigate" as const]),
-          ...(comparisonSet.size < 2 ? ["compare" as const] : []),
+          ...(comparisonSegments.length < SEGMENT_COMPARISON_MIN
+            ? ["compare" as const]
+            : []),
         ]}
       />
 
@@ -258,12 +298,13 @@ export default function SegmentsDashboard() {
         <WorkflowSteps
           activeTab={activeTab}
           selectedSegment={selectedSegment}
-          comparisonCount={comparisonSet.size}
+          comparisonCount={comparisonSegments.length}
         />
         <ShortlistRail
           selectedSegment={selectedSegment}
           comparisonSegments={comparisonSegments}
           selectedArea={selectedSegmentArea}
+          baseUrl={baseUrl}
         />
       </div>
 
@@ -278,7 +319,27 @@ export default function SegmentsDashboard() {
         </div>
 
         <div className="flex-1">
-          {activeTab === "discover" && (
+          {activeTab === "investigate" && selectedSegment ? (
+            <InvestigateTab
+              segment={selectedSegment}
+              planningAreas={data.planningAreas}
+              filters={debouncedFilters}
+              persona={persona}
+              archiveLabel={archiveLabel}
+              baseUrl={baseUrl}
+              selectedArea={selectedArea}
+              onAreaChange={setSelectedArea}
+              onChangeSegment={() => setActiveTab("discover")}
+              onOpenMetricGuide={() => setShowMetricGuide(true)}
+            />
+          ) : activeTab === "compare" ? (
+            <CompareTab
+              segments={comparisonSegments}
+              allSegments={segments}
+              onRemoveSegment={handleRemoveFromCompare}
+              onAddSegment={handleAddFromCompare}
+            />
+          ) : (
             <DiscoverTab
               scoredSegments={scoredSegments}
               insights={data.insights}
@@ -288,32 +349,26 @@ export default function SegmentsDashboard() {
               onResetFilters={resetFilters}
               onInvestigateSegment={handleInvestigateSegment}
               onAddToCompare={handleAddToCompare}
-              comparisonSet={comparisonSet}
-            />
-          )}
-
-          {activeTab === "investigate" && selectedSegment && (
-            <InvestigateTab
-              segment={selectedSegment}
-              planningAreas={data.planningAreas}
-              filters={debouncedFilters}
-              persona={persona}
-              selectedArea={selectedArea}
-              onAreaChange={setSelectedArea}
-              onChangeSegment={() => setActiveTab("discover")}
-              onOpenMetricGuide={() => setShowMetricGuide(true)}
-            />
-          )}
-
-          {activeTab === "compare" && (
-            <CompareTab
-              segments={comparisonSegments}
-              allSegments={data.segments}
-              persona={persona}
+              comparisonSet={new Set(comparisonSegments.map((s) => s.id))}
+              comparisonLimitReached={comparisonLimitReached}
+              baseUrl={baseUrl}
             />
           )}
         </div>
       </div>
+
+      <section
+        aria-label="Source and status"
+        className="rounded-2xl border border-border bg-muted/20 p-5 text-sm text-muted-foreground"
+      >
+        <p className="font-semibold text-foreground">Source and status</p>
+        <p className="mt-2">{SEGMENT_ARCHIVE_NOTE}</p>
+        <p className="mt-2">{SEGMENT_NOT_COMPARABLE_NOTE}</p>
+        <p className="mt-2">
+          Scores, cohort counts and stored averages are archive fields. Changing
+          them requires an owner decision on the segment model, not a UI change.
+        </p>
+      </section>
 
       <SegmentMetricGuideModal
         isOpen={showMetricGuide}
@@ -328,7 +383,7 @@ function WorkflowSteps({
   selectedSegment,
   comparisonCount,
 }: {
-  activeTab: TabId;
+  activeTab: SegmentTab;
   selectedSegment: Segment | null;
   comparisonCount: number;
 }) {
@@ -349,7 +404,7 @@ function WorkflowSteps({
       id: "investigate",
       title: "Investigate",
       description:
-        "Open the selected segment and inspect which planning areas are strongest.",
+        "Open the selected segment and inspect which planning areas it declares.",
       status:
         activeTab === "investigate"
           ? "active"
@@ -360,12 +415,11 @@ function WorkflowSteps({
     {
       id: "compare",
       title: "Compare",
-      description:
-        "Cross-check the shortlisted segments once at least two candidates are saved.",
+      description: `Cross-check ${SEGMENT_COMPARISON_MIN}-${SEGMENT_COMPARISON_MAX} shortlisted segments side by side.`,
       status:
         activeTab === "compare"
           ? "active"
-          : comparisonCount >= 2
+          : comparisonCount >= SEGMENT_COMPARISON_MIN
             ? "open"
             : "locked",
     },
@@ -402,25 +456,29 @@ function ShortlistRail({
   selectedSegment,
   comparisonSegments,
   selectedArea,
+  baseUrl,
 }: {
   selectedSegment: Segment | null;
   comparisonSegments: Segment[];
   selectedArea: string | null;
+  baseUrl: string;
 }) {
-  const mapHref = `${import.meta.env.BASE_URL}dashboard/map${selectedArea ? `?area=${encodeURIComponent(selectedArea)}` : ""}`;
-  const leaderboardHref = `${import.meta.env.BASE_URL}dashboard/leaderboard${
+  const exploreHref = `${baseUrl}explore${
+    selectedArea ? `?area=${encodeURIComponent(selectedArea)}` : ""
+  }`;
+  const mapHref = `${baseUrl}dashboard/map${
     selectedArea ? `?area=${encodeURIComponent(selectedArea)}` : ""
   }`;
 
   return (
     <aside className="rounded-2xl border border-border bg-card p-4 shadow-sm">
       <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        Shortlist Rail
+        Shortlist rail
       </h2>
       <div className="mt-4 space-y-4">
         <div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Selected Segment
+            Selected segment
           </div>
           <div className="mt-1 text-sm font-semibold text-foreground">
             {selectedSegment?.name ?? "None yet"}
@@ -428,7 +486,8 @@ function ShortlistRail({
         </div>
         <div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Comparison Set
+            Comparison set: {comparisonSegments.length} of{" "}
+            {SEGMENT_COMPARISON_MAX}
           </div>
           {comparisonSegments.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-2">
@@ -443,26 +502,37 @@ function ShortlistRail({
             </div>
           ) : (
             <p className="mt-1 text-sm text-muted-foreground">
-              Add at least two segments to unlock side-by-side comparison.
+              Add at least {SEGMENT_COMPARISON_MIN} segments to unlock
+              side-by-side comparison.
+            </p>
+          )}
+          {comparisonSegments.length === 1 && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              One segment shortlisted. The comparison needs{" "}
+              {SEGMENT_COMPARISON_MIN}-{SEGMENT_COMPARISON_MAX}.
             </p>
           )}
         </div>
         <div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Next Handoff
+            Switch evidence context
           </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            These links leave the archive; they do not reinterpret a stored
+            average as a 2025 transaction median.
+          </p>
           <div className="mt-2 grid gap-2">
             <a
-              href={leaderboardHref}
+              href={exploreHref}
               className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
             >
-              Open in compare areas
+              Open observed comparison
             </a>
             <a
               href={mapHref}
               className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
             >
-              Open in explore areas
+              Open research map
             </a>
           </div>
         </div>

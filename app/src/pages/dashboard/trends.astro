@@ -1,52 +1,11 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import Sidebar from '@/components/Sidebar.astro';
-import TrendsDashboard from '@/components/dashboard/TrendsDashboard';
-import fs from 'fs';
-import path from 'path';
-import zlib from 'zlib';
-
-// Read gzipped JSON at build time
-function loadGzippedJson(relativePath) {
-  try {
-    const fullPath = path.resolve(relativePath);
-    const decompressed = zlib.gunzipSync(fs.readFileSync(fullPath)).toString('utf-8');
-    return JSON.parse(decompressed);
-  } catch (error) {
-    console.error(`Failed to load ${relativePath}:`, error);
-    return null;
-  }
-}
-
-const mrtCbdData = loadGzippedJson('public/data/interactive_tools/mrt_cbd_impact.json.gz');
-const leaseDecayData = loadGzippedJson('public/data/interactive_tools/lease_decay_analysis.json.gz');
-const affordabilityData = loadGzippedJson('public/data/interactive_tools/affordability_metrics.json.gz');
-const hotspotsData = loadGzippedJson('public/data/interactive_tools/spatial_hotspots.json.gz');
-const segmentsData = loadGzippedJson('public/data/segments_enhanced.json.gz');
+import ToolsSurface from '@/components/tools/ToolsSurface.astro';
 ---
 
-<Layout title="Decision Tools - Dashboard">
-  <Sidebar currentPath={Astro.url.pathname} />
-
-  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-      {/* Header */}
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold text-foreground">Decision Tools</h1>
-        <p class="text-muted-foreground mt-2">
-          Use this page when you already have a concrete question and want a scenario calculator, not a broad exploration view.
-        </p>
-      </header>
-
-      {/* Dashboard Content */}
-      <TrendsDashboard
-        client:load
-        mrtCbdData={mrtCbdData}
-        leaseDecayData={leaseDecayData}
-        affordabilityData={affordabilityData}
-        hotspotsData={hotspotsData}
-        segmentsData={segmentsData}
-      />
-    </div>
-  </main>
-</Layout>
+<ToolsSurface
+  title="Decision tools - Egg n Bacon Housing"
+  description="Compatibility route for the four-tool research workspace: illustrative financing, stored lease bands, MRT/CBD model inspection and spatial label inspection."
+  headline="Make the assumptions editable."
+  intro="Four tools, four output contracts: one deterministic financing calculation, two archive inspections whose model contracts are unresolved, and one label-only spatial view. Nothing here is a recommendation, a valuation or an eligibility decision."
+  legacyNote="Compatibility route: this URL keeps working and renders the same workspace as /research/tools. The tool selection (?tool=) and the named financing reference (?ref=&amp;rt=&amp;rv=1) survive on both routes."
+/>

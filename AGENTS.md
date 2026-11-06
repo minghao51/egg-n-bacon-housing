@@ -5,7 +5,7 @@
 - **Analyze first** — Understand code, imports, patterns before changes.
 - **Minimal scope** — Only what's needed. No scope-creep refactors.
 - **Check skills** — Before any task, check + follow the matching repository skill in `.agents/skills/`.
-- **Verify** — Lint + type-check after changes. Frontend: `cd app && bun run test:unit && bun run astro check` (astro-check baseline is 26 errors / 0 warnings / 41 hints; touched files must add none). Data boundary: `uv run pytest tests/test_export_app_data.py --no-cov -q` and `uv run ruff check`.
+- **Verify** — Lint + type-check after changes. Frontend: `cd app && bun run test:unit && bun run astro check` (astro-check baseline is 0 errors / 0 warnings / 22 hints; touched files must add none). Data boundary: `uv run pytest tests/test_export_app_data.py --no-cov -q` and `uv run ruff check`.
 - **Restore generated data** — `cd app && bun run build` rewrites `app/public/data/catalog.jsonl.gz`; revert it with `git checkout -- app/public/data/catalog.jsonl.gz` unless a data refresh is authorised.
 - **No commits** — Never commit unless explicitly asked.
 
@@ -15,6 +15,17 @@
 - **Execution:** `uv run <cmd>` (never `python` directly)
 - **Install:** `uv add <pkg>`
 - **Sync:** `uv sync`
+
+### Frontend toolchain
+
+- **Runtime:** `bun` **1.2.23**, standalone at `~/.bun/bin`, pinned by `/.bun-version` (matches
+  `app/package.json:engines` and the `oven-sh/setup-bun` pin in `ci.yml`/`deploy.yml`). A newer bun
+  rewrites `app/bun.lock`; if that happens, `git checkout -- app/bun.lock`.
+- **Never** `npm i -g bun`: that copy is bound to one nvm node version and vanishes on `nvm use`.
+- **Deps:** `cd app && bun install` before any frontend work (`app/node_modules` is not committed).
+- **`bunx`** is the same binary as `bun x` (shim in `~/.bun/bin`); scripts such as Playwright use it.
+- Non-interactive shells do not read rc files: use `~/.bun/bin/bun` or prefix
+  `PATH="$HOME/.bun/bin:$PATH"`.
 
 ## Output
 

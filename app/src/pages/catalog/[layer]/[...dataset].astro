@@ -4,6 +4,10 @@ import Sidebar from "@/components/Sidebar.astro";
 import DatasetHeader from "@/components/catalog/DatasetHeader.astro";
 import SchemaTable from "@/components/catalog/SchemaTable";
 import { loadCatalog } from "@/utils/catalog";
+import {
+  catalogAuditFor,
+  catalogGeneratedLabel,
+} from "@/constants/catalog-audit";
 import { type CatalogData, datasetIdToSlug, slugToDatasetId } from "@/types/catalog";
 
 export function getStaticPaths() {
@@ -24,6 +28,13 @@ const catalog: CatalogData | undefined = loadCatalog() ?? undefined;
 
 const dataset = catalog?.datasetMap.get(datasetId);
 const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
+const catalogGenerated = catalogGeneratedLabel(catalog?.metadata?.generated_at);
+const audit = catalogAuditFor(datasetId);
+const catalogRowCount = dataset?.parquet?.row_count ?? null;
+const showDiscrepancy =
+  audit !== null &&
+  catalogRowCount !== null &&
+  audit.inspectedRowCount !== catalogRowCount;
 
 const upstreamLinks = dataset
   ? dataset.lineage.upstream.flatMap((id) => {
@@ -54,6 +65,61 @@ const downstreamLinks = dataset
           <>
             <DatasetHeader dataset={dataset} baseUrl={baseUrl} />
 
+            <!-- Publication vintage -->
+            <section
+              aria-label="Publication vintage"
+              class="mt-6 rounded-xl border border-border bg-muted/20 p-4 text-sm"
+            >
+              <p class="font-bold text-foreground">
+                Catalog snapshot generated {catalogGenerated}
+              </p>
+              <p class="mt-1 text-muted-foreground">
+                Status “available” means the artifact was present when the catalog
+                was generated. It is not a correctness or freshness check, and the
+                catalog is not part of the dashboard release manifest.
+              </p>
+            </section>
+
+            {
+              showDiscrepancy && audit && (
+                <section
+                  aria-label="Snapshot discrepancy"
+                  class="mt-4 rounded-xl border border-amber-600 bg-amber-50 p-4 text-sm dark:bg-amber-950/30"
+                >
+                  <p class="font-bold text-amber-900 dark:text-amber-200">
+                    Snapshot discrepancy
+                  </p>
+                  <dl class="mt-2 grid gap-2 sm:grid-cols-2">
+                    <div>
+                      <dt class="text-amber-800 dark:text-amber-300">
+                        Catalog reports (this generation)
+                      </dt>
+                      <dd class="text-lg font-bold tabular-nums text-amber-900 dark:text-amber-100">
+                        {catalogRowCount.toLocaleString()} rows
+                      </dd>
+                    </div>
+                    <div>
+                      <dt class="text-amber-800 dark:text-amber-300">
+                        Inspected artifact
+                      </dt>
+                      <dd class="text-lg font-bold tabular-nums text-amber-900 dark:text-amber-100">
+                        {audit.inspectedRowCount.toLocaleString()} rows
+                      </dd>
+                    </div>
+                  </dl>
+                  <p class="mt-2 text-amber-900 dark:text-amber-200">
+                    {audit.note}
+                  </p>
+                  <p class="mt-2 font-mono text-xs text-amber-900 dark:text-amber-200">
+                    {audit.inspectedArtifact}
+                  </p>
+                  <p class="mt-1 text-xs text-amber-800 dark:text-amber-300">
+                    Observation recorded in {audit.recordedIn}.
+                  </p>
+                </section>
+              )
+            }
+
             <!-- Schema Table -->
             {
               (dataset.schema || dataset.parquet?.columns) && (
@@ -63,6 +129,7 @@ const downstreamLinks = dataset
                     client:visible
                     schemaFields={dataset.schema?.fields || null}
                     parquetColumns={dataset.parquet?.columns || null}
+                    snapshotLabel={catalogGenerated}
                   />
                 </section>
               )
