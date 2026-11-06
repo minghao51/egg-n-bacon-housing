@@ -54,11 +54,10 @@ data/pipeline/04_platinum/
 data/03_gold/
 data/04_platinum/
 data/*.parquet
-data/pipeline/*.parquet
+data/pipeline/**/*.parquet
 
-# Analytics outputs (REMOVE from git - pipeline generated)
-# EXCEPTION: Track PNG visualization files for GitHub rendering
-!/data/analysis/**/*.png
+# Analytics outputs (pipeline generated; never tracked)
+data/analysis/
 
 # Forecasts (REMOVE from git - pipeline generated)
 data/forecasts/
