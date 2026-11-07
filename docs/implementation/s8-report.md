@@ -56,7 +56,7 @@ Behaviour proven in the browser: default financing exit values; reference switch
 
 ## 4. Gaps deliberately left open
 
-- **Inputs are intentionally volatile.** Price edits, income, down payment, term and rate live in component state and reset when another tool is selected. Persisting them would be a deliberate local-state design (never a URL), not a bug fix.
+- **~~Inputs are intentionally volatile.~~ Resolved (S8-F1).** Price, income, down payment, term and rate now live in `ToolsWorkspace`, which stays mounted across tabs, so selecting Lease/MRT/Spatial and returning keeps every value. The draft is plain React memory inside the island: never the URL, `localStorage`, `sessionStorage`, telemetry or the console, and a reload still starts from the defaults. The import-on-remount trap is handled by `lib/financing-draft.ts`: the observed median is applied only when the resolved reference key (`area:property`) changes, so a manual price stays manual while a deep link or back/forward to another area still imports that area's median. See §7.
 - **The lease input is 40–99 years** as the plan specifies, while the archive also stores a 4–9-year band. The chart displays every stored band and the table lists them; the out-of-input band cannot be selected. Changing the input range is a product decision.
 - **Spatial allocation stays discarded.** `portfolio_allocation` is dropped by the schema check; surfacing it needs a reviewed model contract.
 - **The MRT floor-area input is inert by design.** It records the basis the archive never declared and no total is computed from it.
@@ -71,3 +71,13 @@ Behaviour proven in the browser: default financing exit values; reference switch
 ## 6. Environment note
 
 `bun run astro check` baseline for this branch is now **20 errors / 0 warnings / 30 hints** on 173 files (was 26/0/35 before the dead tool components were deleted). `pi-lens`'s TypeScript server still reports `import.meta`/`clsx` errors on unmodified files in this checkout; `bunx tsc -p tsconfig.json --noEmit` and `astro check` are the project-accurate signals, and neither reports an S8 file.
+
+## 7. Follow-up — S8-F1 persistence (resolved)
+
+The five financing inputs used to be `useState` strings inside `FinancingScenario`, so switching tool unmounted the component and reset them. They now live in `ToolsWorkspace`, above the per-tool error boundary, as a `FinancingDraft` (`lib/financing-draft.ts`, pure: `DEFAULT`, `mergeDraft`, `createFinancingDraftState`, `applyReferenceToDraft`). `resolveReference` and `referenceKey` moved to `lib/tool-reference.ts` so the workspace owns the import decision.
+
+- **Import only on a reference change.** The workspace stores `{ draft, appliedReferenceKey }` and applies an entry's median only when `referenceKey(entry)` differs. A remount, a tool switch or an unchanged deep link resolves the same key and is a no-op (it returns the same state object), so a manual price survives. A different area, or a hash-less `pushState` + `popstate` reference change, changes the key and imports the new observed median (Queenstown condo → `2088000`) while leaving the other four inputs untouched.
+- **Reset** (`Reset scenario`) is handled by the workspace: it clears the reference and rebuilds the default draft, so it cannot race the import effect.
+- **Privacy is unchanged**, and now covers persistence: the draft is memory-only — no URL keys beyond `tool`/`ref`/`rt`/`rv`, no `localStorage`/`sessionStorage`, no telemetry or console output. A reload starts again from the documented defaults (verified, and recorded here as intended behaviour, not a bug).
+
+Evidence: `tests/unit/financing-draft.test.ts` (17 tests: defaults, partial/blank/`undefined` merges, immutability, same-key no-op with a new entry object, changed-key import, manual-price survival, `null` reference, resolution and key stability). `tests/e2e/research/tools.spec.ts` adds four tests: all five inputs edited then retained across Lease/MRT/Spatial and back with "Price entered manually" still shown; a Queenstown condo import retained across a tool switch; a `popstate` reference change importing `2088000` over a manual price; and a reload returning to `710000`/`120000`. `tests/e2e/integration.spec.ts` now edits income **and** price, switches tabs, and asserts neither value reaches the URL (only the four allowed keys), request URLs, request bodies, console or local/session storage. No scoring, eligibility, model or published-data boundary changed.

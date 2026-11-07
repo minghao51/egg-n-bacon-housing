@@ -2,7 +2,7 @@
 
 Status of the redesign defined in [`assets/svg/implementation-plan.md`](../../assets/svg/implementation-plan.md). Read this first; the plan is the contract, this file is the ledger.
 
-Branch: `main` — slices S0–S6 are merged (PR #2, merge commit `8ab248a`); S7–S10 are implemented and pushed (`52c901b`, ignore follow-up `6aef15a`). GitHub Pages deployment is triggered by the push but has not been independently verified from this environment. Release evidence is in [s10-report.md](s10-report.md). Published data assets were regenerated through **2026-10** in that merge (`app/public/data/*.json.gz` plus `dashboard-release.json`, generation `0e1013ee485f`).
+Branch: `main` — slices S0–S6 are merged (PR #2, merge commit `8ab248a`); S7–S10 are implemented and pushed (`52c901b`, ignore follow-up `6aef15a`). GitHub Pages deployment is triggered by the push but has not been independently verified from this environment. Release evidence is in [s10-report.md](s10-report.md). The post-S10 carry-forward work (S10-F1 catalog props, S8-F1 financing persistence) is on `feat/s10-f1-s8-f1`, uncommitted. Published data assets were regenerated through **2026-10** in that merge (`app/public/data/*.json.gz` plus `dashboard-release.json`, generation `0e1013ee485f`).
 
 ## Slice status
 
@@ -54,7 +54,7 @@ Legacy routes preserved: `/dashboard/{leaderboard,map,segments,trends}`, `/analy
 ```bash
 # frontend
 cd app && bun run test:unit                     # bun:test, hermetic
-cd app && bun run astro check                   # 0 errors, 0 warnings, 22 hints on 187 files (S10 cleared the last 3 errors)
+cd app && bun run astro check                   # 0 errors, 0 warnings, 22 hints on 191 files (S10 cleared the last 3 errors)
 cd app && bun run validate-data                 # manifest contract + release warning
 cd app && bun run build                         # regenerates catalog.jsonl.gz — restore it afterwards
 cd app && LD_LIBRARY_PATH=/tmp/qna-browser-libs/root/usr/lib/x86_64-linux-gnu \
@@ -96,7 +96,7 @@ see [app/public/data/README.md](../../app/public/data/README.md).
 - `uv run pre-commit run --all-files` currently dies in this environment: its prettier hook wants node `27.0.0-alpha.0.0.0` and `nodeenv` rejects the version string. Equivalent check: `cd app && bunx prettier@3.4.2 --write <changed files>` (the hook's `types_or` covers js/jsx/ts/tsx/css/json/markdown, **not** `.astro`).
 - pi-lens's TypeScript server starts before `bun install` creates `node_modules`, so it resolves no project config and flags `import.meta.env`/`clsx` on files that `astro check` accepts. It also marks `MarketOverviewDashboard.tsx` with two such errors. Restart the session after installing; `bunx tsc -p tsconfig.json --noEmit` is the project-accurate signal. S7 avoids `import.meta` in islands by passing `baseUrl` from the Astro shell.
 - Playwright Chromium needs `LD_LIBRARY_PATH=/tmp/qna-browser-libs/root/usr/lib/x86_64-linux-gnu` in this environment.
-- `bun run astro check` is clean: **0 errors / 0 warnings / 22 hints** on 187 files. S10 deleted the dead `PersonaHeader.tsx` and typed the leaderboard `gunzip`, clearing the last 3 errors; touched files must keep the error count at zero.
+- `bun run astro check` is clean: **0 errors / 0 warnings / 22 hints** on 191 files (187 before the S10-F1/S8-F1 follow-up added four modules/tests). S10 deleted the dead `PersonaHeader.tsx` and typed the leaderboard `gunzip`, clearing the last 3 errors; touched files must keep the error count at zero.
 
 ## S7 carry-forward (deferred, not regressions)
 
@@ -118,7 +118,6 @@ The S8 implementation report lists these in `§4 Gaps`. None blocks S9.
 
 | ID    | Task                                                                                       | Suggested slice | Notes                                                                                                         |
 | ----- | ------------------------------------------------------------------------------------------ | --------------- | ------------------------------------------------------------------------------------------------------------- |
-| S8-F1 | Persist financing inputs across tool switches (local state only)                           | S10 / product   | Values reset when another tool is selected. Persisting them must stay local — never in the URL or telemetry.  |
 | S8-F2 | Retire or re-justify the now-unused `affordability_metrics.json.gz`                        | data boundary   | The S8 workspace no longer reads it. Removing it from the exporter/publish list needs data-boundary approval. |
 | S8-F3 | Decide whether the lease input range should include the stored 4–9-year band               | product / S10   | The plan fixes 40–99 years; the chart and table already show every stored band.                               |
 | S8-F4 | Surface `portfolio_allocation` (spatial)                                                   | owner decision  | The schema check discards it; an allocation view needs a reviewed model contract.                             |
@@ -142,7 +141,6 @@ The S10 implementation report lists these in `§6`. None of them is a failing re
 
 | ID     | Task                                                               | Suggested owner   | Notes                                                                                                                                       |
 | ------ | ------------------------------------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| S10-F1 | Catalog index sends 825 kB of SSR island props (every dataset row) | frontend          | Server-render the table or pass only visible rows; needs a pagination/filter contract, not a silent shrink.                                 |
 | S10-F2 | No per-route JS budget; `/dashboard` static graph is 181.8 kB gzip | performance       | Measure before adding another chart library or island.                                                                                      |
 | S10-F3 | Full Playwright suite still runs only at the root base             | integration       | The Pages-base spec covers assets, hydration, links and deep links; a base-aware `goto` fixture would allow the full run.                   |
 | S10-F4 | GitHub Actions are referenced by mutable tags                      | CI / supply chain | Pin to reviewed commit SHAs; do not invent them.                                                                                            |
@@ -151,6 +149,15 @@ The S10 implementation report lists these in `§6`. None of them is a failing re
 | S10-F7 | The catalog audit observation is a recorded constant               | data boundary     | `app/tests/unit/catalog-audit.test.ts` pins both visible counts, so regenerating either side fails until the constant and copy are updated. |
 
 Resolved by S10 and its audit pass: the 3 remaining `astro check` errors, S8-F5 (`PersonaHeader.tsx`), reference-asset failure conflation, MRT/CBD term disclosure, the spatial-warning predicate, payload byte/lazy accuracy, deep-route smoke coverage, the root-relative no-JS link, server path containment, filtered schema state and `aria-sort`.
+
+## Resolved carry-forward (S10-F1, S8-F1)
+
+Branch `feat/s10-f1-s8-f1`; no data, model, scoring or published-asset change.
+
+| ID     | Resolution                                                                                                                                                                                                                                                                                                                                                                                                                               | Evidence                                                                                                                                                                                 |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S10-F1 | `/catalog/` projects the parsed catalog once (`utils/catalog-payload.ts`) and passes slim props: table rows `{id,label,layer,status,rowCount,columnCount,bytes,hasSchema}`, DAG nodes `{id,layer,label}`, edges as `[from,to]`. SSR props **825.0 kB → 186.8 kB** (−77.4%), HTML gzip **81.1 → 31.5 kB**. Residual: the 2,333-row lineage edge list is ~153 kB of the total — drawing it is the capability, so it was kept and recorded. | [s10-report.md](s10-report.md) §8; `tests/unit/catalog-payload.test.ts`; two new `tests/e2e/catalog.spec.ts` tests                                                                       |
+| S8-F1  | Financing inputs moved to `ToolsWorkspace` via `lib/financing-draft.ts`, so a tool switch no longer resets them. The observed reference price is imported only when `referenceKey(area:property)` changes, so a manual price stays manual while a deep link or back/forward still imports the new median. Memory-only: no URL keys, storage, telemetry or console, and a reload still resets.                                            | [s8-report.md](s8-report.md) §7; `tests/unit/financing-draft.test.ts`; four new `tests/e2e/research/tools.spec.ts` tests and the widened privacy test in `tests/e2e/integration.spec.ts` |
 
 ## Remaining slices — entry points
 

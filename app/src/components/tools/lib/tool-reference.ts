@@ -18,7 +18,7 @@ import {
   type EraId,
   type PropertyTypeId,
 } from "@/utils/observed-data";
-import type { ToolProperty } from "./tool-url-state";
+import type { ToolProperty, ToolReferenceSelection } from "./tool-url-state";
 
 /** The only era a financing reference may come from (fixed, verified 2025). */
 export const REFERENCE_ERA: Extract<EraId, "year_2025"> = "year_2025";
@@ -164,4 +164,47 @@ export function defaultReferenceEntry(
     table.entries[0] ??
     null
   );
+}
+
+/**
+ * The named reference the financing tool should display, plus whether an
+ * explicit selection could not be honoured.
+ *
+ * A selection with no published observation falls back to the documented
+ * default rather than substituting a value; `missingRequested` lets the UI say
+ * so. Resolution is pure so the workspace and the tool can share one answer.
+ */
+export interface ReferenceResolution {
+  entry: ReferencePriceEntry | null;
+  missingRequested: boolean;
+}
+
+export function resolveReference(
+  table: ReferencePriceTable,
+  selection: ToolReferenceSelection | null,
+): ReferenceResolution {
+  if (selection === null) {
+    return { entry: defaultReferenceEntry(table), missingRequested: false };
+  }
+  const requested = findReferenceEntry(
+    table,
+    selection.area,
+    selection.property,
+  );
+  if (requested !== null) {
+    return { entry: requested, missingRequested: false };
+  }
+  return { entry: defaultReferenceEntry(table), missingRequested: true };
+}
+
+/**
+ * Stable identity for a resolved reference (`area:property`), or `none`.
+ *
+ * Used to decide whether a reference change is *new*: the workspace imports a
+ * published median only when this key changes, so a manual price survives a
+ * tool switch and a remount, while a deep link or back/forward that names a
+ * different area still imports that area's median.
+ */
+export function referenceKey(entry: ReferencePriceEntry | null): string {
+  return entry === null ? "none" : `${entry.areaId}:${entry.property}`;
 }

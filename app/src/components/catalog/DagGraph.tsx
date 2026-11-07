@@ -1,3 +1,11 @@
+/**
+ * Catalog lineage graph (slice S9, SVG 15).
+ *
+ * Receives slim node/edge projections (S10-F1): placement, labels, links and
+ * colours need only an id, a layer and a label per node plus a `from`/`to` pair
+ * per edge, so the island no longer takes whole catalog datasets as props.
+ */
+
 import { useMemo } from "react";
 import {
   ReactFlow,
@@ -13,12 +21,12 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import type { CatalogDataset, LineageEdge } from "@/types/catalog";
+import type { CatalogDagEdge, CatalogDagNode } from "@/utils/catalog-payload";
 import { LAYER_COLORS, datasetIdToSlug } from "@/types/catalog";
 
 interface DagGraphProps {
-  datasets: CatalogDataset[];
-  edges: LineageEdge[];
+  nodes: CatalogDagNode[];
+  edges: CatalogDagEdge[];
   baseUrl: string;
 }
 
@@ -31,6 +39,9 @@ interface CatalogNodeData {
 }
 
 function CatalogNode({ data }: NodeProps) {
+  // SAFETY: React Flow returns the `data` object this module attached to every
+  // node in `initialNodes`, so these fields are always present strings; no other
+  // producer creates a `catalog` node.
   const { label, href, layer } = data as unknown as CatalogNodeData;
   const color = LAYER_COLORS[layer] || "#64748b";
   return (
@@ -70,32 +81,32 @@ function CatalogNode({ data }: NodeProps) {
 // Defined at module scope so React Flow doesn't warn on re-creation.
 const nodeTypes: NodeTypes = { catalog: CatalogNode };
 
-export default function DagGraph({ datasets, edges, baseUrl }: DagGraphProps) {
-  const datasetMap = useMemo(() => {
-    const m = new Map<string, CatalogDataset>();
-    for (const ds of datasets) {
-      m.set(ds.id, ds);
-    }
-    return m;
-  }, [datasets]);
-
-  const { initialNodes, initialEdges } = useMemo(() => {
+export default function DagGraph({
+  nodes: datasetNodes,
+  edges,
+  baseUrl,
+}: DagGraphProps) {
+  const { initialNodes, initialEdges, layerById } = useMemo(() => {
     // Filter to datasets that actually appear in edges
     const connectedIds = new Set<string>();
-    for (const edge of edges) {
-      connectedIds.add(edge.from);
-      connectedIds.add(edge.to);
+    for (const [from, to] of edges) {
+      connectedIds.add(from);
+      connectedIds.add(to);
     }
 
     // Build node list
     const nodes: Node[] = [];
-    const dsByLayer: Map<string, CatalogDataset[]> = new Map();
+    const dsByLayer: Map<string, CatalogDagNode[]> = new Map();
 
-    for (const ds of datasets) {
+    // Node id → layer, so the minimap can colour a node without a dataset lookup.
+    const layers: Map<string, string> = new Map();
+
+    for (const ds of datasetNodes) {
       if (!connectedIds.has(ds.id)) continue;
       const layer = ds.layer;
       if (!dsByLayer.has(layer)) dsByLayer.set(layer, []);
       dsByLayer.get(layer)!.push(ds);
+      layers.set(ds.id, layer);
     }
 
     const LAYER_X_GAP = 320;
@@ -125,16 +136,16 @@ export default function DagGraph({ datasets, edges, baseUrl }: DagGraphProps) {
     }
 
     // Build edge list
-    const flowEdges: Edge[] = edges.map((e, idx) => ({
+    const flowEdges: Edge[] = edges.map(([source, target], idx) => ({
       id: `e-${idx}`,
-      source: e.from,
-      target: e.to,
+      source,
+      target,
       style: { stroke: "#64748b", strokeWidth: 1.5 },
       markerEnd: { type: MarkerType.ArrowClosed, color: "#64748b" },
     }));
 
-    return { initialNodes: nodes, initialEdges: flowEdges };
-  }, [datasets, edges]);
+    return { initialNodes: nodes, initialEdges: flowEdges, layerById: layers };
+  }, [datasetNodes, edges, baseUrl]);
 
   const nodeCount = initialNodes.length;
   const edgeCount = initialEdges.length;
@@ -168,11 +179,9 @@ export default function DagGraph({ datasets, edges, baseUrl }: DagGraphProps) {
           />
           <MiniMap
             style={{ backgroundColor: "hsl(var(--card))" }}
-            nodeColor={(node) => {
-              const ds = datasetMap.get(node.id);
-              const layer = ds?.layer || "bronze";
-              return LAYER_COLORS[layer] || "#b45309";
-            }}
+            nodeColor={(node) =>
+              LAYER_COLORS[layerById.get(node.id) ?? ""] || "#b45309"
+            }
           />
         </ReactFlow>
       </div>

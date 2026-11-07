@@ -5,9 +5,20 @@ import LayerCard from "@/components/catalog/LayerCard";
 import DagGraph from "@/components/catalog/DagGraph";
 import DatasetTable from "@/components/catalog/DatasetTable";
 import { loadCatalog } from "@/utils/catalog";
+import {
+  dagEdges,
+  dagNodes,
+  tableRows,
+} from "@/utils/catalog-payload";
 import { catalogGeneratedLabel } from "@/constants/catalog-audit";
 
 const catalog = loadCatalog();
+
+// Project once: each island only reads a few fields, so the whole catalog is
+// never serialised into SSR props (S10-F1).
+const tableData = catalog === null ? [] : tableRows(catalog.datasets);
+const dagNodeData = catalog === null ? [] : dagNodes(catalog.datasets);
+const dagEdgeData = catalog === null ? [] : dagEdges(catalog.edges);
 
 const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
 const catalogGenerated = catalogGeneratedLabel(catalog?.metadata?.generated_at);
@@ -53,8 +64,8 @@ const pipelineVersion = catalog?.metadata?.pipeline_version ?? "not supplied";
               <h2 class="text-xl font-semibold text-foreground mb-4">Pipeline Lineage</h2>
               <DagGraph
                 client:load
-                datasets={catalog.datasets}
-                edges={catalog.edges}
+                nodes={dagNodeData}
+                edges={dagEdgeData}
                 baseUrl={baseUrl}
               />
             </section>
@@ -64,7 +75,7 @@ const pipelineVersion = catalog?.metadata?.pipeline_version ?? "not supplied";
               <h2 class="text-xl font-semibold text-foreground mb-4">All Datasets</h2>
               <DatasetTable
                 client:visible
-                datasets={catalog.datasets}
+                rows={tableData}
                 baseUrl={baseUrl}
               />
             </section>

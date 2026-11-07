@@ -56,21 +56,21 @@ Measured with `bun run measure:payload`. “JS gz” is the HTML-referenced stat
 | `/`                                  | 2.2 kB  | 1.0 kB   | 9.3 kB  | 1      | —           | 0                     | 0         |
 | `/dashboard/`                        | 15.9 kB | 181.8 kB | 9.3 kB  | 13     | —           | 3 (load:3)            | 88.5 kB   |
 | `/dashboard/map/`                    | 6.2 kB  | 118.8 kB | 15.5 kB | 12     | —           | 3 (load:2, only:1)    | 184 B     |
-| `/dashboard/trends/`                 | 12.1 kB | 77.8 kB  | 9.3 kB  | 9      | —           | 3 (load:2, only:1)    | 38.2 kB   |
+| `/dashboard/trends/`                 | 12.1 kB | 78.0 kB  | 9.3 kB  | 9      | —           | 3 (load:2, only:1)    | 38.2 kB   |
 | `/dashboard/segments/`               | 5.9 kB  | 82.1 kB  | 15.5 kB | 12     | 3 / 46.5 kB | 3 (load:2, only:1)    | 91 B      |
 | `/dashboard/leaderboard/`            | 15.4 kB | 76.2 kB  | 15.5 kB | 11     | 3 / 46.5 kB | 3 (load:3)            | 34.5 kB   |
 | `/explore/`                          | 5.7 kB  | 78.5 kB  | 9.3 kB  | 11     | —           | 3 (load:2, only:1)    | 223 B     |
 | `/research/trends/`                  | 5.8 kB  | 70.8 kB  | 9.3 kB  | 9      | —           | 3 (load:2, only:1)    | 122 B     |
 | `/research/map/`                     | 6.2 kB  | 118.8 kB | 15.5 kB | 12     | —           | 3 (load:2, only:1)    | 184 B     |
-| `/research/tools/`                   | 12.0 kB | 77.8 kB  | 9.3 kB  | 9      | —           | 3 (load:2, only:1)    | 38.2 kB   |
+| `/research/tools/`                   | 12.0 kB | 78.0 kB  | 9.3 kB  | 9      | —           | 3 (load:2, only:1)    | 38.2 kB   |
 | `/research/segments/`                | 5.8 kB  | 82.1 kB  | 15.5 kB | 12     | 3 / 46.5 kB | 3 (load:2, only:1)    | 91 B      |
 | `/analytics/`                        | 8.9 kB  | 65.1 kB  | 9.3 kB  | 8      | —           | 3 (load:3)            | 6.5 kB    |
 | `/analytics/lease-decay/`            | 10.2 kB | 63.2 kB  | 9.3 kB  | 7      | —           | 2 (load:2)            | 72 B      |
-| `/catalog/`                          | 81.1 kB | 137.3 kB | 11.9 kB | 13     | —           | 4 (load:3, visible:1) | 825.0 kB  |
+| `/catalog/`                          | 31.5 kB | 137.3 kB | 11.9 kB | 13     | —           | 4 (load:3, visible:1) | 186.8 kB  |
 | `/catalog/platinum/unified_dataset/` | 14.5 kB | 79.3 kB  | 9.3 kB  | 9      | —           | 3 (load:2, visible:1) | 22.6 kB   |
 | `/areas/bishan/`                     | 8.0 kB  | 63.2 kB  | 9.3 kB  | 7      | —           | 2 (load:2)            | 72 B      |
 
-The catalog index is the outlier: its table island receives every dataset row as SSR props (**825 kB** uncompressed; 81.1 kB after gzip) because the table is client-rendered. The dashboard embeds 88.5 kB of overview/trends props and its 181.8 kB JS graph includes the charting dependencies. Segments and leaderboard add 46.5 kB of lazy map/chart code that is not part of the initial graph. These are recorded as debt, not regressions.
+The catalog index was the outlier: its table island received every dataset row as SSR props (**825 kB** uncompressed; 81.1 kB after gzip) because the table is client-rendered. **S10-F1** replaced that transport with per-island projections, so the same route now ships **186.8 kB** of props (31.5 kB gzip); the numbers above are the post-projection build and §8 records the before/after split. The dashboard still embeds 88.5 kB of overview/trends props and its 181.8 kB JS graph includes the charting dependencies. Segments and leaderboard add 46.5 kB of lazy map/chart code that is not part of the initial graph. These are recorded as debt, not regressions.
 
 ## 5. Verification matrix
 
@@ -92,15 +92,15 @@ Deliberate non-claims: the production GitHub Pages CDN, live map-tile availabili
 
 ## 6. Remaining debt and owners
 
-| ID     | Item                                                                         | Suggested owner   | Notes                                                                                                                            |
-| ------ | ---------------------------------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| S10-F1 | Catalog index ships 825 kB of SSR island props (all dataset rows)            | frontend          | Server-render the table or send only visible rows; needs a pagination/filter contract decision, not a silent shrink.             |
-| S10-F2 | No JS payload budget; `/dashboard` graph is 181.8 kB gzip                    | performance       | Establish per-route budgets before adding another chart library or island.                                                       |
-| S10-F3 | Full Playwright suite is not run under the Pages base                        | integration       | The focused 8-test spec covers assets, hydration, links and deep links; a base-aware `goto` fixture would allow the full run.    |
-| S10-F4 | Workflows use mutable action tags (`actions/checkout@v4`, `setup-bun@v2`, …) | CI / supply chain | Pin to full commit SHAs; not done here because the SHAs must be fetched and reviewed, not invented.                              |
-| S10-F5 | `refreshError` is surfaced by the leaderboard only                           | frontend          | It is the only surface that revalidates server-rendered data; new SSR-backed islands must adopt the same banner.                 |
-| S10-F6 | The deployed Pages smoke step cannot run locally                             | release owner     | The same greps and the base-asset check pass against the local Pages build; the workflow runs them after deployment.             |
-| S10-F7 | Catalog audit observation is a recorded constant                             | data boundary     | `catalog-audit.test.ts` now pins both visible counts, so regenerating either side fails until the constant and copy are updated. |
+| ID     | Item                                                                               | Suggested owner   | Notes                                                                                                                                            |
+| ------ | ---------------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| S10-F1 | ~~Catalog index ships 825 kB of SSR island props (all dataset rows)~~ **Resolved** | frontend          | Per-island projections (`utils/catalog-payload.ts`): 825.0 kB → 186.8 kB. The remaining cost is the lineage edge list (~153 kB), recorded in §8. |
+| S10-F2 | No JS payload budget; `/dashboard` graph is 181.8 kB gzip                          | performance       | Establish per-route budgets before adding another chart library or island.                                                                       |
+| S10-F3 | Full Playwright suite is not run under the Pages base                              | integration       | The focused 8-test spec covers assets, hydration, links and deep links; a base-aware `goto` fixture would allow the full run.                    |
+| S10-F4 | Workflows use mutable action tags (`actions/checkout@v4`, `setup-bun@v2`, …)       | CI / supply chain | Pin to full commit SHAs; not done here because the SHAs must be fetched and reviewed, not invented.                                              |
+| S10-F5 | `refreshError` is surfaced by the leaderboard only                                 | frontend          | It is the only surface that revalidates server-rendered data; new SSR-backed islands must adopt the same banner.                                 |
+| S10-F6 | The deployed Pages smoke step cannot run locally                                   | release owner     | The same greps and the base-asset check pass against the local Pages build; the workflow runs them after deployment.                             |
+| S10-F7 | Catalog audit observation is a recorded constant                                   | data boundary     | `catalog-audit.test.ts` now pins both visible counts, so regenerating either side fails until the constant and copy are updated.                 |
 
 Resolved by S10 and its audit pass: the remaining `astro check` debt, S8-F5 (`PersonaHeader.tsx`), reference-asset failure conflation, MRT/CBD term disclosure, the spatial-warning predicate, payload byte/lazy accuracy, deep-route smoke coverage, the root-relative no-JS link, server path containment, filtered schema state and sort ARIA.
 
@@ -110,3 +110,27 @@ Resolved by S10 and its audit pass: the remaining `astro check` debt, S8-F5 (`Pe
 - No deployment/CDN verification and no data/model regeneration were performed from this environment.
 - No scoring, eligibility, recommendation or model-definition boundary changed.
 - The next actions require explicit approval: GitHub Pages deployment verification, or a data/model refresh.
+
+## 8. Follow-up — S10-F1 catalog payload (resolved)
+
+Branch `feat/s10-f1-s8-f1` (S10-F1 + S8-F1, no data/model/scoring change). `/catalog/` now projects the parsed catalog once, in `app/src/utils/catalog-payload.ts`, and passes each island only the fields it renders:
+
+- `tableRows(datasets)` → `{ id, label, layer, status, rowCount, columnCount, bytes, hasSchema }` for `DatasetTable`; `hasSchema` replaces the `schema` object, so schema fields never reach the island.
+- `dagNodes(datasets)` → `{ id, layer, label }`; `dagEdges(edges)` → `[from, to]` tuples.
+- `catalog/[layer].astro` uses the same table projection. Dataset routes, slugs, ordering, labels, search, sorting and links are unchanged.
+
+Measured with `bun run measure:payload` on a full root build (UTF-8 bytes of the decoded `astro-island` props):
+
+| Island                | Before                   | After                    | Change     | Per-island split after                          |
+| --------------------- | ------------------------ | ------------------------ | ---------- | ----------------------------------------------- |
+| `DagGraph`            | 533,956 B                | 165,600 B                | −69.0%     | nodes 12,409 B + edges 153,146 B + baseUrl 15 B |
+| `DatasetTable`        | 310,811 B                | 25,543 B                 | −91.8%     | rows 25,543 B + baseUrl 15 B                    |
+| **`/catalog/` total** | **844,839 B (825.0 kB)** | **191,250 B (186.8 kB)** | **−77.4%** | —                                               |
+
+- Route-level: HTML gzip **81.1 kB → 31.5 kB**; JS/CSS/islands unchanged (13 chunks, 137.3 kB JS gz).
+- The four layer pages (`/catalog/{bronze,silver,gold,platinum}/`) now use the same table projection; bronze ships 21,598 B of props instead of 149,345 B of full dataset records.
+- JSON-level projections over the committed snapshot (125 datasets, 2,333 edges): rows 21,039 B, nodes 10,405 B, edges 125,146 B — 156,590 B against 452,032 B of full dataset+edge records (**−65.4%**).
+- **Residual cost:** the lineage edge list is now 153 kB of the 187 kB total (82%). It is a genuine 2,333-row graph the DAG must draw, not an accidental payload; removing it would mean server-rendering or paginating the graph, which changes capability and was not done. Tuples replaced `{from,to}` objects to keep it at this level.
+- Regression cover: `tests/unit/catalog-payload.test.ts` (7 tests — field shape, order, null parquet, no source mutation, and size bounds <40 kB / <25 kB / <160 kB); `tests/e2e/catalog.spec.ts` gained a filtered-table keyboard-sort test (waiting on island hydration before typing) and a graph node-link test.
+
+Re-verified after the change: `test:unit` **334 pass** (23 files), `astro check` **0/0/22 on 191 files**, `validate-data` passes (19 assets, release `0e1013ee485f`), `build` 201 pages, root Playwright **204 passed / 8 skipped / 0 failed**, Pages-base spec **8 passed**, payload table above. No `bun.lock` or published-data change; `catalog.jsonl.gz` restored after each build.
