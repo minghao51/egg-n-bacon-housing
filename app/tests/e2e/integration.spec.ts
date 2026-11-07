@@ -270,17 +270,34 @@ test.describe("Private inputs and model gates", () => {
     await income.fill("137777");
     await expect(income).toHaveValue("137777");
 
-    expect(page.url()).not.toContain("137777");
+    // S8-F1 persists the draft in the island, not in the address bar: the
+    // price must stay private across a tool switch too.
+    const price = page.locator("#financing-price");
+    await price.fill("765432");
+    await expect(price).toHaveValue("765432");
+    await page.getByRole("tab", { name: /Lease bands/ }).click();
+    await page.getByRole("tab", { name: /Financing scenario/ }).click();
+    // The values survived the switch …
+    await expect(income).toHaveValue("137777");
+    await expect(price).toHaveValue("765432");
+
+    // … and were still never serialised anywhere.
+    const privateValues = ["137777", "765432"];
+    for (const value of privateValues) {
+      expect(page.url()).not.toContain(value);
+      expect(requests.some(({ url }) => url.includes(value))).toBe(false);
+      expect(requests.some(({ body }) => body?.includes(value))).toBe(false);
+      expect(consoleMessages.join("\n")).not.toContain(value);
+    }
     for (const key of new URL(page.url()).searchParams.keys()) {
       expect(["tool", "ref", "rt", "rv"]).toContain(key);
     }
-    expect(requests.some(({ url }) => url.includes("137777"))).toBe(false);
-    expect(requests.some(({ body }) => body?.includes("137777"))).toBe(false);
-    expect(consoleMessages.join("\n")).not.toContain("137777");
     const storage = await page.evaluate(() =>
       JSON.stringify({ ...localStorage, ...sessionStorage }),
     );
-    expect(storage).not.toContain("137777");
+    for (const value of privateValues) {
+      expect(storage).not.toContain(value);
+    }
   });
 
   test("reaches the Spatial patterns tab by keyboard and keeps inspection-only output", async ({

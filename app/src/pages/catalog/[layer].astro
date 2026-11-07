@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import Sidebar from "@/components/Sidebar.astro";
 import DatasetTable from "@/components/catalog/DatasetTable";
 import { loadCatalog } from "@/utils/catalog";
+import { tableRows } from "@/utils/catalog-payload";
 import { humanSize, LAYER_BG_COLORS, LAYER_BORDER_COLORS } from "@/types/catalog";
 
 export function getStaticPaths() {
@@ -25,6 +26,8 @@ const layerLabel = layerData?.label || layer;
 const layerDescription = layerData?.description || "";
 
 const datasets = catalog?.datasets.filter((ds) => ds.layer === layer) || [];
+// Project once so the layer table ships only the columns it renders (S10-F1).
+const datasetRows = tableRows(datasets);
 const baseUrl = `${import.meta.env.BASE_URL}catalog/`;
 
 const bgClass = LAYER_BG_COLORS[layer] || "bg-card";
@@ -73,7 +76,7 @@ const borderClass = LAYER_BORDER_COLORS[layer] || "border-border";
               )
             }
 
-            <DatasetTable client:visible datasets={datasets} baseUrl={baseUrl} />
+            <DatasetTable client:visible rows={datasetRows} baseUrl={baseUrl} />
           </>
         ) : (
           <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">

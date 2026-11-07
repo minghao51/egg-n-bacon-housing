@@ -15,17 +15,31 @@
  * State: the address bar is read once, before the first commit (the island is
  * client-only) and written back with `replaceState`. Only `tool` and the named
  * reference (`ref`/`rt`/`rv`) are serialised; loan inputs never leave the tab.
+ *
+ * S8-F1: the financing draft lives here too, not in `FinancingScenario`, so
+ * selecting another tool no longer resets it. The observed reference price is
+ * imported only when the resolved reference key changes, so a manual price
+ * survives a tool switch and a reload still starts from the defaults.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import FinancingScenario, { type ToolsReleaseInfo } from "./FinancingScenario";
 import LeaseBands from "./LeaseBands";
 import MrtCbdInspection from "./MrtCbdInspection";
 import SpatialInspection from "./SpatialInspection";
 import ToolErrorBoundary from "./ToolErrorBoundary";
-import type {
-  ReferencePriceTable,
-  ReferenceSourceStatus,
+import {
+  applyReferenceToDraft,
+  createFinancingDraftState,
+  mergeDraft,
+  type FinancingDraft,
+  type FinancingDraftState,
+} from "./lib/financing-draft";
+import {
+  defaultReferenceEntry,
+  resolveReference,
+  type ReferencePriceTable,
+  type ReferenceSourceStatus,
 } from "./lib/tool-reference";
 import {
   applyToolQuery,
@@ -77,7 +91,27 @@ export default function ToolsWorkspace({
   spatial,
 }: ToolsWorkspaceProps) {
   const [state, setState] = useState<ToolQueryState>(readInitialState);
+  const [financing, setFinancing] = useState<FinancingDraftState>(() =>
+    createFinancingDraftState(
+      resolveReference(referenceTable, state.reference).entry,
+    ),
+  );
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  // One resolved reference for the workspace and the financing tool. The entry
+  // object only changes when the table or the selection changes.
+  const reference = useMemo(
+    () => resolveReference(referenceTable, state.reference),
+    [referenceTable, state.reference],
+  );
+
+  // A new named reference (select, deep link, back/forward) imports that
+  // area's observed median exactly once. `applyReferenceToDraft` is a no-op
+  // when the key is unchanged, which is what keeps a manual price manual across
+  // tool switches — the draft survives, but nothing is re-imported over it.
+  useEffect(() => {
+    setFinancing((current) => applyReferenceToDraft(current, reference.entry));
+  }, [reference.entry]);
 
   const selectTool = useCallback((tool: ToolId) => {
     setState((current) =>
@@ -91,6 +125,20 @@ export default function ToolsWorkspace({
     },
     [],
   );
+
+  const updateFinancingDraft = useCallback((patch: Partial<FinancingDraft>) => {
+    setFinancing((current) => ({
+      ...current,
+      draft: mergeDraft(current.draft, patch),
+    }));
+  }, []);
+
+  const resetFinancing = useCallback(() => {
+    setState((current) => ({ ...current, reference: null }));
+    setFinancing(() =>
+      createFinancingDraftState(defaultReferenceEntry(referenceTable)),
+    );
+  }, [referenceTable]);
 
   // Keep the address bar in step with the state. The serializer omits defaults,
   // so a deep link is canonicalised rather than treated as new state, and
@@ -210,6 +258,11 @@ export default function ToolsWorkspace({
               release={release}
               referenceSelection={state.reference}
               onReferenceChange={selectReference}
+              referenceEntry={reference.entry}
+              referenceMissing={reference.missingRequested}
+              draft={financing.draft}
+              onDraftChange={updateFinancingDraft}
+              onReset={resetFinancing}
             />
           ) : null}
           {state.tool === "lease" ? (

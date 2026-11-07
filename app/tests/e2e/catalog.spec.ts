@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { expectPageToLoadWithoutErrors } from "./utils/pageHealth";
 
 /**
@@ -9,6 +9,21 @@ import { expectPageToLoadWithoutErrors } from "./utils/pageHealth";
  * retained dependency/nested-external URLs. No count is rewritten to match the
  * other generation.
  */
+
+/**
+ * Wait until an island has mounted. Astro removes the `ssr` attribute only after
+ * the component mounted, so this is the deterministic point where handlers work;
+ * the table is `client:visible`, so it must be scrolled into view first.
+ */
+async function waitForHydration(page: Page, component: string): Promise<void> {
+  const island = page.locator(`astro-island[component-url*="${component}"]`);
+  await expect(island).toHaveCount(1);
+  await expect
+    .poll(() => island.evaluate((element) => !element.hasAttribute("ssr")), {
+      timeout: 20_000,
+    })
+    .toBe(true);
+}
 
 test.describe("Data catalog", () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
@@ -138,6 +153,64 @@ test.describe("Data catalog", () => {
       }),
     ).toBeVisible();
     await expect(page.getByText("Upstream (0)").first()).toBeVisible();
+  });
+
+  test("the projected table filters, sorts from the keyboard and keeps links", async ({
+    page,
+  }) => {
+    await page.goto("/catalog/");
+
+    // Hydrated table: the row counter is client state, not SSR markup.
+    const counter = page.getByText(/^\d+ datasets$/);
+    const search = page.getByLabel("Search datasets");
+    await search.scrollIntoViewIfNeeded();
+    await waitForHydration(page, "DatasetTable");
+    await expect(counter).toBeVisible();
+    const total = Number((await counter.textContent())?.split(" ")[0]);
+    expect(total).toBeGreaterThan(0);
+
+    // Filtering still narrows the same rows the slim projection carries.
+    await search.fill("transactions");
+    await expect
+      .poll(async () => Number((await counter.textContent())?.split(" ")[0]))
+      .toBeLessThan(total);
+
+    // The sort control is still a real button, reachable and activatable.
+    const nameSort = page.getByRole("button", { name: /^Name/ });
+    await nameSort.focus();
+    await page.keyboard.press("Enter");
+    await expect(
+      page.getByRole("columnheader", { name: /^Name/ }).first(),
+    ).toHaveAttribute("aria-sort", "ascending");
+    await expect(nameSort).toBeFocused();
+
+    // A filtered row still links to its dataset route (layer + slug survive).
+    const row = page
+      .getByRole("row")
+      .filter({ has: page.getByRole("link") })
+      .first();
+    await expect(row.getByRole("link")).toHaveAttribute(
+      "href",
+      /\/catalog\/(bronze|silver|gold|platinum)\//,
+    );
+  });
+
+  test("the lineage graph ships only nodes and edges and still links them", async ({
+    page,
+  }) => {
+    await page.goto("/catalog/");
+
+    await expect(page.getByText(/^\d+ nodes, \d+ edges/)).toBeVisible({
+      timeout: 30_000,
+    });
+    // Every rendered node is a link into the dataset route.
+    const node = page.locator("a.catalog-node").first();
+    await expect(node).toHaveAttribute(
+      "href",
+      /\/catalog\/(bronze|silver|gold|platinum)\//,
+    );
+    const nodeCount = await page.locator("a.catalog-node").count();
+    expect(nodeCount).toBeGreaterThan(0);
   });
 
   test("does not log errors", async ({ page }) => {

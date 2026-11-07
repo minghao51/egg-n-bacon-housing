@@ -7,10 +7,12 @@
  * built at build time by `ToolsSurface.astro` through `lib/tool-reference.ts`).
  *
  * Nothing here is an eligibility check, a CPF/MSR/TDSR determination or a loan
- * recommendation. Income never leaves component state.
+ * recommendation. Income never leaves the workspace island's memory: the draft
+ * is owned by `ToolsWorkspace` (S8-F1) so it survives a tool switch, and it is
+ * never serialised to the URL, storage or telemetry.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   computeFinancingScenario,
   invalidFieldReason,
@@ -29,8 +31,8 @@ import {
   FINANCING_NOT_OFFER_NOTE,
   FINANCING_REFERENCE_NOTE,
 } from "./lib/tool-evidence";
+import type { FinancingDraft } from "./lib/financing-draft";
 import {
-  defaultReferenceEntry,
   findReferenceEntry,
   referenceAreasFor,
   type ReferencePriceEntry,
@@ -50,13 +52,6 @@ import {
   WithheldPanel,
 } from "./ToolParts";
 
-const DEFAULT_ASSUMPTIONS = {
-  annualIncome: "120000",
-  downPaymentPercent: "30",
-  termYears: "25",
-  annualRatePercent: "3.0",
-} as const;
-
 export interface ToolsReleaseInfo {
   generation: string;
   /** Published trailing month recorded by `dashboard-release.json`. */
@@ -72,6 +67,13 @@ interface FinancingScenarioProps {
   release: ToolsReleaseInfo;
   referenceSelection: ToolReferenceSelection | null;
   onReferenceChange: (selection: ToolReferenceSelection | null) => void;
+  /** Resolved by the workspace, which also decides when to import its price. */
+  referenceEntry: ReferencePriceEntry | null;
+  referenceMissing: boolean;
+  /** Draft owned by the workspace so it survives a tool switch. */
+  draft: FinancingDraft;
+  onDraftChange: (patch: Partial<FinancingDraft>) => void;
+  onReset: () => void;
 }
 
 /** Empty → `null`; anything non-numeric → `NaN` (which every bound rejects). */
@@ -82,28 +84,6 @@ function parseNumber(text: string): number | null {
   return Number.isFinite(value) ? value : Number.NaN;
 }
 
-function resolveReference(
-  table: ReferencePriceTable,
-  selection: ToolReferenceSelection | null,
-): { entry: ReferencePriceEntry | null; missingRequested: boolean } {
-  if (selection === null) {
-    return { entry: defaultReferenceEntry(table), missingRequested: false };
-  }
-  const requested = findReferenceEntry(
-    table,
-    selection.area,
-    selection.property,
-  );
-  if (requested !== null) {
-    return { entry: requested, missingRequested: false };
-  }
-  return { entry: defaultReferenceEntry(table), missingRequested: true };
-}
-
-function referenceKey(entry: ReferencePriceEntry | null): string {
-  return entry === null ? "none" : `${entry.areaId}:${entry.property}`;
-}
-
 export default function FinancingScenario({
   baseUrl,
   referenceTable,
@@ -111,45 +91,23 @@ export default function FinancingScenario({
   release,
   referenceSelection,
   onReferenceChange,
+  referenceEntry: entry,
+  referenceMissing: missingRequested,
+  draft,
+  onDraftChange,
+  onReset,
 }: FinancingScenarioProps) {
-  const { entry, missingRequested } = useMemo(
-    () => resolveReference(referenceTable, referenceSelection),
-    [referenceTable, referenceSelection],
-  );
-
-  const [priceText, setPriceText] = useState<string>(() =>
-    entry === null ? "" : String(entry.medianPrice),
-  );
-  const [incomeText, setIncomeText] = useState<string>(
-    DEFAULT_ASSUMPTIONS.annualIncome,
-  );
-  const [downText, setDownText] = useState<string>(
-    DEFAULT_ASSUMPTIONS.downPaymentPercent,
-  );
-  const [termText, setTermText] = useState<string>(
-    DEFAULT_ASSUMPTIONS.termYears,
-  );
-  const [rateText, setRateText] = useState<string>(
-    DEFAULT_ASSUMPTIONS.annualRatePercent,
-  );
-
-  // A different named reference (select, deep link or back/forward) imports
-  // that area's published median. Manual price edits are local and never
-  // serialised, so they are replaced rather than half-preserved.
-  const key = referenceKey(entry);
-  useEffect(() => {
-    setPriceText(entry === null ? "" : String(entry.medianPrice));
-  }, [key, entry]);
+  const { priceText, incomeText, downText, termText, rateText } = draft;
 
   const inputs: FinancingInputs = useMemo(
     () => ({
-      price: parseNumber(priceText),
-      annualIncome: parseNumber(incomeText),
-      downPaymentPercent: parseNumber(downText),
-      termYears: parseNumber(termText),
-      annualRatePercent: parseNumber(rateText),
+      price: parseNumber(draft.priceText),
+      annualIncome: parseNumber(draft.incomeText),
+      downPaymentPercent: parseNumber(draft.downText),
+      termYears: parseNumber(draft.termText),
+      annualRatePercent: parseNumber(draft.rateText),
     }),
-    [priceText, incomeText, downText, termText, rateText],
+    [draft],
   );
 
   const result = useMemo(() => computeFinancingScenario(inputs), [inputs]);
@@ -187,15 +145,9 @@ export default function FinancingScenario({
     onReferenceChange({ area: areaId, property: currentProperty });
   };
 
-  const resetScenario = () => {
-    onReferenceChange(null);
-    const fallback = defaultReferenceEntry(referenceTable);
-    setPriceText(fallback === null ? "" : String(fallback.medianPrice));
-    setIncomeText(DEFAULT_ASSUMPTIONS.annualIncome);
-    setDownText(DEFAULT_ASSUMPTIONS.downPaymentPercent);
-    setTermText(DEFAULT_ASSUMPTIONS.termYears);
-    setRateText(DEFAULT_ASSUMPTIONS.annualRatePercent);
-  };
+  // The workspace owns the draft, so a reset also resets the defaults there and
+  // cannot race the reference import.
+  const resetScenario = () => onReset();
 
   const generationLabel =
     release.generation.length > 12
@@ -266,7 +218,8 @@ export default function FinancingScenario({
           <button
             type="button"
             onClick={() => {
-              if (entry !== null) setPriceText(String(entry.medianPrice));
+              if (entry !== null)
+                onDraftChange({ priceText: String(entry.medianPrice) });
             }}
             disabled={entry === null}
             className="rounded border border-input px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
@@ -338,7 +291,9 @@ export default function FinancingScenario({
             inputMode="decimal"
             autoComplete="off"
             value={priceText}
-            onChange={(event) => setPriceText(event.target.value)}
+            onChange={(event) =>
+              onDraftChange({ priceText: event.target.value })
+            }
             aria-invalid={isInvalid("price")}
             aria-describedby={
               isInvalid("price") ? fieldErrorId("price") : undefined
@@ -371,7 +326,9 @@ export default function FinancingScenario({
             inputMode="decimal"
             autoComplete="off"
             value={incomeText}
-            onChange={(event) => setIncomeText(event.target.value)}
+            onChange={(event) =>
+              onDraftChange({ incomeText: event.target.value })
+            }
             aria-invalid={isInvalid("annualIncome")}
             aria-describedby={
               isInvalid("annualIncome")
@@ -405,7 +362,9 @@ export default function FinancingScenario({
             inputMode="decimal"
             autoComplete="off"
             value={downText}
-            onChange={(event) => setDownText(event.target.value)}
+            onChange={(event) =>
+              onDraftChange({ downText: event.target.value })
+            }
             aria-invalid={isInvalid("downPaymentPercent")}
             aria-describedby={
               isInvalid("downPaymentPercent")
@@ -436,7 +395,9 @@ export default function FinancingScenario({
             inputMode="numeric"
             autoComplete="off"
             value={termText}
-            onChange={(event) => setTermText(event.target.value)}
+            onChange={(event) =>
+              onDraftChange({ termText: event.target.value })
+            }
             aria-invalid={isInvalid("termYears")}
             aria-describedby={
               isInvalid("termYears") ? fieldErrorId("termYears") : undefined
@@ -470,7 +431,9 @@ export default function FinancingScenario({
             inputMode="decimal"
             autoComplete="off"
             value={rateText}
-            onChange={(event) => setRateText(event.target.value)}
+            onChange={(event) =>
+              onDraftChange({ rateText: event.target.value })
+            }
             aria-invalid={isInvalid("annualRatePercent")}
             aria-describedby={
               isInvalid("annualRatePercent")

@@ -3,6 +3,9 @@
  *
  * Counts and sizes are labelled as catalog-snapshot values, never as a live
  * pipeline read. Sorting and the dataset filter are keyboard operable.
+ *
+ * The island receives slim `CatalogTableRow` projections (S10-F1) rather than
+ * whole catalog datasets, so the six rendered columns are the only fields sent.
  */
 
 import { useMemo, useState } from "react";
@@ -15,15 +18,15 @@ import {
   createColumnHelper,
   type SortingState,
 } from "@tanstack/react-table";
-import type { CatalogDataset } from "@/types/catalog";
 import { humanSize, datasetIdToSlug } from "@/types/catalog";
+import type { CatalogTableRow } from "@/utils/catalog-payload";
 
 interface DatasetTableProps {
-  datasets: CatalogDataset[];
+  rows: CatalogTableRow[];
   baseUrl: string;
 }
 
-const columnHelper = createColumnHelper<CatalogDataset>();
+const columnHelper = createColumnHelper<CatalogTableRow>();
 
 function ariaSort(
   sorted: false | "asc" | "desc",
@@ -33,7 +36,7 @@ function ariaSort(
   return "none";
 }
 
-export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
+export default function DatasetTable({ rows, baseUrl }: DatasetTableProps) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -42,10 +45,10 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
       columnHelper.accessor("label", {
         header: "Name",
         cell: (info) => {
-          const ds = info.row.original;
+          const row = info.row.original;
           return (
             <a
-              href={`${baseUrl}${ds.layer}/${datasetIdToSlug(ds.id)}`}
+              href={`${baseUrl}${row.layer}/${datasetIdToSlug(row.id)}`}
               className="font-medium text-primary hover:underline"
             >
               {info.getValue()}
@@ -53,7 +56,7 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
           );
         },
       }),
-      columnHelper.accessor((row) => row.parquet?.row_count ?? null, {
+      columnHelper.accessor("rowCount", {
         id: "rows",
         header: "Rows (snapshot)",
         cell: (info) => {
@@ -65,7 +68,7 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
           );
         },
       }),
-      columnHelper.accessor((row) => row.parquet?.column_count ?? null, {
+      columnHelper.accessor("columnCount", {
         id: "columns",
         header: "Columns (snapshot)",
         cell: (info) => {
@@ -77,7 +80,7 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
           );
         },
       }),
-      columnHelper.accessor((row) => row.parquet?.file_size_bytes ?? null, {
+      columnHelper.accessor("bytes", {
         id: "size",
         header: "Size (snapshot)",
         cell: (info) => {
@@ -89,7 +92,7 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
           );
         },
       }),
-      columnHelper.accessor("schema", {
+      columnHelper.accessor("hasSchema", {
         header: "Declared schema",
         cell: (info) =>
           info.getValue() ? (
@@ -123,7 +126,7 @@ export default function DatasetTable({ datasets, baseUrl }: DatasetTableProps) {
   );
 
   const table = useReactTable({
-    data: datasets,
+    data: rows,
     columns,
     state: { sorting, globalFilter },
     onSortingChange: setSorting,

@@ -158,6 +158,91 @@ test.describe("Research tools", () => {
     await expect(page.locator("#financing-price")).toHaveValue("2088000");
   });
 
+  test("financing inputs survive switching tools and returning", async ({
+    page,
+  }) => {
+    await openTools(page);
+
+    // One edit per input, including a manual price that is not the reference.
+    await page.locator("#financing-price").fill("700000");
+    await page.locator("#financing-income").fill("137777");
+    await page.locator("#financing-down").fill("25");
+    await page.locator("#financing-term").fill("30");
+    await page.locator("#financing-rate").fill("2.5");
+    await expect(page.getByText(/Price entered manually/)).toBeVisible();
+
+    for (const tab of ["Lease bands", "MRT / CBD", "Spatial patterns"]) {
+      await page.getByRole("tab", { name: new RegExp(tab) }).click();
+    }
+    await page.getByRole("tab", { name: /Financing scenario/ }).click();
+
+    await expect(page.locator("#financing-price")).toHaveValue("700000");
+    await expect(page.locator("#financing-income")).toHaveValue("137777");
+    await expect(page.locator("#financing-down")).toHaveValue("25");
+    await expect(page.locator("#financing-term")).toHaveValue("30");
+    await expect(page.locator("#financing-rate")).toHaveValue("2.5");
+    // The manual price is still manual: returning must not re-import.
+    await expect(page.getByText(/Price entered manually/)).toBeVisible();
+    // No draft value is serialised.
+    expect(page.url()).not.toContain("700000");
+    expect(page.url()).not.toContain("137777");
+  });
+
+  test("a changed reference imports once and survives a tool switch", async ({
+    page,
+  }) => {
+    await openTools(page);
+
+    await page.getByLabel("Planning area").selectOption("QUEENSTOWN");
+    await page.getByLabel("Property type").selectOption("condo");
+    await expect(page.locator("#financing-price")).toHaveValue("2088000");
+
+    await page.getByRole("tab", { name: /Lease bands/ }).click();
+    await page.getByRole("tab", { name: /Financing scenario/ }).click();
+
+    await expect(page.locator("#financing-price")).toHaveValue("2088000");
+    await expect(page.locator("#financing-reference-status")).toContainText(
+      "Imported from",
+    );
+  });
+
+  test("a back/forward reference change still imports the new median", async ({
+    page,
+  }) => {
+    await openTools(page);
+
+    // Manual edits first, so an import on navigation is visibly new.
+    await page.locator("#financing-price").fill("700000");
+    await page.locator("#financing-income").fill("137777");
+    await expect(page.getByText(/Price entered manually/)).toBeVisible();
+
+    await page.evaluate(() => {
+      const url = new URL(window.location.href);
+      url.search = "?ref=QUEENSTOWN&rt=condo&rv=1";
+      window.history.pushState({}, "", url);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
+
+    // The new reference is imported; the other four inputs are unchanged.
+    await expect(page.locator("#financing-price")).toHaveValue("2088000");
+    await expect(page.locator("#financing-income")).toHaveValue("137777");
+    await expect(
+      page.locator("code", { hasText: "map_metrics.year_2025_condo" }).first(),
+    ).toBeVisible();
+  });
+
+  test("a reload starts again from the defaults", async ({ page }) => {
+    await openTools(page);
+    await page.locator("#financing-income").fill("137777");
+    await page.locator("#financing-price").fill("700000");
+
+    await page.reload();
+
+    // Draft state is memory-only by design: nothing is persisted.
+    await expect(page.locator("#financing-price")).toHaveValue("710000");
+    await expect(page.locator("#financing-income")).toHaveValue("120000");
+  });
+
   test("a cold deep link selects the tool and the named reference", async ({
     page,
   }) => {
