@@ -18,6 +18,65 @@ from egg_n_bacon_housing.utils.validation_gateway import (
 logger = logging.getLogger(__name__)
 
 
+# The index is context, not a denominator, and it is the URA *private
+# residential* property rental index -- not an HDB index. It is carried beside
+# the HDB yield as a market marker only. Preference order, measured against
+# `raw_rental_index.parquet` at the 2026-10 cutoff:
+#   Non-Landed      91 quarters, 2004Q1-2026Q3  <- continuous to the cutoff
+#   All Residential 70 quarters, 2004Q1-2021Q2  <- stops five years early
+#   Landed          91 quarters, 2004Q1-2026Q3  <- different segment
+# Choosing "All Residential" would leave 91.4% of published rows (1,599 of
+# 1,749) with a null index, so the continuous non-landed series is used,
+# falling back to "All Residential" only when a source carries nothing else.
+RENTAL_INDEX_SERIES_PREFERENCE: tuple[str, ...] = ("NON-LANDED", "ALL RESIDENTIAL")
+
+
+def _whole_island_rental_index(raw_rental_index: pd.DataFrame) -> pd.DataFrame:
+    """Expand one whole-island index series to `month -> rental_index`.
+
+    The source carries **three property-type series per quarter** (Landed,
+    Non-Landed, All Residential) under the same `locality`. Selecting only the
+    locality and merging on `month` therefore multiplied every town-month row
+    2–3× — identical yields, different `rental_index` — which RS02 caught in
+    `rental_yield.parquet` (3,623 rows for 1,749 town-months).
+
+    One series is chosen by `RENTAL_INDEX_SERIES_PREFERENCE`; a source without a
+    `property_type` column is treated as a single series. Months the chosen
+    series does not cover stay null rather than borrowing another segment.
+    """
+    rental_index = raw_rental_index.copy()
+    rental_index = rental_index[
+        rental_index["locality"].astype(str).str.upper().str.strip() == "WHOLE ISLAND"
+    ]
+    if "property_type" in rental_index.columns:
+        property_type = rental_index["property_type"].astype(str).str.upper().str.strip()
+        for series in RENTAL_INDEX_SERIES_PREFERENCE:
+            selected = rental_index[property_type == series]
+            if not selected.empty:
+                rental_index = selected
+                break
+        else:
+            return pd.DataFrame(columns=["month", "rental_index"])
+    rental_index["quarter"] = pd.PeriodIndex(rental_index["quarter"], freq="Q")
+    rental_index["rental_index"] = pd.to_numeric(rental_index["index"], errors="coerce")
+    rental_index = rental_index.dropna(subset=["rental_index"])
+    if rental_index.empty:
+        return pd.DataFrame(columns=["month", "rental_index"])
+
+    expanded_index: list[dict[str, object]] = []
+    latest = rental_index.sort_values("quarter").drop_duplicates(subset=["quarter"], keep="last")
+    for row in latest[["quarter", "rental_index"]].itertuples(index=False):
+        start_month = row.quarter.asfreq("M", how="start")
+        for month in pd.period_range(start=start_month, periods=3, freq="M"):
+            expanded_index.append({"month": str(month), "rental_index": row.rental_index})
+
+    return (
+        pd.DataFrame(expanded_index)
+        .drop_duplicates(subset=["month"], keep="last")
+        .reset_index(drop=True)
+    )
+
+
 @hamilton_exclude
 def rental_yield(*args, **kwargs) -> pd.DataFrame:
     result = validate_rental_yield(*args, **kwargs)
@@ -139,27 +198,12 @@ def validate_rental_yield(
     if not raw_rental_index.empty and {"quarter", "locality", "index"}.issubset(
         raw_rental_index.columns
     ):
-        rental_index = raw_rental_index.copy()
-        rental_index = rental_index[
-            rental_index["locality"].astype(str).str.upper() == "WHOLE ISLAND"
-        ]
-        rental_index["quarter"] = pd.PeriodIndex(rental_index["quarter"], freq="Q")
-        rental_index["rental_index"] = pd.to_numeric(rental_index["index"], errors="coerce")
-        rental_index = rental_index.dropna(subset=["rental_index"])
-        expanded_index = []
-        for row in (
-            rental_index[["quarter", "rental_index"]].drop_duplicates().itertuples(index=False)
-        ):
-            start_month = row.quarter.asfreq("M", how="start")
-            for month in pd.period_range(start=start_month, periods=3, freq="M"):
-                expanded_index.append({"month": str(month), "rental_index": row.rental_index})
-        if expanded_index:
-            rental_index = pd.DataFrame(expanded_index)
-            df = df.merge(
-                rental_index.drop_duplicates(),
-                on="month",
-                how="left",
-            )
+        rental_index = _whole_island_rental_index(raw_rental_index)
+        if not rental_index.empty:
+            # `validate="m:1"` makes a fan-out a loud failure instead of
+            # silently duplicating every town-month row (the defect RS02 found:
+            # three property-type series per quarter merged on month alone).
+            df = df.merge(rental_index, on="month", how="left", validate="m:1")
 
     return extracted_validation(
         validate_and_quarantine(df, HRentalYieldRecord, "rental_yield"),

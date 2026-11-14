@@ -274,6 +274,7 @@ class TestRentalYieldNodeMaterialization:
 
         path = materialize_rental_yield(df, writer)
 
+        assert path is not None
         layer = PUBLISHED_LAYERS["rental_yield"]
         assert path == writer.resolve_path("rental_yield", layer, tmp_path)
         pd.testing.assert_frame_equal(pd.read_parquet(path), df)
@@ -296,3 +297,150 @@ class TestRentalYieldNodeMaterialization:
             for record in caplog.records
         )
         assert not list(tmp_path.rglob("*.parquet"))
+
+
+class TestRentalIndexSeriesSelection:
+    """The rental index is one series per month, not one per property type.
+
+    RS02 found `rental_yield.parquet` carrying 3,623 rows for 1,749 town-months:
+    the source has three property-type series per quarter under the same
+    locality, and merging them on `month` alone multiplied every row. These
+    tests pin the selection and the no-fan-out guard.
+    """
+
+    @staticmethod
+    def _sales() -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "town": "TOA PAYOH",
+                    "price": 500000.0,
+                    "flat_type": "4 ROOM",
+                    "transaction_date": pd.Timestamp("2024-02-15"),
+                }
+            ]
+        )
+
+    @staticmethod
+    def _rents() -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "town": "TOA PAYOH",
+                    "flat_type": "4-ROOM",
+                    "monthly_rent": 3000.0,
+                    "rent_approval_date": "2024-02",
+                }
+            ]
+        )
+
+    def test_three_property_type_series_produce_one_row_per_town_month(self):
+        from egg_n_bacon_housing.components.feature_rental import rental_yield
+
+        raw_rental_index = pd.DataFrame(
+            [
+                {
+                    "quarter": "2024-Q1",
+                    "locality": "Whole Island",
+                    "property_type": "Landed",
+                    "index": "64.0",
+                },
+                {
+                    "quarter": "2024-Q1",
+                    "locality": "Whole Island",
+                    "property_type": "Non-Landed",
+                    "index": "66.4",
+                },
+                {
+                    "quarter": "2024-Q1",
+                    "locality": "Whole Island",
+                    "property_type": "All Residential",
+                    "index": "63.4",
+                },
+            ]
+        )
+
+        df = rental_yield(self._sales(), self._rents(), raw_rental_index)
+
+        assert len(df) == 1
+        assert df[["town", "month"]].duplicated().sum() == 0
+        # Non-Landed is preferred: it is the continuous, HDB-relevant series.
+        assert df["rental_index"].tolist() == [66.4]
+
+    def test_all_residential_is_used_only_when_nothing_else_exists(self):
+        from egg_n_bacon_housing.components.feature_rental import rental_yield
+
+        raw_rental_index = pd.DataFrame(
+            [
+                {
+                    "quarter": "2024-Q1",
+                    "locality": "Whole Island",
+                    "property_type": "All Residential",
+                    "index": "63.4",
+                }
+            ]
+        )
+
+        df = rental_yield(self._sales(), self._rents(), raw_rental_index)
+
+        assert len(df) == 1
+        assert df["rental_index"].tolist() == [63.4]
+
+    def test_a_source_without_property_type_still_works(self):
+        from egg_n_bacon_housing.components.feature_rental import rental_yield
+
+        raw_rental_index = pd.DataFrame(
+            [{"quarter": "2024-Q1", "locality": "Whole Island", "index": "108.2"}]
+        )
+
+        df = rental_yield(self._sales(), self._rents(), raw_rental_index)
+
+        assert len(df) == 1
+        assert df["rental_index"].tolist() == [108.2]
+
+    def test_a_duplicated_quarter_does_not_fan_out(self):
+        from egg_n_bacon_housing.components.feature_rental import rental_yield
+
+        raw_rental_index = pd.DataFrame(
+            [
+                {
+                    "quarter": "2024-Q1",
+                    "locality": "Whole Island",
+                    "property_type": "All Residential",
+                    "index": "63.4",
+                },
+                {
+                    "quarter": "2024-Q1",
+                    "locality": "Whole Island",
+                    "property_type": "All Residential",
+                    "index": "63.4",
+                },
+            ]
+        )
+
+        df = rental_yield(self._sales(), self._rents(), raw_rental_index)
+
+        assert len(df) == 1
+        assert df["rental_index"].tolist() == [63.4]
+
+    def test_no_chosen_series_leaves_the_context_column_out(self):
+        from egg_n_bacon_housing.components.feature_rental import rental_yield
+
+        # Only the "Landed" series exists for this quarter. The index is
+        # context, so the build proceeds without it rather than borrowing a
+        # segment that does not describe HDB flats.
+        raw_rental_index = pd.DataFrame(
+            [
+                {
+                    "quarter": "2024-Q1",
+                    "locality": "Whole Island",
+                    "property_type": "Landed",
+                    "index": "64.0",
+                }
+            ]
+        )
+
+        df = rental_yield(self._sales(), self._rents(), raw_rental_index)
+
+        assert len(df) == 1
+        assert "rental_index" not in df.columns
