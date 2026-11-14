@@ -11,6 +11,19 @@ test.describe("Dashboard - Market Overview", () => {
     await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
   });
 
+  test("shows the verified current-data window", async ({ page }) => {
+    const strip = page.locator('[data-current-data="2026-10"]');
+    await expect(strip).toBeVisible();
+    await expect(
+      strip.getByRole("heading", { name: "Current data" }),
+    ).toBeVisible();
+    await expect(strip).toContainText("cutoff 2026-10");
+    await expect(strip).toContainText("21,801 sales");
+    await expect(strip).toContainText("+1.9% vs prior year");
+    // Private scopes are labelled as records under review, not as a headline.
+    await expect(strip).toContainText("still under coverage review");
+  });
+
   test("should display sidebar navigation", async ({ page }) => {
     await expect(
       page.getByRole("navigation", { name: "Main navigation" }),

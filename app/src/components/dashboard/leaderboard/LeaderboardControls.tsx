@@ -3,8 +3,9 @@ import type {
   LeaderboardControlsState,
   LeaderboardPropertyType,
   LeaderboardTimeBasis,
+  PlanningRegion,
 } from "@/types/leaderboard";
-import type { Region } from "@/types/segments";
+import { PLANNING_REGIONS, PLANNING_REGION_LABELS } from "@/types/leaderboard";
 
 interface LeaderboardControlsProps {
   controls: LeaderboardControlsState;
@@ -15,13 +16,20 @@ interface LeaderboardControlsProps {
   ) => void;
   onReset: () => void;
   compact?: boolean;
+  /**
+   * Period choices: published windows first (when a verified pack is loaded),
+   * then the historical eras. Defaults to the legacy eras so the control still
+   * renders before any pack is available.
+   */
+  timeBasisOptions?: { value: LeaderboardTimeBasis; label: string }[];
 }
 
-const REGION_OPTIONS: { value: Region; label: string }[] = [
-  { value: "CCR", label: "Core Central Region" },
-  { value: "RCR", label: "Rest of Central Region" },
-  { value: "OCR", label: "Outside Central Region" },
-];
+/** Published planning regions. CCR/RCR/OCR are not observable area labels. */
+const REGION_OPTIONS: { value: PlanningRegion; label: string }[] =
+  PLANNING_REGIONS.map((value) => ({
+    value,
+    label: `${PLANNING_REGION_LABELS[value]} (${value.replace(" REGION", "")})`,
+  }));
 
 const PROPERTY_TYPE_OPTIONS: {
   value: LeaderboardPropertyType;
@@ -33,9 +41,12 @@ const PROPERTY_TYPE_OPTIONS: {
   { value: "ec", label: "EC" },
 ];
 
-const TIME_BASIS_OPTIONS: { value: LeaderboardTimeBasis; label: string }[] = [
-  { value: "recent", label: "Recent" },
-  { value: "whole", label: "All-time" },
+const LEGACY_TIME_BASIS_OPTIONS: {
+  value: LeaderboardTimeBasis;
+  label: string;
+}[] = [
+  { value: "recent", label: "2022 onward" },
+  { value: "whole", label: "All history" },
   { value: "year_2025", label: "2025" },
 ];
 
@@ -52,6 +63,7 @@ export default function LeaderboardControls({
   onChange,
   onReset,
   compact = false,
+  timeBasisOptions = LEGACY_TIME_BASIS_OPTIONS,
 }: LeaderboardControlsProps) {
   const sectionGap = compact ? "space-y-4" : "space-y-6";
 
@@ -117,7 +129,7 @@ export default function LeaderboardControls({
 
       <FilterSection title="Time Basis">
         <SegmentedButtons
-          options={TIME_BASIS_OPTIONS}
+          options={timeBasisOptions}
           value={controls.timeBasis}
           onChange={(value) => onChange("timeBasis", value)}
         />

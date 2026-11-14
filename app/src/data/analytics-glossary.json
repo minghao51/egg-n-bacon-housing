@@ -73,14 +73,14 @@
   },
   "appreciation rate": {
     "explanation": "The percentage increase in property value over time",
-    "whyItMatters": "Properties within 500m of MRT appreciate 35% faster than those >2km away"
+    "whyItMatters": "Station distance is one factor in fitted price differences; the study reports associations, not guaranteed returns"
   },
   "heterogeneous effects": {
     "explanation": "When the same factor affects different groups differently",
-    "whyItMatters": "MRT proximity matters 4x more for 2-room flats than Executive flats"
+    "whyItMatters": "The same location factor can matter differently by flat type, so a single national rule of thumb hides variation"
   },
   "CBD": {
     "explanation": "Central Business District - Singapore's downtown core (Raffles Place, Marina Bay)",
-    "whyItMatters": "Distance to CBD explains 22.6% of price variation - more than MRT proximity"
+    "whyItMatters": "The MRT study compares CBD distance with station distance for HDB prices; the fitted shares differ from the popular narrative"
   }
 }

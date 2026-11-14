@@ -53,6 +53,12 @@ interface LeaderboardMapProps {
   highlightedArea: string | null;
   onAreaHover: (area: string | null) => void;
   onAreaClick: (area: string) => void;
+  /**
+   * Whether areas may be coloured by the metric. A `limited-display` scope may
+   * be read but not ranked, and a value choropleth is a rank in colour, so the
+   * fill stays neutral and the values remain in the table.
+   */
+  colourable?: boolean;
 }
 
 interface GeoJSONFeature {
@@ -106,6 +112,7 @@ export default function LeaderboardMap({
   highlightedArea,
   onAreaHover,
   onAreaClick,
+  colourable = true,
 }: LeaderboardMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [MapContainer, setMapContainer] = useState<any>(null);
@@ -172,8 +179,21 @@ export default function LeaderboardMap({
   const { metricData, minValue, maxValue, getColor } = useMemo(() => {
     const dataDict: Record<string, number> = {};
 
+    if (!colourable) {
+      // No fill: the map still locates the areas and the table carries the
+      // values, but nothing is coloured by a metric that may not be ranked.
+      return {
+        metricData: dataDict,
+        minValue: 0,
+        maxValue: 1,
+        getColor: () => "#e5e7eb",
+      };
+    }
+
     data.forEach((row) => {
-      dataDict[row.areaKey] = row.rankMetricValue;
+      if (row.rankMetricValue !== null) {
+        dataDict[row.areaKey] = row.rankMetricValue;
+      }
     });
 
     const values = Object.values(dataDict).filter(
@@ -229,7 +249,7 @@ export default function LeaderboardMap({
       maxValue: max,
       getColor: getColorForValue,
     };
-  }, [data, selectedMetric]);
+  }, [colourable, data, selectedMetric]);
 
   const style = useMemo(
     () => (feature: GeoJSONFeature) => {
@@ -267,17 +287,24 @@ export default function LeaderboardMap({
         }) => void;
       };
 
+      const metricValueLabel = !row
+        ? "—"
+        : row.rankMetricValue === null
+          ? "—"
+          : `${row.rankMetricValue.toFixed(2)} ${metricMeta.unit}`;
+      const rankLabel = row && row.rank !== null ? `#${row.rank}` : "Not ranked";
+
       const tooltip = row
         ? `
           <div class="text-sm min-w-[220px]">
             <div class="mb-2 border-b pb-1 text-base font-bold">${row.planningArea}</div>
             <div class="grid grid-cols-2 gap-x-3 gap-y-1">
               <span class="text-muted-foreground">Region</span>
-              <span class="text-right font-medium">${row.region}</span>
+              <span class="text-right font-medium">${row.region ?? "Unmapped"}</span>
               <span class="text-muted-foreground">${metricMeta.label}</span>
-              <span class="text-right font-medium">${row.rankMetricValue.toFixed(2)} ${metricMeta.unit}</span>
+              <span class="text-right font-medium">${metricValueLabel}</span>
               <span class="text-muted-foreground">Rank</span>
-              <span class="text-right font-medium">#${row.rank}</span>
+              <span class="text-right font-medium">${rankLabel}</span>
             </div>
           </div>
         `

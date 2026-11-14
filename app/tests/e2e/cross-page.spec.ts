@@ -3,7 +3,9 @@ import { test, expect } from "@playwright/test";
 test.describe("Cross-Page Navigation", () => {
   test("should navigate from home to dashboard and back", async ({ page }) => {
     await page.goto("/");
-    await page.getByText("Live Dashboard").click();
+    // The "Live Dashboard" teaser was removed in RF02 (no unsupported "live"
+    // claim); the home page links to the dashboard with the same destination.
+    await page.locator('a[href="/dashboard"]').first().click();
     await expect(page).toHaveURL(/dashboard/);
     await page.goto("/");
     await expect(page).toHaveURL("/");
@@ -82,7 +84,7 @@ test.describe("Responsive Behavior", () => {
     await expect(
       page.getByRole("heading", { name: /Egg n Bacon/i }),
     ).toBeVisible();
-    await expect(page.getByText("Live Dashboard")).toBeVisible();
+    await expect(page.locator('a[href="/dashboard"]').first()).toBeVisible();
   });
 
   test("should display correctly on tablet", async ({ page }) => {

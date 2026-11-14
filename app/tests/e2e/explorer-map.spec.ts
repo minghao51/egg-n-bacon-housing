@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { expectPageToLoadWithoutErrors } from "./utils/pageHealth";
+import { servePackBytesFromDisk } from "./utils/servePackBytes";
 
 /**
  * `/explore` map and table views.
@@ -15,6 +16,13 @@ import { expectPageToLoadWithoutErrors } from "./utils/pageHealth";
 /** The 2 MB geometry plus projection can take a moment on a cold cache. */
 const MAP_TIMEOUT = 30_000;
 
+// Tests that do not pin a legacy era open on the published window, and preview
+// re-labels `.gz` with `Content-Encoding`. Serve the pinned pack bytes raw so the
+// verification path under test is the same one the deployed host exercises.
+test.beforeEach(async ({ page }) => {
+  await servePackBytesFromDisk(page);
+});
+
 function mapFigure(page: Page) {
   return page.getByRole("figure");
 }
@@ -23,7 +31,7 @@ function areaPaths(page: Page) {
   return mapFigure(page).locator("path[data-area-state]");
 }
 
-async function openMap(page: Page, url = "/explore?view=map") {
+async function openMap(page: Page, url = "/explore?view=map&period=year_2025") {
   await page.goto(url);
   await expect(areaPaths(page).first()).toBeVisible({ timeout: MAP_TIMEOUT });
   await expect(areaPaths(page)).toHaveCount(55, { timeout: MAP_TIMEOUT });
@@ -194,7 +202,9 @@ test.describe("Explore map view", () => {
     await page.route("**/data/planning_areas.geojson", (route) =>
       route.fulfill({ status: 500, body: "" }),
     );
-    await page.goto("/explore?view=map");
+    // Geometry failure is about the fallback, so the era is pinned to keep the
+    // expected value stable.
+    await page.goto("/explore?view=map&period=year_2025");
 
     await expect(mapFigure(page).getByRole("alert")).toContainText(
       /planning-area boundaries could not be drawn/i,
@@ -241,7 +251,9 @@ test.describe("Explore table view", () => {
   test("renders a real table with the same published values as the list", async ({
     page,
   }) => {
-    await page.goto("/explore?view=table");
+    // Table/list parity is asserted on the explicit legacy era; the default
+    // published window is covered by the explore suite.
+    await page.goto("/explore?view=table&period=year_2025");
 
     const table = page.getByRole("table");
     await expect(table).toBeVisible();

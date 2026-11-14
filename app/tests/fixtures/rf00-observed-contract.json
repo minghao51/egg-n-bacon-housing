@@ -1,0 +1,313 @@
+{
+  "expectedScopedReadings": {
+    "PUNGGOL": {
+      "year_2025_hdb": {
+        "medianPrice": 672000,
+        "medianPsf": 686,
+        "sales": 1538
+      }
+    },
+    "comment": "RF01 must read the joint section. Values below are the published truth for this fixture.",
+    "wrongPropertyOnlyFallback": {
+      "comment": "The current leaderboard fallback for PUNGGOL hdb, retained as a negative fixture.",
+      "medianPrice": 500000,
+      "sales": 24854,
+      "year2025AllPropertyMedian": 742444
+    }
+  },
+  "fixtureVersion": 1,
+  "id": "rf00-observed-contract",
+  "provenance": {
+    "exportedAt": "2026-11-03T14:27:33Z",
+    "note": "Published aggregate values copied verbatim; no personal or licensed record-level data.",
+    "observationEndMonth": "2026-10",
+    "releaseGeneration": "0e1013ee485fe085874f2ef53ece8eb5f4f47305985ba991eda5fc753e4e0c27",
+    "sourceAssets": [
+      {
+        "path": "app/public/data/map_metrics.json.gz",
+        "sha256": "8cc21cb3af698d02a53d214b7a5c6e9cb6a1f7acf4ab71a47f76db64a7d4b43a"
+      },
+      {
+        "path": "app/public/data/dashboard_leaderboard.json.gz",
+        "sha256": "be99ba6b610b36fee108e64544d370acb52fcbe47fc491db2677f1807518419b"
+      }
+    ]
+  },
+  "published": {
+    "jointSections": {
+      "year_2025_condo": {
+        "ANG MO KIO": {
+          "affordability_class": "Affordable",
+          "affordability_ratio": 3.14,
+          "median_price": 2139000,
+          "median_psf": 2175,
+          "mortgage_to_income_pct": 15.1,
+          "rental_yield_mean": 6.84,
+          "rental_yield_median": 6.96,
+          "rental_yield_std": 0.61,
+          "volume": 1827
+        },
+        "PUNGGOL": {
+          "affordability_class": "Moderate",
+          "affordability_ratio": 6.24,
+          "median_price": 1500000,
+          "median_psf": 1609,
+          "mortgage_to_income_pct": 29.97,
+          "rental_yield_mean": 5.71,
+          "rental_yield_median": 5.71,
+          "rental_yield_std": 0.66,
+          "volume": 303
+        },
+        "TAMPINES": {
+          "affordability_class": "Affordable",
+          "affordability_ratio": 4.24,
+          "median_price": 1698000,
+          "median_psf": 1866,
+          "mortgage_to_income_pct": 20.35,
+          "rental_yield_mean": 5.99,
+          "rental_yield_median": 6.02,
+          "rental_yield_std": 0.52,
+          "volume": 2486
+        }
+      },
+      "year_2025_ec": {
+        "ANG MO KIO": {
+          "affordability_class": "Affordable",
+          "affordability_ratio": 3.14,
+          "median_price": 1900000,
+          "median_psf": 1348,
+          "mortgage_to_income_pct": 15.1,
+          "rental_yield_mean": 6.84,
+          "rental_yield_median": 6.96,
+          "rental_yield_std": 0.61,
+          "volume": 14
+        },
+        "PUNGGOL": {
+          "affordability_class": "Moderate",
+          "affordability_ratio": 6.24,
+          "median_price": 1660000,
+          "median_psf": 1484,
+          "mortgage_to_income_pct": 29.97,
+          "rental_yield_mean": 5.71,
+          "rental_yield_median": 5.71,
+          "rental_yield_std": 0.66,
+          "volume": 433
+        },
+        "TAMPINES": {
+          "affordability_class": "Affordable",
+          "affordability_ratio": 4.24,
+          "median_price": 1664000,
+          "median_psf": 1754,
+          "mortgage_to_income_pct": 20.35,
+          "rental_yield_mean": 5.99,
+          "rental_yield_median": 6.02,
+          "rental_yield_std": 0.52,
+          "volume": 1382
+        }
+      },
+      "year_2025_hdb": {
+        "ANG MO KIO": {
+          "affordability_class": "Affordable",
+          "affordability_ratio": 3.14,
+          "median_price": 499000,
+          "median_psf": 583,
+          "mortgage_to_income_pct": 15.1,
+          "rental_yield_mean": 6.84,
+          "rental_yield_median": 6.96,
+          "rental_yield_std": 0.61,
+          "volume": 971
+        },
+        "PUNGGOL": {
+          "affordability_class": "Moderate",
+          "affordability_ratio": 6.24,
+          "median_price": 672000,
+          "median_psf": 686,
+          "mortgage_to_income_pct": 29.97,
+          "rental_yield_mean": 5.71,
+          "rental_yield_median": 5.71,
+          "rental_yield_std": 0.66,
+          "volume": 1538
+        },
+        "TAMPINES": {
+          "affordability_class": "Affordable",
+          "affordability_ratio": 4.24,
+          "median_price": 710000,
+          "median_psf": 620,
+          "mortgage_to_income_pct": 20.35,
+          "rental_yield_mean": 5.99,
+          "rental_yield_median": 6.02,
+          "rental_yield_std": 0.52,
+          "volume": 1921
+        }
+      }
+    },
+    "leaderboardRows": {
+      "ANG MO KIO": {
+        "by_property_type": {
+          "condo": {
+            "median_price": 1896000,
+            "volume": 8930
+          },
+          "ec": {
+            "median_price": 1698000,
+            "volume": 89
+          },
+          "hdb": {
+            "median_price": 235000,
+            "volume": 53858
+          }
+        },
+        "by_time_period": {
+          "whole": {
+            "median_price": 267000,
+            "yoy_growth": 3.69
+          },
+          "year_2025": {
+            "median_price": 1646000,
+            "yoy_growth": null
+          }
+        },
+        "coordinates": [
+          103.83622,
+          1.377383
+        ],
+        "region": "NORTH-EAST REGION"
+      },
+      "PUNGGOL": {
+        "by_property_type": {
+          "condo": {
+            "median_price": 1280000,
+            "volume": 1823
+          },
+          "ec": {
+            "median_price": 1418000,
+            "volume": 3150
+          },
+          "hdb": {
+            "median_price": 500000,
+            "volume": 24854
+          }
+        },
+        "by_time_period": {
+          "whole": {
+            "median_price": 530000,
+            "yoy_growth": 6.06
+          },
+          "year_2025": {
+            "median_price": 742444,
+            "yoy_growth": null
+          }
+        },
+        "coordinates": [
+          103.910126,
+          1.413129
+        ],
+        "region": "NORTH-EAST REGION"
+      },
+      "TAMPINES": {
+        "by_property_type": {
+          "condo": {
+            "median_price": 1410000,
+            "volume": 8203
+          },
+          "ec": {
+            "median_price": 1509000,
+            "volume": 4673
+          },
+          "hdb": {
+            "median_price": 330800,
+            "volume": 84847
+          }
+        },
+        "by_time_period": {
+          "whole": {
+            "median_price": 360000,
+            "yoy_growth": 71.71
+          },
+          "year_2025": {
+            "median_price": 1438888,
+            "yoy_growth": null
+          }
+        },
+        "coordinates": [
+          103.962555,
+          1.333155
+        ],
+        "region": "EAST REGION"
+      }
+    }
+  },
+  "status": "baseline pin for RF01/RF04 regression fixtures",
+  "synthetic": {
+    "cases": [
+      {
+        "area": "PUNGGOL",
+        "expectedStatus": "not-published",
+        "id": "absent-joint-section",
+        "jointSection": null,
+        "periodId": "year_2025",
+        "propertyType": "hdb",
+        "synthetic": true
+      },
+      {
+        "area": "PUNGGOL",
+        "expectedStatus": "partial-coverage",
+        "id": "null-metric",
+        "jointSection": {
+          "median_price": null,
+          "median_psf": null,
+          "volume": 412
+        },
+        "periodId": "year_2025",
+        "propertyType": "ec",
+        "synthetic": true
+      },
+      {
+        "area": "TAMPINES",
+        "expectedStatus": "thin-sample",
+        "id": "thin-sample",
+        "jointSection": {
+          "median_price": 812000,
+          "median_psf": 640,
+          "volume": 12
+        },
+        "periodId": "year_2025",
+        "propertyType": "ec",
+        "synthetic": true
+      },
+      {
+        "area": "ANG MO KIO",
+        "expectedStatus": "no-sales",
+        "id": "zero-sales-complete-month",
+        "jointSection": {
+          "median_price": null,
+          "median_psf": null,
+          "volume": 0
+        },
+        "periodId": "month_2026_10",
+        "propertyType": "ec",
+        "synthetic": true
+      },
+      {
+        "comment": "Four rows span fourteen months; a 12-row window shift is not a trailing year.",
+        "expectedStatus": "not-comparable",
+        "id": "sparse-month-grid",
+        "months": [
+          "2024-02",
+          "2024-06",
+          "2024-07",
+          "2024-08"
+        ],
+        "synthetic": true
+      },
+      {
+        "comment": "Legacy CCR/RCR/OCR label with no planning-region mapping.",
+        "expectedStatus": "not-published",
+        "id": "unknown-region",
+        "region": "CCR",
+        "synthetic": true
+      }
+    ],
+    "comment": "Hand-authored contract edge cases. Not market observations."
+  }
+}

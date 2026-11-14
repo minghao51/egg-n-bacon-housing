@@ -3,9 +3,18 @@
  *
  * Owns four things and nothing else: the selection (initialised from the
  * address bar, written back with `replaceState`), the list/map/table view
- * choice, the two published assets the selection reads, and the
- * release-generation check that decides whether a national baseline may be
- * shown at all.
+ * choice, the published assets the selection reads, and the release-generation
+ * checks that decide whether a national baseline may be shown at all.
+ *
+ * Two data sources, one selection:
+ *
+ * - a legacy era (`whole`, `pre_covid`, `recent`, `year_2025`) reads
+ *   `map_metrics.json.gz` plus `dashboard_overview.json.gz` and keeps its
+ *   generation check;
+ * - a concrete published period (`ttm_2026_10`, …) reads the v2 observed pack,
+ *   which this island verifies itself (manifest, sizes, sha256, period parser)
+ *   before building a row. An unpublished id is reported, never swapped for a
+ *   different window.
  *
  * The URL is read once, before the first commit, exactly like `/dashboard/map`
  * after the S1 fix — so a deep link is never overwritten by defaults. State is
@@ -13,21 +22,35 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import PublishedWindowsPanel from "@/components/observed/PublishedWindowsPanel";
+import type { WindowsByType } from "@/utils/observed-pack-build";
+import { type PackLoad } from "@/utils/observed-pack-loader";
+import { useObservedPack } from "@/hooks/useObservedPack";
 import { useGzipJson } from "@/hooks/useGzipJson";
 import {
   EXPLORER_DEFAULTS,
+  isConcretePeriod,
+  isLegacyPeriod,
   parseExplorerSelection,
   serializeExplorerSelection,
   withSelection,
+  type ExplorerPackPeriod,
   type ExplorerSelection,
 } from "@/utils/explorer-selection";
-import { buildExplorerDataset } from "@/utils/observed-rows";
+import {
+  buildPackExplorerDataset,
+} from "@/utils/explorer-pack-rows";
+import { publishedPeriodOptions } from "@/utils/observed-periods";
+import { buildExplorerDataset, type ExplorerDataset } from "@/utils/observed-rows";
 import {
   loadReleaseCheck,
   type ReleaseCheck,
   type ReleaseStatus,
 } from "@/utils/release-manifest";
-import ExplorerSettings from "./ExplorerSettings";
+import ExplorerSettings, {
+  explorerPeriodGroups,
+  type ExplorerPeriodGroup,
+} from "./ExplorerSettings";
 import ExplorerView, {
   EXPLORER_VIEW_QUERY_KEY,
   parseExplorerView,
@@ -53,13 +76,37 @@ const EXPLORER_QUERY_KEYS: readonly (keyof ExplorerSelection)[] = [
 ];
 
 /** Read the incoming selection once, before the first render commit. */
-function readSelectionFromUrl(): ExplorerSelection {
+function readSelectionFromUrl(
+  defaultPeriodId: ExplorerPackPeriod | null,
+): ExplorerSelection {
   if (typeof window === "undefined") {
     // A server render shows the documented default; the client island
     // initialises from the real address bar.
-    return EXPLORER_DEFAULTS;
+    return defaultPeriodId === null
+      ? EXPLORER_DEFAULTS
+      : { ...EXPLORER_DEFAULTS, period: defaultPeriodId };
   }
-  return parseExplorerSelection(window.location.search);
+
+  const parsed = parseExplorerSelection(window.location.search);
+  if (defaultPeriodId === null) return parsed;
+  // Only a bare URL adopts the new default: an explicit `?period=` is the
+  // reader's choice, whatever the default is.
+  const hasPeriod = new URLSearchParams(window.location.search).has("period");
+  return hasPeriod ? parsed : { ...parsed, period: defaultPeriodId };
+}
+
+/**
+ * The "updated default" notice is for readers who arrived on a bare URL, and
+ * only when a default actually moved. An explicit window never earns it.
+ */
+function readDefaultMigration(
+  defaultPeriodId: ExplorerPackPeriod | null,
+  previous: { label: string; query: string } | null,
+): { label: string; query: string } | null {
+  if (defaultPeriodId === null || previous === null) return null;
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  return params.has("period") ? null : previous;
 }
 
 /**
@@ -79,6 +126,13 @@ export interface ExplorerWorkspaceProps {
   mapMetricsUrl: string;
   overviewUrl: string;
   manifestUrl: string;
+  /** Verified v2 windows; absent when no pack is published. */
+  publishedWindows?: WindowsByType | null;
+  observedCutoff?: { cutoffMonth: string; generation: string } | null;
+  /** D03's bare-URL default while `PUBLIC_OBSERVED_RELEASE=v2`; else `null`. */
+  observedDefault?: { periodId: string; label: string } | null;
+  /** The window a bare URL used to open on, for the migration notice. */
+  previousDefault?: { label: string; query: string } | null;
 }
 
 /**
@@ -89,8 +143,15 @@ export default function ExplorerWorkspace({
   mapMetricsUrl,
   overviewUrl,
   manifestUrl,
+  publishedWindows = null,
+  observedCutoff = null,
+  observedDefault = null,
+  previousDefault = null,
 }: ExplorerWorkspaceProps) {
   const [releaseCheck, setReleaseCheck] = useState<ReleaseCheck | null>(null);
+  // `null` while the pack is still being verified; the v2 payloads are hashed
+  // in this request, so nothing is rendered from an unverified response.
+  const packLoad = useObservedPack();
 
   useEffect(() => {
     let cancelled = false;
@@ -139,6 +200,11 @@ export default function ExplorerWorkspace({
       mapMetricsUrl={mapMetricsUrl}
       overviewUrl={overviewUrl}
       releaseCheck={releaseCheck}
+      packLoad={packLoad}
+      publishedWindows={publishedWindows}
+      observedCutoff={observedCutoff}
+      observedDefault={observedDefault}
+      previousDefault={previousDefault}
     />
   );
 }
@@ -147,14 +213,47 @@ function ExplorerData({
   mapMetricsUrl,
   overviewUrl,
   releaseCheck,
+  packLoad,
+  publishedWindows,
+  observedCutoff,
+  observedDefault,
+  previousDefault,
 }: {
   mapMetricsUrl: string;
   overviewUrl: string;
   releaseCheck: ReleaseCheck;
+  packLoad: PackLoad | null;
+  publishedWindows: WindowsByType | null;
+  observedCutoff: { cutoffMonth: string; generation: string } | null;
+  observedDefault: { periodId: string; label: string } | null;
+  previousDefault: { label: string; query: string } | null;
 }) {
-  const [selection, setSelection] =
-    useState<ExplorerSelection>(readSelectionFromUrl);
+  const defaultPeriodId =
+    observedDefault !== null && isConcretePeriod(observedDefault.periodId)
+      ? observedDefault.periodId
+      : null;
+
+  const [selection, setSelection] = useState<ExplorerSelection>(() =>
+    readSelectionFromUrl(defaultPeriodId),
+  );
   const [view, setView] = useState<ExplorerViewKind>(readViewFromUrl);
+  const [defaultMigration] = useState(() =>
+    readDefaultMigration(defaultPeriodId, previousDefault),
+  );
+
+  /**
+   * The defaults this route actually uses. In v2 mode the bare URL opens on a
+   * published window, so a legacy selection must stay in the address bar;
+   * comparing against the legacy constant would drop it and a reload would
+   * silently switch the reader's window.
+   */
+  const activeDefaults = useMemo<ExplorerSelection>(
+    () =>
+      defaultPeriodId === null
+        ? EXPLORER_DEFAULTS
+        : { ...EXPLORER_DEFAULTS, period: defaultPeriodId },
+    [defaultPeriodId],
+  );
 
   const generationKey =
     releaseCheck.status === "verified" && releaseCheck.manifest !== null
@@ -175,20 +274,109 @@ function ExplorerData({
   }, []);
 
   const reset = useCallback(() => {
-    setSelection({ ...EXPLORER_DEFAULTS });
-  }, []);
+    setSelection(
+      defaultPeriodId === null
+        ? { ...EXPLORER_DEFAULTS }
+        : { ...EXPLORER_DEFAULTS, period: defaultPeriodId },
+    );
+  }, [defaultPeriodId]);
 
   const releaseStatus: ReleaseStatus = releaseCheck.status;
 
-  const dataset = useMemo(
+  const period = selection.period;
+  const legacyPeriod = isLegacyPeriod(period) ? period : null;
+
+  // The legacy builder only runs for a legacy era; a published period never
+  // falls back to `map_metrics`. Both builders share `finaliseExplorerRows`,
+  // so ordering, the sample threshold and the search behave identically.
+  const legacyDataset = useMemo(
     () =>
-      buildExplorerDataset({
-        mapMetrics: mapMetrics.data,
-        overviewStats: overview.data,
-        selection,
-        baselineCompatible: releaseStatus === "verified",
-      }),
-    [mapMetrics.data, overview.data, selection, releaseStatus],
+      legacyPeriod === null
+        ? null
+        : buildExplorerDataset({
+            mapMetrics: mapMetrics.data,
+            overviewStats: overview.data,
+            selection: {
+              property: selection.property,
+              period: legacyPeriod,
+              minSales: selection.minSales,
+              search: selection.search,
+              sort: selection.sort,
+              direction: selection.direction,
+            },
+            baselineCompatible: releaseStatus === "verified",
+          }),
+    [legacyPeriod, mapMetrics.data, overview.data, selection, releaseStatus],
+  );
+
+  const packResult = useMemo(
+    () =>
+      legacyPeriod !== null || packLoad === null || packLoad.state !== "ready"
+        ? null
+        : buildPackExplorerDataset({
+            pack: packLoad.pack,
+            generation: packLoad.manifest.generation,
+            periodId: period,
+            property: selection.property,
+            minSales: selection.minSales,
+            search: selection.search,
+            sort: selection.sort,
+            direction: selection.direction,
+          }),
+    [legacyPeriod, packLoad, period, selection],
+  );
+
+  /**
+   * What the selected window resolves to. `unavailable` is a first-class
+   * state: an unpublished id is reported with the id and the published list,
+   * not replaced by another window's numbers.
+   */
+  type WindowView =
+    | { state: "ready"; dataset: ExplorerDataset }
+    | { state: "pending"; message: string }
+    | { state: "unavailable"; message: string };
+
+  let windowView: WindowView;
+  if (legacyDataset !== null) {
+    windowView = { state: "ready", dataset: legacyDataset };
+  } else if (packLoad === null) {
+    windowView = {
+      state: "pending",
+      message: `Verifying the published ${period} window against its manifest\u2026`,
+    };
+  } else if (packLoad.state === "absent") {
+    windowView = {
+      state: "unavailable",
+      message: `This build publishes no verified observed-period pack, so ${period} cannot be shown here. The historical windows below still resolve from map_metrics.`,
+    };
+  } else if (packLoad.state === "invalid") {
+    windowView = {
+      state: "unavailable",
+      message: `The published observed-period pack did not verify (${packLoad.errors.join("; ")}), so ${period} is not shown. The historical windows below still resolve from map_metrics.`,
+    };
+  } else if (packResult !== null && !packResult.ok) {
+    windowView = { state: "unavailable", message: packResult.reason };
+  } else if (packResult !== null && packResult.ok) {
+    windowView = { state: "ready", dataset: packResult.dataset };
+  } else {
+    windowView = {
+      state: "pending",
+      message: `Reading the published ${period} window\u2026`,
+    };
+  }
+
+  /**
+   * Period choices: the pack's published descriptors first (when this build has
+   * a verified pack), then the legacy eras as their own labelled group.
+   */
+  const periodGroups: readonly ExplorerPeriodGroup[] = useMemo(
+    () =>
+      explorerPeriodGroups(
+        packLoad !== null && packLoad.state === "ready"
+          ? publishedPeriodOptions(packLoad.pack)
+          : [],
+      ),
+    [packLoad],
   );
 
   // Keep the address bar in step with the selection and the view. A deep link
@@ -200,7 +388,7 @@ function ExplorerData({
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const next = serializeExplorerSelection(selection);
+    const next = serializeExplorerSelection(selection, activeDefaults);
     const url = new URL(window.location.href);
     let changed = false;
 
@@ -233,7 +421,7 @@ function ExplorerData({
 
     if (!changed) return;
     window.history.replaceState({}, "", url.toString());
-  }, [selection, view]);
+  }, [selection, view, activeDefaults]);
 
   // Back/forward: the URL is the source of truth, so re-apply it.
   useEffect(() => {
@@ -265,7 +453,39 @@ function ExplorerData({
 
   return (
     <div className="mt-8">
-      {loadingData ? (
+      {defaultMigration !== null && observedDefault !== null ? (
+        <p
+          className="mt-8 rounded-lg border border-border bg-muted px-4 py-3 text-sm text-foreground"
+          data-observed-default-notice="true"
+        >
+          <span className="font-bold">Updated default.</span> This page now
+          opens on {observedDefault.label}. The earlier default was{" "}
+          {defaultMigration.label} &mdash;{" "}
+          <a
+            href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/explore?${defaultMigration.query}`}
+            className="font-bold text-[hsl(var(--teal))] underline underline-offset-4 hover:no-underline"
+          >
+            open that view
+          </a>
+          .
+        </p>
+      ) : null}
+
+      {publishedWindows && observedCutoff ? (
+        <PublishedWindowsPanel
+          windows={publishedWindows}
+          series={selection.property}
+          cutoffMonth={observedCutoff.cutoffMonth}
+          generation={observedCutoff.generation}
+          intro={
+            legacyPeriod === null
+              ? `National figures for the published windows. The area table below reads the same verified pack for the window you select, and the historical eras stay listed separately.`
+              : `National figures for the published windows. The area table below compares planning areas on the legacy era selection, which is labelled separately.`
+          }
+        />
+      ) : null}
+
+      {legacyPeriod !== null && loadingData ? (
         <div
           role="status"
           aria-live="polite"
@@ -281,7 +501,7 @@ function ExplorerData({
         </div>
       ) : null}
 
-      {dataError !== null ? (
+      {legacyPeriod !== null && dataError !== null ? (
         <div
           role="alert"
           className="rounded-lg border border-border bg-card p-6 text-sm"
@@ -300,65 +520,124 @@ function ExplorerData({
         </div>
       ) : null}
 
-      {mapMetrics.data !== null ? (
+      {legacyPeriod === null || mapMetrics.data !== null ? (
         <>
           <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-8">
             <ExplorerSettings
               selection={selection}
-              summary={{
-                shown: dataset.filtered.length,
-                total: dataset.totalAreas,
-                thin: dataset.thinCount,
-              }}
+              periodGroups={periodGroups}
+              summary={
+                windowView.state === "ready"
+                  ? {
+                      shown: windowView.dataset.filtered.length,
+                      total: windowView.dataset.totalAreas,
+                      thin: windowView.dataset.thinCount,
+                    }
+                  : null
+              }
               onChange={update}
               onReset={reset}
             />
-            <ExplorerView
-              view={view}
-              onViewChange={setView}
-              dataset={dataset}
-              selection={selection}
-              releaseStatus={releaseStatus}
-              nationalLoading={overview.loading && overview.data === null}
-              nationalError={overview.error}
-              onRetryNational={retryNational}
-              onChange={update}
-              onReset={reset}
-            />
+            {windowView.state === "ready" ? (
+              <ExplorerView
+                view={view}
+                onViewChange={setView}
+                dataset={windowView.dataset}
+                selection={selection}
+                releaseStatus={releaseStatus}
+                nationalLoading={overview.loading && overview.data === null}
+                nationalError={overview.error}
+                onRetryNational={retryNational}
+                onChange={update}
+                onReset={reset}
+              />
+            ) : (
+              <div
+                role={windowView.state === "pending" ? "status" : "alert"}
+                className="rounded-lg border border-border bg-card p-6 text-sm"
+              >
+                <p className="font-bold text-foreground">
+                  {windowView.state === "pending"
+                    ? `Checking the published ${period} window`
+                    : `${period} is not available in this build`}
+                </p>
+                <p className="mt-2 text-muted-foreground">
+                  {windowView.message}
+                </p>
+              </div>
+            )}
           </div>
 
           <footer className="mt-10 border-t border-border pt-4 text-xs text-muted-foreground">
-            <p>
-              Area values:{" "}
-              <code className="font-mono">map_metrics.{dataset.section}</code>{" "}
-              &mdash; one row per planning area in that joint period and
-              property section.
-            </p>
-            {dataset.baselineCompatible && dataset.national !== null ? (
-              <p className="mt-1">
-                National value:{" "}
-                <code className="font-mono">
-                  dashboard_overview.stats.{dataset.section}
-                </code>{" "}
-                &mdash; read from the national aggregate, never computed from
-                these area rows.
-              </p>
+            {windowView.state === "ready" &&
+            windowView.dataset.kind === "pack" ? (
+              <>
+                <p>
+                  Area values: the verified{" "}
+                  <code className="font-mono">observed pack</code> &mdash;{" "}
+                  <code className="font-mono">
+                    {windowView.dataset.periodId}
+                  </code>{" "}
+                  ({windowView.dataset.label}), generation{" "}
+                  <code className="font-mono">
+                    {windowView.dataset.generation}
+                  </code>{" "}
+                  &mdash; one row per planning area, read from the payload this
+                  page verified.
+                </p>
+                <p className="mt-1">
+                  National value: the pack's own{" "}
+                  <code className="font-mono">SG</code> scope for the same
+                  window &mdash; read from the national aggregate, never
+                  computed from these area rows.
+                </p>
+                <p className="mt-1">
+                  The manifest, payload sizes and sha256 digests were checked
+                  before these numbers were read. The legacy{" "}
+                  <code className="font-mono">map_metrics</code> assets were not
+                  used for this view.
+                </p>
+              </>
             ) : null}
-            {releaseStatus === "verified" ? (
-              <p className="mt-1">
-                Publication generation verified for{" "}
-                <code className="font-mono">map_metrics</code> and{" "}
-                <code className="font-mono">dashboard_overview</code> (the two
-                assets this screen compares). The other dashboard files were not
-                checked by this screen.
-              </p>
-            ) : (
-              <p className="mt-1">
-                Release generation could not be verified (status:{" "}
-                {releaseStatus}). National comparison stays withheld until one
-                publication generation is proven.
-              </p>
-            )}
+            {windowView.state === "ready" &&
+            windowView.dataset.kind === "legacy" ? (
+              <>
+                <p>
+                  Area values:{" "}
+                  <code className="font-mono">
+                    map_metrics.{windowView.dataset.section}
+                  </code>{" "}
+                  &mdash; one row per planning area in that joint period and
+                  property section.
+                </p>
+                {windowView.dataset.baselineCompatible &&
+                windowView.dataset.national !== null ? (
+                  <p className="mt-1">
+                    National value:{" "}
+                    <code className="font-mono">
+                      dashboard_overview.stats.{windowView.dataset.section}
+                    </code>{" "}
+                    &mdash; read from the national aggregate, never computed
+                    from these area rows.
+                  </p>
+                ) : null}
+                {releaseStatus === "verified" ? (
+                  <p className="mt-1">
+                    Publication generation verified for{" "}
+                    <code className="font-mono">map_metrics</code> and{" "}
+                    <code className="font-mono">dashboard_overview</code> (the
+                    two assets this screen compares). The other dashboard files
+                    were not checked by this screen.
+                  </p>
+                ) : (
+                  <p className="mt-1">
+                    Release generation could not be verified (status:{" "}
+                    {releaseStatus}). National comparison stays withheld until
+                    one publication generation is proven.
+                  </p>
+                )}
+              </>
+            ) : null}
             <p className="mt-1">
               Observed sale records from the published snapshot, not asking
               prices, live listings or a valuation.

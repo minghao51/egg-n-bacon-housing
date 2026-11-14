@@ -11,6 +11,9 @@ import { describe, expect, test } from "bun:test";
 import {
   EXPLORER_DEFAULTS,
   THIN_SAMPLE_THRESHOLD,
+  isConcretePeriod,
+  isLegacyPeriod,
+  parseExplorerPeriod,
   parseExplorerSelection,
   serializeExplorerSelection,
   withSelection,
@@ -44,6 +47,72 @@ describe("EXPLORER_DEFAULTS", () => {
     });
     expect(THIN_SAMPLE_THRESHOLD).toBe(150);
     expect(EXPLORER_DEFAULTS.minSales).toBe(THIN_SAMPLE_THRESHOLD);
+  });
+});
+
+describe("the period vocabulary", () => {
+  test("recognises the four legacy era ids and nothing around them", () => {
+    for (const era of ["whole", "pre_covid", "recent", "year_2025"]) {
+      expect(isLegacyPeriod(era)).toBe(true);
+    }
+    for (const value of ["Whole", "precovid", "2025", "year_2024", ""]) {
+      expect(isLegacyPeriod(value)).toBe(false);
+    }
+  });
+
+  test("accepts concrete ids in the published shapes only", () => {
+    for (const id of [
+      "month_2026_10",
+      "ytd_2026_10",
+      "ttm_2026_10",
+      "year_2024",
+      "year_2025",
+      "rolling3_2026_10",
+    ]) {
+      expect(isConcretePeriod(id)).toBe(true);
+    }
+    for (const value of [
+      "ttm",
+      "latest",
+      "ttm_2026",
+      "ttm_26_10",
+      "year_2026_10",
+      "rolling3_2026",
+      "rolling_2026_10",
+      "month_2026_13",
+      "TTM_2026_10",
+      "ttm_2026_10 ",
+    ]) {
+      expect(isConcretePeriod(value)).toBe(false);
+    }
+  });
+
+  test("a legacy id wins over a pack period of the same name", () => {
+    // `year_2025` also matches the concrete shape; the legacy era keeps the id
+    // so an existing link still reads the asset it named.
+    expect(parseExplorerPeriod("year_2025")).toBe("year_2025");
+    expect(isLegacyPeriod(parseExplorerPeriod("year_2025"))).toBe(true);
+  });
+
+  test("keeps an explicit concrete id and falls back only on nonsense", () => {
+    expect(parseExplorerPeriod("ttm_2026_10")).toBe("ttm_2026_10");
+    expect(parseExplorerPeriod("month_2025_10")).toBe("month_2025_10");
+    expect(parseExplorerPeriod(null)).toBe(EXPLORER_DEFAULTS.period);
+    expect(parseExplorerPeriod("ttm")).toBe(EXPLORER_DEFAULTS.period);
+    expect(parseExplorerPeriod("2024")).toBe(EXPLORER_DEFAULTS.period);
+  });
+
+  test("a concrete id round-trips through the query string verbatim", () => {
+    const selection = parseExplorerSelection("?period=ttm_2026_10");
+    expect(selection.period).toBe("ttm_2026_10");
+    expect(serializeExplorerSelection(selection).get("period")).toBe(
+      "ttm_2026_10",
+    );
+    expect(
+      parseExplorerSelection(
+        serializeExplorerSelection(selection).toString(),
+      ).period,
+    ).toBe("ttm_2026_10");
   });
 });
 

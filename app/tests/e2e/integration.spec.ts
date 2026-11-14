@@ -160,7 +160,9 @@ test.describe("No-results states", () => {
   test("the observed explorer keeps its list after a no-match search", async ({
     page,
   }) => {
-    await page.goto("/explore");
+    // Pin the era: the default is now a published window, and this test is
+    // about the search reset, not about which window opens.
+    await page.goto("/explore?period=year_2025");
     const search = page.getByLabel("Search planning areas");
     await expect(search).toBeVisible({ timeout: 30_000 });
     await search.fill("zzzz-no-such-area");

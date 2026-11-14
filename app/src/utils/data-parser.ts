@@ -197,6 +197,112 @@ export interface ChartData {
   }[];
 }
 
+/** Coarse unit inferred from a column header, used to keep axes honest. */
+export type ChartUnit = "percent" | "currency" | "count" | "number";
+
+export const CHART_UNIT_LABELS: Readonly<Record<ChartUnit, string>> = {
+  percent: "percentage",
+  currency: "S$",
+  count: "transaction count",
+  number: "index / score",
+};
+
+/**
+ * Infer a column's unit from its header text.
+ *
+ * Mixing a currency premium, a per-square-foot price and a transaction count on
+ * one numeric axis produces a meaningless chart, so callers group by this
+ * before rendering.
+ */
+export function inferChartUnit(header: string): ChartUnit {
+  const label = header.toLowerCase();
+  if (
+    label.includes("%") ||
+    label.includes("yield") ||
+    label.includes("accuracy") ||
+    label.includes("acc ") ||
+    label.endsWith("acc") ||
+    label.includes("r²") ||
+    label.includes("r2") ||
+    label.includes("discount") ||
+    label.includes("cagr") ||
+    label.includes("growth")
+  ) {
+    return "percent";
+  }
+  if (
+    label.includes("$") ||
+    label.includes("psf") ||
+    label.includes("psm") ||
+    label.includes("price") ||
+    label.includes("premium") ||
+    label.includes("rent") ||
+    label.includes("coefficient")
+  ) {
+    return "currency";
+  }
+  if (
+    label.includes("transaction") ||
+    label.includes("record") ||
+    label.includes("count") ||
+    label.includes("volume")
+  ) {
+    return "count";
+  }
+  return "number";
+}
+
+/**
+ * Split chart data into one dataset group per unit, preserving column order.
+ *
+ * A single-unit table returns one group, so existing single-unit charts keep
+ * their current shape.
+ */
+export function splitDatasetsByUnit(
+  data: ChartData,
+): { unit: ChartUnit; data: ChartData }[] {
+  const groups = new Map<ChartUnit, ChartData["datasets"]>();
+  for (const dataset of data.datasets) {
+    const unit = inferChartUnit(dataset.label);
+    const existing = groups.get(unit);
+    if (existing) {
+      existing.push(dataset);
+    } else {
+      groups.set(unit, [dataset]);
+    }
+  }
+
+  return [...groups.entries()].map(([unit, datasets]) => ({
+    unit,
+    data: { labels: data.labels, datasets },
+  }));
+}
+
+/**
+ * Remove datasets whose values are all missing.
+ *
+ * An all-missing series usually means the source cells cannot be parsed (for
+ * example a "±18.58%" uncertainty column); rendering it would show an empty
+ * legend entry and imply the data was plotted.
+ */
+export function dropEmptyDatasets(data: ChartData): {
+  data: ChartData;
+  dropped: string[];
+} {
+  const kept: ChartData["datasets"] = [];
+  const dropped: string[] = [];
+
+  for (const dataset of data.datasets) {
+    if (dataset.data.some((value) => value !== null)) {
+      kept.push(dataset);
+    } else {
+      dropped.push(dataset.label);
+    }
+  }
+
+  return { data: { labels: data.labels, datasets: kept }, dropped };
+}
+
 export function tableToChartData(
   table: TableData,
   valueColumns?: string[],

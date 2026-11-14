@@ -18,6 +18,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { useGzipJson } from "@/hooks/useGzipJson";
+import type { WindowsByType } from "@/utils/observed-pack-build";
+import PublishedWindowsPanel from "@/components/observed/PublishedWindowsPanel";
 import {
   buildTrendSeries,
   filterWindow,
@@ -178,9 +180,16 @@ function Choice({ name, value, checked, onSelect, children }: ChoiceProps) {
 
 export interface TrendsWorkspaceProps {
   trendsUrl: string;
+  /** Verified v2 windows; absent when no pack is published. */
+  publishedWindows?: WindowsByType | null;
+  observedCutoff?: { cutoffMonth: string; generation: string } | null;
 }
 
-export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
+export default function TrendsWorkspace({
+  trendsUrl,
+  publishedWindows = null,
+  observedCutoff = null,
+}: TrendsWorkspaceProps) {
   const [selection, setSelection] =
     useState<TrendSelection>(readSelectionFromUrl);
   const trends = useGzipJson<unknown>(
@@ -326,6 +335,15 @@ export default function TrendsWorkspace({ trendsUrl }: TrendsWorkspaceProps) {
           Read all monthly prices &amp; counts &rarr;
         </a>
       </section>
+
+      {publishedWindows && observedCutoff ? (
+        <PublishedWindowsPanel
+          windows={publishedWindows}
+          series={selection.series}
+          cutoffMonth={observedCutoff.cutoffMonth}
+          generation={observedCutoff.generation}
+        />
+      ) : null}
 
       {loading ? (
         <p

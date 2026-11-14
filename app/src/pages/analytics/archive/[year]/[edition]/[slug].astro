@@ -1,0 +1,263 @@
+---
+/**
+ * `/analytics/archive/<year>/<edition>/<slug>` — frozen edition route (RF07).
+ *
+ * The archive renders RF00's original bytes with their own identity and status,
+ * and never promotes a historical finding: the header says which edition this is,
+ * whether it ever had independent scientific sign-off, and links back to the
+ * current series entry.
+ *
+ * Gates carry over unchanged: a study whose units are under review keeps its
+ * charts withheld here too, because an archive URL must not revive a withheld
+ * chart (RF07 §6).
+ */
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import InlineChartRenderer from '@/components/charts/InlineChartRenderer';
+import { studyEvidence } from '@/components/studies/lib/studies';
+import {
+  ANALYTICS_EDITIONS,
+  archiveYearSegment,
+  validateEditionRegistry,
+  verifyEditionArtifacts,
+  type AnalyticsEdition,
+} from '@/components/studies/lib/edition-registry';
+import { getCollection, render } from 'astro:content';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+export async function getStaticPaths() {
+  // Astro extracts this function into its own module, so the registry check, the
+  // hasher and the identity derivation all live inside it rather than in
+  // frontmatter scope (a frontmatter helper is `is not defined` here).
+  const sha256OfFrozenSource = (repoRelativePath: string): string | null => {
+    try {
+      return createHash('sha256')
+        .update(readFileSync(join(process.cwd(), '..', repoRelativePath)))
+        .digest('hex');
+    } catch {
+      return null;
+    }
+  };
+
+  // Astro extracts this function into its own module, so the registry check and
+  // the identity derivation live here rather than in shared frontmatter scope.
+  const registryErrors = validateEditionRegistry(ANALYTICS_EDITIONS);
+  if (registryErrors.length > 0) {
+    throw new Error(
+      `analytics edition registry is invalid:\n- ${registryErrors.join('\n- ')}`,
+    );
+  }
+
+  // An approved edition claims specific reviewed bytes; refuse to publish a route
+  // for text that no longer hashes to the pin.
+  const artifactErrors = verifyEditionArtifacts(
+    ANALYTICS_EDITIONS,
+    sha256OfFrozenSource,
+  );
+  if (artifactErrors.length > 0) {
+    throw new Error(
+      `analytics edition artifacts do not match their approvals:\n- ${artifactErrors.join('\n- ')}`,
+    );
+  }
+
+  const docs = await getCollection('analyticsEditions');
+
+  const registered = new Map<string, AnalyticsEdition>(
+    ANALYTICS_EDITIONS.map((edition) => [
+      `${edition.editionId}|${edition.seriesSlug}`,
+      edition,
+    ]),
+  );
+
+  return docs.map((doc) => {
+    // The glob id carries the collection base, e.g.
+    // `editions/legacy/2026-11-12/mrt-impact`; the last three segments are the
+    // edition identity and the series.
+    const segments = doc.id.replace(/\.mdx?$/, '').split('/');
+    const seriesSlug = segments.at(-1) ?? '';
+    const editionDate = segments.at(-2) ?? '';
+    const editionDir = segments.at(-3) ?? '';
+    const editionId = `${editionDir}-${editionDate}`;
+    const edition = registered.get(`${editionId}|${seriesSlug}`);
+    if (edition === undefined) {
+      // A frozen file with no identity would be an unreviewed archive page.
+      throw new Error(
+        `frozen edition source ${doc.id} has no identity in the edition registry`,
+      );
+    }
+
+    return {
+      params: {
+        year: archiveYearSegment(edition),
+        edition: edition.editionId,
+        slug: edition.seriesSlug,
+      },
+      props: { doc, edition },
+    };
+  });
+}
+
+const { doc, edition } = Astro.props as {
+  doc: Awaited<ReturnType<typeof getCollection<'analyticsEditions'>>>[number];
+  edition: AnalyticsEdition;
+};
+const { Content } = await render(doc);
+const evidence = studyEvidence(edition.seriesSlug);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const title = doc.data.title || edition.seriesSlug;
+
+const publishedDate =
+  doc.data.date instanceof Date
+    ? doc.data.date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      })
+    : null;
+
+const statusCopy =
+  edition.evidenceStatus === 'approved'
+    ? 'Approved edition: three recorded sign-offs cover the evidence artifact named below.'
+    : edition.evidenceStatus === 'withheld'
+      ? 'Withheld edition: its claims could not be verified, so only the archived text is shown.'
+      : 'Historical edition: this is the frozen record of what was published, not a current confirmed finding.';
+
+const signoffRoleLabels: Record<string, string> = {
+  source: 'Source and cutoff',
+  scientific: 'Scientific validity',
+  publication: 'Publication',
+};
+---
+
+<Layout title={`${title} — archived edition - Analytics`}>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64">
+    <div class="max-w-4xl mx-auto px-4 sm:px-8 py-12">
+      <nav class="mb-4">
+        <ol class="flex flex-wrap items-center gap-2 text-sm">
+          <li>
+            <a
+              href={`${import.meta.env.BASE_URL}analytics/`}
+              class="text-muted-foreground hover:text-foreground"
+            >
+              Analytics
+            </a>
+          </li>
+          <li class="text-muted-foreground">/</li>
+          <li>
+            <a
+              href={`${import.meta.env.BASE_URL}analytics/${edition.seriesSlug}`}
+              class="text-muted-foreground hover:text-foreground"
+            >
+              {title}
+            </a>
+          </li>
+          <li class="text-muted-foreground">/</li>
+          <li class="text-foreground font-medium">Archive</li>
+        </ol>
+      </nav>
+
+      <header class="mb-8">
+        <p class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]">
+          Archived edition / {edition.editionId}
+        </p>
+        <h1 class="mt-3 text-4xl font-bold text-foreground">{title}</h1>
+        <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          {publishedDate && <span>Published {publishedDate}</span>}
+          <span>
+            · Edition {edition.editionId}
+            {edition.publicationYear === null
+              ? ' (undated)'
+              : ` (${edition.publicationYear})`}
+          </span>
+          <span>· Editorial status: {edition.editorialStatus}</span>
+        </p>
+      </header>
+
+      <section
+        aria-label="Edition status"
+        class="mb-8 rounded-xl border border-border bg-muted/20 p-4 text-sm"
+        data-edition-status={edition.evidenceStatus}
+      >
+        <p class="font-bold text-foreground">{statusCopy}</p>
+        <p class="mt-2 text-muted-foreground">
+          Edition <code class="font-mono">{edition.editionId}</code> · evidence{' '}
+          {edition.evidenceStatus} · editorial {edition.editorialStatus}
+          {edition.publicationYear === null
+            ? ' · publication year undated'
+            : ` · publication year ${edition.publicationYear}`}
+        </p>
+        <p class="mt-2 text-muted-foreground">{edition.note}</p>
+        {edition.signoffs.length > 0 && (
+          <div class="mt-3">
+            <p class="font-semibold text-foreground">Recorded sign-offs (D12)</p>
+            <ul class="mt-1 space-y-1 text-muted-foreground">
+              {edition.signoffs.map((signoff) => (
+                <li data-signoff-role={signoff.role}>
+                  <span class="font-medium text-foreground">
+                    {signoffRoleLabels[signoff.role] ?? signoff.role}
+                  </span>{' '}
+                  — {signoff.name} · {signoff.date}
+                  {signoff.automated ? ' (recorded review run)' : ''} · artifact{' '}
+                  <code class="font-mono">{signoff.artifactSha256.slice(0, 12)}</code>
+                  {signoff.evidencePath !== '' && (
+                    <>
+                      {' '}· <code class="font-mono">{signoff.evidencePath}</code>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <p class="mt-2 text-muted-foreground">
+          Frozen source: <code class="font-mono">{edition.frozenSource}</code>{' '}
+          · {edition.assetsPinned} referenced assets pinned at freeze.
+        </p>
+        {evidence.chartsWithheld && (
+          <p class="mt-2 text-muted-foreground">
+            Charts stay withheld on this study; only the archived tables are
+            shown.
+          </p>
+        )}
+        <p class="mt-3">
+          <a
+            class="font-bold text-[hsl(var(--teal))] underline underline-offset-4 hover:no-underline"
+            href={`${base}/analytics/${edition.seriesSlug}`}
+          >
+            Open the current series entry
+          </a>
+        </p>
+      </section>
+
+      <article
+        class="prose prose-slate max-w-none dark:prose-invert mb-8"
+        id="article-content"
+      >
+        <Content />
+      </article>
+
+      <style>
+        .prose table {
+          @apply w-full border-collapse my-6;
+        }
+        .prose th,
+        .prose td {
+          @apply border border-border px-4 py-2 text-left;
+        }
+        .prose th {
+          @apply bg-muted font-semibold text-foreground;
+        }
+        .prose [data-chart-metadata='true'] {
+          display: none;
+        }
+      </style>
+
+      {!evidence.chartsWithheld && <InlineChartRenderer client:only="react" />}
+    </div>
+  </main>
+</Layout>

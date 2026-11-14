@@ -14,17 +14,17 @@ import { describe, expect, test } from "bun:test";
 
 import {
   buildExplorerDataset,
+  type ExplorerNationalMetric,
   type ExplorerRow,
 } from "../../src/utils/observed-rows";
 import {
   EXPLORER_DEFAULTS,
+  isLegacyPeriod,
   withSelection,
+  type ExplorerLegacyPeriod,
   type ExplorerSelection,
 } from "../../src/utils/explorer-selection";
-import type {
-  ObservedMetric,
-  ObservedObservation,
-} from "../../src/utils/observed-data";
+import type { ObservedMetric } from "../../src/utils/observed-data";
 
 /**
  * The published `map_metrics.json.gz` `year_2025_hdb` section, reduced to the
@@ -96,10 +96,22 @@ const OVERVIEW_STATS: unknown = {
   },
 };
 
-function selection(
-  overrides: Partial<ExplorerSelection> = {},
-): ExplorerSelection {
-  return withSelection(EXPLORER_DEFAULTS, overrides);
+/** The legacy builder takes a legacy era; published ids are pack-row tests. */
+type LegacySelection = Pick<
+  ExplorerSelection,
+  "property" | "period" | "minSales" | "search" | "sort" | "direction"
+> & { period: ExplorerLegacyPeriod };
+
+function selection(overrides: Partial<ExplorerSelection> = {}): LegacySelection {
+  const merged = withSelection(EXPLORER_DEFAULTS, overrides);
+  return {
+    property: merged.property,
+    period: isLegacyPeriod(merged.period) ? merged.period : "year_2025",
+    minSales: merged.minSales,
+    search: merged.search,
+    sort: merged.sort,
+    direction: merged.direction,
+  };
 }
 
 function findRow(rows: ExplorerRow[], areaId: string): ExplorerRow {
@@ -109,7 +121,7 @@ function findRow(rows: ExplorerRow[], areaId: string): ExplorerRow {
 }
 
 function metricOf(
-  observations: ObservedObservation[],
+  observations: ExplorerNationalMetric[],
   metric: ObservedMetric,
 ): number | null {
   const found = observations.find((entry) => entry.metric === metric);
@@ -139,7 +151,9 @@ describe("buildExplorerDataset — published 2025 HDB section", () => {
   });
 
   test("reads only the joint section", () => {
+    expect(dataset.kind).toBe("legacy");
     expect(dataset.section).toBe("year_2025_hdb");
+    expect(dataset.label).toBe("2025 complete year");
     expect(dataset.property).toBe("hdb");
     expect(dataset.period).toBe("year_2025");
     expect(dataset.totalAreas).toBe(31);
@@ -154,9 +168,15 @@ describe("buildExplorerDataset — published 2025 HDB section", () => {
     expect(tampines.medianPrice).toBe(710000);
     expect(tampines.medianPsf).toBe(620);
     expect(tampines.volume).toBe(1921);
-    expect(tampines.observation.section).toBe("year_2025_hdb");
-    expect(tampines.observation.era).toBe("year_2025");
-    expect(tampines.observation.propertyType).toBe("hdb");
+    const observation = tampines.observation;
+    if (observation === undefined) {
+      throw new Error("a legacy row carries its map_metrics record");
+    }
+    expect(observation.section).toBe("year_2025_hdb");
+    expect(observation.era).toBe("year_2025");
+    expect(observation.propertyType).toBe("hdb");
+    expect(tampines.sectionLabel).toBe("2025 complete year");
+    expect(tampines.packObservation).toBeUndefined();
   });
 
   test("keeps published values unrounded", () => {
@@ -178,8 +198,10 @@ describe("buildExplorerDataset — published 2025 HDB section", () => {
     expect(metricOf(national, "median_price")).toBe(628000);
     expect(metricOf(national, "median_psf")).toBe(603);
     expect(metricOf(national, "volume")).toBe(25084);
-    expect(national[0]?.source.asset).toBe("dashboard_overview");
-    expect(national[0]?.source.section).toBe("year_2025_hdb");
+    expect(national[0]?.source).toBe(
+      "dashboard_overview.stats.year_2025_hdb",
+    );
+    expect(national[0]?.note).toBeNull();
     expect(dataset.baselineCompatible).toBe(true);
   });
 

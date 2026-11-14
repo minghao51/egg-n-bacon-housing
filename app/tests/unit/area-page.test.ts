@@ -41,12 +41,15 @@ import { gunzipSync, gzipSync } from "node:zlib";
 import {
   AREA_PAGE_COMBINATIONS,
   areaHref,
+  areaPageDefaultOption,
+  areaPageOptions,
   loadAreaPages,
+  resolveAreaPageSelection,
   verifyBaselineAtBuild,
   type AreaPageData,
 } from "../../src/utils/area-page";
 import { sectionKey } from "../../src/utils/observed-data";
-import { AREA_RETURN_PARAMETERS } from "../../src/utils/area-links";
+import { AREA_RETURN_PARAMETERS, explorerReturnHref } from "../../src/utils/area-links";
 
 /** The published `map_metrics.year_2025_hdb` section, approved metrics only. */
 const YEAR_2025_HDB = {
@@ -172,7 +175,12 @@ afterEach(() => {
  * value for this combination" path is exercised without inventing a number.
  */
 function writeFixture(
-  options: { manifest?: boolean; omitNational?: string } = {},
+  options: {
+    manifest?: boolean;
+    omitNational?: string;
+    /** Extra area entries merged into one joint section, for collision cases. */
+    extraSections?: Record<string, Record<string, unknown>>;
+  } = {},
 ): string {
   const root = mkdtempSync(join(tmpdir(), "area-page-"));
   tempRoots.push(root);
@@ -189,8 +197,18 @@ function writeFixture(
   // The release contract covers the seven exporter-owned assets, so the
   // fixture publishes all of them: a manifest that omits one is not a valid
   // generation and must not be reported as compatible.
+  const mapMetrics = structuredClone(MAP_METRICS) as Record<
+    string,
+    Record<string, unknown>
+  >;
+  for (const [section, entries] of Object.entries(
+    options.extraSections ?? {},
+  )) {
+    mapMetrics[section] = { ...(mapMetrics[section] ?? {}), ...entries };
+  }
+
   const assets: Record<string, unknown> = {
-    "map_metrics.json.gz": MAP_METRICS,
+    "map_metrics.json.gz": mapMetrics,
     "dashboard_overview.json.gz": overview,
     "dashboard_trends.json.gz": [{ month: "2025-01", value: 1 }],
     "dashboard_segments.json.gz": { segments: [] },
@@ -569,19 +587,188 @@ describe("areaHref", () => {
   });
 });
 
+describe("fieldnote selection", () => {
+  const optionsFor = async (
+    areaId: string,
+    fixture: { manifest?: boolean } = {},
+  ) => {
+    const pages = await loadAreaPages(writeFixture(fixture));
+    const area = page(pages, areaId);
+    const options = areaPageOptions(area);
+    return { area, options, defaultOption: areaPageDefaultOption(options) };
+  };
+
+  test("offers the whole joint matrix in reading order, defaults to 2025 HDB", async () => {
+    // A verified manifest is what allows the national comparison to render.
+    const { options, defaultOption } = await optionsFor("TAMPINES", {
+      manifest: true,
+    });
+
+    expect(options).toHaveLength(AREA_PAGE_COMBINATIONS.length);
+    expect(options.map((option) => option.id).slice(0, 3)).toEqual([
+      "year_2025_hdb",
+      "year_2025_ec",
+      "year_2025_condo",
+    ]);
+    expect(defaultOption.id).toBe("year_2025_hdb");
+    expect(defaultOption.label).toBe("2025 complete year · HDB");
+    expect(defaultOption.source).toBe("map_metrics.year_2025_hdb");
+    expect(defaultOption.area.medianPrice).toBe(710000);
+    expect(defaultOption.comparable).toBe(true);
+  });
+
+  test("an empty combination stays selectable with its own note", async () => {
+    const { options } = await optionsFor("BEDOK");
+    const bedokEc = options.find((option) => option.id === "year_2025_ec");
+    if (bedokEc === undefined) throw new Error("expected the EC combination");
+
+    expect(bedokEc.area.medianPrice).toBeNull();
+    expect(bedokEc.area.volume).toBeNull();
+    expect(bedokEc.emptyNote).toContain("No transactions are published");
+  });
+
+  test("resolves a requested property and period together", async () => {
+    const { options, defaultOption } = await optionsFor("TAMPINES");
+
+    const selected = resolveAreaPageSelection({
+      options,
+      defaultOption,
+      requestedPeriod: "whole",
+      requestedProperty: "hdb",
+    });
+    expect(selected.kind).toBe("selected");
+    if (selected.kind !== "selected") return;
+    expect(selected.option.id).toBe("whole_hdb");
+    expect(selected.option.source).toBe("map_metrics.whole_hdb");
+
+    const propertyOnly = resolveAreaPageSelection({
+      options,
+      defaultOption,
+      requestedPeriod: null,
+      requestedProperty: "EC",
+    });
+    expect(propertyOnly.kind).toBe("selected");
+    if (propertyOnly.kind === "selected") {
+      expect(propertyOnly.option.id).toBe("year_2025_ec");
+    }
+
+    const bare = resolveAreaPageSelection({
+      options,
+      defaultOption,
+      requestedPeriod: null,
+      requestedProperty: null,
+    });
+    expect(bare.kind).toBe("default");
+  });
+
+  test("a concrete v2 window is reported, never substituted silently", async () => {
+    const { options, defaultOption } = await optionsFor("TAMPINES");
+
+    const unavailable = resolveAreaPageSelection({
+      options,
+      defaultOption,
+      requestedPeriod: "ttm_2026_10",
+      requestedProperty: "hdb",
+    });
+    expect(unavailable.kind).toBe("unavailable");
+    if (unavailable.kind !== "unavailable") return;
+    expect(unavailable.message).toContain("ttm_2026_10");
+    expect(unavailable.message).toContain("Explore");
+    expect(unavailable.fallback.id).toBe("year_2025_hdb");
+  });
+
+  test("an unknown period or property is reported with the default fallback", async () => {
+    const { options, defaultOption } = await optionsFor("TAMPINES");
+
+    const badPeriod = resolveAreaPageSelection({
+      options,
+      defaultOption,
+      requestedPeriod: "since_forever",
+      requestedProperty: null,
+    });
+    expect(badPeriod.kind).toBe("unavailable");
+
+    const badProperty = resolveAreaPageSelection({
+      options,
+      defaultOption,
+      requestedPeriod: null,
+      requestedProperty: "landed",
+    });
+    expect(badProperty.kind).toBe("unavailable");
+  });
+});
+
+describe("fieldnote route union", () => {
+  test("two identities that share a slug stop the build", async () => {
+    // "TEST AREA" and "TEST-AREA" canonicalise to the same slug.
+    const root = writeFixture({
+      extraSections: {
+        recent_hdb: {
+          "TEST AREA": { median_price: 1, median_psf: 1, volume: 1 },
+        },
+        whole_hdb: {
+          "TEST-AREA": { median_price: 2, median_psf: 2, volume: 2 },
+        },
+      },
+    });
+
+    let message: string | null = null;
+    try {
+      await loadAreaPages(root);
+    } catch (error) {
+      message = error instanceof Error ? error.message : String(error);
+    }
+    expect(message).toContain("share the fieldnote slug");
+  });
+});
+
 describe("return-link contract", () => {
-  test("the area page inline allow-list matches the exported constant", () => {
+  test("the fieldnote carries the explorer allow-list, not a second copy", () => {
     const page = readFileSync(
       join(process.cwd(), "src", "pages", "areas", "[slug].astro"),
       "utf8",
     );
-    const block = page.slice(page.indexOf("const allowed = ["));
-    const list = block
-      .slice(0, block.indexOf("];"))
-      .split("\n")
-      .slice(1)
-      .map((line) => line.trim().replace(/[",]/g, ""))
-      .filter((line) => line.length > 0);
-    expect(list).toEqual([...AREA_RETURN_PARAMETERS]);
+    // The inline allow-list moved into `explorerReturnHref`; the page must not
+    // grow a second, drifting copy.
+    expect(page.includes("const allowed = [")).toBe(false);
+    expect(page.includes("AreaSectionPanel")).toBe(true);
+  });
+
+  test("returns the plain explorer route for a direct visit", () => {
+    expect(explorerReturnHref("/explore", "")).toBe("/explore");
+    expect(explorerReturnHref("/explore", "?property=hdb")).toBe("/explore");
+  });
+
+  test("keeps the validated explorer query, including a concrete period", () => {
+    const href = explorerReturnHref(
+      "/explore",
+      "?from=explore&property=hdb&period=ttm_2026_10&metric=volume&sort=volume&direction=desc&minSales=all&search=bedok&area=BEDOK&page=2",
+    );
+    expect(href).toBe(
+      "/explore?from=explore&property=hdb&period=ttm_2026_10&metric=volume&sort=volume&direction=desc&minSales=all&search=bedok&area=BEDOK&page=2",
+    );
+  });
+
+  test("drops values outside the published vocabularies", () => {
+    const href = explorerReturnHref(
+      "/explore",
+      "?from=explore&property=landed&period=<script>&metric=yield&direction=sideways&minSales=lots&page=x&search=%20",
+    );
+    expect(href).toBe("/explore?from=explore");
+  });
+
+  test("keeps a base-prefixed explorer path", () => {
+    expect(
+      explorerReturnHref(
+        "/egg-n-bacon-housing/explore",
+        "?from=explore&property=condo&period=year_2025",
+      ),
+    ).toBe("/egg-n-bacon-housing/explore?from=explore&property=condo&period=year_2025");
+  });
+
+  test("the exported list is what the shared function reads", () => {
+    // A key the list forgets is a key the explorer can never get back.
+    expect([...AREA_RETURN_PARAMETERS]).toContain("period");
+    expect([...AREA_RETURN_PARAMETERS]).toContain("search");
   });
 });

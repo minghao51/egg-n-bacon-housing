@@ -4,6 +4,11 @@ import Sidebar from '@/components/Sidebar.astro';
 import TableOfContents from '@/components/TableOfContents.astro';
 import InlineChartRenderer from '@/components/charts/InlineChartRenderer';
 import { studyEvidence } from '@/components/studies/lib/studies';
+import {
+  approvedEditionFor,
+  archivePath,
+  editionsForSeries,
+} from '@/components/studies/lib/edition-registry';
 import { getCollection, render } from 'astro:content';
 
 // Generate static paths for all analytics docs
@@ -24,6 +29,11 @@ const date = doc.data.date;
 const slug = doc.id.replace(/\.mdx?$/, '');
 const evidence = studyEvidence(slug);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// RF07: the entry renders the latest *approved* edition; with none, it says so
+// and links the frozen edition instead of promoting a historical finding.
+const editions = editionsForSeries(slug);
+const approvedEdition = approvedEditionFor(slug);
 
 // Format headings for TOC. The study's leading H1 is stripped by the remark
 // plugin (the shell owns the page H1), so a level-1 entry never appears here.
@@ -101,6 +111,69 @@ const publishedDate =
             Charts are withheld on this study. The source tables remain below,
             unchanged, so the published values are still readable.
           </p>
+        )}
+      </section>
+
+      <section
+        aria-label="Edition status"
+        class="mb-8 rounded-xl border border-border bg-card p-4 text-sm"
+        data-edition-status={approvedEdition === null ? 'no-approved-edition' : 'approved'}
+      >
+        {approvedEdition === null ? (
+          <>
+            <p class="font-bold text-foreground">
+              No approved current edition
+            </p>
+            <p class="mt-2 text-muted-foreground">
+              This page renders the series text. A refreshed edition needs
+              independent scientific sign-off before it can be presented as a
+              current finding, so the frozen edition below stays labelled
+              historical.
+            </p>
+          </>
+        ) : (
+          <>
+            <p class="font-bold text-foreground">
+              Approved edition {approvedEdition.editionId}
+              {approvedEdition.publicationYear === null
+                ? ' (undated)'
+                : ` (${approvedEdition.publicationYear})`}
+            </p>
+            <p class="mt-2 text-muted-foreground">
+              This edition carries the three recorded sign-offs and is the
+              current edition of this series.{' '}
+              <a
+                href={`${base}${archivePath(approvedEdition)}`}
+                class="font-bold text-[hsl(var(--teal))] underline underline-offset-4 hover:no-underline"
+              >
+                Read the approved edition
+              </a>.
+            </p>
+            <p class="mt-2 text-muted-foreground">
+              The narrative below is the series text and may predate that
+              edition; where they differ, the approved edition is the signed
+              one.
+            </p>
+          </>
+        )}
+        {editions.length > 0 && (
+          <ul class="mt-3 space-y-1">
+            {editions.map((edition) => (
+              <li>
+                <a
+                  href={`${base}${archivePath(edition)}`}
+                  class="font-bold text-[hsl(var(--teal))] underline underline-offset-4 hover:no-underline"
+                >
+                  Archived edition {edition.editionId}
+                </a>
+                <span class="text-muted-foreground">
+                  {' '}
+                  · {edition.evidenceStatus} · editorial{' '}
+                  {edition.editorialStatus}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
 

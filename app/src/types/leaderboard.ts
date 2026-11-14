@@ -1,7 +1,16 @@
 import type { Region } from "@/types/segments";
+import {
+  isObservedPeriodId,
+  type ObservedPeriodId,
+} from "@/utils/observed-periods";
 
 /**
  * Leaderboard type definitions for the enhanced leaderboard dashboard.
+ *
+ * RF01 scope: observed rankings read the joint `map_metrics[era_property]`
+ * section only. Fields that the published release cannot scope jointly
+ * (growth, momentum, yield, affordability) are gone from the display row so no
+ * margin-derived number can reach a renderer.
  */
 
 /**
@@ -21,7 +30,11 @@ export interface TimePeriodMetrics {
 }
 
 /**
- * Full leaderboard entry for a planning area
+ * Full leaderboard entry for a planning area.
+ *
+ * `by_property_type` and `by_time_period` are property-only and period-only
+ * margins. They are retained here only because the asset publishes them; no
+ * observed surface may read a price, PSF or volume from them.
  */
 export interface LeaderboardEntry {
   /** Planning area name (e.g., "PASIR RIS") */
@@ -83,7 +96,11 @@ export interface LeaderboardEntry {
 }
 
 /**
- * Available metrics for sorting and display
+ * Available metrics for sorting and display.
+ *
+ * Kept wide for URL compatibility: link IDs that the release cannot scope
+ * jointly resolve to an explicit unavailable state, never to a substituted
+ * value.
  */
 export type LeaderboardMetric =
   | "median_price"
@@ -109,10 +126,69 @@ export interface MetricMeta {
 }
 
 export type LeaderboardPropertyType = "all" | "hdb" | "ec" | "condo";
-export type LeaderboardTimeBasis = "recent" | "whole" | "year_2025";
+
+/** The historical eras `map_metrics.json.gz` publishes and this page accepts. */
+export type LeaderboardLegacyTimeBasis = "recent" | "whole" | "year_2025";
+
+/**
+ * A selected comparison window: one of the legacy eras above, or a concrete v2
+ * observed-period id (`ttm_2026_10`). A legacy id always reads the legacy era,
+ * even where the pack publishes the same id, so existing links keep meaning.
+ */
+export type LeaderboardTimeBasis =
+  | LeaderboardLegacyTimeBasis
+  | ObservedPeriodId;
+
+export const LEADERBOARD_LEGACY_TIME_BASES: readonly LeaderboardLegacyTimeBasis[] =
+  ["recent", "whole", "year_2025"];
+
+/** The bare-URL default; moving it onto a pack window is the migration step. */
+export const LEADERBOARD_DEFAULT_TIME_BASIS: LeaderboardLegacyTimeBasis =
+  "recent";
+
+export function isLeaderboardLegacyTimeBasis(
+  value: string,
+): value is LeaderboardLegacyTimeBasis {
+  return (LEADERBOARD_LEGACY_TIME_BASES as readonly string[]).includes(value);
+}
+
+/**
+ * Read one `?timeBasis=` value.
+ *
+ * Legacy eras and well-formed concrete ids are kept verbatim; anything else
+ * falls back to the documented default, like every other enumerated parameter.
+ */
+export function parseLeaderboardTimeBasis(
+  value: string | null,
+): LeaderboardTimeBasis {
+  if (value === null) return LEADERBOARD_DEFAULT_TIME_BASIS;
+  if (isLeaderboardLegacyTimeBasis(value)) return value;
+  if (isObservedPeriodId(value)) return value;
+  return LEADERBOARD_DEFAULT_TIME_BASIS;
+}
+
+/** The five planning regions published in the observed release. */
+export const PLANNING_REGIONS = [
+  "CENTRAL REGION",
+  "EAST REGION",
+  "NORTH REGION",
+  "NORTH-EAST REGION",
+  "WEST REGION",
+] as const;
+
+export type PlanningRegion = (typeof PLANNING_REGIONS)[number];
+
+/** Short labels for chips and filters. */
+export const PLANNING_REGION_LABELS: Record<PlanningRegion, string> = {
+  "CENTRAL REGION": "Central",
+  "EAST REGION": "East",
+  "NORTH REGION": "North",
+  "NORTH-EAST REGION": "North-East",
+  "WEST REGION": "West",
+};
 
 export interface LeaderboardControlsState {
-  region: Region[];
+  region: PlanningRegion[];
   propertyType: LeaderboardPropertyType;
   timeBasis: LeaderboardTimeBasis;
   priceRange: [number, number];
@@ -124,23 +200,25 @@ export interface LeaderboardDisplayRow {
   sourceEntry: LeaderboardEntry;
   planningArea: string;
   areaKey: string;
-  region: string;
-  rank: number;
+  /** Explicit null when the published region label is not a planning region. */
+  region: PlanningRegion | null;
+  /** `null` means the row is visible but not ranked (sample too thin). */
+  rank: number | null;
   rankMetric: LeaderboardMetric;
-  rankMetricValue: number;
+  rankMetricValue: number | null;
   medianPrice: number | null;
   medianPsf: number | null;
-  rentalYieldMean: number | null;
-  rentalYieldMedian: number | null;
-  yoyGrowthPct: number | null;
-  momChangePct: number | null;
-  momentum: number | null;
-  volume: number;
-  affordabilityRatio: number | null;
+  volume: number | null;
+  /** True when the selected window has fewer than the caution threshold. */
+  isThinSample: boolean;
+  /** Era-scoped volumes per property type; `null` when nothing is published. */
   propertyMix: {
-    hdb: number;
-    ec: number;
-    condo: number;
+    hdb: number | null;
+    ec: number | null;
+    condo: number | null;
     total: number;
-  };
+  } | null;
 }
+
+/** Retained for compatibility with segment geography; not used by observed rankings. */
+export type SegmentRegion = Region;

@@ -9,11 +9,46 @@
  *
  * No React, no DOM, no `window` at module scope — the caller owns the address
  * bar and history.
+ *
+ * Two period families share this vocabulary:
+ *
+ * - `ExplorerLegacyPeriod` — the historical eras `map_metrics.json.gz`
+ *   publishes (`whole`, `pre_covid`, `recent`, `year_2025`).
+ * - `ExplorerPackPeriod` — a concrete v2 observed-period id (`ttm_2026_10`),
+ *   i.e. the kind plus the window end and nothing else. Friendly aliases
+ *   (`ttm`, `latest`) are never written: they resolve through the loaded pack
+ *   and the concrete id goes into the address bar.
+ *
+ * A legacy id always reads the legacy era, even where a pack also publishes a
+ * period with that id (`year_2025`). That precedence keeps existing links
+ * meaning what they meant — a new source is never swapped in under an old id —
+ * and keeps the default view renderable in a build with no pack. A pack period
+ * is only selectable when its id is not shadowed by a legacy id.
  */
+
+import {
+  isObservedPeriodId,
+  type ObservedPeriodId,
+} from "@/utils/observed-periods";
 
 export type ExplorerProperty = "all" | "hdb" | "ec" | "condo";
 
-export type ExplorerPeriod = "whole" | "pre_covid" | "recent" | "year_2025";
+/** Historical era ids the legacy `map_metrics` asset publishes. */
+export type ExplorerLegacyPeriod =
+  | "whole"
+  | "pre_covid"
+  | "recent"
+  | "year_2025";
+/**
+ * Concrete v2 observed-period id, e.g. `ttm_2026_10` or `year_2024`.
+ *
+ * The shape and its check live in the pack contract module
+ * (`observed-periods.ts`) because Compare Areas accepts the same ids; this is
+ * the explorer's name for that vocabulary.
+ */
+export type ExplorerPackPeriod = ObservedPeriodId;
+
+export type ExplorerPeriod = ExplorerLegacyPeriod | ExplorerPackPeriod;
 
 export type ExplorerMetric = "median_price" | "median_psf" | "volume";
 
@@ -38,12 +73,43 @@ export const EXPLORER_PROPERTIES: readonly ExplorerProperty[] = [
   "condo",
 ];
 
-export const EXPLORER_PERIODS: readonly ExplorerPeriod[] = [
+export const EXPLORER_LEGACY_PERIODS: readonly ExplorerLegacyPeriod[] = [
   "whole",
   "pre_covid",
   "recent",
   "year_2025",
 ];
+
+/**
+ * True for a well-formed concrete observed-period id, published or not.
+ *
+ * Re-exported under the explorer's name so the island's call sites keep one
+ * import while the shape check lives with the pack contract.
+ */
+export const isConcretePeriod = isObservedPeriodId;
+
+/** True for one of the four legacy `map_metrics` era ids. */
+export function isLegacyPeriod(value: string): value is ExplorerLegacyPeriod {
+  for (const candidate of EXPLORER_LEGACY_PERIODS) {
+    if (candidate === value) return true;
+  }
+  return false;
+}
+
+/**
+ * Read one `?period=` value.
+ *
+ * A legacy era id and a well-formed concrete id are both kept verbatim, so an
+ * explicit request is answered by the asset it names (or reported as
+ * unpublished) rather than being swapped for another window. Anything else
+ * falls back to the documented default, like every other enumerated parameter.
+ */
+export function parseExplorerPeriod(value: string | null): ExplorerPeriod {
+  if (value === null) return EXPLORER_DEFAULTS.period;
+  if (isLegacyPeriod(value)) return value;
+  if (isConcretePeriod(value)) return value;
+  return EXPLORER_DEFAULTS.period;
+}
 
 export const EXPLORER_METRICS: readonly ExplorerMetric[] = [
   "median_price",
@@ -57,7 +123,14 @@ export const THIN_SAMPLE_THRESHOLD = 150;
 /** Highest accepted `minSales` value; anything above it is clamped. */
 const MAX_MIN_SALES = 100000;
 
-/** Canonical empty state: 2025 HDB at the thin-sample threshold, cheapest first. */
+/**
+ * Canonical empty state: 2025 HDB at the thin-sample threshold, cheapest first.
+ *
+ * The period stays the legacy 2025 era in this slice: the v2 pack is read from
+ * the browser, so the default must render before (and without) it. Moving the
+ * bare-URL default onto the pack is the separate migration step, which ships
+ * with the "updated default" notice.
+ */
 export const EXPLORER_DEFAULTS: ExplorerSelection = {
   property: "hdb",
   period: "year_2025",
@@ -140,11 +213,7 @@ export function parseExplorerSelection(search: string): ExplorerSelection {
     EXPLORER_PROPERTIES,
     EXPLORER_DEFAULTS.property,
   );
-  const period = pickEnum(
-    params.get("period"),
-    EXPLORER_PERIODS,
-    EXPLORER_DEFAULTS.period,
-  );
+  const period = parseExplorerPeriod(params.get("period"));
   const metric = pickEnum(
     params.get("metric"),
     EXPLORER_METRICS,
@@ -206,40 +275,53 @@ function parseArea(value: string | null): string | null {
 /**
  * Serialize a selection, omitting every default so the canonical URL stays
  * short. `minSales=all` is written only when it differs from the default.
+ *
+ * `defaults` is the **active** default for the route, which is not always the
+ * legacy one: while `PUBLIC_OBSERVED_RELEASE=v2` the bare URL opens on a
+ * published window, so a legacy selection must stay in the URL. Comparing
+ * against the wrong default would canonicalise the reader's window away and a
+ * reload would silently switch it.
  */
 export function serializeExplorerSelection(
   selection: ExplorerSelection,
+  defaults: ExplorerSelection = EXPLORER_DEFAULTS,
 ): URLSearchParams {
   const params = new URLSearchParams();
 
-  if (selection.property !== EXPLORER_DEFAULTS.property) {
+  if (selection.property !== defaults.property) {
     params.set("property", selection.property);
   }
-  if (selection.period !== EXPLORER_DEFAULTS.period) {
+  // A concrete published id is always written, even when it is the active
+  // default: a shared link must pin the window it showed, because the default
+  // is re-resolved from the pack on every build. A legacy era is omitted only
+  // when it *is* this route's default.
+  const periodIsImplicit =
+    selection.period === defaults.period && isLegacyPeriod(selection.period);
+  if (!periodIsImplicit) {
     params.set("period", selection.period);
   }
-  if (selection.metric !== EXPLORER_DEFAULTS.metric) {
+  if (selection.metric !== defaults.metric) {
     params.set("metric", selection.metric);
   }
-  if (selection.sort !== EXPLORER_DEFAULTS.sort) {
+  if (selection.sort !== defaults.sort) {
     params.set("sort", selection.sort);
   }
-  if (selection.direction !== EXPLORER_DEFAULTS.direction) {
+  if (selection.direction !== defaults.direction) {
     params.set("direction", selection.direction);
   }
-  if (selection.minSales !== EXPLORER_DEFAULTS.minSales) {
+  if (selection.minSales !== defaults.minSales) {
     params.set(
       "minSales",
       selection.minSales === null ? "all" : String(selection.minSales),
     );
   }
-  if (selection.search !== EXPLORER_DEFAULTS.search) {
+  if (selection.search !== defaults.search) {
     params.set("search", selection.search);
   }
-  if (selection.area !== EXPLORER_DEFAULTS.area && selection.area !== null) {
+  if (selection.area !== defaults.area && selection.area !== null) {
     params.set("area", selection.area);
   }
-  if (selection.page !== EXPLORER_DEFAULTS.page) {
+  if (selection.page !== defaults.page) {
     params.set("page", String(selection.page));
   }
 

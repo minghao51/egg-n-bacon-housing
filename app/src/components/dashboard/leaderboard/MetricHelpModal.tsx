@@ -12,25 +12,26 @@ const METRICS: MetricMeta[] = [
     key: "median_price",
     label: "Median Price",
     description:
-      "The middle value of all property transaction prices in the area.",
-    formula: "median(all transaction prices)",
+      "Middle transaction price for the selected property type and period in that planning area.",
+    formula: "median(transaction prices)",
     unit: "SGD",
     colorScale: "sequential",
   },
   {
-    key: "yoy_growth_pct",
-    label: "Year-over-Year Growth",
+    key: "median_psf",
+    label: "Median Price per Square Foot",
     description:
-      "Percentage change in median price compared to the previous year.",
-    formula: "((price_this_year - price_last_year) ÷ price_last_year) × 100",
-    unit: "%",
-    colorScale: "diverging",
+      "Middle price per square foot across eligible transactions for the selected property type and period.",
+    formula: "median(price ÷ floor area in sqft)",
+    unit: "S$/sqft",
+    colorScale: "sequential",
   },
   {
     key: "volume",
-    label: "Transaction Volume",
-    description: "Total number of property transactions in the period.",
-    formula: "count(all transactions)",
+    label: "Sales",
+    description:
+      "Number of included transactions for the selected property type and period.",
+    formula: "count(transactions)",
     unit: "count",
     colorScale: "sequential",
   },
@@ -119,31 +120,18 @@ export default function MetricHelpModal({
 
             <section>
               <h3 className="text-lg font-semibold mb-3 text-orange-600">
-                Growth Metrics
+                Not published for this selection
               </h3>
-              <div className="space-y-4">
-                {METRICS.filter((m) => m.key === "yoy_growth_pct").map(
-                  (metric) => (
-                    <div
-                      key={metric.key}
-                      className="border-l-2 border-orange-500 pl-4"
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold">{metric.label}</h4>
-                        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                          {metric.unit}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {metric.description}
-                      </p>
-                      <code className="text-xs bg-muted px-2 py-1 rounded block font-mono">
-                        {metric.formula}
-                      </code>
-                    </div>
-                  ),
-                )}
-              </div>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Growth, momentum, yield and affordability are published only
+                across all property types or all periods at once. Ranking areas
+                on them would compare different populations, so this page
+                reports them as unavailable instead of substituting a number.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                An older link that requests one of them opens this notice; pick
+                a supported metric to rank again.
+              </p>
             </section>
 
             <section>
@@ -177,18 +165,21 @@ export default function MetricHelpModal({
           {/* Data Source Note */}
           <div className="mt-6 pt-4 border-t text-sm text-muted-foreground">
             <p className="mb-2">
-              <strong>Data Source:</strong> L3 unified dataset with processed
-              analytics.
+              <strong>Data Source:</strong> Published dashboard release
+              (observed transactions, coverage through 2026-10).
             </p>
             <p>
-              <strong>Time Period:</strong> Default metrics are based on recent
-              transactions (2022+). Time-based filters allow you to compare
-              recent, all-time, and 2025 views.
+              <strong>Scope:</strong> Every value is the planning area ×
+              property type × period section of the released data. Property-only
+              and period-only totals are never used as substitutes.
+            </p>
+            <p className="mt-2">
+              <strong>Ranking:</strong> Areas with fewer than 150 sales in the
+              selected window stay visible but are not ranked.
             </p>
             <p className="mt-2 text-xs">
-              <strong>Note:</strong> Some metrics may be unavailable for certain
-              planning areas or time periods due to insufficient transaction
-              data. These are displayed as "—" in the table.
+              <strong>Note:</strong> A missing value means the release does not
+              publish that area for the selected scope. It is not zero.
             </p>
           </div>
         </div>

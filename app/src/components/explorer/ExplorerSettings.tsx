@@ -9,7 +9,9 @@
 
 import type { ReactNode } from "react";
 import {
+  EXPLORER_LEGACY_PERIODS,
   THIN_SAMPLE_THRESHOLD,
+  type ExplorerLegacyPeriod,
   type ExplorerMetric,
   type ExplorerPeriod,
   type ExplorerProperty,
@@ -31,14 +33,20 @@ export const PROPERTY_OPTIONS: readonly ExplorerOption<ExplorerProperty>[] = [
 
 /**
  * Period options reuse the literal era labels and boundaries the exporter
- * writes (`ERA_DEFINITIONS`), so the control cannot drift from the published
+ * writes (`ERA_DEFINITIONS`), so the legend cannot drift from the published
  * `map_metrics[period_property]` sections.
  */
-export const PERIOD_OPTIONS: readonly ExplorerOption<ExplorerPeriod>[] =
+export const PERIOD_OPTIONS: readonly ExplorerOption<ExplorerLegacyPeriod>[] =
   ERA_DEFINITIONS.map((definition) => ({
     value: definition.id,
     label: definition.label,
   }));
+
+/** One labelled group of period choices: the published windows, or the eras. */
+export interface ExplorerPeriodGroup {
+  legend: string;
+  options: readonly ExplorerOption<ExplorerPeriod>[];
+}
 
 export interface MetricOption extends ExplorerOption<ExplorerMetric> {
   /** Sentence noun, e.g. "median transaction price". */
@@ -73,6 +81,29 @@ export function propertyNoun(property: ExplorerProperty): string {
 export function periodLabel(period: ExplorerPeriod): string {
   const option = PERIOD_OPTIONS.find((entry) => entry.value === period);
   return option === undefined ? period : option.label;
+}
+
+/**
+ * The groups the settings rail offers. Published windows come first because
+ * they are the verified current periods; the legacy eras stay listed and
+ * labelled as the historical view rather than disappearing when a pack is
+ * published.
+ */
+export function explorerPeriodGroups(
+  published: readonly ExplorerOption<ExplorerPeriod>[],
+): readonly ExplorerPeriodGroup[] {
+  const groups: ExplorerPeriodGroup[] = [];
+  if (published.length > 0) {
+    groups.push({ legend: "Published windows", options: published });
+  }
+  groups.push({
+    legend: published.length > 0 ? "Historical windows" : "Period",
+    options: EXPLORER_LEGACY_PERIODS.map((period) => ({
+      value: period,
+      label: periodLabel(period),
+    })),
+  });
+  return groups;
 }
 
 export function metricNoun(metric: ExplorerMetric): string {
@@ -126,13 +157,17 @@ function Choice({
 
 export interface ExplorerSettingsProps {
   selection: ExplorerSelection;
-  summary: { shown: number; total: number; thin: number };
+  /** Period choices by group; the last group is the legacy historical view. */
+  periodGroups: readonly ExplorerPeriodGroup[];
+  /** `null` while the selected window cannot be resolved yet. */
+  summary: { shown: number; total: number; thin: number } | null;
   onChange: (patch: Partial<ExplorerSelection>) => void;
   onReset: () => void;
 }
 
 export default function ExplorerSettings({
   selection,
+  periodGroups,
   summary,
   onChange,
   onReset,
@@ -171,22 +206,26 @@ export default function ExplorerSettings({
         </div>
       </fieldset>
 
-      <fieldset className="mt-6">
-        <legend className="text-sm font-bold text-foreground">Period</legend>
-        <div className="mt-2 flex flex-col gap-2">
-          {PERIOD_OPTIONS.map((option) => (
-            <Choice
-              key={option.value}
-              name="explorer-period"
-              value={option.value}
-              checked={selection.period === option.value}
-              onSelect={() => onChange({ period: option.value })}
-            >
-              {option.label}
-            </Choice>
-          ))}
-        </div>
-      </fieldset>
+      {periodGroups.map((group) => (
+        <fieldset key={group.legend} className="mt-6">
+          <legend className="text-sm font-bold text-foreground">
+            {group.legend}
+          </legend>
+          <div className="mt-2 flex flex-col gap-2">
+            {group.options.map((option) => (
+              <Choice
+                key={option.value}
+                name="explorer-period"
+                value={option.value}
+                checked={selection.period === option.value}
+                onSelect={() => onChange({ period: option.value })}
+              >
+                {option.label}
+              </Choice>
+            ))}
+          </div>
+        </fieldset>
+      ))}
 
       <fieldset className="mt-6">
         <legend className="text-sm font-bold text-foreground">
@@ -218,12 +257,14 @@ export default function ExplorerSettings({
         </p>
       </fieldset>
 
-      <p className="mt-4 text-sm text-muted-foreground" role="status">
-        {summary.shown} of {summary.total} areas shown.
-        {summary.thin > 0
-          ? ` ${summary.thin} ${summary.thin === 1 ? "area is" : "areas are"} below the ${THIN_SAMPLE_THRESHOLD}-sale threshold.`
-          : null}
-      </p>
+      {summary !== null ? (
+        <p className="mt-4 text-sm text-muted-foreground" role="status">
+          {summary.shown} of {summary.total} areas shown.
+          {summary.thin > 0
+            ? ` ${summary.thin} ${summary.thin === 1 ? "area is" : "areas are"} below the ${THIN_SAMPLE_THRESHOLD}-sale threshold.`
+            : null}
+        </p>
+      ) : null}
 
       <div className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
         <p>Price is per transaction, not an asking price or a valuation.</p>

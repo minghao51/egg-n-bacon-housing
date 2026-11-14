@@ -21,7 +21,7 @@ import type { ExplorerDataset, ExplorerRow } from "@/utils/observed-rows";
 import { areaHref } from "@/utils/area-links";
 import ExplorerList, { type ExplorerListProps } from "./ExplorerList";
 import ExplorerMap from "./ExplorerMap";
-import { METRIC_OPTIONS, periodLabel, propertyNoun } from "./ExplorerSettings";
+import { METRIC_OPTIONS, propertyNoun } from "./ExplorerSettings";
 
 /** The three representations of the same dataset. */
 export type ExplorerViewKind = "list" | "map" | "table";
@@ -141,8 +141,7 @@ function ExplorerTable({
   return (
     <div className="min-w-0">
       <h2 className="text-2xl font-bold text-foreground">
-        {periodLabel(dataset.period)} {propertyNoun(dataset.property)}{" "}
-        {metricOption.noun}
+        {dataset.label} {propertyNoun(dataset.property)} {metricOption.noun}
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Every area the current settings keep, with all three observed metrics.
@@ -153,13 +152,23 @@ function ExplorerTable({
           <caption className="pb-2 text-left text-xs text-muted-foreground">
             {`Observed values for ${rows.length} ${
               rows.length === 1 ? "planning area" : "planning areas"
-            } · ${propertyNoun(dataset.property)} · ${periodLabel(
-              dataset.period,
-            )} · `}
-            <code className="font-mono">map_metrics.{dataset.section}</code>
-            {
-              ". N/A means the section does not publish that value for the area."
-            }
+            } · ${propertyNoun(dataset.property)} · ${dataset.label} · `}
+            {dataset.kind === "pack" ? (
+              <>
+                <code className="font-mono">observed pack</code>
+                {" ("}
+                <code className="font-mono">{dataset.periodId}</code>
+                {"), verified in this request. "}
+              </>
+            ) : (
+              <>
+                <code className="font-mono">
+                  map_metrics.{dataset.section}
+                </code>
+                {". "}
+              </>
+            )}
+            {"N/A means the window does not publish that value for the area."}
           </caption>
           <thead>
             <tr className="border-b border-border text-left">

@@ -3,249 +3,259 @@ import type {
   LeaderboardControlsState,
   LeaderboardDisplayRow,
   LeaderboardEntry,
-  LeaderboardMetric,
-  LeaderboardPropertyType,
+  LeaderboardLegacyTimeBasis,
+  LeaderboardTimeBasis,
+} from "@/types/leaderboard";
+import {
+  LEADERBOARD_LEGACY_TIME_BASES,
+  isLeaderboardLegacyTimeBasis,
 } from "@/types/leaderboard";
 import { useGzipJson } from "./useGzipJson";
+import { useObservedPack } from "./useObservedPack";
 import { DATA_URLS } from "@/constants/data-urls";
+import { sectionKey } from "@/utils/observed-data";
+import { publishedPeriodOptions } from "@/utils/observed-periods";
+import {
+  buildPackScopedRows,
+  buildScopedRows,
+  isScopedRankMetric,
+  unsupportedMetricReason,
+  type RankedScope,
+} from "@/utils/leaderboard-observed";
 
-function mapEntryRegion(region: LeaderboardEntry["region"]) {
-  switch (region) {
-    case "CENTRAL REGION":
-      return "CCR";
-    case "REST OF CENTRAL REGION":
-      return "RCR";
-    case "OUTSIDE CENTRAL REGION":
-      return "OCR";
-    default:
-      return null;
-  }
-}
+/** Labels for the historical eras; published windows carry their own label. */
+export const LEGACY_TIME_BASIS_LABELS: Record<
+  LeaderboardLegacyTimeBasis,
+  string
+> = {
+  recent: "2022 onward",
+  whole: "All history",
+  year_2025: "2025 complete year",
+};
 
-function getPropertyMetrics(
-  entry: LeaderboardEntry,
-  propertyType: LeaderboardPropertyType,
-) {
-  if (propertyType === "all") {
-    return null;
-  }
-
-  return entry.by_property_type[propertyType];
-}
-
-function getTimePeriodMetrics(
-  entry: LeaderboardEntry,
-  timeBasis: LeaderboardControlsState["timeBasis"],
-) {
-  if (timeBasis === "recent") {
-    return null;
-  }
-
-  return entry.by_time_period[timeBasis];
-}
-
-function resolveMetricValue(
-  entry: LeaderboardEntry,
-  metric: LeaderboardMetric,
-  controls: LeaderboardControlsState,
-): number {
-  const propertyMetrics = getPropertyMetrics(entry, controls.propertyType);
-  const timeMetrics = getTimePeriodMetrics(entry, controls.timeBasis);
-
-  if (metric === "median_price") {
-    if (
-      propertyMetrics?.median_price !== null &&
-      propertyMetrics?.median_price !== undefined
-    ) {
-      return propertyMetrics.median_price;
-    }
-    if (
-      timeMetrics?.median_price !== null &&
-      timeMetrics?.median_price !== undefined
-    ) {
-      return timeMetrics.median_price;
-    }
-    return entry.median_price;
-  }
-
-  if (metric === "volume") {
-    if (propertyMetrics) {
-      return propertyMetrics.volume;
-    }
-    return entry.volume;
-  }
-
-  if (
-    metric === "yoy_growth_pct" &&
-    timeMetrics?.yoy_growth !== null &&
-    timeMetrics?.yoy_growth !== undefined
-  ) {
-    return timeMetrics.yoy_growth;
-  }
-
-  const fallback = entry[metric];
-  return typeof fallback === "number" ? fallback : 0;
-}
-
-function toDisplayRow(
-  entry: LeaderboardEntry,
-  controls: LeaderboardControlsState,
-  rank: number,
-): LeaderboardDisplayRow {
-  const resolvedMedianPrice = resolveMetricValue(
-    entry,
-    "median_price",
-    controls,
-  );
-  const resolvedVolume = resolveMetricValue(entry, "volume", controls);
-  const resolvedYoyGrowth = resolveMetricValue(
-    entry,
-    "yoy_growth_pct",
-    controls,
-  );
-
-  return {
-    sourceEntry: entry,
-    planningArea: entry.planning_area,
-    areaKey: entry.planning_area.toUpperCase(),
-    region: entry.region,
-    rank,
-    rankMetric: controls.rankMetric,
-    rankMetricValue: resolveMetricValue(entry, controls.rankMetric, controls),
-    medianPrice: resolvedMedianPrice,
-    medianPsf: entry.median_psf,
-    rentalYieldMean: entry.rental_yield_mean,
-    rentalYieldMedian: entry.rental_yield_median,
-    yoyGrowthPct: resolvedYoyGrowth,
-    momChangePct: entry.mom_change_pct,
-    momentum: entry.momentum,
-    volume: resolvedVolume,
-    affordabilityRatio: entry.affordability_ratio,
-    propertyMix: {
-      hdb: entry.by_property_type.hdb.volume,
-      ec: entry.by_property_type.ec.volume,
-      condo: entry.by_property_type.condo.volume,
-      total: entry.volume,
-    },
-  };
-}
-
-function applyFilters(
-  data: LeaderboardEntry[],
-  controls: LeaderboardControlsState,
-): LeaderboardEntry[] {
-  return data.filter((entry) => {
-    const entryRegion = mapEntryRegion(entry.region);
-    const regionMatch =
-      controls.region.length === 3 ||
-      (entryRegion !== null && controls.region.includes(entryRegion));
-
-    if (!regionMatch) {
-      return false;
-    }
-
-    const resolvedMedianPrice = resolveMetricValue(
-      entry,
-      "median_price",
-      controls,
-    );
-    const [minPrice, maxPrice] = controls.priceRange;
-
-    if (resolvedMedianPrice < minPrice || resolvedMedianPrice > maxPrice) {
-      return false;
-    }
-
-    if (controls.search.trim()) {
-      const query = controls.search.trim().toUpperCase();
-      if (!entry.planning_area.toUpperCase().includes(query)) {
-        return false;
-      }
-    }
-
-    if (controls.propertyType !== "all") {
-      const propertyMetrics = getPropertyMetrics(entry, controls.propertyType);
-      if (!propertyMetrics || propertyMetrics.volume <= 0) {
-        return false;
-      }
-    }
-
-    return true;
-  });
-}
-
-function sortRows(
-  data: LeaderboardEntry[],
-  controls: LeaderboardControlsState,
-): LeaderboardDisplayRow[] {
-  const sorted = [...data].sort((a, b) => {
-    return (
-      resolveMetricValue(b, controls.rankMetric, controls) -
-      resolveMetricValue(a, controls.rankMetric, controls)
-    );
-  });
-
-  return sorted.map((entry, index) => toDisplayRow(entry, controls, index + 1));
-}
-
-export function getMetricValue(
-  row: LeaderboardDisplayRow,
-  metric: LeaderboardMetric,
-): number | null {
-  switch (metric) {
-    case "median_price":
-      return row.medianPrice;
-    case "median_psf":
-      return row.medianPsf;
-    case "rental_yield_mean":
-      return row.rentalYieldMean;
-    case "rental_yield_median":
-      return row.rentalYieldMedian;
-    case "yoy_growth_pct":
-      return row.yoyGrowthPct;
-    case "mom_change_pct":
-      return row.momChangePct;
-    case "momentum":
-      return row.momentum;
-    case "volume":
-      return row.volume;
-    case "affordability_ratio":
-      return row.affordabilityRatio;
-    default:
-      return null;
-  }
-}
-
-export function useLeaderboardData(
-  controls: LeaderboardControlsState,
-  initialData?: LeaderboardEntry[],
-): {
+export interface LeaderboardDataResult {
   data: LeaderboardDisplayRow[];
+  /** Areas the selected property/period does not publish. */
+  unpublishedAreas: string[];
+  rankedCount: number;
+  unrankedCount: number;
+  /** False when the scope may be read but not ranked (`limited-display`). */
+  rankable: boolean;
+  /** Human label for the active window, e.g. "12 months to 2026-10". */
+  timeBasisLabel: string;
+  /** The asset or payload the numbers came from. */
+  sourceLabel: string;
+  /** Coverage note that travels with a limited-display scope, or `null`. */
+  windowNote: string | null;
+  /** Why the selected window resolves to nothing, or `null` when it resolves. */
+  windowUnavailable: string | null;
+  /** True while a published window is still being verified in this request. */
+  windowPending: boolean;
+  /** Period choices for the control: published windows first, eras after. */
+  timeBasisOptions: { value: LeaderboardTimeBasis; label: string }[];
+  /** Why the selected metric cannot be ranked, or `null` when it can. */
+  unsupportedReason: string | null;
   loading: boolean;
   error: string | null;
   refreshError: string | null;
   reload: () => void;
-} {
-  const {
-    data: rawData,
-    loading,
-    error,
-    refreshError,
-    reload,
-  } = useGzipJson<LeaderboardEntry[]>(
+}
+
+const EMPTY_SCOPE: RankedScope = {
+  rows: [],
+  unpublishedAreas: [],
+  filteredOut: 0,
+  rankedCount: 0,
+  unrankedCount: 0,
+  rankable: true,
+};
+
+/**
+ * Observed ranking data for Compare Areas.
+ *
+ * Two sources, one row shape:
+ *
+ * - a legacy era (`recent`, `whole`, `year_2025`) reads the joint
+ *   `map_metrics[era_property]` section as RF01 established;
+ * - a concrete published period (`ttm_2026_10`, …) reads the v2 observed pack,
+ *   which this hook verifies in the browser before any row is built.
+ *
+ * The leaderboard asset itself is only ever used for area identity, region
+ * label and coordinates; no price, PSF or volume is read from it.
+ *
+ * A published window carries its own ratified disposition: only a `publish`
+ * scope may be ranked, so EC/condo/All windows stay readable but unranked. An
+ * unpublished or malformed id is reported instead of falling back to another
+ * window.
+ */
+export function useLeaderboardData(
+  controls: LeaderboardControlsState,
+  initialData?: LeaderboardEntry[],
+  initialMetrics?: unknown,
+): LeaderboardDataResult {
+  const leaderboard = useGzipJson<LeaderboardEntry[]>(
     DATA_URLS.leaderboard,
     "leaderboard",
     true,
     initialData ?? null,
   );
+  const mapMetrics = useGzipJson<unknown>(
+    DATA_URLS.mapMetrics,
+    "map_metrics",
+    true,
+    initialMetrics ?? null,
+  );
+  const packLoad = useObservedPack();
 
-  const data = useMemo(() => {
-    if (!rawData) {
-      return [];
+  const legacyBasis = isLeaderboardLegacyTimeBasis(controls.timeBasis)
+    ? controls.timeBasis
+    : null;
+
+  const metric = isScopedRankMetric(controls.rankMetric)
+    ? controls.rankMetric
+    : "median_price";
+
+  const legacyScope = useMemo(() => {
+    if (legacyBasis === null || !leaderboard.data || !mapMetrics.data) {
+      return null;
+    }
+    return buildScopedRows({
+      entries: leaderboard.data,
+      mapMetrics: mapMetrics.data,
+      era: legacyBasis,
+      propertyType: controls.propertyType,
+      metric,
+      region: controls.region,
+      priceRange: controls.priceRange,
+      search: controls.search,
+    });
+  }, [legacyBasis, leaderboard.data, mapMetrics.data, controls, metric]);
+
+  const packOutcome = useMemo(() => {
+    if (
+      legacyBasis !== null ||
+      !leaderboard.data ||
+      packLoad === null ||
+      packLoad.state !== "ready"
+    ) {
+      return null;
+    }
+    return buildPackScopedRows({
+      entries: leaderboard.data,
+      pack: packLoad.pack,
+      periodId: controls.timeBasis,
+      propertyType: controls.propertyType,
+      metric,
+      region: controls.region,
+      priceRange: controls.priceRange,
+      search: controls.search,
+    });
+  }, [legacyBasis, leaderboard.data, packLoad, controls, metric]);
+
+  const timeBasisOptions = useMemo(() => {
+    const options: { value: LeaderboardTimeBasis; label: string }[] = [];
+    if (packLoad !== null && packLoad.state === "ready") {
+      for (const period of publishedPeriodOptions(packLoad.pack)) {
+        options.push({ value: period.value, label: period.label });
+      }
+    }
+    for (const basis of LEADERBOARD_LEGACY_TIME_BASES) {
+      options.push({ value: basis, label: LEGACY_TIME_BASIS_LABELS[basis] });
+    }
+    return options;
+  }, [packLoad]);
+
+  const resolveWindow = (): Omit<
+    LeaderboardDataResult,
+    | "timeBasisOptions"
+    | "unsupportedReason"
+    | "loading"
+    | "error"
+    | "refreshError"
+    | "reload"
+  > => {
+    if (legacyBasis !== null) {
+      const scope = legacyScope ?? EMPTY_SCOPE;
+      return {
+        data: scope.rows,
+        unpublishedAreas: scope.unpublishedAreas,
+        rankedCount: scope.rankedCount,
+        unrankedCount: scope.unrankedCount,
+        rankable: true,
+        timeBasisLabel: LEGACY_TIME_BASIS_LABELS[legacyBasis],
+        sourceLabel: `map_metrics.${sectionKey(legacyBasis, controls.propertyType)}`,
+        windowNote: null,
+        windowUnavailable: null,
+        windowPending: false,
+      };
     }
 
-    const filtered = applyFilters(rawData, controls);
-    return sortRows(filtered, controls);
-  }, [rawData, controls]);
+    const empty = {
+      data: [] as LeaderboardDisplayRow[],
+      unpublishedAreas: [] as string[],
+      rankedCount: 0,
+      unrankedCount: 0,
+      rankable: true,
+      timeBasisLabel: controls.timeBasis,
+      sourceLabel: "observed pack",
+      windowNote: null,
+      windowUnavailable: null,
+      windowPending: false,
+    };
 
-  return { data, loading, error, refreshError, reload };
+    if (packLoad === null) {
+      return {
+        ...empty,
+        windowPending: true,
+      };
+    }
+    if (packLoad.state === "absent") {
+      return {
+        ...empty,
+        windowUnavailable: `This build publishes no verified observed-period pack, so ${controls.timeBasis} cannot be shown here. The historical time bases above still resolve from map_metrics.`,
+      };
+    }
+    if (packLoad.state === "invalid") {
+      return {
+        ...empty,
+        windowUnavailable: `The published observed-period pack did not verify (${packLoad.errors.join("; ")}), so ${controls.timeBasis} is not shown.`,
+      };
+    }
+    if (packOutcome === null) {
+      return empty;
+    }
+    if (!packOutcome.ok) {
+      return { ...empty, windowUnavailable: packOutcome.reason };
+    }
+
+    return {
+      data: packOutcome.scope.rows,
+      unpublishedAreas: packOutcome.scope.unpublishedAreas,
+      rankedCount: packOutcome.scope.rankedCount,
+      unrankedCount: packOutcome.scope.unrankedCount,
+      rankable: packOutcome.scope.rankable,
+      timeBasisLabel: packOutcome.periodLabel,
+      sourceLabel: `observed pack · ${controls.timeBasis} · ${packLoad.manifest.generation}`,
+      windowNote: packOutcome.note,
+      windowUnavailable: null,
+      windowPending: false,
+    };
+  };
+
+  const reload = () => {
+    void leaderboard.reload();
+    void mapMetrics.reload();
+  };
+
+  return {
+    ...resolveWindow(),
+    timeBasisOptions,
+    unsupportedReason: unsupportedMetricReason(controls.rankMetric),
+    loading:
+      (leaderboard.loading && !leaderboard.data) ||
+      (mapMetrics.loading && !mapMetrics.data),
+    error: leaderboard.error ?? mapMetrics.error,
+    refreshError: leaderboard.refreshError ?? mapMetrics.refreshError,
+    reload,
+  };
 }

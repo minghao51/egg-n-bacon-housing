@@ -40,132 +40,19 @@ import {
   readAreaObservation,
   readNationalBaseline,
   sectionKey,
-  type ObservedAreaRecord,
-  type ObservedObservation,
 } from "@/utils/observed-data";
+import { loadObservedPackFromDir } from "@/utils/observed-pack-build";
+import { buildAreaActivity } from "@/utils/area-activity";
 import {
   computeReleaseGeneration,
   parseReleaseManifest,
   type ReleaseStatus,
 } from "@/utils/release-manifest";
+import { AREA_PAGE_COMBINATIONS, type AreaPageData } from "./area-selection";
 
-/** The four era labels a fieldnote reports on (a subset of `EraId`). */
-export type AreaPageEra = "year_2025" | "recent" | "pre_covid" | "whole";
+// Re-exported so the Astro page and the tests keep one import site.
+export * from "./area-selection";
 
-/** The property subsets a fieldnote reports on, including the all-property aggregate. */
-export type AreaPageProperty = "all" | "hdb" | "ec" | "condo";
-
-export interface AreaPageCombination {
-  era: AreaPageEra;
-  property: AreaPageProperty;
-  /** Reader-facing label, e.g. "2025 complete year · HDB". */
-  label: string;
-}
-
-/**
- * Every joint section the exporter publishes, in reading order. A fieldnote
- * covers the whole matrix so an area that only appears for condominiums or only
- * in the all-property aggregate still gets a page, and the availability panel
- * can say precisely which combinations are missing.
- */
-const AREA_PAGE_ERAS: readonly AreaPageEra[] = [
-  "year_2025",
-  "whole",
-  "recent",
-  "pre_covid",
-];
-
-const AREA_PAGE_PROPERTIES: readonly AreaPageProperty[] = [
-  "hdb",
-  "ec",
-  "condo",
-  "all",
-];
-
-const ERA_PAGE_LABELS: Record<AreaPageEra, string> = {
-  year_2025: "2025 complete year",
-  whole: "All history",
-  recent: "2022 onward",
-  pre_covid: "Through 2021",
-};
-
-const PROPERTY_PAGE_LABELS: Record<AreaPageProperty, string> = {
-  hdb: "HDB",
-  ec: "EC",
-  condo: "Condominium",
-  all: "All property types",
-};
-
-export const AREA_PAGE_COMBINATIONS: readonly AreaPageCombination[] =
-  AREA_PAGE_ERAS.flatMap((era) =>
-    AREA_PAGE_PROPERTIES.map((property) => ({
-      era,
-      property,
-      label: `${ERA_PAGE_LABELS[era]} · ${PROPERTY_PAGE_LABELS[property]}`,
-    })),
-  );
-
-/** Reader-facing scope sentence for the era a fieldnote is anchored on. */
-export function areaEraScope(era: AreaPageEra): string {
-  if (era === "year_2025") {
-    return "the 2025 complete year (2025-01-01 through 2025-12-31)";
-  }
-  if (era === "whole") return "all published history (no period filter)";
-  if (era === "recent") return "transactions from 2022 onward";
-  return "transactions dated on or before 2021-12-31";
-}
-
-/** Reader-facing headline label, e.g. "HDB resale · All history". */
-export function areaSectionScope(
-  era: AreaPageEra,
-  property: AreaPageProperty,
-): string {
-  const noun =
-    property === "hdb"
-      ? "HDB resale"
-      : property === "ec"
-        ? "Executive condominium"
-        : property === "condo"
-          ? "Condominium"
-          : "All property types";
-  return `${noun} · ${ERA_PAGE_LABELS[era]}`;
-}
-
-/** Combinations that decide the headline of a fieldnote, most specific first. */
-export const AREA_PRIMARY_PREFERENCE: readonly {
-  era: AreaPageEra;
-  property: AreaPageProperty;
-}[] = [
-  { era: "year_2025", property: "hdb" },
-  { era: "year_2025", property: "condo" },
-  { era: "year_2025", property: "all" },
-  { era: "year_2025", property: "ec" },
-  { era: "whole", property: "hdb" },
-  { era: "whole", property: "condo" },
-  { era: "whole", property: "all" },
-  { era: "whole", property: "ec" },
-];
-
-export interface AreaPageSection {
-  era: AreaPageEra;
-  property: AreaPageProperty;
-  /** Exact asset section identity, e.g. `map_metrics.year_2025_hdb`'s key. */
-  section: string;
-  /** The area record for this combination, or `null` when not published. */
-  area: ObservedAreaRecord | null;
-  /** The national baseline for this combination, or `null` when not published. */
-  national: ObservedObservation[] | null;
-}
-
-export interface AreaPageData {
-  areaId: string;
-  areaName: string;
-  slug: string;
-  sections: AreaPageSection[];
-  baselineCompatible: boolean;
-  baselineStatus: string;
-  generation: string | null;
-}
 
 export interface BaselineVerdict {
   compatible: boolean;
@@ -404,6 +291,35 @@ export async function loadAreaPages(rootDir: string): Promise<AreaPageData[]> {
     }
   }
 
+  // Current-window identities: the pack may publish an area the historical
+  // sections do not (Mandai, Sungei Kadut, Central Water Catchment). A current
+  // row without a historical one still owns its route; the page then says
+  // which combinations are missing instead of the route disappearing.
+  const packLoad = await loadObservedPackFromDir(dataDir);
+  if (packLoad.state === "ready") {
+    for (const observation of packLoad.pack.observations) {
+      if (NON_AREA_GEOGRAPHIES.has(observation.geographyId)) continue;
+      const areaId = canonicalAreaId(observation.geographyId);
+      if (areaId !== "") areaIds.add(areaId);
+    }
+  }
+
+  // Two identities that slug to one path would silently overwrite a fieldnote,
+  // so the collision stops the build instead of dropping a route.
+  const slugOwners = new Map<string, string>();
+  for (const areaId of [...areaIds].sort(compareIds)) {
+    const slug = areaSlug(areaId);
+    const owner = slugOwners.get(slug);
+    if (owner !== undefined && owner !== areaId) {
+      throw new Error(
+        `two planning areas share the fieldnote slug "${slug}": ${owner} and ${areaId}`,
+      );
+    }
+    slugOwners.set(slug, areaId);
+  }
+
+  const pack = packLoad.state === "ready" ? packLoad.pack : null;
+
   return [...areaIds].sort(compareIds).map((areaId) => ({
     areaId,
     areaName: formatAreaName(areaId),
@@ -427,8 +343,21 @@ export async function loadAreaPages(rootDir: string): Promise<AreaPageData[]> {
     baselineCompatible: baseline.compatible,
     baselineStatus: baseline.status,
     generation: baseline.generation,
+    // RF10: the rolling-quarter numbers come from the same verified pack the
+    // identities came from, so the fieldnote needs no extra request for them.
+    activity: pack === null ? null : buildAreaActivity(pack, areaId),
   }));
 }
 
 export { areaHref } from "./area-links";
 export type { AreaHrefSelection } from "./area-links";
+
+/* ------------------------------------------------------------------------- */
+/* Fieldnote selection (RF06)                                                 */
+/* ------------------------------------------------------------------------- */
+
+/**
+ * Geography ids the pack writes that are not planning areas: the national scope
+ * and the exporter's "unassigned" bucket. Neither may become `/areas/<slug>`.
+ */
+const NON_AREA_GEOGRAPHIES: ReadonlySet<string> = new Set(["SG", "NONE"]);

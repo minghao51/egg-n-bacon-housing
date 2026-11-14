@@ -18,6 +18,10 @@ import {
   DASHBOARD_NAV_ITEMS,
   type DashboardNavItem,
 } from "@/constants/dashboard-nav";
+import type {
+  CurrentDataSummary,
+  MetricReading,
+} from "@/utils/observed-pack-build";
 import {
   ERA_DEFINITIONS,
   readNationalBaseline,
@@ -185,15 +189,115 @@ function yearOf(value: string | undefined): string | null {
   return match === null ? null : match[1];
 }
 
+function formatOptionalSgd(value: number | null): string {
+  if (value === null) return "not published";
+  return `S$${Math.round(value).toLocaleString("en-SG")}`;
+}
+
+function formatOptionalSales(value: number | null): string {
+  if (value === null) return "not published";
+  return `${value.toLocaleString("en-SG")} sales`;
+}
+
+function formatChange(reading: MetricReading | undefined): string {
+  if (!reading) return "";
+  if (reading.percentChange === null) {
+    return reading.changeNote ? `no comparison — ${reading.changeNote}` : "";
+  }
+  const sign = reading.percentChange > 0 ? "+" : "";
+  return `${sign}${reading.percentChange.toFixed(1)}% vs prior year`;
+}
+
+/**
+ * Compact "current data" strip sourced from the verified v2 pack.
+ *
+ * Rendered only when the page passed a loaded pack; when the pack is absent or
+ * failed verification the page keeps the legacy snapshot and this strip is not
+ * shown at all. HDB is the only scope cleared for headline use — the private
+ * types stay labelled as records under coverage review.
+ */
+function CurrentDataSection({
+  hdb,
+  condo,
+}: {
+  hdb: CurrentDataSummary;
+  condo: CurrentDataSummary;
+}) {
+  const ytdSales = hdb.ytd?.metrics.find((metric) => metric.metric === "transactionCount");
+  const ytdPrice = hdb.ytd?.metrics.find((metric) => metric.metric === "medianPrice");
+  const latestSales = hdb.latestMonth?.metrics.find(
+    (metric) => metric.metric === "transactionCount",
+  );
+
+  return (
+    <section
+      aria-labelledby="current-data-heading"
+      data-current-data={hdb.cutoffMonth}
+      className="rounded-2xl border border-border bg-card p-5 shadow-sm"
+    >
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="current-data-heading" className="text-xl font-bold text-foreground">
+          Current data
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          cutoff {hdb.cutoffMonth} · generation{" "}
+          <code className="font-mono">{hdb.generation.slice(0, 12)}</code>
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            HDB sales, {hdb.ytd?.label ?? "year to date"}
+          </p>
+          <p className="text-lg font-semibold text-foreground">
+            {formatOptionalSales(ytdSales?.value ?? null)}
+          </p>
+          <p className="text-xs text-muted-foreground">{formatChange(ytdSales)}</p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            HDB median price, year to date
+          </p>
+          <p className="text-lg font-semibold text-foreground">
+            {formatOptionalSgd(ytdPrice?.value ?? null)}
+          </p>
+          <p className="text-xs text-muted-foreground">{formatChange(ytdPrice)}</p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            HDB sales, {hdb.latestMonth?.label ?? "latest month"}
+          </p>
+          <p className="text-lg font-semibold text-foreground">
+            {formatOptionalSales(latestSales?.value ?? null)}
+          </p>
+          <p className="text-xs text-muted-foreground">{formatChange(latestSales)}</p>
+        </div>
+      </div>
+
+      {condo.ytd?.disposition !== "publish" && (
+        <p className="mt-4 border-t border-border pt-3 text-sm text-muted-foreground">
+          Condominium and EC 2026 counts are still under coverage review. They are
+          published as records with their dates, not as a growth headline — see the
+          per-type sections below for their 2025 medians.
+        </p>
+      )}
+    </section>
+  );
+}
+
 export default function MarketOverviewDashboard({
   initialData,
   trendsData,
   baseUrl,
+  currentData,
 }: {
   initialData: MarketOverviewDashboardData;
   trendsData?: TrendRecord[];
   /** Deployment base path, resolved once by the Astro page. */
   baseUrl: string;
+  /** Verified v2 pack summary; absent when the pack is not published. */
+  currentData?: { hdb: CurrentDataSummary; condo: CurrentDataSummary } | null;
 }) {
   const [era, setEra] = useState<EraId>("whole");
   const [propertyType, setPropertyType] = useState<PropertyTypeId>("all");
@@ -367,6 +471,10 @@ export default function MarketOverviewDashboard({
           so the three prices are not a like-for-like comparison.
         </p>
       </section>
+
+      {currentData ? (
+        <CurrentDataSection hdb={currentData.hdb} condo={currentData.condo} />
+      ) : null}
 
       <section
         aria-labelledby="overview-snapshot-heading"

@@ -38,7 +38,7 @@ import {
   type ProjectedMap,
 } from "@/utils/geo-projection";
 import type { ExplorerDataset, ExplorerRow } from "@/utils/observed-rows";
-import { METRIC_OPTIONS, periodLabel, propertyNoun } from "./ExplorerSettings";
+import { METRIC_OPTIONS, propertyNoun } from "./ExplorerSettings";
 
 /** Bin count for the choropleth; matches the five steps of `MAP_PALETTE`. */
 const BIN_COUNT = 5;
@@ -279,7 +279,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
     METRIC_OPTIONS.find((option) => option.value === selection.metric) ??
     METRIC_OPTIONS[0];
 
-  const scopeLabel = `${periodLabel(dataset.period)} ${propertyNoun(
+  const scopeLabel = `${dataset.label} ${propertyNoun(
     dataset.property,
   )} ${metricOption.noun}`;
 
@@ -287,7 +287,21 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
   const geometryError = geometry.error ?? projection.error ?? null;
 
   let body: ReactNode;
-  if (dataset.filtered.length === 0) {
+  if (!dataset.rankable) {
+    // A limited-display scope may be read but not ranked, and a value
+    // choropleth is a rank in colour: the values stay in the list and the
+    // table, which carry the window label with every number.
+    body = (
+      <p className="mt-4 rounded border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+        Coverage for this scope is limited, so the map does not colour areas by{
+          " "
+        }
+        {metricOption.noun}. The published values are listed in the list and
+        table views for {dataset.label}, and the historical eras remain
+        available as a labelled comparison.
+      </p>
+    );
+  } else if (dataset.filtered.length === 0) {
     // An empty dataset must not render as an empty map: there is nothing to
     // colour, and the reason belongs in words.
     body = (
@@ -517,8 +531,19 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
       {body}
 
       <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-        Data: <code className="font-mono">map_metrics.{dataset.section}</code>{" "}
-        &mdash; the same joint section as the list and the table.
+        {dataset.kind === "pack" ? (
+          <>
+            Data: the verified <code className="font-mono">observed pack</code>{" "}
+            &mdash; <code className="font-mono">{dataset.periodId}</code>,
+            generation <code className="font-mono">{dataset.generation}</code>{" "}
+            &mdash; the same rows as the list and the table.
+          </>
+        ) : (
+          <>
+            Data: <code className="font-mono">map_metrics.{dataset.section}</code>{" "}
+            &mdash; the same joint section as the list and the table.
+          </>
+        )}
       </p>
     </figure>
   );

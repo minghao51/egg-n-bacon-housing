@@ -19,6 +19,21 @@ function tableRows(page: Page) {
 test.describe("Research trends", () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
 
+  test("shows the verified trailing-12-month window", async ({ page }) => {
+    await page.goto("/research/trends");
+    const panel = page.locator('[data-observed-cutoff="2026-10"]');
+    await expect(panel).toBeVisible();
+    await expect(
+      panel.getByRole("heading", { name: "Published windows" }),
+    ).toBeVisible();
+    await expect(panel).toContainText("12 months to 2026-10");
+    await expect(panel).toContainText("25,483");
+    await expect(panel).toContainText("S$631,000");
+    // The panel follows the property-type choice without refetching.
+    await panel.getByRole("button", { name: "Year to date" }).click();
+    await expect(panel).toContainText("January to 2026-10");
+  });
+
   test("renders one heading and the default 2025 HDB series", async ({
     page,
   }) => {

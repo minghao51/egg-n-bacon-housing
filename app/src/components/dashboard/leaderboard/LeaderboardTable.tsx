@@ -3,6 +3,7 @@ import type {
   LeaderboardDisplayRow,
   LeaderboardMetric,
 } from "@/types/leaderboard";
+import { SAMPLE_CAUTION_THRESHOLD } from "@/utils/leaderboard-observed";
 import { METRICS } from "./MetricHelpModal";
 
 interface LeaderboardTableProps {
@@ -13,18 +14,15 @@ interface LeaderboardTableProps {
   onRowClick: (area: string) => void;
 }
 
-function formatNumber(
-  value: number | null | undefined,
-  digits: number = 1,
-): string {
-  if (value === null || value === undefined || Number.isNaN(value)) {
+function formatNumber(value: number | null, digits: number = 1): string {
+  if (value === null || Number.isNaN(value)) {
     return "—";
   }
   return value.toFixed(digits);
 }
 
 function formatCurrency(value: number | null): string {
-  if (value === null || value === undefined) {
+  if (value === null) {
     return "—";
   }
   return `$${value.toLocaleString()}`;
@@ -38,47 +36,13 @@ function formatMetricValue(
     case "median_price":
       return formatCurrency(row.medianPrice);
     case "median_psf":
-      return row.medianPsf === null
-        ? "—"
-        : `$${row.medianPsf.toLocaleString()}`;
-    case "rental_yield_mean":
-      return `${formatNumber(row.rentalYieldMean)}%`;
-    case "rental_yield_median":
-      return `${formatNumber(row.rentalYieldMedian)}%`;
-    case "yoy_growth_pct":
-      return `${row.yoyGrowthPct && row.yoyGrowthPct > 0 ? "+" : ""}${formatNumber(row.yoyGrowthPct)}%`;
-    case "mom_change_pct":
-      return `${row.momChangePct && row.momChangePct > 0 ? "+" : ""}${formatNumber(row.momChangePct)}%`;
-    case "momentum":
-      return `${row.momentum && row.momentum > 0 ? "+" : ""}${formatNumber(row.momentum)}`;
+      return formatCurrency(row.medianPsf);
     case "volume":
-      return row.volume.toLocaleString();
-    case "affordability_ratio":
-      return formatNumber(row.affordabilityRatio, 2);
+      return row.volume === null ? "—" : row.volume.toLocaleString();
     default:
+      // Unsupported metrics are never substituted; the page shows the reason.
       return "—";
   }
-}
-
-function metricTone(metric: LeaderboardMetric, value: string): string {
-  if (
-    metric === "volume" ||
-    metric === "median_price" ||
-    metric === "median_psf" ||
-    metric === "affordability_ratio"
-  ) {
-    return "text-foreground";
-  }
-
-  if (value.startsWith("+")) {
-    return "text-emerald-600";
-  }
-
-  if (value.startsWith("-")) {
-    return "text-rose-600";
-  }
-
-  return "text-foreground";
 }
 
 export default function LeaderboardTable({
@@ -89,7 +53,7 @@ export default function LeaderboardTable({
   onRowClick,
 }: LeaderboardTableProps) {
   const selectedMetricMeta =
-    METRICS.find((metric) => metric.key === selectedMetric) || METRICS[0];
+    METRICS.find((metric) => metric.key === selectedMetric) ?? METRICS[0];
   const showPriceColumn = selectedMetric !== "median_price";
   const showVolumeColumn = selectedMetric !== "volume";
 
@@ -135,7 +99,7 @@ export default function LeaderboardTable({
               )}
               {showVolumeColumn && (
                 <th className="hidden px-3 py-3 font-semibold lg:table-cell">
-                  Volume
+                  Sales
                 </th>
               )}
               <th className="hidden px-3 py-3 font-semibold xl:table-cell">
@@ -152,6 +116,7 @@ export default function LeaderboardTable({
                 <tr
                   key={row.areaKey}
                   data-area={row.areaKey}
+                  data-ranked={row.rank === null ? "false" : "true"}
                   className={`cursor-pointer transition-colors ${
                     isHighlighted
                       ? "bg-primary/10 ring-1 ring-inset ring-primary/20"
@@ -162,17 +127,32 @@ export default function LeaderboardTable({
                   onClick={() => onRowClick(row.areaKey)}
                 >
                   <td className="px-3 py-3 font-semibold text-foreground">
-                    #{row.rank}
+                    {row.rank === null ? (
+                      <span
+                        className="text-muted-foreground"
+                        title={`Not ranked: fewer than ${SAMPLE_CAUTION_THRESHOLD} sales in this window`}
+                      >
+                        —
+                      </span>
+                    ) : (
+                      `#${row.rank}`
+                    )}
                   </td>
                   <td className="px-3 py-3 font-medium text-foreground">
-                    {row.planningArea}
+                    <span>{row.planningArea}</span>
+                    {row.isThinSample && (
+                      <span
+                        className="ml-2 rounded-full border border-amber-500/40 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+                        title={`Fewer than ${SAMPLE_CAUTION_THRESHOLD} sales in this window; shown but not ranked.`}
+                      >
+                        Thin sample
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-3 text-muted-foreground">
-                    {row.region}
+                    {row.region ?? "Unmapped"}
                   </td>
-                  <td
-                    className={`px-3 py-3 font-semibold ${metricTone(selectedMetric, selectedValue)}`}
-                  >
+                  <td className="px-3 py-3 font-semibold text-foreground">
                     {selectedValue}
                   </td>
                   {showPriceColumn && (
@@ -182,37 +162,37 @@ export default function LeaderboardTable({
                   )}
                   {showVolumeColumn && (
                     <td className="hidden px-3 py-3 text-foreground lg:table-cell">
-                      {row.volume.toLocaleString()}
+                      {row.volume === null ? "—" : row.volume.toLocaleString()}
                     </td>
                   )}
                   <td className="hidden px-3 py-3 xl:table-cell">
-                    <div className="flex h-3 w-24 overflow-hidden rounded-full bg-muted">
-                      {row.propertyMix.total > 0 && (
-                        <>
-                          <div
-                            className="bg-sky-500"
-                            style={{
-                              width: `${(row.propertyMix.hdb / row.propertyMix.total) * 100}%`,
-                            }}
-                            title={`HDB ${row.propertyMix.hdb}`}
-                          />
-                          <div
-                            className="bg-amber-500"
-                            style={{
-                              width: `${(row.propertyMix.ec / row.propertyMix.total) * 100}%`,
-                            }}
-                            title={`EC ${row.propertyMix.ec}`}
-                          />
-                          <div
-                            className="bg-emerald-500"
-                            style={{
-                              width: `${(row.propertyMix.condo / row.propertyMix.total) * 100}%`,
-                            }}
-                            title={`Condo ${row.propertyMix.condo}`}
-                          />
-                        </>
-                      )}
-                    </div>
+                    {row.propertyMix && row.propertyMix.total > 0 ? (
+                      <div className="flex h-3 w-24 overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="bg-sky-500"
+                          style={{
+                            width: `${((row.propertyMix.hdb ?? 0) / row.propertyMix.total) * 100}%`,
+                          }}
+                          title={`HDB ${formatNumber(row.propertyMix.hdb, 0)}`}
+                        />
+                        <div
+                          className="bg-amber-500"
+                          style={{
+                            width: `${((row.propertyMix.ec ?? 0) / row.propertyMix.total) * 100}%`,
+                          }}
+                          title={`EC ${formatNumber(row.propertyMix.ec, 0)}`}
+                        />
+                        <div
+                          className="bg-emerald-500"
+                          style={{
+                            width: `${((row.propertyMix.condo ?? 0) / row.propertyMix.total) * 100}%`,
+                          }}
+                          title={`Condo ${formatNumber(row.propertyMix.condo, 0)}`}
+                        />
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
                   </td>
                 </tr>
               );
@@ -220,6 +200,12 @@ export default function LeaderboardTable({
           </tbody>
         </table>
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        Rows with fewer than {SAMPLE_CAUTION_THRESHOLD} sales in the selected
+        window stay visible but are not ranked. Property mix uses the same
+        period as the ranking.
+      </p>
     </div>
   );
 }

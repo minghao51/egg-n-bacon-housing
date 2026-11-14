@@ -1,0 +1,6308 @@
+{
+  "cutoffMonth": "2026-10",
+  "cutoffSource": "declared",
+  "methodVersion": "observed-aggregates-2",
+  "monthsPresent": [
+    "1990-01",
+    "1990-02",
+    "1990-03",
+    "1990-04",
+    "1990-05",
+    "1990-06",
+    "1990-07",
+    "1990-08",
+    "1990-09",
+    "1990-10",
+    "1990-11",
+    "1990-12",
+    "1991-01",
+    "1991-02",
+    "1991-03",
+    "1991-04",
+    "1991-05",
+    "1991-06",
+    "1991-07",
+    "1991-08",
+    "1991-09",
+    "1991-10",
+    "1991-11",
+    "1991-12",
+    "1992-01",
+    "1992-02",
+    "1992-03",
+    "1992-04",
+    "1992-05",
+    "1992-06",
+    "1992-07",
+    "1992-08",
+    "1992-09",
+    "1992-10",
+    "1992-11",
+    "1992-12",
+    "1993-01",
+    "1993-02",
+    "1993-03",
+    "1993-04",
+    "1993-05",
+    "1993-06",
+    "1993-07",
+    "1993-08",
+    "1993-09",
+    "1993-10",
+    "1993-11",
+    "1993-12",
+    "1994-01",
+    "1994-02",
+    "1994-03",
+    "1994-04",
+    "1994-05",
+    "1994-06",
+    "1994-07",
+    "1994-08",
+    "1994-09",
+    "1994-10",
+    "1994-11",
+    "1994-12",
+    "1995-01",
+    "1995-02",
+    "1995-03",
+    "1995-04",
+    "1995-05",
+    "1995-06",
+    "1995-07",
+    "1995-08",
+    "1995-09",
+    "1995-10",
+    "1995-11",
+    "1995-12",
+    "1996-01",
+    "1996-02",
+    "1996-03",
+    "1996-04",
+    "1996-05",
+    "1996-06",
+    "1996-07",
+    "1996-08",
+    "1996-09",
+    "1996-10",
+    "1996-11",
+    "1996-12",
+    "1997-01",
+    "1997-02",
+    "1997-03",
+    "1997-04",
+    "1997-05",
+    "1997-06",
+    "1997-07",
+    "1997-08",
+    "1997-09",
+    "1997-10",
+    "1997-11",
+    "1997-12",
+    "1998-01",
+    "1998-02",
+    "1998-03",
+    "1998-04",
+    "1998-05",
+    "1998-06",
+    "1998-07",
+    "1998-08",
+    "1998-09",
+    "1998-10",
+    "1998-11",
+    "1998-12",
+    "1999-01",
+    "1999-02",
+    "1999-03",
+    "1999-04",
+    "1999-05",
+    "1999-06",
+    "1999-07",
+    "1999-08",
+    "1999-09",
+    "1999-10",
+    "1999-11",
+    "1999-12",
+    "2000-01",
+    "2000-02",
+    "2000-03",
+    "2000-04",
+    "2000-05",
+    "2000-06",
+    "2000-07",
+    "2000-08",
+    "2000-09",
+    "2000-10",
+    "2000-11",
+    "2000-12",
+    "2001-01",
+    "2001-02",
+    "2001-03",
+    "2001-04",
+    "2001-05",
+    "2001-06",
+    "2001-07",
+    "2001-08",
+    "2001-09",
+    "2001-10",
+    "2001-11",
+    "2001-12",
+    "2002-01",
+    "2002-02",
+    "2002-03",
+    "2002-04",
+    "2002-05",
+    "2002-06",
+    "2002-07",
+    "2002-08",
+    "2002-09",
+    "2002-10",
+    "2002-11",
+    "2002-12",
+    "2003-01",
+    "2003-02",
+    "2003-03",
+    "2003-04",
+    "2003-05",
+    "2003-06",
+    "2003-07",
+    "2003-08",
+    "2003-09",
+    "2003-10",
+    "2003-11",
+    "2003-12",
+    "2004-01",
+    "2004-02",
+    "2004-03",
+    "2004-04",
+    "2004-05",
+    "2004-06",
+    "2004-07",
+    "2004-08",
+    "2004-09",
+    "2004-10",
+    "2004-11",
+    "2004-12",
+    "2005-01",
+    "2005-02",
+    "2005-03",
+    "2005-04",
+    "2005-05",
+    "2005-06",
+    "2005-07",
+    "2005-08",
+    "2005-09",
+    "2005-10",
+    "2005-11",
+    "2005-12",
+    "2006-01",
+    "2006-02",
+    "2006-03",
+    "2006-04",
+    "2006-05",
+    "2006-06",
+    "2006-07",
+    "2006-08",
+    "2006-09",
+    "2006-10",
+    "2006-11",
+    "2006-12",
+    "2007-01",
+    "2007-02",
+    "2007-03",
+    "2007-04",
+    "2007-05",
+    "2007-06",
+    "2007-07",
+    "2007-08",
+    "2007-09",
+    "2007-10",
+    "2007-11",
+    "2007-12",
+    "2008-01",
+    "2008-02",
+    "2008-03",
+    "2008-04",
+    "2008-05",
+    "2008-06",
+    "2008-07",
+    "2008-08",
+    "2008-09",
+    "2008-10",
+    "2008-11",
+    "2008-12",
+    "2009-01",
+    "2009-02",
+    "2009-03",
+    "2009-04",
+    "2009-05",
+    "2009-06",
+    "2009-07",
+    "2009-08",
+    "2009-09",
+    "2009-10",
+    "2009-11",
+    "2009-12",
+    "2010-01",
+    "2010-02",
+    "2010-03",
+    "2010-04",
+    "2010-05",
+    "2010-06",
+    "2010-07",
+    "2010-08",
+    "2010-09",
+    "2010-10",
+    "2010-11",
+    "2010-12",
+    "2011-01",
+    "2011-02",
+    "2011-03",
+    "2011-04",
+    "2011-05",
+    "2011-06",
+    "2011-07",
+    "2011-08",
+    "2011-09",
+    "2011-10",
+    "2011-11",
+    "2011-12",
+    "2012-01",
+    "2012-02",
+    "2012-03",
+    "2012-04",
+    "2012-05",
+    "2012-06",
+    "2012-07",
+    "2012-08",
+    "2012-09",
+    "2012-10",
+    "2012-11",
+    "2012-12",
+    "2013-01",
+    "2013-02",
+    "2013-03",
+    "2013-04",
+    "2013-05",
+    "2013-06",
+    "2013-07",
+    "2013-08",
+    "2013-09",
+    "2013-10",
+    "2013-11",
+    "2013-12",
+    "2014-01",
+    "2014-02",
+    "2014-03",
+    "2014-04",
+    "2014-05",
+    "2014-06",
+    "2014-07",
+    "2014-08",
+    "2014-09",
+    "2014-10",
+    "2014-11",
+    "2014-12",
+    "2015-01",
+    "2015-02",
+    "2015-03",
+    "2015-04",
+    "2015-05",
+    "2015-06",
+    "2015-07",
+    "2015-08",
+    "2015-09",
+    "2015-10",
+    "2015-11",
+    "2015-12",
+    "2016-01",
+    "2016-02",
+    "2016-03",
+    "2016-04",
+    "2016-05",
+    "2016-06",
+    "2016-07",
+    "2016-08",
+    "2016-09",
+    "2016-10",
+    "2016-11",
+    "2016-12",
+    "2017-01",
+    "2017-02",
+    "2017-03",
+    "2017-04",
+    "2017-05",
+    "2017-06",
+    "2017-07",
+    "2017-08",
+    "2017-09",
+    "2017-10",
+    "2017-11",
+    "2017-12",
+    "2018-01",
+    "2018-02",
+    "2018-03",
+    "2018-04",
+    "2018-05",
+    "2018-06",
+    "2018-07",
+    "2018-08",
+    "2018-09",
+    "2018-10",
+    "2018-11",
+    "2018-12",
+    "2019-01",
+    "2019-02",
+    "2019-03",
+    "2019-04",
+    "2019-05",
+    "2019-06",
+    "2019-07",
+    "2019-08",
+    "2019-09",
+    "2019-10",
+    "2019-11",
+    "2019-12",
+    "2020-01",
+    "2020-02",
+    "2020-03",
+    "2020-04",
+    "2020-05",
+    "2020-06",
+    "2020-07",
+    "2020-08",
+    "2020-09",
+    "2020-10",
+    "2020-11",
+    "2020-12",
+    "2021-01",
+    "2021-02",
+    "2021-03",
+    "2021-04",
+    "2021-05",
+    "2021-06",
+    "2021-07",
+    "2021-08",
+    "2021-09",
+    "2021-10",
+    "2021-11",
+    "2021-12",
+    "2022-01",
+    "2022-02",
+    "2022-03",
+    "2022-04",
+    "2022-05",
+    "2022-06",
+    "2022-07",
+    "2022-08",
+    "2022-09",
+    "2022-10",
+    "2022-11",
+    "2022-12",
+    "2023-01",
+    "2023-02",
+    "2023-03",
+    "2023-04",
+    "2023-05",
+    "2023-06",
+    "2023-07",
+    "2023-08",
+    "2023-09",
+    "2023-10",
+    "2023-11",
+    "2023-12",
+    "2024-01",
+    "2024-02",
+    "2024-03",
+    "2024-04",
+    "2024-05",
+    "2024-06",
+    "2024-07",
+    "2024-08",
+    "2024-09",
+    "2024-10",
+    "2024-11",
+    "2024-12",
+    "2025-01",
+    "2025-02",
+    "2025-03",
+    "2025-04",
+    "2025-05",
+    "2025-06",
+    "2025-07",
+    "2025-08",
+    "2025-09",
+    "2025-10",
+    "2025-11",
+    "2025-12",
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09",
+    "2026-10"
+  ],
+  "observations": [
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 4719,
+          "unit": "SGD",
+          "value": 1280000.0
+        },
+        "medianPsf": {
+          "observations": 4719,
+          "unit": "SGD_per_sqft",
+          "value": 1306.0652214964634
+        },
+        "transactionCount": {
+          "observations": 4719,
+          "unit": "transactions",
+          "value": 4719
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2173,
+          "unit": "SGD",
+          "value": 650000.0
+        },
+        "medianPsf": {
+          "observations": 2173,
+          "unit": "SGD_per_sqft",
+          "value": 600.773573395021
+        },
+        "transactionCount": {
+          "observations": 2173,
+          "unit": "transactions",
+          "value": 2173
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 154,
+          "unit": "SGD",
+          "value": 1618000.0
+        },
+        "medianPsf": {
+          "observations": 154,
+          "unit": "SGD_per_sqft",
+          "value": 1464.4277535436813
+        },
+        "transactionCount": {
+          "observations": 154,
+          "unit": "transactions",
+          "value": 154
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2392,
+          "unit": "SGD",
+          "value": 2341750.0
+        },
+        "medianPsf": {
+          "observations": 2392,
+          "unit": "SGD_per_sqft",
+          "value": 2508.3845074740566
+        },
+        "transactionCount": {
+          "observations": 2392,
+          "unit": "transactions",
+          "value": 2392
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 135,
+          "unit": "SGD",
+          "value": 868888.0
+        },
+        "medianPsf": {
+          "observations": 135,
+          "unit": "SGD_per_sqft",
+          "value": 916.3626904408592
+        },
+        "transactionCount": {
+          "observations": 135,
+          "unit": "transactions",
+          "value": 135
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 84,
+          "unit": "SGD",
+          "value": 494444.0
+        },
+        "medianPsf": {
+          "observations": 84,
+          "unit": "SGD_per_sqft",
+          "value": 570.7272861260353
+        },
+        "transactionCount": {
+          "observations": 84,
+          "unit": "transactions",
+          "value": 84
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 0,
+          "unit": "SGD",
+          "value": null
+        },
+        "medianPsf": {
+          "observations": 0,
+          "unit": "SGD_per_sqft",
+          "value": null
+        },
+        "transactionCount": {
+          "observations": 0,
+          "unit": "transactions",
+          "value": 0
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "ec",
+      "status": "no-sales"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 51,
+          "unit": "SGD",
+          "value": 2328100.0
+        },
+        "medianPsf": {
+          "observations": 51,
+          "unit": "SGD_per_sqft",
+          "value": 2315.485643119919
+        },
+        "transactionCount": {
+          "observations": 51,
+          "unit": "transactions",
+          "value": 51
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 179,
+          "unit": "SGD",
+          "value": 728000.0
+        },
+        "medianPsf": {
+          "observations": 179,
+          "unit": "SGD_per_sqft",
+          "value": 719.2500379853926
+        },
+        "transactionCount": {
+          "observations": 179,
+          "unit": "transactions",
+          "value": 179
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 146,
+          "unit": "SGD",
+          "value": 680000.0
+        },
+        "medianPsf": {
+          "observations": 146,
+          "unit": "SGD_per_sqft",
+          "value": 688.0504269626633
+        },
+        "transactionCount": {
+          "observations": 146,
+          "unit": "transactions",
+          "value": 146
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 21,
+          "unit": "SGD",
+          "value": 1730000.0
+        },
+        "medianPsf": {
+          "observations": 21,
+          "unit": "SGD_per_sqft",
+          "value": 1528.256486961046
+        },
+        "transactionCount": {
+          "observations": 21,
+          "unit": "transactions",
+          "value": 21
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 12,
+          "unit": "SGD",
+          "value": 1865000.0
+        },
+        "medianPsf": {
+          "observations": 12,
+          "unit": "SGD_per_sqft",
+          "value": 1493.7542694141634
+        },
+        "transactionCount": {
+          "observations": 12,
+          "unit": "transactions",
+          "value": 12
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 267,
+          "unit": "SGD",
+          "value": 815000.0
+        },
+        "medianPsf": {
+          "observations": 267,
+          "unit": "SGD_per_sqft",
+          "value": 739.2292057072091
+        },
+        "transactionCount": {
+          "observations": 267,
+          "unit": "transactions",
+          "value": 267
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 193,
+          "unit": "SGD",
+          "value": 750000.0
+        },
+        "medianPsf": {
+          "observations": 193,
+          "unit": "SGD_per_sqft",
+          "value": 632.3658422203505
+        },
+        "transactionCount": {
+          "observations": 193,
+          "unit": "transactions",
+          "value": 193
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 12,
+          "unit": "SGD",
+          "value": 1580000.0
+        },
+        "medianPsf": {
+          "observations": 12,
+          "unit": "SGD_per_sqft",
+          "value": 1699.9277814888392
+        },
+        "transactionCount": {
+          "observations": 12,
+          "unit": "transactions",
+          "value": 12
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 62,
+          "unit": "SGD",
+          "value": 1465000.0
+        },
+        "medianPsf": {
+          "observations": 62,
+          "unit": "SGD_per_sqft",
+          "value": 1569.6859463165224
+        },
+        "transactionCount": {
+          "observations": 62,
+          "unit": "transactions",
+          "value": 62
+        }
+      },
+      "periodId": "month_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 12718,
+          "unit": "SGD",
+          "value": 945000.0
+        },
+        "medianPsf": {
+          "observations": 12718,
+          "unit": "SGD_per_sqft",
+          "value": 938.9758479161646
+        },
+        "transactionCount": {
+          "observations": 12718,
+          "unit": "transactions",
+          "value": 12718
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 6930,
+          "unit": "SGD",
+          "value": 643844.0
+        },
+        "medianPsf": {
+          "observations": 6930,
+          "unit": "SGD_per_sqft",
+          "value": 599.6175254213302
+        },
+        "transactionCount": {
+          "observations": 6930,
+          "unit": "transactions",
+          "value": 6930
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 477,
+          "unit": "SGD",
+          "value": 1620000.0
+        },
+        "medianPsf": {
+          "observations": 477,
+          "unit": "SGD_per_sqft",
+          "value": 1493.5284122103026
+        },
+        "transactionCount": {
+          "observations": 477,
+          "unit": "transactions",
+          "value": 477
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 5311,
+          "unit": "SGD",
+          "value": 2204000.0
+        },
+        "medianPsf": {
+          "observations": 5311,
+          "unit": "SGD_per_sqft",
+          "value": 2151.371051119284
+        },
+        "transactionCount": {
+          "observations": 5311,
+          "unit": "transactions",
+          "value": 5311
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 374,
+          "unit": "SGD",
+          "value": 858344.0
+        },
+        "medianPsf": {
+          "observations": 374,
+          "unit": "SGD_per_sqft",
+          "value": 829.2199299547938
+        },
+        "transactionCount": {
+          "observations": 374,
+          "unit": "transactions",
+          "value": 374
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 232,
+          "unit": "SGD",
+          "value": 486500.0
+        },
+        "medianPsf": {
+          "observations": 232,
+          "unit": "SGD_per_sqft",
+          "value": 566.7324181793005
+        },
+        "transactionCount": {
+          "observations": 232,
+          "unit": "transactions",
+          "value": 232
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2,
+          "unit": "SGD",
+          "value": 1939444.0
+        },
+        "medianPsf": {
+          "observations": 2,
+          "unit": "SGD_per_sqft",
+          "value": 1380.8707453550023
+        },
+        "transactionCount": {
+          "observations": 2,
+          "unit": "transactions",
+          "value": 2
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 140,
+          "unit": "SGD",
+          "value": 2475000.0
+        },
+        "medianPsf": {
+          "observations": 140,
+          "unit": "SGD_per_sqft",
+          "value": 2323.7137303600202
+        },
+        "transactionCount": {
+          "observations": 140,
+          "unit": "transactions",
+          "value": 140
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 597,
+          "unit": "SGD",
+          "value": 716000.0
+        },
+        "medianPsf": {
+          "observations": 597,
+          "unit": "SGD_per_sqft",
+          "value": 714.9501736278713
+        },
+        "transactionCount": {
+          "observations": 597,
+          "unit": "transactions",
+          "value": 597
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 488,
+          "unit": "SGD",
+          "value": 680000.0
+        },
+        "medianPsf": {
+          "observations": 488,
+          "unit": "SGD_per_sqft",
+          "value": 688.170444677335
+        },
+        "transactionCount": {
+          "observations": 488,
+          "unit": "transactions",
+          "value": 488
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 66,
+          "unit": "SGD",
+          "value": 1700000.0
+        },
+        "medianPsf": {
+          "observations": 66,
+          "unit": "SGD_per_sqft",
+          "value": 1521.184700712567
+        },
+        "transactionCount": {
+          "observations": 66,
+          "unit": "transactions",
+          "value": 66
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 43,
+          "unit": "SGD",
+          "value": 1760000.0
+        },
+        "medianPsf": {
+          "observations": 43,
+          "unit": "SGD_per_sqft",
+          "value": 1645.712586914196
+        },
+        "transactionCount": {
+          "observations": 43,
+          "unit": "transactions",
+          "value": 43
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 816,
+          "unit": "SGD",
+          "value": 780000.0
+        },
+        "medianPsf": {
+          "observations": 816,
+          "unit": "SGD_per_sqft",
+          "value": 715.9059914015643
+        },
+        "transactionCount": {
+          "observations": 816,
+          "unit": "transactions",
+          "value": 816
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 610,
+          "unit": "SGD",
+          "value": 728000.0
+        },
+        "medianPsf": {
+          "observations": 610,
+          "unit": "SGD_per_sqft",
+          "value": 627.9629836147456
+        },
+        "transactionCount": {
+          "observations": 610,
+          "unit": "transactions",
+          "value": 610
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 44,
+          "unit": "SGD",
+          "value": 1823500.0
+        },
+        "medianPsf": {
+          "observations": 44,
+          "unit": "SGD_per_sqft",
+          "value": 1761.3781101186532
+        },
+        "transactionCount": {
+          "observations": 44,
+          "unit": "transactions",
+          "value": 44
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 162,
+          "unit": "SGD",
+          "value": 1425000.0
+        },
+        "medianPsf": {
+          "observations": 162,
+          "unit": "SGD_per_sqft",
+          "value": 1548.5494326977828
+        },
+        "transactionCount": {
+          "observations": 162,
+          "unit": "transactions",
+          "value": 162
+        }
+      },
+      "periodId": "rolling3_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 42631,
+          "unit": "SGD",
+          "value": 995000.0
+        },
+        "medianPsf": {
+          "observations": 42631,
+          "unit": "SGD_per_sqft",
+          "value": 1051.9913239406446
+        },
+        "transactionCount": {
+          "observations": 42631,
+          "unit": "transactions",
+          "value": 42631
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 21801,
+          "unit": "SGD",
+          "value": 633999.0
+        },
+        "medianPsf": {
+          "observations": 21801,
+          "unit": "SGD_per_sqft",
+          "value": 601.5477661442415
+        },
+        "transactionCount": {
+          "observations": 21801,
+          "unit": "transactions",
+          "value": 21801
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2353,
+          "unit": "SGD",
+          "value": 1700000.0
+        },
+        "medianPsf": {
+          "observations": 2353,
+          "unit": "SGD_per_sqft",
+          "value": 1621.42255025402
+        },
+        "transactionCount": {
+          "observations": 2353,
+          "unit": "transactions",
+          "value": 2353
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 18477,
+          "unit": "SGD",
+          "value": 2112000.0
+        },
+        "medianPsf": {
+          "observations": 18477,
+          "unit": "SGD_per_sqft",
+          "value": 2107.314897877934
+        },
+        "transactionCount": {
+          "observations": 18477,
+          "unit": "transactions",
+          "value": 18477
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1387,
+          "unit": "SGD",
+          "value": 1082000.0
+        },
+        "medianPsf": {
+          "observations": 1387,
+          "unit": "SGD_per_sqft",
+          "value": 987.9135644981288
+        },
+        "transactionCount": {
+          "observations": 1387,
+          "unit": "transactions",
+          "value": 1387
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 758,
+          "unit": "SGD",
+          "value": 518444.0
+        },
+        "medianPsf": {
+          "observations": 758,
+          "unit": "SGD_per_sqft",
+          "value": 582.149266536951
+        },
+        "transactionCount": {
+          "observations": 758,
+          "unit": "transactions",
+          "value": 758
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 7,
+          "unit": "SGD",
+          "value": 1938888.0
+        },
+        "medianPsf": {
+          "observations": 7,
+          "unit": "SGD_per_sqft",
+          "value": 1334.1264189879632
+        },
+        "transactionCount": {
+          "observations": 7,
+          "unit": "transactions",
+          "value": 7
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 622,
+          "unit": "SGD",
+          "value": 2316000.0
+        },
+        "medianPsf": {
+          "observations": 622,
+          "unit": "SGD_per_sqft",
+          "value": 2301.8868626360495
+        },
+        "transactionCount": {
+          "observations": 622,
+          "unit": "transactions",
+          "value": 622
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1835,
+          "unit": "SGD",
+          "value": 710000.0
+        },
+        "medianPsf": {
+          "observations": 1835,
+          "unit": "SGD_per_sqft",
+          "value": 719.2500379853926
+        },
+        "transactionCount": {
+          "observations": 1835,
+          "unit": "transactions",
+          "value": 1835
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1477,
+          "unit": "SGD",
+          "value": 675000.0
+        },
+        "medianPsf": {
+          "observations": 1477,
+          "unit": "SGD_per_sqft",
+          "value": 694.0410293011007
+        },
+        "transactionCount": {
+          "observations": 1477,
+          "unit": "transactions",
+          "value": 1477
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 211,
+          "unit": "SGD",
+          "value": 1700000.0
+        },
+        "medianPsf": {
+          "observations": 211,
+          "unit": "SGD_per_sqft",
+          "value": 1533.3526295238753
+        },
+        "transactionCount": {
+          "observations": 211,
+          "unit": "transactions",
+          "value": 211
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 147,
+          "unit": "SGD",
+          "value": 1648000.0
+        },
+        "medianPsf": {
+          "observations": 147,
+          "unit": "SGD_per_sqft",
+          "value": 1641.1441123673678
+        },
+        "transactionCount": {
+          "observations": 147,
+          "unit": "transactions",
+          "value": 147
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 3323,
+          "unit": "SGD",
+          "value": 935000.0
+        },
+        "medianPsf": {
+          "observations": 3323,
+          "unit": "SGD_per_sqft",
+          "value": 817.1479598222933
+        },
+        "transactionCount": {
+          "observations": 3323,
+          "unit": "transactions",
+          "value": 3323
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1822,
+          "unit": "SGD",
+          "value": 724000.0
+        },
+        "medianPsf": {
+          "observations": 1822,
+          "unit": "SGD_per_sqft",
+          "value": 622.6041074005102
+        },
+        "transactionCount": {
+          "observations": 1822,
+          "unit": "transactions",
+          "value": 1822
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 566,
+          "unit": "SGD",
+          "value": 1990500.0
+        },
+        "medianPsf": {
+          "observations": 566,
+          "unit": "SGD_per_sqft",
+          "value": 1915.190233262048
+        },
+        "transactionCount": {
+          "observations": 566,
+          "unit": "transactions",
+          "value": 566
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 935,
+          "unit": "SGD",
+          "value": 1820000.0
+        },
+        "medianPsf": {
+          "observations": 935,
+          "unit": "SGD_per_sqft",
+          "value": 2251.7098344632973
+        },
+        "transactionCount": {
+          "observations": 935,
+          "unit": "transactions",
+          "value": 935
+        }
+      },
+      "periodId": "ytd_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 52053,
+          "unit": "SGD",
+          "value": 1050000.0
+        },
+        "medianPsf": {
+          "observations": 52053,
+          "unit": "SGD_per_sqft",
+          "value": 1130.994624948045
+        },
+        "transactionCount": {
+          "observations": 52053,
+          "unit": "transactions",
+          "value": 52053
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 25483,
+          "unit": "SGD",
+          "value": 631000.0
+        },
+        "medianPsf": {
+          "observations": 25483,
+          "unit": "SGD_per_sqft",
+          "value": 601.8149654116714
+        },
+        "transactionCount": {
+          "observations": 25483,
+          "unit": "transactions",
+          "value": 25483
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 3002,
+          "unit": "SGD",
+          "value": 1671500.0
+        },
+        "medianPsf": {
+          "observations": 3002,
+          "unit": "SGD_per_sqft",
+          "value": 1591.8687553471832
+        },
+        "transactionCount": {
+          "observations": 3002,
+          "unit": "transactions",
+          "value": 3002
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 23568,
+          "unit": "SGD",
+          "value": 2080000.0
+        },
+        "medianPsf": {
+          "observations": 23568,
+          "unit": "SGD_per_sqft",
+          "value": 2067.3742257033946
+        },
+        "transactionCount": {
+          "observations": 23568,
+          "unit": "transactions",
+          "value": 23568
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1640,
+          "unit": "SGD",
+          "value": 1080000.0
+        },
+        "medianPsf": {
+          "observations": 1640,
+          "unit": "SGD_per_sqft",
+          "value": 987.8806167876544
+        },
+        "transactionCount": {
+          "observations": 1640,
+          "unit": "transactions",
+          "value": 1640
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 889,
+          "unit": "SGD",
+          "value": 513000.0
+        },
+        "medianPsf": {
+          "observations": 889,
+          "unit": "SGD_per_sqft",
+          "value": 582.3778292642918
+        },
+        "transactionCount": {
+          "observations": 889,
+          "unit": "transactions",
+          "value": 889
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 7,
+          "unit": "SGD",
+          "value": 1938888.0
+        },
+        "medianPsf": {
+          "observations": 7,
+          "unit": "SGD_per_sqft",
+          "value": 1334.1264189879632
+        },
+        "transactionCount": {
+          "observations": 7,
+          "unit": "transactions",
+          "value": 7
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 744,
+          "unit": "SGD",
+          "value": 2316000.0
+        },
+        "medianPsf": {
+          "observations": 744,
+          "unit": "SGD_per_sqft",
+          "value": 2279.05529570983
+        },
+        "transactionCount": {
+          "observations": 744,
+          "unit": "transactions",
+          "value": 744
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2156,
+          "unit": "SGD",
+          "value": 715000.0
+        },
+        "medianPsf": {
+          "observations": 2156,
+          "unit": "SGD_per_sqft",
+          "value": 721.0392171843613
+        },
+        "transactionCount": {
+          "observations": 2156,
+          "unit": "transactions",
+          "value": 2156
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1702,
+          "unit": "SGD",
+          "value": 672888.0
+        },
+        "medianPsf": {
+          "observations": 1702,
+          "unit": "SGD_per_sqft",
+          "value": 692.418167502952
+        },
+        "transactionCount": {
+          "observations": 1702,
+          "unit": "transactions",
+          "value": 1702
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 266,
+          "unit": "SGD",
+          "value": 1697500.0
+        },
+        "medianPsf": {
+          "observations": 266,
+          "unit": "SGD_per_sqft",
+          "value": 1523.9905269143212
+        },
+        "transactionCount": {
+          "observations": 266,
+          "unit": "transactions",
+          "value": 266
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 188,
+          "unit": "SGD",
+          "value": 1644444.0
+        },
+        "medianPsf": {
+          "observations": 188,
+          "unit": "SGD_per_sqft",
+          "value": 1641.769365178167
+        },
+        "transactionCount": {
+          "observations": 188,
+          "unit": "transactions",
+          "value": 188
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 3842,
+          "unit": "SGD",
+          "value": 930000.0
+        },
+        "medianPsf": {
+          "observations": 3842,
+          "unit": "SGD_per_sqft",
+          "value": 813.9211397411741
+        },
+        "transactionCount": {
+          "observations": 3842,
+          "unit": "transactions",
+          "value": 3842
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2103,
+          "unit": "SGD",
+          "value": 720000.0
+        },
+        "medianPsf": {
+          "observations": 2103,
+          "unit": "SGD_per_sqft",
+          "value": 622.4509703731919
+        },
+        "transactionCount": {
+          "observations": 2103,
+          "unit": "transactions",
+          "value": 2103
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 622,
+          "unit": "SGD",
+          "value": 1979500.0
+        },
+        "medianPsf": {
+          "observations": 622,
+          "unit": "SGD_per_sqft",
+          "value": 1910.5301196257096
+        },
+        "transactionCount": {
+          "observations": 622,
+          "unit": "transactions",
+          "value": 622
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07",
+          "2026-08",
+          "2026-09",
+          "2026-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1117,
+          "unit": "SGD",
+          "value": 1780888.0
+        },
+        "medianPsf": {
+          "observations": 1117,
+          "unit": "SGD_per_sqft",
+          "value": 1837.8262728027742
+        },
+        "transactionCount": {
+          "observations": 1117,
+          "unit": "transactions",
+          "value": 1117
+        }
+      },
+      "periodId": "ttm_2026_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 78797,
+          "unit": "SGD",
+          "value": 1465000.0
+        },
+        "medianPsf": {
+          "observations": 78797,
+          "unit": "SGD_per_sqft",
+          "value": 1632.2986759279358
+        },
+        "transactionCount": {
+          "observations": 78797,
+          "unit": "transactions",
+          "value": 78797
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 25084,
+          "unit": "SGD",
+          "value": 628000.0
+        },
+        "medianPsf": {
+          "observations": 25084,
+          "unit": "SGD_per_sqft",
+          "value": 603.8703443919026
+        },
+        "transactionCount": {
+          "observations": 25084,
+          "unit": "transactions",
+          "value": 25084
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 6209,
+          "unit": "SGD",
+          "value": 1578000.0
+        },
+        "medianPsf": {
+          "observations": 6209,
+          "unit": "SGD_per_sqft",
+          "value": 1530.1691984591198
+        },
+        "transactionCount": {
+          "observations": 6209,
+          "unit": "transactions",
+          "value": 6209
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 47504,
+          "unit": "SGD",
+          "value": 1938952.0
+        },
+        "medianPsf": {
+          "observations": 47504,
+          "unit": "SGD_per_sqft",
+          "value": 2116.969574812075
+        },
+        "transactionCount": {
+          "observations": 47504,
+          "unit": "transactions",
+          "value": 47504
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2812,
+          "unit": "SGD",
+          "value": 1646000.0
+        },
+        "medianPsf": {
+          "observations": 2812,
+          "unit": "SGD_per_sqft",
+          "value": 2021.2563352042034
+        },
+        "transactionCount": {
+          "observations": 2812,
+          "unit": "transactions",
+          "value": 2812
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 971,
+          "unit": "SGD",
+          "value": 499000.0
+        },
+        "medianPsf": {
+          "observations": 971,
+          "unit": "SGD_per_sqft",
+          "value": 583.4769744124387
+        },
+        "transactionCount": {
+          "observations": 971,
+          "unit": "transactions",
+          "value": 971
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 14,
+          "unit": "SGD",
+          "value": 1900000.0
+        },
+        "medianPsf": {
+          "observations": 14,
+          "unit": "SGD_per_sqft",
+          "value": 1348.8733067284875
+        },
+        "transactionCount": {
+          "observations": 14,
+          "unit": "transactions",
+          "value": 14
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1827,
+          "unit": "SGD",
+          "value": 2139000.0
+        },
+        "medianPsf": {
+          "observations": 1827,
+          "unit": "SGD_per_sqft",
+          "value": 2175.889095177301
+        },
+        "transactionCount": {
+          "observations": 1827,
+          "unit": "transactions",
+          "value": 1827
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2274,
+          "unit": "SGD",
+          "value": 742444.0
+        },
+        "medianPsf": {
+          "observations": 2274,
+          "unit": "SGD_per_sqft",
+          "value": 733.7307829024376
+        },
+        "transactionCount": {
+          "observations": 2274,
+          "unit": "transactions",
+          "value": 2274
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1538,
+          "unit": "SGD",
+          "value": 672000.0
+        },
+        "medianPsf": {
+          "observations": 1538,
+          "unit": "SGD_per_sqft",
+          "value": 686.6753080041702
+        },
+        "transactionCount": {
+          "observations": 1538,
+          "unit": "transactions",
+          "value": 1538
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 433,
+          "unit": "SGD",
+          "value": 1660000.0
+        },
+        "medianPsf": {
+          "observations": 433,
+          "unit": "SGD_per_sqft",
+          "value": 1484.6284485049791
+        },
+        "transactionCount": {
+          "observations": 433,
+          "unit": "transactions",
+          "value": 433
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 303,
+          "unit": "SGD",
+          "value": 1500000.0
+        },
+        "medianPsf": {
+          "observations": 303,
+          "unit": "SGD_per_sqft",
+          "value": 1609.1973091566645
+        },
+        "transactionCount": {
+          "observations": 303,
+          "unit": "transactions",
+          "value": 303
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 5789,
+          "unit": "SGD",
+          "value": 1438888.0
+        },
+        "medianPsf": {
+          "observations": 5789,
+          "unit": "SGD_per_sqft",
+          "value": 1614.9516039812204
+        },
+        "transactionCount": {
+          "observations": 5789,
+          "unit": "transactions",
+          "value": 5789
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1921,
+          "unit": "SGD",
+          "value": 710000.0
+        },
+        "medianPsf": {
+          "observations": 1921,
+          "unit": "SGD_per_sqft",
+          "value": 620.8430315863495
+        },
+        "transactionCount": {
+          "observations": 1921,
+          "unit": "transactions",
+          "value": 1921
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1382,
+          "unit": "SGD",
+          "value": 1664000.0
+        },
+        "medianPsf": {
+          "observations": 1382,
+          "unit": "SGD_per_sqft",
+          "value": 1754.0940104612382
+        },
+        "transactionCount": {
+          "observations": 1382,
+          "unit": "transactions",
+          "value": 1382
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2486,
+          "unit": "SGD",
+          "value": 1698000.0
+        },
+        "medianPsf": {
+          "observations": 2486,
+          "unit": "SGD_per_sqft",
+          "value": 1866.9355083889577
+        },
+        "transactionCount": {
+          "observations": 2486,
+          "unit": "transactions",
+          "value": 2486
+        }
+      },
+      "periodId": "year_2025",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 8506,
+          "unit": "SGD",
+          "value": 1962000.0
+        },
+        "medianPsf": {
+          "observations": 8506,
+          "unit": "SGD_per_sqft",
+          "value": 2240.0062067650374
+        },
+        "transactionCount": {
+          "observations": 8506,
+          "unit": "transactions",
+          "value": 8506
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1338,
+          "unit": "SGD",
+          "value": 620000.0
+        },
+        "medianPsf": {
+          "observations": 1338,
+          "unit": "SGD_per_sqft",
+          "value": 606.9663225646682
+        },
+        "transactionCount": {
+          "observations": 1338,
+          "unit": "transactions",
+          "value": 1338
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 330,
+          "unit": "SGD",
+          "value": 1573000.0
+        },
+        "medianPsf": {
+          "observations": 330,
+          "unit": "SGD_per_sqft",
+          "value": 1443.6390891081337
+        },
+        "transactionCount": {
+          "observations": 330,
+          "unit": "transactions",
+          "value": 330
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 6838,
+          "unit": "SGD",
+          "value": 2181000.0
+        },
+        "medianPsf": {
+          "observations": 6838,
+          "unit": "SGD_per_sqft",
+          "value": 2676.1831335217285
+        },
+        "transactionCount": {
+          "observations": 6838,
+          "unit": "transactions",
+          "value": 6838
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 144,
+          "unit": "SGD",
+          "value": 1480000.0
+        },
+        "medianPsf": {
+          "observations": 144,
+          "unit": "SGD_per_sqft",
+          "value": 1099.711061187993
+        },
+        "transactionCount": {
+          "observations": 144,
+          "unit": "transactions",
+          "value": 144
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 61,
+          "unit": "SGD",
+          "value": 478000.0
+        },
+        "medianPsf": {
+          "observations": 61,
+          "unit": "SGD_per_sqft",
+          "value": 581.9207038096102
+        },
+        "transactionCount": {
+          "observations": 61,
+          "unit": "transactions",
+          "value": 61
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2,
+          "unit": "SGD",
+          "value": 1890000.0
+        },
+        "medianPsf": {
+          "observations": 2,
+          "unit": "SGD_per_sqft",
+          "value": 1330.1967903365462
+        },
+        "transactionCount": {
+          "observations": 2,
+          "unit": "transactions",
+          "value": 2
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 81,
+          "unit": "SGD",
+          "value": 2328000.0
+        },
+        "medianPsf": {
+          "observations": 81,
+          "unit": "SGD_per_sqft",
+          "value": 2115.3131521024497
+        },
+        "transactionCount": {
+          "observations": 81,
+          "unit": "transactions",
+          "value": 81
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 136,
+          "unit": "SGD",
+          "value": 760000.0
+        },
+        "medianPsf": {
+          "observations": 136,
+          "unit": "SGD_per_sqft",
+          "value": 739.2292057072091
+        },
+        "transactionCount": {
+          "observations": 136,
+          "unit": "transactions",
+          "value": 136
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 83,
+          "unit": "SGD",
+          "value": 680000.0
+        },
+        "medianPsf": {
+          "observations": 83,
+          "unit": "SGD_per_sqft",
+          "value": 687.0960649330943
+        },
+        "transactionCount": {
+          "observations": 83,
+          "unit": "transactions",
+          "value": 83
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 28,
+          "unit": "SGD",
+          "value": 1690444.0
+        },
+        "medianPsf": {
+          "observations": 28,
+          "unit": "SGD_per_sqft",
+          "value": 1469.4260983630686
+        },
+        "transactionCount": {
+          "observations": 28,
+          "unit": "transactions",
+          "value": 28
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 25,
+          "unit": "SGD",
+          "value": 1420000.0
+        },
+        "medianPsf": {
+          "observations": 25,
+          "unit": "SGD_per_sqft",
+          "value": 1637.9673613910848
+        },
+        "transactionCount": {
+          "observations": 25,
+          "unit": "transactions",
+          "value": 25
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 239,
+          "unit": "SGD",
+          "value": 1120000.0
+        },
+        "medianPsf": {
+          "observations": 239,
+          "unit": "SGD_per_sqft",
+          "value": 1174.9924793403054
+        },
+        "transactionCount": {
+          "observations": 239,
+          "unit": "transactions",
+          "value": 239
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 95,
+          "unit": "SGD",
+          "value": 690000.0
+        },
+        "medianPsf": {
+          "observations": 95,
+          "unit": "SGD_per_sqft",
+          "value": 624.3090329713208
+        },
+        "transactionCount": {
+          "observations": 95,
+          "unit": "transactions",
+          "value": 95
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 26,
+          "unit": "SGD",
+          "value": 1620000.0
+        },
+        "medianPsf": {
+          "observations": 26,
+          "unit": "SGD_per_sqft",
+          "value": 1407.6140000198038
+        },
+        "transactionCount": {
+          "observations": 26,
+          "unit": "transactions",
+          "value": 26
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-10"
+        ],
+        "requestedMonths": 1
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 118,
+          "unit": "SGD",
+          "value": 1620000.0
+        },
+        "medianPsf": {
+          "observations": 118,
+          "unit": "SGD_per_sqft",
+          "value": 1501.1322408152714
+        },
+        "transactionCount": {
+          "observations": 118,
+          "unit": "transactions",
+          "value": 118
+        }
+      },
+      "periodId": "month_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 23224,
+          "unit": "SGD",
+          "value": 1666500.0
+        },
+        "medianPsf": {
+          "observations": 23224,
+          "unit": "SGD_per_sqft",
+          "value": 1913.0390103801647
+        },
+        "transactionCount": {
+          "observations": 23224,
+          "unit": "transactions",
+          "value": 23224
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 5714,
+          "unit": "SGD",
+          "value": 630000.0
+        },
+        "medianPsf": {
+          "observations": 5714,
+          "unit": "SGD_per_sqft",
+          "value": 606.0942683635203
+        },
+        "transactionCount": {
+          "observations": 5714,
+          "unit": "transactions",
+          "value": 5714
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1294,
+          "unit": "SGD",
+          "value": 1600000.0
+        },
+        "medianPsf": {
+          "observations": 1294,
+          "unit": "SGD_per_sqft",
+          "value": 1514.4460807079051
+        },
+        "transactionCount": {
+          "observations": 1294,
+          "unit": "transactions",
+          "value": 1294
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 16216,
+          "unit": "SGD",
+          "value": 2000000.0
+        },
+        "medianPsf": {
+          "observations": 16216,
+          "unit": "SGD_per_sqft",
+          "value": 2211.9792834868226
+        },
+        "transactionCount": {
+          "observations": 16216,
+          "unit": "transactions",
+          "value": 16216
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 457,
+          "unit": "SGD",
+          "value": 1075000.0
+        },
+        "medianPsf": {
+          "observations": 457,
+          "unit": "SGD_per_sqft",
+          "value": 989.7756532340651
+        },
+        "transactionCount": {
+          "observations": 457,
+          "unit": "transactions",
+          "value": 457
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 235,
+          "unit": "SGD",
+          "value": 501888.0
+        },
+        "medianPsf": {
+          "observations": 235,
+          "unit": "SGD_per_sqft",
+          "value": 582.3778292642918
+        },
+        "transactionCount": {
+          "observations": 235,
+          "unit": "transactions",
+          "value": 235
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2,
+          "unit": "SGD",
+          "value": 1890000.0
+        },
+        "medianPsf": {
+          "observations": 2,
+          "unit": "SGD_per_sqft",
+          "value": 1330.1967903365462
+        },
+        "transactionCount": {
+          "observations": 2,
+          "unit": "transactions",
+          "value": 2
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 220,
+          "unit": "SGD",
+          "value": 2374000.0
+        },
+        "medianPsf": {
+          "observations": 220,
+          "unit": "SGD_per_sqft",
+          "value": 2115.322978063078
+        },
+        "transactionCount": {
+          "observations": 220,
+          "unit": "transactions",
+          "value": 220
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 567,
+          "unit": "SGD",
+          "value": 755000.0
+        },
+        "medianPsf": {
+          "observations": 567,
+          "unit": "SGD_per_sqft",
+          "value": 751.1316886053125
+        },
+        "transactionCount": {
+          "observations": 567,
+          "unit": "transactions",
+          "value": 567
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 370,
+          "unit": "SGD",
+          "value": 680000.0
+        },
+        "medianPsf": {
+          "observations": 370,
+          "unit": "SGD_per_sqft",
+          "value": 696.7734742983491
+        },
+        "transactionCount": {
+          "observations": 370,
+          "unit": "transactions",
+          "value": 370
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 124,
+          "unit": "SGD",
+          "value": 1690444.0
+        },
+        "medianPsf": {
+          "observations": 124,
+          "unit": "SGD_per_sqft",
+          "value": 1490.2804553885644
+        },
+        "transactionCount": {
+          "observations": 124,
+          "unit": "transactions",
+          "value": 124
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 73,
+          "unit": "SGD",
+          "value": 1420000.0
+        },
+        "medianPsf": {
+          "observations": 73,
+          "unit": "SGD_per_sqft",
+          "value": 1615.463026283532
+        },
+        "transactionCount": {
+          "observations": 73,
+          "unit": "transactions",
+          "value": 73
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 814,
+          "unit": "SGD",
+          "value": 940000.0
+        },
+        "medianPsf": {
+          "observations": 814,
+          "unit": "SGD_per_sqft",
+          "value": 918.6507371086266
+        },
+        "transactionCount": {
+          "observations": 814,
+          "unit": "transactions",
+          "value": 814
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 404,
+          "unit": "SGD",
+          "value": 690000.0
+        },
+        "medianPsf": {
+          "observations": 404,
+          "unit": "SGD_per_sqft",
+          "value": 620.9064413766152
+        },
+        "transactionCount": {
+          "observations": 404,
+          "unit": "transactions",
+          "value": 404
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 92,
+          "unit": "SGD",
+          "value": 1691500.0
+        },
+        "medianPsf": {
+          "observations": 92,
+          "unit": "SGD_per_sqft",
+          "value": 1609.7229628113128
+        },
+        "transactionCount": {
+          "observations": 92,
+          "unit": "transactions",
+          "value": 92
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 3
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 318,
+          "unit": "SGD",
+          "value": 1480000.0
+        },
+        "medianPsf": {
+          "observations": 318,
+          "unit": "SGD_per_sqft",
+          "value": 1520.3494329380956
+        },
+        "transactionCount": {
+          "observations": 318,
+          "unit": "transactions",
+          "value": 318
+        }
+      },
+      "periodId": "rolling3_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 69375,
+          "unit": "SGD",
+          "value": 1486000.0
+        },
+        "medianPsf": {
+          "observations": 69375,
+          "unit": "SGD_per_sqft",
+          "value": 1664.6299120123665
+        },
+        "transactionCount": {
+          "observations": 69375,
+          "unit": "transactions",
+          "value": 69375
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 21402,
+          "unit": "SGD",
+          "value": 628000.0
+        },
+        "medianPsf": {
+          "observations": 21402,
+          "unit": "SGD_per_sqft",
+          "value": 603.8703443919026
+        },
+        "transactionCount": {
+          "observations": 21402,
+          "unit": "transactions",
+          "value": 21402
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 5560,
+          "unit": "SGD",
+          "value": 1576800.0
+        },
+        "medianPsf": {
+          "observations": 5560,
+          "unit": "SGD_per_sqft",
+          "value": 1533.3526295238753
+        },
+        "transactionCount": {
+          "observations": 5560,
+          "unit": "transactions",
+          "value": 5560
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 42413,
+          "unit": "SGD",
+          "value": 1940000.0
+        },
+        "medianPsf": {
+          "observations": 42413,
+          "unit": "SGD_per_sqft",
+          "value": 2138.921896942854
+        },
+        "transactionCount": {
+          "observations": 42413,
+          "unit": "transactions",
+          "value": 42413
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2559,
+          "unit": "SGD",
+          "value": 1663000.0
+        },
+        "medianPsf": {
+          "observations": 2559,
+          "unit": "SGD_per_sqft",
+          "value": 2056.4756617883195
+        },
+        "transactionCount": {
+          "observations": 2559,
+          "unit": "transactions",
+          "value": 2559
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 840,
+          "unit": "SGD",
+          "value": 500000.0
+        },
+        "medianPsf": {
+          "observations": 840,
+          "unit": "SGD_per_sqft",
+          "value": 582.813694142439
+        },
+        "transactionCount": {
+          "observations": 840,
+          "unit": "transactions",
+          "value": 840
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 14,
+          "unit": "SGD",
+          "value": 1900000.0
+        },
+        "medianPsf": {
+          "observations": 14,
+          "unit": "SGD_per_sqft",
+          "value": 1348.8733067284875
+        },
+        "transactionCount": {
+          "observations": 14,
+          "unit": "transactions",
+          "value": 14
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1705,
+          "unit": "SGD",
+          "value": 2122000.0
+        },
+        "medianPsf": {
+          "observations": 1705,
+          "unit": "SGD_per_sqft",
+          "value": 2181.3452248234853
+        },
+        "transactionCount": {
+          "observations": 1705,
+          "unit": "transactions",
+          "value": 1705
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1953,
+          "unit": "SGD",
+          "value": 745000.0
+        },
+        "medianPsf": {
+          "observations": 1953,
+          "unit": "SGD_per_sqft",
+          "value": 733.6614817612029
+        },
+        "transactionCount": {
+          "observations": 1953,
+          "unit": "transactions",
+          "value": 1953
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1313,
+          "unit": "SGD",
+          "value": 672888.0
+        },
+        "medianPsf": {
+          "observations": 1313,
+          "unit": "SGD_per_sqft",
+          "value": 686.4965793971935
+        },
+        "transactionCount": {
+          "observations": 1313,
+          "unit": "transactions",
+          "value": 1313
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 378,
+          "unit": "SGD",
+          "value": 1660000.0
+        },
+        "medianPsf": {
+          "observations": 378,
+          "unit": "SGD_per_sqft",
+          "value": 1483.318077984503
+        },
+        "transactionCount": {
+          "observations": 378,
+          "unit": "transactions",
+          "value": 378
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 262,
+          "unit": "SGD",
+          "value": 1500000.0
+        },
+        "medianPsf": {
+          "observations": 262,
+          "unit": "SGD_per_sqft",
+          "value": 1599.2266031833556
+        },
+        "transactionCount": {
+          "observations": 262,
+          "unit": "transactions",
+          "value": 262
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 5270,
+          "unit": "SGD",
+          "value": 1472000.0
+        },
+        "medianPsf": {
+          "observations": 5270,
+          "unit": "SGD_per_sqft",
+          "value": 1681.1042554499852
+        },
+        "transactionCount": {
+          "observations": 5270,
+          "unit": "transactions",
+          "value": 5270
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1640,
+          "unit": "SGD",
+          "value": 710444.0
+        },
+        "medianPsf": {
+          "observations": 1640,
+          "unit": "SGD_per_sqft",
+          "value": 620.9470458914345
+        },
+        "transactionCount": {
+          "observations": 1640,
+          "unit": "transactions",
+          "value": 1640
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1326,
+          "unit": "SGD",
+          "value": 1659000.0
+        },
+        "medianPsf": {
+          "observations": 1326,
+          "unit": "SGD_per_sqft",
+          "value": 1754.3664647279354
+        },
+        "transactionCount": {
+          "observations": 1326,
+          "unit": "transactions",
+          "value": 1326
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 10
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2304,
+          "unit": "SGD",
+          "value": 1704000.0
+        },
+        "medianPsf": {
+          "observations": 2304,
+          "unit": "SGD_per_sqft",
+          "value": 2226.471233857541
+        },
+        "transactionCount": {
+          "observations": 2304,
+          "unit": "transactions",
+          "value": 2304
+        }
+      },
+      "periodId": "ytd_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 84261,
+          "unit": "SGD",
+          "value": 1500000.0
+        },
+        "medianPsf": {
+          "observations": 84261,
+          "unit": "SGD_per_sqft",
+          "value": 1670.7079528175973
+        },
+        "transactionCount": {
+          "observations": 84261,
+          "unit": "transactions",
+          "value": 84261
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 25443,
+          "unit": "SGD",
+          "value": 625000.0
+        },
+        "medianPsf": {
+          "observations": 25443,
+          "unit": "SGD_per_sqft",
+          "value": 600.7735733950211
+        },
+        "transactionCount": {
+          "observations": 25443,
+          "unit": "transactions",
+          "value": 25443
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 6964,
+          "unit": "SGD",
+          "value": 1551500.0
+        },
+        "medianPsf": {
+          "observations": 6964,
+          "unit": "SGD_per_sqft",
+          "value": 1539.2602442778682
+        },
+        "transactionCount": {
+          "observations": 6964,
+          "unit": "transactions",
+          "value": 6964
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 51854,
+          "unit": "SGD",
+          "value": 1947000.0
+        },
+        "medianPsf": {
+          "observations": 51854,
+          "unit": "SGD_per_sqft",
+          "value": 2161.19152644723
+        },
+        "transactionCount": {
+          "observations": 51854,
+          "unit": "transactions",
+          "value": 51854
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2991,
+          "unit": "SGD",
+          "value": 1686000.0
+        },
+        "medianPsf": {
+          "observations": 2991,
+          "unit": "SGD_per_sqft",
+          "value": 2046.8181636531401
+        },
+        "transactionCount": {
+          "observations": 2991,
+          "unit": "transactions",
+          "value": 2991
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 983,
+          "unit": "SGD",
+          "value": 495000.0
+        },
+        "medianPsf": {
+          "observations": 983,
+          "unit": "SGD_per_sqft",
+          "value": 582.3778292642918
+        },
+        "transactionCount": {
+          "observations": 983,
+          "unit": "transactions",
+          "value": 983
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 14,
+          "unit": "SGD",
+          "value": 1900000.0
+        },
+        "medianPsf": {
+          "observations": 14,
+          "unit": "SGD_per_sqft",
+          "value": 1348.8733067284875
+        },
+        "transactionCount": {
+          "observations": 14,
+          "unit": "transactions",
+          "value": 14
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1994,
+          "unit": "SGD",
+          "value": 2139000.0
+        },
+        "medianPsf": {
+          "observations": 1994,
+          "unit": "SGD_per_sqft",
+          "value": 2182.357896171973
+        },
+        "transactionCount": {
+          "observations": 1994,
+          "unit": "transactions",
+          "value": 1994
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2395,
+          "unit": "SGD",
+          "value": 740800.0
+        },
+        "medianPsf": {
+          "observations": 2395,
+          "unit": "SGD_per_sqft",
+          "value": 731.2375386184825
+        },
+        "transactionCount": {
+          "observations": 2395,
+          "unit": "transactions",
+          "value": 2395
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1592,
+          "unit": "SGD",
+          "value": 670000.0
+        },
+        "medianPsf": {
+          "observations": 1592,
+          "unit": "SGD_per_sqft",
+          "value": 680.7955003762314
+        },
+        "transactionCount": {
+          "observations": 1592,
+          "unit": "transactions",
+          "value": 1592
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 468,
+          "unit": "SGD",
+          "value": 1629000.0
+        },
+        "medianPsf": {
+          "observations": 468,
+          "unit": "SGD_per_sqft",
+          "value": 1472.5928127375034
+        },
+        "transactionCount": {
+          "observations": 468,
+          "unit": "transactions",
+          "value": 468
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 335,
+          "unit": "SGD",
+          "value": 1450000.0
+        },
+        "medianPsf": {
+          "observations": 335,
+          "unit": "SGD_per_sqft",
+          "value": 1592.6250841105125
+        },
+        "transactionCount": {
+          "observations": 335,
+          "unit": "transactions",
+          "value": 335
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 5862,
+          "unit": "SGD",
+          "value": 1430444.0
+        },
+        "medianPsf": {
+          "observations": 5862,
+          "unit": "SGD_per_sqft",
+          "value": 1587.5413024221084
+        },
+        "transactionCount": {
+          "observations": 5862,
+          "unit": "transactions",
+          "value": 5862
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1943,
+          "unit": "SGD",
+          "value": 712000.0
+        },
+        "medianPsf": {
+          "observations": 1943,
+          "unit": "SGD_per_sqft",
+          "value": 618.307992958445
+        },
+        "transactionCount": {
+          "observations": 1943,
+          "unit": "transactions",
+          "value": 1943
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1388,
+          "unit": "SGD",
+          "value": 1658100.0
+        },
+        "medianPsf": {
+          "observations": 1388,
+          "unit": "SGD_per_sqft",
+          "value": 1752.3131842549233
+        },
+        "transactionCount": {
+          "observations": 1388,
+          "unit": "transactions",
+          "value": 1388
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2531,
+          "unit": "SGD",
+          "value": 1682000.0
+        },
+        "medianPsf": {
+          "observations": 2531,
+          "unit": "SGD_per_sqft",
+          "value": 1821.1962767374841
+        },
+        "transactionCount": {
+          "observations": 2531,
+          "unit": "transactions",
+          "value": 2531
+        }
+      },
+      "periodId": "ttm_2025_10",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 74422,
+          "unit": "SGD",
+          "value": 1258888.0
+        },
+        "medianPsf": {
+          "observations": 74422,
+          "unit": "SGD_per_sqft",
+          "value": 1377.0425389783657
+        },
+        "transactionCount": {
+          "observations": 74422,
+          "unit": "transactions",
+          "value": 74422
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 27832,
+          "unit": "SGD",
+          "value": 590000.0
+        },
+        "medianPsf": {
+          "observations": 27832,
+          "unit": "SGD_per_sqft",
+          "value": 566.4948142664963
+        },
+        "transactionCount": {
+          "observations": 27832,
+          "unit": "transactions",
+          "value": 27832
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 6174,
+          "unit": "SGD",
+          "value": 1450000.0
+        },
+        "medianPsf": {
+          "observations": 6174,
+          "unit": "SGD_per_sqft",
+          "value": 1383.5472753608713
+        },
+        "transactionCount": {
+          "observations": 6174,
+          "unit": "transactions",
+          "value": 6174
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "SG",
+      "metrics": {
+        "medianPrice": {
+          "observations": 40416,
+          "unit": "SGD",
+          "value": 1818888.0
+        },
+        "medianPsf": {
+          "observations": 40416,
+          "unit": "SGD_per_sqft",
+          "value": 1921.473289667248
+        },
+        "transactionCount": {
+          "observations": 40416,
+          "unit": "transactions",
+          "value": 40416
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 3572,
+          "unit": "SGD",
+          "value": 1587500.0
+        },
+        "medianPsf": {
+          "observations": 3572,
+          "unit": "SGD_per_sqft",
+          "value": 2083.010756605612
+        },
+        "transactionCount": {
+          "observations": 3572,
+          "unit": "transactions",
+          "value": 3572
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1060,
+          "unit": "SGD",
+          "value": 470000.0
+        },
+        "medianPsf": {
+          "observations": 1060,
+          "unit": "SGD_per_sqft",
+          "value": 557.4187794386793
+        },
+        "transactionCount": {
+          "observations": 1060,
+          "unit": "transactions",
+          "value": 1060
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 10,
+          "unit": "SGD",
+          "value": 1780000.0
+        },
+        "medianPsf": {
+          "observations": 10,
+          "unit": "SGD_per_sqft",
+          "value": 1239.8914898934704
+        },
+        "transactionCount": {
+          "observations": 10,
+          "unit": "transactions",
+          "value": 10
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "ANG MO KIO",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2502,
+          "unit": "SGD",
+          "value": 1990000.0
+        },
+        "medianPsf": {
+          "observations": 2502,
+          "unit": "SGD_per_sqft",
+          "value": 2197.0887603501897
+        },
+        "transactionCount": {
+          "observations": 2502,
+          "unit": "transactions",
+          "value": 2502
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2919,
+          "unit": "SGD",
+          "value": 700000.0
+        },
+        "medianPsf": {
+          "observations": 2919,
+          "unit": "SGD_per_sqft",
+          "value": 684.2864944722138
+        },
+        "transactionCount": {
+          "observations": 2919,
+          "unit": "transactions",
+          "value": 2919
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 2027,
+          "unit": "SGD",
+          "value": 640000.0
+        },
+        "medianPsf": {
+          "observations": 2027,
+          "unit": "SGD_per_sqft",
+          "value": 644.3281590285809
+        },
+        "transactionCount": {
+          "observations": 2027,
+          "unit": "transactions",
+          "value": 2027
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 534,
+          "unit": "SGD",
+          "value": 1530000.0
+        },
+        "medianPsf": {
+          "observations": 534,
+          "unit": "SGD_per_sqft",
+          "value": 1386.5491842794822
+        },
+        "transactionCount": {
+          "observations": 534,
+          "unit": "transactions",
+          "value": 534
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "PUNGGOL",
+      "metrics": {
+        "medianPrice": {
+          "observations": 358,
+          "unit": "SGD",
+          "value": 1390000.0
+        },
+        "medianPsf": {
+          "observations": 358,
+          "unit": "SGD_per_sqft",
+          "value": 1495.1869571491961
+        },
+        "transactionCount": {
+          "observations": 358,
+          "unit": "transactions",
+          "value": 358
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "condo",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 3692,
+          "unit": "SGD",
+          "value": 838000.0
+        },
+        "medianPsf": {
+          "observations": 3692,
+          "unit": "SGD_per_sqft",
+          "value": 780.6849391109363
+        },
+        "transactionCount": {
+          "observations": 3692,
+          "unit": "transactions",
+          "value": 3692
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "all",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "publish",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1961,
+          "unit": "SGD",
+          "value": 648000.0
+        },
+        "medianPsf": {
+          "observations": 1961,
+          "unit": "SGD_per_sqft",
+          "value": 575.1146137065739
+        },
+        "transactionCount": {
+          "observations": 1961,
+          "unit": "transactions",
+          "value": 1961
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "hdb",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 336,
+          "unit": "SGD",
+          "value": 1522500.0
+        },
+        "medianPsf": {
+          "observations": 336,
+          "unit": "SGD_per_sqft",
+          "value": 1417.0651034924012
+        },
+        "transactionCount": {
+          "observations": 336,
+          "unit": "transactions",
+          "value": 336
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "ec",
+      "status": "available"
+    },
+    {
+      "coverage": {
+        "months": [
+          "2024-01",
+          "2024-02",
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "requestedMonths": 12
+      },
+      "disposition": "limited-display",
+      "geographyId": "TAMPINES",
+      "metrics": {
+        "medianPrice": {
+          "observations": 1395,
+          "unit": "SGD",
+          "value": 1320000.0
+        },
+        "medianPsf": {
+          "observations": 1395,
+          "unit": "SGD_per_sqft",
+          "value": 1565.9338674231046
+        },
+        "transactionCount": {
+          "observations": 1395,
+          "unit": "transactions",
+          "value": 1395
+        }
+      },
+      "periodId": "year_2024",
+      "propertyType": "condo",
+      "status": "available"
+    }
+  ],
+  "schemaVersion": "2.1.0"
+}

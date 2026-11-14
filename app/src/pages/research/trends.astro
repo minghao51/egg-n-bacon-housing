@@ -3,11 +3,31 @@ import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/Sidebar.astro';
 import TrendsWorkspace from '@/components/trends/TrendsWorkspace';
 import { DATA_URLS } from '@/constants/data-urls';
+import { loadObservedPackFromDir, summariseWindows } from '@/utils/observed-pack-build';
+import path from 'path';
 
 // The workspace is a client island: the series/window selection lives in the
 // address bar, so parsing and history handling must happen in the browser (the
 // same pattern as /explore). One published asset feeds every number below.
 const trendsUrl = DATA_URLS.trends;
+
+// Verified v2 pack, read at build time. Absent or invalid means the workspace
+// keeps the legacy monthly series and shows no "published windows" panel.
+const observedResult = await loadObservedPackFromDir(path.resolve('public/data'));
+if (observedResult.state === 'invalid') {
+  console.error(
+    'v2 observed pack failed verification:',
+    observedResult.errors.join('; '),
+  );
+}
+const publishedWindows =
+  observedResult.state === 'ready'
+    ? summariseWindows(observedResult.pack, observedResult.manifest.generation)
+    : null;
+const observedCutoff =
+  observedResult.state === 'ready'
+    ? { cutoffMonth: observedResult.pack.cutoffMonth, generation: observedResult.manifest.generation }
+    : null;
 ---
 
 <Layout
@@ -52,7 +72,12 @@ const trendsUrl = DATA_URLS.trends;
         </div>
       </noscript>
 
-      <TrendsWorkspace client:only="react" trendsUrl={trendsUrl} />
+      <TrendsWorkspace
+        client:only="react"
+        trendsUrl={trendsUrl}
+        publishedWindows={publishedWindows}
+        observedCutoff={observedCutoff}
+      />
     </div>
   </main>
 </Layout>

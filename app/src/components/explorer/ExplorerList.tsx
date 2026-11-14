@@ -16,11 +16,11 @@ import {
   type ExplorerSort,
 } from "@/utils/explorer-selection";
 import type { ExplorerDataset, ExplorerRow } from "@/utils/observed-rows";
+import { ACTIVITY_SALE_FLOOR } from "@/utils/area-activity";
 import type { ReleaseStatus } from "@/utils/release-manifest";
 import { areaHref } from "@/utils/area-links";
 import {
   METRIC_OPTIONS,
-  periodLabel,
   propertyNoun,
   metricNoun,
 } from "./ExplorerSettings";
@@ -33,6 +33,29 @@ const COMPANION_METRICS: Record<ExplorerMetric, readonly ExplorerMetric[]> = {
   median_psf: ["volume", "median_price"],
   volume: ["median_price", "median_psf"],
 };
+
+/**
+ * One row's prior-year activity, as a sentence (RF10).
+ *
+ * Neutral by construction: a signed percentage or the reason it cannot be
+ * computed. No "up/down", "hot/cold" or score wording, and a missing
+ * comparison is stated rather than shown as 0%.
+ */
+function activitySentence(row: ExplorerRow): string | null {
+  const activity = row.activity;
+  if (activity === undefined || activity === null) return null;
+  const belowFloor = activity.eligible
+    ? ""
+    : ` · below the ${ACTIVITY_SALE_FLOOR}-sale floor`;
+  if (activity.changePercent === null || activity.priorCount === null) {
+    return `Prior-year comparison: ${activity.reason ?? "not published"}${belowFloor}`;
+  }
+  const sign = activity.changePercent >= 0 ? "+" : "−";
+  const prior = activity.priorCount.toLocaleString("en-US");
+  return `Prior-year same window: ${prior} sales (${sign}${Math.abs(
+    activity.changePercent,
+  ).toFixed(1)}%)${belowFloor}`;
+}
 
 function formatMetricValue(metric: ExplorerMetric, value: number): string {
   const digits = Math.round(value).toLocaleString("en-US");
@@ -60,22 +83,29 @@ function rowValue(row: ExplorerRow, metric: ExplorerMetric): number | null {
 }
 
 /**
- * Why a cell shows "N/A" instead of a number. Distinguishes a metric the
- * section does not publish from a subset the exporter wrote as empty, so a
- * reader never sees `0` standing in for missing data.
+ * Why a cell shows "N/A" instead of a number. Distinguishes a metric the window
+ * does not publish from a subset the exporter wrote as empty or a verified
+ * no-sales window, so a reader never sees `0` standing in for missing data.
  */
 function unavailableReason(row: ExplorerRow, metric: ExplorerMetric): string {
-  const observation = row.observation.metrics.find(
-    (entry) => entry.metric === metric,
-  );
   const noun = metricNoun(metric);
-  if (observation === undefined) {
-    return `${noun} is not published for ${row.areaName} in this selection.`;
+  const legacy = row.observation;
+
+  if (legacy !== undefined) {
+    const entry = legacy.metrics.find((item) => item.metric === metric);
+    if (entry === undefined) {
+      return `${noun} is not published for ${row.areaName} in this selection.`;
+    }
+    if (entry.status === "empty") {
+      return `${row.areaName} has no transactions in this section, so no ${noun} is published.`;
+    }
+    return `${noun} is not published for ${row.areaName} in ${row.sectionLabel}.`;
   }
-  if (observation.status === "empty") {
-    return `${row.areaName} has no transactions in this section, so no ${noun} is published.`;
+
+  if (row.packObservation?.status === "no-sales") {
+    return `No sales were recorded for ${row.areaName} in ${row.sectionLabel}, so no ${noun} is published.`;
   }
-  return `${noun} is not published for ${row.areaName} in ${row.observation.section}.`;
+  return `${noun} is not published for ${row.areaName} in ${row.sectionLabel}.`;
 }
 
 function MetricCell({
@@ -139,13 +169,56 @@ export default function ExplorerList({
     METRIC_OPTIONS[0];
 
   const national =
-    dataset.baselineCompatible && dataset.national !== null
-      ? (dataset.national.find((entry) => entry.metric === selection.metric) ??
-        null)
-      : null;
+    dataset.national?.find((entry) => entry.metric === selection.metric) ?? null;
+
+  /** The national line: the value is the same kind of number, the source differs. */
+  const nationalValue = (sourceLabel: string, source: string) => (
+    <p className="mt-3 rounded border border-border bg-accent px-3 py-2 text-sm text-foreground">
+      <span className="font-bold">
+        National {propertyNoun(dataset.property)} {metricNoun(selection.metric)}:{" "}
+        {formatMetricValue(selection.metric, national!.value!)}
+      </span>
+      <span className="text-muted-foreground">
+        {" "}
+        &middot; {sourceLabel}{" "}
+        <code className="font-mono">{source}</code>
+      </span>
+    </p>
+  );
+
+  const nationalNotPublished = (source: string) => (
+    <p className="mt-3 rounded border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+      The national value for <code className="font-mono">{source}</code> is not
+      published for this selection, so no baseline is shown.
+    </p>
+  );
 
   let baselineBlock: ReactNode;
-  if (releaseStatus === "mismatch") {
+  if (dataset.kind === "pack") {
+    // The pack carries its own national scope and its own disposition, so the
+    // legacy asset-identity checks below do not apply to this window.
+    const coverageNote = dataset.national?.[0]?.note ?? null;
+    baselineBlock = (
+      <>
+        {national !== null && national.value !== null
+          ? nationalValue("from the same verified payload,", national.source)
+          : nationalNotPublished(
+              dataset.national?.[0]?.source ??
+                `observed pack · SG · ${dataset.label}`,
+            )}
+        {coverageNote !== null ? (
+          <p className="mt-2 rounded border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+            {coverageNote}
+          </p>
+        ) : null}
+        {!dataset.rankable ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Areas are listed by name, not ranked, for this scope.
+          </p>
+        ) : null}
+      </>
+    );
+  } else if (releaseStatus === "mismatch") {
     // Only a hash/generation disagreement proves the pair is mixed. A missing
     // or unreadable manifest proves nothing about compatibility, so it must not
     // be described as one.
@@ -207,87 +280,97 @@ export default function ExplorerList({
       </div>
     );
   } else if (national !== null && national.value !== null) {
-    baselineBlock = (
-      <p className="mt-3 rounded border border-border bg-accent px-3 py-2 text-sm text-foreground">
-        <span className="font-bold">
-          National {propertyNoun(dataset.property)}{" "}
-          {metricNoun(selection.metric)}:{" "}
-          {formatMetricValue(selection.metric, national.value)}
-        </span>
-        <span className="text-muted-foreground">
-          {" "}
-          &middot; same joint section, from{" "}
-          <code className="font-mono">
-            dashboard_overview.stats.{national.source.section}
-          </code>
-        </span>
-      </p>
-    );
+    baselineBlock = nationalValue("same joint section, from", national.source);
   } else {
-    baselineBlock = (
-      <p className="mt-3 rounded border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-        The national value for{" "}
-        <code className="font-mono">
-          dashboard_overview.stats.{dataset.section}
-        </code>{" "}
-        is not published for this selection, so no baseline is shown.
-      </p>
+    baselineBlock = nationalNotPublished(
+      `dashboard_overview.stats.${dataset.section}`,
     );
   }
 
   return (
     <div className="min-w-0">
       <h2 className="text-2xl font-bold text-foreground">
-        {periodLabel(dataset.period)} {propertyNoun(dataset.property)}{" "}
-        {metricOption.noun}
+        {dataset.label} {propertyNoun(dataset.property)} {metricOption.noun}
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Showing {pageRows.length} of {rows.length} areas &middot;{" "}
-        {selection.direction === "asc" ? "ascending" : "descending"}{" "}
-        {sortOption.noun} &middot; page {page} of {pageCount}
+        {dataset.rankable
+          ? `${selection.direction === "asc" ? "ascending" : "descending"} ${sortOption.noun}`
+          : "listed by name"}{" "}
+        &middot; page {page} of {pageCount}
       </p>
 
       {baselineBlock}
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="sm:w-60">
-          <label
-            htmlFor="explorer-sort"
-            className="block text-sm font-bold text-foreground"
-          >
-            Sort by
-          </label>
-          <select
-            id="explorer-sort"
-            value={selection.sort}
-            onChange={(event) => {
-              // The visible metric and the ordering stay in step: the list
-              // always shows the quantity it is sorted by.
-              const next = event.target.value as ExplorerSort;
-              onChange({ sort: next, metric: next });
-            }}
-            className="mt-1 w-full rounded border border-input bg-card px-3 py-2 text-sm text-foreground"
-          >
-            {METRIC_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {dataset.rankable ? (
+          <>
+            <div className="sm:w-60">
+              <label
+                htmlFor="explorer-sort"
+                className="block text-sm font-bold text-foreground"
+              >
+                Sort by
+              </label>
+              <select
+                id="explorer-sort"
+                value={selection.sort}
+                onChange={(event) => {
+                  // The visible metric and the ordering stay in step: the list
+                  // always shows the quantity it is sorted by.
+                  const next = event.target.value as ExplorerSort;
+                  onChange({ sort: next, metric: next });
+                }}
+                className="mt-1 w-full rounded border border-input bg-card px-3 py-2 text-sm text-foreground"
+              >
+                {METRIC_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            onChange({
-              direction: selection.direction === "asc" ? "desc" : "asc",
-            })
-          }
-          className="rounded border border-input bg-card px-3 py-2 text-sm font-bold text-foreground"
-        >
-          <span className="sr-only">Sort direction: </span>
-          {selection.direction === "asc" ? "Ascending ↑" : "Descending ↓"}
-        </button>
+            <button
+              type="button"
+              onClick={() =>
+                onChange({
+                  direction: selection.direction === "asc" ? "desc" : "asc",
+                })
+              }
+              className="rounded border border-input bg-card px-3 py-2 text-sm font-bold text-foreground"
+            >
+              <span className="sr-only">Sort direction: </span>
+              {selection.direction === "asc" ? "Ascending ↑" : "Descending ↓"}
+            </button>
+          </>
+        ) : (
+          <div className="sm:w-60">
+            {/* No ordering control: this scope may not be ranked, so the
+                reader can still choose which value is shown in the main
+                column without the list implying a league table. */}
+            <label
+              htmlFor="explorer-metric"
+              className="block text-sm font-bold text-foreground"
+            >
+              Show metric
+            </label>
+            <select
+              id="explorer-metric"
+              value={selection.metric}
+              onChange={(event) =>
+                onChange({ metric: event.target.value as ExplorerMetric })
+              }
+              className="mt-1 w-full rounded border border-input bg-card px-3 py-2 text-sm text-foreground"
+            >
+              {METRIC_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="flex-1">
           <label
@@ -386,6 +469,22 @@ export default function ExplorerList({
                         ),
                       )}
                     </p>
+                    {(() => {
+                      const sentence = activitySentence(row);
+                      if (sentence === null) return null;
+                      return (
+                        <p
+                          className="mt-1 text-xs text-muted-foreground"
+                          data-explorer-activity={
+                            row.activity?.eligible === true
+                              ? "eligible"
+                              : "ineligible"
+                          }
+                        >
+                          {sentence}
+                        </p>
+                      );
+                    })()}
                   </div>
                   <MetricCell
                     row={row}

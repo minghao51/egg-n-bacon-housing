@@ -2,6 +2,10 @@
 import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/Sidebar.astro';
 import MarketOverviewDashboard from '@/components/dashboard/MarketOverviewDashboard';
+import {
+  loadObservedPackFromDir,
+  summariseForDashboard,
+} from '@/utils/observed-pack-build';
 import fs from 'fs';
 import path from 'path';
 import zlib from 'zlib';
@@ -21,6 +25,36 @@ try {
   dashboardData = JSON.parse(decompressed);
 } catch (error) {
   console.error("Failed to load dashboard data:", error);
+}
+
+// The v2 observed pack is verified at build time. When it is absent or fails
+// verification the page keeps the legacy snapshot and passes nothing, so no
+// number can silently come from an unverified payload.
+const observedResult = await loadObservedPackFromDir(
+  path.resolve('public/data'),
+);
+
+const currentData =
+  observedResult.state === 'ready'
+    ? {
+        hdb: summariseForDashboard(
+          observedResult.pack,
+          observedResult.manifest.generation,
+          'hdb',
+        ),
+        condo: summariseForDashboard(
+          observedResult.pack,
+          observedResult.manifest.generation,
+          'condo',
+        ),
+      }
+    : null;
+
+if (observedResult.state === 'invalid') {
+  console.error(
+    'v2 observed pack failed verification:',
+    observedResult.errors.join('; '),
+  );
 }
 
 // The monthly series are a separate published asset; the page never mixes
@@ -65,6 +99,7 @@ try {
           initialData={dashboardData}
           trendsData={trendsData}
           baseUrl={import.meta.env.BASE_URL}
+          currentData={currentData}
         />
       ) : (
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">

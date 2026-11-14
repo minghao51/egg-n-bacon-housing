@@ -1,13 +1,35 @@
+import { readFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
+
 import { test, expect, type Page } from "@playwright/test";
 import { expectPageToLoadWithoutErrors } from "./utils/pageHealth";
 
 /**
- * Catalog routes (slice S9).
+ * The catalog is regenerated whenever an inspected artifact changes (RF11, then
+ * the RS02 rental-yield rerun), so the snapshot date is read from the published
+ * catalog instead of being pinned to a literal.
+ */
+const CATALOG_GENERATED_LABEL = (() => {
+  const raw = gunzipSync(
+    readFileSync(new URL("../../public/data/catalog.jsonl.gz", import.meta.url)),
+  ).toString("utf-8");
+  const meta = JSON.parse(raw.split("\n")[0]) as { generated_at: string };
+  return new Date(meta.generated_at).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+})();
+
+/**
+ * Catalog routes (slice S9, reconciled in RF11).
  *
- * The catalog is a separate snapshot from the platinum artifacts, so the tests
- * bind to both labelled counts, the declared-vs-observed schema columns and the
- * retained dependency/nested-external URLs. No count is rewritten to match the
- * other generation.
+ * RF11 regenerated the catalog from the current platinum build, so the catalog
+ * and the artifact now describe the same snapshot. The tests bind to the
+ * labelled snapshot counts, the declared-vs-observed schema columns and the
+ * retained dependency/nested-external URLs; the earlier discrepancy is
+ * preserved in `src/constants/catalog-audit.ts` history, not on the page.
  */
 
 /**
@@ -38,7 +60,9 @@ test.describe("Data catalog", () => {
     await expect(
       page.getByText("Catalog snapshot, not a live run"),
     ).toBeVisible();
-    await expect(page.getByText(/Generated 12 Sept? 2026/)).toBeVisible();
+    await expect(
+      page.getByText(new RegExp(`Generated ${CATALOG_GENERATED_LABEL}`)),
+    ).toBeVisible();
     await expect(
       page.getByText(
         /“Available” means the artifact was present when the catalog was generated/,
@@ -55,25 +79,28 @@ test.describe("Data catalog", () => {
     ).toBeVisible();
   });
 
-  test("shows the snapshot discrepancy without rewriting either count", async ({
+  test("the regenerated catalog and the artifact agree, with no banner", async ({
     page,
   }) => {
     await page.goto("/catalog/platinum/unified_dataset");
     await expect(
       page.getByRole("heading", { level: 1, name: "Unified Dataset" }),
     ).toBeVisible();
-    await expect(page.getByText("Snapshot discrepancy")).toBeVisible();
+
+    // RF11 regenerated the catalog from this artifact, so the audit banner is
+    // gone; the recorded S0 finding lives in the audit constants, not here.
+    await expect(page.getByText("Snapshot discrepancy")).toHaveCount(0);
     await expect(
       page.getByText("Catalog reports (this generation)"),
-    ).toBeVisible();
-    await expect(page.getByText("1,233,405 rows")).toBeVisible();
-    await expect(page.getByText("Inspected artifact")).toBeVisible();
-    await expect(page.getByText("1,234,928 rows")).toBeVisible();
+    ).toHaveCount(0);
+
+    // The snapshot count shown on the page is the regenerated one ("Rows
+    // (catalog snapshot) · 1,236,310").
+    await expect(page.getByText("1,236,310", { exact: true }).first()).toBeVisible();
     await expect(
-      page.getByText(/Neither count replaces the other/),
-    ).toBeVisible();
-    await expect(
-      page.getByText(/Catalog snapshot generated 12 Sept? 2026/),
+      page.getByText(
+        new RegExp(`Catalog snapshot generated ${CATALOG_GENERATED_LABEL}`),
+      ),
     ).toBeVisible();
   });
 
@@ -104,6 +131,9 @@ test.describe("Data catalog", () => {
 
   test("schema search and sorting are keyboard operable", async ({ page }) => {
     await page.goto("/catalog/platinum/unified_dataset");
+    // The schema table is a `client:visible` island; interacting before it
+    // hydrates loses the toggle silently, so wait for the mount point.
+    await waitForHydration(page, "SchemaTable");
     const search = page.getByLabel("Search schema fields");
     await expect(search).toBeVisible();
     await search.fill("psf");

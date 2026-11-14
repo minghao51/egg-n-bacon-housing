@@ -20,19 +20,19 @@ test.describe("Home Page", () => {
   });
 
   test("should display navigation cards", async ({ page }) => {
-    await expect(page.getByText("Live Dashboard")).toBeVisible();
+    await expect(page.getByText("Market dashboard")).toBeVisible();
     await expect(page.getByText("Analytics Reports")).toBeVisible();
   });
 
   test("should display key insights", async ({ page }) => {
-    await expect(page.getByText("Lease Decay Myth Busted")).toBeVisible();
-    await expect(page.getByText("CBD > MRT")).toBeVisible();
+    await expect(page.getByText("Lease decay, measured")).toBeVisible();
+    await expect(page.getByText("CBD and MRT")).toBeVisible();
   });
 
-  test("should navigate to dashboard when clicking Live Dashboard card", async ({
+  test("should navigate to dashboard when clicking the dashboard card", async ({
     page,
   }) => {
-    await page.getByText("Live Dashboard").click();
+    await page.getByText("Market dashboard").click();
     await expect(page).toHaveURL(/dashboard/);
     await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
   });
@@ -50,12 +50,12 @@ test.describe("Home Page", () => {
   });
 
   test("should navigate to lease decay article", async ({ page }) => {
-    await page.getByText("Lease Decay Myth Busted").click();
+    await page.getByText("Lease decay, measured").click();
     await expect(page).toHaveURL(/analytics\/lease-decay/);
   });
 
   test("should navigate to MRT impact article", async ({ page }) => {
-    await page.getByText("CBD > MRT").click();
+    await page.getByText("CBD and MRT").click();
     await expect(page).toHaveURL(/analytics\/mrt-impact/);
   });
 

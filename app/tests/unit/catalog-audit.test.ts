@@ -12,6 +12,7 @@ import { gunzipSync } from "node:zlib";
 
 import {
   CATALOG_AUDIT,
+  CATALOG_AUDIT_HISTORY,
   catalogAuditFor,
   catalogGeneratedLabel,
 } from "../../src/constants/catalog-audit";
@@ -39,16 +40,27 @@ function catalogRowCount(datasetId: string): number | null {
 }
 
 describe("catalog audit", () => {
-  test("records both generations and never collapses them", () => {
+  test("the regenerated catalog and the artifact now agree", () => {
     expect(audit.datasetId).toBe("unified_dataset");
-    expect(audit.inspectedRowCount).toBe(1_234_928);
-    expect(catalogRowCount("unified_dataset")).toBe(1_233_405);
-    expect(audit.inspectedRowCount).not.toBe(
-      catalogRowCount("unified_dataset"),
-    );
+    expect(audit.inspectedRowCount).toBe(1_236_310);
+    expect(catalogRowCount("unified_dataset")).toBe(audit.inspectedRowCount);
+    expect(audit.catalogRowCount).toBe(audit.inspectedRowCount);
     expect(audit.inspectedArtifact.endsWith(".parquet")).toBe(true);
-    expect(audit.recordedIn).toContain("s0-baseline");
-    expect(audit.note).toContain("Neither count replaces the other");
+    expect(/^[0-9a-f]{16}$/.test(audit.inspectedArtifactSha256)).toBe(true);
+    expect(audit.recordedIn).toContain("rf11");
+    expect(audit.note).toContain("same snapshot");
+  });
+
+  test("the earlier S0 finding is preserved, not overwritten", () => {
+    expect(CATALOG_AUDIT_HISTORY).toHaveLength(1);
+    const previous = CATALOG_AUDIT_HISTORY[0]!;
+    expect(previous.inspectedRowCount).toBe(1_234_928);
+    expect(previous.catalogRowCount).toBe(1_233_405);
+    expect(previous.inspectedRowCount).not.toBe(previous.catalogRowCount);
+    expect(previous.recordedIn).toContain("s0-baseline");
+    expect(previous.note).toContain("Neither count replaced the other");
+    // The history entry is evidence, never the live comparison.
+    expect(previous).not.toBe(audit);
   });
 
   test("lookup is exact and the date falls back closed", () => {

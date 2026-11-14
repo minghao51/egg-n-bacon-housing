@@ -1,0 +1,194 @@
+{
+  "cutoffMonth": "2026-10",
+  "methodVersion": "observed-aggregates-2",
+  "metrics": [
+    "transactionCount",
+    "medianPrice",
+    "medianPsf"
+  ],
+  "periods": [
+    {
+      "comparatorId": "month_2025_10",
+      "endMonth": "2026-10",
+      "id": "month_2026_10",
+      "kind": "month",
+      "label": "2026-10 (one month)",
+      "months": [
+        "2026-10"
+      ],
+      "startMonth": "2026-10"
+    },
+    {
+      "comparatorId": "rolling3_2025_10",
+      "endMonth": "2026-10",
+      "id": "rolling3_2026_10",
+      "kind": "rolling3",
+      "label": "3 months to 2026-10",
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "startMonth": "2026-08"
+    },
+    {
+      "comparatorId": "ytd_2025_10",
+      "endMonth": "2026-10",
+      "id": "ytd_2026_10",
+      "kind": "ytd",
+      "label": "2026 January to 2026-10 (partial year)",
+      "months": [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "startMonth": "2026-01"
+    },
+    {
+      "comparatorId": "ttm_2025_10",
+      "endMonth": "2026-10",
+      "id": "ttm_2026_10",
+      "kind": "ttm",
+      "label": "12 months to 2026-10",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "startMonth": "2025-11"
+    },
+    {
+      "comparatorId": "year_2024",
+      "endMonth": "2025-12",
+      "id": "year_2025",
+      "kind": "year",
+      "label": "calendar year 2025",
+      "months": [
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-06",
+        "2025-07",
+        "2025-08",
+        "2025-09",
+        "2025-10",
+        "2025-11",
+        "2025-12"
+      ],
+      "startMonth": "2025-01"
+    },
+    {
+      "comparatorId": null,
+      "endMonth": "2025-10",
+      "id": "month_2025_10",
+      "kind": "month",
+      "label": "2025-10 (one month)",
+      "months": [
+        "2025-10"
+      ],
+      "startMonth": "2025-10"
+    },
+    {
+      "comparatorId": null,
+      "endMonth": "2025-10",
+      "id": "rolling3_2025_10",
+      "kind": "rolling3",
+      "label": "3 months to 2025-10",
+      "months": [
+        "2025-08",
+        "2025-09",
+        "2025-10"
+      ],
+      "startMonth": "2025-08"
+    },
+    {
+      "comparatorId": null,
+      "endMonth": "2025-10",
+      "id": "ytd_2025_10",
+      "kind": "ytd",
+      "label": "2025 January to 2025-10 (partial year)",
+      "months": [
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-06",
+        "2025-07",
+        "2025-08",
+        "2025-09",
+        "2025-10"
+      ],
+      "startMonth": "2025-01"
+    },
+    {
+      "comparatorId": null,
+      "endMonth": "2025-10",
+      "id": "ttm_2025_10",
+      "kind": "ttm",
+      "label": "12 months to 2025-10",
+      "months": [
+        "2024-11",
+        "2024-12",
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-06",
+        "2025-07",
+        "2025-08",
+        "2025-09",
+        "2025-10"
+      ],
+      "startMonth": "2024-11"
+    },
+    {
+      "comparatorId": null,
+      "endMonth": "2024-12",
+      "id": "year_2024",
+      "kind": "year",
+      "label": "calendar year 2024",
+      "months": [
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-08",
+        "2024-09",
+        "2024-10",
+        "2024-11",
+        "2024-12"
+      ],
+      "startMonth": "2024-01"
+    }
+  ],
+  "propertyTypes": [
+    "all",
+    "hdb",
+    "ec",
+    "condo"
+  ],
+  "schemaVersion": "2.1.0"
+}

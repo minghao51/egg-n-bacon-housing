@@ -3,11 +3,48 @@ import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/Sidebar.astro';
 import ExplorerWorkspace from '@/components/explorer/ExplorerWorkspace';
 import { DATA_URLS } from '@/constants/data-urls';
+import { loadObservedPackFromDir, summariseWindows } from '@/utils/observed-pack-build';
+import { resolveObservedRouteDefault } from '@/utils/observed-defaults';
+import { isObservedV2Enabled } from '@/config/observed-release';
+import path from 'path';
 
 // The workspace is a client island: the selection lives in the address bar, so
 // parsing and history handling must happen in the browser (same pattern as
 // /dashboard/map). Everything below is readable without it.
 const manifestUrl = `${import.meta.env.BASE_URL}data/dashboard-release.json`;
+
+// Verified v2 pack, read at build time. When it is absent or fails
+// verification the workspace keeps the legacy era selection and shows no
+// "published windows" panel.
+const observedResult = await loadObservedPackFromDir(path.resolve('public/data'));
+if (observedResult.state === 'invalid') {
+  console.error(
+    'v2 observed pack failed verification:',
+    observedResult.errors.join('; '),
+  );
+}
+const publishedWindows =
+  observedResult.state === 'ready'
+    ? summariseWindows(observedResult.pack, observedResult.manifest.generation)
+    : null;
+const observedCutoff =
+  observedResult.state === 'ready'
+    ? {
+        cutoffMonth: observedResult.pack.cutoffMonth,
+        generation: observedResult.manifest.generation,
+      }
+    : null;
+
+// D03's bare-URL default, gated by the release switch. `null` keeps the legacy
+// 2025 era, so a staged build without the switch behaves exactly as before.
+const observedDefault = resolveObservedRouteDefault({
+  v2Enabled: isObservedV2Enabled(),
+  pack: observedResult.state === 'ready' ? observedResult.pack : null,
+  alias: 'ttm',
+});
+const previousDefault = observedDefault
+  ? { label: '2025 complete year', query: 'period=year_2025' }
+  : null;
 ---
 
 <Layout
@@ -48,6 +85,10 @@ const manifestUrl = `${import.meta.env.BASE_URL}data/dashboard-release.json`;
         mapMetricsUrl={DATA_URLS.mapMetrics}
         overviewUrl={DATA_URLS.overview}
         manifestUrl={manifestUrl}
+        publishedWindows={publishedWindows}
+        observedCutoff={observedCutoff}
+        observedDefault={observedDefault}
+        previousDefault={previousDefault}
       >
         <p slot="fallback" class="mt-8 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
           Loading the observed comparison workspace&hellip;

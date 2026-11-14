@@ -48,7 +48,10 @@ export default function ComparisonChart({
           width={width}
           height={height}
           data={chartData}
-          layout={horizontal ? "horizontal" : "vertical"}
+          // Recharts "horizontal" draws vertical bars. `horizontal` here means
+          // horizontal bars, so the layout value is the inverse, matching the
+          // numeric X axis / category Y axis configuration below.
+          layout={horizontal ? "vertical" : "horizontal"}
         >
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
           <XAxis

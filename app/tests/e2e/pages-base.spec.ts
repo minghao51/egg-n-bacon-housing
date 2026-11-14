@@ -74,14 +74,18 @@ test.describe("Pages base path", () => {
         name: /Same year\. Same housing type\./,
       }),
     ).toBeVisible();
-    // This status only appears after the island fetches dashboard-release.json
-    // and verifies the published assets; it proves hydration + base-prefixed
-    // data URLs in one assertion.
-    await expect(page.getByText(/Publication generation verified/)).toBeVisible(
-      { timeout: 30_000 },
-    );
+    // The shipped default is a published window: this status only appears after
+    // the island fetches the manifest and hashes the payloads under the base
+    // prefix, so it proves hydration + base-prefixed data URLs in one assertion.
+    await expect(
+      page.getByText(/The manifest, payload sizes and sha256 digests were checked/),
+    ).toBeVisible({ timeout: 30_000 });
     await expect(page.getByLabel("Search planning areas")).toBeVisible();
     await expect(page.getByLabel("Area results")).toBeVisible();
+    // The bare URL adopted the published default and says so.
+    await expect(
+      page.locator('[data-observed-default-notice="true"]'),
+    ).toBeVisible();
 
     expect(failed).toEqual([]);
     await expect(
@@ -232,6 +236,31 @@ test.describe("Pages base path", () => {
 
 test.describe("Pages base path on a narrow viewport", () => {
   test.use({ viewport: { width: 390, height: 844 } });
+
+  test("resolves the verified v2 pack under the prefix", async ({ page }) => {
+    const failed: string[] = [];
+    page.on("response", (response) => {
+      if (response.url().startsWith(ORIGIN) && response.status() >= 400) {
+        failed.push(`${response.status()} ${response.url()}`);
+      }
+    });
+
+    await page.goto(at("/explore/?period=ttm_2026_10"));
+
+    await expect(
+      page.getByRole("radio", { name: "12 months to 2026-10" }),
+    ).toBeChecked({ timeout: 30_000 });
+    // The pack footer carries the generation the browser verified from the
+    // payloads it fetched under the base prefix.
+    await expect(
+      page.getByText(/The manifest, payload sizes and sha256 digests were checked/),
+    ).toBeVisible();
+    await expect(
+      page.getByText(/National HDB median transaction price: S\$631,000/),
+    ).toBeVisible();
+
+    expect(failed).toEqual([]);
+  });
 
   test("opens the drawer and reaches a research route", async ({ page }) => {
     await page.goto(at("/dashboard/"));

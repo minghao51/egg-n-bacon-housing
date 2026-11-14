@@ -5,6 +5,10 @@ import LeaderboardDashboard from '@/components/dashboard/leaderboard/Leaderboard
 import fs from 'fs';
 import path from 'path';
 import zlib from 'zlib';
+import { loadObservedPackFromDir } from '@/utils/observed-pack-build';
+import { resolveObservedRouteDefault } from '@/utils/observed-defaults';
+import { resolvePeriodAlias, findObservation } from '@/utils/observed-periods';
+import { isObservedV2Enabled } from '@/config/observed-release';
 
 function gunzip(data: Buffer): string {
   return zlib.gunzipSync(data).toString('utf-8');
@@ -22,6 +26,44 @@ try {
 } catch (error) {
   console.error("Failed to load leaderboard data:", error);
 }
+
+// D03's bare-URL default, gated by the release switch. `null` keeps the legacy
+// "2022 onward" era, so a staged build without the switch behaves as before.
+const observedPack = await loadObservedPackFromDir(path.resolve('public/data'));
+if (observedPack.state === 'invalid') {
+  console.error(
+    'v2 observed pack failed verification:',
+    observedPack.errors.join('; '),
+  );
+}
+const observedPackReady =
+  observedPack.state === 'ready' ? observedPack.pack : null;
+
+// D03's rankings default is only adopted when the page's default property scope
+// (`all`) is cleared to publish. Today that scope is `limited-display` in the
+// pack, so a bare Compare Areas URL keeps "2022 onward" — an unranked default
+// would be a regression, not a migration. The published windows stay
+// selectable, and the notice is shown only when a default actually moves.
+const defaultPeriod =
+  observedPackReady === null
+    ? null
+    : resolvePeriodAlias(observedPackReady, 'ttm');
+const defaultScope =
+  observedPackReady === null || defaultPeriod === null
+    ? null
+    : findObservation(observedPackReady, 'SG', 'all', defaultPeriod.id);
+const allScopePublishable = defaultScope?.disposition === 'publish';
+
+const observedDefault = allScopePublishable
+  ? resolveObservedRouteDefault({
+      v2Enabled: isObservedV2Enabled(),
+      pack: observedPackReady,
+      alias: 'ttm',
+    })
+  : null;
+const previousDefault = observedDefault
+  ? { label: '2022 onward', query: 'timeBasis=recent' }
+  : null;
 ---
 
 <Layout title="Compare Areas - Dashboard">
@@ -29,7 +71,12 @@ try {
 
   <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
     {leaderboardData.length > 0 ? (
-      <LeaderboardDashboard client:load initialData={leaderboardData} />
+      <LeaderboardDashboard
+        client:load
+        initialData={leaderboardData}
+        observedDefault={observedDefault}
+        previousDefault={previousDefault}
+      />
     ) : (
       <div class="flex items-center justify-center h-screen">
         <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">

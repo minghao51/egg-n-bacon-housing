@@ -14,19 +14,22 @@
  */
 import Layout from "@/layouts/Layout.astro";
 import Sidebar from "@/components/Sidebar.astro";
+import AreaSectionPanel from "@/components/areas/AreaSectionPanel";
+import AreaHistoryPanel from "@/components/areas/AreaHistoryPanel";
 import {
   AREA_PAGE_COMBINATIONS,
-  AREA_PRIMARY_PREFERENCE,
   areaEraScope,
+  areaPageDefaultOption,
+  areaPageOptions,
   areaSectionScope,
   loadAreaPages,
   type AreaPageData,
   type AreaPageSection,
 } from "@/utils/area-page";
-import {
-  compareWithBaseline,
-  type ObservedMetric,
-  type ObservedObservation,
+import { ACTIVITY_SALE_FLOOR, type AreaActivityRow } from "@/utils/area-activity";
+import type {
+  ObservedMetric,
+  ObservedObservation,
 } from "@/utils/observed-data";
 import { fileURLToPath } from "node:url";
 
@@ -51,15 +54,14 @@ const { area } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const exploreHref = `${base}/explore`;
 
+const sectionOptions = areaPageOptions(area);
+const defaultSection = areaPageDefaultOption(sectionOptions);
+const defaultSectionId = defaultSection.id;
+
 const primary =
-  AREA_PRIMARY_PREFERENCE.map((preference) =>
-    area.sections.find(
-      (section) =>
-        section.era === preference.era &&
-        section.property === preference.property &&
-        section.area !== null,
-    ),
-  ).find((section) => section !== undefined) ?? null;
+  area.sections.find(
+    (section) => section.section === defaultSectionId,
+  ) ?? null;
 
 const primarySectionName = primary?.section ?? "year_2025_hdb";
 
@@ -97,33 +99,9 @@ function formatPsf(value: number | null): string {
     : `S$${Math.round(value).toLocaleString("en-US")} psf`;
 }
 
-const areaPrice = areaMetric(primary, "median_price");
-const areaPsf = areaMetric(primary, "median_psf");
+// The default section's count anchors the page subtitle; the panel owns the
+// per-metric values for whatever section the reader selects.
 const areaVolume = areaMetric(primary, "volume");
-
-const areaPriceObservation =
-  primary?.area?.metrics.find((entry) => entry.metric === "median_price") ??
-  null;
-const nationalPriceObservation =
-  primary?.national?.find((entry) => entry.metric === "median_price") ?? null;
-
-// The national row and the difference exist only when the build-time release
-// check proves both assets come from one publication generation.
-const comparison =
-  area.baselineCompatible &&
-  areaPriceObservation !== null &&
-  nationalPriceObservation !== null
-    ? compareWithBaseline(areaPriceObservation, nationalPriceObservation)
-    : null;
-
-const nationalPrice = metricValue(primary?.national, "median_price");
-const nationalPsf = metricValue(primary?.national, "median_psf");
-const nationalVolume = metricValue(primary?.national, "volume");
-
-const priceNote =
-  areaPrice === null
-    ? "No transaction-price median is published for this area in this section."
-    : `The middle sale was ${formatPrice(areaPrice)}.`;
 
 const kicker = `Area fieldnote / ${area.areaName}`;
 // The headline scope must describe the section that was actually read: an area
@@ -147,6 +125,7 @@ const availabilityRows = AREA_PAGE_COMBINATIONS.map((combination) => {
   return {
     label: combination.label,
     sectionName: section?.section ?? "not published",
+    href: `?property=${combination.property}&period=${combination.era}`,
     price: areaMetric(section, "median_price"),
     psf: areaMetric(section, "median_psf"),
     volume: areaMetric(section, "volume"),
@@ -155,6 +134,29 @@ const availabilityRows = AREA_PAGE_COMBINATIONS.map((combination) => {
 
 const generationShort =
   area.generation === null ? null : area.generation.slice(0, 12);
+
+/**
+ * Activity cells (RF10).
+ *
+ * `null` never renders as a zero: a verified `no-sales` window and a missing
+ * observation say different things, so the caller picks the wording from the
+ * window's status rather than from the number alone.
+ */
+function activityCount(value: number | null): string {
+  return value === null ? "No observed sales" : value.toLocaleString("en-US");
+}
+
+function activityChange(row: AreaActivityRow): string {
+  const change = row.changePercent;
+  const before = row.priorYear?.transactionCount ?? null;
+  const now = row.current.transactionCount;
+  if (change === null || before === null || now === null) {
+    return row.changeUnavailableReason ?? "Not computable";
+  }
+  const absolute = now - before;
+  const sign = change >= 0 ? "+" : "−";
+  return `${sign}${Math.abs(absolute).toLocaleString("en-US")} sales (${sign}${Math.abs(change).toFixed(1)}%)`;
+}
 ---
 
 <Layout
@@ -195,221 +197,27 @@ const generationShort =
 
       <hr class="mt-6 border-border" />
 
+      <noscript>
+        <p class="mt-6 rounded-lg border border-border bg-muted px-4 py-3 text-sm text-foreground">
+          <span class="font-bold">Fixed build-time scope.</span> Without
+          JavaScript this page shows {headlineScope} from{" "}
+          <code class="font-mono">map_metrics.{primarySectionName}</code>. A
+          property type or period in the address bar cannot change these static
+          figures; follow one of the section links under “What else is
+          published”, or open Explore.
+        </p>
+      </noscript>
+
       <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <section aria-labelledby="area-comparison-heading" class="min-w-0">
-          <h2
-            id="area-comparison-heading"
-            class="text-2xl font-bold text-foreground"
-          >
-            What this area sold for
-          </h2>
-          <p class="mt-3 text-lg text-foreground">{priceNote}</p>
-
-          <dl class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div class="rounded-lg border border-border bg-card p-4">
-              <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
-                Median price
-              </dt>
-              <dd class="mt-1 text-2xl font-bold text-foreground" data-numeric>
-                {formatPrice(areaPrice)}
-              </dd>
-            </div>
-            <div class="rounded-lg border border-border bg-card p-4">
-              <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
-                Median PSF
-              </dt>
-              <dd class="mt-1 text-2xl font-bold text-foreground" data-numeric>
-                {formatPsf(areaPsf)}
-              </dd>
-            </div>
-            <div class="rounded-lg border border-border bg-card p-4">
-              <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
-                Transactions
-              </dt>
-              <dd class="mt-1 text-2xl font-bold text-foreground" data-numeric>
-                {formatCount(areaVolume)}
-              </dd>
-            </div>
-          </dl>
-
-          {
-            comparison !== null && nationalPrice !== null ? (
-              <div class="mt-6 rounded-lg border border-border bg-card p-5">
-                <p class="text-xl font-bold text-foreground">
-                  {comparison.difference === 0
-                    ? "At the national median. Not a like-for-like comparison."
-                    : comparison.difference > 0
-                      ? "Above the national median. Not a like-for-like premium."
-                      : "Below the national median. Not a like-for-like discount."}
-                </p>
-                <p class="mt-3 text-base text-foreground">
-                  The {area.areaName} median transaction price was{" "}
-                  <span data-numeric>
-                    {formatPrice(Math.abs(comparison.difference))}
-                  </span>{" "}
-                  {comparison.difference > 0
-                    ? "higher"
-                    : comparison.difference < 0
-                      ? "lower"
-                      : "level"}{" "}
-                  than the national HDB median in 2025
-                  {comparison.percentOfBaseline === 0
-                    ? "."
-                    : ` — a ${Math.abs(comparison.percentOfBaseline).toFixed(1)}% difference.`}
-                </p>
-                <p class="mt-2 text-sm text-muted-foreground">
-                  This difference may reflect the homes that sold, not location
-                  alone. The national figure counts transactions the area map
-                  excludes (for example Sungei Kadut), so area counts need not
-                  sum to it.
-                </p>
-              </div>
-            ) : null
-          }
-
-          {
-            area.baselineStatus === "mismatch" ? (
-              <div class="mt-6 rounded-lg border border-border bg-muted px-4 py-3 text-sm">
-                <p class="font-bold text-foreground">
-                  Assets do not share one publication generation; national
-                  comparison withheld
-                </p>
-                <p class="mt-1 text-muted-foreground">
-                  The area figures above are published for{" "}
-                  <code class="font-mono">map_metrics.{primarySectionName}</code>{" "}
-                  and are shown as they are. No national figure is shown, and
-                  none is computed from these area values.
-                </p>
-              </div>
-            ) : !area.baselineCompatible ? (
-              <div class="mt-6 rounded-lg border border-border bg-muted px-4 py-3 text-sm">
-                <p class="font-bold text-foreground">
-                  National comparison could not be verified; withheld
-                </p>
-                <p class="mt-1 text-muted-foreground">
-                  This snapshot publishes no verified publication manifest for{" "}
-                  <code class="font-mono">map_metrics.{primarySectionName}</code>{" "}
-                  and{" "}
-                  <code class="font-mono">
-                    dashboard_overview.stats.{primarySectionName}
-                  </code>{" "}
-                  (status: {area.baselineStatus}). The area figures above are
-                  shown as published; no national figure and no difference is
-                  drawn from them.
-                </p>
-              </div>
-            ) : null
-          }
-
-          <h3 class="mt-8 text-xl font-bold text-foreground">
-            The numbers behind this fieldnote
-          </h3>
-          <p class="mt-1 text-sm text-muted-foreground">
-            {headlineScope} only ·{" "}
-            <code class="font-mono">map_metrics.{primarySectionName}</code>
-          </p>
-          <div class="mt-4 rounded-lg border border-border bg-card sm:hidden">
-            <dl class="divide-y divide-border">
-              <div class="flex items-baseline justify-between gap-4 px-4 py-3">
-                <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
-                  Median price
-                </dt>
-                <dd class="text-lg font-bold text-foreground" data-numeric>
-                  {formatPrice(areaPrice)}
-                </dd>
-              </div>
-              <div class="flex items-baseline justify-between gap-4 px-4 py-3">
-                <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
-                  Median PSF
-                </dt>
-                <dd class="text-lg font-bold text-foreground" data-numeric>
-                  {formatPsf(areaPsf)}
-                </dd>
-              </div>
-              <div class="flex items-baseline justify-between gap-4 px-4 py-3">
-                <dt class="text-xs font-bold uppercase tracking-[1.2px] text-muted-foreground">
-                  Transactions
-                </dt>
-                <dd class="text-lg font-bold text-foreground" data-numeric>
-                  {formatCount(areaVolume)}
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <div
-            class="mt-4 hidden overflow-x-auto rounded-lg border border-border bg-card sm:block"
-            role="region"
-            aria-label={`Observed medians for ${area.areaName} and the national baseline`}
-            tabindex="0"
-          >
-            <table class="w-full border-collapse text-left text-sm">
-              <caption class="sr-only">
-                Observed medians for {area.areaName} in{" "}
-                {primarySectionName} and the national baseline
-              </caption>
-              <thead>
-                <tr class="border-b border-border">
-                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Area</th>
-                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Median price</th>
-                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Median PSF</th>
-                  <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Transactions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="border-b border-border">
-                  <th scope="row" class="px-4 py-3 font-bold text-foreground">
-                    {area.areaName}
-                  </th>
-                  <td class="px-4 py-3 text-foreground" data-numeric>
-                    {formatPrice(areaPrice)}
-                  </td>
-                  <td class="px-4 py-3 text-foreground" data-numeric>
-                    {formatPsf(areaPsf)}
-                  </td>
-                  <td class="px-4 py-3 text-foreground" data-numeric>
-                    {formatCount(areaVolume)}
-                  </td>
-                </tr>
-                {
-                  area.baselineCompatible && comparison !== null ? (
-                    <tr>
-                      <th scope="row" class="px-4 py-3 font-bold text-foreground">
-                        Singapore
-                      </th>
-                      <td class="px-4 py-3 text-foreground" data-numeric>
-                        {formatPrice(nationalPrice)}
-                      </td>
-                      <td class="px-4 py-3 text-foreground" data-numeric>
-                        {formatPsf(nationalPsf)}
-                      </td>
-                      <td class="px-4 py-3 text-foreground" data-numeric>
-                        {formatCount(nationalVolume)}
-                      </td>
-                    </tr>
-                  ) : null
-                }
-              </tbody>
-            </table>
-          </div>
-          {
-            area.baselineCompatible && comparison !== null ? (
-              <p class="mt-3 text-sm text-muted-foreground">
-                {comparison.difference === 0 ? (
-                  <>This area’s median is the same as the national median.</>
-                ) : (
-                  <>
-                    Difference to the national median:{" "}
-                    <span class="font-bold text-foreground" data-numeric>
-                      {formatPrice(Math.abs(comparison.difference))}
-                    </span>{" "}
-                    ({`${comparison.percentOfBaseline > 0 ? "+" : "−"}${Math.abs(comparison.percentOfBaseline).toFixed(1)}%`}{" "}
-                    of the national median).
-                  </>
-                )}
-              </p>
-            ) : null
-          }
-        </section>
+        <AreaSectionPanel
+          client:load
+          areaName={area.areaName}
+          areaId={area.areaId}
+          options={sectionOptions}
+          defaultOptionId={defaultSectionId}
+          baseline={{ compatible: area.baselineCompatible, status: area.baselineStatus }}
+          base={base}
+        />
 
         <aside
           aria-labelledby="area-limits-heading"
@@ -440,6 +248,155 @@ const generationShort =
 
       <hr class="mt-10 border-border" />
 
+      {
+        area.activity !== null && (
+          <section
+            aria-labelledby="area-activity-heading"
+            class="mt-8 min-w-0"
+            data-area-activity={area.activity.rows.length > 0 ? 'published' : 'none'}
+          >
+            <h2
+              id="area-activity-heading"
+              class="text-2xl font-bold text-foreground"
+            >
+              Observed transaction activity
+            </h2>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Rolling quarter <strong>{area.activity.range}</strong> — three
+              months of observed resale transactions ending at the{' '}
+              {area.activity.cutoffMonth} cutoff
+              {area.activity.comparatorRange !== null ? (
+                <>
+                  , compared with the same quarter a year earlier (
+                  {area.activity.comparatorRange})
+                </>
+              ) : (
+                <>; this quarter publishes no prior-year comparator</>
+              )}
+              . The trailing twelve months is shown separately as context and is
+              never folded into the quarter.
+            </p>
+
+            {area.activity.rows.length === 0 ? (
+              <p class="mt-4 rounded-lg border border-border bg-muted px-4 py-3 text-sm text-foreground">
+                No rolling-quarter observation is published for{' '}
+                {area.areaName}. Nothing is shown rather than a zero.
+              </p>
+            ) : (
+              <div class="mt-4 overflow-x-auto">
+                <table
+                  class="w-full min-w-[46rem] border-collapse text-sm"
+                  data-activity-table
+                >
+                  <caption class="sr-only">
+                    Observed rolling-quarter resale transactions by property type
+                    for {area.areaName}
+                  </caption>
+                  <thead>
+                    <tr class="border-b border-border text-left">
+                      <th scope="col" class="py-2 pr-4 font-bold">
+                        Property type
+                      </th>
+                      <th scope="col" class="py-2 pr-4 font-bold">
+                        Observed sales, {area.activity.range}
+                      </th>
+                      <th scope="col" class="py-2 pr-4 font-bold">
+                        Observed sales, prior-year quarter
+                      </th>
+                      <th scope="col" class="py-2 pr-4 font-bold">
+                        Change in observed sales
+                      </th>
+                      <th scope="col" class="py-2 pr-4 font-bold">
+                        Twelve months to {area.activity.cutoffMonth}
+                      </th>
+                      <th scope="col" class="py-2 font-bold">
+                        Meets the {ACTIVITY_SALE_FLOOR}-sale floor in both
+                        quarters
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {area.activity.rows.map((row) => (
+                      <tr
+                        class="border-b border-border align-top"
+                        data-activity-row={row.propertyType}
+                        data-activity-eligible={
+                          row.eligible ? 'true' : 'false'
+                        }
+                      >
+                        <th scope="row" class="py-3 pr-4 text-left font-bold">
+                          {row.propertyLabel}
+                        </th>
+                        <td class="py-3 pr-4" data-numeric>
+                          {activityCount(row.current.transactionCount)}
+                          {row.current.status === 'no-sales' && (
+                            <span class="mt-1 block text-xs text-muted-foreground">
+                              verified zero for this population
+                            </span>
+                          )}
+                        </td>
+                        <td class="py-3 pr-4" data-numeric>
+                          {row.priorYear === null
+                            ? 'Not published'
+                            : activityCount(row.priorYear.transactionCount)}
+                        </td>
+                        <td class="py-3 pr-4" data-numeric>
+                          {activityChange(row)}
+                        </td>
+                        <td class="py-3 pr-4" data-numeric>
+                          {row.ttmCount === null
+                            ? 'Not published'
+                            : activityCount(row.ttmCount)}
+                        </td>
+                        <td class="py-3">
+                          {row.eligible ? (
+                            <span>Yes</span>
+                          ) : (
+                            <span>
+                              No — <span>{row.ineligibleReason}</span>
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <ul class="mt-4 space-y-2 text-sm text-muted-foreground">
+              {area.activity.notes.map((note) => (
+                <li>{note}</li>
+              ))}
+            </ul>
+
+            {area.activity.periodId !== null && (
+              <p class="mt-3 text-sm">
+                <a
+                  href={`${base}/explore?period=${area.activity.periodId}`}
+                  class="font-bold text-[hsl(var(--teal))] underline underline-offset-4 hover:no-underline"
+                >
+                  Open this quarter in Explore
+                </a>
+              </p>
+            )}
+          </section>
+        )
+      }
+
+      {/*
+        RF10 slice 2b: the monthly payload is the largest asset in the release,
+        so it is fetched only when the reader asks. The island receives identity
+        only — never history data in props.
+      */}
+      <AreaHistoryPanel
+        client:idle
+        areaName={area.areaName}
+        areaId={area.areaId}
+        property={defaultSection.property}
+        base={base}
+      />
+
       <section aria-labelledby="area-availability-heading" class="mt-8 min-w-0">
         <h2
           id="area-availability-heading"
@@ -456,7 +413,12 @@ const generationShort =
             availabilityRows.map((row) => (
               <li class="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-baseline sm:justify-between">
                 <p class="text-base font-bold text-foreground">
-                  {row.label}
+                  <a
+                    href={row.href}
+                    class="underline-offset-4 hover:underline"
+                  >
+                    {row.label}
+                  </a>
                   <span class="ml-2 font-mono text-xs font-normal text-muted-foreground">
                     {row.sectionName}
                   </span>
@@ -522,52 +484,4 @@ const generationShort =
     </div>
   </main>
 
-  <script is:inline>
-    // Return-link enhancer only. A static build cannot see the incoming query,
-    // so the anchor renders the plain `/explore` fallback and this script adds
-    // the allow-listed explorer keys when the reader arrived from `/explore`.
-    (() => {
-      const link = document.getElementById("area-return");
-      if (!(link instanceof HTMLAnchorElement)) return;
-      const target = link.dataset.exploreHref;
-      if (typeof target !== "string" || target === "") return;
-
-      const current = new URLSearchParams(window.location.search);
-      if (current.get("from") !== "explore") return;
-
-      const allowed = [
-        "from",
-        "property",
-        "period",
-        "metric",
-        "sort",
-        "direction",
-        "minSales",
-        "search",
-        "area",
-        "page",
-      ];
-      const vocabularies = {
-        property: ["all", "hdb", "ec", "condo"],
-        period: ["whole", "pre_covid", "recent", "year_2025"],
-        metric: ["median_price", "median_psf", "volume"],
-        sort: ["median_price", "median_psf", "volume"],
-        direction: ["asc", "desc"],
-      };
-      const query = new URLSearchParams();
-      for (const key of allowed) {
-        const value = current.get(key);
-        if (value === null || value === "") continue;
-        const vocabulary = vocabularies[key];
-        if (vocabulary && !vocabulary.includes(value)) continue;
-        if (key === "minSales" && value !== "all" && !/^\d{1,6}$/.test(value)) continue;
-        if (key === "page" && !/^\d{1,4}$/.test(value)) continue;
-        if (value.length > 80) continue;
-        query.set(key, value);
-      }
-
-      const qs = query.toString();
-      link.href = qs === "" ? target : target + "?" + qs;
-    })();
-  </script>
 </Layout>

@@ -11,7 +11,12 @@ import type {
   LeaderboardEntry,
   LeaderboardMetric,
 } from "@/types/leaderboard";
-import type { Region } from "@/types/segments";
+import {
+  PLANNING_REGIONS,
+  PLANNING_REGION_LABELS,
+  parseLeaderboardTimeBasis,
+} from "@/types/leaderboard";
+import { isScopedRankMetric } from "@/utils/leaderboard-observed";
 import { useLeaderboardData } from "@/hooks/useLeaderboardData";
 import LeaderboardControls from "./LeaderboardControls";
 import LeaderboardMap from "./LeaderboardMap";
@@ -21,29 +26,21 @@ import { useModalDialog } from "@/hooks/useModalDialog";
 
 interface LeaderboardDashboardProps {
   initialData?: LeaderboardEntry[];
+  /** D03's bare-URL default while `PUBLIC_OBSERVED_RELEASE=v2`; else `null`. */
+  observedDefault?: { periodId: string; label: string } | null;
+  /** The window a bare URL used to open on, for the migration notice. */
+  previousDefault?: { label: string; query: string } | null;
 }
 
 const DEFAULT_CONTROLS: LeaderboardControlsState = {
-  region: ["CCR", "RCR", "OCR"],
+  region: [...PLANNING_REGIONS],
   propertyType: "all",
   timeBasis: "recent",
   priceRange: [300000, 2500000],
   search: "",
-  rankMetric: "yoy_growth_pct",
+  rankMetric: "median_price",
 };
 
-const REGION_LABELS: Record<Region, string> = {
-  CCR: "CCR",
-  RCR: "RCR",
-  OCR: "OCR",
-};
-
-const TIME_BASIS_LABELS: Record<LeaderboardControlsState["timeBasis"], string> =
-  {
-    recent: "Recent",
-    whole: "All-time",
-    year_2025: "2025",
-  };
 
 function formatCurrency(value: number): string {
   return `$${value.toLocaleString()}`;
@@ -51,9 +48,13 @@ function formatCurrency(value: number): string {
 
 export default function LeaderboardDashboard({
   initialData,
+  observedDefault = null,
+  previousDefault = null,
 }: LeaderboardDashboardProps) {
   const [controls, setControls] =
     useState<LeaderboardControlsState>(DEFAULT_CONTROLS);
+  const [defaultMigration, setDefaultMigration] =
+    useState<{ label: string; query: string } | null>(null);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [highlightedArea, setHighlightedArea] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -64,10 +65,24 @@ export default function LeaderboardDashboard({
     setIsMobileFiltersOpen(false),
   );
 
-  const { data, loading, error, refreshError, reload } = useLeaderboardData(
-    controls,
-    initialData,
-  );
+  const {
+    data,
+    unpublishedAreas,
+    rankedCount,
+    unrankedCount,
+    rankable,
+    timeBasisLabel,
+    sourceLabel,
+    windowNote,
+    windowUnavailable,
+    windowPending,
+    timeBasisOptions,
+    unsupportedReason,
+    loading,
+    error,
+    refreshError,
+    reload,
+  } = useLeaderboardData(controls, initialData);
   const metricMeta =
     METRICS.find((metric) => metric.key === controls.rankMetric) || METRICS[0];
 
@@ -95,6 +110,13 @@ export default function LeaderboardDashboard({
         ...current,
         rankMetric: metricParam as LeaderboardMetric,
       }));
+    } else if (metricParam && isScopedRankMetric(metricParam as LeaderboardMetric) === false) {
+      // A known legacy metric ID stays in the URL and resolves to an explicit
+      // unavailable state rather than silently ranking on something else.
+      setControls((current) => ({
+        ...current,
+        rankMetric: metricParam as LeaderboardMetric,
+      }));
     }
 
     if (
@@ -108,16 +130,22 @@ export default function LeaderboardDashboard({
       }));
     }
 
-    if (
-      timeBasisParam &&
-      ["recent", "whole", "year_2025"].includes(timeBasisParam)
-    ) {
+    if (timeBasisParam !== null) {
+      // Legacy eras and concrete published ids are both accepted; anything
+      // else falls back to the documented default.
       setControls((current) => ({
         ...current,
-        timeBasis: timeBasisParam as LeaderboardControlsState["timeBasis"],
+        timeBasis: parseLeaderboardTimeBasis(timeBasisParam),
       }));
+    } else if (observedDefault !== null) {
+      // A bare URL adopts D03's default; an explicit `?timeBasis=` never does.
+      setControls((current) => ({
+        ...current,
+        timeBasis: parseLeaderboardTimeBasis(observedDefault.periodId),
+      }));
+      setDefaultMigration(previousDefault);
     }
-  }, []);
+  }, [observedDefault, previousDefault]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -139,7 +167,7 @@ export default function LeaderboardDashboard({
 
     if (controls.region.length !== DEFAULT_CONTROLS.region.length) {
       chips.push(
-        `Region: ${controls.region.map((region) => REGION_LABELS[region]).join(", ") || "None"}`,
+        `Region: ${controls.region.map((region) => PLANNING_REGION_LABELS[region]).join(", ") || "None"}`,
       );
     }
 
@@ -148,7 +176,7 @@ export default function LeaderboardDashboard({
     }
 
     if (controls.timeBasis !== DEFAULT_CONTROLS.timeBasis) {
-      chips.push(`Time: ${TIME_BASIS_LABELS[controls.timeBasis]}`);
+      chips.push(`Time: ${timeBasisLabel}`);
     }
 
     if (
@@ -165,7 +193,7 @@ export default function LeaderboardDashboard({
     }
 
     return chips;
-  }, [controls]);
+  }, [controls, timeBasisLabel]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -218,22 +246,13 @@ export default function LeaderboardDashboard({
     [data, highlightedArea],
   );
   const quickSummary = useMemo(() => {
-    const topFive = data.slice(0, 5);
-    const topLabel =
-      controls.rankMetric === "rental_yield_mean" ||
-      controls.rankMetric === "rental_yield_median"
-        ? "Top 5 by yield"
-        : controls.rankMetric === "yoy_growth_pct"
-          ? "Top movers by recent growth"
-          : controls.rankMetric === "affordability_ratio"
-            ? "Best value under current budget"
-            : "Top 5 under current metric";
+    const topFive = data.filter((row) => row.rank !== null).slice(0, 5);
 
     return {
-      label: topLabel,
+      label: `Top 5 by ${metricMeta.label.toLowerCase()}`,
       areas: topFive.map((row) => row.planningArea).join(", "),
     };
-  }, [controls.rankMetric, data]);
+  }, [data, metricMeta.label]);
 
   if (loading && !initialData?.length) {
     return (
@@ -269,6 +288,23 @@ export default function LeaderboardDashboard({
       className="min-h-screen bg-background"
       data-interactive-ready={isInteractiveReady ? "true" : "false"}
     >
+      {defaultMigration !== null && observedDefault !== null ? (
+        <p
+          className="border-b border-border bg-muted px-4 py-3 text-sm text-foreground"
+          data-observed-default-notice="true"
+        >
+          <span className="font-bold">Updated default.</span> This page now
+          opens on {observedDefault.label}. The earlier default was{" "}
+          {defaultMigration.label} &mdash;{" "}
+          <a
+            href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/dashboard/leaderboard?${defaultMigration.query}`}
+            className="font-bold text-[hsl(var(--teal))] underline underline-offset-4 hover:no-underline"
+          >
+            open that view
+          </a>
+          .
+        </p>
+      ) : null}
       {refreshError ? (
         <div
           role="alert"
@@ -321,6 +357,11 @@ export default function LeaderboardDashboard({
                       {metric.label}
                     </option>
                   ))}
+                  {unsupportedReason !== null && (
+                    <option value={controls.rankMetric} disabled>
+                      Unavailable: {controls.rankMetric}
+                    </option>
+                  )}
                 </select>
               </label>
               <button
@@ -337,15 +378,41 @@ export default function LeaderboardDashboard({
           <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-2">
               <div className="text-sm font-medium text-foreground">
-                Showing {data.length} areas ranked by{" "}
-                {metricMeta.label.toLowerCase()} using{" "}
-                {TIME_BASIS_LABELS[controls.timeBasis].toLowerCase()} data.
+                {unsupportedReason !== null
+                  ? `This metric is not published for the selected scope.`
+                  : !rankable
+                    ? `${data.length} areas by ${metricMeta.label.toLowerCase()} for ${timeBasisLabel}, listed by name because coverage is limited for this scope.`
+                    : `Showing ${rankedCount} ${rankedCount === 1 ? "area" : "areas"} ranked by ${metricMeta.label.toLowerCase()} using ${timeBasisLabel.toLowerCase()} data.`}
               </div>
-              <div className="text-sm text-muted-foreground">
-                {quickSummary.label}:{" "}
+              {unsupportedReason === null && (
+                <div className="text-sm text-muted-foreground">
+                  {rankable && unrankedCount > 0
+                    ? `${unrankedCount} area${unrankedCount === 1 ? "" : "s"} shown but not ranked (fewer than 150 sales). `
+                    : ""}
+                  {unpublishedAreas.length > 0
+                    ? `${unpublishedAreas.length} area${unpublishedAreas.length === 1 ? "" : "s"} not published for this property and period.`
+                    : ""}
+                </div>
+              )}
+              {windowNote !== null && (
+                <div className="text-sm text-muted-foreground">
+                  {windowNote}
+                </div>
+              )}
+              {unsupportedReason === null && (
+                <div className="text-sm text-muted-foreground">
+                  {quickSummary.label}:{" "}
+                  <span className="font-medium text-foreground">
+                    {quickSummary.areas || "No areas available"}
+                  </span>
+                </div>
+              )}
+              <div className="text-xs text-muted-foreground">
+                Window:{" "}
                 <span className="font-medium text-foreground">
-                  {quickSummary.areas || "No areas available"}
-                </span>
+                  {timeBasisLabel}
+                </span>{" "}
+                &middot; from <code className="font-mono">{sourceLabel}</code>
               </div>
               {activeChips.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -392,11 +459,36 @@ export default function LeaderboardDashboard({
                 activeFilterCount={activeFilterCount}
                 onChange={updateControl}
                 onReset={resetControls}
+                timeBasisOptions={timeBasisOptions}
               />
             </div>
           </aside>
 
           <main className="min-w-0 space-y-6">
+            {windowUnavailable !== null ? (
+              <div
+                role="alert"
+                className="rounded-2xl border border-border bg-card p-5 text-sm shadow-sm"
+              >
+                <p className="font-bold text-foreground">
+                  {controls.timeBasis} is not available in this build
+                </p>
+                <p className="mt-2 text-muted-foreground">
+                  {windowUnavailable}
+                </p>
+              </div>
+            ) : windowPending ? (
+              <p
+                role="status"
+                className="rounded-2xl border border-border bg-card p-5 text-sm text-muted-foreground shadow-sm"
+              >
+                Checking the published {controls.timeBasis} window against its
+                manifest\u2026 no area values are shown until it verifies.
+              </p>
+            ) : null}
+
+            {windowUnavailable === null && windowPending === false && (
+            <>
             {selectedAreaRow && (
               <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -405,9 +497,11 @@ export default function LeaderboardDashboard({
                       Selected Area
                     </h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {selectedAreaRow.planningArea} is currently highlighted at
-                      rank #{selectedAreaRow.rank} for{" "}
-                      {metricMeta.label.toLowerCase()}.
+                      {selectedAreaRow.planningArea} is currently highlighted at{" "}
+                      {selectedAreaRow.rank === null
+                        ? "an unranked position (small sample)"
+                        : `rank #${selectedAreaRow.rank}`}{" "}
+                      for {metricMeta.label.toLowerCase()}.
                     </p>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
@@ -462,9 +556,9 @@ export default function LeaderboardDashboard({
                 <div className="border-b border-border px-5 py-4">
                   <h2 className="text-lg font-semibold">Geographic View</h2>
                   <p className="text-sm text-muted-foreground">
-                    Color-coded by {metricMeta.label.toLowerCase()} using{" "}
-                    {TIME_BASIS_LABELS[controls.timeBasis].toLowerCase()}{" "}
-                    values.
+                    {rankable
+                      ? `Color-coded by ${metricMeta.label.toLowerCase()} using ${timeBasisLabel.toLowerCase()} values.`
+                      : `Not colour-coded: coverage is limited for this scope, so areas are shown without a ${metricMeta.label.toLowerCase()} fill.`}
                   </p>
                 </div>
                 <div className="h-[420px] md:h-[520px]">
@@ -475,6 +569,7 @@ export default function LeaderboardDashboard({
                     highlightedArea={highlightedArea}
                     onAreaHover={setHighlightedArea}
                     onAreaClick={handleAreaClick}
+                    colourable={rankable}
                   />
                 </div>
               </div>
@@ -521,6 +616,8 @@ export default function LeaderboardDashboard({
                 </div>
               </div>
             </section>
+            </>
+            )}
           </main>
         </div>
       </div>
@@ -562,6 +659,7 @@ export default function LeaderboardDashboard({
               onChange={updateControl}
               onReset={resetControls}
               compact
+              timeBasisOptions={timeBasisOptions}
             />
           </div>
         </div>
