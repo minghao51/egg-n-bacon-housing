@@ -1,7 +1,7 @@
 # RF12 release evidence — candidate identity, disposition, verification and rollback
 
 - **Date:** 2026-11-14
-- **Status:** **Evidence prepared for a staged candidate. Not deployed.** Every number below was measured from this working tree; nothing is committed, pushed or published, and deployment remains a separate owner authorisation (D10).
+- **Status:** **Deployed and probed 2026-11-14** on the owner's instruction. `bb42fa8` (the programme) and `7862b5d` (formatters, validation, secrets audit) are on `main`; `deploy.yml` run 43620352855 succeeded and the live site was probed in a browser (7/7). CI is green except the pre-existing `security` job (`pip-audit` findings in transitive dependencies, also red on the previous `main` run).
 - **Parent:** [implementation map](../plans/2026-11-12-reporting-refresh-implementation-map.md) §4 (milestones) · [handoff](../plans/2026-11-12-reporting-refresh-handoffs.md) RF12
 - **Upstream identity records:** [RF04 pack](2026-11-13-rf04-v2-period-pack.md) · [RF09 history](2026-11-14-rf09-area-type-month-history.md) · [RF11 catalog](2026-11-13-rf11-catalog-report.md) · [RF08 editions](2026-11-14-rf08-editions-signoff.md)
 
@@ -134,13 +134,26 @@ headers, not on the file name:
 | --------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
 | `bun run preview` (Vite)                      | `Content-Type: application/json`, **`Content-Encoding: gzip`** | 2,465 bytes decompressed JSON, sha256 `58e4b4dcc11b…` | **No** — `/explore` shows the fail-closed "did not verify" state |
 | `scripts/serve-pages-base.mjs` (Pages-shaped) | `Content-Type: application/gzip`, **no** `Content-Encoding`    | 560 raw gzip bytes, sha256 `fac8170fd9e7…`            | **Yes**                                                          |
+| **`https://minghao51.github.io`** (live)      | `content-type: application/gzip`, **no `Content-Encoding`**    | 560 raw gzip bytes, sha256 `fac8170fd9e7…`            | **Yes**                                                          |
 
 `Content-Encoding: gzip` tells the browser "this is a gzip-encoded _representation_", so it
 inflates the body transparently; `curl` without `--compressed` shows the raw bytes and hides
 the difference, which is why this is easy to miss. The comparison in the table is the same
 URL fetched both ways: raw bytes hash to the pinned value, the decompressed body does not.
 
-Consequences, if the deploy host behaves like preview: the fix is **not** to loosen the hash.
+**Measured on the deployed host (2026-11-14):** GitHub Pages returns the raw bytes with
+`content-type: application/gzip` and no `Content-Encoding`, so the browser hashes exactly what
+the manifest pins. The contract holds in production and **no hash-basis change is needed**; the
+only divergence is the local preview server, which is why pack-path tests keep using
+`tests/e2e/utils/servePackBytes.ts` (handoff trap #12).
+
+A browser probe of the live site confirmed the consequence rather than assuming it: `/explore`
+verifies the pack and opens on `ttm_2026_10`, a rolling-quarter window shows its prior-year
+sentence, `/areas/punggol` renders the activity table and loads its monthly history through the
+manifest, `/analytics/data-sources` offers the approved edition, its archive route renders with
+three sign-offs, and `/dashboard` (v1) is unchanged.
+
+Original reasoning, kept because it explains the pin: consequences, if the deploy host behaved like preview: the fix is **not** to loosen the hash.
 Either the host must stop re-labelling `.gz` assets, or the manifest must pin a hash of the
 _decoded payload_ (an RF04/RF12 contract change with its own migration). Until that is
 measured on the host, this stays an open release gate rather than a passed one.
@@ -160,18 +173,20 @@ rollback. This table records identities, not a rehearsal.
 
 ## 6. Open items blocking a _deployed_ release
 
-| #   | Item                                                                                                                                                                                                                                                                                    | Owner / gate                                                             |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| 1   | Confirm the **deploy host** serves `observed/**/*.json.gz` without `Content-Encoding: gzip`. Both servers we control were measured on 2026-11-14 (§4a): preview re-labels and fails the pin, `serve-pages-base.mjs` serves raw bytes and verifies. The host itself is still unmeasured. | Needs deployment permission (D10)                                        |
-| 2   | Exercise the rollback path against the host                                                                                                                                                                                                                                             | Needs deployment permission                                              |
-| 3   | Decide the RF04 generation `6cd4510f…` retention horizon                                                                                                                                                                                                                                | Owner; no deletion without a reference review                            |
-| 4   | ~~Decide `interactive_tools/affordability_metrics.json.gz` retain/remove~~ — **retained** on owner instruction 2026-11-14                                                                                                                                                               | any future removal needs a data-boundary approval and a reference review |
-| 5   | 13 remaining studies need evidence + text + reviewer                                                                                                                                                                                                                                    | RF08 continuation                                                        |
-| 6   | Directional activity labels / map colouring                                                                                                                                                                                                                                             | Owner decision on RF09 §3.4                                              |
-| 7   | Recurring refresh + auto-deploy runbook execution                                                                                                                                                                                                                                       | Separate approval                                                        |
+| #   | Item                                                                                                                                                                                          | Owner / gate                                                             |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 1   | ~~Confirm the **deploy host** serves `observed/**/*.json.gz` without `Content-Encoding`~~ — **measured live 2026-11-14**: raw bytes, no `Content-Encoding`, sha256 matches the pin. Resolved. | done                                                                     |
+| 2   | Exercise the rollback path against the live host (identities recorded in §5; the exercise has not been run)                                                                                   | Owner; needs a maintenance window                                        |
+| 3   | Decide the RF04 generation `6cd4510f…` retention horizon                                                                                                                                      | Owner; no deletion without a reference review                            |
+| 4   | ~~Decide `interactive_tools/affordability_metrics.json.gz` retain/remove~~ — **retained** on owner instruction 2026-11-14                                                                     | any future removal needs a data-boundary approval and a reference review |
+| 5   | 13 remaining studies need evidence + text + reviewer                                                                                                                                          | RF08 continuation                                                        |
+| 6   | Directional activity labels / map colouring                                                                                                                                                   | Owner decision on RF09 §3.4                                              |
+| 7   | Recurring refresh + auto-deploy runbook execution                                                                                                                                             | Separate approval                                                        |
 
 ## 7. Deploy gate
 
-Nothing in this document authorises publication. The candidate is **staged locally**: the
-build artefacts, manifests, editions and evidence hashes above describe what a deployment
-would publish, and the owner's deployment permission is a separate, explicit grant.
+Deployment was authorised by the owner on 2026-11-14 and executed: the build artefacts,
+manifests, editions and evidence hashes above are what is now published at
+`https://minghao51.github.io/egg-n-bacon-housing/`, and the live probe confirmed the pinned
+bytes are what the host serves. Rollback has **not** been rehearsed in production (§5), and
+any further deployment (including a rollback) is a separate authorisation.
