@@ -1,11 +1,7 @@
 {
   "cutoffMonth": "2026-10",
   "methodVersion": "observed-aggregates-2",
-  "metrics": [
-    "transactionCount",
-    "medianPrice",
-    "medianPsf"
-  ],
+  "metrics": ["transactionCount", "medianPrice", "medianPsf"],
   "periods": [
     {
       "comparatorId": "month_2025_10",
@@ -13,9 +9,7 @@
       "id": "month_2026_10",
       "kind": "month",
       "label": "2026-10 (one month)",
-      "months": [
-        "2026-10"
-      ],
+      "months": ["2026-10"],
       "startMonth": "2026-10"
     },
     {
@@ -24,11 +18,7 @@
       "id": "rolling3_2026_10",
       "kind": "rolling3",
       "label": "3 months to 2026-10",
-      "months": [
-        "2026-08",
-        "2026-09",
-        "2026-10"
-      ],
+      "months": ["2026-08", "2026-09", "2026-10"],
       "startMonth": "2026-08"
     },
     {
@@ -101,9 +91,7 @@
       "id": "month_2025_10",
       "kind": "month",
       "label": "2025-10 (one month)",
-      "months": [
-        "2025-10"
-      ],
+      "months": ["2025-10"],
       "startMonth": "2025-10"
     },
     {
@@ -112,11 +100,7 @@
       "id": "rolling3_2025_10",
       "kind": "rolling3",
       "label": "3 months to 2025-10",
-      "months": [
-        "2025-08",
-        "2025-09",
-        "2025-10"
-      ],
+      "months": ["2025-08", "2025-09", "2025-10"],
       "startMonth": "2025-08"
     },
     {
@@ -184,11 +168,6 @@
       "startMonth": "2024-01"
     }
   ],
-  "propertyTypes": [
-    "all",
-    "hdb",
-    "ec",
-    "condo"
-  ],
+  "propertyTypes": ["all", "hdb", "ec", "condo"],
   "schemaVersion": "2.1.0"
 }

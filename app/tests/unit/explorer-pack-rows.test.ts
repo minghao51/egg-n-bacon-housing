@@ -122,17 +122,12 @@ function observation(input: {
     disposition: input.disposition ?? "publish",
     coverage: { months: TTM_MONTHS, requestedMonths: 12 },
     metrics: {
-      transactionCount: metric(
-        input.count,
-        "transactions",
-        input.count ?? 0,
-      ),
+      transactionCount: metric(input.count, "transactions", input.count ?? 0),
       medianPrice: metric(input.price, "SGD", input.count ?? 0),
       medianPsf: metric(input.psf, "SGD_per_sqft", input.count ?? 0),
     },
   };
 }
-
 
 /** ttm_2026_10 HDB (publish) plus EC (limited-display) for the same window. */
 const SUMMARY_PAYLOAD = {
@@ -272,13 +267,15 @@ describe("buildPackExplorerDataset — published window", () => {
     const national = hdb.national;
     if (national === null) throw new Error("expected a national baseline");
 
-    expect(national.find((entry) => entry.metric === "median_price")?.value).toBe(
-      633999,
-    );
+    expect(
+      national.find((entry) => entry.metric === "median_price")?.value,
+    ).toBe(633999);
     expect(national.find((entry) => entry.metric === "volume")?.value).toBe(
       21801,
     );
-    expect(national[0]?.source).toBe("observed pack · SG · 12 months to 2026-10");
+    expect(national[0]?.source).toBe(
+      "observed pack · SG · 12 months to 2026-10",
+    );
     expect(national[0]?.note).toBeNull();
 
     const ec = build({ property: "ec" });
@@ -296,9 +293,7 @@ describe("buildPackExplorerDataset — published window", () => {
 
   test("a verified no-sales window is a real zero, not a missing row", () => {
     const dataset = build({ minSales: null });
-    const downtown = dataset.rows.find(
-      (row) => row.areaId === "DOWNTOWN CORE",
-    );
+    const downtown = dataset.rows.find((row) => row.areaId === "DOWNTOWN CORE");
     if (downtown === undefined) throw new Error("expected the no-sales row");
 
     expect(downtown.volume).toBe(0);
@@ -308,7 +303,11 @@ describe("buildPackExplorerDataset — published window", () => {
   });
 
   test("nulls sort last in both directions", () => {
-    const asc = build({ minSales: null, sort: "median_price", direction: "asc" });
+    const asc = build({
+      minSales: null,
+      sort: "median_price",
+      direction: "asc",
+    });
     const desc = build({
       minSales: null,
       sort: "median_price",
@@ -458,8 +457,16 @@ describe("buildPackExplorerDataset — activity column", () => {
           unit: "transactions",
           observations: count ?? 0,
         },
-        medianPrice: { value: count === null ? null : 500000, unit: "SGD", observations: 0 },
-        medianPsf: { value: count === null ? null : 600, unit: "SGD_PSF", observations: 0 },
+        medianPrice: {
+          value: count === null ? null : 500000,
+          unit: "SGD",
+          observations: 0,
+        },
+        medianPsf: {
+          value: count === null ? null : 600,
+          unit: "SGD_PSF",
+          observations: 0,
+        },
       },
     };
   }
@@ -470,13 +477,19 @@ describe("buildPackExplorerDataset — activity column", () => {
       kind: "rolling3" as const,
       startMonth: id === QUARTER ? "2026-08" : "2025-08",
       endMonth: id === QUARTER ? "2026-10" : "2025-10",
-      months: id === QUARTER ? ["2026-08", "2026-09", "2026-10"] : ["2025-08", "2025-09", "2025-10"],
+      months:
+        id === QUARTER
+          ? ["2026-08", "2026-09", "2026-10"]
+          : ["2025-08", "2025-09", "2025-10"],
       label: id === QUARTER ? "2026-08 → 2026-10" : "2025-08 → 2025-10",
       comparatorId,
     };
   }
 
-  function packWith(comparatorId: string | null, includePrior = true): PeriodPack {
+  function packWith(
+    comparatorId: string | null,
+    includePrior = true,
+  ): PeriodPack {
     const periods = [period(QUARTER, comparatorId)];
     if (includePrior) periods.push(period(PRIOR, null));
     const observations = [
@@ -525,7 +538,9 @@ describe("buildPackExplorerDataset — activity column", () => {
     });
     if (!result.ok) throw new Error(result.reason);
 
-    const eligible = result.dataset.rows.find((row) => row.areaId === "ELIGIBLE")!;
+    const eligible = result.dataset.rows.find(
+      (row) => row.areaId === "ELIGIBLE",
+    )!;
     expect(eligible.activity).toEqual({
       priorCount: 200,
       changePercent: 50,
@@ -607,6 +622,8 @@ describe("buildPackExplorerDataset — activity column", () => {
     const thin = result.dataset.rows.find((row) => row.areaId === "THIN")!;
     expect(thin.activity?.changePercent).toBeNull();
     expect(thin.activity?.priorCount).toBeNull();
-    expect(thin.activity?.reason).toContain("no prior-year-quarter observation");
+    expect(thin.activity?.reason).toContain(
+      "no prior-year-quarter observation",
+    );
   });
 });

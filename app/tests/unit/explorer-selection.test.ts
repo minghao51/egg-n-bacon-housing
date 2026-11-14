@@ -109,9 +109,8 @@ describe("the period vocabulary", () => {
       "ttm_2026_10",
     );
     expect(
-      parseExplorerSelection(
-        serializeExplorerSelection(selection).toString(),
-      ).period,
+      parseExplorerSelection(serializeExplorerSelection(selection).toString())
+        .period,
     ).toBe("ttm_2026_10");
   });
 });

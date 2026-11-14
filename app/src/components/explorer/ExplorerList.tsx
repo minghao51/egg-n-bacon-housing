@@ -19,11 +19,7 @@ import type { ExplorerDataset, ExplorerRow } from "@/utils/observed-rows";
 import { ACTIVITY_SALE_FLOOR } from "@/utils/area-activity";
 import type { ReleaseStatus } from "@/utils/release-manifest";
 import { areaHref } from "@/utils/area-links";
-import {
-  METRIC_OPTIONS,
-  propertyNoun,
-  metricNoun,
-} from "./ExplorerSettings";
+import { METRIC_OPTIONS, propertyNoun, metricNoun } from "./ExplorerSettings";
 
 /** Desktop page size; the mobile layout shows four rows of the same page. */
 const PAGE_SIZE = 12;
@@ -169,19 +165,19 @@ export default function ExplorerList({
     METRIC_OPTIONS[0];
 
   const national =
-    dataset.national?.find((entry) => entry.metric === selection.metric) ?? null;
+    dataset.national?.find((entry) => entry.metric === selection.metric) ??
+    null;
 
   /** The national line: the value is the same kind of number, the source differs. */
   const nationalValue = (sourceLabel: string, source: string) => (
     <p className="mt-3 rounded border border-border bg-accent px-3 py-2 text-sm text-foreground">
       <span className="font-bold">
-        National {propertyNoun(dataset.property)} {metricNoun(selection.metric)}:{" "}
-        {formatMetricValue(selection.metric, national!.value!)}
+        National {propertyNoun(dataset.property)} {metricNoun(selection.metric)}
+        : {formatMetricValue(selection.metric, national!.value!)}
       </span>
       <span className="text-muted-foreground">
         {" "}
-        &middot; {sourceLabel}{" "}
-        <code className="font-mono">{source}</code>
+        &middot; {sourceLabel} <code className="font-mono">{source}</code>
       </span>
     </p>
   );

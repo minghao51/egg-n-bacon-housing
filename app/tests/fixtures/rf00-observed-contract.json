@@ -167,10 +167,7 @@
             "yoy_growth": null
           }
         },
-        "coordinates": [
-          103.83622,
-          1.377383
-        ],
+        "coordinates": [103.83622, 1.377383],
         "region": "NORTH-EAST REGION"
       },
       "PUNGGOL": {
@@ -198,10 +195,7 @@
             "yoy_growth": null
           }
         },
-        "coordinates": [
-          103.910126,
-          1.413129
-        ],
+        "coordinates": [103.910126, 1.413129],
         "region": "NORTH-EAST REGION"
       },
       "TAMPINES": {
@@ -229,10 +223,7 @@
             "yoy_growth": null
           }
         },
-        "coordinates": [
-          103.962555,
-          1.333155
-        ],
+        "coordinates": [103.962555, 1.333155],
         "region": "EAST REGION"
       }
     }
@@ -292,12 +283,7 @@
         "comment": "Four rows span fourteen months; a 12-row window shift is not a trailing year.",
         "expectedStatus": "not-comparable",
         "id": "sparse-month-grid",
-        "months": [
-          "2024-02",
-          "2024-06",
-          "2024-07",
-          "2024-08"
-        ],
+        "months": ["2024-02", "2024-06", "2024-07", "2024-08"],
         "synthetic": true
       },
       {

@@ -38,7 +38,11 @@ repos:
     hooks:
       - id: prettier
         types_or: [javascript, jsx, ts, tsx, css, json, markdown]
-        exclude: bun\.lock
+        # Frozen edition sources are signed bytes: the ledger pins their sha256
+        # (`editionSha256`) and the archive route re-hashes them at build time, so
+        # a formatter rewriting a table would invalidate an approval. The legacy
+        # tree is additionally pinned by the RF00 baseline manifest.
+        exclude: (bun\.lock|^docs/analytics/editions/)
         additional_dependencies:
           - prettier@3.4.2
 

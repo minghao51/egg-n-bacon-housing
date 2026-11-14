@@ -1,7 +1,7 @@
 # RS02 evidence pack — rental-yield definition, coverage and denominators
 
 - **Date:** 2026-11-14
-- **Status:** **Prepared for review, not signed off.** The definition is pinned and the join/denominator evidence is measured. The **duplicated-row defect found in the first review has been fixed at its source and the gold asset regenerated** (§5). No published *observation* changed — `unified_dataset` came out byte-identical to the hash the v2 pack pins as its input — but the **catalog** did change (`rental_yield` 3,623 → 1,749 rows) and was regenerated. Register row: RS02 — `docs/analytics/rental-yields.md`. Gate: "gross proxy vs matched-unit yield defined; denominators and zero/missing handling validated."
+- **Status:** **Prepared for review, not signed off.** The definition is pinned and the join/denominator evidence is measured. The **duplicated-row defect found in the first review has been fixed at its source and the gold asset regenerated** (§5). No published _observation_ changed — `unified_dataset` came out byte-identical to the hash the v2 pack pins as its input — but the **catalog** did change (`rental_yield` 3,623 → 1,749 rows) and was regenerated. Register row: RS02 — `docs/analytics/rental-yields.md`. Gate: "gross proxy vs matched-unit yield defined; denominators and zero/missing handling validated."
 - **Prepared by:** `repo-agent/session-2026-11-14`.
 - **Machine-readable ledger:** [`artifacts/rs02-rental-yield-evidence.json`](artifacts/rs02-rental-yield-evidence.json) — sha256 `db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313`.
 - **Producer:** `scripts/tools/rental_yield_evidence.py`.
@@ -14,18 +14,18 @@ The shipped method is a **gross proxy**, not a matched-unit yield:
 1. Per `(town, flat_type, month)`: `median_rent × 12 / median_sale_price × 100`, computed over **two independent transaction populations** (rentals and resales).
 2. Per `(town, month)`: a **sale-count-weighted mean of those flat-type ratios**, published with `flat_type: "ALL"` and `property_type: "HDB"` (`src/egg_n_bacon_housing/components/feature_rental.py:120-137`).
 
-That is a *mean of ratios*, not a ratio of sums, and it inherits both populations' mix. **Matched-unit yield is not computable from any source in this repo**: no file carries a unit identifier (§3). The gross proxy is therefore **the only definition the shipped method implements** — a block-matched proxy is feasible (§3) but is a method change, not a refresh, and the edition must label the gross proxy as such.
+That is a _mean of ratios_, not a ratio of sums, and it inherits both populations' mix. **Matched-unit yield is not computable from any source in this repo**: no file carries a unit identifier (§3). The gross proxy is therefore **the only definition the shipped method implements** — a block-matched proxy is feasible (§3) but is a method change, not a refresh, and the edition must label the gross proxy as such.
 
 ## 2. Join coverage (the population-defining cut)
 
-| Measure | Value |
-| --- | --- |
-| Months where either side exists | 443 (1990-01 → 2026-11) |
-| Months with rentals | 2021-01 → 2026-10 (rentals are the short side of the join) |
-| Sales months with no rental group | `2020-12` and `2026-11` (the terminal partial month) |
-| Matched share of `(town, flat_type)` sale groups, **full period** (70 months, 2021-01 → 2026-10) | **median 92.5%** (min 86.6%, max 95.6%) |
-| Same measure, **last 24 months only** | median 93.1% (min 89.3%, max 95.5%) |
-| Same measure **without** the flat-type normaliser, last 24 months | median 16.0% (min 13.5%, max 18.3%) |
+| Measure                                                                                          | Value                                                      |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Months where either side exists                                                                  | 443 (1990-01 → 2026-11)                                    |
+| Months with rentals                                                                              | 2021-01 → 2026-10 (rentals are the short side of the join) |
+| Sales months with no rental group                                                                | `2020-12` and `2026-11` (the terminal partial month)       |
+| Matched share of `(town, flat_type)` sale groups, **full period** (70 months, 2021-01 → 2026-10) | **median 92.5%** (min 86.6%, max 95.6%)                    |
+| Same measure, **last 24 months only**                                                            | median 93.1% (min 89.3%, max 95.5%)                        |
+| Same measure **without** the flat-type normaliser, last 24 months                                | median 16.0% (min 13.5%, max 18.3%)                        |
 
 The first row is the finding that matters: across the whole published period the inner join keeps **92.5% of sale groups (86.6–95.6%), and only because** `normalize_hdb_flat_type` reconciles `"3 ROOM"`/`"3-ROOM"`/`"3 ROOM FLAT"` variants — the 16.0% figure is measured on the same 24-month window the ~93% figure comes from, and is a like-for-like comparison. Without it the join would keep 16% of groups. The drop is not unrecorded — `feature_rental.py:96-108` logs a warning with the matched-group coverage — but **the published asset carries no coverage field**, so a reader of `rental_yield.parquet` alone cannot see it. The normaliser is load-bearing, not cosmetic; a future change to it must re-run this measurement.
 
@@ -33,11 +33,11 @@ Consequence for the article: a yield point is a **town-month aggregate over 86.6
 
 ## 3. Matched-unit vs matched-block
 
-| Option | Feasible? | Evidence |
-| --- | --- | --- |
-| Unit-level matched yield | **No** | No source carries a unit identifier; `(town, block, street, flat_type, month)` is the finest joint grain. |
+| Option                    | Feasible?                | Evidence                                                                                                                       |
+| ------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| Unit-level matched yield  | **No**                   | No source carries a unit identifier; `(town, block, street, flat_type, month)` is the finest joint grain.                      |
 | Block-level matched proxy | **Yes, not implemented** | Over the last 12 months, 8,185 sale blocks and 8,770 rental blocks exist, and **7,397 appear in both (90.4% of sale blocks)**. |
-| Gross proxy (shipped) | Yes | See §1. |
+| Gross proxy (shipped)     | Yes                      | See §1.                                                                                                                        |
 
 A block-matched yield is a **method change**, not a refresh: it would need its own definition, review and a new method version. It is recorded here as an available option, not adopted.
 
@@ -45,17 +45,17 @@ A block-matched yield is a **method change**, not a refresh: it would need its o
 
 Measured from the published `data/pipeline/03_gold/rental_yield.parquet`:
 
-| Measure | Value |
-| --- | --- |
-| Rows / unique `(town, month)` | 1,749 / 1,749 (no duplicates — see §5) |
-| Towns | 25 |
-| Coverage | 2021-01 → 2026-10 |
-| `rental_yield_pct` | min 3.41 · p10 5.16 · p50 **6.24** · p90 7.29 · max 8.57 |
-| `sample_size` | min 1 · p10 30 · p50 78 · p90 162.2 · max 279 |
-| Rows with `< 20` sales | **136** town-months (7.8%) — thin, must not be ranked |
-| Non-positive or non-finite yields | 0 |
-| Yields above 20% | 0 |
-| Contextual `rental_index` | present for **1,724 of 1,749** rows, 2021-01 → 2026-09 (the source has not published 2026-Q4) |
+| Measure                           | Value                                                                                         |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| Rows / unique `(town, month)`     | 1,749 / 1,749 (no duplicates — see §5)                                                        |
+| Towns                             | 25                                                                                            |
+| Coverage                          | 2021-01 → 2026-10                                                                             |
+| `rental_yield_pct`                | min 3.41 · p10 5.16 · p50 **6.24** · p90 7.29 · max 8.57                                      |
+| `sample_size`                     | min 1 · p10 30 · p50 78 · p90 162.2 · max 279                                                 |
+| Rows with `< 20` sales            | **136** town-months (7.8%) — thin, must not be ranked                                         |
+| Non-positive or non-finite yields | 0                                                                                             |
+| Yields above 20%                  | 0                                                                                             |
+| Contextual `rental_index`         | present for **1,724 of 1,749** rows, 2021-01 → 2026-09 (the source has not published 2026-Q4) |
 
 There is no row-weighting question any more: one row per town-month means the distribution above is already unweighted.
 
@@ -69,11 +69,11 @@ There is no zero/missing yield row: the inner join and the finite-value filter r
 
 **Fix (`src/egg_n_bacon_housing/components/feature_rental.py`).**
 
-| Change | Reason |
-| --- | --- |
-| `_whole_island_rental_index()` selects **one** series by `RENTAL_INDEX_SERIES_PREFERENCE = ("NON-LANDED", "ALL RESIDENTIAL")` | The index is **context only** — it is the URA *private residential* property rental index (`docs/research/singapore-open-datasets.md`), not an HDB index, and it is never a denominator here. Measured coverage decides the order: `All Residential` **stops at 2021-Q2**, which would have left **91.4% of rows (1,599 of 1,749)** with a null index; `Non-Landed` runs to 2026-Q3. `Landed` is never borrowed. |
-| Quarter de-duplication before expansion, and `df.merge(..., validate="m:1")` | A duplicated source quarter or a future re-introduction of the fan-out now fails loudly instead of silently multiplying rows. |
-| Months the chosen series does not cover stay **null** | 25 rows (2026-10) have no index; nothing is borrowed from another segment. |
+| Change                                                                                                                        | Reason                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_whole_island_rental_index()` selects **one** series by `RENTAL_INDEX_SERIES_PREFERENCE = ("NON-LANDED", "ALL RESIDENTIAL")` | The index is **context only** — it is the URA _private residential_ property rental index (`docs/research/singapore-open-datasets.md`), not an HDB index, and it is never a denominator here. Measured coverage decides the order: `All Residential` **stops at 2021-Q2**, which would have left **91.4% of rows (1,599 of 1,749)** with a null index; `Non-Landed` runs to 2026-Q3. `Landed` is never borrowed. |
+| Quarter de-duplication before expansion, and `df.merge(..., validate="m:1")`                                                  | A duplicated source quarter or a future re-introduction of the fan-out now fails loudly instead of silently multiplying rows.                                                                                                                                                                                                                                                                                    |
+| Months the chosen series does not cover stay **null**                                                                         | 25 rows (2026-10) have no index; nothing is borrowed from another segment.                                                                                                                                                                                                                                                                                                                                       |
 
 **After regeneration** (warm `--stage features`, no source refresh): **1,749 rows for 1,749 town-months, zero duplicates**, one index per pair, `rental_yield_pct` p50 6.24, 136 thin town-months, index populated 1,724/1,749 (2021-01 → 2026-09).
 
@@ -89,11 +89,11 @@ There is no zero/missing yield row: the inner join and the finite-value filter r
 
 ## 7. Sign-off record
 
-| Role | Signatory | Attests | Recorded |
-| --- | --- | --- | --- |
-| Source / cutoff | repo owner | the measured coverage (2021-01 → 2026-10) and the §5 remediation (regenerate) | **pending** |
-| Scientific | recorded review run (`openai-codex/gpt-6-luna`, xhigh) | §1–§4 and §6 are accurate; §5's defect, fix and blast radius are described correctly and not overclaimed — **recorded** below | **recorded 2026-11-14** |
-| Publication | repo owner (≠ scientific reviewer) | the exact artifacts to be published | **pending** |
+| Role            | Signatory                                              | Attests                                                                                                                       | Recorded                |
+| --------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Source / cutoff | repo owner                                             | the measured coverage (2021-01 → 2026-10) and the §5 remediation (regenerate)                                                 | **pending**             |
+| Scientific      | recorded review run (`openai-codex/gpt-6-luna`, xhigh) | §1–§4 and §6 are accurate; §5's defect, fix and blast radius are described correctly and not overclaimed — **recorded** below | **recorded 2026-11-14** |
+| Publication     | repo owner (≠ scientific reviewer)                     | the exact artifacts to be published                                                                                           | **pending**             |
 
 Until §5 has a disposition and all three attestations are in the registry, `rental-yields` stays historical and the series keeps saying "No approved current edition".
 

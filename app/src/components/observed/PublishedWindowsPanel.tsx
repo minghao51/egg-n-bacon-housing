@@ -61,8 +61,12 @@ export default function PublishedWindowsPanel({
 }: PublishedWindowsPanelProps) {
   const [windowKey, setWindowKey] = useState<WindowKey>("ttm");
   const active = windows[series][windowKey];
-  const sales = active?.metrics.find((metric) => metric.metric === "transactionCount");
-  const price = active?.metrics.find((metric) => metric.metric === "medianPrice");
+  const sales = active?.metrics.find(
+    (metric) => metric.metric === "transactionCount",
+  );
+  const price = active?.metrics.find(
+    (metric) => metric.metric === "medianPrice",
+  );
 
   return (
     <section
@@ -112,7 +116,9 @@ export default function PublishedWindowsPanel({
             <dt className="text-xs uppercase tracking-wide text-muted-foreground">
               Window
             </dt>
-            <dd className="text-sm font-semibold text-foreground">{active.label}</dd>
+            <dd className="text-sm font-semibold text-foreground">
+              {active.label}
+            </dd>
           </div>
           <div>
             <dt className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -145,8 +151,8 @@ export default function PublishedWindowsPanel({
 
       {active && active.disposition !== "publish" ? (
         <p className="mt-4 border-t border-border pt-3 text-sm text-muted-foreground">
-          {SERIES_LABELS[series]} 2026 counts are under coverage review: read them
-          as records with their dates, not as a growth story.
+          {SERIES_LABELS[series]} 2026 counts are under coverage review: read
+          them as records with their dates, not as a growth story.
         </p>
       ) : null}
     </section>

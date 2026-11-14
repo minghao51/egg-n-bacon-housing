@@ -13,10 +13,7 @@
  */
 
 import { useEffect, useState } from "react";
-import {
-  loadObservedPack,
-  type PackLoad,
-} from "@/utils/observed-pack-loader";
+import { loadObservedPack, type PackLoad } from "@/utils/observed-pack-loader";
 
 export function useObservedPack(): PackLoad | null {
   const [packLoad, setPackLoad] = useState<PackLoad | null>(null);

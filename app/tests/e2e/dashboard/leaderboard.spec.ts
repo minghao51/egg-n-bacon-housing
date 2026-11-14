@@ -161,11 +161,13 @@ test.describe("Compare Areas - published periods", () => {
     await expect(row).toContainText("$672,888");
     await expect(row).toContainText("1,702");
 
+    await expect(page.getByText("Window:").first()).toBeVisible();
     await expect(
-      page.getByText("Window:").first(),
-    ).toBeVisible();
-    await expect(
-      page.getByText(new RegExp(`observed pack · ttm_2026_10 · ${PACK_GENERATION}`)).first(),
+      page
+        .getByText(
+          new RegExp(`observed pack · ttm_2026_10 · ${PACK_GENERATION}`),
+        )
+        .first(),
     ).toBeVisible();
     expect(new URL(page.url()).searchParams.get("timeBasis")).toBe(
       "ttm_2026_10",
@@ -218,9 +220,15 @@ test.describe("Compare Areas - published periods", () => {
     page,
   }) => {
     await gotoLeaderboard(page);
-    const timeBasis = page.getByRole("heading", { name: "Time Basis" }).locator("..");
-    await expect(timeBasis.getByRole("button", { name: "2022 onward" })).toBeVisible();
-    await expect(timeBasis.getByRole("button", { name: "All history" })).toBeVisible();
+    const timeBasis = page
+      .getByRole("heading", { name: "Time Basis" })
+      .locator("..");
+    await expect(
+      timeBasis.getByRole("button", { name: "2022 onward" }),
+    ).toBeVisible();
+    await expect(
+      timeBasis.getByRole("button", { name: "All history" }),
+    ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "12 months to 2026-10" }),
     ).toBeVisible();

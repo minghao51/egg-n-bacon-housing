@@ -65,7 +65,10 @@ export async function loadObservedPackFromDir(
   try {
     rawManifest = JSON.parse(readFileSync(manifestPath, "utf8"));
   } catch (error) {
-    return { state: "invalid", errors: [`manifest is not valid JSON: ${String(error)}`] };
+    return {
+      state: "invalid",
+      errors: [`manifest is not valid JSON: ${String(error)}`],
+    };
   }
 
   const parsed = parseV2Manifest(rawManifest);
@@ -76,7 +79,9 @@ export async function loadObservedPackFromDir(
   if (recomputed !== manifest.generation) {
     return {
       state: "invalid",
-      errors: [`generation mismatch: manifest ${manifest.generation}, recomputed ${recomputed}`],
+      errors: [
+        `generation mismatch: manifest ${manifest.generation}, recomputed ${recomputed}`,
+      ],
     };
   }
 
@@ -95,7 +100,9 @@ export async function loadObservedPackFromDir(
     if (bytes.length !== asset.bytes) {
       return {
         state: "invalid",
-        errors: [`${asset.path}: expected ${asset.bytes} bytes, found ${bytes.length}`],
+        errors: [
+          `${asset.path}: expected ${asset.bytes} bytes, found ${bytes.length}`,
+        ],
       };
     }
     const digest = sha256(bytes);
@@ -112,7 +119,10 @@ export async function loadObservedPackFromDir(
   const packResult = parsePeriodPack(payloads.periods, payloads.summary);
   if (!packResult.ok) return { state: "invalid", errors: packResult.errors };
   if (packResult.pack.cutoffMonth !== manifest.cutoffMonth) {
-    return { state: "invalid", errors: ["pack cutoff does not match the manifest"] };
+    return {
+      state: "invalid",
+      errors: ["pack cutoff does not match the manifest"],
+    };
   }
 
   return { state: "ready", manifest, pack: packResult.pack };
@@ -137,16 +147,22 @@ export function readMonthlyHistoryFromDir(
   const role = monthlyRole(propertyType);
   const asset = manifest.assets.find((entry) => entry.role === role);
   if (asset === undefined) {
-    return { state: "invalid", errors: [`manifest has no asset for role ${role}`] };
+    return {
+      state: "invalid",
+      errors: [`manifest has no asset for role ${role}`],
+    };
   }
   const filePath = join(dataDir, asset.path);
-  if (!existsSync(filePath)) return { state: "invalid", errors: [`missing asset ${asset.path}`] };
+  if (!existsSync(filePath))
+    return { state: "invalid", errors: [`missing asset ${asset.path}`] };
 
   const bytes = readFileSync(filePath);
   if (bytes.length !== asset.bytes) {
     return {
       state: "invalid",
-      errors: [`${asset.path}: expected ${asset.bytes} bytes, found ${bytes.length}`],
+      errors: [
+        `${asset.path}: expected ${asset.bytes} bytes, found ${bytes.length}`,
+      ],
     };
   }
   if (sha256(bytes) !== asset.sha256) {
@@ -219,7 +235,9 @@ function readWindow(pack: PeriodPack, observation: Observation): CurrentWindow {
   ).map((metric) => {
     const reading = observation.metrics[metric];
     const change = comparison?.changes.find((entry) => entry.metric === metric);
-    const skipped = comparison?.skipped.find((entry) => entry.metric === metric);
+    const skipped = comparison?.skipped.find(
+      (entry) => entry.metric === metric,
+    );
     return {
       metric,
       value: reading.value,
@@ -246,7 +264,8 @@ function readWindow(pack: PeriodPack, observation: Observation): CurrentWindow {
     status: observation.status,
     disposition: observation.disposition,
     publishable:
-      observation.disposition === "publish" && observation.status === "available",
+      observation.disposition === "publish" &&
+      observation.status === "available",
     metrics,
     note: null,
   };
@@ -300,19 +319,34 @@ export function summariseWindows(
   const windowsFor = (propertyType: PropertyTypeId): TypeWindows => ({
     latest: latestPeriod
       ? (() => {
-          const observation = findObservation(pack, "SG", propertyType, latestPeriod.id);
+          const observation = findObservation(
+            pack,
+            "SG",
+            propertyType,
+            latestPeriod.id,
+          );
           return observation ? readWindow(pack, observation) : null;
         })()
       : null,
     ytd: ytdPeriod
       ? (() => {
-          const observation = findObservation(pack, "SG", propertyType, ytdPeriod.id);
+          const observation = findObservation(
+            pack,
+            "SG",
+            propertyType,
+            ytdPeriod.id,
+          );
           return observation ? readWindow(pack, observation) : null;
         })()
       : null,
     ttm: ttmPeriod
       ? (() => {
-          const observation = findObservation(pack, "SG", propertyType, ttmPeriod.id);
+          const observation = findObservation(
+            pack,
+            "SG",
+            propertyType,
+            ttmPeriod.id,
+          );
           return observation ? readWindow(pack, observation) : null;
         })()
       : null,

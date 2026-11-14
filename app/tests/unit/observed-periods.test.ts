@@ -27,7 +27,8 @@ import summaryFixture from "../fixtures/v2-pack/summary.json";
 
 function realPack() {
   const result = parsePeriodPack(periodsFixture, summaryFixture);
-  if (!result.ok) throw new Error(`fixture failed to parse: ${result.errors.join("; ")}`);
+  if (!result.ok)
+    throw new Error(`fixture failed to parse: ${result.errors.join("; ")}`);
   return result.pack;
 }
 
@@ -37,13 +38,15 @@ const metric = (value: number | null, unit = "SGD", observations = 10) => ({
   observations,
 });
 
-function syntheticPayloads(options: {
-  status?: "available" | "no-sales";
-  current?: number | null;
-  comparator?: number | null;
-  comparatorId?: string | null;
-  extraPeriod?: boolean;
-} = {}) {
+function syntheticPayloads(
+  options: {
+    status?: "available" | "no-sales";
+    current?: number | null;
+    comparator?: number | null;
+    comparatorId?: string | null;
+    extraPeriod?: boolean;
+  } = {},
+) {
   const status = options.status ?? "available";
   const current = options.current === undefined ? 100 : options.current;
   const comparator = options.comparator === undefined ? 80 : options.comparator;
@@ -56,7 +59,10 @@ function syntheticPayloads(options: {
       endMonth: "2026-10",
       months: ["2026-10"],
       label: "2026-10",
-      comparatorId: options.comparatorId === undefined ? "month_2025_10" : options.comparatorId,
+      comparatorId:
+        options.comparatorId === undefined
+          ? "month_2025_10"
+          : options.comparatorId,
     },
     {
       id: "month_2025_10",
@@ -115,7 +121,10 @@ function syntheticPayloads(options: {
       cutoffMonth: "2026-10",
       cutoffSource: "declared",
       monthsPresent: ["2025-10", "2026-10"],
-      observations: options.status === "no-sales" ? [observations[0], observations[1]] : observations,
+      observations:
+        options.status === "no-sales"
+          ? [observations[0], observations[1]]
+          : observations,
     },
   };
 }
@@ -179,7 +188,10 @@ describe("parsing the real pack", () => {
 describe("parse rejection", () => {
   it("rejects an unsupported schema version", () => {
     const { periods, summary } = syntheticPayloads();
-    const result = parsePeriodPack({ ...periods, schemaVersion: "1.0.0" }, summary);
+    const result = parsePeriodPack(
+      { ...periods, schemaVersion: "1.0.0" },
+      summary,
+    );
 
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.errors.join(" ")).toContain("schemaVersion");
@@ -194,33 +206,37 @@ describe("parse rejection", () => {
     const result = parsePeriodPack(duplicated, summary);
 
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.errors.join(" ")).toContain("duplicate period id");
+    if (!result.ok)
+      expect(result.errors.join(" ")).toContain("duplicate period id");
   });
 
   it("rejects an observation that references an unpublished period", () => {
     const { periods, summary } = syntheticPayloads();
     const orphaned = {
       ...summary,
-      observations: [
-        { ...summary.observations[0], periodId: "month_2030_01" },
-      ],
+      observations: [{ ...summary.observations[0], periodId: "month_2030_01" }],
     };
     const result = parsePeriodPack(periods, orphaned);
 
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.errors.join(" ")).toContain("unpublished period");
+    if (!result.ok)
+      expect(result.errors.join(" ")).toContain("unpublished period");
   });
 
   it("rejects months that disagree with the bounds", () => {
     const { periods, summary } = syntheticPayloads();
     const broken = {
       ...periods,
-      periods: [{ ...periods.periods[0], months: ["2026-09"] }, periods.periods[1]],
+      periods: [
+        { ...periods.periods[0], months: ["2026-09"] },
+        periods.periods[1],
+      ],
     };
     const result = parsePeriodPack(broken, summary);
 
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.errors.join(" ")).toContain("months do not match");
+    if (!result.ok)
+      expect(result.errors.join(" ")).toContain("months do not match");
   });
 
   it("rejects a no-sales observation that carries a price", () => {
@@ -240,12 +256,16 @@ describe("parse rejection", () => {
     const result = parsePeriodPack(periods, contradictory);
 
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.errors.join(" ")).toContain("no-sales with a price");
+    if (!result.ok)
+      expect(result.errors.join(" ")).toContain("no-sales with a price");
   });
 
   it("rejects periods and summary that disagree about the cutoff", () => {
     const { periods, summary } = syntheticPayloads();
-    const result = parsePeriodPack(periods, { ...summary, cutoffMonth: "2026-09" });
+    const result = parsePeriodPack(periods, {
+      ...summary,
+      cutoffMonth: "2026-09",
+    });
 
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.errors.join(" ")).toContain("cutoff month");
@@ -284,7 +304,9 @@ describe("observation lookup", () => {
     expect(punggol?.metrics.transactionCount.value).toBe(1538);
     expect(punggol?.metrics.medianPrice.value).toBe(672000);
 
-    expect(findObservation(pack, "PUNGGOL", "hdb", "month_2026_10")).not.toBeNull();
+    expect(
+      findObservation(pack, "PUNGGOL", "hdb", "month_2026_10"),
+    ).not.toBeNull();
     expect(findObservation(pack, "NOWHERE", "hdb", "year_2025")).toBeNull();
     expect(findObservation(pack, "PUNGGOL", "hdb", "ytd_1999_01")).toBeNull();
   });
@@ -304,7 +326,9 @@ describe("comparisons", () => {
     expect(comparison).not.toBeNull();
     expect(comparison?.comparatorPeriod.id).toBe("month_2025_10");
 
-    const count = comparison?.changes.find((change) => change.metric === "transactionCount");
+    const count = comparison?.changes.find(
+      (change) => change.metric === "transactionCount",
+    );
     expect(count).toBeDefined();
     expect(count!.absolute).toBe(
       (current!.metrics.transactionCount.value ?? 0) -
@@ -340,36 +364,55 @@ describe("comparisons", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    const comparison = compareWithComparator(result.pack, result.pack.observations[0]);
+    const comparison = compareWithComparator(
+      result.pack,
+      result.pack.observations[0],
+    );
     expect(comparison?.changes).toEqual([]);
     expect(comparison?.skipped.map((entry) => entry.metric).sort()).toEqual([
       "medianPrice",
       "medianPsf",
       "transactionCount",
     ]);
-    expect(comparison?.skipped[0].reason).toContain("not observed in both windows");
+    expect(comparison?.skipped[0].reason).toContain(
+      "not observed in both windows",
+    );
   });
 
   it("refuses a zero comparator denominator", () => {
-    const { periods, summary } = syntheticPayloads({ current: 5, comparator: 0 });
+    const { periods, summary } = syntheticPayloads({
+      current: 5,
+      comparator: 0,
+    });
     const result = parsePeriodPack(periods, summary);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    const comparison = compareWithComparator(result.pack, result.pack.observations[0]);
+    const comparison = compareWithComparator(
+      result.pack,
+      result.pack.observations[0],
+    );
     const reasons = comparison?.skipped.map((entry) => entry.reason) ?? [];
     expect(reasons).toContain("zero comparator denominator");
     expect(comparison?.changes).toEqual([]);
   });
 
   it("computes a percentage change for an available scope", () => {
-    const { periods, summary } = syntheticPayloads({ current: 120, comparator: 100 });
+    const { periods, summary } = syntheticPayloads({
+      current: 120,
+      comparator: 100,
+    });
     const result = parsePeriodPack(periods, summary);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    const comparison = compareWithComparator(result.pack, result.pack.observations[0]);
-    const count = comparison?.changes.find((change) => change.metric === "transactionCount");
+    const comparison = compareWithComparator(
+      result.pack,
+      result.pack.observations[0],
+    );
+    const count = comparison?.changes.find(
+      (change) => change.metric === "transactionCount",
+    );
 
     expect(count?.absolute).toBe(20);
     expect(count?.percent).toBeCloseTo(20, 10);
@@ -380,19 +423,23 @@ describe("dispositions", () => {
   it("treats only cleared, observed scopes as publishable", () => {
     const pack = realPack();
 
-    expect(isPublishable(findObservation(pack, "SG", "hdb", "month_2026_10")!)).toBe(true);
-    expect(isPublishable(findObservation(pack, "SG", "condo", "month_2026_10")!)).toBe(
-      false,
-    );
+    expect(
+      isPublishable(findObservation(pack, "SG", "hdb", "month_2026_10")!),
+    ).toBe(true);
+    expect(
+      isPublishable(findObservation(pack, "SG", "condo", "month_2026_10")!),
+    ).toBe(false);
   });
 
   it("explains why a scope is limited", () => {
     const pack = realPack();
 
-    expect(scopeNote(findObservation(pack, "SG", "condo", "month_2026_10")!)).toContain(
-      "Coverage is limited",
-    );
-    expect(scopeNote(findObservation(pack, "SG", "hdb", "month_2026_10")!)).toBeNull();
+    expect(
+      scopeNote(findObservation(pack, "SG", "condo", "month_2026_10")!),
+    ).toContain("Coverage is limited");
+    expect(
+      scopeNote(findObservation(pack, "SG", "hdb", "month_2026_10")!),
+    ).toBeNull();
   });
 });
 

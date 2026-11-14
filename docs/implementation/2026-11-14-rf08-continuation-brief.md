@@ -8,21 +8,21 @@
 
 ## 1. The studies that remain
 
-| Series | Register row | Extra gate beyond D12 |
-| --- | --- | --- |
-| `temporal-evolution` | RS03 | Comparable periods and period-correct feature vintages |
-| `amenity-impact` | RS04 | Refit with units and controls; no causal premium |
-| `facility-premiums` | RS05 | Matched facilities; publish uncertainty |
-| `lease-decay` | RS06 | **Model/unit approval** — per-square-metre vs per-square-foot must be resolved first; charts stay withheld |
-| `mrt-impact` | RS07 | **Model approval** — confirm metres/km and the response variable; no "15×" marketing |
-| `school-quality` | RS08 | **Causal/RDD review** — tiers, bandwidth, assignment, multiple testing |
-| `macro-sensitivity` | RS09 | Real release vintages; fallback series excluded from claims |
-| `market-segments` | RS10 | **Segment/scoring owner approval** — recover scaling and cohort counts |
-| `spatial-autocorrelation` | RS11 | **Spatial method review** — weights, disconnected areas, permutations |
-| `spatial-hotspots` | RS12 | **Spatial method review** — keep Jan 2024–Jan 2025 as its own historical window |
-| `causal-inference-overview` | RS13 | **Causal identification approval** — estimand, pretrends, placebos |
-| `price-forecasts` | RS14 | **Forecast/model approval** — rolling-origin validation, leakage checks, score expired 2025 forecasts |
-| `findings` | RS15 | **Last** — every quantitative sentence must link to a reviewed edition |
+| Series                      | Register row | Extra gate beyond D12                                                                                      |
+| --------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `temporal-evolution`        | RS03         | Comparable periods and period-correct feature vintages                                                     |
+| `amenity-impact`            | RS04         | Refit with units and controls; no causal premium                                                           |
+| `facility-premiums`         | RS05         | Matched facilities; publish uncertainty                                                                    |
+| `lease-decay`               | RS06         | **Model/unit approval** — per-square-metre vs per-square-foot must be resolved first; charts stay withheld |
+| `mrt-impact`                | RS07         | **Model approval** — confirm metres/km and the response variable; no "15×" marketing                       |
+| `school-quality`            | RS08         | **Causal/RDD review** — tiers, bandwidth, assignment, multiple testing                                     |
+| `macro-sensitivity`         | RS09         | Real release vintages; fallback series excluded from claims                                                |
+| `market-segments`           | RS10         | **Segment/scoring owner approval** — recover scaling and cohort counts                                     |
+| `spatial-autocorrelation`   | RS11         | **Spatial method review** — weights, disconnected areas, permutations                                      |
+| `spatial-hotspots`          | RS12         | **Spatial method review** — keep Jan 2024–Jan 2025 as its own historical window                            |
+| `causal-inference-overview` | RS13         | **Causal identification approval** — estimand, pretrends, placebos                                         |
+| `price-forecasts`           | RS14         | **Forecast/model approval** — rolling-origin validation, leakage checks, score expired 2025 forecasts      |
+| `findings`                  | RS15         | **Last** — every quantitative sentence must link to a reviewed edition                                     |
 
 `amenity-impact`…`findings` are the 13. RS15 must not start until its dependencies exist.
 
@@ -56,13 +56,13 @@ For each study, in this order, stopping at each gate:
 
 ## 3. Mechanics you will need
 
-| Thing | Where |
-| --- | --- |
-| Edition registry + validation + text pin | `app/src/components/studies/lib/edition-registry.ts` (`REFRESHED_EDITIONS`, `editionSha256`, `verifyEditionArtifacts`) |
-| Build-time enforcement | `app/src/pages/analytics/archive/[year]/[edition]/[slug].astro` — `getStaticPaths` throws on an invalid registry **or** a drifted frozen text |
-| Series page | `app/src/pages/analytics/[slug].astro` — the approved branch names and links the approved edition and says the narrative below may predate it |
+| Thing                                    | Where                                                                                                                                                   |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Edition registry + validation + text pin | `app/src/components/studies/lib/edition-registry.ts` (`REFRESHED_EDITIONS`, `editionSha256`, `verifyEditionArtifacts`)                                  |
+| Build-time enforcement                   | `app/src/pages/analytics/archive/[year]/[edition]/[slug].astro` — `getStaticPaths` throws on an invalid registry **or** a drifted frozen text           |
+| Series page                              | `app/src/pages/analytics/[slug].astro` — the approved branch names and links the approved edition and says the narrative below may predate it           |
 | Everything is unregistered ⇒ build fails | A new file under `editions/*/*/*.md` **must** get a registry entry in the same change, or `getStaticPaths` throws "no identity in the edition registry" |
-| Signed hashes currently pinned | `data-sources` text `bde11c61…`, RS01 ledger `65ce7a10…`; `rental-yields` text `f6b0bd9d…`, RS02 ledger `db134525…` |
+| Signed hashes currently pinned           | `data-sources` text `bde11c61…`, RS01 ledger `65ce7a10…`; `rental-yields` text `f6b0bd9d…`, RS02 ledger `db134525…`                                     |
 
 ## 4. Traps that cost time the first two times
 

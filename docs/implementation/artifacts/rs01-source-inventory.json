@@ -433,12 +433,7 @@
         "status": "recorded"
       },
       "bytes": 4475,
-      "columns": [
-        "_id",
-        "shs_year",
-        "town_estate",
-        "number"
-      ],
+      "columns": ["_id", "shs_year", "town_estate", "number"],
       "coverage": {
         "column": null,
         "max": null,
@@ -534,11 +529,7 @@
         "status": "recorded"
       },
       "bytes": 7562,
-      "columns": [
-        "name",
-        "lat",
-        "lon"
-      ],
+      "columns": ["name", "lat", "lon"],
       "coverage": {
         "column": null,
         "max": null,
@@ -561,12 +552,7 @@
         "status": "recorded"
       },
       "bytes": 8516,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "line"
-      ],
+      "columns": ["name", "lat", "lon", "line"],
       "coverage": {
         "column": null,
         "max": null,
@@ -589,13 +575,7 @@
         "status": "recorded"
       },
       "bytes": 8975,
-      "columns": [
-        "_id",
-        "quarter",
-        "property_type",
-        "locality",
-        "index"
-      ],
+      "columns": ["_id", "quarter", "property_type", "locality", "index"],
       "coverage": {
         "column": "quarter",
         "max": "2026-07-01",
@@ -697,12 +677,7 @@
         "status": "recorded"
       },
       "bytes": 132985,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -748,12 +723,7 @@
         "status": "recorded"
       },
       "bytes": 36177,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -799,12 +769,7 @@
         "status": "recorded"
       },
       "bytes": 62256,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -850,12 +815,7 @@
         "status": "recorded"
       },
       "bytes": 6772,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -901,12 +861,7 @@
         "status": "recorded"
       },
       "bytes": 8226,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -975,12 +930,7 @@
         "status": "recorded"
       },
       "bytes": 17422,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -1026,12 +976,7 @@
         "status": "recorded"
       },
       "bytes": 37681,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -1077,12 +1022,7 @@
         "status": "recorded"
       },
       "bytes": 4476,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -1128,12 +1068,7 @@
         "status": "recorded"
       },
       "bytes": 14643,
-      "columns": [
-        "name",
-        "lat",
-        "lon",
-        "amenity_type"
-      ],
+      "columns": ["name", "lat", "lon", "amenity_type"],
       "coverage": {
         "column": null,
         "max": null,
@@ -1156,10 +1091,7 @@
         "status": "recorded"
       },
       "bytes": 8173,
-      "columns": [
-        "date",
-        "sora_3m"
-      ],
+      "columns": ["date", "sora_3m"],
       "coverage": {
         "column": "date",
         "max": "2026-09-01",
@@ -1182,10 +1114,7 @@
         "status": "recorded"
       },
       "bytes": 14291,
-      "columns": [
-        "date",
-        "cpi"
-      ],
+      "columns": ["date", "cpi"],
       "coverage": {
         "column": "date",
         "max": "2026-09-01",
@@ -1208,10 +1137,7 @@
         "status": "recorded"
       },
       "bytes": 4235,
-      "columns": [
-        "quarter",
-        "gdp"
-      ],
+      "columns": ["quarter", "gdp"],
       "coverage": {
         "column": "quarter",
         "max": "2026-06-30",
@@ -1234,10 +1160,7 @@
         "status": "recorded"
       },
       "bytes": 3903,
-      "columns": [
-        "quarter",
-        "hdb_rpi"
-      ],
+      "columns": ["quarter", "hdb_rpi"],
       "coverage": {
         "column": "quarter",
         "max": "2026-09-30",
@@ -1283,10 +1206,7 @@
         "status": "not-recorded"
       },
       "bytes": 2768,
-      "columns": [
-        "date",
-        "sora_rate"
-      ],
+      "columns": ["date", "sora_rate"],
       "coverage": {
         "column": "date",
         "max": "2025-12-31",
@@ -1309,10 +1229,7 @@
         "status": "recorded"
       },
       "bytes": 3383,
-      "columns": [
-        "quarter",
-        "unemployment_rate"
-      ],
+      "columns": ["quarter", "unemployment_rate"],
       "coverage": {
         "column": "quarter",
         "max": "2026-09-30",
@@ -1335,10 +1252,7 @@
         "status": "recorded"
       },
       "bytes": 4698,
-      "columns": [
-        "quarter",
-        "ura_ppi"
-      ],
+      "columns": ["quarter", "ura_ppi"],
       "coverage": {
         "column": "quarter",
         "max": "2026-09-30",
@@ -1361,10 +1275,7 @@
         "status": "recorded"
       },
       "bytes": 2897,
-      "columns": [
-        "quarter",
-        "wage_growth"
-      ],
+      "columns": ["quarter", "wage_growth"],
       "coverage": {
         "column": "quarter",
         "max": "2025-12-31",
@@ -1468,12 +1379,7 @@
         "status": "not-recorded"
       },
       "bytes": 1058,
-      "columns": [
-        "planning_area",
-        "region",
-        "area_sqkm",
-        "planning_class"
-      ],
+      "columns": ["planning_area", "region", "area_sqkm", "planning_class"],
       "coverage": {
         "column": null,
         "max": null,
@@ -2025,12 +1931,7 @@
         "status": "not-recorded"
       },
       "bytes": 969,
-      "columns": [
-        "feature",
-        "weight",
-        "description",
-        "calculation_method"
-      ],
+      "columns": ["feature", "weight", "description", "calculation_method"],
       "coverage": {
         "column": null,
         "max": null,
@@ -2813,9 +2714,7 @@
         "status": "not-recorded"
       },
       "bytes": 189,
-      "columns": [
-        "Traceback (most recent call last):"
-      ],
+      "columns": ["Traceback (most recent call last):"],
       "coverage": {
         "column": null,
         "max": null,

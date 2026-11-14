@@ -65,10 +65,7 @@ test.describe("Analytics archive", () => {
     const archiveLink = panel.getByRole("link", {
       name: /Archived edition legacy-2026-11-12/,
     });
-    await expect(archiveLink).toHaveAttribute(
-      "href",
-      `${LEGACY}/mrt-impact`,
-    );
+    await expect(archiveLink).toHaveAttribute("href", `${LEGACY}/mrt-impact`);
   });
 
   test("an approved edition is offered as the series' current edition", async ({
@@ -89,10 +86,7 @@ test.describe("Analytics archive", () => {
       await expect(panel).toContainText(`Approved edition ${edition}`);
       await expect(
         panel.getByRole("link", { name: /Read the approved edition/ }),
-      ).toHaveAttribute(
-        "href",
-        `/analytics/archive/2026/${edition}/${series}`,
-      );
+      ).toHaveAttribute("href", `/analytics/archive/2026/${edition}/${series}`);
 
       // The approved edition renders as approved, not as a frozen historical one.
       const archive = page.locator('[data-edition-status="approved"]');

@@ -70,8 +70,8 @@ Two stale tests were corrected rather than worked around: `cross-page.spec.ts` s
 
 ## 8. Not in this slice
 
-| Item | Owner | Why |
-| --- | --- | --- |
-| Pack current-window slices on the fieldnote | RF10 | The fieldnote now *reports* a published window instead of substituting one; embedding per-area rolling-quarter/TTM slices belongs with the area-activity UI, which needs RF09. |
-| Editions and archive routes | RF07/RF08 | Requires the three recorded sign-offs; no self-approval. |
-| `PUBLIC_OBSERVED_RELEASE=v2` | RF05 tail | Now unblocked in the fieldnote/return-link sense — the remaining reason to hold is the v1-period tool reference, which is explicit and labelled. |
+| Item                                        | Owner     | Why                                                                                                                                                                            |
+| ------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Pack current-window slices on the fieldnote | RF10      | The fieldnote now _reports_ a published window instead of substituting one; embedding per-area rolling-quarter/TTM slices belongs with the area-activity UI, which needs RF09. |
+| Editions and archive routes                 | RF07/RF08 | Requires the three recorded sign-offs; no self-approval.                                                                                                                       |
+| `PUBLIC_OBSERVED_RELEASE=v2`                | RF05 tail | Now unblocked in the fieldnote/return-link sense — the remaining reason to hold is the v1-period tool reference, which is explicit and labelled.                               |

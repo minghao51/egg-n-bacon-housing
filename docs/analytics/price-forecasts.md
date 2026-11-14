@@ -37,12 +37,12 @@ Forecast quality depends far more on **market segment** than on having a single 
 <div data-chart-metadata="true" data-chart="comparison" data-chart-title="Forecast reliability by property segment" data-chart-columns="R² (magnitude fit),Directional Acc"></div>
 
 | Segment            | R² (magnitude fit) | 95% CI Width | Directional Acc | Practical read               |
-| ------------------ | ------------- | ------------ | --------------- | ---------------------------- |
-| HDB flats          | 79.8%         | ±18.58%      | 99.4%           | Strong                       |
-| Executive Condos   | 98.5%         | ±50.15%      | 97.1%           | Strong but wider uncertainty |
-| Mass Market Condos | 85.6%         | ±40.48%      | 96.4%           | Useful with caution          |
-| Mid Market Condos  | 72.6%         | ±1877.88%    | 94.2%           | Direction only               |
-| Luxury Condos      | 30.1%         | ±1076.24%    | 92.3%           | Magnitude unusable           |
+| ------------------ | ------------------ | ------------ | --------------- | ---------------------------- |
+| HDB flats          | 79.8%              | ±18.58%      | 99.4%           | Strong                       |
+| Executive Condos   | 98.5%              | ±50.15%      | 97.1%           | Strong but wider uncertainty |
+| Mass Market Condos | 85.6%              | ±40.48%      | 96.4%           | Useful with caution          |
+| Mid Market Condos  | 72.6%              | ±1877.88%    | 94.2%           | Direction only               |
+| Luxury Condos      | 30.1%              | ±1076.24%    | 92.3%           | Magnitude unusable           |
 
 ### 2. Direction is often easier to predict than magnitude
 

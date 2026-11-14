@@ -78,9 +78,7 @@ export function isScopedRankMetric(
 export function unsupportedMetricReason(
   metric: LeaderboardMetric,
 ): string | null {
-  return isScopedRankMetric(metric)
-    ? null
-    : UNSUPPORTED_METRIC_REASONS[metric];
+  return isScopedRankMetric(metric) ? null : UNSUPPORTED_METRIC_REASONS[metric];
 }
 
 export function isPlanningRegion(value: string): value is PlanningRegion {
@@ -166,7 +164,9 @@ function readMixVolume(
   era: EraId,
   propertyType: "hdb" | "ec" | "condo",
 ): number | null {
-  return readScopedAreaMetrics(mapMetrics, area, era, propertyType)?.volume ?? null;
+  return (
+    readScopedAreaMetrics(mapMetrics, area, era, propertyType)?.volume ?? null
+  );
 }
 
 /**
@@ -291,8 +291,11 @@ function buildRankRows(
   const { entries, metric, region, priceRange, search } = input;
 
   const unpublishedAreas: string[] = [];
-  const qualified: { value: number; area: string; row: LeaderboardDisplayRow }[] =
-    [];
+  const qualified: {
+    value: number;
+    area: string;
+    row: LeaderboardDisplayRow;
+  }[] = [];
   const unranked: LeaderboardDisplayRow[] = [];
   let filteredOut = 0;
 

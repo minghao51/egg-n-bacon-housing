@@ -42,10 +42,7 @@ test.describe("Observed default migration (switch on)", () => {
     await expect(notice).toContainText("2025 complete year");
 
     const link = notice.getByRole("link", { name: "open that view" });
-    await expect(link).toHaveAttribute(
-      "href",
-      /\/explore\?period=year_2025$/,
-    );
+    await expect(link).toHaveAttribute("href", /\/explore\?period=year_2025$/);
 
     // The link resolves to the previously explicit window.
     await link.click();
@@ -84,8 +81,6 @@ test.describe("Observed default migration (switch on)", () => {
       page.locator('[data-observed-default-notice="true"]'),
     ).toHaveCount(0);
     expect(new URL(page.url()).searchParams.get("timeBasis")).toBe("recent");
-    await expect(
-      page.getByText(/2022 onward/i).first(),
-    ).toBeVisible();
+    await expect(page.getByText(/2022 onward/i).first()).toBeVisible();
   });
 });

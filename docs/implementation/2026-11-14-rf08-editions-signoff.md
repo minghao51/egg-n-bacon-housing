@@ -17,9 +17,9 @@ Given by the repo owner as `howt` on both ledger hashes, after the agent reporte
 verified against this tree (`source_inventory.py --check` → `Pass: RS01 ledger matches
 the tree`; both ledger files re-hashed on disk).
 
-| Ledger | sha256 | What the owner accepted |
-| --- | --- | --- |
-| RS01 `artifacts/rs01-source-inventory.json` | `65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae` | the measured inventory and the cutoff/dispositions it implies |
+| Ledger                                           | sha256                                                             | What the owner accepted                                                   |
+| ------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| RS01 `artifacts/rs01-source-inventory.json`      | `65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae` | the measured inventory and the cutoff/dispositions it implies             |
 | RS02 `artifacts/rs02-rental-yield-evidence.json` | `db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313` | the measured coverage 2021-01 → 2026-10 and the §5 regenerate disposition |
 
 Because `validateEditionRegistry()` rejects any sign-off on a non-approved edition, this
@@ -32,9 +32,9 @@ flips the editions to `approved`.
 New frozen sources; the RF00 originals were **not** edited. `verify_reporting_baseline.py
 --assets` still passes 15 frozen sources / 72 assets, which is the byte-level proof.
 
-| Series | Frozen source | Edition id | Signed text sha256 |
-| --- | --- | --- | --- |
-| `data-sources` | `docs/analytics/editions/data-sources/2026-11-14/data-sources.md` | `data-sources-2026-11-14` | `bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81` |
+| Series          | Frozen source                                                       | Edition id                 | Signed text sha256                                                 |
+| --------------- | ------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------ |
+| `data-sources`  | `docs/analytics/editions/data-sources/2026-11-14/data-sources.md`   | `data-sources-2026-11-14`  | `bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81` |
 | `rental-yields` | `docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md` | `rental-yields-2026-11-14` | `f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67` |
 
 The signed hashes above are the post-review bytes — the text as it stood when the
@@ -111,16 +111,16 @@ say "No approved current edition".
 
 ## Verification at freeze
 
-| Check | Result |
-| --- | --- |
-| `uv run python scripts/tools/source_inventory.py --check` | Pass: RS01 ledger matches the tree |
-| `uv run python scripts/tools/rental_yield_evidence.py` | re-measured; ledger hash unchanged |
-| `uv run pytest tests/test_research_evidence_tools.py tests/test_rental_yield_metrics.py --no-cov -q` | 25 passed |
-| `uv run python scripts/tools/verify_reporting_baseline.py --assets` | Pass: 15 sources, 72 assets |
-| `uv run ruff check` / `ruff format --check scripts/` | clean / 14 files formatted |
-| `cd app && bun run test:unit` | 508 passed (32 files) |
-| `cd app && bun run astro check` | 0 errors, 0 warnings, 22 hints |
-| `cd app && bun run build` | 221 pages (+2 archive routes) |
-| `cd app && bunx playwright test tests/e2e --workers=4` | 230 → 231 passed / 9 skipped after the approved-edition test |
-| Archive routes render | `data-edition-status="historical"` — the honest pre-approval state |
-| Build-time pin check | proven: an approved entry with a wrong `editionSha256` fails the build with the mismatch named |
+| Check                                                                                                | Result                                                                                         |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `uv run python scripts/tools/source_inventory.py --check`                                            | Pass: RS01 ledger matches the tree                                                             |
+| `uv run python scripts/tools/rental_yield_evidence.py`                                               | re-measured; ledger hash unchanged                                                             |
+| `uv run pytest tests/test_research_evidence_tools.py tests/test_rental_yield_metrics.py --no-cov -q` | 25 passed                                                                                      |
+| `uv run python scripts/tools/verify_reporting_baseline.py --assets`                                  | Pass: 15 sources, 72 assets                                                                    |
+| `uv run ruff check` / `ruff format --check scripts/`                                                 | clean / 14 files formatted                                                                     |
+| `cd app && bun run test:unit`                                                                        | 508 passed (32 files)                                                                          |
+| `cd app && bun run astro check`                                                                      | 0 errors, 0 warnings, 22 hints                                                                 |
+| `cd app && bun run build`                                                                            | 221 pages (+2 archive routes)                                                                  |
+| `cd app && bunx playwright test tests/e2e --workers=4`                                               | 230 → 231 passed / 9 skipped after the approved-edition test                                   |
+| Archive routes render                                                                                | `data-edition-status="historical"` — the honest pre-approval state                             |
+| Build-time pin check                                                                                 | proven: an approved entry with a wrong `editionSha256` fails the build with the mismatch named |

@@ -449,9 +449,7 @@
   "observations": [
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -479,9 +477,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -509,9 +505,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -539,9 +533,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -569,9 +561,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -599,9 +589,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -629,9 +617,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -659,9 +645,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -689,9 +673,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -719,9 +701,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -749,9 +729,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -779,9 +757,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -809,9 +785,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -839,9 +813,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -869,9 +841,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -899,9 +869,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-10"
-        ],
+        "months": ["2026-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -929,11 +897,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -961,11 +925,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -993,11 +953,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1025,11 +981,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1057,11 +1009,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1089,11 +1037,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -1121,11 +1065,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1153,11 +1093,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1185,11 +1121,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1217,11 +1149,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -1249,11 +1177,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1281,11 +1205,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1313,11 +1233,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1345,11 +1261,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -1377,11 +1289,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -1409,11 +1317,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2026-08",
-          "2026-09",
-          "2026-10"
-        ],
+        "months": ["2026-08", "2026-09", "2026-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -3377,9 +3281,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3407,9 +3309,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -3437,9 +3337,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3467,9 +3365,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3497,9 +3393,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3527,9 +3421,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -3557,9 +3449,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3587,9 +3477,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3617,9 +3505,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3647,9 +3533,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -3677,9 +3561,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3707,9 +3589,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3737,9 +3617,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3767,9 +3645,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "publish",
@@ -3797,9 +3673,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3827,9 +3701,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-10"
-        ],
+        "months": ["2025-10"],
         "requestedMonths": 1
       },
       "disposition": "limited-display",
@@ -3857,11 +3729,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -3889,11 +3757,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -3921,11 +3785,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -3953,11 +3813,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -3985,11 +3841,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4017,11 +3869,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -4049,11 +3897,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4081,11 +3925,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4113,11 +3953,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4145,11 +3981,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -4177,11 +4009,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4209,11 +4037,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4241,11 +4065,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4273,11 +4093,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "publish",
@@ -4305,11 +4121,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",
@@ -4337,11 +4149,7 @@
     },
     {
       "coverage": {
-        "months": [
-          "2025-08",
-          "2025-09",
-          "2025-10"
-        ],
+        "months": ["2025-08", "2025-09", "2025-10"],
         "requestedMonths": 3
       },
       "disposition": "limited-display",

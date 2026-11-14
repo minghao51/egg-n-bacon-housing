@@ -57,11 +57,15 @@ function formatCount(value: number | null): string {
 }
 
 function formatPrice(value: number | null): string {
-  return value === null ? "—" : `S$${Math.round(value).toLocaleString("en-US")}`;
+  return value === null
+    ? "—"
+    : `S$${Math.round(value).toLocaleString("en-US")}`;
 }
 
 function formatPsf(value: number | null): string {
-  return value === null ? "—" : `S$${Math.round(value).toLocaleString("en-US")}`;
+  return value === null
+    ? "—"
+    : `S$${Math.round(value).toLocaleString("en-US")}`;
 }
 
 /** Fetch the manifest only, then verify the one payload we need. */
@@ -69,7 +73,9 @@ async function fetchHistory(
   base: string,
   property: PropertyTypeId,
   areaId: string,
-): Promise<{ ok: true; view: AreaHistoryView } | { ok: false; message: string }> {
+): Promise<
+  { ok: true; view: AreaHistoryView } | { ok: false; message: string }
+> {
   const baseUrl = base === "" ? "/" : `${base}/`;
   let manifest: V2Manifest;
   try {
@@ -130,14 +136,17 @@ export default function AreaHistoryPanel({
 
   return (
     <section aria-labelledby="area-history-heading" className="mt-8 min-w-0">
-      <h2 id="area-history-heading" className="text-2xl font-bold text-foreground">
+      <h2
+        id="area-history-heading"
+        className="text-2xl font-bold text-foreground"
+      >
         Monthly history
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
         Month-by-month observed sales and medians for {areaName} (
         {PROPERTY_LABELS[property]}). This reads the published monthly payload,
-        so it is loaded only when you ask for it. Nothing here is fetched on page
-        load.
+        so it is loaded only when you ask for it. Nothing here is fetched on
+        page load.
       </p>
 
       {panel.state === "idle" ? (
@@ -259,7 +268,10 @@ function HistoryTable({
                 data-history-row={row.month}
                 data-history-status={row.status}
               >
-                <th scope="row" className="py-2 pr-4 text-left font-mono text-xs">
+                <th
+                  scope="row"
+                  className="py-2 pr-4 text-left font-mono text-xs"
+                >
                   {row.month}
                 </th>
                 <td className="py-2 pr-4" data-numeric>

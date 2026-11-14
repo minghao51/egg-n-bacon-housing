@@ -49,7 +49,10 @@ import {
   type AreaPageData,
 } from "../../src/utils/area-page";
 import { sectionKey } from "../../src/utils/observed-data";
-import { AREA_RETURN_PARAMETERS, explorerReturnHref } from "../../src/utils/area-links";
+import {
+  AREA_RETURN_PARAMETERS,
+  explorerReturnHref,
+} from "../../src/utils/area-links";
 
 /** The published `map_metrics.year_2025_hdb` section, approved metrics only. */
 const YEAR_2025_HDB = {
@@ -763,7 +766,9 @@ describe("return-link contract", () => {
         "/egg-n-bacon-housing/explore",
         "?from=explore&property=condo&period=year_2025",
       ),
-    ).toBe("/egg-n-bacon-housing/explore?from=explore&property=condo&period=year_2025");
+    ).toBe(
+      "/egg-n-bacon-housing/explore?from=explore&property=condo&period=year_2025",
+    );
   });
 
   test("the exported list is what the shared function reads", () => {

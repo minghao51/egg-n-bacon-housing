@@ -48,13 +48,14 @@ export const ACTIVITY_PROPERTY_TYPES: readonly PropertyTypeId[] = [
   "all",
 ];
 
-export const ACTIVITY_PROPERTY_LABELS: Readonly<Record<PropertyTypeId, string>> =
-  {
-    hdb: "HDB resale",
-    ec: "Executive condominium",
-    condo: "Private residential",
-    all: "All residential",
-  };
+export const ACTIVITY_PROPERTY_LABELS: Readonly<
+  Record<PropertyTypeId, string>
+> = {
+  hdb: "HDB resale",
+  ec: "Executive condominium",
+  condo: "Private residential",
+  all: "All residential",
+};
 
 export interface ActivityWindow {
   periodId: string;
@@ -131,7 +132,9 @@ function windowOf(
 }
 
 /** The newest published rolling-quarter period, or `null`. */
-export function rollingQuarterPeriod(pack: PeriodPack): PeriodDescriptor | null {
+export function rollingQuarterPeriod(
+  pack: PeriodPack,
+): PeriodDescriptor | null {
   const quarters = pack.periods.filter((period) => period.kind === "rolling3");
   if (quarters.length === 0) return null;
   return quarters.reduce((newest, period) =>
@@ -238,13 +241,21 @@ export function activityForObservation(
       ineligibleReason = "no prior-year-quarter denominator is published";
     } else {
       const shortWindows: string[] = [];
-      if (currentCount < ACTIVITY_SALE_FLOOR) shortWindows.push("the current quarter");
-      if (priorCount < ACTIVITY_SALE_FLOOR) shortWindows.push("the prior-year quarter");
+      if (currentCount < ACTIVITY_SALE_FLOOR)
+        shortWindows.push("the current quarter");
+      if (priorCount < ACTIVITY_SALE_FLOOR)
+        shortWindows.push("the prior-year quarter");
       ineligibleReason = `fewer than ${ACTIVITY_SALE_FLOOR} observed sales in ${shortWindows.join(" and ")}`;
     }
   }
 
-  return { priorYear, changePercent, changeUnavailableReason, eligible, ineligibleReason };
+  return {
+    priorYear,
+    changePercent,
+    changeUnavailableReason,
+    eligible,
+    ineligibleReason,
+  };
 }
 
 /**
@@ -272,8 +283,13 @@ export function buildAreaActivity(
     if (observation === null) continue;
 
     const current = windowOf(observation, period);
-    const { priorYear, changePercent, changeUnavailableReason, eligible, ineligibleReason } =
-      activityForObservation(pack, observation);
+    const {
+      priorYear,
+      changePercent,
+      changeUnavailableReason,
+      eligible,
+      ineligibleReason,
+    } = activityForObservation(pack, observation);
 
     rows.push({
       propertyType,

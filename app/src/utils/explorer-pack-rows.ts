@@ -19,7 +19,11 @@
  *   the area rows.
  */
 
-import { areaSlug, canonicalAreaId, formatAreaName } from "@/utils/observed-data";
+import {
+  areaSlug,
+  canonicalAreaId,
+  formatAreaName,
+} from "@/utils/observed-data";
 import { activityForObservation } from "@/utils/area-activity";
 import {
   findObservation,
@@ -88,8 +92,16 @@ function publishedIds(pack: PeriodPack): string {
  * reported as unknown instead of silently rendering another window.
  */
 export function buildPackExplorerDataset(input: PackRowInput): PackRowResult {
-  const { pack, generation, periodId, property, minSales, search, sort, direction } =
-    input;
+  const {
+    pack,
+    generation,
+    periodId,
+    property,
+    minSales,
+    search,
+    sort,
+    direction,
+  } = input;
 
   if (!isConcretePeriod(periodId)) {
     return {

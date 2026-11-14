@@ -81,7 +81,9 @@ describe("monthly history view", () => {
     const history = fixtureHistory();
     const view = buildAreaHistoryView(history, "PUNGGOL");
 
-    expect(view.rows.length).toBe(Math.min(HISTORY_MONTH_LIMIT, history.months.length));
+    expect(view.rows.length).toBe(
+      Math.min(HISTORY_MONTH_LIMIT, history.months.length),
+    );
     expect(view.months).toEqual(history.months.slice(-view.rows.length));
     // Ascending, oldest first: no reversed table by accident.
     expect(view.months).toEqual([...view.months].sort());

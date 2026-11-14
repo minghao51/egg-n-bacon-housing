@@ -292,7 +292,8 @@ export default function LeaderboardMap({
         : row.rankMetricValue === null
           ? "—"
           : `${row.rankMetricValue.toFixed(2)} ${metricMeta.unit}`;
-      const rankLabel = row && row.rank !== null ? `#${row.rank}` : "Not ranked";
+      const rankLabel =
+        row && row.rank !== null ? `#${row.rank}` : "Not ranked";
 
       const tooltip = row
         ? `

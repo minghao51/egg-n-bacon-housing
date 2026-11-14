@@ -32,10 +32,10 @@ Verified v2 observed pack 6cd4510f26ec (cutoff 2026-10, 8 periods, 1472 observat
 
 `app/src/utils/observed-pack-build.ts` — verifies the pack from disk with the same manifest parser, generation hash and period parser the browser uses, then extracts only what the page needs:
 
-| Export | Behaviour |
-| --- | --- |
-| `loadObservedPackFromDir(dir)` | Reads `dashboard-release-v2.json`, checks generation, per-payload size + sha256, gunzips **those** bytes, parses. Returns `ready` / `absent` / `invalid` |
-| `summariseForDashboard(pack, generation, type)` | YTD + latest-month windows with per-metric value, prior-year comparator, change and skip reason |
+| Export                                          | Behaviour                                                                                                                                                |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `loadObservedPackFromDir(dir)`                  | Reads `dashboard-release-v2.json`, checks generation, per-payload size + sha256, gunzips **those** bytes, parses. Returns `ready` / `absent` / `invalid` |
+| `summariseForDashboard(pack, generation, type)` | YTD + latest-month windows with per-metric value, prior-year comparator, change and skip reason                                                          |
 
 7 tests cover verification, absent, tampered payload, edited generation, and the HDB/condo summaries.
 
@@ -47,7 +47,7 @@ Verified v2 observed pack 6cd4510f26ec (cutoff 2026-10, 8 periods, 1472 observat
 > HDB sales, 2026 January to 2026-10 (partial year): **21,801 sales**, +1.9% vs prior year
 > HDB median price, year to date: **S$633,999**, +1.0% vs prior year
 > HDB sales, 2026-10 (one month): **2,173 sales**, +62.4% vs prior year
-> *Condominium and EC 2026 counts are still under coverage review…*
+> _Condominium and EC 2026 counts are still under coverage review…_
 
 The strip is absent when the pack is missing or fails verification — the page then keeps the legacy snapshot and logs the verification error at build time. No number is drawn from an unverified payload.
 
@@ -84,11 +84,11 @@ The area table, list and map are now on the pack for a published period (§7). T
 
 Building the pack exposed an error in the RF03 comparison table: the 2025 column held **full-year** totals (25,084 / 6,209 / 47,504) while the 2026 column held **January–October**. Like-for-like:
 
-| Label | Jan–Oct 2025 | Jan–Oct 2026 | Δ |
-| --- | --- | --- | --- |
-| HDB | 21,402 | 21,801 | **+1.9%** |
-| EC | 5,560 | 2,353 | −57.7% |
-| Condominium | 42,413 | 18,477 | −56.4% |
+| Label       | Jan–Oct 2025 | Jan–Oct 2026 | Δ         |
+| ----------- | ------------ | ------------ | --------- |
+| HDB         | 21,402       | 21,801       | **+1.9%** |
+| EC          | 5,560        | 2,353        | −57.7%    |
+| Condominium | 42,413       | 18,477       | −56.4%    |
 
 HDB is unchanged in disposition (publishable, now with the correct +1.9%). The EC/condo gap survives the correction, so that item stays open and those scopes stay `limited-display`. The [RF03 report](2026-11-13-rf03-source-reconciliation.md) carries the correction inline.
 
@@ -117,10 +117,10 @@ The overview E2E still asserts the strip's cutoff, the 21,801-sales figure, the 
 
 ## 6. Remaining for RF05
 
-| Surface | Work | Size |
-| --- | --- | --- |
-| `PUBLIC_OBSERVED_RELEASE=v2` | Flip for one build once RF06 has moved fieldnotes/tools; §9 is the staged check to run first | one config line, gated |
-| Host contract | Confirm the deployment serves `observed/**/*.json.gz` without a `Content-Encoding` header (see §7.4) | small, blocks nothing |
+| Surface                      | Work                                                                                                 | Size                   |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------- |
+| `PUBLIC_OBSERVED_RELEASE=v2` | Flip for one build once RF06 has moved fieldnotes/tools; §9 is the staged check to run first         | one config line, gated |
+| Host contract                | Confirm the deployment serves `observed/**/*.json.gz` without a `Content-Encoding` header (see §7.4) | small, blocks nothing  |
 
 ## 7. Explorer rows and map on published periods (second pass)
 
@@ -208,7 +208,7 @@ The two pages (`explore.astro`, `dashboard/leaderboard.astro`) compute that once
 
 - A **bare** URL adopts the default; an explicit `?period=` / `?timeBasis=` is never overridden, and it never shows the notice.
 - The adopted window is a concrete id, so the existing serialisers write it into the address bar — newly shared links name the window, as the contract requires.
-- The notice reads *"Updated default. This page now opens on 12 months to 2026-10. The earlier default was 2025 complete year — open that view."* (Compare Areas uses *2022 onward*), and the link resolves to the previous window with the notice absent.
+- The notice reads _"Updated default. This page now opens on 12 months to 2026-10. The earlier default was 2025 complete year — open that view."_ (Compare Areas uses _2022 onward_), and the link resolves to the previous window with the notice absent.
 - "Reset settings" returns to the route default, not to the historical era.
 
 ### 9.3 Verification
@@ -233,13 +233,13 @@ The two pages (`explore.astro`, `dashboard/leaderboard.astro`) compute that once
 
 ### 10.1 What moved, and what did not
 
-| Surface | Bare-URL default | Notes |
-| --- | --- | --- |
-| `/explore` | `ttm_2026_10` (pack) | adopts D03; shows the updated-default notice and a link to `?period=year_2025` |
-| `/research/trends` | `ttm` (unchanged) | the published-windows panel already defaulted to D03 |
-| `/dashboard` | YTD strip (unchanged) | the legacy snapshot stays visible beside it |
-| `/dashboard/leaderboard` | **`recent` (unchanged)** | see 10.2 |
-| `/areas/<slug>` | fixed build-time section (unchanged) | specialised surface; does not inherit a new observed default (contract §5.3) |
+| Surface                  | Bare-URL default                     | Notes                                                                          |
+| ------------------------ | ------------------------------------ | ------------------------------------------------------------------------------ |
+| `/explore`               | `ttm_2026_10` (pack)                 | adopts D03; shows the updated-default notice and a link to `?period=year_2025` |
+| `/research/trends`       | `ttm` (unchanged)                    | the published-windows panel already defaulted to D03                           |
+| `/dashboard`             | YTD strip (unchanged)                | the legacy snapshot stays visible beside it                                    |
+| `/dashboard/leaderboard` | **`recent` (unchanged)**             | see 10.2                                                                       |
+| `/areas/<slug>`          | fixed build-time section (unchanged) | specialised surface; does not inherit a new observed default (contract §5.3)   |
 
 ### 10.2 Why Compare Areas keeps its ranked default
 
@@ -249,7 +249,7 @@ The page therefore adopts D03's default **only when its default scope is cleared
 
 ### 10.3 A defect the flip exposed, fixed
 
-`serializeExplorerSelection()` compared against the *legacy* defaults. On a v2-default page that dropped an explicit `?period=year_2025` from the address bar, so a reload silently switched the reader to the pack window. The serialiser now takes the route's **active** defaults, and a concrete published id is always written even when it is the default — a shared link pins the window it showed, because the default is re-resolved from the pack on every build.
+`serializeExplorerSelection()` compared against the _legacy_ defaults. On a v2-default page that dropped an explicit `?period=year_2025` from the address bar, so a reload silently switched the reader to the pack window. The serialiser now takes the route's **active** defaults, and a concrete published id is always written even when it is the default — a shared link pins the window it showed, because the default is re-resolved from the pack on every build.
 
 ### 10.4 Verification
 

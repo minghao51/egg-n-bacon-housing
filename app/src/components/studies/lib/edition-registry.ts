@@ -141,7 +141,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     publicationYear: 2026,
     evidenceStatus: "approved",
     editorialStatus: "published",
-    frozenSource: "docs/analytics/editions/data-sources/2026-11-14/data-sources.md",
+    frozenSource:
+      "docs/analytics/editions/data-sources/2026-11-14/data-sources.md",
     assetsPinned: 0,
     preparedBy: "repo-agent/session-2026-11-14",
     editionSha256:
@@ -151,7 +152,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         role: "source",
         name: "howt",
         date: "2026-11-14",
-        artifactSha256: "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
+        artifactSha256:
+          "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
         statement:
           "I attest that the measured ledger matches this checkout and accept the cutoff and dispositions it implies: 2026-10 as the last complete month, the measured per-source coverage, the stale sora_rates label and the recorded source defects.",
         automated: false,
@@ -161,7 +163,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         role: "scientific",
         name: "openai-codex/gpt-6-luna (xhigh)",
         date: "2026-11-14",
-        artifactSha256: "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
+        artifactSha256:
+          "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
         statement:
           "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims and the withdrawals were verified, and the sign-off language matches the registry gate. I do not attest to the evidence pack itself, other studies, or later edits.",
         automated: true,
@@ -171,7 +174,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         role: "publication",
         name: "howt",
         date: "2026-11-14",
-        artifactSha256: "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
+        artifactSha256:
+          "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
         automated: false,
@@ -186,7 +190,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     publicationYear: 2026,
     evidenceStatus: "approved",
     editorialStatus: "published",
-    frozenSource: "docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md",
+    frozenSource:
+      "docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md",
     assetsPinned: 0,
     preparedBy: "repo-agent/session-2026-11-14",
     editionSha256:
@@ -196,17 +201,20 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         role: "source",
         name: "howt",
         date: "2026-11-14",
-        artifactSha256: "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
+        artifactSha256:
+          "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
         statement:
           "I attest that the measured ledger matches this checkout and accept the cutoff and dispositions it implies: 2026-10 as the last complete month, the measured per-source coverage, the stale sora_rates label and the recorded source defects.",
         automated: false,
-        evidencePath: "docs/implementation/2026-11-14-rs02-rental-yield-evidence.md",
+        evidencePath:
+          "docs/implementation/2026-11-14-rs02-rental-yield-evidence.md",
       },
       {
         role: "scientific",
         name: "openai-codex/gpt-6-luna (xhigh)",
         date: "2026-11-14",
-        artifactSha256: "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
+        artifactSha256:
+          "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
         statement:
           "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims and the withdrawals were verified, and the sign-off language matches the registry gate. I do not attest to the evidence pack itself, other studies, or later edits.",
         automated: true,
@@ -216,7 +224,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         role: "publication",
         name: "howt",
         date: "2026-11-14",
-        artifactSha256: "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
+        artifactSha256:
+          "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
         automated: false,
@@ -277,7 +286,9 @@ function validateSignoffs(edition: AnalyticsEdition): string[] {
   }
 
   if (edition.editionSha256 === null) {
-    errors.push(`${label}: approved edition does not pin its frozen text (editionSha256)`);
+    errors.push(
+      `${label}: approved edition does not pin its frozen text (editionSha256)`,
+    );
   } else if (!SHA256_PATTERN.test(edition.editionSha256)) {
     errors.push(`${label}: editionSha256 is not a sha256`);
   }
@@ -297,10 +308,14 @@ function validateSignoffs(edition: AnalyticsEdition): string[] {
       errors.push(`${label}: ${signoff.role} sign-off has no name`);
     }
     if (!ISO_DATE_PATTERN.test(signoff.date)) {
-      errors.push(`${label}: ${signoff.role} sign-off date ${signoff.date} is not YYYY-MM-DD`);
+      errors.push(
+        `${label}: ${signoff.role} sign-off date ${signoff.date} is not YYYY-MM-DD`,
+      );
     }
     if (!SHA256_PATTERN.test(signoff.artifactSha256)) {
-      errors.push(`${label}: ${signoff.role} sign-off does not pin an evidence sha256`);
+      errors.push(
+        `${label}: ${signoff.role} sign-off does not pin an evidence sha256`,
+      );
     }
     if (signoff.statement.trim() === "") {
       errors.push(`${label}: ${signoff.role} sign-off has no statement`);
@@ -323,7 +338,9 @@ function validateSignoffs(edition: AnalyticsEdition): string[] {
   // D12: the scientific reviewer cannot approve publication, and nobody who
   // prepared the evidence may sign it off.
   if (scientific && publication && scientific.name === publication.name) {
-    errors.push(`${label}: the scientific reviewer may not also approve publication`);
+    errors.push(
+      `${label}: the scientific reviewer may not also approve publication`,
+    );
   }
   if (edition.preparedBy !== null) {
     for (const signoff of [source, scientific, publication]) {
@@ -335,9 +352,13 @@ function validateSignoffs(edition: AnalyticsEdition): string[] {
     }
   }
 
-  const hashes = new Set(edition.signoffs.map((signoff) => signoff.artifactSha256));
+  const hashes = new Set(
+    edition.signoffs.map((signoff) => signoff.artifactSha256),
+  );
   if (hashes.size > 1) {
-    errors.push(`${label}: the sign-offs do not all cover the same evidence artifact`);
+    errors.push(
+      `${label}: the sign-offs do not all cover the same evidence artifact`,
+    );
   }
 
   return errors;
@@ -362,7 +383,11 @@ export function validateEditionRegistry(
         `edition ${edition.editionId}: "${edition.seriesSlug}" is not a series slug`,
       );
     }
-    if ((RESERVED_ANALYTICS_SLUGS as readonly string[]).includes(edition.seriesSlug)) {
+    if (
+      (RESERVED_ANALYTICS_SLUGS as readonly string[]).includes(
+        edition.seriesSlug,
+      )
+    ) {
       errors.push(
         `edition ${edition.editionId}: "${edition.seriesSlug}" is a reserved analytics segment`,
       );
@@ -413,13 +438,18 @@ export function verifyEditionArtifacts(
 ): string[] {
   const errors: string[] = [];
   for (const edition of editions) {
-    if (edition.evidenceStatus !== "approved" || edition.editionSha256 === null) {
+    if (
+      edition.evidenceStatus !== "approved" ||
+      edition.editionSha256 === null
+    ) {
       continue;
     }
     const label = `edition ${edition.editionId} (${edition.seriesSlug})`;
     const actual = sha256OfFile(edition.frozenSource);
     if (actual === null) {
-      errors.push(`${label}: frozen source ${edition.frozenSource} is unreadable`);
+      errors.push(
+        `${label}: frozen source ${edition.frozenSource} is unreadable`,
+      );
       continue;
     }
     if (actual !== edition.editionSha256) {
@@ -431,7 +461,7 @@ export function verifyEditionArtifacts(
   return errors;
 }
 
-/** Every edition of one series, newest publication year first. */export function editionsForSeries(
+/** Every edition of one series, newest publication year first. */ export function editionsForSeries(
   seriesSlug: string,
   editions: readonly AnalyticsEdition[] = ANALYTICS_EDITIONS,
 ): AnalyticsEdition[] {

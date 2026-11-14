@@ -223,8 +223,12 @@ function CurrentDataSection({
   hdb: CurrentDataSummary;
   condo: CurrentDataSummary;
 }) {
-  const ytdSales = hdb.ytd?.metrics.find((metric) => metric.metric === "transactionCount");
-  const ytdPrice = hdb.ytd?.metrics.find((metric) => metric.metric === "medianPrice");
+  const ytdSales = hdb.ytd?.metrics.find(
+    (metric) => metric.metric === "transactionCount",
+  );
+  const ytdPrice = hdb.ytd?.metrics.find(
+    (metric) => metric.metric === "medianPrice",
+  );
   const latestSales = hdb.latestMonth?.metrics.find(
     (metric) => metric.metric === "transactionCount",
   );
@@ -236,7 +240,10 @@ function CurrentDataSection({
       className="rounded-2xl border border-border bg-card p-5 shadow-sm"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="current-data-heading" className="text-xl font-bold text-foreground">
+        <h2
+          id="current-data-heading"
+          className="text-xl font-bold text-foreground"
+        >
           Current data
         </h2>
         <p className="text-xs text-muted-foreground">
@@ -253,7 +260,9 @@ function CurrentDataSection({
           <p className="text-lg font-semibold text-foreground">
             {formatOptionalSales(ytdSales?.value ?? null)}
           </p>
-          <p className="text-xs text-muted-foreground">{formatChange(ytdSales)}</p>
+          <p className="text-xs text-muted-foreground">
+            {formatChange(ytdSales)}
+          </p>
         </div>
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -262,7 +271,9 @@ function CurrentDataSection({
           <p className="text-lg font-semibold text-foreground">
             {formatOptionalSgd(ytdPrice?.value ?? null)}
           </p>
-          <p className="text-xs text-muted-foreground">{formatChange(ytdPrice)}</p>
+          <p className="text-xs text-muted-foreground">
+            {formatChange(ytdPrice)}
+          </p>
         </div>
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -271,15 +282,17 @@ function CurrentDataSection({
           <p className="text-lg font-semibold text-foreground">
             {formatOptionalSales(latestSales?.value ?? null)}
           </p>
-          <p className="text-xs text-muted-foreground">{formatChange(latestSales)}</p>
+          <p className="text-xs text-muted-foreground">
+            {formatChange(latestSales)}
+          </p>
         </div>
       </div>
 
       {condo.ytd?.disposition !== "publish" && (
         <p className="mt-4 border-t border-border pt-3 text-sm text-muted-foreground">
-          Condominium and EC 2026 counts are still under coverage review. They are
-          published as records with their dates, not as a growth headline — see the
-          per-type sections below for their 2025 medians.
+          Condominium and EC 2026 counts are still under coverage review. They
+          are published as records with their dates, not as a growth headline —
+          see the per-type sections below for their 2025 medians.
         </p>
       )}
     </section>

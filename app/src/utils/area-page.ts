@@ -53,7 +53,6 @@ import { AREA_PAGE_COMBINATIONS, type AreaPageData } from "./area-selection";
 // Re-exported so the Astro page and the tests keep one import site.
 export * from "./area-selection";
 
-
 export interface BaselineVerdict {
   compatible: boolean;
   status: ReleaseStatus;

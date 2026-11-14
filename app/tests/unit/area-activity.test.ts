@@ -105,7 +105,9 @@ function syntheticPack(
   const prior = options.prior === undefined ? 100 : options.prior;
   const status = options.status ?? "available";
   const comparatorId =
-    options.comparatorId === undefined ? "rolling3_2025_10" : options.comparatorId;
+    options.comparatorId === undefined
+      ? "rolling3_2025_10"
+      : options.comparatorId;
   const quarter: PeriodDescriptor = { ...QUARTER, comparatorId };
 
   const periods: PeriodDescriptor[] = [];
@@ -142,11 +144,15 @@ function syntheticPack(
 describe("rolling-quarter selection", () => {
   it("picks the newest published rolling quarter", () => {
     expect(rollingQuarterPeriod(realPack())?.id).toBe("rolling3_2026_10");
-    expect(rollingQuarterPeriod(syntheticPack({ includeQuarter: false }))).toBeNull();
+    expect(
+      rollingQuarterPeriod(syntheticPack({ includeQuarter: false })),
+    ).toBeNull();
   });
 
   it("returns null when the pack publishes no rolling quarter", () => {
-    expect(buildAreaActivity(syntheticPack({ includeQuarter: false }), "TEST")).toBeNull();
+    expect(
+      buildAreaActivity(syntheticPack({ includeQuarter: false }), "TEST"),
+    ).toBeNull();
   });
 });
 
@@ -202,7 +208,9 @@ describe("area activity rows (published pack)", () => {
     const activity = buildAreaActivity(pack, "TAMPINES")!;
     const notes = activity.notes.join(" ");
     expect(notes).toContain("observed resale transactions");
-    expect(notes).toContain(`${ACTIVITY_SALE_FLOOR} observed sales in both quarters`);
+    expect(notes).toContain(
+      `${ACTIVITY_SALE_FLOOR} observed sales in both quarters`,
+    );
     for (const row of activity.rows) {
       expect(Object.keys(row).sort()).toEqual(
         [
@@ -249,7 +257,9 @@ describe("area activity states", () => {
     expect(row.changePercent).toBeNull();
     expect(row.changeUnavailableReason).toContain("no observed sales");
     expect(row.eligible).toBe(false);
-    expect(activity.notes.join(" ")).toContain("verified zero for this population");
+    expect(activity.notes.join(" ")).toContain(
+      "verified zero for this population",
+    );
   });
 
   it("states a missing comparator instead of dropping the change", () => {
@@ -269,11 +279,17 @@ describe("area activity states", () => {
 
   it("applies the floor to both windows", () => {
     const atFloor = buildAreaActivity(
-      syntheticPack({ current: ACTIVITY_SALE_FLOOR, prior: ACTIVITY_SALE_FLOOR }),
+      syntheticPack({
+        current: ACTIVITY_SALE_FLOOR,
+        prior: ACTIVITY_SALE_FLOOR,
+      }),
       "TEST",
     )!.rows[0]!;
     const justUnder = buildAreaActivity(
-      syntheticPack({ current: ACTIVITY_SALE_FLOOR, prior: ACTIVITY_SALE_FLOOR - 1 }),
+      syntheticPack({
+        current: ACTIVITY_SALE_FLOOR,
+        prior: ACTIVITY_SALE_FLOOR - 1,
+      }),
       "TEST",
     )!.rows[0]!;
 
@@ -283,7 +299,8 @@ describe("area activity states", () => {
   });
 
   it("reports a zero prior-year denominator rather than dividing by zero", () => {
-    const row = buildAreaActivity(syntheticPack({ prior: 0 }), "TEST")!.rows[0]!;
+    const row = buildAreaActivity(syntheticPack({ prior: 0 }), "TEST")!
+      .rows[0]!;
     expect(row.changePercent).toBeNull();
     expect(row.changeUnavailableReason).toContain("zero observed sales");
   });
@@ -297,7 +314,9 @@ describe("area activity states", () => {
   it("returns notes but no rows for an area the quarter does not report", () => {
     const activity = buildAreaActivity(syntheticPack(), "NOWHERE")!;
     expect(activity.rows).toEqual([]);
-    expect(activity.notes.join(" ")).toContain("Nothing is shown rather than a zero");
+    expect(activity.notes.join(" ")).toContain(
+      "Nothing is shown rather than a zero",
+    );
   });
 });
 
@@ -324,7 +343,9 @@ describe("activityForObservation parity", () => {
         row.priorYear?.transactionCount ?? null,
       );
       expect(comparison.changePercent).toBe(row.changePercent);
-      expect(comparison.changeUnavailableReason).toBe(row.changeUnavailableReason);
+      expect(comparison.changeUnavailableReason).toBe(
+        row.changeUnavailableReason,
+      );
       expect(comparison.eligible).toBe(row.eligible);
       expect(comparison.ineligibleReason).toBe(row.ineligibleReason);
     }

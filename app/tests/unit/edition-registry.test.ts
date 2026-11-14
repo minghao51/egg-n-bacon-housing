@@ -56,9 +56,17 @@ describe("edition registry matches the frozen sources", () => {
   test("every frozen edition file on disk has exactly one identity", () => {
     // The archive route throws for a frozen file with no register entry, so this
     // pins the same invariant earlier and names every offender at once.
-    const editionsRoot = join(process.cwd(), "..", "docs", "analytics", "editions");
+    const editionsRoot = join(
+      process.cwd(),
+      "..",
+      "docs",
+      "analytics",
+      "editions",
+    );
     const onDisk: string[] = [];
-    for (const editionDir of readdirSync(editionsRoot, { withFileTypes: true })) {
+    for (const editionDir of readdirSync(editionsRoot, {
+      withFileTypes: true,
+    })) {
       if (!editionDir.isDirectory()) continue;
       const dirPath = join(editionsRoot, editionDir.name);
       for (const dateDir of readdirSync(dirPath, { withFileTypes: true })) {
@@ -158,7 +166,9 @@ describe("selection and paths", () => {
     ];
 
     expect(approvedEditionFor(series, editions)?.editionId).toBe("2026-06-01");
-    expect(editionsForSeries(series, editions)[0]?.editionId).toBe("2027-01-01");
+    expect(editionsForSeries(series, editions)[0]?.editionId).toBe(
+      "2027-01-01",
+    );
   });
 
   test("archive paths carry year, edition and series", () => {
@@ -201,7 +211,12 @@ describe("registry validation rejects bad identities", () => {
   test("rejects malformed identifiers and years", () => {
     const errors = validateEditionRegistry([
       { ...base, seriesSlug: "MRT Impact" },
-      { ...base, seriesSlug: "price-forecasts", editionId: " ", publicationYear: 1800 },
+      {
+        ...base,
+        seriesSlug: "price-forecasts",
+        editionId: " ",
+        publicationYear: 1800,
+      },
     ]).join(" ");
 
     expect(errors).toContain("is not a series slug");
@@ -225,7 +240,10 @@ describe("D12 sign-off record", () => {
   ): EditionSignoff {
     return {
       role,
-      name: role === "scientific" ? "openai-codex/gpt-6-luna (xhigh)" : `owner-${role}`,
+      name:
+        role === "scientific"
+          ? "openai-codex/gpt-6-luna (xhigh)"
+          : `owner-${role}`,
       date: "2026-11-14",
       artifactSha256: HASH,
       statement: `${role} attestation`,
@@ -248,7 +266,11 @@ describe("D12 sign-off record", () => {
       assetsPinned: 4,
       preparedBy: "repo-agent/session-2026-11-14",
       editionSha256: "c".repeat(64),
-      signoffs: [signoff("source"), signoff("scientific"), signoff("publication")],
+      signoffs: [
+        signoff("source"),
+        signoff("scientific"),
+        signoff("publication"),
+      ],
       note: "RS01 inventory reviewed against the measured source ledger.",
       ...overrides,
     };
@@ -339,7 +361,11 @@ describe("D12 sign-off record", () => {
     const errors = validateEditionRegistry([
       approvedEdition({
         signoffs: [
-          signoff("source", { date: "14/11/2026", artifactSha256: "abc", statement: "" }),
+          signoff("source", {
+            date: "14/11/2026",
+            artifactSha256: "abc",
+            statement: "",
+          }),
           signoff("scientific"),
           signoff("publication"),
         ],
@@ -361,7 +387,9 @@ describe("D12 sign-off record", () => {
       },
     ]).join(" ");
 
-    expect(errors).toContain("an approval record exists only on an approved edition");
+    expect(errors).toContain(
+      "an approval record exists only on an approved edition",
+    );
   });
 
   test("the shipped register's claims match each edition's status", () => {
@@ -400,13 +428,17 @@ describe("approved editions pin their frozen text", () => {
       publicationYear: 2026,
       evidenceStatus: "approved",
       editorialStatus: "published",
-      frozenSource: "docs/analytics/editions/data-sources/2026-11-14/data-sources.md",
+      frozenSource:
+        "docs/analytics/editions/data-sources/2026-11-14/data-sources.md",
       assetsPinned: 0,
       preparedBy: "repo-agent/session-2026-11-14",
       editionSha256: "c".repeat(64),
       signoffs: ["source", "scientific", "publication"].map((role) => ({
         role: role as EditionSignoff["role"],
-        name: role === "scientific" ? "openai-codex/gpt-6-luna (xhigh)" : `owner-${role}`,
+        name:
+          role === "scientific"
+            ? "openai-codex/gpt-6-luna (xhigh)"
+            : `owner-${role}`,
         date: "2026-11-14",
         artifactSha256: "a".repeat(64),
         statement: `${role} attestation`,
@@ -472,7 +504,9 @@ describe("approved editions pin their frozen text", () => {
       editionSha256: null,
     };
 
-    expect(verifyEditionArtifacts([historical], () => "d".repeat(64))).toEqual([]);
+    expect(verifyEditionArtifacts([historical], () => "d".repeat(64))).toEqual(
+      [],
+    );
   });
 
   test("the shipped register's text pins match the files on disk", () => {
@@ -505,7 +539,10 @@ describe("approved editions pin their frozen text", () => {
             signoffs: approvedEdition().signoffs,
           },
         ],
-        (path) => createHash("sha256").update(readFileSync(join(process.cwd(), "..", path))).digest("hex"),
+        (path) =>
+          createHash("sha256")
+            .update(readFileSync(join(process.cwd(), "..", path)))
+            .digest("hex"),
       ),
     ).toEqual([]);
 
@@ -521,7 +558,10 @@ describe("approved editions pin their frozen text", () => {
             signoffs: approvedEdition().signoffs,
           },
         ],
-        (path) => createHash("sha256").update(readFileSync(join(process.cwd(), "..", path))).digest("hex"),
+        (path) =>
+          createHash("sha256")
+            .update(readFileSync(join(process.cwd(), "..", path)))
+            .digest("hex"),
       ).join(" "),
     ).toContain("but the approved edition pins");
   });

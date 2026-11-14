@@ -112,14 +112,16 @@ function gzipJson(value: unknown): Uint8Array {
   return new Uint8Array(gzipSync(Buffer.from(JSON.stringify(value), "utf8")));
 }
 
-async function buildPack(options: {
-  cutoffMonth?: string;
-  manifestCutoff?: string;
-  generationOverride?: string;
-  corruptServed?: boolean;
-  corruptMonthly?: boolean;
-  dropRole?: "summary" | "area-monthly-hdb";
-} = {}) {
+async function buildPack(
+  options: {
+    cutoffMonth?: string;
+    manifestCutoff?: string;
+    generationOverride?: string;
+    corruptServed?: boolean;
+    corruptMonthly?: boolean;
+    dropRole?: "summary" | "area-monthly-hdb";
+  } = {},
+) {
   const cutoff = options.cutoffMonth ?? "2026-10";
   const { periods, summary, monthly } = payloads(cutoff);
 
@@ -148,7 +150,8 @@ async function buildPack(options: {
     inputs: { unified_dataset: "a".repeat(64) },
     roles,
   };
-  const generation = options.generationOverride ?? (await computeV2Generation(identity));
+  const generation =
+    options.generationOverride ?? (await computeV2Generation(identity));
 
   const servedRoles = new Set(["periods", "summary", ...monthlyBytes.keys()]);
   const assets = [...servedRoles].map((role) => {
@@ -191,16 +194,30 @@ async function buildPack(options: {
   // is where `v2_observed.py --output-dir app/public/data` writes them.
   const dataBase = `${BASE}data/`;
   const files = new Map<string, ArrayBuffer>([
-    [`${BASE}${V2_MANIFEST_PATH}`, new TextEncoder().encode(JSON.stringify(manifest)).buffer as ArrayBuffer],
-    [`${dataBase}observed/${generation}/periods.json.gz`, servedPeriods.buffer as ArrayBuffer],
-    [`${dataBase}observed/${generation}/summary.json.gz`, summaryBytes.buffer as ArrayBuffer],
+    [
+      `${BASE}${V2_MANIFEST_PATH}`,
+      new TextEncoder().encode(JSON.stringify(manifest)).buffer as ArrayBuffer,
+    ],
+    [
+      `${dataBase}observed/${generation}/periods.json.gz`,
+      servedPeriods.buffer as ArrayBuffer,
+    ],
+    [
+      `${dataBase}observed/${generation}/summary.json.gz`,
+      summaryBytes.buffer as ArrayBuffer,
+    ],
   ]);
   for (const [role, bytes] of monthlyBytes) {
     const served = role === "area-monthly-hdb" ? servedHdb : bytes;
-    files.set(`${dataBase}observed/${generation}/${role}.json.gz`, served.buffer as ArrayBuffer);
+    files.set(
+      `${dataBase}observed/${generation}/${role}.json.gz`,
+      served.buffer as ArrayBuffer,
+    );
   }
   if (options.dropRole !== undefined) {
-    files.delete(`${dataBase}observed/${generation}/${options.dropRole}.json.gz`);
+    files.delete(
+      `${dataBase}observed/${generation}/${options.dropRole}.json.gz`,
+    );
   }
 
   const fetchBytes = async (url: string): Promise<ArrayBuffer | null> =>
@@ -230,7 +247,9 @@ describe("canonical identity", () => {
 
   it("is insensitive to key order", () => {
     expect(canonicalJson({ b: 1, a: 2 })).toBe(canonicalJson({ a: 2, b: 1 }));
-    expect(canonicalJson({ a: [1, { d: 4, c: 3 }] })).toBe('{"a":[1,{"c":3,"d":4}]}');
+    expect(canonicalJson({ a: [1, { d: 4, c: 3 }] })).toBe(
+      '{"a":[1,{"c":3,"d":4}]}',
+    );
   });
 
   it("refuses non-finite numbers", () => {
@@ -261,7 +280,10 @@ describe("manifest parsing", () => {
     const { manifest } = await buildPack();
     const tampered = {
       ...manifest,
-      assets: [{ ...manifest.assets[0], path: "../evil.json.gz" }, manifest.assets[1]],
+      assets: [
+        { ...manifest.assets[0], path: "../evil.json.gz" },
+        manifest.assets[1],
+      ],
     };
 
     expect(parseV2Manifest(tampered).ok).toBe(false);
@@ -309,20 +331,30 @@ describe("loading", () => {
   it("returns a verified pack", async () => {
     const { fetchBytes, decode } = await buildPack();
 
-    const result = await loadObservedPack({ baseUrl: BASE, fetchBytes, decode });
+    const result = await loadObservedPack({
+      baseUrl: BASE,
+      fetchBytes,
+      decode,
+    });
 
     expect(result.state).toBe("ready");
     if (result.state !== "ready") return;
     expect(result.pack.cutoffMonth).toBe("2026-10");
     expect(result.pack.observations).toHaveLength(1);
-    expect(result.pack.periodsById.get("month_2026_10")?.endMonth).toBe("2026-10");
+    expect(result.pack.periodsById.get("month_2026_10")?.endMonth).toBe(
+      "2026-10",
+    );
     expect(result.manifest.cutoffMonth).toBe(result.pack.cutoffMonth);
   });
 
   it("rejects tampered payload bytes", async () => {
     const { fetchBytes, decode } = await buildPack({ corruptServed: true });
 
-    const result = await loadObservedPack({ baseUrl: BASE, fetchBytes, decode });
+    const result = await loadObservedPack({
+      baseUrl: BASE,
+      fetchBytes,
+      decode,
+    });
 
     expect(result.state).toBe("invalid");
     if (result.state === "invalid") {
@@ -357,9 +389,15 @@ describe("loading", () => {
   });
 
   it("rejects a manifest whose generation does not match its identity", async () => {
-    const { fetchBytes, decode } = await buildPack({ generationOverride: "f".repeat(64) });
+    const { fetchBytes, decode } = await buildPack({
+      generationOverride: "f".repeat(64),
+    });
 
-    const result = await loadObservedPack({ baseUrl: BASE, fetchBytes, decode });
+    const result = await loadObservedPack({
+      baseUrl: BASE,
+      fetchBytes,
+      decode,
+    });
 
     expect(result.state).toBe("invalid");
     if (result.state === "invalid") {
@@ -370,7 +408,11 @@ describe("loading", () => {
   it("rejects a missing payload rather than degrading", async () => {
     const { fetchBytes, decode } = await buildPack({ dropRole: "summary" });
 
-    const result = await loadObservedPack({ baseUrl: BASE, fetchBytes, decode });
+    const result = await loadObservedPack({
+      baseUrl: BASE,
+      fetchBytes,
+      decode,
+    });
 
     expect(result.state).toBe("invalid");
     if (result.state === "invalid") {
@@ -379,9 +421,15 @@ describe("loading", () => {
   });
 
   it("rejects a manifest cutoff that disagrees with the pack", async () => {
-    const { fetchBytes, decode } = await buildPack({ manifestCutoff: "2026-09" });
+    const { fetchBytes, decode } = await buildPack({
+      manifestCutoff: "2026-09",
+    });
 
-    const result = await loadObservedPack({ baseUrl: BASE, fetchBytes, decode });
+    const result = await loadObservedPack({
+      baseUrl: BASE,
+      fetchBytes,
+      decode,
+    });
 
     expect(result.state).toBe("invalid");
     if (result.state === "invalid") {
@@ -442,7 +490,9 @@ describe("monthly history", () => {
   });
 
   it("rejects a monthly payload whose bytes were altered", async () => {
-    const { fetchBytes, decode, manifest } = await buildPack({ corruptMonthly: true });
+    const { fetchBytes, decode, manifest } = await buildPack({
+      corruptMonthly: true,
+    });
     const parsed = parseV2Manifest(manifest);
     if (!parsed.ok) throw new Error(parsed.errors.join("; "));
 
@@ -459,7 +509,9 @@ describe("monthly history", () => {
   });
 
   it("reports a missing monthly payload instead of an empty history", async () => {
-    const { fetchBytes, decode } = await buildPack({ dropRole: "area-monthly-hdb" });
+    const { fetchBytes, decode } = await buildPack({
+      dropRole: "area-monthly-hdb",
+    });
     const eager = await loadObservedPack({ baseUrl: BASE, fetchBytes, decode });
     // The manifest itself is complete, so the pack loads; the missing history
     // is reported when it is asked for, never rendered as a shorter series.

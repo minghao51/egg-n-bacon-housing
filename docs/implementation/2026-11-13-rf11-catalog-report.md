@@ -10,10 +10,10 @@
 
 Step 1 asks for the old catalog generation and the discrepancy, inspected directly rather than inferred from the app:
 
-| What | Rows | Generation / provenance |
-| --- | --- | --- |
-| Catalog snapshot before RF11 | 1,233,405 | `catalog.jsonl` generated `2026-09-12T08:05:07Z` |
-| S0 audit observation | 1,234,928 | recorded in [S0 baseline](s0-baseline.md) |
+| What                          | Rows      | Generation / provenance                                                                                       |
+| ----------------------------- | --------- | ------------------------------------------------------------------------------------------------------------- |
+| Catalog snapshot before RF11  | 1,233,405 | `catalog.jsonl` generated `2026-09-12T08:05:07Z`                                                              |
+| S0 audit observation          | 1,234,928 | recorded in [S0 baseline](s0-baseline.md)                                                                     |
 | Platinum artifact before RF11 | 1,236,310 | `data/pipeline/04_platinum/unified_dataset.parquet`, 97 columns, 78,381,526 bytes, sha256 `39d234f703c9d6e0…` |
 
 The catalog row count and the S0 audit were themselves different snapshots, which is why neither could be "the" answer. The artifact was read with parquet metadata, not from the app's overview or from the catalog.
@@ -49,21 +49,21 @@ Not replaced. The refresh is a transaction refresh, which does not authorize a b
 ## 5. `interactive_tools/affordability_metrics.json.gz`
 
 - Present at `app/public/data/interactive_tools/affordability_metrics.json.gz` (2,282 bytes).
-- **No consumer**: `app/src/components/tools/lib/tool-reference.ts` and `ToolsSurface.astro` mention it only to say it is *not* read (the financing reference uses `map_metrics.year_2025_*` joint sections instead).
+- **No consumer**: `app/src/components/tools/lib/tool-reference.ts` and `ToolsSurface.astro` mention it only to say it is _not_ read (the financing reference uses `map_metrics.year_2025_*` joint sections instead).
 - **Not in the release manifest**: the v1 `dashboard-release.json` lists the seven exporter assets and does not include it, so it is outside the verified generation.
 - **Disposition: retain.** Removing it is a data-boundary decision (and would need the required-file contract checked first); this slice only records the finding. Proposed follow-up for the data owner: either list it in a manifest with a period/source identity, or approve removal.
 
 ## 6. Asset disposition (for RF12)
 
-| Asset | Disposition | Identity |
-| --- | --- | --- |
-| v1 release payloads (7 files) | **frozen**, served unchanged | generation `0e1013ee485f…` |
-| v2 observed pack (`dashboard-release-v2.json` + `observed/<gen>/{periods,summary}.json.gz`) | **published beside v1**, cutoff 2026-10, 8 periods, 1,472 observations | generation `6cd4510f26ec…` |
-| `catalog.jsonl` / `catalog.jsonl.gz` | **regenerated** (authorized RF11 output) | `7f75527f…` / rebuild-time gzip |
-| `unified_dataset.parquet` | **inspected source**, unchanged | sha256 `39d234f703c9d6e0…` |
-| `interactive_tools/affordability_metrics.json.gz` | **retained, unused**, outside the manifest | 2,282 bytes |
-| `planning_areas.geojson(.gz)` and reference assets | **unchanged** | not re-pinned in this slice |
-| `public/data/observed/**` | immutable generation path | verified by `validate-data` |
+| Asset                                                                                       | Disposition                                                            | Identity                        |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------- |
+| v1 release payloads (7 files)                                                               | **frozen**, served unchanged                                           | generation `0e1013ee485f…`      |
+| v2 observed pack (`dashboard-release-v2.json` + `observed/<gen>/{periods,summary}.json.gz`) | **published beside v1**, cutoff 2026-10, 8 periods, 1,472 observations | generation `6cd4510f26ec…`      |
+| `catalog.jsonl` / `catalog.jsonl.gz`                                                        | **regenerated** (authorized RF11 output)                               | `7f75527f…` / rebuild-time gzip |
+| `unified_dataset.parquet`                                                                   | **inspected source**, unchanged                                        | sha256 `39d234f703c9d6e0…`      |
+| `interactive_tools/affordability_metrics.json.gz`                                           | **retained, unused**, outside the manifest                             | 2,282 bytes                     |
+| `planning_areas.geojson(.gz)` and reference assets                                          | **unchanged**                                                          | not re-pinned in this slice     |
+| `public/data/observed/**`                                                                   | immutable generation path                                              | verified by `validate-data`     |
 
 ## 7. Verification
 

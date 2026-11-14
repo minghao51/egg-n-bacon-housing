@@ -203,7 +203,9 @@ export function areaPageOptions(area: AreaPageData): AreaPageOption[] {
       ) ?? null;
 
     const areaValues = valuesOf(section?.area?.metrics);
-    const nationalValues = section?.national ? valuesOf(section.national) : null;
+    const nationalValues = section?.national
+      ? valuesOf(section.national)
+      : null;
     const hasNational =
       nationalValues !== null && isPublishableValues(nationalValues);
 
@@ -298,7 +300,8 @@ export function resolveAreaPageSelection(input: {
   requestedProperty: string | null;
 }): AreaPageSelection {
   const { options, defaultOption } = input;
-  const requestedProperty = input.requestedProperty?.trim().toLowerCase() ?? null;
+  const requestedProperty =
+    input.requestedProperty?.trim().toLowerCase() ?? null;
   const requestedPeriod = input.requestedPeriod?.trim() ?? null;
 
   const noneRequested =

@@ -86,7 +86,9 @@ describe("resolveObservedRouteDefault", () => {
   });
 
   test("resolves D03's trailing-12-month window when v2 is enabled", () => {
-    expect(resolveObservedRouteDefault({ v2Enabled: true, pack: PACK })).toEqual({
+    expect(
+      resolveObservedRouteDefault({ v2Enabled: true, pack: PACK }),
+    ).toEqual({
       periodId: "ttm_2026_10",
       label: "12 months to 2026-10",
     });
@@ -94,7 +96,11 @@ describe("resolveObservedRouteDefault", () => {
 
   test("resolves another alias through the same pack", () => {
     expect(
-      resolveObservedRouteDefault({ v2Enabled: true, pack: PACK, alias: "latest" }),
+      resolveObservedRouteDefault({
+        v2Enabled: true,
+        pack: PACK,
+        alias: "latest",
+      }),
     ).toEqual({ periodId: "month_2026_10", label: "2026-10 (one month)" });
   });
 

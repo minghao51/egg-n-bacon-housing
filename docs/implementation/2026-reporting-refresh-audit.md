@@ -14,20 +14,20 @@ Refresh the observed dashboard first, but fix metric scope before promoting newe
 
 ## 1. Scout: current web app structure
 
-| Surface | Role and evidence boundary | Recommendation |
-| --- | --- | --- |
-| `/` | Landing page; reads overview/trends, but hardcodes 2024/2025 comparisons and research teasers | Replace stale promotional claims with scoped latest-observed highlights and a visible cutoff |
-| `/dashboard` | Overview cards, period/type controls, distributions and monthly charts | Make the latest completed observation prominent; retain the full-year comparison |
-| `/research/trends` | Monthly price and volume charts/table; defaults to 2025 even though data extends to 2026-10 | Default to latest 12 completed months; add YTD and same-month prior-year comparisons |
-| `/explore` | Joint period × property-type area comparison, list/map/table; minimum-sale caution threshold; verified national comparison | Reuse this joint-section contract for all current area metrics |
-| `/areas/[slug]` | 41 static area fieldnotes; build-time generation verification | Add current activity, trend and report links with the same selected scope |
-| `/dashboard/leaderboard` | Area rankings and geographic view; independent property/time breakdowns | Repair incorrect joint filtering and regional taxonomy before extending it |
-| `/research/map` | Observed fill plus nine archived model layers; models do not paint analytical polygon fills | Keep archive inspection separate from a new current-activity map |
-| `/research/segments` | Six stored research segments; investigation/comparison; separate archive evidence contract | Preserve current archive; only publish refreshed segmentation after revalidation |
-| `/research/tools` | Illustrative financing, archived lease bands, MRT/CBD inspection and spatial labels | Keep financial/model gates; separately update the observed reference period when supported |
-| `/analytics` and `/analytics/[slug]` | Searchable library and 15 published markdown studies, opt-in table charts | Add edition, observation cutoff, validation status and current/archive filters |
-| `/analytics/personas/[persona]` | Three persona landing pages backed by `persona-content.json` | Remove unsupported gain/timing promises and inherit report freshness/status |
-| `/catalog`, layer and dataset pages | Separate generated catalog snapshot, not live source availability | Regenerate with a new audit observation; keep both historical counts until reconciled |
+| Surface                              | Role and evidence boundary                                                                                                 | Recommendation                                                                               |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `/`                                  | Landing page; reads overview/trends, but hardcodes 2024/2025 comparisons and research teasers                              | Replace stale promotional claims with scoped latest-observed highlights and a visible cutoff |
+| `/dashboard`                         | Overview cards, period/type controls, distributions and monthly charts                                                     | Make the latest completed observation prominent; retain the full-year comparison             |
+| `/research/trends`                   | Monthly price and volume charts/table; defaults to 2025 even though data extends to 2026-10                                | Default to latest 12 completed months; add YTD and same-month prior-year comparisons         |
+| `/explore`                           | Joint period × property-type area comparison, list/map/table; minimum-sale caution threshold; verified national comparison | Reuse this joint-section contract for all current area metrics                               |
+| `/areas/[slug]`                      | 41 static area fieldnotes; build-time generation verification                                                              | Add current activity, trend and report links with the same selected scope                    |
+| `/dashboard/leaderboard`             | Area rankings and geographic view; independent property/time breakdowns                                                    | Repair incorrect joint filtering and regional taxonomy before extending it                   |
+| `/research/map`                      | Observed fill plus nine archived model layers; models do not paint analytical polygon fills                                | Keep archive inspection separate from a new current-activity map                             |
+| `/research/segments`                 | Six stored research segments; investigation/comparison; separate archive evidence contract                                 | Preserve current archive; only publish refreshed segmentation after revalidation             |
+| `/research/tools`                    | Illustrative financing, archived lease bands, MRT/CBD inspection and spatial labels                                        | Keep financial/model gates; separately update the observed reference period when supported   |
+| `/analytics` and `/analytics/[slug]` | Searchable library and 15 published markdown studies, opt-in table charts                                                  | Add edition, observation cutoff, validation status and current/archive filters               |
+| `/analytics/personas/[persona]`      | Three persona landing pages backed by `persona-content.json`                                                               | Remove unsupported gain/timing promises and inherit report freshness/status                  |
+| `/catalog`, layer and dataset pages  | Separate generated catalog snapshot, not live source availability                                                          | Regenerate with a new audit observation; keep both historical counts until reconciled        |
 
 Compatibility routes remain important: `/dashboard/map`, `/dashboard/segments` and `/dashboard/trends` wrap research surfaces. **`/dashboard/trends` is Decision Tools**, not monthly trends. Keep existing links working; make canonical destinations clear.
 
@@ -55,10 +55,10 @@ Read-only decompression of checked-in assets found:
 Monthly count sums, not independently verified national market totals:
 
 | Property type | Jan–Oct 2025 | Jan–Oct 2026 | Published count change |
-| --- | ---: | ---: | ---: |
-| HDB | 21,402 | 21,808 | +1.90% |
-| EC | 5,560 | 2,313 | −58.40% |
-| Condominium | 42,414 | 17,363 | −59.06% |
+| ------------- | -----------: | -----------: | ---------------------: |
+| HDB           |       21,402 |       21,808 |                 +1.90% |
+| EC            |        5,560 |        2,313 |                −58.40% |
+| Condominium   |       42,414 |       17,363 |                −59.06% |
 
 The large private/EC differences are a **source coverage/grain reconciliation priority**, not an established market-collapse finding. Check source completeness by property type, overlap/deduplication, sales categories and unit-versus-record grain before promoting those changes into headlines. No specific cause was established in this audit.
 
@@ -130,23 +130,23 @@ Expose **source data through**, **completed month through**, **exported at**, an
 
 Dates below are **claims in the documents**, not independently validated transaction coverage. Most research generation scripts are explicitly retired from the supported repository surface.
 
-| Study (`docs/analytics/`) | Declared observation window / vintage | Recommended treatment |
-| --- | --- | --- |
-| `findings.md` | 2017–2026; body updated March 2026, frontmatter February | Rebuild last, after dependencies; distinguish editorial from data dates |
-| `data-sources.md` | Inventory June 2026; HDB to June, rentals to May, some macro to Q1; SORA to 2025 | Reconcile actual source cutoffs and publish a coverage matrix |
-| `amenity-impact.md` | 2015–2026; March 2026 analysis | Keep historical edition; rerun associations/models for a new edition |
-| `causal-inference-overview.md` | 2017–2026; February 2026 | New edition only after treatment/control and causal-design validation |
-| `facility-premiums.md` | 2017–2026; March 2026, cross-sectional facilities | Verify facility snapshot and refit; do not assume 2026 freshness |
-| `lease-decay.md` | 2017–2026; February 2026 | Unit repair first, then refit; preserve review warning |
-| `macro-sensitivity.md` | Housing 2017–2026; macro 2021–2026; March analysis | Real/synthetic lineage audit and lag-aware rerun |
-| `market-segments.md` | 2017–2026, emphasis 2021 onward; March analysis | Recluster/revalidate; retain mapping to old segment identities |
-| `mrt-impact.md` | 2021–2026; February 2026 | Refit with station-status/date and distance/unit checks |
-| `price-forecasts.md` | 2021–2026; February 2026 | Archive historical outputs; reconcile assets, retrain and backtest |
-| `rental-yields.md` | 2017–2026; March 2026 | Refresh aligned rental/sale inputs; distinguish proxy gross from net yield |
-| `school-quality.md` | 2021 onward; February 2026 | Revalidate sample, school data and RDD/causal caveats |
-| `spatial-autocorrelation.md` | 2021–2026; February 2026 | Rerun spatial analysis; record boundaries, weights and significance policy |
-| `spatial-hotspots.md` | **January 2024–January 2025**, analysis February 2026 | Archive as historical rental study; generate a separate current edition |
-| `temporal-evolution.md` | 2017–2026; March 2026 | Recompute comparable period estimates and figures |
+| Study (`docs/analytics/`)      | Declared observation window / vintage                                            | Recommended treatment                                                      |
+| ------------------------------ | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `findings.md`                  | 2017–2026; body updated March 2026, frontmatter February                         | Rebuild last, after dependencies; distinguish editorial from data dates    |
+| `data-sources.md`              | Inventory June 2026; HDB to June, rentals to May, some macro to Q1; SORA to 2025 | Reconcile actual source cutoffs and publish a coverage matrix              |
+| `amenity-impact.md`            | 2015–2026; March 2026 analysis                                                   | Keep historical edition; rerun associations/models for a new edition       |
+| `causal-inference-overview.md` | 2017–2026; February 2026                                                         | New edition only after treatment/control and causal-design validation      |
+| `facility-premiums.md`         | 2017–2026; March 2026, cross-sectional facilities                                | Verify facility snapshot and refit; do not assume 2026 freshness           |
+| `lease-decay.md`               | 2017–2026; February 2026                                                         | Unit repair first, then refit; preserve review warning                     |
+| `macro-sensitivity.md`         | Housing 2017–2026; macro 2021–2026; March analysis                               | Real/synthetic lineage audit and lag-aware rerun                           |
+| `market-segments.md`           | 2017–2026, emphasis 2021 onward; March analysis                                  | Recluster/revalidate; retain mapping to old segment identities             |
+| `mrt-impact.md`                | 2021–2026; February 2026                                                         | Refit with station-status/date and distance/unit checks                    |
+| `price-forecasts.md`           | 2021–2026; February 2026                                                         | Archive historical outputs; reconcile assets, retrain and backtest         |
+| `rental-yields.md`             | 2017–2026; March 2026                                                            | Refresh aligned rental/sale inputs; distinguish proxy gross from net yield |
+| `school-quality.md`            | 2021 onward; February 2026                                                       | Revalidate sample, school data and RDD/causal caveats                      |
+| `spatial-autocorrelation.md`   | 2021–2026; February 2026                                                         | Rerun spatial analysis; record boundaries, weights and significance policy |
+| `spatial-hotspots.md`          | **January 2024–January 2025**, analysis February 2026                            | Archive as historical rental study; generate a separate current edition    |
+| `temporal-evolution.md`        | 2017–2026; March 2026                                                            | Recompute comparable period estimates and figures                          |
 
 Persona pages: **first-time buyer, investor, upgrader**, all from `app/src/data/persona-content.json`. They are recommendation/navigation surfaces, not independent analytical results. Update them after correcting report status; avoid current-opportunity/gain claims from archived studies.
 
@@ -229,13 +229,13 @@ Proposed report metadata: `seriesId`, `editionId`, `publishedAt`, `revisedAt`, `
 
 ## 8. Recommended implementation order and acceptance gates
 
-| Priority | Slice | Exit condition |
-| --- | --- | --- |
-| 1 | Correctness and trust | Leaderboard matches joint explorer values; region filters use a valid taxonomy; missing values stay unavailable; unsafe persona/homepage promotion removed; chart marks match tables |
-| 2 | Source reconciliation and period contract | Restore inputs via documented acquisition; validate cutoff/coverage/deduplication by property type; publish YTD/rolling periods reproducibly without altering 2025 semantics |
-| 3 | Current observed dashboard | Dashboard/trends/explorer/area pages agree on property, window, sample and generation; matched YTD/rolling comparisons; no annualized partial-year headlines |
-| 4 | Research editions | Metadata/archive routes shipped; historical assets preserved; rental/temporal descriptive reports refreshed before summaries; model/causal reports separately validated |
-| 5 | Area activity MVP | Area-type-month contract, sample/coverage gates, map/table parity, transparent labels; no unsupported demand or investment claims |
+| Priority | Slice                                     | Exit condition                                                                                                                                                                       |
+| -------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1        | Correctness and trust                     | Leaderboard matches joint explorer values; region filters use a valid taxonomy; missing values stay unavailable; unsafe persona/homepage promotion removed; chart marks match tables |
+| 2        | Source reconciliation and period contract | Restore inputs via documented acquisition; validate cutoff/coverage/deduplication by property type; publish YTD/rolling periods reproducibly without altering 2025 semantics         |
+| 3        | Current observed dashboard                | Dashboard/trends/explorer/area pages agree on property, window, sample and generation; matched YTD/rolling comparisons; no annualized partial-year headlines                         |
+| 4        | Research editions                         | Metadata/archive routes shipped; historical assets preserved; rental/temporal descriptive reports refreshed before summaries; model/causal reports separately validated              |
+| 5        | Area activity MVP                         | Area-type-month contract, sample/coverage gates, map/table parity, transparent labels; no unsupported demand or investment claims                                                    |
 
 Research regeneration must remain behind explicit methodological approval where existing decision registers require it (lease/MRT models, segment scoring and recommendation promotion). This audit is not authorization to replace archived model outputs.
 

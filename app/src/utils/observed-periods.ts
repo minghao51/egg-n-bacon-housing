@@ -148,18 +148,13 @@ function isMonth(value: unknown): value is string {
 
 function isDisposition(value: unknown): value is ObservationDisposition {
   return (
-    value === "publish" ||
-    value === "limited-display" ||
-    value === "withhold"
+    value === "publish" || value === "limited-display" || value === "withhold"
   );
 }
 
 function isPropertyType(value: unknown): value is PropertyTypeId {
   return (
-    value === "all" ||
-    value === "hdb" ||
-    value === "ec" ||
-    value === "condo"
+    value === "all" || value === "hdb" || value === "ec" || value === "condo"
   );
 }
 
@@ -191,7 +186,9 @@ export function monthsBetween(
   for (let index = start; index <= end; index += 1) {
     const year = Math.floor(index / 12);
     const month = (index % 12) + 1;
-    months.push(`${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}`);
+    months.push(
+      `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}`,
+    );
   }
   return months;
 }
@@ -243,7 +240,10 @@ function parsePeriod(
     return null;
   }
 
-  if (comparatorId !== null && (typeof comparatorId !== "string" || comparatorId === "")) {
+  if (
+    comparatorId !== null &&
+    (typeof comparatorId !== "string" || comparatorId === "")
+  ) {
     errors.push(`period ${id} has an invalid comparatorId`);
     return null;
   }
@@ -270,7 +270,10 @@ function parseMetric(
     return null;
   }
   const { value, unit, observations } = raw;
-  if (value !== null && (typeof value !== "number" || !Number.isFinite(value))) {
+  if (
+    value !== null &&
+    (typeof value !== "number" || !Number.isFinite(value))
+  ) {
     errors.push(`${observationId} metric ${metric} has a non-numeric value`);
     return null;
   }
@@ -296,8 +299,15 @@ function parseObservation(
     return null;
   }
 
-  const { geographyId, propertyType, periodId, status, disposition, coverage, metrics } =
-    raw;
+  const {
+    geographyId,
+    propertyType,
+    periodId,
+    status,
+    disposition,
+    coverage,
+    metrics,
+  } = raw;
 
   if (typeof geographyId !== "string" || geographyId.length === 0) {
     errors.push(`observations[${index}] has no geographyId`);
@@ -316,11 +326,15 @@ function parseObservation(
     return null;
   }
   if (!isDisposition(disposition)) {
-    errors.push(`observation ${geographyId}/${periodId} has an unknown disposition`);
+    errors.push(
+      `observation ${geographyId}/${periodId} has an unknown disposition`,
+    );
     return null;
   }
   if (!isRecord(coverage) || !Array.isArray(coverage.months)) {
-    errors.push(`observation ${geographyId}/${periodId} has no coverage months`);
+    errors.push(
+      `observation ${geographyId}/${periodId} has no coverage months`,
+    );
     return null;
   }
 
@@ -427,7 +441,10 @@ export function parsePeriodPack(
 
   const rawObservations = summaryPayload.observations;
   if (!Array.isArray(rawObservations)) {
-    return { ok: false, errors: [...errors, "summary payload has no observations"] };
+    return {
+      ok: false,
+      errors: [...errors, "summary payload has no observations"],
+    };
   }
 
   const observations: Observation[] = [];
@@ -595,7 +612,9 @@ export function compareWithComparator(
 
 /** A scope may be presented as current evidence only when cleared to publish. */
 export function isPublishable(observation: Observation): boolean {
-  return observation.disposition === "publish" && observation.status === "available";
+  return (
+    observation.disposition === "publish" && observation.status === "available"
+  );
 }
 
 export function scopeNote(observation: Observation): string | null {
@@ -638,9 +657,13 @@ export function publishedPeriodOptions(
 ): { value: ObservedPeriodId; label: string }[] {
   return pack.periods
     .filter(
-      (period) => isObservedPeriodId(period.id) && !LEGACY_PERIOD_IDS.has(period.id),
+      (period) =>
+        isObservedPeriodId(period.id) && !LEGACY_PERIOD_IDS.has(period.id),
     )
-    .map((period) => ({ value: period.id as ObservedPeriodId, label: period.label }));
+    .map((period) => ({
+      value: period.id as ObservedPeriodId,
+      label: period.label,
+    }));
 }
 
 /** Label for one published period id, or `null` when it is not published. */

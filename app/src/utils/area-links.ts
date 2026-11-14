@@ -117,7 +117,10 @@ function acceptedValue(key: string, value: string): string | null {
  * only when the reader actually arrived from `/explore` — otherwise the link is
  * the plain explorer route.
  */
-export function explorerReturnHref(exploreHref: string, search: string): string {
+export function explorerReturnHref(
+  exploreHref: string,
+  search: string,
+): string {
   let params: URLSearchParams;
   try {
     params = new URLSearchParams(search);

@@ -11,7 +11,9 @@ import { expectPageToLoadWithoutErrors } from "./utils/pageHealth";
  */
 const CATALOG_GENERATED_LABEL = (() => {
   const raw = gunzipSync(
-    readFileSync(new URL("../../public/data/catalog.jsonl.gz", import.meta.url)),
+    readFileSync(
+      new URL("../../public/data/catalog.jsonl.gz", import.meta.url),
+    ),
   ).toString("utf-8");
   const meta = JSON.parse(raw.split("\n")[0]) as { generated_at: string };
   return new Date(meta.generated_at).toLocaleDateString("en-GB", {
@@ -96,7 +98,9 @@ test.describe("Data catalog", () => {
 
     // The snapshot count shown on the page is the regenerated one ("Rows
     // (catalog snapshot) · 1,236,310").
-    await expect(page.getByText("1,236,310", { exact: true }).first()).toBeVisible();
+    await expect(
+      page.getByText("1,236,310", { exact: true }).first(),
+    ).toBeVisible();
     await expect(
       page.getByText(
         new RegExp(`Catalog snapshot generated ${CATALOG_GENERATED_LABEL}`),

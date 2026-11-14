@@ -113,7 +113,8 @@ export function canonicalJson(value: unknown): string {
 export async function sha256Hex(
   payload: Uint8Array | ArrayBuffer,
 ): Promise<string> {
-  const source = payload instanceof Uint8Array ? payload : new Uint8Array(payload);
+  const source =
+    payload instanceof Uint8Array ? payload : new Uint8Array(payload);
   // Copy into an ArrayBuffer-backed view so the digest input type is exact.
   const bytes = new Uint8Array(source.byteLength);
   bytes.set(source);
@@ -151,11 +152,17 @@ export async function computeV2Generation(
 export function parseV2Manifest(raw: unknown): ManifestParse {
   const errors: string[] = [];
 
-  if (!isRecord(raw)) return { ok: false, errors: ["manifest is not an object"] };
+  if (!isRecord(raw))
+    return { ok: false, errors: ["manifest is not an object"] };
   if (raw.schemaVersion !== V2_SCHEMA_VERSION) {
-    errors.push(`unsupported manifest schemaVersion ${String(raw.schemaVersion)}`);
+    errors.push(
+      `unsupported manifest schemaVersion ${String(raw.schemaVersion)}`,
+    );
   }
-  if (typeof raw.generation !== "string" || !SHA256_PATTERN.test(raw.generation)) {
+  if (
+    typeof raw.generation !== "string" ||
+    !SHA256_PATTERN.test(raw.generation)
+  ) {
     errors.push("manifest generation is not a sha256");
   }
   if (typeof raw.cutoffMonth !== "string") {
@@ -200,7 +207,10 @@ export function parseV2Manifest(raw: unknown): ManifestParse {
       errors.push(`asset ${asset.role} has an unsafe path`);
       continue;
     }
-    if (typeof asset.sha256 !== "string" || !SHA256_PATTERN.test(asset.sha256)) {
+    if (
+      typeof asset.sha256 !== "string" ||
+      !SHA256_PATTERN.test(asset.sha256)
+    ) {
       errors.push(`asset ${asset.role} has no sha256`);
       continue;
     }
@@ -246,22 +256,21 @@ export function parseV2Manifest(raw: unknown): ManifestParse {
       methodVersion: identity.methodVersion,
       generation: String(raw.generation),
       cutoffMonth: String(raw.cutoffMonth),
-      cutoffSource: typeof raw.cutoffSource === "string" ? raw.cutoffSource : "unknown",
+      cutoffSource:
+        typeof raw.cutoffSource === "string" ? raw.cutoffSource : "unknown",
       identity: {
         schemaVersion: identity.schemaVersion,
         methodVersion: identity.methodVersion,
         cutoffMonth: identity.cutoffMonth,
         inputs: Object.fromEntries(
-          Object.entries(identity.inputs as Record<string, unknown>).map(([key, value]) => [
-            key,
-            String(value),
-          ]),
+          Object.entries(identity.inputs as Record<string, unknown>).map(
+            ([key, value]) => [key, String(value)],
+          ),
         ),
         roles: Object.fromEntries(
-          Object.entries(identity.roles as Record<string, unknown>).map(([key, value]) => [
-            key,
-            String(value),
-          ]),
+          Object.entries(identity.roles as Record<string, unknown>).map(
+            ([key, value]) => [key, String(value)],
+          ),
         ),
       },
       assets: parsedAssets,
@@ -334,7 +343,9 @@ export async function loadManifestAsset(
 ): Promise<AssetLoad> {
   const fetchBytes = options.fetchBytes ?? defaultFetchBytes;
   const decode = options.decode ?? defaultDecode;
-  const base = options.baseUrl.endsWith("/") ? options.baseUrl : `${options.baseUrl}/`;
+  const base = options.baseUrl.endsWith("/")
+    ? options.baseUrl
+    : `${options.baseUrl}/`;
   const manifestDir = V2_MANIFEST_PATH.slice(
     0,
     V2_MANIFEST_PATH.lastIndexOf("/") + 1,
@@ -342,7 +353,10 @@ export async function loadManifestAsset(
 
   const asset = manifest.assets.find((entry) => entry.role === role);
   if (asset === undefined) {
-    return { state: "invalid", errors: [`manifest has no asset for role ${role}`] };
+    return {
+      state: "invalid",
+      errors: [`manifest has no asset for role ${role}`],
+    };
   }
 
   let bytes: ArrayBuffer | null;
@@ -351,7 +365,9 @@ export async function loadManifestAsset(
   } catch (error) {
     return {
       state: "invalid",
-      errors: [`${asset.role}: ${error instanceof Error ? error.message : "fetch failed"}`],
+      errors: [
+        `${asset.role}: ${error instanceof Error ? error.message : "fetch failed"}`,
+      ],
     };
   }
   if (bytes === null) {
@@ -373,14 +389,19 @@ export async function loadManifestAsset(
   }
   const digest = await sha256Hex(bytes);
   if (digest !== asset.sha256) {
-    return { state: "invalid", errors: [`${asset.path}: sha256 mismatch (${digest})`] };
+    return {
+      state: "invalid",
+      errors: [`${asset.path}: sha256 mismatch (${digest})`],
+    };
   }
   try {
     return { state: "ready", payload: await decode(bytes) };
   } catch (error) {
     return {
       state: "invalid",
-      errors: [`${asset.path}: ${error instanceof Error ? error.message : "decode failed"}`],
+      errors: [
+        `${asset.path}: ${error instanceof Error ? error.message : "decode failed"}`,
+      ],
     };
   }
 }
@@ -401,7 +422,11 @@ export async function loadObservedHistory(
   propertyType: Parameters<typeof monthlyRole>[0],
   options: LoadPackOptions,
 ): Promise<HistoryLoad> {
-  const loaded = await loadManifestAsset(manifest, monthlyRole(propertyType), options);
+  const loaded = await loadManifestAsset(
+    manifest,
+    monthlyRole(propertyType),
+    options,
+  );
   if (loaded.state !== "ready") return loaded;
 
   const parsed = parseMonthlyHistory(loaded.payload, {
@@ -424,10 +449,14 @@ export async function loadObservedHistory(
  * so they are resolved under the manifest's directory rather than the site
  * root.
  */
-export async function loadObservedPack(options: LoadPackOptions): Promise<PackLoad> {
+export async function loadObservedPack(
+  options: LoadPackOptions,
+): Promise<PackLoad> {
   const fetchBytes = options.fetchBytes ?? defaultFetchBytes;
   const decode = options.decode ?? defaultDecode;
-  const base = options.baseUrl.endsWith("/") ? options.baseUrl : `${options.baseUrl}/`;
+  const base = options.baseUrl.endsWith("/")
+    ? options.baseUrl
+    : `${options.baseUrl}/`;
   const manifestDir = V2_MANIFEST_PATH.slice(
     0,
     V2_MANIFEST_PATH.lastIndexOf("/") + 1,
@@ -439,7 +468,9 @@ export async function loadObservedPack(options: LoadPackOptions): Promise<PackLo
   } catch (error) {
     return {
       state: "invalid",
-      errors: [error instanceof Error ? error.message : "manifest fetch failed"],
+      errors: [
+        error instanceof Error ? error.message : "manifest fetch failed",
+      ],
     };
   }
   if (manifestBytes === null) return { state: "absent" };

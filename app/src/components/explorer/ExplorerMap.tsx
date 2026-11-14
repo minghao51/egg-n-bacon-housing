@@ -293,9 +293,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
     // table, which carry the window label with every number.
     body = (
       <p className="mt-4 rounded border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-        Coverage for this scope is limited, so the map does not colour areas by{
-          " "
-        }
+        Coverage for this scope is limited, so the map does not colour areas by{" "}
         {metricOption.noun}. The published values are listed in the list and
         table views for {dataset.label}, and the historical eras remain
         available as a labelled comparison.
@@ -540,7 +538,8 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
           </>
         ) : (
           <>
-            Data: <code className="font-mono">map_metrics.{dataset.section}</code>{" "}
+            Data:{" "}
+            <code className="font-mono">map_metrics.{dataset.section}</code>{" "}
             &mdash; the same joint section as the list and the table.
           </>
         )}

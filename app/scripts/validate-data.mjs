@@ -3,9 +3,27 @@ import { existsSync, readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 
 const root = new URL("../public/data/", import.meta.url);
-const manifest = JSON.parse(
-  readFileSync(new URL("manifest.json", root), "utf8"),
-);
+
+/**
+ * Read and parse a JSON asset with a named error.
+ *
+ * These files are generated, so "not valid JSON" must name the artefact that
+ * broke instead of surfacing a bare SyntaxError from deep inside the validator.
+ */
+function readJson(url, label) {
+  let text;
+  try {
+    text = readFileSync(url, "utf8");
+  } catch (error) {
+    throw new Error(`${label}: unreadable (${error?.message ?? error})`);
+  }
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`${label}: not valid JSON (${error?.message ?? error})`);
+  }
+}
+const manifest = readJson(new URL("manifest.json", root), "manifest.json");
 
 for (const asset of manifest.assets) {
   const url = new URL(asset.path, root);
@@ -105,7 +123,7 @@ if (!existsSync(releaseUrl)) {
     "Warning: dashboard-release.json is missing; dashboard assets have no verified single-generation identity (run scripts/export_app_data.py to publish one)",
   );
 } else {
-  const release = JSON.parse(readFileSync(releaseUrl, "utf8"));
+  const release = readJson(releaseUrl, "dashboard-release.json");
   if (release === null || typeof release !== "object" || Array.isArray(release))
     throw new Error("dashboard-release.json: expected a JSON object");
   if (!Array.isArray(release.assets))
@@ -174,7 +192,8 @@ if (!existsSync(releaseUrl)) {
 // Present once the v2 sidecar is published. Absent means the deployment still
 // serves the legacy release; that is reported, never treated as a failure.
 function monthsBetween(startMonth, endMonth) {
-  const index = (month) => Number(month.slice(0, 4)) * 12 + Number(month.slice(5, 7)) - 1;
+  const index = (month) =>
+    Number(month.slice(0, 4)) * 12 + Number(month.slice(5, 7)) - 1;
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(startMonth)) return null;
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(endMonth)) return null;
   const start = index(startMonth);
@@ -193,9 +212,11 @@ function checkObservedPack() {
     return;
   }
 
-  const manifest = JSON.parse(readFileSync(manifestUrl, "utf8"));
+  const manifest = readJson(manifestUrl, "dashboard-release-v2.json");
   if (manifest.schemaVersion !== "2.1.0")
-    throw new Error(`dashboard-release-v2.json: unsupported schemaVersion ${manifest.schemaVersion}`);
+    throw new Error(
+      `dashboard-release-v2.json: unsupported schemaVersion ${manifest.schemaVersion}`,
+    );
 
   const identity = manifest.identity;
   if (!identity || typeof identity !== "object")
@@ -220,13 +241,19 @@ function checkObservedPack() {
     if (![...CORE_ROLES, ...MONTHLY_ROLES].includes(asset.role))
       throw new Error(`dashboard-release-v2.json: unknown role ${asset.role}`);
     if (assets.has(asset.role))
-      throw new Error(`dashboard-release-v2.json: duplicate role ${asset.role}`);
+      throw new Error(
+        `dashboard-release-v2.json: duplicate role ${asset.role}`,
+      );
     if (typeof asset.path !== "string" || asset.path.includes(".."))
       throw new Error(`dashboard-release-v2.json: unsafe path ${asset.path}`);
     if (!asset.path.startsWith(`observed/${manifest.generation}/`))
-      throw new Error(`dashboard-release-v2.json: ${asset.path} is outside its generation`);
+      throw new Error(
+        `dashboard-release-v2.json: ${asset.path} is outside its generation`,
+      );
     if (identity.roles?.[asset.role] !== asset.sha256)
-      throw new Error(`dashboard-release-v2.json: identity role ${asset.role} does not match its asset`);
+      throw new Error(
+        `dashboard-release-v2.json: identity role ${asset.role} does not match its asset`,
+      );
     assets.set(asset.role, asset);
   }
   for (const role of [...CORE_ROLES, ...MONTHLY_ROLES]) {
@@ -242,13 +269,19 @@ function checkObservedPack() {
   for (const [role, asset] of assets) {
     const url = new URL(asset.path, root);
     if (!existsSync(url))
-      throw new Error(`dashboard-release-v2.json: missing payload ${asset.path}`);
+      throw new Error(
+        `dashboard-release-v2.json: missing payload ${asset.path}`,
+      );
     const bytes = readFileSync(url);
     if (bytes.length !== asset.bytes)
-      throw new Error(`${asset.path}: ${bytes.length} bytes, recorded ${asset.bytes}`);
+      throw new Error(
+        `${asset.path}: ${bytes.length} bytes, recorded ${asset.bytes}`,
+      );
     const digest = sha256(bytes);
     if (digest !== asset.sha256)
-      throw new Error(`${asset.path}: hash ${digest} != recorded ${asset.sha256}`);
+      throw new Error(
+        `${asset.path}: hash ${digest} != recorded ${asset.sha256}`,
+      );
     try {
       payloads[role] = JSON.parse(gunzipSync(bytes).toString("utf8"));
     } catch (error) {
@@ -258,7 +291,9 @@ function checkObservedPack() {
 
   const periods = payloads.periods;
   if (periods.schemaVersion !== "2.1.0")
-    throw new Error(`v2 periods: unsupported schemaVersion ${periods.schemaVersion}`);
+    throw new Error(
+      `v2 periods: unsupported schemaVersion ${periods.schemaVersion}`,
+    );
   if (periods.cutoffMonth !== manifest.cutoffMonth)
     throw new Error("v2 periods: cutoffMonth disagrees with the manifest");
   if (!Array.isArray(periods.periods) || periods.periods.length === 0)
@@ -277,11 +312,15 @@ function checkObservedPack() {
       period.months.length !== expected.length ||
       period.months.some((month, index) => month !== expected[index])
     )
-      throw new Error(`v2 periods: ${period.id} months do not match its bounds`);
+      throw new Error(
+        `v2 periods: ${period.id} months do not match its bounds`,
+      );
   }
   for (const period of periods.periods) {
     if (period.comparatorId !== null && !ids.has(period.comparatorId))
-      throw new Error(`v2 periods: ${period.id} references unpublished comparator ${period.comparatorId}`);
+      throw new Error(
+        `v2 periods: ${period.id} references unpublished comparator ${period.comparatorId}`,
+      );
   }
 
   const summary = payloads.summary;
@@ -293,20 +332,30 @@ function checkObservedPack() {
   const dispositions = new Set(["publish", "limited-display", "withhold"]);
   for (const observation of summary.observations) {
     if (!ids.has(observation.periodId))
-      throw new Error(`v2 summary: ${observation.geographyId} references unknown period ${observation.periodId}`);
+      throw new Error(
+        `v2 summary: ${observation.geographyId} references unknown period ${observation.periodId}`,
+      );
     if (!["all", "hdb", "ec", "condo"].includes(observation.propertyType))
-      throw new Error(`v2 summary: unknown propertyType ${observation.propertyType}`);
+      throw new Error(
+        `v2 summary: unknown propertyType ${observation.propertyType}`,
+      );
     if (!["available", "no-sales"].includes(observation.status))
       throw new Error(`v2 summary: unknown status ${observation.status}`);
     if (!dispositions.has(observation.disposition))
-      throw new Error(`v2 summary: unknown disposition ${observation.disposition}`);
+      throw new Error(
+        `v2 summary: unknown disposition ${observation.disposition}`,
+      );
     if (observation.status === "no-sales") {
       const count = observation.metrics?.transactionCount?.value;
       const price = observation.metrics?.medianPrice?.value;
       if (count !== 0)
-        throw new Error(`v2 summary: ${observation.geographyId}/${observation.periodId} is no-sales with count ${count}`);
+        throw new Error(
+          `v2 summary: ${observation.geographyId}/${observation.periodId} is no-sales with count ${count}`,
+        );
       if (price !== null)
-        throw new Error(`v2 summary: ${observation.geographyId}/${observation.periodId} is no-sales with a price`);
+        throw new Error(
+          `v2 summary: ${observation.geographyId}/${observation.periodId} is no-sales with a price`,
+        );
     }
   }
 
@@ -329,41 +378,61 @@ function checkObservedPack() {
     const payload = payloads[role];
     const expectedType = role.replace("area-monthly-", "");
     if (payload.schemaVersion !== "2.1.0")
-      throw new Error(`v2 ${role}: unsupported schemaVersion ${payload.schemaVersion}`);
+      throw new Error(
+        `v2 ${role}: unsupported schemaVersion ${payload.schemaVersion}`,
+      );
     if (payload.cutoffMonth !== manifest.cutoffMonth)
       throw new Error(`v2 ${role}: cutoffMonth disagrees with the manifest`);
     if (payload.propertyType !== expectedType)
-      throw new Error(`v2 ${role}: declares propertyType ${payload.propertyType}`);
+      throw new Error(
+        `v2 ${role}: declares propertyType ${payload.propertyType}`,
+      );
     if (!dispositions.has(payload.disposition))
       throw new Error(`v2 ${role}: unknown disposition ${payload.disposition}`);
     if (
       !Array.isArray(payload.cellFields) ||
       payload.cellFields.length !== MONTHLY_CELL_FIELDS.length ||
-      payload.cellFields.some((field, index) => field !== MONTHLY_CELL_FIELDS[index])
+      payload.cellFields.some(
+        (field, index) => field !== MONTHLY_CELL_FIELDS[index],
+      )
     )
-      throw new Error(`v2 ${role}: cellFields does not match the published cell contract`);
+      throw new Error(
+        `v2 ${role}: cellFields does not match the published cell contract`,
+      );
 
     const months = payload.months;
-    if (!Array.isArray(months)) throw new Error(`v2 ${role}: months is not an array`);
+    if (!Array.isArray(months))
+      throw new Error(`v2 ${role}: months is not an array`);
     months.forEach((month, index) => {
       if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))
         throw new Error(`v2 ${role}: months[${index}] is not a YYYY-MM month`);
       if (index > 0 && monthIndexOf(month) <= monthIndexOf(months[index - 1]))
-        throw new Error(`v2 ${role}: months[${index}] is not after ${months[index - 1]}`);
+        throw new Error(
+          `v2 ${role}: months[${index}] is not after ${months[index - 1]}`,
+        );
     });
     const coverage = payload.coverage ?? {};
     if (coverage.monthCount !== months.length)
-      throw new Error(`v2 ${role}: coverage.monthCount disagrees with the month grid`);
+      throw new Error(
+        `v2 ${role}: coverage.monthCount disagrees with the month grid`,
+      );
     if ((coverage.firstMonth ?? null) !== (months[0] ?? null))
-      throw new Error(`v2 ${role}: coverage.firstMonth disagrees with the month grid`);
+      throw new Error(
+        `v2 ${role}: coverage.firstMonth disagrees with the month grid`,
+      );
     if ((coverage.lastMonth ?? null) !== (months[months.length - 1] ?? null))
-      throw new Error(`v2 ${role}: coverage.lastMonth disagrees with the month grid`);
+      throw new Error(
+        `v2 ${role}: coverage.lastMonth disagrees with the month grid`,
+      );
 
     if (!Array.isArray(payload.series) || payload.series.length === 0)
       throw new Error(`v2 ${role}: no series published`);
     const geographies = new Set();
     for (const entry of payload.series) {
-      if (typeof entry.geographyId !== "string" || entry.geographyId.length === 0)
+      if (
+        typeof entry.geographyId !== "string" ||
+        entry.geographyId.length === 0
+      )
         throw new Error(`v2 ${role}: series entry without a geographyId`);
       if (geographies.has(entry.geographyId))
         throw new Error(`v2 ${role}: duplicate series ${entry.geographyId}`);
@@ -376,7 +445,9 @@ function checkObservedPack() {
       for (const [position, cell] of entry.cells.entries()) {
         const label = `v2 ${role}: series ${entry.geographyId} cell ${months[position]}`;
         if (!Array.isArray(cell) || cell.length !== MONTHLY_CELL_FIELDS.length)
-          throw new Error(`${label} is not a ${MONTHLY_CELL_FIELDS.length}-field cell`);
+          throw new Error(
+            `${label} is not a ${MONTHLY_CELL_FIELDS.length}-field cell`,
+          );
         const [count, price, priceObs, psf, psfObs] = cell;
         for (const [name, value] of [
           ["transactionCount", count],
@@ -413,18 +484,24 @@ function checkObservedPack() {
     const declared = payload.geographies;
     if (declared === null || typeof declared !== "object")
       throw new Error(`v2 ${role}: does not declare its geographies`);
-    if (typeof declared.national !== "string" || !geographies.has(declared.national))
+    if (
+      typeof declared.national !== "string" ||
+      !geographies.has(declared.national)
+    )
       throw new Error(`v2 ${role}: geographies.national has no series`);
     if (!Array.isArray(declared.unassigned))
       throw new Error(`v2 ${role}: geographies.unassigned is not an array`);
     for (const id of declared.unassigned) {
       if (typeof id !== "string" || id === "" || id === declared.national)
-        throw new Error(`v2 ${role}: geographies.unassigned has an invalid id ${id}`);
+        throw new Error(
+          `v2 ${role}: geographies.unassigned has an invalid id ${id}`,
+        );
       if (!geographies.has(id))
-        throw new Error(`v2 ${role}: geographies.unassigned ${id} has no series`);
+        throw new Error(
+          `v2 ${role}: geographies.unassigned ${id} has no series`,
+        );
     }
-    const areaCount =
-      geographies.size - 1 - declared.unassigned.length;
+    const areaCount = geographies.size - 1 - declared.unassigned.length;
     if (declared.areaCount !== areaCount)
       throw new Error(
         `v2 ${role}: geographies.areaCount ${declared.areaCount} != ${areaCount} declared areas`,

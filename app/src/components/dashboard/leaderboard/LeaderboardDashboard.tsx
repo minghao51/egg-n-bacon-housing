@@ -41,7 +41,6 @@ const DEFAULT_CONTROLS: LeaderboardControlsState = {
   rankMetric: "median_price",
 };
 
-
 function formatCurrency(value: number): string {
   return `$${value.toLocaleString()}`;
 }
@@ -53,8 +52,10 @@ export default function LeaderboardDashboard({
 }: LeaderboardDashboardProps) {
   const [controls, setControls] =
     useState<LeaderboardControlsState>(DEFAULT_CONTROLS);
-  const [defaultMigration, setDefaultMigration] =
-    useState<{ label: string; query: string } | null>(null);
+  const [defaultMigration, setDefaultMigration] = useState<{
+    label: string;
+    query: string;
+  } | null>(null);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [highlightedArea, setHighlightedArea] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -110,7 +111,10 @@ export default function LeaderboardDashboard({
         ...current,
         rankMetric: metricParam as LeaderboardMetric,
       }));
-    } else if (metricParam && isScopedRankMetric(metricParam as LeaderboardMetric) === false) {
+    } else if (
+      metricParam &&
+      isScopedRankMetric(metricParam as LeaderboardMetric) === false
+    ) {
       // A known legacy metric ID stays in the URL and resolves to an explicit
       // unavailable state rather than silently ranking on something else.
       setControls((current) => ({
@@ -488,135 +492,136 @@ export default function LeaderboardDashboard({
             ) : null}
 
             {windowUnavailable === null && windowPending === false && (
-            <>
-            {selectedAreaRow && (
-              <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold text-foreground">
-                      Selected Area
-                    </h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {selectedAreaRow.planningArea} is currently highlighted at{" "}
-                      {selectedAreaRow.rank === null
-                        ? "an unranked position (small sample)"
-                        : `rank #${selectedAreaRow.rank}`}{" "}
-                      for {metricMeta.label.toLowerCase()}.
-                    </p>
-                  </div>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <a
-                      href={`${import.meta.env.BASE_URL}dashboard/map?area=${encodeURIComponent(selectedAreaRow.areaKey)}&metric=${encodeURIComponent(controls.rankMetric)}&propertyType=${encodeURIComponent(controls.propertyType)}&timeBasis=${encodeURIComponent(controls.timeBasis)}`}
-                      className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+              <>
+                {selectedAreaRow && (
+                  <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">
+                          Selected Area
+                        </h2>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {selectedAreaRow.planningArea} is currently
+                          highlighted at{" "}
+                          {selectedAreaRow.rank === null
+                            ? "an unranked position (small sample)"
+                            : `rank #${selectedAreaRow.rank}`}{" "}
+                          for {metricMeta.label.toLowerCase()}.
+                        </p>
+                      </div>
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <a
+                          href={`${import.meta.env.BASE_URL}dashboard/map?area=${encodeURIComponent(selectedAreaRow.areaKey)}&metric=${encodeURIComponent(controls.rankMetric)}&propertyType=${encodeURIComponent(controls.propertyType)}&timeBasis=${encodeURIComponent(controls.timeBasis)}`}
+                          className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+                        >
+                          Open in explore areas
+                        </a>
+                        <a
+                          href={`${import.meta.env.BASE_URL}dashboard/segments?area=${encodeURIComponent(selectedAreaRow.areaKey)}`}
+                          className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+                        >
+                          Open in discover segments
+                        </a>
+                      </div>
+                    </div>
+                  </section>
+                )}
+
+                <section className="lg:hidden">
+                  <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-card p-2 shadow-sm">
+                    <button
+                      type="button"
+                      onClick={() => setMobileView("map")}
+                      className={`rounded-xl px-3 py-2 text-sm font-medium ${
+                        mobileView === "map"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground"
+                      }`}
                     >
-                      Open in explore areas
-                    </a>
-                    <a
-                      href={`${import.meta.env.BASE_URL}dashboard/segments?area=${encodeURIComponent(selectedAreaRow.areaKey)}`}
-                      className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+                      Map
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMobileView("rankings")}
+                      className={`rounded-xl px-3 py-2 text-sm font-medium ${
+                        mobileView === "rankings"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground"
+                      }`}
                     >
-                      Open in discover segments
-                    </a>
+                      Rankings
+                    </button>
                   </div>
-                </div>
-              </section>
-            )}
+                </section>
 
-            <section className="lg:hidden">
-              <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-card p-2 shadow-sm">
-                <button
-                  type="button"
-                  onClick={() => setMobileView("map")}
-                  className={`rounded-xl px-3 py-2 text-sm font-medium ${
-                    mobileView === "map"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground"
-                  }`}
+                <section
+                  className={`${mobileView === "rankings" ? "hidden lg:block" : "block"}`}
                 >
-                  Map
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMobileView("rankings")}
-                  className={`rounded-xl px-3 py-2 text-sm font-medium ${
-                    mobileView === "rankings"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  Rankings
-                </button>
-              </div>
-            </section>
-
-            <section
-              className={`${mobileView === "rankings" ? "hidden lg:block" : "block"}`}
-            >
-              <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-                <div className="border-b border-border px-5 py-4">
-                  <h2 className="text-lg font-semibold">Geographic View</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {rankable
-                      ? `Color-coded by ${metricMeta.label.toLowerCase()} using ${timeBasisLabel.toLowerCase()} values.`
-                      : `Not colour-coded: coverage is limited for this scope, so areas are shown without a ${metricMeta.label.toLowerCase()} fill.`}
-                  </p>
-                </div>
-                <div className="h-[420px] md:h-[520px]">
-                  <LeaderboardMap
-                    data={data}
-                    selectedMetric={controls.rankMetric}
-                    metricMeta={metricMeta}
-                    highlightedArea={highlightedArea}
-                    onAreaHover={setHighlightedArea}
-                    onAreaClick={handleAreaClick}
-                    colourable={rankable}
-                  />
-                </div>
-              </div>
-            </section>
-
-            <section
-              className={`${mobileView === "map" ? "hidden lg:block" : "block"}`}
-            >
-              <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-                <div className="border-b border-border px-5 py-4">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <h2 className="text-lg font-semibold">
-                        Detailed Rankings
-                      </h2>
+                  <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                    <div className="border-b border-border px-5 py-4">
+                      <h2 className="text-lg font-semibold">Geographic View</h2>
                       <p className="text-sm text-muted-foreground">
-                        Rows stay sorted by the selected ranking metric. Hover
-                        to sync with the map.
+                        {rankable
+                          ? `Color-coded by ${metricMeta.label.toLowerCase()} using ${timeBasisLabel.toLowerCase()} values.`
+                          : `Not colour-coded: coverage is limited for this scope, so areas are shown without a ${metricMeta.label.toLowerCase()} fill.`}
                       </p>
                     </div>
-                    <label className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm">
-                      <Search className="h-4 w-4 text-muted-foreground" />
-                      <input
-                        type="text"
-                        aria-label="Search planning areas"
-                        value={controls.search}
-                        onChange={(event) =>
-                          updateControl("search", event.target.value)
-                        }
-                        placeholder="Search planning areas..."
-                        className="w-full bg-transparent outline-none md:w-64"
+                    <div className="h-[420px] md:h-[520px]">
+                      <LeaderboardMap
+                        data={data}
+                        selectedMetric={controls.rankMetric}
+                        metricMeta={metricMeta}
+                        highlightedArea={highlightedArea}
+                        onAreaHover={setHighlightedArea}
+                        onAreaClick={handleAreaClick}
+                        colourable={rankable}
                       />
-                    </label>
+                    </div>
                   </div>
-                </div>
-                <div className="p-4">
-                  <LeaderboardTable
-                    data={data}
-                    selectedMetric={controls.rankMetric}
-                    highlightedArea={highlightedArea}
-                    onRowHover={setHighlightedArea}
-                    onRowClick={handleAreaClick}
-                  />
-                </div>
-              </div>
-            </section>
-            </>
+                </section>
+
+                <section
+                  className={`${mobileView === "map" ? "hidden lg:block" : "block"}`}
+                >
+                  <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                    <div className="border-b border-border px-5 py-4">
+                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                          <h2 className="text-lg font-semibold">
+                            Detailed Rankings
+                          </h2>
+                          <p className="text-sm text-muted-foreground">
+                            Rows stay sorted by the selected ranking metric.
+                            Hover to sync with the map.
+                          </p>
+                        </div>
+                        <label className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm">
+                          <Search className="h-4 w-4 text-muted-foreground" />
+                          <input
+                            type="text"
+                            aria-label="Search planning areas"
+                            value={controls.search}
+                            onChange={(event) =>
+                              updateControl("search", event.target.value)
+                            }
+                            placeholder="Search planning areas..."
+                            className="w-full bg-transparent outline-none md:w-64"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <LeaderboardTable
+                        data={data}
+                        selectedMetric={controls.rankMetric}
+                        highlightedArea={highlightedArea}
+                        onRowHover={setHighlightedArea}
+                        onRowClick={handleAreaClick}
+                      />
+                    </div>
+                  </div>
+                </section>
+              </>
             )}
           </main>
         </div>

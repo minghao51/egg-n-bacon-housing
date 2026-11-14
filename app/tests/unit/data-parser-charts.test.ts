@@ -55,10 +55,7 @@ describe("splitDatasetsByUnit", () => {
 
     const groups = splitDatasetsByUnit(data);
 
-    expect(groups.map((group) => group.unit)).toEqual([
-      "currency",
-      "count",
-    ]);
+    expect(groups.map((group) => group.unit)).toEqual(["currency", "count"]);
     expect(groups[0].data.datasets.map((dataset) => dataset.label)).toEqual([
       "MRT Premium per 100m",
       "Mean Price PSF",

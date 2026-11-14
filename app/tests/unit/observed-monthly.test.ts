@@ -61,7 +61,9 @@ describe("parsing the real history payload", () => {
     expect(result.history.propertyType).toBe("hdb");
     expect(result.history.cutoffMonth).toBe("2026-10");
     expect(result.history.months.at(-1)).toBe("2026-10");
-    expect(result.history.coverage.monthCount).toBe(result.history.months.length);
+    expect(result.history.coverage.monthCount).toBe(
+      result.history.months.length,
+    );
   });
 
   it("keeps the cell grid aligned to the month grid", () => {
@@ -98,11 +100,9 @@ describe("parsing the real history payload", () => {
 
     expect(result.history.nationalId).toBe("SG");
     expect(result.history.unassignedIds).toEqual([]);
-    expect(areaSeries(result.history).map((entry) => entry.geographyId)).toEqual([
-      "ANG MO KIO",
-      "PUNGGOL",
-      "TAMPINES",
-    ]);
+    expect(
+      areaSeries(result.history).map((entry) => entry.geographyId),
+    ).toEqual(["ANG MO KIO", "PUNGGOL", "TAMPINES"]);
   });
 
   it("reports an uncovered month as missing source, never as zero sales", () => {
@@ -117,7 +117,9 @@ describe("parsing the real history payload", () => {
     expect(before.medianPrice).toBeNull();
     expect(unknownArea.status).toBe("missing-source");
     expect(coveredHistoryMonths(result.history, "ATLANTIS")).toEqual([]);
-    expect(coveredHistoryMonths(result.history, "SG")).toEqual(result.history.months);
+    expect(coveredHistoryMonths(result.history, "SG")).toEqual(
+      result.history.months,
+    );
   });
 });
 
@@ -215,7 +217,11 @@ describe("rejection", () => {
 
   it("rejects an unassigned id with no series", () => {
     const payload = cloneFixture();
-    payload.geographies = { national: "SG", unassigned: ["NONE"], areaCount: 2 };
+    payload.geographies = {
+      national: "SG",
+      unassigned: ["NONE"],
+      areaCount: 2,
+    };
     expectRejected(payload, "geographies.unassigned NONE has no series");
   });
 

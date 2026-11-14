@@ -162,9 +162,7 @@ function ExplorerTable({
               </>
             ) : (
               <>
-                <code className="font-mono">
-                  map_metrics.{dataset.section}
-                </code>
+                <code className="font-mono">map_metrics.{dataset.section}</code>
                 {". "}
               </>
             )}

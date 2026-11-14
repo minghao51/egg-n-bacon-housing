@@ -250,30 +250,30 @@ Each finding draws from a distinct analytical workflow. The table below cross-re
 
 ### Technical Findings (Consolidated)
 
-| Topic                             | Key Metric                        | Value            | Confidence                               |
-| --------------------------------- | --------------------------------- | ---------------- | ---------------------------------------- |
-| CBD effect                        | R² from CBD-only model            | 0.2263           | High — robust across specifications      |
-| MRT incremental lift              | ΔR² after adding MRT to CBD model | +0.0078          | High — hierarchical regression           |
+| Topic                             | Key Metric                        | Value            | Confidence                                             |
+| --------------------------------- | --------------------------------- | ---------------- | ------------------------------------------------------ |
+| CBD effect                        | R² from CBD-only model            | 0.2263           | High — robust across specifications                    |
+| MRT incremental lift              | ΔR² after adding MRT to CBD model | +0.0078          | High — hierarchical regression                         |
 | Condo vs HDB MRT sensitivity      | Relative coefficient magnitude    | ~15×             | Consistent across OLS and XGBoost; not a price premium |
-| Lease steepest penalty            | 70-80 yr band discount            | -21.9% vs 90+ yr | High — 47,044 transactions               |
-| Lease deepest discount            | 60-70 yr band discount            | -23.8% vs 90+ yr | High — 54,521 transactions               |
-| Pure lease effect                 | Per extra year (after controls)   | +$54.75 PSF      | Moderate — hedonic regression            |
-| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost          |
-| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                 |
-| Ensemble vs unified               | Accuracy improvement              | 74% vs 47%       | High — out-of-sample                     |
-| School quality OLS                | Coefficient                       | +$9.66 PSF       | High — predictive                        |
-| School RDD                        | Treatment effect at 1 km          | -$79.47 PSF      | Low — covariate balance failed           |
-| Spatial clustering                | Moran's I / z-score               | 0.766 / 9.91     | High — p < 0.001                         |
-| Rental hotspot selectivity        | 99% confidence cells              | 12 of 847        | High — Gi\* statistic                    |
-| CCR condo policy effect           | DiD estimate (Sep 2022)           | ~-$137,743       | Moderate — regime-specific               |
-| HDB policy response               | RDiT jump (Dec 2023)              | ~+$13,118        | Moderate — bandwidth-sensitive           |
-| Hawker feature importance         | XGBoost importance for HDB        | 27.4%            | High — consistent across models          |
-| Park feature importance           | XGBoost importance for HDB        | 7.2%             | High — underpriced by market             |
-| Yield vs appreciation correlation | Pearson r by planning area        | ~-0.3            | Moderate — weakly negative               |
-| Median HDB rental yield           | Annual rent / resale price        | ~4.2%            | Moderate — median across types           |
-| Real CAGR spread over CPI         | Nominal CAGR minus inflation      | ~2%              | Moderate — all segments                  |
-| MRT premium COVID decline         | Pre vs post-COVID coefficient     | Reduced          | Moderate — structural break              |
-| School premium resilience         | Pre vs post-COVID stability       | Stable           | Moderate — maintained through COVID      |
+| Lease steepest penalty            | 70-80 yr band discount            | -21.9% vs 90+ yr | High — 47,044 transactions                             |
+| Lease deepest discount            | 60-70 yr band discount            | -23.8% vs 90+ yr | High — 54,521 transactions                             |
+| Pure lease effect                 | Per extra year (after controls)   | +$54.75 PSF      | Moderate — hedonic regression                          |
+| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost                        |
+| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                               |
+| Ensemble vs unified               | Accuracy improvement              | 74% vs 47%       | High — out-of-sample                                   |
+| School quality OLS                | Coefficient                       | +$9.66 PSF       | High — predictive                                      |
+| School RDD                        | Treatment effect at 1 km          | -$79.47 PSF      | Low — covariate balance failed                         |
+| Spatial clustering                | Moran's I / z-score               | 0.766 / 9.91     | High — p < 0.001                                       |
+| Rental hotspot selectivity        | 99% confidence cells              | 12 of 847        | High — Gi\* statistic                                  |
+| CCR condo policy effect           | DiD estimate (Sep 2022)           | ~-$137,743       | Moderate — regime-specific                             |
+| HDB policy response               | RDiT jump (Dec 2023)              | ~+$13,118        | Moderate — bandwidth-sensitive                         |
+| Hawker feature importance         | XGBoost importance for HDB        | 27.4%            | High — consistent across models                        |
+| Park feature importance           | XGBoost importance for HDB        | 7.2%             | High — underpriced by market                           |
+| Yield vs appreciation correlation | Pearson r by planning area        | ~-0.3            | Moderate — weakly negative                             |
+| Median HDB rental yield           | Annual rent / resale price        | ~4.2%            | Moderate — median across types                         |
+| Real CAGR spread over CPI         | Nominal CAGR minus inflation      | ~2%              | Moderate — all segments                                |
+| MRT premium COVID decline         | Pre vs post-COVID coefficient     | Reduced          | Moderate — structural break                            |
+| School premium resilience         | Pre vs post-COVID stability       | Stable           | Moderate — maintained through COVID                    |
 
 ### Conclusion
 

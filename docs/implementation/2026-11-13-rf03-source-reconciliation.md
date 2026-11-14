@@ -8,14 +8,14 @@
 
 ## 1. Restoration
 
-| Step | Result |
-| --- | --- |
-| `00_sync_data.py --download --only manual` | 51 files (124 MB) of CSV/GeoJSON |
-| `00_sync_data.py --download --only geocache` | 18,032 parquet files (140 MB) |
-| `00_sync_data.py --verify` | **18,084 OK, 0 missing locally, 0 missing in R2, 0 size mismatches** |
-| `main.py --stage ingest --refresh` | 24 source nodes; HDB 990,860 · condo 245,655 · rental 215,469 · 23 reference layers |
-| `main.py --stage all` | 1,236,310 × 97 `unified_dataset`; `pa_monthly_metrics` 13,236; `planning_area_360` 44; `town_360` 28; `block_profile` 10,031; `appreciation_hotspots` 20 |
-| `export_app_data.py --last-complete-month 2026-10 --output-dir /tmp/rf03-candidate` | 8 files, generation `9605fceca35c27e6`, 7 assets + release manifest |
+| Step                                                                                | Result                                                                                                                                                   |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `00_sync_data.py --download --only manual`                                          | 51 files (124 MB) of CSV/GeoJSON                                                                                                                         |
+| `00_sync_data.py --download --only geocache`                                        | 18,032 parquet files (140 MB)                                                                                                                            |
+| `00_sync_data.py --verify`                                                          | **18,084 OK, 0 missing locally, 0 missing in R2, 0 size mismatches**                                                                                     |
+| `main.py --stage ingest --refresh`                                                  | 24 source nodes; HDB 990,860 · condo 245,655 · rental 215,469 · 23 reference layers                                                                      |
+| `main.py --stage all`                                                               | 1,236,310 × 97 `unified_dataset`; `pa_monthly_metrics` 13,236; `planning_area_360` 44; `town_360` 28; `block_profile` 10,031; `appreciation_hotspots` 20 |
+| `export_app_data.py --last-complete-month 2026-10 --output-dir /tmp/rf03-candidate` | 8 files, generation `9605fceca35c27e6`, 7 assets + release manifest                                                                                      |
 
 Operational note: the first `--stage all` run was killed at the 55-minute tool budget while `condo_validated` was running (3,214 s in that node alone). The rerun completed in ~4 minutes because the validation-layer cache was warm. A cold refresh therefore costs roughly an hour, almost all of it in private-residential validation.
 
@@ -37,12 +37,12 @@ So: history is reproducible to within a rounding of one transaction, with one do
 
 The audit's Jan–Oct count gap **reproduces on freshly fetched data**, so it is not a stale-export artifact:
 
-| Label | Jan–Oct 2025 | Jan–Oct 2026 | Δ |
-| --- | --- | --- | --- |
-| HDB | 21,402 | 21,801 | **+1.9%** |
-| EC | 5,560 | 2,353 | −57.7% |
-| Condominium | 42,413 | 18,477 | −56.4% |
-| All | 69,375 | 42,631 | −38.5% |
+| Label       | Jan–Oct 2025 | Jan–Oct 2026 | Δ         |
+| ----------- | ------------ | ------------ | --------- |
+| HDB         | 21,402       | 21,801       | **+1.9%** |
+| EC          | 5,560        | 2,353        | −57.7%    |
+| Condominium | 42,413       | 18,477       | −56.4%    |
+| All         | 69,375       | 42,631       | −38.5%    |
 
 **Correction (2026-11-13, after the v2 pack was built):** an earlier revision of this table put 25,084 / 6,209 / 47,504 in the 2025 column. Those are **full-year 2025** totals, not January–October. Comparing ten months against twelve overstated the HDB change as −13.1%; the like-for-like figure is **+1.9%**, which matches the published release and the audit. The EC/condominium gap survives the correction (−57.7% / −56.4%), so that item stays open.
 
@@ -54,19 +54,19 @@ What the checks ruled out:
 
 What remains unexplained: whether 2025 private volume is genuinely ~2.5× 2026 (a launch-cycle peak — the top project-months are real launches: Springleaf Residence 1,436 in 2025-08, Skye at Holland 1,196 and Zyon Grand 1,130 in 2025-10) or whether the private/EC grain still over-counts some rows. Resolving it needs the URA source definition and an independent monthly check against published URA caveat counts — that is a data-owner task, not something a label change can settle.
 
-**Disposition under D11:** HDB = *publish current* (like-for-like +1.9%; full-year 2025 count identical at 25,084; monthly deltas ≤ 3; no joint-scope ambiguity). EC and Condominium 2026 = *limited historical/diagnostic display* — raw counts may be shown with their dates, but no growth headline, no ranked comparison and no activity colour until this is settled.
+**Disposition under D11:** HDB = _publish current_ (like-for-like +1.9%; full-year 2025 count identical at 25,084; monthly deltas ≤ 3; no joint-scope ambiguity). EC and Condominium 2026 = _limited historical/diagnostic display_ — raw counts may be shown with their dates, but no growth headline, no ranked comparison and no activity colour until this is settled.
 
 ## 4. Candidate asset hashes
 
-| Asset | Bytes | sha256 |
-| --- | --- | --- |
-| `dashboard_overview.json.gz` | 716 | `c7cf56287202…` |
-| `dashboard_trends.json.gz` | 5,756 | `3e54547387e9…` |
-| `dashboard_segments.json.gz` | 6,093 | `c689286ff629…` |
-| `dashboard_leaderboard.json.gz` | 4,757 | `2a58c7ff8683…` |
-| `map_metrics.json.gz` | 11,398 | `febb736c1537…` |
-| `hotspots.json.gz` | 1,086 | `6896116f71e6…` |
-| `amenity_summary.json.gz` | 1,782 | `8cf9e3a32c88…` |
+| Asset                           | Bytes  | sha256          |
+| ------------------------------- | ------ | --------------- |
+| `dashboard_overview.json.gz`    | 716    | `c7cf56287202…` |
+| `dashboard_trends.json.gz`      | 5,756  | `3e54547387e9…` |
+| `dashboard_segments.json.gz`    | 6,093  | `c689286ff629…` |
+| `dashboard_leaderboard.json.gz` | 4,757  | `2a58c7ff8683…` |
+| `map_metrics.json.gz`           | 11,398 | `febb736c1537…` |
+| `hotspots.json.gz`              | 1,086  | `6896116f71e6…` |
+| `amenity_summary.json.gz`       | 1,782  | `8cf9e3a32c88…` |
 
 Inputs: `unified_dataset` `39d234f703c9…` (1,236,310 rows), `pa_monthly_metrics` `6d4ed626ef08…` (13,236 rows). Published v1 assets are untouched: `verify_reporting_baseline.py --assets` still passes for all 72 pinned files.
 

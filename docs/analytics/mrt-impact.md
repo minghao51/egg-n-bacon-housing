@@ -62,9 +62,9 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 ### 3. MRT matters far more for condos than HDB
 
-| Property Type | MRT sensitivity             |
-| ------------- | --------------------------- |
-| HDB           | low                         |
+| Property Type | MRT sensitivity                     |
+| ------------- | ----------------------------------- |
+| HDB           | low                                 |
 | Condo         | fitted coefficient ~15× the HDB one |
 
 **Impact**

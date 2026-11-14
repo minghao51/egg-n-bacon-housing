@@ -25,7 +25,9 @@ function areaList(page: Page) {
 }
 
 test.describe("Explore - published windows", () => {
-  test("shows the verified window panel above the selected table", async ({ page }) => {
+  test("shows the verified window panel above the selected table", async ({
+    page,
+  }) => {
     await page.goto("/explore");
     const panel = page.locator('[data-observed-cutoff="2026-10"]');
     await expect(panel).toBeVisible();
@@ -468,6 +470,9 @@ test.describe("Explore activity", () => {
     // present and marked ineligible rather than dropped or ranked.
     const activity = page.locator("[data-explorer-activity]").first();
     await expect(activity).toBeVisible();
-    await expect(activity).toHaveAttribute("data-explorer-activity", "ineligible");
+    await expect(activity).toHaveAttribute(
+      "data-explorer-activity",
+      "ineligible",
+    );
   });
 });

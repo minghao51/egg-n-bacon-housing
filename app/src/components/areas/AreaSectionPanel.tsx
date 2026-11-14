@@ -36,7 +36,9 @@ export interface AreaSectionPanelProps {
 }
 
 function formatCount(value: number | null): string {
-  return value === null ? "Not published" : Math.round(value).toLocaleString("en-US");
+  return value === null
+    ? "Not published"
+    : Math.round(value).toLocaleString("en-US");
 }
 
 function formatPrice(value: number | null): string {
@@ -116,10 +118,15 @@ export default function AreaSectionPanel({
   }, [base]);
 
   const option =
-    options.find((candidate) => candidate.id === state.optionId) ?? defaultOption;
+    options.find((candidate) => candidate.id === state.optionId) ??
+    defaultOption;
 
   const selectable = useMemo(
-    () => options.map((candidate) => ({ id: candidate.id, label: candidate.label })),
+    () =>
+      options.map((candidate) => ({
+        id: candidate.id,
+        label: candidate.label,
+      })),
     [options],
   );
 
@@ -183,8 +190,7 @@ export default function AreaSectionPanel({
           ))}
         </select>
         <p className="mt-2 text-xs text-muted-foreground">
-          {option.scope} ·{" "}
-          <code className="font-mono">{option.source}</code>
+          {option.scope} · <code className="font-mono">{option.source}</code>
         </p>
         {state.notice !== null ? (
           <p
@@ -342,10 +348,30 @@ export default function AreaSectionPanel({
           </caption>
           <thead>
             <tr className="border-b border-border">
-              <th scope="col" className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Area</th>
-              <th scope="col" className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Median price</th>
-              <th scope="col" className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Median PSF</th>
-              <th scope="col" className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]">Transactions</th>
+              <th
+                scope="col"
+                className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]"
+              >
+                Area
+              </th>
+              <th
+                scope="col"
+                className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]"
+              >
+                Median price
+              </th>
+              <th
+                scope="col"
+                className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]"
+              >
+                Median PSF
+              </th>
+              <th
+                scope="col"
+                className="px-4 py-3 text-xs font-bold uppercase tracking-[1.2px]"
+              >
+                Transactions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -393,7 +419,8 @@ export default function AreaSectionPanel({
               <span className="font-bold text-foreground" data-numeric>
                 {formatDifference(comparison.difference)}
               </span>{" "}
-              ({(comparison.percent > 0 ? "+" : "−") +
+              (
+              {(comparison.percent > 0 ? "+" : "−") +
                 Math.abs(comparison.percent).toFixed(1)}
               % of the national median).
             </>
@@ -403,7 +430,9 @@ export default function AreaSectionPanel({
 
       <p className="mt-3 text-xs text-muted-foreground">
         Fieldnote area {areaId} · national baseline{" "}
-        <code className="font-mono">{option.nationalSource ?? "not published"}</code>
+        <code className="font-mono">
+          {option.nationalSource ?? "not published"}
+        </code>
         .
       </p>
     </section>

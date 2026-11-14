@@ -37,11 +37,12 @@ import {
   type ExplorerPackPeriod,
   type ExplorerSelection,
 } from "@/utils/explorer-selection";
-import {
-  buildPackExplorerDataset,
-} from "@/utils/explorer-pack-rows";
+import { buildPackExplorerDataset } from "@/utils/explorer-pack-rows";
 import { publishedPeriodOptions } from "@/utils/observed-periods";
-import { buildExplorerDataset, type ExplorerDataset } from "@/utils/observed-rows";
+import {
+  buildExplorerDataset,
+  type ExplorerDataset,
+} from "@/utils/observed-rows";
 import {
   loadReleaseCheck,
   type ReleaseCheck,

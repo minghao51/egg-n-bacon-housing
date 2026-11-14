@@ -154,18 +154,13 @@ function isMonth(value: unknown): value is string {
 
 function isPropertyType(value: unknown): value is PropertyTypeId {
   return (
-    value === "all" ||
-    value === "hdb" ||
-    value === "ec" ||
-    value === "condo"
+    value === "all" || value === "hdb" || value === "ec" || value === "condo"
   );
 }
 
 function isDisposition(value: unknown): value is ObservationDisposition {
   return (
-    value === "publish" ||
-    value === "limited-display" ||
-    value === "withhold"
+    value === "publish" || value === "limited-display" || value === "withhold"
   );
 }
 
@@ -178,7 +173,9 @@ function isCount(value: unknown): value is number {
 }
 
 function isOptionalMedian(value: unknown): value is number | null {
-  return value === null || (typeof value === "number" && Number.isFinite(value));
+  return (
+    value === null || (typeof value === "number" && Number.isFinite(value))
+  );
 }
 
 function parseCell(
@@ -191,7 +188,9 @@ function parseCell(
     return null;
   }
   if (raw.length !== MONTHLY_CELL_FIELDS.length) {
-    errors.push(`${label} has ${raw.length} fields, expected ${MONTHLY_CELL_FIELDS.length}`);
+    errors.push(
+      `${label} has ${raw.length} fields, expected ${MONTHLY_CELL_FIELDS.length}`,
+    );
     return null;
   }
   const [count, price, priceObs, psf, psfObs] = raw;
@@ -300,14 +299,20 @@ export function parseMonthlyHistory(
 ): MonthlyParse {
   const errors: string[] = [];
 
-  if (!isRecord(raw)) return { ok: false, errors: ["monthly payload is not an object"] };
+  if (!isRecord(raw))
+    return { ok: false, errors: ["monthly payload is not an object"] };
   if (raw.schemaVersion !== V2_SCHEMA_VERSION) {
-    errors.push(`unsupported monthly schemaVersion ${String(raw.schemaVersion)}`);
+    errors.push(
+      `unsupported monthly schemaVersion ${String(raw.schemaVersion)}`,
+    );
   }
   if (!isMonth(raw.cutoffMonth)) {
     errors.push("monthly payload has no cutoffMonth");
   }
-  if (options.cutoffMonth !== undefined && raw.cutoffMonth !== options.cutoffMonth) {
+  if (
+    options.cutoffMonth !== undefined &&
+    raw.cutoffMonth !== options.cutoffMonth
+  ) {
     errors.push("monthly cutoff disagrees with the manifest");
   }
   if (!isPropertyType(raw.propertyType)) {
@@ -384,7 +389,11 @@ export function parseMonthlyHistory(
       );
       return;
     }
-    const parsedSeries: MonthlySeries = { geographyId, noSalesMonths: noSales, cells };
+    const parsedSeries: MonthlySeries = {
+      geographyId,
+      noSalesMonths: noSales,
+      cells,
+    };
     series.push(parsedSeries);
     seriesById.set(geographyId, parsedSeries);
   });
@@ -402,7 +411,10 @@ export function parseMonthlyHistory(
   if (!isRecord(rawGeographies)) {
     errors.push("monthly payload does not declare its geographies");
   } else {
-    if (typeof rawGeographies.national !== "string" || rawGeographies.national === "") {
+    if (
+      typeof rawGeographies.national !== "string" ||
+      rawGeographies.national === ""
+    ) {
       errors.push("geographies.national is not an id");
     } else {
       nationalId = rawGeographies.national;

@@ -136,7 +136,9 @@ def test_inventory_check_detects_derived_row_drift(inventory, tmp_path, capsys):
     """A derivation can change when the pipeline reruns, so it is checked too."""
     _point_inventory_at(inventory, tmp_path)
     gold = tmp_path / "data" / "pipeline" / "03_gold" / "rental_yield.parquet"
-    _write_parquet(gold, pd.DataFrame({"town": ["BEDOK", "BEDOK"], "month": ["2025-01", "2025-02"]}))
+    _write_parquet(
+        gold, pd.DataFrame({"town": ["BEDOK", "BEDOK"], "month": ["2025-01", "2025-02"]})
+    )
 
     ledger = tmp_path / "ledger.json"
     assert inventory.main(["--output", str(ledger)]) == 0

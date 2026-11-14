@@ -23,7 +23,9 @@ function tempCopy(): string {
 }
 
 function manifestOf(dir: string) {
-  return JSON.parse(readFileSync(join(dir, "dashboard-release-v2.json"), "utf8"));
+  return JSON.parse(
+    readFileSync(join(dir, "dashboard-release-v2.json"), "utf8"),
+  );
 }
 
 describe("loading the published pack", () => {
@@ -33,7 +35,9 @@ describe("loading the published pack", () => {
     expect(result.state).toBe("ready");
     if (result.state !== "ready") return;
     expect(result.pack.cutoffMonth).toBe("2026-10");
-    expect(result.manifest.generation).toBe(result.pack.methodVersion ? result.manifest.generation : "");
+    expect(result.manifest.generation).toBe(
+      result.pack.methodVersion ? result.manifest.generation : "",
+    );
     expect(result.pack.periods.length).toBeGreaterThanOrEqual(8);
   });
 
@@ -46,7 +50,9 @@ describe("loading the published pack", () => {
   it("rejects a tampered payload", async () => {
     const dir = tempCopy();
     const manifest = manifestOf(dir);
-    const summaryAsset = manifest.assets.find((asset: { role: string }) => asset.role === "summary");
+    const summaryAsset = manifest.assets.find(
+      (asset: { role: string }) => asset.role === "summary",
+    );
     const path = join(dir, summaryAsset.path);
     const bytes = readFileSync(path);
     bytes[bytes.length - 1] ^= 0xff;
@@ -64,7 +70,10 @@ describe("loading the published pack", () => {
     const dir = tempCopy();
     const manifest = manifestOf(dir);
     manifest.generation = "f".repeat(64);
-    writeFileSync(join(dir, "dashboard-release-v2.json"), JSON.stringify(manifest));
+    writeFileSync(
+      join(dir, "dashboard-release-v2.json"),
+      JSON.stringify(manifest),
+    );
 
     const result = await loadObservedPackFromDir(dir);
 
@@ -81,7 +90,11 @@ describe("dashboard summary", () => {
     expect(result.state).toBe("ready");
     if (result.state !== "ready") return;
 
-    const summary = summariseForDashboard(result.pack, result.manifest.generation, "hdb");
+    const summary = summariseForDashboard(
+      result.pack,
+      result.manifest.generation,
+      "hdb",
+    );
     const ytd = summary.ytd;
 
     expect(summary.cutoffMonth).toBe("2026-10");
@@ -90,7 +103,9 @@ describe("dashboard summary", () => {
     expect(ytd?.disposition).toBe("publish");
     expect(ytd?.publishable).toBe(true);
 
-    const count = ytd?.metrics.find((metric) => metric.metric === "transactionCount");
+    const count = ytd?.metrics.find(
+      (metric) => metric.metric === "transactionCount",
+    );
     expect(count?.value).toBeGreaterThan(0);
     expect(count?.percentChange).not.toBeNull();
     expect(count?.changeNote).toBeNull();
@@ -100,7 +115,11 @@ describe("dashboard summary", () => {
     const result = await loadObservedPackFromDir(DATA_DIR);
     if (result.state !== "ready") throw new Error("pack unavailable");
 
-    const summary = summariseForDashboard(result.pack, result.manifest.generation, "hdb");
+    const summary = summariseForDashboard(
+      result.pack,
+      result.manifest.generation,
+      "hdb",
+    );
 
     expect(summary.latestMonth?.periodId).toBe("month_2026_10");
     expect(summary.latestMonth?.comparatorId).toBe("month_2025_10");
@@ -111,7 +130,11 @@ describe("dashboard summary", () => {
     const result = await loadObservedPackFromDir(DATA_DIR);
     if (result.state !== "ready") throw new Error("pack unavailable");
 
-    const summary = summariseForDashboard(result.pack, result.manifest.generation, "condo");
+    const summary = summariseForDashboard(
+      result.pack,
+      result.manifest.generation,
+      "condo",
+    );
 
     expect(summary.ytd?.disposition).toBe("limited-display");
     expect(summary.ytd?.publishable).toBe(false);

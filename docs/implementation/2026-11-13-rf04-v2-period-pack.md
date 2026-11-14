@@ -10,16 +10,16 @@
 
 `scripts/v2_observed.py` — separate supported exporter over the platinum outputs; the v1 path is untouched.
 
-| Piece | Behaviour |
-| --- | --- |
+| Piece                   | Behaviour                                                                                                                                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `build_periods(cutoff)` | Concrete `month`, `ytd`, `ttm` and completed-`year` descriptors with inclusive bounds, explicit month lists and comparator IDs. A December cutoff closes that year; a January cutoff never invents a new-year YTD. |
-| Comparator publication | A comparator period is published only when **every** month it needs is covered, so no comparison is computed from a partial window. |
-| `build_observations` | National (`SG`) + every planning area × 4 property types × every period. Counts and medians are computed from transactions for the whole window — never from monthly medians. |
-| Null/zero contract | `transactionCount` counts rows; `medianPrice` uses its own price-observation count; `medianPsf` drops null/non-positive values and reports its own count. Zero rows → `no-sales` with null medians. |
-| Dispositions | Default `limited-display`. `all` inherits the weakest constituent, so EC/condo limits cannot be laundered through the combined scope. |
-| Pack emission | `observed/<generation>/periods.json.gz`, `observed/<generation>/summary.json.gz`, then `dashboard-release-v2.json` last. Payloads are deterministic gzip (mtime 0) and canonical JSON. |
-| Identity | `generation = sha256(schema + method + cutoff + input hash + role hashes)`. Payloads never embed their own generation, so verification is not circular. |
-| `verify_pack` | Recomputes the generation, re-hashes every asset, detects size/hash/corrupt-gzip tampering and any payload that embeds its own generation. |
+| Comparator publication  | A comparator period is published only when **every** month it needs is covered, so no comparison is computed from a partial window.                                                                                |
+| `build_observations`    | National (`SG`) + every planning area × 4 property types × every period. Counts and medians are computed from transactions for the whole window — never from monthly medians.                                      |
+| Null/zero contract      | `transactionCount` counts rows; `medianPrice` uses its own price-observation count; `medianPsf` drops null/non-positive values and reports its own count. Zero rows → `no-sales` with null medians.                |
+| Dispositions            | Default `limited-display`. `all` inherits the weakest constituent, so EC/condo limits cannot be laundered through the combined scope.                                                                              |
+| Pack emission           | `observed/<generation>/periods.json.gz`, `observed/<generation>/summary.json.gz`, then `dashboard-release-v2.json` last. Payloads are deterministic gzip (mtime 0) and canonical JSON.                             |
+| Identity                | `generation = sha256(schema + method + cutoff + input hash + role hashes)`. Payloads never embed their own generation, so verification is not circular.                                                            |
+| `verify_pack`           | Recomputes the generation, re-hashes every asset, detects size/hash/corrupt-gzip tampering and any payload that embeds its own generation.                                                                         |
 
 CLI:
 
@@ -34,13 +34,13 @@ uv run python scripts/v2_observed.py --output-dir /tmp/rf04-v2 --verify-only
 
 Generation `6cd4510f26eca3fd…`, cutoff `2026-10`, **1,472 observations**, 8 periods, 60 KB total.
 
-| Period | Window | Comparator |
-| --- | --- | --- |
-| `month_2026_10` | 2026-10 | `month_2025_10` |
-| `ytd_2026_10` | 2026-01 → 2026-10 | `ytd_2025_10` |
-| `ttm_2026_10` | 2025-11 → 2026-10 | `ttm_2025_10` |
-| `year_2025` | 2025-01 → 2025-12 | `year_2024` |
-| `month_2025_10` · `ytd_2025_10` · `ttm_2025_10` · `year_2024` | comparators | — |
+| Period                                                        | Window            | Comparator      |
+| ------------------------------------------------------------- | ----------------- | --------------- |
+| `month_2026_10`                                               | 2026-10           | `month_2025_10` |
+| `ytd_2026_10`                                                 | 2026-01 → 2026-10 | `ytd_2025_10`   |
+| `ttm_2026_10`                                                 | 2025-11 → 2026-10 | `ttm_2025_10`   |
+| `year_2025`                                                   | 2025-01 → 2025-12 | `year_2024`     |
+| `month_2025_10` · `ytd_2025_10` · `ttm_2025_10` · `year_2024` | comparators       | —               |
 
 Spot checks against independent numbers:
 
@@ -68,15 +68,15 @@ v1 is unchanged: no file under `app/public/data/` was modified, and the exporter
 
 `app/src/utils/observed-periods.ts` — pure, no fetch/DOM/React:
 
-| Export | Purpose |
-| --- | --- |
-| `parsePeriodPack(periods, summary)` | Validates both payloads and indexes them. Rejects wrong schema, disagreeing cutoff, duplicate period ids, months that disagree with bounds, observations pointing at unpublished periods, and `no-sales` carrying a price. Returns `{ok:false, errors}` rather than a partial pack. |
-| `resolvePeriodAlias(pack, "latest" \| "ytd" \| "ttm")` | Resolves through the loaded pack only — never the browser clock. |
-| `DEFAULT_ALIAS_BY_SURFACE` | The ratified D03 defaults: dashboard `ytd`, trends/explorer/rankings `ttm`. |
-| `findObservation` | Keyed lookup; `null` when the scope is not published. |
-| `compareWithComparator` | Returns per-metric absolute/percent change plus a `skipped` list with reasons (not observed, value unavailable, unit mismatch, zero denominator). Returns `null` when the period declares no comparator or the comparator observation is absent. |
-| `isPublishable` / `scopeNote` | Disposition gating and reader-facing explanations. |
-| `coveredMonths` / `cutoffUnobserved` | Freshness derived from the pack, not from a timestamp. |
+| Export                                                 | Purpose                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parsePeriodPack(periods, summary)`                    | Validates both payloads and indexes them. Rejects wrong schema, disagreeing cutoff, duplicate period ids, months that disagree with bounds, observations pointing at unpublished periods, and `no-sales` carrying a price. Returns `{ok:false, errors}` rather than a partial pack. |
+| `resolvePeriodAlias(pack, "latest" \| "ytd" \| "ttm")` | Resolves through the loaded pack only — never the browser clock.                                                                                                                                                                                                                    |
+| `DEFAULT_ALIAS_BY_SURFACE`                             | The ratified D03 defaults: dashboard `ytd`, trends/explorer/rankings `ttm`.                                                                                                                                                                                                         |
+| `findObservation`                                      | Keyed lookup; `null` when the scope is not published.                                                                                                                                                                                                                               |
+| `compareWithComparator`                                | Returns per-metric absolute/percent change plus a `skipped` list with reasons (not observed, value unavailable, unit mismatch, zero denominator). Returns `null` when the period declares no comparator or the comparator observation is absent.                                    |
+| `isPublishable` / `scopeNote`                          | Disposition gating and reader-facing explanations.                                                                                                                                                                                                                                  |
+| `coveredMonths` / `cutoffUnobserved`                   | Freshness derived from the pack, not from a timestamp.                                                                                                                                                                                                                              |
 
 Fixture: `app/tests/fixtures/v2-pack/` is a trimmed real pack (generation `6cd4510f…`, national + 3 areas, 128 observations). 26 unit tests cover parsing, rejection paths, alias resolution, comparisons, dispositions and coverage. The resolver reads Punggol HDB 2025 as **1,538 sales / S$672,000**, matching the Python emitter and the RF01 fixture.
 
@@ -89,12 +89,12 @@ cd app && bun run astro check      # 0 errors, 0 warnings, 22 hints
 
 `app/src/utils/observed-pack-loader.ts`:
 
-| Piece | Behaviour |
-| --- | --- |
-| `parseV2Manifest` | Validates schema, 64-hex generation, safe relative paths, exactly the required roles, and that `identity.roles[role]` equals the asset hash. |
-| `computeV2Generation` / `canonicalJson` | Reimplements the Python canonical identity hash in TS; a golden vector from `scripts/v2_observed.py` is asserted in tests, so the two sides cannot drift. |
-| `loadObservedPack` | Fetches the **exact** bytes, checks length + sha256, decodes *those* bytes, then parses. Returns `ready` / `absent` (404) / `invalid` (anything else). No refetch, no fallback. |
-| `sha256Hex` | Web Crypto digest over an ArrayBuffer-backed copy; throws rather than skipping verification when Web Crypto is unavailable. |
+| Piece                                   | Behaviour                                                                                                                                                                       |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseV2Manifest`                       | Validates schema, 64-hex generation, safe relative paths, exactly the required roles, and that `identity.roles[role]` equals the asset hash.                                    |
+| `computeV2Generation` / `canonicalJson` | Reimplements the Python canonical identity hash in TS; a golden vector from `scripts/v2_observed.py` is asserted in tests, so the two sides cannot drift.                       |
+| `loadObservedPack`                      | Fetches the **exact** bytes, checks length + sha256, decodes _those_ bytes, then parses. Returns `ready` / `absent` (404) / `invalid` (anything else). No refetch, no fallback. |
+| `sha256Hex`                             | Web Crypto digest over an ArrayBuffer-backed copy; throws rather than skipping verification when Web Crypto is unavailable.                                                     |
 
 `app/scripts/validate-data.mjs` now also verifies a published v2 pack when the manifest exists: generation recomputation, per-payload size/hash, gunzip+JSON parse, period bounds/uniqueness/comparators, observation→period references, and the `no-sales` ⇒ zero-count/no-price rule. When the pack is absent it prints `v2 observed pack: not published (legacy release only)` and does not fail.
 
@@ -108,12 +108,12 @@ cd app && bun run validate-data   # 19 assets, v1 release verified, v2 reported 
 
 ## 4. Not done (deferred on purpose)
 
-| Item | Why it is separate |
-| --- | --- |
+| Item                                        | Why it is separate                                                                                                          |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Publishing the pack into `app/public/data/` | A publication step (RF12), not code: copy `observed/<generation>/…` + `dashboard-release-v2.json`, then run `validate-data` |
-| Wiring surfaces to the loader | RF05; the loader, resolver and switch are ready |
-| `manifest.json` entry for v2 assets | Only needed when the pack is published; `validate-data` already verifies it standalone |
-| `generatedAt` in the manifest | Deliberately null: a timestamp inside the identity would break reproducible hashes; it belongs in the deployment record |
+| Wiring surfaces to the loader               | RF05; the loader, resolver and switch are ready                                                                             |
+| `manifest.json` entry for v2 assets         | Only needed when the pack is published; `validate-data` already verifies it standalone                                      |
+| `generatedAt` in the manifest               | Deliberately null: a timestamp inside the identity would break reproducible hashes; it belongs in the deployment record     |
 
 The pack lives in `/tmp/rf04-v2` and is **not** part of `app/public/data/`; nothing is published and v1 remains the served release.
 

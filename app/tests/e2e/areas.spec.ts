@@ -377,7 +377,9 @@ test.describe("Area activity", () => {
     ).toHaveAttribute("href", /\/explore\?period=rolling3_\d{4}_\d{2}$/);
   });
 
-  test("the activity table stays inside a narrow viewport", async ({ page }) => {
+  test("the activity table stays inside a narrow viewport", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/areas/punggol");
 
@@ -415,7 +417,9 @@ test.describe("Area fieldnote - section selection", () => {
     const panel = page.locator(
       'section[aria-labelledby="area-comparison-heading"]',
     );
-    await expect(panel.getByText("map_metrics.whole_hdb").first()).toBeVisible();
+    await expect(
+      panel.getByText("map_metrics.whole_hdb").first(),
+    ).toBeVisible();
     await expect(panel.getByText("S$330,800").first()).toBeVisible();
     await expect(panel.getByText("S$276").first()).toBeVisible();
     await expect(panel.getByText("84,847").first()).toBeVisible();
@@ -426,7 +430,9 @@ test.describe("Area fieldnote - section selection", () => {
     await expect(panel.getByText("S$710,000")).toHaveCount(0);
   });
 
-  test("a concrete v2 window is reported, not substituted", async ({ page }) => {
+  test("a concrete v2 window is reported, not substituted", async ({
+    page,
+  }) => {
     await page.goto("/areas/tampines?property=hdb&period=ttm_2026_10");
 
     const notice = page.locator('[data-area-selection-notice="true"]');
@@ -464,7 +470,9 @@ test.describe("Area fieldnote - section selection", () => {
     await expect(page.getByText("S$330,800").first()).toBeVisible();
   });
 
-  test("the return link keeps a concrete published period", async ({ page }) => {
+  test("the return link keeps a concrete published period", async ({
+    page,
+  }) => {
     await page.goto(
       "/areas/tampines?from=explore&property=hdb&period=ttm_2026_10",
     );
@@ -511,7 +519,8 @@ test.describe("Area monthly history", () => {
   }) => {
     const payloadRequests: string[] = [];
     page.on("request", (request) => {
-      if (request.url().includes("area-monthly-")) payloadRequests.push(request.url());
+      if (request.url().includes("area-monthly-"))
+        payloadRequests.push(request.url());
     });
 
     await page.goto("/areas/punggol");

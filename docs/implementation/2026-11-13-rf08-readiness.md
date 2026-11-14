@@ -14,13 +14,13 @@
 
 ## 1. Why this is blocked, precisely
 
-| Requirement | Who can supply it | Status |
-| --- | --- | --- |
-| Frozen inputs + method/code version per job | named researcher/data owner | not assigned |
-| Source/cutoff approval | data steward other than the preparer | not recorded |
-| Scientific validity (identification, leakage, intervals, units) | reviewer who did not author/fit the result | **not available in this session** |
-| Publication approval of the exact artifacts | release authority (not the scientific reviewer) | not recorded |
-| New edition registration | RF07 register + this approval chain | register ready; entries intentionally absent |
+| Requirement                                                     | Who can supply it                               | Status                                       |
+| --------------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------- |
+| Frozen inputs + method/code version per job                     | named researcher/data owner                     | not assigned                                 |
+| Source/cutoff approval                                          | data steward other than the preparer            | not recorded                                 |
+| Scientific validity (identification, leakage, intervals, units) | reviewer who did not author/fit the result      | **not available in this session**            |
+| Publication approval of the exact artifacts                     | release authority (not the scientific reviewer) | not recorded                                 |
+| New edition registration                                        | RF07 register + this approval chain             | register ready; entries intentionally absent |
 
 The register's own rule applies: an old article's coverage label is "a declaration to investigate, not a verified training interval". Nothing in this document asserts a verification that did not happen.
 
@@ -28,31 +28,31 @@ The register's own rule applies: an old article's coverage label is "a declarati
 
 Each row states the gate a refreshed edition must clear; "gate" is the specialised review named in the register, on top of the three sign-offs.
 
-| Row | Article | Gate before any refreshed claim |
-| --- | --- | --- |
-| RS01 | `data-sources.md` | measured source-specific coverage/cadence/business keys; unavailable files vs absent assets; macro/rental lags reconciled |
-| RS02 | `rental-yields.md` | gross proxy vs matched-unit yield defined; denominators and zero/missing handling validated |
-| RS03 | `temporal-evolution.md` | period-correct feature/reference vintages; changing sample composition stated; no causal reading of coefficient drift |
-| RS04 | `amenity-impact.md` | amenity snapshot/operating status and distance quality; no historical presence implied; identification for any causal claim |
-| RS05 | `facility-premiums.md` | facility ownership/date and join keys recovered; correlated-amenity and project effects addressed |
-| RS06 | `lease-decay.md` | **unit/model review**: PSF/PSM and total-vs-per-area response resolved before fitting; interactive-band lineage reconciled |
-| RS07 | `mrt-impact.md` | **model review**: metres/km and total-price/log/PSF response confirmed; predictive-vs-causal separated; calculator stays locked |
-| RS08 | `school-quality.md` | **causal/RDD review**: tier provenance, bandwidth, treatment assignment, balance, multiplicity |
-| RS09 | `macro-sensitivity.md` | **model review**: real release vintages, revisions, stationarity, uncertainty; generated/fallback series excluded or labelled simulation |
-| RS10 | `market-segments.md` | **segment/scoring owner approval**: feature scaling, clustering version, cohort counts, old/new segment identity mapping; app weights unchanged |
-| RS11 | `spatial-autocorrelation.md` | **spatial method review**: weights/neighbour definition, disconnected areas, permutations, multiplicity |
-| RS12 | `spatial-hotspots.md` | **spatial method review**: stated hotspot method rerun; Jan 2024–Jan 2025 kept as its own window; instability disclosed |
-| RS13 | `causal-inference-overview.md` | **causal identification approval**: estimand, treatment/control construction, pretrends, concurrent policies, placebos |
-| RS14 | `price-forecasts.md` | **forecast/model approval**: frozen training vintages, rolling-origin validation, leakage checks, interval coverage, expired forecasts scored |
-| RS15 | `findings.md` | runs **last**; every quantitative sentence links to a reviewed edition, and blocked dependencies are flagged, not summarized |
+| Row  | Article                        | Gate before any refreshed claim                                                                                                                 |
+| ---- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| RS01 | `data-sources.md`              | measured source-specific coverage/cadence/business keys; unavailable files vs absent assets; macro/rental lags reconciled                       |
+| RS02 | `rental-yields.md`             | gross proxy vs matched-unit yield defined; denominators and zero/missing handling validated                                                     |
+| RS03 | `temporal-evolution.md`        | period-correct feature/reference vintages; changing sample composition stated; no causal reading of coefficient drift                           |
+| RS04 | `amenity-impact.md`            | amenity snapshot/operating status and distance quality; no historical presence implied; identification for any causal claim                     |
+| RS05 | `facility-premiums.md`         | facility ownership/date and join keys recovered; correlated-amenity and project effects addressed                                               |
+| RS06 | `lease-decay.md`               | **unit/model review**: PSF/PSM and total-vs-per-area response resolved before fitting; interactive-band lineage reconciled                      |
+| RS07 | `mrt-impact.md`                | **model review**: metres/km and total-price/log/PSF response confirmed; predictive-vs-causal separated; calculator stays locked                 |
+| RS08 | `school-quality.md`            | **causal/RDD review**: tier provenance, bandwidth, treatment assignment, balance, multiplicity                                                  |
+| RS09 | `macro-sensitivity.md`         | **model review**: real release vintages, revisions, stationarity, uncertainty; generated/fallback series excluded or labelled simulation        |
+| RS10 | `market-segments.md`           | **segment/scoring owner approval**: feature scaling, clustering version, cohort counts, old/new segment identity mapping; app weights unchanged |
+| RS11 | `spatial-autocorrelation.md`   | **spatial method review**: weights/neighbour definition, disconnected areas, permutations, multiplicity                                         |
+| RS12 | `spatial-hotspots.md`          | **spatial method review**: stated hotspot method rerun; Jan 2024–Jan 2025 kept as its own window; instability disclosed                         |
+| RS13 | `causal-inference-overview.md` | **causal identification approval**: estimand, treatment/control construction, pretrends, concurrent policies, placebos                          |
+| RS14 | `price-forecasts.md`           | **forecast/model approval**: frozen training vintages, rolling-origin validation, leakage checks, interval coverage, expired forecasts scored   |
+| RS15 | `findings.md`                  | runs **last**; every quantitative sentence links to a reviewed edition, and blocked dependencies are flagged, not summarized                    |
 
 ## 3. Personas and archived assets
 
-| Row | Asset / surface | Disposition |
-| --- | --- | --- |
-| RA01 | `persona-content.json`, three persona routes | RF02 safety copy keeps unsupported promises out; recommendations may cite only approved editions. The RF07 status panel is the current propagation point; per-card status is the follow-up once an approved edition exists. |
-| RA02–RA05 | `predictive_analytics`, `feature_impact`, `spatial_analysis`, `segments_enhanced` | Archived as-is; replacement needs the corresponding RS job plus its own version/validation manifest. No global "current" flag. |
-| RA06–RA08 | lease-decay / MRT-CBD / spatial-hotspots tool assets | RF06 preserved the tool contracts (dated bands, inspection-only coefficients, label inspection). Any change is proposed by RS06/RS07/RS11/R12 and independently approved; a new study does not unlock a tool. |
+| Row       | Asset / surface                                                                   | Disposition                                                                                                                                                                                                                 |
+| --------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RA01      | `persona-content.json`, three persona routes                                      | RF02 safety copy keeps unsupported promises out; recommendations may cite only approved editions. The RF07 status panel is the current propagation point; per-card status is the follow-up once an approved edition exists. |
+| RA02–RA05 | `predictive_analytics`, `feature_impact`, `spatial_analysis`, `segments_enhanced` | Archived as-is; replacement needs the corresponding RS job plus its own version/validation manifest. No global "current" flag.                                                                                              |
+| RA06–RA08 | lease-decay / MRT-CBD / spatial-hotspots tool assets                              | RF06 preserved the tool contracts (dated bands, inspection-only coefficients, label inspection). Any change is proposed by RS06/RS07/RS11/R12 and independently approved; a new study does not unlock a tool.               |
 
 ## 4. What is ready to receive a job
 
@@ -72,12 +72,12 @@ RS01 (`data-sources.md`) is the only register row whose gate is a data-inventory
 
 Two independent reviews were run (requested `gpt-6.1-sol` at high reasoning; both runs resolved to `openai-codex/gpt-6-luna` at high reasoning because the model id was ambiguous across providers — recorded honestly, and neither reviewer authored or fitted any result). Both reached the same verdict on this readiness contract, the register, D10/D12, the edition registry, RF03's evidence and the current `data-sources.md`:
 
-| Question | Reviewer's answer |
-| --- | --- |
-| Can any refreshed study be signed off today? | **No.** No measured source/cutoff inventory exists for RS01, and no D12 approval record exists for any row. |
-| Is any gate purely an inventory check already satisfied? | **No.** RS01 is the only inventory-only gate and RF03's evidence does not cover the current article's claims. |
-| Can the approval *mechanism* be demonstrated without a false claim? | Only by assembling the RS01 evidence pack first; flipping `evidenceStatus` to `approved` without attestations would make the series assert an approval that was never recorded. |
-| Does the tree currently claim a refreshed edition exists? | No registry entry is `approved`; all 15 are `historical`. Risk noted: `app/src/pages/analytics/archive/[year]/[edition]/[slug].astro` renders an "independently reviewed" panel from registry status alone, so the registry must not be flipped before the attestations exist. The second review adds that RS01's claims (`docs/analytics/data-sources.md:25-130`) and the modelling articles (`mrt-impact.md`, `price-forecasts.md` point at retired scripts and precomputed assets) can only be checked against source-level evidence, not against the published packs. |
+| Question                                                            | Reviewer's answer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Can any refreshed study be signed off today?                        | **No.** No measured source/cutoff inventory exists for RS01, and no D12 approval record exists for any row.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Is any gate purely an inventory check already satisfied?            | **No.** RS01 is the only inventory-only gate and RF03's evidence does not cover the current article's claims.                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Can the approval _mechanism_ be demonstrated without a false claim? | Only by assembling the RS01 evidence pack first; flipping `evidenceStatus` to `approved` without attestations would make the series assert an approval that was never recorded.                                                                                                                                                                                                                                                                                                                                                                                           |
+| Does the tree currently claim a refreshed edition exists?           | No registry entry is `approved`; all 15 are `historical`. Risk noted: `app/src/pages/analytics/archive/[year]/[edition]/[slug].astro` renders an "independently reviewed" panel from registry status alone, so the registry must not be flipped before the attestations exist. The second review adds that RS01's claims (`docs/analytics/data-sources.md:25-130`) and the modelling articles (`mrt-impact.md`, `price-forecasts.md` point at retired scripts and precomputed assets) can only be checked against source-level evidence, not against the published packs. |
 
 This is a **review record, not a sign-off**. It satisfies the "independent reviewer participated" precondition for whoever assembles RS01's evidence, and it explicitly attests nothing about refreshed numbers. The three D12 approvals remain outstanding, and D10 still requires separate permission for any research rerun.
 

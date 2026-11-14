@@ -13,18 +13,18 @@ Region controls mapped three published planning regions onto CCR/RCR/OCR (`useLe
 
 ## 2. What changed
 
-| File | Change |
-| --- | --- |
-| `app/src/utils/leaderboard-observed.ts` (new) | Pure adapter: joint `map_metrics` reads via `readAreaObservation`, planning-region resolution, 150-sale caution rule, metric availability, ranking order |
-| `app/src/hooks/useLeaderboardData.ts` | Loads leaderboard + `map_metrics` from the same release pack; no margin fallbacks; reports unpublished/unranked counts and unsupported-metric reason |
-| `app/src/types/leaderboard.ts` | `region: PlanningRegion \| null`, `rank: number \| null`, nullable metrics, `isThinSample`; margin-derived display fields removed |
-| `LeaderboardControls.tsx` | Five planning-region checkboxes; time labels `2022 onward` / `All history` / `2025 complete year` |
-| `LeaderboardDashboard.tsx` | Default metric `median_price`, default regions = all five; unavailable-metric panel keeps legacy metric URLs link-compatible without substitution; summary separates ranked / unranked / unpublished |
-| `LeaderboardTable.tsx` | `—` rank for thin rows, "Thin sample" badge, nullable cells, scoped property mix, explanatory footnote |
-| `LeaderboardMap.tsx` | Null-safe colour scale, tooltip and rank label |
-| `MetricHelpModal.tsx` | Only the three jointly published metrics documented; explicit "not published for this selection" section; scope note |
-| `app/tests/unit/leaderboard-observed.test.ts` (new) | 17 tests over the RF00 fixture |
-| `app/tests/e2e/dashboard/leaderboard.spec.ts` | Punggol regression plus region/metric-availability tests |
+| File                                                | Change                                                                                                                                                                                               |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/src/utils/leaderboard-observed.ts` (new)       | Pure adapter: joint `map_metrics` reads via `readAreaObservation`, planning-region resolution, 150-sale caution rule, metric availability, ranking order                                             |
+| `app/src/hooks/useLeaderboardData.ts`               | Loads leaderboard + `map_metrics` from the same release pack; no margin fallbacks; reports unpublished/unranked counts and unsupported-metric reason                                                 |
+| `app/src/types/leaderboard.ts`                      | `region: PlanningRegion \| null`, `rank: number \| null`, nullable metrics, `isThinSample`; margin-derived display fields removed                                                                    |
+| `LeaderboardControls.tsx`                           | Five planning-region checkboxes; time labels `2022 onward` / `All history` / `2025 complete year`                                                                                                    |
+| `LeaderboardDashboard.tsx`                          | Default metric `median_price`, default regions = all five; unavailable-metric panel keeps legacy metric URLs link-compatible without substitution; summary separates ranked / unranked / unpublished |
+| `LeaderboardTable.tsx`                              | `—` rank for thin rows, "Thin sample" badge, nullable cells, scoped property mix, explanatory footnote                                                                                               |
+| `LeaderboardMap.tsx`                                | Null-safe colour scale, tooltip and rank label                                                                                                                                                       |
+| `MetricHelpModal.tsx`                               | Only the three jointly published metrics documented; explicit "not published for this selection" section; scope note                                                                                 |
+| `app/tests/unit/leaderboard-observed.test.ts` (new) | 17 tests over the RF00 fixture                                                                                                                                                                       |
+| `app/tests/e2e/dashboard/leaderboard.spec.ts`       | Punggol regression plus region/metric-availability tests                                                                                                                                             |
 
 Behaviour now: price/PSF/volume come only from `map_metrics[era_property][area]`; unrecognised region labels resolve to `null` and render `Unmapped`; rows under 150 sales stay visible, sort after ranked rows and carry `data-ranked="false"`; `yoy_growth_pct`, `mom_change_pct`, `momentum`, both yield metrics and `affordability_ratio` report a reason instead of a number.
 

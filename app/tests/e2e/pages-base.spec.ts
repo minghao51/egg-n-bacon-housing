@@ -78,7 +78,9 @@ test.describe("Pages base path", () => {
     // the island fetches the manifest and hashes the payloads under the base
     // prefix, so it proves hydration + base-prefixed data URLs in one assertion.
     await expect(
-      page.getByText(/The manifest, payload sizes and sha256 digests were checked/),
+      page.getByText(
+        /The manifest, payload sizes and sha256 digests were checked/,
+      ),
     ).toBeVisible({ timeout: 30_000 });
     await expect(page.getByLabel("Search planning areas")).toBeVisible();
     await expect(page.getByLabel("Area results")).toBeVisible();
@@ -253,7 +255,9 @@ test.describe("Pages base path on a narrow viewport", () => {
     // The pack footer carries the generation the browser verified from the
     // payloads it fetched under the base prefix.
     await expect(
-      page.getByText(/The manifest, payload sizes and sha256 digests were checked/),
+      page.getByText(
+        /The manifest, payload sizes and sha256 digests were checked/,
+      ),
     ).toBeVisible();
     await expect(
       page.getByText(/National HDB median transaction price: S\$631,000/),

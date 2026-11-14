@@ -102,7 +102,9 @@ type LegacySelection = Pick<
   "property" | "period" | "minSales" | "search" | "sort" | "direction"
 > & { period: ExplorerLegacyPeriod };
 
-function selection(overrides: Partial<ExplorerSelection> = {}): LegacySelection {
+function selection(
+  overrides: Partial<ExplorerSelection> = {},
+): LegacySelection {
   const merged = withSelection(EXPLORER_DEFAULTS, overrides);
   return {
     property: merged.property,
@@ -198,9 +200,7 @@ describe("buildExplorerDataset — published 2025 HDB section", () => {
     expect(metricOf(national, "median_price")).toBe(628000);
     expect(metricOf(national, "median_psf")).toBe(603);
     expect(metricOf(national, "volume")).toBe(25084);
-    expect(national[0]?.source).toBe(
-      "dashboard_overview.stats.year_2025_hdb",
-    );
+    expect(national[0]?.source).toBe("dashboard_overview.stats.year_2025_hdb");
     expect(national[0]?.note).toBeNull();
     expect(dataset.baselineCompatible).toBe(true);
   });

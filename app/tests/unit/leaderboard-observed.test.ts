@@ -8,10 +8,7 @@
  */
 
 import { describe, expect, it } from "bun:test";
-import {
-  PLANNING_REGIONS,
-  type LeaderboardEntry,
-} from "@/types/leaderboard";
+import { PLANNING_REGIONS, type LeaderboardEntry } from "@/types/leaderboard";
 import {
   SAMPLE_CAUTION_THRESHOLD,
   buildPackScopedRows,
@@ -120,7 +117,11 @@ describe("scoped metric reads", () => {
 
   it("treats an exporter zero block as empty, not S$0", () => {
     const metrics = readScopedAreaMetrics(
-      { year_2025_hdb: { PUNGGOL: { median_price: 0, median_psf: 0, volume: 0 } } },
+      {
+        year_2025_hdb: {
+          PUNGGOL: { median_price: 0, median_psf: 0, volume: 0 },
+        },
+      },
       "PUNGGOL",
       "year_2025",
       "hdb",
@@ -226,7 +227,10 @@ describe("ranking rows", () => {
   });
 
   it("drops rows whose region label cannot be resolved when filtering", () => {
-    const entries = [makeEntry("PUNGGOL", "NORTH-EAST REGION"), makeEntry("TAMPINES", "CCR")];
+    const entries = [
+      makeEntry("PUNGGOL", "NORTH-EAST REGION"),
+      makeEntry("TAMPINES", "CCR"),
+    ];
     const result = buildScopedRows(
       baseInput({ entries, region: ["NORTH-EAST REGION"] }),
     );
@@ -334,7 +338,11 @@ function packObservation(input: {
         unit: "transactions",
         observations: input.count ?? 0,
       },
-      medianPrice: { value: input.price, unit: "SGD", observations: input.count ?? 0 },
+      medianPrice: {
+        value: input.price,
+        unit: "SGD",
+        observations: input.count ?? 0,
+      },
       medianPsf: {
         value: input.psf,
         unit: "SGD_per_sqft",
@@ -350,10 +358,34 @@ const PACK_SUMMARY = {
   cutoffSource: "test",
   methodVersion: "test-1",
   observations: [
-    packObservation({ area: "SG", propertyType: "hdb", count: 21801, price: 631000, psf: 601 }),
-    packObservation({ area: "PUNGGOL", propertyType: "hdb", count: 1702, price: 672888, psf: 640 }),
-    packObservation({ area: "TAMPINES", propertyType: "hdb", count: 2103, price: 720000, psf: 655 }),
-    packObservation({ area: "ANG MO KIO", propertyType: "hdb", count: 60, price: 499000, psf: 583 }),
+    packObservation({
+      area: "SG",
+      propertyType: "hdb",
+      count: 21801,
+      price: 631000,
+      psf: 601,
+    }),
+    packObservation({
+      area: "PUNGGOL",
+      propertyType: "hdb",
+      count: 1702,
+      price: 672888,
+      psf: 640,
+    }),
+    packObservation({
+      area: "TAMPINES",
+      propertyType: "hdb",
+      count: 2103,
+      price: 720000,
+      psf: 655,
+    }),
+    packObservation({
+      area: "ANG MO KIO",
+      propertyType: "hdb",
+      count: 60,
+      price: 499000,
+      psf: 583,
+    }),
     packObservation({
       area: "BUKIT TIMAH",
       propertyType: "hdb",
@@ -363,9 +395,30 @@ const PACK_SUMMARY = {
       noSales: true,
     }),
     // Same-window mix (counts with dates are allowed for a limited-display scope).
-    packObservation({ area: "PUNGGOL", propertyType: "ec", count: 266, price: 1697500, psf: 1250, disposition: "limited-display" }),
-    packObservation({ area: "PUNGGOL", propertyType: "condo", count: 188, price: 1644444, psf: 1300, disposition: "limited-display" }),
-    packObservation({ area: "SG", propertyType: "ec", count: 3002, price: 1450000, psf: 1200, disposition: "limited-display" }),
+    packObservation({
+      area: "PUNGGOL",
+      propertyType: "ec",
+      count: 266,
+      price: 1697500,
+      psf: 1250,
+      disposition: "limited-display",
+    }),
+    packObservation({
+      area: "PUNGGOL",
+      propertyType: "condo",
+      count: 188,
+      price: 1644444,
+      psf: 1300,
+      disposition: "limited-display",
+    }),
+    packObservation({
+      area: "SG",
+      propertyType: "ec",
+      count: 3002,
+      price: 1450000,
+      psf: 1200,
+      disposition: "limited-display",
+    }),
   ],
 };
 
@@ -411,7 +464,12 @@ describe("pack-backed rankings", () => {
       "ANG MO KIO",
       "BUKIT TIMAH",
     ]);
-    expect(outcome.scope.rows.map((row) => row.rank)).toEqual([1, 2, null, null]);
+    expect(outcome.scope.rows.map((row) => row.rank)).toEqual([
+      1,
+      2,
+      null,
+      null,
+    ]);
     expect(outcome.scope.rows[1]?.medianPrice).toBe(672888);
     expect(outcome.scope.rows[1]?.volume).toBe(1702);
     // BEDOK is not published for this window; it is reported, not zeroed.
@@ -486,7 +544,9 @@ describe("pack-backed rankings", () => {
       packInput({ region: ["EAST REGION"], search: "" }),
     );
     if (!east.ok) throw new Error(east.reason);
-    expect(east.scope.rows.map((row) => row.planningArea)).toEqual(["TAMPINES"]);
+    expect(east.scope.rows.map((row) => row.planningArea)).toEqual([
+      "TAMPINES",
+    ]);
 
     const cheap = buildPackScopedRows(
       packInput({ priceRange: [0, 700000] as const }),
