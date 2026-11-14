@@ -27,7 +27,14 @@ test.describe("Observed default migration (switch on)", () => {
     await expect(
       page.getByRole("radio", { name: "12 months to 2026-10" }),
     ).toBeChecked({ timeout: 30_000 });
-    expect(new URL(page.url()).searchParams.get("period")).toBe("ttm_2026_10");
+    // The address bar is written by an effect after the selection commits, so the
+    // assertion polls: the contract is that the URL ends up naming the window,
+    // not that it is already rewritten in the same tick.
+    await expect
+      .poll(() => new URL(page.url()).searchParams.get("period"), {
+        timeout: 10_000,
+      })
+      .toBe("ttm_2026_10");
 
     const notice = page.locator('[data-observed-default-notice="true"]');
     await expect(notice).toBeVisible();
