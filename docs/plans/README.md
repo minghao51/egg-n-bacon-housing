@@ -22,6 +22,18 @@ Include a header block near the top with:
 - If a plan is replaced, keep the file but mark it `Superseded` and point to the replacement.
 - Many older plans document now-removed analytics scripts and historical output paths; use them as design history only unless a newer active doc explicitly revives that surface.
 
+## Current Reporting Refresh Proposal
+
+**Resume point:** [`prompts/handoffs.md`](../../prompts/handoffs.md) — where the refresh stands and what to do next.
+
+**Status:** RF00–RF07, RF09 and RF11 are implemented locally and uncommitted (see the [implementation ledger](../implementation/README.md)); the v2 observed pack is published in the working tree, nothing is deployed, RF08 stays blocked on its sign-offs, and RF10/RF12 have not started.
+
+- [Full implementation map](2026-11-12-reporting-refresh-implementation-map.md) — RF00–RF12 dependencies, contracts, ownership and milestone release gates.
+- [Implementation handoffs](2026-11-12-reporting-refresh-handoffs.md) — bounded assignments, entry files, tests, approvals and stop conditions.
+- [Research and asset register](2026-11-12-reporting-refresh-research-register.md) — all 15 studies, persona pages and separate asset vintages.
+- [Decision ledger](2026-11-12-reporting-refresh-decisions.md) — the 12 open decisions, what each blocks, and the format for recording them.
+- [Audit evidence](../implementation/2026-reporting-refresh-audit.md) — observed freshness and correctness findings behind the proposal.
+
 ## Recent Meta Plans
 
 - `docs/plans/2026-02-24-scripts-docs-simplification-plan.md` - scripts/docs organization conventions and migration steps

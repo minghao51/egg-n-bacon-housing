@@ -27,7 +27,7 @@ The market premium often attributed to MRT access is mostly a **city-access prem
 ### What matters most in practice
 
 - **HDB buyers** should not overpay for MRT proximity alone. Lease remaining, affordability, and neighborhood quality matter more.
-- **Condo buyers and investors** should still care about MRT access. Condo prices are roughly **15x** more MRT-sensitive than HDB prices.
+- **Condo buyers and investors** should still care about MRT access, but read the gap carefully: the condo fitted coefficient is roughly **15×** the HDB one across different populations — a relative sensitivity, not a 15× price premium.
 - **Timing and segment matter**. Policy effects, lease decay, and forecast reliability differ materially across HDB, condo, and EC markets.
 - **Amenity mix matters**. Hawker proximity outranks MRT as a pricing feature for HDB. Parks are underpriced. Multi-amenity hubs command synergistic premiums.
 - **Macro conditions matter**. Interest rates (SORA) are the most actionable macro signal for housing timing. Real returns are modestly positive across all segments.
@@ -254,7 +254,7 @@ Each finding draws from a distinct analytical workflow. The table below cross-re
 | --------------------------------- | --------------------------------- | ---------------- | ---------------------------------------- |
 | CBD effect                        | R² from CBD-only model            | 0.2263           | High — robust across specifications      |
 | MRT incremental lift              | ΔR² after adding MRT to CBD model | +0.0078          | High — hierarchical regression           |
-| Condo vs HDB MRT sensitivity      | Relative magnitude                | ~15×             | High — consistent across OLS and XGBoost |
+| Condo vs HDB MRT sensitivity      | Relative coefficient magnitude    | ~15×             | Consistent across OLS and XGBoost; not a price premium |
 | Lease steepest penalty            | 70-80 yr band discount            | -21.9% vs 90+ yr | High — 47,044 transactions               |
 | Lease deepest discount            | 60-70 yr band discount            | -23.8% vs 90+ yr | High — 54,521 transactions               |
 | Pure lease effect                 | Per extra year (after controls)   | +$54.75 PSF      | Moderate — hedonic regression            |

@@ -34,9 +34,9 @@ Forecast quality depends far more on **market segment** than on having a single 
 
 ### 1. Reliability differs sharply across segments
 
-<div data-chart-metadata="true" data-chart="comparison" data-chart-title="Forecast reliability by property segment" data-chart-columns="Accuracy (R²),95% CI Width,Directional Acc"></div>
+<div data-chart-metadata="true" data-chart="comparison" data-chart-title="Forecast reliability by property segment" data-chart-columns="R² (magnitude fit),Directional Acc"></div>
 
-| Segment            | Accuracy (R²) | 95% CI Width | Directional Acc | Practical read               |
+| Segment            | R² (magnitude fit) | 95% CI Width | Directional Acc | Practical read               |
 | ------------------ | ------------- | ------------ | --------------- | ---------------------------- |
 | HDB flats          | 79.8%         | ±18.58%      | 99.4%           | Strong                       |
 | Executive Condos   | 98.5%         | ±50.15%      | 97.1%           | Strong but wider uncertainty |

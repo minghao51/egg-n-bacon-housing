@@ -65,7 +65,7 @@ On its own, that average is too small to justify many listing premiums seen in p
 | Property Type | MRT sensitivity             |
 | ------------- | --------------------------- |
 | HDB           | low                         |
-| Condo         | roughly 15x higher than HDB |
+| Condo         | fitted coefficient ~15× the HDB one |
 
 **Impact**
 
@@ -124,14 +124,14 @@ On its own, that average is too small to justify many listing premiums seen in p
 
 - **CBD-only model R² = 0.2263**, CBD+MRT R² = 0.2341, ΔR² = +0.0078 (MRT adds less than 1 percentage point beyond CBD)
 - **Full model R² = 0.4977** (broader housing features dominate)
-- **HDB MRT coefficient**: $1.28/100m (mean PSF $552); **Condo MRT sensitivity ~15× HDB**
+- **HDB MRT coefficient**: $1.28/100m (mean PSF $552); **Condo fitted coefficient ~15× the HDB one**
 - **Feature importance (XGBoost)**: hawker_within_1km = 27.4%, remaining_lease_months = 14.1%, park_within_1km = 7.2%, mrt_within_1km = 5.5%
 - **Town-level variation**: Central Area +$59.19/100m, Marine Parade -$38.54/100m
 - **VIF**: MRT and CBD distance show moderate collinearity (~0.5-0.7 correlation), confirming they capture overlapping but distinct location effects
 
 ### Conclusion
 
-The technical evidence supports the headline finding: CBD proximity is the dominant location factor for HDB, and MRT adds only a marginal incremental contribution. The ~15× condo-vs-HDB sensitivity gap is robust across OLS and XGBoost specifications. Town-level heterogeneity is large enough that a single national MRT premium is misleading. Key limitations: distances are straight-line to nearest station (not walking path quality), and some town coefficients likely absorb omitted neighborhood factors.
+The technical evidence supports the descriptive reading: CBD proximity accounts for more of the fitted HDB price variation than station distance, and MRT adds only a marginal incremental contribution. The condo-versus-HDB gap is a ratio of fitted coefficients from models with different populations, samples and control sets; it is not a 15× price premium and does not transfer to an individual listing. The gap is stable across the OLS and XGBoost specifications reported here, but town-level heterogeneity is large enough that a single national MRT premium is misleading. Key limitations: distances are straight-line to the nearest station (not walking-path quality), some town coefficients likely absorb omitted neighbourhood factors, and none of these estimates identify a causal effect.
 
 ### Provenance
 

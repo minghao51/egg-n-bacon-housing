@@ -1,0 +1,2840 @@
+{
+  "definition": "One row per acquisition file. `coverage` is the min/max of the temporal column that file actually carries; `acquisition.status: not-recorded` means no bronze_manifest key matches the file (by name or stem), not that it is unused. `acquisition.rowsMatch` compares the manifest's recorded row count with the measured one. The ledger reports the files present; it does not check them against a separate expected-asset list.",
+  "derived": [
+    {
+      "coverage": {
+        "column": "transaction_date",
+        "max": "2026-11-01",
+        "min": "1990-01-01"
+      },
+      "name": "unified_dataset",
+      "path": "data/pipeline/04_platinum/unified_dataset.parquet",
+      "propertyTypes": {
+        "condo": 245655,
+        "hdb": 990655
+      },
+      "rows": 1236310
+    },
+    {
+      "columns": [
+        "town",
+        "month",
+        "median_price",
+        "median_rent",
+        "rental_yield_pct",
+        "sample_size",
+        "property_type",
+        "flat_type",
+        "rental_index"
+      ],
+      "coverage": {
+        "column": "month",
+        "max": "2026-10",
+        "min": "2021-01"
+      },
+      "name": "rental_yield",
+      "path": "data/pipeline/03_gold/rental_yield.parquet",
+      "rows": 1749
+    },
+    {
+      "columns": [
+        "planning_area",
+        "median_dist_to_school",
+        "median_dist_to_mrt",
+        "median_dist_to_mall",
+        "median_dist_to_hawker",
+        "median_dist_to_supermarket",
+        "median_dist_to_park",
+        "median_dist_to_childcare",
+        "median_dist_to_kindergarten",
+        "median_dist_to_bus_stop",
+        "median_dist_to_chas_clinic",
+        "median_dist_to_sports_facility",
+        "median_dist_to_community_club",
+        "median_dist_to_green_mark_building",
+        "avg_year_completed",
+        "avg_max_floor",
+        "total_dwelling_units",
+        "region",
+        "median_price",
+        "transaction_volume",
+        "median_psf",
+        "median_rental_yield_pct",
+        "median_monthly_income",
+        "cpi",
+        "sora_3m",
+        "unemployment_rate",
+        "gdp"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "name": "planning_area_360",
+      "path": "data/pipeline/03_gold/planning_area_360.parquet",
+      "rows": 44
+    },
+    {
+      "columns": [
+        "town",
+        "median_price",
+        "transaction_volume",
+        "median_psf",
+        "dwelling_units_in_town",
+        "population_in_town",
+        "population_per_dwelling",
+        "annual_value_3_room",
+        "property_tax_3_room",
+        "annual_value_4_room",
+        "property_tax_4_room",
+        "annual_value_5_room",
+        "property_tax_5_room"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "name": "town_360",
+      "path": "data/pipeline/03_gold/town_360.parquet",
+      "rows": 28
+    },
+    {
+      "columns": [
+        "block",
+        "street_name",
+        "median_price",
+        "transaction_count",
+        "median_psf",
+        "town"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "name": "block_profile",
+      "path": "data/pipeline/03_gold/block_profile.parquet",
+      "rows": 10031
+    },
+    {
+      "files": [
+        "20261113T113912062789Z_16873e89b0ca4559b07bfde3671b10a8.parquet",
+        "20261114T044533540830Z_d983e5ffe4bd42b8b7251bb9d2fadb29.parquet"
+      ],
+      "name": "quarantine",
+      "path": "data/pipeline/04_platinum/_quarantine"
+    }
+  ],
+  "schemaVersion": "1.0.0",
+  "scope": "RS01 data-sources inventory, measured from this checkout",
+  "sources": [
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:26:11+00:00",
+        "manifestKey": "raw_condo_transactions",
+        "rows": 245655,
+        "rowsMatch": true,
+        "source": "ura_api+manual_csv",
+        "status": "recorded"
+      },
+      "bytes": 2637688,
+      "columns": [
+        "project_name",
+        "price",
+        "area_sqft",
+        "Unit Price ($ PSF)",
+        "sale_date",
+        "street_name",
+        "type_of_sale",
+        "type_of_area",
+        "area_sqm",
+        "Unit Price ($ PSM)",
+        "nett_price",
+        "property_subtype",
+        "number_of_units",
+        "tenure",
+        "postal_district",
+        "market_segment",
+        "floor_level",
+        "transaction_date",
+        "property_type"
+      ],
+      "coverage": {
+        "column": "transaction_date",
+        "max": "2026-11-01",
+        "min": "2021-01-01"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_condo_transactions.parquet",
+      "rows": 245655,
+      "sha256": "9971d1a8e440655d68fff3bf6f065a04fc706938d54a0ff86e04db346d852e34"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:47+00:00",
+        "manifestKey": "raw_dwelling_units_by_town",
+        "rows": 4940,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 45227,
+      "columns": [
+        "_id",
+        "financial_year",
+        "town_or_estate",
+        "flat_type",
+        "sold_or_rental",
+        "no_of_dwelling_units"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_dwelling_units_by_town.parquet",
+      "rows": 4940,
+      "sha256": "5e6104a32b35aba026e37c8694845d1953cd80f0db8d6fb9be76591346bd41c7"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:41+00:00",
+        "manifestKey": "raw_green_mark_buildings",
+        "rows": 4145,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 418413,
+      "columns": [
+        "_id",
+        "Reference_No",
+        "Project_Name",
+        "Actual_Project_Name",
+        "Postal_Code",
+        "Rating",
+        "SLE_ZE_PE",
+        "CN",
+        "HW",
+        "IN",
+        "MT",
+        "RE",
+        "Prov_Letter",
+        "e_cert",
+        "Expiry",
+        "Project_Type",
+        "GFA",
+        "Re_Certification",
+        "Previous_GM_Cert_Reference_No",
+        "GM_Version",
+        "Developer",
+        "Architect",
+        "ME_Engineer",
+        "CS_Engineer",
+        "Facility_Manager",
+        "ESD_Consultant",
+        "postal_code"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_green_mark_buildings.parquet",
+      "rows": 4145,
+      "sha256": "ea2be1bf5dc8b086395a56a9283a18626335c3964bed1d3070bc9d07bf349761"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:41:57+00:00",
+        "manifestKey": "raw_green_mark_buildings_geocoded",
+        "rows": 4015,
+        "rowsMatch": false,
+        "source": "onemap_geocode",
+        "status": "recorded"
+      },
+      "bytes": 531410,
+      "columns": [
+        "_id",
+        "Reference_No",
+        "Project_Name",
+        "Actual_Project_Name",
+        "Postal_Code",
+        "Rating",
+        "SLE_ZE_PE",
+        "CN",
+        "HW",
+        "IN",
+        "MT",
+        "RE",
+        "Prov_Letter",
+        "e_cert",
+        "Expiry",
+        "Project_Type",
+        "GFA",
+        "Re_Certification",
+        "Previous_GM_Cert_Reference_No",
+        "GM_Version",
+        "Developer",
+        "Architect",
+        "ME_Engineer",
+        "CS_Engineer",
+        "Facility_Manager",
+        "ESD_Consultant",
+        "postal_code",
+        "lat",
+        "lon",
+        "name"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_green_mark_buildings_geocoded.parquet",
+      "rows": 4145,
+      "sha256": "64ec4bf22cc7b18127d8cad65e402a83c78d135664f29acbf0d54666a44ac8a7"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:23+00:00",
+        "manifestKey": "raw_hdb_property_info",
+        "rows": 13392,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 249527,
+      "columns": [
+        "_id",
+        "blk_no",
+        "street",
+        "max_floor_lvl",
+        "year_completed",
+        "residential",
+        "commercial",
+        "market_hawker",
+        "miscellaneous",
+        "multistorey_carpark",
+        "precinct_pavilion",
+        "bldg_contract_town",
+        "total_dwelling_units",
+        "1room_sold",
+        "2room_sold",
+        "3room_sold",
+        "4room_sold",
+        "5room_sold",
+        "exec_sold",
+        "multigen_sold",
+        "studio_apartment_sold",
+        "1room_rental",
+        "2room_rental",
+        "3room_rental",
+        "other_room_rental"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_hdb_property_info.parquet",
+      "rows": 13392,
+      "sha256": "65cc4caaeaa394889f26efd6306537d8333fbe8333963415af090acfc2faba23"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:31:52+00:00",
+        "manifestKey": "raw_hdb_rental",
+        "rows": 215469,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 2127570,
+      "columns": [
+        "_id",
+        "rent_approval_date",
+        "town",
+        "block",
+        "street_name",
+        "flat_type",
+        "monthly_rent"
+      ],
+      "coverage": {
+        "column": "rent_approval_date",
+        "max": "2026-10",
+        "min": "2021-01"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_hdb_rental.parquet",
+      "rows": 215469,
+      "sha256": "960691dbdcbcd1f0df18b7ad719f19994e3b43baad788c5a3410b32c9527d13d"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:25:49+00:00",
+        "manifestKey": "raw_hdb_resale",
+        "rows": 990860,
+        "rowsMatch": true,
+        "source": "datagov_api+manual_csv",
+        "status": "recorded"
+      },
+      "bytes": 7554493,
+      "columns": [
+        "month",
+        "town",
+        "flat_type",
+        "block",
+        "street_name",
+        "storey_range",
+        "floor_area_sqm",
+        "flat_model",
+        "lease_commence_date",
+        "resale_price",
+        "remaining_lease"
+      ],
+      "coverage": {
+        "column": "month",
+        "max": "2026-11",
+        "min": "1990-01"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_hdb_resale.parquet",
+      "rows": 990860,
+      "sha256": "b3380a29f9b85a688ac479b28ce924ebdb6d1da836645dd9b82c128e9c40978b"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:50+00:00",
+        "manifestKey": "raw_hdb_resident_population",
+        "rows": 104,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 4475,
+      "columns": [
+        "_id",
+        "shs_year",
+        "town_estate",
+        "number"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_hdb_resident_population.parquet",
+      "rows": 104,
+      "sha256": "f2d8f25fa6aca7272c0a47ee65b3ab83c85fb63e25e6d0ea561848dba8cdd5ea"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:24+00:00",
+        "manifestKey": "raw_income_by_planning_area",
+        "rows": 29,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 14672,
+      "columns": [
+        "_id",
+        "planning_area",
+        "Total",
+        "Below_1_000",
+        "1_000_1_499",
+        "1_500_1_999",
+        "2_000_2_499",
+        "2_500_2_999",
+        "3_000_3_999",
+        "4_000_4_999",
+        "5_000_5_999",
+        "6_000_6_999",
+        "7_000_7_999",
+        "8_000_8_999",
+        "9_000_9_999",
+        "10_000_10_999",
+        "11_000_11_999",
+        "12_000andOver",
+        "median_monthly_income"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_income_by_planning_area.parquet",
+      "rows": 29,
+      "sha256": "acb4071aa754dce6a9f8c791d1694ce5dbdf16f2f6bc1757a331168a639c0082"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:49+00:00",
+        "manifestKey": "raw_median_annual_value",
+        "rows": 80,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 6233,
+      "columns": [
+        "_id",
+        "financial_year",
+        "type_of_hdb",
+        "no_of_cases",
+        "median_annual_value",
+        "property_tax_collection"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_median_annual_value.parquet",
+      "rows": 80,
+      "sha256": "2284edeba04397e5f24b5ce209898186ede3bcf4f5f82cdd836e82f1c63e43f9"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:15+00:00",
+        "manifestKey": "raw_mp25_malls",
+        "rows": 294,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 7562,
+      "columns": [
+        "name",
+        "lat",
+        "lon"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_mp25_malls.parquet",
+      "rows": 294,
+      "sha256": "45e4271366ce5099d26169d53e8efe13f562203c3326e8be6319a44635b43d7c"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T11:36:26+00:00",
+        "manifestKey": "raw_mrt_stations",
+        "rows": 188,
+        "rowsMatch": true,
+        "source": "lta_api",
+        "status": "recorded"
+      },
+      "bytes": 8516,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "line"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_mrt_stations.parquet",
+      "rows": 188,
+      "sha256": "48a473626e2a22d24ffde28974e3fd206f807a45bad05223acfd94513da1fdc2"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:31:58+00:00",
+        "manifestKey": "raw_rental_index",
+        "rows": 525,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 8975,
+      "columns": [
+        "_id",
+        "quarter",
+        "property_type",
+        "locality",
+        "index"
+      ],
+      "coverage": {
+        "column": "quarter",
+        "max": "2026-07-01",
+        "min": "2004-01-01"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_rental_index.parquet",
+      "rows": 525,
+      "sha256": "a675173af4ac372be6137986ccc3dfa71f331024ac99f596cf24a5b0b5b43262"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:00+00:00",
+        "manifestKey": "raw_school_directory",
+        "rows": 337,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 84479,
+      "columns": [
+        "_id",
+        "school_name",
+        "url_address",
+        "address",
+        "postal_code",
+        "telephone_no",
+        "telephone_no_2",
+        "fax_no",
+        "fax_no_2",
+        "email_address",
+        "mrt_desc",
+        "bus_desc",
+        "principal_name",
+        "first_vp_name",
+        "second_vp_name",
+        "third_vp_name",
+        "fourth_vp_name",
+        "fifth_vp_name",
+        "sixth_vp_name",
+        "dgp_code",
+        "zone_code",
+        "type_code",
+        "nature_code",
+        "session_code",
+        "mainlevel_code",
+        "sap_ind",
+        "autonomous_ind",
+        "gifted_ind",
+        "ip_ind",
+        "mothertongue1_code",
+        "mothertongue2_code",
+        "mothertongue3_code"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "bronze",
+      "path": "data/pipeline/01_bronze/raw_school_directory.parquet",
+      "rows": 337,
+      "sha256": "ff32b98035fb7821fe09836fdd8fe132ddc9d2400316969c1e882728e46d53c0"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1886415,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/BusStops.geojson",
+      "rows": 5205,
+      "sha256": "23cb5ce083e3573a8ea6cc26faf0f74578317231833ded48b500d017f965ebee"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:47+00:00",
+        "manifestKey": "BusStops.parquet",
+        "rows": 5205,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 132985,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/BusStops.parquet",
+      "rows": 5205,
+      "sha256": "94b813a47fa8b7eaed79b1e03e2a7cf35d516ee7153ff26488e8c9a963ec88aa"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1644760,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/CHASClinics.geojson",
+      "rows": 1193,
+      "sha256": "d25ed5c5b460d2c12a725a18670968478501d8fcf5bf34f1449f2f2ed1355e0e"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:41+00:00",
+        "manifestKey": "CHASClinics.parquet",
+        "rows": 1193,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 36177,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/CHASClinics.parquet",
+      "rows": 1193,
+      "sha256": "33db141c17caf1abeb54786931e5cd69d3b66ea44a831c348b061cecae88059a"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1488543,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/ChildCareServices.geojson",
+      "rows": 1925,
+      "sha256": "21f2d818555965991605e92532f4a3d3d822e394c250f126abd715912c363885"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:46+00:00",
+        "manifestKey": "ChildCareServices.parquet",
+        "rows": 1925,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 62256,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/ChildCareServices.parquet",
+      "rows": 1925,
+      "sha256": "9961dae2240b7116638e9f92c619722388c9521fabb9e31eb76cbbee90b8a362"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 93676,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/CommunityClubs.geojson",
+      "rows": 128,
+      "sha256": "6493f3f057b896735bd4f1abe750f9dfaf4b271b97e25e31aa8d18d290673ed5"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:41+00:00",
+        "manifestKey": "CommunityClubs.parquet",
+        "rows": 128,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 6772,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/CommunityClubs.parquet",
+      "rows": 128,
+      "sha256": "7fc0ef167dedaf528d4c2cc577f6927c04b380106dec2d3ee135c3db76494c43"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 140459,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/HawkerCentresGEOJSON.geojson",
+      "rows": 129,
+      "sha256": "0a39526ab5c652296b807f0ab50126e7b2aa1a536bb0dff0e248ff68ebfe8c10"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:46+00:00",
+        "manifestKey": "HawkerCentresGEOJSON.parquet",
+        "rows": 129,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 8226,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/HawkerCentresGEOJSON.parquet",
+      "rows": 129,
+      "sha256": "811b96d3d3ee50fbf73753a481b1697f0727e1e541d45c62b92431746363782f"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 784676,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/MRTStations.geojson",
+      "rows": 257,
+      "sha256": "6153f2944065b3bcf81b45783b8a17bfbcc2f34db4f202d2b9c9c4c9172f20aa"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 2865278,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/NParksParksandNatureReserves.geojson",
+      "rows": 450,
+      "sha256": "a6ae86b0919c05c99a529e738a4ffd0b7fe9943fb5b5f68e54ac42d776b0e623"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:46+00:00",
+        "manifestKey": "NParksParksandNatureReserves.parquet",
+        "rows": 450,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 17422,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/NParksParksandNatureReserves.parquet",
+      "rows": 450,
+      "sha256": "4f9acd21ede476aa34281c02775746932dd77b8f2d758b5254b426a812c8dd53"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1341092,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/PreSchoolsLocation.geojson",
+      "rows": 2290,
+      "sha256": "56539ec2f0a5d57e42babe29960dcc6708222ba09c046c59a26cb64f805436bb"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:46+00:00",
+        "manifestKey": "PreSchoolsLocation.parquet",
+        "rows": 2290,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 37681,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/PreSchoolsLocation.parquet",
+      "rows": 2290,
+      "sha256": "041b22c35b3d7bb999f40acb520925e22e43490931fc6d3aca00681b1e31adef"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 22526,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/SportSGFacilities.geojson",
+      "rows": 45,
+      "sha256": "51dc45c1fcc09fc081808849632c1eb75d2672288ce4a9ff9ee48aa69cd817ae"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:33:41+00:00",
+        "manifestKey": "SportSGFacilities.parquet",
+        "rows": 45,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 4476,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/SportSGFacilities.parquet",
+      "rows": 45,
+      "sha256": "89111d55339ef2906f953294fa6ce553bd662eeac48ff41f44f929e1d8ec08a6"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 437568,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/SupermarketsGEOJSON.geojson",
+      "rows": 526,
+      "sha256": "46c28612b8f737c65d9c90c7dc7f3d2a5ab5faa2cfaf9d87f8f9ae25f025eda3"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:46+00:00",
+        "manifestKey": "SupermarketsGEOJSON.parquet",
+        "rows": 526,
+        "rowsMatch": true,
+        "source": "r2_external",
+        "status": "recorded"
+      },
+      "bytes": 14643,
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "amenity_type"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/SupermarketsGEOJSON.parquet",
+      "rows": 526,
+      "sha256": "28cc1aba594b45e2a898aa337ff04c556c7005db98d0c48bec15a6a5f14e44e3"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:15+00:00",
+        "manifestKey": "bank_rates.parquet",
+        "rows": 465,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 8173,
+      "columns": [
+        "date",
+        "sora_3m"
+      ],
+      "coverage": {
+        "column": "date",
+        "max": "2026-09-01",
+        "min": "1988-01-01"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/bank_rates.parquet",
+      "rows": 465,
+      "sha256": "9a4327bb154d70768f7fa7bd370d46638d65be5fd907e5e52623248fe98f176a"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:20+00:00",
+        "manifestKey": "cpi.parquet",
+        "rows": 789,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 14291,
+      "columns": [
+        "date",
+        "cpi"
+      ],
+      "coverage": {
+        "column": "date",
+        "max": "2026-09-01",
+        "min": "1961-01-01"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/cpi.parquet",
+      "rows": 789,
+      "sha256": "ae065cecd81bd776a70da5af67949df79e2e451f588a9eb3994e90dd9f0ccc04"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:30+00:00",
+        "manifestKey": "gdp.parquet",
+        "rows": 202,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 4235,
+      "columns": [
+        "quarter",
+        "gdp"
+      ],
+      "coverage": {
+        "column": "quarter",
+        "max": "2026-06-30",
+        "min": "1976-03-31"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/gdp.parquet",
+      "rows": 202,
+      "sha256": "b43fb19211da5c842943da948f1adbaac137ba2b15b04ca39e66496b064ac3d0"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:46+00:00",
+        "manifestKey": "hdb_rpi.parquet",
+        "rows": 147,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 3903,
+      "columns": [
+        "quarter",
+        "hdb_rpi"
+      ],
+      "coverage": {
+        "column": "quarter",
+        "max": "2026-09-30",
+        "min": "1990-03-31"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/hdb_rpi.parquet",
+      "rows": 147,
+      "sha256": "57ddf2ae983e5f3798899fac2888b27e58c5e866c0ce88e44681dc4b9a4a8c4c"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 5475,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "json",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/mrt_stations.json",
+      "rows": 181,
+      "sha256": "902a0b73e4378bbdb9396225cbf907e1cd0aa999a8726f06af104551e5691233"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 2768,
+      "columns": [
+        "date",
+        "sora_rate"
+      ],
+      "coverage": {
+        "column": "date",
+        "max": "2025-12-31",
+        "min": "2021-01-31"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/sora_rates.parquet",
+      "rows": 60,
+      "sha256": "c0323795d4e26023d03eec73d4a146565b301f9bdfbc4f5fd5a895a060201316"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:30+00:00",
+        "manifestKey": "unemployment.parquet",
+        "rows": 139,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 3383,
+      "columns": [
+        "quarter",
+        "unemployment_rate"
+      ],
+      "coverage": {
+        "column": "quarter",
+        "max": "2026-09-30",
+        "min": "1992-03-31"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/unemployment.parquet",
+      "rows": 139,
+      "sha256": "78b8cbbf55be52eba1891ea7b655ff4dc80b0ee0750eb986c6828a6d7d3ae260"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:27+00:00",
+        "manifestKey": "ura_ppi.parquet",
+        "rows": 207,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 4698,
+      "columns": [
+        "quarter",
+        "ura_ppi"
+      ],
+      "coverage": {
+        "column": "quarter",
+        "max": "2026-09-30",
+        "min": "1975-03-31"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/ura_ppi.parquet",
+      "rows": 207,
+      "sha256": "a73cd16354629494e9c02da5c92251c2beff028eebad8c573e63210b34ed91b6"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": "2026-11-13T10:32:27+00:00",
+        "manifestKey": "wage_growth.parquet",
+        "rows": 100,
+        "rowsMatch": true,
+        "source": "datagov_api",
+        "status": "recorded"
+      },
+      "bytes": 2897,
+      "columns": [
+        "quarter",
+        "wage_growth"
+      ],
+      "coverage": {
+        "column": "quarter",
+        "max": "2025-12-31",
+        "min": "2001-03-31"
+      },
+      "format": "parquet",
+      "formatMatchesExtension": true,
+      "kind": "external",
+      "path": "data/pipeline/01_bronze/external/wage_growth.parquet",
+      "rows": 100,
+      "sha256": "2a47a4953ab2ee5188b46d6af83fcb0e0edbae725c4ca84641b7dcdca2bbe1a6"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 283,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "json",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/crosswalks/crosswalk_validation.json",
+      "rows": 9,
+      "sha256": "3d6c1875ee6ceab967285db2f6bb536efc7f8b52e8e9431ae334ce64b3580fc0"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1670,
+      "columns": [
+        "source_type",
+        "source_value",
+        "planning_area",
+        "mapping_type",
+        "validation_status"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/crosswalks/hdb_town_to_planning_area.csv",
+      "rows": 34,
+      "sha256": "a97cd2a3ae494c5800e29703b07b1179c2c289eb21fba71ce46891731766a4a2"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 4648,
+      "columns": [
+        "source_type",
+        "source_value",
+        "planning_area",
+        "mapping_type",
+        "validation_status"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/crosswalks/planning_area_crosswalk.csv",
+      "rows": 96,
+      "sha256": "ea96759a3a7bb93751801daabaca3bf99ba3deaa9ff7ea97544c6b97f6f7f8a3"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1058,
+      "columns": [
+        "planning_area",
+        "region",
+        "area_sqkm",
+        "planning_class"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/crosswalks/planning_area_reference.csv",
+      "rows": 34,
+      "sha256": "9eaf0d342d66abf858399675ded89725b2bc07187f2a35574ae1103bfce66049"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 3048,
+      "columns": [
+        "source_type",
+        "source_value",
+        "planning_area",
+        "mapping_type",
+        "validation_status"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/crosswalks/postal_district_to_planning_area.csv",
+      "rows": 62,
+      "sha256": "3c844bd57c69afba6b506b02534a696f29304cfc5851cf3b638b1e803d9a669a"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 22635623,
+      "columns": [
+        "month",
+        "town",
+        "flat_type",
+        "block",
+        "street_name",
+        "storey_range",
+        "floor_area_sqm",
+        "flat_model",
+        "lease_commence_date",
+        "resale_price"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ResaleFlatPrices/Resale Flat Prices (Based on Approval Date), 1990 - 1999.csv",
+      "rows": 287196,
+      "sha256": "2e064923f41cc96536db04c978901695aa0191022829895cf4ce177e42afad57"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 29369945,
+      "columns": [
+        "month",
+        "town",
+        "flat_type",
+        "block",
+        "street_name",
+        "storey_range",
+        "floor_area_sqm",
+        "flat_model",
+        "lease_commence_date",
+        "resale_price"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ResaleFlatPrices/Resale Flat Prices (Based on Approval Date), 2000 - Feb 2012.csv",
+      "rows": 369651,
+      "sha256": "5f6a72bd7b9120281863beb1fc4c89aa5f4923f00b0f6c52494c4347363f2c36"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 4160771,
+      "columns": [
+        "month",
+        "town",
+        "flat_type",
+        "block",
+        "street_name",
+        "storey_range",
+        "floor_area_sqm",
+        "flat_model",
+        "lease_commence_date",
+        "resale_price"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ResaleFlatPrices/Resale Flat Prices (Based on Registration Date), From Mar 2012 to Dec 2014.csv",
+      "rows": 52203,
+      "sha256": "6a16e2dc78f70048ec1a522b59a9727581c36e45e02022641c53e755a7657c72"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 3070924,
+      "columns": [
+        "month",
+        "town",
+        "flat_type",
+        "block",
+        "street_name",
+        "storey_range",
+        "floor_area_sqm",
+        "flat_model",
+        "lease_commence_date",
+        "remaining_lease",
+        "resale_price"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ResaleFlatPrices/ResaleFlatPricesBasedonRegistrationDateFromJan2015toDec2016.csv",
+      "rows": 37153,
+      "sha256": "4ff7ce4a4f642fb384d2b75a42e75b0477e50005f4aaa9989591a7a92507d185"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 22087973,
+      "columns": [
+        "month",
+        "town",
+        "flat_type",
+        "block",
+        "street_name",
+        "storey_range",
+        "floor_area_sqm",
+        "flat_model",
+        "lease_commence_date",
+        "remaining_lease",
+        "resale_price"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ResaleFlatPrices/ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv",
+      "rows": 223545,
+      "sha256": "85c5cdc6c296c5e47005ef4d4414a1c4b7877362476447d3be613b21d40057ba"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1886415,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/BusStops.geojson",
+      "rows": 5205,
+      "sha256": "23cb5ce083e3573a8ea6cc26faf0f74578317231833ded48b500d017f965ebee"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1644760,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/CHASClinics.geojson",
+      "rows": 1193,
+      "sha256": "d25ed5c5b460d2c12a725a18670968478501d8fcf5bf34f1449f2f2ed1355e0e"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1488543,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/ChildCareServices.geojson",
+      "rows": 1925,
+      "sha256": "21f2d818555965991605e92532f4a3d3d822e394c250f126abd715912c363885"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 93676,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/CommunityClubs.geojson",
+      "rows": 128,
+      "sha256": "6493f3f057b896735bd4f1abe750f9dfaf4b271b97e25e31aa8d18d290673ed5"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 140459,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/HawkerCentresGEOJSON.geojson",
+      "rows": 129,
+      "sha256": "0a39526ab5c652296b807f0ab50126e7b2aa1a536bb0dff0e248ff68ebfe8c10"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 920177,
+      "columns": [
+        "centre_code",
+        "centre_name",
+        "incidental_charges",
+        "frequency",
+        "amount"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": false,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/Kindergartens.geojson",
+      "rows": 10000,
+      "sha256": "7e27a49ee0ec6bae999c6352cb2a12a454b2129b64ad0cd3163e417ae14fa548"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 207783,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/MRTStationExits.geojson",
+      "rows": 597,
+      "sha256": "0a94ebe6f3f7129d1620f012e2e6be3e6565055a2ac36bdcf4d2c226ec8c192f"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 784676,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/MRTStations.geojson",
+      "rows": 257,
+      "sha256": "6153f2944065b3bcf81b45783b8a17bfbcc2f34db4f202d2b9c9c4c9172f20aa"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 3769067,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/MasterPlan2019SDCPParkConnectorLinelayerGEOJSON.geojson",
+      "rows": 1277,
+      "sha256": "9173dfbb8eb8fccad2862c7d6137279a846daba4e2ede01ce7a6c7591d3c3e89"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 2865278,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/NParksParksandNatureReserves.geojson",
+      "rows": 450,
+      "sha256": "a6ae86b0919c05c99a529e738a4ffd0b7fe9943fb5b5f68e54ac42d776b0e623"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1341092,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/PreSchoolsLocation.geojson",
+      "rows": 2290,
+      "sha256": "56539ec2f0a5d57e42babe29960dcc6708222ba09c046c59a26cb64f805436bb"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 231573,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/SchoolsMOE.geojson",
+      "rows": 197,
+      "sha256": "6ed84238263d5afbd39282be928abaf513156915a4e09f6abd086119501dd34a"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 22526,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/SportSGFacilities.geojson",
+      "rows": 45,
+      "sha256": "51dc45c1fcc09fc081808849632c1eb75d2672288ce4a9ff9ee48aa69cd817ae"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 437568,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/datagov/SupermarketsGEOJSON.geojson",
+      "rows": 526,
+      "sha256": "46c28612b8f737c65d9c90c7dc7f3d2a5ab5faa2cfaf9d87f8f9ae25f025eda3"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 969,
+      "columns": [
+        "feature",
+        "weight",
+        "description",
+        "calculation_method"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/school_quality_weights.csv",
+      "rows": 13,
+      "sha256": "aef604d26ba0b84b011419a6abc8b06ba4c11c7af8d9b67cd2b08c139f5e8ac0"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1858,
+      "columns": [
+        "school_name",
+        "gep",
+        "sap",
+        "tier",
+        "popularity_p2b",
+        "region",
+        "notable_for"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/school_tiers_primary.csv",
+      "rows": 29,
+      "sha256": "2d985e4d3520fa6c81465beefc7c36c939e9c823d6dc728d838b508472d7b641"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1700,
+      "columns": [
+        "school_name",
+        "track",
+        "tier",
+        "ip_cutoff_2026",
+        "sap",
+        "autonomous",
+        "ip",
+        "awards"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/school_tiers_secondary.csv",
+      "rows": 25,
+      "sha256": "3109779a1cdb1ccbd9572e21ecc07e4ee764be6c7632879bc23383a816d83682"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1340291,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ECResidentialTransaction20260121003532.csv",
+      "rows": 7051,
+      "sha256": "67eb28e35f0f116228566891b055e3151da342d7abed3bcea1301c0b1b09261d"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1904021,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ECResidentialTransaction20260121003707.csv",
+      "rows": 10000,
+      "sha256": "218b93f809b0be433766aac98042551fb6c788550798ce7f6789d56320dbda20"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1694599,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121003944.csv",
+      "rows": 10000,
+      "sha256": "60f56b7da45f6b083eab2440c51d183a6c11aa1f42c5da04b2cde76c008098da"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1696029,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121004101.csv",
+      "rows": 10000,
+      "sha256": "12f2e7ff4a3c4314ac9c526689dce6c2994d7441dc867312a6330b912ca47b7b"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1697660,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121004213.csv",
+      "rows": 10000,
+      "sha256": "7f8f7ca065d51e6d7054e7f76f034c55465260a8919b447b38bc1c55f24ba398"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1707213,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121004407.csv",
+      "rows": 10000,
+      "sha256": "a09aa9f15ecbcd7758c46ca24ddefe5498f9f7b2bf51294e0e6b790d9b302ce4"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1550685,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121004517.csv",
+      "rows": 9052,
+      "sha256": "604f1207527dae90b7c8a774ef10792cb28220d8e08475420e8b451bd56e61c9"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1736171,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121005130.csv",
+      "rows": 10000,
+      "sha256": "9de425c0dc43dc4fdd56ebdec9c18432e3baf0d432ee16211aea946d6c47d55e"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1741302,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121005233.csv",
+      "rows": 10000,
+      "sha256": "4e5dd66d2ed73a4fd883ca9e41a052c6ad78bcc550defdc664d7c0b92b0b68f9"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1738491,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121005346.csv",
+      "rows": 10000,
+      "sha256": "25fe57acba76aefbf827f3b4fac8123d0200bc57bf908a6e1fa2cf571108b212"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1710094,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121005450.csv",
+      "rows": 10000,
+      "sha256": "b7286365aa6ed0963edf1975313d0c5035ac567b5e7fc899bc6dd6bcc4f5cf69"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1714631,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121005601.csv",
+      "rows": 10000,
+      "sha256": "1c06f2aff39dfbd9be7d2813b0dd7d8ea47e154449c2860477f1103321fe63f9"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1718434,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121005715.csv",
+      "rows": 10000,
+      "sha256": "035992416f6bd2c8b8cc0af0d42cca1966c6d585471a2acff0abf4102bce60e5"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 172197,
+      "columns": [
+        "Project Name",
+        "Transacted Price ($)",
+        "Area (SQFT)",
+        "Unit Price ($ PSF)",
+        "Sale Date",
+        "Street Name",
+        "Type of Sale",
+        "Type of Area",
+        "Area (SQM)",
+        "Unit Price ($ PSM)",
+        "Nett Price($)",
+        "Property Type",
+        "Number of Units",
+        "Tenure",
+        "Postal District",
+        "Market Segment",
+        "Floor Level"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/csv/ura/ResidentialTransaction20260121005734.csv",
+      "rows": 1037,
+      "sha256": "9b1589c0a442004a13ec5a54faea698bf98fa39bdd66eca8a46207435ae08497"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 1279633,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/geojsons/onemap_planning_area_polygon.geojson",
+      "rows": 55,
+      "sha256": "42a757c7cf332a6e22e6786a752eb2a025297d8285a4eaa9a614189ac670c505"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 2429975,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/geojsons/park.geojson",
+      "rows": 450,
+      "sha256": "3e990d23e8f44bf1bbc8d2f675c9a9c0b8e1250b21c4a1512cebcf4e4f736e9d"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 3263825,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/geojsons/park_connector.geojson",
+      "rows": 1277,
+      "sha256": "27c072c4e59bef84bc1d23eebad3d073aa20d4348be3af06e5b98c46e7a74f95"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 2092229,
+      "columns": [],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "geojson",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/geojsons/ura_planning_area_boundary.geojson",
+      "rows": 55,
+      "sha256": "f23856251b467089f788d0fff72ef5a38e753f21aa69b4352401d7ed50d380cc"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 10818,
+      "columns": [
+        "station_name",
+        "line_code",
+        "line_name",
+        "station_type",
+        "is_interchange",
+        "color_hex",
+        "tier"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/mrt_lines_mapping.csv",
+      "rows": 217,
+      "sha256": "bf8b23857e74313d902f1310a28c2581587b10eef1719ae425b052c42ead65bc"
+    },
+    {
+      "acquisition": {
+        "fetchedAt": null,
+        "manifestKey": null,
+        "rows": null,
+        "rowsMatch": null,
+        "source": null,
+        "status": "not-recorded"
+      },
+      "bytes": 189,
+      "columns": [
+        "Traceback (most recent call last):"
+      ],
+      "coverage": {
+        "column": null,
+        "max": null,
+        "min": null
+      },
+      "format": "delimited",
+      "formatMatchesExtension": true,
+      "kind": "manual",
+      "path": "data/manual/mrt_stations_list.txt",
+      "rows": 3,
+      "sha256": "26fa9110b44f0e5f0cce4785f794969f93b14fc7f24f51d180b135cdb56964a7"
+    }
+  ],
+  "summary": {
+    "bronze": 14,
+    "external": 28,
+    "files": 89,
+    "manifestRowMismatches": 1,
+    "manual": 47,
+    "unrecordedAcquisition": 59
+  }
+}

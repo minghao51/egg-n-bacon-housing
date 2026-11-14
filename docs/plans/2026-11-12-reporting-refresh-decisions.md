@@ -1,0 +1,85 @@
+# RF00 decision ledger — ratify before RF01/RF04 begin
+
+- **Date:** 2026-11-12
+- **Status:** D01–D12 **Accepted** as written (all recommended defaults), recorded 2026-11-12 on repo-owner instruction. No replacements, no deferrals.
+- **Contract:** [implementation map](2026-11-12-reporting-refresh-implementation-map.md) › §3 (definitions) and §5–§7 (mechanics)
+- **Execution units:** [handoffs](2026-11-12-reporting-refresh-handoffs.md) · [research register](2026-11-12-reporting-refresh-research-register.md)
+- **Evidence:** [RF00 baseline](../implementation/2026-11-12-rf00-baseline.md) · [audit](../implementation/2026-reporting-refresh-audit.md)
+
+## How to record a decision
+
+Edit the `Status` / `Date` / `Approver` cells in the table below (or add a line under "Recorded decisions"). `Status` is one of:
+
+- **Accepted** — implement the recommended default as written.
+- **Replaced** — implement the replacement text you put in `Notes`; the map default is superseded.
+- **Deferred** — leave the affected slice blocked; no fixture-default implementation either.
+
+```text
+| D04 | Replaced | 2026-11-13 | howt | Use 3 URA regions; amend map §3 D04 |
+```
+
+Acceptance opens a decision gate for its slice; it does not grant data access, a refresh run, research rerun or deployment (D10 keeps those separate — see "What acceptance does not authorize").
+
+## Decisions
+
+| ID | What you are deciding | Recommended default | Blocks | Status | Date | Approver | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| D01 | Can the app add a v2 release beside the existing one, or must the existing contract evolve in place? | Separate v2 sidecar; the current seven-file v1 contract, `schemaVersion: 1.0.0` and all existing URLs keep their exact meaning | RF04 (all of it) | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D02 | What is the newest month we publish as observed, and who certifies it? | 2026-10 as initial cutoff; advance only on measured completeness | RF03/RF04 promotion | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D03 | Which window does each surface open on? | Dashboard: year-to-date. Trends/explorer/rankings: trailing 12 completed months. Old bookmarks stay pinned | RF05 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D04 | Which geography labels appear in observed rankings? | The five planning regions; drop CCR/RCR/OCR from observed surfaces (archived segments unchanged) | RF01 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D05 | When may an area be ranked, and what sample size counts as caution-worthy? | 150-sale caution threshold in the selected window; change rankings need both windows to qualify; thin rows visible but unranked | RF01, RF09 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D06 | Which metrics are supported on current data? | Transaction count, transaction median price, median per-transaction PSF. Unsupported legacy metrics show unavailable, never a margin fallback | RF05 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D07 | Do reports become dated editions with permanent archives? | Edition ≠ observation window; immutable archive routes; stable series URLs point at the latest approved edition | RF07 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D08 | How should `/areas/[slug]` behave when a query string asks for a different property/period? | Static fixed-scope page plus a small accessible selector over verified embedded per-area sections | RF06 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D09 | How far does “area activity” go? | Count/price signals with numeric comparisons; no composite hotness score, no BUY label, no demand claim | RF10 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D10 | What am I authorizing beyond reading the repo? | Four separate grants: R2/source access, a pipeline refresh run, research reruns, deployment | RF03, RF08, RF12 | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D11 | What evidence makes a scope publishable, and who signs it? | Source-specific coverage policies plus a per-scope publish / limited-display / withhold ledger signed by a data steward | RF04 promotion | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+| D12 | Who may approve a refreshed study? | Three separate sign-offs: source/cutoff, independent scientific (not the author), release. No self-approval | Any edition promotion | Accepted | 2026-11-12 | repo owner (session instruction) | Default adopted as written |
+
+## Recorded decisions
+
+Owner instructions recorded after the D01–D12 ratification, in the form the section
+above prescribes. They are inputs to a slice, not a promotion: D12 still requires
+three attestations on one artifact before anything claims `approved`.
+
+| ID | Recorded | Approver | Notes |
+| --- | --- | --- | --- |
+| D12 / RF08 — **source/cutoff attestation** for RS01 + RS02 | 2026-11-14 | `howt` (repo owner, release authority) | Approves the two measured ledgers as the source/cutoff record. Pins `docs/implementation/artifacts/rs01-source-inventory.json` sha256 `65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae` and `docs/implementation/artifacts/rs02-rental-yield-evidence.json` sha256 `db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313`, read against [RS01](../implementation/2026-11-14-rs01-source-inventory.md) and [RS02](../implementation/2026-11-14-rs02-rental-yield-evidence.md). Accepts the implied cutoff (2026-10, last complete month), the measured coverage (sales 1990-01 → 2026-11, rentals 2021-01 → 2026-10, private 2021-01 → 2026-11), `sora_rates` labelled stale at 2025-12, the two recorded source defects (`raw_green_mark_buildings_geocoded` 4,015 vs 4,145; `Kindergartens.geojson` holds CSV), and RS02 §5's disposition (regenerate `rental_yield.parquet` with the single Non-Landed index series, 1,749 rows). |
+| D12 — **approval-record shape** for the RF08 editions | 2026-11-14 | `howt` (repo owner) | Option **B**: an approved edition additionally pins the frozen text by `editionSha256`, so a publication signature binds the bytes that were reviewed rather than only the evidence ledger. `validateEditionRegistry()` rejects an approved edition whose `editionSha256` is absent or malformed, and the archive route refuses to build when it does not match the frozen file. Historical editions keep `null` (their pin is the RF00 baseline manifest). |
+| D12 — **scientific re-review** of the RS01/RS02 editions | 2026-11-14 | `openai-codex/gpt-6-luna` (xhigh, recorded run) | PASS on the final text after one FAIL round (three hard defects + one note, all fixed). Verbatim attestation, defect list and the exact ledger hashes are recorded in [the RF08 sign-off record](../implementation/2026-11-14-rf08-editions-signoff.md). Note the recorded scientific seat on each edition is this review; the earlier pack reviews attest the evidence, not these article sentences. |
+| D12 — **publication signature** on the RS01/RS02 editions | 2026-11-14 | `howt` (repo owner, release authority) | Approves publication of `data-sources-2026-11-14` (frozen text sha256 `bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81`) and `rental-yields-2026-11-14` (`f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67`) as the current editions of their series. Both entries are now `approved`/`published` with the three attestations and the matching `editionSha256`; the archive route re-verifies the text hash at build time. Record: [RF08 sign-off](../implementation/2026-11-14-rf08-editions-signoff.md). |
+| Asset retention — `interactive_tools/affordability_metrics.json.gz` | 2026-11-14 | `howt` (repo owner) | **Retained, unused**, outside every release manifest (2,282 bytes, sha256 `c9addb2711a30787…`). No consumer was found in RF11's review and no removal was performed; a future removal needs a data-boundary decision plus a reference review. Recorded in [RF12 §3](../implementation/2026-11-14-rf12-release-evidence.md). |
+
+**Why the gate-1 attestation is recorded here and not in the registry.**
+`validateEditionRegistry()` rejects *any* sign-off on a non-approved edition, and there
+is no approved edition yet (no refreshed text exists). Recording one role there would
+be exactly the partial approval trail D12 forbids, so the owner's word is recorded
+here and materialised verbatim into `signoffs[]` in the same edit that flips the
+editions to `approved`. Nothing is signed twice and nothing is pre-approved.
+
+## Consequences worth knowing
+
+- **D03** changes what a bare URL shows. The plan mitigates with a visible “updated default” notice and links to the previous explicit window, but a reader with an unparameterised bookmark will see a different period than before.
+- **D05** is a product caution rule, not significance testing. Choosing a higher threshold hides real EC/small-area movement; a lower one ranks areas on dozens of sales. 150 matches the shipped `/explore` threshold.
+- **D06** is the reason several legacy leaderboard metrics would become “unavailable”. They are currently produced from property-only or period-only margins, which is the bug RF01 fixes; the data needed for a joint version does not exist in the current release.
+- **D09** decides whether “hotness” ships as a labelled observed signal or not at all. A composite score would need weights, stock normalization and approval that the current sources cannot support.
+- **D12** is what stops a refreshed model from being treated as approved because its page renders. Without independent review, refreshed studies stay archived.
+
+## What acceptance does not authorize
+
+D10's default is *separate* grants, so accepting it approves the policy, not any operation. Still unauthorized: R2/manual-source download, a pipeline refresh run, research reruns, model fitting, publishing a regenerated asset, and deployment. Ask explicitly per operation.
+
+## Not your decision (blocked elsewhere)
+
+- **RF03** — `data/pipeline/04_platinum/` and `data/manual/geojsons/` are absent from this checkout; the release is inspectable but not reproducible. Needs source restoration, not a decision.
+- **Research method approvals** — RS06/RS07 (units), RS08/RS13 (causal identification), RS14 (forecast), RS10/RS11/RS12 (segment/spatial method) each need their own reviewer, per the [register](2026-11-12-reporting-refresh-research-register.md). D12 only sets the process.
+- **Portal access** — PropertyGuru and 99.co returned 403 during the audit. Not on the critical path; no bypass attempted or planned.
+
+## Unblocked now
+
+- **RF02** — report copy and chart repair (no decision needed; freeze gate passes).
+- **RF01** — area rankings: joint metrics, planning regions, sample caution (D04/D05/D06 open).
+- **RF04 code** — v2 contract on fixtures only (D01 open); real-data candidate still needs RF03.
+- **RF05/RF06/RF07/RF09/RF10** — implementation on fixtures/data at the gates their dependencies define.
+- **RF03, RF08, RF12 publication** — still blocked by absent inputs and per-operation grants.

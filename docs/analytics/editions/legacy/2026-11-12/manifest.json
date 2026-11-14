@@ -1,0 +1,558 @@
+{
+  "assets": [
+    {
+      "bytes": 1789,
+      "mutable": false,
+      "path": "app/public/data/amenity_summary.json.gz",
+      "sha256": "80530f355a149a963143cfbe99af65daafa0dd8883602f0b5920c269240e21e2"
+    },
+    {
+      "bytes": 214110,
+      "mutable": false,
+      "path": "app/public/data/analysis/appreciation_patterns/appreciation_analysis_overview.png",
+      "sha256": "4a52da28e29d8d84b4a368bd221ff3329fddc503558421b988a19343ba8916f2"
+    },
+    {
+      "bytes": 91244,
+      "mutable": false,
+      "path": "app/public/data/analysis/causal_did_analysis.png",
+      "sha256": "7f5732e6c77711e95278a7c38d2f9d5ea47c81bc542610b0e27eb79514a30177"
+    },
+    {
+      "bytes": 280579,
+      "mutable": false,
+      "path": "app/public/data/analysis/cbd_mrt_decomposition/cbd_mrt_decomposition_summary.png",
+      "sha256": "1d6710cbf7c3715e3470e387c4d8fc6efcacddd90701e62ec07415940eb5d2c0"
+    },
+    {
+      "bytes": 214451,
+      "mutable": false,
+      "path": "app/public/data/analysis/cbd_mrt_decomposition/mrt_cbd_scatter.png",
+      "sha256": "54571d748d92cbd43be7aea7121a4a84525a9fc6ee5210c75a640d7ed58b5985"
+    },
+    {
+      "bytes": 78881,
+      "mutable": false,
+      "path": "app/public/data/analysis/cbd_mrt_decomposition/regional_effects_comparison.png",
+      "sha256": "f18aae1464064cfefe16fa7fd4cfc4e8c167cd3b8560529c08c0eef9bc123c39"
+    },
+    {
+      "bytes": 28975,
+      "mutable": false,
+      "path": "app/public/data/analysis/feature_importance.png",
+      "sha256": "4c453fddab85b0031ba9ab08b90ece193666e2b26d8eb71cb16d63915286c8b2"
+    },
+    {
+      "bytes": 538069,
+      "mutable": false,
+      "path": "app/public/data/analysis/lease_decay_advanced/lease_decay_advanced_analysis.png",
+      "sha256": "20e546ea0efffc263d47eed11be347ae25af1fb4949053826390506783e64c39"
+    },
+    {
+      "bytes": 77233,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_impact/distance_band_premiums.png",
+      "sha256": "58a7b583b2d7bbbfa4ec6a41df5c3e78232281f1830a764dd29f55e9979c073e"
+    },
+    {
+      "bytes": 201887,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_impact/exploratory_analysis.png",
+      "sha256": "666dbc274a1272f19f215235afbd2e1b610d960e2140c51d532c38dfdff18709"
+    },
+    {
+      "bytes": 76317,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_impact/feature_importance_price_psf.png",
+      "sha256": "3a9d052e994701b0e9692e19d380c6228a1a18343fe153d73535f3b9d69355a9"
+    },
+    {
+      "bytes": 169860,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_impact/heterogeneous_effects.png",
+      "sha256": "833581a56d054a507aacc874b900bc247307e7fee019916714d68ee41499c8ca"
+    },
+    {
+      "bytes": 78197,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_impact/model_performance_comparison.png",
+      "sha256": "7e8190084ddf1bdb3711ee31852c7bc3345d7d58799fbac010dde76ddf959081"
+    },
+    {
+      "bytes": 137909,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_impact/property_type_comparison.png",
+      "sha256": "befdf2d9ba31fce42aeddda68fb94810d1958c3169801920064a119f5327559a"
+    },
+    {
+      "bytes": 136915,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_impact/town_mrt_premiums_ranked.png",
+      "sha256": "97ae20cc09e14c43656a270011afc04b6698945258fdd268d0af0d40b1f369a2"
+    },
+    {
+      "bytes": 285030,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_temporal_evolution/temporal_evolution_overview.png",
+      "sha256": "75d8a03892d7a5181f52be668b8f4da088bec89b8a53a8e195c46eeb4043e07d"
+    },
+    {
+      "bytes": 211006,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_temporal_evolution/top_areas_evolution_condominium.png",
+      "sha256": "8703f27bb5069a1819384357915e8fd5b8f113ac466bea5b2180e42b54c11f6f"
+    },
+    {
+      "bytes": 199058,
+      "mutable": false,
+      "path": "app/public/data/analysis/mrt_temporal_evolution/top_areas_evolution_hdb.png",
+      "sha256": "e4115328b1f3efdc60155f60eaa1e432d558bf2f42836f639b3fa195213ede73"
+    },
+    {
+      "bytes": 197330,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/confidence_intervals/confidence_intervals_analysis.png",
+      "sha256": "4f5c1f8a4d1c52bc6b9119c45aea52d253c62055964b10090e55a8f33923a04e"
+    },
+    {
+      "bytes": 54980,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis/heteroscedasticity_check.png",
+      "sha256": "9f9c538b39583ede6fb14ad3fd7f6d372718e96c2aa0f297f9ddd04894da9410"
+    },
+    {
+      "bytes": 71343,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis/residual_distribution.png",
+      "sha256": "d65fe3cbd494ea4d268070478e817157ae1291478c2577ef8b2053a314abd31b"
+    },
+    {
+      "bytes": 32945,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis/temporal_autocorrelation.png",
+      "sha256": "8ac4abb99059aafb84f9f3db71a6ff3eb706eb6bf4da3e76a7a75152805ab1ea"
+    },
+    {
+      "bytes": 58651,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/condo_actual_vs_predicted.png",
+      "sha256": "202bd2f3f52310a54c1fb41b7c770d96d30f7437a4475bc37e53a2135b36772c"
+    },
+    {
+      "bytes": 52810,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/condo_heteroscedasticity.png",
+      "sha256": "b997292edbdece4e3211300fe347c2c8aacc285a239d15af8086072013503a6f"
+    },
+    {
+      "bytes": 73058,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/condo_residual_distribution.png",
+      "sha256": "4505a00a2ab88e4f677b2e78585d9f92ab928431c5601952b31687e6a370b7fd"
+    },
+    {
+      "bytes": 54011,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/ec_actual_vs_predicted.png",
+      "sha256": "79bdb19d2a68aa8a8c2217b4f7c2125c96ba9e655929d0dac72b693fc18f1861"
+    },
+    {
+      "bytes": 47780,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/ec_heteroscedasticity.png",
+      "sha256": "557a719fb2849ea273ada7e94519113b1c078c71028b2eacc964d7ab01291a6c"
+    },
+    {
+      "bytes": 61782,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/ec_residual_distribution.png",
+      "sha256": "66743520cf5675cd35b6a5112e675565028d50b979aec10297a19a6fa013c344"
+    },
+    {
+      "bytes": 58897,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/hdb_actual_vs_predicted.png",
+      "sha256": "659570738eef461dc745e76abf090100ff05324caef70a97cffde4391ec7939b"
+    },
+    {
+      "bytes": 61690,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/hdb_heteroscedasticity.png",
+      "sha256": "dc60cb5d13d59090149219745a2ad7915e8f70b1dc572574f56e6793d01a67e1"
+    },
+    {
+      "bytes": 70148,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_appreciation_modeling/residual_analysis_by_property_type/hdb_residual_distribution.png",
+      "sha256": "984dfb4b93b0e56e1d93e6d8ae3000365d0f673fcd9cf11781801387cfd61854"
+    },
+    {
+      "bytes": 329781,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_forecasts/planning_area_forecasts.png",
+      "sha256": "92050b3e22cdf890ad08c32c515ee167c8532edf5396a9ae211856d3ed8b9df1"
+    },
+    {
+      "bytes": 344605,
+      "mutable": false,
+      "path": "app/public/data/analysis/price_forecasts/price_vs_forecast_scatter.png",
+      "sha256": "713fc86d0621c26041b7fadc2de4792eda26e477d43c1f237093dbe26c5f19d8"
+    },
+    {
+      "bytes": 168559,
+      "mutable": false,
+      "path": "app/public/data/analysis/school_impact/exploratory_analysis.png",
+      "sha256": "25c35923d7fa4507572593ebef5ceb5c0a79146b1c6a521621d03eb6caa817e9"
+    },
+    {
+      "bytes": 96540,
+      "mutable": false,
+      "path": "app/public/data/analysis/school_rdd/rdd_visualization.png",
+      "sha256": "e69200fd348c7775c5b741421e848a41c05937d94cd74a83c7e0730809e980ce"
+    },
+    {
+      "bytes": 61689,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/appreciation_by_cluster.png",
+      "sha256": "159fee47b7a2cb284371287e73ccd2ac41a880cef36b0880d281c95cb6d484eb"
+    },
+    {
+      "bytes": 113428,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_comparison_matrix.png",
+      "sha256": "59e2f0409c0051bae749c724d506182cc79d7c857b93e703d7bea0c10e3821d7"
+    },
+    {
+      "bytes": 110737,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_evolution_stacked.png",
+      "sha256": "9b019861c7e97762780724d554d5669e08dbee8520f10b38300b217ca40aac9b"
+    },
+    {
+      "bytes": 91353,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_evolution_timeline.png",
+      "sha256": "ef54037226730c3b14e654ae44bd2ec6a76ec8e1fd70cf96de4a632e9a553033"
+    },
+    {
+      "bytes": 499957,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_radar_profiles.png",
+      "sha256": "798cffd339c4abbef10113a49dbdfc8b0cbe9ccec8b20c856c1ce89007418ee0"
+    },
+    {
+      "bytes": 78113,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_risk_return.png",
+      "sha256": "788121e82913cd94e1b08d3ca98a07d01d464c37313dcfbff778cdbe3bda320b"
+    },
+    {
+      "bytes": 52567,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_stability_scores.png",
+      "sha256": "4bb422a184393573756a9d7d3f96e7c40d929a5ffb1b682e3fd60658013a3dd8"
+    },
+    {
+      "bytes": 141467,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_transition_flows.png",
+      "sha256": "75be16e80fac3670fccba9d84dbddd980315cd0037622db025e46e432f850ebd"
+    },
+    {
+      "bytes": 204760,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/cluster_transition_sankey.png",
+      "sha256": "8141d9066b7a5095c7786388089b6daf1166fbab39a7ef0a1eb5908a76750c33"
+    },
+    {
+      "bytes": 78899,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/combined_feature_importance.png",
+      "sha256": "591734588d154fd2f2e841a33f45046b0f48352f7e02913b3c9ab35e081a949a"
+    },
+    {
+      "bytes": 98930,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/comprehensive_cluster_distribution.png",
+      "sha256": "d999edb94b42e3dbf3ea793f1831c35e497ca87cf14bc1920cc59c01ed33bff2"
+    },
+    {
+      "bytes": 75895,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/feature_importance.png",
+      "sha256": "5fc6270fbdf5aaa1fd20382386e7c5715b2bc75ff0d67f917e71f82261ee446d"
+    },
+    {
+      "bytes": 48329,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/lisa_cluster_distribution_bars.png",
+      "sha256": "98366f4589233d4d0192e92b950027b137f0bf53e47349b59c1a1e2c07c6719c"
+    },
+    {
+      "bytes": 108540,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/lisa_cluster_map_singapore.png",
+      "sha256": "e14faad8365db280d7f41ded9eedc53939dfcc62316e70292db438ead1c8ac93"
+    },
+    {
+      "bytes": 89575,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/moran_scatter_condo.png",
+      "sha256": "a7ffc87c10ae8ed87c97a070d734f302ba00abaca008da54a94aa00d1a38d16c"
+    },
+    {
+      "bytes": 86672,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/moran_scatter_ec.png",
+      "sha256": "50f630d6b13880d835d81201d080827d13407309371ce390ea7a97cb4ec0e5d5"
+    },
+    {
+      "bytes": 87373,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/moran_scatter_hdb.png",
+      "sha256": "12d879086cbe02756857858ec47ccff9bffc645ffd15f90d1a02c13457961604"
+    },
+    {
+      "bytes": 57055,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/morans_i_by_property_type.png",
+      "sha256": "4ee26ee9a9123e368179ee5fdb1e9198e87213722b22cb0678a0d91b6369220f"
+    },
+    {
+      "bytes": 130044,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/property_type_comparison.png",
+      "sha256": "0eccb1f78bff42882adf8b8d2b7a09531d616d13fae11d656f989f237c38a67a"
+    },
+    {
+      "bytes": 334601,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/spatial_analysis_dashboard.png",
+      "sha256": "37c36c8281639f3370b574ed1c86ac5a12ed309d4c72ad0e745cf757a0da6a86"
+    },
+    {
+      "bytes": 111331,
+      "mutable": false,
+      "path": "app/public/data/analysis/spatial_autocorrelation/transition_heatmap.png",
+      "sha256": "8f1bf8f94327068a04285b6cc189628f127c3c0483180865ffb12dba9bebe22d"
+    },
+    {
+      "bytes": 958,
+      "mutable": false,
+      "path": "app/public/data/analytics/feature_impact.json.gz",
+      "sha256": "69b5e85dc451b2be5d7efa472e66ac213288206095e1e9cd8d6984fb413eb579"
+    },
+    {
+      "bytes": 1804,
+      "mutable": false,
+      "path": "app/public/data/analytics/predictive_analytics.json.gz",
+      "sha256": "14a8ae6f0ce503e10068a491940cc78e2ad0ae77afa3dbe67b2096a73f3e3c06"
+    },
+    {
+      "bytes": 1156,
+      "mutable": false,
+      "path": "app/public/data/analytics/spatial_analysis.json.gz",
+      "sha256": "e3ff620242187ba93f09986f313b3261c63df2cc6b333cce460c63fe227c2d54"
+    },
+    {
+      "bytes": 29850,
+      "mutable": true,
+      "path": "app/public/data/catalog.jsonl.gz",
+      "sha256": "bdc8fc1d7b1adf5020ca2f373e85cc77cb220e58fc869e7b6d88e3b31ac338f5"
+    },
+    {
+      "bytes": 8125,
+      "mutable": true,
+      "path": "app/public/data/dashboard-release.json",
+      "sha256": "8ef738a59aa1e1b563fe44ad47108198a033f1d038f12db2fc886cdb4f335951"
+    },
+    {
+      "bytes": 4720,
+      "mutable": false,
+      "path": "app/public/data/dashboard_leaderboard.json.gz",
+      "sha256": "be99ba6b610b36fee108e64544d370acb52fcbe47fc491db2677f1807518419b"
+    },
+    {
+      "bytes": 718,
+      "mutable": false,
+      "path": "app/public/data/dashboard_overview.json.gz",
+      "sha256": "022471a97e4ba6b2caae4d21077fd6e04a86ef6f1b81b110d5de1d52a5659709"
+    },
+    {
+      "bytes": 6080,
+      "mutable": false,
+      "path": "app/public/data/dashboard_segments.json.gz",
+      "sha256": "69d7a3d266452811d8153f009c1df0baa4e6b91bc48ec3bc78d7ffe745373a24"
+    },
+    {
+      "bytes": 5728,
+      "mutable": false,
+      "path": "app/public/data/dashboard_trends.json.gz",
+      "sha256": "b47ac8b5f43632eb338b8338affda7f650d5020f1cf8c7a8f1a575229879e783"
+    },
+    {
+      "bytes": 1090,
+      "mutable": false,
+      "path": "app/public/data/hotspots.json.gz",
+      "sha256": "7b68e505f1743e2f887a95984a8d9c85c191185b92e77923d2edf63a73371f34"
+    },
+    {
+      "bytes": 2282,
+      "mutable": false,
+      "path": "app/public/data/interactive_tools/affordability_metrics.json.gz",
+      "sha256": "c9addb2711a307874e1c6e3f108bdcf44334550034d1f18242c3266ba50a10df"
+    },
+    {
+      "bytes": 1164,
+      "mutable": false,
+      "path": "app/public/data/interactive_tools/lease_decay_analysis.json.gz",
+      "sha256": "09da6d774759e1f25c44fd38d02d854e421130d7258a0c521e065fa6ee0aac69"
+    },
+    {
+      "bytes": 1257,
+      "mutable": false,
+      "path": "app/public/data/interactive_tools/mrt_cbd_impact.json.gz",
+      "sha256": "4325fb54a3efc8b09eeea77ee92dc1c780b9408671bd43524ab9da361de11101"
+    },
+    {
+      "bytes": 1284,
+      "mutable": false,
+      "path": "app/public/data/interactive_tools/spatial_hotspots.json.gz",
+      "sha256": "12ff7464b188e8bd40b9d3090cb533e6faea500680b0d5617af761ae6d16bb67"
+    },
+    {
+      "bytes": 3838,
+      "mutable": true,
+      "path": "app/public/data/manifest.json",
+      "sha256": "686b444aeb18506b95f3f00936df02b235887438634b2e72748432833c7a8e10"
+    },
+    {
+      "bytes": 11293,
+      "mutable": false,
+      "path": "app/public/data/map_metrics.json.gz",
+      "sha256": "8cc21cb3af698d02a53d214b7a5c6e9cb6a1f7acf4ab71a47f76db64a7d4b43a"
+    },
+    {
+      "bytes": 2092229,
+      "mutable": false,
+      "path": "app/public/data/planning_areas.geojson",
+      "sha256": "f23856251b467089f788d0fff72ef5a38e753f21aa69b4352401d7ed50d380cc"
+    },
+    {
+      "bytes": 378569,
+      "mutable": false,
+      "path": "app/public/data/planning_areas.geojson.gz",
+      "sha256": "047397266de02f4a6446d1f4889a00a50d1131f2b823f116c779d70f2d4bf09e"
+    },
+    {
+      "bytes": 3432,
+      "mutable": false,
+      "path": "app/public/data/segments_enhanced.json.gz",
+      "sha256": "76979cc5fdc4e7fff27847147b70520f896c3f344d701f4ef702c252dd571d56"
+    }
+  ],
+  "basis": {
+    "branch": "feat/s10-f1-s8-f1",
+    "commit": "e680a1bb0d1ed601add219260cce5386c43e4e40",
+    "completeYear": 2025,
+    "observationEndMonth": "2026-10",
+    "releaseGeneratedAt": "2026-11-03T14:27:33Z",
+    "releaseGeneration": "0e1013ee485fe085874f2ef53ece8eb5f4f47305985ba991eda5fc753e4e0c27",
+    "releaseSchemaVersion": "1.0.0"
+  },
+  "edition": "legacy-2026-11-12",
+  "frozenAt": "2026-11-12",
+  "purpose": "Byte pin for historical research sources and published v1 dashboard assets before the 2026 reporting refresh. Recover originals with `uv run python scripts/tools/verify_reporting_baseline.py --sources --assets`.",
+  "sources": [
+    {
+      "bytes": 8995,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/amenity-impact.md",
+      "path": "docs/analytics/amenity-impact.md",
+      "sha256": "5683269e4b3c04a61edcc45bd259fba6fa8b6c501946bbcc3740a312ab6ffb65"
+    },
+    {
+      "bytes": 6574,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+      "path": "docs/analytics/causal-inference-overview.md",
+      "sha256": "bd2e2f6898aae548168db7b8d3bde446c8750f01897de24d1b37aec7f2805c89"
+    },
+    {
+      "bytes": 7315,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/data-sources.md",
+      "path": "docs/analytics/data-sources.md",
+      "sha256": "2e0da919bf85f9a08dbd140ebf926b8c0c5d30c5d0ce1b9ebf5ac3fd3f671b81"
+    },
+    {
+      "bytes": 9582,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/facility-premiums.md",
+      "path": "docs/analytics/facility-premiums.md",
+      "sha256": "d44ad9c54586b2b658ecd5589d0a9698b049f1b244e4e055216f8aad7a96efa0"
+    },
+    {
+      "bytes": 19019,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+      "path": "docs/analytics/findings.md",
+      "sha256": "c7fd2fdd6732d63ee6ddb60663ff0990e750787e08875a20a748946d99631d8f"
+    },
+    {
+      "bytes": 7740,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+      "path": "docs/analytics/lease-decay.md",
+      "sha256": "6aab72f046c4df45368843a3b1046e1165097aef22a5691e7231f1840464f1b4"
+    },
+    {
+      "bytes": 10060,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md",
+      "path": "docs/analytics/macro-sensitivity.md",
+      "sha256": "8af923420706a072c1b8e6287b4d54b70bdfbad3afcd65dce1a9e7cce41a7a88"
+    },
+    {
+      "bytes": 9328,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+      "path": "docs/analytics/market-segments.md",
+      "sha256": "6813e4e121d8e1784f8a4605e8911ea26b634910cac02ce3702c1093d498e958"
+    },
+    {
+      "bytes": 6480,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md",
+      "path": "docs/analytics/mrt-impact.md",
+      "sha256": "de9eeb8e0c4afcb063300ede1ca8512d9d999359060dda05ea4051873a45bce1"
+    },
+    {
+      "bytes": 6117,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/price-forecasts.md",
+      "path": "docs/analytics/price-forecasts.md",
+      "sha256": "0bebf7307907002449571441af7308ba1cbf0c40622be415572bec4f112839ee"
+    },
+    {
+      "bytes": 9684,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/rental-yields.md",
+      "path": "docs/analytics/rental-yields.md",
+      "sha256": "7b5f8109576ecc76ccdab3cee93a3dc866fad21134c4cc48657af0649c3be514"
+    },
+    {
+      "bytes": 7200,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+      "path": "docs/analytics/school-quality.md",
+      "sha256": "ec5fc939efa4a0b6604d57eff630f99d8d65f578a00899a0e856c2bce9dffcf9"
+    },
+    {
+      "bytes": 5812,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md",
+      "path": "docs/analytics/spatial-autocorrelation.md",
+      "sha256": "efea427d37df07b7a5363ca6622b33087d80d6d166adf3774a421e9b60bcbc22"
+    },
+    {
+      "bytes": 6072,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/spatial-hotspots.md",
+      "path": "docs/analytics/spatial-hotspots.md",
+      "sha256": "c13717fde829aaf8d1193d4f5bb66f1c61e8d397e30bd2e7ee134963828d596c"
+    },
+    {
+      "bytes": 9185,
+      "frozenPath": "docs/analytics/editions/legacy/2026-11-12/temporal-evolution.md",
+      "path": "docs/analytics/temporal-evolution.md",
+      "sha256": "3b1b7c32629ad3bea55051afe8f25fabf1686ba4e577438c38f190af62822e9a"
+    }
+  ]
+}
