@@ -4,6 +4,7 @@
 - **For:** the next agent (or the next session) picking up RF08 where RS01/RS02 left off
 - **Status of the programme:** 2 of 15 studies have a signed, approved edition (`data-sources`, `rental-yields`). **13 do not.** Nothing is deployed.
 - **Read first:** [`prompts/handoffs.md`](../../prompts/handoffs.md) §0 and §4a · [RF08 sign-off record](2026-11-14-rf08-editions-signoff.md) · [RF08 readiness](2026-11-13-rf08-readiness.md) · [research register](../plans/2026-11-12-reporting-refresh-research-register.md) · [decision ledger](../plans/2026-11-12-reporting-refresh-decisions.md) (D12)
+- **Paste-ready dispatch prompt:** [`prompts/rf08-study-worker-prompt.md`](../../prompts/rf08-study-worker-prompt.md) — one study per worker, waves, the reviewer prompt and the owner's gate
 - **Reference pair to copy:** [RS01](2026-11-14-rs01-source-inventory.md) + [`data-sources` edition](../../docs/analytics/editions/data-sources/2026-11-14/data-sources.md) and [RS02](2026-11-14-rs02-rental-yield-evidence.md) + [`rental-yields` edition](../../docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md)
 
 ## 1. The studies that remain
