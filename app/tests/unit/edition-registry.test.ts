@@ -119,8 +119,9 @@ describe("edition registry matches the frozen sources", () => {
 
 describe("selection and paths", () => {
   test("only the signed series claim an approved current edition", () => {
-    // RF08: data-sources and rental-yields are signed; the other thirteen studies
-    // stay historical until each has its own evidence pack and three sign-offs.
+    // RF08: data-sources, rental-yields and temporal-evolution are signed; the
+    // other twelve studies stay historical until each has its own evidence pack
+    // and three sign-offs.
     const approved = ANALYTICS_EDITIONS.filter(
       (edition) => edition.evidenceStatus === "approved",
     ).map((edition) => `${edition.seriesSlug}:${edition.editionId}`);
@@ -128,6 +129,7 @@ describe("selection and paths", () => {
     expect(approved.sort()).toEqual([
       "data-sources:data-sources-2026-11-14",
       "rental-yields:rental-yields-2026-11-14",
+      "temporal-evolution:temporal-evolution-2026-11-15",
     ]);
     for (const seriesSlug of ["mrt-impact", "lease-decay", "price-forecasts"]) {
       expect(approvedEditionFor(seriesSlug)).toBeNull();

@@ -1,0 +1,3991 @@
+{
+  "cutoff": {
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact",
+    "condoTerminalMonth": "2026-11",
+    "lastCompleteMonth": "2026-10",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.3718,
+    "terminalMonthTransactions": 790,
+    "trailing12MedianTransactions": 2125.0
+  },
+  "definition": "Descriptive re-cut of the legacy period windows on the current dataset: transaction counts, sample composition, and nominal and CPI-deflated median prices per (property type, window), plus a per-planning-area-year baseline with a stated sample floor. No premium model, no clustering and no trajectory classification is reproduced; window medians are not mix-adjusted and period-over-period changes are not causal claims.",
+  "featureVintages": {
+    "featureDefinitions": {
+      "mrtProximity": "src/egg_n_bacon_housing/utils/proximity.py + src/egg_n_bacon_housing/utils/mrt_line_mapping.py",
+      "schoolQuality": "src/egg_n_bacon_housing/utils/school_features.py + data/manual/csv/school_tiers_*.csv + school_quality_weights.csv (methodology: school_scoring_methodology.md)"
+    },
+    "featurePopulationByWindowHdb": {
+      "covid": {
+        "distToNearestMrtNonNullShare": 1.0,
+        "schoolAccessibilityScoreNonNullShare": 1.0,
+        "transactions": 79140
+      },
+      "post-covid": {
+        "distToNearestMrtNonNullShare": 1.0,
+        "schoolAccessibilityScoreNonNullShare": 1.0,
+        "transactions": 100471
+      },
+      "pre-covid": {
+        "distToNearestMrtNonNullShare": 1.0,
+        "schoolAccessibilityScoreNonNullShare": 1.0,
+        "transactions": 64256
+      }
+    },
+    "mrtLineMapping": {
+      "columns": [
+        "station_name",
+        "line_code",
+        "line_name",
+        "station_type",
+        "is_interchange",
+        "color_hex",
+        "tier"
+      ],
+      "hasOpeningDate": false,
+      "path": "data/manual/mrt_lines_mapping.csv",
+      "rows": 217
+    },
+    "mrtStationsBronze": {
+      "columns": [
+        "name",
+        "lat",
+        "lon",
+        "line"
+      ],
+      "hasOpeningDate": false,
+      "path": "data/pipeline/01_bronze/raw_mrt_stations.parquet",
+      "rows": 188
+    },
+    "mrtStationsGeojson": {
+      "features": 257,
+      "hasOpeningDate": false,
+      "ingestionFallback": {
+        "line": 517,
+        "path": "src/egg_n_bacon_housing/components/ingestion/geojson.py",
+        "quote": "\"(MRTStations.geojson / mrt_stations.json, 2019 vintage) with %d \""
+      },
+      "path": "data/manual/csv/datagov/MRTStations.geojson",
+      "propertyKeys": [
+        "FMEL_UPD_D",
+        "GRND_LEVEL",
+        "INC_CRC",
+        "NAME",
+        "OBJECTID",
+        "RAIL_TYPE",
+        "SHAPE.AREA",
+        "SHAPE.LEN"
+      ],
+      "railTypes": {
+        "LRT": 45,
+        "MRT": 212
+      },
+      "singleVintage": true,
+      "updateStampColumn": "FMEL_UPD_D",
+      "updateStampFeatureCounts": {
+        "20191209180316": 257
+      },
+      "updateStampNormalisedDate": "2019-12-09",
+      "updateStampValues": [
+        "20191209180316"
+      ]
+    },
+    "schoolDirectory": {
+      "hasOpeningDate": false,
+      "path": "data/pipeline/01_bronze/raw_school_directory.parquet",
+      "rows": 337
+    },
+    "schoolTierFiles": {
+      "primary": {
+        "path": "data/manual/csv/school_tiers_primary.csv",
+        "rows": 29
+      },
+      "secondary": {
+        "path": "data/manual/csv/school_tiers_secondary.csv",
+        "rows": 25
+      },
+      "weights": {
+        "path": "data/manual/csv/school_quality_weights.csv",
+        "rows": 13
+      }
+    },
+    "shippedFeatureLineage": {
+      "consumerCode": {
+        "line": 210,
+        "path": "src/egg_n_bacon_housing/components/features.py",
+        "quote": "mrt_stations=raw_mrt_stations if not raw_mrt_stations.empty else None,"
+      },
+      "input": {
+        "distinctStationNames": 185,
+        "path": "data/pipeline/01_bronze/raw_mrt_stations.parquet",
+        "rows": 188,
+        "rowsWithLrtLine": 30,
+        "sha256": "48a473626e2a22d24ffde28974e3fd206f807a45bad05223acfd94513da1fdc2"
+      },
+      "seedInput": {
+        "distinctNames": 219,
+        "features": 257,
+        "loaderKeptRows": 249,
+        "path": "data/manual/csv/datagov/MRTStations.geojson"
+      },
+      "verification": {
+        "bronzeMatches": 20000,
+        "bronzeMaxAbsDeviationMetres": 0.0,
+        "conclusion": "the shipped dist_to_nearest_mrt column reproduces exactly from the sha-pinned bronze station frame and does not reproduce from the 2019 seed; the seed-vs-bronze discrepancy is therefore meaningful and resolves in favour of the bronze frame",
+        "method": "nearest-station distance recomputed as the minimum haversine_metres over every station in the candidate frame — the same nearest-station distance utils/proximity.py computes via its BallTree(metric='haversine') k=1 selection",
+        "sampleSeed": 20261115,
+        "sampleSize": 20000,
+        "seedMatches": 0,
+        "seedMaxAbsDeviationMetres": 1702.6481,
+        "shippedRowsWithCoordinatesAndDistance": 1224710,
+        "toleranceMetres": 1e-06
+      }
+    }
+  },
+  "inputs": {
+    "data/pipeline/01_bronze/raw_condo_transactions.parquet": {
+      "rows": 245655,
+      "sha256": "9971d1a8e440655d68fff3bf6f065a04fc706938d54a0ff86e04db346d852e34"
+    },
+    "data/pipeline/01_bronze/raw_hdb_resale.parquet": {
+      "rows": 990860,
+      "sha256": "b3380a29f9b85a688ac479b28ce924ebdb6d1da836645dd9b82c128e9c40978b"
+    },
+    "data/pipeline/01_bronze/raw_mrt_stations.parquet": {
+      "rows": 188,
+      "sha256": "48a473626e2a22d24ffde28974e3fd206f807a45bad05223acfd94513da1fdc2"
+    },
+    "data/pipeline/01_bronze/raw_school_directory.parquet": {
+      "rows": 337,
+      "sha256": "ff32b98035fb7821fe09836fdd8fe132ddc9d2400316969c1e882728e46d53c0"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    }
+  },
+  "legacyClaims": [
+    {
+      "basis": "windowCoverage: HDB covers 2017-01 to the measured cutoff; condo source coverage starts 2021-01, so the condo side of the period 2017-2020 is source-missing in this checkout",
+      "claim": "Data Period: 2017-2026 (10 years of transaction data)",
+      "disposition": "re-cut"
+    },
+    {
+      "basis": "featureVintages: no source carries station opening dates, and the only dated station snapshot is the single 2019-12-09 legacy seed (mrtStationsGeojson.updateStampNormalisedDate) — one vintage, nothing per window — and no dated school series exists, so a period-correct distance-to-MRT feature cannot be constructed; the condo side also has no pre-COVID transactions in this checkout",
+      "claim": "MRT premiums declined during COVID for both HDB and condo segments, with only partial post-COVID recovery",
+      "disposition": "withdrawn-not-measurable"
+    },
+    {
+      "basis": "featureVintages: school tiers, weights and directory are a single current snapshot with no historical vintage, so premium stability across periods is not measurable",
+      "claim": "School proximity premiums remained stable through COVID",
+      "disposition": "withdrawn-not-measurable"
+    },
+    {
+      "basis": "the retired clustering model is not reproduced; planningAreaBaseline provides the descriptive per-area-year medians only",
+      "claim": "K-means clustering of area-level appreciation time series identifies 5 distinct temporal patterns, with most areas in moderate growth clusters",
+      "disposition": "withdrawn-not-measurable"
+    },
+    {
+      "basis": "cluster membership and cluster means come from the retired model; the descriptive distribution of area-year median-price change is measured instead (planningAreaBaseline.changeOverall)",
+      "claim": "High Growth 31-51% / Moderate Growth 9-17% / ~10% / ~14% / Low Growth 7-18% (cluster table)",
+      "disposition": "withdrawn-not-measurable"
+    },
+    {
+      "basis": "planningAreaBaseline.changeOverall.shareWithin7to17Pct: the share of computed area-year median-price changes inside 7-17%, on this pack's floor; not comparable to the legacy model's appreciation figures",
+      "claim": "Most areas cluster in the 7-17% YoY range during strong years",
+      "disposition": "re-measured-descriptively"
+    },
+    {
+      "basis": "trajectory classification is a model output of the retired analysis; per-area medians are measured (planningAreaBaseline.perAreaYear) but no trajectory is classified; whether each named example area even appears in the study window is measured in planningAreaBaseline.exampleAreasPresent",
+      "claim": "Accelerating: Jurong East, Punggol, Bidadari / Steady: Bishan, Ang Mo Kio, Queenstown / Decelerating: Some mature CCR areas / Volatile: Luxury segments",
+      "disposition": "withdrawn-not-measurable"
+    },
+    {
+      "basis": "causal claim; no identification strategy is reproduced. The condo pre-COVID window is absent from this checkout, so the comparison has no like-for-like baseline",
+      "claim": "Recovery asymmetry: HDB recovered faster post-COVID than luxury condos, likely due to demand inelasticity",
+      "disposition": "withdrawn-not-measurable"
+    },
+    {
+      "basis": "this pack's descriptive floor is planningAreaBaseline.floor = 30 transactions in both years; the legacy regression floors are not reproduced",
+      "claim": "minimum 300 transactions for HDB areas and 100 for condo areas (regression floor)",
+      "disposition": "superseded"
+    }
+  ],
+  "planningAreaBaseline": {
+    "areas": [
+      "ANG MO KIO",
+      "BEDOK",
+      "BISHAN",
+      "BUKIT BATOK",
+      "BUKIT MERAH",
+      "BUKIT PANJANG",
+      "BUKIT TIMAH",
+      "CHANGI",
+      "CHOA CHU KANG",
+      "CLEMENTI",
+      "DOWNTOWN CORE",
+      "GEYLANG",
+      "HOUGANG",
+      "JURONG EAST",
+      "JURONG WEST",
+      "KALLANG",
+      "MARINE PARADE",
+      "NOVENA",
+      "OUTRAM",
+      "PASIR RIS",
+      "PUNGGOL",
+      "QUEENSTOWN",
+      "ROCHOR",
+      "SEMBAWANG",
+      "SENGKANG",
+      "SERANGOON",
+      "SUNGEI KADUT",
+      "TAMPINES",
+      "TANGLIN",
+      "TOA PAYOH",
+      "WOODLANDS",
+      "YISHUN"
+    ],
+    "byYear": {
+      "2017": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 20509
+      },
+      "2018": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 21561
+      },
+      "2019": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 22186
+      },
+      "2020": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 23333
+      },
+      "2021": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 29087
+      },
+      "2022": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 26720
+      },
+      "2023": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 25754
+      },
+      "2024": {
+        "areasBelowFloor": 3,
+        "areasNoSalesObserved": 1,
+        "areasObserved": 31,
+        "transactions": 27832
+      },
+      "2025": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "transactions": 25084
+      },
+      "2026": {
+        "areasBelowFloor": 4,
+        "areasNoSalesObserved": 0,
+        "areasObserved": 32,
+        "note2026PartialYear": "2026 covers 2026-01 → the measured cutoff only (a terminal partial year at this cutoff) and is excluded from year-over-year change",
+        "transactions": 21801
+      }
+    },
+    "changeByYear": {
+      "2018": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 4,
+          "prior-year-below-floor": 4
+        },
+        "pctChange": {
+          "max": 7.58,
+          "min": -5.71,
+          "p10": -3.89,
+          "p50": -0.82,
+          "p90": 5.7
+        }
+      },
+      "2019": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 4,
+          "prior-year-below-floor": 4
+        },
+        "pctChange": {
+          "max": 18.33,
+          "min": -20.82,
+          "p10": -7.91,
+          "p50": -2.06,
+          "p90": 6.45
+        }
+      },
+      "2020": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 4,
+          "prior-year-below-floor": 4
+        },
+        "pctChange": {
+          "max": 21.1,
+          "min": -11.37,
+          "p10": -5.59,
+          "p50": 4.09,
+          "p90": 9.92
+        }
+      },
+      "2021": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 4,
+          "prior-year-below-floor": 4
+        },
+        "pctChange": {
+          "max": 51.86,
+          "min": 2.86,
+          "p10": 7.02,
+          "p50": 12.22,
+          "p90": 25.98
+        }
+      },
+      "2022": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 4,
+          "prior-year-below-floor": 4
+        },
+        "pctChange": {
+          "max": 25.09,
+          "min": -8.65,
+          "p10": -2.96,
+          "p50": 7.31,
+          "p90": 13.62
+        }
+      },
+      "2023": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 4,
+          "prior-year-below-floor": 4
+        },
+        "pctChange": {
+          "max": 19.87,
+          "min": -32.08,
+          "p10": -4.91,
+          "p50": 5.52,
+          "p90": 10.4
+        }
+      },
+      "2024": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 3,
+          "no-sales-observed": 1,
+          "prior-year-below-floor": 4
+        },
+        "pctChange": {
+          "max": 25.13,
+          "min": -4.99,
+          "p10": -0.93,
+          "p50": 7.94,
+          "p90": 13.97
+        }
+      },
+      "2025": {
+        "changesComputed": 28,
+        "changesExcluded": 4,
+        "excludedReasonCounts": {
+          "current-year-below-floor": 4,
+          "prior-year-below-floor": 3,
+          "prior-year-no-sales-observed": 1
+        },
+        "pctChange": {
+          "max": 29.28,
+          "min": -0.44,
+          "p10": 3.2,
+          "p50": 5.7,
+          "p90": 14.29
+        }
+      }
+    },
+    "changeOverall": {
+      "bandNote": "the descriptive share of computed area-year median-price changes inside the legacy text's quoted 7-17% band; a median-price change is not the legacy model's year-over-year appreciation figure and this share does not reproduce or validate clustering",
+      "computableAreaYears": 224,
+      "pctChange": {
+        "max": 51.86,
+        "min": -32.08,
+        "p10": -4.41,
+        "p50": 5.17,
+        "p90": 14.52
+      },
+      "shareWithin7to17Pct": 0.308
+    },
+    "changeYears": [
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "cutoffUpperBound": "2026-10",
+    "cutoffUpperBoundMeaning": "every area-year aggregate ends at the last complete month; the terminal partial month is excluded from all counts and medians",
+    "exampleAreasPresent": {
+      "ANG MO KIO": true,
+      "BIDADARI": false,
+      "BISHAN": true,
+      "JURONG EAST": true,
+      "PUNGGOL": true,
+      "QUEENSTOWN": true
+    },
+    "excludedChanges": [
+      {
+        "area": "CHANGI",
+        "currentTransactions": 7,
+        "priorTransactions": 6,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2018
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 3,
+        "priorTransactions": 9,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2018
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": 1,
+        "priorTransactions": 3,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2018
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 3,
+        "priorTransactions": 3,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2018
+      },
+      {
+        "area": "CHANGI",
+        "currentTransactions": 5,
+        "priorTransactions": 7,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2019
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 5,
+        "priorTransactions": 3,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2019
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": 1,
+        "priorTransactions": 1,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2019
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 4,
+        "priorTransactions": 3,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2019
+      },
+      {
+        "area": "CHANGI",
+        "currentTransactions": 4,
+        "priorTransactions": 5,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2020
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 3,
+        "priorTransactions": 5,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2020
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": 2,
+        "priorTransactions": 1,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2020
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 1,
+        "priorTransactions": 4,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2020
+      },
+      {
+        "area": "CHANGI",
+        "currentTransactions": 6,
+        "priorTransactions": 4,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2021
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 8,
+        "priorTransactions": 3,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2021
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": 7,
+        "priorTransactions": 2,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2021
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 6,
+        "priorTransactions": 1,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2021
+      },
+      {
+        "area": "CHANGI",
+        "currentTransactions": 2,
+        "priorTransactions": 6,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2022
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 5,
+        "priorTransactions": 8,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2022
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": 2,
+        "priorTransactions": 7,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2022
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 8,
+        "priorTransactions": 6,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2022
+      },
+      {
+        "area": "CHANGI",
+        "currentTransactions": 5,
+        "priorTransactions": 2,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2023
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 6,
+        "priorTransactions": 5,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2023
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": 6,
+        "priorTransactions": 2,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2023
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 2,
+        "priorTransactions": 8,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2023
+      },
+      {
+        "area": "CHANGI",
+        "currentTransactions": 4,
+        "priorTransactions": 5,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2024
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 3,
+        "priorTransactions": 6,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2024
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": null,
+        "priorTransactions": 6,
+        "reasons": [
+          "no-sales-observed",
+          "prior-year-below-floor"
+        ],
+        "year": 2024
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 6,
+        "priorTransactions": 2,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2024
+      },
+      {
+        "area": "CHANGI",
+        "currentTransactions": 8,
+        "priorTransactions": 4,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2025
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "currentTransactions": 6,
+        "priorTransactions": 3,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2025
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "currentTransactions": 2,
+        "priorTransactions": null,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-no-sales-observed"
+        ],
+        "year": 2025
+      },
+      {
+        "area": "TANGLIN",
+        "currentTransactions": 2,
+        "priorTransactions": 6,
+        "reasons": [
+          "current-year-below-floor",
+          "prior-year-below-floor"
+        ],
+        "year": 2025
+      }
+    ],
+    "floor": 30,
+    "floorMeaning": "a year-over-year change is computed only when BOTH years have at least 30 transactions in that planning area; this pack's floor is a descriptive-display rule, not the legacy regression minimum (300 HDB / 100 condo), which is not reproduced",
+    "perAreaYear": [
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 360000,
+        "transactions": 942,
+        "year": 2017
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 346000,
+        "transactions": 1014,
+        "year": 2018
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 325000,
+        "transactions": 954,
+        "year": 2019
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 350000,
+        "transactions": 997,
+        "year": 2020
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 375000,
+        "transactions": 1055,
+        "year": 2021
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 425000,
+        "transactions": 1026,
+        "year": 2022
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 448888,
+        "transactions": 1045,
+        "year": 2023
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 470000,
+        "transactions": 1060,
+        "year": 2024
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 499000,
+        "transactions": 971,
+        "year": 2025
+      },
+      {
+        "area": "ANG MO KIO",
+        "medianPriceNominal": 518444,
+        "transactions": 758,
+        "year": 2026
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 385000,
+        "transactions": 1149,
+        "year": 2017
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 370000,
+        "transactions": 1139,
+        "year": 2018
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 350000,
+        "transactions": 1149,
+        "year": 2019
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 360000,
+        "transactions": 1315,
+        "year": 2020
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 432500,
+        "transactions": 1619,
+        "year": 2021
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 440278,
+        "transactions": 1366,
+        "year": 2022
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 468000,
+        "transactions": 1312,
+        "year": 2023
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 503000,
+        "transactions": 1319,
+        "year": 2024
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 548000,
+        "transactions": 1208,
+        "year": 2025
+      },
+      {
+        "area": "BEDOK",
+        "medianPriceNominal": 560000,
+        "transactions": 1173,
+        "year": 2026
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 645694,
+        "transactions": 446,
+        "year": 2017
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 628888,
+        "transactions": 405,
+        "year": 2018
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 608000,
+        "transactions": 417,
+        "year": 2019
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 600000,
+        "transactions": 448,
+        "year": 2020
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 640444,
+        "transactions": 570,
+        "year": 2021
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 700000,
+        "transactions": 465,
+        "year": 2022
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 750000,
+        "transactions": 380,
+        "year": 2023
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 809444,
+        "transactions": 382,
+        "year": 2024
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 849000,
+        "transactions": 376,
+        "year": 2025
+      },
+      {
+        "area": "BISHAN",
+        "medianPriceNominal": 850000,
+        "transactions": 378,
+        "year": 2026
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 350000,
+        "transactions": 736,
+        "year": 2017
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 360000,
+        "transactions": 841,
+        "year": 2018
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 350500,
+        "transactions": 874,
+        "year": 2019
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 370000,
+        "transactions": 686,
+        "year": 2020
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 428000,
+        "transactions": 752,
+        "year": 2021
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 489444,
+        "transactions": 886,
+        "year": 2022
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 575000,
+        "transactions": 1410,
+        "year": 2023
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 575000,
+        "transactions": 1732,
+        "year": 2024
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 600000,
+        "transactions": 1304,
+        "year": 2025
+      },
+      {
+        "area": "BUKIT BATOK",
+        "medianPriceNominal": 613000,
+        "transactions": 1221,
+        "year": 2026
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 579000,
+        "transactions": 829,
+        "year": 2017
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 590000,
+        "transactions": 874,
+        "year": 2018
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 581444,
+        "transactions": 880,
+        "year": 2019
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 580000,
+        "transactions": 795,
+        "year": 2020
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 630000,
+        "transactions": 1173,
+        "year": 2021
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 660000,
+        "transactions": 963,
+        "year": 2022
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 726500,
+        "transactions": 984,
+        "year": 2023
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 760000,
+        "transactions": 1040,
+        "year": 2024
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 785000,
+        "transactions": 933,
+        "year": 2025
+      },
+      {
+        "area": "BUKIT MERAH",
+        "medianPriceNominal": 797500,
+        "transactions": 808,
+        "year": 2026
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 420000,
+        "transactions": 694,
+        "year": 2017
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 412000,
+        "transactions": 753,
+        "year": 2018
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 417000,
+        "transactions": 937,
+        "year": 2019
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 435000,
+        "transactions": 1143,
+        "year": 2020
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 475000,
+        "transactions": 1055,
+        "year": 2021
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 502778,
+        "transactions": 954,
+        "year": 2022
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 530000,
+        "transactions": 759,
+        "year": 2023
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 585000,
+        "transactions": 866,
+        "year": 2024
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 610000,
+        "transactions": 798,
+        "year": 2025
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "medianPriceNominal": 615000,
+        "transactions": 685,
+        "year": 2026
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 660000,
+        "transactions": 70,
+        "year": 2017
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 710000,
+        "transactions": 63,
+        "year": 2018
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 699500,
+        "transactions": 72,
+        "year": 2019
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 620000,
+        "transactions": 57,
+        "year": 2020
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 655000,
+        "transactions": 95,
+        "year": 2021
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 621500,
+        "transactions": 64,
+        "year": 2022
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 745000,
+        "transactions": 59,
+        "year": 2023
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 844000,
+        "transactions": 68,
+        "year": 2024
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 945500,
+        "transactions": 60,
+        "year": 2025
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "medianPriceNominal": 959000,
+        "transactions": 54,
+        "year": 2026
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 300000,
+        "transactions": 6,
+        "year": 2017
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 295000,
+        "transactions": 7,
+        "year": 2018
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 270000,
+        "transactions": 5,
+        "year": 2019
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 278500,
+        "transactions": 4,
+        "year": 2020
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 296500,
+        "transactions": 6,
+        "year": 2021
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 331592,
+        "transactions": 2,
+        "year": 2022
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 343800,
+        "transactions": 5,
+        "year": 2023
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 355000,
+        "transactions": 4,
+        "year": 2024
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 360000,
+        "transactions": 8,
+        "year": 2025
+      },
+      {
+        "area": "CHANGI",
+        "medianPriceNominal": 339500,
+        "transactions": 4,
+        "year": 2026
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 370000,
+        "transactions": 804,
+        "year": 2017
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 365000,
+        "transactions": 933,
+        "year": 2018
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 365000,
+        "transactions": 923,
+        "year": 2019
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 402000,
+        "transactions": 942,
+        "year": 2020
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 477500,
+        "transactions": 1570,
+        "year": 2021
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 520000,
+        "transactions": 1404,
+        "year": 2022
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 528000,
+        "transactions": 1137,
+        "year": 2023
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 557500,
+        "transactions": 1284,
+        "year": 2024
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 592888,
+        "transactions": 1027,
+        "year": 2025
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "medianPriceNominal": 588000,
+        "transactions": 901,
+        "year": 2026
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 420000,
+        "transactions": 438,
+        "year": 2017
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 415000,
+        "transactions": 486,
+        "year": 2018
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 383000,
+        "transactions": 479,
+        "year": 2019
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 438000,
+        "transactions": 583,
+        "year": 2020
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 531500,
+        "transactions": 672,
+        "year": 2021
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 536500,
+        "transactions": 610,
+        "year": 2022
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 550000,
+        "transactions": 565,
+        "year": 2023
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 525000,
+        "transactions": 554,
+        "year": 2024
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 590000,
+        "transactions": 551,
+        "year": 2025
+      },
+      {
+        "area": "CLEMENTI",
+        "medianPriceNominal": 622500,
+        "transactions": 434,
+        "year": 2026
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 640000,
+        "transactions": 9,
+        "year": 2017
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 653000,
+        "transactions": 3,
+        "year": 2018
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 650000,
+        "transactions": 5,
+        "year": 2019
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 680000,
+        "transactions": 3,
+        "year": 2020
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 649000,
+        "transactions": 8,
+        "year": 2021
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 640000,
+        "transactions": 5,
+        "year": 2022
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 729000,
+        "transactions": 6,
+        "year": 2023
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 765000,
+        "transactions": 3,
+        "year": 2024
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 812500,
+        "transactions": 6,
+        "year": 2025
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "medianPriceNominal": 766500,
+        "transactions": 4,
+        "year": 2026
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 370000,
+        "transactions": 566,
+        "year": 2017
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 394000,
+        "transactions": 450,
+        "year": 2018
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 370000,
+        "transactions": 534,
+        "year": 2019
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 390000,
+        "transactions": 570,
+        "year": 2020
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 489000,
+        "transactions": 741,
+        "year": 2021
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 448000,
+        "transactions": 680,
+        "year": 2022
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 498000,
+        "transactions": 633,
+        "year": 2023
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 572500,
+        "transactions": 662,
+        "year": 2024
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 570000,
+        "transactions": 638,
+        "year": 2025
+      },
+      {
+        "area": "GEYLANG",
+        "medianPriceNominal": 608000,
+        "transactions": 556,
+        "year": 2026
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 402800,
+        "transactions": 977,
+        "year": 2017
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 409500,
+        "transactions": 1034,
+        "year": 2018
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 391500,
+        "transactions": 966,
+        "year": 2019
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 430000,
+        "transactions": 1250,
+        "year": 2020
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 478000,
+        "transactions": 1469,
+        "year": 2021
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 510000,
+        "transactions": 1326,
+        "year": 2022
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 540000,
+        "transactions": 1408,
+        "year": 2023
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 595000,
+        "transactions": 1465,
+        "year": 2024
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 615000,
+        "transactions": 1311,
+        "year": 2025
+      },
+      {
+        "area": "HOUGANG",
+        "medianPriceNominal": 632000,
+        "transactions": 1084,
+        "year": 2026
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 389000,
+        "transactions": 457,
+        "year": 2017
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 410000,
+        "transactions": 489,
+        "year": 2018
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 380000,
+        "transactions": 500,
+        "year": 2019
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 395000,
+        "transactions": 502,
+        "year": 2020
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 450000,
+        "transactions": 565,
+        "year": 2021
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 450000,
+        "transactions": 485,
+        "year": 2022
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 470000,
+        "transactions": 467,
+        "year": 2023
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 488000,
+        "transactions": 566,
+        "year": 2024
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 524000,
+        "transactions": 482,
+        "year": 2025
+      },
+      {
+        "area": "JURONG EAST",
+        "medianPriceNominal": 525500,
+        "transactions": 424,
+        "year": 2026
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 390000,
+        "transactions": 1620,
+        "year": 2017
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 380000,
+        "transactions": 1622,
+        "year": 2018
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 382000,
+        "transactions": 1703,
+        "year": 2019
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 406000,
+        "transactions": 1439,
+        "year": 2020
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 455000,
+        "transactions": 1500,
+        "year": 2021
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 500000,
+        "transactions": 1655,
+        "year": 2022
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 510000,
+        "transactions": 1561,
+        "year": 2023
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 528000,
+        "transactions": 1961,
+        "year": 2024
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 568000,
+        "transactions": 1591,
+        "year": 2025
+      },
+      {
+        "area": "JURONG WEST",
+        "medianPriceNominal": 560000,
+        "transactions": 1297,
+        "year": 2026
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 498444,
+        "transactions": 512,
+        "year": 2017
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 470000,
+        "transactions": 457,
+        "year": 2018
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 495000,
+        "transactions": 474,
+        "year": 2019
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 480000,
+        "transactions": 407,
+        "year": 2020
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 550000,
+        "transactions": 617,
+        "year": 2021
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 688000,
+        "transactions": 683,
+        "year": 2022
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 638500,
+        "transactions": 543,
+        "year": 2023
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 738000,
+        "transactions": 693,
+        "year": 2024
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 761500,
+        "transactions": 588,
+        "year": 2025
+      },
+      {
+        "area": "KALLANG",
+        "medianPriceNominal": 778800,
+        "transactions": 505,
+        "year": 2026
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 469000,
+        "transactions": 124,
+        "year": 2017
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 489000,
+        "transactions": 140,
+        "year": 2018
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 448000,
+        "transactions": 125,
+        "year": 2019
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 434844,
+        "transactions": 132,
+        "year": 2020
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 488444,
+        "transactions": 204,
+        "year": 2021
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 489000,
+        "transactions": 194,
+        "year": 2022
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 529444,
+        "transactions": 144,
+        "year": 2023
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 503000,
+        "transactions": 142,
+        "year": 2024
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 539750,
+        "transactions": 162,
+        "year": 2025
+      },
+      {
+        "area": "MARINE PARADE",
+        "medianPriceNominal": 550000,
+        "transactions": 111,
+        "year": 2026
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 375000,
+        "transactions": 166,
+        "year": 2017
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 376500,
+        "transactions": 162,
+        "year": 2018
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 445500,
+        "transactions": 120,
+        "year": 2019
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 420000,
+        "transactions": 153,
+        "year": 2020
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 535000,
+        "transactions": 248,
+        "year": 2021
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 585500,
+        "transactions": 232,
+        "year": 2022
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 550000,
+        "transactions": 224,
+        "year": 2023
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 591500,
+        "transactions": 230,
+        "year": 2024
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 630000,
+        "transactions": 201,
+        "year": 2025
+      },
+      {
+        "area": "NOVENA",
+        "medianPriceNominal": 680000,
+        "transactions": 152,
+        "year": 2026
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 805000,
+        "transactions": 121,
+        "year": 2017
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 852500,
+        "transactions": 112,
+        "year": 2018
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 675000,
+        "transactions": 110,
+        "year": 2019
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 631500,
+        "transactions": 94,
+        "year": 2020
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 959000,
+        "transactions": 172,
+        "year": 2021
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 876044,
+        "transactions": 130,
+        "year": 2022
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 595000,
+        "transactions": 111,
+        "year": 2023
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 625000,
+        "transactions": 107,
+        "year": 2024
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 808000,
+        "transactions": 105,
+        "year": 2025
+      },
+      {
+        "area": "OUTRAM",
+        "medianPriceNominal": 1180000,
+        "transactions": 91,
+        "year": 2026
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 465000,
+        "transactions": 620,
+        "year": 2017
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 472500,
+        "transactions": 618,
+        "year": 2018
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 476500,
+        "transactions": 580,
+        "year": 2019
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 500000,
+        "transactions": 845,
+        "year": 2020
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 555000,
+        "transactions": 945,
+        "year": 2021
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 609000,
+        "transactions": 816,
+        "year": 2022
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 638000,
+        "transactions": 618,
+        "year": 2023
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 690000,
+        "transactions": 679,
+        "year": 2024
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 715000,
+        "transactions": 626,
+        "year": 2025
+      },
+      {
+        "area": "PASIR RIS",
+        "medianPriceNominal": 730000,
+        "transactions": 655,
+        "year": 2026
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 440000,
+        "transactions": 1316,
+        "year": 2017
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 438000,
+        "transactions": 1537,
+        "year": 2018
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 452000,
+        "transactions": 1160,
+        "year": 2019
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 460000,
+        "transactions": 1748,
+        "year": 2020
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 500000,
+        "transactions": 2742,
+        "year": 2021
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 550000,
+        "transactions": 2005,
+        "year": 2022
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 590000,
+        "transactions": 2084,
+        "year": 2023
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 640000,
+        "transactions": 2027,
+        "year": 2024
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 672000,
+        "transactions": 1538,
+        "year": 2025
+      },
+      {
+        "area": "PUNGGOL",
+        "medianPriceNominal": 675000,
+        "transactions": 1477,
+        "year": 2026
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 570000,
+        "transactions": 518,
+        "year": 2017
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 561500,
+        "transactions": 622,
+        "year": 2018
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 545000,
+        "transactions": 563,
+        "year": 2019
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 660000,
+        "transactions": 648,
+        "year": 2020
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 709444,
+        "transactions": 976,
+        "year": 2021
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 695000,
+        "transactions": 753,
+        "year": 2022
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 710044,
+        "transactions": 592,
+        "year": 2023
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 688000,
+        "transactions": 687,
+        "year": 2024
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 816888,
+        "transactions": 599,
+        "year": 2025
+      },
+      {
+        "area": "QUEENSTOWN",
+        "medianPriceNominal": 860000,
+        "transactions": 698,
+        "year": 2026
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 427000,
+        "transactions": 55,
+        "year": 2017
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 412500,
+        "transactions": 62,
+        "year": 2018
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 450000,
+        "transactions": 72,
+        "year": 2019
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 455000,
+        "transactions": 73,
+        "year": 2020
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 468000,
+        "transactions": 83,
+        "year": 2021
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 495000,
+        "transactions": 79,
+        "year": 2022
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 494000,
+        "transactions": 79,
+        "year": 2023
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 560888,
+        "transactions": 69,
+        "year": 2024
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 572500,
+        "transactions": 62,
+        "year": 2025
+      },
+      {
+        "area": "ROCHOR",
+        "medianPriceNominal": 615000,
+        "transactions": 65,
+        "year": 2026
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 380000,
+        "transactions": 525,
+        "year": 2017
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 368000,
+        "transactions": 586,
+        "year": 2018
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 365000,
+        "transactions": 643,
+        "year": 2019
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 395500,
+        "transactions": 450,
+        "year": 2020
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 455000,
+        "transactions": 513,
+        "year": 2021
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 520000,
+        "transactions": 790,
+        "year": 2022
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 550000,
+        "transactions": 1010,
+        "year": 2023
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 575294,
+        "transactions": 1010,
+        "year": 2024
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 620000,
+        "transactions": 1191,
+        "year": 2025
+      },
+      {
+        "area": "SEMBAWANG",
+        "medianPriceNominal": 598000,
+        "transactions": 733,
+        "year": 2026
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 428000,
+        "transactions": 1534,
+        "year": 2017
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 420000,
+        "transactions": 1641,
+        "year": 2018
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 429000,
+        "transactions": 1795,
+        "year": 2019
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 441000,
+        "transactions": 2159,
+        "year": 2020
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 485000,
+        "transactions": 2751,
+        "year": 2021
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 541888,
+        "transactions": 2299,
+        "year": 2022
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 578888,
+        "transactions": 1953,
+        "year": 2023
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 628000,
+        "transactions": 2118,
+        "year": 2024
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 660888,
+        "transactions": 1905,
+        "year": 2025
+      },
+      {
+        "area": "SENGKANG",
+        "medianPriceNominal": 658000,
+        "transactions": 1530,
+        "year": 2026
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 463000,
+        "transactions": 433,
+        "year": 2017
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 476000,
+        "transactions": 461,
+        "year": 2018
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 460000,
+        "transactions": 438,
+        "year": 2019
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 458500,
+        "transactions": 418,
+        "year": 2020
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 514000,
+        "transactions": 521,
+        "year": 2021
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 535000,
+        "transactions": 428,
+        "year": 2022
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 583000,
+        "transactions": 425,
+        "year": 2023
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 637500,
+        "transactions": 442,
+        "year": 2024
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 669444,
+        "transactions": 404,
+        "year": 2025
+      },
+      {
+        "area": "SERANGOON",
+        "medianPriceNominal": 670400,
+        "transactions": 336,
+        "year": 2026
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 335000,
+        "transactions": 3,
+        "year": 2017
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 265000,
+        "transactions": 1,
+        "year": 2018
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 310000,
+        "transactions": 1,
+        "year": 2019
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 256500,
+        "transactions": 2,
+        "year": 2020
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 300000,
+        "transactions": 7,
+        "year": 2021
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 323500,
+        "transactions": 2,
+        "year": 2022
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 310500,
+        "transactions": 6,
+        "year": 2023
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 359000,
+        "transactions": 2,
+        "year": 2025
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "medianPriceNominal": 348888,
+        "transactions": 1,
+        "year": 2026
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 455000,
+        "transactions": 1299,
+        "year": 2017
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 460000,
+        "transactions": 1368,
+        "year": 2018
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 440000,
+        "transactions": 1413,
+        "year": 2019
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 462000,
+        "transactions": 1700,
+        "year": 2020
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 505000,
+        "transactions": 2149,
+        "year": 2021
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 545000,
+        "transactions": 1704,
+        "year": 2022
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 580000,
+        "transactions": 1634,
+        "year": 2023
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 648000,
+        "transactions": 1961,
+        "year": 2024
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 710000,
+        "transactions": 1921,
+        "year": 2025
+      },
+      {
+        "area": "TAMPINES",
+        "medianPriceNominal": 724000,
+        "transactions": 1822,
+        "year": 2026
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 620000,
+        "transactions": 3,
+        "year": 2017
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 875000,
+        "transactions": 3,
+        "year": 2018
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 700000,
+        "transactions": 4,
+        "year": 2019
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 850000,
+        "transactions": 1,
+        "year": 2020
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 526500,
+        "transactions": 6,
+        "year": 2021
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 570000,
+        "transactions": 8,
+        "year": 2022
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 770000,
+        "transactions": 2,
+        "year": 2023
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 634000,
+        "transactions": 6,
+        "year": 2024
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 810000,
+        "transactions": 2,
+        "year": 2025
+      },
+      {
+        "area": "TANGLIN",
+        "medianPriceNominal": 1030000,
+        "transactions": 4,
+        "year": 2026
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 445000,
+        "transactions": 749,
+        "year": 2017
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 470000,
+        "transactions": 729,
+        "year": 2018
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 380000,
+        "transactions": 706,
+        "year": 2019
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 359000,
+        "transactions": 671,
+        "year": 2020
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 468000,
+        "transactions": 916,
+        "year": 2021
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 510000,
+        "transactions": 846,
+        "year": 2022
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 487500,
+        "transactions": 720,
+        "year": 2023
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 610000,
+        "transactions": 808,
+        "year": 2024
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 785000,
+        "transactions": 1063,
+        "year": 2025
+      },
+      {
+        "area": "TOA PAYOH",
+        "medianPriceNominal": 815888,
+        "transactions": 871,
+        "year": 2026
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 370000,
+        "transactions": 1531,
+        "year": 2017
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 350000,
+        "transactions": 1663,
+        "year": 2018
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 360000,
+        "transactions": 1794,
+        "year": 2019
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 385000,
+        "transactions": 1406,
+        "year": 2020
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 448000,
+        "transactions": 1637,
+        "year": 2021
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 502400,
+        "transactions": 1870,
+        "year": 2022
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 528000,
+        "transactions": 2056,
+        "year": 2023
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 570000,
+        "transactions": 2042,
+        "year": 2024
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 590000,
+        "transactions": 1748,
+        "year": 2025
+      },
+      {
+        "area": "WOODLANDS",
+        "medianPriceNominal": 586888,
+        "transactions": 1599,
+        "year": 2026
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 330000,
+        "transactions": 1257,
+        "year": 2017
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 325000,
+        "transactions": 1286,
+        "year": 2018
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 355000,
+        "transactions": 1790,
+        "year": 2019
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 370000,
+        "transactions": 1692,
+        "year": 2020
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 430000,
+        "transactions": 1750,
+        "year": 2021
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 458000,
+        "transactions": 1990,
+        "year": 2022
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 480000,
+        "transactions": 1822,
+        "year": 2023
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 530000,
+        "transactions": 1845,
+        "year": 2024
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 547000,
+        "transactions": 1703,
+        "year": 2025
+      },
+      {
+        "area": "YISHUN",
+        "medianPriceNominal": 535000,
+        "transactions": 1370,
+        "year": 2026
+      }
+    ],
+    "propertyType": "hdb",
+    "years": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ]
+  },
+  "sampleComposition": {
+    "byPropertyType": {
+      "condo": {
+        "covid": {
+          "distinctPlanningAreas": 41,
+          "ecShare": 0.1263,
+          "ecTransactions": 10538,
+          "medianFloorAreaSqm": 94.0,
+          "subtypeMix": {
+            "Apartment": 0.4077,
+            "Condominium": 0.4362,
+            "Detached": 0.0033,
+            "Executive Condominium": 0.1263,
+            "Semi-detached": 0.0082,
+            "Strata Detached": 0.0003,
+            "Strata Semi-detached": 0.0015,
+            "Strata Terrace": 0.0034,
+            "Terrace": 0.0132
+          },
+          "transactions": 83412
+        },
+        "post-covid": {
+          "distinctPlanningAreas": 43,
+          "ecShare": 0.1226,
+          "ecTransactions": 19847,
+          "medianFloorAreaSqm": 92.0,
+          "subtypeMix": {
+            "Apartment": 0.4177,
+            "Condominium": 0.4135,
+            "Detached": 0.0047,
+            "Executive Condominium": 0.1226,
+            "Semi-detached": 0.0122,
+            "Strata Detached": 0.0004,
+            "Strata Semi-detached": 0.0014,
+            "Strata Terrace": 0.0043,
+            "Terrace": 0.0232
+          },
+          "transactions": 161822
+        },
+        "pre-covid": {
+          "distinctPlanningAreas": 0,
+          "ecShare": null,
+          "ecTransactions": 0,
+          "medianFloorAreaSqm": null,
+          "subtypeMix": {},
+          "transactions": 0
+        }
+      },
+      "hdb": {
+        "covid": {
+          "distinctTowns": 26,
+          "flatTypeMix": {
+            "1-ROOM": 0.0004,
+            "2-ROOM": 0.0159,
+            "3-ROOM": 0.2273,
+            "4-ROOM": 0.4208,
+            "5-ROOM": 0.259,
+            "EXECUTIVE": 0.0761,
+            "MULTI-GENERATION": 0.0005
+          },
+          "medianFloorAreaSqm": 93.0,
+          "medianRemainingLeaseYears": 75.0,
+          "transactions": 79140
+        },
+        "post-covid": {
+          "distinctTowns": 26,
+          "flatTypeMix": {
+            "1-ROOM": 0.0003,
+            "2-ROOM": 0.0295,
+            "3-ROOM": 0.2415,
+            "4-ROOM": 0.435,
+            "5-ROOM": 0.2319,
+            "EXECUTIVE": 0.0615,
+            "MULTI-GENERATION": 0.0002
+          },
+          "medianFloorAreaSqm": 93.0,
+          "medianRemainingLeaseYears": 72.0,
+          "transactions": 100471
+        },
+        "pre-covid": {
+          "distinctTowns": 26,
+          "flatTypeMix": {
+            "1-ROOM": 0.0005,
+            "2-ROOM": 0.0143,
+            "3-ROOM": 0.2426,
+            "4-ROOM": 0.414,
+            "5-ROOM": 0.2477,
+            "EXECUTIVE": 0.0804,
+            "MULTI-GENERATION": 0.0005
+          },
+          "medianFloorAreaSqm": 95.0,
+          "medianRemainingLeaseYears": 74.0,
+          "transactions": 64256
+        }
+      }
+    }
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS03 temporal-evolution evidence: comparable period windows, sample composition, feature vintages, descriptive price baselines",
+  "windowMedians": {
+    "byPropertyType": {
+      "condo": {
+        "covid": {
+          "cpiExcludedShare": 0.0,
+          "medianPriceNominal": {
+            "ci95High": 1490000,
+            "ci95Low": 1480000,
+            "median": 1485000,
+            "n": 83412
+          },
+          "medianPriceReal": {
+            "ci95High": 1696786,
+            "ci95Low": 1682440,
+            "median": 1691748,
+            "n": 83412
+          },
+          "medianPsfNominal": {
+            "median": 1549.62,
+            "n": 83412
+          },
+          "transactions": 83412
+        },
+        "post-covid": {
+          "cpiExcludedShare": 0.0157,
+          "medianPriceNominal": {
+            "ci95High": 1780000,
+            "ci95Low": 1770000,
+            "median": 1775089,
+            "n": 161822
+          },
+          "medianPriceReal": {
+            "ci95High": 1834525,
+            "ci95Low": 1822975,
+            "median": 1829180,
+            "n": 159276
+          },
+          "medianPsfNominal": {
+            "median": 1888.26,
+            "n": 161822
+          },
+          "transactions": 161822
+        },
+        "pre-covid": {
+          "cpiExcludedShare": null,
+          "medianPriceNominal": {
+            "ci95High": null,
+            "ci95Low": null,
+            "median": null,
+            "n": 0
+          },
+          "medianPriceReal": {
+            "ci95High": null,
+            "ci95Low": null,
+            "median": null,
+            "n": 0
+          },
+          "medianPsfNominal": {
+            "median": null,
+            "n": 0
+          },
+          "transactions": 0
+        }
+      },
+      "hdb": {
+        "covid": {
+          "cpiExcludedShare": 0.0,
+          "medianPriceNominal": {
+            "ci95High": 480000,
+            "ci95Low": 480000,
+            "median": 480000,
+            "n": 79140
+          },
+          "medianPriceReal": {
+            "ci95High": 560016,
+            "ci95Low": 557484,
+            "median": 559167,
+            "n": 79140
+          },
+          "medianPsfNominal": {
+            "median": 459.41,
+            "n": 79140
+          },
+          "transactions": 79140
+        },
+        "post-covid": {
+          "cpiExcludedShare": 0.0216,
+          "medianPriceNominal": {
+            "ci95High": 600000,
+            "ci95Low": 595000,
+            "median": 598000,
+            "n": 100471
+          },
+          "medianPriceReal": {
+            "ci95High": 618672,
+            "ci95Low": 616388,
+            "median": 617324,
+            "n": 98298
+          },
+          "medianPsfNominal": {
+            "median": 575.11,
+            "n": 100471
+          },
+          "transactions": 100471
+        },
+        "pre-covid": {
+          "cpiExcludedShare": 0.0,
+          "medianPriceNominal": {
+            "ci95High": 408000,
+            "ci95Low": 405000,
+            "median": 408000,
+            "n": 64256
+          },
+          "medianPriceReal": {
+            "ci95High": 494335,
+            "ci95Low": 491766,
+            "median": 492968,
+            "n": 64256
+          },
+          "medianPsfNominal": {
+            "median": 392.26,
+            "n": 64256
+          },
+          "transactions": 64256
+        }
+      }
+    },
+    "cpiBaseMonth": "2026-09"
+  },
+  "windows": {
+    "byPropertyType": {
+      "condo": {
+        "sourceCoverage": {
+          "firstMonth": "2021-01",
+          "lastMonth": "2026-11"
+        },
+        "windows": {
+          "covid": {
+            "endMonth": "2022-12",
+            "firstTransactionMonth": "2021-01",
+            "lastTransactionMonth": "2022-12",
+            "legacyLabel": "COVID (2020-2022)",
+            "monthsExpected": 36,
+            "monthsObserved": 24,
+            "noSalesObservedMonths": 0,
+            "sourceMissingMonths": 12,
+            "startMonth": "2020-01",
+            "transactions": 83412
+          },
+          "post-covid": {
+            "endMonth": "2026-10",
+            "firstTransactionMonth": "2023-01",
+            "lastTransactionMonth": "2026-10",
+            "legacyLabel": "Post-COVID (2023-2026)",
+            "monthsExpected": 46,
+            "monthsObserved": 46,
+            "noSalesObservedMonths": 0,
+            "sourceMissingMonths": 0,
+            "startMonth": "2023-01",
+            "transactions": 161822
+          },
+          "pre-covid": {
+            "endMonth": "2019-12",
+            "firstTransactionMonth": null,
+            "lastTransactionMonth": null,
+            "legacyLabel": "Pre-COVID (2017-2019)",
+            "monthsExpected": 36,
+            "monthsObserved": 0,
+            "noSalesObservedMonths": 0,
+            "sourceMissingMonths": 36,
+            "startMonth": "2017-01",
+            "transactions": 0
+          }
+        }
+      },
+      "hdb": {
+        "sourceCoverage": {
+          "firstMonth": "1990-01",
+          "lastMonth": "2026-11"
+        },
+        "windows": {
+          "covid": {
+            "endMonth": "2022-12",
+            "firstTransactionMonth": "2020-01",
+            "lastTransactionMonth": "2022-12",
+            "legacyLabel": "COVID (2020-2022)",
+            "monthsExpected": 36,
+            "monthsObserved": 36,
+            "noSalesObservedMonths": 0,
+            "sourceMissingMonths": 0,
+            "startMonth": "2020-01",
+            "transactions": 79140
+          },
+          "post-covid": {
+            "endMonth": "2026-10",
+            "firstTransactionMonth": "2023-01",
+            "lastTransactionMonth": "2026-10",
+            "legacyLabel": "Post-COVID (2023-2026)",
+            "monthsExpected": 46,
+            "monthsObserved": 46,
+            "noSalesObservedMonths": 0,
+            "sourceMissingMonths": 0,
+            "startMonth": "2023-01",
+            "transactions": 100471
+          },
+          "pre-covid": {
+            "endMonth": "2019-12",
+            "firstTransactionMonth": "2017-01",
+            "lastTransactionMonth": "2019-12",
+            "legacyLabel": "Pre-COVID (2017-2019)",
+            "monthsExpected": 36,
+            "monthsObserved": 36,
+            "noSalesObservedMonths": 0,
+            "sourceMissingMonths": 0,
+            "startMonth": "2017-01",
+            "transactions": 64256
+          }
+        }
+      }
+    },
+    "monthlyTransactions": {
+      "condo": [
+        {
+          "month": "2017-01",
+          "transactions": 0
+        },
+        {
+          "month": "2017-02",
+          "transactions": 0
+        },
+        {
+          "month": "2017-03",
+          "transactions": 0
+        },
+        {
+          "month": "2017-04",
+          "transactions": 0
+        },
+        {
+          "month": "2017-05",
+          "transactions": 0
+        },
+        {
+          "month": "2017-06",
+          "transactions": 0
+        },
+        {
+          "month": "2017-07",
+          "transactions": 0
+        },
+        {
+          "month": "2017-08",
+          "transactions": 0
+        },
+        {
+          "month": "2017-09",
+          "transactions": 0
+        },
+        {
+          "month": "2017-10",
+          "transactions": 0
+        },
+        {
+          "month": "2017-11",
+          "transactions": 0
+        },
+        {
+          "month": "2017-12",
+          "transactions": 0
+        },
+        {
+          "month": "2018-01",
+          "transactions": 0
+        },
+        {
+          "month": "2018-02",
+          "transactions": 0
+        },
+        {
+          "month": "2018-03",
+          "transactions": 0
+        },
+        {
+          "month": "2018-04",
+          "transactions": 0
+        },
+        {
+          "month": "2018-05",
+          "transactions": 0
+        },
+        {
+          "month": "2018-06",
+          "transactions": 0
+        },
+        {
+          "month": "2018-07",
+          "transactions": 0
+        },
+        {
+          "month": "2018-08",
+          "transactions": 0
+        },
+        {
+          "month": "2018-09",
+          "transactions": 0
+        },
+        {
+          "month": "2018-10",
+          "transactions": 0
+        },
+        {
+          "month": "2018-11",
+          "transactions": 0
+        },
+        {
+          "month": "2018-12",
+          "transactions": 0
+        },
+        {
+          "month": "2019-01",
+          "transactions": 0
+        },
+        {
+          "month": "2019-02",
+          "transactions": 0
+        },
+        {
+          "month": "2019-03",
+          "transactions": 0
+        },
+        {
+          "month": "2019-04",
+          "transactions": 0
+        },
+        {
+          "month": "2019-05",
+          "transactions": 0
+        },
+        {
+          "month": "2019-06",
+          "transactions": 0
+        },
+        {
+          "month": "2019-07",
+          "transactions": 0
+        },
+        {
+          "month": "2019-08",
+          "transactions": 0
+        },
+        {
+          "month": "2019-09",
+          "transactions": 0
+        },
+        {
+          "month": "2019-10",
+          "transactions": 0
+        },
+        {
+          "month": "2019-11",
+          "transactions": 0
+        },
+        {
+          "month": "2019-12",
+          "transactions": 0
+        },
+        {
+          "month": "2020-01",
+          "transactions": 0
+        },
+        {
+          "month": "2020-02",
+          "transactions": 0
+        },
+        {
+          "month": "2020-03",
+          "transactions": 0
+        },
+        {
+          "month": "2020-04",
+          "transactions": 0
+        },
+        {
+          "month": "2020-05",
+          "transactions": 0
+        },
+        {
+          "month": "2020-06",
+          "transactions": 0
+        },
+        {
+          "month": "2020-07",
+          "transactions": 0
+        },
+        {
+          "month": "2020-08",
+          "transactions": 0
+        },
+        {
+          "month": "2020-09",
+          "transactions": 0
+        },
+        {
+          "month": "2020-10",
+          "transactions": 0
+        },
+        {
+          "month": "2020-11",
+          "transactions": 0
+        },
+        {
+          "month": "2020-12",
+          "transactions": 0
+        },
+        {
+          "month": "2021-01",
+          "transactions": 2137
+        },
+        {
+          "month": "2021-02",
+          "transactions": 2015
+        },
+        {
+          "month": "2021-03",
+          "transactions": 2944
+        },
+        {
+          "month": "2021-04",
+          "transactions": 3090
+        },
+        {
+          "month": "2021-05",
+          "transactions": 2778
+        },
+        {
+          "month": "2021-06",
+          "transactions": 2230
+        },
+        {
+          "month": "2021-07",
+          "transactions": 3186
+        },
+        {
+          "month": "2021-08",
+          "transactions": 2833
+        },
+        {
+          "month": "2021-09",
+          "transactions": 2802
+        },
+        {
+          "month": "2021-10",
+          "transactions": 2525
+        },
+        {
+          "month": "2021-11",
+          "transactions": 5503
+        },
+        {
+          "month": "2021-12",
+          "transactions": 4605
+        },
+        {
+          "month": "2022-01",
+          "transactions": 3625
+        },
+        {
+          "month": "2022-02",
+          "transactions": 3083
+        },
+        {
+          "month": "2022-03",
+          "transactions": 4205
+        },
+        {
+          "month": "2022-04",
+          "transactions": 4735
+        },
+        {
+          "month": "2022-05",
+          "transactions": 5550
+        },
+        {
+          "month": "2022-06",
+          "transactions": 3900
+        },
+        {
+          "month": "2022-07",
+          "transactions": 4158
+        },
+        {
+          "month": "2022-08",
+          "transactions": 3632
+        },
+        {
+          "month": "2022-09",
+          "transactions": 4639
+        },
+        {
+          "month": "2022-10",
+          "transactions": 3638
+        },
+        {
+          "month": "2022-11",
+          "transactions": 2876
+        },
+        {
+          "month": "2022-12",
+          "transactions": 2723
+        },
+        {
+          "month": "2023-01",
+          "transactions": 2320
+        },
+        {
+          "month": "2023-02",
+          "transactions": 2703
+        },
+        {
+          "month": "2023-03",
+          "transactions": 3867
+        },
+        {
+          "month": "2023-04",
+          "transactions": 3865
+        },
+        {
+          "month": "2023-05",
+          "transactions": 4588
+        },
+        {
+          "month": "2023-06",
+          "transactions": 2824
+        },
+        {
+          "month": "2023-07",
+          "transactions": 4759
+        },
+        {
+          "month": "2023-08",
+          "transactions": 3714
+        },
+        {
+          "month": "2023-09",
+          "transactions": 2738
+        },
+        {
+          "month": "2023-10",
+          "transactions": 2937
+        },
+        {
+          "month": "2023-11",
+          "transactions": 3849
+        },
+        {
+          "month": "2023-12",
+          "transactions": 2525
+        },
+        {
+          "month": "2024-01",
+          "transactions": 3181
+        },
+        {
+          "month": "2024-02",
+          "transactions": 2486
+        },
+        {
+          "month": "2024-03",
+          "transactions": 4027
+        },
+        {
+          "month": "2024-04",
+          "transactions": 3915
+        },
+        {
+          "month": "2024-05",
+          "transactions": 3735
+        },
+        {
+          "month": "2024-06",
+          "transactions": 3013
+        },
+        {
+          "month": "2024-07",
+          "transactions": 4060
+        },
+        {
+          "month": "2024-08",
+          "transactions": 3430
+        },
+        {
+          "month": "2024-09",
+          "transactions": 3608
+        },
+        {
+          "month": "2024-10",
+          "transactions": 4290
+        },
+        {
+          "month": "2024-11",
+          "transactions": 7536
+        },
+        {
+          "month": "2024-12",
+          "transactions": 3309
+        },
+        {
+          "month": "2025-01",
+          "transactions": 4167
+        },
+        {
+          "month": "2025-02",
+          "transactions": 4797
+        },
+        {
+          "month": "2025-03",
+          "transactions": 5590
+        },
+        {
+          "month": "2025-04",
+          "transactions": 4453
+        },
+        {
+          "month": "2025-05",
+          "transactions": 3250
+        },
+        {
+          "month": "2025-06",
+          "transactions": 3181
+        },
+        {
+          "month": "2025-07",
+          "transactions": 5025
+        },
+        {
+          "month": "2025-08",
+          "transactions": 6940
+        },
+        {
+          "month": "2025-09",
+          "transactions": 3402
+        },
+        {
+          "month": "2025-10",
+          "transactions": 7168
+        },
+        {
+          "month": "2025-11",
+          "transactions": 3086
+        },
+        {
+          "month": "2025-12",
+          "transactions": 2654
+        },
+        {
+          "month": "2026-01",
+          "transactions": 2159
+        },
+        {
+          "month": "2026-02",
+          "transactions": 1547
+        },
+        {
+          "month": "2026-03",
+          "transactions": 2777
+        },
+        {
+          "month": "2026-04",
+          "transactions": 2918
+        },
+        {
+          "month": "2026-05",
+          "transactions": 1887
+        },
+        {
+          "month": "2026-06",
+          "transactions": 1647
+        },
+        {
+          "month": "2026-07",
+          "transactions": 2107
+        },
+        {
+          "month": "2026-08",
+          "transactions": 1550
+        },
+        {
+          "month": "2026-09",
+          "transactions": 1692
+        },
+        {
+          "month": "2026-10",
+          "transactions": 2546
+        }
+      ],
+      "hdb": [
+        {
+          "month": "2017-01",
+          "transactions": 1185
+        },
+        {
+          "month": "2017-02",
+          "transactions": 1085
+        },
+        {
+          "month": "2017-03",
+          "transactions": 1903
+        },
+        {
+          "month": "2017-04",
+          "transactions": 1839
+        },
+        {
+          "month": "2017-05",
+          "transactions": 1980
+        },
+        {
+          "month": "2017-06",
+          "transactions": 1747
+        },
+        {
+          "month": "2017-07",
+          "transactions": 1780
+        },
+        {
+          "month": "2017-08",
+          "transactions": 1960
+        },
+        {
+          "month": "2017-09",
+          "transactions": 1680
+        },
+        {
+          "month": "2017-10",
+          "transactions": 1785
+        },
+        {
+          "month": "2017-11",
+          "transactions": 1980
+        },
+        {
+          "month": "2017-12",
+          "transactions": 1585
+        },
+        {
+          "month": "2018-01",
+          "transactions": 1072
+        },
+        {
+          "month": "2018-02",
+          "transactions": 1183
+        },
+        {
+          "month": "2018-03",
+          "transactions": 1881
+        },
+        {
+          "month": "2018-04",
+          "transactions": 1838
+        },
+        {
+          "month": "2018-05",
+          "transactions": 1740
+        },
+        {
+          "month": "2018-06",
+          "transactions": 1975
+        },
+        {
+          "month": "2018-07",
+          "transactions": 2539
+        },
+        {
+          "month": "2018-08",
+          "transactions": 2067
+        },
+        {
+          "month": "2018-09",
+          "transactions": 1985
+        },
+        {
+          "month": "2018-10",
+          "transactions": 1992
+        },
+        {
+          "month": "2018-11",
+          "transactions": 1866
+        },
+        {
+          "month": "2018-12",
+          "transactions": 1423
+        },
+        {
+          "month": "2019-01",
+          "transactions": 1550
+        },
+        {
+          "month": "2019-02",
+          "transactions": 1304
+        },
+        {
+          "month": "2019-03",
+          "transactions": 1653
+        },
+        {
+          "month": "2019-04",
+          "transactions": 1915
+        },
+        {
+          "month": "2019-05",
+          "transactions": 2070
+        },
+        {
+          "month": "2019-06",
+          "transactions": 1884
+        },
+        {
+          "month": "2019-07",
+          "transactions": 2114
+        },
+        {
+          "month": "2019-08",
+          "transactions": 1902
+        },
+        {
+          "month": "2019-09",
+          "transactions": 1830
+        },
+        {
+          "month": "2019-10",
+          "transactions": 2206
+        },
+        {
+          "month": "2019-11",
+          "transactions": 1910
+        },
+        {
+          "month": "2019-12",
+          "transactions": 1848
+        },
+        {
+          "month": "2020-01",
+          "transactions": 1911
+        },
+        {
+          "month": "2020-02",
+          "transactions": 1661
+        },
+        {
+          "month": "2020-03",
+          "transactions": 1937
+        },
+        {
+          "month": "2020-04",
+          "transactions": 424
+        },
+        {
+          "month": "2020-05",
+          "transactions": 363
+        },
+        {
+          "month": "2020-06",
+          "transactions": 2438
+        },
+        {
+          "month": "2020-07",
+          "transactions": 2456
+        },
+        {
+          "month": "2020-08",
+          "transactions": 2426
+        },
+        {
+          "month": "2020-09",
+          "transactions": 2482
+        },
+        {
+          "month": "2020-10",
+          "transactions": 2427
+        },
+        {
+          "month": "2020-11",
+          "transactions": 2322
+        },
+        {
+          "month": "2020-12",
+          "transactions": 2486
+        },
+        {
+          "month": "2021-01",
+          "transactions": 2491
+        },
+        {
+          "month": "2021-02",
+          "transactions": 2160
+        },
+        {
+          "month": "2021-03",
+          "transactions": 2443
+        },
+        {
+          "month": "2021-04",
+          "transactions": 2333
+        },
+        {
+          "month": "2021-05",
+          "transactions": 1957
+        },
+        {
+          "month": "2021-06",
+          "transactions": 2302
+        },
+        {
+          "month": "2021-07",
+          "transactions": 2659
+        },
+        {
+          "month": "2021-08",
+          "transactions": 2739
+        },
+        {
+          "month": "2021-09",
+          "transactions": 2516
+        },
+        {
+          "month": "2021-10",
+          "transactions": 2499
+        },
+        {
+          "month": "2021-11",
+          "transactions": 2566
+        },
+        {
+          "month": "2021-12",
+          "transactions": 2422
+        },
+        {
+          "month": "2022-01",
+          "transactions": 2442
+        },
+        {
+          "month": "2022-02",
+          "transactions": 1895
+        },
+        {
+          "month": "2022-03",
+          "transactions": 2262
+        },
+        {
+          "month": "2022-04",
+          "transactions": 2262
+        },
+        {
+          "month": "2022-05",
+          "transactions": 2154
+        },
+        {
+          "month": "2022-06",
+          "transactions": 2135
+        },
+        {
+          "month": "2022-07",
+          "transactions": 2361
+        },
+        {
+          "month": "2022-08",
+          "transactions": 2309
+        },
+        {
+          "month": "2022-09",
+          "transactions": 2578
+        },
+        {
+          "month": "2022-10",
+          "transactions": 1958
+        },
+        {
+          "month": "2022-11",
+          "transactions": 2130
+        },
+        {
+          "month": "2022-12",
+          "transactions": 2234
+        },
+        {
+          "month": "2023-01",
+          "transactions": 2551
+        },
+        {
+          "month": "2023-02",
+          "transactions": 1837
+        },
+        {
+          "month": "2023-03",
+          "transactions": 2277
+        },
+        {
+          "month": "2023-04",
+          "transactions": 2177
+        },
+        {
+          "month": "2023-05",
+          "transactions": 2245
+        },
+        {
+          "month": "2023-06",
+          "transactions": 1853
+        },
+        {
+          "month": "2023-07",
+          "transactions": 2052
+        },
+        {
+          "month": "2023-08",
+          "transactions": 2467
+        },
+        {
+          "month": "2023-09",
+          "transactions": 1974
+        },
+        {
+          "month": "2023-10",
+          "transactions": 2189
+        },
+        {
+          "month": "2023-11",
+          "transactions": 2128
+        },
+        {
+          "month": "2023-12",
+          "transactions": 2004
+        },
+        {
+          "month": "2024-01",
+          "transactions": 2621
+        },
+        {
+          "month": "2024-02",
+          "transactions": 2123
+        },
+        {
+          "month": "2024-03",
+          "transactions": 2046
+        },
+        {
+          "month": "2024-04",
+          "transactions": 2370
+        },
+        {
+          "month": "2024-05",
+          "transactions": 2490
+        },
+        {
+          "month": "2024-06",
+          "transactions": 2171
+        },
+        {
+          "month": "2024-07",
+          "transactions": 3036
+        },
+        {
+          "month": "2024-08",
+          "transactions": 2591
+        },
+        {
+          "month": "2024-09",
+          "transactions": 2204
+        },
+        {
+          "month": "2024-10",
+          "transactions": 2139
+        },
+        {
+          "month": "2024-11",
+          "transactions": 1929
+        },
+        {
+          "month": "2024-12",
+          "transactions": 2112
+        },
+        {
+          "month": "2025-01",
+          "transactions": 2313
+        },
+        {
+          "month": "2025-02",
+          "transactions": 2091
+        },
+        {
+          "month": "2025-03",
+          "transactions": 1899
+        },
+        {
+          "month": "2025-04",
+          "transactions": 2297
+        },
+        {
+          "month": "2025-05",
+          "transactions": 2266
+        },
+        {
+          "month": "2025-06",
+          "transactions": 2260
+        },
+        {
+          "month": "2025-07",
+          "transactions": 2562
+        },
+        {
+          "month": "2025-08",
+          "transactions": 2202
+        },
+        {
+          "month": "2025-09",
+          "transactions": 2174
+        },
+        {
+          "month": "2025-10",
+          "transactions": 1338
+        },
+        {
+          "month": "2025-11",
+          "transactions": 1658
+        },
+        {
+          "month": "2025-12",
+          "transactions": 2024
+        },
+        {
+          "month": "2026-01",
+          "transactions": 2338
+        },
+        {
+          "month": "2026-02",
+          "transactions": 1661
+        },
+        {
+          "month": "2026-03",
+          "transactions": 2042
+        },
+        {
+          "month": "2026-04",
+          "transactions": 1933
+        },
+        {
+          "month": "2026-05",
+          "transactions": 2126
+        },
+        {
+          "month": "2026-06",
+          "transactions": 2124
+        },
+        {
+          "month": "2026-07",
+          "transactions": 2647
+        },
+        {
+          "month": "2026-08",
+          "transactions": 2518
+        },
+        {
+          "month": "2026-09",
+          "transactions": 2239
+        },
+        {
+          "month": "2026-10",
+          "transactions": 2173
+        }
+      ]
+    }
+  }
+}

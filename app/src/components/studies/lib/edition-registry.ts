@@ -234,6 +234,56 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     ],
     note: "RS02 gross-proxy definition, coverage and denominators. Replaces the 2026-03-31 text: per-flat-type bands, the yield-vs-appreciation claim, the league table, the affordability ratio and the downside-floor claim are withdrawn.",
   },
+  {
+    seriesSlug: "temporal-evolution",
+    editionId: "temporal-evolution-2026-11-15",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/temporal-evolution/2026-11-15/temporal-evolution.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-15",
+    editionSha256:
+      "d95beefc8386291ffa60c94db6c0d9a5b9f9b289e52cf9c6a74c5517d4b02b8d",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-15",
+        artifactSha256:
+          "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012",
+        statement:
+          "I attest that the measured ledger matches this checkout and accept the cutoff and dispositions it implies: 2026-10 as the last complete month, the measured HDB window coverage and composition, the condo pre-COVID window as source-missing, the single 2019-12-09 station vintage with no vintage per window, and the resulting withdrawal of the premium-evolution, clustering, trajectory and recovery-asymmetry claims.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-15-rs03-temporal-evolution-evidence.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-15",
+        artifactSha256:
+          "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012",
+        statement:
+          "I reviewed the edition text against this ledger hash: quantitative claims, feature lineage, cutoff bounding, absence semantics and legacy quotations were verified, and the six defects from two prior failed reviews are closed. I do not attest to source completeness beyond this checkout, causal interpretation, other editions, or later edits.",
+        automated: true,
+        evidencePath: "docs/implementation/2026-11-15-rs03-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-15",
+        artifactSha256:
+          "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
+        automated: false,
+        evidencePath: "docs/implementation/2026-11-15-rs03-editions-signoff.md",
+      },
+    ],
+    note: "RS03 comparable-window re-cut: HDB window coverage, composition and like-window medians plus a descriptive per-area-year baseline (floor n = 30, aggregates bounded at the 2026-10 cutoff). Premium-evolution claims are withdrawn: the only dated MRT snapshot is a single 2019-12-09 legacy seed (no vintage per window), no dated school series exists, and the condo pre-COVID window is source-missing. Measured lineage: the shipped dist_to_nearest_mrt column reproduces exactly from the sha-pinned 188-row bronze station frame (20,000/20,000, zero deviation) and not from the seed (0/20,000).",
+  },
 ];
 
 export const ANALYTICS_EDITIONS: readonly AnalyticsEdition[] = [

@@ -38,11 +38,15 @@ repos:
     hooks:
       - id: prettier
         types_or: [javascript, jsx, ts, tsx, css, json, markdown]
-        # Frozen edition sources are signed bytes: the ledger pins their sha256
-        # (`editionSha256`) and the archive route re-hashes them at build time, so
-        # a formatter rewriting a table would invalidate an approval. The legacy
-        # tree is additionally pinned by the RF00 baseline manifest.
-        exclude: (bun\.lock|^docs/analytics/editions/)
+        # Two trees are hash-pinned and must never be reformatted:
+        # - docs/analytics/editions/ : signed text, pinned by `editionSha256` and
+        #   re-hashed by the archive route at build time (the legacy tree is also
+        #   pinned by the RF00 baseline manifest).
+        # - docs/implementation/artifacts/ : canonical evidence ledgers written by
+        #   scripts/tools/*.py with sort_keys + indent=2. Their sha256 IS the thing
+        #   signatures attach to (`artifactSha256`), and `--check` re-measures the
+        #   bytes, so a formatter touching them breaks a recorded approval.
+        exclude: (bun\.lock|^docs/analytics/editions/|^docs/implementation/artifacts/)
         additional_dependencies:
           - prettier@3.4.2
 

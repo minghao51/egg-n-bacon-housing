@@ -2,30 +2,30 @@
 
 - **Written:** 2026-11-14
 - **For:** the next agent (or the next session) picking up RF08 where RS01/RS02 left off
-- **Status of the programme:** 2 of 15 studies have a signed, approved edition (`data-sources`, `rental-yields`). **13 do not.** Nothing is deployed.
+- **Status of the programme:** 3 of 15 studies have a signed, approved edition (`data-sources`, `rental-yields`, `temporal-evolution`). **12 do not.** All three are deployed.
 - **Read first:** [`prompts/handoffs.md`](../../prompts/handoffs.md) §0 and §4a · [RF08 sign-off record](2026-11-14-rf08-editions-signoff.md) · [RF08 readiness](2026-11-13-rf08-readiness.md) · [research register](../plans/2026-11-12-reporting-refresh-research-register.md) · [decision ledger](../plans/2026-11-12-reporting-refresh-decisions.md) (D12)
 - **Paste-ready dispatch prompt:** [`prompts/rf08-study-worker-prompt.md`](../../prompts/rf08-study-worker-prompt.md) — one study per worker, waves, the reviewer prompt and the owner's gate
 - **Reference pair to copy:** [RS01](2026-11-14-rs01-source-inventory.md) + [`data-sources` edition](../../docs/analytics/editions/data-sources/2026-11-14/data-sources.md) and [RS02](2026-11-14-rs02-rental-yield-evidence.md) + [`rental-yields` edition](../../docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md)
 
 ## 1. The studies that remain
 
-| Series                      | Register row | Extra gate beyond D12                                                                                      |
-| --------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
-| `temporal-evolution`        | RS03         | Comparable periods and period-correct feature vintages                                                     |
-| `amenity-impact`            | RS04         | Refit with units and controls; no causal premium                                                           |
-| `facility-premiums`         | RS05         | Matched facilities; publish uncertainty                                                                    |
-| `lease-decay`               | RS06         | **Model/unit approval** — per-square-metre vs per-square-foot must be resolved first; charts stay withheld |
-| `mrt-impact`                | RS07         | **Model approval** — confirm metres/km and the response variable; no "15×" marketing                       |
-| `school-quality`            | RS08         | **Causal/RDD review** — tiers, bandwidth, assignment, multiple testing                                     |
-| `macro-sensitivity`         | RS09         | Real release vintages; fallback series excluded from claims                                                |
-| `market-segments`           | RS10         | **Segment/scoring owner approval** — recover scaling and cohort counts                                     |
-| `spatial-autocorrelation`   | RS11         | **Spatial method review** — weights, disconnected areas, permutations                                      |
-| `spatial-hotspots`          | RS12         | **Spatial method review** — keep Jan 2024–Jan 2025 as its own historical window                            |
-| `causal-inference-overview` | RS13         | **Causal identification approval** — estimand, pretrends, placebos                                         |
-| `price-forecasts`           | RS14         | **Forecast/model approval** — rolling-origin validation, leakage checks, score expired 2025 forecasts      |
-| `findings`                  | RS15         | **Last** — every quantitative sentence must link to a reviewed edition                                     |
+| Series                      | Register row | Extra gate beyond D12                                                                                                                                    |
+| --------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ~~`temporal-evolution`~~    | RS03         | **DONE 2026-11-15** — comparable periods and vintages resolved by measurement + withdrawal; see the [RS03 sign-off](2026-11-15-rs03-editions-signoff.md) |
+| `amenity-impact`            | RS04         | Refit with units and controls; no causal premium                                                                                                         |
+| `facility-premiums`         | RS05         | Matched facilities; publish uncertainty                                                                                                                  |
+| `lease-decay`               | RS06         | **Model/unit approval** — per-square-metre vs per-square-foot must be resolved first; charts stay withheld                                               |
+| `mrt-impact`                | RS07         | **Model approval** — confirm metres/km and the response variable; no "15×" marketing                                                                     |
+| `school-quality`            | RS08         | **Causal/RDD review** — tiers, bandwidth, assignment, multiple testing                                                                                   |
+| `macro-sensitivity`         | RS09         | Real release vintages; fallback series excluded from claims                                                                                              |
+| `market-segments`           | RS10         | **Segment/scoring owner approval** — recover scaling and cohort counts                                                                                   |
+| `spatial-autocorrelation`   | RS11         | **Spatial method review** — weights, disconnected areas, permutations                                                                                    |
+| `spatial-hotspots`          | RS12         | **Spatial method review** — keep Jan 2024–Jan 2025 as its own historical window                                                                          |
+| `causal-inference-overview` | RS13         | **Causal identification approval** — estimand, pretrends, placebos                                                                                       |
+| `price-forecasts`           | RS14         | **Forecast/model approval** — rolling-origin validation, leakage checks, score expired 2025 forecasts                                                    |
+| `findings`                  | RS15         | **Last** — every quantitative sentence must link to a reviewed edition                                                                                   |
 
-`amenity-impact`…`findings` are the 13. RS15 must not start until its dependencies exist.
+`amenity-impact`…`findings` are the remaining 12. RS15 must not start until its dependencies exist.
 
 ## 2. The gate sequence that is now proven (do not improvise a different one)
 

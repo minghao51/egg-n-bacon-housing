@@ -118,9 +118,11 @@ signature; you do not.
 - Register the new file **in the same change** or the build fails with "no identity in the edition
   registry": add one `REFRESHED_EDITIONS` entry with
   `evidenceStatus: "historical"`, `editorialStatus: "draft"`, `preparedBy:
-"repo-agent/session-{{EDITION_DATE}}"`, `assetsPinned: 0`, and **no `signoffs`, no
-  `editionSha256`** (both are forbidden on a non-approved edition, and a sign-off on a non-approved
-  edition is rejected by design).
+"repo-agent/session-{{EDITION_DATE}}"`, `assetsPinned: 0`, `editionSha256: null`, `signoffs: []`.
+  `editionSha256` is a **required property** whose value must be `null` until approval: a non-null
+  pin on a non-approved edition is rejected, and so is any sign-off, and omitting the property
+  entirely also fails `validateEditionRegistry`. Never put a hash there — that hash is the text pin
+  the owner's publication signature authorises.
 
 **Gate 4 — hand it to an independent reviewer.** Report the text sha256
 (`sha256sum docs/analytics/editions/{{SERIES}}/{{EDITION_DATE}}/{{SERIES}}.md`) and stop. Do not
@@ -170,7 +172,7 @@ STUDY: {{SERIES}} ({{REGISTER_ROW}})
 REACHED GATE: 1 | 3 | 4   (and why you stopped)
 LEDGER: <path> sha256=<64 hex>
 TEXT:   <path> sha256=<64 hex>
-REGISTRY: <evidenceStatus>/<editorialStatus> entry added (no signoffs, no editionSha256)
+REGISTRY: <evidenceStatus>/<editorialStatus> entry added (editionSha256: null, signoffs: [])
 MEASURED: <3-6bullet summary of what the ledger establishes, with n=>
 NOT ESTABLISHED: <what the pack explicitly refuses to claim>
 WITHDRAWN: <old figure -> new value or "not measured">
