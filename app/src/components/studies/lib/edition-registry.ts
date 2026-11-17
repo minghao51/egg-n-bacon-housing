@@ -284,6 +284,56 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     ],
     note: "RS03 comparable-window re-cut: HDB window coverage, composition and like-window medians plus a descriptive per-area-year baseline (floor n = 30, aggregates bounded at the 2026-10 cutoff). Premium-evolution claims are withdrawn: the only dated MRT snapshot is a single 2019-12-09 legacy seed (no vintage per window), no dated school series exists, and the condo pre-COVID window is source-missing. Measured lineage: the shipped dist_to_nearest_mrt column reproduces exactly from the sha-pinned 188-row bronze station frame (20,000/20,000, zero deviation) and not from the seed (0/20,000).",
   },
+  {
+    seriesSlug: "amenity-impact",
+    editionId: "amenity-impact-2026-11-16",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/amenity-impact/2026-11-16/amenity-impact.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-16",
+    editionSha256:
+      "3a5ef72d97af0c0004491567314e180bf3238bdaaff11457707a3138657b4507",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-16",
+        artifactSha256:
+          "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed",
+        statement:
+          "I attest that the measured ledger matches this checkout and accept the cutoff and dispositions it implies: 2026-10 as the last complete month, the measured snapshot join and its 27.46% not-established share (6.11% nearest a centre currently Under Construction), hawker completion dates as the only amenity vintage in the checkout, and the resulting withdrawal of the importance ranking, the COVID period-shift rows, the interaction/synergy claim, the 500 m localisation and every condo claim.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-16-rs04-amenity-impact-evidence.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-16",
+        artifactSha256:
+          "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed",
+        statement:
+          "I reviewed the edition text against this ledger hash: model arithmetic and coefficient transforms, cutoff and exclusion accounting, snapshot mismatch, feature lineage with its targeted leave-out ablation, absence semantics, legacy quotations and byte-reproducible re-measurement were verified, and the defects from four failed rounds are closed. I do not attest to the evidence pack's method beyond these checks, to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath: "docs/implementation/2026-11-16-rs04-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-16",
+        artifactSha256:
+          "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
+        automated: false,
+        evidencePath: "docs/implementation/2026-11-16-rs04-editions-signoff.md",
+      },
+    ],
+    note: "RS04 amenity re-measurement with units and controls: one recorded OLS specification of log HDB resale price on five jointly-fitted snapshot indicators (shipped distance <= 1000 m) with floor-area/lease/storey controls and flat-type/town/year fixed effects (n = 281,020, 2015-01 -> 2026-10, R2 = 0.9157, HC1 standard errors) supports conditional associations only (hawker within 1 km +2.79%, mall +5.59%, park +0.72%, supermarket -14.42% on a 0.42% thin, geographically concentrated contrast group with no effect interpretation, MRT +10.47%; amenity count +4.10% per additional type) and no premium, ranking or temporal claim. The specification is recorded, not pre-registered: no dated prior protocol exists, so specification search cannot be ruled out — a disclosed limitation. The legacy importance ranking, COVID-period importance shifts, interaction/synergy and condo claims are withdrawn: no amenity vintage per period exists (hawker completion dates are the only presence dates in any amenity layer and the shipped features never read them; parks/supermarkets/malls/childcare/preschools/MRT carry no presence dates — update stamps only, or none), and the condo source starts 2021-01. The snapshot join is measured, not assumed: distances reproduce exactly from the bronze snapshot for 9,789/9,789 unique locations, a targeted leave-out ablation locates the six Under-Construction centres' coordinates in the shipped distances (738/738 nearest-location breaks on exclusion, 9,051 unchanged; construction start dates not in checkout), and 27.46% of transactions' nearest hawker centre is not established as completed at the transaction date (40.4% in 2015-2019).",
+  },
 ];
 
 export const ANALYTICS_EDITIONS: readonly AnalyticsEdition[] = [

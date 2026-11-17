@@ -1,0 +1,1315 @@
+{
+  "amenityVintages": {
+    "childcare": {
+      "datedPresenceAvailable": false,
+      "rawGeojson": {
+        "features": 1925,
+        "fmelUpdD": {
+          "20211201093837": 1925
+        },
+        "path": "data/manual/csv/datagov/ChildCareServices.geojson"
+      }
+    },
+    "hawker": {
+      "bronze": {
+        "carriesDates": false,
+        "columns": [
+          "name",
+          "lat",
+          "lon",
+          "amenity_type"
+        ],
+        "namesEqualRawGeojson": true,
+        "note": "ingest keeps name/lat/lon/amenity_type only; the completion dates and STATUS the raw GeoJSON carries are dropped before the features are computed",
+        "path": "data/pipeline/01_bronze/external/HawkerCentresGEOJSON.parquet",
+        "rows": 129
+      },
+      "datedPresenceAvailable": true,
+      "datedPresenceUsedByShippedFeatures": false,
+      "rawGeojson": {
+        "dateColumns": {
+          "awardedDate": {
+            "nonEmpty": 22
+          },
+          "estOriginalCompletionDate": {
+            "exactDateRange": {
+              "max": "2024-10-08",
+              "min": "1967-07-19"
+            },
+            "kinds": {
+              "exact-date": 100,
+              "future-year": 6,
+              "pre-war": 1,
+              "unknown": 1,
+              "year": 21
+            },
+            "nonEmpty": 128
+          },
+          "fmelUpdD": {
+            "meaning": "dataset last-update stamp, not an opening or completion date",
+            "normalisedDates": [
+              "2024-12-11",
+              "2025-04-05",
+              "2025-08-07"
+            ],
+            "stamps": {
+              "20241211100036": 116,
+              "20250405100117": 4,
+              "20250807100106": 9
+            }
+          },
+          "hupCompletionDate": {
+            "exactDateRange": {
+              "max": "2014-03-31",
+              "min": "2002-01-01"
+            },
+            "meaning": "Hawker Upgrading Programme completion, not the centre's original completion",
+            "nonEmpty": 95
+          },
+          "implementationDate": {
+            "nonEmpty": 23
+          }
+        },
+        "features": 129,
+        "futureYearCompletionYears": [
+          "2027",
+          "2029",
+          "2030"
+        ],
+        "futureYearCompletions": [
+          "Bukit Timah Market",
+          "Chong Pang Hawker Centre & Market",
+          "Tampines North Hawker Centre",
+          "Tanglin Halt Hawker Centre & Market",
+          "Telok Blangah Hawker Centre & Market",
+          "Yew Tee Hawker Centre"
+        ],
+        "path": "data/manual/csv/datagov/HawkerCentresGEOJSON.geojson",
+        "propertyKeys": [
+          "ADDRESSBLOCKHOUSENUMBER",
+          "ADDRESSBUILDINGNAME",
+          "ADDRESSPOSTALCODE",
+          "ADDRESSSTREETNAME",
+          "ADDRESS_MYENV",
+          "AWARDED_DATE",
+          "DESCRIPTION",
+          "EST_ORIGINAL_COMPLETION_DATE",
+          "FMEL_UPD_D",
+          "HUP_COMPLETION_DATE",
+          "IMPLEMENTATION_DATE",
+          "INC_CRC",
+          "INFO_ON_CO_LOCATORS",
+          "LANDXADDRESSPOINT",
+          "LANDYADDRESSPOINT",
+          "NAME",
+          "NUMBER_OF_COOKED_FOOD_STALLS",
+          "OBJECTID",
+          "PHOTOURL",
+          "STATUS"
+        ],
+        "status": {
+          "Existing": 103,
+          "Existing (new)": 16,
+          "Existing (replacement)": 3,
+          "Interim Centre": 1,
+          "Under Construction": 6
+        }
+      }
+    },
+    "mall": {
+      "bronze": {
+        "carriesDates": false,
+        "columns": [
+          "name",
+          "lat",
+          "lon"
+        ],
+        "namesEmptyShare": 1.0,
+        "path": "data/pipeline/01_bronze/raw_mp25_malls.parquet",
+        "rows": 294
+      },
+      "datedPresenceAvailable": false,
+      "layerCompositionCitation": {
+        "line": 463,
+        "path": "src/egg_n_bacon_housing/components/ingestion/datagov.py",
+        "quote": "# existing and designated mall sites."
+      },
+      "rawLayerInCheckout": false,
+      "rawLayerNote": "the MP25 mall layer is fetched from data.gov.sg at ingestion time (use_cache=False) and is not stored in this checkout; only the bronze name/lat/lon frame exists here"
+    },
+    "mrt": {
+      "bronze": {
+        "columns": [
+          "name",
+          "lat",
+          "lon",
+          "line"
+        ],
+        "hasOpeningDate": false,
+        "path": "data/pipeline/01_bronze/raw_mrt_stations.parquet",
+        "rows": 188
+      },
+      "datedPresenceAvailable": false,
+      "seedGeojson": {
+        "note": "RS03 measured this seed and the shipped MRT lineage in full (rs03-temporal-evolution-evidence.json, featureVintages.mrtStationsGeojson and shippedFeatureLineage); this pack re-states only the headline: one 2019-12-09 vintage, no opening dates, and the shipped dist_to_nearest_mrt reproduces from the 188-row bronze frame, not the seed",
+        "path": "data/manual/csv/datagov/MRTStations.geojson",
+        "singleUpdateStamp": "2019-12-09"
+      }
+    },
+    "park": {
+      "bronze": {
+        "carriesDates": false,
+        "columns": [
+          "name",
+          "lat",
+          "lon",
+          "amenity_type"
+        ],
+        "path": "data/pipeline/01_bronze/external/NParksParksandNatureReserves.parquet",
+        "rows": 450
+      },
+      "datedPresenceAvailable": false,
+      "rawGeojson": {
+        "features": 450,
+        "fmelUpdD": {
+          "20260115000105": 1,
+          "20260115000106": 449
+        },
+        "hasGazettingOrOpeningDate": false,
+        "normalisedDates": [
+          "2026-01-15"
+        ],
+        "path": "data/manual/csv/datagov/NParksParksandNatureReserves.geojson",
+        "propertyKeys": [
+          "FMEL_UPD_D",
+          "INC_CRC",
+          "L_CODE",
+          "NAME",
+          "N_RESERVE",
+          "OBJECTID_1",
+          "SHAPE_1.AREA",
+          "SHAPE_1.LEN"
+        ]
+      }
+    },
+    "preschool": {
+      "datedPresenceAvailable": false,
+      "rawGeojson": {
+        "features": 2290,
+        "hasAnyDateColumn": false,
+        "path": "data/manual/csv/datagov/PreSchoolsLocation.geojson",
+        "propertyKeys": [
+          "Description",
+          "Name"
+        ]
+      }
+    },
+    "supermarket": {
+      "bronze": {
+        "carriesDates": false,
+        "columns": [
+          "name",
+          "lat",
+          "lon",
+          "amenity_type"
+        ],
+        "path": "data/pipeline/01_bronze/external/SupermarketsGEOJSON.parquet",
+        "rows": 526
+      },
+      "datedPresenceAvailable": false,
+      "rawGeojson": {
+        "features": 526,
+        "hasAnyDateColumn": false,
+        "path": "data/manual/csv/datagov/SupermarketsGEOJSON.geojson",
+        "propertyKeys": [
+          "Description",
+          "Name"
+        ]
+      }
+    }
+  },
+  "associations": {
+    "amenityCountModel": {
+      "distribution": {
+        "1": 2199,
+        "2": 27241,
+        "3": 97689,
+        "4": 136225,
+        "5": 17666
+      },
+      "fit": {
+        "k": 47,
+        "n": 281020,
+        "rSquared": 0.9114
+      },
+      "interpretation": "a conditional association of the count, NOT the legacy interaction claim: the legacy 'combined effect exceeds the sum of individual effects' is a SHAP-interaction output of the retired model and is withdrawn, not re-expressed here",
+      "logPoint": 0.040195,
+      "pctEffectExpMinus1": 4.1013,
+      "regressor": "amenity_count = number of the five indicators equal to 1 (integer 0-5), continuous in log points per additional amenity type within 1000 m; same controls and sample",
+      "robustSe": 0.000302,
+      "tStat": 133.19
+    },
+    "controlCoefficients": {
+      "floor_area_sqm": {
+        "logPoint": 0.00827274,
+        "perNaturalUnit": 10.0,
+        "robustSe": 4.667e-05
+      },
+      "lease_commence_date": {
+        "logPoint": 0.01056302,
+        "perNaturalUnit": 10.0,
+        "robustSe": 1.961e-05
+      },
+      "storey_mid": {
+        "logPoint": 0.00755385,
+        "perNaturalUnit": 10.0,
+        "robustSe": 3.759e-05
+      }
+    },
+    "estimator": {
+      "controls": [
+        "floor_area_sqm (sqm, continuous)",
+        "lease_commence_date (calendar year of lease commencement, continuous)",
+        "storey midpoint ((storey_min + storey_max)/2, storey number, continuous)",
+        "flat-type fixed effects (7 levels; baseline 1-ROOM)",
+        "town fixed effects (levels observed in the sample; baseline ANG MO KIO)",
+        "transaction-year fixed effects (baseline 2015; absorb nominal price drift and inflation)"
+      ],
+      "functionalForm": "log-linear; coefficients are log points, and pctEffectExpMinus1 = 100*(exp(beta)-1) is the approximate percentage difference the log point implies",
+      "indicators": "each amenity enters as dist <= 1000 m in the shipped snapshot feature; ALL five indicators are fitted jointly in ONE specification (no selection, no stepwise search)",
+      "internalScaling": "floor_area_sqm/10, (lease_commence_date-2000)/10 and storey midpoint/10 for numerical stability; the amenity indicators and dummies are unscaled, and the control coefficients below are back-transformed to natural units",
+      "name": "OLS (statsmodels OLS, HC1 heteroskedasticity-robust covariance, use_t=False)",
+      "notControlled": [
+        "flat_model (unit layout vintage; many levels, not in the legacy controls either)",
+        "unit condition, renovation, view and floor orientation",
+        "block-level attributes (point blocks, lift upgrading, car park)",
+        "buyer grants, ethnicity-quota constraints and financing conditions",
+        "walking-path distance, street-level connectivity, and amenity quality or operating status",
+        "town x year shocks (amenity indicators correlate with neighbourhood change inside a town)",
+        "the amenity snapshot's own vintage (see snapshotJoinMismatch)"
+      ],
+      "remainingLeaseEquivalence": "remaining lease at transaction = 99 - (transaction year - lease commencement year) for 99-year resale flats; given the transaction-year fixed effects, lease_commence_date and that remaining-lease measure are affine transforms of each other, so the two parameterisations are equivalent here",
+      "response": "log(resale price), resale price in nominal Singapore dollars (SGD)",
+      "standardErrors": "HC1 robust; no clustering (town and year enter as fixed effects, not clusters)"
+    },
+    "fit": {
+      "adjRSquared": 0.9157,
+      "dfResid": 280969,
+      "k": 51,
+      "n": 281020,
+      "rSquared": 0.9157
+    },
+    "fullCoefficientVector": [
+      {
+        "logPoint": 12.11813322,
+        "name": "const",
+        "robustSe": 0.00898171
+      },
+      {
+        "logPoint": 0.08272741,
+        "name": "floor_area_sqm_10",
+        "robustSe": 0.00046665
+      },
+      {
+        "logPoint": 0.1056302,
+        "name": "lease_commence_2000_10",
+        "robustSe": 0.00019606
+      },
+      {
+        "logPoint": 0.07553855,
+        "name": "storey_mid_10",
+        "robustSe": 0.00037588
+      },
+      {
+        "logPoint": 0.02749827,
+        "name": "hawker_1km",
+        "robustSe": 0.00047019
+      },
+      {
+        "logPoint": 0.05442216,
+        "name": "mall_1km",
+        "robustSe": 0.00106189
+      },
+      {
+        "logPoint": 0.00721513,
+        "name": "park_1km",
+        "robustSe": 0.00050632
+      },
+      {
+        "logPoint": -0.15573159,
+        "name": "supermarket_1km",
+        "robustSe": 0.00300011
+      },
+      {
+        "logPoint": 0.09958674,
+        "name": "mrt_1km",
+        "robustSe": 0.0006673
+      },
+      {
+        "logPoint": 0.02038162,
+        "name": "ft_2-ROOM",
+        "robustSe": 0.00826935
+      },
+      {
+        "logPoint": 0.1695488,
+        "name": "ft_3-ROOM",
+        "robustSe": 0.00829634
+      },
+      {
+        "logPoint": 0.23580391,
+        "name": "ft_4-ROOM",
+        "robustSe": 0.00863285
+      },
+      {
+        "logPoint": 0.24872605,
+        "name": "ft_5-ROOM",
+        "robustSe": 0.00903477
+      },
+      {
+        "logPoint": 0.30284174,
+        "name": "ft_EXECUTIVE",
+        "robustSe": 0.00961718
+      },
+      {
+        "logPoint": 0.3576298,
+        "name": "ft_MULTI-GENERATION",
+        "robustSe": 0.01303996
+      },
+      {
+        "logPoint": -0.04299096,
+        "name": "town_BEDOK",
+        "robustSe": 0.00120467
+      },
+      {
+        "logPoint": 0.16124834,
+        "name": "town_BISHAN",
+        "robustSe": 0.00182927
+      },
+      {
+        "logPoint": -0.16572284,
+        "name": "town_BUKIT BATOK",
+        "robustSe": 0.00124906
+      },
+      {
+        "logPoint": 0.13701527,
+        "name": "town_BUKIT MERAH",
+        "robustSe": 0.00157051
+      },
+      {
+        "logPoint": -0.26904369,
+        "name": "town_BUKIT PANJANG",
+        "robustSe": 0.0014644
+      },
+      {
+        "logPoint": 0.28952401,
+        "name": "town_BUKIT TIMAH",
+        "robustSe": 0.00392994
+      },
+      {
+        "logPoint": 0.19508709,
+        "name": "town_CENTRAL AREA",
+        "robustSe": 0.00334261
+      },
+      {
+        "logPoint": -0.33136367,
+        "name": "town_CHOA CHU KANG",
+        "robustSe": 0.00136011
+      },
+      {
+        "logPoint": 0.02703483,
+        "name": "town_CLEMENTI",
+        "robustSe": 0.002031
+      },
+      {
+        "logPoint": 0.00865398,
+        "name": "town_GEYLANG",
+        "robustSe": 0.00188128
+      },
+      {
+        "logPoint": -0.1320761,
+        "name": "town_HOUGANG",
+        "robustSe": 0.00128976
+      },
+      {
+        "logPoint": -0.15989472,
+        "name": "town_JURONG EAST",
+        "robustSe": 0.00163632
+      },
+      {
+        "logPoint": -0.24899309,
+        "name": "town_JURONG WEST",
+        "robustSe": 0.0012322
+      },
+      {
+        "logPoint": 0.077017,
+        "name": "town_KALLANG/WHAMPOA",
+        "robustSe": 0.00185901
+      },
+      {
+        "logPoint": 0.21614075,
+        "name": "town_MARINE PARADE",
+        "robustSe": 0.00331439
+      },
+      {
+        "logPoint": -0.14080582,
+        "name": "town_PASIR RIS",
+        "robustSe": 0.00138567
+      },
+      {
+        "logPoint": -0.23798469,
+        "name": "town_PUNGGOL",
+        "robustSe": 0.00128112
+      },
+      {
+        "logPoint": 0.15362833,
+        "name": "town_QUEENSTOWN",
+        "robustSe": 0.00180433
+      },
+      {
+        "logPoint": -0.33614178,
+        "name": "town_SEMBAWANG",
+        "robustSe": 0.00143702
+      },
+      {
+        "logPoint": -0.27062215,
+        "name": "town_SENGKANG",
+        "robustSe": 0.00126188
+      },
+      {
+        "logPoint": 0.05304601,
+        "name": "town_SERANGOON",
+        "robustSe": 0.00195744
+      },
+      {
+        "logPoint": -0.06753875,
+        "name": "town_TAMPINES",
+        "robustSe": 0.00119574
+      },
+      {
+        "logPoint": 0.0688934,
+        "name": "town_TOA PAYOH",
+        "robustSe": 0.001553
+      },
+      {
+        "logPoint": -0.34224451,
+        "name": "town_WOODLANDS",
+        "robustSe": 0.00131409
+      },
+      {
+        "logPoint": -0.19112453,
+        "name": "town_YISHUN",
+        "robustSe": 0.00117127
+      },
+      {
+        "logPoint": -0.00903717,
+        "name": "yr_2016",
+        "robustSe": 0.0010866
+      },
+      {
+        "logPoint": -0.02590116,
+        "name": "yr_2017",
+        "robustSe": 0.00108742
+      },
+      {
+        "logPoint": -0.04867372,
+        "name": "yr_2018",
+        "robustSe": 0.00109499
+      },
+      {
+        "logPoint": -0.0600702,
+        "name": "yr_2019",
+        "robustSe": 0.00109501
+      },
+      {
+        "logPoint": -0.03977313,
+        "name": "yr_2020",
+        "robustSe": 0.00107175
+      },
+      {
+        "logPoint": 0.06272517,
+        "name": "yr_2021",
+        "robustSe": 0.00099042
+      },
+      {
+        "logPoint": 0.16243221,
+        "name": "yr_2022",
+        "robustSe": 0.00097251
+      },
+      {
+        "logPoint": 0.21972463,
+        "name": "yr_2023",
+        "robustSe": 0.00096609
+      },
+      {
+        "logPoint": 0.28516105,
+        "name": "yr_2024",
+        "robustSe": 0.00097608
+      },
+      {
+        "logPoint": 0.3432272,
+        "name": "yr_2025",
+        "robustSe": 0.00098272
+      },
+      {
+        "logPoint": 0.33577365,
+        "name": "yr_2026",
+        "robustSe": 0.00104205
+      }
+    ],
+    "indicatorCoefficients": {
+      "hawker_1km": {
+        "interpretation": "conditional log-point difference in resale price associated with the indicator, holding the stated controls fixed; descriptive, not a causal premium",
+        "logPoint": 0.027498,
+        "pctEffectExpMinus1": 2.788,
+        "regressor": "1 when the shipped dist_to_nearest_hawker is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.00047,
+        "tStat": 58.48,
+        "within1000mN": 215641,
+        "within1000mShare": 0.7674
+      },
+      "mall_1km": {
+        "interpretation": "conditional log-point difference in resale price associated with the indicator, holding the stated controls fixed; descriptive, not a causal premium",
+        "logPoint": 0.054422,
+        "pctEffectExpMinus1": 5.593,
+        "regressor": "1 when the shipped dist_to_nearest_mall is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.001062,
+        "tStat": 51.25,
+        "within1000mN": 25851,
+        "within1000mShare": 0.092
+      },
+      "mrt_1km": {
+        "interpretation": "conditional log-point difference in resale price associated with the indicator, holding the stated controls fixed; descriptive, not a causal premium",
+        "logPoint": 0.099587,
+        "pctEffectExpMinus1": 10.4714,
+        "regressor": "1 when the shipped dist_to_nearest_mrt is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.000667,
+        "tStat": 149.24,
+        "within1000mN": 241370,
+        "within1000mShare": 0.8589
+      },
+      "park_1km": {
+        "interpretation": "conditional log-point difference in resale price associated with the indicator, holding the stated controls fixed; descriptive, not a causal premium",
+        "logPoint": 0.007215,
+        "pctEffectExpMinus1": 0.7241,
+        "regressor": "1 when the shipped dist_to_nearest_park is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.000506,
+        "tStat": 14.25,
+        "within1000mN": 220273,
+        "within1000mShare": 0.7838
+      },
+      "supermarket_1km": {
+        "interpretation": "conditional log-point difference in resale price associated with the indicator, holding the stated controls fixed; descriptive, not a causal premium",
+        "logPoint": -0.155732,
+        "pctEffectExpMinus1": -14.4211,
+        "regressor": "1 when the shipped dist_to_nearest_supermarket is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.003,
+        "tStat": -51.91,
+        "within1000mN": 279843,
+        "within1000mShare": 0.9958
+      }
+    },
+    "sample": {
+      "cutoffUpperBound": "2026-10",
+      "cutoffUpperBoundMeaning": "every model row and every aggregate in this ledger ends at the last complete month; the terminal partial month is excluded",
+      "excludedInWindowRows": [],
+      "excludedReasonCounts": {
+        "before-study-window": 708845,
+        "missing-lease-commencement": 0,
+        "missing-or-invalid-storey-range": 0,
+        "missing-source:hawker-distance": 11599,
+        "missing-source:mall-distance": 11599,
+        "missing-source:mrt-distance": 11599,
+        "missing-source:park-distance": 11599,
+        "missing-source:supermarket-distance": 11599,
+        "missing-town": 0,
+        "non-positive-or-missing-floor-area": 0,
+        "non-positive-or-missing-price": 0,
+        "terminal-partial-month-after-cutoff": 790,
+        "unrecognised-flat-type": 0
+      },
+      "excludedRowsByReasonCount": {
+        "1": 698036,
+        "6": 11599
+      },
+      "excludedRowsTotal": 709635,
+      "hdbRowsTotal": 990655,
+      "includedN": 281020,
+      "propertyType": "hdb",
+      "reasonSetSemantics": "exclusions are sets: a row failing several conditions records every reason (excludedRowsByReasonCount counts rows by the SIZE of their reason set), and no reason is asserted as the single cause",
+      "windowMonths": 142,
+      "windowStart": "2015-01"
+    },
+    "supermarketContrast": {
+      "indicatorZeroN": 1177,
+      "indicatorZeroShare": 0.0042,
+      "medianDistanceMetres": 1176.9,
+      "minDistanceMetres": 1006.7,
+      "note": "the supermarket indicator equals 0 for 0.42% of the sample, so its coefficient is a near-degenerate contrast and its sign must not be read as an amenity effect; the group is attributed here",
+      "townCompositionTop5": {
+        "PASIR RIS": 59,
+        "TAMPINES": 41,
+        "WOODLANDS": 1077
+      }
+    }
+  },
+  "condoScope": {
+    "cutoffUpperBound": "2026-10",
+    "rows": 245655,
+    "rowsAfterCutoffTerminalMonth": 421,
+    "rowsBefore2021_01": 0,
+    "rowsIn2021_01ToCutoff": 245234,
+    "statement": "no condo model is fitted: the private-residential source starts 2021-01, so the legacy amenity statements' 2015-2026 span has no condo analogue, and no cross-segment comparison is measured; counts are separated per side of the window so the terminal partial month is never mixed into a coverage count"
+  },
+  "cutoff": {
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact",
+    "lastCompleteMonth": "2026-10",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.3718,
+    "terminalMonthTransactions": 790,
+    "trailing12MedianTransactions": 2125.0
+  },
+  "definition": "A descriptive conditional-association refit: one recorded OLS of log(HDB resale price in SGD) on five jointly-fitted snapshot amenity indicators (shipped distance <= 1000 m) with stated controls (floor area sqm, lease commencement year, storey midpoint, flat-type/town/transaction-year fixed effects) and HC1 robust standard errors, plus an amenity-count model. Coefficients are conditional associations in a cross-section, not premiums and not causal effects; the amenity features come from one snapshot per layer whose datedness differs (update stamps from 2021-12 to 2026-01 where they exist; hawker completion dates are the only presence dates, and supermarkets, preschools, malls and MRT carry none) and is joined to transactions from 2015 onward, so no coefficient compares amenity states at two dates; no temporal model, no feature-importance model and no interaction model is reproduced. This ledger records one specification and only that one was fitted, and all its coefficients are reported; there is no dated prior protocol, so specification search cannot be ruled out — the single-specification discipline is a disclosed limitation, not a credential.",
+  "inputs": {
+    "data/manual/csv/datagov/ChildCareServices.geojson": {
+      "rows": 1925,
+      "sha256": "21f2d818555965991605e92532f4a3d3d822e394c250f126abd715912c363885"
+    },
+    "data/manual/csv/datagov/HawkerCentresGEOJSON.geojson": {
+      "rows": 129,
+      "sha256": "0a39526ab5c652296b807f0ab50126e7b2aa1a536bb0dff0e248ff68ebfe8c10"
+    },
+    "data/manual/csv/datagov/NParksParksandNatureReserves.geojson": {
+      "rows": 450,
+      "sha256": "a6ae86b0919c05c99a529e738a4ffd0b7fe9943fb5b5f68e54ac42d776b0e623"
+    },
+    "data/manual/csv/datagov/PreSchoolsLocation.geojson": {
+      "rows": 2290,
+      "sha256": "56539ec2f0a5d57e42babe29960dcc6708222ba09c046c59a26cb64f805436bb"
+    },
+    "data/manual/csv/datagov/SupermarketsGEOJSON.geojson": {
+      "rows": 526,
+      "sha256": "46c28612b8f737c65d9c90c7dc7f3d2a5ab5faa2cfaf9d87f8f9ae25f025eda3"
+    },
+    "data/pipeline/01_bronze/external/HawkerCentresGEOJSON.parquet": {
+      "rows": 129,
+      "sha256": "811b96d3d3ee50fbf73753a481b1697f0727e1e541d45c62b92431746363782f"
+    },
+    "data/pipeline/01_bronze/external/NParksParksandNatureReserves.parquet": {
+      "rows": 450,
+      "sha256": "4f9acd21ede476aa34281c02775746932dd77b8f2d758b5254b426a812c8dd53"
+    },
+    "data/pipeline/01_bronze/external/SupermarketsGEOJSON.parquet": {
+      "rows": 526,
+      "sha256": "28cc1aba594b45e2a898aa337ff04c556c7005db98d0c48bec15a6a5f14e44e3"
+    },
+    "data/pipeline/01_bronze/raw_mp25_malls.parquet": {
+      "rows": 294,
+      "sha256": "45e4271366ce5099d26169d53e8efe13f562203c3326e8be6319a44635b43d7c"
+    },
+    "data/pipeline/01_bronze/raw_mrt_stations.parquet": {
+      "rows": 188,
+      "sha256": "48a473626e2a22d24ffde28974e3fd206f807a45bad05223acfd94513da1fdc2"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    }
+  },
+  "legacyClaims": [
+    {
+      "basis": "feature-importance ranking is an output of the retired XGBoost/SHAP model, which this pack does not reproduce; importance shares are not associations with units, and the refit's conditional associations (associations.indicatorCoefficients) cannot rank importance without that model",
+      "claim": "Hawker proximity is the single most important amenity feature for HDB pricing",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Hawker centre proximity is the single most important amenity feature for HDB pricing, outranking even MRT access."
+    },
+    {
+      "basis": "retired model not reproduced; no importance table is re-estimated",
+      "claim": "XGBoost importance table (hawker 27.4%, lease 14.1%, park 7.2%, MRT 5.5%, supermarket 3.8%)",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "is the dominant non-structural feature at 27.4% XGBoost importance, followed by remaining lease (14.1%), park within 1km (7.2%), and MRT within 1km (5.5%)"
+    },
+    {
+      "basis": "'premium driver' is a causal model claim; the measured park association (associations.indicatorCoefficients.park_1km) is a descriptive conditional difference and cannot support it",
+      "claim": "Parks are the most underappreciated premium driver",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Parks and green space are the most underappreciated premium driver."
+    },
+    {
+      "basis": "'adds' is causal and 'underweighted' needs a model of buyer beliefs; neither is reproduced. The measured analogue is a descriptive association: park within 1000 m +0.72 pct (logPoint 0.007215, robustSe 0.000506, n = 281,020), conditional on controls, snapshot-vintage join",
+      "claim": "Park proximity adds a measurable premium that buyers underweight",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Park proximity adds a measurable premium that is frequently underweighted in buyer decisions."
+    },
+    {
+      "basis": "'not fully priced' asserts a market-efficiency finding no model here can produce; no pricing-error measurement exists in this pack",
+      "claim": "Parks near large parks offer better value because the market has not fully priced green space",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "because the market has not fully priced the green-space premium."
+    },
+    {
+      "basis": "a change statement needs amenity features per period; the shipped features are one current snapshot joined to every period alike (amenityVintages, shippedFeatureLineage), and the retired RandomForest temporal comparison is not reproduced",
+      "claim": "Amenity importance shifted across COVID periods (park elevated, MRT reduced then partially recovered)",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "COVID elevated the importance of nearby green space and reduced the MRT premium as remote work reduced commute frequency."
+    },
+    {
+      "basis": "same missing per-period vintages; preference shifts are not measurable from a cross-sectional snapshot join",
+      "claim": "Park importance increased post-COVID — structural shift in preferences",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Park importance increased post-COVID and has remained elevated, suggesting a structural shift in buyer preferences"
+    },
+    {
+      "basis": "same missing per-period vintages; the hybrid-work attribution is causal and unmeasured here",
+      "claim": "MRT importance dipped during COVID, partially recovered — hybrid work",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "MRT importance dipped during COVID and has only partially recovered, likely reflecting sustained hybrid work patterns"
+    },
+    {
+      "basis": "a SHAP-interaction output of the retired model; the measured amenity-count coefficient (associations.amenityCountModel, +4.10 pct per additional amenity type) is a different quantity — a conditional association of a count, not an interaction that exceeds the sum of parts",
+      "claim": "Combined amenity effect exceeds the sum of individual effects (synergy)",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "The combined effect of having multiple amenities nearby exceeds the sum of individual effects."
+    },
+    {
+      "basis": "retired SHAP-interaction model not reproduced; no combination ranking is estimated",
+      "claim": "MRT + Mall + Hawker is the strongest combination (synergistic premium)",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Amenity interaction effects are strongest for the MRT + Mall + Hawker combination, suggesting convenience hubs command pricing power beyond individual amenity effects"
+    },
+    {
+      "basis": "the grid premium model is not reproduced and no 500m grid is constructed; the descriptive presence-dispersion fragment is measured instead (withinAreaVariation)",
+      "claim": "500m-grid analysis shows amenity premiums highly localised within the same town",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "At the 500m x 500m grid level, amenity premiums are highly localized within the same town."
+    },
+    {
+      "basis": "withinAreaVariation: on the bounded 2015-01 -> 2026-10 window, the within-1000m indicator varies inside 22 of 26 towns for hawker (0 < share < 1) and inside 19 of 26 for park — presence profiles do vary within towns. No grid and no premium is involved",
+      "claim": "Two flats in the same planning area but different grids can have materially different amenity profiles",
+      "disposition": "re-measured-descriptively",
+      "quote": "Two flats in the same planning area but different grids can have materially different amenity profiles."
+    },
+    {
+      "basis": "no condo model is fitted: the private-residential source in this checkout starts 2021-01 while the legacy analysis claims 2015-2026, and the legacy condo statements are cross-segment comparisons the coverage cannot support",
+      "claim": "Condo buyers get more pricing benefit from MRT and mall proximity than in-facility amenities",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "get more pricing benefit from MRT and mall proximity than from most in-facility amenities"
+    },
+    {
+      "basis": "a decision rule built on the retired importance ranking; the measured conditional associations (hawker +2.79 pct, mrt +10.47 pct, both descriptive, snapshot-vintage joins) do not rank amenities and must not be turned into guidance",
+      "claim": "HDB buyers should prioritize hawker proximity over MRT proximity",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "should prioritize hawker proximity over MRT proximity when evaluating daily convenience."
+    },
+    {
+      "basis": "rental demand and capital appreciation are not measured in this pack (no rental join, no forward-looking outcome); the sentence is also prescriptive",
+      "claim": "Target multi-amenity hubs for stronger rental demand and capital appreciation",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Target multi-amenity hubs for stronger rental demand and capital appreciation."
+    },
+    {
+      "basis": "HDB re-cuts to 2015-01 -> the measured 2026-10 cutoff (142 months, 281,020 transactions); the private-residential source starts 2021-01, so '2015-2026' holds only for HDB",
+      "claim": "Data Period: 2015-2026",
+      "disposition": "re-cut",
+      "quote": "Data Period: 2015-2026"
+    },
+    {
+      "basis": "the retired analysis scripts are not in the supported repo surface (the legacy text says so itself) and none of the four model families is reproduced; the refit is one OLS specification declared in associations.estimator",
+      "claim": "Methodology: XGBoost (100 trees, depth 6, lr 0.1) + SHAP; RandomForest temporal comparison; within-town models; 500m grid",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "XGBoost (100 trees, max_depth=6, learning_rate=0.1) with SHAP values for feature importance and interaction detection"
+    },
+    {
+      "basis": "the shipped path in this checkout is data/pipeline/04_platinum/unified_dataset.parquet (1,236,310 rows x 97 columns), sha-pinned in this ledger's inputs",
+      "claim": "Primary input: data/04_platinum/housing_unified.parquet",
+      "disposition": "superseded",
+      "quote": "data/04_platinum/housing_unified.parquet"
+    },
+    {
+      "basis": "the shipped dataset carries DISTANCES in metres (per amenity; shippedFeatures.perAmenity), not threshold indicators at three radii; this pack constructs exactly one threshold (1000 m) per legacy amenity from the shipped distances and states it in associations.estimator.indicators",
+      "claim": "Amenity features: distance and threshold indicators at 500m/1km/2km radii",
+      "disposition": "superseded",
+      "quote": "Distance and threshold indicators for hawker, mall, park, supermarket, preschool, childcare at 500m, 1km, and 2km radii"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 19,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/amenity-impact.md",
+    "legacyFileSha256": "5683269e4b3c04a61edcc45bd259fba6fa8b6c501946bbcc3740a312ab6ffb65",
+    "quotes": [
+      {
+        "claim": "Hawker proximity is the single most important amenity feature for HDB pricing",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "XGBoost importance table (hawker 27.4%, lease 14.1%, park 7.2%, MRT 5.5%, supermarket 3.8%)",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Parks are the most underappreciated premium driver",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Park proximity adds a measurable premium that buyers underweight",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Parks near large parks offer better value because the market has not fully priced green space",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Amenity importance shifted across COVID periods (park elevated, MRT reduced then partially recovered)",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Park importance increased post-COVID — structural shift in preferences",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "MRT importance dipped during COVID, partially recovered — hybrid work",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Combined amenity effect exceeds the sum of individual effects (synergy)",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "MRT + Mall + Hawker is the strongest combination (synergistic premium)",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "500m-grid analysis shows amenity premiums highly localised within the same town",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Two flats in the same planning area but different grids can have materially different amenity profiles",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Condo buyers get more pricing benefit from MRT and mall proximity than in-facility amenities",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "HDB buyers should prioritize hawker proximity over MRT proximity",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Target multi-amenity hubs for stronger rental demand and capital appreciation",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Data Period: 2015-2026",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Methodology: XGBoost (100 trees, depth 6, lr 0.1) + SHAP; RandomForest temporal comparison; within-town models; 500m grid",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Primary input: data/04_platinum/housing_unified.parquet",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Amenity features: distance and threshold indicators at 500m/1km/2km radii",
+        "foundInLegacyText": true
+      }
+    ]
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS04 amenity-impact evidence: amenity-source vintages, shipped-feature lineage with a targeted leave-out ablation, the measured hawker snapshot-join mismatch, and a descriptive conditional-association refit with stated units and controls (one recorded specification; no dated prior protocol, so specification search cannot be ruled out)",
+  "shippedFeatureLineage": {
+    "grain": "every unique (lat, lon) location in the study window (not a sample)",
+    "hawker": {
+      "bronzeMatches": 9789,
+      "bronzeMaxAbsDeviationMetres": 0.0,
+      "conclusion": "the shipped dist_to_nearest_hawker reproduces exactly from the bronze snapshot that INCLUDES the six Under-Construction centres; a targeted ablation excluding them breaks reproduction for every location whose nearest centre is one of those six (and none of the others), so those six centres' coordinates feed the single distance value the location join applies to transactions of every study month. When construction at each site began is not recorded in this checkout",
+      "locationsNearestUnderConstruction": 738,
+      "matchesWhenUnderConstructionExcluded": 9051,
+      "underConstructionCentres": [
+        "Bukit Timah Market",
+        "Chong Pang Hawker Centre & Market",
+        "Tampines North Hawker Centre",
+        "Tanglin Halt Hawker Centre & Market",
+        "Telok Blangah Hawker Centre & Market",
+        "Yew Tee Hawker Centre"
+      ],
+      "underConstructionCount": 6,
+      "underConstructionNearestLocationsBrokenByExclusion": 738
+    },
+    "locations": 9789,
+    "mall": {
+      "bronzeMatches": 9789,
+      "bronzeMaxAbsDeviationMetres": 0.0,
+      "conclusion": "the shipped dist_to_nearest_mall reproduces exactly from the 294-row MP25 bronze frame; its nearest-name column is empty for every row because the MP25 layer carries no names"
+    },
+    "method": "nearest-POI metres recomputed with the pipeline's own estimator (BallTree(metric='haversine') k=1, radians x 6371000) from the sha-pinned bronze frames, compared to the shipped columns at 1e-6 m tolerance",
+    "mrt": {
+      "bronzeMatches": 9789,
+      "bronzeMaxAbsDeviationMetres": 0.0,
+      "conclusion": "the shipped dist_to_nearest_mrt reproduces exactly from the 188-row undated bronze station frame at this location grain, consistent with RS03's sample-level lineage measurement"
+    },
+    "notRecomputed": "park and supermarket lineage is not recomputed here; their bronze frames are audited in amenityVintages and their snapshot-join mismatch is not measurable (no dated vintage)"
+  },
+  "shippedFeatures": {
+    "grain": "computed once per unique (lat, lon) location and left-merged onto transactions (features.py builds the location dimension on ~10K unique locations, not per transaction)",
+    "hdbIndicatorPrevalenceByWindow": {
+      "2015-2019": {
+        "hawkerWithin1000mShare": 0.7754,
+        "mallWithin1000mShare": 0.0975,
+        "months": "2015-01 -> 2019-12",
+        "mrtWithin1000mShare": 0.865,
+        "parkWithin1000mShare": 0.7949,
+        "supermarketWithin1000mShare": 0.9951,
+        "transactions": 101409
+      },
+      "2020-2022": {
+        "hawkerWithin1000mShare": 0.7547,
+        "mallWithin1000mShare": 0.0902,
+        "months": "2020-01 -> 2022-12",
+        "mrtWithin1000mShare": 0.8673,
+        "parkWithin1000mShare": 0.7818,
+        "supermarketWithin1000mShare": 0.9965,
+        "transactions": 79140
+      },
+      "2023-2026": {
+        "hawkerWithin1000mShare": 0.7692,
+        "mallWithin1000mShare": 0.0879,
+        "months": "2023-01 -> 2026-10",
+        "mrtWithin1000mShare": 0.8462,
+        "parkWithin1000mShare": 0.7743,
+        "supermarketWithin1000mShare": 0.996,
+        "transactions": 100471
+      }
+    },
+    "perAmenity": {
+      "hawker": {
+        "column": "dist_to_nearest_hawker",
+        "computationCitations": [
+          {
+            "line": 127,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "tree = BallTree(station_coords, metric=\"haversine\")"
+          },
+          {
+            "line": 285,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "distances_m = distances_rad[:, 0] * 6371000"
+          }
+        ],
+        "distanceMetres": {
+          "p10": 205.1,
+          "p50": 614.7,
+          "p90": 1362.4
+        },
+        "nearestNameEmptyShare": 0.0,
+        "nonNullShare": 1.0,
+        "unit": "metres (BallTree haversine x 6371000)",
+        "windowTransactions": 281020,
+        "within1000mN": 215641,
+        "within1000mShare": 0.7674
+      },
+      "mall": {
+        "column": "dist_to_nearest_mall",
+        "computationCitations": [
+          {
+            "line": 127,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "tree = BallTree(station_coords, metric=\"haversine\")"
+          },
+          {
+            "line": 285,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "distances_m = distances_rad[:, 0] * 6371000"
+          }
+        ],
+        "distanceMetres": {
+          "p10": 1064.8,
+          "p50": 4800.2,
+          "p90": 8475.2
+        },
+        "nearestNameEmptyShare": 1.0,
+        "nonNullShare": 1.0,
+        "unit": "metres (BallTree haversine x 6371000)",
+        "windowTransactions": 281020,
+        "within1000mN": 25851,
+        "within1000mShare": 0.092
+      },
+      "mrt": {
+        "column": "dist_to_nearest_mrt",
+        "computationCitations": [
+          {
+            "line": 127,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "tree = BallTree(station_coords, metric=\"haversine\")"
+          },
+          {
+            "line": 285,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "distances_m = distances_rad[:, 0] * 6371000"
+          }
+        ],
+        "distanceMetres": {
+          "p10": 199.9,
+          "p50": 538.9,
+          "p90": 1114.5
+        },
+        "nearestNameEmptyShare": 0.0,
+        "nonNullShare": 1.0,
+        "unit": "metres (BallTree haversine x 6371000)",
+        "windowTransactions": 281020,
+        "within1000mN": 241370,
+        "within1000mShare": 0.8589
+      },
+      "park": {
+        "column": "dist_to_nearest_park",
+        "computationCitations": [
+          {
+            "line": 127,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "tree = BallTree(station_coords, metric=\"haversine\")"
+          },
+          {
+            "line": 285,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "distances_m = distances_rad[:, 0] * 6371000"
+          }
+        ],
+        "distanceMetres": {
+          "p10": 304.3,
+          "p50": 662.5,
+          "p90": 1276.4
+        },
+        "nearestNameEmptyShare": 0.0,
+        "nonNullShare": 1.0,
+        "unit": "metres (BallTree haversine x 6371000)",
+        "windowTransactions": 281020,
+        "within1000mN": 220273,
+        "within1000mShare": 0.7838
+      },
+      "supermarket": {
+        "column": "dist_to_nearest_supermarket",
+        "computationCitations": [
+          {
+            "line": 127,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "tree = BallTree(station_coords, metric=\"haversine\")"
+          },
+          {
+            "line": 285,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "distances_m = distances_rad[:, 0] * 6371000"
+          }
+        ],
+        "distanceMetres": {
+          "p10": 111.4,
+          "p50": 272.8,
+          "p90": 496.4
+        },
+        "nearestNameEmptyShare": 0.0,
+        "nonNullShare": 1.0,
+        "unit": "metres (BallTree haversine x 6371000)",
+        "windowTransactions": 281020,
+        "within1000mN": 279843,
+        "within1000mShare": 0.9958
+      }
+    }
+  },
+  "snapshotJoinMismatch": {
+    "buckets": {
+      "nearest-completed-before-transaction": 203172,
+      "nearest-completion-unknown": 675,
+      "nearest-not-established-before-transaction": 77173
+    },
+    "byWindow": {
+      "2015-2019": {
+        "months": "2015-01 -> 2019-12",
+        "notEstablishedShare": 0.404,
+        "transactions": 101409
+      },
+      "2020-2022": {
+        "months": "2020-01 -> 2022-12",
+        "notEstablishedShare": 0.3236,
+        "transactions": 79140
+      },
+      "2023-2026": {
+        "months": "2023-01 -> 2026-10",
+        "notEstablishedShare": 0.1055,
+        "transactions": 100471
+      }
+    },
+    "nearestUnderConstruction": {
+      "centres": [
+        "Bukit Timah Market",
+        "Chong Pang Hawker Centre & Market",
+        "Tampines North Hawker Centre",
+        "Tanglin Halt Hawker Centre & Market",
+        "Telok Blangah Hawker Centre & Market",
+        "Yew Tee Hawker Centre"
+      ],
+      "rows": 17179,
+      "share": 0.0611
+    },
+    "notEstablishedShare": 0.2746,
+    "notMeasurableForOtherAmenities": {
+      "childcare": "only a single 2021-12-01 update stamp",
+      "mall": "the MP25 layer carries no dates and its raw GeoJSON is not in this checkout",
+      "meaning": "the join applies one snapshot's values to transactions of every month, so the mismatch is present by construction; its magnitude is not measurable in this checkout",
+      "mrt": "no opening dates (bronze); one 2019-12-09 seed stamp (RS03)",
+      "park": "no gazetting or opening date; only a 2026-01-15 update stamp",
+      "preschool": "no date property of any kind",
+      "supermarket": "no date property of any kind; outlet vintages cannot be reconstructed"
+    },
+    "rule": "each transaction's nearest hawker centre (by exact bronze name) is classified against EST_ORIGINAL_COMPLETION_DATE: an exact date at or before the transaction month's first day counts as completed; a year-only value strictly before the transaction year counts as completed, a year-only value in the transaction year is NOT established as completed (mid-year completion is unresolved, a conservative reading); a future-year value (all six Under Construction centres) is not established for any study transaction; pre-war counts as completed; null/unknown stays unknown. Centres farther than the nearest are not classified.",
+    "transactions": 281020
+  },
+  "withinAreaVariation": {
+    "byGrain": {
+      "planning_area": {
+        "hawker": {
+          "groups": 32,
+          "maxShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "CHOA CHU KANG",
+            "n": 12695,
+            "share": 0.3864
+          },
+          "mixedGroups": 23
+        },
+        "mall": {
+          "groups": 32,
+          "maxShare": {
+            "area": "DOWNTOWN CORE",
+            "n": 62,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 0.0
+          },
+          "mixedGroups": 8
+        },
+        "mrt": {
+          "groups": 32,
+          "maxShare": {
+            "area": "BUKIT PANJANG",
+            "n": 10042,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "CHANGI",
+            "n": 59,
+            "share": 0.0
+          },
+          "mixedGroups": 18
+        },
+        "park": {
+          "groups": 32,
+          "maxShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "WOODLANDS",
+            "n": 19945,
+            "share": 0.4059
+          },
+          "mixedGroups": 19
+        },
+        "supermarket": {
+          "groups": 32,
+          "maxShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "CHANGI",
+            "n": 59,
+            "share": 0.0
+          },
+          "mixedGroups": 2
+        }
+      },
+      "town": {
+        "hawker": {
+          "groups": 26,
+          "maxShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "CHOA CHU KANG",
+            "n": 12695,
+            "share": 0.3864
+          },
+          "mixedGroups": 22
+        },
+        "mall": {
+          "groups": 26,
+          "maxShare": {
+            "area": "CENTRAL AREA",
+            "n": 2305,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 0.0
+          },
+          "mixedGroups": 7
+        },
+        "mrt": {
+          "groups": 26,
+          "maxShare": {
+            "area": "BUKIT PANJANG",
+            "n": 10042,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "PASIR RIS",
+            "n": 8238,
+            "share": 0.4511
+          },
+          "mixedGroups": 18
+        },
+        "park": {
+          "groups": 26,
+          "maxShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "WOODLANDS",
+            "n": 19945,
+            "share": 0.4059
+          },
+          "mixedGroups": 19
+        },
+        "supermarket": {
+          "groups": 26,
+          "maxShare": {
+            "area": "ANG MO KIO",
+            "n": 11673,
+            "share": 1.0
+          },
+          "minShare": {
+            "area": "WOODLANDS",
+            "n": 19945,
+            "share": 0.946
+          },
+          "mixedGroups": 3
+        }
+      }
+    },
+    "grainNote": "the shipped dataset carries both town and planning_area and they disagree (e.g. town KALLANG/WHAMPOA spans planning areas KALLANG and NOVENA), so both grains are measured",
+    "note": "presence dispersion only: no premium is computed per area, no grid is built, and variation in an indicator is not variation in a premium. The legacy analysis' within-town regressions (minimum 100 transactions per town) and 500m grid cells (minimum 5 records) are retired-model constructs and are not reproduced."
+  }
+}

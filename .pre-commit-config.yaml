@@ -56,7 +56,12 @@ repos:
     hooks:
       - id: detect-secrets
         args: [--baseline, .secrets.baseline]
-        exclude: package-lock\.json|pnpm-lock\.yaml|uv\.lock
+        # Canonical evidence ledgers are generated, hash-pinned JSON whose content is
+        # sha256 digests by construction (asset identity, model inputs, quote checks).
+        # Scanning them only produces line-number churn that silently invalidates a
+        # signed `artifactSha256`-adjacent baseline; their integrity is enforced by the
+        # producers' `--check` modes instead.
+        exclude: (package-lock\.json|pnpm-lock\.yaml|uv\.lock|^docs/implementation/artifacts/)
 
   # Local hooks (venv-dependent)
   - repo: local
