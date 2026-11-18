@@ -334,6 +334,56 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     ],
     note: "RS04 amenity re-measurement with units and controls: one recorded OLS specification of log HDB resale price on five jointly-fitted snapshot indicators (shipped distance <= 1000 m) with floor-area/lease/storey controls and flat-type/town/year fixed effects (n = 281,020, 2015-01 -> 2026-10, R2 = 0.9157, HC1 standard errors) supports conditional associations only (hawker within 1 km +2.79%, mall +5.59%, park +0.72%, supermarket -14.42% on a 0.42% thin, geographically concentrated contrast group with no effect interpretation, MRT +10.47%; amenity count +4.10% per additional type) and no premium, ranking or temporal claim. The specification is recorded, not pre-registered: no dated prior protocol exists, so specification search cannot be ruled out — a disclosed limitation. The legacy importance ranking, COVID-period importance shifts, interaction/synergy and condo claims are withdrawn: no amenity vintage per period exists (hawker completion dates are the only presence dates in any amenity layer and the shipped features never read them; parks/supermarkets/malls/childcare/preschools/MRT carry no presence dates — update stamps only, or none), and the condo source starts 2021-01. The snapshot join is measured, not assumed: distances reproduce exactly from the bronze snapshot for 9,789/9,789 unique locations, a targeted leave-out ablation locates the six Under-Construction centres' coordinates in the shipped distances (738/738 nearest-location breaks on exclusion, 9,051 unchanged; construction start dates not in checkout), and 27.46% of transactions' nearest hawker centre is not established as completed at the transaction date (40.4% in 2015-2019).",
   },
+  {
+    seriesSlug: "facility-premiums",
+    editionId: "facility-premiums-2026-11-17",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/facility-premiums/2026-11-17/facility-premiums.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-17",
+    editionSha256:
+      "8027e19e6d4cc8fd2402b7dd1691d1e5ab7eaf4baae547605914380fbe38f6ea",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-18",
+        artifactSha256:
+          "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970",
+        statement:
+          "I attest that the measured ledger matches this checkout and accept the cutoff and dispositions it implies: 2026-10 as the last complete month, the measured absence of the in-house facility layer and the withdrawal of every legacy facility claim that depends on it, the recovered project_name join with its bulk-label caveat, the between-project framing, and project-clustered uncertainty as the published measure.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-17-rs05-facility-premiums-evidence.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-18",
+        artifactSha256:
+          "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970",
+        statement:
+          "I reviewed the edition text against this ledger hash: the absent facility layer and the withdrawals, the recovered join key, project-clustered standard errors with the mall/hawker non-distinguishability, the 97-column schema audit, absence semantics, legacy quotations and byte-reproducible re-measurement were verified. This attestation supersedes an earlier one because the ledger changed only in serialisation, with every measurement confirmed unchanged. I do not attest to the evidence pack's method beyond these checks, to source availability outside this checkout, other studies, or later edits.",
+        automated: true,
+        evidencePath: "docs/implementation/2026-11-17-rs05-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-18",
+        artifactSha256:
+          "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
+        automated: false,
+        evidencePath: "docs/implementation/2026-11-17-rs05-editions-signoff.md",
+      },
+    ],
+    note: "RS05 facility re-measurement: the legacy study's in-house facility layer (which development has which facility) is absent from this checkout — the four legacy-named sources measure absent (legacySourceAudit), the shipped dataset's only facility-like columns are external SportSG public-facility distances, and the only candidate join key (project_name) is fully populated (3,005 distinct projects, 0 empty) but has no counterparty layer to join to, so no facility prevalence, premium or combination is measurable and every legacy claim is withdrawn with that measured reason. What is measured: a one-way decomposition on the model sample showing 91.0638% of log condo price-psf variance lies between projects (2,413 projects, n = 234,479, 2021-01 -> 2026-10 at the 2026-10 cutoff) with the five external-access indicators 98.9-99.9% between-project — the quantified reason an unadjusted facility comparison is a comparison of projects — and one recorded descriptive OLS of log condo price-psf on five jointly-fitted distance<=1000m indicators with planning-area/year/floor-band/subtype/sale-type fixed effects and area/tenure controls (R2 = 0.7872; two standard-error batteries, HC1 and project-clustered CRVE with cluster = project_name, 2,413 clusters — the clustered battery is the published uncertainty: MRT within 1 km +7.1059% (clustered |t| = 3.82), SportSG facility -2.3628% (|t| = 2.16) and childcare -13.2448% (|t| = 2.82, on a 0.53% thin contrast with no effect interpretation) remain larger than twice their clustered SEs, while mall -1.7536% (|t| = 1.19) and hawker -0.1336% (|t| = 0.11) are NOT distinguishable from zero on this design; clustered SEs run 2.8x-16.6x the HC1 ones), labelled a between-project comparison: project identity is not conditioned on and the project-fixed-effects variant is recorded as not fitted. The specification is recorded, not pre-registered: no dated prior protocol exists, so specification search cannot be ruled out. Per-facility status is no-record (source absent) — not absent, not zero — for all nine legacy facilities and all five synergy-combination rows.",
+  },
 ];
 
 export const ANALYTICS_EDITIONS: readonly AnalyticsEdition[] = [

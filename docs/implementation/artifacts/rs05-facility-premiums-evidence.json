@@ -1,0 +1,1732 @@
+{
+  "associations": {
+    "childcareContrast": {
+      "indicatorZeroN": 1248,
+      "indicatorZeroShare": 0.0053,
+      "medianDistanceMetres": 1372.9,
+      "minDistanceMetres": 1026.0,
+      "note": "the childcare indicator equals 0 for a measured 0.5% share of the sample (childcareContrast.indicatorZeroShare), so its coefficient is a near-degenerate contrast and its sign must not be read as an access effect; the group is attributed here",
+      "planningAreaComposition": {
+        "CHANGI": 51,
+        "MARINA SOUTH": 1108,
+        "SOUTHERN ISLANDS": 89
+      }
+    },
+    "controlCoefficients": {
+      "area_sqft": {
+        "clusteredRobustSe": 1.15e-06,
+        "logPoint": -1.78e-06,
+        "perNaturalUnit": 100.0,
+        "robustSe": 8.8e-07
+      },
+      "lease_commence_year": {
+        "clusteredRobustSe": 0.00103723,
+        "logPoint": 0.00377342,
+        "perNaturalUnit": 100.0,
+        "robustSe": 7.974e-05
+      }
+    },
+    "designLevels": {
+      "baselinePlanningArea": "BUKIT TIMAH",
+      "floorLevels": [
+        "-",
+        "01 to 05",
+        "06 to 10",
+        "11 to 15",
+        "16 to 20",
+        "21 to 25",
+        "26 to 30",
+        "31 to 35",
+        "36 to 40",
+        "41 to 45",
+        "46 to 50",
+        "51 to 55",
+        "56 to 60",
+        "61 to 65",
+        "66 to 70",
+        "71 to 75",
+        "B1 to B5"
+      ],
+      "planningAreas": [
+        "ANG MO KIO",
+        "BEDOK",
+        "BISHAN",
+        "BUKIT BATOK",
+        "BUKIT MERAH",
+        "BUKIT PANJANG",
+        "BUKIT TIMAH",
+        "CENTRAL WATER CATCHMENT",
+        "CHANGI",
+        "CHOA CHU KANG",
+        "CLEMENTI",
+        "DOWNTOWN CORE",
+        "GEYLANG",
+        "HOUGANG",
+        "JURONG EAST",
+        "JURONG WEST",
+        "KALLANG",
+        "MANDAI",
+        "MARINA SOUTH",
+        "MARINE PARADE",
+        "MUSEUM",
+        "NEWTON",
+        "NOVENA",
+        "ORCHARD",
+        "OUTRAM",
+        "PASIR RIS",
+        "PUNGGOL",
+        "QUEENSTOWN",
+        "RIVER VALLEY",
+        "ROCHOR",
+        "SEMBAWANG",
+        "SENGKANG",
+        "SERANGOON",
+        "SINGAPORE RIVER",
+        "SOUTHERN ISLANDS",
+        "TAMPINES",
+        "TANGLIN",
+        "TENGAH",
+        "TOA PAYOH",
+        "WOODLANDS",
+        "YISHUN"
+      ],
+      "subtypes": [
+        "Apartment",
+        "Condominium",
+        "Executive Condominium"
+      ]
+    },
+    "estimator": {
+      "clusteredStandardErrors": {
+        "clusterKey": "project_name",
+        "clusters": 2413,
+        "estimator": "statsmodels OLS cov_type='cluster' (cluster-robust CRVE), groups=project_name, statsmodels' default finite-cluster corrections; coefficients identical to the HC1 fit, only the covariance differs",
+        "why": "transactions inside one project share one location and project-level unobservables, so HC1's independence assumption is the wrong uncertainty model here; the HC1-vs-clustered comparison (indicatorCoefficients .clusterVsHC1SeRatio) is the measured demonstration of how much it understates"
+      },
+      "controls": [
+        "area_sqft (square feet of strata area, continuous)",
+        "freehold indicator (1 when the tenure string is exactly 'Freehold')",
+        "long-lease indicator (1 when the parsed lease duration is at least 100 years; covers the 999-year and similar long-lease strings)",
+        "lease commencement year ((year-1900)/100, continuous; defined for parsed leasehold rows and set to 0 for freehold rows — the freehold indicator separates the groups, so this coefficient is identified from leasehold variation)",
+        "floor-band fixed effects (17 levels observed in the sample; baseline '01 to 05'; '-' is the unreported-band level, kept as its own level and never read as a storey number)",
+        "property-subtype fixed effects (3 levels: Apartment, Condominium, Executive Condominium; baseline 'Condominium')",
+        "transaction-type fixed effects (Resale/New Sale/Sub Sale; baseline 'Resale')",
+        "transaction-year fixed effects (baseline '2021'; absorb nominal price drift and inflation)",
+        "planning-area fixed effects (41 levels observed in the sample; baseline 'BUKIT TIMAH')"
+      ],
+      "functionalForm": "log-linear; coefficients are log points, and pctEffectExpMinus1 = 100*(exp(beta)-1) is the approximate percentage difference the log point implies",
+      "indicators": "each access indicator enters as dist <= 1000 m in the shipped snapshot feature; ALL five indicators are fitted jointly in ONE specification (no selection, no stepwise search)",
+      "internalScaling": "area_sqft/100 and (lease commencement year-1900)/100 for numerical stability; the indicators and dummies are unscaled, and the control coefficients below are back-transformed to natural units",
+      "name": "OLS (statsmodels OLS, HC1 heteroskedasticity-robust covariance, use_t=False)",
+      "notControlled": [
+        "project identity (no project fixed effects — see projectEffects)",
+        "project completion year (the shipped year_completed column is null for all but a measured handful of condo rows; see sample.yearCompletedNullRows)",
+        "in-house facility presence (the subject of the legacy study; the layer is absent from this checkout)",
+        "unit condition, renovation, view and orientation",
+        "floor level WITHIN a floor band (bands are controlled, not storeys)",
+        "tenure gradations beyond the freehold and long-lease flags (9999/999999 lease-duration codes are not separated)",
+        "new-sale incentive structures and buyer financing",
+        "walking-path distance to the access features; access quality",
+        "planning-area x year shocks (the access indicators correlate with neighbourhood change inside a planning area)",
+        "the access snapshot's own vintage (one undated snapshot per layer; see RS04's amenity-impact audit for the vintage semantics)"
+      ],
+      "projectEffects": "NOT conditioned on: the specification carries no project fixed effects, so every coefficient here is a BETWEEN-PROJECT association — it compares transactions of projects that differ in the indicator with transactions of projects that do not, and cannot separate an access attribute from the project-level characteristics (location quality within the planning area, age, tenure mix, build quality, branding) that move with it. projectStructure quantifies this on the same sample. A project-fixed-effects specification is recorded as notFitted, not run",
+      "response": "log(price per square foot); price in nominal Singapore dollars per square foot of strata area (shipped psf column; its identity with price/area_sqft is measured in responseLineage)",
+      "standardErrors": "two batteries reported for every coefficient: (1) HC1 robust (unclustered — treats transactions as independent) and (2) project-clustered CRVE (see clusteredStandardErrors). The clustered battery is the published uncertainty; the HC1 battery is retained only to show the scale of the clustering understatement"
+    },
+    "fit": {
+      "adjRSquared": 0.7871,
+      "dfResid": 234404,
+      "k": 75,
+      "n": 234479,
+      "rSquared": 0.7872
+    },
+    "flagControls": {
+      "freehold": {
+        "clusteredRobustSe": 0.11545212,
+        "logPoint": 0.49407081,
+        "robustSe": 0.00896221
+      },
+      "long_lease_100yrs_plus": {
+        "clusteredRobustSe": 0.15095446,
+        "logPoint": 0.42689178,
+        "robustSe": 0.01149295
+      }
+    },
+    "fullCoefficientVector": [
+      {
+        "clusteredRobustSe": 0.12702561,
+        "logPoint": 6.92589316,
+        "name": "const",
+        "robustSe": 0.02046191
+      },
+      {
+        "clusteredRobustSe": 0.00011524,
+        "logPoint": -0.00017813,
+        "name": "area_sqft_100",
+        "robustSe": 8.816e-05
+      },
+      {
+        "clusteredRobustSe": 0.11545212,
+        "logPoint": 0.49407081,
+        "name": "freehold",
+        "robustSe": 0.00896221
+      },
+      {
+        "clusteredRobustSe": 0.15095446,
+        "logPoint": 0.42689178,
+        "name": "long_lease_100yrs_plus",
+        "robustSe": 0.01149295
+      },
+      {
+        "clusteredRobustSe": 0.1037233,
+        "logPoint": 0.37734239,
+        "name": "lease_commence_1900_100",
+        "robustSe": 0.00797394
+      },
+      {
+        "clusteredRobustSe": 0.01798205,
+        "logPoint": 0.06864753,
+        "name": "mrt_1km",
+        "robustSe": 0.00108331
+      },
+      {
+        "clusteredRobustSe": 0.01486953,
+        "logPoint": -0.01769131,
+        "name": "mall_1km",
+        "robustSe": 0.00122707
+      },
+      {
+        "clusteredRobustSe": 0.01215882,
+        "logPoint": -0.00133708,
+        "name": "hawker_1km",
+        "robustSe": 0.00087114
+      },
+      {
+        "clusteredRobustSe": 0.01107946,
+        "logPoint": -0.02391171,
+        "name": "sports_facility_1km",
+        "robustSe": 0.00084577
+      },
+      {
+        "clusteredRobustSe": 0.05045143,
+        "logPoint": -0.1420793,
+        "name": "childcare_1km",
+        "robustSe": 0.01830145
+      },
+      {
+        "clusteredRobustSe": 0.04804118,
+        "logPoint": -0.19546283,
+        "name": "floor_-",
+        "robustSe": 0.01150253
+      },
+      {
+        "clusteredRobustSe": 0.00378543,
+        "logPoint": 0.05459824,
+        "name": "floor_06 to 10",
+        "robustSe": 0.00085685
+      },
+      {
+        "clusteredRobustSe": 0.00463202,
+        "logPoint": 0.07413234,
+        "name": "floor_11 to 15",
+        "robustSe": 0.00092313
+      },
+      {
+        "clusteredRobustSe": 0.00639626,
+        "logPoint": 0.08689552,
+        "name": "floor_16 to 20",
+        "robustSe": 0.00122311
+      },
+      {
+        "clusteredRobustSe": 0.00887076,
+        "logPoint": 0.10801713,
+        "name": "floor_21 to 25",
+        "robustSe": 0.00160203
+      },
+      {
+        "clusteredRobustSe": 0.01012985,
+        "logPoint": 0.14600736,
+        "name": "floor_26 to 30",
+        "robustSe": 0.00198343
+      },
+      {
+        "clusteredRobustSe": 0.01010558,
+        "logPoint": 0.1548111,
+        "name": "floor_31 to 35",
+        "robustSe": 0.00223303
+      },
+      {
+        "clusteredRobustSe": 0.01348981,
+        "logPoint": 0.16553019,
+        "name": "floor_36 to 40",
+        "robustSe": 0.00290261
+      },
+      {
+        "clusteredRobustSe": 0.02529648,
+        "logPoint": 0.15589825,
+        "name": "floor_41 to 45",
+        "robustSe": 0.00554024
+      },
+      {
+        "clusteredRobustSe": 0.0398144,
+        "logPoint": 0.16058025,
+        "name": "floor_46 to 50",
+        "robustSe": 0.00868214
+      },
+      {
+        "clusteredRobustSe": 0.0474464,
+        "logPoint": 0.19208506,
+        "name": "floor_51 to 55",
+        "robustSe": 0.00847319
+      },
+      {
+        "clusteredRobustSe": 0.07608478,
+        "logPoint": 0.23602782,
+        "name": "floor_56 to 60",
+        "robustSe": 0.01612215
+      },
+      {
+        "clusteredRobustSe": 0.04302768,
+        "logPoint": 0.21384258,
+        "name": "floor_61 to 65",
+        "robustSe": 0.018063
+      },
+      {
+        "clusteredRobustSe": 0.02744098,
+        "logPoint": 0.24414211,
+        "name": "floor_66 to 70",
+        "robustSe": 0.0350293
+      },
+      {
+        "clusteredRobustSe": 0.02927643,
+        "logPoint": 0.2695438,
+        "name": "floor_71 to 75",
+        "robustSe": 0.00286178
+      },
+      {
+        "clusteredRobustSe": 0.05195218,
+        "logPoint": -0.18548768,
+        "name": "floor_B1 to B5",
+        "robustSe": 0.0331908
+      },
+      {
+        "clusteredRobustSe": 0.01152328,
+        "logPoint": -0.01430645,
+        "name": "subtype_Apartment",
+        "robustSe": 0.0009251
+      },
+      {
+        "clusteredRobustSe": 0.01971214,
+        "logPoint": -0.13288067,
+        "name": "subtype_Executive Condominium",
+        "robustSe": 0.0011837
+      },
+      {
+        "clusteredRobustSe": 0.01720369,
+        "logPoint": 0.31691348,
+        "name": "sale_New Sale",
+        "robustSe": 0.00115102
+      },
+      {
+        "clusteredRobustSe": 0.01819552,
+        "logPoint": 0.20675316,
+        "name": "sale_Sub Sale",
+        "robustSe": 0.00149427
+      },
+      {
+        "clusteredRobustSe": 0.00581995,
+        "logPoint": 0.09125284,
+        "name": "yr_2022",
+        "robustSe": 0.00115041
+      },
+      {
+        "clusteredRobustSe": 0.00789098,
+        "logPoint": 0.17198277,
+        "name": "yr_2023",
+        "robustSe": 0.00118782
+      },
+      {
+        "clusteredRobustSe": 0.0087943,
+        "logPoint": 0.21461974,
+        "name": "yr_2024",
+        "robustSe": 0.00116673
+      },
+      {
+        "clusteredRobustSe": 0.01020204,
+        "logPoint": 0.25983859,
+        "name": "yr_2025",
+        "robustSe": 0.00113241
+      },
+      {
+        "clusteredRobustSe": 0.01022204,
+        "logPoint": 0.28845555,
+        "name": "yr_2026",
+        "robustSe": 0.0015099
+      },
+      {
+        "clusteredRobustSe": 0.02894461,
+        "logPoint": -0.17490826,
+        "name": "pa_ANG MO KIO",
+        "robustSe": 0.00194582
+      },
+      {
+        "clusteredRobustSe": 0.02661493,
+        "logPoint": -0.19058442,
+        "name": "pa_BEDOK",
+        "robustSe": 0.00206658
+      },
+      {
+        "clusteredRobustSe": 0.0304351,
+        "logPoint": -0.03248,
+        "name": "pa_BISHAN",
+        "robustSe": 0.00282577
+      },
+      {
+        "clusteredRobustSe": 0.03045492,
+        "logPoint": -0.29568362,
+        "name": "pa_BUKIT BATOK",
+        "robustSe": 0.0022642
+      },
+      {
+        "clusteredRobustSe": 0.02794461,
+        "logPoint": 0.03237688,
+        "name": "pa_BUKIT MERAH",
+        "robustSe": 0.00227995
+      },
+      {
+        "clusteredRobustSe": 0.03026275,
+        "logPoint": -0.22799549,
+        "name": "pa_BUKIT PANJANG",
+        "robustSe": 0.00236335
+      },
+      {
+        "clusteredRobustSe": 0.08076332,
+        "logPoint": -0.34640749,
+        "name": "pa_CENTRAL WATER CATCHMENT",
+        "robustSe": 0.03424138
+      },
+      {
+        "clusteredRobustSe": 0.14856022,
+        "logPoint": -0.42294973,
+        "name": "pa_CHANGI",
+        "robustSe": 0.04297148
+      },
+      {
+        "clusteredRobustSe": 0.06084384,
+        "logPoint": -0.30973236,
+        "name": "pa_CHOA CHU KANG",
+        "robustSe": 0.00353842
+      },
+      {
+        "clusteredRobustSe": 0.02970935,
+        "logPoint": -0.10641521,
+        "name": "pa_CLEMENTI",
+        "robustSe": 0.00233747
+      },
+      {
+        "clusteredRobustSe": 0.03757964,
+        "logPoint": 0.12935142,
+        "name": "pa_DOWNTOWN CORE",
+        "robustSe": 0.00327913
+      },
+      {
+        "clusteredRobustSe": 0.03787642,
+        "logPoint": -0.10170437,
+        "name": "pa_GEYLANG",
+        "robustSe": 0.00263647
+      },
+      {
+        "clusteredRobustSe": 0.0294674,
+        "logPoint": -0.22867581,
+        "name": "pa_HOUGANG",
+        "robustSe": 0.00237724
+      },
+      {
+        "clusteredRobustSe": 0.06158197,
+        "logPoint": -0.15980039,
+        "name": "pa_JURONG EAST",
+        "robustSe": 0.00457513
+      },
+      {
+        "clusteredRobustSe": 0.04351752,
+        "logPoint": -0.21639719,
+        "name": "pa_JURONG WEST",
+        "robustSe": 0.00331832
+      },
+      {
+        "clusteredRobustSe": 0.02689273,
+        "logPoint": -0.07399448,
+        "name": "pa_KALLANG",
+        "robustSe": 0.00256029
+      },
+      {
+        "clusteredRobustSe": 0.04344996,
+        "logPoint": -0.49924906,
+        "name": "pa_MANDAI",
+        "robustSe": 0.0073019
+      },
+      {
+        "clusteredRobustSe": 0.05830998,
+        "logPoint": -0.1165184,
+        "name": "pa_MARINA SOUTH",
+        "robustSe": 0.01848572
+      },
+      {
+        "clusteredRobustSe": 0.02879923,
+        "logPoint": 0.02289594,
+        "name": "pa_MARINE PARADE",
+        "robustSe": 0.00224967
+      },
+      {
+        "clusteredRobustSe": 0.02999207,
+        "logPoint": 0.18254447,
+        "name": "pa_MUSEUM",
+        "robustSe": 0.0039273
+      },
+      {
+        "clusteredRobustSe": 0.04304587,
+        "logPoint": 0.25367725,
+        "name": "pa_NEWTON",
+        "robustSe": 0.00552322
+      },
+      {
+        "clusteredRobustSe": 0.02793634,
+        "logPoint": -0.03039719,
+        "name": "pa_NOVENA",
+        "robustSe": 0.00274786
+      },
+      {
+        "clusteredRobustSe": 0.04587237,
+        "logPoint": 0.44827085,
+        "name": "pa_ORCHARD",
+        "robustSe": 0.00737859
+      },
+      {
+        "clusteredRobustSe": 0.04640263,
+        "logPoint": 0.05877665,
+        "name": "pa_OUTRAM",
+        "robustSe": 0.00466535
+      },
+      {
+        "clusteredRobustSe": 0.02987536,
+        "logPoint": -0.31249095,
+        "name": "pa_PASIR RIS",
+        "robustSe": 0.00222995
+      },
+      {
+        "clusteredRobustSe": 0.03588891,
+        "logPoint": -0.21819094,
+        "name": "pa_PUNGGOL",
+        "robustSe": 0.00261749
+      },
+      {
+        "clusteredRobustSe": 0.03034053,
+        "logPoint": -0.0433267,
+        "name": "pa_QUEENSTOWN",
+        "robustSe": 0.00208955
+      },
+      {
+        "clusteredRobustSe": 0.03338273,
+        "logPoint": 0.20093105,
+        "name": "pa_RIVER VALLEY",
+        "robustSe": 0.00281429
+      },
+      {
+        "clusteredRobustSe": 0.05906488,
+        "logPoint": 0.00284657,
+        "name": "pa_ROCHOR",
+        "robustSe": 0.00554075
+      },
+      {
+        "clusteredRobustSe": 0.0402255,
+        "logPoint": -0.27893996,
+        "name": "pa_SEMBAWANG",
+        "robustSe": 0.00258324
+      },
+      {
+        "clusteredRobustSe": 0.03255568,
+        "logPoint": -0.22609446,
+        "name": "pa_SENGKANG",
+        "robustSe": 0.00225752
+      },
+      {
+        "clusteredRobustSe": 0.03058164,
+        "logPoint": -0.0930901,
+        "name": "pa_SERANGOON",
+        "robustSe": 0.00234754
+      },
+      {
+        "clusteredRobustSe": 0.04368073,
+        "logPoint": 0.22797275,
+        "name": "pa_SINGAPORE RIVER",
+        "robustSe": 0.00313576
+      },
+      {
+        "clusteredRobustSe": 0.05751308,
+        "logPoint": 0.11633028,
+        "name": "pa_SOUTHERN ISLANDS",
+        "robustSe": 0.00619775
+      },
+      {
+        "clusteredRobustSe": 0.03898318,
+        "logPoint": -0.27295918,
+        "name": "pa_TAMPINES",
+        "robustSe": 0.00222736
+      },
+      {
+        "clusteredRobustSe": 0.02744517,
+        "logPoint": 0.19802538,
+        "name": "pa_TANGLIN",
+        "robustSe": 0.00302924
+      },
+      {
+        "clusteredRobustSe": 0.0359952,
+        "logPoint": -0.31976511,
+        "name": "pa_TENGAH",
+        "robustSe": 0.00219692
+      },
+      {
+        "clusteredRobustSe": 0.04183907,
+        "logPoint": -0.0843024,
+        "name": "pa_TOA PAYOH",
+        "robustSe": 0.00275035
+      },
+      {
+        "clusteredRobustSe": 0.04486583,
+        "logPoint": -0.35858611,
+        "name": "pa_WOODLANDS",
+        "robustSe": 0.00322536
+      },
+      {
+        "clusteredRobustSe": 0.03983283,
+        "logPoint": -0.31917002,
+        "name": "pa_YISHUN",
+        "robustSe": 0.00239498
+      }
+    ],
+    "indicatorCoefficients": {
+      "childcare_1km": {
+        "clusterVsHC1SeRatio": 2.7567,
+        "clusteredRobustSe": 0.050451,
+        "clusteredTStat": -2.82,
+        "interpretation": "conditional log-point difference in price-psf associated with the indicator, holding the stated controls fixed; descriptive, between projects (project identity is not conditioned on), and joined to an undated snapshot — not a causal premium. The clustered SE is the published uncertainty; the HC1 SE is retained only for the comparison",
+        "logPoint": -0.142079,
+        "pctEffectExpMinus1": -13.2448,
+        "regressor": "1 when the shipped dist_to_nearest_childcare is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.018301,
+        "tStat": -7.76,
+        "within1000mN": 233231,
+        "within1000mShare": 0.9947
+      },
+      "hawker_1km": {
+        "clusterVsHC1SeRatio": 13.9573,
+        "clusteredRobustSe": 0.012159,
+        "clusteredTStat": -0.11,
+        "interpretation": "conditional log-point difference in price-psf associated with the indicator, holding the stated controls fixed; descriptive, between projects (project identity is not conditioned on), and joined to an undated snapshot — not a causal premium. The clustered SE is the published uncertainty; the HC1 SE is retained only for the comparison",
+        "logPoint": -0.001337,
+        "pctEffectExpMinus1": -0.1336,
+        "regressor": "1 when the shipped dist_to_nearest_hawker is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.000871,
+        "tStat": -1.53,
+        "within1000mN": 165838,
+        "within1000mShare": 0.7073
+      },
+      "mall_1km": {
+        "clusterVsHC1SeRatio": 12.1179,
+        "clusteredRobustSe": 0.01487,
+        "clusteredTStat": -1.19,
+        "interpretation": "conditional log-point difference in price-psf associated with the indicator, holding the stated controls fixed; descriptive, between projects (project identity is not conditioned on), and joined to an undated snapshot — not a causal premium. The clustered SE is the published uncertainty; the HC1 SE is retained only for the comparison",
+        "logPoint": -0.017691,
+        "pctEffectExpMinus1": -1.7536,
+        "regressor": "1 when the shipped dist_to_nearest_mall is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.001227,
+        "tStat": -14.42,
+        "within1000mN": 57049,
+        "within1000mShare": 0.2433
+      },
+      "mrt_1km": {
+        "clusterVsHC1SeRatio": 16.5991,
+        "clusteredRobustSe": 0.017982,
+        "clusteredTStat": 3.82,
+        "interpretation": "conditional log-point difference in price-psf associated with the indicator, holding the stated controls fixed; descriptive, between projects (project identity is not conditioned on), and joined to an undated snapshot — not a causal premium. The clustered SE is the published uncertainty; the HC1 SE is retained only for the comparison",
+        "logPoint": 0.068648,
+        "pctEffectExpMinus1": 7.1059,
+        "regressor": "1 when the shipped dist_to_nearest_mrt is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.001083,
+        "tStat": 63.37,
+        "within1000mN": 200169,
+        "within1000mShare": 0.8537
+      },
+      "sports_facility_1km": {
+        "clusterVsHC1SeRatio": 13.0999,
+        "clusteredRobustSe": 0.011079,
+        "clusteredTStat": -2.16,
+        "interpretation": "conditional log-point difference in price-psf associated with the indicator, holding the stated controls fixed; descriptive, between projects (project identity is not conditioned on), and joined to an undated snapshot — not a causal premium. The clustered SE is the published uncertainty; the HC1 SE is retained only for the comparison",
+        "logPoint": -0.023912,
+        "pctEffectExpMinus1": -2.3628,
+        "regressor": "1 when the shipped dist_to_nearest_sports_facility is <= 1000 m, else 0 (unitless binary indicator built from the shipped metres column)",
+        "robustSe": 0.000846,
+        "tStat": -28.27,
+        "within1000mN": 75939,
+        "within1000mShare": 0.3239
+      }
+    },
+    "sample": {
+      "condoRowsTotal": 245655,
+      "cutoffUpperBound": "2026-10",
+      "cutoffUpperBoundMeaning": "every model row and every aggregate in this ledger ends at the last complete month; the terminal partial month is excluded",
+      "excludedInWindowReasonSignatures": {
+        "landed-or-strata-landed-subtype": 9957,
+        "landed-or-strata-landed-subtype|missing-planning-area|missing-source:childcare-distance|missing-source:hawker-distance|missing-source:mall-distance|missing-source:mrt-distance|missing-source:sports_facility-distance": 1,
+        "landed-or-strata-landed-subtype|unparseable-tenure": 2,
+        "unparseable-tenure": 795
+      },
+      "excludedInWindowRowCount": 10755,
+      "excludedInWindowRowsDigestBasis": "sha256 over canonical_bytes (sorted keys, indent=2, trailing newline) of the full per-row list [{month, reasons, rowIndex} ...] in row order; --check recomputes that payload from this checkout, so a single drifting row, month or reason set fails it",
+      "excludedInWindowRowsSample": [
+        {
+          "month": "2025-11",
+          "reasons": [
+            "unparseable-tenure"
+          ],
+          "rowIndex": 49297
+        },
+        {
+          "month": "2025-11",
+          "reasons": [
+            "unparseable-tenure"
+          ],
+          "rowIndex": 49636
+        },
+        {
+          "month": "2025-10",
+          "reasons": [
+            "unparseable-tenure"
+          ],
+          "rowIndex": 52440
+        },
+        {
+          "month": "2025-10",
+          "reasons": [
+            "unparseable-tenure"
+          ],
+          "rowIndex": 53422
+        },
+        {
+          "month": "2025-09",
+          "reasons": [
+            "unparseable-tenure"
+          ],
+          "rowIndex": 54258
+        }
+      ],
+      "excludedInWindowRowsSha256": "500b8b2b7bda2ff218614af8248542c385e0f6a0c57efe5c2fdcc898e35c5057",
+      "excludedReasonCounts": {
+        "before-study-window": 0,
+        "landed-or-strata-landed-subtype": 9995,
+        "missing-planning-area": 1,
+        "missing-project-name": 0,
+        "missing-source:childcare-distance": 1,
+        "missing-source:hawker-distance": 1,
+        "missing-source:mall-distance": 1,
+        "missing-source:mrt-distance": 1,
+        "missing-source:sports_facility-distance": 1,
+        "non-positive-or-missing-area-sqft": 0,
+        "non-positive-or-missing-price": 0,
+        "terminal-partial-month-after-cutoff": 421,
+        "unparseable-tenure": 934
+      },
+      "excludedRowsByReasonCount": {
+        "1": 11001,
+        "2": 174,
+        "7": 1
+      },
+      "excludedRowsTotal": 11176,
+      "includedN": 234479,
+      "missingSourceSemantics": "a null access distance is a missing source (the row's location has no coordinates), not a zero distance and not 'no amenity nearby'; it is recorded as missing-source, never rendered as 0",
+      "propertyType": "condo (non-landed strata: Condominium, Apartment, Executive Condominium)",
+      "reasonSetSemantics": "exclusions are sets: a row failing several conditions records every reason (excludedRowsByReasonCount counts rows by the SIZE of their reason set), and no reason is asserted as the single cause",
+      "windowStart": "2021-01",
+      "yearCompletedNullRows": 245649
+    }
+  },
+  "condoSourceCoverage": {
+    "cutoffUpperBound": "2026-10",
+    "cutoffUpperBoundMeaning": "every count, share, decomposition and model row in this ledger ends at the last complete month; the terminal partial month is excluded and never mixed into a coverage count",
+    "firstMonth": "2021-01",
+    "lastMonthObserved": "2026-11",
+    "minWindowMonthTransactions": {
+      "month": "2026-02",
+      "n": 1547
+    },
+    "rows": 245655,
+    "rowsBeforeSourceStart": 0,
+    "rowsInTerminalMonth": 421,
+    "rowsInWindow": 245234,
+    "sourceMissingWindowMonths": [],
+    "windowMonths": 70
+  },
+  "cutoff": {
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact",
+    "lastCompleteMonth": "2026-10",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.1974,
+    "terminalMonthTransactions": 421,
+    "trailing12MedianTransactions": 2133.0
+  },
+  "definition": "A measured source audit and one descriptive conditional-association model. The in-house facility layer the legacy study analysed (project facilities such as pools, gyms, tennis courts, sky gardens) is ABSENT from this checkout: the four legacy-named sources do not exist here, and the shipped dataset's only facility-like columns are external SportSG public-facility distances, a different subject. No facility premium is fitted, re-measured or claimed. What is measured: the recovered join key (project_name) and its coverage; per-facility no-record status (no-record is not absent and not zero); a between/within-project decomposition of log price-psf variance; and one recorded OLS of log condo price-psf on five jointly-fitted external-access indicators (shipped distance <= 1000 m) with stated controls and HC1 and project-clustered standard errors (cluster = project_name; the clustered battery is the published uncertainty and the HC1 battery is retained only to show the scale of the clustering understatement). That model does not condition on project identity: it is a BETWEEN-PROJECT comparison, and the measured variance decomposition is the quantification of what that means. Coefficients are conditional associations, not premiums and not causal effects; the access features come from one undated snapshot per layer joined to transactions from 2021-01 onward (see RS04's snapshot-join audit for the vintage semantics), so no coefficient compares amenity states at two dates. This ledger records one specification and only that one was fitted, and all its coefficients are reported; there is no dated prior protocol, so specification search cannot be ruled out — the single-specification discipline is a disclosed limitation, not a credential.",
+  "facilityMissingness": {
+    "combinations": [
+      {
+        "combination": "Pool + Gym + Security (baseline row)",
+        "premiumMeasured": null,
+        "reason": "facility-source-absent",
+        "status": "no-record"
+      },
+      {
+        "combination": "+ Tennis Court row",
+        "premiumMeasured": null,
+        "reason": "facility-source-absent",
+        "status": "no-record"
+      },
+      {
+        "combination": "+ Sky Garden row",
+        "premiumMeasured": null,
+        "reason": "facility-source-absent",
+        "status": "no-record"
+      },
+      {
+        "combination": "Tennis + Sky Garden + Concierge row",
+        "premiumMeasured": null,
+        "reason": "facility-source-absent",
+        "status": "no-record"
+      },
+      {
+        "combination": "Full premium suite row",
+        "premiumMeasured": null,
+        "reason": "facility-source-absent",
+        "status": "no-record"
+      }
+    ],
+    "facilities": [
+      {
+        "facility": "Swimming pool",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "Security (24hr)",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "Gym / Fitness corner",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "BBQ pits",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "Function room",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "Tennis court",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "Sky garden / Roof terrace",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "Concierge / Clubhouse",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      },
+      {
+        "facility": "Jacuzzi / Hydrospa",
+        "propertiesCounted": null,
+        "reason": "facility-source-absent",
+        "shareOfProperties": null,
+        "status": "no-record"
+      }
+    ],
+    "semantics": "no-record (the source layer that carried the attribute is absent) is distinguished from absent (a record exists and shows the facility missing) and from zero (a count was taken and returned 0). This checkout supports only no-record for every in-house facility the legacy text names"
+  },
+  "inputs": {
+    "data/manual/csv/datagov/SportSGFacilities.geojson": {
+      "rows": 45,
+      "sha256": "51dc45c1fcc09fc081808849632c1eb75d2672288ce4a9ff9ee48aa69cd817ae"
+    },
+    "data/pipeline/01_bronze/external/SportSGFacilities.parquet": {
+      "rows": 45,
+      "sha256": "89111d55339ef2906f953294fa6ce553bd662eeac48ff41f44f929e1d8ec08a6"
+    },
+    "data/pipeline/01_bronze/raw_condo_transactions.parquet": {
+      "rows": 245655,
+      "sha256": "9971d1a8e440655d68fff3bf6f065a04fc706938d54a0ff86e04db346d852e34"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/archive/20250120-data-pipeline.md": {
+      "rows": 708,
+      "sha256": "2bf5ab87f46f1e7883b2657aa3439109dc4cce861b225be6f3c0cf46254b1e59"
+    }
+  },
+  "joinKey": {
+    "availableIn": [
+      "data/pipeline/01_bronze/raw_condo_transactions.parquet",
+      "unified_dataset (condo rows)"
+    ],
+    "bronze": {
+      "distinctProjects": 3005,
+      "empty": 0,
+      "emptyShare": 0.0,
+      "largestProject": {
+        "name": "LANDED HOUSING DEVELOPMENT",
+        "transactions": 2800
+      },
+      "largestValueNote": "the most frequent value of the key is the literal string 'LANDED HOUSING DEVELOPMENT' — a category label the source attaches to bulk records, not a named development; one more reason the key cannot be treated as a validated development identity without the master layer this checkout lacks",
+      "projectsWithAtLeast30": 1155,
+      "rows": 245655,
+      "singleTransactionProjects": 138,
+      "transactionsPerProject": {
+        "max": 2800,
+        "median": 18.0,
+        "min": 1,
+        "p10": 2.0,
+        "p90": 228.6
+      }
+    },
+    "conclusion": "the join is recovered as far as this checkout allows: the key exists and is fully populated, but the facility layer it would join to was never carried into the Hamilton pipeline",
+    "counterparty": {
+      "facilityLayerPresent": false,
+      "meaning": "'none joined' is a missing counterparty, not zero facilities: this ledger cannot count facilities per project, and no sentence in the refreshed edition may read the missing layer as an absence of facilities",
+      "recordsJoinedToAFacilityLayer": "none — the key has no counterparty layer in this checkout"
+    },
+    "key": "project_name",
+    "normalisation": "the key joins as exact shipped strings; no project master layer or crosswalk exists in this checkout to validate name spelling, so the risk of two developments sharing one name string is not measurable here",
+    "window": {
+      "distinctProjects": 3005,
+      "empty": 0,
+      "emptyShare": 0.0,
+      "largestProject": {
+        "name": "LANDED HOUSING DEVELOPMENT",
+        "transactions": 2788
+      },
+      "largestValueNote": "the most frequent value of the key is the literal string 'LANDED HOUSING DEVELOPMENT' — a category label the source attaches to bulk records, not a named development; one more reason the key cannot be treated as a validated development identity without the master layer this checkout lacks",
+      "projectsWithAtLeast30": 1154,
+      "rows": 245234,
+      "singleTransactionProjects": 140,
+      "transactionsPerProject": {
+        "max": 2788,
+        "median": 18.0,
+        "min": 1,
+        "p10": 2.0,
+        "p90": 226.6
+      }
+    }
+  },
+  "legacyClaims": [
+    {
+      "basis": "the in-house facility layer is absent from this checkout (legacySourceAudit), so no with-vs-without tennis-court or sky-garden population exists; 'commands' is also causal, and no identification strategy exists here",
+      "claim": "Differentiated facilities command a measurable premium",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "The facilities that actually move prices are the ones that are not universally available. A condo with a tennis court or sky garden commands a measurable premium over an equivalent property with only standard facilities."
+    },
+    {
+      "basis": "facilityMissingness records the facility as no-record: the layer that carried per-project facility lists is absent, so no prevalence share or premium classification is measurable; no-record is not zero and not absence",
+      "claim": "Prevalence table row: swimming pool",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Swimming pool | ~85-90% | Minimal (expected) | Table stake |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: security",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Security (24hr) | ~80-85% | Minimal (expected) | Table stake |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: gym",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Gym / Fitness corner | ~75-80% | Minimal (expected) | Table stake |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: BBQ pits",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| BBQ pits | ~70-75% | Minimal | Table stake |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: function room",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Function room | ~60-65% | Modest | Nice-to-have |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: tennis court",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Tennis court | ~25-30% | Moderate | Differentiator |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: sky garden / roof terrace",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Sky garden / Roof terrace | ~15-20% | Moderate-High | Differentiator |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: concierge / clubhouse",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Concierge / Clubhouse | ~10-15% | Moderate | Differentiator |"
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Prevalence table row: jacuzzi / hydrospa",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Jacuzzi / Hydrospa | ~20-25% | Low-Moderate | Minor differentiator |"
+    },
+    {
+      "basis": "no interaction model is reproduced and no facility combination is observable (the layer is absent); the synergy percentages have no population in this checkout",
+      "claim": "Synergy table row: baseline",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Pool + Gym + Security | Baseline | 0% (expected) |"
+    },
+    {
+      "basis": "same absent layer; no combination premium is measurable",
+      "claim": "Synergy table row: tennis court",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| + Tennis Court | Moderate | +2-4% |"
+    },
+    {
+      "basis": "same absent layer; no combination premium is measurable",
+      "claim": "Synergy table row: sky garden",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| + Sky Garden | Moderate-High | +3-5% |"
+    },
+    {
+      "basis": "same absent layer; no combination premium is measurable",
+      "claim": "Synergy table row: tennis + sky garden + concierge",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Tennis + Sky Garden + Concierge | Strong | +5-8% |"
+    },
+    {
+      "basis": "same absent layer; no combination premium is measurable",
+      "claim": "Synergy table row: full premium suite",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Full premium suite | Diminishing returns | +6-10% |"
+    },
+    {
+      "basis": "'adds' is causal and the facility-count regressor it needs does not exist here; no combination model is fitted",
+      "claim": "The first differentiating facility adds the most value; diminishing returns beyond",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "The first differentiating facility adds the most value. Adding more facilities beyond the first premium one shows diminishing returns."
+    },
+    {
+      "basis": "needs both an MRT measure (exists, snapshot) and an in-house facility measure (absent); the interaction of the two is not measurable, and 'command' is causal",
+      "claim": "Condos near MRT with good in-house facilities command the strongest pricing",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Condos near MRT stations with good in-house facilities command the strongest pricing."
+    },
+    {
+      "basis": "the 3.6M-record nearby-facilities layer is absent (legacyNamedSources); the distance-premium labels came from the retired v1 pipeline and are not reproduced. Measured analogue, not a replacement: the recorded model's conditional associations for mrt/mall/hawker/childcare/sports within 1000 m (associations.indicatorCoefficients), between projects",
+      "claim": "External amenity proximity table row: MRT within 500m",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| MRT within 500m | High | Strong synergy with condo facilities |"
+    },
+    {
+      "basis": "same absent layer; the label and its 'complements' interaction reading are not reproduced",
+      "claim": "External amenity proximity table row: mall within 500m",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Mall within 500m | Moderate | Complements retail-deprived condos |"
+    },
+    {
+      "basis": "same absent layer; 'relevant for family-oriented buyers' asserts a buyer-preference finding nothing here measures",
+      "claim": "External amenity proximity table row: childcare within 500m",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Childcare within 500m | Low-Moderate | Relevant for family-oriented buyers |"
+    },
+    {
+      "basis": "same absent layer; segment relevance is not a measured quantity in this pack",
+      "claim": "External amenity proximity table row: hawker within 1km",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "| Hawker within 1km | Low | Less relevant for condo segment |"
+    },
+    {
+      "basis": "an interaction claim needs both measures; the in-house half is absent, and no interaction model is fitted",
+      "claim": "Internal and external amenities are complements, not substitutes",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "The interaction effect suggests that internal and external amenities are complementary, not substitutes."
+    },
+    {
+      "basis": "facility condition is not recorded anywhere in this checkout (the legacy text itself flags this), and no longitudinal property-level price trajectory is reproducible without a unit-level key (RS01: no source carries one)",
+      "claim": "Facility quality and maintenance affect value retention",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Properties with aging or poorly maintained facilities show weaker value retention compared to well-maintained equivalents."
+    },
+    {
+      "basis": "rental demand is not measured in this pack (no rental join for condos), facility presence is unmeasurable, and 'command' is causal",
+      "claim": "Differentiated facilities attract stronger tenant demand and command higher rents",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Properties with differentiated facilities attract stronger tenant demand and command higher rents."
+    },
+    {
+      "basis": "a decision rule built on the unmeasurable prevalence and premium claims; the measured conditional associations in this pack are between-project and support no guidance of this form",
+      "claim": "Buyer guidance: do not pay extra for table stakes; look for differentiators",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Do not pay extra for table-stakes facilities (pool, gym, security). Every comparable condo has them."
+    },
+    {
+      "basis": "no EC privatisation event, facility quality or pricing factor is measured here; EC rows are in the model sample only as a subtype fixed-effect level",
+      "claim": "EC guidance: facility quality becomes a direct pricing factor after privatisation",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "When the EC privatizes after MOP, facility quality becomes a direct pricing factor."
+    },
+    {
+      "basis": "same absent layer; no prevalence share is measurable (facilityMissingness)",
+      "claim": "Technical finding: pools/security/gyms present in 75-90% of properties",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Swimming pools, security, and gyms are present in 75-90% of properties, making them baseline expectations rather than pricing differentiators"
+    },
+    {
+      "basis": "same absent layer; no prevalence share and no differentiator ranking is measurable",
+      "claim": "Technical finding: tennis courts and sky gardens present in only 15-30% of properties",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Tennis courts and sky gardens are the strongest individual facility differentiators, present in only 15-30% of properties"
+    },
+    {
+      "basis": "'adds' is causal and the combination model is not reproduced; no facility count exists",
+      "claim": "Technical finding: the first premium facility adds 2-5%, subsequent ones add 1-3% each",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Combination effects show diminishing returns: the first premium facility adds 2-5%, subsequent ones add 1-3% each"
+    },
+    {
+      "basis": "property_nearby_facilities.parquet is absent from this checkout (legacyNamedSources); the shipped dataset carries nearest-distance columns per amenity layer instead, whose lineage RS04 audited",
+      "claim": "3.6M nearby facility records provide granular proximity data",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "3.6M nearby facility records provide granular proximity data for childcare, hawker, mall, and other external amenities"
+    },
+    {
+      "basis": "the private-residential source in this checkout starts 2021-01 with 0 earlier rows (condoSourceCoverage), so 2017-2020 is source-missing; the measured window is 2021-01 -> 2026-10 (70 months), and the facility cross-section has no source at all here",
+      "claim": "Data Period: Cross-sectional (facility data) with transaction data 2017-2026",
+      "disposition": "re-cut",
+      "quote": "Data Period: Cross-sectional (facility data) with transaction data 2017-2026"
+    },
+    {
+      "basis": "the comparison population is unavailable (no facility layer); and projectStructure measures why that control set is insufficient on this data: the between-project share of log psf variance it records is the quantification of what a with-vs-without comparison conditioned only on planning area and age would actually compare — projects",
+      "claim": "Methodology: PSF comparison with vs without each facility, controlling for location and age",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Premium estimation: Comparison of price PSF for properties with vs without each facility type, controlling for location (planning area) and property age"
+    },
+    {
+      "basis": "none of the four legacy-named paths exists in this checkout (legacySourceAudit measures each); the shipped paths are data/pipeline/01_bronze (source), 02_silver, 03_gold and data/pipeline/04_platinum/unified_dataset.parquet, none of which carries an in-house facility column",
+      "claim": "Legacy data paths (property facilities / nearby facilities / property master / housing_unified)",
+      "disposition": "superseded",
+      "quote": "Property facilities: data/04_platinum/private_property_facilities.parquet (172,504 records)"
+    },
+    {
+      "basis": "the analysis is not reproducible in this checkout; the renewed edition makes no table-stakes claim because no facility-level pricing measurement exists here",
+      "claim": "Conclusion: most facilities are table stakes with minimal individual pricing impact",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Private property facility analysis reveals that most facilities are table stakes with minimal individual pricing impact."
+    },
+    {
+      "basis": "neither facility quality nor tenant retention is measured in this checkout; the sentence is also prescriptive",
+      "claim": "Investor guidance: facility quality beats facility quantity",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Facility quality matters more for tenant retention than facility quantity."
+    },
+    {
+      "basis": "no MCST financial data exists in this checkout; the claim is prescriptive and unmeasurable here",
+      "claim": "Investor guidance: MCST financials indicate sustainable maintenance",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Check the MCST (management corporation) financials. Well-funded reserve funds indicate sustainable facility maintenance."
+    },
+    {
+      "basis": "built on the unmeasurable prevalence and premium claims; no future-resale measurement exists in this pack",
+      "claim": "Condo-buyer guidance: look for differentiators for resale value",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Look for one or two genuine differentiators (tennis court, sky garden, concierge). These support future resale value."
+    },
+    {
+      "basis": "facility condition is not recorded anywhere in this checkout; the sentence is prescriptive",
+      "claim": "Condo-buyer guidance: inspect facility condition",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Inspect facility condition during viewings. A poorly maintained pool is a liability, not a selling point."
+    },
+    {
+      "basis": "no EC facility comparison is measurable (the layer is absent); the sentence is prescriptive",
+      "claim": "EC guidance: ECs have more extensive facilities than equivalent-price condos",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "ECs typically have more extensive facilities than equivalent-price condos. Compare the facility quality, not just the list."
+    },
+    {
+      "basis": "built on the unmeasurable differentiator claims and a future-buyer-preference assertion nothing here measures",
+      "claim": "EC guidance: prioritize at least one differentiating facility",
+      "disposition": "withdrawn-not-measurable",
+      "quote": "Prioritize developments with at least one differentiating facility that will appeal to future private-market buyers."
+    },
+    {
+      "basis": "the path does not exist in this checkout (legacyNamedSources measures each); the shipped dataset carries nearest-distance columns per amenity layer instead",
+      "claim": "Data Used: nearby facilities layer",
+      "disposition": "superseded",
+      "quote": "Nearby facilities: data/04_platinum/property_nearby_facilities.parquet (3,638,104 records)"
+    },
+    {
+      "basis": "the path does not exist in this checkout; the condo-side location/amenity features live in the gold location_dim and the platinum unified_dataset under data/pipeline/",
+      "claim": "Data Used: property master layer",
+      "disposition": "superseded",
+      "quote": "Property master data: data/04_platinum/property.parquet (41,340 records, 30 columns including amenity distance features)"
+    },
+    {
+      "basis": "the shipped path is data/pipeline/04_platinum/unified_dataset.parquet (1,236,310 rows x 97 columns, sha-pinned in the ledger inputs)",
+      "claim": "Data Used: transaction layer",
+      "disposition": "superseded",
+      "quote": "Transaction data: data/04_platinum/housing_unified.parquet (price data for premium estimation)"
+    },
+    {
+      "basis": "still true and now stronger: the facility data is not merely cross-sectional, it is absent from this checkout; and the refreshed edition adds the between-project limitation the legacy methodology carried without stating",
+      "claim": "Key limitation acknowledged by the legacy text itself",
+      "disposition": "superseded",
+      "quote": "Key limitation: facility data is cross-sectional and does not capture facility quality or condition directly."
+    },
+    {
+      "basis": "this edition is dated 2026-11-17 and measured from the current checkout; the observation cutoff is 2026-10 (cutoff)",
+      "claim": "Analysis Date: 2026-03-31",
+      "disposition": "superseded",
+      "quote": "Analysis Date: 2026-03-31"
+    },
+    {
+      "basis": "the focus is kept as a scope statement (the model sample is non-landed strata including Executive Condominium rows), but no facility measurement is possible under it in this checkout",
+      "claim": "Primary Focus: Condominium and EC facilities",
+      "disposition": "superseded",
+      "quote": "Primary Focus: Condominium and EC facilities"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 46,
+    "editionSpans": {
+      "allClaimsQuoted": true,
+      "allSpansFoundInLegacy": true,
+      "claimsQuotedInEdition": 46,
+      "claimsRegistered": 46,
+      "driftBehaviour": "--check fails if a quoted span in the edition's Superseded-figures section no longer matches the legacy file, or if a registered legacy claim loses its quotation in the edition; quoted prose outside that section is not a legacy quotation and is not checked",
+      "editionFile": "docs/analytics/editions/facility-premiums/2026-11-17/facility-premiums.md",
+      "scope": "every double-quoted span inside the edition's Superseded-figures section; spans are unescaped (\\| -> |), bold/backtick-stripped and whitespace-normalised before matching against the legacy file",
+      "section": "Superseded figures",
+      "spansChecked": 46
+    },
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/facility-premiums.md",
+    "legacyFileSha256": "d44ad9c54586b2b658ecd5589d0a9698b049f1b244e4e055216f8aad7a96efa0",
+    "quotes": [
+      {
+        "claim": "Differentiated facilities command a measurable premium",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: swimming pool",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: security",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: gym",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: BBQ pits",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: function room",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: tennis court",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: sky garden / roof terrace",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: concierge / clubhouse",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Prevalence table row: jacuzzi / hydrospa",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Synergy table row: baseline",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Synergy table row: tennis court",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Synergy table row: sky garden",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Synergy table row: tennis + sky garden + concierge",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Synergy table row: full premium suite",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "The first differentiating facility adds the most value; diminishing returns beyond",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Condos near MRT with good in-house facilities command the strongest pricing",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "External amenity proximity table row: MRT within 500m",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "External amenity proximity table row: mall within 500m",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "External amenity proximity table row: childcare within 500m",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "External amenity proximity table row: hawker within 1km",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Internal and external amenities are complements, not substitutes",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Facility quality and maintenance affect value retention",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Differentiated facilities attract stronger tenant demand and command higher rents",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Buyer guidance: do not pay extra for table stakes; look for differentiators",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "EC guidance: facility quality becomes a direct pricing factor after privatisation",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Technical finding: pools/security/gyms present in 75-90% of properties",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Technical finding: tennis courts and sky gardens present in only 15-30% of properties",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Technical finding: the first premium facility adds 2-5%, subsequent ones add 1-3% each",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "3.6M nearby facility records provide granular proximity data",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Data Period: Cross-sectional (facility data) with transaction data 2017-2026",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Methodology: PSF comparison with vs without each facility, controlling for location and age",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Legacy data paths (property facilities / nearby facilities / property master / housing_unified)",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Conclusion: most facilities are table stakes with minimal individual pricing impact",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Investor guidance: facility quality beats facility quantity",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Investor guidance: MCST financials indicate sustainable maintenance",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Condo-buyer guidance: look for differentiators for resale value",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Condo-buyer guidance: inspect facility condition",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "EC guidance: ECs have more extensive facilities than equivalent-price condos",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "EC guidance: prioritize at least one differentiating facility",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Data Used: nearby facilities layer",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Data Used: property master layer",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Data Used: transaction layer",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Key limitation acknowledged by the legacy text itself",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Analysis Date: 2026-03-31",
+        "foundInLegacyText": true
+      },
+      {
+        "claim": "Primary Focus: Condominium and EC facilities",
+        "foundInLegacyText": true
+      }
+    ]
+  },
+  "legacySourceAudit": {
+    "archivedPipeline": {
+      "doc": {
+        "citations": [
+          {
+            "line": 268,
+            "occurrences": 3,
+            "path": "docs/archive/20250120-data-pipeline.md",
+            "quote": "- `L3_private_property_facilities` - Private property facilities"
+          },
+          {
+            "line": 269,
+            "occurrences": 3,
+            "path": "docs/archive/20250120-data-pipeline.md",
+            "quote": "- `L3_property_nearby_facilities` - Nearby amenities counts"
+          }
+        ],
+        "meaning": "the v1 (2025-01) pipeline defined L3 stages named private_property_facilities and property_nearby_facilities; the Hamilton pipeline under data/pipeline/ defines no facility stage, and no facility parquet exists anywhere in the pipeline tree this checkout ships",
+        "path": "docs/archive/20250120-data-pipeline.md",
+        "sha256": "2bf5ab87f46f1e7883b2657aa3439109dc4cce861b225be6f3c0cf46254b1e59"
+      }
+    },
+    "conclusion": "no in-house facility layer exists in this checkout: the legacy facility prevalence table, the facility-combination synergy table and every facility-premium comparison built on them have no population to measure here",
+    "legacyNamedSources": {
+      "data/04_platinum/housing_unified.parquet": {
+        "exists": false,
+        "meaning": "the legacy text's named facility source is not in this checkout"
+      },
+      "data/04_platinum/private_property_facilities.parquet": {
+        "exists": false,
+        "meaning": "the legacy text's named facility source is not in this checkout"
+      },
+      "data/04_platinum/property.parquet": {
+        "exists": false,
+        "meaning": "the legacy text's named facility source is not in this checkout"
+      },
+      "data/04_platinum/property_nearby_facilities.parquet": {
+        "exists": false,
+        "meaning": "the legacy text's named facility source is not in this checkout"
+      }
+    },
+    "sportsgLayer": {
+      "loaderCitations": [
+        {
+          "line": 658,
+          "occurrences": 1,
+          "path": "src/egg_n_bacon_housing/components/ingestion/geojson.py",
+          "quote": "\"\"\"Load SportSG facility locations from bronze/external GeoJSON.\"\"\""
+        },
+        {
+          "line": 662,
+          "occurrences": 1,
+          "path": "src/egg_n_bacon_housing/components/ingestion/geojson.py",
+          "quote": "[\"Name\", \"NAME\", \"VENUE\"],"
+        }
+      ],
+      "meaning": "45 public SportSG venues (sport centres, swimming complexes, ActiveSG gyms, stadiums, playfields) — public infrastructure shared across developments, not a development's private facility list; it cannot stand in for the legacy in-house facility layer, and this pack does not treat it as one",
+      "parquet": {
+        "carriesDates": false,
+        "columns": [
+          "name",
+          "lat",
+          "lon",
+          "amenity_type"
+        ],
+        "distinctNames": 45,
+        "path": "data/pipeline/01_bronze/external/SportSGFacilities.parquet",
+        "rows": 45
+      },
+      "rawGeojson": {
+        "distinctVenueValues": 45,
+        "features": 45,
+        "fmelUpdD": {
+          "20241024152749": 44,
+          "20250711141125": 1
+        },
+        "nameProperty": "VENUE",
+        "path": "data/manual/csv/datagov/SportSGFacilities.geojson"
+      }
+    },
+    "unifiedDataset": {
+      "columnNames": [
+        "month",
+        "town",
+        "flat_type",
+        "block",
+        "street_name",
+        "storey_range",
+        "floor_area_sqm",
+        "flat_model",
+        "lease_commence_date",
+        "price",
+        "remaining_lease",
+        "floor_area_sqft",
+        "transaction_date",
+        "property_type",
+        "storey_min",
+        "storey_max",
+        "address",
+        "property_segment",
+        "is_ec",
+        "project_name",
+        "area_sqft",
+        "Unit Price ($ PSF)",
+        "sale_date",
+        "type_of_sale",
+        "type_of_area",
+        "area_sqm",
+        "Unit Price ($ PSM)",
+        "nett_price",
+        "property_subtype",
+        "number_of_units",
+        "tenure",
+        "postal_district",
+        "market_segment",
+        "floor_level",
+        "area",
+        "lat",
+        "lon",
+        "psf",
+        "nearest_schoolPRIMARY_dist",
+        "nearest_schoolSECONDARY_dist",
+        "nearest_schoolJUNIOR_dist",
+        "dist_to_nearest_school",
+        "nearest_top_primary_school_dist",
+        "nearest_top_secondary_school_dist",
+        "school_accessibility_score",
+        "nearest_mrt_station",
+        "nearest_mrt_tier",
+        "nearest_mrt_is_interchange",
+        "dist_to_nearest_mrt",
+        "nearest_mrt_score",
+        "dist_to_nearest_mall",
+        "nearest_mall",
+        "dist_to_nearest_hawker",
+        "nearest_hawker",
+        "dist_to_nearest_supermarket",
+        "nearest_supermarket",
+        "dist_to_nearest_park",
+        "nearest_park",
+        "dist_to_nearest_childcare",
+        "nearest_childcare",
+        "dist_to_nearest_kindergarten",
+        "nearest_kindergarten",
+        "dist_to_nearest_bus_stop",
+        "nearest_bus_stop",
+        "dist_to_nearest_chas_clinic",
+        "nearest_chas_clinic",
+        "dist_to_nearest_sports_facility",
+        "nearest_sports_facility",
+        "dist_to_nearest_community_club",
+        "nearest_community_club",
+        "dist_to_nearest_green_mark_building",
+        "nearest_green_mark_building",
+        "max_floor_lvl",
+        "year_completed",
+        "total_dwelling_units",
+        "residential",
+        "commercial",
+        "market_hawker",
+        "multistorey_carpark",
+        "planning_area",
+        "region",
+        "rental_yield_pct",
+        "cpi",
+        "sora_rate",
+        "sora_3m",
+        "unemployment_rate",
+        "gdp",
+        "hdb_rpi",
+        "ura_ppi",
+        "wage_growth",
+        "dwelling_units_in_town",
+        "population_in_town",
+        "population_per_dwelling",
+        "annual_value",
+        "property_tax",
+        "median_monthly_income",
+        "price_stratum"
+      ],
+      "columnsScanned": 97,
+      "facilityLikeColumns": [
+        "dist_to_nearest_sports_facility",
+        "nearest_sports_facility"
+      ],
+      "meaning": "across the full physical schema, the only facility-like column names describe distance to SportSG PUBLIC sport facilities; no column describes a development's in-house facility list (pool, gym, tennis court, sky garden, concierge, and so on)",
+      "scanBasis": "full physical schema read from the parquet metadata (no data read), in schema order — not the 18-column projection this tool loads, so a facility-like column outside the projection would still fail --check"
+    },
+    "unresolvedNameMarker": {
+      "column": "nearest_sports_facility",
+      "literal": "None",
+      "meaning": "one shipped row carries the literal string 'None' as its nearest-facility name alongside null distances; that is a missing-name marker, not a facility named None (see associations.sample reason sets)"
+    }
+  },
+  "notFitted": {
+    "facilityPremiumModel": {
+      "reason": "the facility layer that would supply the regressors (which projects have which facilities) is absent from this checkout; no with-vs-without facility population exists to fit",
+      "status": "not fitted"
+    },
+    "legacyMethodReproduction": {
+      "reason": "the legacy methodology (facility prevalence frequency tables, PSF comparison controlling for planning area and property age, facility-combination interaction regression, longitudinal value-retention trajectories) is not reproduced; the retired v1 pipeline and its L3 facility stages are not in this checkout",
+      "status": "not fitted"
+    },
+    "projectFixedEffectsSpecification": {
+      "reason": "the pack records ONE specification and only that one is fitted; a project-fixed-effects fit of the same indicators is a different specification, and the facility regressor it would clarify does not exist. The between-project labelling plus the measured variance decomposition (projectStructure) is the disclosure of what the fitted coefficients can and cannot mean; the pack runs no sensitivity or robustness family",
+      "status": "not fitted"
+    }
+  },
+  "projectStructure": {
+    "grain": "the associations model sample (see associations.sample); not a sample of it",
+    "indicatorBetweenProjectShare": {
+      "childcare": {
+        "betweenProjectShareOfVariation": 0.98901,
+        "prevalence": 0.9947
+      },
+      "hawker": {
+        "betweenProjectShareOfVariation": 0.997726,
+        "prevalence": 0.7073
+      },
+      "mall": {
+        "betweenProjectShareOfVariation": 0.99683,
+        "prevalence": 0.2433
+      },
+      "mrt": {
+        "betweenProjectShareOfVariation": 0.998792,
+        "prevalence": 0.8537
+      },
+      "sports_facility": {
+        "betweenProjectShareOfVariation": 0.997387,
+        "prevalence": 0.3239
+      }
+    },
+    "logPsfVariance": {
+      "betweenProjectShare": 0.910638,
+      "method": "one-way decomposition: between-project share = sum over projects of n_g (mean_g - mean)^2 divided by the total sum of squared deviations of log(psf); descriptive, no model",
+      "withinProjectShare": 0.089362
+    },
+    "meaning": "the access indicators are nearly project-level constants (transactions of one project share one location), and price variation is dominated by differences BETWEEN projects; an unadjusted with-vs-without facility comparison on this population would compare project means, so this pack labels its model a between-project comparison and conditions on no project identity",
+    "n": 234479,
+    "perProjectMedianPsf": {
+      "acrossProjects": {
+        "max": 4707.67,
+        "median": 1692.19,
+        "min": 824.16,
+        "p10": 1132.57,
+        "p90": 2509.0
+      },
+      "highestMedianProjects": [
+        {
+          "medianPsf": 4707.67,
+          "project": "PARK NOVA",
+          "transactions": 78
+        },
+        {
+          "medianPsf": 4107.83,
+          "project": "ARDMORE PARK",
+          "transactions": 66
+        },
+        {
+          "medianPsf": 3959.28,
+          "project": "BOULEVARD 88",
+          "transactions": 94
+        }
+      ],
+      "lowestMedianProjects": [
+        {
+          "medianPsf": 824.16,
+          "project": "WOODSVALE",
+          "transactions": 214
+        },
+        {
+          "medianPsf": 842.32,
+          "project": "NORTHOAKS",
+          "transactions": 273
+        },
+        {
+          "medianPsf": 859.6,
+          "project": "KEW GREEN",
+          "transactions": 59
+        }
+      ],
+      "minimumN": 30,
+      "projectsAtMinimumN": 1102,
+      "unit": "SGD per square foot (median of the shipped psf column, per project)"
+    },
+    "projects": 2413
+  },
+  "responseLineage": {
+    "check": "psf equals price/area_sqft for every condo row: 245655/245655 exact (max deviation 0.0)",
+    "column": "psf",
+    "definition": "price (nominal SGD) per square foot of strata area",
+    "nonPositiveRows": 0,
+    "nullRows": 0
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS05 facility-premiums evidence: measured absence of the legacy in-house facility layer, join-key (project_name) recovery and coverage, per-facility no-record status, a between/within-project variance decomposition, and one recorded descriptive OLS of log condo price-psf on five jointly-fitted external-access indicators with stated controls (a between-project comparison; no dated prior protocol, so specification search cannot be ruled out)"
+}
