@@ -1,33 +1,29 @@
-# RF08 study worker — dispatch prompt (glm-5.3-flash)
+# RF08 study specification — how one study is produced, reviewed and signed (the filename is retained for link stability)
 
-- **Written:** 2026-11-14
-- **Purpose:** the exact prompt to hand one `glm-flash-worker` subagent so it can take **one** of the 13
-  remaining `historical` studies from "no evidence" to "ready for the owner's signature".
-- **Companion:** [RF08 continuation brief](../docs/implementation/2026-11-14-rf08-continuation-brief.md)
-  (gate sequence, mechanics, traps). This file is the paste-ready form of it.
-- **Not in this prompt:** the owner's signatures. A worker cannot give one, and a worker that writes
-  `evidenceStatus: "approved"` has produced a forged approval.
+- **Written:** 2026-11-14 · **Revised:** 2026-11-18 — the producer subagent was retired; the
+  orchestrator now performs the producer role itself.
+- **What this is:** the specification the orchestrator executes to take **one** `historical` study
+  from "no evidence" to "ready for the owner's signature".
+- **Operating manual:** [RF08 remaining-studies runbook](rf08-remaining-studies-runbook.md) — the
+  operating manual for the whole queue: roles, the loop, the per-study gates. This file is the
+  per-study detail it points to.
+- **Worked examples:** RS03 `temporal-evolution`, RS04 `amenity-impact` and RS05
+  `facility-premiums` are signed; their sign-off records under `docs/implementation/` and
+  [handoffs](handoffs.md) §4b–§4d record what each round cost and taught.
+- **Not in this file:** the owner's signatures. The orchestrator cannot give one, and an
+  `evidenceStatus: "approved"` written before they are given is a forged approval.
 
-## 0. How to dispatch
+## 0. Who does what
 
-One study per worker. Sequential in the shared checkout, because every study edits the same four
-files (`app/src/components/studies/lib/edition-registry.ts`, `docs/implementation/README.md`,
-`prompts/handoffs.md`, `docs/plans/2026-11-12-reporting-refresh-decisions.md`). Only use
-`isolation: "worktree"` if you intend to run several **in parallel** and merge each study's branch
-yourself.
+The orchestrator — the agent executing this specification — produces each study: the measurement
+tool, the canonical ledger, the evidence pack and the edition text (§2). `doc-writer`
+(`opencode-go/mimo-v2.6-pro`) writes the records: the sign-off record, the implementation-README
+and handoff updates, runbook revisions. `codex-luna-reviewer` (`openai-codex/gpt-6-luna`, effort
+`xhigh`) performs the independent gate-4 review (§3) and writes nothing. The owner gives the two
+signatures (§4) and nobody else may. The full roles table and the exact strings every record must
+carry are in [the runbook](rf08-remaining-studies-runbook.md) §0 — follow those, not a paraphrase.
 
-```
-Agent
-  subagent_type: "glm-flash-worker"        # implementation worker on zai/glm-5.3-flash
-  model:         "zai/glm-5.3-flash"
-  description:   "RF08 <series> evidence + edition"
-  prompt:        <the filled template from §2>
-```
-
-Then, before the owner signs, dispatch the **independent reviewer** (§3) on a _different_ model.
-A worker must never review its own text: the D12 scientific signatory has to be a separate record.
-
-## 1. Dispatch order
+## 1. Study order
 
 | Wave | Studies                                                                                                                                                         | Why now                                                              |
 | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -36,13 +32,15 @@ A worker must never review its own text: the D12 scientific signatory has to be 
 | —    | `lease-decay`, `mrt-impact`, `market-segments`, `price-forecasts`, `school-quality`, `spatial-autocorrelation`, `spatial-hotspots`, `causal-inference-overview` | **hold** until a named model/causal/spatial/forecast reviewer exists |
 | last | `findings` (RS15)                                                                                                                                               | every quantitative sentence must link to a reviewed edition          |
 
-Do not dispatch a held study "to make progress": an edition refreshed without its model approval is
+Do not start a held study "to make progress": an edition refreshed without its model approval is
 exactly the artefact D12 exists to prevent.
 
-## 2. Worker prompt template
+## 2. Per-study checklist
 
-Fill `{{SERIES}}`, `{{REGISTER_ROW}}`, `{{EDITION_DATE}}` (today's ISO date) and `{{EXTRA_GATE}}`
-(see the table in the continuation brief §1), then send it verbatim. Everything else is fixed.
+This is the orchestrator's own working checklist for one study, not a prompt to hand anyone.
+Instantiate `{{SERIES}}`, `{{SERIES_SNAKE}}`, `{{REGISTER_ROW}}`, `{{RS_NN}}`, `{{EDITION_DATE}}`
+(today's ISO date) and `{{EXTRA_GATE}}` (see the table in the continuation brief §1) and work
+through it section by section. Everything else is fixed.
 
 ---
 
@@ -54,8 +52,8 @@ You are taking **one** study of the egg-n-bacon-housing reporting refresh from `
 
 Fifteen analytics series were published years ago and were re-frozen as immutable sources under
 `docs/analytics/editions/legacy/2026-11-12/`. They are marked `historical` because the paper's
-numbers were never re-measured. Two series have since been re-measured, re-reviewed and signed
-(`data-sources`, `rental-yields`). You are doing that job for `{{SERIES}}`, **except the
+numbers were never re-measured. Five series have since been re-measured, re-reviewed and signed
+(`data-sources`, `rental-yields`, `temporal-evolution`, `amenity-impact`, `facility-premiums`). You are doing that job for `{{SERIES}}`, **except the
 signatures**: you produce the evidence pack and the refreshed text, and you stop.
 
 ### Read these first (do not skip)
@@ -125,15 +123,20 @@ signature; you do not.
   the owner's publication signature authorises.
 
 **Gate 4 — hand it to an independent reviewer.** Report the text sha256
-(`sha256sum docs/analytics/editions/{{SERIES}}/{{EDITION_DATE}}/{{SERIES}}.md`) and stop. Do not
-ask another instance of yourself to bless it.
+(`sha256sum docs/analytics/editions/{{SERIES}}/{{EDITION_DATE}}/{{SERIES}}.md`) and stop. Never
+review your own text: the gate-4 review belongs to the independent reviewer (§3), a different
+actor on a different model.
 
 ### Hard rules
+
+These rules bind harder now: the orchestrator authors the text that will be signed, so it must
+never write `approved`, `signoffs` or a non-null `editionSha256`, and must never review its own
+text.
 
 - **Do not** commit, push, deploy, or run `gh`. Nothing in this task is published.
 - **Do not** open, print or create `.env`; never read credentials.
 - **Do not** set `evidenceStatus: "approved"`, fill `signoffs`, or set `editionSha256`. Those three
-  are the owner's signature and the reviewer's attestation — a worker writing them is forging an
+  are the owner's signature and the reviewer's attestation — an author writing them is forging an
   approval.
 - **Do not** edit `docs/analytics/editions/legacy/**` or `docs/analytics/editions/*/2026-11-14/**`
   belonging to other series.
@@ -165,7 +168,7 @@ cd app && PATH="$HOME/.bun/bin:$PATH" bunx playwright test tests/e2e/analytics -
 `bun run build` rewrites `app/public/data/catalog.jsonl.gz`: keep the change and note its new size
 and hash. If `cd app && bun run build` fails with the registry error, you forgot the registry entry.
 
-### Return exactly this
+### Record exactly this in your study report
 
 ```
 STUDY: {{SERIES}} ({{REGISTER_ROW}})
@@ -188,8 +191,8 @@ in progress.
 
 ## 3. Independent reviewer prompt (gate 4, different model)
 
-Dispatch after the worker returns, on `codex-luna-reviewer` (`openai-codex/gpt-6-luna`, `xhigh`).
-Short form:
+Dispatch before the owner signs, on the orchestrator's text, to `codex-luna-reviewer`
+(`openai-codex/gpt-6-luna`, `xhigh`). Short form:
 
 > Review only the edition text at `docs/analytics/editions/{{SERIES}}/{{EDITION_DATE}}/{{SERIES}}.md`
 > against the evidence ledger `docs/implementation/artifacts/rs{{RS_NN}}-{{SERIES}}-evidence.json`

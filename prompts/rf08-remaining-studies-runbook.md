@@ -3,9 +3,9 @@
 - **Written:** 2026-11-18
 - **For:** a fresh agent (and the repo owner) finishing RF08 after RS01–RS05
 - **State at handoff:** **5 of 15 series signed and published** (`data-sources`, `rental-yields`, `temporal-evolution`, `amenity-impact`, `facility-premiums`). **10 remain.**
-- **Read first:** [continuation brief](../docs/implementation/2026-11-14-rf08-continuation-brief.md) (gate sequence, mechanics, traps) · [worker prompt](rf08-study-worker-prompt.md) (the per-study dispatch template) · [handoff §4a–§4d](../prompts/handoffs.md) (what each completed study cost and taught) · [decision ledger D12](../docs/plans/2026-11-12-reporting-refresh-decisions.md)
+- **Read first:** [continuation brief](../docs/implementation/2026-11-14-rf08-continuation-brief.md) (gate sequence, mechanics, traps) · [worker prompt](rf08-study-worker-prompt.md) (the per-study specification the orchestrator follows) · [handoff §4a–§4d](../prompts/handoffs.md) (what each completed study cost and taught) · [decision ledger D12](../docs/plans/2026-11-12-reporting-refresh-decisions.md)
 
-This runbook is the operating manual. It assumes you will run the same loop the first five studies proved: **worker produces → you verify → independent reviewer re-derives → fix pass → narrow re-review → owner signs → verify and ship.**
+This runbook is the operating manual. It assumes you will run the same loop the first five studies proved: **you produce → you verify → independent reviewer re-derives → fix pass → narrow re-review → owner signs → verify and ship.**
 
 ---
 
@@ -13,13 +13,54 @@ This runbook is the operating manual. It assumes you will run the same loop the 
 
 Every remaining study's register row names a specialist gate: **model approval** (`lease-decay`, `mrt-impact`, `macro-sensitivity`, `price-forecasts`), **causal/RDD review** (`school-quality`, `causal-inference-overview`), **spatial method review** (`spatial-autocorrelation`, `spatial-hotspots`), **segment/scoring owner approval** (`market-segments`), and RS15 gates on the rest.
 
-Earlier in the programme those seats were left unnamed on purpose: a refreshed edition without its model approval is exactly what D12 exists to prevent. So the first act is a recorded owner decision, in this shape (add a row to the decision ledger's "Recorded decisions" table):
+Earlier in the programme those seats were left unnamed on purpose: a refreshed edition without its model approval is exactly what D12 exists to prevent. So the first act is a recorded owner decision — a row in the decision ledger's "Recorded decisions" table. A fresh agent cannot guess the string formats and the registry validates them, so the roles and the exact strings are fixed first.
 
-> **D12 / RF08 — named scientific reviewer for the remaining studies** — 2026-11-XX — `howt` — approves `openai-codex/gpt-6-luna` (xhigh, `codex-luna-reviewer`) as the independent scientific reviewer for RS06–RS15, including the model, causal/RDD, spatial-method and forecast seats, on the same terms as RS01–RS05: every verdict is recorded with model identity, `automated: true`, and the owner retains both signatures.
+**Who acts, and the exact strings the record must carry:**
 
-Until that row exists, a worker may produce evidence and text but **you must not** present a signature packet for a model-gated study. Do not invent a reviewer, and do not treat "the agent ran it" as approval.
+| Role                                                                               | Agent type                | Model                                      | String that must appear in the record                        |
+| ---------------------------------------------------------------------------------- | ------------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| Producer (evidence tool + edition text)                                            | orchestrator (this agent) | —                                          | `preparedBy: "repo-agent/session-<YYYY-MM-DD>"`              |
+| **Document writer** (sign-off records, README/handoff/brief updates, this runbook) | `doc-writer`              | `opencode-go/mimo-v2.6-pro`                | — (authors documents, never signs)                           |
+| Scientific reviewer (gate 4)                                                       | `codex-luna-reviewer`     | `openai-codex/gpt-6-luna` (effort `xhigh`) | `name: "openai-codex/gpt-6-luna (xhigh)"`, `automated: true` |
+| Source/cutoff signatory                                                            | — (owner)                 | —                                          | `role: "source"`, `name: "howt"`, `automated: false`         |
+| Publication signatory                                                              | — (owner)                 | —                                          | `role: "publication"`, `name: "howt"`, `automated: false`    |
 
-Also agree the operating envelope with the owner before the first dispatch:
+The orchestrator performs the producer role directly and is the edition's preparer — there is no producer subagent, and the registry forbids a sign-off `name` equal to `preparedBy`, so the orchestrator can never sign its own evidence.
+
+**What the registry enforces** (`validateEditionRegistry()` in `app/src/components/studies/lib/edition-registry.ts`) — as rules:
+
+- the three sign-off roles must be exactly `source`, `scientific`, `publication` — one each, no others;
+- all three must pin the **same** `artifactSha256` (the evidence ledger hash);
+- no sign-off `name` may equal the entry's `preparedBy` — the preparer cannot approve their own evidence;
+- the scientific reviewer may not also be the publication approver;
+- `editionSha256` is required on an approved edition and must equal the frozen text hash; on a non-approved edition it must be `null` with `signoffs: []`.
+
+**The row to paste** (its columns match the "Recorded decisions" table):
+
+```
+| D12 / RF08 — **named scientific reviewer** for RS06–RS15 | 2026-11-XX | `howt` (repo owner, release authority) | Names `openai-codex/gpt-6-luna (xhigh)` (`codex-luna-reviewer`) as the independent scientific reviewer for RS06–RS15, including the model, causal/RDD, spatial-method and forecast seats, on the same terms as RS01–RS05: every verdict is recorded with model identity, `automated: true`, and the owner retains both signatures (source/cutoff and publication). |
+```
+
+If the owner prefers a different reviewer, the row must name that reviewer's exact `provider/model (effort)` string — that string is what gets recorded.
+
+**If the row is absent:** you may still measure and draft, but **you must not** present a signature packet for a model-gated study. A reviewer must not be substituted or invented, and "the agent ran it" is not approval.
+
+**Per-study names to instantiate** — register row, series slug, and the registry `editionId` (`<series>-<YYYY-MM-DD>`):
+
+| Row  | Series slug                 | Edition ID                               |
+| ---- | --------------------------- | ---------------------------------------- |
+| RS06 | `lease-decay`               | `lease-decay-<YYYY-MM-DD>`               |
+| RS07 | `mrt-impact`                | `mrt-impact-<YYYY-MM-DD>`                |
+| RS08 | `school-quality`            | `school-quality-<YYYY-MM-DD>`            |
+| RS09 | `macro-sensitivity`         | `macro-sensitivity-<YYYY-MM-DD>`         |
+| RS10 | `market-segments`           | `market-segments-<YYYY-MM-DD>`           |
+| RS11 | `spatial-autocorrelation`   | `spatial-autocorrelation-<YYYY-MM-DD>`   |
+| RS12 | `spatial-hotspots`          | `spatial-hotspots-<YYYY-MM-DD>`          |
+| RS13 | `causal-inference-overview` | `causal-inference-overview-<YYYY-MM-DD>` |
+| RS14 | `price-forecasts`           | `price-forecasts-<YYYY-MM-DD>`           |
+| RS15 | `findings`                  | `findings-<YYYY-MM-DD>`                  |
+
+Also agree the operating envelope with the owner before the first study:
 
 - **Signatures are per study and never delegated.** Two acts, both the owner's: source/cutoff on the ledger hash, publication on the text hash. You materialise them only after they are given.
 - **Commit/push/deploy is per-turn permission**, not standing. The live site is `https://minghao51.github.io/egg-n-bacon-housing/`; each push redeploys.
@@ -48,22 +89,22 @@ Order rationale: front-load studies whose gate is a **source/vintage audit** (ch
 
 ## 2. The loop, per study
 
-### 2.1 Dispatch the worker
+### 2.1 Produce the evidence (orchestrator)
 
-Use `Agent` with `subagent_type: "glm-flash-worker"`, `model: "zai/glm-5.3-flash"`, `run_in_background: true`, a short `name` (`rf08-rs06`, …), and the prompt from [`rf08-study-worker-prompt.md`](rf08-study-worker-prompt.md) §2 with these substitutions:
+You are the producer — no `Agent` dispatch to a producer. Write the measurement tool (`scripts/tools/<series>_evidence.py`), run it, own the canonical ledger, and write the evidence pack and the edition text, following [`rf08-study-worker-prompt.md`](rf08-study-worker-prompt.md) §2 as the specification: its gate sequence, the stop-at-gate-4 rule and its hard rules (no commit/env/R2; never set `approved`/`signoffs`/`editionSha256`; never fabricate a number or hash) bind you directly. Instantiate its placeholders per study:
 
 `{{SERIES}}`, `{{SERIES_SNAKE}}`, `{{REGISTER_ROW}}`, `{{RS_NN}}`, `{{EDITION_DATE}}` (today, ISO), `{{EXTRA_GATE}}` (quote the register row verbatim).
 
-Add to the prompt, every time:
+Apply, every time:
 
-- the two or three completed studies most similar to it, as worked examples of failure;
+- the two or three completed studies most similar to this one, as worked examples of failure;
 - the specific edge: e.g. for `lease-decay`, "resolve PSF/PSM and total-price vs per-area response **before** fitting; never convert a coefficient without confirming its original response/unit";
 - the **ledger size ceiling**: no row-level dumps; counts + reason-set signatures + a `sha256` digest recomputed by `--check` (RS05 shrank 1,740 KB → 70.7 KB this way and the repo's large-file guard rejects >500 KB);
 - "print full digests; never assemble a hash from a truncated prefix" (this cost a review round).
 
-### 2.2 Verify the worker before any review
+### 2.2 Verify the evidence before any review
 
-Never forward a worker's summary as fact. Minimum:
+Never forward a summary as fact — re-derive it. Minimum:
 
 ```bash
 sha256sum docs/implementation/artifacts/rs<NN>-<series>-evidence.json \
@@ -93,13 +134,13 @@ Expect a first-pass FAIL. RS03 needed 3 rounds, RS04 needed 5, RS05 needed 4. A 
 
 ### 2.4 Fix passes
 
-Resume **the same worker** (`resume: "<agent id>"`), not a fresh one — it retains the tool, ledger and text in context. The prompt must contain, for each defect: the exact sentence, the ledger key that contradicts it, and what the corrected sentence must say. Always add:
+You fix your own text and code — there is no worker to resume. For each defect the reviewer names, work from: the exact sentence, the ledger key that contradicts it, and what the corrected sentence must say. Always:
 
 - "fix the **class**, then sweep the whole document for it; list every extra fix";
 - "no measured number may change unless the defect is a measurement" (for wording-only passes, require a **structural ledger diff** proving strings-only — RS04's final pass changed exactly two keys);
 - for a statistics or scope defect: change the **producer**, regenerate, and expect the ledger hash to move.
 
-After any ledger change, the previous attestation is void (D12 trap #4 — a signature pins bytes, not a document). Re-review the **new** bytes; if the change was serialisation-only, say so and ask for a **narrow** PASS that re-attests.
+After any ledger change, the previous attestation is void (D12 trap #4 — a signature pins bytes, not a document). Send the **new** bytes back to the reviewer; if the change was serialisation-only, say so and ask for a **narrow** PASS that re-attests.
 
 ### 2.5 The signature packet
 
@@ -110,9 +151,20 @@ Give the owner, in one message: the two **full** digests (ledger and text), what
 1. Registry entry: `evidenceStatus: "approved"`, `editorialStatus: "published"`, three `signoffs[]` (**all** pinning the ledger hash; none named `repo-agent/session-…`; scientific is the recorded run with `automated: true` and its `evidencePath`), and `editionSha256` = the text hash.
 2. Unit test guard: extend the approved-series list in `app/tests/unit/edition-registry.test.ts` (it will fail until you do — that is the guard working).
 3. Decision ledger: three rows (source/cutoff, scientific re-review, publication) with the full hashes and the round history.
-4. Sign-off record: `docs/implementation/<date>-rs<NN>-<series>-editions-signoff.md` with the gate sequence, the review table (verdict per round and what each found), the **verbatim** attestation, and what the edition does not establish.
+4. Sign-off record: `docs/implementation/<date>-rs<NN>-<series>-editions-signoff.md`, authored by `doc-writer` (§2.7) from four inputs you hand it — the two hashes (ledger and text), the round-by-round verdict history, the verbatim reviewer attestation, and the study's exclusions — with the gate sequence, the review table (verdict per round and what each found), the **verbatim** attestation, and what the edition does not establish.
 5. Docs: implementation README entry, `prompts/handoffs.md` (state row, §4x lesson block, next-actions), continuation-brief status row.
 6. Verify: re-hash both files against the registry (`artifactSha256` ×3 = ledger, `editionSha256` = text, roles exactly source/scientific/publication); `bun run test:unit`; `bun run astro check`; `bun run build` and confirm the archive route renders `data-edition-status="approved"` with 3 sign-off records; `bunx playwright test tests/e2e/analytics`; `uv run pytest tests/ -q --no-cov`; baseline; layout; ruff; `uvx pre-commit run --all-files` (run twice — the fixers settle on the second).
+
+### 2.7 Who writes what
+
+Three actors, no producer subagent:
+
+- **Orchestrator (you)** — code and numbers, and the edition text: the measurement tool, the canonical ledger, the evidence pack and the edition text (anything where a number must trace to a ledger key).
+- **`doc-writer`** (`opencode-go/mimo-v2.6-pro`) — records and state docs: the sign-off record (§2.6 step 4), the implementation-README entry, the `prompts/handoffs.md` updates, and any revision of this runbook. Dispatch with `Agent`, `subagent_type: "doc-writer"`, `run_in_background: true`.
+- **The reviewer** (`codex-luna-reviewer`, §2.3) writes nothing — it reviews and reports.
+- **The owner** signs (§2.5); nobody else may.
+
+In `doc-writer`'s prompt, state the instruction it needs: read the neighbouring sign-off records first (`docs/implementation/2026-11-16-rs04-editions-signoff.md`, `docs/implementation/2026-11-17-rs05-editions-signoff.md`) and match their section shape; cite measured numbers and file paths only; never restate a figure it cannot see in the ledger; never edit code, JSON, artifacts or hashed files.
 
 ---
 
@@ -171,7 +223,7 @@ Every defect found in RS03–RS05 was **prose outrunning the ledger** except one
 
 ## 6. Per-study gates, quoted from the register
 
-Use these verbatim in the worker prompt's `{{EXTRA_GATE}}`; they are the acceptance bar, not decoration.
+Use these verbatim in the specification's `{{EXTRA_GATE}}` (§2.1); they are the acceptance bar, not decoration.
 
 | Row                              | Gate                                                                                                                                                                                                                                                                                                                                                                |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -208,5 +260,7 @@ WHAT IT WITHDRAWS: <legacy phrase -> not measured | re-measured, with the reason
 STATUS: ready-for-signature | signed | blocked (why)
 VERIFICATION: <commands with counts>
 ```
+
+The numbers come from the ledger (§2.1); once they are fixed, the prose report is `doc-writer`'s job (§2.7) — measured numbers and file paths only.
 
 **Definition of done for the programme:** all 15 series `approved`/`published`, each with a ledger that re-measures byte-identically, a frozen text no one has retro-edited, three distinct attestations, a sign-off record with the review history, and a live archive route that re-verifies its own pin on every build.
