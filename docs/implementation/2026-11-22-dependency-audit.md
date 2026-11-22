@@ -171,7 +171,7 @@ dependency change:
   moved by one step (e.g. `pSim` 0.18 → 0.17 on one cell) and I checked the claim that
   the bump caused it by rebuilding a scratch environment from the **pre-bump lock**
   (`git show HEAD:uv.lock`, `UV_PROJECT_ENVIRONMENT=/tmp/prev-venv uv sync --group
-  research --frozen`): `--check` failed there too, with the same drift. So the shift
+research --frozen`): `--check` failed there too, with the same drift. So the shift
   predates the bump and is a reproducibility limit of that producer, not a regression
   here.
 
