@@ -227,7 +227,7 @@
         "analyticZ": 0.1648,
         "cell": "886520ca39fffff",
         "medianMonthlyRent": 2700.0,
-        "pSim": 0.18,
+        "pSim": 0.17,
         "rows": 316,
         "simulationZ": 1.0467,
         "town": "JURONG WEST"
@@ -254,7 +254,7 @@
         "analyticZ": 0.1091,
         "cell": "886520ca41fffff",
         "medianMonthlyRent": 2775.0,
-        "pSim": 0.24,
+        "pSim": 0.23,
         "rows": 120,
         "simulationZ": 0.7734,
         "town": "JURONG EAST"
@@ -695,7 +695,7 @@
         "analyticZ": 0.1648,
         "cell": "886520d837fffff",
         "medianMonthlyRent": 3500.0,
-        "pSim": 0.37,
+        "pSim": 0.36,
         "rows": 26,
         "simulationZ": 0.2781,
         "town": "QUEENSTOWN"
@@ -821,7 +821,7 @@
         "analyticZ": 0.125,
         "cell": "886520d901fffff",
         "medianMonthlyRent": 3350.0,
-        "pSim": 0.33,
+        "pSim": 0.32,
         "rows": 32,
         "simulationZ": 0.3418,
         "town": "KALLANG/WHAMPOA"
@@ -974,7 +974,7 @@
         "analyticZ": 0.4196,
         "cell": "886520d947fffff",
         "medianMonthlyRent": 3500.0,
-        "pSim": 0.16,
+        "pSim": 0.15,
         "rows": 336,
         "simulationZ": 1.1589,
         "town": "KALLANG/WHAMPOA"
@@ -1280,7 +1280,7 @@
         "analyticZ": -0.2969,
         "cell": "886526341bfffff",
         "medianMonthlyRent": 3000.0,
-        "pSim": 0.29,
+        "pSim": 0.31,
         "rows": 255,
         "simulationZ": -0.6012,
         "town": "YISHUN"
@@ -1307,7 +1307,7 @@
         "analyticZ": -0.8861,
         "cell": "886526343bfffff",
         "medianMonthlyRent": 2600.0,
-        "pSim": 0.02,
+        "pSim": 0.03,
         "rows": 15,
         "simulationZ": -2.0795,
         "town": "YISHUN"
@@ -1712,7 +1712,7 @@
         "analyticZ": -0.2173,
         "cell": "8865263643fffff",
         "medianMonthlyRent": 2800.0,
-        "pSim": 0.5,
+        "pSim": 0.49,
         "rows": 195,
         "simulationZ": -0.1358,
         "town": "HOUGANG"
@@ -1730,7 +1730,7 @@
         "analyticZ": -0.0581,
         "cell": "8865263651fffff",
         "medianMonthlyRent": 3400.0,
-        "pSim": 0.46,
+        "pSim": 0.47,
         "rows": 51,
         "simulationZ": -0.2184,
         "town": "HOUGANG"
@@ -1784,7 +1784,7 @@
         "analyticZ": -0.0183,
         "cell": "886526365dfffff",
         "medianMonthlyRent": 3000.0,
-        "pSim": 0.39,
+        "pSim": 0.37,
         "rows": 207,
         "simulationZ": 0.3035,
         "town": "HOUGANG"
@@ -1829,7 +1829,7 @@
         "analyticZ": 0.117,
         "cell": "886526366bfffff",
         "medianMonthlyRent": 3200.0,
-        "pSim": 0.28,
+        "pSim": 0.25,
         "rows": 66,
         "simulationZ": 0.5424,
         "town": "HOUGANG"
@@ -1874,7 +1874,7 @@
         "analyticZ": -0.082,
         "cell": "88652636c3fffff",
         "medianMonthlyRent": 3500.0,
-        "pSim": 0.43,
+        "pSim": 0.44,
         "rows": 24,
         "simulationZ": -0.3874,
         "town": "ANG MO KIO"
@@ -1946,7 +1946,7 @@
         "analyticZ": -0.4243,
         "cell": "8865263719fffff",
         "medianMonthlyRent": 2450.0,
-        "pSim": 0.39,
+        "pSim": 0.4,
         "rows": 12,
         "simulationZ": -0.4894,
         "town": "PUNGGOL"
@@ -1955,7 +1955,7 @@
         "analyticZ": -0.4243,
         "cell": "886526371bfffff",
         "medianMonthlyRent": 2500.0,
-        "pSim": 0.34,
+        "pSim": 0.38,
         "rows": 1,
         "simulationZ": -0.5375,
         "town": "PUNGGOL"
@@ -2108,7 +2108,7 @@
         "analyticZ": -0.0103,
         "cell": "886526ac97fffff",
         "medianMonthlyRent": 2800.0,
-        "pSim": 0.26,
+        "pSim": 0.24,
         "rows": 298,
         "simulationZ": 0.5639,
         "town": "GEYLANG"
@@ -2324,7 +2324,7 @@
         "analyticZ": 0.4673,
         "cell": "886526ad89fffff",
         "medianMonthlyRent": 3450.0,
-        "pSim": 0.08,
+        "pSim": 0.07,
         "rows": 176,
         "simulationZ": 1.3934,
         "town": "PASIR RIS"
@@ -2369,7 +2369,7 @@
         "analyticZ": 0.5151,
         "cell": "886526ad9dfffff",
         "medianMonthlyRent": 3700.0,
-        "pSim": 0.1,
+        "pSim": 0.09,
         "rows": 13,
         "simulationZ": 1.3182,
         "town": "TAMPINES"
@@ -2441,7 +2441,7 @@
         "analyticZ": 0.0693,
         "cell": "886526add3fffff",
         "medianMonthlyRent": 3000.0,
-        "pSim": 0.25,
+        "pSim": 0.22,
         "rows": 275,
         "simulationZ": 0.6171,
         "town": "TAMPINES"
@@ -2459,7 +2459,7 @@
         "analyticZ": 0.1967,
         "cell": "886526add7fffff",
         "medianMonthlyRent": 3450.0,
-        "pSim": 0.27,
+        "pSim": 0.24,
         "rows": 273,
         "simulationZ": 0.6,
         "town": "TAMPINES"
@@ -5478,10 +5478,10 @@
     }
   },
   "rentalAsset": {
-    "bytes": 8669,
+    "bytes": 8661,
     "determinism": "gzip.compress(..., mtime=0) over canonical_bytes (sorted keys, indent 2, no timestamps, no absolute paths)",
     "path": "app/public/data/analytics/rental_hotspots_2024-01_2025-01.json.gz",
-    "sha256": "0a88a0561919c2dcdd759a0cbb11e7f52f189c08e83ac890c37a571b2a634db3"
+    "sha256": "a26b10ce81c87b0b27cfa8b35f5b9a62ceba5b5280c6b4d0ea14db9d9c58beca"
   },
   "schemaVersion": "1.0.0",
   "scope": "RS12 spatial-hotspots evidence: the measured cutoff, the gate-pinned window, the rental population and its join to the sale-side block geocodes, the re-measured Getis-Ord Gi* statistic on the joined population (both esda z bases), the six legacy-named areas, the bounded absence scan, the shipped-asset separation, and the claim-by-claim disposition of the frozen legacy text",

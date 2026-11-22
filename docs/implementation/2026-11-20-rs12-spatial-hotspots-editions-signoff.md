@@ -9,7 +9,7 @@
 
 | Object                                                                                          | sha256                                                             |   Bytes |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------: |
-| Evidence ledger — `docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json`           | `6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab` | 202,191 |
+| Evidence ledger — `docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json`           | `28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7` | 202,191 |
 | Frozen edition text — `docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md` | `81236f9abc1214424e6ef7a0ad1c0bed98300c0b6291ab167958a38f6cdea072` |  38,401 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.

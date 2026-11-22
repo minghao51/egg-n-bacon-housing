@@ -9,7 +9,7 @@
 
 | Object                                                                                | sha256                                                             |   Bytes |
 | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------: |
-| Evidence ledger — `docs/implementation/artifacts/rs06-lease-decay-evidence.json`      | `f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27` | 197,825 |
+| Evidence ledger — `docs/implementation/artifacts/rs06-lease-decay-evidence.json`      | `5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a` | 197,825 |
 | Frozen edition text — `docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md` | `c772a1643a1f968b07f06598c07787adc1032488a1862cded9ed723f1b368918` |  48,884 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.

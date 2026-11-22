@@ -9,7 +9,7 @@
 
 | Object                                                                          | sha256                                                             |   Bytes |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------: |
-| Evidence ledger — `docs/implementation/artifacts/rs15-findings-evidence.json`   | `d45fb612b0fa7bd425022b3986e90e997ec0d5ee3c86b903565d803c3a942dbc` | 138,705 |
+| Evidence ledger — `docs/implementation/artifacts/rs15-findings-evidence.json`   | `f20b2a6221f8c563b661725726931f299fc7d4f53831bbf03063f04e9c143086` | 138,705 |
 | Frozen edition text — `docs/analytics/editions/findings/2026-11-20/findings.md` | `a2c20043c55e9497082be96c534d9fc46b614f028dd5b5830362c7fc16897073` |  21,804 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.

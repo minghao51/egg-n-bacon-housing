@@ -719,8 +719,8 @@
       "sha256": "3a5ef72d97af0c0004491567314e180bf3238bdaaff11457707a3138657b4507"
     },
     "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md": {
-      "bytes": 50822,
-      "sha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2"
+      "bytes": 50838,
+      "sha256": "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd"
     },
     "docs/analytics/editions/data-sources/2026-11-14/data-sources.md": {
       "bytes": 11864,
@@ -731,8 +731,8 @@
       "sha256": "8027e19e6d4cc8fd2402b7dd1691d1e5ab7eaf4baae547605914380fbe38f6ea"
     },
     "docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md": {
-      "bytes": 48884,
-      "sha256": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b"
+      "bytes": 49205,
+      "sha256": "c772a1643a1f968b07f06598c07787adc1032488a1862cded9ed723f1b368918"
     },
     "docs/analytics/editions/legacy/2026-11-12/amenity-impact.md": {
       "bytes": 8995,
@@ -799,32 +799,32 @@
       "sha256": "0741e45bde949357c9bd39fdbd59e40a341c7b86597223ad9ff0484b157f002c"
     },
     "docs/analytics/editions/market-segments/2026-11-20/market-segments.md": {
-      "bytes": 47257,
-      "sha256": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5"
+      "bytes": 47263,
+      "sha256": "efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167"
     },
     "docs/analytics/editions/mrt-impact/2026-11-20/mrt-impact.md": {
       "bytes": 41017,
       "sha256": "40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05"
     },
     "docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md": {
-      "bytes": 44787,
-      "sha256": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b"
+      "bytes": 44790,
+      "sha256": "7cc937aecca5886cd693eb79e7e72a7879e75bc95cc0b23493703e7f127af616"
     },
     "docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md": {
       "bytes": 10323,
       "sha256": "f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67"
     },
     "docs/analytics/editions/school-quality/2026-11-20/school-quality.md": {
-      "bytes": 54228,
-      "sha256": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf"
+      "bytes": 54376,
+      "sha256": "5306546ca5ba30230823c5b8cac24bf1867381fcb032f43032ca49a0e322ad9d"
     },
     "docs/analytics/editions/spatial-autocorrelation/2026-11-20/spatial-autocorrelation.md": {
       "bytes": 54274,
       "sha256": "d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee"
     },
     "docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md": {
-      "bytes": 38401,
-      "sha256": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8"
+      "bytes": 38473,
+      "sha256": "81236f9abc1214424e6ef7a0ad1c0bed98300c0b6291ab167958a38f6cdea072"
     },
     "docs/analytics/editions/temporal-evolution/2026-11-15/temporal-evolution.md": {
       "bytes": 28653,
@@ -852,15 +852,15 @@
     },
     "docs/implementation/artifacts/rs06-lease-decay-evidence.json": {
       "bytes": 197825,
-      "sha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27"
+      "sha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a"
     },
     "docs/implementation/artifacts/rs07-mrt-impact-evidence.json": {
       "bytes": 205688,
-      "sha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f"
+      "sha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53"
     },
     "docs/implementation/artifacts/rs08-school-quality-evidence.json": {
-      "bytes": 252384,
-      "sha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8"
+      "bytes": 252385,
+      "sha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad"
     },
     "docs/implementation/artifacts/rs09-macro-sensitivity-evidence.json": {
       "bytes": 96351,
@@ -875,16 +875,16 @@
       "sha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a"
     },
     "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json": {
-      "bytes": 202191,
-      "sha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab"
+      "bytes": 202192,
+      "sha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7"
     },
     "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json": {
       "bytes": 97812,
-      "sha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba"
+      "sha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3"
     },
     "docs/implementation/artifacts/rs14-price-forecasts-evidence.json": {
       "bytes": 193110,
-      "sha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc"
+      "sha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f"
     }
   },
   "legacyClaims": [
@@ -1924,7 +1924,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba"
+          "sharedArtifactSha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3"
         },
         "claimDispositions": {
           "byValue": {
@@ -1940,7 +1940,7 @@
         "currentEdition": {
           "assetsPinned": 0,
           "editionId": "causal-inference-overview-2026-11-20",
-          "editionSha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2",
+          "editionSha256": "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd",
           "editorialStatus": "published",
           "evidenceStatus": "approved",
           "frozenSource": "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md",
@@ -1967,12 +1967,12 @@
           "state": "measured"
         },
         "editionFile": {
-          "bytes": 50822,
+          "bytes": 50838,
           "matchesPin": true,
           "matchesPinState": "matches",
           "path": "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md",
-          "pin": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2",
-          "sha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2"
+          "pin": "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd",
+          "sha256": "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd"
         },
         "editionsRegistered": 2,
         "frameDependency": {
@@ -1986,11 +1986,11 @@
         "ledger": {
           "bytes": 97812,
           "contentMatchesPin": true,
-          "contentSha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "contentSha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
           "path": "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json",
-          "pin": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "pin": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
           "rawMatchesPin": true,
-          "rawSha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "rawSha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2311,7 +2311,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27"
+          "sharedArtifactSha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a"
         },
         "claimDispositions": {
           "byValue": {
@@ -2327,7 +2327,7 @@
         "currentEdition": {
           "assetsPinned": 0,
           "editionId": "lease-decay-2026-11-20",
-          "editionSha256": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b",
+          "editionSha256": "c772a1643a1f968b07f06598c07787adc1032488a1862cded9ed723f1b368918",
           "editorialStatus": "published",
           "evidenceStatus": "approved",
           "frozenSource": "docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md",
@@ -2354,12 +2354,12 @@
           "state": "measured"
         },
         "editionFile": {
-          "bytes": 48884,
+          "bytes": 49205,
           "matchesPin": true,
           "matchesPinState": "matches",
           "path": "docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md",
-          "pin": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b",
-          "sha256": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b"
+          "pin": "c772a1643a1f968b07f06598c07787adc1032488a1862cded9ed723f1b368918",
+          "sha256": "c772a1643a1f968b07f06598c07787adc1032488a1862cded9ed723f1b368918"
         },
         "editionsRegistered": 2,
         "frameDependency": {
@@ -2373,11 +2373,11 @@
         "ledger": {
           "bytes": 197825,
           "contentMatchesPin": true,
-          "contentSha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+          "contentSha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
           "path": "docs/implementation/artifacts/rs06-lease-decay-evidence.json",
-          "pin": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+          "pin": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
           "rawMatchesPin": true,
-          "rawSha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+          "rawSha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2528,7 +2528,7 @@
         "currentEdition": {
           "assetsPinned": 0,
           "editionId": "market-segments-2026-11-20",
-          "editionSha256": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5",
+          "editionSha256": "efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167",
           "editorialStatus": "published",
           "evidenceStatus": "approved",
           "frozenSource": "docs/analytics/editions/market-segments/2026-11-20/market-segments.md",
@@ -2555,12 +2555,12 @@
           "state": "measured"
         },
         "editionFile": {
-          "bytes": 47257,
+          "bytes": 47263,
           "matchesPin": true,
           "matchesPinState": "matches",
           "path": "docs/analytics/editions/market-segments/2026-11-20/market-segments.md",
-          "pin": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5",
-          "sha256": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5"
+          "pin": "efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167",
+          "sha256": "efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167"
         },
         "editionsRegistered": 2,
         "frameDependency": {
@@ -2613,7 +2613,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f"
+          "sharedArtifactSha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53"
         },
         "claimDispositions": {
           "byValue": {
@@ -2662,11 +2662,11 @@
         "ledger": {
           "bytes": 205688,
           "contentMatchesPin": true,
-          "contentSha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+          "contentSha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
           "path": "docs/implementation/artifacts/rs07-mrt-impact-evidence.json",
-          "pin": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+          "pin": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
           "rawMatchesPin": true,
-          "rawSha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+          "rawSha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2701,7 +2701,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc"
+          "sharedArtifactSha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f"
         },
         "claimDispositions": {
           "byValue": {
@@ -2716,7 +2716,7 @@
         "currentEdition": {
           "assetsPinned": 0,
           "editionId": "price-forecasts-2026-11-20",
-          "editionSha256": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b",
+          "editionSha256": "7cc937aecca5886cd693eb79e7e72a7879e75bc95cc0b23493703e7f127af616",
           "editorialStatus": "published",
           "evidenceStatus": "approved",
           "frozenSource": "docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md",
@@ -2743,12 +2743,12 @@
           "state": "measured"
         },
         "editionFile": {
-          "bytes": 44787,
+          "bytes": 44790,
           "matchesPin": true,
           "matchesPinState": "matches",
           "path": "docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md",
-          "pin": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b",
-          "sha256": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b"
+          "pin": "7cc937aecca5886cd693eb79e7e72a7879e75bc95cc0b23493703e7f127af616",
+          "sha256": "7cc937aecca5886cd693eb79e7e72a7879e75bc95cc0b23493703e7f127af616"
         },
         "editionsRegistered": 2,
         "frameDependency": {
@@ -2762,11 +2762,11 @@
         "ledger": {
           "bytes": 193110,
           "contentMatchesPin": true,
-          "contentSha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+          "contentSha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
           "path": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json",
-          "pin": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+          "pin": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
           "rawMatchesPin": true,
-          "rawSha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+          "rawSha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2897,7 +2897,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8"
+          "sharedArtifactSha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad"
         },
         "claimDispositions": {
           "byValue": {
@@ -2913,7 +2913,7 @@
         "currentEdition": {
           "assetsPinned": 0,
           "editionId": "school-quality-2026-11-20",
-          "editionSha256": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf",
+          "editionSha256": "5306546ca5ba30230823c5b8cac24bf1867381fcb032f43032ca49a0e322ad9d",
           "editorialStatus": "published",
           "evidenceStatus": "approved",
           "frozenSource": "docs/analytics/editions/school-quality/2026-11-20/school-quality.md",
@@ -2940,12 +2940,12 @@
           "state": "measured"
         },
         "editionFile": {
-          "bytes": 54228,
+          "bytes": 54376,
           "matchesPin": true,
           "matchesPinState": "matches",
           "path": "docs/analytics/editions/school-quality/2026-11-20/school-quality.md",
-          "pin": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf",
-          "sha256": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf"
+          "pin": "5306546ca5ba30230823c5b8cac24bf1867381fcb032f43032ca49a0e322ad9d",
+          "sha256": "5306546ca5ba30230823c5b8cac24bf1867381fcb032f43032ca49a0e322ad9d"
         },
         "editionsRegistered": 2,
         "frameDependency": {
@@ -2957,13 +2957,13 @@
         },
         "id": "school-quality",
         "ledger": {
-          "bytes": 252384,
+          "bytes": 252385,
           "contentMatchesPin": true,
-          "contentSha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "contentSha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
           "path": "docs/implementation/artifacts/rs08-school-quality-evidence.json",
-          "pin": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "pin": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
           "rawMatchesPin": true,
-          "rawSha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "rawSha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -3099,7 +3099,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab"
+          "sharedArtifactSha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7"
         },
         "claimDispositions": {
           "byValue": {
@@ -3115,7 +3115,7 @@
         "currentEdition": {
           "assetsPinned": 1,
           "editionId": "spatial-hotspots-2026-11-20",
-          "editionSha256": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8",
+          "editionSha256": "81236f9abc1214424e6ef7a0ad1c0bed98300c0b6291ab167958a38f6cdea072",
           "editorialStatus": "published",
           "evidenceStatus": "approved",
           "frozenSource": "docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md",
@@ -3142,12 +3142,12 @@
           "state": "measured"
         },
         "editionFile": {
-          "bytes": 38401,
+          "bytes": 38473,
           "matchesPin": true,
           "matchesPinState": "matches",
           "path": "docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md",
-          "pin": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8",
-          "sha256": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8"
+          "pin": "81236f9abc1214424e6ef7a0ad1c0bed98300c0b6291ab167958a38f6cdea072",
+          "sha256": "81236f9abc1214424e6ef7a0ad1c0bed98300c0b6291ab167958a38f6cdea072"
         },
         "editionsRegistered": 2,
         "frameDependency": {
@@ -3159,13 +3159,13 @@
         },
         "id": "spatial-hotspots",
         "ledger": {
-          "bytes": 202191,
+          "bytes": 202192,
           "contentMatchesPin": true,
-          "contentSha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+          "contentSha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
           "path": "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json",
-          "pin": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+          "pin": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
           "rawMatchesPin": true,
-          "rawSha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+          "rawSha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"

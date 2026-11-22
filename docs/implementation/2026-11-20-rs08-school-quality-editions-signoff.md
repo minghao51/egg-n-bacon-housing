@@ -9,7 +9,7 @@
 
 | Object                                                                                      | sha256                                                             |   Bytes |
 | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------: |
-| Evidence ledger — `docs/implementation/artifacts/rs08-school-quality-evidence.json`         | `74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5` | 252,384 |
+| Evidence ledger — `docs/implementation/artifacts/rs08-school-quality-evidence.json`         | `c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad` | 252,384 |
 | Frozen edition text — `docs/analytics/editions/school-quality/2026-11-20/school-quality.md` | `5306546ca5ba30230823c5b8cac24bf1867381fcb032f43032ca49a0e322ad9d` |  54,228 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.

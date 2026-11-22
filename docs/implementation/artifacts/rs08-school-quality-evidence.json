@@ -2080,14 +2080,14 @@
           "sha256": "a2928414c042e6c6dd5c27f60776c403027391c1f7bc2bfe44a999ccd96357a3"
         },
         {
-          "bytes": 72362,
+          "bytes": 73203,
           "path": "scripts/export_app_data.py",
-          "sha256": "46f70ef79da39b0bfbe84c6708c615a578c19ab67e493b72c9f7f2607d97a9cc"
+          "sha256": "ea971b5a1f0627bbc61421563e3c197273212670b368c4f0398c0b511bb1c155"
         },
         {
-          "bytes": 20974,
+          "bytes": 21007,
           "path": "scripts/generate_catalog.py",
-          "sha256": "fd8483f94869a6e2041e37f6c0164cfbd82a4c30e203f04f6837ea5dcdb97506"
+          "sha256": "b241fcc37fc181827224c84fb1006ed8d8f7526209e182cbef16d62599b973e0"
         },
         {
           "bytes": 35681,
@@ -2205,9 +2205,9 @@
           "sha256": "6b1d9742d446d8007422cb590bc1ed3d835e0dcfb07c4f1b8aa0dc0bb54d4feb"
         },
         {
-          "bytes": 12297,
+          "bytes": 12314,
           "path": "src/egg_n_bacon_housing/pipeline.py",
-          "sha256": "7680baceca35fa0165f127bc46be439b93d7e0aff7a3652efde0922566110041"
+          "sha256": "b51c9a6ec68d5f3f7e9e6f04d696fd234319422dfe3e13ff4152c0832d44d320"
         },
         {
           "bytes": 263,
@@ -5297,14 +5297,14 @@
           "sha256": "a2928414c042e6c6dd5c27f60776c403027391c1f7bc2bfe44a999ccd96357a3"
         },
         {
-          "bytes": 72362,
+          "bytes": 73203,
           "path": "scripts/export_app_data.py",
-          "sha256": "46f70ef79da39b0bfbe84c6708c615a578c19ab67e493b72c9f7f2607d97a9cc"
+          "sha256": "ea971b5a1f0627bbc61421563e3c197273212670b368c4f0398c0b511bb1c155"
         },
         {
-          "bytes": 20974,
+          "bytes": 21007,
           "path": "scripts/generate_catalog.py",
-          "sha256": "fd8483f94869a6e2041e37f6c0164cfbd82a4c30e203f04f6837ea5dcdb97506"
+          "sha256": "b241fcc37fc181827224c84fb1006ed8d8f7526209e182cbef16d62599b973e0"
         },
         {
           "bytes": 35681,
@@ -5422,9 +5422,9 @@
           "sha256": "6b1d9742d446d8007422cb590bc1ed3d835e0dcfb07c4f1b8aa0dc0bb54d4feb"
         },
         {
-          "bytes": 12297,
+          "bytes": 12314,
           "path": "src/egg_n_bacon_housing/pipeline.py",
-          "sha256": "7680baceca35fa0165f127bc46be439b93d7e0aff7a3652efde0922566110041"
+          "sha256": "b51c9a6ec68d5f3f7e9e6f04d696fd234319422dfe3e13ff4152c0832d44d320"
         },
         {
           "bytes": 263,

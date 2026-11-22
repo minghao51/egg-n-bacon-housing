@@ -9,7 +9,7 @@
 
 | Object                                                                              | sha256                                                             |   Bytes |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------: |
-| Evidence ledger — `docs/implementation/artifacts/rs07-mrt-impact-evidence.json`     | `55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f` | 205,688 |
+| Evidence ledger — `docs/implementation/artifacts/rs07-mrt-impact-evidence.json`     | `3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53` | 205,688 |
 | Frozen edition text — `docs/analytics/editions/mrt-impact/2026-11-20/mrt-impact.md` | `40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05` |  41,017 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.
