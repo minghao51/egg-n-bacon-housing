@@ -1,0 +1,2255 @@
+{
+  "adjacentModelArtefacts": {
+    "directory": "data/analysis/feature_importance",
+    "files": [
+      {
+        "bytes": 8070,
+        "dataRows": 121,
+        "legacyFeatureNameRows": 0,
+        "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv",
+        "schoolTokenRows": 4,
+        "sha256": "d89a7be2cc90e539fc06534a64089dc234c8114b31411cb60a929c232748f7ef"
+      },
+      {
+        "bytes": 6279,
+        "dataRows": 121,
+        "legacyFeatureNameRows": 0,
+        "path": "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv",
+        "schoolTokenRows": 4,
+        "sha256": "7864979c99ba4c2ec22c142bd4429d94803419f537dd520b28009f077b8df2f4"
+      },
+      {
+        "bytes": 7618,
+        "dataRows": 104,
+        "legacyFeatureNameRows": 0,
+        "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv",
+        "schoolTokenRows": 4,
+        "sha256": "a2244fddf01be07cb572b3fd4eb7b5c7c32d71d188ef255f23eee7cf608576dc"
+      },
+      {
+        "bytes": 5857,
+        "dataRows": 104,
+        "legacyFeatureNameRows": 0,
+        "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_xgboost.csv",
+        "schoolTokenRows": 4,
+        "sha256": "0aafc146740e61479ca648fd9334d7a0ea27e90ee3dd317474c91dd076b06e6b"
+      },
+      {
+        "bytes": 7626,
+        "dataRows": 108,
+        "legacyFeatureNameRows": 0,
+        "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv",
+        "schoolTokenRows": 4,
+        "sha256": "7952713db5acdf1c77f7713ecfa55a47d0dd0e3a3d7146c7ed326cfc46705fa2"
+      },
+      {
+        "bytes": 5766,
+        "dataRows": 108,
+        "legacyFeatureNameRows": 0,
+        "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv",
+        "schoolTokenRows": 4,
+        "sha256": "4dadafd391960a7ed5b5bb8e279ce783e20964e97e577fa68af6feaa991fc34c"
+      },
+      {
+        "bytes": 2061,
+        "dataRows": 12,
+        "path": "data/analysis/feature_importance/model_comparison.csv",
+        "sha256": "3ae305054c392db84289a47380ef8fbb712f0576c14b7f9a0470b122e2d6e962"
+      }
+    ],
+    "legacyFeatureNameRowsTotal": 0,
+    "meaning": "the checkout's nearest stored model outputs: importance tables and a model comparison whose school rows are preschool amenity features, with zero rows for any of the legacy's three feature names. The trees are UNLINKED to the legacy article's fits — symmetrically, they are evidence neither for nor against its coefficients, and their price_psf linear test R-squared is a different model on a different population, recorded only so the near-match in vocabulary cannot be mistaken for lineage",
+    "pricePsfLinearTestR2": 0.912287,
+    "schoolTokenRowsTotal": 24
+  },
+  "association": {
+    "accessibilityExcluded": {
+      "column": "school_accessibility_score",
+      "reason": "the shipped score is screened as embedding the manual tier lists' policy-status columns (policyEligibility), and the gate keeps policy eligibility outside model outputs"
+    },
+    "distanceCoefficients": {
+      "dist_primary_per_100m": {
+        "interpretation": "conditional log-point difference in PSF associated with +100 m of distance, holding the stated controls fixed; descriptive only, NOT a causal admissions premium",
+        "logPointPer100m": -0.002455,
+        "pctEffectPer100m": -0.2452,
+        "regressor": "shipped nearest_schoolPRIMARY_dist in metres / 100 — distance to the nearest primary-level school, no tier or policy content",
+        "robustSePer100m": 0.000113,
+        "tStat": -21.69
+      },
+      "dist_top_primary_per_100m": {
+        "interpretation": "conditional log-point difference in PSF associated with +100 m of distance, holding the stated controls fixed; descriptive only, NOT a causal admissions premium",
+        "logPointPer100m": -0.000704,
+        "pctEffectPer100m": -0.0704,
+        "regressor": "shipped nearest_top_primary_school_dist in metres / 100 — distance to the nearest TIER-1 primary school of the manual tier list (29 listed schools, 10 tier 1): the proxy tier is named here explicitly and is hand-authored reference data, origin unverified",
+        "robustSePer100m": 5.4e-05,
+        "tStat": -12.98
+      },
+      "dist_top_secondary_per_100m": {
+        "interpretation": "conditional log-point difference in PSF associated with +100 m of distance, holding the stated controls fixed; descriptive only, NOT a causal admissions premium",
+        "logPointPer100m": 6.5e-05,
+        "pctEffectPer100m": 0.0065,
+        "regressor": "shipped nearest_top_secondary_school_dist in metres / 100 — distance to the nearest TIER-1 secondary school of the manual tier list (25 listed schools, 5 tier 1): same named proxy",
+        "robustSePer100m": 4.9e-05,
+        "tStat": 1.34
+      }
+    },
+    "estimator": {
+      "continuousControls": [
+        "floor_area_sqm / 10",
+        "(lease_commence_date - 2000) / 10",
+        "(storey_min + storey_max) / 2 / 10"
+      ],
+      "covariance": "HC1 robust",
+      "family": "OLS",
+      "fixedEffects": {
+        "flatType": {
+          "baseline": "4-ROOM"
+        },
+        "town": {
+          "baseline": "ANG MO KIO",
+          "levelsInSample": 26
+        },
+        "year": {
+          "baseline": "2021"
+        }
+      },
+      "response": "ln(psf)",
+      "software": "statsmodels sm.OLS"
+    },
+    "exclusionReasonCounts": {
+      "invalid-storey-range": 0,
+      "missing-floor-area": 0,
+      "missing-lease-commencement": 0,
+      "missing-primary-distance": 0,
+      "missing-top-primary-distance": 0,
+      "missing-top-secondary-distance": 0,
+      "missing-town-or-flat-type": 0,
+      "non-positive-or-missing-psf": 0,
+      "outside-study-window-or-hdb-or-radius": 1080079
+    },
+    "interpretation": "a descriptive conditional association measured on the columns that exist, on the legacy's own stated screen; it does not establish a causal admissions premium and the pack draws no eligibility or valuation rule from it",
+    "multipleTesting": {
+      "allCoefficientsReported": true,
+      "correctionApplied": "none",
+      "distanceCoefficients": 3,
+      "policyNote": "one pre-stated specification; all three distance coefficients are reported regardless of significance; no coefficient is selected, dropped or promoted on significance, so no multiplicity correction is required and none is applied; no causal or admissions-premium conclusion is drawn from any coefficient",
+      "preStatedSpecifications": 1,
+      "selectionOnSignificance": false
+    },
+    "regressorCorrelations": {
+      "dist_primary_per_100m__dist_top_primary_per_100m": -0.1154,
+      "dist_primary_per_100m__dist_top_secondary_per_100m": -0.1828,
+      "dist_top_primary_per_100m__dist_top_secondary_per_100m": 0.7936
+    },
+    "sample": {
+      "designColumnCount": 43,
+      "firstMonth": "2021-01",
+      "lastMonth": "2026-10",
+      "medianPrimaryDistMetres": 374.7,
+      "medianPsf": 542.43,
+      "n": 156231
+    },
+    "screen": {
+      "definition": "the legacy's own stated screen, adopted verbatim: HDB rows, 2021-01..2026-10 (measured last complete month), nearest_schoolPRIMARY_dist <= 2000 m, complete cases on regressors and controls, psf > 0",
+      "radiusMetres": 2000.0,
+      "windowEnd": "2026-10",
+      "windowStart": "2021-01"
+    }
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 36,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; the resolution is syntactic — it verifies the key names a recorded node, not the disposition's content — and an unresolved key fails the build rather than shipping",
+    "resolutionIsSyntactic": true,
+    "unresolved": []
+  },
+  "columnHealth": {
+    "absentLegacyColumns": {
+      "school_primary_dist_score": {
+        "presentInUnifiedSchema": false,
+        "status": "absentColumn"
+      },
+      "school_primary_quality_score": {
+        "presentInUnifiedSchema": false,
+        "status": "absentColumn"
+      },
+      "school_secondary_dist_score": {
+        "presentInUnifiedSchema": false,
+        "status": "absentColumn"
+      }
+    },
+    "accessibilityZeroMass": {
+      "frameNulls": 11600,
+      "frameRecordedZeros": 969982,
+      "meaning": "school_accessibility_score is zero on the overwhelming majority of rows because the producer's formula contributes 0 when the nearest school is not in the manual tier lists — a recorded zero, not a missing value; this is why the column cannot be read as a coverage measure"
+    },
+    "columns": {
+      "dist_to_nearest_school": {
+        "associationSample": {
+          "nullCount": 0,
+          "recordedZeroCount": 0,
+          "rowCount": 156231
+        },
+        "frame": {
+          "max": 5145.6409,
+          "median": 327.2635,
+          "min": 0.0,
+          "nullCount": 11600,
+          "p95": 876.3708,
+          "recordedZeroCount": 146,
+          "rowCount": 1236310
+        }
+      },
+      "nearest_schoolJUNIOR_dist": {
+        "associationSample": {
+          "nullCount": 0,
+          "recordedZeroCount": 0,
+          "rowCount": 156231
+        },
+        "frame": {
+          "max": 9175.5364,
+          "median": 2601.8867,
+          "min": 98.3287,
+          "nullCount": 11600,
+          "p95": 6090.8835,
+          "recordedZeroCount": 0,
+          "rowCount": 1236310
+        }
+      },
+      "nearest_schoolPRIMARY_dist": {
+        "associationSample": {
+          "nullCount": 0,
+          "recordedZeroCount": 0,
+          "rowCount": 156231
+        },
+        "frame": {
+          "max": 5145.6409,
+          "median": 409.0697,
+          "min": 0.0,
+          "nullCount": 11600,
+          "p95": 1049.4453,
+          "recordedZeroCount": 142,
+          "rowCount": 1236310
+        }
+      },
+      "nearest_schoolSECONDARY_dist": {
+        "associationSample": {
+          "nullCount": 0,
+          "recordedZeroCount": 0,
+          "rowCount": 156231
+        },
+        "frame": {
+          "max": 5202.307,
+          "median": 518.4282,
+          "min": 0.0,
+          "nullCount": 11600,
+          "p95": 1588.5227,
+          "recordedZeroCount": 4,
+          "rowCount": 1236310
+        }
+      },
+      "nearest_top_primary_school_dist": {
+        "associationSample": {
+          "nullCount": 0,
+          "recordedZeroCount": 0,
+          "rowCount": 156231
+        },
+        "frame": {
+          "max": 13019.2582,
+          "median": 3945.8761,
+          "min": 82.8216,
+          "nullCount": 11600,
+          "p95": 9674.8991,
+          "recordedZeroCount": 0,
+          "rowCount": 1236310
+        }
+      },
+      "nearest_top_secondary_school_dist": {
+        "associationSample": {
+          "nullCount": 0,
+          "recordedZeroCount": 0,
+          "rowCount": 156231
+        },
+        "frame": {
+          "max": 18070.152,
+          "median": 7231.4076,
+          "min": 189.2406,
+          "nullCount": 11600,
+          "p95": 12375.7876,
+          "recordedZeroCount": 0,
+          "rowCount": 1236310
+        }
+      },
+      "school_accessibility_score": {
+        "associationSample": {
+          "nullCount": 0,
+          "recordedZeroCount": 129735,
+          "rowCount": 156231
+        },
+        "frame": {
+          "max": 1.515,
+          "median": 0.0,
+          "min": 0.0,
+          "nullCount": 11600,
+          "p95": 0.4159,
+          "recordedZeroCount": 969982,
+          "rowCount": 1236310
+        }
+      }
+    },
+    "frameRowCount": 1236310,
+    "states": {
+      "absentColumn": "a name in no schema of the shipped layers (legacyFeatureNames.schemaScan)",
+      "absentRow": "a row the frame does not contain; measured here only as the frame's own row count",
+      "nullValue": "a present column with a null in a row",
+      "recordedZero": "a present column with an exact 0.0 in a row (a stored value, not a missing one)"
+    }
+  },
+  "cutoff": {
+    "allTypesBasis": {
+      "terminalMonth": "2026-11",
+      "terminalMonthShareOfTrailingMedian": 0.264,
+      "terminalMonthTransactions": 1211,
+      "trailing12MedianTransactions": 4587.5
+    },
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact (the same rule RS03/RS04/RS05/RS09/RS10 shipped, computed on the private rows so the bound is identical across the studies)",
+    "frameFirstMonth": "1990-01",
+    "frameLastMonth": "2026-11",
+    "hdbRowsBasis": {
+      "lastCompleteMonth": "2026-10",
+      "lastCompleteMonthTransactions": 2173,
+      "terminalMonth": "2026-11",
+      "terminalMonthShareOfTrailingMedian": 0.3718,
+      "terminalMonthTransactions": 790,
+      "trailing12MedianTransactions": 2125.0
+    },
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthTransactions": 4719,
+    "meaning": "every window, count and share in this ledger that touches the frame stops at lastCompleteMonth",
+    "privateRowsBasis": {
+      "lastCompleteMonth": "2026-10",
+      "lastCompleteMonthTransactions": 2546,
+      "terminalMonth": "2026-11",
+      "terminalMonthShareOfTrailingMedian": 0.1974,
+      "terminalMonthTransactions": 421,
+      "trailing12MedianTransactions": 2133.0
+    },
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.264,
+    "terminalMonthTransactions": 1211,
+    "trailing12MedianTransactions": 4587.5,
+    "trailing12Months": [
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ]
+  },
+  "definition": "A measured inventory and reconciliation of what this checkout holds for school quality, with an explicit list of what cannot be re-derived. The tier artefacts DO exist: four hand-authored files under data/manual/csv/ (two tier lists, a weights table, a scoring methodology) drive the shipped school_accessibility_score through the producer's documented formula; they are screened as hand-authored reference data, origin unverified, and the 2026-11-18 checkout note that no tier artefact exists is corrected by this scan. The bronze school directory carries no coordinate columns, but a coordinate-bearing school artefact also exists (data/manual/csv/datagov/SchoolsMOE.geojson, 197 Point features, a name subset of the directory, zero consumers in src/ or scripts/) — unlinked to the shipped distance columns in BOTH directions: it neither shows the distances were produced from it nor that they were not; the producer cites runtime geocoding from postal codes. The legacy article's three school feature names exist in no shipped schema, so its three coefficients cannot be re-derived; its RDD rests on a covariate balance the legacy itself records as FAILED, and a failed-design estimate is not a premium. What IS measured here: one pre-stated descriptive OLS association of ln(psf) with the shipped school-distance columns on the legacy's own stated screen — a conditional association that does not establish a causal admissions premium, and no model output in this pack consumes a policy-eligibility flag. No RDD is re-estimated and no causal language is retained: the ledger supports withdrawing the legacy's causal/RDD claims, not restating them.",
+  "inputs": {
+    "app/public/data/analysis/school_impact/exploratory_analysis.png": {
+      "bytes": 168559,
+      "class": "served PNG (human visual read at rddRecovery.servedPlots)",
+      "sha256": "25c35923d7fa4507572593ebef5ceb5c0a79146b1c6a521621d03eb6caa817e9"
+    },
+    "app/public/data/analysis/school_rdd/rdd_visualization.png": {
+      "bytes": 96540,
+      "class": "served PNG (human visual read at rddRecovery.servedPlots)",
+      "sha256": "e69200fd348c7775c5b741421e848a41c05937d94cd74a83c7e0730809e980ce"
+    },
+    "data/analysis/feature_importance/model_comparison.csv": {
+      "bytes": 2061,
+      "dataRows": 12,
+      "sha256": "3ae305054c392db84289a47380ef8fbb712f0576c14b7f9a0470b122e2d6e962"
+    },
+    "data/manual/csv/datagov/SchoolsMOE.geojson": {
+      "bytes": 231573,
+      "features": 197,
+      "sha256": "6ed84238263d5afbd39282be928abaf513156915a4e09f6abd086119501dd34a"
+    },
+    "data/manual/csv/school_quality_weights.csv": {
+      "bytes": 969,
+      "dataRows": 13,
+      "sha256": "aef604d26ba0b84b011419a6abc8b06ba4c11c7af8d9b67cd2b08c139f5e8ac0"
+    },
+    "data/manual/csv/school_scoring_methodology.md": {
+      "bytes": 4298,
+      "sha256": "f711e614ba330ef3ef2b831504aae4fa85acb648d8a85f36fa2aa033d65d8959"
+    },
+    "data/manual/csv/school_tiers_primary.csv": {
+      "bytes": 1858,
+      "dataRows": 29,
+      "sha256": "2d985e4d3520fa6c81465beefc7c36c939e9c823d6dc728d838b508472d7b641"
+    },
+    "data/manual/csv/school_tiers_secondary.csv": {
+      "bytes": 1700,
+      "dataRows": 25,
+      "sha256": "3109779a1cdb1ccbd9572e21ecc07e4ee764be6c7632879bc23383a816d83682"
+    },
+    "data/pipeline/01_bronze/raw_school_directory.parquet": {
+      "bytes": 84479,
+      "columns": 32,
+      "rows": 337,
+      "sha256": "ff32b98035fb7821fe09836fdd8fe132ddc9d2400316969c1e882728e46d53c0"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "bytes": 78381526,
+      "columns": 97,
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/school-quality.md": {
+      "bytes": 7200,
+      "sha256": "ec5fc939efa4a0b6604d57eff630f99d8d65f578a00899a0e856c2bce9dffcf9"
+    }
+  },
+  "legacyArithmetic": {
+    "coefficientPsf": 9.66,
+    "difference": -20.0,
+    "floorAreaSqft": 1000.0,
+    "legacyStated": 29000.0,
+    "meaning": "the legacy's $29,000 is its own +$9.66 PSF coefficient times 3 points times 1,000 sqft, rounded up from 28,980; the arithmetic closes on the coefficient, whose own reproduction fails at legacyFeatureNames.schemaScan",
+    "operandsSource": "parsed from the frozen legacy text (legacyQuoteCheck pins the phrases)",
+    "points": 3.0,
+    "product": 28980.0
+  },
+  "legacyClaims": [
+    {
+      "id": "C1",
+      "ledgerKey": "legacySampleReconciliation.candidatePopulations",
+      "note": "no measured window reproduces 194,165; the closest candidates are recorded with their counts and differences at legacySampleReconciliation.candidatePopulations",
+      "phrase": "**Sample**: 194,165 transactions",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C2",
+      "ledgerKey": "legacySampleReconciliation.candidatePopulations",
+      "note": "the screen is constructible and was measured on four candidate readings (HDB/all-types, both distance columns, through the legacy's publication month); none reproduces the stated size",
+      "phrase": "194,165 transactions, 2021 onward, within 2 km of primary schools",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C3",
+      "ledgerKey": "association.screen",
+      "note": "the definition itself is adopted verbatim as this pack's association screen and its measured counts recorded at legacySampleReconciliation; adopting a screen is not endorsing the sample size claimed of it",
+      "phrase": "2021 onward, within 2 km of primary schools",
+      "status": "re-measured"
+    },
+    {
+      "id": "C4",
+      "ledgerKey": "legacyFeatureNames.schemaScan",
+      "note": "school_primary_quality_score exists in no shipped schema and no coefficient table is stored; the coefficient cannot be re-derived",
+      "phrase": "+$9.66 PSF",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C5",
+      "ledgerKey": "legacyFeatureNames.schemaScan",
+      "note": "school_primary_dist_score exists in no shipped schema; same ground as C4",
+      "phrase": "+$6.27 PSF",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C6",
+      "ledgerKey": "legacyFeatureNames.schemaScan",
+      "note": "school_secondary_dist_score exists in no shipped schema; same ground as C4",
+      "phrase": "+$3.52 PSF",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C7",
+      "ledgerKey": "legacyArithmetic",
+      "note": "the legacy's own arithmetic is internally consistent (legacyArithmetic.product = 28,980 against its stated 29,000, a rounding step) but inherits the non-reproducibility of the coefficient it scales; the pack records the arithmetic without restating the conclusion",
+      "phrase": "For a 1,000 sqft unit, a 3-point quality-score difference implies about **$29,000** in modeled price difference.",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C8",
+      "ledgerKey": "notMeasurable.regionalFits",
+      "note": "the OCR coefficient belongs to a regional fit that is not stored",
+      "phrase": "+$9.63 PSF",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C9",
+      "ledgerKey": "legacySampleReconciliation.regionalComparison",
+      "note": "the measured OCR analogue on the legacy's own screen is recorded beside it",
+      "phrase": "146,553",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C10",
+      "ledgerKey": "notMeasurable.regionalFits",
+      "note": "the OCR R-squared belongs to a fit that is not stored; no regional R-squared is re-measurable",
+      "phrase": "R²=0.53",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C11",
+      "ledgerKey": "notMeasurable.regionalFits",
+      "note": "the RCR coefficient belongs to an unrecorded fit; the sign flip it carries is recorded as the legacy's own stated property, not re-measured",
+      "phrase": "-$23.67 PSF",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C12",
+      "ledgerKey": "legacySampleReconciliation.regionalComparison",
+      "note": "the measured RCR analogue is recorded beside it",
+      "phrase": "46,298",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C13",
+      "ledgerKey": "notMeasurable.regionalFits",
+      "note": "the RCR R-squared belongs to a fit that is not stored",
+      "phrase": "R²=0.80",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C14",
+      "ledgerKey": "notMeasurable.regionalFits",
+      "note": "the flip is a property of the legacy's unrecorded fit; this pack records it, does not re-measure it, and draws no neighbourhood explanation from it — the legacy's 'other neighborhood forces dominate' is its own interpretation, not a measured finding",
+      "phrase": "In **RCR**, the sign flips, which suggests other neighborhood forces dominate.",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "notMeasurable.regionalFits",
+      "note": "an open-ended band ('about $0') for the CCR fit; no stored fit exists to compare it against",
+      "phrase": "about $0 PSF",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C16",
+      "ledgerKey": "legacySampleReconciliation.regionalComparison",
+      "note": "the measured CCR analogue is recorded beside it",
+      "phrase": "1,314",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C17",
+      "ledgerKey": "notMeasurable.regionalFits",
+      "note": "the CCR R-squared belongs to a fit that is not stored",
+      "phrase": "R²=0.87",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C18",
+      "ledgerKey": "notMeasurable.rddEstimate",
+      "note": "a failed-design estimate (the legacy's own covariate balance is FAILED), not re-derivable from any stored artefact; the causal reading is withdrawn and no 'within-1km discount' is stated",
+      "phrase": "-$79.47 PSF",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C19",
+      "ledgerKey": "notMeasurable.rddEstimate",
+      "note": "the interpretation cell of the withdrawn estimate; treatment cannot even be assigned from this checkout (rddRecovery.treatmentAssignment), so the sentence is withdrawn rather than re-measured",
+      "phrase": "Units within 1km were cheaper after controls",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C20",
+      "ledgerKey": "legacySampleReconciliation.rddBand",
+      "note": "three candidate readings of the band are measured and none reproduces 52,881; the legacy's running variable is unstated, so the record is underspecified and no choice is made for it",
+      "phrase": "52,881 near-boundary transactions (800-1200 m from nearest school)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C21",
+      "ledgerKey": "legacySampleReconciliation.rddBand",
+      "note": "the band definition is adopted verbatim and its measured counts recorded under three candidate readings of 'nearest school'",
+      "phrase": "800-1200 m from nearest school",
+      "status": "re-measured"
+    },
+    {
+      "id": "C22",
+      "ledgerKey": "rddRecovery.covariateBalance",
+      "note": "the legacy's own design diagnostic; without treatment assignment there are no boundary groups, so the failure is neither re-measurable nor refutable here",
+      "phrase": "Covariate balance | Failed",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C23",
+      "ledgerKey": "rddRecovery.covariateBalance",
+      "note": "same ground as C22; the dimensions named (age, size, MRT distance, neighbourhood profile) are recorded, not re-tested",
+      "phrase": "FAILED — boundary groups differ systematically on age, size, MRT distance, and neighborhood profile",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C24",
+      "ledgerKey": "notMeasurable.rddEstimate",
+      "note": "withdrawn in BOTH directions: no premium is supported, and the sentence's implied negative treatment reading is equally not re-established — the design artefacts do not exist to support either",
+      "phrase": "Regression discontinuity around the 1km admissions boundary does **not** support a clean positive premium.",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C25",
+      "ledgerKey": "notMeasurable.rddEstimate",
+      "note": "the legacy conclusion's causal/RDD language is retired; what remains in this pack is a descriptive distance association and the recorded unmeasurability of the design",
+      "phrase": "the treatment effect is negative after controls, and covariate balance fails",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C26",
+      "ledgerKey": "rddRecovery.legacyMethodStatements",
+      "note": "parameters recorded in prose only; no model object or run record carries them (adjacentModelArtefacts records the nearest stored trees, unlinked)",
+      "phrase": "n_estimators=100, max_depth=6, learning_rate=0.1",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C27",
+      "ledgerKey": "rddRecovery.bandwidth",
+      "note": "no bandwidth artefact exists; the statement is recorded with its scan",
+      "phrase": "Bandwidth: 200 m on each side of boundary",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C28",
+      "ledgerKey": "rddRecovery.bandwidth",
+      "note": "no sensitivity or placebo output is stored; the number of bandwidths inside 100-300 m is unstated and is not chosen for it",
+      "phrase": "tested at 100-300 m; placebo tests at 800 m and 1200 m fake cutoffs",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C29",
+      "ledgerKey": "rddRecovery.legacyMethodStatements",
+      "note": "an estimator detail of unrecorded fits; this pack's one model uses HC1 (RS04's estimator family) and claims no equivalence",
+      "phrase": "Robust HC3 standard errors, 95% confidence intervals",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C30",
+      "ledgerKey": "rddRecovery.legacyMethodStatements",
+      "note": "no fold assignment, CV split or score output is stored",
+      "phrase": "standard 5-fold CV vs GroupKFold by planning area",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C31",
+      "ledgerKey": "notMeasurable.spatialCv",
+      "note": "the gap is stated without a magnitude, window or population — underspecified and not reproducible; no number is chosen for it",
+      "phrase": "large generalization gap between standard CV and spatial CV",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C32",
+      "ledgerKey": "rddRecovery.treatmentAssignment.boundaryArtefact",
+      "note": "a policy fact asserted in prose; no dated boundary artefact exists in the checkout, and the phrase is recorded without endorsing a date or a geometry for it",
+      "phrase": "Singapore primary school admission boundary",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C33",
+      "ledgerKey": "rddRecovery.legacyMethodStatements",
+      "note": "the specification is recorded verbatim; no fitted counterpart exists",
+      "phrase": "Model: `price = α + τ·treated + β·running_var + γ·(treated × running_var) + controls`",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C34",
+      "ledgerKey": "cutoff.frameFirstMonth",
+      "note": "the frame spans 1990-01 through the terminal month and the post-2021 window is constructible; the measured window boundaries are recorded at legacySampleReconciliation.measuredSample",
+      "phrase": "Post-2021 housing market",
+      "status": "re-measured"
+    },
+    {
+      "id": "C35",
+      "ledgerKey": "legacyFeatureNames.schemaScan",
+      "note": "the three named features exist in no shipped schema; the sentence describes a feature set this checkout cannot rebuild",
+      "phrase": "OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C36",
+      "ledgerKey": "notMeasurable.legacyModelFit",
+      "note": "an agreement claim about two unrecorded fits; neither side of the agreement exists to compare",
+      "phrase": "OLS and XGBoost agree on direction and magnitude",
+      "status": "not-reproducible"
+    }
+  ],
+  "legacyFeatureNames": {
+    "schemaScan": {
+      "columnPresence": {
+        "school_primary_dist_score": {
+          "files": 0,
+          "paths": []
+        },
+        "school_primary_quality_score": {
+          "files": 0,
+          "paths": []
+        },
+        "school_secondary_dist_score": {
+          "files": 0,
+          "paths": []
+        }
+      },
+      "excludedRoots": {
+        "data/cache/": "content-addressed API-response cache (OneMap search results); its filenames are digests, not entity names, and it holds no analysis parquet"
+      },
+      "filesScanned": 57,
+      "method": "pyarrow schema (metadata-only) read of every parquet file",
+      "roots": [
+        "data/pipeline/",
+        "data/analysis/"
+      ],
+      "schoolColumnFiles": [
+        {
+          "columns": 32,
+          "path": "data/pipeline/01_bronze/raw_school_directory.parquet",
+          "rows": 337,
+          "schoolColumns": [
+            "school_name"
+          ]
+        },
+        {
+          "columns": 99,
+          "path": "data/pipeline/03_gold/_quarantine/transactions_enriched/20261113T113912062789Z_16873e89b0ca4559b07bfde3671b10a8.parquet",
+          "rows": 104,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 99,
+          "path": "data/pipeline/03_gold/_quarantine/transactions_enriched/20261114T043055045008Z_77af346264464bb490cccc954ad10305.parquet",
+          "rows": 104,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 99,
+          "path": "data/pipeline/03_gold/_quarantine/transactions_enriched/20261114T043755074629Z_2b25d78d3bb648589a1951aea521d263.parquet",
+          "rows": 104,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 99,
+          "path": "data/pipeline/03_gold/_quarantine/transactions_enriched/20261114T044208820869Z_79b53134284142629d9225d9b7cfcae6.parquet",
+          "rows": 104,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 99,
+          "path": "data/pipeline/03_gold/_quarantine/transactions_enriched/20261114T044533540830Z_d983e5ffe4bd42b8b7251bb9d2fadb29.parquet",
+          "rows": 104,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 48,
+          "path": "data/pipeline/03_gold/location_dim.parquet",
+          "rows": 13564,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 27,
+          "path": "data/pipeline/03_gold/planning_area_360.parquet",
+          "rows": 44,
+          "schoolColumns": [
+            "median_dist_to_school"
+          ]
+        },
+        {
+          "columns": 97,
+          "path": "data/pipeline/03_gold/transactions_enriched.parquet",
+          "rows": 1236411,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 99,
+          "path": "data/pipeline/04_platinum/_quarantine/unified_dataset/20261113T113912062789Z_16873e89b0ca4559b07bfde3671b10a8.parquet",
+          "rows": 101,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 99,
+          "path": "data/pipeline/04_platinum/_quarantine/unified_dataset/20261114T044533540830Z_d983e5ffe4bd42b8b7251bb9d2fadb29.parquet",
+          "rows": 101,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 97,
+          "path": "data/pipeline/04_platinum/unified_dataset.parquet",
+          "rows": 1236310,
+          "schoolColumns": [
+            "dist_to_nearest_school",
+            "nearest_schoolJUNIOR_dist",
+            "nearest_schoolPRIMARY_dist",
+            "nearest_schoolSECONDARY_dist",
+            "nearest_top_primary_school_dist",
+            "nearest_top_secondary_school_dist",
+            "school_accessibility_score"
+          ]
+        },
+        {
+          "columns": 61,
+          "path": "data/analysis/market_segmentation/housing_unified_segmented.parquet",
+          "rows": 911797,
+          "schoolColumns": [
+            "dist_to_nearest_preschool",
+            "preschool_within_1km",
+            "preschool_within_2km",
+            "preschool_within_500m"
+          ]
+        },
+        {
+          "columns": 61,
+          "path": "data/analysis/market_segmentation_period/housing_unified_period_segmented.parquet",
+          "rows": 911797,
+          "schoolColumns": [
+            "dist_to_nearest_preschool",
+            "preschool_within_1km",
+            "preschool_within_2km",
+            "preschool_within_500m"
+          ]
+        }
+      ]
+    },
+    "textScan": {
+      "excludedEditionTexts": "published edition texts under docs/analytics/editions/ are excluded except the frozen legacy originals under docs/analytics/editions/legacy/",
+      "excludedPaths": [
+        "docs/plans/2026-11-12-reporting-refresh-decisions.md"
+      ],
+      "excludedPrefixes": [
+        "docs/implementation/",
+        "scripts/tools/",
+        "prompts/"
+      ],
+      "filesScanned": 325,
+      "meaning": "outside the excluded programme surfaces the three legacy feature names occur only in the frozen legacy article, its live twin and the retired programme's plan documents (docs/plans/2025-02-02-school-impact-analysis.md and docs/plans/2026-02-05-enhanced-school-impact-analysis.md, sha-pinned at methodRecordSurfaces) — prose, not shipped columns",
+      "roots": [
+        "docs",
+        "scripts",
+        "src",
+        "assets",
+        "prompts",
+        "app/src",
+        ".claude/handoffs"
+      ],
+      "tokens": {
+        "school_primary_dist_score": {
+          "files": 3,
+          "firstMatches": [
+            {
+              "line": 40,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "| `school_primary_dist_score`    | +$6.27 PSF  | Better primary-school access adds value         |"
+            },
+            {
+              "line": 108,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`) plus controls (floor are"
+            },
+            {
+              "line": 120,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
+            },
+            {
+              "line": 40,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "| `school_primary_dist_score`    | +$6.27 PSF  | Better primary-school access adds value         |"
+            },
+            {
+              "line": 108,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`) plus controls (floor are"
+            },
+            {
+              "line": 120,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
+            },
+            {
+              "line": 34,
+              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+              "quote": "- `school_primary_dist_score`: Primary school distance score"
+            }
+          ],
+          "occurrences": 7,
+          "surfacesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+            "docs/analytics/school-quality.md",
+            "docs/plans/2025-02-02-school-impact-analysis.md"
+          ]
+        },
+        "school_primary_quality_score": {
+          "files": 5,
+          "firstMatches": [
+            {
+              "line": 39,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "| `school_primary_quality_score` | +$9.66 PSF  | Higher quality is associated with higher prices |"
+            },
+            {
+              "line": 108,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`) plus controls (floor are"
+            },
+            {
+              "line": 120,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
+            },
+            {
+              "line": 39,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "| `school_primary_quality_score` | +$9.66 PSF  | Higher quality is associated with higher prices |"
+            },
+            {
+              "line": 108,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`) plus controls (floor are"
+            },
+            {
+              "line": 120,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
+            },
+            {
+              "line": 35,
+              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+              "quote": "- `school_primary_quality_score`: Primary school quality score (based on school awards/achievements)"
+            },
+            {
+              "line": 357,
+              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+              "quote": "- **Primary feature:** `school_accessibility_score` or `school_primary_quality_score`"
+            }
+          ],
+          "occurrences": 22,
+          "surfacesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+            "docs/analytics/school-quality.md",
+            "docs/plans/2025-02-02-school-impact-analysis.md"
+          ]
+        },
+        "school_secondary_dist_score": {
+          "files": 3,
+          "firstMatches": [
+            {
+              "line": 41,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "| `school_secondary_dist_score`  | +$3.52 PSF  | Secondary access also matters                   |"
+            },
+            {
+              "line": 108,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`) plus controls (floor are"
+            },
+            {
+              "line": 120,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
+            },
+            {
+              "line": 41,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "| `school_secondary_dist_score`  | +$3.52 PSF  | Secondary access also matters                   |"
+            },
+            {
+              "line": 108,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`) plus controls (floor are"
+            },
+            {
+              "line": 120,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
+            },
+            {
+              "line": 36,
+              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+              "quote": "- `school_secondary_dist_score`: Secondary school distance score"
+            }
+          ],
+          "occurrences": 7,
+          "surfacesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+            "docs/analytics/school-quality.md",
+            "docs/plans/2025-02-02-school-impact-analysis.md"
+          ]
+        }
+      }
+    }
+  },
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 36,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+    "legacyFileSha256": "ec5fc939efa4a0b6604d57eff630f99d8d65f578a00899a0e856c2bce9dffcf9",
+    "method": "each phrase is required to appear verbatim in the frozen legacy text; a paraphrase inside quotation marks is a defect, and an ellipsis is permitted only for a genuine omission",
+    "quotes": [
+      {
+        "id": "C1",
+        "occurrences": 2,
+        "phrase": "**Sample**: 194,165 transactions"
+      },
+      {
+        "id": "C2",
+        "occurrences": 1,
+        "phrase": "194,165 transactions, 2021 onward, within 2 km of primary schools"
+      },
+      {
+        "id": "C3",
+        "occurrences": 1,
+        "phrase": "2021 onward, within 2 km of primary schools"
+      },
+      {
+        "id": "C4",
+        "occurrences": 2,
+        "phrase": "+$9.66 PSF"
+      },
+      {
+        "id": "C5",
+        "occurrences": 2,
+        "phrase": "+$6.27 PSF"
+      },
+      {
+        "id": "C6",
+        "occurrences": 2,
+        "phrase": "+$3.52 PSF"
+      },
+      {
+        "id": "C7",
+        "occurrences": 1,
+        "phrase": "For a 1,000 sqft unit, a 3-point quality-score difference implies about **$29,000** in modeled price difference."
+      },
+      {
+        "id": "C8",
+        "occurrences": 2,
+        "phrase": "+$9.63 PSF"
+      },
+      {
+        "id": "C9",
+        "occurrences": 2,
+        "phrase": "146,553"
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "R²=0.53"
+      },
+      {
+        "id": "C11",
+        "occurrences": 2,
+        "phrase": "-$23.67 PSF"
+      },
+      {
+        "id": "C12",
+        "occurrences": 2,
+        "phrase": "46,298"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "R²=0.80"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "In **RCR**, the sign flips, which suggests other neighborhood forces dominate."
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "about $0 PSF"
+      },
+      {
+        "id": "C16",
+        "occurrences": 2,
+        "phrase": "1,314"
+      },
+      {
+        "id": "C17",
+        "occurrences": 1,
+        "phrase": "R²=0.87"
+      },
+      {
+        "id": "C18",
+        "occurrences": 2,
+        "phrase": "-$79.47 PSF"
+      },
+      {
+        "id": "C19",
+        "occurrences": 1,
+        "phrase": "Units within 1km were cheaper after controls"
+      },
+      {
+        "id": "C20",
+        "occurrences": 1,
+        "phrase": "52,881 near-boundary transactions (800-1200 m from nearest school)"
+      },
+      {
+        "id": "C21",
+        "occurrences": 1,
+        "phrase": "800-1200 m from nearest school"
+      },
+      {
+        "id": "C22",
+        "occurrences": 1,
+        "phrase": "Covariate balance | Failed"
+      },
+      {
+        "id": "C23",
+        "occurrences": 1,
+        "phrase": "FAILED — boundary groups differ systematically on age, size, MRT distance, and neighborhood profile"
+      },
+      {
+        "id": "C24",
+        "occurrences": 1,
+        "phrase": "Regression discontinuity around the 1km admissions boundary does **not** support a clean positive premium."
+      },
+      {
+        "id": "C25",
+        "occurrences": 1,
+        "phrase": "the treatment effect is negative after controls, and covariate balance fails"
+      },
+      {
+        "id": "C26",
+        "occurrences": 1,
+        "phrase": "n_estimators=100, max_depth=6, learning_rate=0.1"
+      },
+      {
+        "id": "C27",
+        "occurrences": 1,
+        "phrase": "Bandwidth: 200 m on each side of boundary"
+      },
+      {
+        "id": "C28",
+        "occurrences": 1,
+        "phrase": "tested at 100-300 m; placebo tests at 800 m and 1200 m fake cutoffs"
+      },
+      {
+        "id": "C29",
+        "occurrences": 1,
+        "phrase": "Robust HC3 standard errors, 95% confidence intervals"
+      },
+      {
+        "id": "C30",
+        "occurrences": 1,
+        "phrase": "standard 5-fold CV vs GroupKFold by planning area"
+      },
+      {
+        "id": "C31",
+        "occurrences": 1,
+        "phrase": "large generalization gap between standard CV and spatial CV"
+      },
+      {
+        "id": "C32",
+        "occurrences": 1,
+        "phrase": "Singapore primary school admission boundary"
+      },
+      {
+        "id": "C33",
+        "occurrences": 1,
+        "phrase": "Model: `price = α + τ·treated + β·running_var + γ·(treated × running_var) + controls`"
+      },
+      {
+        "id": "C34",
+        "occurrences": 1,
+        "phrase": "Post-2021 housing market"
+      },
+      {
+        "id": "C35",
+        "occurrences": 1,
+        "phrase": "OLS and XGBoost** with school features (`school_primary_quality_score`, `school_primary_dist_score`, `school_secondary_dist_score`)"
+      },
+      {
+        "id": "C36",
+        "occurrences": 1,
+        "phrase": "OLS and XGBoost agree on direction and magnitude"
+      }
+    ]
+  },
+  "legacySampleReconciliation": {
+    "anyCandidateReproducesLegacySample": false,
+    "anyRegionalCountReproduced": false,
+    "candidatePopulations": [
+      {
+        "definition": "property_type=hdb, 2021-01..2026-10, nearest_schoolPRIMARY_dist<=2000",
+        "difference": -37934,
+        "equalsLegacyClaim": false,
+        "label": "hdbRowsWindowedWithin2kmPrimary",
+        "legacyClaimCompared": 194165,
+        "rows": 156231
+      },
+      {
+        "definition": "property_type=hdb, 2021-01..2026-10, dist_to_nearest_school<=2000",
+        "difference": null,
+        "equalsLegacyClaim": false,
+        "label": "hdbRowsWindowedWithin2kmNearestAnyLevel",
+        "legacyClaimCompared": 194165,
+        "rows": 156231
+      },
+      {
+        "definition": "property_type=hdb, 2021-01..2026-01, nearest_schoolPRIMARY_dist<=2000",
+        "difference": null,
+        "equalsLegacyClaim": false,
+        "label": "hdbRowsWindowStartThroughLegacyPublicationMonth",
+        "legacyClaimCompared": 194165,
+        "rows": 136774
+      },
+      {
+        "definition": "all property types, 2021-01..2026-10, nearest_schoolPRIMARY_dist<=2000",
+        "difference": null,
+        "equalsLegacyClaim": false,
+        "label": "allPropertyTypesWindowedWithin2kmPrimary",
+        "legacyClaimCompared": 194165,
+        "rows": 394678
+      }
+    ],
+    "legacyClaim": {
+      "basis": "2021 onward, within 2 km of primary schools",
+      "sampleSize": 194165
+    },
+    "legacyRegionalCounts": {
+      "CCR": 1314,
+      "OCR": 146553,
+      "RCR": 46298
+    },
+    "measuredSample": {
+      "distinctTowns": 26,
+      "firstMonth": "2021-01",
+      "lastMonth": "2026-10",
+      "medianPrimaryDistMetres": 374.7,
+      "medianPsf": 542.43,
+      "regionCounts": {
+        "CCR": 5961,
+        "OCR": 128159,
+        "RCR": 22111
+      },
+      "regionNullRows": 0,
+      "rows": 156231
+    },
+    "rddBand": {
+      "anyCandidateReproducesLegacyRddSample": false,
+      "bandMetres": [
+        800.0,
+        1200.0
+      ],
+      "candidatePopulations": [
+        {
+          "definition": "property_type=hdb, 2021-01..2026-10, nearest_schoolPRIMARY_dist in [800,1200]",
+          "difference": -42793,
+          "equalsLegacyClaim": false,
+          "label": "hdbWindowedPrimaryBand800to1200",
+          "legacyClaimCompared": 52881,
+          "rows": 10088
+        },
+        {
+          "definition": "property_type=hdb, 2021-01..2026-10, dist_to_nearest_school in [800,1200]",
+          "difference": null,
+          "equalsLegacyClaim": false,
+          "label": "hdbWindowedNearestAnyLevelBand800to1200",
+          "legacyClaimCompared": 52881,
+          "rows": 5314
+        },
+        {
+          "definition": "all property types, 2021-01..2026-10, nearest_schoolPRIMARY_dist in [800,1200]",
+          "difference": null,
+          "equalsLegacyClaim": false,
+          "label": "allPropertyTypesWindowedPrimaryBand800to1200",
+          "legacyClaimCompared": 52881,
+          "rows": 60586
+        }
+      ],
+      "runningVariableNote": "the legacy does not state WHICH distance column its near-boundary band runs on (nearest primary, or nearest school of any level); the record is underspecified and no choice is made for it here — three candidate readings are measured instead"
+    },
+    "regionalComparison": [
+      {
+        "difference": 4647,
+        "equalsLegacyClaim": false,
+        "legacyCount": 1314,
+        "measuredCount": 5961,
+        "region": "CCR"
+      },
+      {
+        "difference": -18394,
+        "equalsLegacyClaim": false,
+        "legacyCount": 146553,
+        "measuredCount": 128159,
+        "region": "OCR"
+      },
+      {
+        "difference": -24187,
+        "equalsLegacyClaim": false,
+        "legacyCount": 46298,
+        "measuredCount": 22111,
+        "region": "RCR"
+      }
+    ],
+    "screen": {
+      "definition": "the legacy's own stated screen, adopted verbatim: HDB rows, 2021-01 through the measured last complete month (2026-10), within 2 km of a primary school on the shipped nearest_schoolPRIMARY_dist column",
+      "radiusMetres": 2000.0,
+      "runningColumn": "nearest_schoolPRIMARY_dist",
+      "unit": "metres (producer haversine; see columnHealth for the distribution)",
+      "windowEnd": "2026-10",
+      "windowStart": "2021-01"
+    },
+    "verdict": "the screen is constructible from shipped columns and its counts are recorded, but no measured candidate reproduces the legacy's 194,165 or its 52,881, and no measured regional count reproduces 146,553/46,298/1,314; the legacy's sample stands as its own unreproducible figure"
+  },
+  "methodRecordSurfaces": {
+    "liveTwin": {
+      "bytes": 7200,
+      "path": "docs/analytics/school-quality.md",
+      "sha256": "ec5fc939efa4a0b6604d57eff630f99d8d65f578a00899a0e856c2bce9dffcf9"
+    },
+    "meaning": "the legacy method vocabulary also lives in these surfaces; they are recorded and pinned because tokenScan cites them, and an unlinked prose surface adjudicates nothing about the article's fits in either direction",
+    "plan2025": {
+      "bytes": 14414,
+      "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+      "sha256": "bd8ce78b02cf75b19057a7dac9c3f58645af14bb1e1e03e9fd943dc09562285f"
+    },
+    "plan2026": {
+      "bytes": 61859,
+      "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+      "sha256": "d84e01945e1588ecd7f6dd39993305ef5ba452d7a5ba6137fc546719e1200078"
+    }
+  },
+  "multiplicityPolicy": {
+    "legacyRecordedCorrection": {
+      "filesScanned": 325,
+      "legacyNamedTestFamilies": [
+        "one headline OLS (+ one XGBoost)",
+        "three regional fits (OCR/RCR/CCR)",
+        "one RDD at 1 km",
+        "bandwidth sensitivity 100-300 m (number of bandwidths unstated)",
+        "two placebo cutoffs (800 m, 1200 m)",
+        "covariate balance t-tests"
+      ],
+      "meaning": "the legacy names at least six test families and records no multiple-testing correction anywhere in the scanned roots; the regional split whose sign flips in RCR is one of these uncorrected families",
+      "scanBoundary": "the scanned text roots with the programme's own surfaces excluded (tokenScan.excludedPrefixes); a correction recorded only inside those excluded surfaces would not be found, and that boundary is disclosed rather than widened",
+      "status": "absent",
+      "tokens": {
+        "bonferroni": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "false discovery": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "fdr": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "holm": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "multiple comparison": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "multiple testing": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        }
+      },
+      "totalOccurrences": 0
+    },
+    "thisPack": {
+      "correctionApplied": "none",
+      "preStatedSpecifications": 1,
+      "reason": "a single pre-stated descriptive specification with all coefficients reported needs no correction; the pack's conclusion is 'association, not premium', which no coefficient significance could upgrade",
+      "reportedCoefficients": 3,
+      "selectionOnSignificance": false
+    }
+  },
+  "notMeasurable": [
+    {
+      "gateClause": "School-quality model fit does not establish a causal admissions premium.",
+      "id": "legacyModelFit",
+      "ledgerKey": "legacyFeatureNames.schemaScan",
+      "reason": "the three legacy feature names exist in no shipped schema (legacyFeatureNames.schemaScan) and no fitted OLS/XGBoost object, coefficient table or output file for the legacy's model exists in the checkout; the +9.66/+6.27/+3.52 PSF figures cannot be re-derived and are recorded as the legacy's own. This pack fits no premium model: its single association is descriptive and is reported as an association, not a premium",
+      "status": "notReproducible"
+    },
+    {
+      "gateClause": "School-quality model fit does not establish a causal admissions premium.",
+      "id": "regionalFits",
+      "ledgerKey": "legacySampleReconciliation.regionalComparison",
+      "reason": "the regional coefficients (+9.63 / -23.67 / about-0 PSF) and R-squareds belong to fits that are not stored; the measured regional row counts (legacySampleReconciliation.regionalComparison) reproduce none of the legacy's segment sizes. The RCR sign flip is recorded as a property of the legacy's own unrecorded fit: nothing measured here can confirm or refute it",
+      "status": "notReproducible"
+    },
+    {
+      "gateClause": "School-quality model fit does not establish a causal admissions premium.",
+      "id": "rddEstimate",
+      "ledgerKey": "rddRecovery.covariateBalance",
+      "reason": "the -79.47 PSF treatment effect rests on a covariate balance the legacy itself records as FAILED — a failed-design estimate, not a premium; no RDD table, bandwidth object or boundary definition is stored, so the estimate cannot be re-derived, and its causal reading is withdrawn from the edition regardless",
+      "status": "withdrawn"
+    },
+    {
+      "gateClause": "Recheck ... treatment assignment ...",
+      "id": "treatmentAssignment",
+      "ledgerKey": "rddRecovery.treatmentAssignment",
+      "reason": "treatment = within 1 km at the admissions boundary needs school coordinates and a dated boundary; neither exists in a linked artefact (rddRecovery.treatmentAssignment), so no shipped row can be assigned treatment and the assignment rule cannot be rechecked, only recorded as unmeasurable with its scan",
+      "status": "unmeasurable"
+    },
+    {
+      "gateClause": "Recheck ... covariate balance ...",
+      "id": "covariateBalance",
+      "ledgerKey": "rddRecovery.covariateBalance",
+      "reason": "with no treatment assignment there are no boundary groups to balance; the legacy's FAILED verdict is its own recorded diagnostic of its own design and is not re-measurable here",
+      "status": "unmeasurable"
+    },
+    {
+      "gateClause": "Recheck ... bandwidth ...",
+      "id": "bandwidthArtefact",
+      "ledgerKey": "rddRecovery.bandwidth",
+      "reason": "no bandwidth object, sensitivity table or placebo output exists; the legacy's 200 m / 100-300 m / 800-1200 m figures are recorded as prose statements with their scan at rddRecovery.bandwidth",
+      "status": "notRecorded"
+    },
+    {
+      "gateClause": "Recheck ... multiple-testing policy ...",
+      "id": "spatialCv",
+      "ledgerKey": "rddRecovery.legacyMethodStatements",
+      "reason": "the legacy records a 'large generalization gap' with no magnitude, no fold assignment and no stored output; the gap is underspecified and not reproducible from this checkout",
+      "status": "notReproducible"
+    },
+    {
+      "gateClause": "Keep policy eligibility outside model outputs.",
+      "id": "policyEligibilityOutsideOutputs",
+      "ledgerKey": "policyEligibility.srcConsumptionScan",
+      "reason": "no model output in this pack consumes sap_ind, gifted_ind, ip_ind, autonomous_ind or any tier-list policy column: the association regressors are three policy-free distance columns (policyEligibility.associationExclusion), the bronze flags have zero call sites under src/ (policyEligibility.srcConsumptionScan), and the one shipped column that embeds policy flags is excluded from the model",
+      "status": "enforcedByConstruction"
+    }
+  ],
+  "policyEligibility": {
+    "associationExclusion": {
+      "excludedColumn": "school_accessibility_score",
+      "reason": "the shipped score is screened as embedding policy-status flags through the tier lists, so this pack's one association model uses only the three policy-free distance columns; no model output in this ledger consumes sap_ind, gifted_ind, ip_ind, autonomous_ind or any tier-list policy column"
+    },
+    "bronzeFlags": {
+      "autonomous_ind": {
+        "noCount": 309,
+        "yesCount": 28
+      },
+      "gifted_ind": {
+        "noCount": 321,
+        "yesCount": 16
+      },
+      "ip_ind": {
+        "noCount": 318,
+        "yesCount": 19
+      },
+      "sap_ind": {
+        "noCount": 314,
+        "yesCount": 23
+      }
+    },
+    "compliance": "no model output in this pack uses a policy-eligibility flag: the association regressors are three shipped distance columns, and the controls are floor area, lease commencement, storey band, flat type, town and year",
+    "gateClause": "Keep policy eligibility outside model outputs.",
+    "srcConsumptionScan": {
+      "meaning": "zero occurrences of the four bronze policy-flag column names anywhere under src/: the bronze admission-policy flags are counted in schoolDirectory.policyFlags but are consumed by no pipeline node",
+      "roots": [
+        "src/"
+      ],
+      "tokens": {
+        "autonomous_ind": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "gifted_ind": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "ip_ind": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "sap_ind": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        }
+      },
+      "totalOccurrences": 0
+    },
+    "tierListPolicyColumns": {
+      "meaning": "the manual tier lists themselves carry gep/sap/ip/autonomous Yes/No columns, and the producer's quality formula consumes them (tierProvenance.qualityScoreFormula.producerImplementation); the shipped school_accessibility_score is therefore screened as embedding policy-status flags",
+      "primaryGepYes": 8,
+      "primarySapYes": 18,
+      "secondaryAutonomousYes": 16,
+      "secondaryIpYes": 20,
+      "secondarySapYes": 12
+    }
+  },
+  "rddRecovery": {
+    "bandwidth": {
+      "artefactScan": "no bandwidth object, sensitivity table or placebo output exists in the checkout: the served school_rdd directory holds one PNG (rddRecovery.servedPlots), data/analysis holds no school directory, and the token scan records the bandwidth/RDD vocabulary only in prose surfaces (tokenScan below)",
+      "ledgerKey": "rddRecovery.bandwidth",
+      "legacyStatements": {
+        "bandwidth": "200 m on each side of boundary",
+        "placebos": "800 m and 1200 m fake cutoffs",
+        "sensitivity": "tested at 100-300 m"
+      },
+      "meaning": "the bandwidth claims are recorded as the legacy's own prose and are not re-measurable: no artefact carries a bandwidth, and re-deriving one would require re-running the RDD, which this pack does not do",
+      "status": "notRecorded"
+    },
+    "covariateBalance": {
+      "legacyStatement": "FAILED — boundary groups differ systematically on age, size, MRT distance, and neighborhood profile",
+      "meaning": "the legacy itself records its covariate balance as FAILED; with no treatment assignment (above) there are no boundary groups to balance, so the failure is neither re-measurable nor refutable here. A failed-design estimate is not a premium: the -79.47 PSF figure is recorded as a failed-design estimate, and the causal reading is withdrawn at legacyClaims",
+      "status": "unmeasurable"
+    },
+    "legacyMethodStatements": {
+      "meaning": "each statement is recorded verbatim from the legacy text; no fitted object, parameter file or output table for any of them exists in the checkout (tokenScan and adjacentModelArtefacts record the nearest surfaces), so none is re-runnable",
+      "recordedStatus": "notReproducible",
+      "statements": {
+        "estimator": "OLS and XGBoost with school features plus controls (floor area, lease, amenities)",
+        "rddModel": "price = α + τ·treated + β·running_var + γ·(treated × running_var) + controls",
+        "spatialCv": "standard 5-fold CV vs GroupKFold by planning area; large generalization gap (no magnitude recorded)",
+        "uncertainty": "Robust HC3 standard errors, 95% confidence intervals",
+        "xgboostParameters": "n_estimators=100, max_depth=6, learning_rate=0.1"
+      }
+    },
+    "servedPlots": {
+      "exploratoryAnalysis": {
+        "bytes": 168559,
+        "directoryFiles": [
+          "exploratory_analysis.png"
+        ],
+        "path": "app/public/data/analysis/school_impact/exploratory_analysis.png",
+        "sha256": "25c35923d7fa4507572593ebef5ceb5c0a79146b1c6a521621d03eb6caa817e9",
+        "visiblePrint": {
+          "meaning": "the served exploratory figure itself prints that its quality-band analysis had NO DATA, and a median accessibility of 0.00 — consistent with the measured zero mass in columnHealth, and a visual record that the quality-score axis of the legacy study was data-starved at plot time",
+          "panels": [
+            "Price PSF ($) vs School Accessibility Score scatter (mass at score 0)",
+            "a quality-bands panel printed 'No data for quality bands'",
+            "Distribution of School Accessibility Scores histogram annotated 'Median: 0.00'",
+            "Primary vs Secondary School Quality scatter, axes 0-8 and 0-9, coloured by Price PSF ($)"
+          ]
+        }
+      },
+      "method": "HUMAN VISUAL READ of the two sha-pinned PNGs by the producer, recorded because the pixels are not machine-read. The hashes pin exactly which images were read; the values below are what they visibly print, and are not re-derived numbers. An image whose hash changes invalidates its read and must be re-read",
+      "rddVisualization": {
+        "bytes": 96540,
+        "directoryFiles": [
+          "rdd_visualization.png"
+        ],
+        "meaning": "a served plot with no numbers attached: it neither reproduces nor refutes the legacy's -79.47 PSF, and no table behind it is stored in the checkout",
+        "path": "app/public/data/analysis/school_rdd/rdd_visualization.png",
+        "sha256": "e69200fd348c7775c5b741421e848a41c05937d94cd74a83c7e0730809e980ce",
+        "visiblePrint": {
+          "cutoff": "a red dashed rule at 1000 m",
+          "legend": [
+            "Control (>1km)",
+            "Treated (≤1km)",
+            "1km Cutoff"
+          ],
+          "shape": "the fitted line visibly steps DOWN across the cutoff (treated side rising to about 1990 near 980 m, control side starting about 1550 just past 1000 m), consistent in direction with the legacy's negative estimate; the scatter is sparse binned means, not the 52,881-row sub-sample",
+          "title": "RDD: Price Discontinuity at 1km School Boundary",
+          "xAxis": "Distance to Primary School (m), plotted about 800-1200",
+          "yAxis": "Price PSF ($)"
+        }
+      },
+      "unlinkedNote": "the legacy's provenance section names the served analysis tree generically as the canonical asset location; neither PNG carries a run identifier, so each is recorded as what it visibly prints and as evidence in NEITHER direction about the legacy's stored fits"
+    },
+    "tokenScan": {
+      "excludedPaths": [
+        "docs/plans/2026-11-12-reporting-refresh-decisions.md"
+      ],
+      "excludedPrefixes": [
+        "docs/implementation/",
+        "scripts/tools/",
+        "prompts/"
+      ],
+      "filesScanned": 325,
+      "roots": [
+        "docs",
+        "scripts",
+        "src",
+        "assets",
+        "prompts",
+        "app/src",
+        ".claude/handoffs"
+      ],
+      "tokens": {
+        "RDD": {
+          "files": 23,
+          "firstMatches": [
+            {
+              "line": 45,
+              "path": "app/src/components/dashboard/MarketOverviewDashboard.tsx",
+              "quote": "export interface MarketOverviewDashboardData {"
+            },
+            {
+              "line": 308,
+              "path": "app/src/components/dashboard/MarketOverviewDashboard.tsx",
+              "quote": "initialData: MarketOverviewDashboardData;"
+            },
+            {
+              "line": 20,
+              "path": "app/src/components/dashboard/leaderboard/LeaderboardDashboard.tsx",
+              "quote": "import { useLeaderboardData } from \"@/hooks/useLeaderboardData\";"
+            },
+            {
+              "line": 27,
+              "path": "app/src/components/dashboard/leaderboard/LeaderboardDashboard.tsx",
+              "quote": "interface LeaderboardDashboardProps {"
+            },
+            {
+              "line": 48,
+              "path": "app/src/components/dashboard/leaderboard/LeaderboardDashboard.tsx",
+              "quote": "export default function LeaderboardDashboard({"
+            },
+            {
+              "line": 52,
+              "path": "app/src/components/dashboard/leaderboard/LeaderboardDashboard.tsx",
+              "quote": "}: LeaderboardDashboardProps) {"
+            },
+            {
+              "line": 86,
+              "path": "app/src/components/dashboard/leaderboard/LeaderboardDashboard.tsx",
+              "quote": "} = useLeaderboardData(controls, initialData);"
+            },
+            {
+              "line": 3,
+              "path": "app/src/components/dashboard/leaderboard/LeaderboardMap.tsx",
+              "quote": "LeaderboardDisplayRow,"
+            }
+          ],
+          "occurrences": 194
+        },
+        "RDD-case-sensitive": {
+          "files": 10,
+          "firstMatches": [
+            {
+              "line": 240,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+              "quote": "| School quality premium                      | `school-quality.md`            | School-impact charts and RDD visualization                 |"
+            },
+            {
+              "line": 265,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+              "quote": "| School RDD                        | Treatment effect at 1 km          | -$79.47 PSF      | Low — covariate balance failed           |"
+            },
+            {
+              "line": 280,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+              "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
+            },
+            {
+              "line": 70,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "| RDD metric        | Value       | Interpretation                               |"
+            },
+            {
+              "line": 104,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **RDD sub-sample**: 52,881 near-boundary transactions (800-1200 m from nearest school)"
+            },
+            {
+              "line": 110,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)"
+            },
+            {
+              "line": 122,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **RDD treatment effect**: -$79.47 PSF (within 1 km cheaper after controls)"
+            },
+            {
+              "line": 132,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "School quality shows up clearly in predictive models (OLS and XGBoost agree on direction and magnitude), but the causal read is much weaker. The RDD at the 1 km"
+            }
+          ],
+          "occurrences": 80
+        },
+        "admission boundary": {
+          "files": 4,
+          "firstMatches": [
+            {
+              "line": 110,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)"
+            },
+            {
+              "line": 110,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)"
+            },
+            {
+              "line": 204,
+              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+              "quote": "**Purpose:** Establish causal effect of school proximity using Regression Discontinuity Design at 1km admission boundary."
+            },
+            {
+              "line": 1760,
+              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+              "quote": "**Purpose:** Establish causal effect of school proximity using Regression Discontinuity Design at 1km admission boundary."
+            }
+          ],
+          "occurrences": 4
+        },
+        "admissions boundary": {
+          "files": 2,
+          "firstMatches": [
+            {
+              "line": 68,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "Regression discontinuity around the 1km admissions boundary does **not** support a clean positive premium."
+            },
+            {
+              "line": 68,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "Regression discontinuity around the 1km admissions boundary does **not** support a clean positive premium."
+            }
+          ],
+          "occurrences": 2
+        },
+        "covariate balance": {
+          "files": 8,
+          "firstMatches": [
+            {
+              "line": 265,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+              "quote": "| School RDD                        | Treatment effect at 1 km          | -$79.47 PSF      | Low — covariate balance failed           |"
+            },
+            {
+              "line": 280,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+              "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
+            },
+            {
+              "line": 74,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "| Covariate balance | Failed      | Boundary groups differ systematically        |"
+            },
+            {
+              "line": 114,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **Covariate balance testing**: t-tests at cutoff to check if boundary groups differ systematically"
+            },
+            {
+              "line": 123,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **Covariate balance**: FAILED — boundary groups differ systematically on age, size, MRT distance, and neighborhood profile"
+            },
+            {
+              "line": 132,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "School quality shows up clearly in predictive models (OLS and XGBoost agree on direction and magnitude), but the causal read is much weaker. The RDD at the 1 km"
+            },
+            {
+              "line": 265,
+              "path": "docs/analytics/findings.md",
+              "quote": "| School RDD                        | Treatment effect at 1 km          | -$79.47 PSF      | Low — covariate balance failed                         |"
+            },
+            {
+              "line": 280,
+              "path": "docs/analytics/findings.md",
+              "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
+            }
+          ],
+          "occurrences": 21
+        },
+        "rdrobust": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "regression discontinuity": {
+          "files": 9,
+          "firstMatches": [
+            {
+              "line": 54,
+              "path": "docs/analytics/causal-inference-overview.md",
+              "quote": "| Regression discontinuity in time | Immediate jump and slope-change behavior |"
+            },
+            {
+              "line": 106,
+              "path": "docs/analytics/causal-inference-overview.md",
+              "quote": "- **Regression discontinuity in time (RDiT)**:"
+            },
+            {
+              "line": 54,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+              "quote": "| Regression discontinuity in time | Immediate jump and slope-change behavior |"
+            },
+            {
+              "line": 106,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+              "quote": "- **Regression discontinuity in time (RDiT)**:"
+            },
+            {
+              "line": 68,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "Regression discontinuity around the 1km admissions boundary does **not** support a clean positive premium."
+            },
+            {
+              "line": 110,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+              "quote": "- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)"
+            },
+            {
+              "line": 68,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "Regression discontinuity around the 1km admissions boundary does **not** support a clean positive premium."
+            },
+            {
+              "line": 110,
+              "path": "docs/analytics/school-quality.md",
+              "quote": "- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)"
+            }
+          ],
+          "occurrences": 15
+        }
+      }
+    },
+    "treatmentAssignment": {
+      "boundaryArtefact": {
+        "datedBoundaryArtefactExists": false,
+        "scan": "'admission boundary'/'admissions boundary' occur only in prose surfaces (legacy article, live twin, retired plan documents — tokenScan); no data file in data/ or app/public/data encodes a 1 km admissions boundary, dated or undated"
+      },
+      "coordinatesAvailable": "no shipped layer carries school coordinates (schoolCoordinates.bronzeDirectoryCoordinates); one unconsumed coordinate artefact exists (schoolCoordinates.schoolsMoeGeojson) and is unlinked in both directions",
+      "definitionRequired": "treatment = within 1 km of the nearest primary school at the admissions boundary; this requires (a) school coordinates and (b) a dated 1 km boundary definition",
+      "meaning": "without a linked coordinate source and a dated boundary, treatment cannot be assigned to any shipped row, so no treatment-effect estimate can be reproduced or refuted here",
+      "status": "unmeasurable"
+    }
+  },
+  "schemaVersion": "1.0.0",
+  "schoolCoordinates": {
+    "bronzeDirectoryCoordinates": {
+      "coordinateColumnCount": 0,
+      "meaning": "the bronze directory's schema (metadata read) carries no coordinate column; the shipped distances were produced from coordinates that existed only transiently at pipeline runtime"
+    },
+    "meaning": "the 2026-11-18 checkout lead 'no school coordinates' is corrected and narrowed: no SHIPPED layer carries school coordinates, but an unconsumed coordinate-bearing school artefact exists under data/manual/csv/datagov/, and the runtime producer geocodes postal codes instead of reading any persisted coordinate file",
+    "runtimeGeocoding": {
+      "bronzeSource": {
+        "line": 143,
+        "path": "src/egg_n_bacon_housing/components/ingestion/datagov.py",
+        "quote": "(\"raw_school_directory.parquet\", \"raw_datagov_school_directory.parquet\")"
+      },
+      "featureNodeCall": {
+        "line": 165,
+        "path": "src/egg_n_bacon_housing/components/features.py",
+        "quote": "schools = geocode_schools(schools, geocoder)"
+      },
+      "geocoderFunction": {
+        "line": 409,
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "quote": "def geocode_schools(schools_df: pd.DataFrame, geocoder: Geocoder) -> pd.DataFrame:"
+      },
+      "meaning": "the producer geocodes school postal codes at runtime and does not persist school coordinates as a school-keyed artefact; the shipped layers carry the resulting per-property distance columns instead (screened as, from code)"
+    },
+    "schoolFileNameScan": [
+      {
+        "bytes": 1341092,
+        "class": "preschool-amenity-source (not a primary/secondary school artefact)",
+        "path": "data/manual/csv/datagov/PreSchoolsLocation.geojson"
+      },
+      {
+        "bytes": 231573,
+        "class": "geojson (coordinate-bearing)",
+        "path": "data/manual/csv/datagov/SchoolsMOE.geojson"
+      },
+      {
+        "bytes": 969,
+        "class": "tier/reference artefact",
+        "path": "data/manual/csv/school_quality_weights.csv"
+      },
+      {
+        "bytes": 4298,
+        "class": "tier/reference artefact",
+        "path": "data/manual/csv/school_scoring_methodology.md"
+      },
+      {
+        "bytes": 1858,
+        "class": "tier/reference artefact",
+        "path": "data/manual/csv/school_tiers_primary.csv"
+      },
+      {
+        "bytes": 1700,
+        "class": "tier/reference artefact",
+        "path": "data/manual/csv/school_tiers_secondary.csv"
+      },
+      {
+        "bytes": 1341092,
+        "class": "preschool-amenity-source (not a primary/secondary school artefact)",
+        "path": "data/pipeline/01_bronze/external/PreSchoolsLocation.geojson"
+      },
+      {
+        "bytes": 37681,
+        "class": "preschool-amenity-source (not a primary/secondary school artefact)",
+        "path": "data/pipeline/01_bronze/external/PreSchoolsLocation.parquet"
+      },
+      {
+        "bytes": 84479,
+        "class": "bronze directory (schema carries no coordinate column)",
+        "path": "data/pipeline/01_bronze/raw_school_directory.parquet"
+      },
+      {
+        "bytes": 1341092,
+        "class": "preschool-amenity-source (not a primary/secondary school artefact)",
+        "path": "data/raw/external/datagov/PreSchoolsLocation.geojson"
+      },
+      {
+        "bytes": 168559,
+        "class": "served plot (visual read at rddRecovery.servedPlots)",
+        "path": "app/public/data/analysis/school_impact/exploratory_analysis.png"
+      },
+      {
+        "bytes": 96540,
+        "class": "served plot (visual read at rddRecovery.servedPlots)",
+        "path": "app/public/data/analysis/school_rdd/rdd_visualization.png"
+      }
+    ],
+    "schoolsMoeGeojson": {
+      "bytes": 231573,
+      "consumerScan": {
+        "meaning": "zero call sites under src/ reference this artefact, so it is unlinked to the shipped distance columns in BOTH directions: it is neither evidence that the shipped distances were produced from it, nor evidence that they were not",
+        "occurrencesUnderSrc": 0,
+        "roots": [
+          "src/",
+          "scripts/ (excluded prefix: programmes' own surfaces)"
+        ],
+        "token": "SchoolsMOE"
+      },
+      "distinctSchoolNames": 197,
+      "featureCount": 197,
+      "featuresWithPointGeometryAndLatLng": 197,
+      "namesAlsoInBronzeDirectory": 197,
+      "namesOnlyInGeojson": [],
+      "path": "data/manual/csv/datagov/SchoolsMOE.geojson",
+      "sha256": "6ed84238263d5afbd39282be928abaf513156915a4e09f6abd086119501dd34a"
+    }
+  },
+  "schoolDirectory": {
+    "bytes": 84479,
+    "columnCount": 32,
+    "columns": [
+      "_id",
+      "school_name",
+      "url_address",
+      "address",
+      "postal_code",
+      "telephone_no",
+      "telephone_no_2",
+      "fax_no",
+      "fax_no_2",
+      "email_address",
+      "mrt_desc",
+      "bus_desc",
+      "principal_name",
+      "first_vp_name",
+      "second_vp_name",
+      "third_vp_name",
+      "fourth_vp_name",
+      "fifth_vp_name",
+      "sixth_vp_name",
+      "dgp_code",
+      "zone_code",
+      "type_code",
+      "nature_code",
+      "session_code",
+      "mainlevel_code",
+      "sap_ind",
+      "autonomous_ind",
+      "gifted_ind",
+      "ip_ind",
+      "mothertongue1_code",
+      "mothertongue2_code",
+      "mothertongue3_code"
+    ],
+    "coordinateColumnCount": 0,
+    "coordinateColumns": [],
+    "mainlevelCodeCounts": {
+      "CENTRALISED INSTITUTE": 1,
+      "JUNIOR COLLEGE": 10,
+      "MIXED LEVEL (P1-S4)": 3,
+      "MIXED LEVEL (S1-JC2)": 10,
+      "MIXED LEVEL (S1-S5, JC1-JC2)": 1,
+      "PRIMARY": 179,
+      "SECONDARY (S1-S4)": 16,
+      "SECONDARY (S1-S5)": 117
+    },
+    "path": "data/pipeline/01_bronze/raw_school_directory.parquet",
+    "policyFlagMeaning": "sap_ind/gifted_ind/ip_ind/autonomous_ind are admission-policy eligibility flags. They are counted here and NOT used by any model output in this pack (policyEligibility records the consumption scan)",
+    "policyFlags": {
+      "autonomous_ind": {
+        "noCount": 309,
+        "valueCounts": {
+          "No": 309,
+          "Yes": 28
+        },
+        "yesCount": 28
+      },
+      "gifted_ind": {
+        "noCount": 321,
+        "valueCounts": {
+          "No": 321,
+          "Yes": 16
+        },
+        "yesCount": 16
+      },
+      "ip_ind": {
+        "noCount": 318,
+        "valueCounts": {
+          "No": 318,
+          "Yes": 19
+        },
+        "yesCount": 19
+      },
+      "sap_ind": {
+        "noCount": 314,
+        "valueCounts": {
+          "No": 314,
+          "Yes": 23
+        },
+        "yesCount": 23
+      }
+    },
+    "rows": 337,
+    "sha256": "ff32b98035fb7821fe09836fdd8fe132ddc9d2400316969c1e882728e46d53c0",
+    "zoneCodeCounts": {
+      "EAST": 85,
+      "NORTH": 84,
+      "SOUTH": 84,
+      "WEST": 84
+    }
+  },
+  "scope": "RS08 school-quality evidence: tier provenance measured end to end, the shipped school columns' four missingness states, the legacy sample reconciliation, one pre-stated distance association, the RDD/balance/bandwidth/multiplicity clauses recorded as absent or unmeasurable with their scans, and the withdrawal of causal/RDD language",
+  "series": "school-quality",
+  "study": "RS08",
+  "tierProvenance": {
+    "bronzeJsonPreferredAndAbsent": {
+      "csvFallback": {
+        "line": 83,
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "quote": "csv_dir = self.data_dir / \"manual\" / \"csv\""
+      },
+      "exists": false,
+      "meaning": "the producer prefers a bronze JSON tier file that is absent, so the manual CSV lists are the ACTIVE tier source of the shipped school_accessibility_score — measured, not assumed",
+      "preferredPath": "data/pipeline/01_bronze/external/school_tiers.json",
+      "producerPreference": {
+        "line": 73,
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "quote": "json_data = self.load_json(\"school_tiers.json\")"
+      },
+      "schoolOrTierNamedFilesInBronzeExternal": [
+        "PreSchoolsLocation.geojson",
+        "PreSchoolsLocation.parquet"
+      ]
+    },
+    "directoryJoin": {
+      "directoryNameCount": 337,
+      "directoryRows": 337,
+      "primary": {
+        "exactNameMatches": 26,
+        "method": "the producer's own join rule: exact match on the normalized name first, then longest prefix in either direction; unresolved schools score quality 0 and are never tier 1",
+        "prefixFallbackMatches": 2,
+        "rows": 29,
+        "unresolved": [
+          "FAIRFIELD METHODIST PRIMARY SCHOOL"
+        ]
+      },
+      "secondary": {
+        "exactNameMatches": 21,
+        "method": "the producer's own join rule: exact match on the normalized name first, then longest prefix in either direction; unresolved schools score quality 0 and are never tier 1",
+        "prefixFallbackMatches": 4,
+        "rows": 25,
+        "unresolved": []
+      }
+    },
+    "manualArtefacts": {
+      "qualityWeights": {
+        "bytes": 969,
+        "dataRows": 13,
+        "features": [
+          "3.0",
+          "2.0",
+          "2.5",
+          "1.5",
+          "3.0",
+          "2.0",
+          "1.0",
+          "1.0",
+          "0.5",
+          "0.5",
+          "2.0",
+          "1.0",
+          "1.5"
+        ],
+        "path": "data/manual/csv/school_quality_weights.csv",
+        "sha256": "aef604d26ba0b84b011419a6abc8b06ba4c11c7af8d9b67cd2b08c139f5e8ac0"
+      },
+      "scoringMethodology": {
+        "bytes": 4298,
+        "path": "data/manual/csv/school_scoring_methodology.md",
+        "sha256": "f711e614ba330ef3ef2b831504aae4fa85acb648d8a85f36fa2aa033d65d8959"
+      },
+      "tiersPrimary": {
+        "bytes": 1858,
+        "columns": [
+          "school_name",
+          "gep",
+          "sap",
+          "tier",
+          "popularity_p2b",
+          "region",
+          "notable_for"
+        ],
+        "dataRows": 29,
+        "gepYes": 8,
+        "path": "data/manual/csv/school_tiers_primary.csv",
+        "popularityHighMarkerRows": 19,
+        "popularityNumericRows": 6,
+        "sapYes": 18,
+        "sha256": "2d985e4d3520fa6c81465beefc7c36c939e9c823d6dc728d838b508472d7b641",
+        "tier1Count": 10,
+        "tierCounts": {
+          "1": 10,
+          "2": 16,
+          "3": 3
+        }
+      },
+      "tiersSecondary": {
+        "autonomousYes": 16,
+        "bytes": 1700,
+        "columns": [
+          "school_name",
+          "track",
+          "tier",
+          "ip_cutoff_2026",
+          "sap",
+          "autonomous",
+          "ip",
+          "awards"
+        ],
+        "dataRows": 25,
+        "ipYes": 20,
+        "path": "data/manual/csv/school_tiers_secondary.csv",
+        "sapYes": 12,
+        "sha256": "3109779a1cdb1ccbd9572e21ecc07e4ee764be6c7632879bc23383a816d83682",
+        "tier1Count": 5,
+        "tierCounts": {
+          "1": 5,
+          "2": 10,
+          "3": 10
+        }
+      }
+    },
+    "origin": "hand-authored reference data: no extraction, download or pipeline call site produces these four files, and no dated source snapshot is recorded in them; they are screened as hand-authored tier lists, origin unverified. This pack builds no model output on them",
+    "qualityScoreFormula": {
+      "accessibilityBlend": {
+        "line": 307,
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "quote": "- ``school_accessibility_score`` — 0.4 * primary + 0.6 * secondary blend"
+      },
+      "decay": {
+        "line": 32,
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "quote": "_ACCESSIBILITY_DECAY_RANGE_M = 2000.0"
+      },
+      "meaning": "the shipped score's formula is recorded in code and in the manual methodology; the inputs to that formula are the hand-authored tier lists, so the score is screened as a tier-list-derived feature, not a measured school-quality measure independent of those lists",
+      "methodology": {
+        "line": 28,
+        "path": "data/manual/csv/school_scoring_methodology.md",
+        "quote": "quality_score = ("
+      },
+      "producerDocumentedDeviations": {
+        "line": 164,
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "quote": "- ``academic_awards`` is 0 for every school — the ``awards`` column is"
+      },
+      "producerImplementation": {
+        "line": 155,
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "quote": "def calculate_school_quality_scores("
+      }
+    },
+    "servedTierArtefactScan": {
+      "finding": "no tier data artefact (csv/json/parquet) is served or stored under app/public/data; the only school-named served paths are the two PNG plots recorded at rddRecovery.servedPlots (schoolFileNameScan lists every matched path with its class)",
+      "roots": [
+        "data/",
+        "app/public/data/"
+      ]
+    }
+  }
+}

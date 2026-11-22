@@ -2,7 +2,7 @@
 
 import logging
 from datetime import date
-from typing import Literal
+from typing import Literal, cast
 
 import numpy as np
 import pandas as pd
@@ -74,7 +74,7 @@ def _annual_value_type_series(flat_type: pd.Series) -> pd.Series:
     mapped = flat_type.map(_ANNUAL_VALUE_TYPE_MAP)
     residual = mapped.isna() & flat_type.notna()
     if bool(residual.any()):
-        upper = flat_type[residual].astype(str).str.strip().str.upper()
+        upper = cast(pd.Series, flat_type[residual]).astype(str).str.strip().str.upper()
         compact = upper.str.replace(" ", "", regex=False).str.replace("-", "", regex=False)
         mapped.loc[residual] = compact.map(_ANNUAL_VALUE_TYPE_MAP).fillna(upper)
     return mapped
@@ -115,7 +115,7 @@ def _enforce_transaction_time_contract(
         now = pd.Timestamp(pipeline_as_of_date)
         if latest.tz is not None:
             now = now.tz_localize(latest.tz)
-        age_days = (now.normalize() - latest.normalize()).days
+        age_days = (cast(pd.Timestamp, now).normalize() - latest.normalize()).days
         if age_days > max_transaction_age_days:
             raise ValueError(
                 f"transactions_enriched latest transaction is {age_days} days old; "
@@ -161,8 +161,8 @@ def validate_transactions_enriched(
 
     # --- Derived columns ---
     if "price" in df.columns and "floor_area_sqft" in df.columns:
-        price = pd.to_numeric(df["price"], errors="coerce")
-        floor_area_sqft = pd.to_numeric(df["floor_area_sqft"], errors="coerce")
+        price = cast(pd.Series, pd.to_numeric(df["price"], errors="coerce"))
+        floor_area_sqft = cast(pd.Series, pd.to_numeric(df["floor_area_sqft"], errors="coerce"))
         df["psf"] = np.where(floor_area_sqft > 0, price / floor_area_sqft, np.nan)
     else:
         df["psf"] = np.nan
@@ -184,7 +184,7 @@ def validate_transactions_enriched(
     # Normalize unconditionally (when the column exists) so enrichment output
     # does not depend on rental data being present for flat_type to match.
     if "flat_type" in df.columns:
-        df["flat_type"] = normalize_hdb_flat_type(df["flat_type"])
+        df["flat_type"] = normalize_hdb_flat_type(cast(pd.Series, df["flat_type"]))
 
     # --- Rental yield ---
     # ``month`` is guaranteed canonical (YYYY-MM string) by the time contract
@@ -193,7 +193,9 @@ def validate_transactions_enriched(
     if not rental_yield.empty and "rental_yield_pct" in rental_yield.columns:
         rental_df = rental_yield.copy()
         if "flat_type" in rental_df.columns:
-            rental_df["flat_type"] = normalize_hdb_flat_type(rental_df["flat_type"])
+            rental_df["flat_type"] = normalize_hdb_flat_type(
+                cast(pd.Series, rental_df["flat_type"])
+            )
 
         # rental_yield is aggregated across flat types (flat_type == "ALL" sentinel).
         # A constant sentinel can never match transaction-level flat_type values, so
@@ -211,7 +213,9 @@ def validate_transactions_enriched(
 
         if merge_keys:
             rental_cols = [*merge_keys, "rental_yield_pct"]
-            rental_lookup = rental_df[rental_cols].dropna(subset=["rental_yield_pct"])
+            rental_lookup = cast(pd.DataFrame, rental_df[rental_cols]).dropna(
+                subset=["rental_yield_pct"]
+            )
             sort_col = next((c for c in merge_keys if "month" in c or "date" in c), merge_keys[0])
             rental_lookup = rental_lookup.sort_values(sort_col).drop_duplicates(
                 subset=merge_keys, keep="last"
@@ -245,12 +249,12 @@ def validate_transactions_enriched(
         macro_df = raw_macro_data.get(key, pd.DataFrame())
         if macro_df.empty or date_col not in macro_df.columns:
             continue
-        lookup = macro_df[[date_col, value_col]].copy()
+        lookup = cast(pd.DataFrame, macro_df[[date_col, value_col]].copy())
         lookup[date_col] = pd.to_datetime(lookup[date_col], errors="coerce")
-        lookup["month"] = lookup[date_col].dt.to_period("M").astype("string")
+        lookup["month"] = cast(pd.Series, lookup[date_col]).dt.to_period("M").astype("string")
         lookup = lookup.dropna(subset=["month", value_col])
         lookup = lookup.sort_values("month").drop_duplicates(subset="month", keep="last")
-        monthly_lookups.append(lookup[["month", value_col]])
+        monthly_lookups.append(cast(pd.DataFrame, lookup[["month", value_col]]))
         monthly_present.add(value_col)
 
     if monthly_lookups:
@@ -275,12 +279,12 @@ def validate_transactions_enriched(
         macro_df = raw_macro_data.get(key, pd.DataFrame())
         if macro_df.empty or qtr_col not in macro_df.columns:
             continue
-        lookup = macro_df[[qtr_col, value_col]].copy()
+        lookup = cast(pd.DataFrame, macro_df[[qtr_col, value_col]].copy())
         lookup[qtr_col] = pd.to_datetime(lookup[qtr_col], errors="coerce")
-        lookup["_quarter"] = lookup[qtr_col].dt.to_period("Q")
+        lookup["_quarter"] = cast(pd.Series, lookup[qtr_col]).dt.to_period("Q")
         lookup = lookup.dropna(subset=["_quarter", value_col])
         lookup = lookup.sort_values("_quarter").drop_duplicates(subset="_quarter", keep="last")
-        quarterly_lookups.append(lookup[["_quarter", value_col]])
+        quarterly_lookups.append(cast(pd.DataFrame, lookup[["_quarter", value_col]]))
         quarterly_present.add(value_col)
 
     if quarterly_lookups:
@@ -306,7 +310,7 @@ def validate_transactions_enriched(
 
         mav_lookup = annual_value_lookup(raw_median_annual_value)
         if not mav_lookup.empty and "flat_type" in df.columns:
-            df["_av_type"] = _annual_value_type_series(df["flat_type"])
+            df["_av_type"] = _annual_value_type_series(cast(pd.Series, df["flat_type"]))
             df = df.merge(mav_lookup, left_on="_av_type", right_on="type_of_hdb", how="left")
             df = df.drop(columns=["_av_type", "type_of_hdb"], errors="ignore")
 
@@ -331,7 +335,10 @@ def validate_transactions_enriched(
     # boundary below. Fewer than five distinct prices degrade to NA (the
     # duplicates-dropped bin count cannot cover five labels).
     try:
-        strata = pd.qcut(df["price"], q=5, labels=["Q1", "Q2", "Q3", "Q4", "Q5"], duplicates="drop")
+        strata = cast(
+            pd.Series,
+            pd.qcut(df["price"], q=5, labels=["Q1", "Q2", "Q3", "Q4", "Q5"], duplicates="drop"),
+        )
         df["price_stratum"] = strata.astype("string")
     except ValueError:
         df["price_stratum"] = pd.NA

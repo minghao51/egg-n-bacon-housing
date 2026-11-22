@@ -1,0 +1,1457 @@
+{
+  "claimKeyCheck": {
+    "checked": 28,
+    "passed": true,
+    "resolution": "syntactic path resolution only; does not validate semantic support",
+    "unresolved": []
+  },
+  "cutoff": {
+    "bound": "All aggregation and analysis excludes rows after lastCompleteMonth.",
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthTransactions": 4719,
+    "rule": "last complete month is month before terminal month; terminal count compared with preceding 12-month median",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.263978,
+    "terminalMonthTransactions": 1211,
+    "trailing12MedianTransactions": 4587.5,
+    "trailing12Months": [
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ]
+  },
+  "gate": "Record weights/neighbour definition, disconnected areas, permutation settings, sample adequacy and multiplicity correction. High-high labels are not future return or demand predictions. Produce reproducible memberships and uncertainty/significance metadata.",
+  "inputs": [
+    {
+      "bytes": 78381526,
+      "path": "data/pipeline/04_platinum/unified_dataset.parquet",
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    {
+      "bytes": 1156,
+      "path": "app/public/data/analytics/spatial_analysis.json.gz",
+      "rows": null,
+      "sha256": "e3ff620242187ba93f09986f313b3261c63df2cc6b333cce460c63fe227c2d54"
+    },
+    {
+      "bytes": 5812,
+      "path": "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md",
+      "rows": null,
+      "sha256": "efea427d37df07b7a5363ca6622b33087d80d6d166adf3774a421e9b60bcbc22"
+    }
+  ],
+  "legacyAssessment": {
+    "appreciation": {
+      "recovery": "not measured: legacy names a rental input; appreciation unit/window/population are underspecified"
+    },
+    "clusterCounts": {
+      "legacyPhrase": "16 HH / 17 LH / 1 LL / 8 NS cells",
+      "recovery": "unreproducible as stated"
+    },
+    "clusterReturns": {
+      "legacyPhrase": "12.7%, 11.3%, about 10%, 12.0% YoY",
+      "recovery": "unit/window/population not established"
+    },
+    "globalMoran": {
+      "legacyValue": 0.766,
+      "recovery": "not recoverable from placeholder asset; remeasured on a different explicit sale-PSF population"
+    },
+    "globalPValue": {
+      "legacyPhrase": "p-value < 0.001",
+      "recovery": "not recoverable from placeholder asset; sale-PSF remeasurement uses a different population and statistic"
+    },
+    "globalZ": {
+      "legacyValue": 9.91,
+      "recovery": "not recoverable from placeholder asset; remeasurement records permutation outputs"
+    },
+    "method": {
+      "recovery": "legacy H3/rental method does not specify this sale-PSF remeasurement"
+    },
+    "period": {
+      "legacyPhrase": "2021-2026",
+      "recovery": "window semantics not established"
+    },
+    "segmentCorrelations": {
+      "legacyPhrase": "Condo 78%, HDB 71%, EC 65%",
+      "recovery": "unit/window/population not established"
+    },
+    "transition": {
+      "recovery": "withdrawn; this asset contains no time dimension supporting transition or persistence"
+    }
+  },
+  "legacyAsset": {
+    "path": "app/public/data/analytics/spatial_analysis.json.gz",
+    "placeholderExample": {
+      "hotspot": {
+        "classification": "NOT_SIGNIFICANT",
+        "confidence": "NOT_SIGNIFICANT",
+        "p_value": 1.0,
+        "z_score": 0.0
+      },
+      "lisa_cluster": {
+        "persistence_rate": 0.5,
+        "transition_probabilities": {
+          "to_coldspot": 0.2,
+          "to_hotspot": 0.2,
+          "to_stable": 0.6
+        },
+        "type": "STABLE",
+        "yoy_appreciation": 1.0
+      },
+      "neighborhood_effect": {
+        "moran_i_local": 0.0,
+        "neighborhood_multiplier": 1.0,
+        "spatial_lag": 295000.0
+      }
+    },
+    "planningAreaCount": 41
+  },
+  "legacyClaims": [
+    {
+      "id": "analysis_date",
+      "ledgerKey": "legacyAssessment.period",
+      "note": "The article date does not establish the analyzed population or statistic window.",
+      "phrase": "2026-02-06",
+      "status": "withdrawn"
+    },
+    {
+      "id": "period",
+      "ledgerKey": "legacyAssessment.period",
+      "note": "The legacy does not define the population/window endpoint semantics; the frame does not establish the legacy statistic.",
+      "phrase": "2021-2026",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "coverage",
+      "ledgerKey": "legacyAssessment.appreciation",
+      "note": "Appreciation series and precise population are unspecified.",
+      "phrase": "HDB, EC, and condominium appreciation patterns",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "global_moran",
+      "ledgerKey": "legacyAssessment.globalMoran",
+      "note": "Frozen asset is a placeholder; this is independently re-measured on median sale PSF, not confirmed.",
+      "phrase": "0.766",
+      "status": "withdrawn"
+    },
+    {
+      "id": "global_z",
+      "ledgerKey": "legacyAssessment.globalZ",
+      "note": "Statistic is not recoverable from the placeholder; permutation z is independently measured.",
+      "phrase": "9.91",
+      "status": "withdrawn"
+    },
+    {
+      "id": "global_p_value",
+      "ledgerKey": "legacyAssessment.globalPValue",
+      "note": "The legacy p-value is not recoverable from the placeholder; the sale-PSF remeasurement is a different population and statistic.",
+      "phrase": "p-value < 0.001",
+      "status": "withdrawn"
+    },
+    {
+      "id": "high_high_count",
+      "ledgerKey": "legacyAssessment.clusterCounts",
+      "note": "Unreproducible legacy membership count.",
+      "phrase": "16",
+      "status": "withdrawn"
+    },
+    {
+      "id": "high_high_yoy",
+      "ledgerKey": "legacyAssessment.clusterReturns",
+      "note": "Appreciation metric/window/population underspecified.",
+      "phrase": "12.7%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "lh_count",
+      "ledgerKey": "legacyAssessment.clusterCounts",
+      "note": "Unreproducible legacy membership count.",
+      "phrase": "17",
+      "status": "withdrawn"
+    },
+    {
+      "id": "lh_yoy",
+      "ledgerKey": "legacyAssessment.clusterReturns",
+      "note": "Appreciation metric/window/population underspecified.",
+      "phrase": "11.3%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "ll_count",
+      "ledgerKey": "legacyAssessment.clusterCounts",
+      "note": "Unreproducible legacy membership count.",
+      "phrase": "1 cell",
+      "status": "withdrawn"
+    },
+    {
+      "id": "ll_yoy",
+      "ledgerKey": "legacyAssessment.clusterReturns",
+      "note": "Unit/window/population are underspecified.",
+      "phrase": "about 10%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "ns_count",
+      "ledgerKey": "legacyAssessment.clusterCounts",
+      "note": "Unreproducible legacy membership count.",
+      "phrase": "8",
+      "status": "withdrawn"
+    },
+    {
+      "id": "ns_yoy",
+      "ledgerKey": "legacyAssessment.clusterReturns",
+      "note": "Appreciation metric/window/population underspecified.",
+      "phrase": "12.0%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "fallback_yoy_band",
+      "ledgerKey": "legacyAssessment.clusterReturns",
+      "note": "The underlying appreciation unit, window and population are underspecified.",
+      "phrase": "~10-12% elsewhere",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "condo_corr",
+      "ledgerKey": "legacyAssessment.segmentCorrelations",
+      "note": "Correlation unit, window and population are unspecified.",
+      "phrase": "78%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "hdb_corr",
+      "ledgerKey": "legacyAssessment.segmentCorrelations",
+      "note": "Correlation unit, window and population are unspecified.",
+      "phrase": "71%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "ec_corr",
+      "ledgerKey": "legacyAssessment.segmentCorrelations",
+      "note": "Correlation unit, window and population are unspecified.",
+      "phrase": "65%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "h3_cell_area",
+      "ledgerKey": "legacyAssessment.method",
+      "note": "Describes legacy H3 cells, not this measured planning-area statistic.",
+      "phrase": "~0.5 km² cells",
+      "status": "withdrawn"
+    },
+    {
+      "id": "h3_resolution",
+      "ledgerKey": "legacyAssessment.method",
+      "note": "The legacy rental/H3 method does not describe the independently measured sale-PSF planning-area method.",
+      "phrase": "resolution 8",
+      "status": "withdrawn"
+    },
+    {
+      "id": "minimum_records",
+      "ledgerKey": "legacyAssessment.method",
+      "note": "Not applicable to planning-area aggregation; adequacy measured per area.",
+      "phrase": "≥10 records per cell",
+      "status": "withdrawn"
+    },
+    {
+      "id": "knn_k",
+      "ledgerKey": "measurement.method.weights",
+      "note": "KNN k=8 is used and recorded as a new, explicit choice, not evidence of legacy recovery.",
+      "phrase": "k=8",
+      "status": "re-measured"
+    },
+    {
+      "id": "row_standardized",
+      "ledgerKey": "measurement.method.weights",
+      "note": "Used and recorded for this remeasurement.",
+      "phrase": "row-standardized",
+      "status": "re-measured"
+    },
+    {
+      "id": "global_permutations",
+      "ledgerKey": "measurement.method.permutations",
+      "note": "Legacy setting reproduced as a recorded setting, with fixed seed.",
+      "phrase": "99 permutations",
+      "status": "re-measured"
+    },
+    {
+      "id": "local_permutations",
+      "ledgerKey": "measurement.method.permutations",
+      "note": "Legacy setting reproduced as a recorded setting, with fixed seed.",
+      "phrase": "99 permutations",
+      "status": "re-measured"
+    },
+    {
+      "id": "local_threshold",
+      "ledgerKey": "measurement.method.significance",
+      "note": "Recorded for local classification with BH correction also applied.",
+      "phrase": "p ≤ 0.05",
+      "status": "re-measured"
+    },
+    {
+      "id": "transition",
+      "ledgerKey": "legacyAssessment.transition",
+      "note": "No time-series transition measure is present in the asset; persistence withdrawn.",
+      "phrase": "moderate persistence",
+      "status": "withdrawn"
+    },
+    {
+      "id": "transition_sticky",
+      "ledgerKey": "legacyAssessment.transition",
+      "note": "No time-series transition measure is present in the asset; persistence withdrawn.",
+      "phrase": "sticky but not permanent",
+      "status": "withdrawn"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allPresent": true,
+    "checked": 28,
+    "quotes": [
+      {
+        "id": "analysis_date",
+        "occurrences": 2,
+        "phrase": "2026-02-06"
+      },
+      {
+        "id": "period",
+        "occurrences": 1,
+        "phrase": "2021-2026"
+      },
+      {
+        "id": "coverage",
+        "occurrences": 1,
+        "phrase": "HDB, EC, and condominium appreciation patterns"
+      },
+      {
+        "id": "global_moran",
+        "occurrences": 3,
+        "phrase": "0.766"
+      },
+      {
+        "id": "global_z",
+        "occurrences": 3,
+        "phrase": "9.91"
+      },
+      {
+        "id": "global_p_value",
+        "occurrences": 1,
+        "phrase": "p-value < 0.001"
+      },
+      {
+        "id": "high_high_count",
+        "occurrences": 2,
+        "phrase": "16"
+      },
+      {
+        "id": "high_high_yoy",
+        "occurrences": 3,
+        "phrase": "12.7%"
+      },
+      {
+        "id": "lh_count",
+        "occurrences": 3,
+        "phrase": "17"
+      },
+      {
+        "id": "lh_yoy",
+        "occurrences": 2,
+        "phrase": "11.3%"
+      },
+      {
+        "id": "ll_count",
+        "occurrences": 1,
+        "phrase": "1 cell"
+      },
+      {
+        "id": "ll_yoy",
+        "occurrences": 1,
+        "phrase": "about 10%"
+      },
+      {
+        "id": "ns_count",
+        "occurrences": 7,
+        "phrase": "8"
+      },
+      {
+        "id": "ns_yoy",
+        "occurrences": 2,
+        "phrase": "12.0%"
+      },
+      {
+        "id": "fallback_yoy_band",
+        "occurrences": 1,
+        "phrase": "~10-12% elsewhere"
+      },
+      {
+        "id": "condo_corr",
+        "occurrences": 3,
+        "phrase": "78%"
+      },
+      {
+        "id": "hdb_corr",
+        "occurrences": 3,
+        "phrase": "71%"
+      },
+      {
+        "id": "ec_corr",
+        "occurrences": 3,
+        "phrase": "65%"
+      },
+      {
+        "id": "h3_cell_area",
+        "occurrences": 1,
+        "phrase": "~0.5 km² cells"
+      },
+      {
+        "id": "h3_resolution",
+        "occurrences": 1,
+        "phrase": "resolution 8"
+      },
+      {
+        "id": "minimum_records",
+        "occurrences": 1,
+        "phrase": "≥10 records per cell"
+      },
+      {
+        "id": "knn_k",
+        "occurrences": 1,
+        "phrase": "k=8"
+      },
+      {
+        "id": "row_standardized",
+        "occurrences": 1,
+        "phrase": "row-standardized"
+      },
+      {
+        "id": "global_permutations",
+        "occurrences": 2,
+        "phrase": "99 permutations"
+      },
+      {
+        "id": "local_permutations",
+        "occurrences": 2,
+        "phrase": "99 permutations"
+      },
+      {
+        "id": "local_threshold",
+        "occurrences": 1,
+        "phrase": "p ≤ 0.05"
+      },
+      {
+        "id": "transition",
+        "occurrences": 1,
+        "phrase": "moderate persistence"
+      },
+      {
+        "id": "transition_sticky",
+        "occurrences": 1,
+        "phrase": "sticky but not permanent"
+      }
+    ]
+  },
+  "measurement": {
+    "method": {
+      "global": {
+        "expectedI": -0.02380952,
+        "moranI": 0.45755378,
+        "pSim": 0.01,
+        "permutationZ": 7.59811342
+      },
+      "membershipCounts": {
+        "HH": 6,
+        "HL": 0,
+        "LH": 4,
+        "LL": 1,
+        "NS": 32
+      },
+      "memberships": [
+        {
+          "medianPsf": 291.9813,
+          "membership": "NS",
+          "pAdjustedBH": 0.0688,
+          "pSim": 0.04,
+          "planningArea": "ANG MO KIO",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 62873
+        },
+        {
+          "medianPsf": 309.6771,
+          "membership": "NS",
+          "pAdjustedBH": 0.086,
+          "pSim": 0.06,
+          "planningArea": "BEDOK",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 85489
+        },
+        {
+          "medianPsf": 377.1498,
+          "membership": "NS",
+          "pAdjustedBH": 0.26219512,
+          "pSim": 0.25,
+          "planningArea": "BISHAN",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 26745
+        },
+        {
+          "medianPsf": 286.4513,
+          "membership": "NS",
+          "pAdjustedBH": 0.18594595,
+          "pSim": 0.16,
+          "planningArea": "BUKIT BATOK",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 55027
+        },
+        {
+          "medianPsf": 481.5934,
+          "membership": "LH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "BUKIT MERAH",
+          "quadrant": "LH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 43317
+        },
+        {
+          "medianPsf": 331.7969,
+          "membership": "NS",
+          "pAdjustedBH": 0.29690476,
+          "pSim": 0.29,
+          "planningArea": "BUKIT PANJANG",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 34796
+        },
+        {
+          "medianPsf": 2086.411,
+          "membership": "NS",
+          "pAdjustedBH": 0.2365,
+          "pSim": 0.22,
+          "planningArea": "BUKIT TIMAH",
+          "quadrant": "HH",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 19728
+        },
+        {
+          "medianPsf": 1049.8005,
+          "membership": "NS",
+          "pAdjustedBH": 0.0688,
+          "pSim": 0.04,
+          "planningArea": "CENTRAL WATER CATCHMENT",
+          "quadrant": "HL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 92
+        },
+        {
+          "medianPsf": 415.2488,
+          "membership": "NS",
+          "pAdjustedBH": 0.07678571,
+          "pSim": 0.05,
+          "planningArea": "CHANGI",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 263
+        },
+        {
+          "medianPsf": 292.1089,
+          "membership": "NS",
+          "pAdjustedBH": 0.06142857,
+          "pSim": 0.03,
+          "planningArea": "CHOA CHU KANG",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 44731
+        },
+        {
+          "medianPsf": 360.5196,
+          "membership": "NS",
+          "pAdjustedBH": 0.20948718,
+          "pSim": 0.19,
+          "planningArea": "CLEMENTI",
+          "quadrant": "LH",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 36331
+        },
+        {
+          "medianPsf": 2256.2084,
+          "membership": "NS",
+          "pAdjustedBH": 0.05375,
+          "pSim": 0.02,
+          "planningArea": "DOWNTOWN CORE",
+          "quadrant": "HH",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 5290
+        },
+        {
+          "medianPsf": 384.2096,
+          "membership": "NS",
+          "pAdjustedBH": 0.086,
+          "pSim": 0.06,
+          "planningArea": "GEYLANG",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 38977
+        },
+        {
+          "medianPsf": 314.8384,
+          "membership": "NS",
+          "pAdjustedBH": 0.05375,
+          "pSim": 0.02,
+          "planningArea": "HOUGANG",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 64311
+        },
+        {
+          "medianPsf": 265.2568,
+          "membership": "NS",
+          "pAdjustedBH": 0.19236842,
+          "pSim": 0.17,
+          "planningArea": "JURONG EAST",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 28070
+        },
+        {
+          "medianPsf": 267.2556,
+          "membership": "NS",
+          "pAdjustedBH": 0.0688,
+          "pSim": 0.04,
+          "planningArea": "JURONG WEST",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 72460
+        },
+        {
+          "medianPsf": 464.5156,
+          "membership": "NS",
+          "pAdjustedBH": 0.11057143,
+          "pSim": 0.09,
+          "planningArea": "KALLANG",
+          "quadrant": "LH",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 27609
+        },
+        {
+          "medianPsf": 99.989,
+          "membership": "NS",
+          "pAdjustedBH": 0.07678571,
+          "pSim": 0.05,
+          "planningArea": "LIM CHU KANG",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 33
+        },
+        {
+          "medianPsf": 950.8542,
+          "membership": "NS",
+          "pAdjustedBH": 0.06142857,
+          "pSim": 0.03,
+          "planningArea": "MANDAI",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 227
+        },
+        {
+          "medianPsf": 2963.6745,
+          "membership": "NS",
+          "pAdjustedBH": 0.05375,
+          "pSim": 0.02,
+          "planningArea": "MARINA SOUTH",
+          "quadrant": "HH",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 1108
+        },
+        {
+          "medianPsf": 1639.1974,
+          "membership": "NS",
+          "pAdjustedBH": 0.47,
+          "pSim": 0.47,
+          "planningArea": "MARINE PARADE",
+          "quadrant": "HH",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 18488
+        },
+        {
+          "medianPsf": 2589.3057,
+          "membership": "HH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "MUSEUM",
+          "quadrant": "HH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 587
+        },
+        {
+          "medianPsf": 2511.3142,
+          "membership": "NS",
+          "pAdjustedBH": 0.05375,
+          "pSim": 0.02,
+          "planningArea": "NEWTON",
+          "quadrant": "HH",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 2504
+        },
+        {
+          "medianPsf": 715.1144,
+          "membership": "NS",
+          "pAdjustedBH": 0.07678571,
+          "pSim": 0.05,
+          "planningArea": "NOVENA",
+          "quadrant": "LH",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 14080
+        },
+        {
+          "medianPsf": 3108.7905,
+          "membership": "HH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "ORCHARD",
+          "quadrant": "HH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 829
+        },
+        {
+          "medianPsf": 732.2026,
+          "membership": "LH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "OUTRAM",
+          "quadrant": "LH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 5177
+        },
+        {
+          "medianPsf": 331.7969,
+          "membership": "NS",
+          "pAdjustedBH": 0.06142857,
+          "pSim": 0.03,
+          "planningArea": "PASIR RIS",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 44949
+        },
+        {
+          "medianPsf": 519.4584,
+          "membership": "LL",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "PUNGGOL",
+          "quadrant": "LL",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 29803
+        },
+        {
+          "medianPsf": 535.9796,
+          "membership": "LH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "QUEENSTOWN",
+          "quadrant": "LH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 39672
+        },
+        {
+          "medianPsf": 2808.4069,
+          "membership": "HH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "RIVER VALLEY",
+          "quadrant": "HH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 6437
+        },
+        {
+          "medianPsf": 542.4689,
+          "membership": "LH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "ROCHOR",
+          "quadrant": "LH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 5125
+        },
+        {
+          "medianPsf": 409.5729,
+          "membership": "NS",
+          "pAdjustedBH": 0.10117647,
+          "pSim": 0.08,
+          "planningArea": "SEMBAWANG",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 21286
+        },
+        {
+          "medianPsf": 460.4049,
+          "membership": "NS",
+          "pAdjustedBH": 0.06142857,
+          "pSim": 0.03,
+          "planningArea": "SENGKANG",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 46474
+        },
+        {
+          "medianPsf": 360.8411,
+          "membership": "NS",
+          "pAdjustedBH": 0.0940625,
+          "pSim": 0.07,
+          "planningArea": "SERANGOON",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 33015
+        },
+        {
+          "medianPsf": 2854.0906,
+          "membership": "HH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "SINGAPORE RIVER",
+          "quadrant": "HH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 3860
+        },
+        {
+          "medianPsf": 1793.8965,
+          "membership": "HH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "SOUTHERN ISLANDS",
+          "quadrant": "HH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 1071
+        },
+        {
+          "medianPsf": 364.1803,
+          "membership": "NS",
+          "pAdjustedBH": 0.0688,
+          "pSim": 0.04,
+          "planningArea": "SUNGEI KADUT",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 137
+        },
+        {
+          "medianPsf": 299.8581,
+          "membership": "NS",
+          "pAdjustedBH": 0.0940625,
+          "pSim": 0.07,
+          "planningArea": "TAMPINES",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 97699
+        },
+        {
+          "medianPsf": 2247.0135,
+          "membership": "HH",
+          "pAdjustedBH": 0.03909091,
+          "pSim": 0.01,
+          "planningArea": "TANGLIN",
+          "quadrant": "HH",
+          "significantBH": true,
+          "significantRaw": true,
+          "transactions": 5574
+        },
+        {
+          "medianPsf": 1688.594,
+          "membership": "NS",
+          "pAdjustedBH": 0.10117647,
+          "pSim": 0.08,
+          "planningArea": "TENGAH",
+          "quadrant": "HL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 3366
+        },
+        {
+          "medianPsf": 368.5413,
+          "membership": "NS",
+          "pAdjustedBH": 0.17916667,
+          "pSim": 0.15,
+          "planningArea": "TOA PAYOH",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": false,
+          "transactions": 40563
+        },
+        {
+          "medianPsf": 265.4375,
+          "membership": "NS",
+          "pAdjustedBH": 0.05375,
+          "pSim": 0.02,
+          "planningArea": "WOODLANDS",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 73745
+        },
+        {
+          "medianPsf": 262.3147,
+          "membership": "NS",
+          "pAdjustedBH": 0.06142857,
+          "pSim": 0.03,
+          "planningArea": "YISHUN",
+          "quadrant": "LL",
+          "significantBH": false,
+          "significantRaw": true,
+          "transactions": 81577
+        }
+      ],
+      "permutations": 99,
+      "sample": {
+        "adequacy": "area-level minimum 10 transactions; counts recorded per membership; 44-ish areas are not independent transaction observations",
+        "method": "all valid rows through cutoff; no random subsample",
+        "seed": null,
+        "size": 1223499
+      },
+      "seed": 20261120,
+      "significance": {
+        "adjustedAlpha": 0.05,
+        "multiplicityCorrection": "Benjamini-Hochberg false-discovery rate",
+        "rawAlpha": 0.05
+      },
+      "statistic": "Global Moran's I and Local Moran (LISA) on planning-area median PSF",
+      "weights": {
+        "definition": "K-nearest-neighbours on planning-area mean longitude/latitude",
+        "disconnectedAreas": {
+          "componentCount": 1,
+          "components": [
+            [
+              "ANG MO KIO",
+              "BEDOK",
+              "BISHAN",
+              "BUKIT BATOK",
+              "BUKIT MERAH",
+              "BUKIT PANJANG",
+              "BUKIT TIMAH",
+              "CENTRAL WATER CATCHMENT",
+              "CHANGI",
+              "CHOA CHU KANG",
+              "CLEMENTI",
+              "DOWNTOWN CORE",
+              "GEYLANG",
+              "HOUGANG",
+              "JURONG EAST",
+              "JURONG WEST",
+              "KALLANG",
+              "LIM CHU KANG",
+              "MANDAI",
+              "MARINA SOUTH",
+              "MARINE PARADE",
+              "MUSEUM",
+              "NEWTON",
+              "NOVENA",
+              "ORCHARD",
+              "OUTRAM",
+              "PASIR RIS",
+              "PUNGGOL",
+              "QUEENSTOWN",
+              "RIVER VALLEY",
+              "ROCHOR",
+              "SEMBAWANG",
+              "SENGKANG",
+              "SERANGOON",
+              "SINGAPORE RIVER",
+              "SOUTHERN ISLANDS",
+              "SUNGEI KADUT",
+              "TAMPINES",
+              "TANGLIN",
+              "TENGAH",
+              "TOA PAYOH",
+              "WOODLANDS",
+              "YISHUN"
+            ]
+          ],
+          "islands": [],
+          "meaning": "KNN graph component membership, including the connected case; islands are nodes with no neighbors."
+        },
+        "k": 8,
+        "transform": "row-standardized"
+      }
+    },
+    "population": {
+      "absentColumns": [],
+      "absentColumnsMeaning": "All selected columns exist in the metadata schema.",
+      "absentRows": {
+        "excludedFromValidRowsDueToNulls": 11600,
+        "fabricated": 0,
+        "meaning": "No rows are fabricated; rows excluded because any selected field is null are counted separately from per-column null values."
+      },
+      "areasExcludedBelow10Transactions": 1,
+      "basis": "median transaction PSF per planning area; not appreciation",
+      "inputRowsAfterCutoff": 1235099,
+      "nullsByColumn": {
+        "lat": 11600,
+        "lon": 11600,
+        "planning_area": 11600,
+        "psf": 0
+      },
+      "planningAreasAnalyzed": 43,
+      "planningAreasObserved": 44,
+      "recordedZeroPsfRows": 0,
+      "threshold": 10,
+      "validRows": 1223499
+    }
+  },
+  "scan": {
+    "boundary": "Frozen legacy article only: docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md; no broader repository absence claim is made.",
+    "matches": [],
+    "roots": [
+      {
+        "matchedFiles": 1,
+        "path": "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md"
+      }
+    ]
+  },
+  "schemaVersion": "1.0.0",
+  "sourceSchema": {
+    "bytes": 78381526,
+    "columns": [
+      {
+        "name": "month",
+        "type": "string"
+      },
+      {
+        "name": "town",
+        "type": "string"
+      },
+      {
+        "name": "flat_type",
+        "type": "string"
+      },
+      {
+        "name": "block",
+        "type": "string"
+      },
+      {
+        "name": "street_name",
+        "type": "string"
+      },
+      {
+        "name": "storey_range",
+        "type": "string"
+      },
+      {
+        "name": "floor_area_sqm",
+        "type": "double"
+      },
+      {
+        "name": "flat_model",
+        "type": "string"
+      },
+      {
+        "name": "lease_commence_date",
+        "type": "double"
+      },
+      {
+        "name": "price",
+        "type": "double"
+      },
+      {
+        "name": "remaining_lease",
+        "type": "string"
+      },
+      {
+        "name": "floor_area_sqft",
+        "type": "double"
+      },
+      {
+        "name": "transaction_date",
+        "type": "timestamp[ns]"
+      },
+      {
+        "name": "property_type",
+        "type": "string"
+      },
+      {
+        "name": "storey_min",
+        "type": "int64"
+      },
+      {
+        "name": "storey_max",
+        "type": "int64"
+      },
+      {
+        "name": "address",
+        "type": "string"
+      },
+      {
+        "name": "property_segment",
+        "type": "string"
+      },
+      {
+        "name": "is_ec",
+        "type": "bool"
+      },
+      {
+        "name": "project_name",
+        "type": "string"
+      },
+      {
+        "name": "area_sqft",
+        "type": "double"
+      },
+      {
+        "name": "Unit Price ($ PSF)",
+        "type": "string"
+      },
+      {
+        "name": "sale_date",
+        "type": "string"
+      },
+      {
+        "name": "type_of_sale",
+        "type": "string"
+      },
+      {
+        "name": "type_of_area",
+        "type": "string"
+      },
+      {
+        "name": "area_sqm",
+        "type": "double"
+      },
+      {
+        "name": "Unit Price ($ PSM)",
+        "type": "string"
+      },
+      {
+        "name": "nett_price",
+        "type": "string"
+      },
+      {
+        "name": "property_subtype",
+        "type": "string"
+      },
+      {
+        "name": "number_of_units",
+        "type": "double"
+      },
+      {
+        "name": "tenure",
+        "type": "string"
+      },
+      {
+        "name": "postal_district",
+        "type": "int64"
+      },
+      {
+        "name": "market_segment",
+        "type": "string"
+      },
+      {
+        "name": "floor_level",
+        "type": "string"
+      },
+      {
+        "name": "area",
+        "type": "string"
+      },
+      {
+        "name": "lat",
+        "type": "double"
+      },
+      {
+        "name": "lon",
+        "type": "double"
+      },
+      {
+        "name": "psf",
+        "type": "double"
+      },
+      {
+        "name": "nearest_schoolPRIMARY_dist",
+        "type": "double"
+      },
+      {
+        "name": "nearest_schoolSECONDARY_dist",
+        "type": "double"
+      },
+      {
+        "name": "nearest_schoolJUNIOR_dist",
+        "type": "double"
+      },
+      {
+        "name": "dist_to_nearest_school",
+        "type": "double"
+      },
+      {
+        "name": "nearest_top_primary_school_dist",
+        "type": "double"
+      },
+      {
+        "name": "nearest_top_secondary_school_dist",
+        "type": "double"
+      },
+      {
+        "name": "school_accessibility_score",
+        "type": "double"
+      },
+      {
+        "name": "nearest_mrt_station",
+        "type": "string"
+      },
+      {
+        "name": "nearest_mrt_tier",
+        "type": "double"
+      },
+      {
+        "name": "nearest_mrt_is_interchange",
+        "type": "bool"
+      },
+      {
+        "name": "dist_to_nearest_mrt",
+        "type": "double"
+      },
+      {
+        "name": "nearest_mrt_score",
+        "type": "double"
+      },
+      {
+        "name": "dist_to_nearest_mall",
+        "type": "double"
+      },
+      {
+        "name": "nearest_mall",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_hawker",
+        "type": "double"
+      },
+      {
+        "name": "nearest_hawker",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_supermarket",
+        "type": "double"
+      },
+      {
+        "name": "nearest_supermarket",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_park",
+        "type": "double"
+      },
+      {
+        "name": "nearest_park",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_childcare",
+        "type": "double"
+      },
+      {
+        "name": "nearest_childcare",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_kindergarten",
+        "type": "double"
+      },
+      {
+        "name": "nearest_kindergarten",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_bus_stop",
+        "type": "double"
+      },
+      {
+        "name": "nearest_bus_stop",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_chas_clinic",
+        "type": "double"
+      },
+      {
+        "name": "nearest_chas_clinic",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_sports_facility",
+        "type": "double"
+      },
+      {
+        "name": "nearest_sports_facility",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_community_club",
+        "type": "double"
+      },
+      {
+        "name": "nearest_community_club",
+        "type": "string"
+      },
+      {
+        "name": "dist_to_nearest_green_mark_building",
+        "type": "double"
+      },
+      {
+        "name": "nearest_green_mark_building",
+        "type": "string"
+      },
+      {
+        "name": "max_floor_lvl",
+        "type": "double"
+      },
+      {
+        "name": "year_completed",
+        "type": "double"
+      },
+      {
+        "name": "total_dwelling_units",
+        "type": "double"
+      },
+      {
+        "name": "residential",
+        "type": "string"
+      },
+      {
+        "name": "commercial",
+        "type": "string"
+      },
+      {
+        "name": "market_hawker",
+        "type": "string"
+      },
+      {
+        "name": "multistorey_carpark",
+        "type": "string"
+      },
+      {
+        "name": "planning_area",
+        "type": "string"
+      },
+      {
+        "name": "region",
+        "type": "string"
+      },
+      {
+        "name": "rental_yield_pct",
+        "type": "double"
+      },
+      {
+        "name": "cpi",
+        "type": "double"
+      },
+      {
+        "name": "sora_rate",
+        "type": "double"
+      },
+      {
+        "name": "sora_3m",
+        "type": "double"
+      },
+      {
+        "name": "unemployment_rate",
+        "type": "double"
+      },
+      {
+        "name": "gdp",
+        "type": "double"
+      },
+      {
+        "name": "hdb_rpi",
+        "type": "double"
+      },
+      {
+        "name": "ura_ppi",
+        "type": "double"
+      },
+      {
+        "name": "wage_growth",
+        "type": "double"
+      },
+      {
+        "name": "dwelling_units_in_town",
+        "type": "double"
+      },
+      {
+        "name": "population_in_town",
+        "type": "double"
+      },
+      {
+        "name": "population_per_dwelling",
+        "type": "double"
+      },
+      {
+        "name": "annual_value",
+        "type": "double"
+      },
+      {
+        "name": "property_tax",
+        "type": "double"
+      },
+      {
+        "name": "median_monthly_income",
+        "type": "double"
+      },
+      {
+        "name": "price_stratum",
+        "type": "string"
+      }
+    ],
+    "path": "data/pipeline/04_platinum/unified_dataset.parquet",
+    "rows": 1236310,
+    "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+  },
+  "study": "RS11"
+}

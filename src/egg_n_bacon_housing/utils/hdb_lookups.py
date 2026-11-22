@@ -6,6 +6,8 @@ IRAS annual value, median income) and the HDB flat-type normalizer, so
 longer share logic through private cross-module imports.
 """
 
+from typing import Any, cast
+
 import numpy as np
 import pandas as pd
 
@@ -29,8 +31,10 @@ def dwelling_units_lookup(raw_dwelling_units_by_town: pd.DataFrame) -> pd.DataFr
         return pd.DataFrame()
     dwell = raw.copy()
     dwell["financial_year"] = pd.to_numeric(dwell["financial_year"], errors="coerce")
-    dwell = dwell[dwell["financial_year"] == dwell["financial_year"].max()]
-    dwell = dwell[dwell["sold_or_rental"].astype(str).str.strip() == "Sold Units"]
+    dwell = cast(pd.DataFrame, dwell[dwell["financial_year"] == dwell["financial_year"].max()])
+    dwell = cast(
+        pd.DataFrame, dwell[dwell["sold_or_rental"].astype(str).str.strip() == "Sold Units"]
+    )
     dwell["no_of_dwelling_units"] = pd.to_numeric(dwell["no_of_dwelling_units"], errors="coerce")
     dwell["_town_upper"] = dwell["town_or_estate"].astype(str).str.strip().str.upper()
     return (
@@ -52,16 +56,14 @@ def population_lookup(raw_hdb_resident_population: pd.DataFrame) -> pd.DataFrame
         return pd.DataFrame()
     pop = raw.copy()
     pop["shs_year"] = pd.to_numeric(pop["shs_year"], errors="coerce")
-    pop = pop[pop["shs_year"] == pop["shs_year"].max()]
+    pop = cast(pd.DataFrame, pop[pop["shs_year"] == pop["shs_year"].max()])
     pop["number"] = pd.to_numeric(pop["number"], errors="coerce")
     pop["_town_upper"] = pop["town_estate"].astype(str).str.strip().str.upper()
     # Multi-row towns are summed (consistent with dwelling_units_lookup).
     # Previously this kept an arbitrary first row per town, silently dropping
     # the population of any town reported across multiple source rows.
-    return (
-        pop.groupby("_town_upper", as_index=False)["number"]
-        .sum()
-        .rename(columns={"number": "population_in_town"})
+    return cast(pd.DataFrame, pop.groupby("_town_upper", as_index=False)["number"].sum()).rename(
+        columns={"number": "population_in_town"}
     )
 
 
@@ -81,10 +83,10 @@ def annual_value_lookup(raw_median_annual_value: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
     mav = raw.copy()
     mav["financial_year"] = pd.to_numeric(mav["financial_year"], errors="coerce")
-    mav = mav[mav["financial_year"] == mav["financial_year"].max()]
+    mav = cast(pd.DataFrame, mav[mav["financial_year"] == mav["financial_year"].max()])
     mav["annual_value"] = pd.to_numeric(mav["median_annual_value"], errors="coerce")
     mav["property_tax"] = pd.to_numeric(mav["property_tax_collection"], errors="coerce")
-    return mav[["type_of_hdb", "annual_value", "property_tax"]].drop_duplicates(
+    return cast(pd.DataFrame, mav[["type_of_hdb", "annual_value", "property_tax"]]).drop_duplicates(
         subset="type_of_hdb", keep="first"
     )
 
@@ -96,9 +98,9 @@ def population_per_dwelling(df: pd.DataFrame) -> pd.Series:
     columns to exist (missing values allowed); returns ``NA`` wherever the
     unit count is not a positive number.
     """
-    units = pd.to_numeric(df["dwelling_units_in_town"], errors="coerce")
-    pop_vals = pd.to_numeric(df["population_in_town"], errors="coerce")
-    return pd.Series(np.where(units > 0, pop_vals / units, pd.NA), index=df.index)
+    units = cast(pd.Series, pd.to_numeric(df["dwelling_units_in_town"], errors="coerce"))
+    pop_vals = cast(pd.Series, pd.to_numeric(df["population_in_town"], errors="coerce"))
+    return pd.Series(np.where(units > 0, pop_vals / units, cast(Any, pd.NA)), index=df.index)
 
 
 def merge_town_context(
@@ -165,15 +167,20 @@ def merge_median_income(
     if raw_income_by_planning_area.empty or "planning_area" not in df.columns:
         return df
 
-    income_lookup = raw_income_by_planning_area[["planning_area", "median_monthly_income"]].copy()
+    income_lookup = cast(
+        pd.DataFrame,
+        raw_income_by_planning_area[["planning_area", "median_monthly_income"]].copy(),
+    )
     # Guard against NaN keys: astype(str) would turn them into the literal
     # "NAN", creating a bogus planning area in the lookup.
-    income_lookup = income_lookup[income_lookup["planning_area"].notna()]
+    income_lookup = cast(pd.DataFrame, income_lookup[income_lookup["planning_area"].notna()])
     income_lookup["planning_area"] = (
         income_lookup["planning_area"].astype(str).str.strip().str.upper()
     )
-    income_lookup = income_lookup.dropna(subset=["median_monthly_income"])
-    income_lookup = income_lookup.drop_duplicates(subset="planning_area", keep="first")
+    income_lookup = cast(pd.DataFrame, income_lookup.dropna(subset=["median_monthly_income"]))
+    income_lookup = cast(
+        pd.DataFrame, income_lookup.drop_duplicates(subset="planning_area", keep="first")
+    )
 
     result = df.copy()
     # Only normalize non-null values; astype(str) on the whole column would

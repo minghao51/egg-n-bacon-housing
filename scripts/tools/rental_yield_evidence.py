@@ -27,7 +27,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -278,10 +278,10 @@ def _index_coverage(yields: pd.DataFrame) -> dict[str, Any]:
     if "rental_index" not in yields.columns:
         return {"present": False, "nonNull": 0, "firstMonth": None, "lastMonth": None}
     index = pd.to_numeric(yields["rental_index"], errors="coerce")
-    populated = yields.loc[index.notna()]
+    populated = yields.loc[pd.notna(index)]
     return {
         "present": True,
-        "nonNull": int(index.notna().sum()),
+        "nonNull": int(cast(pd.Series, pd.notna(index)).sum()),
         "rows": int(len(yields)),
         "firstMonth": str(populated["month"].min()) if not populated.empty else None,
         "lastMonth": str(populated["month"].max()) if not populated.empty else None,

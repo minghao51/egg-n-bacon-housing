@@ -53,19 +53,35 @@ test.describe("Analytics archive", () => {
     ).toHaveCount(0);
   });
 
-  test("the series entry states that no approved edition exists and links the archive", async ({
+  test("every series offers its approved edition after the RF08 close-out", async ({
     page,
   }) => {
-    await page.goto("/analytics/mrt-impact");
+    // All fifteen series carry an approved current edition now, so the honest
+    // assertion is that each one names it rather than claiming there is none.
+    // The "no approved current edition" state is still covered as a unit-level
+    // case in edition-registry.test.ts, where the register can be constructed.
+    const closed = [
+      { series: "findings", edition: "findings-2026-11-20" },
+      { series: "lease-decay", edition: "lease-decay-2026-11-20" },
+      {
+        series: "spatial-autocorrelation",
+        edition: "spatial-autocorrelation-2026-11-20",
+      },
+    ];
 
-    const panel = page.locator('[data-edition-status="no-approved-edition"]');
-    await expect(panel).toBeVisible();
-    await expect(panel).toContainText("No approved current edition");
+    for (const { series, edition } of closed) {
+      await expectPageToLoadWithoutErrors(page, `/analytics/${series}`);
 
-    const archiveLink = panel.getByRole("link", {
-      name: /Archived edition legacy-2026-11-12/,
-    });
-    await expect(archiveLink).toHaveAttribute("href", `${LEGACY}/mrt-impact`);
+      const panel = page.locator('[data-edition-status="approved"]');
+      await expect(panel).toBeVisible();
+      await expect(panel).toContainText(`Approved edition ${edition}`);
+      await expect(
+        panel.getByRole("link", { name: /Read the approved edition/ }),
+      ).toHaveAttribute("href", `/analytics/archive/2026/${edition}/${series}`);
+      await expect(
+        page.locator('[data-edition-status="no-approved-edition"]'),
+      ).toHaveCount(0);
+    }
   });
 
   test("an approved edition is offered as the series' current edition", async ({

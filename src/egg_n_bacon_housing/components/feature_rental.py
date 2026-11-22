@@ -1,6 +1,7 @@
 """Rental-domain Hamilton nodes and normalization helpers."""
 
 import logging
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -45,27 +46,30 @@ def _whole_island_rental_index(raw_rental_index: pd.DataFrame) -> pd.DataFrame:
     series does not cover stay null rather than borrowing another segment.
     """
     rental_index = raw_rental_index.copy()
-    rental_index = rental_index[
-        rental_index["locality"].astype(str).str.upper().str.strip() == "WHOLE ISLAND"
-    ]
+    rental_index = cast(
+        pd.DataFrame,
+        rental_index[
+            rental_index["locality"].astype(str).str.upper().str.strip() == "WHOLE ISLAND"
+        ],
+    )
     if "property_type" in rental_index.columns:
         property_type = rental_index["property_type"].astype(str).str.upper().str.strip()
         for series in RENTAL_INDEX_SERIES_PREFERENCE:
-            selected = rental_index[property_type == series]
+            selected = cast(pd.DataFrame, rental_index[property_type == series])
             if not selected.empty:
                 rental_index = selected
                 break
         else:
-            return pd.DataFrame(columns=["month", "rental_index"])
+            return pd.DataFrame(columns=cast(Any, ["month", "rental_index"]))
     rental_index["quarter"] = pd.PeriodIndex(rental_index["quarter"], freq="Q")
     rental_index["rental_index"] = pd.to_numeric(rental_index["index"], errors="coerce")
     rental_index = rental_index.dropna(subset=["rental_index"])
     if rental_index.empty:
-        return pd.DataFrame(columns=["month", "rental_index"])
+        return pd.DataFrame(columns=cast(Any, ["month", "rental_index"]))
 
     expanded_index: list[dict[str, object]] = []
     latest = rental_index.sort_values("quarter").drop_duplicates(subset=["quarter"], keep="last")
-    for row in latest[["quarter", "rental_index"]].itertuples(index=False):
+    for row in cast(Any, latest[["quarter", "rental_index"]].itertuples(index=False)):
         start_month = row.quarter.asfreq("M", how="start")
         for month in pd.period_range(start=start_month, periods=3, freq="M"):
             expanded_index.append({"month": str(month), "rental_index": row.rental_index})
@@ -122,7 +126,7 @@ def validate_rental_yield(
     sales["transaction_date"] = pd.to_datetime(sales["transaction_date"], errors="coerce")
     sales = ensure_month_column(sales)
     sales["town"] = sales["town"].astype(str).str.upper().str.strip()
-    sales["flat_type"] = normalize_hdb_flat_type(sales["flat_type"])
+    sales["flat_type"] = normalize_hdb_flat_type(cast(pd.Series, sales["flat_type"]))
     sales = sales.dropna(subset=["price", "transaction_date", "town", "flat_type"])
     sales = sales[sales["price"] > 0]
 
@@ -132,15 +136,21 @@ def validate_rental_yield(
     )
     rents = ensure_month_column(rents, date_column="rent_approval_date")
     rents["town"] = rents["town"].astype(str).str.upper().str.strip()
-    rents["flat_type"] = normalize_hdb_flat_type(rents["flat_type"])
+    rents["flat_type"] = normalize_hdb_flat_type(cast(pd.Series, rents["flat_type"]))
     rents = rents.dropna(subset=["monthly_rent", "rent_approval_date", "town", "flat_type"])
     rents = rents[rents["monthly_rent"] > 0]
 
-    monthly_sales = sales.groupby(["town", "flat_type", "month"], as_index=False).agg(
-        median_price=("price", "median"), sale_sample_size=("price", "size")
+    monthly_sales = cast(
+        pd.DataFrame,
+        sales.groupby(["town", "flat_type", "month"], as_index=False).agg(
+            median_price=("price", "median"), sale_sample_size=("price", "size")
+        ),
     )
-    monthly_rents = rents.groupby(["town", "flat_type", "month"], as_index=False).agg(
-        median_rent=("monthly_rent", "median"), rent_sample_size=("monthly_rent", "size")
+    monthly_rents = cast(
+        pd.DataFrame,
+        rents.groupby(["town", "flat_type", "month"], as_index=False).agg(
+            median_rent=("monthly_rent", "median"), rent_sample_size=("monthly_rent", "size")
+        ),
     )
 
     sales_keys = set(
@@ -183,11 +193,14 @@ def validate_rental_yield(
         combo_yields["rental_yield_pct"] * combo_yields["sale_sample_size"]
     )
 
-    df = combo_yields.groupby(["town", "month"], as_index=False).agg(
-        median_price=("median_price", "median"),
-        median_rent=("median_rent", "median"),
-        rental_yield_pct=("weighted_yield", lambda x: x.sum()),
-        sample_size=("sale_sample_size", "sum"),
+    df = cast(
+        pd.DataFrame,
+        combo_yields.groupby(["town", "month"], as_index=False).agg(
+            median_price=("median_price", "median"),
+            median_rent=("median_rent", "median"),
+            rental_yield_pct=("weighted_yield", lambda x: x.sum()),
+            sample_size=("sale_sample_size", "sum"),
+        ),
     )
     df["rental_yield_pct"] = df["rental_yield_pct"] / df["sample_size"]
     df["property_type"] = "HDB"

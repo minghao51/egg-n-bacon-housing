@@ -1,0 +1,2436 @@
+{
+  "absenceScans": {
+    "bandDefinitionAsExecuted": {
+      "meaning": "the stated bins appear only in the frozen legacy text and its live twin (prose), and in no code file on the scanned surface; the L1 code that executed the banding is retired with its frame. The definition THIS ledger uses is the stated bins re-implemented in this producer (bandTable.definition)",
+      "status": "absent",
+      "tokenScanReference": "absenceScans.tokenScan.tokens.bins [0, 60, 70, 80, 90, 100]"
+    },
+    "fittedModel": {
+      "filenameScan": {
+        "excludedPrefixes": [
+          "docs/implementation/"
+        ],
+        "exclusionMeaning": "docs/implementation/ is excluded because it holds this programme's own records, including this ledger and this study's evidence prose, whose file names contain 'lease' — a hash-pinned scan cannot read its own output",
+        "matchCount": 12,
+        "matches": [
+          {
+            "bytes": 472,
+            "path": "data/analysis/lease_decay/lease_decay_analysis.csv",
+            "substringNote": null
+          },
+          {
+            "bytes": 65857,
+            "path": "data/analysis/lease_decay/lease_decay_price_distribution.png",
+            "substringNote": null
+          },
+          {
+            "bytes": 57875,
+            "path": "data/analysis/lease_decay/lease_decay_psm_by_band.png",
+            "substringNote": null
+          },
+          {
+            "bytes": 52012,
+            "path": "data/analysis/lease_decay/lease_decay_transaction_volume.png",
+            "substringNote": null
+          },
+          {
+            "bytes": 570,
+            "path": "data/analysis/lease_decay/lease_price_statistics.csv",
+            "substringNote": null
+          },
+          {
+            "bytes": 538069,
+            "path": "app/public/data/analysis/lease_decay_advanced/lease_decay_advanced_analysis.png",
+            "substringNote": null
+          },
+          {
+            "bytes": 2359,
+            "path": "app/public/data/dashboard-release-v2.json",
+            "substringNote": "filename contains 'release', not the lease-decay series — recorded, not filtered"
+          },
+          {
+            "bytes": 8125,
+            "path": "app/public/data/dashboard-release.json",
+            "substringNote": "filename contains 'release', not the lease-decay series — recorded, not filtered"
+          },
+          {
+            "bytes": 1164,
+            "path": "app/public/data/interactive_tools/lease_decay_analysis.json.gz",
+            "substringNote": null
+          },
+          {
+            "bytes": 106329,
+            "path": "scripts/tools/lease_decay_evidence.py",
+            "substringNote": null
+          },
+          {
+            "bytes": 7740,
+            "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+            "substringNote": null
+          },
+          {
+            "bytes": 7740,
+            "path": "docs/analytics/lease-decay.md",
+            "substringNote": null
+          }
+        ],
+        "roots": [
+          "data",
+          "app/public/data",
+          "scripts",
+          "src",
+          "docs"
+        ],
+        "token": "lease"
+      },
+      "meaning": "no fitted lease-decay model artefact (coefficients, pickle, joblib, parameter file) exists in the scanned roots: the 'lease'-named files are this series' stored CSV/PNG/JSON artefacts, the article texts, and two release-named files whose names merely contain the substring 'lease' (recorded, not filtered). The coefficient therefore has no stored source and no refit is attempted",
+      "status": "absent"
+    },
+    "l1Frame": {
+      "dataParquetsRootExists": false,
+      "filenameMatchesUnderData": [
+        "data/analysis/lease_decay/lease_decay_analysis.csv",
+        "data/analysis/lease_decay/lease_decay_price_distribution.png",
+        "data/analysis/lease_decay/lease_decay_psm_by_band.png",
+        "data/analysis/lease_decay/lease_decay_transaction_volume.png",
+        "data/analysis/lease_decay/lease_price_statistics.csv"
+      ],
+      "meaning": "the article's primary input does not exist in this checkout: the data/parquets root is absent and no data/ file name carries housing_hdb_transaction (zero matches). The legacy producer that read it is retired — an absence with a boundary, not a claim about the source's history",
+      "namedPath": "data/parquets/L1/housing_hdb_transaction.parquet",
+      "namedPathExists": false,
+      "status": "absent"
+    },
+    "l3Frame": {
+      "filenameMatchesUnderData": [],
+      "meaning": "the article's advanced regression input does not exist; the only data/ files whose names carry housing_unified are the two segmented panels under data/analysis/market_segmentation* (RS10's adjacent panels, a different subject)",
+      "namedPath": "data/parquets/L3/housing_unified.parquet",
+      "namedPathExists": false
+    },
+    "tokenScan": {
+      "excludedPaths": [
+        "scripts/tools/lease_decay_evidence.py",
+        "docs/plans/2026-11-12-reporting-refresh-decisions.md"
+      ],
+      "excludedPrefixes": [
+        "docs/implementation/",
+        "scripts/tools/",
+        "prompts/",
+        "docs/analytics/editions/"
+      ],
+      "filesScanned": 313,
+      "meaning": "no lease-decay implementation was found on the scanned surface: every token match is prose (the frozen legacy texts, their live twins, plan/archive documents) or this series' stored-asset wiring in the app. Hits are NOT claimed to be uniformly prose or false positives — the files list records every one. The programme's own surfaces are excluded and the exclusion is disclosed here; the frozen legacy originals stay IN the scan because the article's method claims are what the tokens are matched against",
+      "retainedEditionPrefix": "docs/analytics/editions/legacy/",
+      "roots": [
+        "docs",
+        "scripts",
+        "src",
+        "app/src"
+      ],
+      "suffixes": [
+        ".md",
+        ".py",
+        ".ts",
+        ".tsx"
+      ],
+      "tokens": {
+        "54.75": {
+          "fileCount": 4,
+          "files": [
+            "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+            "docs/analytics/findings.md",
+            "docs/analytics/lease-decay.md"
+          ],
+          "firstMatches": [
+            {
+              "line": 260,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+              "quote": "| Pure lease effect                 | Per extra year (after controls)   | +$54.75 PSF      | Moderate — hedonic regression            |"
+            },
+            {
+              "line": 61,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "| Pure lease effect     | +$54.75 PSF per extra year | Lease still has measurable pricing power |"
+            },
+            {
+              "line": 132,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "- **Pure lease effect**: +$54.75 PSF per extra year (after controlling for town, floor level, MRT distance)"
+            },
+            {
+              "line": 139,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "The data confirms non-linear lease decay. The 70-80 yr band shows the steepest penalty (not the oldest flats), while the 60-70 yr band offers the deepest absolu"
+            },
+            {
+              "line": 260,
+              "path": "docs/analytics/findings.md",
+              "quote": "| Pure lease effect                 | Per extra year (after controls)   | +$54.75 PSF      | Moderate — hedonic regression                          |"
+            },
+            {
+              "line": 61,
+              "path": "docs/analytics/lease-decay.md",
+              "quote": "| Pure lease effect     | +$54.75 PSF per extra year | Lease still has measurable pricing power |"
+            },
+            {
+              "line": 132,
+              "path": "docs/analytics/lease-decay.md",
+              "quote": "- **Pure lease effect**: +$54.75 PSF per extra year (after controlling for town, floor level, MRT distance)"
+            },
+            {
+              "line": 139,
+              "path": "docs/analytics/lease-decay.md",
+              "quote": "The data confirms non-linear lease decay. The 70-80 yr band shows the steepest penalty (not the oldest flats), while the 60-70 yr band offers the deepest absolu"
+            }
+          ],
+          "matchCase": false,
+          "occurrences": 8
+        },
+        "Bala": {
+          "fileCount": 23,
+          "files": [
+            "docs/analytics/causal-inference-overview.md",
+            "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+            "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+            "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+            "docs/analytics/editions/legacy/2026-11-12/rental-yields.md",
+            "docs/analytics/lease-decay.md",
+            "docs/analytics/market-segments.md",
+            "docs/analytics/rental-yields.md",
+            "docs/archive/20250120-data-pipeline.md",
+            "docs/archive/20260121-background-geocoding-guide.md",
+            "docs/archive/20260123-hdb-comprehensive-investment-analysis.md",
+            "docs/archive/20260124-era-comparison-analytics.md",
+            "docs/archive/20260124-market-segments-enhanced-visualization.md",
+            "docs/archive/20260127-mrt-complete-summary.md",
+            "docs/archive/20260127-mrt-impact-analysis-report.md",
+            "docs/plans/2025-02-02-school-impact-analysis.md",
+            "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
+            "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+            "docs/plans/2026-02-17-analytics-accessibility-implementation.md",
+            "docs/plans/2026-02-19-price-appreciation-forecasting-report-design.md",
+            "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md",
+            "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md",
+            "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
+          ],
+          "firstMatches": [
+            {
+              "line": 112,
+              "path": "docs/analytics/causal-inference-overview.md",
+              "quote": "- **Lease mispricing**: empirical market pricing vs theoretical Bala depreciation schedule, ≥5% deviation flagged"
+            },
+            {
+              "line": 119,
+              "path": "docs/analytics/causal-inference-overview.md",
+              "quote": "- 30-50 yr range: market appears richly priced relative to Bala theory"
+            },
+            {
+              "line": 126,
+              "path": "docs/analytics/causal-inference-overview.md",
+              "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+            },
+            {
+              "line": 112,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+              "quote": "- **Lease mispricing**: empirical market pricing vs theoretical Bala depreciation schedule, ≥5% deviation flagged"
+            },
+            {
+              "line": 119,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+              "quote": "- 30-50 yr range: market appears richly priced relative to Bala theory"
+            },
+            {
+              "line": 126,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+              "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+            },
+            {
+              "line": 125,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "- **Bala's curve validation**: empirical vs theoretical depreciation, ≥5% deviation flagged"
+            },
+            {
+              "line": 135,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "- **Spline-based arbitrage**: identifies BUY/SELL/HOLD signals at lease years where market deviates ≥5% from theoretical Bala curve"
+            }
+          ],
+          "matchCase": true,
+          "occurrences": 40
+        },
+        "Mann-Whitney": {
+          "fileCount": 2,
+          "files": [
+            "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+            "docs/analytics/lease-decay.md"
+          ],
+          "firstMatches": [
+            {
+              "line": 124,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "- **Policy threshold analysis**: Mann-Whitney U tests at 60-yr and 30-yr marks"
+            },
+            {
+              "line": 124,
+              "path": "docs/analytics/lease-decay.md",
+              "quote": "- **Policy threshold analysis**: Mann-Whitney U tests at 60-yr and 30-yr marks"
+            }
+          ],
+          "matchCase": true,
+          "occurrences": 2
+        },
+        "bins [0, 60, 70, 80, 90, 100]": {
+          "fileCount": 2,
+          "files": [
+            "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+            "docs/analytics/lease-decay.md"
+          ],
+          "firstMatches": [
+            {
+              "line": 117,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "- **Lease bands**: bins [0, 60, 70, 80, 90, 100], labels [<60, 60-70, 70-80, 80-90, 90+]"
+            },
+            {
+              "line": 117,
+              "path": "docs/analytics/lease-decay.md",
+              "quote": "- **Lease bands**: bins [0, 60, 70, 80, 90, 100], labels [<60, 60-70, 70-80, 80-90, 90+]"
+            }
+          ],
+          "matchCase": false,
+          "occurrences": 2
+        },
+        "lease_decay": {
+          "fileCount": 14,
+          "files": [
+            "app/src/components/studies/lib/studies.ts",
+            "app/src/components/tools/lib/tool-assets.ts",
+            "app/src/components/tools/lib/tool-evidence.ts",
+            "docs/archive/20260128-scripts-reorganization-complete.md",
+            "docs/plans/2026-01-24-analytics-scripts-design.md",
+            "docs/plans/2026-02-15-analytics-content-organization-design.md",
+            "docs/plans/2026-02-15-analytics-content-organization.md",
+            "docs/plans/2026-02-17-analytics-accessibility-implementation.md",
+            "docs/plans/2026-02-17-analytics-accessibility-summary.md",
+            "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md",
+            "docs/plans/2026-02-21-interactive-tools-dashboard.md",
+            "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md",
+            "docs/plans/2026-03-04-data-quality-handoff.md",
+            "docs/plans/2026-11-12-reporting-refresh-research-register.md"
+          ],
+          "firstMatches": [
+            {
+              "line": 127,
+              "path": "app/src/components/studies/lib/studies.ts",
+              "quote": "const LEASE_DECAY_EVIDENCE: StudyEvidence = {"
+            },
+            {
+              "line": 140,
+              "path": "app/src/components/studies/lib/studies.ts",
+              "quote": "return slug === \"lease-decay\" ? LEASE_DECAY_EVIDENCE : DEFAULT_EVIDENCE;"
+            },
+            {
+              "line": 89,
+              "path": "app/src/components/tools/lib/tool-assets.ts",
+              "quote": "* `lease_decay_analysis.json.gz`."
+            },
+            {
+              "line": 25,
+              "path": "app/src/components/tools/lib/tool-evidence.ts",
+              "quote": "lease: \"lease_decay_analysis.json.gz\","
+            },
+            {
+              "line": 48,
+              "path": "docs/archive/20260128-scripts-reorganization-complete.md",
+              "quote": "│       │   ├── analyze_lease_decay.py"
+            },
+            {
+              "line": 29,
+              "path": "docs/plans/2026-01-24-analytics-scripts-design.md",
+              "quote": "| `analyze_lease_decay.py` (enhanced) | Survival analysis + PSM         | pandas, lifelines, scikit-learn |"
+            },
+            {
+              "line": 41,
+              "path": "docs/plans/2026-01-24-analytics-scripts-design.md",
+              "quote": "scripts/analyze_lease_decay.py          → scripts/analysis/"
+            },
+            {
+              "line": 52,
+              "path": "docs/plans/2026-01-24-analytics-scripts-design.md",
+              "quote": "├── analyze_lease_decay.py             (moved, enhanced)"
+            }
+          ],
+          "matchCase": false,
+          "occurrences": 37
+        },
+        "remaining_lease_months": {
+          "fileCount": 19,
+          "files": [
+            "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+            "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+            "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md",
+            "docs/analytics/lease-decay.md",
+            "docs/analytics/market-segments.md",
+            "docs/analytics/mrt-impact.md",
+            "docs/archive/20250219-final-validation-report.md",
+            "docs/archive/20260122-L2-data-reference.md",
+            "docs/archive/20260122-L3-unified-dataset-schema.md",
+            "docs/archive/20260123-amenity-impact-analysis.md",
+            "docs/archive/20260124-era-comparison-analytics.md",
+            "docs/archive/20260127-mrt-impact-analysis-report.md",
+            "docs/plans/2026-02-04-analyze-policy-impact.md",
+            "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+            "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
+            "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md",
+            "src/egg_n_bacon_housing/components/cleaning.py",
+            "src/egg_n_bacon_housing/components/feature_transactions.py",
+            "src/egg_n_bacon_housing/schemas/clean_models.py"
+          ],
+          "firstMatches": [
+            {
+              "line": 118,
+              "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+              "quote": "- **Remaining lease years**: `remaining_lease_months / 12`"
+            },
+            {
+              "line": 130,
+              "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+              "quote": "- **Derived features**: `price_psm`, `rental_yield_pct`, `yoy_change_pct`, `mom_change_pct`, `remaining_lease_months`, `floor_area_sqm`"
+            },
+            {
+              "line": 116,
+              "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md",
+              "quote": "- **OLS LinearRegression** controlling for `dist_to_nearest_mrt`, `floor_area_sqm`, `remaining_lease_months`"
+            },
+            {
+              "line": 128,
+              "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md",
+              "quote": "- **Feature importance (XGBoost)**: hawker_within_1km = 27.4%, remaining_lease_months = 14.1%, park_within_1km = 7.2%, mrt_within_1km = 5.5%"
+            },
+            {
+              "line": 118,
+              "path": "docs/analytics/lease-decay.md",
+              "quote": "- **Remaining lease years**: `remaining_lease_months / 12`"
+            },
+            {
+              "line": 130,
+              "path": "docs/analytics/market-segments.md",
+              "quote": "- **Derived features**: `price_psm`, `rental_yield_pct`, `yoy_change_pct`, `mom_change_pct`, `remaining_lease_months`, `floor_area_sqm`"
+            },
+            {
+              "line": 116,
+              "path": "docs/analytics/mrt-impact.md",
+              "quote": "- **OLS LinearRegression** controlling for `dist_to_nearest_mrt`, `floor_area_sqm`, `remaining_lease_months`"
+            },
+            {
+              "line": 128,
+              "path": "docs/analytics/mrt-impact.md",
+              "quote": "- **Feature importance (XGBoost)**: hawker_within_1km = 27.4%, remaining_lease_months = 14.1%, park_within_1km = 7.2%, mrt_within_1km = 5.5%"
+            }
+          ],
+          "matchCase": false,
+          "occurrences": 35
+        }
+      }
+    }
+  },
+  "bandTable": {
+    "articleRowsVsMeasured": [
+      {
+        "article": {
+          "avgRemainingYears": 54.5,
+          "discountLabel": "-15.0%",
+          "id": "<60",
+          "medianPrice": 390000,
+          "perAreaValue": 5274,
+          "transactions": 41595
+        },
+        "articleOwnArithmetic": {
+          "meaning": "the article's discount column reproduces from its own PER-AREA column, not from its own Median Price column (e.g. 80-90: per-area arithmetic gives -13.15 against the published -13.2%, median-price arithmetic gives -6.81) — the published column mixes a per-area discount with a table headed Median Price",
+          "medianPriceDiscountVs90Plus": 30.11,
+          "perAreaDiscountVs90Plus": 15.0
+        },
+        "id": "<60",
+        "measured": {
+          "count": 50756,
+          "discountMedianPriceVs90Plus": 28.32,
+          "discountPsfVs90Plus": 14.66,
+          "discountPsmVs90Plus": 14.66,
+          "id": "<60",
+          "meanRemainingYears": 54.34,
+          "medianDerivedPsm": 5384.62,
+          "medianMeasuredPsf": 500.25,
+          "medianPrice": 405000.0,
+          "shareOfWindow": 0.2081
+        },
+        "measuredMinusArticle": {
+          "count": 9161,
+          "meanRemainingYears": -0.16,
+          "medianDerivedPsm": 110.62,
+          "medianMeasuredPsf": -4773.75,
+          "medianPrice": 15000.0
+        },
+        "perAreaUnitIdentification": {
+          "absMeasuredPsfMinusArticle": 4773.75,
+          "absMeasuredPsmMinusArticle": 110.62,
+          "nearestMeasuredUnit": "psm"
+        }
+      },
+      {
+        "article": {
+          "avgRemainingYears": 64.6,
+          "discountLabel": "-23.8%",
+          "id": "60-70",
+          "medianPrice": 446000,
+          "perAreaValue": 4730,
+          "transactions": 54521
+        },
+        "articleOwnArithmetic": {
+          "meaning": "the article's discount column reproduces from its own PER-AREA column, not from its own Median Price column (e.g. 80-90: per-area arithmetic gives -13.15 against the published -13.2%, median-price arithmetic gives -6.81) — the published column mixes a per-area discount with a table headed Median Price",
+          "medianPriceDiscountVs90Plus": 20.07,
+          "perAreaDiscountVs90Plus": 23.77
+        },
+        "id": "60-70",
+        "measured": {
+          "count": 57267,
+          "discountMedianPriceVs90Plus": 18.05,
+          "discountPsfVs90Plus": 24.2,
+          "discountPsmVs90Plus": 24.2,
+          "id": "60-70",
+          "meanRemainingYears": 64.6,
+          "medianDerivedPsm": 4782.61,
+          "medianMeasuredPsf": 444.32,
+          "medianPrice": 463000.0,
+          "shareOfWindow": 0.2348
+        },
+        "measuredMinusArticle": {
+          "count": 2746,
+          "meanRemainingYears": 0.0,
+          "medianDerivedPsm": 52.61,
+          "medianMeasuredPsf": -4285.68,
+          "medianPrice": 17000.0
+        },
+        "perAreaUnitIdentification": {
+          "absMeasuredPsfMinusArticle": 4285.68,
+          "absMeasuredPsmMinusArticle": 52.61,
+          "nearestMeasuredUnit": "psm"
+        }
+      },
+      {
+        "article": {
+          "avgRemainingYears": 75.4,
+          "discountLabel": "-21.9%",
+          "id": "70-80",
+          "medianPrice": 548000,
+          "perAreaValue": 4845,
+          "transactions": 47044
+        },
+        "articleOwnArithmetic": {
+          "meaning": "the article's discount column reproduces from its own PER-AREA column, not from its own Median Price column (e.g. 80-90: per-area arithmetic gives -13.15 against the published -13.2%, median-price arithmetic gives -6.81) — the published column mixes a per-area discount with a table headed Median Price",
+          "medianPriceDiscountVs90Plus": 1.79,
+          "perAreaDiscountVs90Plus": 21.92
+        },
+        "id": "70-80",
+        "measured": {
+          "count": 50601,
+          "discountMedianPriceVs90Plus": 2.65,
+          "discountPsfVs90Plus": 21.72,
+          "discountPsmVs90Plus": 21.72,
+          "id": "70-80",
+          "meanRemainingYears": 75.22,
+          "medianDerivedPsm": 4939.13,
+          "medianMeasuredPsf": 458.86,
+          "medianPrice": 550000.0,
+          "shareOfWindow": 0.2075
+        },
+        "measuredMinusArticle": {
+          "count": 3557,
+          "meanRemainingYears": -0.18,
+          "medianDerivedPsm": 94.13,
+          "medianMeasuredPsf": -4386.14,
+          "medianPrice": 2000.0
+        },
+        "perAreaUnitIdentification": {
+          "absMeasuredPsfMinusArticle": 4386.14,
+          "absMeasuredPsmMinusArticle": 94.13,
+          "nearestMeasuredUnit": "psm"
+        }
+      },
+      {
+        "article": {
+          "avgRemainingYears": 84.6,
+          "discountLabel": "-13.2%",
+          "id": "80-90",
+          "medianPrice": 520000,
+          "perAreaValue": 5389,
+          "transactions": 29562
+        },
+        "articleOwnArithmetic": {
+          "meaning": "the article's discount column reproduces from its own PER-AREA column, not from its own Median Price column (e.g. 80-90: per-area arithmetic gives -13.15 against the published -13.2%, median-price arithmetic gives -6.81) — the published column mixes a per-area discount with a table headed Median Price",
+          "medianPriceDiscountVs90Plus": 6.81,
+          "perAreaDiscountVs90Plus": 13.15
+        },
+        "id": "80-90",
+        "measured": {
+          "count": 33083,
+          "discountMedianPriceVs90Plus": 2.65,
+          "discountPsfVs90Plus": 1.15,
+          "discountPsmVs90Plus": 1.15,
+          "id": "80-90",
+          "meanRemainingYears": 85.1,
+          "medianDerivedPsm": 6236.96,
+          "medianMeasuredPsf": 579.43,
+          "medianPrice": 550000.0,
+          "shareOfWindow": 0.1357
+        },
+        "measuredMinusArticle": {
+          "count": 3521,
+          "meanRemainingYears": 0.5,
+          "medianDerivedPsm": 847.96,
+          "medianMeasuredPsf": -4809.57,
+          "medianPrice": 30000.0
+        },
+        "perAreaUnitIdentification": {
+          "absMeasuredPsfMinusArticle": 4809.57,
+          "absMeasuredPsmMinusArticle": 847.96,
+          "nearestMeasuredUnit": "psm"
+        }
+      },
+      {
+        "article": {
+          "avgRemainingYears": 93.5,
+          "discountLabel": "baseline",
+          "id": "90+",
+          "medianPrice": 558000,
+          "perAreaValue": 6205,
+          "transactions": 50912
+        },
+        "articleOwnArithmetic": {
+          "meaning": "the article's discount column reproduces from its own PER-AREA column, not from its own Median Price column (e.g. 80-90: per-area arithmetic gives -13.15 against the published -13.2%, median-price arithmetic gives -6.81) — the published column mixes a per-area discount with a table headed Median Price",
+          "medianPriceDiscountVs90Plus": 0.0,
+          "perAreaDiscountVs90Plus": 0.0
+        },
+        "id": "90+",
+        "measured": {
+          "count": 52160,
+          "discountMedianPriceVs90Plus": 0.0,
+          "discountPsfVs90Plus": 0.0,
+          "discountPsmVs90Plus": 0.0,
+          "id": "90+",
+          "meanRemainingYears": 93.06,
+          "medianDerivedPsm": 6309.73,
+          "medianMeasuredPsf": 586.19,
+          "medianPrice": 565000.0,
+          "shareOfWindow": 0.2139
+        },
+        "measuredMinusArticle": {
+          "count": 1248,
+          "meanRemainingYears": -0.44,
+          "medianDerivedPsm": 104.73,
+          "medianMeasuredPsf": -5618.81,
+          "medianPrice": 7000.0
+        },
+        "perAreaUnitIdentification": {
+          "absMeasuredPsfMinusArticle": 5618.81,
+          "absMeasuredPsmMinusArticle": 104.73,
+          "nearestMeasuredUnit": "psm"
+        }
+      }
+    ],
+    "bands": [
+      {
+        "count": 50756,
+        "discountMedianPriceVs90Plus": 28.32,
+        "discountPsfVs90Plus": 14.66,
+        "discountPsmVs90Plus": 14.66,
+        "id": "<60",
+        "meanRemainingYears": 54.34,
+        "medianDerivedPsm": 5384.62,
+        "medianMeasuredPsf": 500.25,
+        "medianPrice": 405000.0,
+        "shareOfWindow": 0.2081
+      },
+      {
+        "count": 57267,
+        "discountMedianPriceVs90Plus": 18.05,
+        "discountPsfVs90Plus": 24.2,
+        "discountPsmVs90Plus": 24.2,
+        "id": "60-70",
+        "meanRemainingYears": 64.6,
+        "medianDerivedPsm": 4782.61,
+        "medianMeasuredPsf": 444.32,
+        "medianPrice": 463000.0,
+        "shareOfWindow": 0.2348
+      },
+      {
+        "count": 50601,
+        "discountMedianPriceVs90Plus": 2.65,
+        "discountPsfVs90Plus": 21.72,
+        "discountPsmVs90Plus": 21.72,
+        "id": "70-80",
+        "meanRemainingYears": 75.22,
+        "medianDerivedPsm": 4939.13,
+        "medianMeasuredPsf": 458.86,
+        "medianPrice": 550000.0,
+        "shareOfWindow": 0.2075
+      },
+      {
+        "count": 33083,
+        "discountMedianPriceVs90Plus": 2.65,
+        "discountPsfVs90Plus": 1.15,
+        "discountPsmVs90Plus": 1.15,
+        "id": "80-90",
+        "meanRemainingYears": 85.1,
+        "medianDerivedPsm": 6236.96,
+        "medianMeasuredPsf": 579.43,
+        "medianPrice": 550000.0,
+        "shareOfWindow": 0.1357
+      },
+      {
+        "count": 52160,
+        "discountMedianPriceVs90Plus": 0.0,
+        "discountPsfVs90Plus": 0.0,
+        "discountPsmVs90Plus": 0.0,
+        "id": "90+",
+        "meanRemainingYears": 93.06,
+        "medianDerivedPsm": 6309.73,
+        "medianMeasuredPsf": 586.19,
+        "medianPrice": 565000.0,
+        "shareOfWindow": 0.2139
+      }
+    ],
+    "definition": {
+      "bandVariable": "derivedRemainingYears = 99 - lease age as of transaction month (leaseAgeValidation.derivation); the stored remaining_lease column covers only 2015-2016 and cannot band the study window",
+      "bins": [
+        0,
+        60,
+        70,
+        80,
+        90,
+        100
+      ],
+      "edgeConvention": "right-closed (a, b] (pandas cut default for the stated bins)",
+      "edgeConventionStatus": "the legacy states the bins but not the edge handling; the stored CSV's rounded min/max per band cannot distinguish edge handling, so this ledger states its own convention and records the window's row counts sitting exactly on each interior edge",
+      "edgeRowCountsInWindow": {
+        "60": 568,
+        "70": 356,
+        "80": 354,
+        "90": 409
+      },
+      "labels": [
+        "<60",
+        "60-70",
+        "70-80",
+        "80-90",
+        "90+"
+      ],
+      "sourceOfBins": "- **Lease bands**: bins [0, 60, 70, 80, 90, 100], labels [<60, 60-70, 70-80, 80-90, 90+] (the frozen appendix, adopted verbatim; the definition-as-executed code is retired — see absenceScans.bandDefinitionAsExecuted)"
+    },
+    "measuredFacts": {
+      "cheapestBandMeasuredByDerivedPsm": "60-70",
+      "cheapestBandMedianDerivedPsm": 4782.61,
+      "highestVolumeBandCount": 57267,
+      "highestVolumeBandMeasured": "60-70",
+      "notCheapestBand60Minus": 5384.62
+    },
+    "shareArithmetic": {
+      "articleOwnArithmetic": 24.3796,
+      "articleStated": 24.4,
+      "meaning": "the article's 24.4% equals 54,521 over 223,634 from its own table; the measured window share is recorded beside it",
+      "measured": 0.2348
+    },
+    "storedCsv": {
+      "bytes": 472,
+      "columns": [
+        "lease_band",
+        "avg_remaining_lease_years",
+        "median_price",
+        "median_psm",
+        "transaction_count",
+        "discount_to_baseline",
+        "annual_decay_pct"
+      ],
+      "origin": "unverified — a stored artefact whose producer code is retired (the article's own provenance says the legacy scripts were removed); its values are compared, not attributed",
+      "path": "data/analysis/lease_decay/lease_decay_analysis.csv",
+      "rows": [
+        {
+          "annual_decay_pct": 0.34,
+          "avg_remaining_lease_years": 54.48220539327643,
+          "discount_to_baseline": 15.0,
+          "lease_band": "<60 years",
+          "median_price": 390000.0,
+          "median_psm": 5273.972602739726,
+          "transaction_count": 41595
+        },
+        {
+          "annual_decay_pct": 0.69,
+          "avg_remaining_lease_years": 64.62395835243912,
+          "discount_to_baseline": 23.8,
+          "lease_band": "60-70 years",
+          "median_price": 446000.0,
+          "median_psm": 4729.72972972973,
+          "transaction_count": 54521
+        },
+        {
+          "annual_decay_pct": 0.93,
+          "avg_remaining_lease_years": 75.417571847632,
+          "discount_to_baseline": 21.9,
+          "lease_band": "70-80 years",
+          "median_price": 548000.0,
+          "median_psm": 4844.89545971481,
+          "transaction_count": 47044
+        },
+        {
+          "annual_decay_pct": 0.92,
+          "avg_remaining_lease_years": 84.64632805628848,
+          "discount_to_baseline": 13.2,
+          "lease_band": "80-90 years",
+          "median_price": 520000.0,
+          "median_psm": 5388.619201725998,
+          "transaction_count": 29562
+        },
+        {
+          "annual_decay_pct": 0.0,
+          "avg_remaining_lease_years": 93.50825771265453,
+          "discount_to_baseline": 0.0,
+          "lease_band": "90+ years",
+          "median_price": 558000.0,
+          "median_psm": 6205.304347826087,
+          "transaction_count": 50912
+        }
+      ],
+      "sha256": "b6bdf2f063f673ae96c3da5823b8bb6674e437978825202936d069de94691746"
+    },
+    "storedCsvCountSum": 223634,
+    "storedCsvCountSumMinusArticleSample": 0,
+    "unitIdentification": {
+      "articleColumnLabel": "Median PSF",
+      "measuredNearestUnitByRow": {
+        "60-70": "psm",
+        "70-80": "psm",
+        "80-90": "psm",
+        "90+": "psm",
+        "<60": "psm"
+      },
+      "storedCsvColumnName": "median_psm",
+      "storedCsvMatchesArticle": {
+        "countMatches": 5,
+        "meaning": "the article's per-area column values equal the stored CSV's median_psm column at integer rounding on all five bands (the CSV's unrounded medians are 5,273.97 / 4,729.73 / 4,844.90 / 5,388.62 / 6,205.30; the article prints 5,274 / 4,730 / 4,845 / 5,389 / 6,205), and the stored per-band chart is titled 'Median Price per SQM' — a measured correspondence that identifies the published 'Median PSF' column as per-square-metre values; it is a correspondence between stored artefacts, not a proven lineage, because no producer links them",
+        "medianPriceMatches": 5,
+        "perAreaMatchesAt0dp": 5
+      }
+    },
+    "unitInvarianceMaxAbsDiffPsmVsPsfDiscount": 0.0,
+    "window": {
+      "end": "2026-10",
+      "endBasis": "the article's stated data period start, capped at the measured cutoff",
+      "rowsBandedInWindow": 243867,
+      "start": "2017-01"
+    }
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 36,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; resolution is SYNTACTIC — it checks the key exists, not that the resolved field supports the disposition — and an unresolved key fails the build rather than shipping",
+    "resolution": "syntactic",
+    "unresolved": []
+  },
+  "cutoff": {
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact (the same rule RS03/RS04/RS05/RS09/RS10 shipped, here computed on the HDB rows this study analyses)",
+    "distinctHdbMonths": 443,
+    "frameFirstMonth": "1990-01",
+    "frameLastMonth": "2026-11",
+    "hdbRowsTotal": 990655,
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthShareOfTrailingMedian": 1.0226,
+    "lastCompleteMonthTransactions": 2173,
+    "meaning": "every window, count and share in this ledger that touches the frame stops at lastCompleteMonth",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.3718,
+    "terminalMonthTransactions": 790,
+    "trailing12MedianTransactions": 2125.0,
+    "trailing12Months": [
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ]
+  },
+  "definition": "A measured inventory and reconciliation. One stated response (psf, $ per square foot, exact on every HDB row) with derived PSM as the secondary per-area measure and median price named only where a field says so; a lease variable derived from lease_commence_date as of transaction month and validated against the stored remaining_lease on its own 2015-2016 coverage. No model is fitted, no coefficient is converted, and every number is a ledger field or exact arithmetic on two ledger fields.",
+  "gateClause": "Resolve PSF/PSM and total-price versus per-area response before fitting. Validate lease age as of transaction date. Reconcile article versus interactive-band lineage. Keep chart/model gates until repaired coefficients and wording are reviewed. Never convert a coefficient without confirming its original response/unit.",
+  "gates": {
+    "chartGate": {
+      "encodedAt": {
+        "chartsWithheld": true,
+        "path": "app/src/components/studies/lib/studies.ts",
+        "quote": {
+          "line": 130,
+          "path": "app/src/components/studies/lib/studies.ts",
+          "quote": "note: \"Unit review required: one source table labels a per-square-metre statistic as “Median PSF”. The tables stay readable, but no chart is drawn from them until units and discount arithmetic are reconciled.\","
+        },
+        "sha256": "0a05079c5b54015bbcfd151ac9ef3de7cedfae34824e8b32f1f5e8e227c4044f",
+        "unitReview": true
+      },
+      "meaning": "the app already withholds lease-decay charts pending unit and discount-arithmetic reconciliation; this pack changes no app code, and the gate stays until repaired tables are reviewed",
+      "status": "inForce"
+    },
+    "editionText": {
+      "meaning": "this evidence pack is round 1 pending review; no edition text is drafted and no wording is repaired until the review chain records it",
+      "writtenByThisPack": false
+    },
+    "gateClause": "Resolve PSF/PSM and total-price versus per-area response before fitting. Validate lease age as of transaction date. Reconcile article versus interactive-band lineage. Keep chart/model gates until repaired coefficients and wording are reviewed. Never convert a coefficient without confirming its original response/unit.",
+    "gateClauseSource": {
+      "line": 39,
+      "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md",
+      "quote": "| RS06 | Lease Decay — `docs/analytics/lease-decay.md`                       | Lease dates, transaction price, sqm/sqft, sample construction; **model/unit approval**                                 | Resolve PSF/PSM and total-price versus per-area response before fitting. Validate lease age as of transaction date. Reconcile article versus interactive-band lineage. Keep chart/model gates until repaired coefficients and wording are reviewed. Never convert a coefficient without confirming its original response/unit.                                    |"
+    },
+    "modelGate": {
+      "fitPerformed": false,
+      "meaning": "no model is fitted by this pack and no repaired coefficient exists to review; the response decision (responseDecision.decision) binds any future fitting, and the model gate stays until a reviewed coefficient with a confirmed unit exists",
+      "repairedCoefficientExists": false,
+      "status": "inForce"
+    }
+  },
+  "inputs": {
+    "app/public/data/analysis/lease_decay_advanced/lease_decay_advanced_analysis.png": {
+      "bytes": 538069,
+      "sha256": "20e546ea0efffc263d47eed11be347ae25af1fb4949053826390506783e64c39"
+    },
+    "app/public/data/interactive_tools/lease_decay_analysis.json.gz": {
+      "bytes": 1164,
+      "sha256": "09da6d774759e1f25c44fd38d02d854e421130d7258a0c521e065fa6ee0aac69"
+    },
+    "app/src/components/studies/lib/studies.ts": {
+      "bytes": 4314,
+      "sha256": "0a05079c5b54015bbcfd151ac9ef3de7cedfae34824e8b32f1f5e8e227c4044f"
+    },
+    "data/analysis/lease_decay/lease_decay_analysis.csv": {
+      "bytes": 472,
+      "sha256": "b6bdf2f063f673ae96c3da5823b8bb6674e437978825202936d069de94691746"
+    },
+    "data/analysis/lease_decay/lease_decay_price_distribution.png": {
+      "bytes": 65857,
+      "sha256": "560c46d6efb6914126b66b39a7402554ac46d061439e1c720a61c55edcd7bd29"
+    },
+    "data/analysis/lease_decay/lease_decay_psm_by_band.png": {
+      "bytes": 57875,
+      "sha256": "806595f9fcffe942d8cbf9dbf8c84bcc7292c40aab74bf4c99ac666071714bea"
+    },
+    "data/analysis/lease_decay/lease_decay_transaction_volume.png": {
+      "bytes": 52012,
+      "sha256": "7d0bd2cd9236389536c13a179ff52f5f4c552f628012db084406149e633368a8"
+    },
+    "data/analysis/lease_decay/lease_price_statistics.csv": {
+      "bytes": 570,
+      "sha256": "513492bf19dd2c5362204bdbf01acc1bf330175615ef40d980a1733e3f7e1c5b"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "bytes": 78381526,
+      "columns": 97,
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/lease-decay.md": {
+      "bytes": 7740,
+      "sha256": "6aab72f046c4df45368843a3b1046e1165097aef22a5691e7231f1840464f1b4"
+    },
+    "docs/plans/2026-11-12-reporting-refresh-research-register.md": {
+      "bytes": 20174,
+      "sha256": "9c80a6516588d5b93e15773a62b391adeb184ae3099f6025c9dabd9aa541c735"
+    }
+  },
+  "interactiveAsset": {
+    "ageCoverage": {
+      "absentBinCount": 7,
+      "absentBins": [
+        "60-65",
+        "65-70",
+        "70-75",
+        "75-80",
+        "80-85",
+        "85-90",
+        "95-100"
+      ],
+      "expectedAgeBins0To99": 20,
+      "meaning": "the asset bands LEASE AGE in five-year bins; seven of the twenty bins 0-99 are absent rows in the asset (ages 60-90 and 95-99, i.e. remaining lease of about 4-39 years has no band row) — an absence inside the asset, counted, not a claim about the market",
+      "presentBins": [
+        "0-5",
+        "5-10",
+        "10-15",
+        "15-20",
+        "20-25",
+        "25-30",
+        "30-35",
+        "35-40",
+        "40-45",
+        "45-50",
+        "50-55",
+        "55-60",
+        "90-95"
+      ]
+    },
+    "bandCount": 13,
+    "bands": [
+      {
+        "annualDecayRate": 0.0,
+        "discountPercent": 0.0,
+        "leaseAgeBand": "0-5",
+        "maxLeaseYears": 99.0,
+        "minLeaseYears": 94.0,
+        "riskZone": "cliff",
+        "transactionCount": 17565,
+        "volumeCategory": "low"
+      },
+      {
+        "annualDecayRate": -0.12,
+        "discountPercent": -11.02,
+        "leaseAgeBand": "5-10",
+        "maxLeaseYears": 94.0,
+        "minLeaseYears": 89.0,
+        "riskZone": "cliff",
+        "transactionCount": 27909,
+        "volumeCategory": "medium"
+      },
+      {
+        "annualDecayRate": -0.215,
+        "discountPercent": -18.58,
+        "leaseAgeBand": "10-15",
+        "maxLeaseYears": 89.0,
+        "minLeaseYears": 84.0,
+        "riskZone": "cliff",
+        "transactionCount": 10266,
+        "volumeCategory": "low"
+      },
+      {
+        "annualDecayRate": 0.313,
+        "discountPercent": 25.49,
+        "leaseAgeBand": "15-20",
+        "maxLeaseYears": 84.0,
+        "minLeaseYears": 79.0,
+        "riskZone": "cliff",
+        "transactionCount": 17482,
+        "volumeCategory": "low"
+      },
+      {
+        "annualDecayRate": 0.25,
+        "discountPercent": 19.1,
+        "leaseAgeBand": "20-25",
+        "maxLeaseYears": 79.0,
+        "minLeaseYears": 74.0,
+        "riskZone": "cliff",
+        "transactionCount": 29913,
+        "volumeCategory": "medium"
+      },
+      {
+        "annualDecayRate": 0.218,
+        "discountPercent": 15.55,
+        "leaseAgeBand": "25-30",
+        "maxLeaseYears": 74.0,
+        "minLeaseYears": 69.0,
+        "riskZone": "cliff",
+        "transactionCount": 26647,
+        "volumeCategory": "medium"
+      },
+      {
+        "annualDecayRate": 0.33,
+        "discountPercent": 21.94,
+        "leaseAgeBand": "30-35",
+        "maxLeaseYears": 69.0,
+        "minLeaseYears": 64.0,
+        "riskZone": "cliff",
+        "transactionCount": 28115,
+        "volumeCategory": "medium"
+      },
+      {
+        "annualDecayRate": 0.21,
+        "discountPercent": 12.93,
+        "leaseAgeBand": "35-40",
+        "maxLeaseYears": 64.0,
+        "minLeaseYears": 59.0,
+        "riskZone": "cliff",
+        "transactionCount": 39089,
+        "volumeCategory": "medium"
+      },
+      {
+        "annualDecayRate": 0.2,
+        "discountPercent": 11.27,
+        "leaseAgeBand": "40-45",
+        "maxLeaseYears": 59.0,
+        "minLeaseYears": 54.0,
+        "riskZone": "cliff",
+        "transactionCount": 30901,
+        "volumeCategory": "medium"
+      },
+      {
+        "annualDecayRate": 0.043,
+        "discountPercent": 2.21,
+        "leaseAgeBand": "45-50",
+        "maxLeaseYears": 54.0,
+        "minLeaseYears": 49.0,
+        "riskZone": "cliff",
+        "transactionCount": 26761,
+        "volumeCategory": "medium"
+      },
+      {
+        "annualDecayRate": 0.153,
+        "discountPercent": 7.13,
+        "leaseAgeBand": "50-55",
+        "maxLeaseYears": 49.0,
+        "minLeaseYears": 44.0,
+        "riskZone": "cliff",
+        "transactionCount": 3749,
+        "volumeCategory": "low"
+      },
+      {
+        "annualDecayRate": 0.091,
+        "discountPercent": 3.76,
+        "leaseAgeBand": "55-60",
+        "maxLeaseYears": 44.0,
+        "minLeaseYears": 39.0,
+        "riskZone": "cliff",
+        "transactionCount": 580,
+        "volumeCategory": "low"
+      },
+      {
+        "annualDecayRate": 4.319,
+        "discountPercent": 28.07,
+        "leaseAgeBand": "90-95",
+        "maxLeaseYears": 9.0,
+        "minLeaseYears": 4.0,
+        "riskZone": "safe",
+        "transactionCount": 29397,
+        "volumeCategory": "medium"
+      }
+    ],
+    "bytes": 1164,
+    "countSum": 288374,
+    "countSumVersus": {
+      "articleStatedSample": 223634,
+      "differenceFromArticleSample": 64740,
+      "differenceFromMeasuredWindow": 44507,
+      "meaning": "three populations, none equal: the asset's 13 band counts sum to their own total, which reproduces neither the article's stated sample nor the measured window",
+      "measuredWindowRows": 243867
+    },
+    "discountBaseline": {
+      "note": "screened as: the only band storing discount 0.0 is the freshest age band (0-5), so the stored discounts are relative to the freshest band, not to the article's 90+ remaining-years baseline; origin unverified (no producer linked). Two bands store NEGATIVE discounts (5-10 at -11.02, 10-15 at -18.58, i.e. above the stored baseline), and the 90-95 age band is the only one labelled risk_zone 'safe' (twelve store 'cliff')",
+      "zeroDiscountBand": "0-5"
+    },
+    "insights": [
+      {
+        "articleComparison": {
+          "articleDiscountLabel": "-23.8%",
+          "discountEqualsAbsArticleDiscount": true,
+          "meaning": "the stored insight discount equals the magnitude of the article's published discount for this band"
+        },
+        "key": "best_value",
+        "stored": {
+          "annualRate": 0.79,
+          "band": "60-70 years remaining",
+          "description": "Highest discount with good liquidity",
+          "discount": 23.8
+        },
+        "storedCsvComparison": {
+          "annualRateMatchesCsv": false,
+          "csvAnnualDecayPct": 0.69,
+          "differenceFromCsvAnnualDecay": 0.1
+        }
+      },
+      {
+        "articleComparison": {
+          "articleDiscountLabel": "-21.9%",
+          "discountEqualsAbsArticleDiscount": true,
+          "meaning": "the stored insight discount equals the magnitude of the article's published discount for this band"
+        },
+        "key": "maturity_cliff",
+        "stored": {
+          "annualRate": 0.93,
+          "band": "70-80 years remaining",
+          "description": "Peak decay period - avoid entry",
+          "discount": 21.9
+        },
+        "storedCsvComparison": {
+          "annualRateMatchesCsv": true,
+          "csvAnnualDecayPct": 0.93,
+          "differenceFromCsvAnnualDecay": 0.0
+        }
+      },
+      {
+        "articleComparison": {
+          "articleDiscountLabel": "baseline",
+          "discountEqualsAbsArticleDiscount": false,
+          "meaning": "for 60-70 and 70-80 the stored insight discount equals the magnitude of the article's published discount; for 90+ the article's own table calls the band the BASELINE (0.0) while the insight stores 5.2 — the insight block is not on the article's baseline convention"
+        },
+        "key": "safe_zone",
+        "stored": {
+          "annualRate": 0.52,
+          "band": "90+ years remaining",
+          "description": "Minimal decay, optimal for long-term holds",
+          "discount": 5.2
+        },
+        "storedCsvComparison": {
+          "annualRateMatchesCsv": false,
+          "csvAnnualDecayPct": 0.0,
+          "differenceFromCsvAnnualDecay": 0.52
+        }
+      }
+    ],
+    "lineage": {
+      "bandingIsADifferentTaxonomy": "the article bands REMAINING YEARS into five bands [0,60,70,80,90,100]; the asset bands LEASE AGE into thirteen five-year bins with a freshest-band discount baseline and seven absent age bins — both bandings exist in the checkout, they are not the same definition, and neither is derived from the other here",
+      "insightsMatchArticleDiscounts": {
+        "disagreements": [
+          "safe_zone"
+        ],
+        "matches": [
+          "best_value",
+          "maturity_cliff"
+        ],
+        "meaning": "two of three insight discounts equal the magnitudes of the article's published discounts; the third (safe_zone 5.2) disagrees with the article's own baseline convention (90+ is the baseline, 0.0). A match of stored numbers is a correspondence, not a proven lineage"
+      },
+      "provenancePathCheck": {
+        "articleProvenanceSays": "the current canonical assets for this page are the markdown plus 'the precomputed files served from app/public/data/analysis/'",
+        "interactiveAssetPath": "app/public/data/interactive_tools/lease_decay_analysis.json.gz",
+        "leaseDecayAssetsUnderAnalysis": "app/public/data/analysis/lease_decay_advanced",
+        "meaning": "the interactive asset the tool serves lives under app/public/data/interactive_tools/, not under app/public/data/analysis/; the analysis directory holds only the lease_decay_advanced PNG for this series — a location discrepancy between the article's provenance sentence and the checkout, recorded as measured"
+      },
+      "statement": "screened as, origin unverified: nothing in this checkout links the asset's producer to the article's computation (the legacy scripts are retired per the article's own provenance, and the token scan finds no lease-decay implementation on the shipping surface). Because the asset is UNLINKED, it is evidence neither for nor against the article's numbers — the correspondences below are recorded in both directions"
+    },
+    "path": "app/public/data/interactive_tools/lease_decay_analysis.json.gz",
+    "sha256": "09da6d774759e1f25c44fd38d02d854e421130d7258a0c521e065fa6ee0aac69",
+    "topLevelKeys": [
+      "bands",
+      "insights",
+      "town_decay_rates"
+    ],
+    "townDecayRates": {
+      "articleTownEntries": [
+        {
+          "id": "CLEMENTI",
+          "stored": {
+            "label": "Avg Decay (Lease: 56y)",
+            "value": 0.887
+          }
+        },
+        {
+          "id": "TOA PAYOH",
+          "stored": {
+            "label": "Avg Decay (Lease: 57y)",
+            "value": 0.846
+          }
+        },
+        {
+          "id": "QUEENSTOWN",
+          "stored": {
+            "label": "Avg Decay (Lease: 54y)",
+            "value": 0.865
+          }
+        },
+        {
+          "id": "WOODLANDS",
+          "stored": {
+            "label": "Avg Decay (Lease: 69y)",
+            "value": 0.741
+          }
+        },
+        {
+          "id": "JURONG WEST",
+          "stored": {
+            "label": "Avg Decay (Lease: 59y)",
+            "value": 0.964
+          }
+        },
+        {
+          "id": "PASIR RIS",
+          "stored": {
+            "label": "Avg Decay (Lease: 66y)",
+            "value": 0.693
+          }
+        }
+      ],
+      "assetOnlyTowns": [
+        "CHANGI",
+        "DOWNTOWN CORE",
+        "KALLANG",
+        "NOVENA",
+        "OUTRAM",
+        "ROCHOR",
+        "TANGLIN"
+      ],
+      "frameOnlyTowns": [
+        "BUKIT BATOK",
+        "CENTRAL AREA",
+        "KALLANG/WHAMPOA",
+        "LIM CHU KANG"
+      ],
+      "frameTownCount": 27,
+      "intersectionCount": 23,
+      "labelPattern": "Avg Decay (Lease: NNy)",
+      "meaning": "the asset's 30 towns and the frame's HDB towns overlap in 23 names; seven asset towns (e.g. DOWNTOWN CORE, ROCHOR) are not HDB resale towns in the frame and four frame towns (BUKIT BATOK, CENTRAL AREA, KALLANG/WHAMPOA, LIM CHU KANG) are absent from the asset — including the KALLANG naming split — so the asset's town universe is not the frame's",
+      "townCount": 30
+    }
+  },
+  "leaseAgeValidation": {
+    "agreement": {
+      "maxAbsDeviationYears": 1.0833,
+      "meanAbsDeviationYears": 0.345,
+      "meaning": "on the only rows that carry a stored remaining_lease (2015-2016 transactions), the stored value equals 99 minus the derived lease age within one year on all but one row — the derivation is validated, and the validation window is the stored column's own coverage, not the study window",
+      "medianAbsDeviationYears": 0.3333,
+      "over1_0Years": 1,
+      "rowsComparable": 37153,
+      "rowsOverOneYear": [
+        {
+          "derivedRemaining": 75.9167,
+          "leaseCommenceDate": 1993.0,
+          "month": "2016-02",
+          "storedRemainingLease": 77.0
+        }
+      ],
+      "within0_02Years": 2511,
+      "within0_5Years": 29185,
+      "within1_0Years": 37152
+    },
+    "derivation": {
+      "formula": "leaseAgeYears = (transactionYear + (transactionMonth-1)/12) - lease_commence_date; derivedRemainingYears = 99 - leaseAgeYears",
+      "precision": "month precision — the HDB resale source dates transactions to the month (transaction_date carries day 01), so 'as of transaction date' is as of transaction month",
+      "tenureAssumedYears": 99.0,
+      "tenureAssumptionStatus": "an assumption, validated against the stored column below: the stored remaining_lease plus the derived age clusters at 99"
+    },
+    "derivedRange": {
+      "atOrBelowZeroRows": 0,
+      "below30YearsRows": 0,
+      "frameMax": 100.6667,
+      "frameMin": 38.25,
+      "fromWindowStartMin": 38.25
+    },
+    "exceptions": {
+      "maxDerivedRemainingYears": 100.6667,
+      "meaning": "transactions (1991-2011) carry a transaction month earlier than lease_commence_date under the 99-year tenure assumption, so their derived remaining lease exceeds 99; they are counted, not silently excluded, and they sit outside the study window",
+      "negativeAgeByTransactionYear": {
+        "1991": 1,
+        "1992": 1,
+        "1993": 1,
+        "1994": 18,
+        "1995": 12,
+        "1996": 3,
+        "2004": 2,
+        "2005": 12,
+        "2011": 1
+      },
+      "rowsWithNegativeLeaseAge": 51
+    },
+    "storedColumn": {
+      "nonNullByTransactionYear": {
+        "2015": 17780,
+        "2016": 19373
+      },
+      "nonNullRows": 37153,
+      "nullRows": 953502,
+      "numericMax": 97.0,
+      "numericMin": 48.0,
+      "rowsEqualToZero": 0,
+      "units": "years (numeric range 48-97); the legacy methodology's `remaining_lease_months / 12` names a months-scale column of the retired L1 frame, which no shipped frame carries (see absenceScans); the archived L2/L3 schema documents record remaining_lease_months for those retired frames"
+    }
+  },
+  "legacyClaims": [
+    {
+      "id": "C1",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.70-80",
+      "note": "the sentence says PRICES; the article's own 21.9 reproduces from its PER-AREA column (21.92) and not from its Median Price column (1.79), and the measured window gives 21.72 on the per-area response and 2.65 on median price — the mixing is recorded in articleOwnArithmetic, not repaired by choosing a reading",
+      "phrase": "it concentrates around the **70-80 year** lease band, where prices are about **21.9%** below the 90+ year baseline",
+      "status": "re-measured"
+    },
+    {
+      "id": "C2",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.90+",
+      "note": "every field re-measured on the window; the per-area value 6,205 measures as per-square-metre scale (median PSF 586.19, median derived PSM 6,309.73), and the stored CSV's median_psm column rounds to the article's exact value (6,205.30 -> 6,205)",
+      "phrase": "| 90+ years   | 93.5 years          | $558,000     | $6,205     | baseline            | 50,912       |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C3",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.80-90",
+      "note": "re-measured; the measured 80-90 per-area median sits far above the article's (measuredMinusArticle +848.0) — the article's U-shape does not reproduce in this window at this magnitude",
+      "phrase": "| 80-90 years | 84.6 years          | $520,000     | $5,389     | -13.2%              | 29,562       |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C4",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.70-80",
+      "note": "re-measured; the measured per-area discount 21.72 is the closest of the five bands to the article's figure, at a different level",
+      "phrase": "| 70-80 years | 75.4 years          | $548,000     | $4,845     | -21.9%              | 47,044       |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C5",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.60-70",
+      "note": "re-measured; the measured mean remaining years 64.6 equals the article's to one decimal, the other fields differ by the recorded amounts",
+      "phrase": "| 60-70 years | 64.6 years          | $446,000     | $4,730     | -23.8%              | 54,521       |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C6",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.<60",
+      "note": "re-measured on the window; differences recorded field by field",
+      "phrase": "| <60 years   | 54.5 years          | $390,000     | $5,274     | -15.0%              | 41,595       |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C7",
+      "ledgerKey": "bandTable.shareArithmetic",
+      "note": "the value reproduces from the article's own PER-AREA column (-23.77) and not from its Median Price column (-20.07); measured per-area discount 24.2 and median-price discount 18.05 are recorded beside it — a per-area discount quoted in a total-price column, the mixing the gate flags",
+      "phrase": "| Discount vs 90+ years | -23.8%                     | Large entry-price reduction              |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C8",
+      "ledgerKey": "bandTable.shareArithmetic",
+      "note": "24.4 = 54,521 / 223,634 from the article's own table; the measured window share 0.2348 is recorded beside it",
+      "phrase": "| Share of transactions | 24.4%                      | Resale market remains active             |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C9",
+      "ledgerKey": "regressionInputs.coefficient",
+      "note": "the gate forbids converting a coefficient whose original response/unit is unconfirmed; the frozen text contradicts itself (appendix response price_per_sqm vs sentence PSF), the fitted model is absent (absenceScans.fittedModel), and the only unit label in the checkout is an unlinked chart axis reading SGD/PSM per year. The number is not restated in any unit",
+      "phrase": "| Pure lease effect     | +$54.75 PSF per extra year | Lease still has measurable pricing power |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C10",
+      "ledgerKey": "townTable.towns.CLEMENTI",
+      "note": "the published discount reproduces from the row's own values (40.61); the measured window gives 40.99 — one of the six towns whose measured figure is close to the article's",
+      "phrase": "| CLEMENTI    | $5,224            | $8,796            | 40.6%      |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C11",
+      "ledgerKey": "townTable.towns.TOA PAYOH",
+      "note": "measured 52.13 against the article's 39.6; difference recorded",
+      "phrase": "| TOA PAYOH   | $4,939            | $8,182            | 39.6%      |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C12",
+      "ledgerKey": "townTable.towns.QUEENSTOWN",
+      "note": "measured 42.59 against the article's 38.9; difference recorded",
+      "phrase": "| QUEENSTOWN  | $5,526            | $9,048            | 38.9%      |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C13",
+      "ledgerKey": "townTable.towns.WOODLANDS",
+      "note": "measured 18.62 against the article's 6.2; difference recorded",
+      "phrase": "| WOODLANDS   | $4,262            | $4,544            | 6.2%       |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C14",
+      "ledgerKey": "townTable.towns.JURONG WEST",
+      "note": "measured 27.44 against the article's 0.4; the table's small discount does not reproduce in this window",
+      "phrase": "| JURONG WEST | $4,496            | $4,516            | 0.4%       |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "townTable.pasirRisInversion",
+      "note": "the row's own values give -20.21 under (fresh-short)/fresh and +20.21 inverted, which is what the findings print; the measured window does NOT reproduce the inversion (short median PSM below fresh). The table and findings disagree on sign, not magnitude",
+      "phrase": "| PASIR RIS   | $5,621            | $4,676            | -20.2%     |",
+      "status": "re-measured"
+    },
+    {
+      "id": "C16",
+      "ledgerKey": "bandTable.unitIdentification",
+      "note": "the findings label the SAME numbers PSM that the band table labels PSF — the legacy's own surfaces disagree, and the measured identification (stored CSV column median_psm; chart titled per SQM) resolves which unit the VALUES hold, not which label is right",
+      "phrase": "- **90+ year band**: 50,912 transactions, median $558,000, median PSM $6,205",
+      "status": "re-measured"
+    },
+    {
+      "id": "C17",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.70-80",
+      "note": "same quantity as C4; measured value recorded beside it",
+      "phrase": "- **70-80 yr band**: 47,044 transactions, -21.9% discount (steepest penalty)",
+      "status": "re-measured"
+    },
+    {
+      "id": "C18",
+      "ledgerKey": "bandTable.articleRowsVsMeasured.60-70",
+      "note": "same quantity as C5; the 'highest volume' part is measured at bandTable.measuredFacts.highestVolumeBandMeasured (60-70, 57,267)",
+      "phrase": "- **60-70 yr band**: 54,521 transactions, -23.8% discount (deepest, highest volume)",
+      "status": "re-measured"
+    },
+    {
+      "id": "C19",
+      "ledgerKey": "townTable.signConventions",
+      "note": "each findings value is the exact negative of the table's value for the same town (signConventions.rows); the measured window values are recorded in townTable.towns",
+      "phrase": "- **Town variation**: Clementi -40.6%, Toa Payoh -39.6%, Woodlands -6.2%, Pasir Ris +20.2% (inverted)",
+      "status": "re-measured"
+    },
+    {
+      "id": "C20",
+      "ledgerKey": "regressionInputs.policyThreshold",
+      "note": "no Mann-Whitney implementation or stored result on the shipping surface, and the test population, window and alternative are unstated — underspecified, and not chosen for it",
+      "phrase": "- **60-yr policy threshold**: measurable “liquidity tax” between 61-yr and 59-yr leases (CPF restriction)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C21",
+      "ledgerKey": "regressionInputs.splineArbitrage",
+      "note": "no signal table or implementation exists; it inherits the Bala curve's unstated parameters; the unlinked PNG's Bala panel is recorded without being attributed",
+      "phrase": "- **Spline-based arbitrage**: identifies BUY/SELL/HOLD signals at lease years where market deviates ≥5% from theoretical Bala curve",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C22",
+      "ledgerKey": "sampleClaim",
+      "note": "measured window rows recorded against the stated sample (+20,233); no candidate terminal month 2025-01..2026-11 reproduces 223,634 (all 23 recorded); the measured remaining-lease range in the window differs from the stated 30-99 (fields at sampleClaim.measuredLeaseRangeYearsWindow)",
+      "phrase": "- **Sample**: 223,634 HDB transactions, 2017-2026, lease range 30-99 years",
+      "status": "re-measured"
+    },
+    {
+      "id": "C23",
+      "ledgerKey": "absenceScans.l1Frame",
+      "note": "the named path does not exist (data/parquets root absent, zero housing_hdb_transaction matches under data/); the L1 producer is retired — the claim cannot stand and the pack derives everything from the shipped platinum frame instead",
+      "phrase": "- **Primary input**: `data/parquets/L1/housing_hdb_transaction.parquet`",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C24",
+      "ledgerKey": "absenceScans.l3Frame",
+      "note": "the named path does not exist; the only housing_unified-named files under data/ are the two segmented panels, a different subject; the hedonic specification is withdrawn at regressionInputs.hedonicSpecification",
+      "phrase": "- **Advanced input**: `data/parquets/L3/housing_unified.parquet` for multivariate hedonic regression",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C25",
+      "ledgerKey": "bandTable.definition",
+      "note": "the stated bins are adopted verbatim with the edge convention recorded; the definition-as-executed code is retired (absenceScans.bandDefinitionAsExecuted: the bins literal matches prose only)",
+      "phrase": "- **Lease bands**: bins [0, 60, 70, 80, 90, 100], labels [<60, 60-70, 70-80, 80-90, 90+]",
+      "status": "re-measured"
+    },
+    {
+      "id": "C26",
+      "ledgerKey": "leaseAgeValidation.storedColumn",
+      "note": "no shipped frame carries remaining_lease_months (the archived L2/L3 schema documents record it for the retired frames); the shipped frame's remaining_lease measures in years (48-97) and is null on 953,502 of 990,655 HDB rows, so the ledger derives remaining from lease_commence_date and validates it instead",
+      "phrase": "- **Remaining lease years**: `remaining_lease_months / 12`",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C27",
+      "ledgerKey": "responseDecision.legacyResponseStatement",
+      "note": "the named columns exist under no such names in the shipped frame (price and derived psm are measured instead); this sentence is the legacy's own response statement and the evidence the coefficient's PSF sentence contradicts",
+      "phrase": "- **Price statistics**: median `resale_price` and `price_per_sqm` by band",
+      "status": "re-measured"
+    },
+    {
+      "id": "C28",
+      "ledgerKey": "bandTable.unitInvarianceMaxAbsDiffPsmVsPsfDiscount",
+      "note": "adopted verbatim, computed on derived PSM and on measured PSF (identical to two decimals, max difference recorded — psf = psm/10.7639104167 row-exactly) and on median price (which differs); the discount is per-area whatever the table's price column suggests",
+      "phrase": "- **Discount to 90+ baseline**: `(baseline_psm - band_psm) / baseline_psm × 100`",
+      "status": "re-measured"
+    },
+    {
+      "id": "C29",
+      "ledgerKey": "regressionInputs.annualDecayApproximation",
+      "note": "underspecified (no formula, no baseline band); the stored CSV's annual_decay_pct and the interactive asset's annual rates are unlinked to it and disagree with each other at two of three insight points",
+      "phrase": "- **Annual decay rate**: linear approximation from discount vs years elapsed",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C30",
+      "ledgerKey": "townTable.definition",
+      "note": "adopted verbatim; the frozen text states NO window for this table (recorded as underspecified), so the ledger re-measures under the article's stated data period start capped at the measured cutoff, with the window a field",
+      "phrase": "- **Town-level comparison**: short lease (<70 yr) vs fresh lease (90+ yr) median PSM within same town",
+      "status": "re-measured"
+    },
+    {
+      "id": "C31",
+      "ledgerKey": "regressionInputs.hedonicSpecification",
+      "note": "no fitted model exists (absenceScans.fittedModel) and the FloorLevel term is null on all 990,655 HDB rows (regressionInputs.regressors.floorLevel), so the specification is not runnable as stated; no coefficient is estimated or converted",
+      "phrase": "- **Hedonic regression** (advanced): `Price = β₀ + β₁(Lease) + β₂(FloorLevel) + β₃(DistToMRT) + β₄(Town) + ε`",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C32",
+      "ledgerKey": "regressionInputs.policyThreshold",
+      "note": "the methodology line for the same absent analysis as C20",
+      "phrase": "- **Policy threshold analysis**: Mann-Whitney U tests at 60-yr and 30-yr marks",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C33",
+      "ledgerKey": "regressionInputs.balaCurve",
+      "note": "the Bala parameters are unstated and no implementation or stored result exists; the unlinked advanced PNG depicts such a validation and is recorded symmetrically (neither for nor against)",
+      "phrase": "- **Bala's curve validation**: empirical vs theoretical depreciation, ≥5% deviation flagged",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C34",
+      "ledgerKey": "bandTable.measuredFacts",
+      "note": "the volume half is measured: 60-70 has the highest measured band count (57,267); the value half inherits the discount claims' re-measurements",
+      "phrase": "- **Buyers** can find meaningful value in the **60-70 year** band, which combines deep discounts with the highest transaction volume.",
+      "status": "re-measured"
+    },
+    {
+      "id": "C35",
+      "ledgerKey": "bandTable.measuredFacts",
+      "note": "measured on the per-area response: the cheapest band is 60-70 (4,782.61 derived PSM) and <60 (5,384.62) is not the cheapest — the claim's direction reproduces; its location-mix explanation is advice this ledger does not evaluate",
+      "phrase": "- The **<60 year** group is not the cheapest on a PSF basis, which suggests location mix still matters a lot.",
+      "status": "re-measured"
+    },
+    {
+      "id": "C36",
+      "ledgerKey": "regressionInputs.coefficient",
+      "note": "the same coefficient as C9: unit unconfirmable, model absent, so the robustness claim is untestable and the number is not restated",
+      "phrase": "The pure lease effect of +$54.75 PSF/year is robust after multivariate controls.",
+      "status": "withdrawn"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 36,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+    "legacyFileBytes": 7740,
+    "legacyFileSha256": "6aab72f046c4df45368843a3b1046e1165097aef22a5691e7231f1840464f1b4",
+    "method": "each phrase is required to appear verbatim in the frozen legacy text; a paraphrase inside quotation marks is a defect, and the build fails on any zero-occurrence phrase",
+    "quotes": [
+      {
+        "id": "C1",
+        "occurrences": 1,
+        "phrase": "it concentrates around the **70-80 year** lease band, where prices are about **21.9%** below the 90+ year baseline"
+      },
+      {
+        "id": "C2",
+        "occurrences": 1,
+        "phrase": "| 90+ years   | 93.5 years          | $558,000     | $6,205     | baseline            | 50,912       |"
+      },
+      {
+        "id": "C3",
+        "occurrences": 1,
+        "phrase": "| 80-90 years | 84.6 years          | $520,000     | $5,389     | -13.2%              | 29,562       |"
+      },
+      {
+        "id": "C4",
+        "occurrences": 1,
+        "phrase": "| 70-80 years | 75.4 years          | $548,000     | $4,845     | -21.9%              | 47,044       |"
+      },
+      {
+        "id": "C5",
+        "occurrences": 1,
+        "phrase": "| 60-70 years | 64.6 years          | $446,000     | $4,730     | -23.8%              | 54,521       |"
+      },
+      {
+        "id": "C6",
+        "occurrences": 1,
+        "phrase": "| <60 years   | 54.5 years          | $390,000     | $5,274     | -15.0%              | 41,595       |"
+      },
+      {
+        "id": "C7",
+        "occurrences": 1,
+        "phrase": "| Discount vs 90+ years | -23.8%                     | Large entry-price reduction              |"
+      },
+      {
+        "id": "C8",
+        "occurrences": 1,
+        "phrase": "| Share of transactions | 24.4%                      | Resale market remains active             |"
+      },
+      {
+        "id": "C9",
+        "occurrences": 1,
+        "phrase": "| Pure lease effect     | +$54.75 PSF per extra year | Lease still has measurable pricing power |"
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "| CLEMENTI    | $5,224            | $8,796            | 40.6%      |"
+      },
+      {
+        "id": "C11",
+        "occurrences": 1,
+        "phrase": "| TOA PAYOH   | $4,939            | $8,182            | 39.6%      |"
+      },
+      {
+        "id": "C12",
+        "occurrences": 1,
+        "phrase": "| QUEENSTOWN  | $5,526            | $9,048            | 38.9%      |"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "| WOODLANDS   | $4,262            | $4,544            | 6.2%       |"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "| JURONG WEST | $4,496            | $4,516            | 0.4%       |"
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "| PASIR RIS   | $5,621            | $4,676            | -20.2%     |"
+      },
+      {
+        "id": "C16",
+        "occurrences": 1,
+        "phrase": "- **90+ year band**: 50,912 transactions, median $558,000, median PSM $6,205"
+      },
+      {
+        "id": "C17",
+        "occurrences": 1,
+        "phrase": "- **70-80 yr band**: 47,044 transactions, -21.9% discount (steepest penalty)"
+      },
+      {
+        "id": "C18",
+        "occurrences": 1,
+        "phrase": "- **60-70 yr band**: 54,521 transactions, -23.8% discount (deepest, highest volume)"
+      },
+      {
+        "id": "C19",
+        "occurrences": 1,
+        "phrase": "- **Town variation**: Clementi -40.6%, Toa Payoh -39.6%, Woodlands -6.2%, Pasir Ris +20.2% (inverted)"
+      },
+      {
+        "id": "C20",
+        "occurrences": 1,
+        "phrase": "- **60-yr policy threshold**: measurable “liquidity tax” between 61-yr and 59-yr leases (CPF restriction)"
+      },
+      {
+        "id": "C21",
+        "occurrences": 1,
+        "phrase": "- **Spline-based arbitrage**: identifies BUY/SELL/HOLD signals at lease years where market deviates ≥5% from theoretical Bala curve"
+      },
+      {
+        "id": "C22",
+        "occurrences": 1,
+        "phrase": "- **Sample**: 223,634 HDB transactions, 2017-2026, lease range 30-99 years"
+      },
+      {
+        "id": "C23",
+        "occurrences": 1,
+        "phrase": "- **Primary input**: `data/parquets/L1/housing_hdb_transaction.parquet`"
+      },
+      {
+        "id": "C24",
+        "occurrences": 1,
+        "phrase": "- **Advanced input**: `data/parquets/L3/housing_unified.parquet` for multivariate hedonic regression"
+      },
+      {
+        "id": "C25",
+        "occurrences": 1,
+        "phrase": "- **Lease bands**: bins [0, 60, 70, 80, 90, 100], labels [<60, 60-70, 70-80, 80-90, 90+]"
+      },
+      {
+        "id": "C26",
+        "occurrences": 1,
+        "phrase": "- **Remaining lease years**: `remaining_lease_months / 12`"
+      },
+      {
+        "id": "C27",
+        "occurrences": 1,
+        "phrase": "- **Price statistics**: median `resale_price` and `price_per_sqm` by band"
+      },
+      {
+        "id": "C28",
+        "occurrences": 1,
+        "phrase": "- **Discount to 90+ baseline**: `(baseline_psm - band_psm) / baseline_psm × 100`"
+      },
+      {
+        "id": "C29",
+        "occurrences": 1,
+        "phrase": "- **Annual decay rate**: linear approximation from discount vs years elapsed"
+      },
+      {
+        "id": "C30",
+        "occurrences": 1,
+        "phrase": "- **Town-level comparison**: short lease (<70 yr) vs fresh lease (90+ yr) median PSM within same town"
+      },
+      {
+        "id": "C31",
+        "occurrences": 1,
+        "phrase": "- **Hedonic regression** (advanced): `Price = β₀ + β₁(Lease) + β₂(FloorLevel) + β₃(DistToMRT) + β₄(Town) + ε`"
+      },
+      {
+        "id": "C32",
+        "occurrences": 1,
+        "phrase": "- **Policy threshold analysis**: Mann-Whitney U tests at 60-yr and 30-yr marks"
+      },
+      {
+        "id": "C33",
+        "occurrences": 1,
+        "phrase": "- **Bala's curve validation**: empirical vs theoretical depreciation, ≥5% deviation flagged"
+      },
+      {
+        "id": "C34",
+        "occurrences": 1,
+        "phrase": "- **Buyers** can find meaningful value in the **60-70 year** band, which combines deep discounts with the highest transaction volume."
+      },
+      {
+        "id": "C35",
+        "occurrences": 1,
+        "phrase": "- The **<60 year** group is not the cheapest on a PSF basis, which suggests location mix still matters a lot."
+      },
+      {
+        "id": "C36",
+        "occurrences": 1,
+        "phrase": "The pure lease effect of +$54.75 PSF/year is robust after multivariate controls."
+      }
+    ],
+    "verifiedVerbatim": 36
+  },
+  "regressionInputs": {
+    "annualDecayApproximation": {
+      "ledgerKey": "storedArtefacts.leaseAnalysisCsv.rows",
+      "method": "linear approximation from discount vs years elapsed",
+      "reason": "the approximation is underspecified in the frozen text: no formula for 'years elapsed', no baseline band named. A stored CSV carries annual_decay_pct values and the interactive asset carries annual_decay_rate values that disagree with the CSV at two of three insight points (interactiveAsset.insights) — both unlinked, so neither is adopted as the legacy's rate",
+      "status": "notReproducible"
+    },
+    "balaCurve": {
+      "ledgerKey": "absenceScans.tokenScan.tokens.Bala",
+      "method": "empirical vs theoretical depreciation, >=5% deviation flagged",
+      "reason": "the Bala curve's parameters are unstated in the frozen text and no implementation or stored result exists on the shipping surface (tokenScan token 'Bala' matches prose only). An unlinked PNG depicts a Bala validation (storedArtefacts.pngs.lease_decay_advanced_analysis.png) — recorded symmetrically: it neither confirms nor refutes the legacy computation",
+      "status": "notReproducible"
+    },
+    "coefficient": {
+      "appendixResponse": "price_per_sqm",
+      "conversionPerformed": false,
+      "fittedModelPresent": false,
+      "ledgerKey": "regressionInputs.coefficient",
+      "reason": "the frozen text contradicts itself on the response unit (the appendix names price_per_sqm, the sentence says PSF, and the only unit label in the checkout — an unlinked chart axis — says SGD/PSM per year); the fitted model is absent (see absenceScans.fittedModel), so the coefficient's original response/unit cannot be confirmed and the gate forbids converting it. The number is not restated in any unit",
+      "sentenceUnit": "PSF per extra year",
+      "sentenceValue": 54.75,
+      "status": "withdrawn",
+      "unitConfirmable": false
+    },
+    "fitPerformedByThisPack": false,
+    "hedonicSpecification": {
+      "ledgerKey": "absenceScans.fittedModel",
+      "reason": "no fitted model exists in this checkout (absenceScans.fittedModel) and the stated FloorLevel term is null on every HDB row, so the specification is not runnable as stated on the shipped frame; no coefficients exist to convert and none are estimated here",
+      "specification": "Price = beta0 + beta1(Lease) + beta2(FloorLevel) + beta3(DistToMRT) + beta4(Town) + epsilon",
+      "status": "withdrawn"
+    },
+    "policyThreshold": {
+      "ledgerKey": "absenceScans.tokenScan.tokens.Mann-Whitney",
+      "method": "Mann-Whitney U tests at the 60-yr and 30-yr marks",
+      "reason": "no implementation or stored result exists on the shipping surface (tokenScan token 'Mann-Whitney' matches prose only), and the test populations, window and alternative are unstated in the frozen text — underspecified, and not chosen for it",
+      "status": "notReproducible"
+    },
+    "regressors": {
+      "distToMrt": {
+        "available": true,
+        "hdbNonNullRows": 979056,
+        "hdbNullRows": 11599
+      },
+      "floorLevel": {
+        "available": false,
+        "hdbNonNullRows": 0,
+        "hdbRowTotal": 990655,
+        "status": "four-states: the column exists in the 97-column schema and is null on ALL 990,655 HDB rows (it belongs to the private rows), so the stated FloorLevel term is not measurable on HDB rows from this frame"
+      },
+      "leaseTerm": {
+        "available": true,
+        "measure": "derivedRemainingYears (leaseAgeValidation.derivation)"
+      },
+      "town": {
+        "available": true,
+        "distinctTowns": 27,
+        "hdbNonEmptyRows": 990655
+      }
+    },
+    "splineArbitrage": {
+      "ledgerKey": "regressionInputs.balaCurve",
+      "method": "BUY/SELL/HOLD signals where the market deviates >=5% from the Bala curve",
+      "reason": "no implementation, signal table or threshold artefact exists for this method; it inherits the Bala curve's unstated parameters",
+      "status": "notReproducible"
+    }
+  },
+  "responseDecision": {
+    "columnsExamined": {
+      "Unit Price ($ PSF)": {
+        "frameNonNull": 7093,
+        "hdbNonNull": 0,
+        "unit": "SGD per square foot (private rows only)"
+      },
+      "Unit Price ($ PSM)": {
+        "frameNonNull": 0,
+        "hdbNonNull": 0,
+        "unit": "SGD per square metre (schema-present, zero non-null values frame-wide)"
+      },
+      "area_sqft": {
+        "hdbNonNull": 0,
+        "unit": "square feet (private rows only)"
+      },
+      "area_sqm": {
+        "hdbNonNull": 0,
+        "unit": "square metres (private rows only)"
+      },
+      "floor_area_sqm": {
+        "hdbNonNull": 990655,
+        "unit": "square metres"
+      },
+      "price": {
+        "hdbNonNull": 990655,
+        "unit": "SGD total price"
+      },
+      "psf": {
+        "hdbNonNull": 990655,
+        "unit": "SGD per square foot (measured, see identityCheck)"
+      }
+    },
+    "conversionPerformed": false,
+    "decision": "response = psf, the frame's measured $-per-square-foot column, populated and exact on every HDB row; secondary per-area measure = derivedPsm = price / floor_area_sqm, exact arithmetic on two measured columns; total-price measure = price, used only where a field is named medianPrice. Any future fitting uses one of these stated responses with its unit named in the same sentence. No coefficient is converted between units in this ledger (gate clause), and no model is fitted by this pack.",
+    "derivedPsm": {
+      "definition": "price / floor_area_sqm (SGD per square metre)",
+      "note": "derived arithmetic on two measured columns, never read from a stored per-square-metre column, because none is populated for HDB rows",
+      "sampleMedian": 3091.27
+    },
+    "fitPerformed": false,
+    "fourStatesNote": "`Unit Price ($ PSM)` is an absent-VALUE column, not an absent column: it exists in the parquet schema (97 columns) and holds zero non-null values across all 1,236,310 rows. `floor_level` is the same state on HDB rows (present column, all null).",
+    "gateClause": "Never convert a coefficient without confirming its original response/unit.",
+    "identityCheck": {
+      "maxAbsDeviation": 0.001503,
+      "meaning": "the frame's psf column is exactly the per-square-foot price on every HDB row; per-square-metre prices are not stored for HDB rows and are used here only as the derived measure price/floor_area_sqm",
+      "rowsChecked": 990655,
+      "rowsWithin1": 990655,
+      "sqftPerSqm": 10.7639104167,
+      "statement": "psf == price / (floor_area_sqm * SQFT_PER_SQM)"
+    },
+    "legacyResponseStatement": {
+      "appendixSentence": "- **Price statistics**: median `resale_price` and `price_per_sqm` by band",
+      "coefficientSentence": "| Pure lease effect     | +$54.75 PSF per extra year | Lease still has measurable pricing power |",
+      "meaning": "the frozen text names price_per_sqm as the fitted response in its appendix and PSF in its coefficient sentence; the two statements contradict each other, and the contradiction is recorded, not resolved by choosing for the legacy author"
+    },
+    "unitInvarianceOfBandDiscounts": "psf = derivedPsm / SQFT_PER_SQM row-exactly, so medians and discount ratios computed on psf equal those computed on derivedPsm up to rounding; the band table records both and the measured maximum difference between them"
+  },
+  "sampleClaim": {
+    "anyCandidateEqualsStatedSample": false,
+    "articleStatement": "- **Sample**: 223,634 HDB transactions, 2017-2026, lease range 30-99 years",
+    "candidateWindows": [
+      {
+        "differenceFromStatedSample": -24339,
+        "equalsStatedSample": false,
+        "rows": 199295,
+        "terminalMonth": "2025-01"
+      },
+      {
+        "differenceFromStatedSample": -22248,
+        "equalsStatedSample": false,
+        "rows": 201386,
+        "terminalMonth": "2025-02"
+      },
+      {
+        "differenceFromStatedSample": -20349,
+        "equalsStatedSample": false,
+        "rows": 203285,
+        "terminalMonth": "2025-03"
+      },
+      {
+        "differenceFromStatedSample": -18052,
+        "equalsStatedSample": false,
+        "rows": 205582,
+        "terminalMonth": "2025-04"
+      },
+      {
+        "differenceFromStatedSample": -15786,
+        "equalsStatedSample": false,
+        "rows": 207848,
+        "terminalMonth": "2025-05"
+      },
+      {
+        "differenceFromStatedSample": -13526,
+        "equalsStatedSample": false,
+        "rows": 210108,
+        "terminalMonth": "2025-06"
+      },
+      {
+        "differenceFromStatedSample": -10964,
+        "equalsStatedSample": false,
+        "rows": 212670,
+        "terminalMonth": "2025-07"
+      },
+      {
+        "differenceFromStatedSample": -8762,
+        "equalsStatedSample": false,
+        "rows": 214872,
+        "terminalMonth": "2025-08"
+      },
+      {
+        "differenceFromStatedSample": -6588,
+        "equalsStatedSample": false,
+        "rows": 217046,
+        "terminalMonth": "2025-09"
+      },
+      {
+        "differenceFromStatedSample": -5250,
+        "equalsStatedSample": false,
+        "rows": 218384,
+        "terminalMonth": "2025-10"
+      },
+      {
+        "differenceFromStatedSample": -3592,
+        "equalsStatedSample": false,
+        "rows": 220042,
+        "terminalMonth": "2025-11"
+      },
+      {
+        "differenceFromStatedSample": -1568,
+        "equalsStatedSample": false,
+        "rows": 222066,
+        "terminalMonth": "2025-12"
+      },
+      {
+        "differenceFromStatedSample": 770,
+        "equalsStatedSample": false,
+        "rows": 224404,
+        "terminalMonth": "2026-01"
+      },
+      {
+        "differenceFromStatedSample": 2431,
+        "equalsStatedSample": false,
+        "rows": 226065,
+        "terminalMonth": "2026-02"
+      },
+      {
+        "differenceFromStatedSample": 4473,
+        "equalsStatedSample": false,
+        "rows": 228107,
+        "terminalMonth": "2026-03"
+      },
+      {
+        "differenceFromStatedSample": 6406,
+        "equalsStatedSample": false,
+        "rows": 230040,
+        "terminalMonth": "2026-04"
+      },
+      {
+        "differenceFromStatedSample": 8532,
+        "equalsStatedSample": false,
+        "rows": 232166,
+        "terminalMonth": "2026-05"
+      },
+      {
+        "differenceFromStatedSample": 10656,
+        "equalsStatedSample": false,
+        "rows": 234290,
+        "terminalMonth": "2026-06"
+      },
+      {
+        "differenceFromStatedSample": 13303,
+        "equalsStatedSample": false,
+        "rows": 236937,
+        "terminalMonth": "2026-07"
+      },
+      {
+        "differenceFromStatedSample": 15821,
+        "equalsStatedSample": false,
+        "rows": 239455,
+        "terminalMonth": "2026-08"
+      },
+      {
+        "differenceFromStatedSample": 18060,
+        "equalsStatedSample": false,
+        "rows": 241694,
+        "terminalMonth": "2026-09"
+      },
+      {
+        "differenceFromStatedSample": 20233,
+        "equalsStatedSample": false,
+        "rows": 243867,
+        "terminalMonth": "2026-10"
+      },
+      {
+        "differenceFromStatedSample": 21023,
+        "equalsStatedSample": false,
+        "rows": 244657,
+        "terminalMonth": "2026-11"
+      },
+      {
+        "differenceFromStatedSample": 21023,
+        "equalsStatedSample": false,
+        "rows": 244657,
+        "terminalMonth": "2026-12"
+      }
+    ],
+    "meaning": "no month-capped window starting 2017-01 with a terminal month from 2025-01 through 2026-11 reproduces the stated 223,634 (all 23 candidates recorded), and the window's measured remaining-lease range differs from the stated 30-99; the stated sample stands as the legacy's own figure, unreproduced",
+    "measuredLeaseRangeYearsWindow": {
+      "max": 97.4167,
+      "min": 38.25
+    },
+    "measuredMinusStated": 20233,
+    "measuredWindowRows": 243867,
+    "statedLeaseRangeYears": [
+      30,
+      99
+    ],
+    "statedSample": 223634
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS06 lease-decay evidence: the measured unit/response decision, lease-age validation as of transaction month, the legacy band table re-measured against the article and the stored CSV artefacts, the short-vs-fresh town table re-measured with its two sign conventions reconciled, the interactive band asset inventoried and reconciled against the article by correspondence only, the legacy specification's regressor availability, the absence scans for the retired frames and the fitted model, and the chart/model gates recorded as in force",
+  "series": "lease-decay",
+  "storedArtefacts": {
+    "coefficientAxisLabel": {
+      "meaning": "screened as: the only unit label anywhere in the checkout for the legacy lease coefficient is this chart axis, and it says PSM per year while the article sentence says PSF. The chart is unlinked, so this is recorded as a screen, not as the coefficient's confirmed unit — the unit stays UNCONFIRMED and no conversion is performed",
+      "value": "Coefficient (SGD/PSM per year)",
+      "where": "lease_decay_advanced_analysis.png, panel 4"
+    },
+    "leaseAnalysisCsv": {
+      "bytes": 472,
+      "columns": [
+        "lease_band",
+        "avg_remaining_lease_years",
+        "median_price",
+        "median_psm",
+        "transaction_count",
+        "discount_to_baseline",
+        "annual_decay_pct"
+      ],
+      "origin": "unverified — a stored artefact whose producer code is retired (the article's own provenance says the legacy scripts were removed); its values are compared, not attributed",
+      "path": "data/analysis/lease_decay/lease_decay_analysis.csv",
+      "rows": [
+        {
+          "annual_decay_pct": 0.34,
+          "avg_remaining_lease_years": 54.48220539327643,
+          "discount_to_baseline": 15.0,
+          "lease_band": "<60 years",
+          "median_price": 390000.0,
+          "median_psm": 5273.972602739726,
+          "transaction_count": 41595
+        },
+        {
+          "annual_decay_pct": 0.69,
+          "avg_remaining_lease_years": 64.62395835243912,
+          "discount_to_baseline": 23.8,
+          "lease_band": "60-70 years",
+          "median_price": 446000.0,
+          "median_psm": 4729.72972972973,
+          "transaction_count": 54521
+        },
+        {
+          "annual_decay_pct": 0.93,
+          "avg_remaining_lease_years": 75.417571847632,
+          "discount_to_baseline": 21.9,
+          "lease_band": "70-80 years",
+          "median_price": 548000.0,
+          "median_psm": 4844.89545971481,
+          "transaction_count": 47044
+        },
+        {
+          "annual_decay_pct": 0.92,
+          "avg_remaining_lease_years": 84.64632805628848,
+          "discount_to_baseline": 13.2,
+          "lease_band": "80-90 years",
+          "median_price": 520000.0,
+          "median_psm": 5388.619201725998,
+          "transaction_count": 29562
+        },
+        {
+          "annual_decay_pct": 0.0,
+          "avg_remaining_lease_years": 93.50825771265453,
+          "discount_to_baseline": 0.0,
+          "lease_band": "90+ years",
+          "median_price": 558000.0,
+          "median_psm": 6205.304347826087,
+          "transaction_count": 50912
+        }
+      ],
+      "sha256": "b6bdf2f063f673ae96c3da5823b8bb6674e437978825202936d069de94691746"
+    },
+    "leasePriceStatisticsCsv": {
+      "bytes": 570,
+      "meaning": "the same five bands with rounded statistics; its price_per_sqm_median column repeats the article's per-area values (5274/4730/4845/5389/6205), its remaining_lease_years min/max are integers consistent with right-closed bins at month-integer precision, and its resale_price_count column repeats the article's counts — recorded as stored artefacts whose producer is retired; origin unverified",
+      "path": "data/analysis/lease_decay/lease_price_statistics.csv",
+      "rows": [
+        {
+          "lease_band": "<60 years",
+          "price_per_sqm_mean": 5305.0,
+          "price_per_sqm_median": 5274.0,
+          "remaining_lease_years_max": 60.0,
+          "remaining_lease_years_mean": 54.0,
+          "remaining_lease_years_min": 40.0,
+          "resale_price_count": 41595,
+          "resale_price_mean": 424604.0,
+          "resale_price_median": 390000.0,
+          "resale_price_std": 156121.0
+        },
+        {
+          "lease_band": "60-70 years",
+          "price_per_sqm_mean": 4860.0,
+          "price_per_sqm_median": 4730.0,
+          "remaining_lease_years_max": 70.0,
+          "remaining_lease_years_mean": 65.0,
+          "remaining_lease_years_min": 60.0,
+          "resale_price_count": 54521,
+          "resale_price_mean": 489128.0,
+          "resale_price_median": 446000.0,
+          "resale_price_std": 187271.0
+        },
+        {
+          "lease_band": "70-80 years",
+          "price_per_sqm_mean": 4969.0,
+          "price_per_sqm_median": 4845.0,
+          "remaining_lease_years_max": 80.0,
+          "remaining_lease_years_mean": 75.0,
+          "remaining_lease_years_min": 70.0,
+          "resale_price_count": 47044,
+          "resale_price_mean": 565197.0,
+          "resale_price_median": 548000.0,
+          "resale_price_std": 157604.0
+        },
+        {
+          "lease_band": "80-90 years",
+          "price_per_sqm_mean": 5931.0,
+          "price_per_sqm_median": 5389.0,
+          "remaining_lease_years_max": 90.0,
+          "remaining_lease_years_mean": 85.0,
+          "remaining_lease_years_min": 80.0,
+          "resale_price_count": 29562,
+          "resale_price_mean": 571128.0,
+          "resale_price_median": 520000.0,
+          "resale_price_std": 204257.0
+        },
+        {
+          "lease_band": "90+ years",
+          "price_per_sqm_mean": 6534.0,
+          "price_per_sqm_median": 6205.0,
+          "remaining_lease_years_max": 98.0,
+          "remaining_lease_years_mean": 94.0,
+          "remaining_lease_years_min": 90.0,
+          "resale_price_count": 50912,
+          "resale_price_mean": 582560.0,
+          "resale_price_median": 558000.0,
+          "resale_price_std": 182683.0
+        }
+      ],
+      "sha256": "513492bf19dd2c5362204bdbf01acc1bf330175615ef40d980a1733e3f7e1c5b"
+    },
+    "pngs": {
+      "lease_decay_advanced_analysis.png": {
+        "bytes": 538069,
+        "path": "app/public/data/analysis/lease_decay_advanced/lease_decay_advanced_analysis.png",
+        "sha256": "20e546ea0efffc263d47eed11be347ae25af1fb4949053826390506783e64c39",
+        "visualRead": "HUMAN VISUAL READ: four panels. (1) 'Bala's Curve Validation: Empirical vs Theoretical', empirical value as % of fresh lease against remaining lease 40-97 years with a red dashed theoretical line and a green 'Overvaluation' fill. (2) 'Town-Normalized Lease Discount (Short vs Fresh Lease)', 22 town bars, CLEMENTI highest at about +40%, PASIR RIS lowest at about -20%, dashed rule at about 20%; the town names include KALLANG/WHAMPOA and CENTRAL AREA. (3) 'Lease Decay Scatter Plot', Price PSM (SGD) against remaining lease 30-100 years. (4) 'Hedonic Regression: Isolated Lease Effect (Controlled for floor, MRT, town)', one bar labelled Lease Effect, y-axis 'Coefficient (SGD/PSM per year)', height about 54-55 with a small error bar."
+      },
+      "lease_decay_price_distribution.png": {
+        "bytes": 65857,
+        "path": "data/analysis/lease_decay/lease_decay_price_distribution.png",
+        "sha256": "560c46d6efb6914126b66b39a7402554ac46d061439e1c720a61c55edcd7bd29",
+        "visualRead": "HUMAN VISUAL READ: title 'HDB Resale Price Distribution by Remaining Lease Band'; five boxplots of resale price (SGD, axis to about 1.6e6) by the article's five remaining-lease bands."
+      },
+      "lease_decay_psm_by_band.png": {
+        "bytes": 57875,
+        "path": "data/analysis/lease_decay/lease_decay_psm_by_band.png",
+        "sha256": "806595f9fcffe942d8cbf9dbf8c84bcc7292c40aab74bf4c99ac666071714bea",
+        "visualRead": "HUMAN VISUAL READ: title 'Median Price per SQM by Remaining Lease Band'; y-axis 'Median Price per SQM (SGD)'; five bars at about 5,274 / 4,730 / 4,845 / 5,389 / 6,205, the article's per-area column values."
+      },
+      "lease_decay_transaction_volume.png": {
+        "bytes": 52012,
+        "path": "data/analysis/lease_decay/lease_decay_transaction_volume.png",
+        "sha256": "7d0bd2cd9236389536c13a179ff52f5f4c552f628012db084406149e633368a8",
+        "visualRead": "HUMAN VISUAL READ: title 'Transaction Volume by Remaining Lease Band'; five bars at about 41.6k / 54.5k / 47.0k / 29.6k / 50.9k, the article's transaction counts, 60-70 the highest."
+      }
+    },
+    "visualReadMethod": "HUMAN VISUAL READ of the sha-pinned PNGs by the producer, recorded because the pixels are not machine-read; the hashes pin exactly which images were read. Each PNG is an UNLINKED artefact: evidence neither for nor against the article's computation"
+  },
+  "study": "RS06",
+  "townTable": {
+    "definition": {
+      "freshLease": "derivedRemainingYears >= 90",
+      "perAreaMeasure": "derivedPsm = price / floor_area_sqm (SGD per square metre)",
+      "shortLease": "derivedRemainingYears < 70",
+      "source": "- **Town-level comparison**: short lease (<70 yr) vs fresh lease (90+ yr) median PSM within same town (the frozen appendix, adopted verbatim)",
+      "window": {
+        "end": "2026-10",
+        "start": "2017-01"
+      },
+      "windowStatus": "the frozen text states NO window for the town table — recorded as underspecified and not chosen for it; this ledger re-measures under the article's stated data period start capped at the measured cutoff, and the window is a field"
+    },
+    "pasirRisInversion": {
+      "articleRowDiscountLabel": "-20.2%",
+      "articleRowFresh": 4676,
+      "articleRowOwnArithmetic": {
+        "discountFreshMinusShortOverFresh": -20.21,
+        "inverseShortMinusFreshOverFresh": 20.21,
+        "meaning": "the article's published discount reproduces from its own row values under (fresh - short) / fresh for every row, including PASIR RIS at -20.21; the inverse of that same quantity is what the technical findings print as 'Pasir Ris +20.2% (inverted)'"
+      },
+      "articleRowShort": 5621,
+      "findingsValue": 20.2,
+      "meaning": "the article's own row shows short-lease PSM ABOVE fresh-lease PSM; the table prints that as a -20.2% 'Discount' and the technical findings print the SAME row as +20.2% '(inverted)' — exact sign flips of one quantity computed on the row's own values with the fresh PSM as denominator. The measured window does NOT reproduce the inversion: short-lease median PSM sits BELOW fresh-lease median PSM for Pasir Ris here",
+      "measuredFreshMedianDerivedPsm": 5967.74,
+      "measuredShortBelowFresh": true,
+      "measuredShortMedianDerivedPsm": 5433.07
+    },
+    "signConventions": {
+      "meaning": "the table prints the six discounts as (fresh - short)/fresh; the technical findings restate four of them with the opposite sign; each restatement is the exact negative of the table value (findingsIsExactNegativeOfTable), so the two surfaces disagree on convention, not on magnitude",
+      "rows": [
+        {
+          "findingsIsExactNegativeOfTable": true,
+          "findingsValue": -40.6,
+          "id": "CLEMENTI",
+          "tableValue": 40.6
+        },
+        {
+          "findingsIsExactNegativeOfTable": true,
+          "findingsValue": -39.6,
+          "id": "TOA PAYOH",
+          "tableValue": 39.6
+        },
+        {
+          "findingsIsExactNegativeOfTable": true,
+          "findingsValue": -6.2,
+          "id": "WOODLANDS",
+          "tableValue": 6.2
+        },
+        {
+          "findingsIsExactNegativeOfTable": true,
+          "findingsValue": 20.2,
+          "id": "PASIR RIS",
+          "tableValue": -20.2
+        }
+      ]
+    },
+    "towns": [
+      {
+        "article": {
+          "discountLabel": "40.6%",
+          "fresh": 8796,
+          "id": "CLEMENTI",
+          "short": 5224
+        },
+        "articleOwnArithmetic": {
+          "discountFreshMinusShortOverFresh": 40.61,
+          "inverseShortMinusFreshOverFresh": -40.61,
+          "meaning": "the article's published discount reproduces from its own row values under (fresh - short) / fresh for every row, including PASIR RIS at -20.21; the inverse of that same quantity is what the technical findings print as 'Pasir Ris +20.2% (inverted)'"
+        },
+        "id": "CLEMENTI",
+        "measured": {
+          "discountFreshMinusShortOverFresh": 40.99,
+          "freshMedianDerivedPsm": 8979.17,
+          "freshRows": 991,
+          "shortMedianDerivedPsm": 5298.51,
+          "shortRows": 3716
+        },
+        "measuredMinusArticleFresh": 183.17,
+        "measuredMinusArticleShort": 74.51
+      },
+      {
+        "article": {
+          "discountLabel": "39.6%",
+          "fresh": 8182,
+          "id": "TOA PAYOH",
+          "short": 4939
+        },
+        "articleOwnArithmetic": {
+          "discountFreshMinusShortOverFresh": 39.64,
+          "inverseShortMinusFreshOverFresh": -39.64,
+          "meaning": "the article's published discount reproduces from its own row values under (fresh - short) / fresh for every row, including PASIR RIS at -20.21; the inverse of that same quantity is what the technical findings print as 'Pasir Ris +20.2% (inverted)'"
+        },
+        "id": "TOA PAYOH",
+        "measured": {
+          "discountFreshMinusShortOverFresh": 52.13,
+          "freshMedianDerivedPsm": 10588.24,
+          "freshRows": 1316,
+          "shortMedianDerivedPsm": 5068.49,
+          "shortRows": 5005
+        },
+        "measuredMinusArticleFresh": 2406.24,
+        "measuredMinusArticleShort": 129.49
+      },
+      {
+        "article": {
+          "discountLabel": "38.9%",
+          "fresh": 9048,
+          "id": "QUEENSTOWN",
+          "short": 5526
+        },
+        "articleOwnArithmetic": {
+          "discountFreshMinusShortOverFresh": 38.93,
+          "inverseShortMinusFreshOverFresh": -38.93,
+          "meaning": "the article's published discount reproduces from its own row values under (fresh - short) / fresh for every row, including PASIR RIS at -20.21; the inverse of that same quantity is what the technical findings print as 'Pasir Ris +20.2% (inverted)'"
+        },
+        "id": "QUEENSTOWN",
+        "measured": {
+          "discountFreshMinusShortOverFresh": 42.59,
+          "freshMedianDerivedPsm": 9734.94,
+          "freshRows": 1762,
+          "shortMedianDerivedPsm": 5589.04,
+          "shortRows": 2951
+        },
+        "measuredMinusArticleFresh": 686.94,
+        "measuredMinusArticleShort": 63.04
+      },
+      {
+        "article": {
+          "discountLabel": "6.2%",
+          "fresh": 4544,
+          "id": "WOODLANDS",
+          "short": 4262
+        },
+        "articleOwnArithmetic": {
+          "discountFreshMinusShortOverFresh": 6.21,
+          "inverseShortMinusFreshOverFresh": -6.21,
+          "meaning": "the article's published discount reproduces from its own row values under (fresh - short) / fresh for every row, including PASIR RIS at -20.21; the inverse of that same quantity is what the technical findings print as 'Pasir Ris +20.2% (inverted)'"
+        },
+        "id": "WOODLANDS",
+        "measured": {
+          "discountFreshMinusShortOverFresh": 18.62,
+          "freshMedianDerivedPsm": 5806.45,
+          "freshRows": 2776,
+          "shortMedianDerivedPsm": 4725.27,
+          "shortRows": 3889
+        },
+        "measuredMinusArticleFresh": 1262.45,
+        "measuredMinusArticleShort": 463.27
+      },
+      {
+        "article": {
+          "discountLabel": "0.4%",
+          "fresh": 4516,
+          "id": "JURONG WEST",
+          "short": 4496
+        },
+        "articleOwnArithmetic": {
+          "discountFreshMinusShortOverFresh": 0.44,
+          "inverseShortMinusFreshOverFresh": -0.44,
+          "meaning": "the article's published discount reproduces from its own row values under (fresh - short) / fresh for every row, including PASIR RIS at -20.21; the inverse of that same quantity is what the technical findings print as 'Pasir Ris +20.2% (inverted)'"
+        },
+        "id": "JURONG WEST",
+        "measured": {
+          "discountFreshMinusShortOverFresh": 27.44,
+          "freshMedianDerivedPsm": 6021.51,
+          "freshRows": 1686,
+          "shortMedianDerivedPsm": 4368.93,
+          "shortRows": 6474
+        },
+        "measuredMinusArticleFresh": 1505.51,
+        "measuredMinusArticleShort": -127.07
+      },
+      {
+        "article": {
+          "discountLabel": "-20.2%",
+          "fresh": 4676,
+          "id": "PASIR RIS",
+          "short": 5621
+        },
+        "articleOwnArithmetic": {
+          "discountFreshMinusShortOverFresh": -20.21,
+          "inverseShortMinusFreshOverFresh": 20.21,
+          "meaning": "the article's published discount reproduces from its own row values under (fresh - short) / fresh for every row, including PASIR RIS at -20.21; the inverse of that same quantity is what the technical findings print as 'Pasir Ris +20.2% (inverted)'"
+        },
+        "id": "PASIR RIS",
+        "measured": {
+          "discountFreshMinusShortOverFresh": 8.96,
+          "freshMedianDerivedPsm": 5967.74,
+          "freshRows": 624,
+          "shortMedianDerivedPsm": 5433.07,
+          "shortRows": 3063
+        },
+        "measuredMinusArticleFresh": 1291.74,
+        "measuredMinusArticleShort": -187.93
+      }
+    ]
+  }
+}

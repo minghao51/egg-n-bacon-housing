@@ -1,0 +1,2188 @@
+{
+  "absenceScans": {
+    "cbdDefinition": {
+      "claimChecked": "CBD definition asset / reference point (1.2839, 103.8513)",
+      "contentMatches": [
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/mrt-impact.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
+        }
+      ],
+      "contentPattern": "1\\.2839|103\\.8513",
+      "filenamePattern": "cbd (case-insensitive, path)",
+      "matchedFileCount": 261,
+      "matchedFiles": [
+        "app/public/data/analysis/cbd_mrt_decomposition/cbd_mrt_decomposition_summary.png",
+        "app/public/data/analysis/cbd_mrt_decomposition/mrt_cbd_scatter.png",
+        "app/public/data/analysis/cbd_mrt_decomposition/regional_effects_comparison.png",
+        "app/public/data/interactive_tools/mrt_cbd_impact.json.gz",
+        "app/src/components/tools/MrtCbdInspection.tsx",
+        "data/cache/004cbdc05c231e979f1d2fe669f1b89b970c4dddab50f878453fe10836988c91.parquet",
+        "data/cache/010e0d4cbdd5d1e1b0de45a33e3752e0854c4f6b895f4478061b974c8002729c.parquet",
+        "data/cache/0283df519bfda5b9b18ecbda5784b182911c543b225c0f504631926361647bd7.parquet",
+        "data/cache/03aff7cbdcb09d2ae28fc2806069b82dba78cd0678b8fbd3c4c95b31ca1a92df.parquet",
+        "data/cache/04b1d1fcaa0548d77ccd4dbf76d5f757d223569842e95b492fcbd03bd92e65ff.parquet",
+        "data/cache/052bb36d5a189c1404a3ef0da247cd1f527b96c1c4a8fcbd80c78507e7aa5042.parquet",
+        "data/cache/05b51daa33d54610287011dce787504f7b0a123704bffacb76c6e7bc72ccbd24.parquet",
+        "data/cache/05ecc086de9eafd76cf18cbd991da856b8b613aa0a87560539b101f7b931bd0c.parquet",
+        "data/cache/0652d7b40c118c182dfba8d634172d02b3a07789feef2d1da31bff6f0cbddb0e.parquet",
+        "data/cache/0778e3c31f57b0b70b61906959bbb54592cf4ca9f160273ccbd9b655c70f54db.parquet",
+        "data/cache/0787f72b8c9dffd146c1ead6090bf323aaccbdcf468e8fee56f20fa6fc5fd8a1.parquet",
+        "data/cache/07ffb27ff75bc95d1988e83fdfc4d0526adcb9172acbd3c8fc444a4114b7b097.parquet",
+        "data/cache/087563505388f570e776f9cbd19f2c45267781a20c0695e46925e6046982553f.parquet",
+        "data/cache/08a072332e5bc1d1653ba4dadaabd32cf3a7359d12e2481de3d32f657cd9cbdf.parquet",
+        "data/cache/094168b212cbd25139b1848fd65702b2c1ac903a41273b383f28917700af5e57.parquet",
+        "data/cache/0a1060cb9e2df265c3630f949b2d825b2cbd7d9777f23149cc2bc9a00482b5ab.parquet",
+        "data/cache/0b4330e9962a7a9f59b3e6461144cbd85b891cb456336d4870210d66bbf7871f.parquet",
+        "data/cache/0f7178129034fc88674f9c37791654cf5e7a20254fd0fe0b307cbd10adcd5137.parquet",
+        "data/cache/10b9fcbdfc4252691feea22cb726f4411f63965daee726802e6315db0fb00f46.parquet",
+        "data/cache/110354b66cfd1a60291e6d22afc059d62a2e8f8cbdc371f3dd52259db0d66f36.parquet",
+        "data/cache/13e65094f69baf6f3273d9c3c1456005691225064cbd36e6bdf2a53bc80c8804.parquet",
+        "data/cache/14d9343642a0d324506b6c6579f78cbd3fd6a347205baf5c1138df2052a59920.parquet",
+        "data/cache/1a1adb333d2a6ff2b957cb63406108956e93fbc2d76cbdc44d614b2c467da0dc.parquet",
+        "data/cache/1bac8109d3c6d00d248eb3024a3dc5aae656cf84723d9b8418cfcbda1354918c.parquet",
+        "data/cache/1c9fc231e474b91f17a4b663fe99731af576cbd9cf6c747fa6b32ff3e216c940.parquet",
+        "data/cache/1ddeda9944704642eb9155ada9ade71f23012bd456d022a4dd26d1baa2adcbd5.parquet",
+        "data/cache/1eac4222ebddb8207f76087cbb152037a4958bb4e53dde98a063ecbda245a109.parquet",
+        "data/cache/1eeb9e23b976a4b2f94cfb89cbd7a2fc6c9cdbba2b7ceb5c2f33647eda90274e.parquet",
+        "data/cache/1f15d3b703b750b12a8a97886aca7ebed5c73582ab70d06d4802cbd292860114.parquet",
+        "data/cache/1f5b58639f7ca38a8a55ae508dbe4d566bdf6cd2e79d4fca75cbd575f419e208.parquet",
+        "data/cache/1f892954a69cbd4410e9c03d3b6569165c6ecd52f295bac4903904e17adeb251.parquet",
+        "data/cache/1feea411dda8ec7729835db49e8da68bf70ed16b54518adffc0cbda04f136126.parquet",
+        "data/cache/20899107abaee45b20d9cbd8855b02cdcd7dfdabb7e803d690080cf70f5a2283.parquet",
+        "data/cache/2253908a0b7ca20af80f5c50d4fe61cf465bc6cbde82fe2a1b6e08d01c1238ee.parquet",
+        "data/cache/228e79d416bcbd663f11ec8dbba1942d89ffe455338b4ae10535ce61b2b50981.parquet",
+        "data/cache/244dda764ce39f9869eed51f768c337a5827a20749f5223e8281b8d31e9fcbdf.parquet",
+        "data/cache/2465644a65df970879acbdff00eeb0ac2281ad025531809b1221cca18fd5a202.parquet",
+        "data/cache/24cdb29289af083ada83eea237bd05abf41f4f465e8cbdd999258c261bcd774b.parquet",
+        "data/cache/264288ee9f1809906fbd8637aa87d83a49312f23a02385a352277f02fe340cbd.parquet",
+        "data/cache/276f321f25cbd34c89c969553a5100d318f9bca61f80a1f6dec22607cf040db4.parquet",
+        "data/cache/285836d701c033d41aebdd239f898931f293dfa7984ee930d2f0420cbd59665f.parquet",
+        "data/cache/290b88efa1d35632e547809d5cbd33f3603c9bff9f73ed24c9f89917edf73153.parquet",
+        "data/cache/2ad62eab5bd9a70a40244ce4990139261ed189dbec383957d68cbd15a019dfe7.parquet",
+        "data/cache/2b8aba6485407ab0402b5cbdbfeb645f76727218ded6223c491da7a0af9432ac.parquet",
+        "data/cache/2be50c567d5bb17a525d3375b9cdd2fcbd317a1bc71dcbb30e733cc76a2dfe8e.parquet",
+        "data/cache/2c9b412658cf0043dd3411323bcbd609ff41d81966c65b919a571a676a78c5d2.parquet",
+        "data/cache/2db4b742b9028cb7d46b4366d5ffea8844b6e3d955bcbdedc2b4074296ddbe9a.parquet",
+        "data/cache/305800bd3a52544ef8c4a74bb178714fcce0197f534b6c2ecbd348747609732e.parquet",
+        "data/cache/325f7b70323713cb02890162ce164d3629ccbd70363a634032b92c0a8b681d79.parquet",
+        "data/cache/339e4c355877909f0ce7beab9d2f339bcbddac0670dbe364dfb182ebd22d15b5.parquet",
+        "data/cache/345881bab2dcbd23b05c47ecd54c05a057c8d2028eaa79f349453e42fa262b18.parquet",
+        "data/cache/35f67f3e57783cbd3d609b72e07a1b6395d6798665529760446c99de17f89b0d.parquet",
+        "data/cache/367dbf1d0cbd4e105ea6cae1b8956838a5a8176754693417f7d8ee40c9b29146.parquet",
+        "data/cache/372bcf88813a7b0012e4cbdaee6a8c554b323e721943463432096506d9c76d40.parquet",
+        "data/cache/377a1012db242b5d53247c6e3c1446310b597cbd446b1500c2c34a5f20370b3b.parquet",
+        "data/cache/396e27fd04d287812f3f59a3295836e4ba831079373df34cbd150c44d896bbbe.parquet",
+        "data/cache/39efd9149605455d14da25949abcbd515e372db1cf252948d1e8f014ad0355be.parquet",
+        "data/cache/3a9947a3d6e01a6185508e29980a366906c5965c56637a2be06eb155cbdad2af.parquet",
+        "data/cache/3c70daff628fb606853794e80a660fd4227004870ccbdb0c1e50c790a68fa4f0.parquet",
+        "data/cache/3dbb7d91822d432995a6cce8ecff3f80765f13478201bfe06e1963e9ad9f0cbd.parquet",
+        "data/cache/3f2db4aae830237aacf9aad68b91bdba4b47d992882855cbd2cbd66c0e1de4bf.parquet",
+        "data/cache/41b4dcbd0ea599d40bb4a446959fa38d2651718cb0a5da9bc9e30070d18692e5.parquet",
+        "data/cache/4359bda065e7d6cbd5ae26f93d34bf1e62527ea866e84c7987e4f65a7984f8da.parquet",
+        "data/cache/45189a5400796806eadfc3a648de6ac0cbdca549fe31eadbe80b61d7eb6d1f7b.parquet",
+        "data/cache/465bda74b5cbdbf7d38cfc43810de555d3590df5acc8bac0f6933c191357aa49.parquet",
+        "data/cache/46e41161c43043682756e70a462d8309a5cbd4e1288b0ecbbcda2c3726b7e7c0.parquet",
+        "data/cache/4731a0f6122d3263cbd5374798d95fbdf68f1955f913b92c2457431c74751479.parquet",
+        "data/cache/47a77ce3b1f4357bf19ef6068454cfba478b904379bcd51e382e80e28e81dcbd.parquet",
+        "data/cache/48c6cbd71c2862bacf804e89325e7788969ee56cc32d6091e1e2c72c1711e153.parquet",
+        "data/cache/495d06ecd723cbd3ae6afc1e0366a9e1642b0dbbfe2ea44cf9b884dab9e91580.parquet",
+        "data/cache/49cb02c83796b92590d552e08a1fab6accbd8be33dede8bf41707f361050f120.parquet",
+        "data/cache/49ef60aba111496cb10380d83807759c8bc0aba5da80b350b97605cbd75094f1.parquet",
+        "data/cache/4a1dad3feafa622581f4019a0cbd9092cd863c067322cf71bf1479e9dc1e8916.parquet",
+        "data/cache/4a5cb7aa9346cdd77efb3fc2e0f38d4724ee82f6c8c85095cbd9d49c24de719c.parquet",
+        "data/cache/4c2d93dc40a808ea199a1428a086fdd2dc730a7cce6aca3269cbd106c1f38131.parquet",
+        "data/cache/4ceced2e739df727536c7c1dbf787bc99f0b0de6393f7041db7c3b7cbd68d554.parquet",
+        "data/cache/4d0e7f424234ed1eb02ccc50f835d79aa99595cbd92e26678a21cf6b7c25a9e6.parquet",
+        "data/cache/4e510ad80833a9437081b2fcf5fadddace4e874798405cbd42dedda14dfadfb1.parquet",
+        "data/cache/4e97cc0119d92f1c9ba7c67f9143f84b2debcbde2b403c1d35d8325f4a4cad5f.parquet",
+        "data/cache/5199152129c605a2de399cbd710c236da55642ddb0afd49000a3cd478e4efd4d.parquet",
+        "data/cache/52e149be7a31f6492d19cca49d9ea8fa770a272c07feccdcbd7fafd3980e2cde.parquet",
+        "data/cache/53d28b1bbb723026ab6d05acbd457c258fcfb7c944730331f68a0b968120feb4.parquet",
+        "data/cache/5476e4914484326063b8808f4c0f4d0a849a8e28f987eddc983b00f326cbd4d1.parquet",
+        "data/cache/5974f6b4086d58d685a3d0f6fcbd3f313243a945bce533eed61132516f9741a2.parquet",
+        "data/cache/59fa61909b77018398cbd6166ec09fce31431e3b371838ab4a6be41e29e2d560.parquet",
+        "data/cache/59feb2672bf1430d7a0b13e1cbd1ead6f7bab827ed7563cdf6c23bb0fea62fa6.parquet",
+        "data/cache/5b7527ef6bd7b588e0dca34c3da2cbdb7e9d810f224dc78e89381bae00baf32f.parquet",
+        "data/cache/5bc7842c0a18f30849e8a991a12cf68dd867172256b5ecb1ef24304cbdc6bdf4.parquet",
+        "data/cache/5be8c146fad57c953c2fa998213cbdc982dc838addd91a604306d50ebb5f150e.parquet",
+        "data/cache/5cbd295fd95faf7d0c8ff0fb770035557d64d325ca4ecc555e1c76acac7a2fcb.parquet",
+        "data/cache/5e79540b5cbde049831bef963f4741ab9405859dba2d5a11f0a0db4a1e0d4987.parquet",
+        "data/cache/5f61f9e58d2eaf86dc8d8ce0b1dda96cbdc38902daa5adca3150ffe6fc54a60d.parquet",
+        "data/cache/6094a764dfb75eefa4cbdda414788a24868f5b82c126f14051442a0908917144.parquet",
+        "data/cache/615d4be58678236b34c77973b1ccc3511028ca02de7f10a4cb20ccbde2318cbc.parquet",
+        "data/cache/61b7b5c5cd5ab5ed1749096f2d4bbc1badf43e389eb4d7cbda75ba5500badab0.parquet",
+        "data/cache/62817bee24cbd850c749f1c53db639440f7baaf7c11b98d8b10baa6b2c6cf82b.parquet",
+        "data/cache/64eef3c7f4fba643b4f9cacbd05640a0e07b0fd976f92cb34e3b223e69dc1a25.parquet",
+        "data/cache/650d5004e7ecea85b2af928f1ceb4cd6a30cccbd2818fb8ccd3328b2bea71079.parquet",
+        "data/cache/666aeccbdd6ec2707e1de33d250b4bb278f62916e2118f5ad7e4e36977d37272.parquet",
+        "data/cache/68c1ceda7c4174e3223f8732d41d8b79b0d781672ddad104ed9acbd5048c7781.parquet",
+        "data/cache/6ad47236fa1c0b8aacbd9189d3d7286397168a7901f21e0c715c0a8ea59d6be8.parquet",
+        "data/cache/6bc38d4d1d207837da1e967154d1b17c4dcd60ae575c10cbd53e2eb3f34717a1.parquet",
+        "data/cache/6db63bc094b369f21b9721f711bea81e0afef9ebcbd0e1d012abb5dab7fd4cb9.parquet",
+        "data/cache/712bd1431d2e49ff595778ae3fa3bf9b3a428ddc0b5c814217a0b002cbd427c4.parquet",
+        "data/cache/7325fc7a0c6841fd0c03355f7fc4f0cc5e0f0794584c80895cbd1c8e990701e4.parquet",
+        "data/cache/7466637993ed3db4d4ff0098cc20f9c2951956b43b96d8883a37eee9cbda517a.parquet",
+        "data/cache/747d29893ba3d5451603c7e70a0502e26dde412317ecc6cbd046048856656670.parquet",
+        "data/cache/75310cba4cec861400cb750dab95a7cf42f1f3a11a7b5b187ba1ed309acbd333.parquet",
+        "data/cache/75c9e7cbf317fed3ec44b8137d1f51ff6ff3920ed30082ccbdfa04c1e4c3ae09.parquet",
+        "data/cache/786b2cbdef26467aff68f5ca19c28b5556a023633d2c98f6eff524ed52012b4e.parquet",
+        "data/cache/7963ab9720a098d9b7071f91182cbd15368b71e9e61d0fb5eea477c53466e4f1.parquet",
+        "data/cache/7c219a44bac8b7d79b9a4fb6eccbd1d323e80f8206b8f567460d9429228a8080.parquet",
+        "data/cache/7c2e8593ebbdc9e95acbdab4b1301795fa68c638931c26f0b19a2e56eb484d12.parquet",
+        "data/cache/7cc25e201d2af9c6c02964f7516fce3ab2e90092c31fe2d825cbd780ded71f1b.parquet",
+        "data/cache/7dfa628cf8fbb6628acbd8a2f1626d95779698bf7133b6999f7302a549b87793.parquet",
+        "data/cache/7e09fa39bae81301c3452b40e2e70bea2513ac7f9cbd64dca13b92eca372ee9a.parquet",
+        "data/cache/7e138fc4e84aeb48fe24acc9536602e761acbde1448585b7930b55a17dcfde84.parquet",
+        "data/cache/7e362287bcf6f051f8b417536a754aa643f1b20f8142fb16a477edcbd8122210.parquet",
+        "data/cache/7e9b1b72b530e81d49b7ee8cbd20f822aff4c624208ce345acc6ea54a9bad3d8.parquet",
+        "data/cache/7eceae0f7b9597de56b0ff3800d383f6b5984b21080becbd7700569ab24a2936.parquet",
+        "data/cache/7f940cd78bc167db4820cbdf36f8cc73e861b1870c09296888c27157a254f305.parquet",
+        "data/cache/7fb07edf3275de84feb01a28afd66768ce52faacbd9050e4acc6ece7186c9a7a.parquet",
+        "data/cache/812cbdccbd08214d7a26edefade56e020e399937ef2078eb881510cab9960c68.parquet",
+        "data/cache/838fac52e9fe949f864803f78cbd843974605fdc71750e982933f87676862cac.parquet",
+        "data/cache/850bf166bb3118179cca2caa2d321e716cbde26bf74d49cae3600241998c4a47.parquet",
+        "data/cache/852d3abd23f7905ba0953aa6dc8c3b7a68b8b4b6add3cbdcfc3534a7eb3b7512.parquet",
+        "data/cache/85b83132164bd0bbe4015f609ed1653de164063e53f80d5dbace47339e403cbd.parquet",
+        "data/cache/86434ee429cbdbb58321f7c1e6ea09c72121a35341a64f1447b2a88af0977b5e.parquet",
+        "data/cache/8a25027aa966a13e9e4de215ca064d3260154cbd134b042e889225f173398ff9.parquet",
+        "data/cache/8ca77575af6e3e15a76eebe6c13a8d1cbd8d89055371a54cec8cd4ee7a2c2eb1.parquet",
+        "data/cache/8ce0121128b3e04db73ce4efdcdb33d90af515a48c10ed132a878cbd088c67e2.parquet",
+        "data/cache/8d57a8eb82dcbda796219e2047ddcac885b0cf7211b6f22f309b59bb77e4db32.parquet",
+        "data/cache/8e936d5b1687f1cbd472778f22e19660a1a8eaf0c8b60dc06dc9d1e6b3162056.parquet",
+        "data/cache/8f20c50c270aaf97f6b58dcc81a7a5aa25181c89fbcbd9322a046e29bc71dfda.parquet",
+        "data/cache/8fa5a7d7978198b43392975d46272b59025d52ad06aacbdc45b0f0928b035c45.parquet",
+        "data/cache/8fb22f18d71b2ecd663eb0d13740687a6edd905534c6a4d2b52b36e0054cbdb1.parquet",
+        "data/cache/90951644d851ba25b92e545372a9adbf2ede024a474fe238947cbd0d40b45f8e.parquet",
+        "data/cache/91eb3697ee2dbf726bd38af0a60d18dd63e1002781af8998810e38f4c6adcbd8.parquet",
+        "data/cache/9445827e15bc84dcc97acbdd647296f087a926b708244b81295804566814f6df.parquet",
+        "data/cache/97c4fbb113b0b3eabecc77db45fda2fd37172199fc5dbaf41caed2cbd49871b1.parquet",
+        "data/cache/9938dc5c636d039f741c43fdc403411b11130bf886493870859824b0cbda0e5b.parquet",
+        "data/cache/9a211337f1ac47859977edab6fc312d61acbdca82a79787501ffba745c472df9.parquet",
+        "data/cache/9a55e6f2fc61366cd9192aecbd5faaf168c3de9e5d85a08cccd5b4a96532fbc7.parquet",
+        "data/cache/9a7acb78ba059e90cbd8deaefac4ec9aeda7d293a7527532eb2131fd1f5fed7e.parquet",
+        "data/cache/9ba624fd70e8b44b74bad03f326e52a978da8cbd278df0ab9ad9d3106eee893a.parquet",
+        "data/cache/9c65ff638e0b7b86fbdb97f3bcce5af632ead5470e54cf510fcbd9b1694df727.parquet",
+        "data/cache/9cbde2e7b60b4bc9759a7224288a41bfcdb500f125a36a2893500d532d76836a.parquet",
+        "data/cache/9e10d6e6875f15a3d68e2c7dd1fdb3970f121d6cbd45a8771cf184189bb30014.parquet",
+        "data/cache/9fcfd3ac88d1cbda11f68a831c67408f85ba43a49338e36cb77e0891739576ac.parquet",
+        "data/cache/a0d8b12f6fbe97ecbd1914464dc332b531e5cef0c15188c50f22e77fd5be1642.parquet",
+        "data/cache/a29ceea40e7d787cb001ef2a255a53162e1eb91214657bff89decbde6a3a57d6.parquet",
+        "data/cache/a3f83b88ae21b3184e1a9cdbcbd67a82bd177c8a5dc7cbc5f8b5fc4a533b1a9d.parquet",
+        "data/cache/a43ecb5df915570622245fcda13261ebf87947cf7c2c1cbdcefb5625060a9428.parquet",
+        "data/cache/a620b5a3afe932d9cbdb45cef73116137f81f11dddd4fca98c281e62ebeed84a.parquet",
+        "data/cache/a7439a07faf3a50f214767cbe3c7f627f3c28b510dd7f03cbdfa03294ab32605.parquet",
+        "data/cache/a82726928aa39a9d7e17dae13895cbdcc038d30ab3e04359f54819111bc87638.parquet",
+        "data/cache/aa42a7da3dbbf09a12cac631b6b5bcc8315cbd55c0e24e01f83d00d4458a8655.parquet",
+        "data/cache/ab3bb2896cbd08cd5ca3f40ef73fc038b5f289fcf4e5e0baa41c2ff14aa4a888.parquet",
+        "data/cache/ac3e1e1102a28e2d566746e7fb0f2b580d80bd803301f81cbd672b23aa9828b9.parquet",
+        "data/cache/ae1257fd3fad21b212c097cbdc0453553196a9a891c9098e77a33e665bb2a748.parquet",
+        "data/cache/ae1d58c8b634e357a0039c7f80dcbde651f377d3a625284cc92576b2fd150eb9.parquet",
+        "data/cache/aebcbdf6ec2c6d4cc816bd53f3de4997860d3b903f044270c361d04fe4d84365.parquet",
+        "data/cache/aedcba7069075fc45e14ee34c21be8dc1f57f06a1b3cbd8cfa77d470160d65a5.parquet",
+        "data/cache/aef17f2382bca1a0f8def9cbd4017e46dd9feb57f46c0b00118891243a07090e.parquet",
+        "data/cache/aef5d3713a60c7a391c7f086dcbdc2f44ba775d9125df8c449195397c1fc49dd.parquet",
+        "data/cache/afbbc692b5b0aec301cbdb9149dddc275290636d5234875fe2f2a8b49f6e945a.parquet",
+        "data/cache/afdcbd5f21ecfef2a364c83d51fe9928a60474c9175bf046b68653f15756798a.parquet",
+        "data/cache/b1d8db7aaf9a4df607d2799cbd5bc577ef04048f98d5a8fac104db2147dd106f.parquet",
+        "data/cache/b2cbdefae3fc599478199bc88212e6cdbd2b4a7b5beb9f5c3c566c762d7ca3fb.parquet",
+        "data/cache/b2d3c248c2ec8ba9b6718e4acdcf2c7dcbd082832ab32d01bc6f16f3099de53e.parquet",
+        "data/cache/b31dcbcbd04431226f1969ee4d1b3c70183ecbc221238a04078839a153df9134.parquet",
+        "data/cache/b395e1377a961b976ccbd4acc965f8286b66a50a61fe0795da81523e22c64afd.parquet",
+        "data/cache/b3c446ad874990ad1f3cf7cbdae8105a87b0dafe03ea92da68793a586cdc7d35.parquet",
+        "data/cache/b480fcbdbf221ebcaf39d12f43b41e96409d71193d9cecb2182036467c148bab.parquet",
+        "data/cache/b4e752c7bca9c99771f5b20c76b390b9fa3a0cbd43fcf5412d8e70f0b7478edd.parquet",
+        "data/cache/b54fe5f43b1293d096664af816ecef088cbd6ccfcbd0be6ccede0ded458e1f86.parquet",
+        "data/cache/b6dee45f89a97f52e693e5fc7b4fc6e5cbde4da3453e44dfa57465ae34b4d9c6.parquet",
+        "data/cache/b6e1bccbdab199e4b5b57fe813a8569142048cbfba04a126f7cc821fab61b865.parquet",
+        "data/cache/b8b65e4e9ea27f8eca35ae5050beb5fde28d47f5cbdde95a9ee4030c076b91b6.parquet",
+        "data/cache/b8c76519dfd9070cbd7a681dd50720ab1ee5ad2b08b96291ed67b4cd0cfcc6bb.parquet",
+        "data/cache/ba1f3b8dd4b3cdc3057b9cbd20e4d9e26b926b644bf2e0c41b68ec5ae47bda89.parquet",
+        "data/cache/ba9c2490bd6aaf88f46c8a4755c318f3327786701012c956cbd19c87168e085c.parquet",
+        "data/cache/baf7355a80f5ad1bbfa9f2ed814c6ecbd3b88c04c0647f3924becc49e709d957.parquet",
+        "data/cache/bb995a3fa2da0501a8cbd42932e89204d3fc4737de8ad1ae9b2a7c36ad66a5ff.parquet",
+        "data/cache/bbddd471155a7ed5769c9181adbf3079d9be5e3e6ab0cbd589d0c4fcdcab88ca.parquet",
+        "data/cache/bd40b7c921f3dd3f64a3bb1a1d0ffc79cbdd8335e2b6ee31a4db52bf4c7a3549.parquet",
+        "data/cache/bd4cd169c6b150e4aa291f61ec784a0bbfafbae666b22fccbdb1f4d7771aa7d5.parquet",
+        "data/cache/bd9b77cbd05926f70ca42bc49b62756dd6b48e170d14b76c84e419071996f07c.parquet",
+        "data/cache/c061b6b63b8de036398e9f619a51224307281c69ccbdc875e6884ff03b1b5b58.parquet",
+        "data/cache/c1c3e864a4d9fecbd77fd5a06562b9e4b118783bd8852be01dac236c0eb0c4df.parquet",
+        "data/cache/c1ddfcbdd158658dff30d795e1f3828a56f4aeefc8907c160117a29f1d464702.parquet",
+        "data/cache/c242cbd5e7ff049e725de57cb356608c87497c41dfe9728c85fe38877491bfce.parquet",
+        "data/cache/c492303edb8fce166b93ad0dc7b52b9fd79c42bebc7a6933dd374b1cbd4b13cc.parquet",
+        "data/cache/c554cb70476383a04f7cbd8b7bac7506690fee8874c018ffe8453d8c2304fde5.parquet",
+        "data/cache/c57f70f4f3f1990fefb1899648c8d8f317076cbdc6bd44c55019fe1cda44803a.parquet",
+        "data/cache/c669cdcbd1940f70e42b5deb7d021dd96821818ae0487fc06e5aa0b3c2470e1b.parquet",
+        "data/cache/c72cc5c72c1da0948018cbd8bb03ba06bb78e69c270957c00b4eb6f3b5a01a44.parquet",
+        "data/cache/c74579dab81248cb0b33950b7d49cbd8fa689dca2849698107d1a46f7faa8acf.parquet",
+        "data/cache/c80f3883c50cbd3080af6e08e135688857265ebe4a2a7955326f062bc7f6ff94.parquet",
+        "data/cache/ca9d981d1a2fb153d5ee90063226db1211a2b9d44805a2ddcdd0cbdf245dc77b.parquet",
+        "data/cache/caece7bbf8915b50def541bff70b65cab4fb868882f94a000c5476e7a4bcbd6f.parquet",
+        "data/cache/cba41564862f944822c4eeb2387c1f6d924fcbd424797627bef02da9c87e62ed.parquet",
+        "data/cache/cbd0060c2b693ea4704768d8cbb0c669a5516f70f92ac655680565c0036ddcc3.parquet",
+        "data/cache/cbd9056a240cd7fbe93a79a5aeb9ed63caf0cf07e93fad7e1258b2f385148e9c.parquet",
+        "data/cache/cbda48784432d4622bc66f25fd0629b17afe0f2d5db82a541099285246de5edd.parquet",
+        "data/cache/cf0a346839def7fd9d4b0ac36e339e309d663f7ddccbd390f53f527a3f89cc7c.parquet",
+        "data/cache/d206f884970cbb6c5e28909098cbdf4f60bb63e3518e9c2d86b581dace049733.parquet",
+        "data/cache/d23cbd121f16cc7a8167586dcb2387897be8488cb280b588409fd221ddbb7b3d.parquet",
+        "data/cache/d27df10d2e393ba4809fae4cfe8fa26df5d2ad470e7b36191cbd63f9bd9e032f.parquet",
+        "data/cache/d351bfbb5c3cbd76c1271da6dd3ec5e5883b83fa48c0e31b32c1d530e750f78b.parquet",
+        "data/cache/d5168e16a86341b020971969fa6bbfc8ad4a0c8d6be14d25bafcbd0193383353.parquet",
+        "data/cache/d54c8b9de43238e98a2b76fcc82e44cbd01fc8fd4b79348c9207b93d368f923b.parquet",
+        "data/cache/d784385153f18ccdf89bde38c993b02a1465bce4de2810299c3fb27e1dcbd81a.parquet",
+        "data/cache/d85406213ff4da3f5da31cbde384ae03d3482ac64238951292ad8c99fc12a8db.parquet",
+        "data/cache/d8f0636770a0103cbd4409cf7d01fd83d53be3f2c442498a1f55cdaaccc75ef3.parquet",
+        "data/cache/d9423431b37ab965c280a6bec88f17e084ccffd408d878fcbdaf7a5c94079740.parquet",
+        "data/cache/da64e49961a418bbb9c290be83806e5c06e8a9f856ca9cbd701db47e50161a48.parquet",
+        "data/cache/dbdcbd7beff2ab01b72dba07f4de6b8764e7ef28902970bf81010ad431a9487b.parquet",
+        "data/cache/dcd827d7d4a1d402f23e0dda373212722b653540acbd9bf81e74ef12a49630ce.parquet",
+        "data/cache/df01ddde2ea3b289dcbd243c187c9feeeb2beff2eb2f5821c53153cd68ffbf14.parquet",
+        "data/cache/df64cbda0006232f5f1962178b773a488af31356f2b4fc9a7aa6031193aa3510.parquet",
+        "data/cache/e0bdb371719f2e8b354cbdfde31a36f1f872369c5826bc59f4a395d31bcc70b8.parquet",
+        "data/cache/e213bdd07cbd0553f316e92b86b86b55e8701f5473834a1ed1730c528b85671e.parquet",
+        "data/cache/e29b5b6a1cbdaa7fe58d4d5b27992a8c037f2c08ea6e41e4378418921e102165.parquet",
+        "data/cache/e2b6a6fbd025546cbd742442ef6832c2df57f71bd5dd353afe51d85711ca2045.parquet",
+        "data/cache/e31ee0d7eba44d7c69233cbda21bfcecd63d16d482d15426109a2644e9bf575c.parquet",
+        "data/cache/e32ab47ed842d4bcbd0c369bde01f5c6219ab0b9c8bb32db863b67c681ec97d3.parquet",
+        "data/cache/e40a7e7b3c1ecb6ac1eaa48e4c97c2dd308b2c4fcbd3fdc8d487ddb64f522312.parquet",
+        "data/cache/e4d0580907a122cbda6bf5cad0bc411efb5d1263b081388f40e4fed63ff9dadf.parquet",
+        "data/cache/e86245e4f5c6824c1b5fa59cbd903760920a9f7db994750a0fd5b1ab78b57c41.parquet",
+        "data/cache/e866a03c933c5711fba4b3dc1011cbdd961485e0082ac12d8ec69c471c2972d9.parquet",
+        "data/cache/e93a9aa50e129bfac0489d6f49871fe40b4fcbd61db8c91ca4eed4d0b6f25931.parquet",
+        "data/cache/eaa5c7a530b4603a046b1d46bfddc99072fc76bfacbd1286013cfbff40fed47e.parquet",
+        "data/cache/ebb50933c92f3587294bb5e557726e558b265e8a3cbdac78d00113f4c6a118b6.parquet",
+        "data/cache/eea18e6a2413f44ee2e605d6dc20ff64ebd8ec77833cd5c917cbda40b874982a.parquet",
+        "data/cache/ef2dbe9e8d2b0b5ddb48a2fa5eedb430eb0263b3eda8bc5cbdb79570284229d9.parquet",
+        "data/cache/efe481a6c21e95040584f23864312d7b90c8746cbd32215686a89473d5195495.parquet",
+        "data/cache/f126470b2cbd2ebdf780a0b89f3da074068052394b386d893694c71d118d5cda.parquet",
+        "data/cache/f1d111cc779d55ee0f0f4cbd34cdf4f6189f711373730a2553d88bcc57ec7d07.parquet",
+        "data/cache/f1e86e0cbd35f5df27bec299e4b1ceb9f08649cf9ed5e82e7ee4e7079dbe6e1d.parquet",
+        "data/cache/f235b4ecdfc45f1c1a09ef33b0d684204598787364785ae6e7ea5cbdbd6b7119.parquet",
+        "data/cache/f236be53a3b1309761d6193545316a2861c31cc5f4c5cf0732fb7acbd2d8ce63.parquet",
+        "data/cache/f25cd4c82f667a5dd36831ea69d51f40d24265b8e6527a1b251cbdd71188ea9e.parquet",
+        "data/cache/f2df88f3dbe877ed2a09adc2665ac9c7e04f2eacbd6e91b69320a1c1faa4bc24.parquet",
+        "data/cache/f35608d0d1b615b254cbd2eabdd488ff0027982e017367e8e2b33b698278235c.parquet",
+        "data/cache/f3de5839f783f62f0f762c0e99f74ecbc9566448482d1cbdaa1134e204801ed9.parquet",
+        "data/cache/f50abfd9cbd8676f86cbe99f559d2990d76b3ab80396f8b4d859b2e1ce7fbe7d.parquet",
+        "data/cache/f64cc10d305b174a2734c72b5fbb627bd42cbdf3971b3b1502b8b9bd4cbb00ca.parquet",
+        "data/cache/f71aefce09395a4fd7d61da61f8934b0cf5cbda697effe6b06e4d3623eb7b576.parquet",
+        "data/cache/f7956ec508794b0bad93346734780660cbd5bad623757e97fe9af0c77dc5005d.parquet",
+        "data/cache/f7a41b9ad98faaee809325b81fce9f10a99919114546cbd6fc6e44a9ab47a900.parquet",
+        "data/cache/f891c76947a5b1ad4d9025bdee0f400e6346cd3e7123e7581d958616fb496cbd.parquet",
+        "data/cache/f8b9866b9ab15e74b54344cbd4a34dc02d48d64ca97324d0ce29b088519443fc.parquet",
+        "data/cache/fcbd82922908133e715abd229ada96accfe6a9b26e307b462033c3d90563aa00.parquet",
+        "data/cache/fdae9a05c054b6c6a0f571b57e87394a6044536ea94209a9cbd1b3ad5fe545ee.parquet",
+        "data/cache/fecbd3d81bd14030ed41c9de00d47abc80704587285c995f2f54595c4b121ec3.parquet"
+      ],
+      "verdict": "screened as absent: the coordinate pair appears only in the frozen text and its living copy; no scanned asset carries a CBD reference point or definition — the calculator asset stores per-km discount rates and explanation strings, which is a coefficient block, not a definition; the shipped dataset has no CBD-distance column at all"
+    },
+    "h3Grid": {
+      "claimChecked": "H3 resolution-8 grid with the 10-record minimum",
+      "contentMatches": [
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/spatial-hotspots.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/mrt-impact.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/spatial-autocorrelation.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/analytics/spatial-hotspots.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/archive/20260127-FINAL-COMPLETE-SUMMARY.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/archive/20260127-mrt-complete-summary.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/plans/2026-02-15-analytics-content-organization.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+        }
+      ],
+      "contentPattern": "H3 hexagonal|resolution 8",
+      "filenamePattern": "\\bh3\\b (case-insensitive, path)",
+      "matchedFileCount": 3,
+      "matchedFiles": [
+        "docs/archive/20260124-h3-grid-map-color-fix.md",
+        "docs/archive/20260124-price-map-h3-fix-complete.md",
+        "docs/plans/2026-02-15-analyze-h3-clusters-plan.md"
+      ],
+      "verdict": "screened as absent: no H3 grid artefact exists on the scanned surface; the cell-area figure (~0.5 km²) and the 10-record minimum are not re-derivable here and are recorded as underspecified"
+    },
+    "olsOutput": {
+      "claimChecked": "legacy OLS / hierarchical-regression outputs (R² 0.2263 / 0.2341 / 0.4977)",
+      "contentMatches": [
+        {
+          "matchCount": 2,
+          "path": "data/analysis/anomaly_detection/all_anomalies.csv"
+        },
+        {
+          "matchCount": 4,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "matchCount": 3,
+          "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md"
+        },
+        {
+          "matchCount": 4,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "matchCount": 3,
+          "path": "docs/analytics/mrt-impact.md"
+        }
+      ],
+      "contentPattern": "0\\.2263|0\\.2341|0\\.4977",
+      "filenamePattern": "\\bols\\b|regression|model_comparison|hierarchical (case-insensitive, path)",
+      "matchedFileCount": 2,
+      "matchedFiles": [
+        "data/analysis/feature_importance/model_comparison.csv",
+        "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
+      ],
+      "verdict": "screened as absent: no machine-readable OLS coefficient table from the legacy run exists on the scanned surface; the three R² literals appear only inside the frozen text and its living copy (contentMatches); the matched model_comparison.csv carries a different mixed-segment run whose linear-model R² is 0.9120, not any legacy figure — an unlinked artefact, adjudicating nothing"
+    },
+    "shapImportance": {
+      "claimChecked": "legacy XGBoost/SHAP importance table (hawker 27.4% ...)",
+      "contentMatches": [
+        {
+          "matchCount": 1,
+          "path": "app/public/data/hotspots.json.gz"
+        },
+        {
+          "matchCount": 17,
+          "path": "app/public/data/observed/2c30e2aa836c140a619883c94a0eb8b54d8812f931380b40426b9bf4c82a6fb6/area-monthly-all.json.gz"
+        },
+        {
+          "matchCount": 4,
+          "path": "app/public/data/observed/2c30e2aa836c140a619883c94a0eb8b54d8812f931380b40426b9bf4c82a6fb6/area-monthly-condo.json.gz"
+        },
+        {
+          "matchCount": 13,
+          "path": "app/public/data/observed/2c30e2aa836c140a619883c94a0eb8b54d8812f931380b40426b9bf4c82a6fb6/area-monthly-hdb.json.gz"
+        },
+        {
+          "matchCount": 2,
+          "path": "app/public/data/observed/2c30e2aa836c140a619883c94a0eb8b54d8812f931380b40426b9bf4c82a6fb6/summary.json.gz"
+        },
+        {
+          "matchCount": 2,
+          "path": "app/public/data/observed/6cd4510f26eca3fdaa332dd1fa715614dc36eaf3ad22e7fce787d78401bcd1f8/summary.json.gz"
+        },
+        {
+          "matchCount": 2,
+          "path": "app/src/components/studies/lib/edition-registry.ts"
+        },
+        {
+          "matchCount": 35,
+          "path": "data/analysis/anomaly_detection/all_anomalies.csv"
+        },
+        {
+          "matchCount": 150,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121003944.csv"
+        },
+        {
+          "matchCount": 173,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121004101.csv"
+        },
+        {
+          "matchCount": 120,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121004213.csv"
+        },
+        {
+          "matchCount": 134,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121004407.csv"
+        },
+        {
+          "matchCount": 155,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121004517.csv"
+        },
+        {
+          "matchCount": 200,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121005130.csv"
+        },
+        {
+          "matchCount": 203,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121005233.csv"
+        },
+        {
+          "matchCount": 53,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121005346.csv"
+        },
+        {
+          "matchCount": 96,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121005450.csv"
+        },
+        {
+          "matchCount": 238,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121005601.csv"
+        },
+        {
+          "matchCount": 164,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121005715.csv"
+        },
+        {
+          "matchCount": 8,
+          "path": "data/manual/csv/ura/ResidentialTransaction20260121005734.csv"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/amenity-impact.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/amenity-impact.md"
+        },
+        {
+          "matchCount": 3,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md"
+        },
+        {
+          "matchCount": 3,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/mrt-impact.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/archive/20260127-mrt-complete-summary.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/archive/20260127-property-type-comparison-implementation.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+        }
+      ],
+      "contentPattern": "27\\.4",
+      "filenamePattern": "xgboost|shap|importance (case-insensitive, path)",
+      "matchedFileCount": 11,
+      "matchedFiles": [
+        "app/public/data/analysis/feature_importance.png",
+        "app/public/data/analysis/mrt_impact/feature_importance_price_psf.png",
+        "app/public/data/analysis/spatial_autocorrelation/combined_feature_importance.png",
+        "app/public/data/analysis/spatial_autocorrelation/feature_importance.png",
+        "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv",
+        "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv",
+        "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv",
+        "data/analysis/feature_importance/feature_importance_rental_yield_pct_xgboost.csv",
+        "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv",
+        "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv",
+        "data/analysis/feature_importance/model_comparison.csv"
+      ],
+      "numericCsvInspection": [
+        {
+          "bytes": 8070,
+          "carriesLegacyShares": false,
+          "hawkerWithin1kmImportance": 6.135e-05,
+          "maxImportance": 0.29605519,
+          "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv",
+          "rows": 121,
+          "sha256": "d89a7be2cc90e539fc06534a64089dc234c8114b31411cb60a929c232748f7ef",
+          "targets": [
+            "price_psm"
+          ]
+        },
+        {
+          "bytes": 6279,
+          "carriesLegacyShares": false,
+          "hawkerWithin1kmImportance": 0.0001803,
+          "maxImportance": 0.41465375,
+          "path": "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv",
+          "rows": 121,
+          "sha256": "7864979c99ba4c2ec22c142bd4429d94803419f537dd520b28009f077b8df2f4",
+          "targets": [
+            "price_psm"
+          ]
+        },
+        {
+          "bytes": 7618,
+          "carriesLegacyShares": false,
+          "hawkerWithin1kmImportance": 0.00030974,
+          "maxImportance": 0.30968265,
+          "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv",
+          "rows": 104,
+          "sha256": "a2244fddf01be07cb572b3fd4eb7b5c7c32d71d188ef255f23eee7cf608576dc",
+          "targets": [
+            "rental_yield_pct"
+          ]
+        },
+        {
+          "bytes": 5857,
+          "carriesLegacyShares": false,
+          "hawkerWithin1kmImportance": 0.00367731,
+          "maxImportance": 0.12826455,
+          "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_xgboost.csv",
+          "rows": 104,
+          "sha256": "0aafc146740e61479ca648fd9334d7a0ea27e90ee3dd317474c91dd076b06e6b",
+          "targets": [
+            "rental_yield_pct"
+          ]
+        },
+        {
+          "bytes": 7626,
+          "carriesLegacyShares": false,
+          "hawkerWithin1kmImportance": 9.767e-05,
+          "maxImportance": 0.27151668,
+          "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv",
+          "rows": 108,
+          "sha256": "7952713db5acdf1c77f7713ecfa55a47d0dd0e3a3d7146c7ed326cfc46705fa2",
+          "targets": [
+            "yoy_change_pct"
+          ]
+        },
+        {
+          "bytes": 5766,
+          "carriesLegacyShares": false,
+          "hawkerWithin1kmImportance": 0.00172393,
+          "maxImportance": 0.16339019,
+          "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv",
+          "rows": 108,
+          "sha256": "4dadafd391960a7ed5b5bb8e279ce783e20964e97e577fa68af6feaa991fc34c",
+          "targets": [
+            "yoy_change_pct"
+          ]
+        },
+        {
+          "bytes": 2061,
+          "path": "data/analysis/feature_importance/model_comparison.csv",
+          "rows": 12,
+          "sha256": "3ae305054c392db84289a47380ef8fbb712f0576c14b7f9a0470b122e2d6e962",
+          "targets": [
+            "price_psf",
+            "rental_yield_pct",
+            "yoy_change_pct"
+          ]
+        }
+      ],
+      "verdict": "screened as absent: no machine-readable XGBoost/SHAP output on the scanned surface carries the legacy shares — the only importance CSVs carry a different mixed-segment model whose hawker_within_1km share is 0.02% (numericCsvInspection); the content pattern runs at substring level, so its matches split into narrative-prose files (the frozen text, its living copy, archive and planning records) and pattern-level substrings in data/code files (longer numbers, unrelated statistics) whose reading this screen cannot adjudicate; origin unverified, and the match lists adjudicate nothing either way about the legacy table's provenance"
+    },
+    "stationDates": {
+      "claimChecked": "MRT station opening dates / operating status",
+      "filenamePattern": "path contains 'mrt' (case-insensitive)",
+      "matchedFileCount": 37,
+      "matchedFiles": [
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/cbd_mrt_decomposition/cbd_mrt_decomposition_summary.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/cbd_mrt_decomposition/mrt_cbd_scatter.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/cbd_mrt_decomposition/regional_effects_comparison.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_impact/distance_band_premiums.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_impact/exploratory_analysis.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_impact/feature_importance_price_psf.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_impact/heterogeneous_effects.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_impact/model_performance_comparison.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_impact/property_type_comparison.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_impact/town_mrt_premiums_ranked.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_temporal_evolution/temporal_evolution_overview.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_temporal_evolution/top_areas_evolution_condominium.png"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "app/public/data/analysis/mrt_temporal_evolution/top_areas_evolution_hdb.png"
+        },
+        {
+          "note": "calculator coefficient asset; no station metadata at all (calculatorAsset)",
+          "path": "app/public/data/interactive_tools/mrt_cbd_impact.json.gz"
+        },
+        {
+          "note": "app consumer; inspection-only state (calculatorLock)",
+          "path": "app/src/components/tools/MrtCbdInspection.tsx"
+        },
+        {
+          "note": "UI artwork",
+          "path": "assets/svg/18-lease-and-mrt-model-tools.svg"
+        },
+        {
+          "note": "derived distance-band summary of an earlier run; unlinked to any run in this checkout",
+          "path": "data/analysis/amenity_impact/mrt_distance_stratification.csv"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "data/manual/csv/datagov/MRTStationExits.geojson"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "data/manual/csv/datagov/MRTStations.geojson"
+        },
+        {
+          "note": "manual station/line/tier table; no date column; strict CSV parse fails at line 81",
+          "path": "data/manual/mrt_lines_mapping.csv"
+        },
+        {
+          "note": "four-line pasted Python traceback, not a station list",
+          "path": "data/manual/mrt_stations_list.txt"
+        },
+        {
+          "note": "2019 legacy seed layer; per-feature stamps at mrtStationsFrame.seedGeojson",
+          "path": "data/pipeline/01_bronze/external/MRTStations.geojson"
+        },
+        {
+          "note": "station -> line-code list mapping; no date field; no status field",
+          "path": "data/pipeline/01_bronze/external/mrt_stations.json"
+        },
+        {
+          "note": "bronze station frame; schema read at mrtStationsFrame",
+          "path": "data/pipeline/01_bronze/raw_mrt_stations.parquet"
+        },
+        {
+          "note": "station-exit layer; per-feature stamps at mrtStationsFrame.exitsLayer",
+          "path": "data/raw/external/datagov/MRTStationExits.geojson"
+        },
+        {
+          "note": "same-bytes copy of the 2019 seed layer (sha256 equals the bronze copy)",
+          "path": "data/raw/external/datagov/MRTStations.geojson"
+        },
+        {
+          "note": "frozen legacy text this pack checks against",
+          "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md"
+        },
+        {
+          "note": "living copy of the legacy article (unfrozen)",
+          "path": "docs/analytics/mrt-impact.md"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "docs/archive/20260126-mrt-distance-feature-complete.md"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "docs/archive/20260126-mrt-enhanced-complete.md"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "docs/archive/20260127-mrt-complete-summary.md"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "docs/archive/20260127-mrt-heterogeneous-effects-addendum.md"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "docs/archive/20260127-property-type-mrt-comparison-final-results.md"
+        },
+        {
+          "note": "matched at filename level; not structurally inspected",
+          "path": "docs/archive/20260127-property-type-mrt-impact-summary.md"
+        },
+        {
+          "note": "tier/interchange/score producer code; no station dates",
+          "path": "src/egg_n_bacon_housing/utils/mrt_line_mapping.py"
+        },
+        {
+          "note": "tests for the tier/score code",
+          "path": "tests/test_mrt_line_mapping.py"
+        }
+      ],
+      "structuredInspection": "see mrtStationsFrame (schema, stamps, seeds)",
+      "verdict": "screened as absent: no scanned surface carries a per-station opening date or operating status; the only date-like fields are dataset update stamps (one 2019-12-09 stamp on all 257 seed features, one 2025-12-02 stamp on all 597 exit features); a stamp dates a layer refresh, not a station opening; origin unverified"
+    },
+    "universe": {
+      "excludedPaths": [
+        "docs/plans/2026-11-12-reporting-refresh-decisions.md"
+      ],
+      "excludedPrefixes": [
+        "docs/implementation/",
+        "docs/analytics/editions/",
+        "prompts/",
+        "scripts/tools/",
+        "app/public/data/analytics/"
+      ],
+      "exclusionDisclosure": "the excluded prefixes are the programme's own surfaces (per-study records, evidence producers, handoffs/runbooks, published editions except the frozen legacy originals, and the generated UI analytics payloads under app/public/data/analytics/ published by the study producers) plus the D12 decisions register; the frozen legacy originals are retained because the article's own figures are what the content patterns match against; the RS07 calculator asset (app/public/data/interactive_tools/) is NOT excluded and all bronze/raw/external data roots stay in the scan; content patterns run only on the listed text suffixes plus *.json.gz (decompressed)",
+      "retainedUnderExcludedPrefix": "docs/analytics/editions/legacy/",
+      "roots": [
+        "app/public",
+        "app/src",
+        "assets",
+        "data",
+        "docs",
+        "scripts",
+        "src",
+        "tests"
+      ],
+      "scannedFileCount": 18070,
+      "skipDirectories": [
+        ".git",
+        ".next",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".venv",
+        "__pycache__",
+        "build",
+        "coverage",
+        "dist",
+        "node_modules"
+      ]
+    }
+  },
+  "calculatorAsset": {
+    "bytesGz": 1257,
+    "bytesJsonDecompressed": 6170,
+    "cbdCoefficients": {
+      "Condominium": {
+        "discount_per_km": 35000,
+        "explanation": "Higher CBD sensitivity"
+      },
+      "EC": {
+        "discount_per_km": 25000,
+        "explanation": "Moderate CBD sensitivity"
+      },
+      "HDB": {
+        "discount_per_km": 15000,
+        "explanation": "22.6% of price variation"
+      }
+    },
+    "internalArithmetic": {
+      "condoOverHdbBasePremiumRatio": 7.0,
+      "condoPremiumEqualsBaseTimesMultiplier": true,
+      "hdbPremiumEqualsBaseTimesMultiplier": true,
+      "maxDeviationCondo": 0.0,
+      "maxDeviationHdb": 0.0,
+      "note": "the stored per-type bases reproduce the asset's own town rows exactly; the recorded 7.0 condo-over-HDB ratio of stored bases is inventory of this unlinked asset, not a measured sensitivity, and must not be marketed as one"
+    },
+    "linkStatus": {
+      "appConsumer": "app/src/components/tools/MrtCbdInspection.tsx (inspection-only; calculatorLock)",
+      "producerFoundOnScannedSurface": false,
+      "statement": "no file in the scanned surface produces or updates this asset; it is an unlinked artefact and adjudicates nothing in either direction — nevidence neither for nor against any legacy coefficient"
+    },
+    "path": "app/public/data/interactive_tools/mrt_cbd_impact.json.gz",
+    "propertyTypeMultipliers": {
+      "Condominium": {
+        "cbd_per_km": 35000,
+        "premium_per_100m": 35
+      },
+      "EC": {
+        "cbd_per_km": 25000,
+        "premium_per_100m": 20
+      },
+      "HDB": {
+        "cbd_per_km": 15000,
+        "premium_per_100m": 5
+      }
+    },
+    "sha256Gz": "4325fb54a3efc8b09eeea77ee92dc1c780b9408671bd43524ab9da361de11101",
+    "sha256JsonDecompressed": "a28fab360277f0e4e62bfe4a496307a5b87f44ece72e915aead7699c56f5519b",
+    "topLevelKeys": [
+      "cbd_coefficients",
+      "property_type_multipliers",
+      "town_impacts",
+      "town_multipliers",
+      "town_premiums"
+    ],
+    "townImpactCount": 32,
+    "townImpactLabels": [
+      "HDB Premium"
+    ],
+    "townMultiplierCount": 32,
+    "townPremiumCount": 32
+  },
+  "calculatorLock": {
+    "appSurface": {
+      "component": {
+        "line": 8,
+        "path": "app/src/components/tools/MrtCbdInspection.tsx",
+        "quote": "* and an explicit model-review state — never a premium total."
+      },
+      "evidenceBadge": {
+        "line": 103,
+        "path": "app/src/components/tools/MrtCbdInspection.tsx",
+        "quote": "<EvidenceBadge>Model review required</EvidenceBadge>"
+      },
+      "noFallbackNote": {
+        "line": 253,
+        "path": "app/src/components/tools/lib/tool-evidence.ts",
+        "quote": "export const MRT_NO_FALLBACK_NOTE ="
+      },
+      "unitNote": {
+        "line": 244,
+        "path": "app/src/components/tools/lib/tool-evidence.ts",
+        "quote": "export const MRT_UNIT_NOTE ="
+      },
+      "withheldNote": {
+        "line": 238,
+        "path": "app/src/components/tools/lib/tool-evidence.ts",
+        "quote": "export const MRT_WITHHELD_NOTE ="
+      }
+    },
+    "registerRow": {
+      "assetRowDisposition": "RF06 preserves tool contract; RS07 proposes changes. Continue coefficient inspection/withheld total until model units/combination semantics are independently approved.",
+      "assetRowQuote": "| RA07 | `app/public/data/interactive_tools/mrt_cbd_impact.json.gz`                     | RF06 preserves tool contract; RS07 proposes changes                    | Continue coefficient inspection/withheld total until model units/combination semantics are independently approved.                                                                                            |",
+      "gateLine": 40,
+      "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md"
+    },
+    "statement": "the gate leaves the calculator locked: the app consumer stays in its inspection-only state, the stored units and distance direction remain undeclared, and no output of this pack changes the tool's behaviour or releases a total-dollar estimate",
+    "storedUnitsAsFound": {
+      "hdbCbdDiscountPerKm": 15000,
+      "note": "coefficients are recorded exactly as stored, with the app's own caveat: neither the premium-per-100m nor the CBD-per-km figure declares a floor-area denominator, and the distance direction is undeclared",
+      "propertyTypeBases": {
+        "Condominium": {
+          "cbd_per_km": 35000,
+          "premium_per_100m": 35
+        },
+        "EC": {
+          "cbd_per_km": 25000,
+          "premium_per_100m": 20
+        },
+        "HDB": {
+          "cbd_per_km": 15000,
+          "premium_per_100m": 5
+        }
+      }
+    },
+    "totalDollarEstimateReleased": false,
+    "unlockedByThisPack": false
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 28,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; an unresolved key fails the build. Resolution is syntactic: it confirms the key points at a recorded field, not that the field supports the claim's disposition.",
+    "resolutionIsSyntactic": true,
+    "unresolved": []
+  },
+  "cutoff": {
+    "allPropertyTypesCrossCheck": {
+      "terminalMonth": "2026-11",
+      "terminalMonthShareOfTrailingMedian": 0.264
+    },
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact",
+    "boundAppliedTo": [
+      "studyWindow",
+      "shippedMrtFeatures.windowStats",
+      "responses",
+      "townDescriptives.windowCounts"
+    ],
+    "grain": "HDB transactions (the legacy article's primary focus)",
+    "lastCompleteMonth": "2026-10",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.3718,
+    "terminalMonthTransactions": 790,
+    "trailing12MedianTransactions": 2125.0
+  },
+  "gate": {
+    "clauseDispositions": [
+      {
+        "addressedAt": [
+          "shippedMrtFeatures.units",
+          "calculatorLock.storedUnitsAsFound",
+          "responses.responseDefinition"
+        ],
+        "clause": "Confirm metres/km and total-price/log/PSF response."
+      },
+      {
+        "addressedAt": [
+          "responses.standardizedComparison",
+          "responses.nonComparability",
+          "legacyClaims (the three 15x claims are withdrawn)"
+        ],
+        "clause": "Compare standardized effects or state non-comparability; no raw coefficient “15×” or “4×” marketing."
+      },
+      {
+        "addressedAt": [
+          "predictiveVsCausal"
+        ],
+        "clause": "Separate predictive association from causation."
+      },
+      {
+        "addressedAt": [
+          "calculatorLock"
+        ],
+        "clause": "Do not automatically unlock the MRT calculator."
+      }
+    ],
+    "note": "no '4×' multiple appears in the frozen text; the ban is applied prospectively and no raw multiple between segments is stated anywhere in this ledger except as inventory of the unlinked calculator asset (calculatorAsset.internalArithmetic)",
+    "registerLine": 40,
+    "registerPath": "docs/plans/2026-11-12-reporting-refresh-research-register.md",
+    "text": "Confirm metres/km and total-price/log/PSF response. Compare standardized effects or state non-comparability; no raw coefficient “15×” or “4×” marketing. Separate predictive association from causation. Do not automatically unlock the MRT calculator."
+  },
+  "inputs": {
+    "bronzeManifest": {
+      "bytes": 3815,
+      "path": "data/pipeline/01_bronze/bronze_manifest.json",
+      "sha256": "14d492ecb5a9100b0d5964fb0ebae00c6438bac4cc45fb6b514bc3279c60ed4a"
+    },
+    "calculatorAsset": {
+      "bytesGz": 1257,
+      "path": "app/public/data/interactive_tools/mrt_cbd_impact.json.gz",
+      "sha256Gz": "4325fb54a3efc8b09eeea77ee92dc1c780b9408671bd43524ab9da361de11101"
+    },
+    "exitsGeojson": {
+      "bytes": 207783,
+      "path": "data/raw/external/datagov/MRTStationExits.geojson",
+      "sha256": "0a94ebe6f3f7129d1620f012e2e6be3e6565055a2ac36bdcf4d2c226ec8c192f"
+    },
+    "importanceCsvs": [
+      {
+        "bytes": 8070,
+        "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv",
+        "sha256": "d89a7be2cc90e539fc06534a64089dc234c8114b31411cb60a929c232748f7ef"
+      },
+      {
+        "bytes": 6279,
+        "path": "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv",
+        "sha256": "7864979c99ba4c2ec22c142bd4429d94803419f537dd520b28009f077b8df2f4"
+      },
+      {
+        "bytes": 7618,
+        "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv",
+        "sha256": "a2244fddf01be07cb572b3fd4eb7b5c7c32d71d188ef255f23eee7cf608576dc"
+      },
+      {
+        "bytes": 5857,
+        "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_xgboost.csv",
+        "sha256": "0aafc146740e61479ca648fd9334d7a0ea27e90ee3dd317474c91dd076b06e6b"
+      },
+      {
+        "bytes": 7626,
+        "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv",
+        "sha256": "7952713db5acdf1c77f7713ecfa55a47d0dd0e3a3d7146c7ed326cfc46705fa2"
+      },
+      {
+        "bytes": 5766,
+        "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv",
+        "sha256": "4dadafd391960a7ed5b5bb8e279ce783e20964e97e577fa68af6feaa991fc34c"
+      },
+      {
+        "bytes": 2061,
+        "path": "data/analysis/feature_importance/model_comparison.csv",
+        "sha256": "3ae305054c392db84289a47380ef8fbb712f0576c14b7f9a0470b122e2d6e962"
+      }
+    ],
+    "legacyEdition": {
+      "bytes": 6480,
+      "path": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md",
+      "sha256": "de9eeb8e0c4afcb063300ede1ca8512d9d999359060dda05ea4051873a45bce1"
+    },
+    "manualLinesMapping": {
+      "bytes": 10818,
+      "path": "data/manual/mrt_lines_mapping.csv",
+      "sha256": "bf8b23857e74313d902f1310a28c2581587b10eef1719ae425b052c42ead65bc"
+    },
+    "manualStationsList": {
+      "bytes": 189,
+      "path": "data/manual/mrt_stations_list.txt",
+      "sha256": "26fa9110b44f0e5f0cce4785f794969f93b14fc7f24f51d180b135cdb56964a7"
+    },
+    "note": "every file read as data is sha-pinned here; files matched only by the absence scans are listed at their scan keys with per-file match counts and are not re-pinned",
+    "rawMrtStations": {
+      "columns": 4,
+      "path": "data/pipeline/01_bronze/raw_mrt_stations.parquet",
+      "rows": 188,
+      "sha256": "48a473626e2a22d24ffde28974e3fd206f807a45bad05223acfd94513da1fdc2"
+    },
+    "seedMrtGeojson": {
+      "bytes": 784676,
+      "path": "data/raw/external/datagov/MRTStations.geojson",
+      "sha256": "6153f2944065b3bcf81b45783b8a17bfbcc2f34db4f202d2b9c9c4c9172f20aa"
+    },
+    "seedStationsJson": {
+      "bytes": 5475,
+      "path": "data/pipeline/01_bronze/external/mrt_stations.json",
+      "sha256": "902a0b73e4378bbdb9396225cbf907e1cd0aa999a8726f06af104551e5691233"
+    },
+    "unifiedDataset": {
+      "columns": 97,
+      "path": "data/pipeline/04_platinum/unified_dataset.parquet",
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    }
+  },
+  "legacyClaims": [
+    {
+      "id": "hdb-premium-128-core-table",
+      "ledgerKey": "responses.specifications.hdb-log-price-rich-controls",
+      "note": "the frozen text states no response unit for the $ figure (total price? PSF?) and no OLS output exists to re-derive it; the measured analogue is the recorded log-point slope per 100 m nearer on log total price (mrtCoefficient.logPointsPer100mNearer), direction consistent in sign, magnitude not comparable to an unstated-unit dollar figure",
+      "phrase": "$1.28 per 100m closer",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "hdb-premium-128-technical",
+      "ledgerKey": "responses.specifications.hdb-log-price-rich-controls",
+      "note": "same retired coefficient as the core-table figure; no artefact; a narrative archive record states a PSF basis for the condo variant, but no model output backs either number on the scanned surface",
+      "phrase": "$1.28/100m (mean PSF $552)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "mean-hdb-psf-552",
+      "ledgerKey": "responses.specifications.hdb-log-price-rich-controls.sample.meanPsf",
+      "note": "the legacy's population and window for the mean are unstated; the measured window mean PSF on 2021-01 -> the cutoff is recorded at the key and is a different population, not a reproduction",
+      "phrase": "Mean HDB price PSF | $552",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "ols-r2-052",
+      "ledgerKey": "absenceScans.olsOutput",
+      "note": "no OLS artefact on the scanned surface; the same text also states 'Full model R² = 0.4977', and the two figures cannot be reconciled from this checkout because neither has an artefact",
+      "phrase": "OLS R² | 0.52",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "town-row-central-area",
+      "ledgerKey": "townDescriptives.legacyTable.rows.Central Area",
+      "note": "retired town-level OLS output; window and population unstated; no artefact",
+      "phrase": "Central Area | +$59.19 | $903 | 599",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "town-row-serangoon",
+      "ledgerKey": "townDescriptives.legacyTable.rows.Serangoon",
+      "note": "retired town-level OLS output; window and population unstated; no artefact",
+      "phrase": "Serangoon | +$12.91 | $566 | 1,853",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "town-row-bishan",
+      "ledgerKey": "townDescriptives.legacyTable.rows.Bishan",
+      "note": "retired town-level OLS output; window and population unstated; no artefact",
+      "phrase": "Bishan | +$5.88 | $644 | 1,951",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "town-row-marine-parade",
+      "ledgerKey": "townDescriptives.legacyTable.rows.Marine Parade",
+      "note": "retired town-level OLS output; the negative sign is one end of the unlabelled heterogeneity spread recorded at townDescriptives.legacyTable.signSpread",
+      "phrase": "Marine Parade | -$38.54 | $629 | 515",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "town-row-geylang",
+      "ledgerKey": "townDescriptives.legacyTable.rows.Geylang",
+      "note": "retired town-level OLS output; window and population unstated; no artefact",
+      "phrase": "Geylang | -$20.54 | $584 | 2,054",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "town-row-sengkang",
+      "ledgerKey": "townDescriptives.legacyTable.rows.Sengkang",
+      "note": "retired town-level OLS output; window and population unstated; no artefact",
+      "phrase": "Sengkang | -$16.88 | $558 | 7,585",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "condo-15x-table",
+      "ledgerKey": "responses.standardizedComparison",
+      "note": "withdrawn per the gate: a raw-coefficient multiple is banned marketing; the permitted replacement is the standardized-effect comparison recorded at the key, stated with non-comparability",
+      "phrase": "roughly 15x higher than HDB",
+      "status": "withdrawn"
+    },
+    {
+      "id": "condo-15x-technical",
+      "ledgerKey": "responses.standardizedComparison",
+      "note": "same banned multiple in the technical findings; withdrawn",
+      "phrase": "Condo MRT sensitivity ~15× HDB",
+      "status": "withdrawn"
+    },
+    {
+      "id": "condo-15x-robustness",
+      "ledgerKey": "responses.standardizedComparison",
+      "note": "'robust across specifications' cannot be assessed: neither model's outputs exist on the scanned surface, so there is nothing to be robust across; the claim is withdrawn, not contradicted",
+      "phrase": "The ~15× condo-vs-HDB sensitivity gap is robust across OLS and XGBoost specifications",
+      "status": "withdrawn"
+    },
+    {
+      "id": "importance-table-core",
+      "ledgerKey": "absenceScans.shapImportance",
+      "note": "an importance ranking is an output of the retired XGBoost/SHAP model; no machine-readable artefact carries it (the scanned CSVs carry a different model at 0.02% for hawker), narrative prose matches are unlinked records, and no importance table is re-estimated here",
+      "phrase": "Hawker within 1km | 27.4%",
+      "status": "withdrawn"
+    },
+    {
+      "id": "importance-table-technical",
+      "ledgerKey": "absenceScans.shapImportance",
+      "note": "same retired-importance table in the technical findings; withdrawn",
+      "phrase": "hawker_within_1km = 27.4%, remaining_lease_months = 14.1%, park_within_1km = 7.2%, mrt_within_1km = 5.5%",
+      "status": "withdrawn"
+    },
+    {
+      "id": "xgboost-spec",
+      "ledgerKey": "absenceScans.shapImportance",
+      "note": "the retired analysis scripts are not in the supported surface (the legacy text says so itself) and the model is not reproduced",
+      "phrase": "XGBoost (100 trees, max_depth=6, learning_rate=0.1) for non-linear patterns, with SHAP for explainability",
+      "status": "withdrawn"
+    },
+    {
+      "id": "sample-97133",
+      "ledgerKey": "studyWindow.legacySampleContrast",
+      "note": "the stated filter is re-measured on this checkout (both bounds recorded) and does not reproduce the stated count; the legacy's L3 input file and grid filter are absent, so the difference is unresolved — underspecified population, not-reproducible",
+      "phrase": "97,133 HDB transactions, filtered to 2021 onward, with valid coordinates",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "h3-grid",
+      "ledgerKey": "absenceScans.h3Grid",
+      "note": "no H3 artefact on the scanned surface; the cell area and minimum are recorded as stated, not chosen, and cannot be re-derived here",
+      "phrase": "Spatial grid: H3 hexagonal grid at resolution 8 (~0.5 km² cells), minimum 10 records per cell",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "cbd-reference-point",
+      "ledgerKey": "absenceScans.cbdDefinition.contentMatches",
+      "note": "the coordinate pair appears only in the frozen text and its living copy; no asset carries it; the CBD-distance term the legacy models rely on cannot even be formed from the shipped schema (no CBD column)",
+      "phrase": "CBD reference point: (1.2839, 103.8513), haversine distance calculation",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "ols-controls",
+      "ledgerKey": "shippedMrtFeatures.missingnessStates.absentColumns",
+      "note": "the named control remaining_lease_months does not exist in the shipped schema (absent column; the file carries remaining_lease as a string and lease_commence_date as a year), so the legacy specification cannot be fitted as named; no OLS artefact exists either",
+      "phrase": "OLS LinearRegression controlling for dist_to_nearest_mrt, floor_area_sqm, remaining_lease_months",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "hierarchical-r2",
+      "ledgerKey": "absenceScans.olsOutput.contentMatches",
+      "note": "no hierarchical-regression output on the scanned surface; the three literals appear only in the frozen text and its living copy; the delta is a predictive-increment narrative and is not re-derived",
+      "phrase": "CBD-only model R² = 0.2263, CBD+MRT R² = 0.2341, ΔR² = +0.0078",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "full-model-r2",
+      "ledgerKey": "absenceScans.olsOutput.contentMatches",
+      "note": "no artefact; irreconcilable with the same text's 'OLS R² 0.52'",
+      "phrase": "Full model R² = 0.4977",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "vif-correlation",
+      "ledgerKey": "shippedMrtFeatures.missingnessStates.absentColumns",
+      "note": "the MRT-CBD correlation cannot be measured: the shipped dataset has no CBD-distance column (absent column, verified against the full 97-column schema); 'confirming' is also causal-flavoured language the pack does not adopt",
+      "phrase": "moderate collinearity (~0.5-0.7 correlation), confirming they capture overlapping but distinct location effects",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "town-minimum-500",
+      "ledgerKey": "townDescriptives.windowCounts.townsAtLeast500Transactions",
+      "note": "method statement with no artefact; the descriptive analogue (window town counts against 500) is recorded at the key and is not the legacy's filter",
+      "phrase": "Town-level OLS used a minimum of 500 transactions per town",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "interaction-terms",
+      "ledgerKey": "responses.standardizedComparison",
+      "note": "the interaction model is the source of the banned multiple; it is not reproduced; the permitted replacement is the standardized comparison with its non-comparability statement",
+      "phrase": "Cross-property comparison used interaction terms for property type × MRT distance",
+      "status": "withdrawn"
+    },
+    {
+      "id": "data-period-2021-2026",
+      "ledgerKey": "studyWindow",
+      "note": "coverage measured per segment: the condo source begins 2021-01; HDB rows exist from 1990-01 and every aggregation here stops at the measured cutoff, so '2026' holds only through lastCompleteMonth",
+      "phrase": "Data Period: 2021-2026",
+      "status": "re-measured"
+    },
+    {
+      "id": "town-variation-sign-spread",
+      "ledgerKey": "townDescriptives.legacyTable.signSpread",
+      "note": "the two figures are retired OLS outputs; the spread between them is recorded as a field and labelled unexplained heterogeneity, per the gate's demand that the town table's sign spread not pass unlabelled",
+      "phrase": "Town-level variation: Central Area +$59.19/100m, Marine Parade -$38.54/100m",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "upgrader-300-500m",
+      "ledgerKey": "responses.nonComparability",
+      "note": "'market value' across segments needs the retired cross-property model; the measured fragments (per-segment distance distributions and standardized associations, with non-comparability) do not support a cross-segment value claim and none is made",
+      "phrase": "The same 300-500m difference carries different market value across segments",
+      "status": "withdrawn"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "claimsChecked": 28,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md",
+    "legacyFileBytes": 6480,
+    "legacyFileSha256": "de9eeb8e0c4afcb063300ede1ca8512d9d999359060dda05ea4051873a45bce1",
+    "normalisation": "bold/backtick-stripped, whitespace-collapsed, substring match",
+    "phrasesVerifiedVerbatim": 28,
+    "quotes": [
+      {
+        "claim": "hdb-premium-128-core-table",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "$1.28 per 100m closer"
+      },
+      {
+        "claim": "hdb-premium-128-technical",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "$1.28/100m (mean PSF $552)"
+      },
+      {
+        "claim": "mean-hdb-psf-552",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Mean HDB price PSF | $552"
+      },
+      {
+        "claim": "ols-r2-052",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "OLS R² | 0.52"
+      },
+      {
+        "claim": "town-row-central-area",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Central Area | +$59.19 | $903 | 599"
+      },
+      {
+        "claim": "town-row-serangoon",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Serangoon | +$12.91 | $566 | 1,853"
+      },
+      {
+        "claim": "town-row-bishan",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Bishan | +$5.88 | $644 | 1,951"
+      },
+      {
+        "claim": "town-row-marine-parade",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Marine Parade | -$38.54 | $629 | 515"
+      },
+      {
+        "claim": "town-row-geylang",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Geylang | -$20.54 | $584 | 2,054"
+      },
+      {
+        "claim": "town-row-sengkang",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Sengkang | -$16.88 | $558 | 7,585"
+      },
+      {
+        "claim": "condo-15x-table",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "roughly 15x higher than HDB"
+      },
+      {
+        "claim": "condo-15x-technical",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Condo MRT sensitivity ~15× HDB"
+      },
+      {
+        "claim": "condo-15x-robustness",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "The ~15× condo-vs-HDB sensitivity gap is robust across OLS and XGBoost specifications"
+      },
+      {
+        "claim": "importance-table-core",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Hawker within 1km | 27.4%"
+      },
+      {
+        "claim": "importance-table-technical",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "hawker_within_1km = 27.4%, remaining_lease_months = 14.1%, park_within_1km = 7.2%, mrt_within_1km = 5.5%"
+      },
+      {
+        "claim": "xgboost-spec",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "XGBoost (100 trees, max_depth=6, learning_rate=0.1) for non-linear patterns, with SHAP for explainability"
+      },
+      {
+        "claim": "sample-97133",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "97,133 HDB transactions, filtered to 2021 onward, with valid coordinates"
+      },
+      {
+        "claim": "h3-grid",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Spatial grid: H3 hexagonal grid at resolution 8 (~0.5 km² cells), minimum 10 records per cell"
+      },
+      {
+        "claim": "cbd-reference-point",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "CBD reference point: (1.2839, 103.8513), haversine distance calculation"
+      },
+      {
+        "claim": "ols-controls",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "OLS LinearRegression controlling for dist_to_nearest_mrt, floor_area_sqm, remaining_lease_months"
+      },
+      {
+        "claim": "hierarchical-r2",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "CBD-only model R² = 0.2263, CBD+MRT R² = 0.2341, ΔR² = +0.0078"
+      },
+      {
+        "claim": "full-model-r2",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Full model R² = 0.4977"
+      },
+      {
+        "claim": "vif-correlation",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "moderate collinearity (~0.5-0.7 correlation), confirming they capture overlapping but distinct location effects"
+      },
+      {
+        "claim": "town-minimum-500",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Town-level OLS used a minimum of 500 transactions per town"
+      },
+      {
+        "claim": "interaction-terms",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Cross-property comparison used interaction terms for property type × MRT distance"
+      },
+      {
+        "claim": "data-period-2021-2026",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Data Period: 2021-2026"
+      },
+      {
+        "claim": "town-variation-sign-spread",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "Town-level variation: Central Area +$59.19/100m, Marine Parade -$38.54/100m"
+      },
+      {
+        "claim": "upgrader-300-500m",
+        "foundInLegacyText": true,
+        "occurrences": 1,
+        "phrase": "The same 300-500m difference carries different market value across segments"
+      }
+    ]
+  },
+  "mrtStationsFrame": {
+    "columnCount": 4,
+    "columns": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "lat",
+        "type": "double"
+      },
+      {
+        "name": "lon",
+        "type": "double"
+      },
+      {
+        "name": "line",
+        "type": "string"
+      }
+    ],
+    "distinctStationNames": 185,
+    "duplicateNameRows": {
+      "names": [
+        "BUKIT PANJANG",
+        "CHOA CHU KANG",
+        "PUNGGOL"
+      ],
+      "note": "each duplicated name appears once per physical centroid with near-identical coordinates; nearest-station selection picks whichever centroid is closer",
+      "rows": 6
+    },
+    "exitsLayer": {
+      "bytes": 207783,
+      "features": 597,
+      "fmelUpdDHistogram": {
+        "20251202172807": 597
+      },
+      "path": "data/raw/external/datagov/MRTStationExits.geojson",
+      "propertyKeys": [
+        "EXIT_CODE",
+        "FMEL_UPD_D",
+        "INC_CRC",
+        "OBJECTID",
+        "STATION_NA"
+      ],
+      "sha256": "0a94ebe6f3f7129d1620f012e2e6be3e6565055a2ac36bdcf4d2c226ec8c192f"
+    },
+    "lineValueCounts": {
+      "": 7,
+      "BPLR": 11,
+      "CCL": 19,
+      "CCL;DTL": 3,
+      "CCL;TEL": 1,
+      "DTL": 25,
+      "DTL;BPLR": 2,
+      "EWL": 25,
+      "EWL;CCL": 2,
+      "EWL;DTL": 2,
+      "EWL;NEL;TEL": 1,
+      "NEL": 8,
+      "NEL;CCL": 2,
+      "NEL;DTL": 2,
+      "NEL;PKLRT": 2,
+      "NEL;SKRLRT": 1,
+      "NSL": 16,
+      "NSL;BPLR": 2,
+      "NSL;CCL": 1,
+      "NSL;DTL": 1,
+      "NSL;EWL": 3,
+      "NSL;NEL;CCL": 1,
+      "NSL;TEL": 3,
+      "PKLRT": 14,
+      "SKRLRT": 13,
+      "TEL": 21
+    },
+    "lineValuesIncludeEmptyString": true,
+    "manifestRecord": {
+      "entry": {
+        "fetched_at": "2026-11-13T11:36:26+00:00",
+        "rows": 188,
+        "source": "lta_api"
+      },
+      "note": "the manifest records the stored frame as fetched from the live LTA path; the fetch run itself is outside this checkout, so the record is a screened-as fact about provenance, origin unverified",
+      "path": "data/pipeline/01_bronze/bronze_manifest.json"
+    },
+    "missingnessStates": {
+      "absentColumns": [
+        "no opening-date column",
+        "no operating-status column"
+      ],
+      "absentRows": "not applicable: all 188 rows carry all four columns",
+      "note": "a null value, a recorded zero, an empty string and an absent column are different states and are counted separately; the row count describes this file, not the series of stations over time",
+      "nullValues": {
+        "lat": 0,
+        "line": 0,
+        "lon": 0,
+        "name": 0
+      },
+      "recordedEmptyStrings": {
+        "lineEmptyString": 7,
+        "names": [
+          "CANBERRA",
+          "CANTONMENT",
+          "CHANGI AIRPORT",
+          "HUME",
+          "KEPPEL",
+          "MARINA SOUTH",
+          "PRINCE EDWARD ROAD"
+        ]
+      },
+      "recordedZeros": {
+        "latExactlyZero": 0,
+        "lonExactlyZero": 0
+      }
+    },
+    "namePatternScanForDateOrStatusColumns": {
+      "matchedColumns": [],
+      "pattern": "date|open|status|year|time|stamp (case-insensitive, column names)"
+    },
+    "openingDateColumnPresent": false,
+    "path": "data/pipeline/01_bronze/raw_mrt_stations.parquet",
+    "rowGroups": 1,
+    "rows": 188,
+    "seedGeojson": {
+      "bytes": 784676,
+      "features": 257,
+      "fmelUpdDHistogram": {
+        "20191209180316": 257
+      },
+      "identicalBytesInBronze": {
+        "equal": true,
+        "path": "data/pipeline/01_bronze/external/MRTStations.geojson",
+        "sha256": "6153f2944065b3bcf81b45783b8a17bfbcc2f34db4f202d2b9c9c4c9172f20aa"
+      },
+      "note": "FMEL_UPD_D is a dataset update stamp; it dates the layer's refresh, not any station's opening. The layer carries no status property.",
+      "path": "data/raw/external/datagov/MRTStations.geojson",
+      "propertyKeys": [
+        "FMEL_UPD_D",
+        "GRND_LEVEL",
+        "INC_CRC",
+        "NAME",
+        "OBJECTID",
+        "RAIL_TYPE",
+        "SHAPE.AREA",
+        "SHAPE.LEN"
+      ],
+      "railTypeCounts": {
+        "LRT": 45,
+        "MRT": 212
+      },
+      "sha256": "6153f2944065b3bcf81b45783b8a17bfbcc2f34db4f202d2b9c9c4c9172f20aa"
+    },
+    "stationLinesJson": {
+      "bytes": 5475,
+      "path": "data/pipeline/01_bronze/external/mrt_stations.json",
+      "sha256": "902a0b73e4378bbdb9396225cbf907e1cd0aa999a8726f06af104551e5691233",
+      "shape": "station name -> list of line codes; no dates, no status",
+      "stationCount": 181
+    },
+    "statusColumnPresent": false,
+    "verdict": "screened as carrying no per-station opening date and no operating status anywhere: the frame's schema has four columns (name/lat/lon/line), the column-name pattern scan matches none, and the only date-like field on any MRT-named file is a dataset update stamp; origin unverified"
+  },
+  "predictiveVsCausal": {
+    "calculatorAsset": "the calculator asset's stored formulas are arithmetic on stored coefficients; the app consumer discloses them without computing a total, and the asset's own CBD explanation literal ('22.6% of price variation') is a stored string of unlinked provenance",
+    "languageRule": "this pack writes 'association' for every measured coefficient; 'premium', 'effect' and 'sensitivity' appear only as quoted legacy language or as withdrawn claims",
+    "legacyDeltaR2": "the legacy's CBD-only/CBD+MRT hierarchical regression is a predictive increment claim; its outputs (R² 0.2263 / 0.2341, delta +0.0078) are absent from this checkout and are not re-derived, so even the predictive-increment narrative cannot be re-measured here",
+    "statement": "every coefficient in responses.specifications is a predictive association: transactions nearer a station differ in price, conditional on controls, in one cross-section. Nothing here identifies why — no instrument, no quasi-experiment, no pretrend design, no treatment assignment — so no coefficient supports a causal 'premium' claim."
+  },
+  "responses": {
+    "nonComparability": {
+      "condoWindowRowsMeasured": 245234,
+      "condoWindowRowsWithNonNullLeaseControl": 0,
+      "condoWindowRowsWithNonNullStoreyControl": 0,
+      "condoWindowRowsWithNonNullTown": 0,
+      "reasons": [
+        "control sets cannot be equalised: every condo row carries null lease commencement, null storey and null town, so the condo specification is strictly poorer than the HDB rich specification",
+        "response variances differ (recorded per specification as sdLogResponse) and standardized betas are scale facts of their own samples, not effect sizes comparable across samples",
+        "the condo sample mixes ECs with condominiums (ecShareOfSample is recorded per specification)",
+        "the area grain differs (HDB rich uses town FE; the common specification uses planning_area FE because condo rows carry no town)",
+        "both coefficients are conditional associations in one cross-section; neither is an effect, so a ratio of them is not a ratio of effects"
+      ],
+      "statement": "the standardized effects are reported as recorded fields and their ratio is computed, not asserted; the non-comparability reasons above are stated alongside, and no raw dollar-per-100m multiple between segments appears anywhere in this ledger"
+    },
+    "responseDefinition": {
+      "gateClause": "the gate asks to confirm the metres/km and total-price/log/PSF response: distance is metres (shippedMrtFeatures.units), the calculator asset's rates are stored per 100 m and per km (calculatorAsset.storedLabels), and the refit responses above are log total price (primary) and log PSF (secondary). The legacy's $-per-100m figures state no response unit and are not converted into any chosen unit here.",
+      "primary": "log(total transaction price in SGD)",
+      "secondary": "log(price per square foot in SGD, shipped psf column)"
+    },
+    "specifications": [
+      {
+        "controls": "floor_area_sqm (sqm), lease_commence_date (year), storey midpoint (floors), town fixed effects, transaction-year fixed effects",
+        "estimator": "OLS (statsmodels), HC1 heteroskedasticity-robust covariance, use_t=False; descriptive conditional association only",
+        "fit": {
+          "formula": "lprice ~ dist_to_nearest_mrt + floor_area_sqm + lease_commence_date + storey_mid + C(town) + C(yr)",
+          "k": 35,
+          "n": 156278,
+          "rSquared": 0.9159
+        },
+        "id": "hdb-log-price-rich-controls",
+        "mrtCoefficient": {
+          "betaLogPointsPerMetre": -0.000134,
+          "hc1Se": 1e-06,
+          "logPointsPer100mNearer": 0.0134,
+          "pctPer100mNearerExpMinus1": 1.3536,
+          "standardizedBeta": -0.157,
+          "tStat": -144.5
+        },
+        "response": "log(total price in SGD)",
+        "sample": {
+          "cutoffUpperBound": "2026-10",
+          "ecRows": 0,
+          "ecShareOfSample": 0.0,
+          "meanPrice": 590185.94,
+          "meanPsf": 576.63,
+          "sdDistanceMetres": 372.8,
+          "sdLogResponse": 0.3193,
+          "windowStart": "2021-01"
+        },
+        "sampleSelection": {
+          "estimationRows": 156278,
+          "excludedRowDetails": [],
+          "excludedRows": 0,
+          "windowRows": 156278
+        },
+        "segment": "hdb"
+      },
+      {
+        "controls": "floor_area_sqm (sqm), lease_commence_date (year), storey midpoint (floors), town fixed effects, transaction-year fixed effects",
+        "estimator": "OLS (statsmodels), HC1 heteroskedasticity-robust covariance, use_t=False; descriptive conditional association only",
+        "fit": {
+          "formula": "lpsf ~ dist_to_nearest_mrt + floor_area_sqm + lease_commence_date + storey_mid + C(town) + C(yr)",
+          "k": 35,
+          "n": 156278,
+          "rSquared": 0.8446
+        },
+        "id": "hdb-log-psf-rich-controls",
+        "mrtCoefficient": {
+          "betaLogPointsPerMetre": -0.000129,
+          "hc1Se": 1e-06,
+          "logPointsPer100mNearer": 0.0129,
+          "pctPer100mNearerExpMinus1": 1.2957,
+          "standardizedBeta": -0.2021,
+          "tStat": -137.6
+        },
+        "response": "log(price per square foot in SGD)",
+        "sample": {
+          "cutoffUpperBound": "2026-10",
+          "ecRows": 0,
+          "ecShareOfSample": 0.0,
+          "meanPrice": 590185.94,
+          "meanPsf": 576.63,
+          "sdDistanceMetres": 372.8,
+          "sdLogResponse": 0.2374,
+          "windowStart": "2021-01"
+        },
+        "sampleSelection": {
+          "estimationRows": 156278,
+          "excludedRowDetails": [],
+          "excludedRows": 0,
+          "windowRows": 156278
+        },
+        "segment": "hdb"
+      },
+      {
+        "controls": "floor_area_sqm (sqm), planning_area fixed effects, transaction-year fixed effects",
+        "estimator": "OLS (statsmodels), HC1 heteroskedasticity-robust covariance, use_t=False; descriptive conditional association only",
+        "fit": {
+          "formula": "lprice ~ dist_to_nearest_mrt + floor_area_sqm + C(planning_area) + C(yr)",
+          "k": 39,
+          "n": 156278,
+          "rSquared": 0.6786
+        },
+        "id": "hdb-log-price-common-controls",
+        "mrtCoefficient": {
+          "betaLogPointsPerMetre": -5.6e-05,
+          "hc1Se": 2e-06,
+          "logPointsPer100mNearer": 0.0056,
+          "pctPer100mNearerExpMinus1": 0.5599,
+          "standardizedBeta": -0.0652,
+          "tStat": -36.8
+        },
+        "response": "log(total price in SGD)",
+        "sample": {
+          "cutoffUpperBound": "2026-10",
+          "ecRows": 0,
+          "ecShareOfSample": 0.0,
+          "meanPrice": 590185.94,
+          "meanPsf": 576.63,
+          "sdDistanceMetres": 372.8,
+          "sdLogResponse": 0.3193,
+          "windowStart": "2021-01"
+        },
+        "sampleSelection": {
+          "estimationRows": 156278,
+          "excludedRowDetails": [],
+          "excludedRows": 0,
+          "windowRows": 156278
+        },
+        "segment": "hdb"
+      },
+      {
+        "controls": "floor_area_sqm (sqm), planning_area fixed effects, transaction-year fixed effects",
+        "estimator": "OLS (statsmodels), HC1 heteroskedasticity-robust covariance, use_t=False; descriptive conditional association only",
+        "fit": {
+          "formula": "lpsf ~ dist_to_nearest_mrt + floor_area_sqm + C(planning_area) + C(yr)",
+          "k": 39,
+          "n": 156278,
+          "rSquared": 0.456
+        },
+        "id": "hdb-log-psf-common-controls",
+        "mrtCoefficient": {
+          "betaLogPointsPerMetre": -5.4e-05,
+          "hc1Se": 1e-06,
+          "logPointsPer100mNearer": 0.0054,
+          "pctPer100mNearerExpMinus1": 0.5416,
+          "standardizedBeta": -0.0848,
+          "tStat": -36.2
+        },
+        "response": "log(price per square foot in SGD)",
+        "sample": {
+          "cutoffUpperBound": "2026-10",
+          "ecRows": 0,
+          "ecShareOfSample": 0.0,
+          "meanPrice": 590185.94,
+          "meanPsf": 576.63,
+          "sdDistanceMetres": 372.8,
+          "sdLogResponse": 0.2374,
+          "windowStart": "2021-01"
+        },
+        "sampleSelection": {
+          "estimationRows": 156278,
+          "excludedRowDetails": [],
+          "excludedRows": 0,
+          "windowRows": 156278
+        },
+        "segment": "hdb"
+      },
+      {
+        "controls": "floor_area_sqm (sqm), planning_area fixed effects, transaction-year fixed effects",
+        "estimator": "OLS (statsmodels), HC1 heteroskedasticity-robust covariance, use_t=False; descriptive conditional association only",
+        "fit": {
+          "formula": "lprice ~ dist_to_nearest_mrt + floor_area_sqm + C(planning_area) + C(yr)",
+          "k": 50,
+          "n": 245233,
+          "rSquared": 0.3302
+        },
+        "id": "condo-log-price-available-controls",
+        "mrtCoefficient": {
+          "betaLogPointsPerMetre": -3.4e-05,
+          "hc1Se": 4e-06,
+          "logPointsPer100mNearer": 0.0034,
+          "pctPer100mNearerExpMinus1": 0.3417,
+          "standardizedBeta": -0.029,
+          "tStat": -8.2
+        },
+        "response": "log(total price in SGD)",
+        "sample": {
+          "cutoffUpperBound": "2026-10",
+          "ecRows": 30385,
+          "ecShareOfSample": 0.1239,
+          "meanPrice": 2103012.37,
+          "meanPsf": 1857.23,
+          "sdDistanceMetres": 438.2,
+          "sdLogResponse": 0.5151,
+          "windowStart": "2021-01"
+        },
+        "sampleSelection": {
+          "estimationRows": 245233,
+          "excludedRowDetails": [
+            {
+              "month": "2023-03",
+              "price": 61080008.0,
+              "propertyType": "condo",
+              "reasons": [
+                "missing-mrt-distance-or-coordinates",
+                "missing-planning-area",
+                "missing-lease-commencement (all condo rows)",
+                "missing-storey (all condo rows)",
+                "missing-town (all condo rows)"
+              ]
+            }
+          ],
+          "excludedRows": 1,
+          "windowRows": 245234
+        },
+        "segment": "condo"
+      },
+      {
+        "controls": "floor_area_sqm (sqm), planning_area fixed effects, transaction-year fixed effects",
+        "estimator": "OLS (statsmodels), HC1 heteroskedasticity-robust covariance, use_t=False; descriptive conditional association only",
+        "fit": {
+          "formula": "lpsf ~ dist_to_nearest_mrt + floor_area_sqm + C(planning_area) + C(yr)",
+          "k": 50,
+          "n": 245233,
+          "rSquared": 0.5337
+        },
+        "id": "condo-log-psf-available-controls",
+        "mrtCoefficient": {
+          "betaLogPointsPerMetre": -0.000145,
+          "hc1Se": 2e-06,
+          "logPointsPer100mNearer": 0.0145,
+          "pctPer100mNearerExpMinus1": 1.4596,
+          "standardizedBeta": -0.1878,
+          "tStat": -91.6
+        },
+        "response": "log(price per square foot in SGD)",
+        "sample": {
+          "cutoffUpperBound": "2026-10",
+          "ecRows": 30385,
+          "ecShareOfSample": 0.1239,
+          "meanPrice": 2103012.37,
+          "meanPsf": 1857.23,
+          "sdDistanceMetres": 438.2,
+          "sdLogResponse": 0.3382,
+          "windowStart": "2021-01"
+        },
+        "sampleSelection": {
+          "estimationRows": 245233,
+          "excludedRowDetails": [
+            {
+              "month": "2023-03",
+              "price": 61080008.0,
+              "propertyType": "condo",
+              "reasons": [
+                "missing-mrt-distance-or-coordinates",
+                "missing-planning-area",
+                "missing-lease-commencement (all condo rows)",
+                "missing-storey (all condo rows)",
+                "missing-town (all condo rows)"
+              ]
+            }
+          ],
+          "excludedRows": 1,
+          "windowRows": 245234
+        },
+        "segment": "condo"
+      }
+    ],
+    "standardizedComparison": {
+      "basis": "the two segments never share one specification: the condo rows carry all-null lease, storey and town (measured below), so the comparison uses the common-controls specification (floor area + planning-area FE + year FE) that both segments can fit on the same window",
+      "condoCommonControlsStandardizedBeta": -0.029021548196105838,
+      "hdbCommonControlsStandardizedBeta": -0.06517824766460523,
+      "psfResponseCondoStandardizedBeta": -0.18778270272135097,
+      "psfResponseHdbStandardizedBeta": -0.08480320274463521,
+      "psfResponseRatioCondoOverHdb": 2.2143,
+      "ratioCondoOverHdb": 0.4453,
+      "statement": "on the common-controls specification the condo standardized association is smaller than HDB's, not larger; this is a descriptive comparison of conditional associations in differently composed samples, it is not the legacy's interaction coefficient, and it neither confirms nor refutes the withdrawn 15x claim, whose model outputs are absent from this checkout"
+    }
+  },
+  "schemaVersion": "1.0.0",
+  "shippedMrtFeatures": {
+    "lineMappingCsv": {
+      "bytes": 10818,
+      "linesOnDisk": 218,
+      "note": "carries station_name/line/is_interchange/tier but no date column; no code in src/ or app/src references it — a manual lead, not the pipeline's tier source",
+      "path": "data/manual/mrt_lines_mapping.csv",
+      "referencedByCode": false,
+      "sha256": "bf8b23857e74313d902f1310a28c2581587b10eef1719ae425b052c42ead65bc",
+      "strictParse": "fails at line 81: expected 7 fields, saw 8",
+      "wellFormedRowsBeforeFailure": 80
+    },
+    "missingnessStates": {
+      "absentColumns": [
+        "remaining_lease_months (the legacy's named control; the file carries remaining_lease as a string and lease_commence_date as a year)",
+        "no CBD-distance column of any name (verified against the full 97-column schema; an absent column, not a null value)"
+      ],
+      "absentRows": "no condo row exists before 2021-01 in this file (source window), measured at studyWindow.condo; the HDB series begins 1990-01",
+      "inWindowNullMrtRows": [
+        {
+          "month": "2023-03",
+          "price": 61080008.0,
+          "propertyType": "condo"
+        }
+      ],
+      "inWindowRowsWithNullMrtColumns": 1,
+      "nullMrtEqualsNullCoordinates": true,
+      "recordedZerosFullFile": {
+        "distExactlyZero": 0,
+        "scoreExactlyZero": 0,
+        "tierExactlyZero": 0
+      },
+      "rowsWithNullCoordinatesFullFile": 11600,
+      "rowsWithNullMrtColumnsFullFile": 11600
+    },
+    "perColumn": {
+      "dist_to_nearest_mrt": {
+        "nonNullFullFile": 1224710,
+        "nullsFullFile": 11600,
+        "present": true,
+        "recordedZerosFullFile": 0
+      },
+      "nearest_mrt_is_interchange": {
+        "nonNullFullFile": 1224710,
+        "nullsFullFile": 11600,
+        "present": true
+      },
+      "nearest_mrt_score": {
+        "nonNullFullFile": 1224710,
+        "nullsFullFile": 11600,
+        "present": true,
+        "recordedZerosFullFile": 0
+      },
+      "nearest_mrt_station": {
+        "nonNullFullFile": 1224710,
+        "nullsFullFile": 11600,
+        "present": true
+      },
+      "nearest_mrt_tier": {
+        "nonNullFullFile": 1224710,
+        "nullsFullFile": 11600,
+        "present": true,
+        "recordedZerosFullFile": 0
+      }
+    },
+    "producerNote": "the four feature columns are produced by utils/proximity.py from the bronze frame plus the station->line mapping; the citations above are marker-checked at build time; screened as the producer, origin unverified",
+    "stationJoin": {
+      "note": "every shipped nearest-station name is found in the 188-row bronze frame; the names the station-lines json lacks are exactly the frame's empty-line rows — screened as consistent with the shipped distances having been computed against this frame; origin unverified",
+      "shippedDistinctStations": 171,
+      "shippedStationsAbsentFromBronzeFrame": [],
+      "shippedStationsAbsentFromStationLinesJson": [
+        "CANBERRA",
+        "CANTONMENT",
+        "CHANGI AIRPORT",
+        "HUME",
+        "KEPPEL",
+        "MARINA SOUTH",
+        "PRINCE EDWARD ROAD"
+      ],
+      "shippedStationsFoundInBronzeFrame": 171,
+      "shippedStationsFoundInStationLinesJson": 164
+    },
+    "stationsListTxt": {
+      "bytes": 189,
+      "content": "Traceback (most recent call last):\n  File \"<string>\", line 9, in <module>\n    stations = sorted(gdf['NAME'].unique())\nTypeError: '<' not supported between instances of 'NoneType' and 'str'\n",
+      "note": "a pasted Python traceback, not a station list",
+      "path": "data/manual/mrt_stations_list.txt",
+      "sha256": "26fa9110b44f0e5f0cce4785f794969f93b14fc7f24f51d180b135cdb56964a7"
+    },
+    "units": {
+      "distToNearestMrt": {
+        "evidence": [
+          {
+            "line": 13,
+            "path": "src/egg_n_bacon_housing/utils/geo.py",
+            "quote": "\"\"\"Vectorized great-circle distance in metres (haversine formula)."
+          },
+          {
+            "line": 155,
+            "path": "src/egg_n_bacon_housing/utils/proximity.py",
+            "quote": "distances = haversine_metres("
+          }
+        ],
+        "unit": "metres"
+      },
+      "nearestMrtIsInterchange": {
+        "evidence": [
+          {
+            "line": 295,
+            "path": "src/egg_n_bacon_housing/utils/mrt_line_mapping.py",
+            "quote": "if len(lines) >= 2:"
+          }
+        ],
+        "unit": "boolean, true when the station maps to 2+ lines"
+      },
+      "nearestMrtScore": {
+        "evidence": [
+          {
+            "line": 294,
+            "path": "src/egg_n_bacon_housing/utils/mrt_line_mapping.py",
+            "quote": "basis = 4 - tier"
+          },
+          {
+            "line": 283,
+            "path": "src/egg_n_bacon_housing/utils/mrt_line_mapping.py",
+            "quote": "return (basis * 1000) / max(distance_m, 1)"
+          }
+        ],
+        "unit": "(4 - tier + interchange bonuses) * 1000 / max(distance in m, 1)"
+      },
+      "nearestMrtTier": {
+        "evidence": [
+          {
+            "line": 272,
+            "path": "src/egg_n_bacon_housing/utils/mrt_line_mapping.py",
+            "quote": "def station_tier(self, station_name: str) -> int:"
+          }
+        ],
+        "unit": "integer tier 1-3 from the station's line set"
+      }
+    },
+    "windowStats": {
+      "condo": {
+        "distance": {
+          "max": 3387.1,
+          "mean": 612.5,
+          "median": 495.2,
+          "min": 17.7,
+          "p25": 287.9,
+          "p75": 829.1,
+          "sd": 438.2
+        },
+        "interchangeTrue": 26255,
+        "rows": 245234,
+        "scoreMax": 226.12,
+        "tierCounts": {
+          "1": 140291,
+          "2": 76303,
+          "3": 28639,
+          "null": 1
+        }
+      },
+      "cutoffUpperBound": "2026-10",
+      "hdb": {
+        "distance": {
+          "max": 3594.5,
+          "mean": 612.0,
+          "median": 544.0,
+          "min": 34.1,
+          "p25": 324.7,
+          "p75": 815.2,
+          "sd": 372.8
+        },
+        "interchangeTrue": 16958,
+        "rows": 156278,
+        "scoreMax": 80.76,
+        "tierCounts": {
+          "1": 101083,
+          "2": 18009,
+          "3": 37186
+        }
+      }
+    }
+  },
+  "study": "RS07 mrt-impact",
+  "studyWindow": {
+    "condo": {
+      "fileMonths": 71,
+      "firstMonthInFile": "2021-01",
+      "lastMonthInFile": "2026-11",
+      "rowsInTerminalMonth": 421,
+      "windowEnd": "2026-10",
+      "windowMonths": 70,
+      "windowRows": 245234,
+      "windowStart": "2021-01"
+    },
+    "hdb": {
+      "fileMonths": 443,
+      "firstMonthInFile": "1990-01",
+      "lastMonthInFile": "2026-11",
+      "rowsInTerminalMonth": 790,
+      "windowEnd": "2026-10",
+      "windowMonths": 70,
+      "windowRows": 156278,
+      "windowStart": "2021-01"
+    },
+    "legacySampleContrast": {
+      "measuredFilterRowsIncludingTerminalMonth": 157068,
+      "measuredFilterRowsThroughCutoff": 156278,
+      "note": "the legacy's stated filter does not reproduce 97,133 on this checkout's data under either bound; the legacy's L3 input file and its H3-grid minimum-10 filter are absent, so the difference cannot be resolved here (not-reproducible, not contradicted: a different input frame can hold a different row count)",
+      "reproducesStatedCount": false,
+      "statedFilter": "97,133 HDB transactions, filtered to 2021 onward, with valid coordinates"
+    }
+  },
+  "townDescriptives": {
+    "legacyTable": {
+      "rows": [
+        {
+          "id": "Central Area",
+          "legacyMeanPsfDollars": 903.0,
+          "legacyPremiumPer100mDollars": 59.19,
+          "legacyTransactions": 599,
+          "measuredMedianDistanceMetres": null,
+          "measuredMedianPsf": null,
+          "measuredWindowTransactions": 0
+        },
+        {
+          "id": "Serangoon",
+          "legacyMeanPsfDollars": 566.0,
+          "legacyPremiumPer100mDollars": 12.91,
+          "legacyTransactions": 1853,
+          "measuredMedianDistanceMetres": null,
+          "measuredMedianPsf": null,
+          "measuredWindowTransactions": 0
+        },
+        {
+          "id": "Bishan",
+          "legacyMeanPsfDollars": 644.0,
+          "legacyPremiumPer100mDollars": 5.88,
+          "legacyTransactions": 1951,
+          "measuredMedianDistanceMetres": null,
+          "measuredMedianPsf": null,
+          "measuredWindowTransactions": 0
+        },
+        {
+          "id": "Marine Parade",
+          "legacyMeanPsfDollars": 629.0,
+          "legacyPremiumPer100mDollars": -38.54,
+          "legacyTransactions": 515,
+          "measuredMedianDistanceMetres": null,
+          "measuredMedianPsf": null,
+          "measuredWindowTransactions": 0
+        },
+        {
+          "id": "Geylang",
+          "legacyMeanPsfDollars": 584.0,
+          "legacyPremiumPer100mDollars": -20.54,
+          "legacyTransactions": 2054,
+          "measuredMedianDistanceMetres": null,
+          "measuredMedianPsf": null,
+          "measuredWindowTransactions": 0
+        },
+        {
+          "id": "Sengkang",
+          "legacyMeanPsfDollars": 558.0,
+          "legacyPremiumPer100mDollars": -16.88,
+          "legacyTransactions": 7585,
+          "measuredMedianDistanceMetres": null,
+          "measuredMedianPsf": null,
+          "measuredWindowTransactions": 0
+        }
+      ],
+      "section": "### 2. The average hides large town-level differences",
+      "signSpread": {
+        "label": "the legacy table mixes three positive and three negative per-town coefficients without labelling the spread as heterogeneity; this ledger records the spread as a field and reads it as unexplained heterogeneity, not as a national premium",
+        "maxLegacyPremiumPer100mDollars": 59.19,
+        "minLegacyPremiumPer100mDollars": -38.54,
+        "negativeRows": 3,
+        "positiveRows": 3,
+        "signSpreadDollars": 97.73
+      },
+      "source": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md",
+      "verdict": "the per-town figures are outputs of the retired town-level OLS; no artefact reproduces them, their window and population are unstated, and the measured columns beside them (window counts, medians) are descriptives of this checkout's data, not re-estimates"
+    },
+    "windowCounts": {
+      "cutoffUpperBound": "2026-10",
+      "note": "descriptive window counts only; the legacy's minimum-500 town OLS is not reproduced and no per-town coefficient is estimated here",
+      "towns": 26,
+      "townsAtLeast500Transactions": 25,
+      "townsWithFewerThan500Transactions": {
+        "BUKIT TIMAH": 356
+      }
+    }
+  }
+}

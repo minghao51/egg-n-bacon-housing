@@ -1,0 +1,5028 @@
+{
+  "absenceScans": {
+    "primaryInputPath": {
+      "claimedPath": "data/parquets/L3/housing_unified.parquet",
+      "filenameMatchCount": 0,
+      "filenameMatches": [],
+      "meaning": "the claimed primary input path does not exist; no file named housing_unified.parquet exists in the tree. The shipped platinum frame this pack reads is data/pipeline/04_platinum/unified_dataset.parquet (inputs)",
+      "pathExists": false
+    },
+    "producerScripts": {
+      "filesScanned": 6,
+      "meaning": "no script under the scanned scripts/ root references predictive_analytics: the producer of the stored asset is not in the checkout. A reference count of zero in a bounded root is counter-evidence for 'none was found', never proof that no producer ever existed",
+      "predictiveAnalyticsReferencesInScripts": 0,
+      "root": "scripts/"
+    },
+    "trainTestSplitFiles": {
+      "boundaryNote": "this is a FILENAME scan of the whole tree, build outputs included; it cannot see inside archives or untracked media that are not files on disk",
+      "claimedFiles": [
+        "price_appreciation_train.parquet",
+        "price_appreciation_test.parquet"
+      ],
+      "filesScanned": 18891,
+      "matchCount": 0,
+      "matches": [],
+      "meaning": "an ABSENT FILE state within the declared filename-scan boundary: the split datasets the article names have no matching filenames. What DOES exist is a comparison file recording train/test METRICS for an unlinked run (featureImportanceArtefacts.modelComparison) — metrics without their split files, kept as separate states",
+      "roots": "whole checkout tree (every file), excluding .git/, node_modules/, app/node_modules/, .venv/, scripts/tools/, prompts/, docs/implementation/, docs/plans/2026-11-12-reporting-refresh-decisions.md, and docs/analytics/editions/** except editions/legacy/**"
+    },
+    "yoyChangePctColumn": {
+      "columnPresent": false,
+      "frameColumnCount": 97,
+      "meaning": "the article's stated modelling target yoy_change_pct is NOT a column of the shipped platinum frame — an ABSENT COLUMN, distinct from a null value, a recorded zero, or an absent row. The name survives only in unlinked artefacts (featureImportanceArtefacts) whose computation used some other input in some other run",
+      "state": "absent column"
+    }
+  },
+  "appConsumption": {
+    "consumerFiles": [
+      {
+        "bytes": 23716,
+        "path": "app/src/utils/map-archive.ts",
+        "sha256": "e23de6c83877e7598a1e9961b7e5f53c9e97a2aed1892a89c8406e9921853c27"
+      },
+      {
+        "bytes": 1220,
+        "path": "app/src/constants/data-urls.ts",
+        "sha256": "1bf90653e2afcfb889ac0ea63303a1ff46d79746c1bbffc667dcbc48a354abdd"
+      }
+    ],
+    "forecastLayer": {
+      "gate": {
+        "line": 105,
+        "path": "app/src/utils/map-archive.ts",
+        "quote": "gate: \"The target date is in the past; this is not a forward forecast.\","
+      },
+      "id": "predictive.forecast",
+      "label": {
+        "line": 101,
+        "path": "app/src/utils/map-archive.ts",
+        "quote": "label: \"Historical forecast\","
+      }
+    },
+    "gateClauseCheck": {
+      "clause": "never reuse BUY/SELL prompts as current advice",
+      "meaning": "the shipped map-archive surface already presents the stored signal as archive material, not advice, and the tools workspace withholds BUY/SELL prompts outright; this pack records those labels with line citations and changes no app file. The WITHDRAWAL of the 41 BUY signals is a disposition of this pack applying to the edition text, not a state change",
+      "shippedSurfaceLabelsSignalArchiveNotAdvice": true,
+      "thisPackChangesNoAppFile": true
+    },
+    "signalPresentation": {
+      "label": {
+        "line": 561,
+        "path": "app/src/utils/map-archive.ts",
+        "quote": "label: \"Stored signal (archive, not advice)\","
+      }
+    },
+    "withheldPrompts": {
+      "quote": {
+        "line": 356,
+        "path": "app/src/components/tools/lib/tool-evidence.ts",
+        "quote": "\"Portfolio allocation, BUY/SELL prompts and return simulations are withheld. They need an independently reviewed source and model contract before this workspace may show them.\";"
+      }
+    }
+  },
+  "articleVsAsset": {
+    "ensembleAccuracyClaim": {
+      "meaning": "'74% vs 47%' states no metric definition, population or window; withdrawn, not re-measured. No artefact in the corroboration scan outside the article's own copies carries either number",
+      "metricDefined": false,
+      "metricNameStated": "accuracy",
+      "statedEnsemblePct": 74.0,
+      "statedUnifiedPct": 47.0
+    },
+    "featureClaims": {
+      "combined": {
+        "hdbImportancePctStated": 51.14,
+        "massImportancePctStated": 65.5,
+        "topFeatureStated": "2-year YoY appreciation"
+      },
+      "hdbFeature": {
+        "featureStated": "2-year YoY appreciation",
+        "importancePctStated": 51.14
+      },
+      "massFeature": {
+        "featureStated": "2-year YoY appreciation",
+        "importancePctStated": 65.5
+      },
+      "meaning": "the checkout's feature-importance artefacts (featureImportanceArtefacts) carry six target/model feature lists, none containing a feature named like a 2-year YoY appreciation, and nothing links those artefacts to the article's per-segment models in either direction"
+    },
+    "granularity": {
+      "articleStated": "per planning area (ARIMA) and per property type/segment (XGBoost)",
+      "assetAreaCount": 41,
+      "assetGranularity": "per planning area",
+      "meaning": "the one granularity the asset stores is per planning area; the per-segment granularity has no stored counterpart"
+    },
+    "perSegmentModelOutputs": {
+      "assetBlockKeys": [
+        "lease_arbitrage",
+        "policy_risk",
+        "price_forecast"
+      ],
+      "inStoredAsset": false,
+      "meaning": "the stored asset's per-area blocks carry only price_forecast, policy_risk and lease_arbitrage keys; zero occurrences of any of the five segment labels; and the corroboration scan finds the table's values only in the article's own copies, sibling legacy articles and one plan document — so the per-segment model outputs the article's tables presuppose are absent from this checkout, and the table is withdrawn rather than re-estimated",
+      "segmentNameOccurrencesInStoredAsset": {
+        "Executive Condos": 0,
+        "HDB flats": 0,
+        "Luxury Condos": 0,
+        "Mass Market Condos": 0,
+        "Mid Market Condos": 0
+      }
+    },
+    "reliabilityTable": {
+      "frozenHeader": "Accuracy (R²)",
+      "meaning": "the frozen table's header calls R-squared 'Accuracy'; R-squared is a fit statistic (the share of variance a fitted model explains on the data it was scored against), not forecast accuracy, and no train/test or holdout artefact for these five segment models exists in this checkout (corroborationScan). The working copy already renames the header; the frozen text is what this pack quotes and withdraws. The five rows are withdrawn, not re-measured: there is nothing in the checkout to re-measure them against",
+      "rows": [
+        {
+          "ciWidthPctStated": 18.58,
+          "directionalPctStated": 99.4,
+          "id": "hdb",
+          "nameOccurrencesInStoredAsset": 0,
+          "practicalRead": "Strong",
+          "r2PctStated": 79.8,
+          "segmentLabel": "HDB flats"
+        },
+        {
+          "ciWidthPctStated": 50.15,
+          "directionalPctStated": 97.1,
+          "id": "ec",
+          "nameOccurrencesInStoredAsset": 0,
+          "practicalRead": "Strong but wider uncertainty",
+          "r2PctStated": 98.5,
+          "segmentLabel": "Executive Condos"
+        },
+        {
+          "ciWidthPctStated": 40.48,
+          "directionalPctStated": 96.4,
+          "id": "mass",
+          "nameOccurrencesInStoredAsset": 0,
+          "practicalRead": "Useful with caution",
+          "r2PctStated": 85.6,
+          "segmentLabel": "Mass Market Condos"
+        },
+        {
+          "ciWidthPctStated": 1877.88,
+          "directionalPctStated": 94.2,
+          "id": "mid",
+          "nameOccurrencesInStoredAsset": 0,
+          "practicalRead": "Direction only",
+          "r2PctStated": 72.6,
+          "segmentLabel": "Mid Market Condos"
+        },
+        {
+          "ciWidthPctStated": 1076.24,
+          "directionalPctStated": 92.3,
+          "id": "lux",
+          "nameOccurrencesInStoredAsset": 0,
+          "practicalRead": "Magnitude unusable",
+          "r2PctStated": 30.1,
+          "segmentLabel": "Luxury Condos"
+        }
+      ],
+      "workingCopyHeader": "R² (magnitude fit)"
+    },
+    "technicalTable": {
+      "meaning": "the appendix table repeats the same five triples; withdrawn for the same reason",
+      "rows": [
+        {
+          "ciWidthPctStated": 18.58,
+          "directionalPctStated": 99.4,
+          "id": "hdb",
+          "nameOccurrencesInStoredAsset": 0,
+          "r2PctStated": 79.8,
+          "segmentLabel": "HDB flats"
+        },
+        {
+          "ciWidthPctStated": 50.15,
+          "directionalPctStated": 97.1,
+          "id": "ec",
+          "nameOccurrencesInStoredAsset": 0,
+          "r2PctStated": 98.5,
+          "segmentLabel": "Executive Condos"
+        },
+        {
+          "ciWidthPctStated": 40.48,
+          "directionalPctStated": 96.4,
+          "id": "mass",
+          "nameOccurrencesInStoredAsset": 0,
+          "r2PctStated": 85.6,
+          "segmentLabel": "Mass Market Condos"
+        },
+        {
+          "ciWidthPctStated": 1877.88,
+          "directionalPctStated": 94.2,
+          "id": "mid",
+          "nameOccurrencesInStoredAsset": 0,
+          "r2PctStated": 72.6,
+          "segmentLabel": "Mid Market Condos"
+        },
+        {
+          "ciWidthPctStated": 1076.24,
+          "directionalPctStated": 92.3,
+          "id": "lux",
+          "nameOccurrencesInStoredAsset": 0,
+          "r2PctStated": 30.1,
+          "segmentLabel": "Luxury Condos"
+        }
+      ]
+    }
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 32,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by index or by their `id`; an unresolved key fails the build rather than shipping. Resolution is SYNTACTIC: it certifies that the key addresses a field in this ledger, not that the field's content supports the disposition",
+    "unresolved": []
+  },
+  "corroborationScan": {
+    "excludedClaimSource": "docs/analytics/editions/legacy/2026-11-12/price-forecasts.md",
+    "excludedClaimSourceReason": "the frozen article is the CLAIM SOURCE for these tokens; a text cannot corroborate itself. Its occurrences, and the working copy's, are counted separately as ownCopies",
+    "excludedEditionTexts": "docs/analytics/editions/** except editions/legacy/**",
+    "excludedPaths": [
+      "scripts/tools/price_forecasts_evidence.py",
+      "scripts/tools/market_segments_evidence.py",
+      "scripts/tools/macro_sensitivity_evidence.py",
+      "docs/plans/2026-11-12-reporting-refresh-decisions.md"
+    ],
+    "excludedPrefixes": [
+      "docs/implementation/",
+      "scripts/tools/",
+      "prompts/"
+    ],
+    "filesScanned": 334,
+    "independentMatchFiles": [
+      "app/src/components/charts/InlineChartRenderer.tsx",
+      "app/src/utils/data-parser.ts",
+      "docs/analytics/editions/legacy/2026-11-12/findings.md",
+      "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+      "docs/analytics/findings.md",
+      "docs/analytics/school-quality.md",
+      "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+      "docs/plans/2026-02-19-pipeline-improvements-plan.md"
+    ],
+    "meaning": "outside the article's own two copies (the frozen text and the working copy docs/analytics/price-forecasts.md), the table values appear only in sibling legacy articles that quote the same numbers (findings.md for the segment table, school-quality.md for the XGBoost parameters) and one plan document (ARIMA(1,1,1) in docs/plans/2026-02-19-pipeline-improvements-plan.md) — cross-citation inside documents, never a data or code artefact. NO JSON, CSV or producer output in the scanned roots carries any of the table's values, which is the measured boundary of the per-segment table's provenance: absent, not merely unstated. Cross-citation between articles is corroboration of neither direction and is not claimed as any",
+    "methodTokens": {
+      "feature_importance_yoy_change_pct": {
+        "allMatches": [],
+        "files": 0,
+        "firstMatches": [],
+        "occurrences": 0
+      },
+      "hdb_price_forecasts": {
+        "allMatches": [
+          {
+            "line": 42,
+            "path": "docs/archive/20260124-data-reorganization-complete.md",
+            "quote": "│   ├── hdb_price_forecasts.parquet"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 42,
+            "path": "docs/archive/20260124-data-reorganization-complete.md",
+            "quote": "│   ├── hdb_price_forecasts.parquet"
+          }
+        ],
+        "occurrences": 1
+      },
+      "hdb_yield_forecasts": {
+        "allMatches": [
+          {
+            "line": 43,
+            "path": "docs/archive/20260124-data-reorganization-complete.md",
+            "quote": "│   └── hdb_yield_forecasts.parquet"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 43,
+            "path": "docs/archive/20260124-data-reorganization-complete.md",
+            "quote": "│   └── hdb_yield_forecasts.parquet"
+          }
+        ],
+        "occurrences": 1
+      },
+      "model_comparison.csv": {
+        "allMatches": [],
+        "files": 0,
+        "firstMatches": [],
+        "occurrences": 0
+      },
+      "predictive_analytics": {
+        "allMatches": [
+          {
+            "line": 19,
+            "path": "app/public/data/manifest.json",
+            "quote": "{\"path\": \"analytics/predictive_analytics.json.gz\", \"logicalSource\": \"research/predictive_analytics\", \"schemaVersion\": 1, \"provenance\": \"docs/analytics/README.md"
+          },
+          {
+            "line": 23,
+            "path": "app/src/constants/data-urls.ts",
+            "quote": "predictive: `${BASE_URL}data/analytics/predictive_analytics.json.gz`,"
+          },
+          {
+            "line": 87,
+            "path": "app/src/utils/map-archive.ts",
+            "quote": "asset: \"analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 95,
+            "path": "app/src/utils/map-archive.ts",
+            "quote": "asset: \"analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 103,
+            "path": "app/src/utils/map-archive.ts",
+            "quote": "asset: \"analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 348,
+            "path": "docs/analytics/editions/legacy/2026-11-12/manifest.json",
+            "quote": "\"path\": \"app/public/data/analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 435,
+            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md",
+            "quote": "- `predictive_analytics.json.gz` (~250-400KB)"
+          },
+          {
+            "line": 65,
+            "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md",
+            "quote": "| RA02 | `app/public/data/analytics/predictive_analytics.json.gz`                       | RF07 archive, RS14 for replacement                                    "
+          }
+        ],
+        "files": 6,
+        "firstMatches": [
+          {
+            "line": 19,
+            "path": "app/public/data/manifest.json",
+            "quote": "{\"path\": \"analytics/predictive_analytics.json.gz\", \"logicalSource\": \"research/predictive_analytics\", \"schemaVersion\": 1, \"provenance\": \"docs/analytics/README.md"
+          },
+          {
+            "line": 23,
+            "path": "app/src/constants/data-urls.ts",
+            "quote": "predictive: `${BASE_URL}data/analytics/predictive_analytics.json.gz`,"
+          },
+          {
+            "line": 87,
+            "path": "app/src/utils/map-archive.ts",
+            "quote": "asset: \"analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 95,
+            "path": "app/src/utils/map-archive.ts",
+            "quote": "asset: \"analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 103,
+            "path": "app/src/utils/map-archive.ts",
+            "quote": "asset: \"analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 348,
+            "path": "docs/analytics/editions/legacy/2026-11-12/manifest.json",
+            "quote": "\"path\": \"app/public/data/analytics/predictive_analytics.json.gz\","
+          },
+          {
+            "line": 435,
+            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md",
+            "quote": "- `predictive_analytics.json.gz` (~250-400KB)"
+          },
+          {
+            "line": 65,
+            "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md",
+            "quote": "| RA02 | `app/public/data/analytics/predictive_analytics.json.gz`                       | RF07 archive, RS14 for replacement                                    "
+          }
+        ],
+        "occurrences": 8
+      },
+      "price_appreciation_train": {
+        "allMatches": [
+          {
+            "line": 91,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Train/test split**: `price_appreciation_train.parquet` / `price_appreciation_test.parquet`"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 91,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Train/test split**: `price_appreciation_train.parquet` / `price_appreciation_test.parquet`"
+          }
+        ],
+        "occurrences": 1
+      }
+    },
+    "methodTokensMeaning": "predictive_analytics appears in app/src consumers and plan/register documents but in NO script under scripts/; price_appreciation_train appears nowhere outside the frozen and working article copies; hdb_price_forecasts appears only in the archive reorganization listing. These are counts of references in the scanned roots, disclosed file by file",
+    "ownCopies": {
+      "30.1%": {
+        "inArticleCopies": 3,
+        "occurrences": 9,
+        "outsideArticleCopies": 6,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "51.14%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      },
+      "65.50%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      },
+      "72.6%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      },
+      "74% vs 47%": {
+        "inArticleCopies": 2,
+        "occurrences": 4,
+        "outsideArticleCopies": 2,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "79.8%": {
+        "inArticleCopies": 2,
+        "occurrences": 6,
+        "outsideArticleCopies": 4,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "85.6%": {
+        "inArticleCopies": 2,
+        "occurrences": 4,
+        "outsideArticleCopies": 2,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "92.3%": {
+        "inArticleCopies": 2,
+        "occurrences": 6,
+        "outsideArticleCopies": 4,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "94.2%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      },
+      "96.4%": {
+        "inArticleCopies": 2,
+        "occurrences": 4,
+        "outsideArticleCopies": 2,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "97.1%": {
+        "inArticleCopies": 2,
+        "occurrences": 4,
+        "outsideArticleCopies": 2,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "98.5%": {
+        "inArticleCopies": 2,
+        "occurrences": 4,
+        "outsideArticleCopies": 2,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "99.4%": {
+        "inArticleCopies": 2,
+        "occurrences": 6,
+        "outsideArticleCopies": 4,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "docs/analytics/findings.md"
+        ]
+      },
+      "ARIMA(1,1,1)": {
+        "inArticleCopies": 1,
+        "occurrences": 2,
+        "outsideArticleCopies": 1,
+        "outsideFiles": [
+          "docs/plans/2026-02-19-pipeline-improvements-plan.md"
+        ]
+      },
+      "n_estimators=100": {
+        "inArticleCopies": 1,
+        "occurrences": 7,
+        "outsideArticleCopies": 6,
+        "outsideFiles": [
+          "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+          "docs/analytics/school-quality.md",
+          "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+          "docs/plans/2026-02-19-pipeline-improvements-plan.md"
+        ]
+      },
+      "±1076.24%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      },
+      "±18.58%": {
+        "inArticleCopies": 2,
+        "occurrences": 4,
+        "outsideArticleCopies": 2,
+        "outsideFiles": [
+          "app/src/components/charts/InlineChartRenderer.tsx",
+          "app/src/utils/data-parser.ts"
+        ]
+      },
+      "±1877.88%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      },
+      "±40.48%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      },
+      "±50.15%": {
+        "inArticleCopies": 2,
+        "occurrences": 2,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
+      }
+    },
+    "roots": [
+      "docs",
+      "scripts",
+      "src",
+      "assets",
+      "prompts",
+      "app/src",
+      "app/public",
+      ".claude/handoffs"
+    ],
+    "suffixes": [
+      ".md",
+      ".py",
+      ".ts",
+      ".tsx",
+      ".json",
+      ".csv",
+      ".txt",
+      ".yml",
+      ".yaml"
+    ],
+    "valueTokens": {
+      "30.1%": {
+        "allMatches": [
+          {
+            "line": 108,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                 |"
+          },
+          {
+            "line": 280,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
+          },
+          {
+            "line": 108,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                               |"
+          },
+          {
+            "line": 280,
+            "path": "docs/analytics/findings.md",
+            "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
+          },
+          {
+            "line": 45,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1%              | ±1076.24%    | 92.3%           | Magnitude unusable           |"
+          },
+          {
+            "line": 113,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |"
+          },
+          {
+            "line": 121,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "Segment-specific modeling dramatically outperforms unified approaches (74% vs 47% accuracy). HDB and EC segments are the most forecastable; luxury condos are es"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 108,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                 |"
+          },
+          {
+            "line": 280,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
+          },
+          {
+            "line": 108,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                               |"
+          },
+          {
+            "line": 280,
+            "path": "docs/analytics/findings.md",
+            "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
+          },
+          {
+            "line": 45,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1%              | ±1076.24%    | 92.3%           | Magnitude unusable           |"
+          },
+          {
+            "line": 113,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |"
+          },
+          {
+            "line": 121,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "Segment-specific modeling dramatically outperforms unified approaches (74% vs 47% accuracy). HDB and EC segments are the most forecastable; luxury condos are es"
+          }
+        ],
+        "occurrences": 9
+      },
+      "51.14%": {
+        "allMatches": [
+          {
+            "line": 60,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB               | 2-year YoY appreciation | 51.14%     |"
+          },
+          {
+            "line": 115,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Top feature**: 2-year YoY appreciation (51.14% importance for HDB, 65.50% for mass-market condo)"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 60,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB               | 2-year YoY appreciation | 51.14%     |"
+          },
+          {
+            "line": 115,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Top feature**: 2-year YoY appreciation (51.14% importance for HDB, 65.50% for mass-market condo)"
+          }
+        ],
+        "occurrences": 2
+      },
+      "65.50%": {
+        "allMatches": [
+          {
+            "line": 61,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass market condo | 2-year YoY appreciation | 65.50%     |"
+          },
+          {
+            "line": 115,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Top feature**: 2-year YoY appreciation (51.14% importance for HDB, 65.50% for mass-market condo)"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 61,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass market condo | 2-year YoY appreciation | 65.50%     |"
+          },
+          {
+            "line": 115,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Top feature**: 2-year YoY appreciation (51.14% importance for HDB, 65.50% for mass-market condo)"
+          }
+        ],
+        "occurrences": 2
+      },
+      "72.6%": {
+        "allMatches": [
+          {
+            "line": 44,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6%              | ±1877.88%    | 94.2%           | Direction only               |"
+          },
+          {
+            "line": 112,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 44,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6%              | ±1877.88%    | 94.2%           | Direction only               |"
+          },
+          {
+            "line": 112,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |"
+          }
+        ],
+        "occurrences": 2
+      },
+      "74% vs 47%": {
+        "allMatches": [
+          {
+            "line": 263,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Ensemble vs unified               | Accuracy improvement              | 74% vs 47%       | High — out-of-sample                     |"
+          },
+          {
+            "line": 263,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Ensemble vs unified               | Accuracy improvement              | 74% vs 47%       | High — out-of-sample                                   |"
+          },
+          {
+            "line": 116,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Ensemble accuracy**: 74% vs 47% for a unified one-size-fits-all model"
+          },
+          {
+            "line": 121,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "Segment-specific modeling dramatically outperforms unified approaches (74% vs 47% accuracy). HDB and EC segments are the most forecastable; luxury condos are es"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 263,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Ensemble vs unified               | Accuracy improvement              | 74% vs 47%       | High — out-of-sample                     |"
+          },
+          {
+            "line": 263,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Ensemble vs unified               | Accuracy improvement              | 74% vs 47%       | High — out-of-sample                                   |"
+          },
+          {
+            "line": 116,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **Ensemble accuracy**: 74% vs 47% for a unified one-size-fits-all model"
+          },
+          {
+            "line": 121,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "Segment-specific modeling dramatically outperforms unified approaches (74% vs 47% accuracy). HDB and EC segments are the most forecastable; luxury condos are es"
+          }
+        ],
+        "occurrences": 4
+      },
+      "79.8%": {
+        "allMatches": [
+          {
+            "line": 105,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost          |"
+          },
+          {
+            "line": 105,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost                        |"
+          },
+          {
+            "line": 41,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB flats          | 79.8%              | ±18.58%      | 99.4%           | Strong                       |"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB                | 79.8% | 99.4%                | ±18.58%      |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 105,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost          |"
+          },
+          {
+            "line": 105,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost                        |"
+          },
+          {
+            "line": 41,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB flats          | 79.8%              | ±18.58%      | 99.4%           | Strong                       |"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB                | 79.8% | 99.4%                | ±18.58%      |"
+          }
+        ],
+        "occurrences": 6
+      },
+      "85.6%": {
+        "allMatches": [
+          {
+            "line": 107,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 107,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 43,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6%              | ±40.48%      | 96.4%           | Useful with caution          |"
+          },
+          {
+            "line": 111,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 107,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 107,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 43,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6%              | ±40.48%      | 96.4%           | Useful with caution          |"
+          },
+          {
+            "line": 111,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |"
+          }
+        ],
+        "occurrences": 4
+      },
+      "92.3%": {
+        "allMatches": [
+          {
+            "line": 108,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                 |"
+          },
+          {
+            "line": 108,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                               |"
+          },
+          {
+            "line": 45,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1%              | ±1076.24%    | 92.3%           | Magnitude unusable           |"
+          },
+          {
+            "line": 113,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 108,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                 |"
+          },
+          {
+            "line": 108,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo      | 30.1% | 92.3%                | Trend only, magnitude unreliable      |"
+          },
+          {
+            "line": 262,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Luxury condo forecast             | R² / directional accuracy         | 30.1% / 92.3%    | Low — magnitude unusable                               |"
+          },
+          {
+            "line": 45,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1%              | ±1076.24%    | 92.3%           | Magnitude unusable           |"
+          },
+          {
+            "line": 113,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |"
+          }
+        ],
+        "occurrences": 6
+      },
+      "94.2%": {
+        "allMatches": [
+          {
+            "line": 44,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6%              | ±1877.88%    | 94.2%           | Direction only               |"
+          },
+          {
+            "line": 112,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 44,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6%              | ±1877.88%    | 94.2%           | Direction only               |"
+          },
+          {
+            "line": 112,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |"
+          }
+        ],
+        "occurrences": 2
+      },
+      "96.4%": {
+        "allMatches": [
+          {
+            "line": 107,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 107,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 43,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6%              | ±40.48%      | 96.4%           | Useful with caution          |"
+          },
+          {
+            "line": 111,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 107,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 107,
+            "path": "docs/analytics/findings.md",
+            "quote": "| Mass market condo | 85.6% | 96.4%                | Useful with caution                   |"
+          },
+          {
+            "line": 43,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6%              | ±40.48%      | 96.4%           | Useful with caution          |"
+          },
+          {
+            "line": 111,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |"
+          }
+        ],
+        "occurrences": 4
+      },
+      "97.1%": {
+        "allMatches": [
+          {
+            "line": 106,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 106,
+            "path": "docs/analytics/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 42,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5%              | ±50.15%      | 97.1%           | Strong but wider uncertainty |"
+          },
+          {
+            "line": 110,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 106,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 106,
+            "path": "docs/analytics/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 42,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5%              | ±50.15%      | 97.1%           | Strong but wider uncertainty |"
+          },
+          {
+            "line": 110,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |"
+          }
+        ],
+        "occurrences": 4
+      },
+      "98.5%": {
+        "allMatches": [
+          {
+            "line": 106,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 106,
+            "path": "docs/analytics/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 42,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5%              | ±50.15%      | 97.1%           | Strong but wider uncertainty |"
+          },
+          {
+            "line": 110,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 106,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 106,
+            "path": "docs/analytics/findings.md",
+            "quote": "| EC                | 98.5% | 97.1%                | Strong, but sample is smaller         |"
+          },
+          {
+            "line": 42,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5%              | ±50.15%      | 97.1%           | Strong but wider uncertainty |"
+          },
+          {
+            "line": 110,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |"
+          }
+        ],
+        "occurrences": 4
+      },
+      "99.4%": {
+        "allMatches": [
+          {
+            "line": 105,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost          |"
+          },
+          {
+            "line": 105,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost                        |"
+          },
+          {
+            "line": 41,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB flats          | 79.8%              | ±18.58%      | 99.4%           | Strong                       |"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB                | 79.8% | 99.4%                | ±18.58%      |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 105,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost          |"
+          },
+          {
+            "line": 105,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+          },
+          {
+            "line": 261,
+            "path": "docs/analytics/findings.md",
+            "quote": "| HDB forecast accuracy             | R² / directional accuracy         | 79.8% / 99.4%    | High — segment-specific XGBoost                        |"
+          },
+          {
+            "line": 41,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB flats          | 79.8%              | ±18.58%      | 99.4%           | Strong                       |"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB                | 79.8% | 99.4%                | ±18.58%      |"
+          }
+        ],
+        "occurrences": 6
+      },
+      "ARIMA(1,1,1)": {
+        "allMatches": [
+          {
+            "line": 102,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **ARIMA(1,1,1)** for time-series forecasting per planning area"
+          },
+          {
+            "line": 1124,
+            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+            "quote": "f'Used ARIMA(1,1,1) model with 6-month horizon'"
+          }
+        ],
+        "files": 2,
+        "firstMatches": [
+          {
+            "line": 102,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- **ARIMA(1,1,1)** for time-series forecasting per planning area"
+          },
+          {
+            "line": 1124,
+            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+            "quote": "f'Used ARIMA(1,1,1) model with 6-month horizon'"
+          }
+        ],
+        "occurrences": 2
+      },
+      "n_estimators=100": {
+        "allMatches": [
+          {
+            "line": 109,
+            "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+            "quote": "- XGBoost parameters: n_estimators=100, max_depth=6, learning_rate=0.1"
+          },
+          {
+            "line": 98,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- Parameters: n_estimators=100, max_depth=6, learning_rate=0.1, subsample=0.8"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/school-quality.md",
+            "quote": "- XGBoost parameters: n_estimators=100, max_depth=6, learning_rate=0.1"
+          },
+          {
+            "line": 158,
+            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+            "quote": "model = RandomForestRegressor(n_estimators=100, n_jobs=-1, random_state=42)"
+          },
+          {
+            "line": 160,
+            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+            "quote": "model = xgb.XGBRegressor(n_estimators=100, max_depth=6, n_jobs=-1, random_state=42)"
+          },
+          {
+            "line": 909,
+            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+            "quote": "n_estimators=100,"
+          },
+          {
+            "line": 1283,
+            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+            "quote": "n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42"
+          }
+        ],
+        "files": 5,
+        "firstMatches": [
+          {
+            "line": 109,
+            "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+            "quote": "- XGBoost parameters: n_estimators=100, max_depth=6, learning_rate=0.1"
+          },
+          {
+            "line": 98,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "- Parameters: n_estimators=100, max_depth=6, learning_rate=0.1, subsample=0.8"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/school-quality.md",
+            "quote": "- XGBoost parameters: n_estimators=100, max_depth=6, learning_rate=0.1"
+          },
+          {
+            "line": 158,
+            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+            "quote": "model = RandomForestRegressor(n_estimators=100, n_jobs=-1, random_state=42)"
+          },
+          {
+            "line": 160,
+            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+            "quote": "model = xgb.XGBRegressor(n_estimators=100, max_depth=6, n_jobs=-1, random_state=42)"
+          },
+          {
+            "line": 909,
+            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+            "quote": "n_estimators=100,"
+          },
+          {
+            "line": 1283,
+            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+            "quote": "n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42"
+          }
+        ],
+        "occurrences": 7
+      },
+      "±1076.24%": {
+        "allMatches": [
+          {
+            "line": 45,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1%              | ±1076.24%    | 92.3%           | Magnitude unusable           |"
+          },
+          {
+            "line": 113,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 45,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1%              | ±1076.24%    | 92.3%           | Magnitude unusable           |"
+          },
+          {
+            "line": 113,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |"
+          }
+        ],
+        "occurrences": 2
+      },
+      "±18.58%": {
+        "allMatches": [
+          {
+            "line": 61,
+            "path": "app/src/components/charts/InlineChartRenderer.tsx",
+            "quote": "// A series whose cells cannot be parsed (for example a \"±18.58%\""
+          },
+          {
+            "line": 285,
+            "path": "app/src/utils/data-parser.ts",
+            "quote": "* example a \"±18.58%\" uncertainty column); rendering it would show an empty"
+          },
+          {
+            "line": 41,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB flats          | 79.8%              | ±18.58%      | 99.4%           | Strong                       |"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB                | 79.8% | 99.4%                | ±18.58%      |"
+          }
+        ],
+        "files": 3,
+        "firstMatches": [
+          {
+            "line": 61,
+            "path": "app/src/components/charts/InlineChartRenderer.tsx",
+            "quote": "// A series whose cells cannot be parsed (for example a \"±18.58%\""
+          },
+          {
+            "line": 285,
+            "path": "app/src/utils/data-parser.ts",
+            "quote": "* example a \"±18.58%\" uncertainty column); rendering it would show an empty"
+          },
+          {
+            "line": 41,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB flats          | 79.8%              | ±18.58%      | 99.4%           | Strong                       |"
+          },
+          {
+            "line": 109,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| HDB                | 79.8% | 99.4%                | ±18.58%      |"
+          }
+        ],
+        "occurrences": 4
+      },
+      "±1877.88%": {
+        "allMatches": [
+          {
+            "line": 44,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6%              | ±1877.88%    | 94.2%           | Direction only               |"
+          },
+          {
+            "line": 112,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 44,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6%              | ±1877.88%    | 94.2%           | Direction only               |"
+          },
+          {
+            "line": 112,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |"
+          }
+        ],
+        "occurrences": 2
+      },
+      "±40.48%": {
+        "allMatches": [
+          {
+            "line": 43,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6%              | ±40.48%      | 96.4%           | Useful with caution          |"
+          },
+          {
+            "line": 111,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 43,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6%              | ±40.48%      | 96.4%           | Useful with caution          |"
+          },
+          {
+            "line": 111,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |"
+          }
+        ],
+        "occurrences": 2
+      },
+      "±50.15%": {
+        "allMatches": [
+          {
+            "line": 42,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5%              | ±50.15%      | 97.1%           | Strong but wider uncertainty |"
+          },
+          {
+            "line": 110,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |"
+          }
+        ],
+        "files": 1,
+        "firstMatches": [
+          {
+            "line": 42,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5%              | ±50.15%      | 97.1%           | Strong but wider uncertainty |"
+          },
+          {
+            "line": 110,
+            "path": "docs/analytics/price-forecasts.md",
+            "quote": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |"
+          }
+        ],
+        "occurrences": 2
+      }
+    }
+  },
+  "cutoff": {
+    "allPropertyTypesTerminalMonth": "2026-11",
+    "allPropertyTypesTerminalMonthTransactions": 1211,
+    "allPropertyTypesTerminalShareOfTrailingMedian": 0.264,
+    "allPropertyTypesTrailing12MedianTransactions": 4587.5,
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact (the same rule RS03/RS04/RS05/RS09/RS10 shipped, computed on the private rows so the bound is identical across the studies)",
+    "frameFirstMonth": "1990-01",
+    "frameLastMonth": "2026-11",
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthShareOfTrailingMedian": 1.1936,
+    "lastCompleteMonthTransactions": 2546,
+    "meaning": "every window, count and share in this ledger that touches the frame stops at lastCompleteMonth",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.1974,
+    "terminalMonthTransactions": 421,
+    "trailing12MedianTransactions": 2133.0,
+    "trailing12Months": [
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ]
+  },
+  "definition": "A measured reconciliation of the lineage behind the RS14 price-forecasts article and a scoring of the stored 2025 forecasts against realised outcomes. The stored asset (predictive_analytics.json.gz, metadata model_r2 0.89, last_training_date 2025-01-01) holds 41 planning-area blocks whose price_forecast rows all carry forecast_date 2025-07-01 and signal BUY. That stored date is read, never advanced; the signals are withdrawn as current advice. The scoring anchors each projection at a stated producer convention (the month before the forecast month) plus two recorded alternative readings, because the asset defines no anchor for projected_change_pct, and scores it against realised area median prices through the measured cutoff against three naive baselines, with MAE, RMSE, bias, MAPE on implied levels, directional hit rate and empirical coverage of the stored interval bounds at an assumed 0.95 nominal level. Rolling-origin validation is applied to the baselines across 23 monthly origins; the stored model has exactly one origin, so it cannot be rolling-origin validated from this asset — recorded, not hidden. model_r2 is named as a fit statistic throughout, never as forecast accuracy. The article's per-segment R-squared table is withdrawn: the corroboration scan finds its values only in the article's own copies and sibling legacy articles, and the asset carries no per-segment outputs. Nothing here re-fits a model, produces a new forecast, or edits any stored artefact.",
+  "featureImportanceArtefacts": {
+    "assetModelR2Screen": {
+      "assetMetadataModelR2": 0.89,
+      "meanOfTrainAndTestR2": 0.8891,
+      "meanRoundsToAssetValue": true,
+      "meaning": "SCREENED AS consistent, origin unverified: the asset's 0.89 equals the mean of the unlinked comparison file's XGBoost yoy_change_pct train/test R-squared pair rounded to two decimals. This is evidence in NEITHER direction: nothing links model_comparison.csv to the asset's generator, and equality of one rounded statistic cannot establish lineage. Note also what the file DOES record: train/test metrics for some run — while the split FILES themselves are absent (absenceScans.trainTestSplitFiles); the two states are kept apart",
+      "yoyXgboostTestR2": 0.882999,
+      "yoyXgboostTrainR2": 0.895215
+    },
+    "directory": "data/analysis/feature_importance",
+    "distinctFeatureNames": 134,
+    "featuresNamedLikeYoyLag": 0,
+    "files": [
+      {
+        "bytes": 8070,
+        "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv",
+        "sha256": "d89a7be2cc90e539fc06534a64089dc234c8114b31411cb60a929c232748f7ef"
+      },
+      {
+        "bytes": 6279,
+        "path": "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv",
+        "sha256": "7864979c99ba4c2ec22c142bd4429d94803419f537dd520b28009f077b8df2f4"
+      },
+      {
+        "bytes": 7618,
+        "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv",
+        "sha256": "a2244fddf01be07cb572b3fd4eb7b5c7c32d71d188ef255f23eee7cf608576dc"
+      },
+      {
+        "bytes": 5857,
+        "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_xgboost.csv",
+        "sha256": "0aafc146740e61479ca648fd9334d7a0ea27e90ee3dd317474c91dd076b06e6b"
+      },
+      {
+        "bytes": 7626,
+        "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv",
+        "sha256": "7952713db5acdf1c77f7713ecfa55a47d0dd0e3a3d7146c7ed326cfc46705fa2"
+      },
+      {
+        "bytes": 5766,
+        "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv",
+        "sha256": "4dadafd391960a7ed5b5bb8e279ce783e20964e97e577fa68af6feaa991fc34c"
+      },
+      {
+        "bytes": 2061,
+        "path": "data/analysis/feature_importance/model_comparison.csv",
+        "sha256": "3ae305054c392db84289a47380ef8fbb712f0576c14b7f9a0470b122e2d6e962"
+      }
+    ],
+    "meaning": "the checkout holds per-target, per-model global feature-importance lists and one train/test comparison file, all unlinked to the article's per-segment models in either direction. No feature list contains a name matching the article's claimed top feature (a 2-year YoY appreciation), the comparison file has no segment column, and yoy_change_pct — the article's stated target — is not a column of the shipped platinum frame at all (absenceScans.yoyChangePctColumn)",
+    "modelComparison": {
+      "columns": [
+        "model",
+        "train_r2",
+        "test_r2",
+        "train_mae",
+        "test_mae",
+        "train_rmse",
+        "test_rmse",
+        "target",
+        "target_name"
+      ],
+      "hasTestMetrics": true,
+      "models": [
+        "Linear Regression",
+        "Random Forest",
+        "Ridge Regression",
+        "XGBoost"
+      ],
+      "path": "data/analysis/feature_importance/model_comparison.csv",
+      "rows": [
+        {
+          "model": "Linear Regression",
+          "target": "price_psf",
+          "testMae": 104.118052,
+          "testR2": 0.912287,
+          "testRmse": 173.328623,
+          "trainR2": 0.912041
+        },
+        {
+          "model": "Ridge Regression",
+          "target": "price_psf",
+          "testMae": 104.117316,
+          "testR2": 0.912287,
+          "testRmse": 173.328709,
+          "trainR2": 0.912041
+        },
+        {
+          "model": "XGBoost",
+          "target": "price_psf",
+          "testMae": 45.918351,
+          "testR2": 0.97761,
+          "testRmse": 87.571407,
+          "trainR2": 0.977616
+        },
+        {
+          "model": "Random Forest",
+          "target": "price_psf",
+          "testMae": 42.556894,
+          "testR2": 0.979306,
+          "testRmse": 84.18993,
+          "trainR2": 0.980064
+        },
+        {
+          "model": "Linear Regression",
+          "target": "rental_yield_pct",
+          "testMae": 0.53471,
+          "testR2": 0.456789,
+          "testRmse": 0.690892,
+          "trainR2": 0.466208
+        },
+        {
+          "model": "Ridge Regression",
+          "target": "rental_yield_pct",
+          "testMae": 0.534749,
+          "testR2": 0.456799,
+          "testRmse": 0.690887,
+          "trainR2": 0.466205
+        },
+        {
+          "model": "XGBoost",
+          "target": "rental_yield_pct",
+          "testMae": 0.165821,
+          "testR2": 0.930437,
+          "testRmse": 0.247237,
+          "trainR2": 0.933543
+        },
+        {
+          "model": "Random Forest",
+          "target": "rental_yield_pct",
+          "testMae": 0.08226,
+          "testR2": 0.960569,
+          "testRmse": 0.186143,
+          "trainR2": 0.962801
+        },
+        {
+          "model": "Linear Regression",
+          "target": "yoy_change_pct",
+          "testMae": 31.06926,
+          "testR2": 0.076122,
+          "testRmse": 80.433878,
+          "trainR2": 0.075351
+        },
+        {
+          "model": "Ridge Regression",
+          "target": "yoy_change_pct",
+          "testMae": 31.066435,
+          "testR2": 0.076134,
+          "testRmse": 80.433356,
+          "trainR2": 0.075351
+        },
+        {
+          "model": "XGBoost",
+          "target": "yoy_change_pct",
+          "testMae": 14.894924,
+          "testR2": 0.882999,
+          "testRmse": 28.62372,
+          "trainR2": 0.895215
+        },
+        {
+          "model": "Random Forest",
+          "target": "yoy_change_pct",
+          "testMae": 5.129162,
+          "testR2": 0.98208,
+          "testRmse": 11.202284,
+          "trainR2": 0.987404
+        }
+      ],
+      "segmentColumnExists": false,
+      "sha256": "3ae305054c392db84289a47380ef8fbb712f0576c14b7f9a0470b122e2d6e962",
+      "targets": [
+        "price_psf",
+        "rental_yield_pct",
+        "yoy_change_pct"
+      ]
+    },
+    "perTargetModelFiles": {
+      "feature_importance_price_psm_random_forest.csv": {
+        "model": "random_forest",
+        "rows": 121,
+        "target": "price_psm",
+        "topFeature": "storey_range_None",
+        "topImportance": 0.296055
+      },
+      "feature_importance_price_psm_xgboost.csv": {
+        "model": "xgboost",
+        "rows": 121,
+        "target": "price_psm",
+        "topFeature": "property_type_HDB",
+        "topImportance": 0.414654
+      },
+      "feature_importance_rental_yield_pct_random_forest.csv": {
+        "model": "random_forest",
+        "rows": 104,
+        "target": "rental_yield_pct",
+        "topFeature": "stratified_median_price",
+        "topImportance": 0.309683
+      },
+      "feature_importance_rental_yield_pct_xgboost.csv": {
+        "model": "xgboost",
+        "rows": 104,
+        "target": "rental_yield_pct",
+        "topFeature": "town_QUEENSTOWN",
+        "topImportance": 0.128265
+      },
+      "feature_importance_yoy_change_pct_random_forest.csv": {
+        "model": "random_forest",
+        "rows": 108,
+        "target": "yoy_change_pct",
+        "topFeature": "volume_12m_avg",
+        "topImportance": 0.271517
+      },
+      "feature_importance_yoy_change_pct_xgboost.csv": {
+        "model": "xgboost",
+        "rows": 108,
+        "target": "yoy_change_pct",
+        "topFeature": "town_SERANGOON",
+        "topImportance": 0.16339
+      }
+    }
+  },
+  "forecastScoring": {
+    "basis": {
+      "definition": "realised change = median transaction price of ALL property types in the planning area, target month over anchor month. The asset states no property-type basis for price_forecast (only policy_risk carries a market_segment tag of unstated semantics), so the primary basis filters nothing; per-tag and median-psf bases are recorded as sensitivities",
+      "floor": 10,
+      "floorIsProducerChosen": true,
+      "primary": "medianPriceAllRows"
+    },
+    "basisSensitivity": {
+      "medianPricePerTag": {
+        "anchorMonth": "2025-06",
+        "baselineDefinitions": {
+          "seasonalNaive": "projected change = the realised change over the same six-month window one year earlier (2023-12 to 2024-06)",
+          "trend6m": "projected change = the realised change over the six months ending at the anchor (2024-12 to 2025-06), trend persistence",
+          "zeroChange": "projected change = 0 percentage points (last-value naive)"
+        },
+        "basis": "medianPricePerTag",
+        "coverage": {
+          "empiricalCoverage": 6.0606,
+          "maxCiWidthPct": 205.4,
+          "meanCiWidthPct": 39.6788,
+          "meaning": "cross-sectional empirical coverage: one stored forecast period, N planning areas — the share of areas whose realised change fell inside the stored bounds. It is NOT a time-series coverage rate over repeated forecast periods; the asset stores exactly one period",
+          "minCiWidthPct": 5.4,
+          "nScored": 33,
+          "nWithin": 2,
+          "nominalLevel": 0.95,
+          "nominalLevelIsAssumed": true
+        },
+        "excludedAreas": [
+          {
+            "id": "CHANGI",
+            "nAnchor": 0,
+            "nTarget": 1,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "LIM CHU KANG",
+            "nAnchor": 0,
+            "nTarget": 0,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MANDAI",
+            "nAnchor": 10,
+            "nTarget": 5,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MUSEUM",
+            "nAnchor": 0,
+            "nTarget": 4,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "ORCHARD",
+            "nAnchor": 6,
+            "nTarget": 2,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "OUTRAM",
+            "nAnchor": 20,
+            "nTarget": 5,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "ROCHOR",
+            "nAnchor": 6,
+            "nTarget": 7,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "SOUTHERN ISLANDS",
+            "nAnchor": 8,
+            "nTarget": 14,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          }
+        ],
+        "methods": {
+          "seasonalNaive": {
+            "biasPct": 6.0156,
+            "directionalHitPct": 54.84,
+            "directionalN": 31,
+            "maePct": 19.0032,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 62.7431,
+            "n": 31,
+            "rmsePct": 23.3194
+          },
+          "storedForecasts": {
+            "biasPct": 64.2967,
+            "directionalHitPct": 45.45,
+            "directionalN": 33,
+            "maePct": 64.8411,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 68.3613,
+            "n": 33,
+            "rmsePct": 94.0159
+          },
+          "trend6m": {
+            "biasPct": 3.4754,
+            "directionalHitPct": 46.88,
+            "directionalN": 32,
+            "maePct": 22.2211,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 57.0138,
+            "n": 32,
+            "rmsePct": 37.3651
+          },
+          "zeroChange": {
+            "biasPct": -1.8366,
+            "directionalHitPct": 54.55,
+            "directionalN": 33,
+            "maePct": 12.5995,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 12.6259,
+            "n": 33,
+            "rmsePct": 19.0851
+          }
+        },
+        "scoringPopulation": 33,
+        "targetMonth": "2025-12"
+      },
+      "medianPsfAllRows": {
+        "anchorMonth": "2025-06",
+        "baselineDefinitions": {
+          "seasonalNaive": "projected change = the realised change over the same six-month window one year earlier (2023-12 to 2024-06)",
+          "trend6m": "projected change = the realised change over the six months ending at the anchor (2024-12 to 2025-06), trend persistence",
+          "zeroChange": "projected change = 0 percentage points (last-value naive)"
+        },
+        "basis": "medianPsfAllRows",
+        "coverage": {
+          "empiricalCoverage": 2.8571,
+          "maxCiWidthPct": 205.4,
+          "meanCiWidthPct": 39.9086,
+          "meaning": "cross-sectional empirical coverage: one stored forecast period, N planning areas — the share of areas whose realised change fell inside the stored bounds. It is NOT a time-series coverage rate over repeated forecast periods; the asset stores exactly one period",
+          "minCiWidthPct": 5.4,
+          "nScored": 35,
+          "nWithin": 1,
+          "nominalLevel": 0.95,
+          "nominalLevelIsAssumed": true
+        },
+        "excludedAreas": [
+          {
+            "id": "CHANGI",
+            "nAnchor": 0,
+            "nTarget": 1,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "LIM CHU KANG",
+            "nAnchor": 0,
+            "nTarget": 0,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MANDAI",
+            "nAnchor": 10,
+            "nTarget": 5,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MUSEUM",
+            "nAnchor": 0,
+            "nTarget": 4,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "ORCHARD",
+            "nAnchor": 6,
+            "nTarget": 2,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "SOUTHERN ISLANDS",
+            "nAnchor": 8,
+            "nTarget": 14,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          }
+        ],
+        "methods": {
+          "seasonalNaive": {
+            "biasPct": 5.1252,
+            "directionalHitPct": 48.48,
+            "directionalN": 33,
+            "maePct": 19.9746,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 110957.7528,
+            "n": 33,
+            "rmsePct": 26.892
+          },
+          "storedForecasts": {
+            "biasPct": 65.2311,
+            "directionalHitPct": 57.14,
+            "directionalN": 35,
+            "maePct": 65.3277,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 64.7841,
+            "n": 35,
+            "rmsePct": 93.3958
+          },
+          "trend6m": {
+            "biasPct": 2.0718,
+            "directionalHitPct": 44.12,
+            "directionalN": 34,
+            "maePct": 18.8631,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 110711.3627,
+            "n": 34,
+            "rmsePct": 28.8409
+          },
+          "zeroChange": {
+            "biasPct": -1.286,
+            "directionalHitPct": 42.86,
+            "directionalN": 35,
+            "maePct": 6.1511,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 5.8148,
+            "n": 35,
+            "rmsePct": 9.9535
+          }
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2025-12"
+      },
+      "perTagDefinition": "HDB-tagged areas scored on property_type=hdb medians; PRIVATE-tagged areas on property_type=condo medians — a producer-chosen mapping of the asset's unstated tag semantics"
+    },
+    "conventionSensitivity": {
+      "forecastMonthAnchor": {
+        "anchorMonth": "2025-07",
+        "baselineDefinitions": {
+          "seasonalNaive": "projected change = the realised change over the same six-month window one year earlier (2024-01 to 2024-07)",
+          "trend6m": "projected change = the realised change over the six months ending at the anchor (2025-01 to 2025-07), trend persistence",
+          "zeroChange": "projected change = 0 percentage points (last-value naive)"
+        },
+        "basis": "medianPriceAllRows",
+        "coverage": {
+          "empiricalCoverage": 0.0,
+          "maxCiWidthPct": 205.4,
+          "meanCiWidthPct": 40.3472,
+          "meaning": "cross-sectional empirical coverage: one stored forecast period, N planning areas — the share of areas whose realised change fell inside the stored bounds. It is NOT a time-series coverage rate over repeated forecast periods; the asset stores exactly one period",
+          "minCiWidthPct": 5.4,
+          "nScored": 36,
+          "nWithin": 0,
+          "nominalLevel": 0.95,
+          "nominalLevelIsAssumed": true
+        },
+        "excludedAreas": [
+          {
+            "id": "CHANGI",
+            "nAnchor": 0,
+            "nTarget": 3,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "LIM CHU KANG",
+            "nAnchor": 0,
+            "nTarget": 0,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MANDAI",
+            "nAnchor": 2,
+            "nTarget": 2,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MUSEUM",
+            "nAnchor": 2,
+            "nTarget": 2,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "ORCHARD",
+            "nAnchor": 10,
+            "nTarget": 3,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          }
+        ],
+        "methods": {
+          "seasonalNaive": {
+            "biasPct": 9.7424,
+            "directionalHitPct": 32.35,
+            "directionalN": 34,
+            "maePct": 26.4696,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 35.3359,
+            "n": 34,
+            "rmsePct": 35.7448
+          },
+          "storedForecasts": {
+            "biasPct": 68.9985,
+            "directionalHitPct": 33.33,
+            "directionalN": 36,
+            "maePct": 71.4691,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 76.2741,
+            "n": 36,
+            "rmsePct": 95.8884
+          },
+          "trend6m": {
+            "biasPct": 7.7602,
+            "directionalHitPct": 42.86,
+            "directionalN": 35,
+            "maePct": 24.6762,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 27.4794,
+            "n": 35,
+            "rmsePct": 32.4089
+          },
+          "zeroChange": {
+            "biasPct": 1.7485,
+            "directionalHitPct": 66.67,
+            "directionalN": 36,
+            "maePct": 15.0915,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 16.1654,
+            "n": 36,
+            "rmsePct": 20.9687
+          }
+        },
+        "scoringPopulation": 36,
+        "targetMonth": "2026-01"
+      },
+      "trainingMonthAnchor": {
+        "anchorMonth": "2025-01",
+        "baselineDefinitions": {
+          "seasonalNaive": "projected change = the realised change over the same six-month window one year earlier (2023-07 to 2024-01)",
+          "trend6m": "projected change = the realised change over the six months ending at the anchor (2024-07 to 2025-01), trend persistence",
+          "zeroChange": "projected change = 0 percentage points (last-value naive)"
+        },
+        "basis": "medianPriceAllRows",
+        "coverage": {
+          "empiricalCoverage": 5.7143,
+          "maxCiWidthPct": 205.4,
+          "meanCiWidthPct": 40.7714,
+          "meaning": "cross-sectional empirical coverage: one stored forecast period, N planning areas — the share of areas whose realised change fell inside the stored bounds. It is NOT a time-series coverage rate over repeated forecast periods; the asset stores exactly one period",
+          "minCiWidthPct": 5.4,
+          "nScored": 35,
+          "nWithin": 2,
+          "nominalLevel": 0.95,
+          "nominalLevelIsAssumed": true
+        },
+        "excludedAreas": [
+          {
+            "id": "CHANGI",
+            "nAnchor": 0,
+            "nTarget": 0,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "LIM CHU KANG",
+            "nAnchor": 0,
+            "nTarget": 0,
+            "policyMarketSegmentTag": "HDB",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MANDAI",
+            "nAnchor": 4,
+            "nTarget": 2,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MARINA SOUTH",
+            "nAnchor": 0,
+            "nTarget": 44,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "MUSEUM",
+            "nAnchor": 4,
+            "nTarget": 2,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          },
+          {
+            "id": "SOUTHERN ISLANDS",
+            "nAnchor": 9,
+            "nTarget": 12,
+            "policyMarketSegmentTag": "PRIVATE",
+            "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+          }
+        ],
+        "methods": {
+          "seasonalNaive": {
+            "biasPct": -1.4599,
+            "directionalHitPct": 50.0,
+            "directionalN": 34,
+            "maePct": 20.4117,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 30.2589,
+            "n": 34,
+            "rmsePct": 27.6116
+          },
+          "storedForecasts": {
+            "biasPct": 64.0062,
+            "directionalHitPct": 54.29,
+            "directionalN": 35,
+            "maePct": 66.2806,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 67.2503,
+            "n": 35,
+            "rmsePct": 92.9807
+          },
+          "trend6m": {
+            "biasPct": 0.2212,
+            "directionalHitPct": 32.35,
+            "directionalN": 34,
+            "maePct": 26.335,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 29.2547,
+            "n": 34,
+            "rmsePct": 37.1838
+          },
+          "zeroChange": {
+            "biasPct": -3.9481,
+            "directionalHitPct": 45.71,
+            "directionalN": 35,
+            "maePct": 14.7465,
+            "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+            "mapeOnLevelsPct": 14.6806,
+            "n": 35,
+            "rmsePct": 19.7153
+          }
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2025-07"
+      }
+    },
+    "conventions": {
+      "forecastMonthAnchor": {
+        "anchorMonth": "2025-07",
+        "rule": "anchor = the forecast_date's own month; target = anchor + 6. Recorded, not primary",
+        "targetMonth": "2026-01"
+      },
+      "primary": {
+        "anchorMonth": "2025-06",
+        "rule": "anchor = the calendar month immediately before the stored forecast_date's month (the last complete month at issue); target = anchor + the stored 6-month horizon. This is the PRODUCER'S stated convention: the asset defines no anchor for projected_change_pct",
+        "targetMonth": "2025-12"
+      },
+      "recordedBecause": "projected_change_pct carries no anchor or base definition in the asset; all three readings are measured rather than one being chosen silently",
+      "trainingMonthAnchor": {
+        "anchorMonth": "2025-01",
+        "rule": "anchor = the last_training_date's month (2025-01); target = anchor + 6 = the forecast_date's month. Recorded because the stored dates make training + horizon land on the forecast date, so a training-anchored reading is available",
+        "targetMonth": "2025-07"
+      }
+    },
+    "coverageSummary": {
+      "meaning": "the asset stores no interval level; 0.95 is the producer's assumption taken from the article's own '95% CI Width' header and is flagged wherever coverage is reported",
+      "nominalLevel": 0.95,
+      "nominalLevelIsAssumed": true,
+      "primaryConventionEmpiricalCoverage": 2.8571
+    },
+    "leakageChecks": {
+      "generatedAtDaysAfterTarget": 49.0,
+      "hindsightScreen": {
+        "primaryAnchor": {
+          "matchesAtOneDecimal": 0,
+          "meaning": "a count of equality matches between stored projections and realised outcomes, rounded to one decimal, on the primary convention's per-area table — a screen, not a finding about origin. Zero matches are weak counter-evidence of hindsight, never proof of its absence; origin unverified",
+          "nCompared": 35
+        }
+      },
+      "meaning": "the measurable leakage surfaces are date orderings (training before forecast issue: consistent) and the hindsight screen (equality of stored projections with realised outcomes: zero matches at one decimal under the primary convention). A stored payload generated long after its own target (generatedAtDaysAfterTarget) is consistent with a post-hoc export and is recorded without adjudication — nothing in the checkout establishes when the forecasts were computed relative to what data",
+      "trainingPrecedesForecast": true,
+      "trainingToForecastDays": 181.0
+    },
+    "modelR2Naming": {
+      "assetField": "metadata.model_r2 = 0.89; per-area model_r2 = 0.85 x41",
+      "correctName": "R-squared: a fit statistic of a model against scored data (in-sample or holdout as the case may be); NOT forecast accuracy, which is measured here as MAE/RMSE/bias/MAPE on realised outcomes",
+      "meaning": "the gate's 'name R-squared correctly' clause: every appearance of model_r2 in this ledger is a stored fit statistic, and forecast skill is reported only through the error metrics of forecastScoring"
+    },
+    "primary": {
+      "anchorMonth": "2025-06",
+      "baselineDefinitions": {
+        "seasonalNaive": "projected change = the realised change over the same six-month window one year earlier (2023-12 to 2024-06)",
+        "trend6m": "projected change = the realised change over the six months ending at the anchor (2024-12 to 2025-06), trend persistence",
+        "zeroChange": "projected change = 0 percentage points (last-value naive)"
+      },
+      "basis": "medianPriceAllRows",
+      "coverage": {
+        "empiricalCoverage": 2.8571,
+        "maxCiWidthPct": 205.4,
+        "meanCiWidthPct": 39.9086,
+        "meaning": "cross-sectional empirical coverage: one stored forecast period, N planning areas — the share of areas whose realised change fell inside the stored bounds. It is NOT a time-series coverage rate over repeated forecast periods; the asset stores exactly one period",
+        "minCiWidthPct": 5.4,
+        "nScored": 35,
+        "nWithin": 1,
+        "nominalLevel": 0.95,
+        "nominalLevelIsAssumed": true
+      },
+      "excludedAreas": [
+        {
+          "id": "CHANGI",
+          "nAnchor": 0,
+          "nTarget": 1,
+          "policyMarketSegmentTag": "HDB",
+          "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+        },
+        {
+          "id": "LIM CHU KANG",
+          "nAnchor": 0,
+          "nTarget": 0,
+          "policyMarketSegmentTag": "HDB",
+          "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+        },
+        {
+          "id": "MANDAI",
+          "nAnchor": 10,
+          "nTarget": 5,
+          "policyMarketSegmentTag": "PRIVATE",
+          "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+        },
+        {
+          "id": "MUSEUM",
+          "nAnchor": 0,
+          "nTarget": 4,
+          "policyMarketSegmentTag": "PRIVATE",
+          "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+        },
+        {
+          "id": "ORCHARD",
+          "nAnchor": 6,
+          "nTarget": 2,
+          "policyMarketSegmentTag": "PRIVATE",
+          "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+        },
+        {
+          "id": "SOUTHERN ISLANDS",
+          "nAnchor": 8,
+          "nTarget": 14,
+          "policyMarketSegmentTag": "PRIVATE",
+          "reason": "below the producer floor of 10 transactions in the basis population in the anchor or target month, or no median"
+        }
+      ],
+      "methods": {
+        "seasonalNaive": {
+          "biasPct": 6.4634,
+          "directionalHitPct": 45.45,
+          "directionalN": 33,
+          "maePct": 20.4372,
+          "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+          "mapeOnLevelsPct": 33.0995,
+          "n": 33,
+          "rmsePct": 26.6611
+        },
+        "storedForecasts": {
+          "biasPct": 64.4953,
+          "directionalHitPct": 54.29,
+          "directionalN": 35,
+          "maePct": 65.0086,
+          "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+          "mapeOnLevelsPct": 68.3145,
+          "n": 35,
+          "rmsePct": 92.6605
+        },
+        "trend6m": {
+          "biasPct": 3.1562,
+          "directionalHitPct": 29.41,
+          "directionalN": 34,
+          "maePct": 25.2692,
+          "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+          "mapeOnLevelsPct": 29.7472,
+          "n": 34,
+          "rmsePct": 38.7189
+        },
+        "zeroChange": {
+          "biasPct": -2.0218,
+          "directionalHitPct": 45.71,
+          "directionalN": 35,
+          "maePct": 13.2765,
+          "mapeDefinition": "MAPE is computed on implied LEVELS: anchor median x (1 + pct/100) against the realised target median, |implied - realised| / realised, averaged and expressed in percent — a percentage-change forecast scored without dividing by a near-zero realised change",
+          "mapeOnLevelsPct": 13.454,
+          "n": 35,
+          "rmsePct": 19.2557
+        }
+      },
+      "perArea": [
+        {
+          "ciLowerPct": 19.1,
+          "ciUpperPct": 35.4,
+          "id": "ANG MO KIO",
+          "medianAnchor": 1010000.0,
+          "medianTarget": 940000.0,
+          "nAnchor": 173,
+          "nTarget": 123,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 27.2,
+          "realisedChangePct": -6.9307,
+          "seasonalBaselineProjectedPct": 17.8723,
+          "storedErrorPct": 34.1307,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -39.7734,
+          "zeroBaselineErrorPct": 6.9307
+        },
+        {
+          "ciLowerPct": 29.6,
+          "ciUpperPct": 55.0,
+          "id": "BEDOK",
+          "medianAnchor": 1300000.0,
+          "medianTarget": 1155000.0,
+          "nAnchor": 356,
+          "nTarget": 301,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 42.3,
+          "realisedChangePct": -11.1538,
+          "seasonalBaselineProjectedPct": 43.1694,
+          "storedErrorPct": 53.4538,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 6.7762,
+          "zeroBaselineErrorPct": 11.1538
+        },
+        {
+          "ciLowerPct": 24.9,
+          "ciUpperPct": 46.3,
+          "id": "BISHAN",
+          "medianAnchor": 1388000.0,
+          "medianTarget": 1476888.0,
+          "nAnchor": 98,
+          "nTarget": 75,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 35.6,
+          "realisedChangePct": 6.404,
+          "seasonalBaselineProjectedPct": 23.6052,
+          "storedErrorPct": 29.196,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -11.3099,
+          "zeroBaselineErrorPct": -6.404
+        },
+        {
+          "ciLowerPct": 39.6,
+          "ciUpperPct": 73.5,
+          "id": "BUKIT BATOK",
+          "medianAnchor": 830000.0,
+          "medianTarget": 823444.0,
+          "nAnchor": 222,
+          "nTarget": 172,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 56.5,
+          "realisedChangePct": -0.7899,
+          "seasonalBaselineProjectedPct": 33.4456,
+          "storedErrorPct": 57.2899,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 3.75,
+          "zeroBaselineErrorPct": 0.7899
+        },
+        {
+          "ciLowerPct": 46.0,
+          "ciUpperPct": 85.5,
+          "id": "BUKIT MERAH",
+          "medianAnchor": 1090000.0,
+          "medianTarget": 1426000.0,
+          "nAnchor": 158,
+          "nTarget": 169,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 65.8,
+          "realisedChangePct": 30.8257,
+          "seasonalBaselineProjectedPct": -6.7857,
+          "storedErrorPct": 34.9743,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -23.6695,
+          "zeroBaselineErrorPct": -30.8257
+        },
+        {
+          "ciLowerPct": 31.4,
+          "ciUpperPct": 58.3,
+          "id": "BUKIT PANJANG",
+          "medianAnchor": 785000.0,
+          "medianTarget": 809444.0,
+          "nAnchor": 124,
+          "nTarget": 104,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 44.9,
+          "realisedChangePct": 3.1139,
+          "seasonalBaselineProjectedPct": 25.6545,
+          "storedErrorPct": 41.7861,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -40.0763,
+          "zeroBaselineErrorPct": -3.1139
+        },
+        {
+          "ciLowerPct": 79.8,
+          "ciUpperPct": 148.2,
+          "id": "BUKIT TIMAH",
+          "medianAnchor": 2610000.0,
+          "medianTarget": 2930000.0,
+          "nAnchor": 185,
+          "nTarget": 199,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 114.0,
+          "realisedChangePct": 12.2605,
+          "seasonalBaselineProjectedPct": -1.8723,
+          "storedErrorPct": 101.7395,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 14.4737,
+          "zeroBaselineErrorPct": -12.2605
+        },
+        {
+          "ciLowerPct": 8.7,
+          "ciUpperPct": 16.2,
+          "id": "CHOA CHU KANG",
+          "medianAnchor": 682944.0,
+          "medianTarget": 715000.0,
+          "nAnchor": 144,
+          "nTarget": 123,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 12.4,
+          "realisedChangePct": 4.6938,
+          "seasonalBaselineProjectedPct": 16.129,
+          "storedErrorPct": 7.7062,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -7.89,
+          "zeroBaselineErrorPct": -4.6938
+        },
+        {
+          "ciLowerPct": 27.1,
+          "ciUpperPct": 50.3,
+          "id": "CLEMENTI",
+          "medianAnchor": 1460000.0,
+          "medianTarget": 1480000.0,
+          "nAnchor": 133,
+          "nTarget": 133,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 38.7,
+          "realisedChangePct": 1.3699,
+          "seasonalBaselineProjectedPct": -1.6352,
+          "storedErrorPct": 37.3301,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 14.9606,
+          "zeroBaselineErrorPct": -1.3699
+        },
+        {
+          "ciLowerPct": 89.2,
+          "ciUpperPct": 165.6,
+          "id": "DOWNTOWN CORE",
+          "medianAnchor": 1860000.0,
+          "medianTarget": 1706888.0,
+          "nAnchor": 58,
+          "nTarget": 55,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 127.4,
+          "realisedChangePct": -8.2318,
+          "seasonalBaselineProjectedPct": -28.6333,
+          "storedErrorPct": 135.6318,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 16.9811,
+          "zeroBaselineErrorPct": 8.2318
+        },
+        {
+          "ciLowerPct": 51.0,
+          "ciUpperPct": 94.7,
+          "id": "GEYLANG",
+          "medianAnchor": 1250000.0,
+          "medianTarget": 1325000.0,
+          "nAnchor": 193,
+          "nTarget": 204,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 72.8,
+          "realisedChangePct": 6.0,
+          "seasonalBaselineProjectedPct": 9.5153,
+          "storedErrorPct": 66.8,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -16.6667,
+          "zeroBaselineErrorPct": -6.0
+        },
+        {
+          "ciLowerPct": 17.6,
+          "ciUpperPct": 32.7,
+          "id": "HOUGANG",
+          "medianAnchor": 1018000.0,
+          "medianTarget": 1073888.0,
+          "nAnchor": 279,
+          "nTarget": 231,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 25.2,
+          "realisedChangePct": 5.49,
+          "seasonalBaselineProjectedPct": 6.8235,
+          "storedErrorPct": 19.71,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -7.4545,
+          "zeroBaselineErrorPct": -5.49
+        },
+        {
+          "ciLowerPct": 42.7,
+          "ciUpperPct": 79.4,
+          "id": "JURONG EAST",
+          "medianAnchor": 850000.0,
+          "medianTarget": 685000.0,
+          "nAnchor": 81,
+          "nTarget": 51,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 61.0,
+          "realisedChangePct": -19.4118,
+          "seasonalBaselineProjectedPct": 50.3937,
+          "storedErrorPct": 80.4118,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -32.0,
+          "zeroBaselineErrorPct": 19.4118
+        },
+        {
+          "ciLowerPct": 12.6,
+          "ciUpperPct": 23.5,
+          "id": "JURONG WEST",
+          "medianAnchor": 664500.0,
+          "medianTarget": 640000.0,
+          "nAnchor": 204,
+          "nTarget": 172,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 18.1,
+          "realisedChangePct": -3.687,
+          "seasonalBaselineProjectedPct": 1.7857,
+          "storedErrorPct": 21.787,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 10.199,
+          "zeroBaselineErrorPct": 3.687
+        },
+        {
+          "ciLowerPct": 40.8,
+          "ciUpperPct": 75.8,
+          "id": "KALLANG",
+          "medianAnchor": 1325000.0,
+          "medianTarget": 1355000.0,
+          "nAnchor": 148,
+          "nTarget": 121,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 58.3,
+          "realisedChangePct": 2.2642,
+          "seasonalBaselineProjectedPct": -3.211,
+          "storedErrorPct": 56.0358,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 15.2174,
+          "zeroBaselineErrorPct": -2.2642
+        },
+        {
+          "ciLowerPct": 57.1,
+          "ciUpperPct": 106.0,
+          "id": "MARINA SOUTH",
+          "medianAnchor": 1262947.0,
+          "medianTarget": 2096475.5,
+          "nAnchor": 92,
+          "nTarget": 12,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 81.5,
+          "realisedChangePct": 65.9987,
+          "seasonalBaselineProjectedPct": null,
+          "storedErrorPct": 15.5013,
+          "storedWithinCi": true,
+          "trendBaselineProjectedPct": null,
+          "zeroBaselineErrorPct": -65.9987
+        },
+        {
+          "ciLowerPct": 63.8,
+          "ciUpperPct": 118.4,
+          "id": "MARINE PARADE",
+          "medianAnchor": 2560000.0,
+          "medianTarget": 2521330.0,
+          "nAnchor": 153,
+          "nTarget": 73,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 91.1,
+          "realisedChangePct": -1.5105,
+          "seasonalBaselineProjectedPct": 15.2074,
+          "storedErrorPct": 92.6105,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -3.994,
+          "zeroBaselineErrorPct": 1.5105
+        },
+        {
+          "ciLowerPct": 239.5,
+          "ciUpperPct": 444.9,
+          "id": "NEWTON",
+          "medianAnchor": 3990000.0,
+          "medianTarget": 5150000.0,
+          "nAnchor": 32,
+          "nTarget": 24,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 342.2,
+          "realisedChangePct": 29.0727,
+          "seasonalBaselineProjectedPct": -19.4444,
+          "storedErrorPct": 313.1273,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 7.1141,
+          "zeroBaselineErrorPct": -29.0727
+        },
+        {
+          "ciLowerPct": 81.8,
+          "ciUpperPct": 151.8,
+          "id": "NOVENA",
+          "medianAnchor": 2280000.0,
+          "medianTarget": 1820000.0,
+          "nAnchor": 101,
+          "nTarget": 81,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 116.8,
+          "realisedChangePct": -20.1754,
+          "seasonalBaselineProjectedPct": 3.5152,
+          "storedErrorPct": 136.9754,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 42.5,
+          "zeroBaselineErrorPct": 20.1754
+        },
+        {
+          "ciLowerPct": 39.9,
+          "ciUpperPct": 74.1,
+          "id": "OUTRAM",
+          "medianAnchor": 1416944.0,
+          "medianTarget": 1250000.0,
+          "nAnchor": 26,
+          "nTarget": 11,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 57.0,
+          "realisedChangePct": -11.782,
+          "seasonalBaselineProjectedPct": 35.2491,
+          "storedErrorPct": 68.782,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 11.1329,
+          "zeroBaselineErrorPct": 11.782
+        },
+        {
+          "ciLowerPct": 11.0,
+          "ciUpperPct": 20.3,
+          "id": "PASIR RIS",
+          "medianAnchor": 1250000.0,
+          "medianTarget": 1090000.0,
+          "nAnchor": 200,
+          "nTarget": 181,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 15.7,
+          "realisedChangePct": -12.8,
+          "seasonalBaselineProjectedPct": -3.7037,
+          "storedErrorPct": 28.5,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 13.8952,
+          "zeroBaselineErrorPct": 12.8
+        },
+        {
+          "ciLowerPct": 8.0,
+          "ciUpperPct": 14.9,
+          "id": "PUNGGOL",
+          "medianAnchor": 726088.0,
+          "medianTarget": 725000.0,
+          "nAnchor": 193,
+          "nTarget": 177,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 11.5,
+          "realisedChangePct": -0.1498,
+          "seasonalBaselineProjectedPct": 7.6696,
+          "storedErrorPct": 11.6498,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -0.3995,
+          "zeroBaselineErrorPct": 0.1498
+        },
+        {
+          "ciLowerPct": 13.3,
+          "ciUpperPct": 24.8,
+          "id": "QUEENSTOWN",
+          "medianAnchor": 1672000.0,
+          "medianTarget": 1311388.0,
+          "nAnchor": 234,
+          "nTarget": 178,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 19.1,
+          "realisedChangePct": -21.5677,
+          "seasonalBaselineProjectedPct": 17.3878,
+          "storedErrorPct": 40.6677,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 19.4286,
+          "zeroBaselineErrorPct": 21.5677
+        },
+        {
+          "ciLowerPct": 140.3,
+          "ciUpperPct": 260.6,
+          "id": "RIVER VALLEY",
+          "medianAnchor": 3088000.0,
+          "medianTarget": 2490000.0,
+          "nAnchor": 62,
+          "nTarget": 63,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 200.5,
+          "realisedChangePct": -19.3653,
+          "seasonalBaselineProjectedPct": -11.4493,
+          "storedErrorPct": 219.8653,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 23.52,
+          "zeroBaselineErrorPct": 19.3653
+        },
+        {
+          "ciLowerPct": 62.1,
+          "ciUpperPct": 115.3,
+          "id": "ROCHOR",
+          "medianAnchor": 1170000.0,
+          "medianTarget": 1230000.0,
+          "nAnchor": 22,
+          "nTarget": 40,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 88.7,
+          "realisedChangePct": 5.1282,
+          "seasonalBaselineProjectedPct": 1.7143,
+          "storedErrorPct": 83.5718,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -4.878,
+          "zeroBaselineErrorPct": -5.1282
+        },
+        {
+          "ciLowerPct": 15.0,
+          "ciUpperPct": 27.8,
+          "id": "SEMBAWANG",
+          "medianAnchor": 685000.0,
+          "medianTarget": 720000.0,
+          "nAnchor": 190,
+          "nTarget": 122,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 21.4,
+          "realisedChangePct": 5.1095,
+          "seasonalBaselineProjectedPct": 16.3498,
+          "storedErrorPct": 16.2905,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -1.4388,
+          "zeroBaselineErrorPct": -5.1095
+        },
+        {
+          "ciLowerPct": 9.9,
+          "ciUpperPct": 18.4,
+          "id": "SENGKANG",
+          "medianAnchor": 810000.0,
+          "medianTarget": 853900.0,
+          "nAnchor": 289,
+          "nTarget": 294,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 14.2,
+          "realisedChangePct": 5.4198,
+          "seasonalBaselineProjectedPct": 20.5479,
+          "storedErrorPct": 8.7802,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 2.2082,
+          "zeroBaselineErrorPct": -5.4198
+        },
+        {
+          "ciLowerPct": 36.8,
+          "ciUpperPct": 68.4,
+          "id": "SERANGOON",
+          "medianAnchor": 1470000.0,
+          "medianTarget": 1850000.0,
+          "nAnchor": 140,
+          "nTarget": 171,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 52.6,
+          "realisedChangePct": 25.8503,
+          "seasonalBaselineProjectedPct": 15.1628,
+          "storedErrorPct": 26.7497,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -13.783,
+          "zeroBaselineErrorPct": -25.8503
+        },
+        {
+          "ciLowerPct": 68.3,
+          "ciUpperPct": 126.9,
+          "id": "SINGAPORE RIVER",
+          "medianAnchor": 5249000.0,
+          "medianTarget": 2850000.0,
+          "nAnchor": 38,
+          "nTarget": 18,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 97.6,
+          "realisedChangePct": -45.7039,
+          "seasonalBaselineProjectedPct": -63.8448,
+          "storedErrorPct": 143.3039,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 122.7929,
+          "zeroBaselineErrorPct": 45.7039
+        },
+        {
+          "ciLowerPct": 12.8,
+          "ciUpperPct": 23.7,
+          "id": "TAMPINES",
+          "medianAnchor": 945000.0,
+          "medianTarget": 880000.0,
+          "nAnchor": 371,
+          "nTarget": 295,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 18.3,
+          "realisedChangePct": -6.8783,
+          "seasonalBaselineProjectedPct": -8.1981,
+          "storedErrorPct": 25.1783,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 11.1765,
+          "zeroBaselineErrorPct": 6.8783
+        },
+        {
+          "ciLowerPct": 144.9,
+          "ciUpperPct": 269.1,
+          "id": "TANGLIN",
+          "medianAnchor": 2550000.0,
+          "medianTarget": 3380000.0,
+          "nAnchor": 55,
+          "nTarget": 79,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 207.0,
+          "realisedChangePct": 32.549,
+          "seasonalBaselineProjectedPct": -13.0091,
+          "storedErrorPct": 174.451,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -7.2727,
+          "zeroBaselineErrorPct": -32.549
+        },
+        {
+          "ciLowerPct": 6.2,
+          "ciUpperPct": 11.6,
+          "id": "TENGAH",
+          "medianAnchor": 1398000.0,
+          "medianTarget": 1648000.0,
+          "nAnchor": 15,
+          "nTarget": 49,
+          "policyMarketSegmentTag": "PRIVATE",
+          "projectedChangePct": 8.9,
+          "realisedChangePct": 17.8827,
+          "seasonalBaselineProjectedPct": null,
+          "storedErrorPct": -8.9827,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -4.671,
+          "zeroBaselineErrorPct": -17.8827
+        },
+        {
+          "ciLowerPct": 39.8,
+          "ciUpperPct": 73.9,
+          "id": "TOA PAYOH",
+          "medianAnchor": 1137500.0,
+          "medianTarget": 1188000.0,
+          "nAnchor": 202,
+          "nTarget": 189,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 56.9,
+          "realisedChangePct": 4.4396,
+          "seasonalBaselineProjectedPct": -17.8645,
+          "storedErrorPct": 52.4604,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": -15.9897,
+          "zeroBaselineErrorPct": -4.4396
+        },
+        {
+          "ciLowerPct": 8.2,
+          "ciUpperPct": 15.2,
+          "id": "WOODLANDS",
+          "medianAnchor": 660000.0,
+          "medianTarget": 615000.0,
+          "nAnchor": 212,
+          "nTarget": 187,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 11.7,
+          "realisedChangePct": -6.8182,
+          "seasonalBaselineProjectedPct": 8.9076,
+          "storedErrorPct": 18.5182,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 2.6528,
+          "zeroBaselineErrorPct": 6.8182
+        },
+        {
+          "ciLowerPct": 10.6,
+          "ciUpperPct": 19.7,
+          "id": "YISHUN",
+          "medianAnchor": 644638.0,
+          "medianTarget": 669444.0,
+          "nAnchor": 234,
+          "nTarget": 174,
+          "policyMarketSegmentTag": "HDB",
+          "projectedChangePct": 15.2,
+          "realisedChangePct": 3.8481,
+          "seasonalBaselineProjectedPct": 9.7202,
+          "storedErrorPct": 11.3519,
+          "storedWithinCi": false,
+          "trendBaselineProjectedPct": 4.5642,
+          "zeroBaselineErrorPct": -3.8481
+        }
+      ],
+      "scoringPopulation": 35,
+      "targetMonth": "2025-12"
+    },
+    "storedDateDiscipline": {
+      "cutoffMonth": "2026-10",
+      "forecastDateAdvanced": false,
+      "forecastDateAsStored": "2025-07-01",
+      "generatedAt": "2026-02-19T17:23:03.558034",
+      "generatedAtDaysAfterForecastDate": 233.0,
+      "meaning": "the stored forecast date is read and never advanced; scoring treats the 2025-07-01 projections as EXPIRED, and every comparable outcome exists only because the realised frame has moved past the target under the measured cutoff",
+      "monthsPastTargetAtCutoff": null,
+      "targetMonthUnderPrimaryConvention": "2025-12",
+      "targetWithinCutoff": true,
+      "trainingToForecastDays": 181.0
+    }
+  },
+  "inputs": {
+    "app/public/data/analysis/price_forecasts/planning_area_forecasts.png": {
+      "bytes": 329781,
+      "sha256": "92050b3e22cdf890ad08c32c515ee167c8532edf5396a9ae211856d3ed8b9df1"
+    },
+    "app/public/data/analysis/price_forecasts/price_vs_forecast_scatter.png": {
+      "bytes": 344605,
+      "sha256": "713fc86d0621c26041b7fadc2de4792eda26e477d43c1f237093dbe26c5f19d8"
+    },
+    "app/public/data/analytics/predictive_analytics.json.gz": {
+      "bytes": 1804,
+      "sha256": "14a8ae6f0ce503e10068a491940cc78e2ad0ae77afa3dbe67b2096a73f3e3c06"
+    },
+    "app/src/components/tools/lib/tool-evidence.ts": {
+      "bytes": 14991,
+      "sha256": "2db0deaf69ccb07e88b3a78e9d6bd455bbe71fb0a567b10a2c7e55832caa9e63"
+    },
+    "app/src/constants/data-urls.ts": {
+      "bytes": 1220,
+      "sha256": "1bf90653e2afcfb889ac0ea63303a1ff46d79746c1bbffc667dcbc48a354abdd"
+    },
+    "app/src/utils/map-archive.ts": {
+      "bytes": 23716,
+      "sha256": "e23de6c83877e7598a1e9961b7e5f53c9e97a2aed1892a89c8406e9921853c27"
+    },
+    "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv": {
+      "bytes": 8070,
+      "sha256": "d89a7be2cc90e539fc06534a64089dc234c8114b31411cb60a929c232748f7ef"
+    },
+    "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv": {
+      "bytes": 6279,
+      "sha256": "7864979c99ba4c2ec22c142bd4429d94803419f537dd520b28009f077b8df2f4"
+    },
+    "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv": {
+      "bytes": 7618,
+      "sha256": "a2244fddf01be07cb572b3fd4eb7b5c7c32d71d188ef255f23eee7cf608576dc"
+    },
+    "data/analysis/feature_importance/feature_importance_rental_yield_pct_xgboost.csv": {
+      "bytes": 5857,
+      "sha256": "0aafc146740e61479ca648fd9334d7a0ea27e90ee3dd317474c91dd076b06e6b"
+    },
+    "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv": {
+      "bytes": 7626,
+      "sha256": "7952713db5acdf1c77f7713ecfa55a47d0dd0e3a3d7146c7ed326cfc46705fa2"
+    },
+    "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv": {
+      "bytes": 5766,
+      "sha256": "4dadafd391960a7ed5b5bb8e279ce783e20964e97e577fa68af6feaa991fc34c"
+    },
+    "data/analysis/feature_importance/model_comparison.csv": {
+      "bytes": 2061,
+      "sha256": "3ae305054c392db84289a47380ef8fbb712f0576c14b7f9a0470b122e2d6e962"
+    },
+    "data/forecasts/hdb_price_forecasts.csv": {
+      "bytes": 5847,
+      "sha256": "b63c842d4f8514ca42ccc9df943f5bcf3f9db38c571ed9e68fa8aeb61b64dce0"
+    },
+    "data/forecasts/hdb_price_forecasts.parquet": {
+      "bytes": 9664,
+      "columns": 11,
+      "rows": 60,
+      "sha256": "29ccd3cf4060aef90842e2d08bb21c2116174914fd1827756a5344c0e7714c5e"
+    },
+    "data/forecasts/hdb_yield_forecasts.csv": {
+      "bytes": 3899,
+      "sha256": "b02f7676e21216c1f4221094131b7ae50f0cc62a1ce61de73df6c31a1b3eb2a5"
+    },
+    "data/forecasts/hdb_yield_forecasts.parquet": {
+      "bytes": 8431,
+      "columns": 9,
+      "rows": 56,
+      "sha256": "b1ddc91ef45da91f4b74da0bfa57630bd06c2061a45d7dfe6c6b71077d4084dd"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "bytes": 78381526,
+      "columns": 97,
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/price-forecasts.md": {
+      "bytes": 6117,
+      "sha256": "0bebf7307907002449571441af7308ba1cbf0c40622be415572bec4f112839ee"
+    },
+    "docs/analytics/price-forecasts.md": {
+      "bytes": 6144,
+      "sha256": "82f3890030dbaf994ac8131e8a3c845a16bd9f70288056f297de35c03373d24e"
+    },
+    "docs/archive/20260124-data-reorganization-complete.md": {
+      "bytes": 6235,
+      "sha256": "e92d12741eedad918c0a44aaf074cb5ea83a21cfaf7062d2b34ce321233c72a1"
+    }
+  },
+  "legacyClaims": [
+    {
+      "id": "C01",
+      "ledgerKey": "lineage.vintages.0.meaning",
+      "note": "the article's analysis date has no artefact behind it; the stored asset's generated_at (2026-02-19) is a different, later timestamp recorded at predictiveAsset.generatedAt — two dates, no linkage",
+      "phrase": "**Analysis Date**: 2026-02-17",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C02",
+      "ledgerKey": "notMeasurable.analysisWindow",
+      "note": "the window selection of the retired run is unrecorded; recording a 2021-2026 slice of the frame would prescribe what the source does not state",
+      "phrase": "**Data Period**: 2021-2026",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C03",
+      "ledgerKey": "predictiveAsset.policyMarketSegmentTags",
+      "note": "the stored asset tags its 41 areas HDB(24)/PRIVATE(17) with no EC grouping; the article's three-segment coverage has no stored counterpart and the retired run's coverage is unverifiable",
+      "phrase": "**Coverage**: HDB, condo, and EC segments",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C04",
+      "ledgerKey": "articleVsAsset.reliabilityTable.rows.hdb",
+      "note": "per-segment R-squared table row: withdrawn per the gate; no artefact carries these values outside the article's own copies",
+      "phrase": "| HDB flats          | 79.8%         | ±18.58%      | 99.4%           | Strong                       |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C05",
+      "ledgerKey": "articleVsAsset.reliabilityTable.rows.ec",
+      "note": "per-segment table row: withdrawn; values appear only in the article's own copies and sibling legacy articles (corroborationScan)",
+      "phrase": "| Executive Condos   | 98.5%         | ±50.15%      | 97.1%           | Strong but wider uncertainty |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C06",
+      "ledgerKey": "articleVsAsset.reliabilityTable.rows.mass",
+      "note": "per-segment table row: withdrawn",
+      "phrase": "| Mass Market Condos | 85.6%         | ±40.48%      | 96.4%           | Useful with caution          |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C07",
+      "ledgerKey": "articleVsAsset.reliabilityTable.rows.mid",
+      "note": "per-segment table row: withdrawn; the ±1877.88% width is itself a red flag no artefact explains",
+      "phrase": "| Mid Market Condos  | 72.6%         | ±1877.88%    | 94.2%           | Direction only               |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C08",
+      "ledgerKey": "articleVsAsset.reliabilityTable.rows.lux",
+      "note": "per-segment table row: withdrawn",
+      "phrase": "| Luxury Condos      | 30.1%         | ±1076.24%    | 92.3%           | Magnitude unusable           |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C09",
+      "ledgerKey": "articleVsAsset.featureClaims.hdbFeature",
+      "note": "per-segment feature-importance claim: withdrawn; no checkout feature list contains such a feature name (featureImportanceArtefacts.featuresNamedLikeYoyLag)",
+      "phrase": "| HDB               | 2-year YoY appreciation | 51.14%     |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C10",
+      "ledgerKey": "articleVsAsset.featureClaims.massFeature",
+      "note": "per-segment feature-importance claim: withdrawn",
+      "phrase": "| Mass market condo | 2-year YoY appreciation | 65.50%     |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C11",
+      "ledgerKey": "absenceScans.primaryInputPath",
+      "note": "the named path does not exist in this checkout (0 filename matches); which input the retired run used is unverifiable",
+      "phrase": "- **Primary input**: `data/parquets/L3/housing_unified.parquet` (2021-2026)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C12",
+      "ledgerKey": "absenceScans.trainTestSplitFiles",
+      "note": "0 filename matches in the whole tree; train/test metrics exist only in an unlinked comparison file",
+      "phrase": "- **Train/test split**: `price_appreciation_train.parquet` / `price_appreciation_test.parquet`",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C13",
+      "ledgerKey": "lineage",
+      "note": "the claimed horizons describe the retired article workflow; the stored asset and 2026 vintage are separate, unlinked forecast families and cannot re-measure that workflow. Their own horizons are inventoried independently",
+      "phrase": "- **Forecast horizon**: 6 months (ARIMA), annual (XGBoost ensemble)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C14",
+      "ledgerKey": "notMeasurable.featureSelectionRule",
+      "note": "no preprocessing artefact states the rule as applied",
+      "phrase": "- **Feature selection**: numeric only, max 20% missing values allowed",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "articleVsAsset.perSegmentModelOutputs",
+      "note": "per-property-type model outputs are absent from the checkout; the asset's blocks carry no property-type model fields",
+      "phrase": "- **XGBoost models** were trained per property type (HDB, Condo, EC) in the historical research workflow",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C16",
+      "ledgerKey": "notMeasurable.xgboostParameters",
+      "note": "the parameter string exists only in article copies and a sibling legacy article; no run artefact",
+      "phrase": "  - Parameters: n_estimators=100, max_depth=6, learning_rate=0.1, subsample=0.8",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C17",
+      "ledgerKey": "absenceScans.yoyChangePctColumn",
+      "note": "the stated target is an ABSENT COLUMN of the shipped platinum frame; the name survives only in unlinked importance artefacts",
+      "phrase": "- **Target variable**: `yoy_change_pct` (year-over-year appreciation)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C18",
+      "ledgerKey": "notMeasurable.smartEnsemble",
+      "note": "no ensemble artefact exists",
+      "phrase": "- **Smart ensemble**: stacked model combining segment-specific predictions",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C19",
+      "ledgerKey": "forecastScoring.coverageSummary",
+      "note": "the calibration procedure is unrecorded; what this pack adds is the EMPIRICAL coverage of the stored bounds against realised outcomes, at an assumed and flagged 0.95 nominal level",
+      "phrase": "- **Confidence intervals**: calibrated per segment using residual distributions",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C20",
+      "ledgerKey": "notMeasurable.arimaSpec",
+      "note": "the order string appears in article copies and one plan document; no fitted output exists",
+      "phrase": "- **ARIMA(1,1,1)** for time-series forecasting per planning area",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C21",
+      "ledgerKey": "lineage",
+      "note": "the phrase describes the retired time-series workflow; the stored asset's planning-area granularity is independently inventoried but is unlinked and cannot re-measure the legacy method claim",
+      "phrase": "for time-series forecasting per planning area",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C22",
+      "ledgerKey": "predictiveAsset.policyMarketSegmentTags",
+      "note": "the asset's tags are HDB/PRIVATE only; no mass/mid/luxury grouping exists anywhere in the checkout",
+      "phrase": "- **Condo sub-segmentation**: mass market, mid market, luxury",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C23",
+      "ledgerKey": "articleVsAsset.technicalTable.rows.hdb",
+      "note": "appendix repeat of the segment table: withdrawn",
+      "phrase": "| HDB                | 79.8% | 99.4%                | ±18.58%      |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C24",
+      "ledgerKey": "articleVsAsset.technicalTable.rows.ec",
+      "note": "appendix repeat: withdrawn",
+      "phrase": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C25",
+      "ledgerKey": "articleVsAsset.technicalTable.rows.mass",
+      "note": "appendix repeat: withdrawn",
+      "phrase": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C26",
+      "ledgerKey": "articleVsAsset.technicalTable.rows.mid",
+      "note": "appendix repeat: withdrawn",
+      "phrase": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C27",
+      "ledgerKey": "articleVsAsset.technicalTable.rows.lux",
+      "note": "appendix repeat: withdrawn",
+      "phrase": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C28",
+      "ledgerKey": "articleVsAsset.featureClaims.combined",
+      "note": "combined feature-importance claim: withdrawn",
+      "phrase": "- **Top feature**: 2-year YoY appreciation (51.14% importance for HDB, 65.50% for mass-market condo)",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C29",
+      "ledgerKey": "notMeasurable.arimaCoverage",
+      "note": "the retired run's input coverage is unverifiable; the stored asset covers 41 areas (predictiveAsset.areaCount) with a 6-month horizon (predictiveAsset.horizonMonths) — recorded, not adjudicated",
+      "phrase": "- **ARIMA**: 20 planning areas with ≥12 months of data, 6-month forecast horizon",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C30",
+      "ledgerKey": "articleVsAsset.ensembleAccuracyClaim",
+      "note": "'accuracy' is undefined (metric, population, window all unstated): withdrawn, not re-measured",
+      "phrase": "- **Ensemble accuracy**: 74% vs 47% for a unified one-size-fits-all model",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C31",
+      "ledgerKey": "articleVsAsset.ensembleAccuracyClaim",
+      "note": "conclusion repeat of C30: withdrawn",
+      "phrase": "Segment-specific modeling dramatically outperforms unified approaches (74% vs 47% accuracy).",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C32",
+      "ledgerKey": "articleVsAsset.reliabilityTable.rows.lux",
+      "note": "conclusion repeat of the luxury row (C08): withdrawn",
+      "phrase": "luxury condos are essentially unpredictable in magnitude (R²=30.1%, CI width ±1076%).",
+      "status": "withdrawn"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 32,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/price-forecasts.md",
+    "legacyFileSha256": "0bebf7307907002449571441af7308ba1cbf0c40622be415572bec4f112839ee",
+    "method": "each phrase is required to appear verbatim in the frozen legacy text; a paraphrase inside quotation marks is a defect, and an ellipsis is permitted only for a genuine omission",
+    "quotes": [
+      {
+        "id": "C01",
+        "occurrences": 1,
+        "phrase": "**Analysis Date**: 2026-02-17"
+      },
+      {
+        "id": "C02",
+        "occurrences": 1,
+        "phrase": "**Data Period**: 2021-2026"
+      },
+      {
+        "id": "C03",
+        "occurrences": 1,
+        "phrase": "**Coverage**: HDB, condo, and EC segments"
+      },
+      {
+        "id": "C04",
+        "occurrences": 1,
+        "phrase": "| HDB flats          | 79.8%         | ±18.58%      | 99.4%           | Strong                       |"
+      },
+      {
+        "id": "C05",
+        "occurrences": 1,
+        "phrase": "| Executive Condos   | 98.5%         | ±50.15%      | 97.1%           | Strong but wider uncertainty |"
+      },
+      {
+        "id": "C06",
+        "occurrences": 1,
+        "phrase": "| Mass Market Condos | 85.6%         | ±40.48%      | 96.4%           | Useful with caution          |"
+      },
+      {
+        "id": "C07",
+        "occurrences": 1,
+        "phrase": "| Mid Market Condos  | 72.6%         | ±1877.88%    | 94.2%           | Direction only               |"
+      },
+      {
+        "id": "C08",
+        "occurrences": 1,
+        "phrase": "| Luxury Condos      | 30.1%         | ±1076.24%    | 92.3%           | Magnitude unusable           |"
+      },
+      {
+        "id": "C09",
+        "occurrences": 1,
+        "phrase": "| HDB               | 2-year YoY appreciation | 51.14%     |"
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "| Mass market condo | 2-year YoY appreciation | 65.50%     |"
+      },
+      {
+        "id": "C11",
+        "occurrences": 1,
+        "phrase": "- **Primary input**: `data/parquets/L3/housing_unified.parquet` (2021-2026)"
+      },
+      {
+        "id": "C12",
+        "occurrences": 1,
+        "phrase": "- **Train/test split**: `price_appreciation_train.parquet` / `price_appreciation_test.parquet`"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "- **Forecast horizon**: 6 months (ARIMA), annual (XGBoost ensemble)"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "- **Feature selection**: numeric only, max 20% missing values allowed"
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "- **XGBoost models** were trained per property type (HDB, Condo, EC) in the historical research workflow"
+      },
+      {
+        "id": "C16",
+        "occurrences": 1,
+        "phrase": "  - Parameters: n_estimators=100, max_depth=6, learning_rate=0.1, subsample=0.8"
+      },
+      {
+        "id": "C17",
+        "occurrences": 1,
+        "phrase": "- **Target variable**: `yoy_change_pct` (year-over-year appreciation)"
+      },
+      {
+        "id": "C18",
+        "occurrences": 1,
+        "phrase": "- **Smart ensemble**: stacked model combining segment-specific predictions"
+      },
+      {
+        "id": "C19",
+        "occurrences": 1,
+        "phrase": "- **Confidence intervals**: calibrated per segment using residual distributions"
+      },
+      {
+        "id": "C20",
+        "occurrences": 1,
+        "phrase": "- **ARIMA(1,1,1)** for time-series forecasting per planning area"
+      },
+      {
+        "id": "C21",
+        "occurrences": 1,
+        "phrase": "for time-series forecasting per planning area"
+      },
+      {
+        "id": "C22",
+        "occurrences": 1,
+        "phrase": "- **Condo sub-segmentation**: mass market, mid market, luxury"
+      },
+      {
+        "id": "C23",
+        "occurrences": 1,
+        "phrase": "| HDB                | 79.8% | 99.4%                | ±18.58%      |"
+      },
+      {
+        "id": "C24",
+        "occurrences": 1,
+        "phrase": "| Executive Condos   | 98.5% | 97.1%                | ±50.15%      |"
+      },
+      {
+        "id": "C25",
+        "occurrences": 1,
+        "phrase": "| Mass Market Condos | 85.6% | 96.4%                | ±40.48%      |"
+      },
+      {
+        "id": "C26",
+        "occurrences": 1,
+        "phrase": "| Mid Market Condos  | 72.6% | 94.2%                | ±1877.88%    |"
+      },
+      {
+        "id": "C27",
+        "occurrences": 1,
+        "phrase": "| Luxury Condos      | 30.1% | 92.3%                | ±1076.24%    |"
+      },
+      {
+        "id": "C28",
+        "occurrences": 1,
+        "phrase": "- **Top feature**: 2-year YoY appreciation (51.14% importance for HDB, 65.50% for mass-market condo)"
+      },
+      {
+        "id": "C29",
+        "occurrences": 1,
+        "phrase": "- **ARIMA**: 20 planning areas with ≥12 months of data, 6-month forecast horizon"
+      },
+      {
+        "id": "C30",
+        "occurrences": 1,
+        "phrase": "- **Ensemble accuracy**: 74% vs 47% for a unified one-size-fits-all model"
+      },
+      {
+        "id": "C31",
+        "occurrences": 1,
+        "phrase": "Segment-specific modeling dramatically outperforms unified approaches (74% vs 47% accuracy)."
+      },
+      {
+        "id": "C32",
+        "occurrences": 1,
+        "phrase": "luxury condos are essentially unpredictable in magnitude (R²=30.1%, CI width ±1076%)."
+      }
+    ]
+  },
+  "lineage": {
+    "archiveMentions": [
+      {
+        "meaning": "a January 2026 archive document lists data/forecasts/ as 'ML forecasts (KEPT as-is)' during a data reorganization — a directory listing, not a run linkage to any model or to the 2025 asset",
+        "path": "docs/archive/20260124-data-reorganization-complete.md",
+        "quote": "forecasts/                   # 🔮 ML forecasts (KEPT as-is)",
+        "sha256": "e92d12741eedad918c0a44aaf074cb5ea83a21cfaf7062d2b34ce321233c72a1"
+      }
+    ],
+    "meaning": "four forecast-bearing families exist in the checkout: the 2025 JSON asset this study scores, the 2026 data/forecasts vintages (price scored as secondVintage; yield recorded, not scored), the feature-importance CSVs (featureImportanceArtefacts), and two unlinked plot panels. No scanned file references more than one family (corroborationScan.methodTokens), so lineage between them is unestablished in BOTH directions, and this pack scores the 2025 asset on its own stored values without inheriting anything from the others",
+    "plotPanels": {
+      "directory": "app/public/data/analysis/price_forecasts",
+      "linkage": "unestablished",
+      "meaning": "two PNG panels under app/public/data/analysis/price_forecasts/ are sha-pinned so any later change shows. NOTHING in the checkout links either panel to either JSON/CSV vintage or to the article's models, so they are evidence for none of them and against none of them. A HUMAN VISUAL READ by the producer, recorded because pixels are not machine-read: the bar panel is titled 'Planning Area Housing Price Forecasts (24-Month) / Top 15 Areas by Expected Growth' with appreciation values near 8-10 percent; the scatter is titled 'Current Price vs Forecast Appreciation / Identifying Undervalued Opportunities' with quadrant annotations including 'UNDERATED GEMS' (as printed) and 'MAY BE OVERVALUED'. Both are a THIRD representation: a 24-month horizon that matches neither stored vintage (the 2025 asset is 6-month; the 2026 CSV is 6m/12m), and the scatter's advice-style quadrant labels are exactly the prompt genre the gate withholds from republication",
+      "panels": [
+        {
+          "bytes": 329781,
+          "path": "app/public/data/analysis/price_forecasts/planning_area_forecasts.png",
+          "sha256": "92050b3e22cdf890ad08c32c515ee167c8532edf5396a9ae211856d3ed8b9df1"
+        },
+        {
+          "bytes": 344605,
+          "path": "app/public/data/analysis/price_forecasts/price_vs_forecast_scatter.png",
+          "sha256": "713fc86d0621c26041b7fadc2de4792eda26e477d43c1f237093dbe26c5f19d8"
+        }
+      ]
+    },
+    "vintages": [
+      {
+        "areaCount": 41,
+        "expiredAtCutoff": true,
+        "forecastDate": "2025-07-01",
+        "horizonMonths": 6.0,
+        "id": "predictive-analytics-2025",
+        "lastTrainingDate": "2025-01-01",
+        "meaning": "scored at forecastScoring; dates read as stored",
+        "path": "app/public/data/analytics/predictive_analytics.json.gz",
+        "scoredInThisPack": true,
+        "sha256": "14a8ae6f0ce503e10068a491940cc78e2ad0ae77afa3dbe67b2096a73f3e3c06"
+      },
+      {
+        "areaCount": 30,
+        "areasOverlappingStoredAsset": 30,
+        "csvParquetRowsEqual": true,
+        "csvRows": 60,
+        "csvSha256": "b63c842d4f8514ca42ccc9df943f5bcf3f9db38c571ed9e68fa8aeb61b64dce0",
+        "declaredPropertyType": "HDB",
+        "declaredTarget": "median_price",
+        "expiredAtCutoff": "6m rows: target within cutoff; 12m rows: target after cutoff",
+        "forecastDatesByHorizon": {
+          "12m": [
+            "2026-10-01",
+            "2026-11-01",
+            "2026-12-01"
+          ],
+          "6m": [
+            "2026-04-01",
+            "2026-05-01",
+            "2026-06-01"
+          ]
+        },
+        "horizonCounts": {
+          "12m": 30,
+          "6m": 30
+        },
+        "id": "hdb-price-forecasts-2026",
+        "lastTrainingDate": [
+          "2025-11-01",
+          "2025-12-01",
+          "2026-01-01"
+        ],
+        "meaning": "a second, newer forecast vintage the checkout holds under data/forecasts/. It is a different generation: different training date (2026-01-01), different forecast dates (2026-06-01/2026-12-01), 30 areas against the stored asset's 41, interval bounds in price LEVELS rather than percentage points, and per-area model_r2 values in a different range. Nothing in the scanned checkout links it to the 2025 asset in either direction (corroborationScan)",
+        "modelR2Range": {
+          "max": 0.9825,
+          "min": 0.6217
+        },
+        "parquetRows": 60,
+        "parquetSha256": "29ccd3cf4060aef90842e2d08bb21c2116174914fd1827756a5344c0e7714c5e",
+        "path": "data/forecasts/hdb_price_forecasts.csv",
+        "scoredInThisPack": true
+      },
+      {
+        "areaCount": 28,
+        "csvRows": 56,
+        "csvSha256": "b02f7676e21216c1f4221094131b7ae50f0cc62a1ce61de73df6c31a1b3eb2a5",
+        "declaredTarget": "predicted_yield_pct",
+        "id": "hdb-yield-forecasts-2026",
+        "meaning": "recorded for lineage completeness and NOT scored: its target is rental yield, not price, so it has no comparable price outcome in this pack. Not scored is not absent",
+        "parquetSha256": "b1ddc91ef45da91f4b74da0bfa57630bd06c2061a45d7dfe6c6b71077d4084dd",
+        "path": "data/forecasts/hdb_yield_forecasts.csv",
+        "scoredInThisPack": false
+      }
+    ]
+  },
+  "notMeasurable": [
+    {
+      "claim": "Data Period 2021-2026",
+      "id": "analysisWindow",
+      "note": "no artefact records the retired run's window selection; the frame spans 1990-01 to the terminal month and any 2021-2026 slice would be a producer choice, not a recovery",
+      "status": "notReproducible"
+    },
+    {
+      "claim": "numeric only, max 20% missing values allowed",
+      "id": "featureSelectionRule",
+      "note": "no preprocessing artefact states the feature universe or the missingness rule that was applied",
+      "status": "notRecorded"
+    },
+    {
+      "claim": "n_estimators=100, max_depth=6, learning_rate=0.1, subsample=0.8",
+      "id": "xgboostParameters",
+      "note": "the parameter string appears only in the article's own copies and a sibling legacy article (corroborationScan); no config, log or code artefact records a run with these values",
+      "status": "notRecorded"
+    },
+    {
+      "claim": "ARIMA(1,1,1) per planning area",
+      "id": "arimaSpec",
+      "note": "the order string appears in the article copies and one plan document; no fitted ARIMA output exists in the checkout",
+      "status": "notRecorded"
+    },
+    {
+      "claim": "20 planning areas with >=12 months of data",
+      "id": "arimaCoverage",
+      "note": "the claim is about the retired run's input coverage; the stored asset covers 41 areas (predictiveAsset.areaCount), a different population recorded without adjudicating the article's number",
+      "status": "notReproducible"
+    },
+    {
+      "claim": "stacked model combining segment-specific predictions",
+      "id": "smartEnsemble",
+      "note": "no ensemble artefact, stack weights or per-segment predictions exist in the checkout",
+      "status": "notRecorded"
+    },
+    {
+      "claim": "confidence intervals calibrated per segment using residual distributions",
+      "id": "ciCalibration",
+      "note": "no calibration artefact or residual dump exists; the stored interval level is itself unstated — this pack's 0.95 nominal coverage assumption is flagged at every use (forecastScoring.coverageSummary)",
+      "status": "notRecorded"
+    },
+    {
+      "claim": "the per-segment R-squared/CI/directional table",
+      "id": "perSegmentOutputs",
+      "note": "the table's values exist only in the article's own copies and sibling legacy articles (corroborationScan); the stored asset carries no segment-keyed block; withdrawn, not re-estimated",
+      "status": "notReproducible"
+    },
+    {
+      "claim": "rolling-origin validation of the stored model itself",
+      "id": "modelRollingOrigin",
+      "note": "the asset stores exactly one forecast date, so the model has one origin; rolling-origin validation was applied to the naive baselines instead (rollingOrigin), and the single-origin model errors are reported at forecastScoring.primary",
+      "status": "notMeasurableFromAsset"
+    },
+    {
+      "claim": "the base/anchor of projected_change_pct",
+      "id": "projectedChangeSemantics",
+      "note": "the asset defines no anchor; three readings are measured (forecastScoring.conventions) rather than one being chosen silently",
+      "status": "notRecorded"
+    },
+    {
+      "claim": "article/model equivalence (RA02 register requirement for any replacement)",
+      "id": "lineageEquivalence",
+      "note": "nothing in this checkout links the article's per-segment models to the stored per-area asset; equivalence must be demonstrated by a future producer, not assumed by this pack",
+      "status": "notDemonstrated"
+    },
+    {
+      "claim": "the 2026 vintage's target-month reading",
+      "id": "secondVintageTargetMonth",
+      "note": "the vintage's forecast_date convention does not match the 2025 asset's training+horizon arithmetic; both readable target months are scored (secondVintage.targetMonthReading)",
+      "status": "notRecorded"
+    },
+    {
+      "claim": "the two forecast PNG panels' run linkage",
+      "id": "plotPanelLinkage",
+      "note": "nothing in the checkout ties the panels to any vintage; they are pinned and described visually at lineage.plotPanels and adjudicate nothing in either direction",
+      "status": "notRecorded"
+    }
+  ],
+  "predictiveAsset": {
+    "areaCount": 41,
+    "areasAllInFramePlanningArea": true,
+    "decompressedBytes": 30611,
+    "distinctForecastDates": [
+      "2025-07-01"
+    ],
+    "distinctPerAreaModelR2": [
+      0.85
+    ],
+    "forecastHorizonRaw": "6_months",
+    "generatedAt": "2026-02-19T17:23:03.558034",
+    "gzBytes": 1804,
+    "horizonMonths": 6.0,
+    "lastTrainingDate": "2025-01-01",
+    "leaseRecommendationCounts": {
+      "HOLD": 41
+    },
+    "meaning": "the stored asset is read in full and its dates are recorded as stored: forecast_date 2025-07-01 is read from every block and is never advanced by this pack. The metadata model_r2 is an in-sample/holdout fit statistic recorded by the asset, not a forecast-accuracy measure; forecast error is measured separately at forecastScoring",
+    "metadataModelR2": 0.89,
+    "path": "app/public/data/analytics/predictive_analytics.json.gz",
+    "perArea": [
+      {
+        "ciLowerPct": 19.1,
+        "ciUpperPct": 35.4,
+        "ciWidthPct": 16.3,
+        "forecastDate": "2025-07-01",
+        "id": "ANG MO KIO",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 27.2,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 29.6,
+        "ciUpperPct": 55.0,
+        "ciWidthPct": 25.4,
+        "forecastDate": "2025-07-01",
+        "id": "BEDOK",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 42.3,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 24.9,
+        "ciUpperPct": 46.3,
+        "ciWidthPct": 21.4,
+        "forecastDate": "2025-07-01",
+        "id": "BISHAN",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 35.6,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 39.6,
+        "ciUpperPct": 73.5,
+        "ciWidthPct": 33.9,
+        "forecastDate": "2025-07-01",
+        "id": "BUKIT BATOK",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 56.5,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 46.0,
+        "ciUpperPct": 85.5,
+        "ciWidthPct": 39.5,
+        "forecastDate": "2025-07-01",
+        "id": "BUKIT MERAH",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 65.8,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 31.4,
+        "ciUpperPct": 58.3,
+        "ciWidthPct": 26.9,
+        "forecastDate": "2025-07-01",
+        "id": "BUKIT PANJANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 44.9,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 79.8,
+        "ciUpperPct": 148.2,
+        "ciWidthPct": 68.4,
+        "forecastDate": "2025-07-01",
+        "id": "BUKIT TIMAH",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 114.0,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 8.1,
+        "ciUpperPct": 15.0,
+        "ciWidthPct": 6.9,
+        "forecastDate": "2025-07-01",
+        "id": "CHANGI",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 11.5,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 8.7,
+        "ciUpperPct": 16.2,
+        "ciWidthPct": 7.5,
+        "forecastDate": "2025-07-01",
+        "id": "CHOA CHU KANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 12.4,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 27.1,
+        "ciUpperPct": 50.3,
+        "ciWidthPct": 23.2,
+        "forecastDate": "2025-07-01",
+        "id": "CLEMENTI",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 38.7,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 89.2,
+        "ciUpperPct": 165.6,
+        "ciWidthPct": 76.4,
+        "forecastDate": "2025-07-01",
+        "id": "DOWNTOWN CORE",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 127.4,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 51.0,
+        "ciUpperPct": 94.7,
+        "ciWidthPct": 43.7,
+        "forecastDate": "2025-07-01",
+        "id": "GEYLANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 72.8,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 17.6,
+        "ciUpperPct": 32.7,
+        "ciWidthPct": 15.1,
+        "forecastDate": "2025-07-01",
+        "id": "HOUGANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 25.2,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 42.7,
+        "ciUpperPct": 79.4,
+        "ciWidthPct": 36.7,
+        "forecastDate": "2025-07-01",
+        "id": "JURONG EAST",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 61.0,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 12.6,
+        "ciUpperPct": 23.5,
+        "ciWidthPct": 10.9,
+        "forecastDate": "2025-07-01",
+        "id": "JURONG WEST",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 18.1,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 40.8,
+        "ciUpperPct": 75.8,
+        "ciWidthPct": 35.0,
+        "forecastDate": "2025-07-01",
+        "id": "KALLANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 58.3,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 44.2,
+        "ciUpperPct": 82.1,
+        "ciWidthPct": 37.9,
+        "forecastDate": "2025-07-01",
+        "id": "LIM CHU KANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 63.1,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 47.0,
+        "ciUpperPct": 87.2,
+        "ciWidthPct": 40.2,
+        "forecastDate": "2025-07-01",
+        "id": "MANDAI",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 67.1,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 57.1,
+        "ciUpperPct": 106.0,
+        "ciWidthPct": 48.9,
+        "forecastDate": "2025-07-01",
+        "id": "MARINA SOUTH",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 81.5,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 63.8,
+        "ciUpperPct": 118.4,
+        "ciWidthPct": 54.6,
+        "forecastDate": "2025-07-01",
+        "id": "MARINE PARADE",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 91.1,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 45.6,
+        "ciUpperPct": 84.7,
+        "ciWidthPct": 39.1,
+        "forecastDate": "2025-07-01",
+        "id": "MUSEUM",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 65.1,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 239.5,
+        "ciUpperPct": 444.9,
+        "ciWidthPct": 205.4,
+        "forecastDate": "2025-07-01",
+        "id": "NEWTON",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 342.2,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 81.8,
+        "ciUpperPct": 151.8,
+        "ciWidthPct": 70.0,
+        "forecastDate": "2025-07-01",
+        "id": "NOVENA",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 116.8,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 92.3,
+        "ciUpperPct": 171.4,
+        "ciWidthPct": 79.1,
+        "forecastDate": "2025-07-01",
+        "id": "ORCHARD",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 131.8,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 39.9,
+        "ciUpperPct": 74.1,
+        "ciWidthPct": 34.2,
+        "forecastDate": "2025-07-01",
+        "id": "OUTRAM",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 57.0,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 11.0,
+        "ciUpperPct": 20.3,
+        "ciWidthPct": 9.3,
+        "forecastDate": "2025-07-01",
+        "id": "PASIR RIS",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 15.7,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 8.0,
+        "ciUpperPct": 14.9,
+        "ciWidthPct": 6.9,
+        "forecastDate": "2025-07-01",
+        "id": "PUNGGOL",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 11.5,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 13.3,
+        "ciUpperPct": 24.8,
+        "ciWidthPct": 11.5,
+        "forecastDate": "2025-07-01",
+        "id": "QUEENSTOWN",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 19.1,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 140.3,
+        "ciUpperPct": 260.6,
+        "ciWidthPct": 120.3,
+        "forecastDate": "2025-07-01",
+        "id": "RIVER VALLEY",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 200.5,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 62.1,
+        "ciUpperPct": 115.3,
+        "ciWidthPct": 53.2,
+        "forecastDate": "2025-07-01",
+        "id": "ROCHOR",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 88.7,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 15.0,
+        "ciUpperPct": 27.8,
+        "ciWidthPct": 12.8,
+        "forecastDate": "2025-07-01",
+        "id": "SEMBAWANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 21.4,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 9.9,
+        "ciUpperPct": 18.4,
+        "ciWidthPct": 8.5,
+        "forecastDate": "2025-07-01",
+        "id": "SENGKANG",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 14.2,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 36.8,
+        "ciUpperPct": 68.4,
+        "ciWidthPct": 31.6,
+        "forecastDate": "2025-07-01",
+        "id": "SERANGOON",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 52.6,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 68.3,
+        "ciUpperPct": 126.9,
+        "ciWidthPct": 58.6,
+        "forecastDate": "2025-07-01",
+        "id": "SINGAPORE RIVER",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 97.6,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 65.0,
+        "ciUpperPct": 120.7,
+        "ciWidthPct": 55.7,
+        "forecastDate": "2025-07-01",
+        "id": "SOUTHERN ISLANDS",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 92.9,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 12.8,
+        "ciUpperPct": 23.7,
+        "ciWidthPct": 10.9,
+        "forecastDate": "2025-07-01",
+        "id": "TAMPINES",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 18.3,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 144.9,
+        "ciUpperPct": 269.1,
+        "ciWidthPct": 124.2,
+        "forecastDate": "2025-07-01",
+        "id": "TANGLIN",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 207.0,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 6.2,
+        "ciUpperPct": 11.6,
+        "ciWidthPct": 5.4,
+        "forecastDate": "2025-07-01",
+        "id": "TENGAH",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "PRIVATE",
+        "projectedChangePct": 8.9,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 39.8,
+        "ciUpperPct": 73.9,
+        "ciWidthPct": 34.1,
+        "forecastDate": "2025-07-01",
+        "id": "TOA PAYOH",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 56.9,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 8.2,
+        "ciUpperPct": 15.2,
+        "ciWidthPct": 7.0,
+        "forecastDate": "2025-07-01",
+        "id": "WOODLANDS",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 11.7,
+        "signal": "BUY"
+      },
+      {
+        "ciLowerPct": 10.6,
+        "ciUpperPct": 19.7,
+        "ciWidthPct": 9.1,
+        "forecastDate": "2025-07-01",
+        "id": "YISHUN",
+        "leaseRecommendation": "HOLD",
+        "modelR2": 0.85,
+        "policyMarketSegmentTag": "HDB",
+        "projectedChangePct": 15.2,
+        "signal": "BUY"
+      }
+    ],
+    "perAreaModelR2ConstantAcrossAreas": true,
+    "policyMarketSegmentTags": {
+      "HDB": 24,
+      "PRIVATE": 17
+    },
+    "sha256": "14a8ae6f0ce503e10068a491940cc78e2ad0ae77afa3dbe67b2096a73f3e3c06",
+    "signalCounts": {
+      "BUY": 41
+    },
+    "topLevelKeys": [
+      "metadata",
+      "planning_areas"
+    ]
+  },
+  "rollingOrigin": {
+    "basis": "medianPriceAllRows",
+    "cutoffRespected": true,
+    "firstOrigin": "2024-06",
+    "horizonMonths": 6,
+    "lastOrigin": "2026-04",
+    "meanOfPerOriginMae": {
+      "seasonalNaive": 27.2795,
+      "trend6m": 28.3879,
+      "zeroChange": 16.9752
+    },
+    "meaning": "rolling-origin validation is applied to the zero-change, trend and seasonal-naive baselines across monthly origins from 2024-06 to 2026-04, each with the stored 6-month horizon, stopping at the measured cutoff. It contextualises the stored forecasts' single-origin errors; it does not validate the stored model",
+    "originCount": 23,
+    "originsWithPopulation": 23,
+    "perOrigin": [
+      {
+        "id": "2024-06",
+        "maePct": {
+          "seasonalNaive": 26.481,
+          "trend6m": 23.114,
+          "zeroChange": 13.912
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2024-12"
+      },
+      {
+        "id": "2024-07",
+        "maePct": {
+          "seasonalNaive": 39.6551,
+          "trend6m": 26.7181,
+          "zeroChange": 16.4251
+        },
+        "scoringPopulation": 34,
+        "targetMonth": "2025-01"
+      },
+      {
+        "id": "2024-08",
+        "maePct": {
+          "seasonalNaive": 35.6556,
+          "trend6m": 29.8186,
+          "zeroChange": 18.9577
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2025-02"
+      },
+      {
+        "id": "2024-09",
+        "maePct": {
+          "seasonalNaive": 22.9391,
+          "trend6m": 26.1323,
+          "zeroChange": 18.2935
+        },
+        "scoringPopulation": 33,
+        "targetMonth": "2025-03"
+      },
+      {
+        "id": "2024-10",
+        "maePct": {
+          "seasonalNaive": 29.2102,
+          "trend6m": 29.8297,
+          "zeroChange": 16.5145
+        },
+        "scoringPopulation": 34,
+        "targetMonth": "2025-04"
+      },
+      {
+        "id": "2024-11",
+        "maePct": {
+          "seasonalNaive": 32.3097,
+          "trend6m": 29.484,
+          "zeroChange": 12.091
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2025-05"
+      },
+      {
+        "id": "2024-12",
+        "maePct": {
+          "seasonalNaive": 22.6615,
+          "trend6m": 28.6011,
+          "zeroChange": 16.9003
+        },
+        "scoringPopulation": 34,
+        "targetMonth": "2025-06"
+      },
+      {
+        "id": "2025-01",
+        "maePct": {
+          "seasonalNaive": 20.4117,
+          "trend6m": 26.335,
+          "zeroChange": 14.7465
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2025-07"
+      },
+      {
+        "id": "2025-02",
+        "maePct": {
+          "seasonalNaive": 30.2188,
+          "trend6m": 37.2991,
+          "zeroChange": 24.5316
+        },
+        "scoringPopulation": 36,
+        "targetMonth": "2025-08"
+      },
+      {
+        "id": "2025-03",
+        "maePct": {
+          "seasonalNaive": 24.7713,
+          "trend6m": 31.4976,
+          "zeroChange": 18.1961
+        },
+        "scoringPopulation": 36,
+        "targetMonth": "2025-09"
+      },
+      {
+        "id": "2025-04",
+        "maePct": {
+          "seasonalNaive": 28.6272,
+          "trend6m": 30.2454,
+          "zeroChange": 18.7065
+        },
+        "scoringPopulation": 37,
+        "targetMonth": "2025-10"
+      },
+      {
+        "id": "2025-05",
+        "maePct": {
+          "seasonalNaive": 23.9839,
+          "trend6m": 22.6804,
+          "zeroChange": 15.3418
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2025-11"
+      },
+      {
+        "id": "2025-06",
+        "maePct": {
+          "seasonalNaive": 20.4372,
+          "trend6m": 25.2692,
+          "zeroChange": 13.2765
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2025-12"
+      },
+      {
+        "id": "2025-07",
+        "maePct": {
+          "seasonalNaive": 26.4696,
+          "trend6m": 24.6762,
+          "zeroChange": 15.0915
+        },
+        "scoringPopulation": 36,
+        "targetMonth": "2026-01"
+      },
+      {
+        "id": "2025-08",
+        "maePct": {
+          "seasonalNaive": 26.1224,
+          "trend6m": 34.8236,
+          "zeroChange": 15.3731
+        },
+        "scoringPopulation": 34,
+        "targetMonth": "2026-02"
+      },
+      {
+        "id": "2025-09",
+        "maePct": {
+          "seasonalNaive": 23.4631,
+          "trend6m": 29.2952,
+          "zeroChange": 20.7233
+        },
+        "scoringPopulation": 34,
+        "targetMonth": "2026-03"
+      },
+      {
+        "id": "2025-10",
+        "maePct": {
+          "seasonalNaive": 33.7705,
+          "trend6m": 36.0869,
+          "zeroChange": 20.6494
+        },
+        "scoringPopulation": 35,
+        "targetMonth": "2026-04"
+      },
+      {
+        "id": "2025-11",
+        "maePct": {
+          "seasonalNaive": 31.9166,
+          "trend6m": 28.8999,
+          "zeroChange": 21.006
+        },
+        "scoringPopulation": 34,
+        "targetMonth": "2026-05"
+      },
+      {
+        "id": "2025-12",
+        "maePct": {
+          "seasonalNaive": 19.2095,
+          "trend6m": 17.3424,
+          "zeroChange": 11.2544
+        },
+        "scoringPopulation": 33,
+        "targetMonth": "2026-06"
+      },
+      {
+        "id": "2026-01",
+        "maePct": {
+          "seasonalNaive": 23.8047,
+          "trend6m": 25.8481,
+          "zeroChange": 15.2688
+        },
+        "scoringPopulation": 33,
+        "targetMonth": "2026-07"
+      },
+      {
+        "id": "2026-02",
+        "maePct": {
+          "seasonalNaive": 29.4756,
+          "trend6m": 22.4423,
+          "zeroChange": 14.7009
+        },
+        "scoringPopulation": 32,
+        "targetMonth": "2026-08"
+      },
+      {
+        "id": "2026-03",
+        "maePct": {
+          "seasonalNaive": 22.4369,
+          "trend6m": 26.4335,
+          "zeroChange": 10.8876
+        },
+        "scoringPopulation": 33,
+        "targetMonth": "2026-09"
+      },
+      {
+        "id": "2026-04",
+        "maePct": {
+          "seasonalNaive": 33.3966,
+          "trend6m": 40.0499,
+          "zeroChange": 27.5823
+        },
+        "scoringPopulation": 34,
+        "targetMonth": "2026-10"
+      }
+    ],
+    "scope": "naive baselines only",
+    "storedModelExclusionReason": "the asset stores exactly one forecast date (2025-07-01), so the stored model has one origin; rolling-origin validation of the MODEL is not possible from this checkout and is recorded as notMeasurable.modelRollingOrigin",
+    "storedModelIncluded": false
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS14 price-forecasts evidence: lineage reconciliation of the stored predictive asset against the article and the checkout's other forecast-bearing artefacts, a scoring of the expired 2025-07-01 projections against realised outcomes through the measured cutoff with naive baselines and interval coverage, rolling-origin validation of the baselines, and the disposition of every quantitative claim of the frozen legacy article",
+  "secondVintage": {
+    "areaCount": 30,
+    "areasOverlappingStoredAsset": 30,
+    "csvRows": 60,
+    "forecastDatesByHorizon": {
+      "12m": [
+        "2026-10-01",
+        "2026-11-01",
+        "2026-12-01"
+      ],
+      "6m": [
+        "2026-04-01",
+        "2026-05-01",
+        "2026-06-01"
+      ]
+    },
+    "lastTrainingDate": [
+      "2025-11-01",
+      "2025-12-01",
+      "2026-01-01"
+    ],
+    "meaning": "the 2026 vintage's 6-month rows are scored on LEVELS (its own declared target median_price and property type HDB) against realised HDB medians; the 12-month rows target 2026-12, after the cutoff, and are recorded as not scoreable — an absence of comparable outcome, not a forecast defect",
+    "path": "data/forecasts/hdb_price_forecasts.csv",
+    "rows12m": 30,
+    "rows12mNotScoreable": {
+      "cutoffMonth": "2026-10",
+      "reason": "target month is after the measured cutoff; no comparable outcome exists yet",
+      "rows": 30,
+      "targetMonth": "2026-12"
+    },
+    "rows6m": 30,
+    "targetMonthReading": {
+      "forecastDateMonth": {
+        "basis": "median price, property_type=hdb rows, floor 10 target-month transactions",
+        "biasSgd": -24527.62,
+        "coverage": {
+          "empiricalCoverage": 21.7391,
+          "nScored": 23,
+          "nWithin": 5,
+          "nominalLevel": 0.95,
+          "nominalLevelIsAssumed": true
+        },
+        "excludedAreas": [
+          {
+            "id": "BUKIT TIMAH",
+            "nTarget": 8
+          },
+          {
+            "id": "CHANGI",
+            "nTarget": 0
+          },
+          {
+            "id": "DOWNTOWN CORE",
+            "nTarget": 0
+          },
+          {
+            "id": "MARINE PARADE",
+            "nTarget": 7
+          },
+          {
+            "id": "OUTRAM",
+            "nTarget": 8
+          },
+          {
+            "id": "ROCHOR",
+            "nTarget": 6
+          },
+          {
+            "id": "TANGLIN",
+            "nTarget": 1
+          }
+        ],
+        "maeSgd": 107555.8,
+        "mapeOnLevelsPct": 15.5198,
+        "perArea": [
+          {
+            "ciLower": 466571.98,
+            "ciUpper": 524458.58,
+            "errorSgd": 10628.43,
+            "id": "ANG MO KIO",
+            "nTarget": 84,
+            "predictedValue": 495628.43,
+            "realisedMedianHdbPrice": 485000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 550400.98,
+            "ciUpper": 638241.37,
+            "errorSgd": 64691.53,
+            "id": "BEDOK",
+            "nTarget": 99,
+            "predictedValue": 594691.53,
+            "realisedMedianHdbPrice": 530000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 784643.66,
+            "ciUpper": 883482.73,
+            "errorSgd": 6617.77,
+            "id": "BISHAN",
+            "nTarget": 39,
+            "predictedValue": 834617.77,
+            "realisedMedianHdbPrice": 828000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 765564.08,
+            "ciUpper": 914201.25,
+            "errorSgd": -22731.71,
+            "id": "BUKIT MERAH",
+            "nTarget": 82,
+            "predictedValue": 839768.29,
+            "realisedMedianHdbPrice": 862500.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 649384.81,
+            "ciUpper": 867973.47,
+            "errorSgd": 159084.5,
+            "id": "BUKIT PANJANG",
+            "nTarget": 55,
+            "predictedValue": 759084.5,
+            "realisedMedianHdbPrice": 600000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 638563.61,
+            "ciUpper": 695099.94,
+            "errorSgd": 73503.05,
+            "id": "CHOA CHU KANG",
+            "nTarget": 94,
+            "predictedValue": 667003.05,
+            "realisedMedianHdbPrice": 593500.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 440925.67,
+            "ciUpper": 532783.29,
+            "errorSgd": -274614.93,
+            "id": "CLEMENTI",
+            "nTarget": 42,
+            "predictedValue": 486885.07,
+            "realisedMedianHdbPrice": 761500.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 366679.92,
+            "ciUpper": 506537.8,
+            "errorSgd": -87950.88,
+            "id": "GEYLANG",
+            "nTarget": 47,
+            "predictedValue": 437049.12,
+            "realisedMedianHdbPrice": 525000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 624642.0,
+            "ciUpper": 680834.83,
+            "errorSgd": 52722.84,
+            "id": "HOUGANG",
+            "nTarget": 111,
+            "predictedValue": 652722.84,
+            "realisedMedianHdbPrice": 600000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 406679.76,
+            "ciUpper": 496433.65,
+            "errorSgd": -98474.65,
+            "id": "JURONG EAST",
+            "nTarget": 31,
+            "predictedValue": 451525.35,
+            "realisedMedianHdbPrice": 550000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 551591.21,
+            "ciUpper": 594717.13,
+            "errorSgd": 10129.41,
+            "id": "JURONG WEST",
+            "nTarget": 113,
+            "predictedValue": 573129.41,
+            "realisedMedianHdbPrice": 563000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 640307.76,
+            "ciUpper": 813085.96,
+            "errorSgd": -34852.43,
+            "id": "KALLANG",
+            "nTarget": 53,
+            "predictedValue": 727147.57,
+            "realisedMedianHdbPrice": 762000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 300359.27,
+            "ciUpper": 411612.3,
+            "errorSgd": -415438.75,
+            "id": "NOVENA",
+            "nTarget": 18,
+            "predictedValue": 356061.25,
+            "realisedMedianHdbPrice": 771500.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 761222.95,
+            "ciUpper": 822642.9,
+            "errorSgd": 80637.29,
+            "id": "PASIR RIS",
+            "nTarget": 74,
+            "predictedValue": 791887.29,
+            "realisedMedianHdbPrice": 711250.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 686790.79,
+            "ciUpper": 727058.48,
+            "errorSgd": 46942.49,
+            "id": "PUNGGOL",
+            "nTarget": 152,
+            "predictedValue": 706942.49,
+            "realisedMedianHdbPrice": 660000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 427008.67,
+            "ciUpper": 653473.78,
+            "errorSgd": -329893.13,
+            "id": "QUEENSTOWN",
+            "nTarget": 63,
+            "predictedValue": 540106.87,
+            "realisedMedianHdbPrice": 870000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 623655.48,
+            "ciUpper": 668404.14,
+            "errorSgd": 65944.52,
+            "id": "SEMBAWANG",
+            "nTarget": 60,
+            "predictedValue": 645944.52,
+            "realisedMedianHdbPrice": 580000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 703291.01,
+            "ciUpper": 765336.09,
+            "errorSgd": 84283.89,
+            "id": "SENGKANG",
+            "nTarget": 167,
+            "predictedValue": 734283.89,
+            "realisedMedianHdbPrice": 650000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 765651.91,
+            "ciUpper": 856071.57,
+            "errorSgd": 187486.64,
+            "id": "SERANGOON",
+            "nTarget": 36,
+            "predictedValue": 811486.64,
+            "realisedMedianHdbPrice": 624000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 613352.01,
+            "ciUpper": 660391.51,
+            "errorSgd": -63347.72,
+            "id": "TAMPINES",
+            "nTarget": 171,
+            "predictedValue": 636652.28,
+            "realisedMedianHdbPrice": 700000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 621534.16,
+            "ciUpper": 774846.59,
+            "errorSgd": -191655.16,
+            "id": "TOA PAYOH",
+            "nTarget": 78,
+            "predictedValue": 698788.84,
+            "realisedMedianHdbPrice": 890444.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 665078.14,
+            "ciUpper": 714928.1,
+            "errorSgd": 89378.59,
+            "id": "WOODLANDS",
+            "nTarget": 162,
+            "predictedValue": 690211.59,
+            "realisedMedianHdbPrice": 600833.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 530656.27,
+            "ciUpper": 574570.28,
+            "errorSgd": 22773.08,
+            "id": "YISHUN",
+            "nTarget": 144,
+            "predictedValue": 552773.08,
+            "realisedMedianHdbPrice": 530000.0,
+            "withinCi": false
+          }
+        ],
+        "rmseSgd": 150143.74,
+        "scoringPopulation": 23,
+        "targetMonth": "2026-06"
+      },
+      "forecastDateMonthPlusOne": {
+        "basis": "median price, property_type=hdb rows, floor 10 target-month transactions",
+        "biasSgd": -28749.85,
+        "coverage": {
+          "empiricalCoverage": 29.1667,
+          "nScored": 24,
+          "nWithin": 7,
+          "nominalLevel": 0.95,
+          "nominalLevelIsAssumed": true
+        },
+        "excludedAreas": [
+          {
+            "id": "BUKIT TIMAH",
+            "nTarget": 5
+          },
+          {
+            "id": "CHANGI",
+            "nTarget": 1
+          },
+          {
+            "id": "DOWNTOWN CORE",
+            "nTarget": 0
+          },
+          {
+            "id": "OUTRAM",
+            "nTarget": 7
+          },
+          {
+            "id": "ROCHOR",
+            "nTarget": 4
+          },
+          {
+            "id": "TANGLIN",
+            "nTarget": 0
+          }
+        ],
+        "maeSgd": 96132.7,
+        "mapeOnLevelsPct": 13.5777,
+        "perArea": [
+          {
+            "ciLower": 466571.98,
+            "ciUpper": 524458.58,
+            "errorSgd": -32815.57,
+            "id": "ANG MO KIO",
+            "nTarget": 78,
+            "predictedValue": 495628.43,
+            "realisedMedianHdbPrice": 528444.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 550400.98,
+            "ciUpper": 638241.37,
+            "errorSgd": 15691.53,
+            "id": "BEDOK",
+            "nTarget": 146,
+            "predictedValue": 594691.53,
+            "realisedMedianHdbPrice": 579000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 784643.66,
+            "ciUpper": 883482.73,
+            "errorSgd": 46617.77,
+            "id": "BISHAN",
+            "nTarget": 33,
+            "predictedValue": 834617.77,
+            "realisedMedianHdbPrice": 788000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 765564.08,
+            "ciUpper": 914201.25,
+            "errorSgd": -10231.71,
+            "id": "BUKIT MERAH",
+            "nTarget": 92,
+            "predictedValue": 839768.29,
+            "realisedMedianHdbPrice": 850000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 649384.81,
+            "ciUpper": 867973.47,
+            "errorSgd": 144084.5,
+            "id": "BUKIT PANJANG",
+            "nTarget": 89,
+            "predictedValue": 759084.5,
+            "realisedMedianHdbPrice": 615000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 638563.61,
+            "ciUpper": 695099.94,
+            "errorSgd": 72003.05,
+            "id": "CHOA CHU KANG",
+            "nTarget": 108,
+            "predictedValue": 667003.05,
+            "realisedMedianHdbPrice": 595000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 440925.67,
+            "ciUpper": 532783.29,
+            "errorSgd": -218558.93,
+            "id": "CLEMENTI",
+            "nTarget": 50,
+            "predictedValue": 486885.07,
+            "realisedMedianHdbPrice": 705444.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 366679.92,
+            "ciUpper": 506537.8,
+            "errorSgd": -76950.88,
+            "id": "GEYLANG",
+            "nTarget": 66,
+            "predictedValue": 437049.12,
+            "realisedMedianHdbPrice": 514000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 624642.0,
+            "ciUpper": 680834.83,
+            "errorSgd": 3834.84,
+            "id": "HOUGANG",
+            "nTarget": 133,
+            "predictedValue": 652722.84,
+            "realisedMedianHdbPrice": 648888.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 406679.76,
+            "ciUpper": 496433.65,
+            "errorSgd": -7474.65,
+            "id": "JURONG EAST",
+            "nTarget": 46,
+            "predictedValue": 451525.35,
+            "realisedMedianHdbPrice": 459000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 551591.21,
+            "ciUpper": 594717.13,
+            "errorSgd": 14185.41,
+            "id": "JURONG WEST",
+            "nTarget": 146,
+            "predictedValue": 573129.41,
+            "realisedMedianHdbPrice": 558944.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 640307.76,
+            "ciUpper": 813085.96,
+            "errorSgd": 54147.57,
+            "id": "KALLANG",
+            "nTarget": 49,
+            "predictedValue": 727147.57,
+            "realisedMedianHdbPrice": 673000.0,
+            "withinCi": true
+          },
+          {
+            "ciLower": 449699.6,
+            "ciUpper": 655727.52,
+            "errorSgd": -396836.06,
+            "id": "MARINE PARADE",
+            "nTarget": 17,
+            "predictedValue": 553163.94,
+            "realisedMedianHdbPrice": 950000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 300359.27,
+            "ciUpper": 411612.3,
+            "errorSgd": -188938.75,
+            "id": "NOVENA",
+            "nTarget": 20,
+            "predictedValue": 356061.25,
+            "realisedMedianHdbPrice": 545000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 761222.95,
+            "ciUpper": 822642.9,
+            "errorSgd": 61887.29,
+            "id": "PASIR RIS",
+            "nTarget": 92,
+            "predictedValue": 791887.29,
+            "realisedMedianHdbPrice": 730000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 686790.79,
+            "ciUpper": 727058.48,
+            "errorSgd": 36942.49,
+            "id": "PUNGGOL",
+            "nTarget": 189,
+            "predictedValue": 706942.49,
+            "realisedMedianHdbPrice": 670000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 427008.67,
+            "ciUpper": 653473.78,
+            "errorSgd": -292781.13,
+            "id": "QUEENSTOWN",
+            "nTarget": 91,
+            "predictedValue": 540106.87,
+            "realisedMedianHdbPrice": 832888.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 623655.48,
+            "ciUpper": 668404.14,
+            "errorSgd": 66944.52,
+            "id": "SEMBAWANG",
+            "nTarget": 78,
+            "predictedValue": 645944.52,
+            "realisedMedianHdbPrice": 579000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 703291.01,
+            "ciUpper": 765336.09,
+            "errorSgd": 84283.89,
+            "id": "SENGKANG",
+            "nTarget": 198,
+            "predictedValue": 734283.89,
+            "realisedMedianHdbPrice": 650000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 765651.91,
+            "ciUpper": 856071.57,
+            "errorSgd": 99986.64,
+            "id": "SERANGOON",
+            "nTarget": 46,
+            "predictedValue": 811486.64,
+            "realisedMedianHdbPrice": 711500.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 613352.01,
+            "ciUpper": 660391.51,
+            "errorSgd": -82791.72,
+            "id": "TAMPINES",
+            "nTarget": 234,
+            "predictedValue": 636652.28,
+            "realisedMedianHdbPrice": 719444.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 621534.16,
+            "ciUpper": 774846.59,
+            "errorSgd": -191211.16,
+            "id": "TOA PAYOH",
+            "nTarget": 85,
+            "predictedValue": 698788.84,
+            "realisedMedianHdbPrice": 890000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 665078.14,
+            "ciUpper": 714928.1,
+            "errorSgd": 85211.59,
+            "id": "WOODLANDS",
+            "nTarget": 187,
+            "predictedValue": 690211.59,
+            "realisedMedianHdbPrice": 605000.0,
+            "withinCi": false
+          },
+          {
+            "ciLower": 530656.27,
+            "ciUpper": 574570.28,
+            "errorSgd": 22773.08,
+            "id": "YISHUN",
+            "nTarget": 179,
+            "predictedValue": 552773.08,
+            "realisedMedianHdbPrice": 530000.0,
+            "withinCi": false
+          }
+        ],
+        "rmseSgd": 135908.94,
+        "scoringPopulation": 24,
+        "targetMonth": "2026-07"
+      },
+      "recordedBecause": "for the 2025 asset, last_training_date + horizon lands exactly on forecast_date (2025-01 + 6m = 2025-07); for this vintage, 2026-01 + 6m = 2026-07 while forecast_date reads 2026-06-01, so the two vintages cannot share one reading convention. Both target months are scored"
+    },
+    "twinParquet": {
+      "bytes": 9664,
+      "path": "data/forecasts/hdb_price_forecasts.parquet",
+      "sha256": "29ccd3cf4060aef90842e2d08bb21c2116174914fd1827756a5344c0e7714c5e"
+    }
+  },
+  "series": "price-forecasts",
+  "study": "RS14"
+}

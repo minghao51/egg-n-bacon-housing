@@ -1,0 +1,3330 @@
+{
+  "absenceScans": {
+    "jointModel": {
+      "exclusions": {
+        "directoryComponents": [
+          ".astro",
+          ".astro-cache",
+          ".git",
+          ".mypy_cache",
+          ".pytest_cache",
+          ".ruff_cache",
+          ".venv",
+          "__pycache__",
+          "build",
+          "dist",
+          "htmlcov",
+          "node_modules"
+        ],
+        "editionPrefixExceptRetained": [
+          "docs/analytics/editions/",
+          "docs/analytics/editions/legacy/"
+        ],
+        "paths": [
+          "docs/plans/2026-11-12-reporting-refresh-decisions.md",
+          ".secrets.baseline"
+        ],
+        "prefixes": [
+          "docs/implementation/",
+          "prompts/",
+          "scripts/tools/",
+          "app/src/components/studies/",
+          "app/tests/"
+        ]
+      },
+      "filenameMatchCount": 0,
+      "filenameMatches": [],
+      "filenameTokens": [
+        "joint_model",
+        "pooled_model",
+        "meta_analysis",
+        "cross_study"
+      ],
+      "filesScanned": 326,
+      "matchCount": 2,
+      "matches": [
+        {
+          "line": 18,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
+          "quote": "3. **Heterogeneity Masked:** Pooled models average across diverse market segments (HDB vs Condo, CCR vs OCR), hiding critical differences in how buyers value sc"
+        },
+        {
+          "line": 964,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
+          "quote": "Run pooled model with interaction terms."
+        }
+      ],
+      "matchesTruncated": false,
+      "meaning": "a bounded scan, not proof of universal absence: it reads the listed roots and suffixes, excludes the programme's own output surfaces as disclosed, and records every match it found. A screen is not a finding about origin, and an unlinked artefact adjudicates nothing",
+      "question": "does this checkout hold a joint or pooled model over the series that could carry a cross-study ranking?",
+      "roots": [
+        "docs",
+        "scripts",
+        "src",
+        "app/src",
+        "prompts",
+        "assets"
+      ],
+      "suffixes": [
+        ".md",
+        ".py",
+        ".ts",
+        ".tsx",
+        ".json"
+      ],
+      "tokens": [
+        "joint model",
+        "joint-model",
+        "pooled model",
+        "pooled estimate",
+        "meta-analysis",
+        "meta analysis",
+        "cross-study",
+        "cross study",
+        "multi-study model"
+      ]
+    },
+    "personaContent": {
+      "bytes": 3222,
+      "meaning": "the persona file's concerns carry no quantitative token under the declared pattern; its recommended-reading slugs are resolved against the register at notMeasurable.personaContentPromises",
+      "path": "app/src/data/persona-content.json",
+      "personas": [
+        "first-time-buyer",
+        "investor",
+        "upgrader"
+      ],
+      "quantitativePattern": "\\d+(?:\\.\\d+)?\\s*(?:%|x|×|percent)",
+      "quantitativeTokenCount": 0,
+      "quantitativeTokens": [],
+      "recommendedSlugs": [
+        {
+          "persona": "first-time-buyer",
+          "slug": "lease-decay",
+          "title": null
+        },
+        {
+          "persona": "first-time-buyer",
+          "slug": "price-forecasts",
+          "title": null
+        },
+        {
+          "persona": "first-time-buyer",
+          "slug": "mrt-impact",
+          "title": null
+        },
+        {
+          "persona": "investor",
+          "slug": "price-forecasts",
+          "title": null
+        },
+        {
+          "persona": "investor",
+          "slug": "mrt-impact",
+          "title": null
+        },
+        {
+          "persona": "investor",
+          "slug": "findings",
+          "title": null
+        },
+        {
+          "persona": "upgrader",
+          "slug": "price-forecasts",
+          "title": null
+        },
+        {
+          "persona": "upgrader",
+          "slug": "mrt-impact",
+          "title": null
+        },
+        {
+          "persona": "upgrader",
+          "slug": "lease-decay",
+          "title": null
+        }
+      ],
+      "sha256": "9dd11a9d70668165292c8681ec48edfa885992a90903f92ba4f6fc43888cb3bc"
+    }
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 15,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; an unresolved key fails the build rather than shipping",
+    "unresolved": []
+  },
+  "claimStatuses": {
+    "not-measurable-cross-study": "no single edition can dispose this sentence: it needs a joint model over several series whose populations, windows and units differ",
+    "referred-not-reproducible": "the dependent edition's ledger records this claim's figure as not reproducible from the checkout; this page does not restate it",
+    "referred-re-measured": "the dependent edition's ledger records a re-measurement of this claim's figure; this page does not restate it",
+    "referred-withdrawn": "the dependent edition's ledger records a withdrawal of this claim's figure; this page repeats neither the figure nor the withdrawal's reasoning"
+  },
+  "crossLedgerCheck": {
+    "checked": 13,
+    "checks": [
+      {
+        "dependentClaimId": "hierarchical-r2",
+        "dependentSeries": "mrt-impact",
+        "dependentStatus": "not-reproducible",
+        "dependentStatusKey": "status",
+        "id": "C02",
+        "matches": true,
+        "pageStatus": "referred-not-reproducible"
+      },
+      {
+        "dependentClaimId": "condo-15x-table",
+        "dependentSeries": "mrt-impact",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C03",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "C4",
+        "dependentSeries": "lease-decay",
+        "dependentStatus": "re-measured",
+        "dependentStatusKey": "status",
+        "id": "C04",
+        "matches": true,
+        "pageStatus": "referred-re-measured"
+      },
+      {
+        "dependentClaimId": "C23",
+        "dependentSeries": "price-forecasts",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C05",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "C03",
+        "dependentSeries": "causal-inference-overview",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C06",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "importance-table-core",
+        "dependentSeries": "mrt-impact",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C07",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "C1",
+        "dependentSeries": "market-segments",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C08",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "C35",
+        "dependentSeries": "macro-sensitivity",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C09",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "C8",
+        "dependentSeries": "macro-sensitivity",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C10",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "C01",
+        "dependentSeries": "spatial-autocorrelation",
+        "dependentStatus": "not-reproducible",
+        "dependentStatusKey": "status",
+        "id": "C11",
+        "matches": true,
+        "pageStatus": "referred-not-reproducible"
+      },
+      {
+        "dependentClaimId": "C09",
+        "dependentSeries": "spatial-hotspots",
+        "dependentStatus": "re-measured",
+        "dependentStatusKey": "status",
+        "id": "C12",
+        "matches": true,
+        "pageStatus": "referred-re-measured"
+      },
+      {
+        "dependentClaimId": "C9",
+        "dependentSeries": "lease-decay",
+        "dependentStatus": "withdrawn",
+        "dependentStatusKey": "status",
+        "id": "C13",
+        "matches": true,
+        "pageStatus": "referred-withdrawn"
+      },
+      {
+        "dependentClaimId": "C4",
+        "dependentSeries": "school-quality",
+        "dependentStatus": "not-reproducible",
+        "dependentStatusKey": "status",
+        "id": "C14",
+        "matches": true,
+        "pageStatus": "referred-not-reproducible"
+      }
+    ],
+    "method": "for every claim that names a dependent edition, that edition's own ledger is re-read at the named claim id and its recorded status is mapped to this page's status; a mismatch fails the build",
+    "mismatched": 0
+  },
+  "cutoff": {
+    "allPropertyTypesTerminalMonth": "2026-11",
+    "allPropertyTypesTerminalMonthTransactions": 1211,
+    "allPropertyTypesTrailing12MedianTransactions": 4587.5,
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact (the same rule RS03-RS14 shipped, computed on the private rows so the bound is identical across studies)",
+    "frameFirstMonth": "1990-01",
+    "frameLastMonth": "2026-11",
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthTransactions": 2546,
+    "meaning": "every frame aggregation in this ledger stops at lastCompleteMonth; no sibling edition's own window is re-derived here, and each series row cites the window its ledger records",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.1974,
+    "terminalMonthTransactions": 421,
+    "trailing12MedianTransactions": 2133.0
+  },
+  "definition": "A measured register of the fifteen RF08 series, not a re-measurement of any of them. Each series row is read twice: from the app registry (edition id, evidence status, editorial status, the text pin, and the three attestation roles with the artifact pin they share) and from the files on disk (the frozen text's actual sha256 and byte count, the ledger's actual sha256 and byte count). Two booleans per row are the whole test: does the measured text hash equal the pin the register records, and does the measured ledger hash equal the pin the three attestations share. A false in either fails this build. The claim disposition split is read from each edition's own ledger, never restated from its prose, and the two ledgers that carry no `legacyClaims` block are recorded as that state rather than as zero claims. What this ledger does NOT do: it re-measures no study's subject, so no figure from another edition appears here as a finding; it records which edition owns each legacy sentence and what that edition's ledger says it did with it. A summary page that restated a sibling's number would be a copy of an unverified measurement, and two of the programme's blocking defects were exactly prose outrunning a ledger.",
+  "dependencies": {
+    "blocked": [],
+    "blockedCheck": {
+      "meaning": "the excluded row is not a waived failure: its attestation covers content that this checkout still reproduces byte-for-byte under canonical serialisation, and that is the measured reason it is not in `blocked`",
+      "rowsEvaluated": 15,
+      "rowsExcludedFromBlockedBecauseContentMatches": [
+        "data-sources"
+      ],
+      "rowsExcludedFromBlockedBecauseSelf": [
+        "findings"
+      ],
+      "rowsWithDisclosedSerialisationDrift": 1,
+      "rowsWithLedgerContentMismatch": 0,
+      "rowsWithTextPinMismatch": 0,
+      "selfEdition": [
+        "findings"
+      ],
+      "signedRows": 14
+    },
+    "blockedRule": "blocked iff the dependency is not the page's own edition and (its evidenceStatus is not the registry's signed value, or its measured text sha256 differs from editionSha256, or its ledger's canonical content sha256 differs from the attestation pin)",
+    "meaning": "the summary page depends on the fifteen register rows; each row depends on its own edition text, its own ledger, and (where the ledger records it) the shared frame",
+    "pages": [
+      {
+        "dependsOn": [
+          {
+            "editionId": "amenity-impact-2026-11-16",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "amenity-impact",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "causal-inference-overview-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "causal-inference-overview",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "data-sources-2026-11-14",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": false,
+            "series": "data-sources",
+            "signed": true,
+            "state": "signed-with-disclosed-serialisation-drift",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "facility-premiums-2026-11-17",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "facility-premiums",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "legacy-2026-11-12",
+            "evidenceStatus": "historical",
+            "ledgerContentMatchesPin": null,
+            "ledgerRawMatchesPin": null,
+            "series": "findings",
+            "signed": false,
+            "state": "self-edition-in-draft",
+            "textMatchesPin": null
+          },
+          {
+            "editionId": "lease-decay-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "lease-decay",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "macro-sensitivity-2026-11-18",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "macro-sensitivity",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "market-segments-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "market-segments",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "mrt-impact-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "mrt-impact",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "price-forecasts-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "price-forecasts",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "rental-yields-2026-11-14",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "rental-yields",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "school-quality-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "school-quality",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "spatial-autocorrelation-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "spatial-autocorrelation",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "spatial-hotspots-2026-11-20",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "spatial-hotspots",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          },
+          {
+            "editionId": "temporal-evolution-2026-11-15",
+            "evidenceStatus": "approved",
+            "ledgerContentMatchesPin": true,
+            "ledgerRawMatchesPin": true,
+            "series": "temporal-evolution",
+            "signed": true,
+            "state": "signed",
+            "textMatchesPin": true
+          }
+        ],
+        "id": "findings"
+      }
+    ],
+    "perSeries": [
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "amenity-impact",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "causal-inference-overview",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": null,
+            "recordedSha256": null,
+            "signed": null,
+            "state": "absent-block"
+          }
+        ],
+        "id": "data-sources",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "facility-premiums",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": null,
+            "recordedSha256": null,
+            "signed": null,
+            "state": "no-signed-edition"
+          }
+        ],
+        "id": "findings",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "lease-decay",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "macro-sensitivity",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "market-segments",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "mrt-impact",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "price-forecasts",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": null,
+            "recordedSha256": null,
+            "signed": null,
+            "state": "absent-block"
+          }
+        ],
+        "id": "rental-yields",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "school-quality",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "spatial-autocorrelation",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": null,
+            "recordedSha256": null,
+            "signed": null,
+            "state": "not-recorded-in-ledger"
+          }
+        ],
+        "id": "spatial-hotspots",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "data/pipeline/04_platinum/unified_dataset.parquet",
+            "kind": "shared-frame",
+            "matchesCurrentFrame": true,
+            "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+            "signed": null,
+            "state": "recorded"
+          }
+        ],
+        "id": "temporal-evolution",
+        "meaning": "the shared frame is the only input every series row exposes here; each ledger's full input list is its own record, cited at seriesRegister.rows.<series>.frameDependency"
+      }
+    ]
+  },
+  "gate": "Refresh last. Every quantitative sentence links to a reviewed edition and exact population/window/unit. Omit or explicitly flag blocked dependencies; never summarize unresolved models as settled conclusions.",
+  "inputs": {
+    "app/src/components/studies/lib/edition-registry.ts": {
+      "bytes": 58257,
+      "sha256": "d1d392f71988169fa6e102e493597b3d5034fca091ca542d32c03883a8eac1fc"
+    },
+    "app/src/data/persona-content.json": {
+      "bytes": 3222,
+      "sha256": "9dd11a9d70668165292c8681ec48edfa885992a90903f92ba4f6fc43888cb3bc"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "bytes": 78381526,
+      "columns": 97,
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/editions/amenity-impact/2026-11-16/amenity-impact.md": {
+      "bytes": 23252,
+      "sha256": "3a5ef72d97af0c0004491567314e180bf3238bdaaff11457707a3138657b4507"
+    },
+    "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md": {
+      "bytes": 50822,
+      "sha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2"
+    },
+    "docs/analytics/editions/data-sources/2026-11-14/data-sources.md": {
+      "bytes": 11864,
+      "sha256": "bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81"
+    },
+    "docs/analytics/editions/facility-premiums/2026-11-17/facility-premiums.md": {
+      "bytes": 32686,
+      "sha256": "8027e19e6d4cc8fd2402b7dd1691d1e5ab7eaf4baae547605914380fbe38f6ea"
+    },
+    "docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md": {
+      "bytes": 48884,
+      "sha256": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/amenity-impact.md": {
+      "bytes": 8995,
+      "sha256": "5683269e4b3c04a61edcc45bd259fba6fa8b6c501946bbcc3740a312ab6ffb65"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md": {
+      "bytes": 6574,
+      "sha256": "bd2e2f6898aae548168db7b8d3bde446c8750f01897de24d1b37aec7f2805c89"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/data-sources.md": {
+      "bytes": 7315,
+      "sha256": "2e0da919bf85f9a08dbd140ebf926b8c0c5d30c5d0ce1b9ebf5ac3fd3f671b81"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/facility-premiums.md": {
+      "bytes": 9582,
+      "sha256": "d44ad9c54586b2b658ecd5589d0a9698b049f1b244e4e055216f8aad7a96efa0"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/findings.md": {
+      "bytes": 19019,
+      "sha256": "c7fd2fdd6732d63ee6ddb60663ff0990e750787e08875a20a748946d99631d8f"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/lease-decay.md": {
+      "bytes": 7740,
+      "sha256": "6aab72f046c4df45368843a3b1046e1165097aef22a5691e7231f1840464f1b4"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md": {
+      "bytes": 10060,
+      "sha256": "8af923420706a072c1b8e6287b4d54b70bdfbad3afcd65dce1a9e7cce41a7a88"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/market-segments.md": {
+      "bytes": 9328,
+      "sha256": "6813e4e121d8e1784f8a4605e8911ea26b634910cac02ce3702c1093d498e958"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md": {
+      "bytes": 6480,
+      "sha256": "de9eeb8e0c4afcb063300ede1ca8512d9d999359060dda05ea4051873a45bce1"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/price-forecasts.md": {
+      "bytes": 6117,
+      "sha256": "0bebf7307907002449571441af7308ba1cbf0c40622be415572bec4f112839ee"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/rental-yields.md": {
+      "bytes": 9684,
+      "sha256": "7b5f8109576ecc76ccdab3cee93a3dc866fad21134c4cc48657af0649c3be514"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/school-quality.md": {
+      "bytes": 7200,
+      "sha256": "ec5fc939efa4a0b6604d57eff630f99d8d65f578a00899a0e856c2bce9dffcf9"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md": {
+      "bytes": 5812,
+      "sha256": "efea427d37df07b7a5363ca6622b33087d80d6d166adf3774a421e9b60bcbc22"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/spatial-hotspots.md": {
+      "bytes": 6072,
+      "sha256": "c13717fde829aaf8d1193d4f5bb66f1c61e8d397e30bd2e7ee134963828d596c"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/temporal-evolution.md": {
+      "bytes": 9185,
+      "sha256": "3b1b7c32629ad3bea55051afe8f25fabf1686ba4e577438c38f190af62822e9a"
+    },
+    "docs/analytics/editions/macro-sensitivity/2026-11-18/macro-sensitivity.md": {
+      "bytes": 39982,
+      "sha256": "0741e45bde949357c9bd39fdbd59e40a341c7b86597223ad9ff0484b157f002c"
+    },
+    "docs/analytics/editions/market-segments/2026-11-20/market-segments.md": {
+      "bytes": 47257,
+      "sha256": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5"
+    },
+    "docs/analytics/editions/mrt-impact/2026-11-20/mrt-impact.md": {
+      "bytes": 41017,
+      "sha256": "40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05"
+    },
+    "docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md": {
+      "bytes": 44787,
+      "sha256": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b"
+    },
+    "docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md": {
+      "bytes": 10323,
+      "sha256": "f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67"
+    },
+    "docs/analytics/editions/school-quality/2026-11-20/school-quality.md": {
+      "bytes": 54228,
+      "sha256": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf"
+    },
+    "docs/analytics/editions/spatial-autocorrelation/2026-11-20/spatial-autocorrelation.md": {
+      "bytes": 54274,
+      "sha256": "d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee"
+    },
+    "docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md": {
+      "bytes": 38401,
+      "sha256": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8"
+    },
+    "docs/analytics/editions/temporal-evolution/2026-11-15/temporal-evolution.md": {
+      "bytes": 28653,
+      "sha256": "d95beefc8386291ffa60c94db6c0d9a5b9f9b289e52cf9c6a74c5517d4b02b8d"
+    },
+    "docs/implementation/artifacts/rs01-source-inventory.json": {
+      "bytes": 73080,
+      "sha256": "21d74a7f233d972792b7027b3fba8573852215b54e463b072d137dc8a729a81f"
+    },
+    "docs/implementation/artifacts/rs02-rental-yield-evidence.json": {
+      "bytes": 13551,
+      "sha256": "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313"
+    },
+    "docs/implementation/artifacts/rs03-temporal-evolution-evidence.json": {
+      "bytes": 95350,
+      "sha256": "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012"
+    },
+    "docs/implementation/artifacts/rs04-amenity-impact-evidence.json": {
+      "bytes": 51275,
+      "sha256": "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed"
+    },
+    "docs/implementation/artifacts/rs05-facility-premiums-evidence.json": {
+      "bytes": 72411,
+      "sha256": "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970"
+    },
+    "docs/implementation/artifacts/rs06-lease-decay-evidence.json": {
+      "bytes": 197825,
+      "sha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27"
+    },
+    "docs/implementation/artifacts/rs07-mrt-impact-evidence.json": {
+      "bytes": 205688,
+      "sha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f"
+    },
+    "docs/implementation/artifacts/rs08-school-quality-evidence.json": {
+      "bytes": 252384,
+      "sha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8"
+    },
+    "docs/implementation/artifacts/rs09-macro-sensitivity-evidence.json": {
+      "bytes": 96351,
+      "sha256": "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b"
+    },
+    "docs/implementation/artifacts/rs10-market-segments-evidence.json": {
+      "bytes": 102883,
+      "sha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56"
+    },
+    "docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json": {
+      "bytes": 93324,
+      "sha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a"
+    },
+    "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json": {
+      "bytes": 202191,
+      "sha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab"
+    },
+    "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json": {
+      "bytes": 97812,
+      "sha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba"
+    },
+    "docs/implementation/artifacts/rs14-price-forecasts-evidence.json": {
+      "bytes": 193110,
+      "sha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc"
+    }
+  },
+  "legacyClaims": [
+    {
+      "id": "C01",
+      "ledgerKey": "notMeasurable.legacyCorpusAggregates",
+      "note": "the sentence's population is a retired corpus vintage: no data vintage in this checkout reproduces 911,797 rows, and the shipped frame's own row count over its own month span is a different population, recorded at inputs.",
+      "phrase": "**Data Coverage**: 911,797 transactions (2017-2026)",
+      "status": "not-measurable-cross-study"
+    },
+    {
+      "dependentClaimId": "hierarchical-r2",
+      "dependentSeries": "mrt-impact",
+      "id": "C02",
+      "ledgerKey": "seriesRegister.rows.mrt-impact.claimDispositions",
+      "note": "the dependent edition's ledger records the hierarchical R-squared literals as not reproducible from the checkout; the figure is not restated on this page.",
+      "phrase": "CBD distance explains **22.6%** of price variation on its own, while adding MRT access increases explanatory power by only **0.78 percentage points**.",
+      "status": "referred-not-reproducible"
+    },
+    {
+      "dependentClaimId": "condo-15x-table",
+      "dependentSeries": "mrt-impact",
+      "id": "C03",
+      "ledgerKey": "seriesRegister.rows.mrt-impact.claimDispositions",
+      "note": "withdrawn by the dependent edition as a raw-coefficient multiple; this page does not repeat the multiple as a finding or as a comparison.",
+      "phrase": "Condo prices are roughly **15x** more MRT-sensitive than HDB prices.",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "C4",
+      "dependentSeries": "lease-decay",
+      "id": "C04",
+      "ledgerKey": "seriesRegister.rows.lease-decay.claimDispositions",
+      "note": "the dependent edition's ledger records a re-measurement of this band on its own stated response and window; the measured value lives there.",
+      "phrase": "| 70-80 years | -21.9%              | 47,044       |",
+      "status": "referred-re-measured"
+    },
+    {
+      "dependentClaimId": "C23",
+      "dependentSeries": "price-forecasts",
+      "id": "C05",
+      "ledgerKey": "seriesRegister.rows.price-forecasts.claimDispositions",
+      "note": "withdrawn by the dependent edition: the per-segment figures appear only in the article's own copies and no artefact carries them.",
+      "phrase": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "C03",
+      "dependentSeries": "causal-inference-overview",
+      "id": "C06",
+      "ledgerKey": "seriesRegister.rows.causal-inference-overview.claimDispositions",
+      "note": "withdrawn by the dependent edition as unreconstructable identification under the recorded programme disposition.",
+      "phrase": "about **-$137,743** relative effect vs OCR",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "importance-table-core",
+      "dependentSeries": "mrt-impact",
+      "id": "C07",
+      "ledgerKey": "seriesRegister.rows.mrt-impact.claimDispositions",
+      "note": "the importance ranking is withdrawn by the dependent edition: it is an output of a model family no machine-readable artefact in this checkout carries.",
+      "phrase": "**hawker centre proximity** (27.4% feature importance vs 5.5% for MRT)",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "C1",
+      "dependentSeries": "market-segments",
+      "id": "C08",
+      "ledgerKey": "seriesRegister.rows.market-segments.claimDispositions",
+      "note": "withdrawn by the dependent edition: the stored asset holds six segments and the five names do not appear in it.",
+      "phrase": "Clustering reveals five behavioral segments",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "C35",
+      "dependentSeries": "macro-sensitivity",
+      "id": "C09",
+      "ledgerKey": "seriesRegister.rows.macro-sensitivity.claimDispositions",
+      "note": "the lag clause is withdrawn by the dependent edition: no cross-correlation or lag-order implementation exists on the shipping surface, so the ordering is unmeasured.",
+      "phrase": "SORA changes have an immediate correlation with housing affordability and a 1-quarter lag with price trends.",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "C8",
+      "dependentSeries": "macro-sensitivity",
+      "id": "C10",
+      "ledgerKey": "seriesRegister.rows.macro-sensitivity.claimDispositions",
+      "note": "withdrawn by the dependent edition: no segment price index exists, so the cross-segment spread is not reproducible and only the HDB rows are measurable.",
+      "phrase": "Real (inflation-adjusted) returns are approximately 2% above CPI across all segments",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "C01",
+      "dependentSeries": "spatial-autocorrelation",
+      "id": "C11",
+      "ledgerKey": "seriesRegister.rows.spatial-autocorrelation.claimDispositions",
+      "note": "the dependent edition's ledger records the statistic's variable as unstated and its named input as absent, so the figure is not reproducible; its own protocol's estimate is a different quantity.",
+      "phrase": "| Spatial clustering                | Moran's I / z-score               | 0.766 / 9.91     | High — p < 0.001                         |",
+      "status": "referred-not-reproducible"
+    },
+    {
+      "dependentClaimId": "C09",
+      "dependentSeries": "spatial-hotspots",
+      "id": "C12",
+      "ledgerKey": "seriesRegister.rows.spatial-hotspots.claimDispositions",
+      "note": "the dependent edition's ledger re-measures the cell population inside the gate-pinned window and records its own cell counts; the stated counts are not restated here.",
+      "phrase": "| Rental hotspot selectivity        | 99% confidence cells              | 12 of 847        | High — Gi\\* statistic                    |",
+      "status": "referred-re-measured"
+    },
+    {
+      "dependentClaimId": "C9",
+      "dependentSeries": "lease-decay",
+      "id": "C13",
+      "ledgerKey": "seriesRegister.rows.lease-decay.claimDispositions",
+      "note": "withdrawn by the dependent edition under its own gate: a coefficient is not converted without confirming its original response and unit.",
+      "phrase": "| Pure lease effect                 | Per extra year (after controls)   | +$54.75 PSF      | Moderate — hedonic regression            |",
+      "status": "referred-withdrawn"
+    },
+    {
+      "dependentClaimId": "C4",
+      "dependentSeries": "school-quality",
+      "id": "C14",
+      "ledgerKey": "seriesRegister.rows.school-quality.claimDispositions",
+      "note": "the dependent edition's ledger records the coefficient as not reproducible: the feature it names exists in no shipped schema and no coefficient table is stored.",
+      "phrase": "| School quality OLS                | Coefficient                       | +$9.66 PSF       | High — predictive                        |",
+      "status": "referred-not-reproducible"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "notMeasurable.jointModelAcrossStudies",
+      "note": "a ranking across series needs a joint model on a common outcome; the editions measure different populations, windows and units, so the sentence is omitted rather than reworded into a conclusion.",
+      "phrase": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistication.",
+      "status": "not-measurable-cross-study"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 15,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+    "legacyFileSha256": "c7fd2fdd6732d63ee6ddb60663ff0990e750787e08875a20a748946d99631d8f",
+    "method": "each phrase is required to appear verbatim in the frozen text; a paraphrase inside quotation marks is a defect, and an ellipsis is permitted only for a genuine omission",
+    "quotes": [
+      {
+        "id": "C01",
+        "occurrences": 1,
+        "phrase": "**Data Coverage**: 911,797 transactions (2017-2026)"
+      },
+      {
+        "id": "C02",
+        "occurrences": 1,
+        "phrase": "CBD distance explains **22.6%** of price variation on its own, while adding MRT access increases explanatory power by only **0.78 percentage points**."
+      },
+      {
+        "id": "C03",
+        "occurrences": 1,
+        "phrase": "Condo prices are roughly **15x** more MRT-sensitive than HDB prices."
+      },
+      {
+        "id": "C04",
+        "occurrences": 1,
+        "phrase": "| 70-80 years | -21.9%              | 47,044       |"
+      },
+      {
+        "id": "C05",
+        "occurrences": 1,
+        "phrase": "| HDB               | 79.8% | 99.4%                | Useful for timing and trend direction |"
+      },
+      {
+        "id": "C06",
+        "occurrences": 1,
+        "phrase": "about **-$137,743** relative effect vs OCR"
+      },
+      {
+        "id": "C07",
+        "occurrences": 1,
+        "phrase": "**hawker centre proximity** (27.4% feature importance vs 5.5% for MRT)"
+      },
+      {
+        "id": "C08",
+        "occurrences": 1,
+        "phrase": "Clustering reveals five behavioral segments"
+      },
+      {
+        "id": "C09",
+        "occurrences": 1,
+        "phrase": "SORA changes have an immediate correlation with housing affordability and a 1-quarter lag with price trends."
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "Real (inflation-adjusted) returns are approximately 2% above CPI across all segments"
+      },
+      {
+        "id": "C11",
+        "occurrences": 1,
+        "phrase": "| Spatial clustering                | Moran's I / z-score               | 0.766 / 9.91     | High — p < 0.001                         |"
+      },
+      {
+        "id": "C12",
+        "occurrences": 1,
+        "phrase": "| Rental hotspot selectivity        | 99% confidence cells              | 12 of 847        | High — Gi\\* statistic                    |"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "| Pure lease effect                 | Per extra year (after controls)   | +$54.75 PSF      | Moderate — hedonic regression            |"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "| School quality OLS                | Coefficient                       | +$9.66 PSF       | High — predictive                        |"
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistication."
+      }
+    ]
+  },
+  "missingnessStates": {
+    "meaning": "the states are kept apart everywhere in this ledger: a null pin is not an absent block, an absent block is not zero claims, an empty attestation list is not a missing one, and a placeholder string is not a value",
+    "states": {
+      "absent-block": "the block the field would live in is not present in the ledger at all; this is not a zero and not a null",
+      "absent-key": "the block is present but does not carry the key",
+      "recorded-empty-list": "the field is present and empty (an attestation list on a non-signed edition)",
+      "recorded-null": "the field is present and explicitly null (a registry pin, for example)",
+      "recorded-value": "the field is present and carries a value this ledger cites",
+      "sentinel-string": "the field carries a declared placeholder string instead of a measurement; verified by `sentinelScan`, never inferred"
+    }
+  },
+  "notMeasurable": [
+    {
+      "asks": "a statement that ranks one series' finding above another, or that pools several series into one estimate",
+      "id": "jointModelAcrossStudies",
+      "measuredBound": {
+        "distinctDeclaredUnits": 12,
+        "distinctLedgerCutoffMonths": [
+          "2026-09",
+          "2026-10"
+        ],
+        "scan": "absenceScans.jointModel",
+        "signedEditions": 14,
+        "units": [
+          "MAE, RMSE, bias, MAPE on implied levels",
+          "Retain January 2024-January 2025 as its own historical window",
+          "cohort-size screens inside the measured cutoff",
+          "in levels and in first differences",
+          "its six segments, their stored metrics",
+          "median-psf ratio of the trailing 12 completed months",
+          "median_rent x 12 / median_sale_price x 100",
+          "nominal and CPI-deflated median prices per (property type, window)",
+          "project-clustered standard errors",
+          "psf, $ per square foot",
+          "shipped distance <= 1000 m",
+          "the shipped school-distance columns"
+        ]
+      },
+      "reason": "a ranking or a pooled estimate needs a joint model on one outcome; these editions measure different populations, windows and units, so their coefficients are not commensurable and this checkout holds no joint artefact",
+      "state": "not-measurable"
+    },
+    {
+      "asks": "the frozen text's own corpus totals - 911,797 transactions over 2017-2026, and the lease-band transaction total its appendix states",
+      "id": "legacyCorpusAggregates",
+      "measuredBound": {
+        "frameFirstMonth": "1990-01",
+        "frameLastMonth": "2026-11",
+        "frameRows": "inputs.data/pipeline/04_platinum/unified_dataset.parquet.rows",
+        "lastCompleteMonth": "2026-10"
+      },
+      "reason": "no data vintage in this checkout carries that corpus: the shipped frame's row count and month span are a different population measured at inputs and cutoff, and no ledger reconstructs the retired extract",
+      "state": "not-measurable"
+    },
+    {
+      "asks": "a population/unit sentence the mrt-impact edition records in prose",
+      "id": "mrtImpactScopeProse",
+      "measuredBound": {
+        "scan": "seriesRegister.rows.mrt-impact",
+        "series": "mrt-impact"
+      },
+      "reason": "that ledger carries neither `scope` nor `definition`; its window is recorded at `studyWindow` and its unit at `responses.responseDefinition`, which this ledger cites instead of writing a sentence the source does not contain",
+      "state": "absent-key"
+    },
+    {
+      "asks": "a ledger whose bytes on disk equal the hash its attestations pin",
+      "id": "dataSourcesLedgerRawBytes",
+      "measuredBound": {
+        "declared": "KNOWN_SERIALISATION_DRIFT",
+        "row": "seriesRegister.rows.data-sources.ledger",
+        "series": "data-sources"
+      },
+      "reason": "the RS01 ledger's raw bytes were reformatted after signature; its canonical re-serialisation still hashes to the pin. The mismatch is recorded with both hashes rather than waived, and no other row has one",
+      "state": "sentinel-string-free-mismatch"
+    },
+    {
+      "asks": "the persona promises the app carries, which the register's row notes as still unsupported",
+      "id": "personaContentPromises",
+      "measuredBound": {
+        "bytes": 3222,
+        "meaning": "the persona file's concerns carry no quantitative token under the declared pattern; its recommended-reading slugs are resolved against the register at notMeasurable.personaContentPromises",
+        "path": "app/src/data/persona-content.json",
+        "personas": [
+          "first-time-buyer",
+          "investor",
+          "upgrader"
+        ],
+        "quantitativePattern": "\\d+(?:\\.\\d+)?\\s*(?:%|x|×|percent)",
+        "quantitativeTokenCount": 0,
+        "quantitativeTokens": [],
+        "recommendedSlugs": [
+          {
+            "persona": "first-time-buyer",
+            "slug": "lease-decay",
+            "title": null
+          },
+          {
+            "persona": "first-time-buyer",
+            "slug": "price-forecasts",
+            "title": null
+          },
+          {
+            "persona": "first-time-buyer",
+            "slug": "mrt-impact",
+            "title": null
+          },
+          {
+            "persona": "investor",
+            "slug": "price-forecasts",
+            "title": null
+          },
+          {
+            "persona": "investor",
+            "slug": "mrt-impact",
+            "title": null
+          },
+          {
+            "persona": "investor",
+            "slug": "findings",
+            "title": null
+          },
+          {
+            "persona": "upgrader",
+            "slug": "price-forecasts",
+            "title": null
+          },
+          {
+            "persona": "upgrader",
+            "slug": "mrt-impact",
+            "title": null
+          },
+          {
+            "persona": "upgrader",
+            "slug": "lease-decay",
+            "title": null
+          }
+        ],
+        "sha256": "9dd11a9d70668165292c8681ec48edfa885992a90903f92ba4f6fc43888cb3bc"
+      },
+      "reason": "the persona file's key concerns carry no quantitative token at all under the declared pattern, so there is no figure for an edition to link to; what it does carry is a recommended-reading list, recorded here with each slug's register status",
+      "state": "not-measurable"
+    }
+  ],
+  "schemaVersion": "1.0.0",
+  "scope": "RS15 findings evidence: the register of the fifteen RF08 series as the app registry records it and as the files on disk measure it, the dependency graph of the summary page with its blocked list derived, what this checkout cannot supply, and the disposition of every quantitative sentence of the frozen findings text against the edition that owns it",
+  "sentinelScan": {
+    "citedFields": {
+      "fieldsCompared": [
+        "scope",
+        "definition",
+        "gate",
+        "cutoff.lastCompleteMonth",
+        "legacyClaims[].id",
+        "legacyClaims[].status",
+        "legacyClaims[].disposition"
+      ],
+      "matchCount": 0,
+      "matches": [],
+      "valuesCompared": 733
+    },
+    "declared": [
+      "n/a",
+      "na",
+      "nan",
+      "none",
+      "null",
+      "nil",
+      "unknown",
+      "notrecorded",
+      "not-recorded",
+      "not recorded",
+      "tbd",
+      "todo",
+      "-",
+      ""
+    ],
+    "ledgerWide": {
+      "byFieldPath": {
+        "association.multipleTesting.correctionApplied": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs08-school-quality-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "none": 1
+          }
+        },
+        "associations.designLevels.floorLevels[]": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs05-facility-premiums-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "-": 1
+          }
+        },
+        "legacySourceAudit.unresolvedNameMarker.literal": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs05-facility-premiums-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "None": 1
+          }
+        },
+        "methodRecovery.items.clusteringImplementation.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "methodRecovery.items.compositeScore.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "methodRecovery.items.elbowOutputs.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "methodRecovery.items.featureScaling.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "methodRecovery.items.logTransform.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "methodRecovery.items.modelVersion.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "methodRecovery.items.riskAdjustedMomentum.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "methodRecovery.items.silhouetteOutputs.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "multiplicityPolicy.thisPack.correctionApplied": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs08-school-quality-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "none": 1
+          }
+        },
+        "notMeasurable[].status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs08-school-quality-evidence.json",
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json",
+            "docs/implementation/artifacts/rs14-price-forecasts-evidence.json"
+          ],
+          "matchCount": 13,
+          "values": {
+            "notRecorded": 13
+          }
+        },
+        "rddRecovery.bandwidth.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs08-school-quality-evidence.json"
+          ],
+          "matchCount": 1,
+          "values": {
+            "notRecorded": 1
+          }
+        },
+        "sources[].acquisition.status": {
+          "ledgers": [
+            "docs/implementation/artifacts/rs01-source-inventory.json"
+          ],
+          "matchCount": 59,
+          "values": {
+            "not-recorded": 59
+          }
+        }
+      },
+      "byLedger": {
+        "docs/implementation/artifacts/rs01-source-inventory.json": {
+          "distinctValues": {
+            "not-recorded": 59
+          },
+          "fieldPathCount": 1,
+          "fieldPaths": [
+            "sources[].acquisition.status"
+          ],
+          "matchCount": 59
+        },
+        "docs/implementation/artifacts/rs05-facility-premiums-evidence.json": {
+          "distinctValues": {
+            "-": 1,
+            "None": 1
+          },
+          "fieldPathCount": 2,
+          "fieldPaths": [
+            "associations.designLevels.floorLevels[]",
+            "legacySourceAudit.unresolvedNameMarker.literal"
+          ],
+          "matchCount": 2
+        },
+        "docs/implementation/artifacts/rs08-school-quality-evidence.json": {
+          "distinctValues": {
+            "none": 2,
+            "notRecorded": 2
+          },
+          "fieldPathCount": 4,
+          "fieldPaths": [
+            "association.multipleTesting.correctionApplied",
+            "multiplicityPolicy.thisPack.correctionApplied",
+            "notMeasurable[].status",
+            "rddRecovery.bandwidth.status"
+          ],
+          "matchCount": 4
+        },
+        "docs/implementation/artifacts/rs10-market-segments-evidence.json": {
+          "distinctValues": {
+            "notRecorded": 12
+          },
+          "fieldPathCount": 9,
+          "fieldPaths": [
+            "methodRecovery.items.clusteringImplementation.status",
+            "methodRecovery.items.compositeScore.status",
+            "methodRecovery.items.elbowOutputs.status",
+            "methodRecovery.items.featureScaling.status",
+            "methodRecovery.items.logTransform.status",
+            "methodRecovery.items.modelVersion.status",
+            "methodRecovery.items.riskAdjustedMomentum.status",
+            "methodRecovery.items.silhouetteOutputs.status",
+            "notMeasurable[].status"
+          ],
+          "matchCount": 12
+        },
+        "docs/implementation/artifacts/rs14-price-forecasts-evidence.json": {
+          "distinctValues": {
+            "notRecorded": 8
+          },
+          "fieldPathCount": 1,
+          "fieldPaths": [
+            "notMeasurable[].status"
+          ],
+          "matchCount": 8
+        }
+      },
+      "distinctFieldPathCount": 15,
+      "distinctLedgerCount": 5,
+      "distinctValues": {
+        "-": 1,
+        "None": 1,
+        "none": 2,
+        "not-recorded": 59,
+        "notRecorded": 22
+      },
+      "matchCount": 85,
+      "matches": [
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[14].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[16].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[18].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[20].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[22].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[24].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[25].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[27].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[29].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[31].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[37].acquisition.status",
+          "value": "not-recorded"
+        },
+        {
+          "location": "docs/implementation/artifacts/rs01-source-inventory.json.sources[38].acquisition.status",
+          "value": "not-recorded"
+        }
+      ],
+      "matchesCappedAt": 12,
+      "matchesTruncated": true,
+      "meaning": "`matches` is a capped sample of the first 12 matches, and `matchesTruncated` says whether it was cut; `matchCount`, `distinctValues`, `byLedger`, `byFieldPath` and `split` are complete over every match, so a sentence about the split must cite those and never this list",
+      "split": {
+        "meaning": "the placement rule is declared in `registerField.declared` and everything the rule does not capture is enumerated in full under `otherFields`, so the split is checkable against `byFieldPath` rather than taken on trust",
+        "otherFields": {
+          "byPathShape": {
+            "otherValue": {
+              "matchCount": 4,
+              "matches": [
+                {
+                  "location": "docs/implementation/artifacts/rs05-facility-premiums-evidence.json.associations.designLevels.floorLevels[0]",
+                  "value": "-"
+                },
+                {
+                  "location": "docs/implementation/artifacts/rs05-facility-premiums-evidence.json.legacySourceAudit.unresolvedNameMarker.literal",
+                  "value": "None"
+                },
+                {
+                  "location": "docs/implementation/artifacts/rs08-school-quality-evidence.json.association.multipleTesting.correctionApplied",
+                  "value": "none"
+                },
+                {
+                  "location": "docs/implementation/artifacts/rs08-school-quality-evidence.json.multiplicityPolicy.thisPack.correctionApplied",
+                  "value": "none"
+                }
+              ],
+              "meaning": "the placeholder string is an ordinary value in a field that is not a status: a `-` floor-level bucket, a `correctionApplied` of none, and a quoted missing-name literal, each read as the value it is",
+              "values": {
+                "-": 1,
+                "None": 1,
+                "none": 2
+              }
+            },
+            "statusField": {
+              "fieldPaths": {
+                "methodRecovery.items.clusteringImplementation.status": 1,
+                "methodRecovery.items.compositeScore.status": 1,
+                "methodRecovery.items.elbowOutputs.status": 1,
+                "methodRecovery.items.featureScaling.status": 1,
+                "methodRecovery.items.logTransform.status": 1,
+                "methodRecovery.items.modelVersion.status": 1,
+                "methodRecovery.items.riskAdjustedMomentum.status": 1,
+                "methodRecovery.items.silhouetteOutputs.status": 1,
+                "notMeasurable[].status": 13,
+                "rddRecovery.bandwidth.status": 1
+              },
+              "matchCount": 22,
+              "meaning": "a study's own status field carrying the shared placeholder vocabulary: the value means the item was not recorded FOR THAT STUDY, not that it is absent everywhere",
+              "values": {
+                "notRecorded": 22
+              }
+            }
+          },
+          "fieldPaths": {
+            "association.multipleTesting.correctionApplied": 1,
+            "associations.designLevels.floorLevels[]": 1,
+            "legacySourceAudit.unresolvedNameMarker.literal": 1,
+            "methodRecovery.items.clusteringImplementation.status": 1,
+            "methodRecovery.items.compositeScore.status": 1,
+            "methodRecovery.items.elbowOutputs.status": 1,
+            "methodRecovery.items.featureScaling.status": 1,
+            "methodRecovery.items.logTransform.status": 1,
+            "methodRecovery.items.modelVersion.status": 1,
+            "methodRecovery.items.riskAdjustedMomentum.status": 1,
+            "methodRecovery.items.silhouetteOutputs.status": 1,
+            "multiplicityPolicy.thisPack.correctionApplied": 1,
+            "notMeasurable[].status": 13,
+            "rddRecovery.bandwidth.status": 1
+          },
+          "ledgers": {
+            "docs/implementation/artifacts/rs05-facility-premiums-evidence.json": 2,
+            "docs/implementation/artifacts/rs08-school-quality-evidence.json": 4,
+            "docs/implementation/artifacts/rs10-market-segments-evidence.json": 12,
+            "docs/implementation/artifacts/rs14-price-forecasts-evidence.json": 8
+          },
+          "matchCount": 26,
+          "matches": [
+            {
+              "location": "docs/implementation/artifacts/rs05-facility-premiums-evidence.json.associations.designLevels.floorLevels[0]",
+              "value": "-"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs05-facility-premiums-evidence.json.legacySourceAudit.unresolvedNameMarker.literal",
+              "value": "None"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs08-school-quality-evidence.json.association.multipleTesting.correctionApplied",
+              "value": "none"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs08-school-quality-evidence.json.multiplicityPolicy.thisPack.correctionApplied",
+              "value": "none"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs08-school-quality-evidence.json.notMeasurable[5].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs08-school-quality-evidence.json.rddRecovery.bandwidth.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.clusteringImplementation.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.compositeScore.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.elbowOutputs.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.featureScaling.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.logTransform.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.modelVersion.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.riskAdjustedMomentum.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.methodRecovery.items.silhouetteOutputs.status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.notMeasurable[0].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.notMeasurable[1].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.notMeasurable[2].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs10-market-segments-evidence.json.notMeasurable[4].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[1].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[2].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[3].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[5].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[6].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[9].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[11].status",
+              "value": "notRecorded"
+            },
+            {
+              "location": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json.notMeasurable[12].status",
+              "value": "notRecorded"
+            }
+          ],
+          "meaning": "complete: every ledger-wide match outside the declared register field appears here, with its ledger and field path"
+        },
+        "registerField": {
+          "declared": {
+            "fieldPath": "sources[].acquisition.status",
+            "ledgerSuffix": "rs01-source-inventory.json"
+          },
+          "fieldPaths": [
+            "sources[].acquisition.status"
+          ],
+          "ledgers": [
+            "docs/implementation/artifacts/rs01-source-inventory.json"
+          ],
+          "matchCount": 59,
+          "meaning": "one ledger's own vocabulary for an acquisition source it did not record, repeated once per source in a single field path; this register reads no part of it as a measurement",
+          "values": {
+            "not-recorded": 59
+          }
+        }
+      },
+      "stringValuesCompared": 16033
+    },
+    "meaning": "the sentinel-string state is measured on whole values, not by substring, and the two scopes are reported apart: a placeholder in a field this register cites would appear under citedFields, and the ledger-wide scan is a disclosure of the same test elsewhere, split by ledger and by field path"
+  },
+  "series": "findings",
+  "seriesRegister": {
+    "meaning": "one row per series, read from the app registry and from the files on disk; `signed` is the registry's own evidenceStatus, and the two booleans on each row are measurements of the bytes this checkout holds",
+    "registry": {
+      "bytes": 58257,
+      "path": "app/src/components/studies/lib/edition-registry.ts",
+      "refreshedEditionCount": 14,
+      "seriesFromLegacyListCount": 15,
+      "sha256": "d1d392f71988169fa6e102e493597b3d5034fca091ca542d32c03883a8eac1fc"
+    },
+    "rows": [
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "re-cut": 1,
+            "re-measured-descriptively": 1,
+            "superseded": 2,
+            "withdrawn-not-measurable": 15
+          },
+          "itemCount": 19,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "disposition"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "amenity-impact-2026-11-16",
+          "editionSha256": "3a5ef72d97af0c0004491567314e180bf3238bdaaff11457707a3138657b4507",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/amenity-impact/2026-11-16/amenity-impact.md",
+          "preparedBy": "repo-agent/session-2026-11-16",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "log(HDB resale price in SGD)",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "shipped distance <= 1000 m",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 23252,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/amenity-impact/2026-11-16/amenity-impact.md",
+          "pin": "3a5ef72d97af0c0004491567314e180bf3238bdaaff11457707a3138657b4507",
+          "sha256": "3a5ef72d97af0c0004491567314e180bf3238bdaaff11457707a3138657b4507"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 11,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "amenity-impact",
+        "ledger": {
+          "bytes": 51275,
+          "contentMatchesPin": true,
+          "contentSha256": "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed",
+          "path": "docs/implementation/artifacts/rs04-amenity-impact-evidence.json",
+          "pin": "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed",
+          "rawMatchesPin": true,
+          "rawSha256": "6232702eb8ab01e6508dee7a91418a7f272a41ae76681f35e3881a61de12e6ed",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/amenity-impact.md"
+        },
+        "series": "amenity-impact",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 20,
+            "re-measured": 10,
+            "withdrawn": 9
+          },
+          "itemCount": 39,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "causal-inference-overview-2026-11-20",
+          "editionSha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "the frame the two cohorts would be drawn from",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "cohort-size screens inside the measured cutoff",
+              "sourceKey": "scope",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 50822,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md",
+          "pin": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2",
+          "sha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 8,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "causal-inference-overview",
+        "ledger": {
+          "bytes": 97812,
+          "contentMatchesPin": true,
+          "contentSha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "path": "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json",
+          "pin": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "rawMatchesPin": true,
+          "rawSha256": "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        "series": "causal-inference-overview",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae"
+        },
+        "claimDispositions": {
+          "byValue": null,
+          "itemCount": null,
+          "meaning": "this ledger carries no legacyClaims block, so it records no claim dispositions at all; that is not zero disposed claims",
+          "state": "absent-block",
+          "statusKey": null
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "data-sources-2026-11-14",
+          "editionSha256": "bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/data-sources/2026-11-14/data-sources.md",
+          "preparedBy": "repo-agent/session-2026-11-14",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "One row per acquisition file",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 11864,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/data-sources/2026-11-14/data-sources.md",
+          "pin": "bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81",
+          "sha256": "bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "matchesCurrentFrame": null,
+          "meaning": "this ledger carries no `inputs` block; it records no input pins",
+          "recordedSha256": null,
+          "state": "absent-block"
+        },
+        "id": "data-sources",
+        "ledger": {
+          "bytes": 73080,
+          "contentMatchesPin": true,
+          "contentSha256": "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
+          "path": "docs/implementation/artifacts/rs01-source-inventory.json",
+          "pin": "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
+          "rawMatchesPin": false,
+          "rawSha256": "21d74a7f233d972792b7027b3fba8573852215b54e463b072d137dc8a729a81f",
+          "resolution": "canonical-content",
+          "serialisationDrift": {
+            "cause": "post-signature formatter run: arrays collapse onto single lines, the parsed JSON is identical, and canonical re-serialisation reproduces the pinned sha256 exactly",
+            "contentSha256": "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae",
+            "declared": true,
+            "meaning": "the file's bytes differ from the pinned bytes; its parsed content is identical and canonical re-serialisation reproduces the pin, so the attestation still covers this content and not these bytes",
+            "observedRawSha256": "21d74a7f233d972792b7027b3fba8573852215b54e463b072d137dc8a729a81f",
+            "pinnedSha256": "65ce7a10c257d13fd4250b2e8fd1519f8c35718497379aa103effc5594bfe8ae"
+          },
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": null,
+          "state": "absent-block"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/data-sources.md"
+        },
+        "series": "data-sources",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "re-cut": 1,
+            "superseded": 7,
+            "withdrawn-not-measurable": 38
+          },
+          "itemCount": 46,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "disposition"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "facility-premiums-2026-11-17",
+          "editionSha256": "8027e19e6d4cc8fd2402b7dd1691d1e5ab7eaf4baae547605914380fbe38f6ea",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/facility-premiums/2026-11-17/facility-premiums.md",
+          "preparedBy": "repo-agent/session-2026-11-17",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "log condo price-psf",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "project-clustered standard errors",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 32686,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/facility-premiums/2026-11-17/facility-premiums.md",
+          "pin": "8027e19e6d4cc8fd2402b7dd1691d1e5ab7eaf4baae547605914380fbe38f6ea",
+          "sha256": "8027e19e6d4cc8fd2402b7dd1691d1e5ab7eaf4baae547605914380fbe38f6ea"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 5,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "facility-premiums",
+        "ledger": {
+          "bytes": 72411,
+          "contentMatchesPin": true,
+          "contentSha256": "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970",
+          "path": "docs/implementation/artifacts/rs05-facility-premiums-evidence.json",
+          "pin": "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970",
+          "rawMatchesPin": true,
+          "rawSha256": "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/facility-premiums.md"
+        },
+        "series": "facility-premiums",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": false,
+          "automatedRoles": [],
+          "distinctNames": true,
+          "preparerIsNotASignatory": true,
+          "roleCount": 0,
+          "roles": [],
+          "rolesComplete": false,
+          "sharedArtifactSha256": null
+        },
+        "claimDispositions": {
+          "itemCount": null,
+          "state": "no-signed-edition",
+          "statusKey": null
+        },
+        "currentEdition": {
+          "assetsPinned": null,
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "preparedBy": null,
+          "publicationYear": null
+        },
+        "descriptors": {
+          "entries": [],
+          "missingReason": "this series carries no signed edition and therefore no ledger in this checkout; its only registered edition is the frozen 2026-11-12 text, whose population and unit are its own unverified prose",
+          "state": "no-ledger"
+        },
+        "editionFile": {
+          "bytes": 19019,
+          "matchesPin": null,
+          "matchesPinState": "no-pin",
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "pin": null,
+          "sha256": "c7fd2fdd6732d63ee6ddb60663ff0990e750787e08875a20a748946d99631d8f"
+        },
+        "editionsRegistered": 1,
+        "frameDependency": {
+          "recordedSha256": null,
+          "state": "no-signed-edition"
+        },
+        "id": "findings",
+        "ledger": {
+          "bytes": null,
+          "contentMatchesPin": null,
+          "contentSha256": null,
+          "meaning": "this series carries no signed edition in this checkout, so there is no attestation pin to measure a ledger against",
+          "path": null,
+          "rawMatchesPin": null,
+          "rawSha256": null,
+          "resolution": null,
+          "serialisationDrift": null,
+          "state": "no-attestation-pin"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": null,
+          "state": "no-signed-edition"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        "series": "findings",
+        "signed": false
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 6,
+            "re-measured": 25,
+            "withdrawn": 5
+          },
+          "itemCount": 36,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "lease-decay-2026-11-20",
+          "editionSha256": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "exact on every HDB row",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "psf, $ per square foot",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 48884,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md",
+          "pin": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b",
+          "sha256": "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 11,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "lease-decay",
+        "ledger": {
+          "bytes": 197825,
+          "contentMatchesPin": true,
+          "contentSha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+          "path": "docs/implementation/artifacts/rs06-lease-decay-evidence.json",
+          "pin": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+          "rawMatchesPin": true,
+          "rawSha256": "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md"
+        },
+        "series": "lease-decay",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "re-measured": 7,
+            "withdrawn": 28
+          },
+          "itemCount": 35,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "macro-sensitivity-2026-11-18",
+          "editionSha256": "0741e45bde949357c9bd39fdbd59e40a341c7b86597223ad9ff0484b157f002c",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/macro-sensitivity/2026-11-18/macro-sensitivity.md",
+          "preparedBy": "repo-agent/session-2026-11-18",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "macro-housing association",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "in levels and in first differences",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 39982,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/macro-sensitivity/2026-11-18/macro-sensitivity.md",
+          "pin": "0741e45bde949357c9bd39fdbd59e40a341c7b86597223ad9ff0484b157f002c",
+          "sha256": "0741e45bde949357c9bd39fdbd59e40a341c7b86597223ad9ff0484b157f002c"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 10,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "macro-sensitivity",
+        "ledger": {
+          "bytes": 96351,
+          "contentMatchesPin": true,
+          "contentSha256": "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b",
+          "path": "docs/implementation/artifacts/rs09-macro-sensitivity-evidence.json",
+          "pin": "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b",
+          "rawMatchesPin": true,
+          "rawSha256": "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md"
+        },
+        "series": "macro-sensitivity",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 31,
+            "re-measured": 1,
+            "withdrawn": 4
+          },
+          "itemCount": 36,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "market-segments-2026-11-20",
+          "editionSha256": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/market-segments/2026-11-20/market-segments.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "the stored research segment asset",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "its six segments, their stored metrics",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 47257,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/market-segments/2026-11-20/market-segments.md",
+          "pin": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5",
+          "sha256": "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 7,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "market-segments",
+        "ledger": {
+          "bytes": 102883,
+          "contentMatchesPin": true,
+          "contentSha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "path": "docs/implementation/artifacts/rs10-market-segments-evidence.json",
+          "pin": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "rawMatchesPin": true,
+          "rawSha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/market-segments.md"
+        },
+        "series": "market-segments",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 19,
+            "re-measured": 1,
+            "withdrawn": 8
+          },
+          "itemCount": 28,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "mrt-impact-2026-11-20",
+          "editionSha256": "40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/mrt-impact/2026-11-20/mrt-impact.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [],
+          "missing": [],
+          "missingReason": "this ledger records no `definition` or `scope` prose; its population and window are carried by `studyWindow` (per property type, window start/end and window rows) and its unit by `responses.responseDefinition`, both cited here rather than paraphrased",
+          "state": "absent-value"
+        },
+        "editionFile": {
+          "bytes": 41017,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/mrt-impact/2026-11-20/mrt-impact.md",
+          "pin": "40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05",
+          "sha256": "40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 16,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "mrt-impact",
+        "ledger": {
+          "bytes": 205688,
+          "contentMatchesPin": true,
+          "contentSha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+          "path": "docs/implementation/artifacts/rs07-mrt-impact-evidence.json",
+          "pin": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+          "rawMatchesPin": true,
+          "rawSha256": "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/mrt-impact.md"
+        },
+        "series": "mrt-impact",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 16,
+            "withdrawn": 16
+          },
+          "itemCount": 32,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "price-forecasts-2026-11-20",
+          "editionSha256": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "realised area median prices",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "MAE, RMSE, bias, MAPE on implied levels",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 44787,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md",
+          "pin": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b",
+          "sha256": "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 21,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "price-forecasts",
+        "ledger": {
+          "bytes": 193110,
+          "contentMatchesPin": true,
+          "contentSha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+          "path": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json",
+          "pin": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+          "rawMatchesPin": true,
+          "rawSha256": "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/price-forecasts.md"
+        },
+        "series": "price-forecasts",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313"
+        },
+        "claimDispositions": {
+          "byValue": null,
+          "itemCount": null,
+          "meaning": "this ledger carries no legacyClaims block, so it records no claim dispositions at all; that is not zero disposed claims",
+          "state": "absent-block",
+          "statusKey": null
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "rental-yields-2026-11-14",
+          "editionSha256": "f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md",
+          "preparedBy": "repo-agent/session-2026-11-14",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "two independent transaction populations",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "median_rent x 12 / median_sale_price x 100",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 10323,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/rental-yields/2026-11-14/rental-yields.md",
+          "pin": "f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67",
+          "sha256": "f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "matchesCurrentFrame": null,
+          "meaning": "this ledger carries no `inputs` block; it records no input pins",
+          "recordedSha256": null,
+          "state": "absent-block"
+        },
+        "id": "rental-yields",
+        "ledger": {
+          "bytes": 13551,
+          "contentMatchesPin": true,
+          "contentSha256": "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
+          "path": "docs/implementation/artifacts/rs02-rental-yield-evidence.json",
+          "pin": "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
+          "rawMatchesPin": true,
+          "rawSha256": "db1345253c4c9e4d80b7e3067962199a12f120ccfdfe1b6f599a7d95459f0313",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": null,
+          "state": "absent-block"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/rental-yields.md"
+        },
+        "series": "rental-yields",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 29,
+            "re-measured": 3,
+            "withdrawn": 4
+          },
+          "itemCount": 36,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "school-quality-2026-11-20",
+          "editionSha256": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/school-quality/2026-11-20/school-quality.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "descriptive OLS association of ln(psf)",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "the shipped school-distance columns",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 54228,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/school-quality/2026-11-20/school-quality.md",
+          "pin": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf",
+          "sha256": "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 14,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "school-quality",
+        "ledger": {
+          "bytes": 252384,
+          "contentMatchesPin": true,
+          "contentSha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "path": "docs/implementation/artifacts/rs08-school-quality-evidence.json",
+          "pin": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "rawMatchesPin": true,
+          "rawSha256": "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/school-quality.md"
+        },
+        "series": "school-quality",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 26,
+            "re-measured": 1,
+            "withdrawn": 1
+          },
+          "itemCount": 28,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "spatial-autocorrelation-2026-11-20",
+          "editionSha256": "d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/spatial-autocorrelation/2026-11-20/spatial-autocorrelation.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "The unit that carries reproducible memberships is the planning area",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "median-psf ratio of the trailing 12 completed months",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 54274,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/spatial-autocorrelation/2026-11-20/spatial-autocorrelation.md",
+          "pin": "d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee",
+          "sha256": "d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 4,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "spatial-autocorrelation",
+        "ledger": {
+          "bytes": 93324,
+          "contentMatchesPin": true,
+          "contentSha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "path": "docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json",
+          "pin": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "rawMatchesPin": true,
+          "rawSha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md"
+        },
+        "series": "spatial-autocorrelation",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "not-reproducible": 15,
+            "re-measured": 15,
+            "withdrawn": 10
+          },
+          "itemCount": 40,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "status"
+        },
+        "currentEdition": {
+          "assetsPinned": 1,
+          "editionId": "spatial-hotspots-2026-11-20",
+          "editionSha256": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md",
+          "preparedBy": "repo-agent/session-2026-11-20",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "median monthly_rent per cell",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "Retain January 2024-January 2025 as its own historical window",
+              "sourceKey": "gate",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 38401,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md",
+          "pin": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8",
+          "sha256": "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 6,
+          "matchesCurrentFrame": null,
+          "meaning": "the ledger records inputs but not this frame; its measurements may rest on other sources, and this ledger does not assume the frame",
+          "recordedSha256": null,
+          "state": "not-recorded-in-ledger"
+        },
+        "id": "spatial-hotspots",
+        "ledger": {
+          "bytes": 202191,
+          "contentMatchesPin": true,
+          "contentSha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+          "path": "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json",
+          "pin": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+          "rawMatchesPin": true,
+          "rawSha256": "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-09",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/spatial-hotspots.md"
+        },
+        "series": "spatial-hotspots",
+        "signed": true
+      },
+      {
+        "attestation": {
+          "artifactShaUnique": true,
+          "automatedRoles": [
+            "scientific"
+          ],
+          "distinctNames": false,
+          "preparerIsNotASignatory": true,
+          "roleCount": 3,
+          "roles": [
+            "source",
+            "scientific",
+            "publication"
+          ],
+          "rolesComplete": true,
+          "sharedArtifactSha256": "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012"
+        },
+        "claimDispositions": {
+          "byValue": {
+            "re-cut": 1,
+            "re-measured-descriptively": 1,
+            "superseded": 1,
+            "withdrawn-not-measurable": 6
+          },
+          "itemCount": 9,
+          "meaning": "counts are of this ledger's own claim items under its own status vocabulary; vocabularies differ across ledgers and are never summed",
+          "state": "measured",
+          "statusKey": "disposition"
+        },
+        "currentEdition": {
+          "assetsPinned": 0,
+          "editionId": "temporal-evolution-2026-11-15",
+          "editionSha256": "d95beefc8386291ffa60c94db6c0d9a5b9f9b289e52cf9c6a74c5517d4b02b8d",
+          "editorialStatus": "published",
+          "evidenceStatus": "approved",
+          "frozenSource": "docs/analytics/editions/temporal-evolution/2026-11-15/temporal-evolution.md",
+          "preparedBy": "repo-agent/session-2026-11-15",
+          "publicationYear": 2026
+        },
+        "descriptors": {
+          "entries": [
+            {
+              "field": "population",
+              "quote": "transaction counts, sample composition",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            },
+            {
+              "field": "unit",
+              "quote": "nominal and CPI-deflated median prices per (property type, window)",
+              "sourceKey": "definition",
+              "verbatimInSource": true
+            }
+          ],
+          "missing": [],
+          "missingReason": null,
+          "state": "measured"
+        },
+        "editionFile": {
+          "bytes": 28653,
+          "matchesPin": true,
+          "matchesPinState": "matches",
+          "path": "docs/analytics/editions/temporal-evolution/2026-11-15/temporal-evolution.md",
+          "pin": "d95beefc8386291ffa60c94db6c0d9a5b9f9b289e52cf9c6a74c5517d4b02b8d",
+          "sha256": "d95beefc8386291ffa60c94db6c0d9a5b9f9b289e52cf9c6a74c5517d4b02b8d"
+        },
+        "editionsRegistered": 2,
+        "frameDependency": {
+          "inputRecordCount": 5,
+          "matchesCurrentFrame": true,
+          "meaning": "the ledger recorded the frame hash it measured",
+          "recordedSha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe",
+          "state": "recorded"
+        },
+        "id": "temporal-evolution",
+        "ledger": {
+          "bytes": 95350,
+          "contentMatchesPin": true,
+          "contentSha256": "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012",
+          "path": "docs/implementation/artifacts/rs03-temporal-evolution-evidence.json",
+          "pin": "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012",
+          "rawMatchesPin": true,
+          "rawSha256": "1f0aef749b9f26b6f2f4a5f09cd472956080a413a11397c2160fd45759f71012",
+          "resolution": "raw-bytes",
+          "serialisationDrift": null,
+          "state": "measured"
+        },
+        "ledgerCutoff": {
+          "lastCompleteMonth": "2026-10",
+          "state": "recorded-value"
+        },
+        "legacyEdition": {
+          "editionId": "legacy-2026-11-12",
+          "editionSha256": null,
+          "editorialStatus": "archived",
+          "evidenceStatus": "historical",
+          "frozenSource": "docs/analytics/editions/legacy/2026-11-12/temporal-evolution.md"
+        },
+        "series": "temporal-evolution",
+        "signed": true
+      }
+    ],
+    "summary": {
+      "attestationRoleStates": {
+        "absent": 1,
+        "complete": 14,
+        "partial": 0
+      },
+      "claimSplitStates": {
+        "absentBlock": 2,
+        "measured": 12,
+        "noSignedEdition": 1,
+        "otherStates": []
+      },
+      "claimStatusValues": {
+        "byStatusKey": {
+          "disposition": {
+            "byValue": {
+              "re-cut": 3,
+              "re-measured-descriptively": 2,
+              "superseded": 10,
+              "withdrawn-not-measurable": 59
+            },
+            "itemCount": 74,
+            "ledgerCount": 3,
+            "ledgers": [
+              "amenity-impact",
+              "facility-premiums",
+              "temporal-evolution"
+            ]
+          },
+          "noStatusKey": {
+            "itemCount": null,
+            "ledgerCount": 2,
+            "ledgers": [
+              "data-sources",
+              "rental-yields"
+            ]
+          },
+          "status": {
+            "byValue": {
+              "not-reproducible": 162,
+              "re-measured": 63,
+              "withdrawn": 85
+            },
+            "itemCount": 310,
+            "ledgerCount": 9,
+            "ledgers": [
+              "causal-inference-overview",
+              "lease-decay",
+              "macro-sensitivity",
+              "market-segments",
+              "mrt-impact",
+              "price-forecasts",
+              "school-quality",
+              "spatial-autocorrelation",
+              "spatial-hotspots"
+            ]
+          }
+        },
+        "meaning": "counts of claim items per vocabulary: the totals under `status` and under `disposition` describe different ledgers with different vocabularies, so they are reported apart and never added together"
+      },
+      "claimStatusVocabulary": {
+        "disposition": [
+          "amenity-impact",
+          "facility-premiums",
+          "temporal-evolution"
+        ],
+        "note": "the ledgers use two vocabularies under two keys and one counts neither; they are recorded per ledger and never summed",
+        "status": [
+          "causal-inference-overview",
+          "lease-decay",
+          "macro-sensitivity",
+          "market-segments",
+          "mrt-impact",
+          "price-forecasts",
+          "school-quality",
+          "spatial-autocorrelation",
+          "spatial-hotspots"
+        ]
+      },
+      "frameDependencyStates": {
+        "absent-block": 2,
+        "no-signed-edition": 1,
+        "not-recorded-in-ledger": 1,
+        "recorded": 11
+      },
+      "ledgerCutoffStates": {
+        "absent-block": 2,
+        "no-signed-edition": 1,
+        "recorded-value": 12
+      },
+      "ledgerCutoffValues": {
+        "byValue": {
+          "2026-09": 1,
+          "2026-10": 11
+        },
+        "meaning": "each edition's own ledger window end, counted as recorded; this ledger does not re-derive a sibling's window and does not assume they agree",
+        "recordedValueCount": 12
+      },
+      "ledgerPinChecks": {
+        "checked": 14,
+        "contentDiffered": 0,
+        "contentMatched": 14,
+        "notCheckedNoPin": 1,
+        "rawDiffered": 1,
+        "rawMatched": 13,
+        "serialisationDriftSeries": [
+          "data-sources"
+        ]
+      },
+      "seriesCount": 15,
+      "signedCount": 14,
+      "textPinChecks": {
+        "checked": 14,
+        "differed": 0,
+        "matched": 14,
+        "notCheckedNoPin": 1
+      },
+      "unsignedCount": 1,
+      "unsignedSeries": [
+        "findings"
+      ]
+    }
+  },
+  "study": "RS15"
+}

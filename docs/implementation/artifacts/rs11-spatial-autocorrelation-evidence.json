@@ -1,0 +1,2739 @@
+{
+  "absenceScans": {
+    "dataSpatialArtefactScan": {
+      "filenamePatterns": [
+        "*lisa*",
+        "*moran*",
+        "*spatial*",
+        "*transition*",
+        "*persistence*"
+      ],
+      "matchedFileCount": 0,
+      "matchedFiles": [],
+      "meaning": "no file under data/ carries a lisa, moran, spatial, transition or persistence name: the claim's time dimension exists in no linked artefact, and the served payload's transition block is a constant triple (servedAssetInventory.constantValueFields)",
+      "purpose": "the legacy's transition/persistence claim needs per-period spatial memberships; this scan bounds what spatial time-series artefact exists under data/",
+      "rootsSearched": [
+        "data/"
+      ]
+    },
+    "frameSchemaRentScan": {
+      "columnCount": 97,
+      "meaning": "no monthly_rent column exists; the one rent-substring hit is rental_yield_pct, a different measure that cannot stand in for the legacy's median monthly_rent aggregation, and the pack adds no rental content to RS11's own surfaces",
+      "monthlyRentExactMatches": [],
+      "rentSubstringMatches": [
+        "rental_yield_pct"
+      ],
+      "surface": "the 97-column schema of the shipped unified frame, read by metadata (pq.read_schema)"
+    },
+    "legacyNamedInput": {
+      "claim": "the legacy appendix names data/parquets/L1/housing_hdb_rental.parquet as its primary input",
+      "dataParquetsDirectoryExists": false,
+      "exclusions": {
+        "meaning": "version-control, dependency and programme-output surfaces are excluded from the hash-pinned scan; the programme surfaces could not contain a data parquet in any case, and the exclusion is disclosed rather than silent",
+        "paths": [
+          "docs/plans/2026-11-12-reporting-refresh-decisions.md",
+          ".secrets.baseline"
+        ],
+        "prefixes": [
+          ".git/",
+          "node_modules/",
+          ".venv/",
+          "__pycache__/",
+          "docs/implementation/",
+          "scripts/tools/",
+          "prompts/",
+          "app/src/components/studies/",
+          "app/tests/"
+        ]
+      },
+      "expectedPath": "data/parquets/L1/housing_hdb_rental.parquet",
+      "expectedPathExists": false,
+      "filenamePatterns": [
+        "housing_hdb_rental*",
+        "housing_hdb*"
+      ],
+      "matchedFileCount": 0,
+      "matchedFiles": [],
+      "meaning": "the named input is absent: no path in the checkout matches either filename pattern, and the data/parquets directory itself does not exist",
+      "rootsSearched": [
+        "."
+      ],
+      "scanMethod": "recursive filename match under the repo root with the exclusions above; every matched file would be listed with its path — the count is 0 and the list is empty"
+    },
+    "methodImplementationScan": {
+      "exclusions": {
+        "editionRule": "docs/analytics/editions/ is excluded except the frozen legacy originals under docs/analytics/editions/legacy/, which stay in the scan because the article's own method words are what the tokens are matched against",
+        "paths": [
+          "docs/plans/2026-11-12-reporting-refresh-decisions.md",
+          ".secrets.baseline"
+        ],
+        "prefixes": [
+          "docs/implementation/",
+          "scripts/tools/",
+          "prompts/",
+          "app/src/components/studies/",
+          "app/tests/"
+        ],
+        "selfExclusion": "this tool lives under scripts/tools/ and quotes the tokens it searches for, so it cannot scan itself; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs; .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are explicitly excluded"
+      },
+      "matchedFileCount": 31,
+      "matchedFiles": [
+        {
+          "matchCount": 3,
+          "path": ".claude/handoffs/2026-02-23-interactive-segments-dashboard-implementation.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "app/src/components/catalog/DatasetTable.tsx"
+        },
+        {
+          "matchCount": 1,
+          "path": "app/src/components/catalog/SchemaTable.tsx"
+        },
+        {
+          "matchCount": 1,
+          "path": "app/src/components/charts/InteractiveTable.tsx"
+        },
+        {
+          "matchCount": 1,
+          "path": "app/src/components/dashboard/TownLeaderboard.tsx"
+        },
+        {
+          "matchCount": 16,
+          "path": "app/src/types/analytics.ts"
+        },
+        {
+          "matchCount": 1,
+          "path": "app/src/types/spatial-hotspots.ts"
+        },
+        {
+          "matchCount": 4,
+          "path": "app/src/utils/colorScales.ts"
+        },
+        {
+          "matchCount": 1,
+          "path": "app/src/utils/geometry.ts"
+        },
+        {
+          "matchCount": 23,
+          "path": "app/src/utils/map-archive.ts"
+        },
+        {
+          "matchCount": 2,
+          "path": "assets/svg/audit-review.md"
+        },
+        {
+          "matchCount": 3,
+          "path": "assets/svg/feature-specifications.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "matchCount": 6,
+          "path": "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md"
+        },
+        {
+          "matchCount": 4,
+          "path": "docs/analytics/editions/legacy/2026-11-12/spatial-hotspots.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "matchCount": 6,
+          "path": "docs/analytics/spatial-autocorrelation.md"
+        },
+        {
+          "matchCount": 4,
+          "path": "docs/analytics/spatial-hotspots.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/archive/20260127-FINAL-COMPLETE-SUMMARY.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
+        },
+        {
+          "matchCount": 3,
+          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
+        },
+        {
+          "matchCount": 9,
+          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
+        },
+        {
+          "matchCount": 20,
+          "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
+        },
+        {
+          "matchCount": 46,
+          "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
+        },
+        {
+          "matchCount": 13,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
+        },
+        {
+          "matchCount": 1,
+          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md"
+        },
+        {
+          "matchCount": 6,
+          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
+        },
+        {
+          "matchCount": 2,
+          "path": "docs/research/singapore-open-datasets.md"
+        }
+      ],
+      "meaning": "matches are prose, plan and UI references (including the frozen legacy originals and the sibling spatial-hotspots article), not executable spatial code: no .py file outside the excluded programme surfaces implements the legacy method, which is why the legacy numbers cannot be re-derived from any surviving script",
+      "purpose": "the legacy provenance says its Python spatial scripts were retired; this scan measures whether any implementation of the legacy method survives outside the programme's own surfaces",
+      "rootsSearched": [
+        "docs",
+        "scripts",
+        "src",
+        "assets",
+        "app/src",
+        ".claude/handoffs",
+        "prompts"
+      ],
+      "suffixes": [
+        ".md",
+        ".py",
+        ".ts",
+        ".tsx"
+      ],
+      "tokenPattern": "moran|esda|libpysal|getis|lisa (case-insensitive)",
+      "totalMatches": 188
+    }
+  },
+  "areaGiStar": {
+    "implementation": "esda.getisord.G_Local with star=True (Gi*), permutations=999, keep_simulations=True, n_jobs=1, seed=SEED (esda 2.8.1)",
+    "labelCounts": {
+      "coldspot": 0,
+      "hotspot": 1,
+      "notSignificant": 40
+    },
+    "meaning": "hotspot/coldspot here describe the measured window only; they are not demand or return predictions",
+    "members": [
+      {
+        "area": "ANG MO KIO",
+        "gStar": 0.046245,
+        "label": "notSignificant",
+        "pSim": 0.177,
+        "pSimBH": 0.49405,
+        "zSim": 0.959557
+      },
+      {
+        "area": "BEDOK",
+        "gStar": 0.050066,
+        "label": "notSignificant",
+        "pSim": 0.034,
+        "pSimBH": 0.49405,
+        "zSim": 1.816093
+      },
+      {
+        "area": "BISHAN",
+        "gStar": 0.021716,
+        "label": "notSignificant",
+        "pSim": 0.262,
+        "pSimBH": 0.49405,
+        "zSim": 0.656786
+      },
+      {
+        "area": "BUKIT BATOK",
+        "gStar": 0.019283,
+        "label": "notSignificant",
+        "pSim": 0.329,
+        "pSimBH": 0.49405,
+        "zSim": -0.491471
+      },
+      {
+        "area": "BUKIT MERAH",
+        "gStar": 0.02394,
+        "label": "notSignificant",
+        "pSim": 0.263,
+        "pSimBH": 0.49405,
+        "zSim": -0.695575
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "gStar": 0.015358,
+        "label": "notSignificant",
+        "pSim": 0.277,
+        "pSimBH": 0.49405,
+        "zSim": -0.617437
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "gStar": 0.024537,
+        "label": "notSignificant",
+        "pSim": 0.437,
+        "pSimBH": 0.49405,
+        "zSim": 0.170953
+      },
+      {
+        "area": "CENTRAL WATER CATCHMENT",
+        "gStar": 0.033043,
+        "label": "notSignificant",
+        "pSim": 0.278,
+        "pSimBH": 0.49405,
+        "zSim": 0.648813
+      },
+      {
+        "area": "CHANGI",
+        "gStar": 0.029923,
+        "label": "notSignificant",
+        "pSim": 0.196,
+        "pSimBH": 0.49405,
+        "zSim": 0.882481
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "gStar": 0.013054,
+        "label": "notSignificant",
+        "pSim": 0.243,
+        "pSimBH": 0.49405,
+        "zSim": -0.724575
+      },
+      {
+        "area": "CLEMENTI",
+        "gStar": 0.017114,
+        "label": "notSignificant",
+        "pSim": 0.263,
+        "pSimBH": 0.49405,
+        "zSim": -0.641326
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "gStar": 0.021517,
+        "label": "notSignificant",
+        "pSim": 0.471,
+        "pSimBH": 0.49405,
+        "zSim": 0.083899
+      },
+      {
+        "area": "GEYLANG",
+        "gStar": 0.031626,
+        "label": "notSignificant",
+        "pSim": 0.337,
+        "pSimBH": 0.49405,
+        "zSim": 0.419811
+      },
+      {
+        "area": "HOUGANG",
+        "gStar": 0.050156,
+        "label": "notSignificant",
+        "pSim": 0.078,
+        "pSimBH": 0.49405,
+        "zSim": 1.433915
+      },
+      {
+        "area": "JURONG EAST",
+        "gStar": 0.019283,
+        "label": "notSignificant",
+        "pSim": 0.336,
+        "pSimBH": 0.49405,
+        "zSim": -0.433544
+      },
+      {
+        "area": "JURONG WEST",
+        "gStar": 0.019283,
+        "label": "notSignificant",
+        "pSim": 0.412,
+        "pSimBH": 0.49405,
+        "zSim": -0.21642
+      },
+      {
+        "area": "KALLANG",
+        "gStar": 0.028498,
+        "label": "notSignificant",
+        "pSim": 0.376,
+        "pSimBH": 0.49405,
+        "zSim": 0.332861
+      },
+      {
+        "area": "MANDAI",
+        "gStar": 0.028617,
+        "label": "notSignificant",
+        "pSim": 0.281,
+        "pSimBH": 0.49405,
+        "zSim": 0.595711
+      },
+      {
+        "area": "MARINA SOUTH",
+        "gStar": 0.00802,
+        "label": "notSignificant",
+        "pSim": 0.16,
+        "pSimBH": 0.49405,
+        "zSim": -0.991073
+      },
+      {
+        "area": "MARINE PARADE",
+        "gStar": 0.024974,
+        "label": "notSignificant",
+        "pSim": 0.472,
+        "pSimBH": 0.49405,
+        "zSim": 0.066246
+      },
+      {
+        "area": "MUSEUM",
+        "gStar": 0.006702,
+        "label": "notSignificant",
+        "pSim": 0.131,
+        "pSimBH": 0.49405,
+        "zSim": -1.137363
+      },
+      {
+        "area": "NEWTON",
+        "gStar": 0.00947,
+        "label": "notSignificant",
+        "pSim": 0.202,
+        "pSimBH": 0.49405,
+        "zSim": -0.870092
+      },
+      {
+        "area": "NOVENA",
+        "gStar": 0.019825,
+        "label": "notSignificant",
+        "pSim": 0.427,
+        "pSimBH": 0.49405,
+        "zSim": -0.19206
+      },
+      {
+        "area": "ORCHARD",
+        "gStar": 0.023004,
+        "label": "notSignificant",
+        "pSim": 0.495,
+        "pSimBH": 0.495,
+        "zSim": -0.037338
+      },
+      {
+        "area": "OUTRAM",
+        "gStar": 0.021517,
+        "label": "notSignificant",
+        "pSim": 0.482,
+        "pSimBH": 0.49405,
+        "zSim": -0.076711
+      },
+      {
+        "area": "PASIR RIS",
+        "gStar": 0.031993,
+        "label": "notSignificant",
+        "pSim": 0.237,
+        "pSimBH": 0.49405,
+        "zSim": 0.712018
+      },
+      {
+        "area": "PUNGGOL",
+        "gStar": 0.071271,
+        "label": "hotspot",
+        "pSim": 0.001,
+        "pSimBH": 0.041,
+        "zSim": 3.472317
+      },
+      {
+        "area": "QUEENSTOWN",
+        "gStar": 0.029733,
+        "label": "notSignificant",
+        "pSim": 0.452,
+        "pSimBH": 0.49405,
+        "zSim": 0.130318
+      },
+      {
+        "area": "RIVER VALLEY",
+        "gStar": 0.023119,
+        "label": "notSignificant",
+        "pSim": 0.472,
+        "pSimBH": 0.49405,
+        "zSim": 0.083275
+      },
+      {
+        "area": "ROCHOR",
+        "gStar": 0.009029,
+        "label": "notSignificant",
+        "pSim": 0.117,
+        "pSimBH": 0.49405,
+        "zSim": -1.205515
+      },
+      {
+        "area": "SEMBAWANG",
+        "gStar": 0.040645,
+        "label": "notSignificant",
+        "pSim": 0.162,
+        "pSimBH": 0.49405,
+        "zSim": 1.011647
+      },
+      {
+        "area": "SENGKANG",
+        "gStar": 0.049044,
+        "label": "notSignificant",
+        "pSim": 0.047,
+        "pSimBH": 0.49405,
+        "zSim": 1.724815
+      },
+      {
+        "area": "SERANGOON",
+        "gStar": 0.036723,
+        "label": "notSignificant",
+        "pSim": 0.216,
+        "pSimBH": 0.49405,
+        "zSim": 0.794217
+      },
+      {
+        "area": "SINGAPORE RIVER",
+        "gStar": 0.021386,
+        "label": "notSignificant",
+        "pSim": 0.404,
+        "pSimBH": 0.49405,
+        "zSim": -0.236695
+      },
+      {
+        "area": "SOUTHERN ISLANDS",
+        "gStar": 0.020263,
+        "label": "notSignificant",
+        "pSim": 0.438,
+        "pSimBH": 0.49405,
+        "zSim": -0.157142
+      },
+      {
+        "area": "TAMPINES",
+        "gStar": 0.029923,
+        "label": "notSignificant",
+        "pSim": 0.429,
+        "pSimBH": 0.49405,
+        "zSim": -0.200266
+      },
+      {
+        "area": "TANGLIN",
+        "gStar": 0.023004,
+        "label": "notSignificant",
+        "pSim": 0.463,
+        "pSimBH": 0.49405,
+        "zSim": 0.091842
+      },
+      {
+        "area": "TENGAH",
+        "gStar": 0.019283,
+        "label": "notSignificant",
+        "pSim": 0.446,
+        "pSimBH": 0.49405,
+        "zSim": 0.151889
+      },
+      {
+        "area": "TOA PAYOH",
+        "gStar": 0.016249,
+        "label": "notSignificant",
+        "pSim": 0.131,
+        "pSimBH": 0.49405,
+        "zSim": -1.139059
+      },
+      {
+        "area": "WOODLANDS",
+        "gStar": 0.043696,
+        "label": "notSignificant",
+        "pSim": 0.083,
+        "pSimBH": 0.49405,
+        "zSim": 1.434273
+      },
+      {
+        "area": "YISHUN",
+        "gStar": 0.026211,
+        "label": "notSignificant",
+        "pSim": 0.3,
+        "pSimBH": 0.49405,
+        "zSim": -0.544801
+      }
+    ],
+    "multiplicityCorrection": {
+      "adjustedP": {
+        "ANG MO KIO": 0.49405,
+        "BEDOK": 0.49405,
+        "BISHAN": 0.49405,
+        "BUKIT BATOK": 0.49405,
+        "BUKIT MERAH": 0.49405,
+        "BUKIT PANJANG": 0.49405,
+        "BUKIT TIMAH": 0.49405,
+        "CENTRAL WATER CATCHMENT": 0.49405,
+        "CHANGI": 0.49405,
+        "CHOA CHU KANG": 0.49405,
+        "CLEMENTI": 0.49405,
+        "DOWNTOWN CORE": 0.49405,
+        "GEYLANG": 0.49405,
+        "HOUGANG": 0.49405,
+        "JURONG EAST": 0.49405,
+        "JURONG WEST": 0.49405,
+        "KALLANG": 0.49405,
+        "MANDAI": 0.49405,
+        "MARINA SOUTH": 0.49405,
+        "MARINE PARADE": 0.49405,
+        "MUSEUM": 0.49405,
+        "NEWTON": 0.49405,
+        "NOVENA": 0.49405,
+        "ORCHARD": 0.495,
+        "OUTRAM": 0.49405,
+        "PASIR RIS": 0.49405,
+        "PUNGGOL": 0.041,
+        "QUEENSTOWN": 0.49405,
+        "RIVER VALLEY": 0.49405,
+        "ROCHOR": 0.49405,
+        "SEMBAWANG": 0.49405,
+        "SENGKANG": 0.49405,
+        "SERANGOON": 0.49405,
+        "SINGAPORE RIVER": 0.49405,
+        "SOUTHERN ISLANDS": 0.49405,
+        "TAMPINES": 0.49405,
+        "TANGLIN": 0.49405,
+        "TENGAH": 0.49405,
+        "TOA PAYOH": 0.49405,
+        "WOODLANDS": 0.49405,
+        "YISHUN": 0.49405
+      },
+      "bonferroniThreshold": 0.00122,
+      "m": 41,
+      "meaning": "a label is assigned only after multiplicity correction; the uncorrected significant count is also recorded so the correction's effect is measurable",
+      "method": "Benjamini-Hochberg step-up, implemented in this script (bh_adjust): ranks are sorted stably, adjusted values are made monotone by a reverse cumulative minimum and clipped to 1",
+      "q": 0.05
+    },
+    "n": 41,
+    "variable": "areaPanel.appreciation",
+    "weights": {
+      "connectedComponentsUndirected": 1,
+      "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+      "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+      "islands": 0,
+      "kRequested": 8,
+      "kRule": "min(8, n_areas - 1)",
+      "kUsed": 8,
+      "meanNeighbors": 8.0,
+      "n": 41,
+      "s0": 41.0,
+      "transform": "r (row-standardised)"
+    },
+    "whyThisSectionExists": "the served asset carries a per-area hotspot block with no stated variable; this layer re-measures Gi* under a declared variable so a later payload rebuild has a defined source, not to recover the placeholder's z/p values",
+    "zSimDerivation": "esda-computed simulation z: z_sim = (Gs - mean(sim)) / std(sim) over the 999 conditional-randomization draws (g.sim), exposed because keep_simulations=True; esda 2.8.1 sets z_sim only under keep_simulations=True, so with keep_simulations=False this implementation exposes p_sim but no simulation z score"
+  },
+  "areaLisa": {
+    "implementation": "esda.moran.Moran_Local with permutations=999, geoda_quads=False, n_jobs=1, seed=SEED, island_weight=0 (esda 2.8.1)",
+    "labelCounts": {
+      "HH": 0,
+      "HL": 1,
+      "LH": 0,
+      "LL": 0,
+      "NS": 40
+    },
+    "labelRule": "label = quadrant name when pSimBH <= q, else NS; the labels are descriptions of THIS window, not predictions of future returns or demand",
+    "meaning": "reproducible memberships: every area's quadrant, local I, spatial lag, z and p (raw and corrected) are fields, the seed and permutation count are fields, and rerunning this tool reproduces them byte-identically (determinism is checked by --check)",
+    "members": [
+      {
+        "area": "ANG MO KIO",
+        "label": "NS",
+        "localI": 0.500025,
+        "pSim": 0.177,
+        "pSimBH": 0.49405,
+        "quadrant": 3,
+        "quadrantName": "LL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.250604,
+        "zSim": 0.959557
+      },
+      {
+        "area": "BEDOK",
+        "label": "NS",
+        "localI": -0.088025,
+        "pSim": 0.034,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": true,
+        "spatialLagOfZ": -0.613158,
+        "zSim": -1.816093
+      },
+      {
+        "area": "BISHAN",
+        "label": "NS",
+        "localI": -0.703557,
+        "pSim": 0.262,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.270863,
+        "zSim": -0.656786
+      },
+      {
+        "area": "BUKIT BATOK",
+        "label": "NS",
+        "localI": -0.080659,
+        "pSim": 0.329,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.176771,
+        "zSim": -0.491471
+      },
+      {
+        "area": "BUKIT MERAH",
+        "label": "NS",
+        "localI": -0.560683,
+        "pSim": 0.263,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.273287,
+        "zSim": -0.695575
+      },
+      {
+        "area": "BUKIT PANJANG",
+        "label": "NS",
+        "localI": -0.002524,
+        "pSim": 0.277,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.210757,
+        "zSim": -0.617437
+      },
+      {
+        "area": "BUKIT TIMAH",
+        "label": "NS",
+        "localI": -0.030392,
+        "pSim": 0.437,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.064128,
+        "zSim": -0.170953
+      },
+      {
+        "area": "CENTRAL WATER CATCHMENT",
+        "label": "NS",
+        "localI": -0.02169,
+        "pSim": 0.278,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.213462,
+        "zSim": -0.648813
+      },
+      {
+        "area": "CHANGI",
+        "label": "NS",
+        "localI": -0.471626,
+        "pSim": 0.196,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.318114,
+        "zSim": -0.882481
+      },
+      {
+        "area": "CHOA CHU KANG",
+        "label": "NS",
+        "localI": 0.04972,
+        "pSim": 0.243,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.235561,
+        "zSim": 0.724575
+      },
+      {
+        "area": "CLEMENTI",
+        "label": "NS",
+        "localI": -0.096667,
+        "pSim": 0.263,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.223868,
+        "zSim": -0.641326
+      },
+      {
+        "area": "DOWNTOWN CORE",
+        "label": "NS",
+        "localI": -0.046627,
+        "pSim": 0.471,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.050877,
+        "zSim": -0.083899
+      },
+      {
+        "area": "GEYLANG",
+        "label": "NS",
+        "localI": 0.040626,
+        "pSim": 0.337,
+        "pSimBH": 0.49405,
+        "quadrant": 3,
+        "quadrantName": "LL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.126431,
+        "zSim": 0.419811
+      },
+      {
+        "area": "HOUGANG",
+        "label": "NS",
+        "localI": 0.579732,
+        "pSim": 0.078,
+        "pSimBH": 0.49405,
+        "quadrant": 3,
+        "quadrantName": "LL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.419979,
+        "zSim": 1.433915
+      },
+      {
+        "area": "JURONG EAST",
+        "label": "NS",
+        "localI": -0.025488,
+        "pSim": 0.336,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.141404,
+        "zSim": -0.433544
+      },
+      {
+        "area": "JURONG WEST",
+        "label": "NS",
+        "localI": 0.026902,
+        "pSim": 0.412,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.051909,
+        "zSim": 0.21642
+      },
+      {
+        "area": "KALLANG",
+        "label": "NS",
+        "localI": -0.018735,
+        "pSim": 0.376,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.115859,
+        "zSim": -0.332861
+      },
+      {
+        "area": "MANDAI",
+        "label": "NS",
+        "localI": -0.201492,
+        "pSim": 0.281,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.216919,
+        "zSim": -0.595711
+      },
+      {
+        "area": "MARINA SOUTH",
+        "label": "NS",
+        "localI": 0.178981,
+        "pSim": 0.16,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.303686,
+        "zSim": 0.991073
+      },
+      {
+        "area": "MARINE PARADE",
+        "label": "NS",
+        "localI": -0.002193,
+        "pSim": 0.472,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.024842,
+        "zSim": -0.066246
+      },
+      {
+        "area": "MUSEUM",
+        "label": "NS",
+        "localI": 0.140526,
+        "pSim": 0.131,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.359664,
+        "zSim": 1.137363
+      },
+      {
+        "area": "NEWTON",
+        "label": "NS",
+        "localI": 0.163729,
+        "pSim": 0.202,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.267062,
+        "zSim": 0.870092
+      },
+      {
+        "area": "NOVENA",
+        "label": "NS",
+        "localI": 0.021822,
+        "pSim": 0.427,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.052447,
+        "zSim": 0.19206
+      },
+      {
+        "area": "ORCHARD",
+        "label": "NS",
+        "localI": 0.001526,
+        "pSim": 0.495,
+        "pSimBH": 0.495,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.008172,
+        "zSim": 0.037338
+      },
+      {
+        "area": "OUTRAM",
+        "label": "NS",
+        "localI": 0.006285,
+        "pSim": 0.482,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.0159,
+        "zSim": 0.076711
+      },
+      {
+        "area": "PASIR RIS",
+        "label": "NS",
+        "localI": -0.129771,
+        "pSim": 0.237,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.244205,
+        "zSim": -0.712018
+      },
+      {
+        "area": "PUNGGOL",
+        "label": "HL",
+        "localI": -0.482233,
+        "pSim": 0.001,
+        "pSimBH": 0.041,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": true,
+        "spatialLagOfZ": -1.140145,
+        "zSim": -3.472317
+      },
+      {
+        "area": "QUEENSTOWN",
+        "label": "NS",
+        "localI": 0.015053,
+        "pSim": 0.452,
+        "pSimBH": 0.49405,
+        "quadrant": 3,
+        "quadrantName": "LL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.018286,
+        "zSim": 0.130318
+      },
+      {
+        "area": "RIVER VALLEY",
+        "label": "NS",
+        "localI": -0.022976,
+        "pSim": 0.472,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.041498,
+        "zSim": -0.083275
+      },
+      {
+        "area": "ROCHOR",
+        "label": "NS",
+        "localI": -0.149821,
+        "pSim": 0.117,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.403414,
+        "zSim": -1.205515
+      },
+      {
+        "area": "SEMBAWANG",
+        "label": "NS",
+        "localI": 0.155909,
+        "pSim": 0.162,
+        "pSimBH": 0.49405,
+        "quadrant": 3,
+        "quadrantName": "LL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.312616,
+        "zSim": 1.011647
+      },
+      {
+        "area": "SENGKANG",
+        "label": "NS",
+        "localI": 0.064737,
+        "pSim": 0.047,
+        "pSimBH": 0.49405,
+        "quadrant": 3,
+        "quadrantName": "LL",
+        "significantUncorrectedAt005": true,
+        "spatialLagOfZ": -0.556157,
+        "zSim": 1.724815
+      },
+      {
+        "area": "SERANGOON",
+        "label": "NS",
+        "localI": 0.071227,
+        "pSim": 0.216,
+        "pSimBH": 0.49405,
+        "quadrant": 3,
+        "quadrantName": "LL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.249018,
+        "zSim": 0.794217
+      },
+      {
+        "area": "SINGAPORE RIVER",
+        "label": "NS",
+        "localI": -0.007287,
+        "pSim": 0.404,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.081096,
+        "zSim": -0.236695
+      },
+      {
+        "area": "SOUTHERN ISLANDS",
+        "label": "NS",
+        "localI": 0.017628,
+        "pSim": 0.438,
+        "pSimBH": 0.49405,
+        "quadrant": 1,
+        "quadrantName": "HH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.042613,
+        "zSim": 0.157142
+      },
+      {
+        "area": "TAMPINES",
+        "label": "NS",
+        "localI": -0.201732,
+        "pSim": 0.429,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.10899,
+        "zSim": -0.200266
+      },
+      {
+        "area": "TANGLIN",
+        "label": "NS",
+        "localI": -0.027246,
+        "pSim": 0.463,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.045174,
+        "zSim": -0.091842
+      },
+      {
+        "area": "TENGAH",
+        "label": "NS",
+        "localI": -0.145675,
+        "pSim": 0.446,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.089721,
+        "zSim": -0.151889
+      },
+      {
+        "area": "TOA PAYOH",
+        "label": "NS",
+        "localI": -0.708679,
+        "pSim": 0.131,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.410036,
+        "zSim": -1.139059
+      },
+      {
+        "area": "WOODLANDS",
+        "label": "NS",
+        "localI": -0.147275,
+        "pSim": 0.083,
+        "pSimBH": 0.49405,
+        "quadrant": 4,
+        "quadrantName": "HL",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": -0.486035,
+        "zSim": -1.434273
+      },
+      {
+        "area": "YISHUN",
+        "label": "NS",
+        "localI": -0.463026,
+        "pSim": 0.3,
+        "pSimBH": 0.49405,
+        "quadrant": 2,
+        "quadrantName": "LH",
+        "significantUncorrectedAt005": false,
+        "spatialLagOfZ": 0.223389,
+        "zSim": -0.544801
+      }
+    ],
+    "multiplicityCorrection": {
+      "adjustedP": {
+        "ANG MO KIO": 0.49405,
+        "BEDOK": 0.49405,
+        "BISHAN": 0.49405,
+        "BUKIT BATOK": 0.49405,
+        "BUKIT MERAH": 0.49405,
+        "BUKIT PANJANG": 0.49405,
+        "BUKIT TIMAH": 0.49405,
+        "CENTRAL WATER CATCHMENT": 0.49405,
+        "CHANGI": 0.49405,
+        "CHOA CHU KANG": 0.49405,
+        "CLEMENTI": 0.49405,
+        "DOWNTOWN CORE": 0.49405,
+        "GEYLANG": 0.49405,
+        "HOUGANG": 0.49405,
+        "JURONG EAST": 0.49405,
+        "JURONG WEST": 0.49405,
+        "KALLANG": 0.49405,
+        "MANDAI": 0.49405,
+        "MARINA SOUTH": 0.49405,
+        "MARINE PARADE": 0.49405,
+        "MUSEUM": 0.49405,
+        "NEWTON": 0.49405,
+        "NOVENA": 0.49405,
+        "ORCHARD": 0.495,
+        "OUTRAM": 0.49405,
+        "PASIR RIS": 0.49405,
+        "PUNGGOL": 0.041,
+        "QUEENSTOWN": 0.49405,
+        "RIVER VALLEY": 0.49405,
+        "ROCHOR": 0.49405,
+        "SEMBAWANG": 0.49405,
+        "SENGKANG": 0.49405,
+        "SERANGOON": 0.49405,
+        "SINGAPORE RIVER": 0.49405,
+        "SOUTHERN ISLANDS": 0.49405,
+        "TAMPINES": 0.49405,
+        "TANGLIN": 0.49405,
+        "TENGAH": 0.49405,
+        "TOA PAYOH": 0.49405,
+        "WOODLANDS": 0.49405,
+        "YISHUN": 0.49405
+      },
+      "bonferroniThreshold": 0.00122,
+      "m": 41,
+      "meaning": "a label is assigned only after multiplicity correction; the uncorrected significant count is also recorded so the correction's effect is measurable",
+      "method": "Benjamini-Hochberg step-up, implemented in this script (bh_adjust): ranks are sorted stably, adjusted values are made monotone by a reverse cumulative minimum and clipped to 1",
+      "q": 0.05
+    },
+    "n": 41,
+    "quadrantCountsUncorrected": {
+      "HH": 9,
+      "HL": 15,
+      "LH": 10,
+      "LL": 7
+    },
+    "quadrantMapping": {
+      "1": "HH",
+      "2": "LH",
+      "3": "LL",
+      "4": "HL"
+    },
+    "significantUncorrectedAt005": 3,
+    "variable": "areaPanel.appreciation",
+    "weights": {
+      "connectedComponentsUndirected": 1,
+      "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+      "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+      "islands": 0,
+      "kRequested": 8,
+      "kRule": "min(8, n_areas - 1)",
+      "kUsed": 8,
+      "meanNeighbors": 8.0,
+      "n": 41,
+      "s0": 41.0,
+      "transform": "r (row-standardised)"
+    }
+  },
+  "areaMoran": {
+    "expectedI": -0.025,
+    "meaning": "under this protocol the appreciation screen is NOT significantly clustered across planning areas: the point estimate is slightly negative and every recorded p-value is far above the corrected threshold. This is measured evidence about THIS protocol; the legacy's 0.766 is a different, underspecified statistic recorded at legacyMethodRecovery.globalMoran, and no layer of this pack claims to recover it",
+    "moranI": -0.070041,
+    "n": 41,
+    "pNorm": 0.464813,
+    "pRand": 0.459827,
+    "pSim": 0.269,
+    "permutations": 999,
+    "seI_norm": 0.061620555,
+    "seed": 20261120,
+    "seedMechanism": "np.random.seed(SEED) immediately before the esda call (esda.moran.Moran has no seed parameter); Moran_Local and G_Local take seed= directly and also run with n_jobs=1",
+    "twoTailed": true,
+    "variable": "areaPanel.appreciation (medianPsfW1/medianPsfW0 - 1)",
+    "weights": {
+      "connectedComponentsUndirected": 1,
+      "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+      "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+      "islands": 0,
+      "kRequested": 8,
+      "kRule": "min(8, n_areas - 1)",
+      "kUsed": 8,
+      "meanNeighbors": 8.0,
+      "n": 41,
+      "s0": 328.0,
+      "transform": "r (row-standardised)"
+    },
+    "zNorm": -0.730944,
+    "zRand": -0.739131,
+    "zSim": -0.703996
+  },
+  "areaPanel": {
+    "appreciationFormula": "medianPsfW1 / medianPsfW0 - 1",
+    "areasAfterFloor": 41,
+    "areasInFrame": 44,
+    "areasWithBothWindows": 43,
+    "centroidMethod": "unweighted mean of non-null transaction lat/lon inside w1 per area",
+    "droppedAreas": [
+      {
+        "area": "SELETAR",
+        "n0": 2,
+        "n1": 1,
+        "reasons": [
+          "w1BelowFloor",
+          "w0BelowFloor"
+        ]
+      },
+      {
+        "area": "SUNGEI KADUT",
+        "n0": 9,
+        "n1": 8,
+        "reasons": [
+          "w1BelowFloor",
+          "w0BelowFloor"
+        ]
+      }
+    ],
+    "floor": {
+      "appliedPer": "area-window (both w1 and w0 must meet it)",
+      "attribution": "the numeric floor is adopted from the legacy's stated >=10-records threshold (claim C19); the legacy applied it to H3 cells on an absent input, this pack applies it to planning-area windows it can measure",
+      "value": 10
+    },
+    "meaning": "the area panel is the primary membership layer: the served asset is keyed by planning area, so reproducible memberships are produced at the same unit",
+    "medianDefinition": "median psf over the window's transactions",
+    "members": [
+      {
+        "appreciation": -0.517358,
+        "area": "ANG MO KIO",
+        "centroidLat": 1.375625,
+        "centroidLon": 103.8419,
+        "medianPsfW0": 2046.82,
+        "medianPsfW1": 987.88,
+        "n0": 2991,
+        "n1": 1640
+      },
+      {
+        "appreciation": -0.072109,
+        "area": "BEDOK",
+        "centroidLat": 1.322619,
+        "centroidLon": 103.930382,
+        "medianPsfW0": 1433.96,
+        "medianPsfW1": 1330.56,
+        "n0": 4192,
+        "n1": 3452
+      },
+      {
+        "appreciation": 0.438726,
+        "area": "BISHAN",
+        "centroidLat": 1.355204,
+        "centroidLon": 103.837013,
+        "medianPsfW0": 1773.18,
+        "medianPsfW1": 2551.12,
+        "n0": 1219,
+        "n1": 1603
+      },
+      {
+        "appreciation": -0.196982,
+        "area": "BUKIT BATOK",
+        "centroidLat": 1.355043,
+        "centroidLon": 103.750226,
+        "medianPsfW0": 845.92,
+        "medianPsfW1": 679.29,
+        "n0": 2682,
+        "n1": 1940
+      },
+      {
+        "appreciation": -0.529088,
+        "area": "BUKIT MERAH",
+        "centroidLat": 1.281998,
+        "centroidLon": 103.82215,
+        "medianPsfW0": 2341.76,
+        "medianPsfW1": 1102.76,
+        "n0": 4042,
+        "n1": 1730
+      },
+      {
+        "appreciation": -0.104488,
+        "area": "BUKIT PANJANG",
+        "centroidLat": 1.377412,
+        "centroidLon": 103.769077,
+        "medianPsfW0": 748.39,
+        "medianPsfW1": 670.19,
+        "n0": 1583,
+        "n1": 1375
+      },
+      {
+        "appreciation": -0.003337,
+        "area": "BUKIT TIMAH",
+        "centroidLat": 1.330883,
+        "centroidLon": 103.785361,
+        "medianPsfW0": 2325.92,
+        "medianPsfW1": 2318.15,
+        "n0": 3115,
+        "n1": 1897
+      },
+      {
+        "appreciation": -0.080843,
+        "area": "CENTRAL WATER CATCHMENT",
+        "centroidLat": 1.370075,
+        "centroidLon": 103.827678,
+        "medianPsfW0": 1164.38,
+        "medianPsfW1": 1070.24,
+        "n0": 11,
+        "n1": 17
+      },
+      {
+        "appreciation": 0.206635,
+        "area": "CHANGI",
+        "centroidLat": 1.374306,
+        "centroidLon": 103.990911,
+        "medianPsfW0": 1207.74,
+        "medianPsfW1": 1457.3,
+        "n0": 23,
+        "n1": 24
+      },
+      {
+        "appreciation": -0.058056,
+        "area": "CHOA CHU KANG",
+        "centroidLat": 1.38453,
+        "centroidLon": 103.746558,
+        "medianPsfW0": 584.79,
+        "medianPsfW1": 550.84,
+        "n0": 1753,
+        "n1": 1402
+      },
+      {
+        "appreciation": -0.191884,
+        "area": "CLEMENTI",
+        "centroidLat": 1.314303,
+        "centroidLon": 103.76282,
+        "medianPsfW0": 1997.95,
+        "medianPsfW1": 1614.57,
+        "n0": 2933,
+        "n1": 1316
+      },
+      {
+        "appreciation": 0.088788,
+        "area": "DOWNTOWN CORE",
+        "centroidLat": 1.281023,
+        "centroidLon": 103.850497,
+        "medianPsfW0": 2267.02,
+        "medianPsfW1": 2468.31,
+        "n0": 957,
+        "n1": 626
+      },
+      {
+        "appreciation": -0.168887,
+        "area": "GEYLANG",
+        "centroidLat": 1.317409,
+        "centroidLon": 103.891655,
+        "medianPsfW0": 1825.41,
+        "medianPsfW1": 1517.12,
+        "n0": 2732,
+        "n1": 1672
+      },
+      {
+        "appreciation": -0.389353,
+        "area": "HOUGANG",
+        "centroidLat": 1.369432,
+        "centroidLon": 103.888842,
+        "medianPsfW0": 1299.41,
+        "medianPsfW1": 793.48,
+        "n0": 3272,
+        "n1": 2352
+      },
+      {
+        "appreciation": -0.139517,
+        "area": "JURONG EAST",
+        "centroidLat": 1.337049,
+        "centroidLon": 103.736984,
+        "medianPsfW0": 696.77,
+        "medianPsfW1": 599.56,
+        "n0": 940,
+        "n1": 711
+      },
+      {
+        "appreciation": 0.005891,
+        "area": "JURONG WEST",
+        "centroidLat": 1.343465,
+        "centroidLon": 103.711432,
+        "medianPsfW0": 557.42,
+        "medianPsfW1": 560.7,
+        "n0": 2289,
+        "n1": 2211
+      },
+      {
+        "appreciation": -0.068333,
+        "area": "KALLANG",
+        "centroidLat": 1.313848,
+        "centroidLon": 103.864767,
+        "medianPsfW0": 1581.71,
+        "medianPsfW1": 1473.62,
+        "n0": 1659,
+        "n1": 1312
+      },
+      {
+        "appreciation": 0.091373,
+        "area": "MANDAI",
+        "centroidLat": 1.426472,
+        "centroidLon": 103.824957,
+        "medianPsfW0": 976.43,
+        "medianPsfW1": 1065.65,
+        "n0": 51,
+        "n1": 26
+      },
+      {
+        "appreciation": 0.020694,
+        "area": "MARINA SOUTH",
+        "centroidLat": 1.275801,
+        "centroidLon": 103.862936,
+        "medianPsfW0": 2957.03,
+        "medianPsfW1": 3018.22,
+        "n0": 928,
+        "n1": 180
+      },
+      {
+        "appreciation": -0.083618,
+        "area": "MARINE PARADE",
+        "centroidLat": 1.303338,
+        "centroidLon": 103.899557,
+        "medianPsfW0": 2542.44,
+        "medianPsfW1": 2329.84,
+        "n0": 3130,
+        "n1": 847
+      },
+      {
+        "appreciation": -0.020659,
+        "area": "MUSEUM",
+        "centroidLat": 1.29812,
+        "centroidLon": 103.842902,
+        "medianPsfW0": 2392.19,
+        "medianPsfW1": 2342.77,
+        "n0": 60,
+        "n1": 35
+      },
+      {
+        "appreciation": 0.025631,
+        "area": "NEWTON",
+        "centroidLat": 1.309281,
+        "centroidLon": 103.835577,
+        "medianPsfW0": 2352.38,
+        "medianPsfW1": 2412.67,
+        "n0": 411,
+        "n1": 266
+      },
+      {
+        "appreciation": -0.015381,
+        "area": "NOVENA",
+        "centroidLat": 1.321982,
+        "centroidLon": 103.846422,
+        "medianPsfW0": 1887.09,
+        "medianPsfW1": 1858.06,
+        "n0": 1280,
+        "n1": 797
+      },
+      {
+        "appreciation": -0.063113,
+        "area": "ORCHARD",
+        "centroidLat": 1.30452,
+        "centroidLon": 103.831001,
+        "medianPsfW0": 3117.06,
+        "medianPsfW1": 2920.33,
+        "n0": 143,
+        "n1": 44
+      },
+      {
+        "appreciation": -0.01971,
+        "area": "OUTRAM",
+        "centroidLat": 1.280437,
+        "centroidLon": 103.841679,
+        "medianPsfW0": 1369.09,
+        "medianPsfW1": 1342.1,
+        "n0": 232,
+        "n1": 160
+      },
+      {
+        "appreciation": 0.008629,
+        "area": "PASIR RIS",
+        "centroidLat": 1.371493,
+        "centroidLon": 103.953696,
+        "medianPsfW0": 1249.67,
+        "medianPsfW1": 1260.45,
+        "n0": 2340,
+        "n1": 2166
+      },
+      {
+        "appreciation": -0.013947,
+        "area": "PUNGGOL",
+        "centroidLat": 1.404027,
+        "centroidLon": 103.905431,
+        "medianPsfW0": 731.24,
+        "medianPsfW1": 721.04,
+        "n0": 2395,
+        "n1": 2156
+      },
+      {
+        "appreciation": -0.273361,
+        "area": "QUEENSTOWN",
+        "centroidLat": 1.295492,
+        "centroidLon": 103.79739,
+        "medianPsfW0": 2504.88,
+        "medianPsfW1": 1820.14,
+        "n0": 5341,
+        "n1": 1973
+      },
+      {
+        "appreciation": 0.01326,
+        "area": "RIVER VALLEY",
+        "centroidLat": 1.295506,
+        "centroidLon": 103.8344,
+        "medianPsfW0": 3046.75,
+        "medianPsfW1": 3087.15,
+        "n0": 2175,
+        "n1": 897
+      },
+      {
+        "appreciation": -0.179306,
+        "area": "ROCHOR",
+        "centroidLat": 1.303513,
+        "centroidLon": 103.850708,
+        "medianPsfW0": 2153.96,
+        "medianPsfW1": 1767.74,
+        "n0": 534,
+        "n1": 257
+      },
+      {
+        "appreciation": -0.205816,
+        "area": "SEMBAWANG",
+        "centroidLat": 1.447997,
+        "centroidLon": 103.824829,
+        "medianPsfW0": 867.91,
+        "medianPsfW1": 689.28,
+        "n0": 2395,
+        "n1": 1305
+      },
+      {
+        "appreciation": -0.126226,
+        "area": "SENGKANG",
+        "centroidLat": 1.390973,
+        "centroidLon": 103.889772,
+        "medianPsfW0": 806.0,
+        "medianPsfW1": 704.27,
+        "n0": 3618,
+        "n1": 2703
+      },
+      {
+        "appreciation": -0.161539,
+        "area": "SERANGOON",
+        "centroidLat": 1.360788,
+        "centroidLon": 103.870364,
+        "medianPsfW0": 2028.83,
+        "medianPsfW1": 1701.1,
+        "n0": 3382,
+        "n1": 1462
+      },
+      {
+        "appreciation": -0.1207,
+        "area": "SINGAPORE RIVER",
+        "centroidLat": 1.289906,
+        "centroidLon": 103.84087,
+        "medianPsfW0": 3175.98,
+        "medianPsfW1": 2792.64,
+        "n0": 998,
+        "n1": 319
+      },
+      {
+        "appreciation": -0.015881,
+        "area": "SOUTHERN ISLANDS",
+        "centroidLat": 1.24542,
+        "centroidLon": 103.841693,
+        "medianPsfW0": 1745.01,
+        "medianPsfW1": 1717.3,
+        "n0": 172,
+        "n1": 103
+      },
+      {
+        "appreciation": -0.487307,
+        "area": "TAMPINES",
+        "centroidLat": 1.351374,
+        "centroidLon": 103.942779,
+        "medianPsfW0": 1587.54,
+        "medianPsfW1": 813.92,
+        "n0": 5862,
+        "n1": 3842
+      },
+      {
+        "appreciation": 0.023562,
+        "area": "TANGLIN",
+        "centroidLat": 1.306256,
+        "centroidLon": 103.824175,
+        "medianPsfW0": 2234.09,
+        "medianPsfW1": 2286.73,
+        "n0": 898,
+        "n1": 482
+      },
+      {
+        "appreciation": 0.236005,
+        "area": "TENGAH",
+        "centroidLat": 1.356552,
+        "centroidLon": 103.726791,
+        "medianPsfW0": 1701.01,
+        "medianPsfW1": 2102.46,
+        "n0": 1621,
+        "n1": 812
+      },
+      {
+        "appreciation": -0.461787,
+        "area": "TOA PAYOH",
+        "centroidLat": 1.335922,
+        "centroidLon": 103.861027,
+        "medianPsfW0": 1992.68,
+        "medianPsfW1": 1072.48,
+        "n0": 3241,
+        "n1": 1623
+      },
+      {
+        "appreciation": -0.038916,
+        "area": "WOODLANDS",
+        "centroidLat": 1.437474,
+        "centroidLon": 103.792002,
+        "medianPsfW0": 558.12,
+        "medianPsfW1": 536.4,
+        "n0": 2454,
+        "n1": 2190
+      },
+      {
+        "appreciation": -0.533482,
+        "area": "YISHUN",
+        "centroidLat": 1.424719,
+        "centroidLon": 103.838599,
+        "medianPsfW0": 1271.31,
+        "medianPsfW1": 593.09,
+        "n0": 4196,
+        "n1": 2119
+      }
+    ],
+    "unit": "planning_area",
+    "windowDefinition": "w1 = the trailing 12 completed months ending at the measured cutoff; w0 = the 12 months before w1; both derive from cutoff.lastCompleteMonth by month arithmetic, not from literals",
+    "windowMonths": {
+      "w0": [
+        "2024-11",
+        "2024-12",
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-06",
+        "2025-07",
+        "2025-08",
+        "2025-09",
+        "2025-10"
+      ],
+      "w1": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    }
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 28,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; the resolution is syntactic — it guarantees the key EXISTS and says nothing about the field's semantic adequacy, which the notes carry. An unresolved key fails the build rather than shipping",
+    "resolutionIsSyntactic": true,
+    "unresolved": []
+  },
+  "cutoff": {
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact; the primary basis here is the all-property-types frame because RS11's population is all shipped residential rows, and the private-rows (condo) basis is recorded as a cross-check to the bound RS03/RS04/RS05/RS09/RS10 shipped",
+    "condoBasisCrossCheck": {
+      "lastCompleteMonth": "2026-10",
+      "matchesAllRowsBasis": true,
+      "terminalMonth": "2026-11",
+      "terminalMonthShareOfTrailingMedian": 0.1974,
+      "terminalMonthTransactions": 421,
+      "trailing12MedianTransactions": 2133.0
+    },
+    "frameLastMonth": "2026-11",
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthShareOfTrailingMedian": 1.0287,
+    "lastCompleteMonthTransactions": 4719,
+    "meaning": "every window, panel and count in this ledger that touches the frame stops at lastCompleteMonth",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.264,
+    "terminalMonthTransactions": 1211,
+    "trailing12MedianTransactions": 4587.5,
+    "trailing12Months": [
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ]
+  },
+  "definition": "A fully specified re-measurement of spatial autocorrelation on the shipped frame, plus a measured inventory of the served spatial asset and the frozen legacy text. The unit that carries reproducible memberships is the planning area: the served asset is keyed by planning area, so the pack produces its memberships there — 41 areas after the recorded floor, KNN k=8 row-standardised weights on unweighted-mean centroids (one connected component, zero islands, both recorded), appreciation defined as the median-psf ratio of the trailing 12 completed months against the preceding 12, both windows stopping at the measured cutoff, 999 permutations at a fixed seed, and Benjamini-Hochberg correction at q=0.05 before any high-high label is assigned. Under that protocol the appreciation screen shows NO significant clustering (area-level Moran's I is slightly negative and not significant; the point estimate and its p-values are ledger fields), which is measured evidence about THIS protocol, not a refutation of the legacy's number: the legacy's variable is unstated (its appendix aggregates median monthly_rent on an input file that is absent from this checkout, while its prose interprets appreciation), so its 0.766 is recorded as stated and dispositioned not-reproducible, and the transition/persistence claims are withdrawn outright because no linked asset carries a time dimension. The point-level layer is a price-LEVEL screen on coordinates that resolve to 13,562 distinct pairs: its KNN graph fragments into thousands of disconnected components, which is recorded as the disconnected-areas metadata the gate requires, and its significance is carried by a seeded 20,000-row subsample rather than by the analytic normal approximation alone. No layer of this pack predicts future returns or demand, and no layer claims how any series was produced: everything is screened as.",
+  "environment": {
+    "declaredResearchGroup": {
+      "group": "dependency-groups.research",
+      "meaning": "the spatial stack is importable in the default uv environment; the declared constraints are recorded so the protocol is reproducible elsewhere",
+      "pyprojectPath": "pyproject.toml",
+      "spatialConstraints": [
+        "esda>=2.8.1",
+        "h3==4.1.0b2",
+        "libpysal>=4.14.1"
+      ]
+    },
+    "esda": "2.8.1",
+    "h3": "4.1.0b2",
+    "libpysal": "4.14.1",
+    "numpy": "2.4.1",
+    "pandas": "2.3.3",
+    "python": "3.12.3",
+    "scipy": "1.17.0"
+  },
+  "inputs": {
+    "app/public/data/analytics/spatial_analysis.json.gz": {
+      "bytes": 1156,
+      "sha256": "e3ff620242187ba93f09986f313b3261c63df2cc6b333cce460c63fe227c2d54"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "bytes": 78381526,
+      "columns": 97,
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md": {
+      "bytes": 5812,
+      "sha256": "efea427d37df07b7a5363ca6622b33087d80d6d166adf3774a421e9b60bcbc22"
+    },
+    "pyproject.toml": {
+      "bytes": 4131,
+      "sha256": "f09dea44109e452748e08f9690d9686a56493a04b8e991f4af73de667b82f1a5"
+    }
+  },
+  "legacyClaims": [
+    {
+      "id": "C01",
+      "ledgerKey": "legacyMethodRecovery.globalMoran",
+      "note": "the headline statistic's variable is unstated (appendix: median monthly_rent; prose: appreciation) and its named input is absent; recorded as stated, not re-derived",
+      "phrase": "| Moran's I | 0.766 | Strong positive spatial clustering |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C02",
+      "ledgerKey": "legacyMethodRecovery.globalMoran",
+      "note": "inference for an unreproducible statistic; the pack records its own z and p as fields",
+      "phrase": "| Z-score   | 9.91  | Highly significant                 |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C03",
+      "ledgerKey": "legacyMethodRecovery.globalMoran",
+      "note": "the weights words are recorded; the pack re-adopts k=8 row-standardised at areaMoran.weights with 999 permutations and a fixed seed, a deliberate recorded difference",
+      "phrase": "- **Global Moran's I**: KNN weights (k=8), row-standardized, 99 permutations",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C04",
+      "ledgerKey": "legacyMethodRecovery.globalMoran",
+      "note": "same statistic as C01 in the technical findings; not recoverable from any artefact in this checkout",
+      "phrase": "**Global Moran's I**: 0.766 (strong positive spatial clustering)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C05",
+      "ledgerKey": "legacyMethodRecovery.globalMoran",
+      "note": "same inference as C02; the bound and the z are recorded as stated values only",
+      "phrase": "- **Z-score**: 9.91, p-value < 0.001 — highly significant",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C06",
+      "ledgerKey": "legacyMethodRecovery.globalMoran",
+      "note": "beyond being unreproducible, the verb is a defect this pack flags: a structural screen cannot confirm anything about how a series was produced — the edition must not carry this wording",
+      "phrase": "The Moran's I of 0.766 with z=9.91 confirms that appreciation is far from randomly distributed",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C07",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "the 16-cell count and its 12.7% YoY depend on a per-cell appreciation series and an H3-cell membership that no stored artefact carries",
+      "phrase": "| HH (hotspot)                         | 16    | 12.7%            | High-growth areas near other high-growth areas   |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C08",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "same unreproducible table; the catch-up interpretation is additionally a forward-looking reading the pack does not restate",
+      "phrase": "| LH (lagging in strong neighborhoods) | 17    | 11.3%            | Potential catch-up or persistent underperformers |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C09",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "'about 10%' is not a machine-checkable number and its cell count rests on the same unreproducible run",
+      "phrase": "| LL (coldspot)                        | 1     | about 10%        | Weak area in weak surroundings                   |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C10",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "same unreproducible table; the HL class named in the methodology has no table row at all (recorded at legacyMethodRecovery.clusterTable.hlRowAbsentFromTable)",
+      "phrase": "| Not significant                      | 8     | 12.0%            | No strong local pattern                          |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C11",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "technical-findings restatement of C07; the unit contradiction (42 H3 cells vs the served 41 planning areas) is recorded as fields",
+      "phrase": "  - HH (hotspot): 16 cells, 12.7% YoY appreciation",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C12",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "technical-findings restatement of C08",
+      "phrase": "  - LH (lagging in strong neighborhood): 17 cells, 11.3% YoY",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C13",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "technical-findings restatement of C09",
+      "phrase": "  - LL (coldspot): 1 cell, ~10% YoY",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C14",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "technical-findings restatement of C10",
+      "phrase": "  - Not significant: 8 cells, 12.0% YoY",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "legacyMethodRecovery.lisa",
+      "note": "the implementation name and permutation count are recorded; the pack's own LISA runs with 999 permutations, a fixed seed and BH correction at areaLisa",
+      "phrase": "- **Local LISA** (Local Indicators of Spatial Association): `Moran_Local` with 99 permutations",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C16",
+      "ledgerKey": "legacyMethodRecovery.h3CellArea",
+      "note": "the resolution number is checkable against the data: the mean area of the resolution-8 cells the transactions actually occupy is 0.8374 km² (pointLevel.h3Grid.meanCellAreaKm2, 393 distinct cells, h3.cell_area), about 0.34 km² above the claimed approximation",
+      "phrase": "- **Spatial aggregation**: H3 hexagonal grid at resolution 8 (~0.5 km² cells)",
+      "status": "re-measured"
+    },
+    {
+      "id": "C17",
+      "ledgerKey": "absenceScans.frameSchemaRentScan",
+      "note": "no monthly_rent column exists in the 97-column schema (rental_yield_pct is a different measure) and the named rental input is absent; a rental aggregate also cannot ground the prose's appreciation interpretation — origin unverified",
+      "phrase": "- **Aggregation method**: median `monthly_rent` per H3 cell",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C18",
+      "ledgerKey": "absenceScans.legacyNamedInput",
+      "note": "the path does not exist, the data/parquets directory does not exist, and a repo-wide filename scan finds zero matches — boundary and counts are ledger fields",
+      "phrase": "- **Primary input**: `data/parquets/L1/housing_hdb_rental.parquet`",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C19",
+      "ledgerKey": "areaPanel.floor",
+      "note": "the threshold number is adopted by this pack as its own per-area-window floor (recorded as a field with attribution); the legacy's own per-cell application ran on the absent input",
+      "phrase": "- **Minimum threshold**: ≥10 records per cell for analysis",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C20",
+      "ledgerKey": "areaLisa.multiplicityCorrection",
+      "note": "the uncorrected rule is recorded and deliberately NOT re-adopted: the gate requires multiplicity correction, so the pack labels only at Benjamini-Hochberg q=0.05 (Bonferroni threshold also recorded)",
+      "phrase": "- **Significance threshold**: p ≤ 0.05",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C21",
+      "ledgerKey": "legacyMethodRecovery.spatialLagCorrelation",
+      "note": "'spatial lag correlation' names no variable pair, window or aggregation; recorded as underspecified rather than guessed (pack's defined reading at perTypeMoran)",
+      "phrase": "| Condo         | 78%                     |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C22",
+      "ledgerKey": "legacyMethodRecovery.spatialLagCorrelation",
+      "note": "same undefined statistic as C21",
+      "phrase": "| HDB           | 71%                     |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C23",
+      "ledgerKey": "legacyMethodRecovery.spatialLagCorrelation",
+      "note": "same undefined statistic as C21",
+      "phrase": "| EC            | 65%                     |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C24",
+      "ledgerKey": "legacyMethodRecovery.transition",
+      "note": "a time-series claim with no time dimension in any linked asset: no per-period memberships exist (data scan empty) and the served payload's transition probabilities are one constant triple across all areas; withdrawn, not restated",
+      "phrase": "**Transition analysis**: moderate persistence — hotspot and coldspot status are sticky but not permanent",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C25",
+      "ledgerKey": "population.monthRange",
+      "note": "the frame spans 1990-01 to 2026-11 (fields); which months the legacy run used is not stated beyond years, and the pack's windows are the 24 months ending at the measured cutoff",
+      "phrase": "**Data Period**: 2021-2026",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C26",
+      "ledgerKey": "legacyMethodRecovery.clusterTable",
+      "note": "a premium inference on the unreproducible table; 'statistically robust' cannot be assessed without the underlying memberships, and an HH label is not a return prediction (gate clause)",
+      "phrase": "The HH cluster premium (12.7% YoY vs ~10-12% elsewhere) is modest but statistically robust",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C27",
+      "ledgerKey": "legacyMethodRecovery.spatialLagCorrelation",
+      "note": "a ranking and a mechanism on the undefined statistic; the pack's per-type fields are recorded for contrast and the mechanism is screened as origin-unverified",
+      "phrase": "The stronger spatial dependence in condos (78%) vs HDB (71%) vs EC (65%) suggests that condo pricing is more influenced by peer neighborhood performance",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C28",
+      "ledgerKey": "legacyMethodRecovery.spatialLagCorrelation",
+      "note": "the methodology names the segments but not the statistic; nothing to re-run",
+      "phrase": "- **Spatial lag correlation**: computed per property type (Condo, HDB, EC) to measure neighborhood dependence",
+      "status": "not-reproducible"
+    }
+  ],
+  "legacyMethodRecovery": {
+    "clusterTable": {
+      "hlRowAbsentFromTable": true,
+      "meaning": "the cluster table is unreproducible as stated: its unit, window and per-cell YoY series are all underspecified, and its YoY percentages depend on a per-cell appreciation series that no stored artefact carries",
+      "packReMeasurement": {
+        "labelCounts": "areaLisa.labelCounts",
+        "note": "recorded for contrast at the planning-area unit under the pack's protocol; it does not recover a 42-cell H3 table and does not confirm or refute it"
+      },
+      "servedAssetAreaCount": 41,
+      "statedCellSum": 42,
+      "statedCounts": {
+        "hh": 16,
+        "lh": 17,
+        "ll": 1,
+        "notSignificant": 8
+      },
+      "statedYoY": {
+        "hh": "12.7%",
+        "lh": "11.3%",
+        "ll": "about 10%",
+        "notSignificant": "12.0%"
+      },
+      "unit": "'cells' — the appendix's H3 resolution-8 units at >=10 records",
+      "unitContradiction": {
+        "note": "the table sums to 42 cells over H3 units, while the only spatial asset this checkout serves is keyed by 41 planning areas; no stored membership of either unit exists for the legacy run, and the counts are not derivable from either"
+      }
+    },
+    "globalMoran": {
+      "meaning": "the legacy's inputs are absent and its variable is unstated, so 0.766/z 9.91 cannot be re-derived; the served payload's constants do not bear on it either way (unlinked artefact)",
+      "namedInputPresent": false,
+      "packReMeasurement": {
+        "areaLevelAppreciation": "areaMoran.moranI / areaMoran.pSim",
+        "note": "both are fields of THIS protocol, recorded for contrast; neither recovers the legacy statistic",
+        "pointLevelPriceLevel": "pointLevel.fullPopulation.moranI"
+      },
+      "recoverableFromServedAsset": false,
+      "stated": {
+        "moranI": 0.766,
+        "pValueBound": "< 0.001",
+        "permutations": 99,
+        "weights": "KNN weights (k=8), row-standardized",
+        "zScore": 9.91
+      },
+      "variable": "underspecified: the appendix aggregates median monthly_rent per H3 cell, while the prose interprets appreciation — the source states no variable for its headline statistic, so the pack does not choose one"
+    },
+    "h3CellArea": {
+      "meaning": "re-measured from the occupied cells themselves: the claim's approximate cell area does not match the measured mean, which is a field, not a prose number",
+      "measuredMeanOccupiedCellAreaKm2": "pointLevel.h3Grid.meanCellAreaKm2",
+      "stated": "H3 resolution 8, '~0.5 km² cells'"
+    },
+    "lisa": {
+      "meaning": "the legacy's LISA run is not reproducible (absent input, underspecified unit); the pack's own LISA memberships are at areaLisa.members",
+      "packProtocolContrast": {
+        "meaning": "the pack deliberately differs from the legacy's recorded settings where the gate requires it: more permutations, a fixed seed, and multiplicity correction before labels",
+        "multiplicityCorrection": "Benjamini-Hochberg q=0.05",
+        "permutations": 999,
+        "seed": 20261120,
+        "unit": "planning area (41 areas after the floor)"
+      },
+      "stated": {
+        "classes": [
+          "HH",
+          "LL",
+          "HL",
+          "LH",
+          "NS"
+        ],
+        "implementation": "Moran_Local",
+        "permutations": 99,
+        "significanceThreshold": "p <= 0.05"
+      }
+    },
+    "namedInput": {
+      "meaning": "the appendix's primary input is a RENTAL file invoked for an APPRECIATION finding; both facts are recorded, neither is explained away, and the pack adds no rental content anywhere",
+      "scan": "absenceScans.legacyNamedInput"
+    },
+    "spatialLagCorrelation": {
+      "definitionRecorded": false,
+      "meaning": "the pack records ONE defined reading per segment for contrast; the legacy's ranking (condo strongest) remains unreproducible and its mechanism prose screened as origin-unverified",
+      "packDefinedReading": "perTypeMoran.<segment>.spatialLagCorrelation.r",
+      "stated": {
+        "condo": 78,
+        "ec": 65,
+        "hdb": 71,
+        "unit": "percent"
+      },
+      "why": "the legacy names no variable pair, no window and no aggregation for 'spatial lag correlation'; rule: an underspecified statistic is recorded as underspecified, not guessed into a definition"
+    },
+    "transition": {
+      "dataArtefactScan": "absenceScans.dataSpatialArtefactScan",
+      "disposition": "withdrawn",
+      "meaning": "a time-series claim over a study that names no periods: the only time reference in the legacy text is its 2021-2026 data period line, no per-period memberships exist in any linked artefact, and the served payload's transition probabilities are the same three constants in every area. The pack withdraws the claim rather than restating it",
+      "servedPayloadTransitionBlockIsConstant": "servedAssetInventory.constantValueFields",
+      "stated": "moderate persistence — hotspot and coldspot status are sticky but not permanent",
+      "timeDimensionInAnyLinkedAsset": false
+    }
+  },
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 28,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/spatial-autocorrelation.md",
+    "legacyFileSha256": "efea427d37df07b7a5363ca6622b33087d80d6d166adf3774a421e9b60bcbc22",
+    "method": "each phrase is required to appear verbatim in the frozen legacy text; a paraphrase inside quotation marks is a defect, and an ellipsis is permitted only for a genuine omission",
+    "quotes": [
+      {
+        "id": "C01",
+        "occurrences": 1,
+        "phrase": "| Moran's I | 0.766 | Strong positive spatial clustering |"
+      },
+      {
+        "id": "C02",
+        "occurrences": 1,
+        "phrase": "| Z-score   | 9.91  | Highly significant                 |"
+      },
+      {
+        "id": "C03",
+        "occurrences": 1,
+        "phrase": "- **Global Moran's I**: KNN weights (k=8), row-standardized, 99 permutations"
+      },
+      {
+        "id": "C04",
+        "occurrences": 1,
+        "phrase": "**Global Moran's I**: 0.766 (strong positive spatial clustering)"
+      },
+      {
+        "id": "C05",
+        "occurrences": 1,
+        "phrase": "- **Z-score**: 9.91, p-value < 0.001 — highly significant"
+      },
+      {
+        "id": "C06",
+        "occurrences": 1,
+        "phrase": "The Moran's I of 0.766 with z=9.91 confirms that appreciation is far from randomly distributed"
+      },
+      {
+        "id": "C07",
+        "occurrences": 1,
+        "phrase": "| HH (hotspot)                         | 16    | 12.7%            | High-growth areas near other high-growth areas   |"
+      },
+      {
+        "id": "C08",
+        "occurrences": 1,
+        "phrase": "| LH (lagging in strong neighborhoods) | 17    | 11.3%            | Potential catch-up or persistent underperformers |"
+      },
+      {
+        "id": "C09",
+        "occurrences": 1,
+        "phrase": "| LL (coldspot)                        | 1     | about 10%        | Weak area in weak surroundings                   |"
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "| Not significant                      | 8     | 12.0%            | No strong local pattern                          |"
+      },
+      {
+        "id": "C11",
+        "occurrences": 1,
+        "phrase": "  - HH (hotspot): 16 cells, 12.7% YoY appreciation"
+      },
+      {
+        "id": "C12",
+        "occurrences": 1,
+        "phrase": "  - LH (lagging in strong neighborhood): 17 cells, 11.3% YoY"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "  - LL (coldspot): 1 cell, ~10% YoY"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "  - Not significant: 8 cells, 12.0% YoY"
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "- **Local LISA** (Local Indicators of Spatial Association): `Moran_Local` with 99 permutations"
+      },
+      {
+        "id": "C16",
+        "occurrences": 1,
+        "phrase": "- **Spatial aggregation**: H3 hexagonal grid at resolution 8 (~0.5 km² cells)"
+      },
+      {
+        "id": "C17",
+        "occurrences": 1,
+        "phrase": "- **Aggregation method**: median `monthly_rent` per H3 cell"
+      },
+      {
+        "id": "C18",
+        "occurrences": 1,
+        "phrase": "- **Primary input**: `data/parquets/L1/housing_hdb_rental.parquet`"
+      },
+      {
+        "id": "C19",
+        "occurrences": 1,
+        "phrase": "- **Minimum threshold**: ≥10 records per cell for analysis"
+      },
+      {
+        "id": "C20",
+        "occurrences": 1,
+        "phrase": "- **Significance threshold**: p ≤ 0.05"
+      },
+      {
+        "id": "C21",
+        "occurrences": 1,
+        "phrase": "| Condo         | 78%                     |"
+      },
+      {
+        "id": "C22",
+        "occurrences": 1,
+        "phrase": "| HDB           | 71%                     |"
+      },
+      {
+        "id": "C23",
+        "occurrences": 1,
+        "phrase": "| EC            | 65%                     |"
+      },
+      {
+        "id": "C24",
+        "occurrences": 1,
+        "phrase": "**Transition analysis**: moderate persistence — hotspot and coldspot status are sticky but not permanent"
+      },
+      {
+        "id": "C25",
+        "occurrences": 1,
+        "phrase": "**Data Period**: 2021-2026"
+      },
+      {
+        "id": "C26",
+        "occurrences": 1,
+        "phrase": "The HH cluster premium (12.7% YoY vs ~10-12% elsewhere) is modest but statistically robust"
+      },
+      {
+        "id": "C27",
+        "occurrences": 1,
+        "phrase": "The stronger spatial dependence in condos (78%) vs HDB (71%) vs EC (65%) suggests that condo pricing is more influenced by peer neighborhood performance"
+      },
+      {
+        "id": "C28",
+        "occurrences": 1,
+        "phrase": "- **Spatial lag correlation**: computed per property type (Condo, HDB, EC) to measure neighborhood dependence"
+      }
+    ]
+  },
+  "notEstablished": [
+    {
+      "id": "N1",
+      "statement": "no high-high (or any) label in this pack is a prediction of future returns or demand (gate clause): the labels summarise the 24 measured months ending at the cutoff and carry no forward-looking content"
+    },
+    {
+      "id": "N2",
+      "statement": "the pack does not recover Moran's I 0.766 or z 9.91: the legacy's variable is unstated and its input absent (origin unverified); the re-measured values are fields of a different, fully specified protocol, recorded for contrast"
+    },
+    {
+      "id": "N3",
+      "statement": "the served spatial_analysis.json.gz payload is unlinked to every run described here, so it adjudicates nothing in either direction: its placeholder constants neither support nor undermine the legacy figures, and this pack neither confirms nor denies them from it"
+    },
+    {
+      "id": "N4",
+      "statement": "the point-level layer is a price-LEVEL screen on coordinates that resolve to 13,562 distinct pairs and fragment into 11,803 KNN components; it is not evidence about appreciation clustering and its analytic p-value is explicitly not calibrated (pointLevel.fullPopulation.inferenceCaveat)"
+    },
+    {
+      "id": "N5",
+      "statement": "no transition or persistence statement is supported by this checkout; the legacy's is withdrawn (C24) and nothing here replaces it"
+    },
+    {
+      "id": "N6",
+      "statement": "every absence claim in this pack is bounded to its recorded scan roots and exclusions (absenceScans.*): the scans describe this checkout, not the world"
+    },
+    {
+      "id": "N7",
+      "statement": "the pack produces memberships at the planning-area unit only; it does not reproduce the legacy's H3-cell unit, whose >=10-record cells existed on an input this checkout does not have"
+    }
+  ],
+  "perTypeMoran": {
+    "benjaminiHochberg": {
+      "adjustedPSim": {
+        "condoNonEc": 0.301,
+        "ec": 0.108,
+        "hdb": 0.108
+      },
+      "m": 3,
+      "meaning": "the three per-type p-values are corrected together: the one uncorrected p_sim at or below 0.05 (ec) does not survive the BH step-up, which is the multiplicity correction the gate requires made visible",
+      "q": 0.05
+    },
+    "condoNonEc": {
+      "areasAfterFloor": 40,
+      "definition": "property_type == 'condo' AND is_ec == false",
+      "droppedAreas": [
+        {
+          "area": "SELETAR",
+          "n0": 2,
+          "n1": 1,
+          "reasons": [
+            "w1BelowFloor",
+            "w0BelowFloor"
+          ]
+        },
+        {
+          "area": "SUNGEI KADUT",
+          "n0": 8,
+          "n1": 6,
+          "reasons": [
+            "w1BelowFloor",
+            "w0BelowFloor"
+          ]
+        }
+      ],
+      "kUsed": 8,
+      "moranI": -0.059234,
+      "pNorm": 0.587846,
+      "pSim": 0.301,
+      "permutations": 999,
+      "seed": 20261120,
+      "spatialLagCorrelation": {
+        "definition": "Pearson r between the z-scored area appreciation and its row-standardised spatial lag — ONE defined reading of the legacy's unstated 'spatial lag correlation', recorded for contrast, not a recovery",
+        "n": 40,
+        "r": -0.193098
+      },
+      "weights": {
+        "connectedComponentsUndirected": 1,
+        "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+        "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+        "islands": 0,
+        "kRequested": 8,
+        "kRule": "min(8, n_areas - 1)",
+        "kUsed": 8,
+        "meanNeighbors": 8.0,
+        "n": 40,
+        "s0": 40.0,
+        "transform": "r (row-standardised)"
+      },
+      "zSim": -0.578763
+    },
+    "ec": {
+      "areasAfterFloor": 13,
+      "definition": "is_ec == true (all such rows carry property_type 'condo')",
+      "droppedAreas": [
+        {
+          "area": "ANG MO KIO",
+          "n0": 14,
+          "n1": 7,
+          "reasons": [
+            "w1BelowFloor"
+          ]
+        },
+        {
+          "area": "BISHAN",
+          "n0": 26,
+          "n1": 8,
+          "reasons": [
+            "w1BelowFloor"
+          ]
+        },
+        {
+          "area": "JURONG EAST",
+          "n0": 26,
+          "n1": 4,
+          "reasons": [
+            "w1BelowFloor"
+          ]
+        }
+      ],
+      "kUsed": 8,
+      "moranI": -0.013328,
+      "pNorm": 0.244307,
+      "pSim": 0.048,
+      "permutations": 999,
+      "seed": 20261120,
+      "spatialLagCorrelation": {
+        "definition": "Pearson r between the z-scored area appreciation and its row-standardised spatial lag — ONE defined reading of the legacy's unstated 'spatial lag correlation', recorded for contrast, not a recovery",
+        "n": 13,
+        "r": -0.056292
+      },
+      "weights": {
+        "connectedComponentsUndirected": 1,
+        "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+        "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+        "islands": 0,
+        "kRequested": 8,
+        "kRule": "min(8, n_areas - 1)",
+        "kUsed": 8,
+        "meanNeighbors": 8.0,
+        "n": 13,
+        "s0": 13.0,
+        "transform": "r (row-standardised)"
+      },
+      "zSim": 1.757842
+    },
+    "hdb": {
+      "areasAfterFloor": 28,
+      "definition": "property_type == 'hdb'",
+      "droppedAreas": [
+        {
+          "area": "CHANGI",
+          "n0": 7,
+          "n1": 5,
+          "reasons": [
+            "w1BelowFloor",
+            "w0BelowFloor"
+          ]
+        },
+        {
+          "area": "DOWNTOWN CORE",
+          "n0": 6,
+          "n1": 4,
+          "reasons": [
+            "w1BelowFloor",
+            "w0BelowFloor"
+          ]
+        },
+        {
+          "area": "SUNGEI KADUT",
+          "n0": 1,
+          "n1": 2,
+          "reasons": [
+            "w1BelowFloor",
+            "w0BelowFloor"
+          ]
+        },
+        {
+          "area": "TANGLIN",
+          "n0": 1,
+          "n1": 5,
+          "reasons": [
+            "w1BelowFloor",
+            "w0BelowFloor"
+          ]
+        }
+      ],
+      "kUsed": 8,
+      "moranI": 0.055737,
+      "pNorm": 0.191137,
+      "pSim": 0.072,
+      "permutations": 999,
+      "seed": 20261120,
+      "spatialLagCorrelation": {
+        "definition": "Pearson r between the z-scored area appreciation and its row-standardised spatial lag — ONE defined reading of the legacy's unstated 'spatial lag correlation', recorded for contrast, not a recovery",
+        "n": 28,
+        "r": 0.156119
+      },
+      "weights": {
+        "connectedComponentsUndirected": 1,
+        "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+        "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+        "islands": 0,
+        "kRequested": 8,
+        "kRule": "min(8, n_areas - 1)",
+        "kUsed": 8,
+        "meanNeighbors": 8.0,
+        "n": 28,
+        "s0": 28.0,
+        "transform": "r (row-standardised)"
+      },
+      "zSim": 1.573247
+    },
+    "meaning": "per-property-type area panels under the same protocol; the legacy's 78%/71%/65% spatial lag correlations are undefined statistics (no variable pair, window or aggregation) and remain not-reproducible at legacyMethodRecovery.spatialLagCorrelation"
+  },
+  "pointLevel": {
+    "coordinateSupport": {
+      "distinctRawLatLonPairs": 13562,
+      "latRange": {
+        "max": 1.461673,
+        "min": 1.239627
+      },
+      "lonRange": {
+        "max": 104.003074,
+        "min": 103.685228
+      },
+      "meaning": "the served coordinates are address/block-resolved, not per-transaction survey points: 1,223,499 rows resolve to 13,562 distinct pairs, so point-level neighbourhoods are dominated by coordinate groups",
+      "pairEqualityMethod": "exact float64 pair equality",
+      "rowsUsed": 1223499
+    },
+    "disconnectedAreas": {
+      "allComponentsAtLeastKPlusOnePoints": true,
+      "components": 11803,
+      "meaning": "the gate's disconnected-areas clause, measured: every point has 8 neighbours (zero islands), yet the undirected graph falls into 11,803 components because identical coordinates trap their KNN links internally; a point-level LISA on these weights would fragment the same way, which is why memberships are produced at the planning-area level only"
+    },
+    "fullPopulation": {
+      "expectedI": -8.17e-07,
+      "inferenceCaveat": "the analytic z assumes independence over 1.2M rows; with 13,562 distinct coordinates and 11,803 disconnected components the effective independence is far coarser, so pNorm must not be read as calibrated — the subsample's permutation pSim is the recorded uncertainty statement",
+      "largestComponentShare": 0.0021,
+      "largestComponentSize": 2587,
+      "moranI": 0.805305,
+      "n": 1223499,
+      "pNorm": 0.0,
+      "pRand": 0.0,
+      "permutations": 0,
+      "permutationsReason": "999 permutations over a 1.2M-row KNN graph is out of compute budget; the recorded inference is the analytic normal approximation under the randomisation hypothesis, and the permutation-based uncertainty for the same screen is carried by the documented seeded subsample below",
+      "smallestComponentSize": 9,
+      "subsample": false,
+      "weights": {
+        "connectedComponentsUndirected": 11803,
+        "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+        "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+        "islands": 0,
+        "kRequested": 8,
+        "kRule": "min(8, n_areas - 1)",
+        "kUsed": 8,
+        "meanNeighbors": 8.0,
+        "n": 1223499,
+        "s0": 1223499.0,
+        "transform": "r (row-standardised)"
+      },
+      "zNorm": 2413.1026,
+      "zRand": 2413.1025
+    },
+    "h3Grid": {
+      "cellAreaSource": "h3.cell_area (h3 4.1.0b2), unit km^2",
+      "distinctOccupiedCells": 393,
+      "legacyClaimedApproxCellAreaKm2": 0.5,
+      "maxCellAreaKm2": 0.8387,
+      "meanCellAreaKm2": 0.8374,
+      "meaning": "re-measures the legacy's '~0.5 km² cells' claim: the mean area of the resolution-8 cells the data actually occupies is 0.8374 km², about 0.34 km² above the claim's approximate value",
+      "minCellAreaKm2": 0.8365,
+      "resolution": 8
+    },
+    "meaning": "the point-level layer screens the PRICE LEVEL (log psf), not appreciation; it is not comparable to the legacy's appreciation prose and not a recovery of its rent-based appendix — origin unverified, screened as",
+    "seededSubsample": {
+      "adequacy": "the size is a compute-budget constant, NOT a power calculation; its recorded adequacy evidence is the agreement of its point estimate with the full-population estimate below and its own permutation significance, both as fields",
+      "differenceInPointEstimateFromFullPopulation": -0.071171,
+      "drawMethod": "numpy.random.default_rng(20261120).choice(n, size=20000, replace=False), row order as read, indices sorted",
+      "fractionOfPointRows": 0.016347,
+      "meaning": "the subsample's KNN is computed inside the subsample, so its neighbour definition differs from the full graph by construction; both point estimates and their difference are recorded fields and neither is a recovery of the legacy's statistic",
+      "moranI": 0.734134,
+      "pSim": 0.001,
+      "permutations": 999,
+      "seed": 20261120,
+      "size": 20000,
+      "weights": {
+        "connectedComponentsUndirected": 146,
+        "definition": "KNN k=8 on unit centroids, row-standardised, built with libpysal 4.14.1 weights.KNN",
+        "islandRule": "an island keeps its LISA/Gi* label not-significant by isolation (esda island_weight=0 is the recorded parameter); the counts above are the disconnected-areas metadata",
+        "islands": 0,
+        "kRequested": 8,
+        "kRule": "min(8, n_areas - 1)",
+        "kUsed": 8,
+        "meanNeighbors": 8.0,
+        "n": 20000,
+        "s0": 20000.0,
+        "transform": "r (row-standardised)"
+      },
+      "zSim": 217.9929
+    },
+    "variable": "log(psf), over all rows at or before the cutoff with non-null lat/lon and positive psf"
+  },
+  "population": {
+    "ecFlagCounts": {
+      "false": 1205901,
+      "true": 30409
+    },
+    "ecFlagLivesUnderPropertyType": {
+      "condo": 30409
+    },
+    "frameColumns": 97,
+    "frameRows": 1236310,
+    "meaning": "the frame is the only transaction source in this ledger; its lat/lon support is measured at pointLevel.coordinateSupport",
+    "missingness": {
+      "absentColumn": {
+        "monthly_rent": "not a column of the 97-column schema",
+        "scan": "absenceScans.frameSchemaRentScan"
+      },
+      "absentRows": {
+        "meaning": "the terminal month's rows are present in the file and are excluded from every windowed aggregation by the cutoff rule, not deleted from the source",
+        "rowsBeyondCutoff": 1211
+      },
+      "meaning": "the four missingness states are kept apart: null VALUES (the 11,600 rows with no lat/lon/planning_area), recorded ZEROS (none for psf), ABSENT ROWS (the terminal month present in the file but outside every window), and an ABSENT COLUMN (monthly_rent)",
+      "nullValueRows": {
+        "lat": 11600,
+        "latAndPlanningAreaSameRows": {
+          "exactlyTheSameRows": true,
+          "overlap": 11600,
+          "xor": 0
+        },
+        "lon": 11600,
+        "planning_area": 11600,
+        "psf": 0
+      },
+      "recordedZeroRows": {
+        "meaning": "no row carries psf <= 0, so no recorded zero price enters a median; a recorded zero and a null are different states and neither occurs for psf in this frame",
+        "psfNonPositive": 0
+      }
+    },
+    "monthRange": {
+      "first": "1990-01",
+      "last": "2026-11"
+    },
+    "monthsWithTransactions": 443,
+    "planningAreaDistinctNonNull": 44,
+    "propertyTypeCounts": {
+      "condo": 245655,
+      "hdb": 990655
+    }
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS11 spatial-autocorrelation evidence: the measured cutoff, the population and its missingness states, the planning-area appreciation panel, the area-level Moran/LISA/Gi* re-measurement with weights, connectivity, permutation, seed and multiplicity fields, per-property-type panels, the point-level price-level screen with its connectivity caveat and seeded subsample, the H3 cell-area re-measurement, the served asset's inventory, the absence scans with boundaries, and every legacy claim's disposition",
+  "series": "spatial-autocorrelation",
+  "servedAssetInventory": {
+    "areaCount": 41,
+    "areaNames": [
+      "ANG MO KIO",
+      "BEDOK",
+      "BISHAN",
+      "BUKIT BATOK",
+      "BUKIT MERAH",
+      "BUKIT PANJANG",
+      "BUKIT TIMAH",
+      "CHANGI",
+      "CHOA CHU KANG",
+      "CLEMENTI",
+      "DOWNTOWN CORE",
+      "GEYLANG",
+      "HOUGANG",
+      "JURONG EAST",
+      "JURONG WEST",
+      "KALLANG",
+      "LIM CHU KANG",
+      "MANDAI",
+      "MARINA SOUTH",
+      "MARINE PARADE",
+      "MUSEUM",
+      "NEWTON",
+      "NOVENA",
+      "ORCHARD",
+      "OUTRAM",
+      "PASIR RIS",
+      "PUNGGOL",
+      "QUEENSTOWN",
+      "RIVER VALLEY",
+      "ROCHOR",
+      "SEMBAWANG",
+      "SENGKANG",
+      "SERANGOON",
+      "SINGAPORE RIVER",
+      "SOUTHERN ISLANDS",
+      "TAMPINES",
+      "TANGLIN",
+      "TENGAH",
+      "TOA PAYOH",
+      "WOODLANDS",
+      "YISHUN"
+    ],
+    "bytes": 1156,
+    "constantValueFields": {
+      "hotspot.classification": {
+        "\"NOT_SIGNIFICANT\"": 41
+      },
+      "hotspot.confidence": {
+        "\"NOT_SIGNIFICANT\"": 41
+      },
+      "hotspot.p_value": {
+        "1.0": 41
+      },
+      "hotspot.z_score": {
+        "0.0": 41
+      },
+      "lisa_cluster.persistence_rate": {
+        "0.5": 41
+      },
+      "lisa_cluster.transition_probabilities": {
+        "{\"to_coldspot\": 0.2, \"to_hotspot\": 0.2, \"to_stable\": 0.6}": 41
+      },
+      "lisa_cluster.type": {
+        "\"STABLE\"": 41
+      },
+      "meaning": "each map is a distinct-value -> area-count table over the payload's areas: a single key means the field is constant across every area, which is the placeholder shape",
+      "neighborhood_effect.moran_i_local": {
+        "0.0": 41
+      },
+      "neighborhood_effect.neighborhood_multiplier": {
+        "1.0": 41
+      }
+    },
+    "decompressedBytes": 24305,
+    "firstAreaByInsertionOrder": {
+      "area": "ANG MO KIO",
+      "fields": {
+        "hotspot": {
+          "classification": "NOT_SIGNIFICANT",
+          "confidence": "NOT_SIGNIFICANT",
+          "p_value": 1.0,
+          "z_score": 0.0
+        },
+        "lisa_cluster": {
+          "persistence_rate": 0.5,
+          "transition_probabilities": {
+            "to_coldspot": 0.2,
+            "to_hotspot": 0.2,
+            "to_stable": 0.6
+          },
+          "type": "STABLE",
+          "yoy_appreciation": 1.0
+        },
+        "neighborhood_effect": {
+          "moran_i_local": 0.0,
+          "neighborhood_multiplier": 1.0,
+          "spatial_lag": 295000.0
+        }
+      },
+      "meaning": "the payload's first stored area; its z_score 0.0, p_value 1.0, moran_i_local 0.0 and neighborhood_multiplier 1.0 with a constant spatial_lag value are the measured placeholder shape, recorded from the file, not inferred"
+    },
+    "frameAreaIntersection": {
+      "frameAreas": 44,
+      "frameOnly": [
+        "CENTRAL WATER CATCHMENT",
+        "SELETAR",
+        "SUNGEI KADUT"
+      ],
+      "payloadOnly": [],
+      "shared": 41
+    },
+    "meaning": "the served payload is an UNLINKED artefact: nothing in this checkout connects it to the legacy's retired scripts, so it adjudicates nothing about the legacy figures in EITHER direction — its constants neither confirm nor refute Moran's I 0.766/z 9.91 and its transition block is a per-area constant triple, not a time series. This pack does not rewrite it; RS11 owns it and may extend it later from areaLisa/areaGiStar, with no rental content",
+    "metadata": {
+      "dataVersion": "L3_unified_dataset",
+      "generatedAt": "2026-02-19T17:23:01.143214",
+      "methodology": "Getis-Ord Gi* hotspot analysis, LISA clustering, Moran's I"
+    },
+    "path": "app/public/data/analytics/spatial_analysis.json.gz",
+    "sha256": "e3ff620242187ba93f09986f313b3261c63df2cc6b333cce460c63fe227c2d54",
+    "varyingValueFields": {
+      "lisa_cluster.yoy_appreciation": {
+        "distinctValues": 28,
+        "max": 7.9,
+        "min": 0.0
+      },
+      "neighborhood_effect.spatial_lag": {
+        "distinctValues": 40,
+        "max": 3700000.0,
+        "min": 61750.0
+      }
+    }
+  },
+  "study": "RS11"
+}

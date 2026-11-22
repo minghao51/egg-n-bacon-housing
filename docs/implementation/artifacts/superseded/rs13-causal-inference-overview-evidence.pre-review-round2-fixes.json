@@ -1,0 +1,2368 @@
+{
+  "artefactNameScan": {
+    "filesWalked": 17730,
+    "housingPolicyDatesFileMatches": 0,
+    "matchBasis": "case-insensitive substring match on file NAMES only; contents are not read",
+    "matches": {
+      "bala": {
+        "count": 0,
+        "files": []
+      },
+      "bandwidth": {
+        "count": 0,
+        "files": []
+      },
+      "did": {
+        "count": 2,
+        "files": [
+          "app/dist/data/analysis/causal_did_analysis.png",
+          "app/public/data/analysis/causal_did_analysis.png"
+        ]
+      },
+      "housing_policy_dates": {
+        "count": 0,
+        "files": []
+      },
+      "policy": {
+        "count": 0,
+        "files": []
+      },
+      "pretrend": {
+        "count": 0,
+        "files": []
+      },
+      "rdit": {
+        "count": 0,
+        "files": []
+      }
+    },
+    "meaning": "the dated-policy artefact absence: housing_policy_dates matches zero file names across the three data roots. The two 'did' matches are the unlinked plot PNG and its build copy (unlinkedArtefact). This scan bounds what it claims: names in these roots, not file contents, not other roots, not history",
+    "roots": [
+      "data",
+      "app/public/data",
+      "app/dist/data"
+    ],
+    "skippedPrefixes": [
+      ".git/",
+      ".venv/",
+      "node_modules/",
+      "__pycache__/"
+    ],
+    "tokens": [
+      "policy",
+      "did",
+      "rdit",
+      "bala",
+      "bandwidth",
+      "pretrend",
+      "housing_policy_dates"
+    ]
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 39,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; an unresolved key fails the build rather than shipping. Resolution is syntactic and carries no judgement about the disposition",
+    "resolution": "syntactic",
+    "unresolved": []
+  },
+  "codeScan": {
+    "diDRditPythonFileCount": 0,
+    "meaning": "a count of scan-eligible .py files whose text carries DiD/RDiT tokens, under the declared roots and exclusions. Zero here supports the frozen text's own retirement sentence for THIS checkout's supported surface; it is not a claim about any other machine, history or branch",
+    "pythonFilesScanned": 54,
+    "pythonFilesWithTokenMatches": [],
+    "tokens": [
+      "DiD",
+      "RDiT",
+      "difference-in-differences"
+    ]
+  },
+  "cohortScreens": {
+    "diD": {
+      "floorSatisfiedByStatedGroups": true,
+      "meaning": "a screen of cohort sizes against the stated floor, inside the measured cutoff. The condominium source starts 2021-01, so 'post-2021' is the whole private panel up to the cutoff. No regression is run and no treatment assignment is reconstructed",
+      "monthsPresent": 70,
+      "rows": 245234,
+      "rowsByShippedLabel": {
+        "Core Central Region": 38653,
+        "Outside Central Region": 132620,
+        "Rest of Central Region": 73961
+      },
+      "statedControlRows": 132620,
+      "statedDefinition": "frozen text, technical appendix: Condominium transactions post-2021, CCR vs OCR",
+      "statedGroupFloor": 100,
+      "statedTreatmentRows": 38653,
+      "windowMonths": {
+        "first": "2021-01",
+        "last": "2026-10"
+      }
+    },
+    "legacyInputPath": {
+      "claimedPath": "data/parquets/L3/housing_unified.parquet",
+      "meaning": "the frozen text names a primary input path this checkout does not hold; the shipped platinum dataset is at a different path and no artefact ties the two",
+      "pathExistsInCheckout": false,
+      "shippedUnifiedDataset": "data/pipeline/04_platinum/unified_dataset.parquet"
+    },
+    "rdit": {
+      "calendarMonthsInWindow": 37,
+      "floorSatisfiedByEveryWindowMonth": true,
+      "fullyBeforeCutoff": true,
+      "maxMonth": "2024-07",
+      "maxMonthTransactions": 3036,
+      "meaning": "a screen of the stated window's row and month coverage. The event date the window is anchored on is prose, not a dated artefact (identificationAudit.concurrentPolicies), so the window itself is screened, not verified",
+      "minMonth": "2023-02",
+      "minMonthTransactions": 1837,
+      "monthsPresent": 37,
+      "monthsPresentEqualsCalendarMonths": true,
+      "rows": 82417,
+      "statedDefinition": "frozen text, technical appendix: HDB transactions, Jun 2022 - Jun 2025 (18 months before/after policy)",
+      "statedGroupFloor": 100,
+      "windowMonths": {
+        "first": "2022-06",
+        "last": "2025-06"
+      }
+    },
+    "segmentAreaSpans": {
+      "distinctPlanningAreasAnyLabel": 43,
+      "labels": {
+        "Core Central Region": {
+          "distinctPlanningAreas": 15,
+          "nullPlanningAreaRows": 1,
+          "planningAreas": [
+            "BUKIT MERAH",
+            "BUKIT TIMAH",
+            "CENTRAL WATER CATCHMENT",
+            "DOWNTOWN CORE",
+            "MUSEUM",
+            "NEWTON",
+            "NOVENA",
+            "ORCHARD",
+            "QUEENSTOWN",
+            "RIVER VALLEY",
+            "ROCHOR",
+            "SINGAPORE RIVER",
+            "SOUTHERN ISLANDS",
+            "TANGLIN",
+            "TOA PAYOH"
+          ],
+          "planningAreasAlsoUnderAnotherLabel": [
+            "BUKIT MERAH",
+            "BUKIT TIMAH",
+            "CENTRAL WATER CATCHMENT",
+            "MUSEUM",
+            "NOVENA",
+            "QUEENSTOWN",
+            "ROCHOR",
+            "SINGAPORE RIVER",
+            "TANGLIN",
+            "TOA PAYOH"
+          ],
+          "rows": 38699
+        },
+        "Outside Central Region": {
+          "distinctPlanningAreas": 28,
+          "nullPlanningAreaRows": 0,
+          "planningAreas": [
+            "ANG MO KIO",
+            "BEDOK",
+            "BUKIT BATOK",
+            "BUKIT PANJANG",
+            "CENTRAL WATER CATCHMENT",
+            "CHANGI",
+            "CHOA CHU KANG",
+            "CLEMENTI",
+            "GEYLANG",
+            "HOUGANG",
+            "JURONG EAST",
+            "JURONG WEST",
+            "MANDAI",
+            "MARINE PARADE",
+            "PASIR RIS",
+            "PUNGGOL",
+            "QUEENSTOWN",
+            "SELETAR",
+            "SEMBAWANG",
+            "SENGKANG",
+            "SERANGOON",
+            "SUNGEI KADUT",
+            "TAMPINES",
+            "TANGLIN",
+            "TENGAH",
+            "TOA PAYOH",
+            "WOODLANDS",
+            "YISHUN"
+          ],
+          "planningAreasAlsoUnderAnotherLabel": [
+            "BEDOK",
+            "CENTRAL WATER CATCHMENT",
+            "CHANGI",
+            "CLEMENTI",
+            "GEYLANG",
+            "MARINE PARADE",
+            "QUEENSTOWN",
+            "TANGLIN",
+            "TOA PAYOH"
+          ],
+          "rows": 132795
+        },
+        "Rest of Central Region": {
+          "distinctPlanningAreas": 19,
+          "nullPlanningAreaRows": 0,
+          "planningAreas": [
+            "BEDOK",
+            "BISHAN",
+            "BUKIT MERAH",
+            "BUKIT TIMAH",
+            "CENTRAL WATER CATCHMENT",
+            "CHANGI",
+            "CLEMENTI",
+            "GEYLANG",
+            "KALLANG",
+            "MARINA SOUTH",
+            "MARINE PARADE",
+            "MUSEUM",
+            "NOVENA",
+            "OUTRAM",
+            "QUEENSTOWN",
+            "ROCHOR",
+            "SINGAPORE RIVER",
+            "TANGLIN",
+            "TOA PAYOH"
+          ],
+          "planningAreasAlsoUnderAnotherLabel": [
+            "BEDOK",
+            "BUKIT MERAH",
+            "BUKIT TIMAH",
+            "CENTRAL WATER CATCHMENT",
+            "CHANGI",
+            "CLEMENTI",
+            "GEYLANG",
+            "MARINE PARADE",
+            "MUSEUM",
+            "NOVENA",
+            "QUEENSTOWN",
+            "ROCHOR",
+            "SINGAPORE RIVER",
+            "TANGLIN",
+            "TOA PAYOH"
+          ],
+          "rows": 74161
+        }
+      },
+      "labelsAreNotAPartitionOfPlanningAreas": true,
+      "meaning": "the shipped labels' measured spans overlap (the same planning area appears under more than one label), so the labels are not a clean area partition in the shipped frame; this screens the shipped column and does not reconstruct the retired analysis's treatment assignment, which is absent as code",
+      "sourceColumn": "market_segment"
+    },
+    "statedWindows": {
+      "legacyDataPeriod": {
+        "frameFirstMonth": "1990-01",
+        "frameLastMonth": "2026-11",
+        "meaning": "the stated data period is the retired analysis's own filter, recorded in prose only; the frame spans wider than it and the private rows start later than it. The filter is not recorded as an artefact and is not reproduced here",
+        "privateRowsFirstMonth": "2021-01",
+        "statedPeriod": "2017-2026"
+      }
+    }
+  },
+  "cutoff": {
+    "allRowsCrossCheck": {
+      "lastCompleteMonth": "2026-10",
+      "lastCompleteMonthShareOfTrailingMedian": 1.0287,
+      "lastCompleteMonthTransactions": 4719,
+      "terminalMonth": "2026-11",
+      "terminalMonthShareOfTrailingMedian": 0.264,
+      "terminalMonthTransactions": 1211,
+      "trailing12MedianTransactions": 4587.5,
+      "trailing12Months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact (the same rule RS03/RS04/RS05/RS09/RS10 shipped, computed on the private rows so the bound is identical across the studies)",
+    "frameFirstMonth": "1990-01",
+    "frameLastMonth": "2026-11",
+    "hdbRowsCrossCheck": {
+      "lastCompleteMonth": "2026-10",
+      "lastCompleteMonthShareOfTrailingMedian": 1.0226,
+      "lastCompleteMonthTransactions": 2173,
+      "terminalMonth": "2026-11",
+      "terminalMonthShareOfTrailingMedian": 0.3718,
+      "terminalMonthTransactions": 790,
+      "trailing12MedianTransactions": 2125.0,
+      "trailing12Months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthShareOfTrailingMedian": 1.1936,
+    "lastCompleteMonthTransactions": 2546,
+    "meaning": "every cohort window and cutoff-bounded aggregation in this ledger stops at lastCompleteMonth (cohortScreens.diD, cohortScreens.rdit); frameInventory and cohortScreens.segmentAreaSpans are full-frame descriptions whose value counts are computed on the whole shipped frame and include the terminal month's rows - recorded as frame inventory, not as window evidence",
+    "populationBasis": "private rows (market_segment non-null)",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.1974,
+    "terminalMonthTransactions": 421,
+    "trailing12MedianTransactions": 2133.0,
+    "trailing12Months": [
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ]
+  },
+  "definition": "An identification audit of the frozen policy-impact article, measured against this checkout. Every gate input is recorded in one of two states: ABSENT (the artefact that would carry it matches zero files in a stated scan) or UNMEASURABLE (the quantity needs a run or an artefact this checkout does not hold). The two headline numbers — the CCR-vs-OCR condominium DiD estimate of about -$137,743 and the HDB RDiT jump of about +$13,118 — are WITHDRAWN as unreconstructable identification per the recorded D12/RF08 disposition of 2026-11-18, and the reason is published with them. What is measured here is the frame the two cohorts would be drawn from (screend for size inside the measured cutoff), the shipped region labels' planning-area spans, and the absences. A screen is not a finding about origin: nothing here says how the retired analysis assigned treatment or produced its numbers, and no estimate is reconstructed. What WOULD make the two numbers reconstructable — a dated policy artefact with a bandwidth rule and an estimator record — is recorded as a requirement, not a plan.",
+  "frameInventory": {
+    "columns": 97,
+    "ecFlag": {
+      "column": "is_ec",
+      "ecAsPropertyTypeValue": false,
+      "meaning": "EC exists in the frame as a boolean flag on condominium rows, not as a property_type value; the frozen text's EC coverage can only be screened against the flag",
+      "propertyTypesOfTrueRows": {
+        "condo": 30409
+      },
+      "trueRows": 30409
+    },
+    "marketSegment": {
+      "meaning": "a region label populated only on the private rows; the null bucket is a null VALUE on present rows, not absent rows and not a stored zero",
+      "nonNullEqualsCondoRowCount": true,
+      "nonNullRows": 245655,
+      "nullRows": 990655,
+      "nullsEqualHdbRowCount": true,
+      "valueCounts": {
+        "Core Central Region": 38699,
+        "Outside Central Region": 132795,
+        "Rest of Central Region": 74161
+      }
+    },
+    "missingnessStates": {
+      "absentColumn": {
+        "framePolicyDateColumns": [],
+        "meaning": "the frame's 97-column schema holds no policy-date column at all: the treatment date is not a column that is null, it is absent from the schema"
+      },
+      "absentRow": {
+        "housingPolicyDatesFileMatches": 0,
+        "meaning": "the dated-policy artefact matches zero files in the name scan (artefactNameScan), so there are no rows of it to count — an absence of the file, not a zero-valued column in it"
+      },
+      "nullValue": {
+        "marketSegmentNullRows": 990655,
+        "meaning": "present columns carrying null values on present rows",
+        "planningAreaNullRows": 11600,
+        "regionNullRows": 11600
+      },
+      "recordedZero": {
+        "count": 0,
+        "meaning": "no figure in this ledger is a stored zero read from a source; every zero here (0 matches, 0 files) is a MEASURED count of absence and is labelled as one"
+      }
+    },
+    "monthSpans": {
+      "allRows": {
+        "first": "1990-01",
+        "last": "2026-11"
+      },
+      "hdbRows": {
+        "first": "1990-01",
+        "last": "2026-11"
+      },
+      "privateRows": {
+        "first": "2021-01",
+        "last": "2026-11"
+      }
+    },
+    "planningArea": {
+      "distinctNonNullValues": 44,
+      "nullRows": 11600,
+      "nullRowsByPropertyType": {
+        "condo": 1,
+        "hdb": 11599
+      }
+    },
+    "propertyTypes": {
+      "condo": 245655,
+      "hdb": 990655
+    },
+    "readBasis": "row and column counts from the parquet footer metadata (pyarrow ParquetFile metadata), then the six named working columns this ledger reads (month, property_type, planning_area, region, market_segment, is_ec); no full-frame column sweep",
+    "region": {
+      "valueCounts": {
+        "(null)": 11600,
+        "CCR": 65679,
+        "OCR": 931638,
+        "RCR": 227393
+      }
+    },
+    "rows": 1236310
+  },
+  "identificationAudit": {
+    "anticipation": {
+      "meaning": "no anticipation window is recorded anywhere; the token appears only in the programme's own register vocabulary, and an anticipation check needs the dated events anyway",
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "anticipation": {
+          "files": 0,
+          "occurrences": 0,
+          "perFile": []
+        }
+      }
+    },
+    "assumptions": {
+      "recordedInLegacy": "the frozen text's limitations sentence records two assumptions itself: DiD comparability of CCR and OCR condo segments, and no confounding events at the RDiT cutoff. Both are prose acknowledgments; nothing in the checkout tests them",
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "parallel trend": {
+          "files": 0,
+          "occurrences": 0,
+          "perFile": []
+        }
+      }
+    },
+    "concurrentPolicies": {
+      "nearestRecord": {
+        "bytes": 28621,
+        "path": "docs/plans/2026-02-04-analyze-policy-impact.md",
+        "sha256": "d8acf8fbf136649453f2c4e481a46d62015897fb8268542d97aa372db0e7bd65",
+        "whatItDoesNotDo": "it cannot pin an event date, cannot enumerate concurrent policies, and adjudicates nothing about the frozen text's event dating in either direction",
+        "whatItHolds": "a prose policy-event timeline (April 2023, September 2023, December 2023) in a February 2026 investigation document, plus an explicit 'Traditional DiD not applicable to HDB' limitation. It is prose, not a dated artefact, it names no September 2022 event, and nothing links it to the retired analysis"
+      },
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "ABSD": {
+          "files": 9,
+          "occurrences": 30,
+          "perFile": [
+            {
+              "occurrences": 4,
+              "path": "docs/analytics/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 4,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/macro-sensitivity.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
+            },
+            {
+              "occurrences": 3,
+              "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2025-02-17-var-implementation-report.md"
+            },
+            {
+              "occurrences": 5,
+              "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
+            },
+            {
+              "occurrences": 10,
+              "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
+            }
+          ]
+        },
+        "housing_policy_dates": {
+          "files": 5,
+          "occurrences": 5,
+          "perFile": [
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/macro-sensitivity.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-03-04-data-quality-handoff.md"
+            }
+          ]
+        }
+      }
+    },
+    "estimand": {
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "specificationProse": "the only estimand-shaped record is the frozen text's own formula prose: 'price ~ treatment + post + treatment × post' for the DiD and the jump/kink formulas for the RDiT. No estimand statement, estimand token or estimator output exists outside that prose",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "estimand": {
+          "files": 0,
+          "occurrences": 0,
+          "perFile": []
+        }
+      }
+    },
+    "multiplicity": {
+      "meaning": "no multiple-testing policy is recorded for this study; the multiple-testing token matches the school-quality register row, which governs a different study",
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "multiple-testing": {
+          "files": 0,
+          "occurrences": 0,
+          "perFile": []
+        }
+      }
+    },
+    "placebos": {
+      "meaning": "the placebo token matches only the school-quality study's own surfaces and the programme register — a different study's RDD placebo, not a policy-study placebo. No placebo output for the policy estimates exists in the scan",
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "placebo": {
+          "files": 5,
+          "occurrences": 33,
+          "perFile": [
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/school-quality.md"
+            },
+            {
+              "occurrences": 3,
+              "path": "docs/plans/2025-02-02-school-impact-analysis.md"
+            },
+            {
+              "occurrences": 4,
+              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
+            },
+            {
+              "occurrences": 24,
+              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
+            }
+          ]
+        }
+      }
+    },
+    "pretrends": {
+      "meaning": "no pretrend test output and no parallel-trends artefact exists in the scan; the token appears nowhere outside the programme's own register vocabulary",
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "parallel trend": {
+          "files": 0,
+          "occurrences": 0,
+          "perFile": []
+        },
+        "pretrend": {
+          "files": 0,
+          "occurrences": 0,
+          "perFile": []
+        }
+      }
+    },
+    "robustness": {
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "statedGrid": "frozen text prose only: ±6 months default, robustness tested at 3, 6, 9, 12 months. No stored grid output exists; the bandwidth token matches school-quality and edition surfaces, not a policy-study artefact",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "bandwidth": {
+          "files": 10,
+          "occurrences": 53,
+          "perFile": [
+            {
+              "occurrences": 3,
+              "path": "docs/analytics/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 3,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+            },
+            {
+              "occurrences": 2,
+              "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/findings.md"
+            },
+            {
+              "occurrences": 2,
+              "path": "docs/analytics/school-quality.md"
+            },
+            {
+              "occurrences": 4,
+              "path": "docs/plans/2025-02-02-school-impact-analysis.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
+            },
+            {
+              "occurrences": 6,
+              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
+            },
+            {
+              "occurrences": 30,
+              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
+            }
+          ]
+        }
+      }
+    },
+    "treatmentControlConstruction": {
+      "rditRunningVariable": "the frozen text's running-variable prose ('months since policy') cannot be constructed without a dated event artefact, which matches zero files",
+      "scanBoundary": "token scan over the declared documentation roots with the programme surfaces excluded (scanDeclaration); the token counts are over that bounded set and claim nothing beyond it",
+      "specificationProse": "the frozen text states treatment = CCR condos, control = OCR condos, and a CCR/RCR/OCR planning-area classification. The assignment code is absent (codeScan); the shipped frame's region labels are screens, not the assignment (cohortScreens.segmentAreaSpans)",
+      "status": "unmeasurable",
+      "tokenScan": {
+        "DiD": {
+          "files": 11,
+          "occurrences": 24,
+          "perFile": [
+            {
+              "occurrences": 4,
+              "path": "docs/analytics/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 4,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/findings.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/archive/20260127-mrt-complete-summary.md"
+            },
+            {
+              "occurrences": 2,
+              "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
+            },
+            {
+              "occurrences": 5,
+              "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
+            },
+            {
+              "occurrences": 3,
+              "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-17-analytics-component-library.md"
+            }
+          ]
+        },
+        "RDiT": {
+          "files": 8,
+          "occurrences": 18,
+          "perFile": [
+            {
+              "occurrences": 5,
+              "path": "docs/analytics/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 5,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/analytics/findings.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
+            },
+            {
+              "occurrences": 3,
+              "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-17-analytics-component-library.md"
+            }
+          ]
+        },
+        "difference-in-differences": {
+          "files": 10,
+          "occurrences": 12,
+          "perFile": [
+            {
+              "occurrences": 2,
+              "path": "docs/analytics/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 2,
+              "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/archive/20260127-FINAL-COMPLETE-SUMMARY.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/archive/20260127-mrt-heterogeneous-effects-addendum.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/archive/20260127-property-type-mrt-comparison-final-results.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
+            },
+            {
+              "occurrences": 1,
+              "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "inputs": {
+    "app/dist/data/analysis/causal_did_analysis.png": {
+      "bytes": 91244,
+      "sha256": "7f5732e6c77711e95278a7c38d2f9d5ea47c81bc542610b0e27eb79514a30177"
+    },
+    "app/public/data/analysis/causal_did_analysis.png": {
+      "bytes": 91244,
+      "sha256": "7f5732e6c77711e95278a7c38d2f9d5ea47c81bc542610b0e27eb79514a30177"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "bytes": 78381526,
+      "columns": 97,
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/causal-inference-overview.md": {
+      "bytes": 6574,
+      "sha256": "bd2e2f6898aae548168db7b8d3bde446c8750f01897de24d1b37aec7f2805c89"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md": {
+      "bytes": 6574,
+      "sha256": "bd2e2f6898aae548168db7b8d3bde446c8750f01897de24d1b37aec7f2805c89"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/manifest.json": {
+      "bytes": 21832,
+      "sha256": "11d3e170360013ba7044159e48689be56ff28d4da5cf3a216ad27f5211d79271"
+    },
+    "docs/plans/2026-02-04-analyze-policy-impact.md": {
+      "bytes": 28621,
+      "sha256": "d8acf8fbf136649453f2c4e481a46d62015897fb8268542d97aa372db0e7bd65"
+    }
+  },
+  "leaseMispricing": {
+    "balaSchedule": {
+      "fileNameMatches": 0,
+      "meaning": "the theoretical schedule the frozen text compares against exists as prose only. No data artefact named Bala matches in the data roots (artefactNameScan.bala), and the token's documentation matches are prose references, not the schedule",
+      "status": "absent",
+      "tokenScan": {
+        "files": 23,
+        "occurrences": 40
+      }
+    },
+    "bands": {
+      "band3050": {
+        "meaning": "the band's direction claim ('richly priced') has no stored output behind it in this checkout",
+        "statedBand": "30-50 years",
+        "status": "not-reproducible"
+      },
+      "band8084": {
+        "meaning": "the band's direction claim ('mild undervaluation') has no stored output behind it in this checkout",
+        "statedBand": "80-84 years",
+        "status": "not-reproducible"
+      },
+      "band9798": {
+        "meaning": "the band's direction claim ('large discount') has no stored output behind it in this checkout",
+        "statedBand": "97-98 years",
+        "status": "not-reproducible"
+      }
+    },
+    "deviationThreshold": {
+      "meaning": "the threshold is a rule for flagging deviations; with no schedule and no stored deviation output, no deviation was recomputed and none is reported here",
+      "statedThreshold": "≥5% deviation flagged — frozen text prose only",
+      "status": "not-reproducible"
+    },
+    "meaning": "the lease claims are recorded as not-reproducible, not as false: the checkout cannot recompute them, and nothing here measures lease pricing against any schedule"
+  },
+  "legacyClaims": [
+    {
+      "id": "C01",
+      "ledgerKey": "cohortScreens.statedWindows.legacyDataPeriod",
+      "note": "the stated period is the retired analysis's own filter, recorded in prose only; the frame spans 1990-01 to 2026-11 and the private rows start 2021-01, so the filter is neither reproduced nor refuted here (cohortScreens.statedWindows.legacyDataPeriod)",
+      "phrase": "Data Period**: 2017-2026",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C02",
+      "ledgerKey": "frameInventory.propertyTypes",
+      "note": "screened against the frame: property_type holds exactly two values, hdb (990,655 rows) and condo (245,655 rows); EC exists only as the is_ec flag on 30,409 condominium rows (frameInventory.ecFlag), not as a property_type value",
+      "phrase": "Coverage**: HDB, condominium, and EC market dynamics",
+      "status": "re-measured"
+    },
+    {
+      "id": "C03",
+      "ledgerKey": "withdrawals.condoDid",
+      "note": "withdrawn per the recorded D12/RF08 disposition of 2026-11-18 as unreconstructable identification; no dated policy artefact, no estimator record (withdrawals.condoDid)",
+      "phrase": "about -$137,743 relative effect",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C04",
+      "ledgerKey": "withdrawals.condoDid.dependentInterpretations",
+      "note": "an interpretation cell of the same table row as C03; it restates the withdrawn estimate and is withdrawn with it (withdrawals.condoDid.dependentInterpretations)",
+      "phrase": "Prime condos were meaningfully suppressed",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C05",
+      "ledgerKey": "withdrawals.hdbRdit",
+      "note": "withdrawn per the recorded D12/RF08 disposition of 2026-11-18 as unreconstructable identification (withdrawals.hdbRdit)",
+      "phrase": "about +$13,118 immediate jump",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C06",
+      "ledgerKey": "withdrawals.hdbRdit.dependentInterpretations",
+      "note": "the interpretation cell of the same table row as C05; withdrawn with it (withdrawals.hdbRdit.dependentInterpretations)",
+      "phrase": "HDB did not show the intended cooling response",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C07",
+      "ledgerKey": "identificationAudit.concurrentPolicies.nearestRecord",
+      "note": "the event date exists as prose in the frozen text and as ABSD token matches elsewhere; no dated artefact pins it, and the checkout's nearest prose timeline (the February 2026 plan doc) names no September 2022 event. Prose cannot pin a date in either direction (identificationAudit.concurrentPolicies.nearestRecord)",
+      "phrase": "Sep 2022 ABSD changes",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C08",
+      "ledgerKey": "identificationAudit.concurrentPolicies.nearestRecord",
+      "note": "the nearest prose timeline does name a December 2023 package, but it is prose in an unlinked document, not a dated artefact; it cannot pin the date and cannot enumerate concurrent policies (identificationAudit.concurrentPolicies.nearestRecord)",
+      "phrase": "Dec 2023 cooling measures",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C09",
+      "ledgerKey": "withdrawals.hdbRdit.dependentInterpretations",
+      "note": "the takeaway restates the withdrawn RDiT jump's direction; withdrawn with it (withdrawals.hdbRdit.dependentInterpretations)",
+      "phrase": "HDB prices remained resilient and in this sample even moved higher after a major policy event",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C10",
+      "ledgerKey": "leaseMispricing.bands.band3050",
+      "note": "the 30-50 year band's direction claim; the Bala schedule and any deviation output are absent from this checkout (leaseMispricing.bands.band3050)",
+      "phrase": "Market appears richly priced relative to theory",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C11",
+      "ledgerKey": "leaseMispricing.bands.band8084",
+      "note": "the 80-84 year band's direction claim; underspecified (which cases, which window) as well as unbacked by stored output (leaseMispricing.bands.band8084)",
+      "phrase": "Mild undervaluation in some cases",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C12",
+      "ledgerKey": "leaseMispricing.bands.band9798",
+      "note": "the 97-98 year band's direction claim; no schedule, no stored deviation output (leaseMispricing.bands.band9798)",
+      "phrase": "Large discount relative to theoretical schedule",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C13",
+      "ledgerKey": "cohortScreens.statedWindows.legacyDataPeriod",
+      "note": "the appendix restates the header's period claim with the two named property types; the same disposition as C01 applies (cohortScreens.statedWindows.legacyDataPeriod)",
+      "phrase": "Coverage**: 2017-2026, split by property type (Condominium, HDB)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C14",
+      "ledgerKey": "cohortScreens.diD",
+      "note": "screened as a cohort size inside the measured cutoff: 245,234 condominium rows across 70 months to 2026-10, 38,653 under the CCR label and 132,620 under the OCR label. A screen of the named population, not the estimator (cohortScreens.diD)",
+      "phrase": "Condominium transactions post-2021, CCR vs OCR",
+      "status": "re-measured"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "cohortScreens.rdit",
+      "note": "screened as a cohort: 82,417 HDB rows across 37 months, every month before the cutoff. The window's anchor date is prose, not a dated artefact, so the window is screened, not verified (cohortScreens.rdit)",
+      "phrase": "HDB transactions, Jun 2022 - Jun 2025 (18 months before/after policy)",
+      "status": "re-measured"
+    },
+    {
+      "id": "C16",
+      "ledgerKey": "cohortScreens.segmentAreaSpans.labels.Core Central Region",
+      "note": "the shipped CCR label spans 15 distinct planning areas (one row with null area), not the claimed 10, and CCR areas also appear under other labels. This screens the shipped column; it does not reconstruct how the retired analysis classified areas (cohortScreens.segmentAreaSpans)",
+      "phrase": "CCR (10 planning areas",
+      "status": "re-measured"
+    },
+    {
+      "id": "C17",
+      "ledgerKey": "cohortScreens.segmentAreaSpans.labels.Rest of Central Region",
+      "note": "the shipped RCR label spans 19 distinct planning areas, not the claimed 12, with overlap into other labels; same screen semantics as C16 (cohortScreens.segmentAreaSpans)",
+      "phrase": "RCR (12 planning areas",
+      "status": "re-measured"
+    },
+    {
+      "id": "C18",
+      "ledgerKey": "cohortScreens.segmentAreaSpans.labels.Outside Central Region",
+      "note": "the shipped OCR label spans 28 distinct planning areas; 'remainder' is not a clean partition in the shipped frame because areas overlap across labels; same screen semantics as C16 (cohortScreens.segmentAreaSpans)",
+      "phrase": "OCR (remainder)",
+      "status": "re-measured"
+    },
+    {
+      "id": "C19",
+      "ledgerKey": "identificationAudit.concurrentPolicies.nearestRecord",
+      "note": "the appendix adds an eligibility dimension ('for foreigners') that no artefact records; the same absence as C07 (identificationAudit.concurrentPolicies.nearestRecord)",
+      "phrase": "Sep 2022 ABSD changes for foreigners",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C20",
+      "ledgerKey": "identificationAudit.estimand.specificationProse",
+      "note": "the DiD specification exists only as this prose formula; no code or output executes or stores it (identificationAudit.estimand.specificationProse)",
+      "phrase": "Regression: `price ~ treatment + post + treatment × post`",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C21",
+      "ledgerKey": "cohortScreens.diD",
+      "note": "screened: the stated groups' measured sizes inside the cutoff (38,653 CCR-label and 132,620 OCR-label rows) exceed the stated floor. This screens cohort sizes against a stated rule; it does not run the regression the rule governs (cohortScreens.diD)",
+      "phrase": "Minimum 100 transactions per group",
+      "status": "re-measured"
+    },
+    {
+      "id": "C22",
+      "ledgerKey": "identificationAudit.treatmentControlConstruction.rditRunningVariable",
+      "note": "the running variable needs a dated event to count months from; the dated artefact matches zero files (identificationAudit.treatmentControlConstruction.rditRunningVariable)",
+      "phrase": "Running variable: months since policy (negative = before, positive = after)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C23",
+      "ledgerKey": "identificationAudit.estimand.specificationProse",
+      "note": "the RDiT test specifications exist only as prose formulas; no code or output executes or stores them (identificationAudit.estimand.specificationProse)",
+      "phrase": "Jump test: `price ~ post`; Kink test: `price ~ months_since + post + post × time`",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C24",
+      "ledgerKey": "identificationAudit.robustness.statedGrid",
+      "note": "the grid is stated in prose; no stored grid output exists in the scan (identificationAudit.robustness.statedGrid)",
+      "phrase": "Bandwidth: ±6 months (default), robustness tested at 3, 6, 9, 12 months",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C25",
+      "ledgerKey": "cohortScreens.rdit",
+      "note": "screened: every one of the stated window's 37 measured months holds at least 1,837 HDB rows, above the stated floor; a screen of window months, not the estimator (cohortScreens.rdit)",
+      "phrase": "Minimum 100 transactions for analysis",
+      "status": "re-measured"
+    },
+    {
+      "id": "C26",
+      "ledgerKey": "leaseMispricing.balaSchedule",
+      "note": "the schedule the threshold compares against is absent as data (zero Bala-named files in the data roots); the threshold is prose only (leaseMispricing.balaSchedule)",
+      "phrase": "theoretical Bala depreciation schedule, ≥5% deviation flagged",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C27",
+      "ledgerKey": "withdrawals.condoDid",
+      "note": "the technical-findings restatement of C03; withdrawn with it (withdrawals.condoDid)",
+      "phrase": "~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD)",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C28",
+      "ledgerKey": "withdrawals.hdbRdit",
+      "note": "the technical-findings restatement of C05; withdrawn with it (withdrawals.hdbRdit)",
+      "phrase": "~+$13,118 immediate jump after Dec 2023 measures",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C29",
+      "ledgerKey": "leaseMispricing.bands.band3050",
+      "note": "the findings bullet restating C10; same disposition (leaseMispricing.bands.band3050)",
+      "phrase": "market appears richly priced relative to Bala theory",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C30",
+      "ledgerKey": "leaseMispricing.bands.band8084",
+      "note": "the findings bullet restating C11; same disposition (leaseMispricing.bands.band8084)",
+      "phrase": "mild undervaluation in some cases",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C31",
+      "ledgerKey": "leaseMispricing.bands.band9798",
+      "note": "the findings bullet restating C12; same disposition (leaseMispricing.bands.band9798)",
+      "phrase": "large discount relative to theoretical schedule",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C32",
+      "ledgerKey": "identificationAudit.robustness.statedGrid",
+      "note": "the robustness claim's word 'confirms' has no stored grid output behind it in this checkout; the sentence is recorded, not corroborated (identificationAudit.robustness.statedGrid)",
+      "phrase": "bandwidth sensitivity (3-12 months) confirms direction is stable, magnitude varies",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C33",
+      "ledgerKey": "withdrawals.condoDid.dependentInterpretations",
+      "note": "the conclusion's rounding of C03; withdrawn with it (withdrawals.condoDid.dependentInterpretations)",
+      "phrase": "measurable price suppression (~$138K)",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C34",
+      "ledgerKey": "withdrawals.hdbRdit.dependentInterpretations",
+      "note": "the conclusion's rounding of C05; withdrawn with it (withdrawals.hdbRdit.dependentInterpretations)",
+      "phrase": "upward movement (+$13K)",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C35",
+      "ledgerKey": "identificationAudit.assumptions.recordedInLegacy",
+      "note": "the frozen text's own recorded assumption; comparability is acknowledged in prose and tested nowhere in the checkout (identificationAudit.assumptions.recordedInLegacy)",
+      "phrase": "DiD relies on comparability of CCR and OCR condo segments",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C36",
+      "ledgerKey": "identificationAudit.assumptions.recordedInLegacy",
+      "note": "the frozen text's own recorded assumption; with no dated policy artefact the confounding-event check is unmeasurable, so the assumption can be neither verified nor violated here (identificationAudit.assumptions.recordedInLegacy)",
+      "phrase": "RDiT assumes no confounding events at the cutoff",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C37",
+      "ledgerKey": "unlinkedArtefact.manifestPin",
+      "note": "the directory exists and holds causal_did_analysis.png (sha-pinned, 91,244 bytes), which the frozen manifest lists as a mutable=false asset. That is an asset listing, not a run record; the plot adjudicates nothing about the estimates in either direction (unlinkedArtefact)",
+      "phrase": "the canonical assets for this page now live under `app/public/data/analysis/`",
+      "status": "re-measured"
+    },
+    {
+      "id": "C38",
+      "ledgerKey": "codeScan.diDRditPythonFileCount",
+      "note": "consistent with this checkout's supported surface under the declared scan: zero scan-eligible .py files carry DiD/RDiT tokens. The scan bounds THIS checkout's surface, not history or other machines (codeScan)",
+      "phrase": "The historical Python causal-analysis scripts were retired from the supported repo surface",
+      "status": "re-measured"
+    },
+    {
+      "id": "C39",
+      "ledgerKey": "cohortScreens.legacyInputPath",
+      "note": "the named primary input path does not exist in this checkout; the shipped platinum dataset is at data/pipeline/04_platinum/unified_dataset.parquet and no artefact ties the two (cohortScreens.legacyInputPath)",
+      "phrase": "data/parquets/L3/housing_unified.parquet",
+      "status": "re-measured"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "claimsChecked": 39,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+    "legacyFileBytes": 6574,
+    "legacyFileSha256": "bd2e2f6898aae548168db7b8d3bde446c8750f01897de24d1b37aec7f2805c89",
+    "liveCopyByteIdentical": true,
+    "liveCopyPath": "docs/analytics/causal-inference-overview.md",
+    "method": "each phrase is a verbatim substring test (str.count) against the frozen file's bytes decoded as UTF-8; a count of zero fails the build. Markdown emphasis markers are part of the verbatim text where the source has them",
+    "phrasesVerifiedVerbatim": 39,
+    "quotes": [
+      {
+        "id": "C01",
+        "occurrences": 1,
+        "phrase": "Data Period**: 2017-2026"
+      },
+      {
+        "id": "C02",
+        "occurrences": 1,
+        "phrase": "Coverage**: HDB, condominium, and EC market dynamics"
+      },
+      {
+        "id": "C03",
+        "occurrences": 1,
+        "phrase": "about -$137,743 relative effect"
+      },
+      {
+        "id": "C04",
+        "occurrences": 1,
+        "phrase": "Prime condos were meaningfully suppressed"
+      },
+      {
+        "id": "C05",
+        "occurrences": 1,
+        "phrase": "about +$13,118 immediate jump"
+      },
+      {
+        "id": "C06",
+        "occurrences": 1,
+        "phrase": "HDB did not show the intended cooling response"
+      },
+      {
+        "id": "C07",
+        "occurrences": 2,
+        "phrase": "Sep 2022 ABSD changes"
+      },
+      {
+        "id": "C08",
+        "occurrences": 2,
+        "phrase": "Dec 2023 cooling measures"
+      },
+      {
+        "id": "C09",
+        "occurrences": 1,
+        "phrase": "HDB prices remained resilient and in this sample even moved higher after a major policy event"
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "Market appears richly priced relative to theory"
+      },
+      {
+        "id": "C11",
+        "occurrences": 1,
+        "phrase": "Mild undervaluation in some cases"
+      },
+      {
+        "id": "C12",
+        "occurrences": 1,
+        "phrase": "Large discount relative to theoretical schedule"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "Coverage**: 2017-2026, split by property type (Condominium, HDB)"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "Condominium transactions post-2021, CCR vs OCR"
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "HDB transactions, Jun 2022 - Jun 2025 (18 months before/after policy)"
+      },
+      {
+        "id": "C16",
+        "occurrences": 1,
+        "phrase": "CCR (10 planning areas"
+      },
+      {
+        "id": "C17",
+        "occurrences": 1,
+        "phrase": "RCR (12 planning areas"
+      },
+      {
+        "id": "C18",
+        "occurrences": 1,
+        "phrase": "OCR (remainder)"
+      },
+      {
+        "id": "C19",
+        "occurrences": 1,
+        "phrase": "Sep 2022 ABSD changes for foreigners"
+      },
+      {
+        "id": "C20",
+        "occurrences": 1,
+        "phrase": "Regression: `price ~ treatment + post + treatment × post`"
+      },
+      {
+        "id": "C21",
+        "occurrences": 1,
+        "phrase": "Minimum 100 transactions per group"
+      },
+      {
+        "id": "C22",
+        "occurrences": 1,
+        "phrase": "Running variable: months since policy (negative = before, positive = after)"
+      },
+      {
+        "id": "C23",
+        "occurrences": 1,
+        "phrase": "Jump test: `price ~ post`; Kink test: `price ~ months_since + post + post × time`"
+      },
+      {
+        "id": "C24",
+        "occurrences": 1,
+        "phrase": "Bandwidth: ±6 months (default), robustness tested at 3, 6, 9, 12 months"
+      },
+      {
+        "id": "C25",
+        "occurrences": 1,
+        "phrase": "Minimum 100 transactions for analysis"
+      },
+      {
+        "id": "C26",
+        "occurrences": 1,
+        "phrase": "theoretical Bala depreciation schedule, ≥5% deviation flagged"
+      },
+      {
+        "id": "C27",
+        "occurrences": 1,
+        "phrase": "~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD)"
+      },
+      {
+        "id": "C28",
+        "occurrences": 1,
+        "phrase": "~+$13,118 immediate jump after Dec 2023 measures"
+      },
+      {
+        "id": "C29",
+        "occurrences": 1,
+        "phrase": "market appears richly priced relative to Bala theory"
+      },
+      {
+        "id": "C30",
+        "occurrences": 1,
+        "phrase": "mild undervaluation in some cases"
+      },
+      {
+        "id": "C31",
+        "occurrences": 1,
+        "phrase": "large discount relative to theoretical schedule"
+      },
+      {
+        "id": "C32",
+        "occurrences": 1,
+        "phrase": "bandwidth sensitivity (3-12 months) confirms direction is stable, magnitude varies"
+      },
+      {
+        "id": "C33",
+        "occurrences": 1,
+        "phrase": "measurable price suppression (~$138K)"
+      },
+      {
+        "id": "C34",
+        "occurrences": 1,
+        "phrase": "upward movement (+$13K)"
+      },
+      {
+        "id": "C35",
+        "occurrences": 1,
+        "phrase": "DiD relies on comparability of CCR and OCR condo segments"
+      },
+      {
+        "id": "C36",
+        "occurrences": 1,
+        "phrase": "RDiT assumes no confounding events at the cutoff"
+      },
+      {
+        "id": "C37",
+        "occurrences": 1,
+        "phrase": "the canonical assets for this page now live under `app/public/data/analysis/`"
+      },
+      {
+        "id": "C38",
+        "occurrences": 1,
+        "phrase": "The historical Python causal-analysis scripts were retired from the supported repo surface"
+      },
+      {
+        "id": "C39",
+        "occurrences": 1,
+        "phrase": "data/parquets/L3/housing_unified.parquet"
+      }
+    ]
+  },
+  "notMeasurable": {
+    "anticipation": "unmeasurable",
+    "bandwidthGridOutputs": "unmeasurable",
+    "concurrentPolicyConfounds": "unmeasurable",
+    "datedPolicyArtefactFileMatches": 0,
+    "didRditPythonFiles": 0,
+    "meaning": "each entry above is a statement about THIS checkout under the stated scans; none is a claim that the retired analysis did or did not do these things",
+    "multiplicity": "unmeasurable",
+    "placebos": "unmeasurable",
+    "pretrendTests": "unmeasurable",
+    "theEstimand": "unmeasurable",
+    "theTwoHeadlineNumbers": "withdrawn (withdrawals.condoDid, withdrawals.hdbRdit); not re-estimated, not bounded, not replaced",
+    "treatmentAssignment": "unmeasurable"
+  },
+  "reconstructionRequirements": {
+    "bandwidthRule": {
+      "presentInCheckout": false,
+      "requirement": "the estimator's bandwidth rule recorded with that artefact or with the code: the default bandwidth and the robustness grid as executed, not as prose",
+      "scan": "identificationAudit.robustness"
+    },
+    "datedPolicyArtefact": {
+      "presentInCheckout": false,
+      "requirement": "a machine-readable dated policy artefact (the frozen text's own housing_policy_dates name or equivalent) whose rows pin event identifier, event date, and the segment/population scope each event applies to",
+      "scan": "artefactNameScan.housingPolicyDatesFileMatches"
+    },
+    "estimatorRecord": {
+      "presentInCheckout": false,
+      "requirement": "the DiD/RDiT code, or a stored estimator output carrying its sample windows and group sizes, so the specification prose in the frozen text could be tied to an executed run",
+      "scan": "codeScan.diDRditPythonFileCount"
+    },
+    "pretrendAndPlaceboRecord": {
+      "presentInCheckout": false,
+      "requirement": "stored pretrend and placebo outputs (or the code that produced them) for the same windows, so the checks the gate names could be re-run rather than asserted",
+      "scan": "identificationAudit.pretrends"
+    },
+    "status": "requirements, not a plan: this pack records what a reconstruction would need to exist in the checkout; it does not schedule one, and no estimate is reconstructed here"
+  },
+  "scanDeclaration": {
+    "editionRule": "docs/analytics/editions/ excludes everything except editions/legacy/, so later signed editions cannot drift this ledger; the frozen legacy originals stay in the scan",
+    "excludedPaths": {
+      "docs/plans/2026-11-12-reporting-refresh-decisions.md": "the D12 decision register records verdicts in the programme's vocabulary, which overlaps this study's gate vocabulary",
+      "docs/plans/2026-11-12-reporting-refresh-research-register.md": "the research register holds the gate text itself (pretrend, estimand, anticipation, bandwidth, placebo); a future register amendment must not move a pinned count (the RS10 round-19 lesson)",
+      "scripts/tools/causal_inference_evidence.py": "this producer quotes the tokens it searches for; scanning itself would make the ledger its own evidence"
+    },
+    "excludedPrefixes": [
+      "docs/implementation/",
+      "scripts/tools/",
+      "prompts/"
+    ],
+    "meaning": "the token and code scans are hash-pinned over these declarations; a count can only move if a scanned file changes",
+    "roots": [
+      "docs",
+      "scripts",
+      "src",
+      "assets",
+      "prompts",
+      "app/src",
+      ".claude/handoffs"
+    ],
+    "suffixes": [
+      ".md",
+      ".py",
+      ".ts",
+      ".tsx"
+    ]
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS13 causal-inference-overview evidence: an identification audit of the frozen policy-impact article — the frame the two stated cohorts would draw on, cohort-size screens inside the measured cutoff, the shipped region labels' planning-area spans, the absence scans (dated policy artefact, estimator code, pretrend/placebo/anticipation records, Bala schedule), the unlinked plot artefact, and the two recorded withdrawals with their reason",
+  "series": "causal-inference-overview",
+  "study": "RS13",
+  "tokenScan": {
+    "13,118": {
+      "caseSensitive": false,
+      "files": 5,
+      "firstMatches": [
+        {
+          "line": 40,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "| Dec 2023 cooling measures | HDB               | about +$13,118 immediate jump   | HDB did not show the intended cooling response |"
+        },
+        {
+          "line": 117,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **HDB RDiT**: ~+$13,118 immediate jump after Dec 2023 measures — HDB did not show intended cooling"
+        },
+        {
+          "line": 40,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "| Dec 2023 cooling measures | HDB               | about +$13,118 immediate jump   | HDB did not show the intended cooling response |"
+        },
+        {
+          "line": 117,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **HDB RDiT**: ~+$13,118 immediate jump after Dec 2023 measures — HDB did not show intended cooling"
+        },
+        {
+          "line": 122,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "quote": "| Dec 2023 HDB cooling       | about **+$13,118** immediate jump          |"
+        },
+        {
+          "line": 269,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "quote": "| HDB policy response               | RDiT jump (Dec 2023)              | ~+$13,118        | Moderate — bandwidth-sensitive           |"
+        },
+        {
+          "line": 122,
+          "path": "docs/analytics/findings.md",
+          "quote": "| Dec 2023 HDB cooling       | about **+$13,118** immediate jump          |"
+        },
+        {
+          "line": 269,
+          "path": "docs/analytics/findings.md",
+          "quote": "| HDB policy response               | RDiT jump (Dec 2023)              | ~+$13,118        | Moderate — bandwidth-sensitive                         |"
+        }
+      ],
+      "occurrences": 9,
+      "perFile": [
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
+        }
+      ]
+    },
+    "137,743": {
+      "caseSensitive": false,
+      "files": 5,
+      "firstMatches": [
+        {
+          "line": 39,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "| Sep 2022 ABSD changes     | CCR condos vs OCR | about -$137,743 relative effect | Prime condos were meaningfully suppressed      |"
+        },
+        {
+          "line": 116,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Condo DiD**: ~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD) — prime condos meaningfully suppressed"
+        },
+        {
+          "line": 39,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "| Sep 2022 ABSD changes     | CCR condos vs OCR | about -$137,743 relative effect | Prime condos were meaningfully suppressed      |"
+        },
+        {
+          "line": 116,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Condo DiD**: ~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD) — prime condos meaningfully suppressed"
+        },
+        {
+          "line": 121,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "quote": "| Sep 2022 CCR condo cooling | about **-$137,743** relative effect vs OCR |"
+        },
+        {
+          "line": 268,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "quote": "| CCR condo policy effect           | DiD estimate (Sep 2022)           | ~-$137,743       | Moderate — regime-specific               |"
+        },
+        {
+          "line": 121,
+          "path": "docs/analytics/findings.md",
+          "quote": "| Sep 2022 CCR condo cooling | about **-$137,743** relative effect vs OCR |"
+        },
+        {
+          "line": 268,
+          "path": "docs/analytics/findings.md",
+          "quote": "| CCR condo policy effect           | DiD estimate (Sep 2022)           | ~-$137,743       | Moderate — regime-specific                             |"
+        }
+      ],
+      "occurrences": 9,
+      "perFile": [
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
+        }
+      ]
+    },
+    "ABSD": {
+      "caseSensitive": true,
+      "files": 9,
+      "firstMatches": [
+        {
+          "line": 39,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "| Sep 2022 ABSD changes     | CCR condos vs OCR | about -$137,743 relative effect | Prime condos were meaningfully suppressed      |"
+        },
+        {
+          "line": 103,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- Policy event: Sep 2022 ABSD changes for foreigners"
+        },
+        {
+          "line": 116,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Condo DiD**: ~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD) — prime condos meaningfully suppressed"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        },
+        {
+          "line": 39,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "| Sep 2022 ABSD changes     | CCR condos vs OCR | about -$137,743 relative effect | Prime condos were meaningfully suppressed      |"
+        },
+        {
+          "line": 103,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- Policy event: Sep 2022 ABSD changes for foreigners"
+        },
+        {
+          "line": 116,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Condo DiD**: ~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD) — prime condos meaningfully suppressed"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        }
+      ],
+      "occurrences": 30,
+      "perFile": [
+        {
+          "occurrences": 4,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 4,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/macro-sensitivity.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-17-var-implementation-report.md"
+        },
+        {
+          "occurrences": 5,
+          "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
+        },
+        {
+          "occurrences": 10,
+          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
+        }
+      ]
+    },
+    "Bala": {
+      "caseSensitive": true,
+      "files": 23,
+      "firstMatches": [
+        {
+          "line": 112,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Lease mispricing**: empirical market pricing vs theoretical Bala depreciation schedule, ≥5% deviation flagged"
+        },
+        {
+          "line": 119,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- 30-50 yr range: market appears richly priced relative to Bala theory"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        },
+        {
+          "line": 112,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Lease mispricing**: empirical market pricing vs theoretical Bala depreciation schedule, ≥5% deviation flagged"
+        },
+        {
+          "line": 119,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- 30-50 yr range: market appears richly priced relative to Bala theory"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        },
+        {
+          "line": 125,
+          "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+          "quote": "- **Bala's curve validation**: empirical vs theoretical depreciation, ≥5% deviation flagged"
+        },
+        {
+          "line": 135,
+          "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md",
+          "quote": "- **Spline-based arbitrage**: identifies BUY/SELL/HOLD signals at lease years where market deviates ≥5% from theoretical Bala curve"
+        }
+      ],
+      "occurrences": 40,
+      "perFile": [
+        {
+          "occurrences": 3,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/lease-decay.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/rental-yields.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/lease-decay.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/market-segments.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/rental-yields.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20250120-data-pipeline.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260121-background-geocoding-guide.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/archive/20260123-hdb-comprehensive-investment-analysis.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/archive/20260124-era-comparison-analytics.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260124-market-segments-enhanced-visualization.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260127-mrt-complete-summary.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-design.md"
+        },
+        {
+          "occurrences": 4,
+          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
+        }
+      ]
+    },
+    "DiD": {
+      "caseSensitive": true,
+      "files": 11,
+      "firstMatches": [
+        {
+          "line": 95,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Condo DiD sample**: Condominium transactions post-2021, CCR vs OCR"
+        },
+        {
+          "line": 101,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Difference-in-differences (DiD)**:"
+        },
+        {
+          "line": 116,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Condo DiD**: ~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD) — prime condos meaningfully suppressed"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        },
+        {
+          "line": 95,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Condo DiD sample**: Condominium transactions post-2021, CCR vs OCR"
+        },
+        {
+          "line": 101,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Difference-in-differences (DiD)**:"
+        },
+        {
+          "line": 116,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Condo DiD**: ~-$137,743 relative effect (CCR vs OCR, Sep 2022 ABSD) — prime condos meaningfully suppressed"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        }
+      ],
+      "occurrences": 24,
+      "perFile": [
+        {
+          "occurrences": 4,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 4,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260127-mrt-complete-summary.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
+        },
+        {
+          "occurrences": 5,
+          "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-component-library.md"
+        }
+      ]
+    },
+    "RDiT": {
+      "caseSensitive": true,
+      "files": 8,
+      "firstMatches": [
+        {
+          "line": 96,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **HDB RDiT sample**: HDB transactions, Jun 2022 - Jun 2025 (18 months before/after policy)"
+        },
+        {
+          "line": 106,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Regression discontinuity in time (RDiT)**:"
+        },
+        {
+          "line": 117,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **HDB RDiT**: ~+$13,118 immediate jump after Dec 2023 measures — HDB did not show intended cooling"
+        },
+        {
+          "line": 122,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Robustness**: RDiT bandwidth sensitivity (3-12 months) confirms direction is stable, magnitude varies"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        },
+        {
+          "line": 96,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **HDB RDiT sample**: HDB transactions, Jun 2022 - Jun 2025 (18 months before/after policy)"
+        },
+        {
+          "line": 106,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Regression discontinuity in time (RDiT)**:"
+        },
+        {
+          "line": 117,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **HDB RDiT**: ~+$13,118 immediate jump after Dec 2023 measures — HDB did not show intended cooling"
+        }
+      ],
+      "occurrences": 18,
+      "perFile": [
+        {
+          "occurrences": 5,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 5,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-component-library.md"
+        }
+      ]
+    },
+    "anticipation": {
+      "caseSensitive": false,
+      "files": 0,
+      "firstMatches": [],
+      "occurrences": 0,
+      "perFile": []
+    },
+    "bandwidth": {
+      "caseSensitive": false,
+      "files": 10,
+      "firstMatches": [
+        {
+          "line": 109,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- Bandwidth: ±6 months (default), robustness tested at 3, 6, 9, 12 months"
+        },
+        {
+          "line": 122,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Robustness**: RDiT bandwidth sensitivity (3-12 months) confirms direction is stable, magnitude varies"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        },
+        {
+          "line": 109,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- Bandwidth: ±6 months (default), robustness tested at 3, 6, 9, 12 months"
+        },
+        {
+          "line": 122,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Robustness**: RDiT bandwidth sensitivity (3-12 months) confirms direction is stable, magnitude varies"
+        },
+        {
+          "line": 126,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
+        },
+        {
+          "line": 269,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md",
+          "quote": "| HDB policy response               | RDiT jump (Dec 2023)              | ~+$13,118        | Moderate — bandwidth-sensitive           |"
+        },
+        {
+          "line": 111,
+          "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+          "quote": "- Bandwidth: 200 m on each side of boundary"
+        }
+      ],
+      "occurrences": 53,
+      "perFile": [
+        {
+          "occurrences": 3,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/findings.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/school-quality.md"
+        },
+        {
+          "occurrences": 4,
+          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
+        },
+        {
+          "occurrences": 6,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
+        },
+        {
+          "occurrences": 30,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
+        }
+      ]
+    },
+    "difference-in-differences": {
+      "caseSensitive": false,
+      "files": 10,
+      "firstMatches": [
+        {
+          "line": 53,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "| Difference-in-differences        | Relative segment effect                  |"
+        },
+        {
+          "line": 101,
+          "path": "docs/analytics/causal-inference-overview.md",
+          "quote": "- **Difference-in-differences (DiD)**:"
+        },
+        {
+          "line": 53,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "| Difference-in-differences        | Relative segment effect                  |"
+        },
+        {
+          "line": 101,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md",
+          "quote": "- **Difference-in-differences (DiD)**:"
+        },
+        {
+          "line": 317,
+          "path": "docs/archive/20260127-FINAL-COMPLETE-SUMMARY.md",
+          "quote": "- Difference-in-differences (new line openings)"
+        },
+        {
+          "line": 244,
+          "path": "docs/archive/20260127-mrt-heterogeneous-effects-addendum.md",
+          "quote": "4. **Difference-in-Differences**:"
+        },
+        {
+          "line": 247,
+          "path": "docs/archive/20260127-mrt-impact-analysis-report.md",
+          "quote": "- Difference-in-differences around new MRT openings"
+        },
+        {
+          "line": 346,
+          "path": "docs/archive/20260127-property-type-mrt-comparison-final-results.md",
+          "quote": "- Difference-in-differences (new MRT line openings)"
+        }
+      ],
+      "occurrences": 12,
+      "perFile": [
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 2,
+          "path": "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260127-FINAL-COMPLETE-SUMMARY.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260127-mrt-heterogeneous-effects-addendum.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/archive/20260127-property-type-mrt-comparison-final-results.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
+        }
+      ]
+    },
+    "estimand": {
+      "caseSensitive": false,
+      "files": 0,
+      "firstMatches": [],
+      "occurrences": 0,
+      "perFile": []
+    },
+    "housing_policy_dates": {
+      "caseSensitive": false,
+      "files": 5,
+      "firstMatches": [
+        {
+          "line": 131,
+          "path": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md",
+          "quote": "- `housing_policy_dates.parquet` — 5 major policy events (2021-2023)"
+        },
+        {
+          "line": 131,
+          "path": "docs/analytics/macro-sensitivity.md",
+          "quote": "- `housing_policy_dates.parquet` — 5 major policy events (2021-2023)"
+        },
+        {
+          "line": 174,
+          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md",
+          "quote": "- Files: `singapore_cpi_monthly.parquet`, `sora_rates_monthly.parquet`, `sgdp_quarterly.parquet`, `housing_policy_dates.parquet`"
+        },
+        {
+          "line": 520,
+          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md",
+          "quote": "save_path=output_dir / 'housing_policy_dates.parquet'"
+        },
+        {
+          "line": 28,
+          "path": "docs/plans/2026-03-04-data-quality-handoff.md",
+          "quote": "- `raw_macro_housing_policy_dates`"
+        }
+      ],
+      "occurrences": 5,
+      "perFile": [
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/macro-sensitivity.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/plans/2026-03-04-data-quality-handoff.md"
+        }
+      ]
+    },
+    "multiple-testing": {
+      "caseSensitive": false,
+      "files": 0,
+      "firstMatches": [],
+      "occurrences": 0,
+      "perFile": []
+    },
+    "parallel trend": {
+      "caseSensitive": false,
+      "files": 0,
+      "firstMatches": [],
+      "occurrences": 0,
+      "perFile": []
+    },
+    "placebo": {
+      "caseSensitive": false,
+      "files": 5,
+      "firstMatches": [
+        {
+          "line": 115,
+          "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
+          "quote": "- **Bandwidth sensitivity**: tested at 100-300 m; placebo tests at 800 m and 1200 m fake cutoffs"
+        },
+        {
+          "line": 115,
+          "path": "docs/analytics/school-quality.md",
+          "quote": "- **Bandwidth sensitivity**: tested at 100-300 m; placebo tests at 800 m and 1200 m fake cutoffs"
+        },
+        {
+          "line": 211,
+          "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+          "quote": "- Placebo tests at fake cutoffs (800m, 1200m)"
+        },
+        {
+          "line": 225,
+          "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+          "quote": "- `rdd_placebo_tests.csv`: Fake cutoff results (should be null)"
+        },
+        {
+          "line": 238,
+          "path": "docs/plans/2025-02-02-school-impact-analysis.md",
+          "quote": "- **Placebo tests null**: No effect at fake cutoffs (RDD specification valid)"
+        },
+        {
+          "line": 70,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
+          "quote": "3. **Placebo Tests:** Fake cutoffs at 800m and 1200m (should show null effect)"
+        },
+        {
+          "line": 84,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
+          "quote": "- `rdd_placebo_tests.csv`: Fake cutoff results"
+        },
+        {
+          "line": 193,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
+          "quote": "- Create validation tests (placebo, balance, density)"
+        }
+      ],
+      "occurrences": 33,
+      "perFile": [
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/editions/legacy/2026-11-12/school-quality.md"
+        },
+        {
+          "occurrences": 1,
+          "path": "docs/analytics/school-quality.md"
+        },
+        {
+          "occurrences": 3,
+          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
+        },
+        {
+          "occurrences": 4,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
+        },
+        {
+          "occurrences": 24,
+          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
+        }
+      ]
+    },
+    "pretrend": {
+      "caseSensitive": false,
+      "files": 0,
+      "firstMatches": [],
+      "occurrences": 0,
+      "perFile": []
+    }
+  },
+  "unlinkedArtefact": {
+    "buildCopyPath": "app/dist/data/analysis/causal_did_analysis.png",
+    "bytes": 91244,
+    "copiesByteIdentical": true,
+    "linkage": {
+      "adjudication": "an unlinked artefact adjudicates nothing, symmetrically: it is evidence neither FOR nor AGAINST the withdrawn estimates. The plot's printed estimate (~-$138K) resembles the withdrawn figure's rounding, and the resemblance establishes nothing about either",
+      "runLinkage": "nothing in the checkout links the pixels to the runs behind the two headline numbers: no run id, no estimator output and no code accompanies it. The frozen manifest lists the file — that is an asset listing, not a run record"
+    },
+    "manifestPin": {
+      "entryPresent": true,
+      "manifestPath": "docs/analytics/editions/legacy/2026-11-12/manifest.json",
+      "mutable": false,
+      "pinMatchesMeasuredBytes": true,
+      "pinnedBytes": 91244,
+      "pinnedSha256": "7f5732e6c77711e95278a7c38d2f9d5ea47c81bc542610b0e27eb79514a30177"
+    },
+    "path": "app/public/data/analysis/causal_did_analysis.png",
+    "sha256": "7f5732e6c77711e95278a7c38d2f9d5ea47c81bc542610b0e27eb79514a30177",
+    "visibleAnnotations": {
+      "leftPanel": "bar chart of median price by pre/post period, CCR labelled Treatment and OCR labelled Control, annotated 'DiD Estimate: ~-$138K (p = 0.017 **)'",
+      "method": "HUMAN VISUAL READ of the sha-pinned PNG by the producer, recorded because the pixels are not machine-read. The hash above pins exactly which image was read; the values below are what it visibly prints, and are not a re-derived score",
+      "notPrinted": "no sample windows, no n, no bandwidth and no run identifier appear anywhere on the plot",
+      "rightPanel": "'Price Change (Pre -> Post)': CCR +15.2%, OCR +22.2%",
+      "title": "DiD Analysis: Sep 2022 ABSD Changes / Condominium CCR vs OCR"
+    }
+  },
+  "withdrawals": {
+    "conclusionRounding": {
+      "claimIds": [
+        "C33",
+        "C34"
+      ],
+      "meaning": "the conclusion's (~$138K) and (+$13K) are the frozen text's own roundings of the two withdrawn numbers; they are withdrawn with them and no rounding residual is computed here"
+    },
+    "condoDid": {
+      "claimIds": [
+        "C03",
+        "C27"
+      ],
+      "dependentInterpretations": {
+        "claimIds": [
+          "C04",
+          "C33"
+        ],
+        "meaning": "'Prime condos were meaningfully suppressed' and the conclusion's 'measurable price suppression (~$138K)' restate the withdrawn estimate and are withdrawn with it"
+      },
+      "disposition": "withdrawn",
+      "reconstructedHere": false,
+      "statedUnit": "SGD, relative effect, CCR condominiums vs OCR condominiums, Sep 2022 ABSD event — as stated in the frozen text; the unit and window are the text's own and are not independently verifiable here",
+      "statedValue": "-$137,743",
+      "withdrawnAs": "unreconstructable identification"
+    },
+    "decisionSource": {
+      "decidedOn": "2026-11-18",
+      "quotedReason": "D12 / RF08, 2026-11-18, repo owner (release authority): 'RS13 has no dated housing_policy_dates artefact in the checkout, so its two headline causal numbers (the CCR-vs-OCR DiD estimate and the HDB RDiT jump) are withdrawn as unreconstructable identification, and the edition publishes that absence with the reason. The withdrawal is a finding, not a programme failure.'",
+      "register": "docs/plans/2026-11-12-reporting-refresh-decisions.md",
+      "registerExcludedFromScan": true,
+      "row": "D12 / RF08 — RS06/RS07/RS13 disposition when a gate input is absent"
+    },
+    "hdbRdit": {
+      "claimIds": [
+        "C05",
+        "C28"
+      ],
+      "dependentInterpretations": {
+        "claimIds": [
+          "C06",
+          "C09",
+          "C34"
+        ],
+        "meaning": "'HDB did not show the intended cooling response', the takeaway's 'moved higher after a major policy event' and the conclusion's 'upward movement (+$13K)' restate the withdrawn jump and are withdrawn with it"
+      },
+      "disposition": "withdrawn",
+      "reconstructedHere": false,
+      "statedUnit": "SGD, immediate level jump, HDB, Dec 2023 event — as stated in the frozen text; the unit and window are the text's own and are not independently verifiable here",
+      "statedValue": "+$13,118",
+      "withdrawnAs": "unreconstructable identification"
+    }
+  }
+}

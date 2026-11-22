@@ -119,22 +119,38 @@ describe("edition registry matches the frozen sources", () => {
 
 describe("selection and paths", () => {
   test("only the signed series claim an approved current edition", () => {
-    // RF08: data-sources, rental-yields, temporal-evolution, amenity-impact and
-    // facility-premiums are signed; the other ten studies stay historical until each
-    // has its own evidence pack and three sign-offs.
+    // RF08: data-sources, rental-yields, temporal-evolution, amenity-impact,
+    // facility-premiums, macro-sensitivity and market-segments are signed; the
+    // remaining no studies stay historical until each has its own evidence
+    // pack and three sign-offs.
     const approved = ANALYTICS_EDITIONS.filter(
       (edition) => edition.evidenceStatus === "approved",
     ).map((edition) => `${edition.seriesSlug}:${edition.editionId}`);
 
     expect(approved.sort()).toEqual([
       "amenity-impact:amenity-impact-2026-11-16",
+      "causal-inference-overview:causal-inference-overview-2026-11-20",
       "data-sources:data-sources-2026-11-14",
       "facility-premiums:facility-premiums-2026-11-17",
+      "findings:findings-2026-11-20",
+      "lease-decay:lease-decay-2026-11-20",
+      "macro-sensitivity:macro-sensitivity-2026-11-18",
+      "market-segments:market-segments-2026-11-20",
+      "mrt-impact:mrt-impact-2026-11-20",
+      "price-forecasts:price-forecasts-2026-11-20",
       "rental-yields:rental-yields-2026-11-14",
+      "school-quality:school-quality-2026-11-20",
+      "spatial-autocorrelation:spatial-autocorrelation-2026-11-20",
+      "spatial-hotspots:spatial-hotspots-2026-11-20",
       "temporal-evolution:temporal-evolution-2026-11-15",
     ]);
-    for (const seriesSlug of ["mrt-impact", "lease-decay", "price-forecasts"]) {
-      expect(approvedEditionFor(seriesSlug)).toBeNull();
+    // Every series now carries an approved current edition, so the guard asserts
+    // the whole register rather than a still-unsigned remainder.
+    const legacySeries = ANALYTICS_EDITIONS.filter(
+      (edition) => edition.editionId === LEGACY_EDITION_ID,
+    ).map((edition) => edition.seriesSlug);
+    for (const seriesSlug of legacySeries) {
+      expect(approvedEditionFor(seriesSlug)).not.toBeNull();
     }
   });
 

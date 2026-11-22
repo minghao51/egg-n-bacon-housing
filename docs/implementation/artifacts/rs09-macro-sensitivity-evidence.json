@@ -1,0 +1,2793 @@
+{
+  "associations": {
+    "cutoffUpperBound": "2026-10",
+    "intervalCaveat": "`pearsonCi95` treats the observations as independent, which time-series observations are not. `pearsonCi95SerialAdjusted` recomputes the same interval at an AR(1) effective n = n(1 - rho_x*rho_y)/(1 + rho_x*rho_y), where rho_x and rho_y are the lag-1 autocorrelations reported beside each pair and their PRODUCT is what enters the formula. The effective n is clamped to [4, n] before the interval is recomputed, which makes the adjustment asymmetric: it widens the interval only for POSITIVE products, where a positive product shrinks the effective n. A negative product does not narrow it: it raises the raw effective n above the row count, so the [4, n] clamp returns n and the reported adjusted interval is therefore UNCHANGED from the unadjusted one — never narrower. The `unemployment` difference pair is the worked case: product -0.4653, raw effective n about 378 against 138 rows, reported effective n 138.0, adjusted interval equal to unadjusted. The floor of 4 binds for the five level pairs whose housing side is itself near-integrated; there the effective n says the pair carries about four independent observations, and the resulting interval width then depends on how close r sits to +/-1 (so `hdb_rpi` reads 0.9535 to 1.0000 and `cpi` 0.1543 to 0.9994) — the floor is a statement about information, not a promise that every such interval is wide",
+    "readingRules": [
+      "level figures are what the legacy article read; two trending series correlate by construction, so a level coefficient is not evidence of sensitivity",
+      "first-difference figures are the defensible statistic for the same pairs and are reported with n and both interval variants",
+      "series designated audit-only carry no empirical claim",
+      "no coefficient is a causal effect, and none is a forecast"
+    ],
+    "series": {
+      "bank_rates": {
+        "designation": "measured",
+        "designationReason": "the series passed the fallback screen, so its figures may be cited (with the level/difference reading rules) by the edition",
+        "distinctMacroValuesInWindow": 245,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 248.3,
+            "lag1AutocorrelationHousing": 0.0071,
+            "lag1AutocorrelationMacro": 0.7574,
+            "lag1Product": 0.0054,
+            "n": 251,
+            "pearsonCi95": {
+              "lower": -0.1433,
+              "upper": 0.1043
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.144,
+              "upper": 0.105
+            },
+            "pearsonR": -0.0198,
+            "spearmanR": -0.0792
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 251.0,
+            "lag1AutocorrelationHousing": -0.2451,
+            "lag1AutocorrelationMacro": 0.7574,
+            "lag1Product": -0.1856,
+            "n": 251,
+            "pearsonCi95": {
+              "lower": -0.0575,
+              "upper": 0.1891
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.0575,
+              "upper": 0.1891
+            },
+            "pearsonR": 0.0668,
+            "spearmanR": 0.0653
+          }
+        },
+        "frequency": "monthly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 4.0,
+            "lag1AutocorrelationHousing": 0.9992,
+            "lag1AutocorrelationMacro": 0.9953,
+            "lag1Product": 0.9945,
+            "n": 252,
+            "pearsonCi95": {
+              "lower": -0.0224,
+              "upper": 0.2222
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.9525,
+              "upper": 0.9681
+            },
+            "pearsonR": 0.1014,
+            "spearmanR": -0.018
+          },
+          "macroVsVolume": {
+            "effectiveN": 31.7,
+            "lag1AutocorrelationHousing": 0.7799,
+            "lag1AutocorrelationMacro": 0.9953,
+            "lag1Product": 0.7763,
+            "n": 252,
+            "pearsonCi95": {
+              "lower": 0.1193,
+              "upper": 0.3525
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.1193,
+              "upper": 0.5428
+            },
+            "pearsonR": 0.2394,
+            "spearmanR": 0.2884
+          }
+        },
+        "window": {
+          "first": "2005-10",
+          "last": "2026-09"
+        }
+      },
+      "cpi": {
+        "designation": "measured",
+        "designationReason": "the series passed the fallback screen, so its figures may be cited (with the level/difference reading rules) by the edition",
+        "distinctMacroValuesInWindow": 434,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 440.0,
+            "lag1AutocorrelationHousing": 0.2236,
+            "lag1AutocorrelationMacro": -0.1595,
+            "lag1Product": -0.0357,
+            "n": 440,
+            "pearsonCi95": {
+              "lower": 0.0569,
+              "upper": 0.2397
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.0569,
+              "upper": 0.2397
+            },
+            "pearsonR": 0.1496,
+            "spearmanR": 0.1519
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 406.3,
+            "lag1AutocorrelationHousing": -0.2496,
+            "lag1AutocorrelationMacro": -0.1595,
+            "lag1Product": 0.0398,
+            "n": 440,
+            "pearsonCi95": {
+              "lower": -0.2662,
+              "upper": -0.085
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.2698,
+              "upper": -0.0812
+            },
+            "pearsonR": -0.1771,
+            "spearmanR": -0.2423
+          }
+        },
+        "frequency": "monthly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 4.0,
+            "lag1AutocorrelationHousing": 0.9996,
+            "lag1AutocorrelationMacro": 0.9997,
+            "lag1Product": 0.9993,
+            "n": 441,
+            "pearsonCi95": {
+              "lower": 0.9655,
+              "upper": 0.9762
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.1543,
+              "upper": 0.9994
+            },
+            "pearsonR": 0.9713,
+            "spearmanR": 0.9246
+          },
+          "macroVsVolume": {
+            "effectiveN": 18.0,
+            "lag1AutocorrelationHousing": 0.9218,
+            "lag1AutocorrelationMacro": 0.9997,
+            "lag1Product": 0.9215,
+            "n": 441,
+            "pearsonCi95": {
+              "lower": -0.2691,
+              "upper": -0.0884
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.5969,
+              "upper": 0.313
+            },
+            "pearsonR": -0.1803,
+            "spearmanR": -0.112
+          }
+        },
+        "window": {
+          "first": "1990-01",
+          "last": "2026-09"
+        }
+      },
+      "gdp": {
+        "designation": "measured",
+        "designationReason": "the series passed the fallback screen, so its figures may be cited (with the level/difference reading rules) by the edition",
+        "distinctMacroValuesInWindow": 91,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 137.0,
+            "lag1AutocorrelationHousing": 0.7993,
+            "lag1AutocorrelationMacro": 0.0356,
+            "lag1Product": 0.0285,
+            "n": 145,
+            "pearsonCi95": {
+              "lower": -0.0465,
+              "upper": 0.2752
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.0513,
+              "upper": 0.2796
+            },
+            "pearsonR": 0.1174,
+            "spearmanR": 0.1335
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 144.2,
+            "lag1AutocorrelationHousing": 0.077,
+            "lag1AutocorrelationMacro": 0.0356,
+            "lag1Product": 0.0027,
+            "n": 145,
+            "pearsonCi95": {
+              "lower": -0.0864,
+              "upper": 0.2377
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.0869,
+              "upper": 0.2383
+            },
+            "pearsonR": 0.0777,
+            "spearmanR": 0.0406
+          }
+        },
+        "frequency": "quarterly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 22.1,
+            "lag1AutocorrelationHousing": 0.9984,
+            "lag1AutocorrelationMacro": 0.738,
+            "lag1Product": 0.7368,
+            "n": 146,
+            "pearsonCi95": {
+              "lower": -0.4086,
+              "upper": -0.1057
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.6167,
+              "upper": 0.1777
+            },
+            "pearsonR": -0.2636,
+            "spearmanR": -0.3733
+          },
+          "macroVsVolume": {
+            "effectiveN": 29.2,
+            "lag1AutocorrelationHousing": 0.9036,
+            "lag1AutocorrelationMacro": 0.738,
+            "lag1Product": 0.6669,
+            "n": 146,
+            "pearsonCi95": {
+              "lower": -0.2285,
+              "upper": 0.0949
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.4245,
+              "upper": 0.3056
+            },
+            "pearsonR": -0.0686,
+            "spearmanR": 0.0633
+          }
+        },
+        "window": {
+          "first": "1990Q1",
+          "last": "2026Q2"
+        }
+      },
+      "hdb_rpi": {
+        "designation": "measured",
+        "designationReason": "the series passed the fallback screen, so its figures may be cited (with the level/difference reading rules) by the edition",
+        "distinctMacroValuesInWindow": 133,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 32.8,
+            "lag1AutocorrelationHousing": 0.7979,
+            "lag1AutocorrelationMacro": 0.7933,
+            "lag1Product": 0.633,
+            "n": 146,
+            "pearsonCi95": {
+              "lower": 0.8955,
+              "upper": 0.9443
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.8497,
+              "upper": 0.9619
+            },
+            "pearsonR": 0.9236,
+            "spearmanR": 0.9269
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 129.1,
+            "lag1AutocorrelationHousing": 0.0776,
+            "lag1AutocorrelationMacro": 0.7933,
+            "lag1Product": 0.0615,
+            "n": 146,
+            "pearsonCi95": {
+              "lower": -0.2346,
+              "upper": 0.0885
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.2447,
+              "upper": 0.0991
+            },
+            "pearsonR": -0.075,
+            "spearmanR": -0.0348
+          }
+        },
+        "frequency": "quarterly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 4.0,
+            "lag1AutocorrelationHousing": 0.9984,
+            "lag1AutocorrelationMacro": 0.9984,
+            "lag1Product": 0.9968,
+            "n": 147,
+            "pearsonCi95": {
+              "lower": 0.9987,
+              "upper": 0.9993
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.9535,
+              "upper": 1.0
+            },
+            "pearsonR": 0.9991,
+            "spearmanR": 0.9973
+          },
+          "macroVsVolume": {
+            "effectiveN": 7.6,
+            "lag1AutocorrelationHousing": 0.9029,
+            "lag1AutocorrelationMacro": 0.9984,
+            "lag1Product": 0.9014,
+            "n": 147,
+            "pearsonCi95": {
+              "lower": -0.2334,
+              "upper": 0.0886
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.7402,
+              "upper": 0.6652
+            },
+            "pearsonR": -0.0743,
+            "spearmanR": -0.0957
+          }
+        },
+        "window": {
+          "first": "1990Q1",
+          "last": "2026Q3"
+        }
+      },
+      "sora_rates": {
+        "designation": "audit-only",
+        "designationReason": "the structural screen returned `annual-ramp-signature` for this series, so its association figures are retained only to quantify what excluding it costs or to show that a filled series produces non-independent observations; no empirical claim may rest on them",
+        "distinctMacroValuesInWindow": 55,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 53.5,
+            "lag1AutocorrelationHousing": -0.3024,
+            "lag1AutocorrelationMacro": -0.1608,
+            "lag1Product": 0.0486,
+            "n": 59,
+            "pearsonCi95": {
+              "lower": -0.1947,
+              "upper": 0.3155
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.2067,
+              "upper": 0.3267
+            },
+            "pearsonR": 0.0646,
+            "spearmanR": 0.0947
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 51.8,
+            "lag1AutocorrelationHousing": -0.4028,
+            "lag1AutocorrelationMacro": -0.1608,
+            "lag1Product": 0.0648,
+            "n": 59,
+            "pearsonCi95": {
+              "lower": 0.079,
+              "upper": 0.5392
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.061,
+              "upper": 0.5519
+            },
+            "pearsonR": 0.3285,
+            "spearmanR": 0.3033
+          }
+        },
+        "frequency": "monthly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 4.0,
+            "lag1AutocorrelationHousing": 0.9963,
+            "lag1AutocorrelationMacro": 0.9777,
+            "lag1Product": 0.974,
+            "n": 60,
+            "pearsonCi95": {
+              "lower": 0.9047,
+              "upper": 0.9652
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.2002,
+              "upper": 0.9988
+            },
+            "pearsonR": 0.9422,
+            "spearmanR": 0.9604
+          },
+          "macroVsVolume": {
+            "effectiveN": 35.2,
+            "lag1AutocorrelationHousing": 0.2663,
+            "lag1AutocorrelationMacro": 0.9777,
+            "lag1Product": 0.2603,
+            "n": 60,
+            "pearsonCi95": {
+              "lower": -0.4835,
+              "upper": -0.0083
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.5472,
+              "upper": 0.0784
+            },
+            "pearsonR": -0.2617,
+            "spearmanR": -0.2787
+          }
+        },
+        "window": {
+          "first": "2021-01",
+          "last": "2025-12"
+        }
+      },
+      "unemployment": {
+        "designation": "measured",
+        "designationReason": "the series passed the fallback screen, so its figures may be cited (with the level/difference reading rules) by the edition",
+        "distinctMacroValuesInWindow": 31,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 138.0,
+            "lag1AutocorrelationHousing": 0.7993,
+            "lag1AutocorrelationMacro": -0.5822,
+            "lag1Product": -0.4653,
+            "n": 138,
+            "pearsonCi95": {
+              "lower": -0.219,
+              "upper": 0.1143
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.219,
+              "upper": 0.1143
+            },
+            "pearsonR": -0.0539,
+            "spearmanR": -0.0406
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 138.0,
+            "lag1AutocorrelationHousing": 0.0852,
+            "lag1AutocorrelationMacro": -0.5822,
+            "lag1Product": -0.0496,
+            "n": 138,
+            "pearsonCi95": {
+              "lower": -0.12,
+              "upper": 0.2134
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.12,
+              "upper": 0.2134
+            },
+            "pearsonR": 0.048,
+            "spearmanR": 0.0726
+          }
+        },
+        "frequency": "quarterly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 52.0,
+            "lag1AutocorrelationHousing": 0.998,
+            "lag1AutocorrelationMacro": 0.4564,
+            "lag1Product": 0.4555,
+            "n": 139,
+            "pearsonCi95": {
+              "lower": -0.3419,
+              "upper": -0.0201
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.4368,
+              "upper": 0.0915
+            },
+            "pearsonR": -0.186,
+            "spearmanR": -0.1381
+          },
+          "macroVsVolume": {
+            "effectiveN": 58.6,
+            "lag1AutocorrelationHousing": 0.8911,
+            "lag1AutocorrelationMacro": 0.4564,
+            "lag1Product": 0.4067,
+            "n": 139,
+            "pearsonCi95": {
+              "lower": 0.1326,
+              "upper": 0.4378
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.0396,
+              "upper": 0.5105
+            },
+            "pearsonR": 0.2927,
+            "spearmanR": 0.2876
+          }
+        },
+        "window": {
+          "first": "1992Q1",
+          "last": "2026Q3"
+        }
+      },
+      "ura_ppi": {
+        "designation": "measured",
+        "designationReason": "the series passed the fallback screen, so its figures may be cited (with the level/difference reading rules) by the edition",
+        "distinctMacroValuesInWindow": 139,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 46.0,
+            "lag1AutocorrelationHousing": 0.7979,
+            "lag1AutocorrelationMacro": 0.6525,
+            "lag1Product": 0.5206,
+            "n": 146,
+            "pearsonCi95": {
+              "lower": 0.3634,
+              "upper": 0.6098
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.241,
+              "upper": 0.6877
+            },
+            "pearsonR": 0.4965,
+            "spearmanR": 0.5381
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 131.9,
+            "lag1AutocorrelationHousing": 0.0776,
+            "lag1AutocorrelationMacro": 0.6525,
+            "lag1Product": 0.0506,
+            "n": 146,
+            "pearsonCi95": {
+              "lower": -0.2595,
+              "upper": 0.0622
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.2675,
+              "upper": 0.0708
+            },
+            "pearsonR": -0.1013,
+            "spearmanR": -0.0123
+          }
+        },
+        "frequency": "quarterly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 4.0,
+            "lag1AutocorrelationHousing": 0.9984,
+            "lag1AutocorrelationMacro": 0.9957,
+            "lag1Product": 0.9941,
+            "n": 147,
+            "pearsonCi95": {
+              "lower": 0.9583,
+              "upper": 0.9781
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": 0.1271,
+              "upper": 0.9994
+            },
+            "pearsonR": 0.9697,
+            "spearmanR": 0.941
+          },
+          "macroVsVolume": {
+            "effectiveN": 7.8,
+            "lag1AutocorrelationHousing": 0.9029,
+            "lag1AutocorrelationMacro": 0.9957,
+            "lag1Product": 0.899,
+            "n": 147,
+            "pearsonCi95": {
+              "lower": -0.2506,
+              "upper": 0.0705
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.7484,
+              "upper": 0.6549
+            },
+            "pearsonR": -0.0924,
+            "spearmanR": -0.114
+          }
+        },
+        "window": {
+          "first": "1990Q1",
+          "last": "2026Q3"
+        }
+      },
+      "wage_growth": {
+        "designation": "audit-only",
+        "designationReason": "the structural screen returned `annual-resolution-tiling-signature` for this series, so its association figures are retained only to quantify what excluding it costs or to show that a filled series produces non-independent observations; no empirical claim may rest on them",
+        "distinctMacroValuesInWindow": 19,
+        "firstDifferences": {
+          "dMacroVsDMedianPsf": {
+            "effectiveN": 99.0,
+            "lag1AutocorrelationHousing": 0.8076,
+            "lag1AutocorrelationMacro": -0.0002,
+            "lag1Product": -0.0002,
+            "n": 99,
+            "pearsonCi95": {
+              "lower": -0.0589,
+              "upper": 0.3285
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.0589,
+              "upper": 0.3285
+            },
+            "pearsonR": 0.1402,
+            "spearmanR": 0.0858
+          },
+          "dMacroVsDVolume": {
+            "effectiveN": 99.0,
+            "lag1AutocorrelationHousing": -0.1709,
+            "lag1AutocorrelationMacro": -0.0002,
+            "lag1Product": 0.0,
+            "n": 99,
+            "pearsonCi95": {
+              "lower": -0.2674,
+              "upper": 0.1254
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.2674,
+              "upper": 0.1254
+            },
+            "pearsonR": -0.0739,
+            "spearmanR": -0.1421
+          }
+        },
+        "frequency": "quarterly",
+        "levels": {
+          "macroVsMedianPsf": {
+            "effectiveN": 14.1,
+            "lag1AutocorrelationHousing": 0.9982,
+            "lag1AutocorrelationMacro": 0.7539,
+            "lag1Product": 0.7525,
+            "n": 100,
+            "pearsonCi95": {
+              "lower": 0.1519,
+              "upper": 0.5013
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.2344,
+              "upper": 0.7366
+            },
+            "pearsonR": 0.3382,
+            "spearmanR": 0.3979
+          },
+          "macroVsVolume": {
+            "effectiveN": 23.6,
+            "lag1AutocorrelationHousing": 0.8207,
+            "lag1AutocorrelationMacro": 0.7539,
+            "lag1Product": 0.6187,
+            "n": 100,
+            "pearsonCi95": {
+              "lower": -0.3117,
+              "upper": 0.0754
+            },
+            "pearsonCi95SerialAdjusted": {
+              "lower": -0.5014,
+              "upper": 0.2952
+            },
+            "pearsonR": -0.1228,
+            "spearmanR": -0.0729
+          }
+        },
+        "window": {
+          "first": "2001Q1",
+          "last": "2025Q4"
+        }
+      }
+    },
+    "soraFallbackContrast": {
+      "designation": "audit-only",
+      "firstDifferences": {
+        "dLongVsDMedianPsf": {
+          "effectiveN": 59.0,
+          "lag1AutocorrelationHousing": -0.3024,
+          "lag1AutocorrelationMacro": 0.8232,
+          "lag1Product": -0.2489,
+          "n": 59,
+          "pearsonCi95": {
+            "lower": -0.1159,
+            "upper": 0.3863
+          },
+          "pearsonCi95SerialAdjusted": {
+            "lower": -0.1159,
+            "upper": 0.3863
+          },
+          "pearsonR": 0.1445,
+          "spearmanR": 0.1812
+        },
+        "dShortVsDMedianPsf": {
+          "effectiveN": 53.5,
+          "lag1AutocorrelationHousing": -0.3024,
+          "lag1AutocorrelationMacro": -0.1608,
+          "lag1Product": 0.0486,
+          "n": 59,
+          "pearsonCi95": {
+            "lower": -0.1947,
+            "upper": 0.3155
+          },
+          "pearsonCi95SerialAdjusted": {
+            "lower": -0.2067,
+            "upper": 0.3267
+          },
+          "pearsonR": 0.0646,
+          "spearmanR": 0.0947
+        }
+      },
+      "levels": {
+        "longSeriesVsMedianPsf": {
+          "effectiveN": 4.0,
+          "lag1AutocorrelationHousing": 0.9963,
+          "lag1AutocorrelationMacro": 0.9932,
+          "lag1Product": 0.9896,
+          "n": 60,
+          "pearsonCi95": {
+            "lower": 0.3914,
+            "upper": 0.7318
+          },
+          "pearsonCi95SerialAdjusted": {
+            "lower": -0.8583,
+            "upper": 0.9897
+          },
+          "pearsonR": 0.587,
+          "spearmanR": 0.5263
+        },
+        "shortSeriesVsMedianPsf": {
+          "effectiveN": 4.0,
+          "lag1AutocorrelationHousing": 0.9963,
+          "lag1AutocorrelationMacro": 0.9777,
+          "lag1Product": 0.974,
+          "n": 60,
+          "pearsonCi95": {
+            "lower": 0.9047,
+            "upper": 0.9652
+          },
+          "pearsonCi95SerialAdjusted": {
+            "lower": -0.2002,
+            "upper": 0.9988
+          },
+          "pearsonR": 0.9422,
+          "spearmanR": 0.9604
+        }
+      },
+      "window": {
+        "first": "2021-01",
+        "last": "2025-12"
+      }
+    },
+    "targetDefinition": "HDB resale median psf and HDB resale transaction count per month, measured from unified_dataset and aggregated to the macro series' own frequency (monthly series: the month; quarterly series: the calendar quarter)"
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 35,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; an unresolved key fails the build. Resolution is syntactic and does not judge whether the resolved field supports the disposition",
+    "unresolved": []
+  },
+  "cutoff": {
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact",
+    "lastCompleteMonth": "2026-10",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.264,
+    "terminalMonthTransactions": 1211,
+    "trailing12MedianTransactions": 4587.5
+  },
+  "definition": "RS09 measures macro-series provenance and macro-housing association. Two SORA series exist in this checkout with different spans and different paths; the ledger identifies the one with an annual-ramp signature and the one whose year means match the legacy article's own rate narrative, and measures the housing association under both so the exclusion the gate demands is quantified. Associations are reported in levels and in first differences at the macro series' own frequency: the level figures are what the legacy article read, the difference figures are the defensible statistic, and the gap between them is the trend-domination measurement. No coefficient here is a causal effect, no regime is tested, and no claim rests on a series whose provenance could not be screened.",
+  "fallbackAudit": {
+    "exclusionRule": "no edition-facing claim may rest on sora_rates. Every EDITION-FACING SORA figure — the ones a revised article could cite — is measured from bank_rates.sora_3m. The ledger still records sora_rates-derived numbers on purpose, to quantify what the exclusion costs: fallbackAudit.soraYearMeans, fallbackAudit.soraConfrontation and associations.soraFallbackContrast each carry an explicit `designation: audit-only`, so a reader cannot mistake them for edition-facing figures",
+    "longSeriesVerdict": "source candidate: plausible pre-2021 history (near-zero 2009-2014, 3.19% mean in 2006) and year means that match the legacy article's rate table; it is still unstamped, so 'source candidate' is a screening result, not provenance",
+    "shortSeriesVerdict": "annual-ramp fallback candidate: between-year variance share and a monotone year-mean path with year-boundary steps (see signatures.sora_rates), and a 2023 level roughly one-seventh of the long series it is supposed to represent — the article's own rate narrative (3.5-4.0% through 2023) is not reproducible from it",
+    "signatures": {
+      "bank_rates": {
+        "betweenYearVarianceShare": 0.9324,
+        "caveat": "neither an annual ramp nor annual-resolution tiling was detected — which is the absence of one screen's positive result, not a certification: a high between-year variance share is also what a genuinely trending index looks like, and no series here carries a release or vintage stamp",
+        "distinctValuesPerYear": {
+          "2005": 3,
+          "2006": 12,
+          "2007": 12,
+          "2008": 12,
+          "2009": 12,
+          "2010": 12,
+          "2011": 11,
+          "2012": 12,
+          "2013": 11,
+          "2014": 12,
+          "2015": 11,
+          "2016": 12,
+          "2017": 12,
+          "2018": 12,
+          "2019": 12,
+          "2020": 12,
+          "2021": 12,
+          "2022": 12,
+          "2023": 12,
+          "2024": 12,
+          "2025": 12,
+          "2026": 9
+        },
+        "screen": "no-fallback-signature-detected",
+        "tiledYearCount": 0,
+        "tiledYearShare": 0.0,
+        "tiledYearsHead": [],
+        "yearBoundaryCount": 21,
+        "yearBoundaryStepShare": 0.0945,
+        "yearMeanPathMonotoneIncreasing": false,
+        "yearMeans": {
+          "2005": 2.3353,
+          "2006": 3.1855,
+          "2007": 2.4304,
+          "2008": 0.7505,
+          "2009": 0.2077,
+          "2010": 0.1178,
+          "2011": 0.0575,
+          "2012": 0.0586,
+          "2013": 0.0505,
+          "2014": 0.0751,
+          "2015": 0.2399,
+          "2016": 0.2136,
+          "2017": 0.518,
+          "2018": 1.0062,
+          "2019": 1.5436,
+          "2020": 0.4039,
+          "2021": 0.1648,
+          "2022": 1.3085,
+          "2023": 3.5915,
+          "2024": 3.5213,
+          "2025": 1.9568,
+          "2026": 1.1185
+        }
+      },
+      "cpi": {
+        "betweenYearVarianceShare": 0.9992,
+        "caveat": "neither an annual ramp nor annual-resolution tiling was detected — which is the absence of one screen's positive result, not a certification: a high between-year variance share is also what a genuinely trending index looks like, and no series here carries a release or vintage stamp",
+        "distinctValuesPerYear": {
+          "1961": 12,
+          "1962": 12,
+          "1963": 12,
+          "1964": 12,
+          "1965": 12,
+          "1966": 12,
+          "1967": 11,
+          "1968": 12,
+          "1969": 12,
+          "1970": 12,
+          "1971": 12,
+          "1972": 12,
+          "1973": 12,
+          "1974": 12,
+          "1975": 12,
+          "1976": 12,
+          "1977": 12,
+          "1978": 12,
+          "1979": 12,
+          "1980": 12,
+          "1981": 12,
+          "1982": 12,
+          "1983": 12,
+          "1984": 12,
+          "1985": 12,
+          "1986": 12,
+          "1987": 12,
+          "1988": 12,
+          "1989": 12,
+          "1990": 12,
+          "1991": 12,
+          "1992": 12,
+          "1993": 12,
+          "1994": 12,
+          "1995": 12,
+          "1996": 12,
+          "1997": 12,
+          "1998": 12,
+          "1999": 12,
+          "2000": 12,
+          "2001": 12,
+          "2002": 12,
+          "2003": 12,
+          "2004": 12,
+          "2005": 12,
+          "2006": 11,
+          "2007": 12,
+          "2008": 12,
+          "2009": 12,
+          "2010": 12,
+          "2011": 12,
+          "2012": 12,
+          "2013": 12,
+          "2014": 12,
+          "2015": 12,
+          "2016": 12,
+          "2017": 12,
+          "2018": 12,
+          "2019": 12,
+          "2020": 12,
+          "2021": 12,
+          "2022": 12,
+          "2023": 12,
+          "2024": 12,
+          "2025": 12,
+          "2026": 9
+        },
+        "screen": "no-fallback-signature-detected",
+        "tiledYearCount": 0,
+        "tiledYearShare": 0.0,
+        "tiledYearsHead": [],
+        "yearBoundaryCount": 65,
+        "yearBoundaryStepShare": 0.0939,
+        "yearMeanPathMonotoneIncreasing": false,
+        "yearMeans": {
+          "1961": 20.9533,
+          "1962": 21.0457,
+          "1963": 21.494,
+          "1964": 21.8483,
+          "1965": 21.9015,
+          "1966": 22.3454,
+          "1967": 23.0566,
+          "1968": 23.2234,
+          "1969": 23.1958,
+          "1970": 23.2633,
+          "1971": 23.6998,
+          "1972": 24.2075,
+          "1973": 28.9565,
+          "1974": 35.4327,
+          "1975": 36.3462,
+          "1976": 35.6568,
+          "1977": 36.7933,
+          "1978": 38.2888,
+          "1979": 39.8223,
+          "1980": 43.2231,
+          "1981": 46.7634,
+          "1982": 48.5954,
+          "1983": 49.0997,
+          "1984": 50.378,
+          "1985": 50.6255,
+          "1986": 49.9264,
+          "1987": 50.1676,
+          "1988": 50.9317,
+          "1989": 52.1002,
+          "1990": 53.8977,
+          "1991": 55.7517,
+          "1992": 57.0026,
+          "1993": 58.3085,
+          "1994": 60.1135,
+          "1995": 61.1503,
+          "1996": 61.9937,
+          "1997": 63.2478,
+          "1998": 63.0763,
+          "1999": 63.0912,
+          "2000": 63.9417,
+          "2001": 64.5904,
+          "2002": 64.3374,
+          "2003": 64.651,
+          "2004": 65.7319,
+          "2005": 66.0431,
+          "2006": 66.6808,
+          "2007": 68.0877,
+          "2008": 72.6056,
+          "2009": 73.0333,
+          "2010": 75.0993,
+          "2011": 79.0429,
+          "2012": 82.6638,
+          "2013": 84.6183,
+          "2014": 85.4925,
+          "2015": 85.0463,
+          "2016": 84.5957,
+          "2017": 85.0836,
+          "2018": 85.4569,
+          "2019": 85.9422,
+          "2020": 85.7942,
+          "2021": 87.7813,
+          "2022": 93.1632,
+          "2023": 97.6664,
+          "2024": 100.0002,
+          "2025": 100.9032,
+          "2026": 102.5512
+        }
+      },
+      "gdp": {
+        "betweenYearVarianceShare": 0.7547,
+        "caveat": "neither an annual ramp nor annual-resolution tiling was detected — which is the absence of one screen's positive result, not a certification: a high between-year variance share is also what a genuinely trending index looks like, and no series here carries a release or vintage stamp",
+        "distinctValuesPerYear": {
+          "1976": 4,
+          "1977": 4,
+          "1978": 4,
+          "1979": 4,
+          "1980": 3,
+          "1981": 4,
+          "1982": 4,
+          "1983": 4,
+          "1984": 4,
+          "1985": 4,
+          "1986": 4,
+          "1987": 4,
+          "1988": 4,
+          "1989": 3,
+          "1990": 3,
+          "1991": 3,
+          "1992": 4,
+          "1993": 4,
+          "1994": 4,
+          "1995": 4,
+          "1996": 4,
+          "1997": 4,
+          "1998": 4,
+          "1999": 4,
+          "2000": 4,
+          "2001": 4,
+          "2002": 4,
+          "2003": 4,
+          "2004": 4,
+          "2005": 4,
+          "2006": 4,
+          "2007": 4,
+          "2008": 4,
+          "2009": 4,
+          "2010": 4,
+          "2011": 4,
+          "2012": 4,
+          "2013": 4,
+          "2014": 4,
+          "2015": 4,
+          "2016": 3,
+          "2017": 4,
+          "2018": 4,
+          "2019": 4,
+          "2020": 4,
+          "2021": 4,
+          "2022": 3,
+          "2023": 4,
+          "2024": 4,
+          "2025": 3,
+          "2026": 2
+        },
+        "screen": "no-fallback-signature-detected",
+        "tiledYearCount": 0,
+        "tiledYearShare": 0.0,
+        "tiledYearsHead": [],
+        "yearBoundaryCount": null,
+        "yearBoundaryStepShare": null,
+        "yearMeanPathMonotoneIncreasing": false,
+        "yearMeans": {
+          "1976": 7.45,
+          "1977": 6.85,
+          "1978": 7.7,
+          "1979": 9.575,
+          "1980": 10.15,
+          "1981": 10.85,
+          "1982": 7.15,
+          "1983": 8.55,
+          "1984": 8.85,
+          "1985": -0.575,
+          "1986": 1.375,
+          "1987": 10.775,
+          "1988": 11.25,
+          "1989": 10.175,
+          "1990": 9.925,
+          "1991": 6.675,
+          "1992": 6.625,
+          "1993": 11.425,
+          "1994": 11.15,
+          "1995": 7.15,
+          "1996": 7.575,
+          "1997": 8.3,
+          "1998": -2.125,
+          "1999": 5.675,
+          "2000": 9.025,
+          "2001": -0.925,
+          "2002": 3.95,
+          "2003": 4.525,
+          "2004": 10.0,
+          "2005": 7.325,
+          "2006": 9.025,
+          "2007": 9.05,
+          "2008": 2.0,
+          "2009": 0.175,
+          "2010": 14.625,
+          "2011": 6.3,
+          "2012": 4.425,
+          "2013": 4.8,
+          "2014": 3.95,
+          "2015": 3.0,
+          "2016": 3.9,
+          "2017": 4.325,
+          "2018": 3.2,
+          "2019": 1.15,
+          "2020": -3.575,
+          "2021": 10.375,
+          "2022": 4.05,
+          "2023": 1.45,
+          "2024": 5.35,
+          "2025": 5.025,
+          "2026": 6.1
+        }
+      },
+      "hdb_rpi": {
+        "betweenYearVarianceShare": 0.9952,
+        "caveat": "neither an annual ramp nor annual-resolution tiling was detected — which is the absence of one screen's positive result, not a certification: a high between-year variance share is also what a genuinely trending index looks like, and no series here carries a release or vintage stamp",
+        "distinctValuesPerYear": {
+          "1990": 4,
+          "1991": 4,
+          "1992": 4,
+          "1993": 4,
+          "1994": 4,
+          "1995": 4,
+          "1996": 4,
+          "1997": 4,
+          "1998": 4,
+          "1999": 4,
+          "2000": 4,
+          "2001": 4,
+          "2002": 3,
+          "2003": 4,
+          "2004": 4,
+          "2005": 3,
+          "2006": 4,
+          "2007": 4,
+          "2008": 4,
+          "2009": 4,
+          "2010": 4,
+          "2011": 4,
+          "2012": 4,
+          "2013": 4,
+          "2014": 4,
+          "2015": 4,
+          "2016": 2,
+          "2017": 4,
+          "2018": 3,
+          "2019": 4,
+          "2020": 4,
+          "2021": 4,
+          "2022": 4,
+          "2023": 4,
+          "2024": 4,
+          "2025": 4,
+          "2026": 3
+        },
+        "screen": "no-fallback-signature-detected",
+        "tiledYearCount": 0,
+        "tiledYearShare": 0.0,
+        "tiledYearsHead": [],
+        "yearBoundaryCount": null,
+        "yearBoundaryStepShare": null,
+        "yearMeanPathMonotoneIncreasing": false,
+        "yearMeans": {
+          "1990": 24.6,
+          "1991": 25.175,
+          "1992": 27.45,
+          "1993": 41.625,
+          "1994": 52.875,
+          "1995": 65.65,
+          "1996": 91.7,
+          "1997": 94.425,
+          "1998": 76.8,
+          "1999": 75.325,
+          "2000": 78.25,
+          "2001": 71.375,
+          "2002": 69.525,
+          "2003": 73.225,
+          "2004": 76.225,
+          "2005": 74.35,
+          "2006": 74.25,
+          "2007": 81.275,
+          "2008": 96.725,
+          "2009": 103.85,
+          "2010": 118.6,
+          "2011": 132.475,
+          "2012": 142.15,
+          "2013": 147.975,
+          "2014": 140.275,
+          "2015": 135.0,
+          "2016": 134.675,
+          "2017": 133.25,
+          "2018": 131.575,
+          "2019": 131.05,
+          "2020": 133.85,
+          "2021": 148.725,
+          "2022": 165.85,
+          "2023": 177.175,
+          "2024": 190.6,
+          "2025": 202.8,
+          "2026": 202.9
+        }
+      },
+      "sora_rates": {
+        "betweenYearVarianceShare": 0.9939,
+        "caveat": "0.9939 of variance sits between calendar years, 0.3444 of all movement lands on year boundaries and the year-mean path is monotone; that is a screen for a generated ramp, not provenance proof, and the series is excluded from empirical claims on this evidence rather than on a certified statement about its origin",
+        "distinctValuesPerYear": {
+          "2021": 10,
+          "2022": 12,
+          "2023": 10,
+          "2024": 11,
+          "2025": 12
+        },
+        "screen": "annual-ramp-signature",
+        "tiledYearCount": 0,
+        "tiledYearShare": 0.0,
+        "tiledYearsHead": [],
+        "yearBoundaryCount": 4,
+        "yearBoundaryStepShare": 0.3444,
+        "yearMeanPathMonotoneIncreasing": true,
+        "yearMeans": {
+          "2021": 0.1953,
+          "2022": 0.2914,
+          "2023": 0.4957,
+          "2024": 0.8037,
+          "2025": 1.1953
+        }
+      },
+      "unemployment": {
+        "betweenYearVarianceShare": 0.5722,
+        "caveat": "neither an annual ramp nor annual-resolution tiling was detected — which is the absence of one screen's positive result, not a certification: a high between-year variance share is also what a genuinely trending index looks like, and no series here carries a release or vintage stamp",
+        "distinctValuesPerYear": {
+          "1992": 4,
+          "1993": 4,
+          "1994": 3,
+          "1995": 4,
+          "1996": 4,
+          "1997": 4,
+          "1998": 3,
+          "1999": 3,
+          "2000": 4,
+          "2001": 4,
+          "2002": 4,
+          "2003": 4,
+          "2004": 3,
+          "2005": 4,
+          "2006": 4,
+          "2007": 4,
+          "2008": 4,
+          "2009": 4,
+          "2010": 4,
+          "2011": 2,
+          "2012": 4,
+          "2013": 3,
+          "2014": 4,
+          "2015": 3,
+          "2016": 3,
+          "2017": 4,
+          "2018": 2,
+          "2019": 2,
+          "2020": 4,
+          "2021": 4,
+          "2022": 3,
+          "2023": 4,
+          "2024": 4,
+          "2025": 3,
+          "2026": 2
+        },
+        "screen": "no-fallback-signature-detected",
+        "tiledYearCount": 0,
+        "tiledYearShare": 0.0,
+        "tiledYearsHead": [],
+        "yearBoundaryCount": null,
+        "yearBoundaryStepShare": null,
+        "yearMeanPathMonotoneIncreasing": false,
+        "yearMeans": {
+          "1992": 1.8,
+          "1993": 1.7,
+          "1994": 1.725,
+          "1995": 1.75,
+          "1996": 1.65,
+          "1997": 1.425,
+          "1998": 2.5,
+          "1999": 2.8,
+          "2000": 2.675,
+          "2001": 2.65,
+          "2002": 3.55,
+          "2003": 3.95,
+          "2004": 3.35,
+          "2005": 3.125,
+          "2006": 2.65,
+          "2007": 2.125,
+          "2008": 2.225,
+          "2009": 3.025,
+          "2010": 2.175,
+          "2011": 2.025,
+          "2012": 1.95,
+          "2013": 1.9,
+          "2014": 1.95,
+          "2015": 1.9,
+          "2016": 2.075,
+          "2017": 2.175,
+          "2018": 2.1,
+          "2019": 2.25,
+          "2020": 3.0,
+          "2021": 2.65,
+          "2022": 2.1,
+          "2023": 1.925,
+          "2024": 1.95,
+          "2025": 1.975,
+          "2026": 2.0333
+        }
+      },
+      "ura_ppi": {
+        "betweenYearVarianceShare": 0.9961,
+        "caveat": "neither an annual ramp nor annual-resolution tiling was detected — which is the absence of one screen's positive result, not a certification: a high between-year variance share is also what a genuinely trending index looks like, and no series here carries a release or vintage stamp",
+        "distinctValuesPerYear": {
+          "1975": 2,
+          "1976": 2,
+          "1977": 2,
+          "1978": 3,
+          "1979": 4,
+          "1980": 4,
+          "1981": 4,
+          "1982": 4,
+          "1983": 3,
+          "1984": 4,
+          "1985": 4,
+          "1986": 4,
+          "1987": 3,
+          "1988": 4,
+          "1989": 4,
+          "1990": 4,
+          "1991": 4,
+          "1992": 4,
+          "1993": 4,
+          "1994": 4,
+          "1995": 4,
+          "1996": 4,
+          "1997": 4,
+          "1998": 4,
+          "1999": 4,
+          "2000": 4,
+          "2001": 4,
+          "2002": 4,
+          "2003": 4,
+          "2004": 4,
+          "2005": 4,
+          "2006": 4,
+          "2007": 4,
+          "2008": 4,
+          "2009": 4,
+          "2010": 4,
+          "2011": 4,
+          "2012": 4,
+          "2013": 4,
+          "2014": 4,
+          "2015": 4,
+          "2016": 4,
+          "2017": 4,
+          "2018": 4,
+          "2019": 4,
+          "2020": 4,
+          "2021": 4,
+          "2022": 4,
+          "2023": 4,
+          "2024": 4,
+          "2025": 4,
+          "2026": 3
+        },
+        "screen": "no-fallback-signature-detected",
+        "tiledYearCount": 0,
+        "tiledYearShare": 0.0,
+        "tiledYearsHead": [],
+        "yearBoundaryCount": null,
+        "yearBoundaryStepShare": null,
+        "yearMeanPathMonotoneIncreasing": false,
+        "yearMeans": {
+          "1975": 9.05,
+          "1976": 9.575,
+          "1977": 9.4,
+          "1978": 9.475,
+          "1979": 11.475,
+          "1980": 19.275,
+          "1981": 32.825,
+          "1982": 33.225,
+          "1983": 37.075,
+          "1984": 35.1,
+          "1985": 29.5,
+          "1986": 25.85,
+          "1987": 30.55,
+          "1988": 32.55,
+          "1989": 36.5,
+          "1990": 41.25,
+          "1991": 45.525,
+          "1992": 52.7,
+          "1993": 67.35,
+          "1994": 96.775,
+          "1995": 112.875,
+          "1996": 125.725,
+          "1997": 114.7,
+          "1998": 84.55,
+          "1999": 86.675,
+          "2000": 97.95,
+          "2001": 88.2,
+          "2002": 82.475,
+          "2003": 81.0,
+          "2004": 80.675,
+          "2005": 83.0,
+          "2006": 88.95,
+          "2007": 109.925,
+          "2008": 123.475,
+          "2009": 106.0,
+          "2010": 132.875,
+          "2011": 145.45,
+          "2012": 148.85,
+          "2013": 153.55,
+          "2014": 149.15,
+          "2015": 143.4,
+          "2016": 138.925,
+          "2017": 137.4,
+          "2018": 148.1,
+          "2019": 151.45,
+          "2020": 153.875,
+          "2021": 166.15,
+          "2022": 183.025,
+          "2023": 196.675,
+          "2024": 206.125,
+          "2025": 213.95,
+          "2026": 220.0667
+        }
+      },
+      "wage_growth": {
+        "betweenYearVarianceShare": 1.0,
+        "caveat": "every year carries one distinct value repeated across its periods, so an annual figure has been copied into the finer rows and the row count overstates independent observations; this is a screen for a fill pattern, not a statement about who produced the file",
+        "distinctValuesPerYear": {
+          "2001": 1,
+          "2002": 1,
+          "2003": 1,
+          "2004": 1,
+          "2005": 1,
+          "2006": 1,
+          "2007": 1,
+          "2008": 1,
+          "2009": 1,
+          "2010": 1,
+          "2011": 1,
+          "2012": 1,
+          "2013": 1,
+          "2014": 1,
+          "2015": 1,
+          "2016": 1,
+          "2017": 1,
+          "2018": 1,
+          "2019": 1,
+          "2020": 1,
+          "2021": 1,
+          "2022": 1,
+          "2023": 1,
+          "2024": 1,
+          "2025": 1
+        },
+        "screen": "annual-resolution-tiling-signature",
+        "tiledYearCount": 25,
+        "tiledYearShare": 1.0,
+        "tiledYearsHead": [
+          2001,
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012
+        ],
+        "yearBoundaryCount": null,
+        "yearBoundaryStepShare": null,
+        "yearMeanPathMonotoneIncreasing": false,
+        "yearMeans": {
+          "2001": 2.3,
+          "2002": 0.8,
+          "2003": 1.7,
+          "2004": 3.6,
+          "2005": 3.5,
+          "2006": 3.2,
+          "2007": 6.2,
+          "2008": 5.4,
+          "2009": -2.6,
+          "2010": 5.6,
+          "2011": 6.0,
+          "2012": 2.3,
+          "2013": 4.3,
+          "2014": 2.3,
+          "2015": 3.5,
+          "2016": 3.7,
+          "2017": 3.1,
+          "2018": 3.5,
+          "2019": 2.6,
+          "2020": 1.4,
+          "2021": 3.6,
+          "2022": 6.8,
+          "2023": 5.3,
+          "2024": 5.4,
+          "2025": 4.2
+        }
+      }
+    },
+    "soraBandCheck": {
+      "2021H1": {
+        "max": 0.2216,
+        "mean": 0.1796,
+        "min": 0.1326,
+        "months": 6,
+        "window": {
+          "first": "2021-01",
+          "last": "2021-06"
+        }
+      },
+      "2022H2": {
+        "max": 3.0294,
+        "mean": 2.2247,
+        "min": 1.2712,
+        "months": 6,
+        "window": {
+          "first": "2022-07",
+          "last": "2022-12"
+        }
+      },
+      "2023": {
+        "max": 3.7527,
+        "mean": 3.5915,
+        "min": 3.1419,
+        "months": 12,
+        "window": {
+          "first": "2023-01",
+          "last": "2023-12"
+        }
+      },
+      "2024to2025": {
+        "max": 3.6829,
+        "mean": 2.739,
+        "min": 1.1857,
+        "months": 24,
+        "window": {
+          "first": "2024-01",
+          "last": "2025-12"
+        }
+      },
+      "sourceSpan2024to2026Aug": {
+        "max": 3.6829,
+        "mean": 2.3303,
+        "min": 1.0298,
+        "months": 32,
+        "window": {
+          "first": "2024-01",
+          "last": "2026-08"
+        }
+      }
+    },
+    "soraConfrontation": {
+      "designation": "audit-only",
+      "firstMonth": "2021-01",
+      "lastMonth": "2025-12",
+      "maxAbsoluteDifference": 3.2704,
+      "meanDifferenceShortMinusLong": -1.5123,
+      "months": 60,
+      "pearsonR": 0.4067
+    },
+    "soraYearMeans": {
+      "designation": "audit-only",
+      "years": {
+        "2021": {
+          "longYearMean": 0.1648,
+          "ratioLongToShort": 0.8441,
+          "shortYearMean": 0.1953
+        },
+        "2022": {
+          "longYearMean": 1.3085,
+          "ratioLongToShort": 4.4902,
+          "shortYearMean": 0.2914
+        },
+        "2023": {
+          "longYearMean": 3.5915,
+          "ratioLongToShort": 7.2459,
+          "shortYearMean": 0.4957
+        },
+        "2024": {
+          "longYearMean": 3.5213,
+          "ratioLongToShort": 4.3811,
+          "shortYearMean": 0.8037
+        },
+        "2025": {
+          "longYearMean": 1.9568,
+          "ratioLongToShort": 1.6371,
+          "shortYearMean": 1.1953
+        }
+      }
+    }
+  },
+  "goldColumnLineage": {
+    "columns": {
+      "cpi": {
+        "candidates": {
+          "cpi": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 441,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 441,
+            "frequency": "monthly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          }
+        },
+        "goldDistinctValues": 434,
+        "goldFirstMonth": "1990-01",
+        "goldLastMonth": "2026-09",
+        "goldNullRows": 2,
+        "reproducedBy": "cpi",
+        "reproducedExactShare": 1.0
+      },
+      "gdp": {
+        "candidates": {
+          "gdp": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 438,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 438,
+            "frequency": "quarterly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          }
+        },
+        "goldDistinctValues": 91,
+        "goldFirstMonth": "1990-01",
+        "goldLastMonth": "2026-06",
+        "goldNullRows": 5,
+        "reproducedBy": "gdp",
+        "reproducedExactShare": 1.0
+      },
+      "hdb_rpi": {
+        "candidates": {
+          "hdb_rpi": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 441,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 441,
+            "frequency": "quarterly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          }
+        },
+        "goldDistinctValues": 133,
+        "goldFirstMonth": "1990-01",
+        "goldLastMonth": "2026-09",
+        "goldNullRows": 2,
+        "reproducedBy": "hdb_rpi",
+        "reproducedExactShare": 1.0
+      },
+      "sora_3m": {
+        "candidates": {
+          "bank_rates": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 252,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 252,
+            "frequency": "monthly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          },
+          "sora_rates": {
+            "asOfEqualShare": 0.0,
+            "asOfMonths": 69,
+            "coverageShareOfGoldMonths": 0.2738,
+            "exactMonthEqualShare": 0.0,
+            "exactMonthMonths": 60,
+            "frequency": "monthly",
+            "maxAbsoluteGapAsOf": 3.2704,
+            "maxAbsoluteGapExactMonth": 3.2704
+          }
+        },
+        "goldDistinctValues": 245,
+        "goldFirstMonth": "2005-10",
+        "goldLastMonth": "2026-09",
+        "goldNullRows": 191,
+        "reproducedBy": "bank_rates",
+        "reproducedExactShare": 1.0
+      },
+      "sora_rate": {
+        "candidates": {
+          "bank_rates": {
+            "asOfEqualShare": 0.0,
+            "asOfMonths": 60,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 0.0,
+            "exactMonthMonths": 60,
+            "frequency": "monthly",
+            "maxAbsoluteGapAsOf": 3.2704,
+            "maxAbsoluteGapExactMonth": 3.2704
+          },
+          "sora_rates": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 60,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 60,
+            "frequency": "monthly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          }
+        },
+        "goldDistinctValues": 55,
+        "goldFirstMonth": "2021-01",
+        "goldLastMonth": "2025-12",
+        "goldNullRows": 383,
+        "reproducedBy": "sora_rates",
+        "reproducedExactShare": 1.0
+      },
+      "unemployment_rate": {
+        "candidates": {
+          "unemployment": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 417,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 417,
+            "frequency": "quarterly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          }
+        },
+        "goldDistinctValues": 31,
+        "goldFirstMonth": "1992-01",
+        "goldLastMonth": "2026-09",
+        "goldNullRows": 26,
+        "reproducedBy": "unemployment",
+        "reproducedExactShare": 1.0
+      },
+      "ura_ppi": {
+        "candidates": {
+          "ura_ppi": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 441,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 441,
+            "frequency": "quarterly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          }
+        },
+        "goldDistinctValues": 139,
+        "goldFirstMonth": "1990-01",
+        "goldLastMonth": "2026-09",
+        "goldNullRows": 2,
+        "reproducedBy": "ura_ppi",
+        "reproducedExactShare": 1.0
+      },
+      "wage_growth": {
+        "candidates": {
+          "wage_growth": {
+            "asOfEqualShare": 1.0,
+            "asOfMonths": 300,
+            "coverageShareOfGoldMonths": 1.0,
+            "exactMonthEqualShare": 1.0,
+            "exactMonthMonths": 300,
+            "frequency": "quarterly",
+            "maxAbsoluteGapAsOf": 0.0,
+            "maxAbsoluteGapExactMonth": 0.0
+          }
+        },
+        "goldDistinctValues": 19,
+        "goldFirstMonth": "2001-01",
+        "goldLastMonth": "2025-12",
+        "goldNullRows": 143,
+        "reproducedBy": "wage_growth",
+        "reproducedExactShare": 1.0
+      }
+    },
+    "conclusion": "gold carries both SORA candidates as separate columns; sora_rate reproduces sora_rates (1.0) and sora_3m reproduces bank_rates (1.0), so a query that picks the wrong column picks the screened-out series",
+    "cutoffUpperBound": "2026-10"
+  },
+  "inputs": {
+    "data/pipeline/01_bronze/external/bank_rates.parquet": {
+      "rows": 465,
+      "sha256": "9a4327bb154d70768f7fa7bd370d46638d65be5fd907e5e52623248fe98f176a"
+    },
+    "data/pipeline/01_bronze/external/cpi.parquet": {
+      "rows": 789,
+      "sha256": "ae065cecd81bd776a70da5af67949df79e2e451f588a9eb3994e90dd9f0ccc04"
+    },
+    "data/pipeline/01_bronze/external/gdp.parquet": {
+      "rows": 202,
+      "sha256": "b43fb19211da5c842943da948f1adbaac137ba2b15b04ca39e66496b064ac3d0"
+    },
+    "data/pipeline/01_bronze/external/hdb_rpi.parquet": {
+      "rows": 147,
+      "sha256": "57ddf2ae983e5f3798899fac2888b27e58c5e866c0ce88e44681dc4b9a4a8c4c"
+    },
+    "data/pipeline/01_bronze/external/sora_rates.parquet": {
+      "rows": 60,
+      "sha256": "c0323795d4e26023d03eec73d4a146565b301f9bdfbc4f5fd5a895a060201316"
+    },
+    "data/pipeline/01_bronze/external/unemployment.parquet": {
+      "rows": 139,
+      "sha256": "78b8cbbf55be52eba1891ea7b655ff4dc80b0ee0750eb986c6828a6d7d3ae260"
+    },
+    "data/pipeline/01_bronze/external/ura_ppi.parquet": {
+      "rows": 207,
+      "sha256": "a73cd16354629494e9c02da5c92251c2beff028eebad8c573e63210b34ed91b6"
+    },
+    "data/pipeline/01_bronze/external/wage_growth.parquet": {
+      "rows": 100,
+      "sha256": "2a47a4953ab2ee5188b46d6af83fcb0e0edbae725c4ca84641b7dcdca2bbe1a6"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md": {
+      "lines": 157,
+      "sha256": "8af923420706a072c1b8e6287b4d54b70bdfbad3afcd65dce1a9e7cce41a7a88"
+    }
+  },
+  "legacyClaims": [
+    {
+      "id": "C1",
+      "ledgerKey": "associations.series.bank_rates.firstDifferences.dMacroVsDMedianPsf",
+      "note": "a conditional correlation is not an impact and not an affordability measure; the ledger reports the association, not an effect on affordability",
+      "phrase": "Interest rates (SORA) have the most direct impact on affordability",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C2",
+      "ledgerKey": "associations.readingRules",
+      "note": "'confirms that' asserts proof for a descriptive correlation, and 'most actionable' ranks indicators the ledger does not rank",
+      "phrase": "This confirms that interest rates are the most actionable macro indicator for housing decisions.",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C3",
+      "ledgerKey": "fallbackAudit.soraBandCheck.2023",
+      "note": "the 2023 ANNUAL MEAN (measured 3.5915) falls inside the quoted 3.5-4.0% band; the twelve monthly values span 3.1419 to 3.7527, so the band describes the year's mean rather than containing every month. The screened-out sora_rates gives 2023 a mean near 0.5, which is the measured reason the article's rate narrative cannot rest on it",
+      "phrase": "3.5-4.0%",
+      "status": "re-measured"
+    },
+    {
+      "id": "C4",
+      "ledgerKey": "fallbackAudit.shortSeriesVerdict",
+      "note": "the article names the fallback; the ledger identifies which shipped series carries the annual-ramp signature and excludes it",
+      "phrase": "The macro data collection relies on SingStat API with fallback to generated data when API calls fail.",
+      "status": "re-measured"
+    },
+    {
+      "id": "C5",
+      "ledgerKey": "notMeasurable.lagTesting",
+      "note": "'leading indicator' is a timing claim; the ledger reports level and first-difference association with volume and price at quarterly frequency and does not test lead order",
+      "phrase": "GDP growth is a leading indicator for transaction volume more than price level",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C6",
+      "ledgerKey": "notMeasurable.lagTesting",
+      "note": "no lead-lag test was run and none is recoverable; the ordering is not measured",
+      "phrase": "Unemployment is a lagging indicator that confirms weakness rather than predicting it.",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C7",
+      "ledgerKey": "notMeasurable.regimes",
+      "note": "chosen boundaries, not tested breaks; the methodArtefacts scan found no break-test implementation and none was run",
+      "phrase": "are identifiable in the 2021-2026 data: expansion, tightening, stabilization",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C8",
+      "ledgerKey": "realReturns.segmentsNotReproducible",
+      "note": "only the HDB rows are measurable; no segment price index exists, so the cross-segment spread is not reproducible",
+      "phrase": "is approximately 2% across all segments",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C9",
+      "ledgerKey": "seriesInventory",
+      "note": "the count and span are correct and belong to the screened-out annual-ramp series (`sora_rates`, 60 rows, all populated). The source candidate `bank_rates` is not a 465-observation series: it holds 465 FILE ROWS of which 213 are missing-source (1988-01 to 2005-09) and 252 carry a value, beginning 2005-10, so its usable SERIES span is 2005-10 to 2026-09. Individual analyses then use their own windows “ the SORA confrontation and year means use the 60 shared months (2021-01 to 2025-12), and the band check uses the four article windows named beside it “ so this span bounds the source candidate without being the window of every figure",
+      "phrase": "60 monthly observations (2021-2025)",
+      "status": "re-measured"
+    },
+    {
+      "id": "C10",
+      "ledgerKey": "notMeasurable.policyDates",
+      "note": "the artefact the count comes from is absent from the checkout",
+      "phrase": "5 major policy events (2021-2023)",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C11",
+      "ledgerKey": "notMeasurable.regimes",
+      "note": "the methodArtefacts scan found no break-test implementation on the shipping Python surface (results.structuralBreak: 0 matches) and none was run, so the regimes are visual choices rather than tested breaks. A token scan supports 'none was found', not 'none exists'",
+      "phrase": "Visual and statistical identification of distinct macro periods",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C12",
+      "ledgerKey": "seriesInventory.bank_rates",
+      "note": "the shipped source SORA series spans 2005-10 onward (252 non-null monthly values of 465 physical rows), so the one-rate-cycle limitation belongs to the screened-out 60-row series, not to the data the edition uses",
+      "phrase": "the 5-year macro data window covers only one full rate cycle, limiting generalizability",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C13",
+      "ledgerKey": "fallbackAudit.soraBandCheck.2021H1",
+      "note": "the quoted 2021 H1 band is answered with the measured mean, min and max of bank_rates over that window; the fallback series is not used",
+      "phrase": "0.1-0.2%",
+      "status": "re-measured"
+    },
+    {
+      "id": "C14",
+      "ledgerKey": "fallbackAudit.soraBandCheck.2022H2",
+      "note": "measured mean, min and max of bank_rates over 2022 H2; the ledger states the window it measured, which is the claim's own window",
+      "phrase": "2.5-3.5%",
+      "status": "re-measured"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "fallbackAudit.soraBandCheck.2024to2025",
+      "note": "measured over the article's own 24-month 2024-2025 window; the ledger also records the source series' longer 2024-01 to 2026-08 span separately, because a 32-month mean would answer a different question",
+      "phrase": "3.0-3.5%",
+      "status": "re-measured"
+    },
+    {
+      "id": "C16",
+      "ledgerKey": "seriesInventory",
+      "note": "the shipped quarterly series are far longer than 21 observations (gdp from 1976Q1, ura_ppi from 1975Q1); the count describes a 2021-2026 extract the article used, not the data this checkout holds",
+      "phrase": "21 quarterly observations (2021-2026)",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C17",
+      "ledgerKey": "notMeasurable.lagTesting",
+      "note": "a lead-lag claim; the methodArtefacts scan found no cross-correlation or lag-order implementation on the shipping Python surface (results.lagOrCrossCorrelation: 0 matches) and neither a lag test nor a pretrend test was run for this study, so no lag order is measured here",
+      "phrase": "1-2 quarters",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C18",
+      "ledgerKey": "notMeasurable.affordabilityModel",
+      "note": "a borrower stress scenario offered as advice; it is not a measured quantity and this ledger measures no affordability model",
+      "phrase": "rates +1%",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C19",
+      "ledgerKey": "notMeasurable.regimes",
+      "note": "a chosen regime boundary, not a tested break; see the regime entry",
+      "phrase": "2021 - mid-2022",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C20",
+      "ledgerKey": "notMeasurable.regimes",
+      "note": "a chosen regime boundary, not a tested break; see the regime entry",
+      "phrase": "Mid-2022 - 2023",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C21",
+      "ledgerKey": "realReturns.articleWindow2021To2026",
+      "note": "the HDB row is measured over the article's own window on both the monthly median psf and the HDB resale price index",
+      "phrase": "~4-5%",
+      "status": "re-measured"
+    },
+    {
+      "id": "C22",
+      "ledgerKey": "realReturns.segmentsNotReproducible",
+      "note": "a mass-market condo CAGR; no segment-level price index exists in the checkout",
+      "phrase": "~5-6%",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C23",
+      "ledgerKey": "realReturns.segmentsNotReproducible",
+      "note": "a premium condo CAGR; no segment-level price index exists in the checkout",
+      "phrase": "~3-5%",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C24",
+      "ledgerKey": "realReturns.segmentsNotReproducible",
+      "note": "a luxury condo CAGR; no segment-level price index exists in the checkout",
+      "phrase": "~2-4%",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C25",
+      "ledgerKey": "seriesInventory",
+      "note": "the declared data period; the shipped transaction frame begins 1990-01 and each macro series carries its own measured span, so the pair of windows describes the legacy extract, not this checkout",
+      "phrase": "2021-2026 (macro data), 2017-2026 (housing data)",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C26",
+      "ledgerKey": "notMeasurable.lagTesting",
+      "note": "a lag claim; the methodArtefacts scan of the shipping Python surface found no cross-correlation or lag-order implementation (0 matches) and no lag test was run for this study, so no lag order is measured here",
+      "phrase": "Immediate to 1 quarter",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C27",
+      "ledgerKey": "notMeasurable.affordabilityModel",
+      "note": "a borrower affordability illustration offered as advice; no affordability or financing model is measured in this study",
+      "phrase": "A 1% rate difference on a large loan",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C28",
+      "ledgerKey": "notMeasurable.policyDates",
+      "note": "a policy date the checkout holds no artefact for; see the policyDates entry",
+      "phrase": "Dec 2021",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C29",
+      "ledgerKey": "notMeasurable.policyDates",
+      "note": "a policy date the checkout holds no artefact for; see the policyDates entry",
+      "phrase": "Sep 2022",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C30",
+      "ledgerKey": "notMeasurable.policyDates",
+      "note": "a policy date the checkout holds no artefact for; see the policyDates entry",
+      "phrase": "Apr 2023",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C31",
+      "ledgerKey": "notMeasurable.policyDates",
+      "note": "a policy date the checkout holds no artefact for; the phrase occurs twice in the legacy text and neither occurrence has a dated source here",
+      "phrase": "Dec 2023",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C32",
+      "ledgerKey": "inputs",
+      "note": "the named source path is absent from this checkout; the shipped frame is data/pipeline/04_platinum/unified_dataset.parquet, which is sha-pinned in inputs",
+      "phrase": "data/04_platinum/housing_unified.parquet",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C33",
+      "ledgerKey": "inputs",
+      "note": "the named macro directory is absent; the shipped series live in data/pipeline/01_bronze/external/ and each is sha-pinned in inputs",
+      "phrase": "data/raw_data/macro/",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C34",
+      "ledgerKey": "notMeasurable.regimes",
+      "note": "the stabilization regime's declared window; like the other two regime ranges it is a chosen boundary with no break test behind it",
+      "phrase": "2024-2026",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C35",
+      "ledgerKey": "notMeasurable.lagTesting",
+      "note": "a lag claim in the technical findings; the methodArtefacts scan of the shipping Python surface found no cross-correlation or lag-order implementation (results.lagOrCrossCorrelation: 0 matches) and no lag test was run for this study, so no lag order is measured here",
+      "phrase": "1-quarter lag with price trends",
+      "status": "withdrawn"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 35,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/macro-sensitivity.md",
+    "legacyFileSha256": "8af923420706a072c1b8e6287b4d54b70bdfbad3afcd65dce1a9e7cce41a7a88",
+    "method": "each phrase is required to appear verbatim in the frozen legacy text; a paraphrase inside quotation marks is a defect, and an ellipsis is permitted only for a genuine omission",
+    "quotes": [
+      {
+        "id": "C1",
+        "occurrences": 1,
+        "phrase": "Interest rates (SORA) have the most direct impact on affordability"
+      },
+      {
+        "id": "C2",
+        "occurrences": 1,
+        "phrase": "This confirms that interest rates are the most actionable macro indicator for housing decisions."
+      },
+      {
+        "id": "C3",
+        "occurrences": 1,
+        "phrase": "3.5-4.0%"
+      },
+      {
+        "id": "C4",
+        "occurrences": 1,
+        "phrase": "The macro data collection relies on SingStat API with fallback to generated data when API calls fail."
+      },
+      {
+        "id": "C5",
+        "occurrences": 1,
+        "phrase": "GDP growth is a leading indicator for transaction volume more than price level"
+      },
+      {
+        "id": "C6",
+        "occurrences": 1,
+        "phrase": "Unemployment is a lagging indicator that confirms weakness rather than predicting it."
+      },
+      {
+        "id": "C7",
+        "occurrences": 1,
+        "phrase": "are identifiable in the 2021-2026 data: expansion, tightening, stabilization"
+      },
+      {
+        "id": "C8",
+        "occurrences": 1,
+        "phrase": "is approximately 2% across all segments"
+      },
+      {
+        "id": "C9",
+        "occurrences": 3,
+        "phrase": "60 monthly observations (2021-2025)"
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "5 major policy events (2021-2023)"
+      },
+      {
+        "id": "C11",
+        "occurrences": 1,
+        "phrase": "Visual and statistical identification of distinct macro periods"
+      },
+      {
+        "id": "C12",
+        "occurrences": 1,
+        "phrase": "the 5-year macro data window covers only one full rate cycle, limiting generalizability"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "0.1-0.2%"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "2.5-3.5%"
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "3.0-3.5%"
+      },
+      {
+        "id": "C16",
+        "occurrences": 2,
+        "phrase": "21 quarterly observations (2021-2026)"
+      },
+      {
+        "id": "C17",
+        "occurrences": 2,
+        "phrase": "1-2 quarters"
+      },
+      {
+        "id": "C18",
+        "occurrences": 1,
+        "phrase": "rates +1%"
+      },
+      {
+        "id": "C19",
+        "occurrences": 1,
+        "phrase": "2021 - mid-2022"
+      },
+      {
+        "id": "C20",
+        "occurrences": 1,
+        "phrase": "Mid-2022 - 2023"
+      },
+      {
+        "id": "C21",
+        "occurrences": 1,
+        "phrase": "~4-5%"
+      },
+      {
+        "id": "C22",
+        "occurrences": 1,
+        "phrase": "~5-6%"
+      },
+      {
+        "id": "C23",
+        "occurrences": 1,
+        "phrase": "~3-5%"
+      },
+      {
+        "id": "C24",
+        "occurrences": 1,
+        "phrase": "~2-4%"
+      },
+      {
+        "id": "C25",
+        "occurrences": 1,
+        "phrase": "2021-2026 (macro data), 2017-2026 (housing data)"
+      },
+      {
+        "id": "C26",
+        "occurrences": 1,
+        "phrase": "Immediate to 1 quarter"
+      },
+      {
+        "id": "C27",
+        "occurrences": 1,
+        "phrase": "A 1% rate difference on a large loan"
+      },
+      {
+        "id": "C28",
+        "occurrences": 1,
+        "phrase": "Dec 2021"
+      },
+      {
+        "id": "C29",
+        "occurrences": 1,
+        "phrase": "Sep 2022"
+      },
+      {
+        "id": "C30",
+        "occurrences": 1,
+        "phrase": "Apr 2023"
+      },
+      {
+        "id": "C31",
+        "occurrences": 2,
+        "phrase": "Dec 2023"
+      },
+      {
+        "id": "C32",
+        "occurrences": 1,
+        "phrase": "data/04_platinum/housing_unified.parquet"
+      },
+      {
+        "id": "C33",
+        "occurrences": 1,
+        "phrase": "data/raw_data/macro/"
+      },
+      {
+        "id": "C34",
+        "occurrences": 1,
+        "phrase": "2024-2026"
+      },
+      {
+        "id": "C35",
+        "occurrences": 1,
+        "phrase": "1-quarter lag with price trends"
+      }
+    ]
+  },
+  "methodArtefacts": {
+    "excludedFromScan": [
+      "scripts/tools/macro_sensitivity_evidence.py",
+      "scripts/tools/"
+    ],
+    "filesScanned": 54,
+    "meaning": "this scans for TEXT, not for executed code: a hit is a mention, and the matched file list is recorded so a reader can judge each one. The scanner excludes itself, because its own pattern literals and docstrings would otherwise register as hits. A zero matchCount is counter-evidence for the corresponding absence claim and nothing more — it says no mention exists on this surface, not that no such analysis was ever run",
+    "patterns": {
+      "affordabilityModel": "affordability|loan[_-]?to[_-]?value|\\btdsr\\b|\\bmsr\\b",
+      "lagOrCrossCorrelation": "cross[_-]?correlation|lead[_-]?lag|lag[_-]?test|\\bccf\\b|\\bgranger",
+      "structuralBreak": "structural[_-]?break|\\bchow\\b|breakpoint|bai[_-]?perron|\\bsupf\\b"
+    },
+    "results": {
+      "affordabilityModel": {
+        "filesMatched": 6,
+        "matchCount": 48,
+        "matches": [
+          {
+            "matches": 27,
+            "path": "scripts/export_app_data.py"
+          },
+          {
+            "matches": 1,
+            "path": "scripts/generate_catalog.py"
+          },
+          {
+            "matches": 11,
+            "path": "src/egg_n_bacon_housing/components/metrics.py"
+          },
+          {
+            "matches": 5,
+            "path": "src/egg_n_bacon_housing/config.py"
+          },
+          {
+            "matches": 2,
+            "path": "src/egg_n_bacon_housing/pipeline.py"
+          },
+          {
+            "matches": 2,
+            "path": "src/egg_n_bacon_housing/schemas/platinum_models.py"
+          }
+        ]
+      },
+      "lagOrCrossCorrelation": {
+        "filesMatched": 0,
+        "matchCount": 0,
+        "matches": []
+      },
+      "structuralBreak": {
+        "filesMatched": 0,
+        "matchCount": 0,
+        "matches": []
+      }
+    },
+    "roots": [
+      "src/egg_n_bacon_housing",
+      "scripts"
+    ],
+    "suffix": ".py"
+  },
+  "notMeasurable": {
+    "affordabilityModel": {
+      "gateClause": "No present-day timing regime claims from unknown source vintages.",
+      "reason": "an export-time STATIC affordability lookup does exist: scripts/export_app_data.py implements a fixed-assumption monthly mortgage payment (20% down, 3.5% interest, 25-year term) and bands price-to-income and mortgage-to-income against a flat national median household income (methodArtefacts.results.affordabilityModel lists every matched file and count). What does not exist is anything a rate-shock or borrower-specific claim could rest on: no rate sensitivity, no borrower eligibility test, no TDSR/MSR assessment. The legacy article's stress scenarios are therefore withdrawn for that narrower reason, not on the false ground that no affordability code exists",
+      "status": "notMeasurable"
+    },
+    "lagTesting": {
+      "gateClause": "Document release lag, revisions, missing periods, stationarity and uncertainty.",
+      "reason": "the methodArtefacts scan of the shipping Python surface found no cross-correlation, lead-lag or lag-order implementation (methodArtefacts.results.lagOrCrossCorrelation records zero matches beside the scanned file count; the scanner excludes itself and the scripts/tools instrument prefix), and this study ran no such test, so a claimed lag order has no evidence behind it here: every association figure in this ledger is same-period, not lagged. A token scan can support 'none was found', not 'none exists anywhere'",
+      "status": "notMeasurable"
+    },
+    "policyDates": {
+      "gateClause": "No present-day timing regime claims from unknown source vintages.",
+      "reason": "the legacy article's five-row policy table rests on housing_policy_dates.parquet (5 major policy events 2021-2023), which is absent from this checkout; the article's policy dates also disagree with the causal-inference article's dates, and neither has an artefact",
+      "status": "notMeasurable"
+    },
+    "regimes": {
+      "gateClause": "No present-day timing regime claims from unknown source vintages.",
+      "reason": "the three-regime table is analyst-chosen period boundaries; the methodArtefacts scan of the shipping Python surface found no break-test implementation (methodArtefacts.results.structuralBreak records zero matches and names the scanned file count; the scanner excludes itself and the scripts/tools instrument prefix) and no break test was run, so the regimes are neither tested nor reproducible",
+      "status": "notFitted"
+    },
+    "releaseLag": {
+      "gateClause": "Document release lag, revisions, missing periods, stationarity and uncertainty.",
+      "reason": "no bronze macro file carries a release timestamp or extraction stamp, so the publication-to-observation lag of each series is unrecoverable",
+      "status": "notMeasurable"
+    },
+    "revisions": {
+      "gateClause": "Document release lag, revisions, missing periods, stationarity and uncertainty.",
+      "reason": "no vintage snapshots exist: there is exactly one file per series and no revision history, so published-versus-revised values cannot be compared",
+      "status": "notMeasurable"
+    },
+    "segmentCagr": {
+      "gateClause": "Explicitly identify generated/fallback series and exclude them from empirical claims.",
+      "reason": "no segment-level price index exists in the checkout and the private source begins 2021-01 in the shipped frame; the four-segment nominal/real CAGR table cannot be re-derived",
+      "status": "notMeasurable"
+    }
+  },
+  "realReturns": {
+    "articleWindow2021To2026": {
+      "hdbMedianPsf": {
+        "months": 70,
+        "nominalCagr": 0.0601,
+        "window": {
+          "first": "2021-01",
+          "last": "2026-10"
+        }
+      },
+      "hdbResalePriceIndex": {
+        "nominalCagr": 0.0664,
+        "quarters": 23,
+        "window": {
+          "first": "2021Q1",
+          "last": "2026Q3"
+        }
+      },
+      "note": "the legacy table's own window, measured on the two series this checkout holds: the HDB monthly median psf and the HDB resale price index"
+    },
+    "hdbMedianPsf": {
+      "compositionCaveat": "this is the CAGR of the monthly MEDIAN psf, and the mix of towns, flat types and lease bands behind that median changes across the window; it describes the median's path, not a constant-quality price index. The hdb_rpi row below is the constant-quality alternative, and it covers a different window",
+      "cpiDeflationNote": "the CPI series ends before the transaction cutoff, so the real return is bounded at the CPI's last observed month and its window — and therefore its year count — is reported rather than extrapolated",
+      "cpiLastObservedMonth": "2026-09",
+      "firstMedianPsf": 64.93,
+      "lastMedianPsf": 600.77,
+      "nominalCagr": 0.0624,
+      "realCagrCpiDeflated": 0.0433,
+      "realCagrEndMedianPsf": 598.51,
+      "realCagrWindow": {
+        "first": "1990-01",
+        "last": "2026-09"
+      },
+      "realCagrYears": 36.667,
+      "transactions": 989865,
+      "window": {
+        "first": "1990-01",
+        "last": "2026-10"
+      },
+      "years": 36.75
+    },
+    "hdbResalePriceIndex": {
+      "firstIndex": 24.3,
+      "lastIndex": 202.5,
+      "nominalCagr": 0.0598,
+      "quarters": 147,
+      "source": "data/pipeline/01_bronze/external/hdb_rpi.parquet",
+      "window": {
+        "first": "1990Q1",
+        "last": "2026Q3"
+      }
+    },
+    "segmentsNotReproducible": "the legacy four-row nominal/real CAGR table is by segment (HDB overall, mass-market, premium and luxury condo); the checkout holds no segment-level price index and the private source starts 2021-01 in the shipped frame, so only the HDB rows are measured here and the condo rows are withdrawn"
+  },
+  "schemaVersion": "1.0.0",
+  "scope": "RS09 macro-sensitivity evidence: provenance screening of the eight bronze macro series, the measured generated/fallback SORA conflict, gold-column lineage, ADF stationarity in levels, and the legacy correlation claims re-measured at the macro frequency in levels and first differences",
+  "seriesInventory": {
+    "bank_rates": {
+      "distinctValues": 245,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 465,
+      "fileRows": 465,
+      "firstPeriodOnFile": "1988-01",
+      "firstValuePeriod": "2005-10",
+      "frequency": "monthly",
+      "lastPeriodOnFile": "2026-09",
+      "lastValuePeriod": "2026-09",
+      "max": 3.7527,
+      "min": 0.0362,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 252,
+      "nullValuePeriodsHead": [
+        "1988-01",
+        "1988-02",
+        "1988-03",
+        "1988-04",
+        "1988-05",
+        "1988-06",
+        "1988-07",
+        "1988-08",
+        "1988-09",
+        "1988-10",
+        "1988-11",
+        "1988-12"
+      ],
+      "nullValueRows": 213,
+      "nullValueSpanFirst": "1988-01",
+      "nullValueSpanLast": "2005-09",
+      "path": "data/pipeline/01_bronze/external/bank_rates.parquet",
+      "periodsPresentOnFile": 465,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "9a4327bb154d70768f7fa7bd370d46638d65be5fd907e5e52623248fe98f176a",
+      "valueColumn": "sora_3m",
+      "zeroValueRows": 0
+    },
+    "cpi": {
+      "distinctValues": 780,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 789,
+      "fileRows": 789,
+      "firstPeriodOnFile": "1961-01",
+      "firstValuePeriod": "1961-01",
+      "frequency": "monthly",
+      "lastPeriodOnFile": "2026-09",
+      "lastValuePeriod": "2026-09",
+      "max": 103.551,
+      "min": 20.655,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 789,
+      "nullValuePeriodsHead": [],
+      "nullValueRows": 0,
+      "nullValueSpanFirst": null,
+      "nullValueSpanLast": null,
+      "path": "data/pipeline/01_bronze/external/cpi.parquet",
+      "periodsPresentOnFile": 789,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "ae065cecd81bd776a70da5af67949df79e2e451f588a9eb3994e90dd9f0ccc04",
+      "valueColumn": "cpi",
+      "zeroValueRows": 0
+    },
+    "gdp": {
+      "distinctValues": 109,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 202,
+      "fileRows": 202,
+      "firstPeriodOnFile": "1976Q1",
+      "firstValuePeriod": "1976Q1",
+      "frequency": "quarterly",
+      "lastPeriodOnFile": "2026Q2",
+      "lastValuePeriod": "2026Q2",
+      "max": 18.9,
+      "min": -11.7,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 202,
+      "nullValuePeriodsHead": [],
+      "nullValueRows": 0,
+      "nullValueSpanFirst": null,
+      "nullValueSpanLast": null,
+      "path": "data/pipeline/01_bronze/external/gdp.parquet",
+      "periodsPresentOnFile": 202,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "b43fb19211da5c842943da948f1adbaac137ba2b15b04ca39e66496b064ac3d0",
+      "valueColumn": "gdp",
+      "zeroValueRows": 0
+    },
+    "hdb_rpi": {
+      "distinctValues": 133,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 147,
+      "fileRows": 147,
+      "firstPeriodOnFile": "1990Q1",
+      "firstValuePeriod": "1990Q1",
+      "frequency": "quarterly",
+      "lastPeriodOnFile": "2026Q3",
+      "lastValuePeriod": "2026Q3",
+      "max": 203.7,
+      "min": 24.3,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 147,
+      "nullValuePeriodsHead": [],
+      "nullValueRows": 0,
+      "nullValueSpanFirst": null,
+      "nullValueSpanLast": null,
+      "path": "data/pipeline/01_bronze/external/hdb_rpi.parquet",
+      "periodsPresentOnFile": 147,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "57ddf2ae983e5f3798899fac2888b27e58c5e866c0ce88e44681dc4b9a4a8c4c",
+      "valueColumn": "hdb_rpi",
+      "zeroValueRows": 0
+    },
+    "sora_rates": {
+      "distinctValues": 55,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 60,
+      "fileRows": 60,
+      "firstPeriodOnFile": "2021-01",
+      "firstValuePeriod": "2021-01",
+      "frequency": "monthly",
+      "lastPeriodOnFile": "2025-12",
+      "lastValuePeriod": "2025-12",
+      "max": 1.235,
+      "min": 0.155,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 60,
+      "nullValuePeriodsHead": [],
+      "nullValueRows": 0,
+      "nullValueSpanFirst": null,
+      "nullValueSpanLast": null,
+      "path": "data/pipeline/01_bronze/external/sora_rates.parquet",
+      "periodsPresentOnFile": 60,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "c0323795d4e26023d03eec73d4a146565b301f9bdfbc4f5fd5a895a060201316",
+      "valueColumn": "sora_rate",
+      "zeroValueRows": 0
+    },
+    "unemployment": {
+      "distinctValues": 31,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 139,
+      "fileRows": 139,
+      "firstPeriodOnFile": "1992Q1",
+      "firstValuePeriod": "1992Q1",
+      "frequency": "quarterly",
+      "lastPeriodOnFile": "2026Q3",
+      "lastValuePeriod": "2026Q3",
+      "max": 4.5,
+      "min": 1.0,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 139,
+      "nullValuePeriodsHead": [],
+      "nullValueRows": 0,
+      "nullValueSpanFirst": null,
+      "nullValueSpanLast": null,
+      "path": "data/pipeline/01_bronze/external/unemployment.parquet",
+      "periodsPresentOnFile": 139,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "78b8cbbf55be52eba1891ea7b655ff4dc80b0ee0750eb986c6828a6d7d3ae260",
+      "valueColumn": "unemployment_rate",
+      "zeroValueRows": 0
+    },
+    "ura_ppi": {
+      "distinctValues": 177,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 207,
+      "fileRows": 207,
+      "firstPeriodOnFile": "1975Q1",
+      "firstValuePeriod": "1975Q1",
+      "frequency": "quarterly",
+      "lastPeriodOnFile": "2026Q3",
+      "lastValuePeriod": "2026Q3",
+      "max": 222.5,
+      "min": 8.9,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 207,
+      "nullValuePeriodsHead": [],
+      "nullValueRows": 0,
+      "nullValueSpanFirst": null,
+      "nullValueSpanLast": null,
+      "path": "data/pipeline/01_bronze/external/ura_ppi.parquet",
+      "periodsPresentOnFile": 207,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "a73cd16354629494e9c02da5c92251c2beff028eebad8c573e63210b34ed91b6",
+      "valueColumn": "ura_ppi",
+      "zeroValueRows": 0
+    },
+    "wage_growth": {
+      "distinctValues": 19,
+      "duplicatePeriods": 0,
+      "expectedPeriodsInSpan": 100,
+      "fileRows": 100,
+      "firstPeriodOnFile": "2001Q1",
+      "firstValuePeriod": "2001Q1",
+      "frequency": "quarterly",
+      "lastPeriodOnFile": "2025Q4",
+      "lastValuePeriod": "2025Q4",
+      "max": 6.8,
+      "min": -2.6,
+      "missingPeriodCount": 0,
+      "missingPeriodsHead": [],
+      "nonNullValueRows": 100,
+      "nullValuePeriodsHead": [],
+      "nullValueRows": 0,
+      "nullValueSpanFirst": null,
+      "nullValueSpanLast": null,
+      "path": "data/pipeline/01_bronze/external/wage_growth.parquet",
+      "periodsPresentOnFile": 100,
+      "semantics": "nullValueRows are MISSING-SOURCE (the period exists, its value does not); missingPeriodCount is an ABSENT PERIOD; zeroValueRows is a recorded 0. A measurement that needs a value may use only nonNullValueRows, and must not read a null as zero or as an absent period",
+      "sha256": "2a47a4953ab2ee5188b46d6af83fcb0e0edbae725c4ca84641b7dcdca2bbe1a6",
+      "valueColumn": "wage_growth",
+      "zeroValueRows": 0
+    }
+  },
+  "stationarity": {
+    "caveat": "ADF with a constant and AIC lag selection only: no trend term, no seasonal adjustment, no break test, and monthly series are tested as unadjusted levels",
+    "interpretation": "failing to reject the unit-root null is NOT evidence that a series is non-stationary — ADF is low-powered, and a short or near-integrated series fails to reject for reasons that have nothing to do with the data's origin. The operational consequence recorded here is narrower: the levels of six of these eight series have no rejected unit root, so a level correlation between them and housing cannot be read as sensitivity, and the first-difference figures in associations are reported for that reason. Neither reading is causal.",
+    "series": {
+      "bank_rates": {
+        "adfStatistic": -3.2502,
+        "criticalValues": {
+          "1%": -3.4578,
+          "10%": -2.5732,
+          "5%": -2.8736
+        },
+        "frequency": "monthly",
+        "observations": 241,
+        "pValue": 0.017254,
+        "rejectsUnitRootAt5pct": true,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 10
+      },
+      "cpi": {
+        "adfStatistic": 0.6075,
+        "criticalValues": {
+          "1%": -3.4389,
+          "10%": -2.5688,
+          "5%": -2.8653
+        },
+        "frequency": "monthly",
+        "observations": 767,
+        "pValue": 0.987799,
+        "rejectsUnitRootAt5pct": false,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 21
+      },
+      "gdp": {
+        "adfStatistic": -3.4891,
+        "criticalValues": {
+          "1%": -3.4647,
+          "10%": -2.5748,
+          "5%": -2.8766
+        },
+        "frequency": "quarterly",
+        "observations": 193,
+        "pValue": 0.008271,
+        "rejectsUnitRootAt5pct": true,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 8
+      },
+      "hdb_rpi": {
+        "adfStatistic": -1.0193,
+        "criticalValues": {
+          "1%": -3.4794,
+          "10%": -2.5782,
+          "5%": -2.883
+        },
+        "frequency": "quarterly",
+        "observations": 136,
+        "pValue": 0.746169,
+        "rejectsUnitRootAt5pct": false,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 10
+      },
+      "sora_rates": {
+        "adfStatistic": 5.1628,
+        "criticalValues": {
+          "1%": -3.5746,
+          "10%": -2.6,
+          "5%": -2.924
+        },
+        "frequency": "monthly",
+        "observations": 48,
+        "pValue": 1.0,
+        "rejectsUnitRootAt5pct": false,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 11
+      },
+      "unemployment": {
+        "adfStatistic": -2.0353,
+        "criticalValues": {
+          "1%": -3.4838,
+          "10%": -2.5793,
+          "5%": -2.885
+        },
+        "frequency": "quarterly",
+        "observations": 125,
+        "pValue": 0.271329,
+        "rejectsUnitRootAt5pct": false,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 13
+      },
+      "ura_ppi": {
+        "adfStatistic": 0.0084,
+        "criticalValues": {
+          "1%": -3.4628,
+          "10%": -2.5744,
+          "5%": -2.8758
+        },
+        "frequency": "quarterly",
+        "observations": 204,
+        "pValue": 0.959223,
+        "rejectsUnitRootAt5pct": false,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 2
+      },
+      "wage_growth": {
+        "adfStatistic": -2.4657,
+        "criticalValues": {
+          "1%": -3.5043,
+          "10%": -2.584,
+          "5%": -2.8939
+        },
+        "frequency": "quarterly",
+        "observations": 91,
+        "pValue": 0.124042,
+        "rejectsUnitRootAt5pct": false,
+        "treated": "levels, constant only, AIC lag selection",
+        "usedLag": 8
+      }
+    },
+    "soraNote": "sora_rates returns a positive ADF statistic with p = 1.0, the least stationary result in the set; that is consistent with the annual ramp measured in fallbackAudit but does not by itself establish how the series was produced"
+  },
+  "vintageAudit": {
+    "conclusion": "no bronze macro file carries a release timestamp, extraction stamp or revision history — the only parquet metadata keys are ARROW:schema and pandas — and no housing-policy-date artefact exists in the checkout, so release lag, revision analysis and the legacy article's five-row policy table cannot be measured here",
+    "parquetMetadata": {
+      "bank_rates": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      },
+      "cpi": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      },
+      "gdp": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      },
+      "hdb_rpi": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      },
+      "sora_rates": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      },
+      "unemployment": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      },
+      "ura_ppi": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      },
+      "wage_growth": {
+        "parquetMetadataKeys": [
+          "ARROW:schema",
+          "pandas"
+        ]
+      }
+    },
+    "policyDateArtefactCandidates": [],
+    "policyDateArtefactFound": false,
+    "releaseLagMeasurable": false,
+    "releaseOrVintageStampsFound": 0,
+    "revisionHistoryMeasurable": false
+  }
+}

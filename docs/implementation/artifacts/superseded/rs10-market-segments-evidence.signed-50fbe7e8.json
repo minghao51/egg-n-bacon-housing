@@ -1,0 +1,2551 @@
+{
+  "adjacentSegmentedPanel": {
+    "assetCohortTotal": 911454,
+    "assetIdMatchTotal": 0,
+    "assetIdMatches": {
+      "declining_areas": 0,
+      "high_growth_recent": 0,
+      "large_size_stable": 0,
+      "mid_tier_value": 0,
+      "premium_new_units": 0,
+      "speculator_hotspots": 0
+    },
+    "columns": 61,
+    "hasPlanningArea": true,
+    "hasPrice": true,
+    "meaning": "a per-transaction segmented panel DOES exist in this checkout, under data/analysis/market_segmentation/, with three price tiers assigned per row and a tier-threshold file defining the cut points. It is not the article's segmentation: it carries none of the six asset ids (0 matches measured across all 61 columns), its row count is +343 against the asset's cohort total, and its labels are price tiers rather than behavioural clusters. So 'the six stored segments have no membership' stands; 'no per-transaction segmentation exists in the checkout' would be false",
+    "monthRange": {
+      "first": "1990-01",
+      "last": "2026-01"
+    },
+    "path": "data/analysis/market_segmentation/housing_unified_segmented.parquet",
+    "rows": 911797,
+    "rowsMinusAssetCohortTotal": 343,
+    "sha256": "d49c4cb3ab144ed24193076f1892b03a2b764600a26f8754e0981f759a0e4e60",
+    "taxonomyColumns": [
+      "Market Segment",
+      "market_tier_period",
+      "psf_tier_period",
+      "market_tier",
+      "psf_tier"
+    ],
+    "taxonomyDistributions": {
+      "Market Segment": {
+        "distinctValues": 4,
+        "nullRows": 785395,
+        "top": {
+          "Core Central Region": 19909,
+          "None": 785395,
+          "Outside Central Region": 67988,
+          "Rest of Central Region": 38505
+        }
+      },
+      "market_tier": {
+        "distinctValues": 3,
+        "nullRows": 0,
+        "top": {
+          "Luxury": 269812,
+          "Mass Market": 273615,
+          "Mid-Tier": 368370
+        }
+      },
+      "market_tier_period": {
+        "distinctValues": 3,
+        "nullRows": 0,
+        "top": {
+          "Luxury": 265924,
+          "Mass Market": 279442,
+          "Mid-Tier": 366431
+        }
+      },
+      "psf_tier": {
+        "distinctValues": 3,
+        "nullRows": 0,
+        "top": {
+          "High PSF": 273462,
+          "Low PSF": 273565,
+          "Medium PSF": 364770
+        }
+      },
+      "psf_tier_period": {
+        "distinctValues": 3,
+        "nullRows": 0,
+        "top": {
+          "High PSF": 264135,
+          "Low PSF": 283957,
+          "Medium PSF": 363705
+        }
+      }
+    },
+    "tierPanel": {
+      "columns": [
+        "property_type",
+        "market_tier",
+        "year",
+        "median_price",
+        "transaction_count",
+        "median_psf"
+      ],
+      "hasPlanningArea": false,
+      "keyColumns": [
+        "property_type",
+        "market_tier",
+        "year"
+      ],
+      "meaning": "annual tier-level price evidence keyed by property type, market tier and year, carrying median price, median psf and transaction count. It has no planning-area column and uses the three-tier taxonomy, so it neither reproduces the planning-area CAGR table (cagrWindow.areaCagr is unaffected) nor constitutes a segment-level constant-quality price index for the six stored segments",
+      "measureColumns": [
+        "median_price",
+        "median_psf",
+        "transaction_count"
+      ],
+      "path": "data/analysis/market_segmentation/tier_performance.parquet",
+      "propertyTypes": {
+        "Condominium": 18,
+        "EC": 18,
+        "HDB": 103
+      },
+      "rows": 139,
+      "sha256": "1777b2aa4a698ed1ecc179d2197f68693651c2e6fb64b9010d6c42cb47e53921",
+      "yearRange": {
+        "first": 1990,
+        "last": 2026
+      }
+    },
+    "tierThresholds": {
+      "content": "property_type,mass_market_max,mid_tier_max,luxury_min\nCondominium,1306400.0,2091000.0,2091178.0\nEC,1229000.0,1520000.0,1520200.0\nHDB,208000.0,390000.0,390001.0",
+      "path": "data/analysis/market_segmentation/tier_thresholds.csv",
+      "sha256": "8414fdb044c66f89147ffa37b0ff7f864ca9c3c5f4737b0915cad7b69d3ba7f4"
+    }
+  },
+  "appMatchingWeights": {
+    "changedByThisStudy": false,
+    "gateClause": "App matching weights remain unchanged unless separately approved.",
+    "hardFilter": "spatialClassification",
+    "meaning": "the app's segment matching weights are recorded and sha256-pinned so a later change is visible as drift; this study does not change them and no approval for a change is recorded anywhere",
+    "path": "app/src/hooks/useSegmentMatching.ts",
+    "sha256": "4682a8033aceb900eb17287b216127d50242b37ad2a56df63590c7392dc354d7",
+    "weightSum": 100,
+    "weights": {
+      "budget": 25,
+      "investmentGoal": 30,
+      "location": 15,
+      "propertyType": 20,
+      "timeHorizon": 10
+    }
+  },
+  "cagrWindow": {
+    "areaCagr": {
+      "areas": [
+        {
+          "area": "BUKIT TIMAH",
+          "endpointMedianPsf": {
+            "endYear": 821.35,
+            "startYear": 610.87
+          },
+          "endpointRows": {
+            "endRows": 60,
+            "endYear": 2025,
+            "startRows": 39,
+            "startYear": 2015
+          },
+          "floorSatisfied": false,
+          "hdbCagrPct": null,
+          "legacyCagrBand": "~5-7%",
+          "legacySegmentLabel": "Luxury",
+          "minRowsPerAreaYear": 50,
+          "status": "notMeasurableUnderLegacyFloor",
+          "withinLegacyBand": null,
+          "yearRows": [
+            {
+              "medianPsf": 610.87,
+              "rows": 39,
+              "year": 2015
+            },
+            {
+              "medianPsf": 598.51,
+              "rows": 65,
+              "year": 2016
+            },
+            {
+              "medianPsf": 593.62,
+              "rows": 70,
+              "year": 2017
+            },
+            {
+              "medianPsf": 592.13,
+              "rows": 63,
+              "year": 2018
+            },
+            {
+              "medianPsf": 595.42,
+              "rows": 72,
+              "year": 2019
+            },
+            {
+              "medianPsf": 584.95,
+              "rows": 57,
+              "year": 2020
+            },
+            {
+              "medianPsf": 595.86,
+              "rows": 95,
+              "year": 2021
+            },
+            {
+              "medianPsf": 641.56,
+              "rows": 64,
+              "year": 2022
+            },
+            {
+              "medianPsf": 665.51,
+              "rows": 59,
+              "year": 2023
+            },
+            {
+              "medianPsf": 725.77,
+              "rows": 68,
+              "year": 2024
+            },
+            {
+              "medianPsf": 821.35,
+              "rows": 60,
+              "year": 2025
+            }
+          ]
+        },
+        {
+          "area": "QUEENSTOWN",
+          "endpointMedianPsf": {
+            "endYear": 920.18,
+            "startYear": 571.71
+          },
+          "endpointRows": {
+            "endRows": 599,
+            "endYear": 2025,
+            "startRows": 485,
+            "startYear": 2015
+          },
+          "floorSatisfied": true,
+          "hdbCagrPct": 4.87,
+          "legacyCagrBand": "~4-6%",
+          "legacySegmentLabel": "High-Growth HDB",
+          "minRowsPerAreaYear": 50,
+          "status": "measured",
+          "withinLegacyBand": true,
+          "yearRows": [
+            {
+              "medianPsf": 571.71,
+              "rows": 485,
+              "year": 2015
+            },
+            {
+              "medianPsf": 603.5,
+              "rows": 473,
+              "year": 2016
+            },
+            {
+              "medianPsf": 600.57,
+              "rows": 518,
+              "year": 2017
+            },
+            {
+              "medianPsf": 616.21,
+              "rows": 622,
+              "year": 2018
+            },
+            {
+              "medianPsf": 598.47,
+              "rows": 563,
+              "year": 2019
+            },
+            {
+              "medianPsf": 660.12,
+              "rows": 648,
+              "year": 2020
+            },
+            {
+              "medianPsf": 715.35,
+              "rows": 976,
+              "year": 2021
+            },
+            {
+              "medianPsf": 723.67,
+              "rows": 753,
+              "year": 2022
+            },
+            {
+              "medianPsf": 763.65,
+              "rows": 592,
+              "year": 2023
+            },
+            {
+              "medianPsf": 739.78,
+              "rows": 687,
+              "year": 2024
+            },
+            {
+              "medianPsf": 920.18,
+              "rows": 599,
+              "year": 2025
+            }
+          ]
+        },
+        {
+          "area": "JURONG EAST",
+          "endpointMedianPsf": {
+            "endYear": 545.25,
+            "startYear": 406.77
+          },
+          "endpointRows": {
+            "endRows": 482,
+            "endYear": 2025,
+            "startRows": 399,
+            "startYear": 2015
+          },
+          "floorSatisfied": true,
+          "hdbCagrPct": 2.97,
+          "legacyCagrBand": "~4-6%",
+          "legacySegmentLabel": "High-Growth HDB",
+          "minRowsPerAreaYear": 50,
+          "status": "measured",
+          "withinLegacyBand": false,
+          "yearRows": [
+            {
+              "medianPsf": 406.77,
+              "rows": 399,
+              "year": 2015
+            },
+            {
+              "medianPsf": 403.09,
+              "rows": 433,
+              "year": 2016
+            },
+            {
+              "medianPsf": 392.81,
+              "rows": 457,
+              "year": 2017
+            },
+            {
+              "medianPsf": 393.83,
+              "rows": 489,
+              "year": 2018
+            },
+            {
+              "medianPsf": 374.39,
+              "rows": 500,
+              "year": 2019
+            },
+            {
+              "medianPsf": 382.54,
+              "rows": 502,
+              "year": 2020
+            },
+            {
+              "medianPsf": 439.24,
+              "rows": 565,
+              "year": 2021
+            },
+            {
+              "medianPsf": 471.06,
+              "rows": 485,
+              "year": 2022
+            },
+            {
+              "medianPsf": 487.58,
+              "rows": 467,
+              "year": 2023
+            },
+            {
+              "medianPsf": 513.6,
+              "rows": 566,
+              "year": 2024
+            },
+            {
+              "medianPsf": 545.25,
+              "rows": 482,
+              "year": 2025
+            }
+          ]
+        },
+        {
+          "area": "PUNGGOL",
+          "endpointMedianPsf": {
+            "endYear": 686.68,
+            "startYear": 396.95
+          },
+          "endpointRows": {
+            "endRows": 1538,
+            "endYear": 2025,
+            "startRows": 628,
+            "startYear": 2015
+          },
+          "floorSatisfied": true,
+          "hdbCagrPct": 5.63,
+          "legacyCagrBand": "~3-5%",
+          "legacySegmentLabel": "High-Growth HDB",
+          "minRowsPerAreaYear": 50,
+          "status": "measured",
+          "withinLegacyBand": false,
+          "yearRows": [
+            {
+              "medianPsf": 396.95,
+              "rows": 628,
+              "year": 2015
+            },
+            {
+              "medianPsf": 419.56,
+              "rows": 922,
+              "year": 2016
+            },
+            {
+              "medianPsf": 427.22,
+              "rows": 1316,
+              "year": 2017
+            },
+            {
+              "medianPsf": 434.55,
+              "rows": 1537,
+              "year": 2018
+            },
+            {
+              "medianPsf": 458.91,
+              "rows": 1160,
+              "year": 2019
+            },
+            {
+              "medianPsf": 474.56,
+              "rows": 1748,
+              "year": 2020
+            },
+            {
+              "medianPsf": 501.96,
+              "rows": 2742,
+              "year": 2021
+            },
+            {
+              "medianPsf": 554.16,
+              "rows": 2005,
+              "year": 2022
+            },
+            {
+              "medianPsf": 599.38,
+              "rows": 2084,
+              "year": 2023
+            },
+            {
+              "medianPsf": 644.33,
+              "rows": 2027,
+              "year": 2024
+            },
+            {
+              "medianPsf": 686.68,
+              "rows": 1538,
+              "year": 2025
+            }
+          ]
+        },
+        {
+          "area": "SENGKANG",
+          "endpointMedianPsf": {
+            "endYear": 641.33,
+            "startYear": 396.54
+          },
+          "endpointRows": {
+            "endRows": 1905,
+            "endYear": 2025,
+            "startRows": 1176,
+            "startYear": 2015
+          },
+          "floorSatisfied": true,
+          "hdbCagrPct": 4.93,
+          "legacyCagrBand": "~2-4%",
+          "legacySegmentLabel": "Stable Mid-Tier",
+          "minRowsPerAreaYear": 50,
+          "status": "measured",
+          "withinLegacyBand": false,
+          "yearRows": [
+            {
+              "medianPsf": 396.54,
+              "rows": 1176,
+              "year": 2015
+            },
+            {
+              "medianPsf": 394.84,
+              "rows": 1443,
+              "year": 2016
+            },
+            {
+              "medianPsf": 391.47,
+              "rows": 1534,
+              "year": 2017
+            },
+            {
+              "medianPsf": 391.17,
+              "rows": 1641,
+              "year": 2018
+            },
+            {
+              "medianPsf": 418.06,
+              "rows": 1795,
+              "year": 2019
+            },
+            {
+              "medianPsf": 429.92,
+              "rows": 2159,
+              "year": 2020
+            },
+            {
+              "medianPsf": 461.52,
+              "rows": 2751,
+              "year": 2021
+            },
+            {
+              "medianPsf": 518.46,
+              "rows": 2299,
+              "year": 2022
+            },
+            {
+              "medianPsf": 550.66,
+              "rows": 1953,
+              "year": 2023
+            },
+            {
+              "medianPsf": 599.74,
+              "rows": 2118,
+              "year": 2024
+            },
+            {
+              "medianPsf": 641.33,
+              "rows": 1905,
+              "year": 2025
+            }
+          ]
+        },
+        {
+          "area": "WOODLANDS",
+          "endpointMedianPsf": {
+            "endYear": 531.81,
+            "startYear": 344.29
+          },
+          "endpointRows": {
+            "endRows": 1748,
+            "endYear": 2025,
+            "startRows": 1228,
+            "startYear": 2015
+          },
+          "floorSatisfied": true,
+          "hdbCagrPct": 4.44,
+          "legacyCagrBand": "~1-3%",
+          "legacySegmentLabel": "Stable Mid-Tier",
+          "minRowsPerAreaYear": 50,
+          "status": "measured",
+          "withinLegacyBand": false,
+          "yearRows": [
+            {
+              "medianPsf": 344.29,
+              "rows": 1228,
+              "year": 2015
+            },
+            {
+              "medianPsf": 341.48,
+              "rows": 1371,
+              "year": 2016
+            },
+            {
+              "medianPsf": 332.09,
+              "rows": 1531,
+              "year": 2017
+            },
+            {
+              "medianPsf": 320.74,
+              "rows": 1663,
+              "year": 2018
+            },
+            {
+              "medianPsf": 320.13,
+              "rows": 1794,
+              "year": 2019
+            },
+            {
+              "medianPsf": 336.9,
+              "rows": 1406,
+              "year": 2020
+            },
+            {
+              "medianPsf": 392.73,
+              "rows": 1637,
+              "year": 2021
+            },
+            {
+              "medianPsf": 443.95,
+              "rows": 1870,
+              "year": 2022
+            },
+            {
+              "medianPsf": 473.28,
+              "rows": 2056,
+              "year": 2023
+            },
+            {
+              "medianPsf": 510.46,
+              "rows": 2042,
+              "year": 2024
+            },
+            {
+              "medianPsf": 531.81,
+              "rows": 1748,
+              "year": 2025
+            }
+          ]
+        }
+      ],
+      "definition": "the legacy's own stated definition — 10-year compound annual growth rate by planning area, minimum 50 transactions per area — applied to HDB rows only, on median PSF per area-year, with the floor required at BOTH endpoint years",
+      "endYear": 2025,
+      "meaning": "the six planning areas the legacy table names, measured on the only property type that spans the window; this is a re-measurement of the HDB subset, not of the legacy's mixed-property-type table",
+      "minRowsPerAreaYear": 50,
+      "propertyType": "hdb",
+      "rowsSatisfyingFloor": 5,
+      "startYear": 2015
+    },
+    "frame": {
+      "cutoffUpperBound": "2026-10",
+      "firstMonth": "1990-01",
+      "lastMonth": "2026-11",
+      "propertyTypeValues": {
+        "condo": 245655,
+        "hdb": 990655
+      },
+      "rows": 1236310
+    },
+    "perPropertyType": {
+      "condo": {
+        "cagrWindowAvailable": false,
+        "distinctMonths": 71,
+        "firstMonth": "2021-01",
+        "lastMonth": "2026-11",
+        "rows": 245655,
+        "rowsInWindow": 224404,
+        "windowMonthsExpected": 132,
+        "windowMonthsMissing": 72,
+        "windowMonthsMissingFirst": [
+          "2015-01",
+          "2015-02",
+          "2015-03",
+          "2015-04",
+          "2015-05",
+          "2015-06",
+          "2015-07",
+          "2015-08",
+          "2015-09",
+          "2015-10",
+          "2015-11",
+          "2015-12"
+        ],
+        "windowMonthsObserved": 60
+      },
+      "hdb": {
+        "cagrWindowAvailable": true,
+        "distinctMonths": 443,
+        "firstMonth": "1990-01",
+        "lastMonth": "2026-11",
+        "rows": 990655,
+        "rowsInWindow": 259219,
+        "windowMonthsExpected": 132,
+        "windowMonthsMissing": 0,
+        "windowMonthsMissingFirst": [],
+        "windowMonthsObserved": 132
+      }
+    },
+    "window2015to2025": {
+      "availableForCondo": false,
+      "availableForHdb": true,
+      "meaning": "a 2015-2025 window is available for the HDB rows and not for the private rows, which begin in the source's own first month; the article's all-property-type CAGR table therefore cannot be re-measured as stated",
+      "monthsExpected": 132
+    }
+  },
+  "claimKeyCheck": {
+    "claimsChecked": 36,
+    "method": "each claim's ledgerKey is resolved against this ledger at build time by walking dict keys and list items by their `id`; an unresolved key fails the build rather than shipping",
+    "unresolved": []
+  },
+  "clusteringArtefacts": {
+    "assetCohortTotal": 911454,
+    "clusterCountTotal": 95531,
+    "countRatios": {
+      "definition": "asset transactionCount / profile clusterCount, per segment",
+      "isCommonScaleFactor": false,
+      "max": 9.5831,
+      "meaning": "the ratios are NOT constant, so the asset's counts are not the profile counts multiplied by one scale factor; each segment was rounded/approximated separately. The counts are approximately share-proportional on a ~910K base, which is what the plan document's comment records, and that is a weaker statement than a measured rescaling",
+      "min": 9.502,
+      "values": {
+        "declining_areas": 9.5182,
+        "high_growth_recent": 9.5503,
+        "large_size_stable": 9.5282,
+        "mid_tier_value": 9.5368,
+        "premium_new_units": 9.5831,
+        "speculator_hotspots": 9.502
+      }
+    },
+    "directory": "data/analysis/market_segmentation_2.0",
+    "documentedVersion": {
+      "meaning": "a documented version label does exist for the clustering, and the same archive names scripts/quick_cluster_profiles.py as the record that updated the log transformation to square-foot basis. What that label does NOT establish: a model-library version, the identity of the fitted run behind the stored profile CSV, or reproducible parameters — the script itself is not in the checkout",
+      "source": {
+        "line": 156,
+        "path": "docs/archive/20260124-market-insights-fixes-complete.md",
+        "quote": "_Cluster Version: 2.0 (PSF-based)_",
+        "sha256": "06b01a6a6ca1c24307f91811f0571ac3a848994c81042731c502c9f9ba924c2e"
+      },
+      "value": "Cluster Version: 2.0 (PSF-based)"
+    },
+    "files": [
+      {
+        "bytes": 3541,
+        "path": "data/analysis/market_segmentation_2.0/cluster_profiles.csv",
+        "sha256": "46109df842155720959b1f3a9b44152fd739afb91faa19ecbcad527602689a0e"
+      },
+      {
+        "bytes": 4960984,
+        "path": "data/analysis/market_segmentation_2.0/clusters_pca.png",
+        "sha256": "08bf618b6cfdd713a42146d64ce36b9437beefc5585914b6fe1143a70ac005c7"
+      },
+      {
+        "bytes": 760,
+        "path": "data/analysis/market_segmentation_2.0/investment_strategies.csv",
+        "sha256": "24224211f68bd6af68080ca6b12be728b6522a983d1135bece541dbfdaf36450"
+      },
+      {
+        "bytes": 281872,
+        "path": "data/analysis/market_segmentation_2.0/optimal_clusters.png",
+        "sha256": "113e4cf1bcb6dd631c74339f33ef48d0543566c02a60d173eedd63f82bbf7273"
+      }
+    ],
+    "meaning": "the six segment NAMES and SHARES correspond to stored KMeans profile output: every segment_name maps to an asset id and every cluster_percentage reproduces the asset's marketShare at three decimals. That is a measured CORRESPONDENCE, not a proven lineage — nothing in the directory links these profiles to the code that wrote the asset, and the plot artefacts beside them are a K sweep and a K=2 visualisation, not the six-cluster run (see visibleAnnotations). The asset's COUNTS are neither the profile counts nor a constant multiple of them (countRatios), so the plan document's transactionCount literals are approximate share values on a ~910K base. No per-transaction membership for the six ids exists in the frame or in these files; the profiles are aggregate cluster summaries.",
+    "nameSlugMatches": 6,
+    "periodDirectory": {
+      "directory": "data/analysis/market_segmentation_period",
+      "files": [
+        {
+          "bytes": 25493148,
+          "path": "data/analysis/market_segmentation_period/housing_unified_period_segmented.parquet",
+          "sha256": "baf6ddaecf4373e2367e45c4cf4d587041a480ebdcbf0bbd3d88c49e9c715390"
+        },
+        {
+          "bytes": 817,
+          "path": "data/analysis/market_segmentation_period/tier_thresholds_evolution.csv",
+          "sha256": "d1efca7c8ac32dd75532f09b4c0b0a3517aa3a813363d36c6a941f08c1d7b128"
+        },
+        {
+          "bytes": 291,
+          "path": "data/analysis/market_segmentation_period/tier_thresholds_recent_periods.csv",
+          "sha256": "b969db4f16729a5076961d8e16014f696962453936698c96a3183e30aad9af7d"
+        }
+      ],
+      "meaning": "a second segmentation directory holding another 911,797-row period-labelled panel plus two tier-threshold files (recent_periods and evolution). It adds no asset ids and is not the article's six-segment taxonomy, but its threshold files are preprocessing artefacts that exist as data — so no claim may say the tier-threshold CSV is the only such artefact"
+    },
+    "profileCountsReproduceAssetCounts": false,
+    "profileRows": [
+      {
+        "assetIdMatch": true,
+        "assetMarketShare": 0.126,
+        "clusterCount": 12038,
+        "clusterPercentage": 12.601145,
+        "derivedSlug": "large_size_stable",
+        "pricePsfMean": 570.39,
+        "segmentName": "Large Size Stable",
+        "shareMatchesAsset": true,
+        "yoyChangePctMean": 8.271
+      },
+      {
+        "assetIdMatch": true,
+        "assetMarketShare": 0.33,
+        "clusterCount": 31504,
+        "clusterPercentage": 32.977777,
+        "derivedSlug": "high_growth_recent",
+        "pricePsfMean": 509.081,
+        "segmentName": "High Growth Recent",
+        "shareMatchesAsset": true,
+        "yoyChangePctMean": 24.418
+      },
+      {
+        "assetIdMatch": true,
+        "assetMarketShare": 0.057,
+        "clusterCount": 5468,
+        "clusterPercentage": 5.723796,
+        "derivedSlug": "speculator_hotspots",
+        "pricePsfMean": 550.45,
+        "segmentName": "Speculator Hotspots",
+        "shareMatchesAsset": true,
+        "yoyChangePctMean": 83.935
+      },
+      {
+        "assetIdMatch": true,
+        "assetMarketShare": 0.124,
+        "clusterCount": 11866,
+        "clusterPercentage": 12.421099,
+        "derivedSlug": "declining_areas",
+        "pricePsfMean": 564.013,
+        "segmentName": "Declining Areas",
+        "shareMatchesAsset": true,
+        "yoyChangePctMean": -3.634
+      },
+      {
+        "assetIdMatch": true,
+        "assetMarketShare": 0.253,
+        "clusterCount": 24189,
+        "clusterPercentage": 25.320577,
+        "derivedSlug": "mid_tier_value",
+        "pricePsfMean": 462.757,
+        "segmentName": "Mid-Tier Value",
+        "shareMatchesAsset": true,
+        "yoyChangePctMean": 27.75
+      },
+      {
+        "assetIdMatch": true,
+        "assetMarketShare": 0.11,
+        "clusterCount": 10466,
+        "clusterPercentage": 10.955606,
+        "derivedSlug": "premium_new_units",
+        "pricePsfMean": 826.462,
+        "segmentName": "Premium New Units",
+        "shareMatchesAsset": true,
+        "yoyChangePctMean": 12.289
+      }
+    ],
+    "shareMatches": 6,
+    "visibleAnnotations": {
+      "clusters_pca.png": {
+        "implication": "the scatter is coloured for two clusters, so it is not a visualisation of the six-cluster solution",
+        "title": "Market Segments - PCA Visualization (K=2)"
+      },
+      "method": "HUMAN VISUAL READ of the two sha-pinned PNGs by the producer, recorded because the pixels are not machine-read. The hashes above pin exactly which images were read; the values below are what they visibly print, and are not a re-derived score",
+      "optimal_clusters.png": {
+        "elbow": "a dashed rule labelled 'Elbow at K=7'",
+        "silhouette": "a dashed rule labelled 'Max Silhouette at K=2', peak about 0.235 at K=2",
+        "silhouetteAtK6": "about 0.156 at the plotted K=6 point — a point on the SAME unlinked sweep, not a score for the stored six-cluster profile run",
+        "title": "Elbow Method for Optimal K (left) and Silhouette Analysis for Optimal K (right)",
+        "xAxis": "Number of Clusters (K), 2 through 10"
+      },
+      "runLinkage": "the plots record a K sweep (elbow marked K=7, maximum silhouette marked K=2) and a K=2 visualisation; the profile CSV holds six clusters. NOTHING in the directory links either plot to the same fitted run as the six-row profiles, and that limits what may be concluded in BOTH directions: the unlinked sweep marks K=2 as its own silhouette maximum and K=7 as its own elbow, and it does NOT establish what the profile run's K=6 scored, nor that K=6 was suboptimal. What can be said is narrower: a selection sweep exists whose annotations are K=2 (silhouette maximum) and K=7 (elbow); it does NOT annotate K=6 as either, and whether it is the same run as the stored profiles is unestablished"
+    }
+  },
+  "cohortReconciliation": {
+    "anyPopulationEqualsAssetTotal": false,
+    "anySegmentCountReproducedByItsDeclaredAreas": false,
+    "assetTotalTransactions": 911454,
+    "candidatePopulations": [
+      {
+        "differenceFromAssetTotal": 324856,
+        "equalsAssetTotal": false,
+        "label": "fullFrame",
+        "months": "0000-00..9999-99",
+        "rows": 1236310
+      },
+      {
+        "differenceFromAssetTotal": -509942,
+        "equalsAssetTotal": false,
+        "label": "articleEmphasisWindow",
+        "months": "2021-01..2026-10",
+        "rows": 401512
+      },
+      {
+        "differenceFromAssetTotal": -422353,
+        "equalsAssetTotal": false,
+        "label": "articleStatedDataPeriod",
+        "months": "2017-01..2026-10",
+        "rows": 489101
+      },
+      {
+        "differenceFromAssetTotal": -535198,
+        "equalsAssetTotal": false,
+        "label": "assetLastUpdatedMonthCap",
+        "months": "2021-01..2026-04",
+        "rows": 376256
+      },
+      {
+        "differenceFromAssetTotal": -665799,
+        "equalsAssetTotal": false,
+        "label": "privateRowsOnly",
+        "months": "0000-00..9999-99",
+        "rows": 245655
+      },
+      {
+        "differenceFromAssetTotal": 343,
+        "equalsAssetTotal": false,
+        "label": "adjacentSegmentedPanel",
+        "months": "1990-01..2026-01",
+        "note": "a per-transaction segmented panel under data/analysis with three price tiers per row and none of the six asset ids; the closest candidate to the asset total, still not an exact match, and a different taxonomy — listed here so the near-match is visible beside the other candidates rather than only in its own block",
+        "rows": 911797
+      }
+    ],
+    "marketShareSum": 1.0,
+    "marketShareSumResidual": 0.0,
+    "perSegment": [
+      {
+        "declaredAreaRowsMinusStoredCount": 61770,
+        "declaredAreasReproduceStoredCount": false,
+        "declaredPlanningAreaRows": 176470,
+        "id": "large_size_stable",
+        "impliedDenominator": 910317.5,
+        "marketShare": 0.126,
+        "shareArithmetic": "internallyConsistent",
+        "shareImpliedByCounts": 0.125843,
+        "shareResidual": 0.000157,
+        "transactionCount": 114700
+      },
+      {
+        "declaredAreaRowsMinusStoredCount": 18583,
+        "declaredAreasReproduceStoredCount": false,
+        "declaredPlanningAreaRows": 319455,
+        "id": "high_growth_recent",
+        "impliedDenominator": 911733.3,
+        "marketShare": 0.33,
+        "shareArithmetic": "internallyConsistent",
+        "shareImpliedByCounts": 0.330101,
+        "shareResidual": -0.000101,
+        "transactionCount": 300872
+      },
+      {
+        "declaredAreaRowsMinusStoredCount": 124513,
+        "declaredAreasReproduceStoredCount": false,
+        "declaredPlanningAreaRows": 176470,
+        "id": "speculator_hotspots",
+        "impliedDenominator": 911526.3,
+        "marketShare": 0.057,
+        "shareArithmetic": "internallyConsistent",
+        "shareImpliedByCounts": 0.057005,
+        "shareResidual": -5e-06,
+        "transactionCount": 51957
+      },
+      {
+        "declaredAreaRowsMinusStoredCount": 464619,
+        "declaredAreasReproduceStoredCount": false,
+        "declaredPlanningAreaRows": 577562,
+        "id": "declining_areas",
+        "impliedDenominator": 910830.6,
+        "marketShare": 0.124,
+        "shareArithmetic": "internallyConsistent",
+        "shareImpliedByCounts": 0.123915,
+        "shareResidual": 8.5e-05,
+        "transactionCount": 112943
+      },
+      {
+        "declaredAreaRowsMinusStoredCount": -230652,
+        "declaredAreasReproduceStoredCount": false,
+        "declaredPlanningAreaRows": 33,
+        "id": "mid_tier_value",
+        "impliedDenominator": 911798.4,
+        "marketShare": 0.253,
+        "shareArithmetic": "internallyConsistent",
+        "shareImpliedByCounts": 0.253096,
+        "shareResidual": -9.6e-05,
+        "transactionCount": 230685
+      },
+      {
+        "declaredAreaRowsMinusStoredCount": 76173,
+        "declaredAreasReproduceStoredCount": false,
+        "declaredPlanningAreaRows": 176470,
+        "id": "premium_new_units",
+        "impliedDenominator": 911790.9,
+        "marketShare": 0.11,
+        "shareArithmetic": "internallyConsistent",
+        "shareImpliedByCounts": 0.110041,
+        "shareResidual": -4.1e-05,
+        "transactionCount": 100297
+      }
+    ],
+    "recordedDenominator": {
+      "line": 457,
+      "meaning": "the only recorded denominator for these counts is this generator comment ('~910K'), hard-coded beside the literal; no measured population in this checkout equals it, and the comment is not an extraction of the frame",
+      "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md",
+      "quote": "\"transactionCount\": 114700,  # 12.6% of ~910K"
+    },
+    "shareRoundingTolerance": 0.0005,
+    "verdict": "internallyConsistent arithmetic, unreproducible cohorts: the six marketShare values sum to one and each equals its count over the asset's own total within three-decimal rounding, but the total reproduces no measured population and no per-segment count reproduces the rows inside its own declared planning areas"
+  },
+  "cutoff": {
+    "allPropertyTypesTerminalMonth": "2026-11",
+    "allPropertyTypesTerminalMonthTransactions": 1211,
+    "allPropertyTypesTerminalShareOfTrailingMedian": 0.264,
+    "allPropertyTypesTrailing12MedianTransactions": 4587.5,
+    "basis": "last complete month = the month before the terminal month, whose transaction count is a measured fraction of the trailing-12-month median, not an assumed calendar fact (the same rule RS03/RS04/RS05/RS09 shipped, computed on the private rows so the bound is identical across the studies)",
+    "frameFirstMonth": "1990-01",
+    "frameLastMonth": "2026-11",
+    "lastCompleteMonth": "2026-10",
+    "lastCompleteMonthShareOfTrailingMedian": 1.1936,
+    "lastCompleteMonthTransactions": 2546,
+    "meaning": "every window, count and share in this ledger that touches the frame stops at lastCompleteMonth",
+    "terminalMonth": "2026-11",
+    "terminalMonthShareOfTrailingMedian": 0.1974,
+    "terminalMonthTransactions": 421,
+    "trailing12MedianTransactions": 2133.0,
+    "trailing12Months": [
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ]
+  },
+  "dashboardAssetContrast": {
+    "bytes": 6080,
+    "countPopulation": {
+      "assetTotalTransactions": 911454,
+      "frameRows": 1236310,
+      "matchesAssetTotal": false,
+      "meaning": "the dashboard's z is a count per planning-area × property-type point; its total matches neither the frame nor the asset's cohort total, so it cannot be used to reconcile either",
+      "wholeCountSum": 333555
+    },
+    "distinctCategories": [
+      "Condominium",
+      "EC",
+      "HDB"
+    ],
+    "distinctNames": 84,
+    "emptyKeys": [
+      "pre_covid",
+      "pre_covid_condo",
+      "pre_covid_ec",
+      "pre_covid_hdb"
+    ],
+    "hasSegmentIdField": false,
+    "idIntersectionWithSegmentAsset": {
+      "assetIdsOnly": [
+        "declining_areas",
+        "high_growth_recent",
+        "large_size_stable",
+        "mid_tier_value",
+        "premium_new_units",
+        "speculator_hotspots"
+      ],
+      "dashboardIdsOnly": [],
+      "method": "set intersection of the segment asset's six ids with the dashboard asset's identifier values; the dashboard has no id field, so its identifiers are planning-area × property-type composite names and the intersection is empty by construction as well as by measurement",
+      "namesMatchingAssetIds": 0,
+      "sharedIds": 0
+    },
+    "identicalPayloads": [
+      [
+        "recent",
+        "whole"
+      ],
+      [
+        "recent_condo",
+        "whole_condo"
+      ],
+      [
+        "recent_ec",
+        "whole_ec"
+      ],
+      [
+        "recent_hdb",
+        "whole_hdb"
+      ]
+    ],
+    "identifierFields": [
+      "name",
+      "category"
+    ],
+    "keyCount": 16,
+    "keys": {
+      "pre_covid": {
+        "categories": [],
+        "countSum": 0,
+        "rows": 0
+      },
+      "pre_covid_condo": {
+        "categories": [],
+        "countSum": 0,
+        "rows": 0
+      },
+      "pre_covid_ec": {
+        "categories": [],
+        "countSum": 0,
+        "rows": 0
+      },
+      "pre_covid_hdb": {
+        "categories": [],
+        "countSum": 0,
+        "rows": 0
+      },
+      "recent": {
+        "categories": [
+          "Condominium",
+          "EC",
+          "HDB"
+        ],
+        "countSum": 333555,
+        "rows": 84
+      },
+      "recent_condo": {
+        "categories": [
+          "Condominium"
+        ],
+        "countSum": 181134,
+        "rows": 39
+      },
+      "recent_ec": {
+        "categories": [
+          "EC"
+        ],
+        "countSum": 26002,
+        "rows": 16
+      },
+      "recent_hdb": {
+        "categories": [
+          "HDB"
+        ],
+        "countSum": 126419,
+        "rows": 29
+      },
+      "whole": {
+        "categories": [
+          "Condominium",
+          "EC",
+          "HDB"
+        ],
+        "countSum": 333555,
+        "rows": 84
+      },
+      "whole_condo": {
+        "categories": [
+          "Condominium"
+        ],
+        "countSum": 181134,
+        "rows": 39
+      },
+      "whole_ec": {
+        "categories": [
+          "EC"
+        ],
+        "countSum": 26002,
+        "rows": 16
+      },
+      "whole_hdb": {
+        "categories": [
+          "HDB"
+        ],
+        "countSum": 126419,
+        "rows": 29
+      },
+      "year_2025": {
+        "categories": [
+          "Condominium",
+          "EC",
+          "HDB"
+        ],
+        "countSum": 78545,
+        "rows": 80
+      },
+      "year_2025_condo": {
+        "categories": [
+          "Condominium"
+        ],
+        "countSum": 47437,
+        "rows": 38
+      },
+      "year_2025_ec": {
+        "categories": [
+          "EC"
+        ],
+        "countSum": 6209,
+        "rows": 16
+      },
+      "year_2025_hdb": {
+        "categories": [
+          "HDB"
+        ],
+        "countSum": 24899,
+        "rows": 26
+      }
+    },
+    "path": "app/public/data/dashboard_segments.json.gz",
+    "rowFields": [
+      "category",
+      "name",
+      "x",
+      "y",
+      "z"
+    ],
+    "segmentIds": [],
+    "sha256": "69d7a3d266452811d8153f009c1df0baa4e6b91bc48ec3bc78d7ffe745373a24",
+    "topLevelKeys": [
+      "pre_covid",
+      "pre_covid_condo",
+      "pre_covid_ec",
+      "pre_covid_hdb",
+      "recent",
+      "recent_condo",
+      "recent_ec",
+      "recent_hdb",
+      "whole",
+      "whole_condo",
+      "whole_ec",
+      "whole_hdb",
+      "year_2025",
+      "year_2025_condo",
+      "year_2025_ec",
+      "year_2025_hdb"
+    ],
+    "verdict": "no old/new segment identity mapping exists in the served assets: the segment asset carries six ids, the dashboard asset carries none, and the intersection is zero — recorded as an intersection, not as a resemblance between similarly named surfaces"
+  },
+  "definition": "A measured inventory and reconciliation of the stored research segment asset, with an explicit list of what cannot be recovered. The asset (`segments_enhanced.json.gz`, version 1.0.0) is read in full: its six segments, their stored metrics, their persistence probabilities and their declared planning areas. Three things are measured, not assumed. (1) The asset's own arithmetic: `marketShare` sums to 1 and each share equals its `transactionCount` over the asset's own total, so the six counts are internally consistent. (2) Whether that total or any per-segment count reproduces a shipped population: it does not — no measured window of `unified_dataset` equals the asset's 911,454, and no segment's stored count equals the rows inside its own declared planning areas. The counts are therefore the asset's own unverified figures, recorded as inspection-only. (3) Membership: the frame's `market_segment` column holds three CCR/RCR/OCR region labels and is populated only on the 245,655 private rows; the six asset ids occur zero times as a value in `market_segment`, `property_segment` or `price_stratum`. The one mapping the RS10 ASSET itself stores is at planning-area granularity (31 areas, 51 area→segment pairs) and it is many-to-many, so it assigns no transaction to a segment. That statement is about the asset's six segments, not about the checkout: a separate per-transaction segmented panel exists under data/analysis/market_segmentation/ with three price tiers assigned per row (recorded at adjacentSegmentedPanel), and it carries none of the six ids. Feature scaling and K are not recorded FOR THE ARTICLE'S METHOD, and the asset's segment literals are hard-coded in a January-February 2026 plan document's generator body. That is NOT the whole provenance story, and this definition must not imply it is: data/analysis/market_segmentation_2.0/ holds a PSF-based KMeans profile set whose six segment names map 1:1 onto the asset's ids and whose cluster percentages reproduce the asset's marketShare values at three decimals (clusteringArtefacts), while the plot artefacts in that same directory record an elbow at K=7 and a silhouette maximum at K=2 — not the stored six-cluster solution. The exact lineage between those profiles and the plan document's literals is UNPROVEN, and the asset's counts are not the profile counts nor a constant multiple of them. No clustering is re-fitted here and no segment is re-identified: the ledger supports withdrawing the legacy taxonomy and its per-segment bands, not restating them.",
+  "inputs": {
+    "app/public/data/dashboard_segments.json.gz": {
+      "bytes": 6080,
+      "sha256": "69d7a3d266452811d8153f009c1df0baa4e6b91bc48ec3bc78d7ffe745373a24"
+    },
+    "app/public/data/segments_enhanced.json.gz": {
+      "bytes": 3432,
+      "sha256": "76979cc5fdc4e7fff27847147b70520f896c3f344d701f4ef702c252dd571d56"
+    },
+    "data/analysis/market_segmentation/housing_unified_segmented.parquet": {
+      "bytes": 25681663,
+      "columns": 61,
+      "rows": 911797,
+      "sha256": "d49c4cb3ab144ed24193076f1892b03a2b764600a26f8754e0981f759a0e4e60"
+    },
+    "data/analysis/market_segmentation/tier_performance.parquet": {
+      "bytes": 7053,
+      "columns": 6,
+      "rows": 139,
+      "sha256": "1777b2aa4a698ed1ecc179d2197f68693651c2e6fb64b9010d6c42cb47e53921"
+    },
+    "data/analysis/market_segmentation/tier_thresholds.csv": {
+      "bytes": 160,
+      "sha256": "8414fdb044c66f89147ffa37b0ff7f864ca9c3c5f4737b0915cad7b69d3ba7f4"
+    },
+    "data/pipeline/04_platinum/unified_dataset.parquet": {
+      "bytes": 78381526,
+      "columns": 97,
+      "rows": 1236310,
+      "sha256": "39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe"
+    },
+    "docs/analytics/editions/legacy/2026-11-12/market-segments.md": {
+      "bytes": 9328,
+      "sha256": "6813e4e121d8e1784f8a4605e8911ea26b634910cac02ce3702c1093d498e958"
+    }
+  },
+  "legacyClaims": [
+    {
+      "id": "C1",
+      "ledgerKey": "segmentAsset.segmentCount",
+      "note": "the shipped asset holds six segments, not five; the count alone contradicts the heading, and the five names do not appear in it",
+      "phrase": "Five behavioral segments emerge from clustering",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C2",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "no membership exists to compute a PSF/yield/appreciation band for any named segment, and this name has no counterpart id in the asset",
+      "phrase": "| High-Growth HDB           | Newer HDBs in developing towns   | $450-550     | 4-5%         | 8-15%            |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C3",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "same as C2: a stored band with no segment population behind it and no matching id",
+      "phrase": "| Stable Mid-Tier           | Mature town HDBs and mass condos | $500-700     | 3-4.5%       | 3-7%             |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C4",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "same as C2; the phrase 'Premium Condo' resembles no asset name and no asset id",
+      "phrase": "| Premium Condo (Low Yield) | Central/RCR condos               | $1,200-2,000 | 2-3%         | 4-8%             |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C5",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "same as C2; no membership, no id, no population",
+      "phrase": "| High-Yield Apartments     | OCR condos near transport hubs   | $800-1,200   | 4-6%         | 5-10%            |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C6",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "same as C2; 'Variable' is an open-ended band that no measurement can confirm or refute",
+      "phrase": "| Luxury Segment            | CCR condos and landed            | $2,000+      | 1-2.5%       | Variable         |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C7",
+      "ledgerKey": "cagrWindow.window2015to2025",
+      "note": "the HDB rows span 2015-2025 and the private rows begin in 2021-01, so an all-property-type 2015-2025 area CAGR is not measurable from this frame",
+      "phrase": "CAGR by planning area (2015-2025)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C8",
+      "ledgerKey": "cagrWindow.areaCagr",
+      "note": "the stated definition is adopted verbatim as this ledger's areaCagr definition and applied to the HDB rows, with the floor required at both endpoint years",
+      "phrase": "10-year compound annual growth rate by planning area, minimum 50 transactions per area",
+      "status": "re-measured"
+    },
+    {
+      "id": "C9",
+      "ledgerKey": "cagrWindow.areaCagr.areas",
+      "note": "the HDB-only measurement of this row is recorded in cagrWindow; the row's PSF level and its 'Luxury' segment label are not reproducible from any stored membership",
+      "phrase": "| Bukit Timah   | ~5-7% | $1,800+          | Luxury          |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C10",
+      "ledgerKey": "cagrWindow.areaCagr.areas",
+      "note": "the HDB-only measurement is recorded; the row mixes property types and labels a segment with no membership",
+      "phrase": "| Queenstown    | ~4-6% | $700-900         | High-Growth HDB |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C11",
+      "ledgerKey": "cagrWindow.areaCagr.areas",
+      "note": "same as C10",
+      "phrase": "| Jurong East   | ~4-6% | $550-650         | High-Growth HDB |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C12",
+      "ledgerKey": "cagrWindow.areaCagr.areas",
+      "note": "same as C10",
+      "phrase": "| Punggol       | ~3-5% | $500-600         | High-Growth HDB |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C13",
+      "ledgerKey": "cagrWindow.areaCagr.areas",
+      "note": "same as C10",
+      "phrase": "| Sengkang      | ~2-4% | $450-550         | Stable Mid-Tier |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C14",
+      "ledgerKey": "cagrWindow.areaCagr.areas",
+      "note": "same as C10",
+      "phrase": "| Woodlands     | ~1-3% | $400-500         | Stable Mid-Tier |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C15",
+      "ledgerKey": "methodRecovery.items.compositeScore",
+      "note": "no composite-score artefact or implementation exists for this article's score; the weights are stated only in prose, and the segment surface explicitly disclaims computing an investment score",
+      "phrase": "50% appreciation z-score + 50% yield z-score, normalized to 0-100",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C16",
+      "ledgerKey": "methodRecovery.items.compositeScore",
+      "note": "the score bands have no definition, no artefact and no area list behind them",
+      "phrase": "| 0-19        | Weak           | Depreciating or oversupplied areas            |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C17",
+      "ledgerKey": "methodRecovery.items.silhouetteOutputs",
+      "note": "no hierarchical validation run, agreement table or assignment artefact is stored for this study's method (methodRecovery.tokenScan.tokens.AgglomerativeClustering lists the files that mention it; none is an RS10 artefact)",
+      "phrase": "with >85% agreement on cluster assignments",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C18",
+      "ledgerKey": "segmentAsset.internalCorrelations",
+      "note": "the article's cited sentence — 'Yield and appreciation are weakly negatively correlated (r ~ -0.3)' — DOES NOT SPECIFY the observational unit: it could be within clusters, across transaction records, or across segment summaries. The statistic is therefore UNDESPECIFIED and cannot be reproduced from this evidence, and this note must not prescribe what its unit was. What can be stated is separate: no per-transaction membership for the six stored segments exists, and a correlation across the six aggregate profile rows is computable and recorded at segmentAsset.internalCorrelations — unlinked to the article's method, so it is neither the article's statistic nor evidence about it",
+      "phrase": "(r ~ -0.3)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C19",
+      "ledgerKey": "cohortReconciliation.candidatePopulations",
+      "note": "the measured row counts for the article's own windows are recorded there; none equals the stated volume, and none equals the asset's cohort total either",
+      "phrase": "~288K records (2021-2026 emphasis)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C20",
+      "ledgerKey": "methodRecovery.items.silhouetteOutputs",
+      "note": "no silhouette result is LINKED OR ATTRIBUTABLE to the article's five-cluster claim. Silhouette EVIDENCE does exist in the checkout and is recorded rather than denied: clusteringArtefacts.visibleAnnotations reports the K-selection plot's printed maximum at K=2, on a sweep that plots K=2 through K=10 including a K=5 point whose relationship to the article's method is unknown. That plot is NOT evidence for the five-cluster claim and equally not evidence against it; because the sweep is unlinked, it establishes neither that a five-cluster selection output exists for the article's method, nor that none exists. Separately, the shipped asset holds six segments while the claim names five",
+      "phrase": "provides the best balance of interpretability and granularity based on silhouette analysis",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C21",
+      "ledgerKey": "methodRecovery.items.featureScaling",
+      "note": "no scaler parameters, offset or transformed-column list is stored FOR THE ARTICLE'S METHOD. Related clustering does exist — the PSF-based KMeans profiles and the archive's 'Cluster Version 2.0 (PSF-based)' label — but that run is UNLINKED to the article's method and its own scaling is UNKNOWN, so it bears neither for nor against the article's scaler claim. Preprocessing artefacts DO exist as data elsewhere (tier thresholds in data/analysis, two files in the period directory), which is why this is scoped to the article's method rather than to the checkout",
+      "phrase": "Log-transform for skewed variables, StandardScaler normalization",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C22",
+      "ledgerKey": "membershipRecovery.segmentIdMatchesInColumns",
+      "note": "no per-transaction assignment OF THE SIX STORED SEGMENTS exists in any column of the 97-column frame: the six ids match zero column values, and the asset's own stored membership is a many-to-many planning-area block. A different, three-tier per-row segmentation does exist under data/analysis (adjacentSegmentedPanel); it is not this taxonomy",
+      "phrase": "Cluster assignments per transaction with segment labels",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C23",
+      "ledgerKey": "cagrWindow.perPropertyType",
+      "note": "the private rows begin in 2021-01, so 2017-only coverage exists for the HDB rows; the period cannot describe the asset's mixed population",
+      "phrase": "**Data Period**: 2017-2026, with emphasis on 2021-2026",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C24",
+      "ledgerKey": "cohortReconciliation.candidatePopulations",
+      "note": "the stated window is measurable for the private rows, but the asset's cohort total reproduces no measured window, so the definition window cannot be confirmed for the stored clusters",
+      "phrase": "clusters are defined on 2021-2026 data and may shift as market conditions change",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C25",
+      "ledgerKey": "methodRecovery.items.compositeScore",
+      "note": "the composite score is described only in prose (50% appreciation z + 50% yield z, normalized to 0-100); no implementation or score vector exists FOR THE ARTICLE'S POPULATION, so the band cannot be recomputed. The archived 2026-01-23 HDB analysis does carry score vectors, which is recorded at methodRecovery.items.compositeScore.relatedPrecedent and is a different population and period, not this article's score",
+      "phrase": "| 80-100      | Exceptional    | Emerging towns with new MRT lines             |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C26",
+      "ledgerKey": "methodRecovery.items.compositeScore",
+      "note": "same as C25: the score definition has no implementation to re-run",
+      "phrase": "| 60-79       | Strong         | Mature estates with good yield                |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C27",
+      "ledgerKey": "methodRecovery.items.compositeScore",
+      "note": "same as C25: the score definition has no implementation to re-run",
+      "phrase": "| 40-59       | Average        | Most established areas                        |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C28",
+      "ledgerKey": "methodRecovery.items.compositeScore",
+      "note": "same as C25, and the interpretation itself is an unsupported explanation: no yield/appreciation decomposition supporting THIS band and population is available. The archived 2026-01-23 analysis does report area-level CAGR, rental yield and composite scores, which is a precedent for such a decomposition on a different population and period — not evidence for this explanation",
+      "phrase": "| 20-39       | Below average  | Luxury areas (low yield offsets appreciation) |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C29",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "a strategy screen defined against yield and growth thresholds. Six aggregate yield/growth pairs DO exist (the cluster-profile rows, one of which meets the stated >6% yield and >10% growth thresholds), but they are unlinked to the article's strategy populations, so they cannot identify the strategy's members; and with no per-transaction membership no population can be assigned to it",
+      "phrase": "| Hold & Grow       | High yield + strong appreciation (>6% yield, >10% growth) | High            | Medium-High | Experienced investors    |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C30",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "same as C29: the threshold is defined, the population it screens is not recoverable",
+      "phrase": "| Yield Play        | High rental yield focus (>6%)                             | Medium          | Low-Medium  | Income-focused investors |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C31",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "same as C29: no membership means no YoY series can be attributed to a segment",
+      "phrase": "| Growth Play       | High appreciation potential (>15% YoY)                    | High            | High        | Speculative investors    |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C32",
+      "ledgerKey": "membershipRecovery.perTransactionMembership",
+      "note": "the only strategy whose screen could in principle be evaluated against transactions, but it is attributed to segments that have no membership, so the claim is about a population this checkout cannot build",
+      "phrase": "| Value Investing   | Affordable entry (<$5,000 PSF)                            | Medium          | Low         | First-time buyers        |",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C33",
+      "ledgerKey": "cagrWindow.areaCagr",
+      "note": "a distributional claim over planning areas; the ledger measures CAGR only for the legacy's six named areas under its own 50-transaction floor, which is not enough to characterise a distribution, and one of the six is refused as below the floor",
+      "phrase": "most areas cluster around 2-5%",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C34",
+      "ledgerKey": "cagrWindow.areaCagr",
+      "note": "investment advice, not a measurement; the ledger reports the measured CAGR per named area without a return, risk or affordability comparison that could support the recommendation",
+      "phrase": "A town with 4-5% CAGR and affordable entry is often a better long-term bet",
+      "status": "withdrawn"
+    },
+    {
+      "id": "C35",
+      "ledgerKey": "methodRecovery.items.riskAdjustedMomentum",
+      "note": "the ratio is defined in prose only; no rolling window, no numerator or denominator series and no per-area momentum value exists FOR THE ARTICLE'S POPULATION, so the measure cannot be recomputed. The archived 2026-01-23 analysis publishes per-area Risk-Adjusted Scores on a different population and without its volatility window (methodRecovery.items.riskAdjustedMomentum)",
+      "phrase": "Risk-adjusted momentum (YoY change divided by price volatility)",
+      "status": "not-reproducible"
+    },
+    {
+      "id": "C36",
+      "ledgerKey": "methodRecovery.items.riskAdjustedMomentum",
+      "note": "the methodology restates the same ratio; the rolling window it names is never specified, and no fitted or stored momentum series exists",
+      "phrase": "YoY change divided by rolling price volatility",
+      "status": "not-reproducible"
+    }
+  ],
+  "legacyQuoteCheck": {
+    "allQuotesFound": true,
+    "claimsChecked": 36,
+    "legacyFile": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+    "legacyFileSha256": "6813e4e121d8e1784f8a4605e8911ea26b634910cac02ce3702c1093d498e958",
+    "method": "each phrase is required to appear verbatim in the frozen legacy text; a paraphrase inside quotation marks is a defect, and an ellipsis is permitted only for a genuine omission",
+    "quotes": [
+      {
+        "id": "C1",
+        "occurrences": 1,
+        "phrase": "Five behavioral segments emerge from clustering"
+      },
+      {
+        "id": "C2",
+        "occurrences": 1,
+        "phrase": "| High-Growth HDB           | Newer HDBs in developing towns   | $450-550     | 4-5%         | 8-15%            |"
+      },
+      {
+        "id": "C3",
+        "occurrences": 1,
+        "phrase": "| Stable Mid-Tier           | Mature town HDBs and mass condos | $500-700     | 3-4.5%       | 3-7%             |"
+      },
+      {
+        "id": "C4",
+        "occurrences": 1,
+        "phrase": "| Premium Condo (Low Yield) | Central/RCR condos               | $1,200-2,000 | 2-3%         | 4-8%             |"
+      },
+      {
+        "id": "C5",
+        "occurrences": 1,
+        "phrase": "| High-Yield Apartments     | OCR condos near transport hubs   | $800-1,200   | 4-6%         | 5-10%            |"
+      },
+      {
+        "id": "C6",
+        "occurrences": 1,
+        "phrase": "| Luxury Segment            | CCR condos and landed            | $2,000+      | 1-2.5%       | Variable         |"
+      },
+      {
+        "id": "C7",
+        "occurrences": 1,
+        "phrase": "CAGR by planning area (2015-2025)"
+      },
+      {
+        "id": "C8",
+        "occurrences": 1,
+        "phrase": "10-year compound annual growth rate by planning area, minimum 50 transactions per area"
+      },
+      {
+        "id": "C9",
+        "occurrences": 1,
+        "phrase": "| Bukit Timah   | ~5-7% | $1,800+          | Luxury          |"
+      },
+      {
+        "id": "C10",
+        "occurrences": 1,
+        "phrase": "| Queenstown    | ~4-6% | $700-900         | High-Growth HDB |"
+      },
+      {
+        "id": "C11",
+        "occurrences": 1,
+        "phrase": "| Jurong East   | ~4-6% | $550-650         | High-Growth HDB |"
+      },
+      {
+        "id": "C12",
+        "occurrences": 1,
+        "phrase": "| Punggol       | ~3-5% | $500-600         | High-Growth HDB |"
+      },
+      {
+        "id": "C13",
+        "occurrences": 1,
+        "phrase": "| Sengkang      | ~2-4% | $450-550         | Stable Mid-Tier |"
+      },
+      {
+        "id": "C14",
+        "occurrences": 1,
+        "phrase": "| Woodlands     | ~1-3% | $400-500         | Stable Mid-Tier |"
+      },
+      {
+        "id": "C15",
+        "occurrences": 1,
+        "phrase": "50% appreciation z-score + 50% yield z-score, normalized to 0-100"
+      },
+      {
+        "id": "C16",
+        "occurrences": 1,
+        "phrase": "| 0-19        | Weak           | Depreciating or oversupplied areas            |"
+      },
+      {
+        "id": "C17",
+        "occurrences": 1,
+        "phrase": "with >85% agreement on cluster assignments"
+      },
+      {
+        "id": "C18",
+        "occurrences": 1,
+        "phrase": "(r ~ -0.3)"
+      },
+      {
+        "id": "C19",
+        "occurrences": 1,
+        "phrase": "~288K records (2021-2026 emphasis)"
+      },
+      {
+        "id": "C20",
+        "occurrences": 1,
+        "phrase": "provides the best balance of interpretability and granularity based on silhouette analysis"
+      },
+      {
+        "id": "C21",
+        "occurrences": 1,
+        "phrase": "Log-transform for skewed variables, StandardScaler normalization"
+      },
+      {
+        "id": "C22",
+        "occurrences": 1,
+        "phrase": "Cluster assignments per transaction with segment labels"
+      },
+      {
+        "id": "C23",
+        "occurrences": 1,
+        "phrase": "**Data Period**: 2017-2026, with emphasis on 2021-2026"
+      },
+      {
+        "id": "C24",
+        "occurrences": 1,
+        "phrase": "clusters are defined on 2021-2026 data and may shift as market conditions change"
+      },
+      {
+        "id": "C25",
+        "occurrences": 1,
+        "phrase": "| 80-100      | Exceptional    | Emerging towns with new MRT lines             |"
+      },
+      {
+        "id": "C26",
+        "occurrences": 1,
+        "phrase": "| 60-79       | Strong         | Mature estates with good yield                |"
+      },
+      {
+        "id": "C27",
+        "occurrences": 1,
+        "phrase": "| 40-59       | Average        | Most established areas                        |"
+      },
+      {
+        "id": "C28",
+        "occurrences": 1,
+        "phrase": "| 20-39       | Below average  | Luxury areas (low yield offsets appreciation) |"
+      },
+      {
+        "id": "C29",
+        "occurrences": 1,
+        "phrase": "| Hold & Grow       | High yield + strong appreciation (>6% yield, >10% growth) | High            | Medium-High | Experienced investors    |"
+      },
+      {
+        "id": "C30",
+        "occurrences": 1,
+        "phrase": "| Yield Play        | High rental yield focus (>6%)                             | Medium          | Low-Medium  | Income-focused investors |"
+      },
+      {
+        "id": "C31",
+        "occurrences": 1,
+        "phrase": "| Growth Play       | High appreciation potential (>15% YoY)                    | High            | High        | Speculative investors    |"
+      },
+      {
+        "id": "C32",
+        "occurrences": 1,
+        "phrase": "| Value Investing   | Affordable entry (<$5,000 PSF)                            | Medium          | Low         | First-time buyers        |"
+      },
+      {
+        "id": "C33",
+        "occurrences": 1,
+        "phrase": "most areas cluster around 2-5%"
+      },
+      {
+        "id": "C34",
+        "occurrences": 1,
+        "phrase": "A town with 4-5% CAGR and affordable entry is often a better long-term bet"
+      },
+      {
+        "id": "C35",
+        "occurrences": 1,
+        "phrase": "Risk-adjusted momentum (YoY change divided by price volatility)"
+      },
+      {
+        "id": "C36",
+        "occurrences": 1,
+        "phrase": "YoY change divided by rolling price volatility"
+      }
+    ]
+  },
+  "membershipRecovery": {
+    "areaLevelJoin": {
+      "assetAreas": 31,
+      "assetAreasPresentInFramePlanningArea": 31,
+      "framePlanningAreaValues": 44,
+      "framePlanningAreasAbsentFromAsset": {
+        "count": 13,
+        "names": [
+          "CENTRAL WATER CATCHMENT",
+          "CHANGI",
+          "DOWNTOWN CORE",
+          "MANDAI",
+          "MUSEUM",
+          "NOVENA",
+          "OUTRAM",
+          "ROCHOR",
+          "SELETAR",
+          "SINGAPORE RIVER",
+          "SOUTHERN ISLANDS",
+          "SUNGEI KADUT",
+          "TENGAH"
+        ]
+      },
+      "maxSegmentsPerArea": 4,
+      "meaning": "an area→segments mapping does join to the frame on planning_area, but it is many-to-many (up to four segments per area, six areas with none), so it assigns no transaction to a single segment; it cannot serve as per-transaction membership",
+      "rowsCoveredByAssetAreas": 1185397,
+      "rowsInNonAssetAreas": 39313,
+      "rowsNotCovered": 50913,
+      "rowsWithNullPlanningArea": 11600,
+      "storedAreaToSegmentPairs": 51
+    },
+    "columnsExamined": {
+      "market_segment": {
+        "distinctNonEmptyValues": 3,
+        "nullCount": 990655,
+        "nullKey": "(null)",
+        "valueCounts": {
+          "Core Central Region": 38699,
+          "Outside Central Region": 132795,
+          "Rest of Central Region": 74161
+        }
+      },
+      "price_stratum": {
+        "distinctNonEmptyValues": 5,
+        "nullCount": 0,
+        "nullKey": "(null)",
+        "valueCounts": {
+          "Q1": 248224,
+          "Q2": 246566,
+          "Q3": 247866,
+          "Q4": 246398,
+          "Q5": 247256
+        }
+      },
+      "property_segment": {
+        "distinctNonEmptyValues": 5,
+        "nullCount": 0,
+        "nullKey": "(null)",
+        "valueCounts": {
+          "apartment": 101856,
+          "condominium": 103395,
+          "ec": 30409,
+          "hdb": 990655,
+          "other_private_residential": 9995
+        }
+      }
+    },
+    "marketSegmentIsARegionLabel": {
+      "distinctValueCount": 3,
+      "distinctValues": [
+        "Core Central Region",
+        "Outside Central Region",
+        "Rest of Central Region"
+      ],
+      "hdbRowsInFrame": 990655,
+      "meaning": "the column holds the three national region labels (CCR/RCR/OCR expanded), is populated on the private rows only, and carries no segment-id-shaped value; it is a region label, not a behavioural segment assignment",
+      "nonNullEqualsPrivateRows": true,
+      "nonNullRows": 245655,
+      "nullEqualsHdbRows": true,
+      "nullRows": 990655,
+      "privateRowsInFrame": 245655
+    },
+    "perTransactionMembership": {
+      "available": false,
+      "reason": "no column in the 97-column frame carries a stored segment id (zero id matches measured above), and the RS10 asset's own stored membership is many-to-many at planning-area granularity. A per-transaction segmented panel DOES exist elsewhere in the checkout (data/analysis/market_segmentation/, three price tiers per row) — see adjacentSegmentedPanel; it carries none of the six ids and is a different taxonomy, so this claim is about the six stored segments only"
+    },
+    "segmentIdMatchesInColumns": {
+      "meaning": "zero matches between the asset's ids and the shipped columns — this is a count of matches, not a claim that data is missing",
+      "method": "exact string equality between each of the asset's six segment ids and every distinct non-null value of the three columns",
+      "perColumn": {
+        "market_segment": 0,
+        "price_stratum": 0,
+        "property_segment": 0
+      },
+      "total": 0
+    }
+  },
+  "methodRecovery": {
+    "generatorProvenance": {
+      "generatorScriptExists": false,
+      "handoff": {
+        "path": ".claude/handoffs/2026-02-23-interactive-segments-dashboard-implementation.md",
+        "quote": {
+          "line": 371,
+          "path": ".claude/handoffs/2026-02-23-interactive-segments-dashboard-implementation.md",
+          "quote": "- **Changes**: Generated with 6 segments, 31 planning areas, 4 insight cards"
+        },
+        "sha256": "c0487e94a6fbb4c246b487356517fa1c5f8f1a07e1f23db8bf177dd8f7ba375a"
+      },
+      "meaning": "the asset's six segment objects are literal dicts in the plan document's generator body (values and a '~910K' denominator comment), and the handoff records running that generator against hand-written loaders; the deliverables are therefore hand-authored constants, not the output of a fitted model in this checkout",
+      "planDocument": {
+        "outcomeKeys": [
+          {
+            "line": 457,
+            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md",
+            "quote": "\"transactionCount\": 114700,  # 12.6% of ~910K"
+          },
+          {
+            "line": 341,
+            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md",
+            "quote": "output_path = Path('app/public/data/segments_enhanced.json.gz')"
+          }
+        ],
+        "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md",
+        "sha256": "961f173ebe10a35525b3b4f2b5a78c847089ddb2b19bc6e4157e84399d6142a6"
+      },
+      "segmentNamesInAsset": [
+        "Large Size Stable",
+        "High Growth Recent",
+        "Speculator Hotspots",
+        "Declining Areas",
+        "Mid-Tier Value",
+        "Premium New Units"
+      ]
+    },
+    "items": {
+      "clusteringImplementation": {
+        "detail": "the article names MiniBatchKMeans, AgglomerativeClustering and PCA; no call site for any of them exists under scripts/ or src/ (tokenScan below). Clustering OUTPUT exists as stored artefacts under data/analysis/market_segmentation_2.0/ (clusteringArtefacts) — profiles, PCA scatter and a K-selection plot — so what is absent is the implementation and its fitted parameters, not the clustering's products",
+        "status": "notRecorded",
+        "where": null
+      },
+      "compositeScore": {
+        "detail": "the legacy composite investment score (50% appreciation z-score + 50% yield z-score, normalized to 0-100) has no implementation, no score vector and no normalisation parameters FOR THE ARTICLE'S POPULATION; the band tables cannot be recomputed for that population, and the score is not one of the register's separately-approved app matching weights, which are recorded and sha256-pinned unchanged at appMatchingWeights",
+        "relatedPrecedent": "docs/archive/20260123-hdb-comprehensive-investment-analysis.md records a 50/50 appreciation/yield composite with per-town score vectors (ANG MO KIO 100.0, PUNGGOL 94.3) over 785,395 HDB transactions, 1990-2026 with a 2015-2025 focus. It states the same procedure the legacy article states (z-scores for CAGR and yield, 50/50 weights, scaled 0-100), and it records too few parameters to establish that its normalisation is equivalent, so no difference in normalisation is claimed. What does differ, measurably, is the population and period: HDB resale only and 1990-2026 there, against the article's all-property-type framing and 2017-2026 window. Precedent, therefore, but not evidence for this article's score",
+        "status": "notRecorded",
+        "where": null
+      },
+      "elbowOutputs": {
+        "detail": "an elbow curve IS stored — optimal_clusters.png is annotated 'Elbow at K=7', recorded at clusteringArtefacts.visibleAnnotations. What is absent is any link between that sweep and the six-row profile run, and any elbow implementation on the shipping Python surface (tokenScan.tokens.elbow lists the mentions)",
+        "status": "notRecorded",
+        "where": null
+      },
+      "featureScaling": {
+        "detail": "no scaler object, mean/scale vector or fitted transformer exists for the article's six-segment method. The token scan records every file that mentions a scaler at methodRecovery.tokenScan.tokens.StandardScaler — including the pipeline-improvements plan's `StandardScaler()` / `fit_transform` code EXAMPLE — and none of them is a persisted fitted object for this method. Preprocessing artefacts DO exist as data elsewhere in the checkout, so none may be called the only one: the three-tier cut-point file at adjacentSegmentedPanel.tierThresholds, and the two threshold files recorded at clusteringArtefacts.periodDirectory — all of a different taxonomy, and none recovers this study's scaling",
+        "status": "notRecorded",
+        "where": null
+      },
+      "featureSet": {
+        "detail": "the article's six derived-feature names are recorded, so they can be matched against the shipped schema: present verbatim, present under a different name, or absent (featureMap)",
+        "featureMap": {
+          "floor_area_sqm": {
+            "column": "floor_area_sqm",
+            "status": "presentVerbatim"
+          },
+          "mom_change_pct": {
+            "column": null,
+            "status": "absent"
+          },
+          "price_psm": {
+            "column": "Unit Price ($ PSM)",
+            "status": "presentUnderDifferentName"
+          },
+          "remaining_lease_months": {
+            "column": null,
+            "status": "absent"
+          },
+          "rental_yield_pct": {
+            "column": "rental_yield_pct",
+            "status": "presentVerbatim"
+          },
+          "yoy_change_pct": {
+            "column": null,
+            "status": "absent"
+          }
+        },
+        "status": "recorded",
+        "where": {
+          "legacy": {
+            "key": "Derived features",
+            "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md"
+          },
+          "schema": {
+            "key": "parquet schema",
+            "path": "data/pipeline/04_platinum/unified_dataset.parquet"
+          }
+        }
+      },
+      "k": {
+        "detail": "the cluster count is recorded twice — as six segment objects in the asset and as six hard-coded list literals in the plan document's generator body — but the selection SWEEP that exists in the same directory (clusteringArtefacts.visibleAnnotations: elbow marked K=7, maximum silhouette marked K=2) is unlinked to the six-row profile run, and nothing records which K that run's fitting selected, so this is a count, not evidence that K was chosen",
+        "status": "recorded",
+        "where": {
+          "asset": {
+            "key": "segments[] length",
+            "path": "app/public/data/segments_enhanced.json.gz"
+          },
+          "generator": {
+            "key": "load_investment_clusters()",
+            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
+          }
+        }
+      },
+      "logTransform": {
+        "detail": "no log/offset parameter or list of transformed columns is stored for the article's six-segment method. A RELATED transformation IS documented: docs/archive/20260124-market-insights-fixes-complete.md (sha-pinned at clusteringArtefacts.documentedVersion) records `scripts/quick_cluster_profiles.py` updating the log transformation to a square-foot basis, alongside the label 'Cluster Version 2.0 (PSF-based)'. The script itself is not in the checkout and its parameters are not recoverable, so this is documented intent, not a stored setting",
+        "status": "notRecorded",
+        "where": null
+      },
+      "modelVersion": {
+        "detail": "the asset's own version field is the payload's schema label, not a model version. A clustering artefact DOES exist elsewhere in the checkout: data/analysis/market_segmentation_2.0/ holds a PSF-based KMeans whose six segment names and shares are the asset's (clusteringArtefacts records every file, sha-pinned, with the six-row mapping) — so the version question is answered by that directory rather than by the asset. A documented version LABEL does exist and is recorded at clusteringArtefacts.documentedVersion ('Cluster Version: 2.0 (PSF-based)', quoted from the archive with its hash); what that label is not: a model-library version, or the identity of the fitted run behind the stored profiles",
+        "status": "notRecorded",
+        "where": null
+      },
+      "persistenceRule": {
+        "detail": "persistenceProbability takes one value per clusterClassification (see segmentAsset.persistenceByClassification); the generator assigns it from the label, so it is a lookup rather than a measured transition probability",
+        "status": "recorded",
+        "where": {
+          "asset": {
+            "key": "persistenceProbability",
+            "path": "app/public/data/segments_enhanced.json.gz"
+          },
+          "generator": {
+            "key": "get_persistence(clusterClassification)",
+            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
+          }
+        }
+      },
+      "riskAdjustedMomentum": {
+        "detail": "the legacy risk-adjusted momentum ratio (YoY change divided by rolling price volatility) has no implementation, no defined rolling window and no artefact FOR THE ARTICLE'S POPULATION; the archived 2026-01-23 document does publish a per-area Risk-Adjusted Score table (TANGLIN 0.822 on a sample of 10, SEMBAWANG 0.526 on 1,457), which shows such a measure was produced elsewhere — on HDB resale over 1990-2026 rather than the article's all-property 2017-2026 framing, and without recording its volatility window — so those values cannot stand in for the article's measure",
+        "status": "notRecorded",
+        "where": null
+      },
+      "silhouetteOutputs": {
+        "detail": "a silhouette curve IS stored — optimal_clusters.png is annotated 'Max Silhouette at K=2', recorded as a human visual read at clusteringArtefacts.visibleAnnotations, on a sweep covering K=2 through K=10. What is absent is any link between that sweep and the six-row profile run; and no silhouette score is LINKED OR ATTRIBUTABLE to the article's five-cluster claim — the sweep does plot a K=5 point, but its relationship to that method is unknown. The token scan finds no silhouette implementation on the shipping Python surface (tokenScan.tokens.Silhouette lists the mentions)",
+        "status": "notRecorded",
+        "where": null
+      }
+    },
+    "legacyIdentityRecovery": {
+      "assetIdCount": 6,
+      "legacyNames": [
+        "High-Growth HDB",
+        "Stable Mid-Tier",
+        "Premium Condo (Low Yield)",
+        "High-Yield Apartments",
+        "Luxury Segment"
+      ],
+      "legacyNamesInAsset": [],
+      "linesPairingANameWithAnIdField": 0,
+      "meaning": "the article's five segment names occur only as prose or table text (in the article and its live twin, plus the two findings texts for the two names the findings repeats); no line pairs a name with an id field, so no legacy id set exists to map onto the asset's six ids, and the asset's six names are different names",
+      "mentions": {
+        "High-Growth HDB": {
+          "fileCount": 4,
+          "filesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+            "docs/analytics/findings.md",
+            "docs/analytics/market-segments.md"
+          ],
+          "occurrences": 12
+        },
+        "High-Yield Apartments": {
+          "fileCount": 2,
+          "filesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+            "docs/analytics/market-segments.md"
+          ],
+          "occurrences": 2
+        },
+        "Luxury Segment": {
+          "fileCount": 2,
+          "filesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+            "docs/analytics/market-segments.md"
+          ],
+          "occurrences": 2
+        },
+        "Premium Condo (Low Yield)": {
+          "fileCount": 2,
+          "filesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+            "docs/analytics/market-segments.md"
+          ],
+          "occurrences": 4
+        },
+        "Stable Mid-Tier": {
+          "fileCount": 4,
+          "filesFirst": [
+            "docs/analytics/editions/legacy/2026-11-12/findings.md",
+            "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+            "docs/analytics/findings.md",
+            "docs/analytics/market-segments.md"
+          ],
+          "occurrences": 10
+        }
+      },
+      "namesMentionedOutsideTheArticleCopies": [
+        "High-Growth HDB",
+        "Stable Mid-Tier"
+      ]
+    },
+    "tokenScan": {
+      "excludedEditionTexts": "published edition texts under docs/analytics/editions/ are excluded except the frozen legacy originals under docs/analytics/editions/legacy/, so a study that signs after RS10 cannot drift this count",
+      "excludedPaths": [
+        "scripts/tools/market_segments_evidence.py"
+      ],
+      "excludedPrefixes": [
+        "docs/implementation/",
+        "scripts/tools/",
+        "prompts/"
+      ],
+      "filesScanned": 326,
+      "matchCase": false,
+      "meaning": "no RS10 implementation or evidence was found in the scanned roots: no call site that fits, scales or validates a segment model exists there, and the records that produce the asset are hand-written literals. Hits are NOT claimed to be uniformly prose or false positives — a plan document inside the scanned docs root (docs/plans/2026-02-19-pipeline-improvements-plan.md) contains a KMeans/StandardScaler code EXAMPLE, and it is counted among the hits below. It is an illustration in a plan, not evidence that RS10 used that model, and nothing connects it to the shipped values",
+      "roots": [
+        "docs",
+        "scripts",
+        "src",
+        "assets",
+        "prompts",
+        "app/src",
+        ".claude/handoffs"
+      ],
+      "suffixes": [
+        ".md",
+        ".py",
+        ".ts",
+        ".tsx"
+      ],
+      "tokens": {
+        "AgglomerativeClustering": {
+          "files": 2,
+          "firstMatches": [
+            {
+              "line": 136,
+              "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+              "quote": "- **Hierarchical clustering** (AgglomerativeClustering) for validation of K-means segments"
+            },
+            {
+              "line": 136,
+              "path": "docs/analytics/market-segments.md",
+              "quote": "- **Hierarchical clustering** (AgglomerativeClustering) for validation of K-means segments"
+            }
+          ],
+          "occurrences": 2
+        },
+        "MiniBatchKMeans": {
+          "files": 2,
+          "firstMatches": [
+            {
+              "line": 135,
+              "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+              "quote": "- **K-means clustering** (MiniBatchKMeans) with optimal K selection via elbow method and silhouette scores"
+            },
+            {
+              "line": 135,
+              "path": "docs/analytics/market-segments.md",
+              "quote": "- **K-means clustering** (MiniBatchKMeans) with optimal K selection via elbow method and silhouette scores"
+            }
+          ],
+          "occurrences": 2
+        },
+        "Silhouette": {
+          "files": 4,
+          "firstMatches": [
+            {
+              "line": 25,
+              "path": "assets/svg/feature-specifications.md",
+              "quote": "Data: `map_metrics.year_2025_hdb` and actual `planning_areas.geojson` geometry. SVG polygons are simplified vectors from all 55 features, not an illustrative Si"
+            },
+            {
+              "line": 135,
+              "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+              "quote": "- **K-means clustering** (MiniBatchKMeans) with optimal K selection via elbow method and silhouette scores"
+            },
+            {
+              "line": 145,
+              "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+              "quote": "- **5-cluster solution** provides the best balance of interpretability and granularity based on silhouette analysis"
+            },
+            {
+              "line": 135,
+              "path": "docs/analytics/market-segments.md",
+              "quote": "- **K-means clustering** (MiniBatchKMeans) with optimal K selection via elbow method and silhouette scores"
+            },
+            {
+              "line": 145,
+              "path": "docs/analytics/market-segments.md",
+              "quote": "- **5-cluster solution** provides the best balance of interpretability and granularity based on silhouette analysis"
+            },
+            {
+              "line": 54,
+              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
+              "quote": "| `data/analysis/analyze_h3_clusters/silhouette_plot.png`   | Cluster quality assessment            |"
+            },
+            {
+              "line": 140,
+              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
+              "quote": "Silhouette Score: 0.67 (Good cluster separation)"
+            },
+            {
+              "line": 186,
+              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
+              "quote": "\"Silhouette score: 0.67 (good separation)\""
+            }
+          ],
+          "occurrences": 10
+        },
+        "StandardScaler": {
+          "files": 5,
+          "firstMatches": [
+            {
+              "line": 133,
+              "path": "docs/analytics/amenity-impact.md",
+              "quote": "- **Within-town analysis**: Separate models per town (minimum 100 transactions) controlling for town-level effects with StandardScaler preprocessing"
+            },
+            {
+              "line": 133,
+              "path": "docs/analytics/editions/legacy/2026-11-12/amenity-impact.md",
+              "quote": "- **Within-town analysis**: Separate models per town (minimum 100 transactions) controlling for town-level effects with StandardScaler preprocessing"
+            },
+            {
+              "line": 138,
+              "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+              "quote": "- **Feature preprocessing**: Log-transform for skewed variables, StandardScaler normalization"
+            },
+            {
+              "line": 138,
+              "path": "docs/analytics/market-segments.md",
+              "quote": "- **Feature preprocessing**: Log-transform for skewed variables, StandardScaler normalization"
+            },
+            {
+              "line": 976,
+              "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+              "quote": "from sklearn.preprocessing import StandardScaler"
+            },
+            {
+              "line": 1000,
+              "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
+              "quote": "scaler = StandardScaler()"
+            }
+          ],
+          "occurrences": 6
+        },
+        "elbow": {
+          "files": 3,
+          "firstMatches": [
+            {
+              "line": 135,
+              "path": "docs/analytics/editions/legacy/2026-11-12/market-segments.md",
+              "quote": "- **K-means clustering** (MiniBatchKMeans) with optimal K selection via elbow method and silhouette scores"
+            },
+            {
+              "line": 135,
+              "path": "docs/analytics/market-segments.md",
+              "quote": "- **K-means clustering** (MiniBatchKMeans) with optimal K selection via elbow method and silhouette scores"
+            },
+            {
+              "line": 250,
+              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
+              "quote": "# Plot k-distances and find elbow"
+            }
+          ],
+          "occurrences": 3
+        },
+        "log1p": {
+          "files": 0,
+          "firstMatches": [],
+          "occurrences": 0
+        },
+        "n_clusters": {
+          "files": 3,
+          "firstMatches": [
+            {
+              "line": 327,
+              "path": "app/src/components/tools/lib/tool-assets.ts",
+              "quote": "const town_clusters: SpatialHotspotsData[\"town_clusters\"] = {};"
+            },
+            {
+              "line": 328,
+              "path": "app/src/components/tools/lib/tool-assets.ts",
+              "quote": "if (isRecord(raw.town_clusters)) {"
+            },
+            {
+              "line": 329,
+              "path": "app/src/components/tools/lib/tool-assets.ts",
+              "quote": "for (const [key, value] of Object.entries(raw.town_clusters)) {"
+            },
+            {
+              "line": 331,
+              "path": "app/src/components/tools/lib/tool-assets.ts",
+              "quote": "town_clusters[key] ="
+            },
+            {
+              "line": 332,
+              "path": "app/src/components/tools/lib/tool-assets.ts",
+              "quote": "value as SpatialHotspotsData[\"town_clusters\"][string];"
+            },
+            {
+              "line": 350,
+              "path": "app/src/components/tools/lib/tool-assets.ts",
+              "quote": "town_clusters,"
+            },
+            {
+              "line": 5,
+              "path": "app/src/types/spatial-hotspots.ts",
+              "quote": "* `towns`, `town_clusters`, `cluster_descriptions` and `portfolio_allocation`."
+            },
+            {
+              "line": 33,
+              "path": "app/src/types/spatial-hotspots.ts",
+              "quote": "/** `town_clusters` — uppercase planning area name to LISA cluster type. */"
+            }
+          ],
+          "occurrences": 10
+        }
+      }
+    }
+  },
+  "notMeasurable": [
+    {
+      "gateClause": "Recover feature scaling",
+      "id": "featureScaling",
+      "ledgerKey": "methodRecovery.items.featureScaling",
+      "reason": "no scaler, log-transform parameter or fitted preprocessing parameter exists FOR THE ARTICLE'S SIX-SEGMENT METHOD: the asset stores results only. The scan records every mention of a scaler or a log transform (methodRecovery.tokenScan.tokens.StandardScaler) — the legacy prose AND the pipeline-improvements plan's `StandardScaler()` / `fit_transform` code example — and none of them is a persisted fitted parameter for this method. Preprocessing artefacts DO exist as data elsewhere: the three-tier cut-point file at adjacentSegmentedPanel.tierThresholds and the two threshold files in clusteringArtefacts.periodDirectory, all of a different taxonomy",
+      "status": "notRecorded"
+    },
+    {
+      "gateClause": "Recover clustering/model version",
+      "id": "clusteringModelVersionAndK",
+      "ledgerKey": "methodRecovery.items.modelVersion",
+      "reason": "no clustering CALL SITE exists under scripts/ or src/ and no fitted parameters are stored, BUT a clustering artefact does exist: data/analysis/market_segmentation_2.0/cluster_profiles.csv holds six KMeans clusters whose names map 1:1 to the six asset ids and whose cluster_percentage values reproduce the asset's marketShare values exactly at three decimals (clusteringArtefacts: 6/6 names, 6/6 shares). The profile counts total 95,531 against the asset's 911,454, and the per-segment ratios run 9.502 to 9.5831, so the asset's counts are neither the profile counts nor a constant multiple of them (clusteringArtefacts.countRatios). A documented version LABEL exists — 'Cluster Version: 2.0 (PSF-based)' — but it is not a model-library version and not the identity of the fitted run behind the profiles",
+      "status": "notRecorded"
+    },
+    {
+      "gateClause": "assess stability",
+      "id": "stabilityEvidence",
+      "ledgerKey": "segmentAsset.persistenceByClassification",
+      "reason": "no STABILITY evidence links to the article's method or to the stored six-cluster run: a K-selection sweep does exist in the same directory (clusteringArtefacts.visibleAnnotations records the printed elbow at K=7 and silhouette maximum at K=2, as a human visual read), but nothing links that sweep to the six-row profile run and no per-cluster stability or cross-validation measure is stored; the only stability-shaped field in the asset is persistenceProbability, which is constant within each clusterClassification and therefore a label lookup rather than a measured transition rate",
+      "status": "notRecorded"
+    },
+    {
+      "gateClause": "and cohort counts",
+      "id": "cohortCountsAsVerifiedPopulations",
+      "ledgerKey": "cohortReconciliation.perSegment",
+      "reason": "the six transactionCount values are internally consistent with their own marketShare values, but their total (and every per-segment count) reproduces no measured population in the checkout, and no segment's count equals the rows inside its own declared planning areas; the counts stand only as the asset's own figures",
+      "status": "notReproducible"
+    },
+    {
+      "gateClause": "map old/new segment identities",
+      "id": "perTransactionMembership",
+      "ledgerKey": "adjacentSegmentedPanel",
+      "reason": "no shipped column in the 97-column frame carries a stored segment id: the six ids match zero values in market_segment, property_segment and price_stratum, and the asset's own stored membership is a many-to-many planning-area block that assigns no transaction to one segment. This claim is about THE SIX STORED SEGMENTS and must not be widened: a per-transaction segmented panel DOES exist under data/analysis/market_segmentation/ (911,797 rows, three price tiers assigned per row, plus a tier-threshold file), it carries none of the six ids, and it is a different taxonomy — recorded at adjacentSegmentedPanel",
+      "status": "notRecorded"
+    },
+    {
+      "gateClause": "map old/new segment identities. Do not reuse a segment ID for a different population.",
+      "id": "oldToNewIdentityMapping",
+      "ledgerKey": "methodRecovery.legacyIdentityRecovery",
+      "reason": "the legacy five segment names carry no id and no stored membership in the frame or either asset — methodRecovery.legacyIdentityRecovery records 0 lines anywhere in the scanned roots that pair one of those names with an id field — and the asset's six names are different names, so there is no legacy id set to map onto the new ids; reusing an old id is not merely prohibited, it has no source",
+      "status": "notReproducible"
+    },
+    {
+      "gateClause": "App matching weights remain unchanged unless separately approved.",
+      "id": "appMatchingWeights",
+      "ledgerKey": "appMatchingWeights.weights",
+      "reason": "the weights are recorded and sha256-pinned for audit; this study changes no app code and no approval for a weight change is recorded in the checkout",
+      "status": "notChangedByThisStudy"
+    }
+  ],
+  "schemaVersion": "1.0.0",
+  "scope": "RS10 market-segments evidence: the stored segment asset's inventory, its internal cohort arithmetic, what membership can and cannot be joined to the shipped frame, the dashboard asset's identity intersection, what of the legacy method is recorded anywhere, and the observed CAGR window per property type",
+  "segmentAsset": {
+    "areaPanelFields": [
+      "avgPricePsf",
+      "avgYield",
+      "cbdDistance",
+      "forecast6m",
+      "hotspotConfidence",
+      "mrtPremium",
+      "mrtSensitivity",
+      "name",
+      "persistenceProbability",
+      "region",
+      "schoolPremium",
+      "schoolTier",
+      "segments",
+      "spatialCluster"
+    ],
+    "bytes": 3432,
+    "insightCount": 4,
+    "internalCorrelations": {
+      "areasPricePsfVsForecast6m": {
+        "n": 31,
+        "r": 0.2443
+      },
+      "areasYieldVsForecast6m": {
+        "n": 31,
+        "r": 0.7726
+      },
+      "areasYieldVsPricePsf": {
+        "n": 31,
+        "r": -0.1158
+      },
+      "meaning": "Pearson r over the asset's own stored fields only (six segment rows, 31 area rows) — an internal-consistency measurement, not a re-measurement of any market correlation",
+      "segmentsYieldVsYoyGrowth": {
+        "n": 6,
+        "r": -0.1869
+      }
+    },
+    "lastUpdated": "2026-04-19T23:23:07.521202",
+    "metricsPresentForEverySegment": true,
+    "path": "app/public/data/segments_enhanced.json.gz",
+    "persistenceByClassification": {
+      "HH": {
+        "persistenceProbability": 0.6,
+        "segments": [
+          "large_size_stable",
+          "high_growth_recent",
+          "speculator_hotspots",
+          "premium_new_units"
+        ]
+      },
+      "LH": {
+        "persistenceProbability": 0.33,
+        "segments": [
+          "declining_areas"
+        ]
+      },
+      "LL": {
+        "persistenceProbability": 0.5,
+        "segments": [
+          "mid_tier_value"
+        ]
+      }
+    },
+    "persistenceRule": "persistenceProbability is constant within each clusterClassification (see persistenceByClassification), i.e. a per-label lookup, not a measured transition rate; the generator body cited in methodRecovery.generatorProvenance assigns it from the label",
+    "planningAreaCount": 31,
+    "planningAreaMembership": {
+      "areas": 31,
+      "areasBySegmentCount": {
+        "0": 6,
+        "1": 15,
+        "3": 4,
+        "4": 6
+      },
+      "areasWithNoSegment": [
+        "Bedok",
+        "Bukit Batok",
+        "Bukit Panjang",
+        "Geylang",
+        "Jurong East",
+        "Marine Parade"
+      ],
+      "meaning": "the asset's only stored membership is this area→segments block: an area maps to zero to four segments, so the pairs are many-to-many and not a partition of any population",
+      "pairCount": 51,
+      "pairsPerSegment": {
+        "declining_areas": 10,
+        "high_growth_recent": 10,
+        "large_size_stable": 10,
+        "mid_tier_value": 1,
+        "premium_new_units": 10,
+        "speculator_hotspots": 10
+      },
+      "segmentListsAgreeWithAreaLists": true,
+      "sourceKey": "planningAreas",
+      "symmetricDifference": []
+    },
+    "planningAreaNames": [
+      "Ang Mo Kio",
+      "Bedok",
+      "Bishan",
+      "Bukit Batok",
+      "Bukit Merah",
+      "Bukit Panjang",
+      "Bukit Timah",
+      "Choa Chu Kang",
+      "Clementi",
+      "Geylang",
+      "Hougang",
+      "Jurong East",
+      "Jurong West",
+      "Kallang",
+      "Lim Chu Kang",
+      "Marina South",
+      "Marine Parade",
+      "Newton",
+      "Orchard",
+      "Pasir Ris",
+      "Punggol",
+      "Queenstown",
+      "River Valley",
+      "Sembawang",
+      "Sengkang",
+      "Serangoon",
+      "Tampines",
+      "Tanglin",
+      "Toa Payoh",
+      "Woodlands",
+      "Yishun"
+    ],
+    "segmentCount": 6,
+    "segmentIds": [
+      "large_size_stable",
+      "high_growth_recent",
+      "speculator_hotspots",
+      "declining_areas",
+      "mid_tier_value",
+      "premium_new_units"
+    ],
+    "segmentIdsUnique": true,
+    "segments": [
+      {
+        "avgPricePsf": 570.0,
+        "avgYield": 5.54,
+        "clusterClassification": "HH",
+        "id": "large_size_stable",
+        "marketShare": 0.126,
+        "metricsPresent": true,
+        "name": "Large Size Stable",
+        "persistenceProbability": 0.6,
+        "planningAreaCount": 10,
+        "planningAreasFirst": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Bukit Timah",
+          "Orchard",
+          "Marina South",
+          "Tanglin",
+          "Newton",
+          "River Valley"
+        ],
+        "transactionCount": 114700,
+        "yoyGrowth": 12.0
+      },
+      {
+        "avgPricePsf": 509.0,
+        "avgYield": 5.2,
+        "clusterClassification": "HH",
+        "id": "high_growth_recent",
+        "marketShare": 0.33,
+        "metricsPresent": true,
+        "name": "High Growth Recent",
+        "persistenceProbability": 0.6,
+        "planningAreaCount": 10,
+        "planningAreasFirst": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Newton",
+          "River Valley",
+          "Clementi",
+          "Ang Mo Kio",
+          "Bukit Merah",
+          "Kallang"
+        ],
+        "transactionCount": 300872,
+        "yoyGrowth": 24.4
+      },
+      {
+        "avgPricePsf": 550.0,
+        "avgYield": 4.8,
+        "clusterClassification": "HH",
+        "id": "speculator_hotspots",
+        "marketShare": 0.057,
+        "metricsPresent": true,
+        "name": "Speculator Hotspots",
+        "persistenceProbability": 0.6,
+        "planningAreaCount": 10,
+        "planningAreasFirst": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Bukit Timah",
+          "Orchard",
+          "Marina South",
+          "Tanglin",
+          "Newton",
+          "River Valley"
+        ],
+        "transactionCount": 51957,
+        "yoyGrowth": 83.9
+      },
+      {
+        "avgPricePsf": 564.0,
+        "avgYield": 5.0,
+        "clusterClassification": "LH",
+        "id": "declining_areas",
+        "marketShare": 0.124,
+        "metricsPresent": true,
+        "name": "Declining Areas",
+        "persistenceProbability": 0.33,
+        "planningAreaCount": 10,
+        "planningAreasFirst": [
+          "Woodlands",
+          "Yishun",
+          "Sembawang",
+          "Punggol",
+          "Sengkang",
+          "Choa Chu Kang",
+          "Jurong West",
+          "Tampines",
+          "Pasir Ris",
+          "Hougang"
+        ],
+        "transactionCount": 112943,
+        "yoyGrowth": -3.6
+      },
+      {
+        "avgPricePsf": 463.0,
+        "avgYield": 6.36,
+        "clusterClassification": "LL",
+        "id": "mid_tier_value",
+        "marketShare": 0.253,
+        "metricsPresent": true,
+        "name": "Mid-Tier Value",
+        "persistenceProbability": 0.5,
+        "planningAreaCount": 1,
+        "planningAreasFirst": [
+          "Lim Chu Kang"
+        ],
+        "transactionCount": 230685,
+        "yoyGrowth": 8.5
+      },
+      {
+        "avgPricePsf": 826.0,
+        "avgYield": 3.8,
+        "clusterClassification": "HH",
+        "id": "premium_new_units",
+        "marketShare": 0.11,
+        "metricsPresent": true,
+        "name": "Premium New Units",
+        "persistenceProbability": 0.6,
+        "planningAreaCount": 10,
+        "planningAreasFirst": [
+          "Bishan",
+          "Toa Payoh",
+          "Queenstown",
+          "Serangoon",
+          "Bukit Timah",
+          "Orchard",
+          "Marina South",
+          "Tanglin",
+          "Newton",
+          "River Valley"
+        ],
+        "transactionCount": 100297,
+        "yoyGrowth": 12.3
+      }
+    ],
+    "sha256": "76979cc5fdc4e7fff27847147b70520f896c3f344d701f4ef702c252dd571d56",
+    "topLevelKeys": [
+      "insights",
+      "lastUpdated",
+      "planningAreas",
+      "segments",
+      "version"
+    ],
+    "version": "1.0.0"
+  },
+  "series": "market-segments",
+  "study": "RS10"
+}

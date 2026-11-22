@@ -384,6 +384,524 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     ],
     note: "RS05 facility re-measurement: the legacy study's in-house facility layer (which development has which facility) is absent from this checkout — the four legacy-named sources measure absent (legacySourceAudit), the shipped dataset's only facility-like columns are external SportSG public-facility distances, and the only candidate join key (project_name) is fully populated (3,005 distinct projects, 0 empty) but has no counterparty layer to join to, so no facility prevalence, premium or combination is measurable and every legacy claim is withdrawn with that measured reason. What is measured: a one-way decomposition on the model sample showing 91.0638% of log condo price-psf variance lies between projects (2,413 projects, n = 234,479, 2021-01 -> 2026-10 at the 2026-10 cutoff) with the five external-access indicators 98.9-99.9% between-project — the quantified reason an unadjusted facility comparison is a comparison of projects — and one recorded descriptive OLS of log condo price-psf on five jointly-fitted distance<=1000m indicators with planning-area/year/floor-band/subtype/sale-type fixed effects and area/tenure controls (R2 = 0.7872; two standard-error batteries, HC1 and project-clustered CRVE with cluster = project_name, 2,413 clusters — the clustered battery is the published uncertainty: MRT within 1 km +7.1059% (clustered |t| = 3.82), SportSG facility -2.3628% (|t| = 2.16) and childcare -13.2448% (|t| = 2.82, on a 0.53% thin contrast with no effect interpretation) remain larger than twice their clustered SEs, while mall -1.7536% (|t| = 1.19) and hawker -0.1336% (|t| = 0.11) are NOT distinguishable from zero on this design; clustered SEs run 2.8x-16.6x the HC1 ones), labelled a between-project comparison: project identity is not conditioned on and the project-fixed-effects variant is recorded as not fitted. The specification is recorded, not pre-registered: no dated prior protocol exists, so specification search cannot be ruled out. Per-facility status is no-record (source absent) — not absent, not zero — for all nine legacy facilities and all five synergy-combination rows.",
   },
+  {
+    seriesSlug: "macro-sensitivity",
+    editionId: "macro-sensitivity-2026-11-18",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/macro-sensitivity/2026-11-18/macro-sensitivity.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-18",
+    editionSha256:
+      "0741e45bde949357c9bd39fdbd59e40a341c7b86597223ad9ff0484b157f002c",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-18",
+        artifactSha256:
+          "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b",
+        statement:
+          "I attest that the measured ledger matches this checkout and accept the cutoff and dispositions it implies: 2026-10 as the last complete month, the measured per-series inventory including bank_rates' missing-source rows, the fallback screen and the exclusion it justifies, and the withdrawal of the legacy rate, regime and policy-timing claims.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-18-rs09-macro-sensitivity-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-18",
+        artifactSha256:
+          "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims and the withdrawals were verified, the screen-versus-origin distinction is preserved throughout, and no edition-facing figure rests on a series the ledger designates audit-only. I do not attest to series provenance, release lag or revisions, causal or timing claims, the evidence pack, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-18-rs09-macro-sensitivity-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-18",
+        artifactSha256:
+          "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-18-rs09-macro-sensitivity-editions-signoff.md",
+      },
+    ],
+    note: "RS09 macro re-measurement: the legacy rate narrative rested on a 60-row SORA series screened as an annual-ramp fill pattern (between-year variance share 0.9939, year-boundary step share 0.3444, monotone year-mean path, ADF +5.16) and excluded from every edition-facing figure, with the cost of that exclusion quantified on the 60 shared months (levels r 0.9422 vs 0.5870 against HDB median psf). The source candidate bank_rates.sora_3m runs 2005-10 -> 2026-09 (465 file rows, 213 missing-source, 252 values), and unified_dataset ships both as separate columns, so sora_rate is the screened-out ramp. Two of the article's four rate bands reproduce on the source series (2021 H1 mean 0.1796; 2023 mean 3.5915) and two do not (2022 H2 2.2247 against a quoted 2.5-3.5%; 2024-2025 2.7390 against 3.0-3.5%). wage_growth is screened as annual-resolution tiling (25 of 25 years carrying one distinct value across four quarters) and no figure of it is reproduced. Six of eight series fail to reject a unit root in levels; associations are reported in levels and first differences with serial-adjusted intervals, and level coefficients are explicitly not sensitivity readings. 35 legacy claims disposed: 7 re-measured, 28 withdrawn; release lag, revisions, policy dates, regimes, segment CAGRs and rate-shock affordability recorded as not measurable or not fitted with stated evidence.",
+  },
+  {
+    seriesSlug: "market-segments",
+    editionId: "market-segments-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/market-segments/2026-11-20/market-segments.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+        statement:
+          "I attest that the RS10 measured ledger matches this checkout and accept the cutoff and the dispositions it implies: 2026-10 as the last complete month, the six stored segments' counts as the asset's own unverified figures, zero per-transaction membership for the six ids, the many-to-many area block, the two-part provenance, the CAGR window per property type with Bukit Timah refused under the article's own floor, the app matching weights unchanged, and the disposition of all 36 legacy claims. I also accept the round-15 scan-boundary regeneration, whose diff against the retained round-14 ledger is confined to the scan's declaration.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs10-market-segments-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims and the withdrawals were verified, the three round-16 defects are closed, the correspondence-versus-lineage distinction is preserved, the unlinked selection sweep is treated symmetrically in both directions, every absence cites a scan that lists its matches, and no edition-facing sentence widens the statement to the checkout. I verified the round-15 scan claim by programmatic diff of the two ledgers rather than by reading its description. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs10-market-segments-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs10-market-segments-editions-signoff.md",
+      },
+    ],
+    note: "RS10 measured inventory of the stored six-segment asset. Its counts close on their own shares and on nothing else (911,454 total; nearest candidate 911,797 at +343 and a different taxonomy), the six ids match zero stored values in the 97-column frame and zero identifiers in the served dashboard asset, and the only stored membership is a many-to-many planning-area block of 51 pairs. Provenance is recorded in two parts that are not interchangeable: the segment objects are hand-written literals in a plan document's generator body, while the PSF-based cluster profiles correspond 6-of-6 on names and 6-of-6 on shares (count ratios 9.502-9.5831, so no constant multiple) without any recorded link to that code, and the stored selection sweep marks K=2 and K=7 unlinked to the six-row run. The article's five-name taxonomy, its per-segment bands, its composite-score bands, its momentum rows and its strategy table are withdrawn; 36 legacy claims disposed: 1 re-measured, 4 withdrawn, 31 not reproducible.",
+  },
+  {
+    seriesSlug: "price-forecasts",
+    editionId: "price-forecasts-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs14-price-forecasts-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs14-price-forecasts-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs14-price-forecasts-editions-signoff.md",
+      },
+    ],
+    note: "RS14 price-forecasts: the study turns an audit into a measurement. Legacy claims disposed: 0 re-measured, 16 withdrawn, 16 not-reproducible.",
+  },
+  {
+    seriesSlug: "lease-decay",
+    editionId: "lease-decay-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/lease-decay/2026-11-20/lease-decay.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs06-lease-decay-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs06-lease-decay-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "f022f8c3babc8f603f91ae04b5b6e9791780900c3b9e157e7a07cae6cf555d27",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs06-lease-decay-editions-signoff.md",
+      },
+    ],
+    note: "RS06 lease-decay: the study's finding is a unit reconciliation, not a coefficient. Legacy claims disposed: 25 re-measured, 5 withdrawn, 6 not-reproducible.",
+  },
+  {
+    seriesSlug: "mrt-impact",
+    editionId: "mrt-impact-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource: "docs/analytics/editions/mrt-impact/2026-11-20/mrt-impact.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs07-mrt-impact-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs07-mrt-impact-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "55c91bc2f346267e822fbe0fc159ca6e49ff75926d41d976ef642e6e611c961f",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs07-mrt-impact-editions-signoff.md",
+      },
+    ],
+    note: "RS07 mrt-impact: the study's finding is a stated response plus a withdrawn multiple. Legacy claims disposed: 1 re-measured, 8 withdrawn, 19 not-reproducible.",
+  },
+  {
+    seriesSlug: "school-quality",
+    editionId: "school-quality-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/school-quality/2026-11-20/school-quality.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs08-school-quality-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs08-school-quality-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs08-school-quality-editions-signoff.md",
+      },
+    ],
+    note: "RS08 school-quality: the study's finding is an identification audit that withdraws a causal claim. Legacy claims disposed: 3 re-measured, 4 withdrawn, 29 not-reproducible.",
+  },
+  {
+    seriesSlug: "spatial-autocorrelation",
+    editionId: "spatial-autocorrelation-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/spatial-autocorrelation/2026-11-20/spatial-autocorrelation.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs11-spatial-autocorrelation-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs11-spatial-autocorrelation-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs11-spatial-autocorrelation-editions-signoff.md",
+      },
+    ],
+    note: "RS11 spatial-autocorrelation: the study's finding is a re-measurement replacing a placeholder payload. Legacy claims disposed: 1 re-measured, 1 withdrawn, 26 not-reproducible.",
+  },
+  {
+    seriesSlug: "spatial-hotspots",
+    editionId: "spatial-hotspots-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/spatial-hotspots/2026-11-20/spatial-hotspots.md",
+    assetsPinned: 1,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs12-spatial-hotspots-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs12-spatial-hotspots-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "6c4027340264cdc079dd19a2a5040b4c34e4f4059d53236f313c1ac56b86beab",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs12-spatial-hotspots-editions-signoff.md",
+      },
+    ],
+    note: "RS12 spatial-hotspots: the study's finding is a rerun on a population the checkout can actually join. Legacy claims disposed: 15 re-measured, 10 withdrawn, 15 not-reproducible.",
+  },
+  {
+    seriesSlug: "causal-inference-overview",
+    editionId: "causal-inference-overview-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource:
+      "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs13-causal-inference-overview-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+        statement:
+          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs13-causal-inference-overview-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs13-causal-inference-overview-editions-signoff.md",
+      },
+    ],
+    note: "RS13 causal-inference-overview: the study's finding is an identification audit and two withdrawals. Legacy claims disposed: 10 re-measured, 9 withdrawn, 20 not-reproducible.",
+  },
+  {
+    seriesSlug: "findings",
+    editionId: "findings-2026-11-20",
+    publicationYear: 2026,
+    evidenceStatus: "approved",
+    editorialStatus: "published",
+    frozenSource: "docs/analytics/editions/findings/2026-11-20/findings.md",
+    assetsPinned: 0,
+    preparedBy: "repo-agent/session-2026-11-20",
+    editionSha256:
+      "a2c20043c55e9497082be96c534d9fc46b614f028dd5b5830362c7fc16897073",
+    signoffs: [
+      {
+        role: "source",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "d45fb612b0fa7bd425022b3986e90e997ec0d5ee3c86b903565d803c3a942dbc",
+        statement:
+          "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this checkout and accept the cutoff and the dispositions it implies, including that this page records its own series as not yet signed. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs15-findings-editions-signoff.md",
+      },
+      {
+        role: "scientific",
+        name: "openai-codex/gpt-6-luna (xhigh)",
+        date: "2026-11-20",
+        artifactSha256:
+          "d45fb612b0fa7bd425022b3986e90e997ec0d5ee3c86b903565d803c3a942dbc",
+        statement:
+          "I reviewed the edition text against this ledger hash by running the producer and re-deriving the register myself: the fourteen edition hashes against their files, the fourteen ledger pins, the 85-row placeholder split recounted from the sibling ledgers, and the page's own claims. The register presents no unresolved model as settled, every quantitative sentence names its edition with population, window and unit, and the series is recorded as not signed on the page that lists it. I do not attest to sibling studies' reasoning, source completeness beyond this checkout, or later edits.",
+        automated: true,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs15-findings-editions-signoff.md",
+      },
+      {
+        role: "publication",
+        name: "howt",
+        date: "2026-11-20",
+        artifactSha256:
+          "d45fb612b0fa7bd425022b3986e90e997ec0d5ee3c86b903565d803c3a942dbc",
+        statement:
+          "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
+        automated: false,
+        evidencePath:
+          "docs/implementation/2026-11-20-rs15-findings-editions-signoff.md",
+      },
+    ],
+    note: "RS15 findings register: fifteen series, fourteen signed, the fifteenth (this page) recorded as not signed and saying so; per-series edition and ledger hash comparisons recorded as measured booleans; 85 placeholder strings split 59/26 so a placeholder reads as 'not recorded for that study'; frozen findings claims disposed against the ledger.",
+  },
 ];
 
 export const ANALYTICS_EDITIONS: readonly AnalyticsEdition[] = [

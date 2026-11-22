@@ -5,7 +5,7 @@ validating bronze data into the silver layer.
 """
 
 import logging
-from typing import Literal, NamedTuple
+from typing import Literal, NamedTuple, cast
 
 import pandas as pd
 from hamilton.function_modifiers import extract_fields, hamilton_exclude
@@ -65,7 +65,7 @@ def _filter_invalid_rows(df: pd.DataFrame, node: str) -> pd.DataFrame:
             "%s: dropped %s row(s) with null price/transaction_date", node, dropped_nulls
         )
 
-    df = df[df["price"] > 0]
+    df = cast(pd.DataFrame, df[df["price"] > 0])
     dropped_nonpositive = pre_filter - dropped_nulls - len(df)
     if dropped_nonpositive:
         logger.warning("%s: dropped %s row(s) with non-positive price", node, dropped_nonpositive)
@@ -89,7 +89,7 @@ def _per_type_coverage(
     }
     segments: list[SegmentCoverage] = []
     for segment, rows in combined.groupby("property_type", observed=True):
-        coverage = rows[["lat", "lon"]].notna().all(axis=1).mean()
+        coverage = cast(pd.Series, rows[["lat", "lon"]].notna().all(axis=1)).mean()
         segments.append(
             SegmentCoverage(
                 segment=str(segment),
@@ -152,21 +152,28 @@ def cleaned_hdb_transactions(raw_hdb_resale_transactions: pd.DataFrame) -> pd.Da
         and "transaction_date" in df.columns
     ):
         mask = df["remaining_lease_months"].isna()
-        if mask.any():
-            lease_commence_year = pd.to_numeric(
-                df.loc[mask, "lease_commence_date"], errors="coerce"
+        if cast(bool, mask.any()):
+            lease_commence_year = cast(
+                pd.Series, pd.to_numeric(df.loc[mask, "lease_commence_date"], errors="coerce")
             )
-            transaction_year = pd.to_numeric(
-                df.loc[mask, "transaction_date"].dt.year,
-                errors="coerce",
+            transaction_year = cast(
+                pd.Series,
+                pd.to_numeric(
+                    df.loc[mask, "transaction_date"].dt.year,
+                    errors="coerce",
+                ),
             )
-            remaining_lease_years = 99 - (transaction_year - lease_commence_year)
+            remaining_lease_years = cast(pd.Series, 99 - (transaction_year - lease_commence_year))
             df.loc[mask, "remaining_lease_months"] = (remaining_lease_years * 12).clip(lower=0)
 
     if "storey_range" in df.columns and "storey_min" not in df.columns:
         storey_parts = df["storey_range"].str.split(" TO ", n=1, expand=True)
-        df["storey_min"] = pd.to_numeric(storey_parts[0], errors="coerce").astype("Int64")
-        df["storey_max"] = pd.to_numeric(storey_parts[1], errors="coerce").astype("Int64")
+        df["storey_min"] = cast(pd.Series, pd.to_numeric(storey_parts[0], errors="coerce")).astype(
+            "Int64"
+        )
+        df["storey_max"] = cast(pd.Series, pd.to_numeric(storey_parts[1], errors="coerce")).astype(
+            "Int64"
+        )
 
     if "address" not in df.columns and "block" in df.columns and "street_name" in df.columns:
         df["address"] = df["block"] + " " + df["street_name"]
@@ -231,9 +238,9 @@ def cleaned_condo_transactions(raw_condo_transactions: pd.DataFrame) -> pd.DataF
         df["floor_area_sqm"] = pd.to_numeric(df["area_sqm"], errors="coerce")
 
     if "postal_district" in df.columns:
-        df["postal_district"] = pd.to_numeric(df["postal_district"], errors="coerce").astype(
-            "Int64"
-        )
+        df["postal_district"] = cast(
+            pd.Series, pd.to_numeric(df["postal_district"], errors="coerce")
+        ).astype("Int64")
 
     if "address" not in df.columns:
         if "street_name" in df.columns:
@@ -374,7 +381,7 @@ def geocoded_properties(
     if len(condo_rows):
         _geocode_condo_two_pass(combined, condo_rows, address_col, geocoder)
 
-    coverage = combined[["lat", "lon"]].notna().all(axis=1).mean()
+    coverage = cast(pd.Series, combined[["lat", "lon"]].notna().all(axis=1)).mean()
     logger.info("Geocoding coverage: %.1f%%", coverage * 100)
 
     segment_coverages = _per_type_coverage(

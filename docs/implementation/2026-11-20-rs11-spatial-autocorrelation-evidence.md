@@ -1,0 +1,50 @@
+# RS11 — spatial autocorrelation evidence
+
+## Gate and clause-by-clause response
+
+> Record weights/neighbour definition, disconnected areas, permutation settings, sample adequacy and multiplicity correction. High-high labels are not future return or demand predictions. Produce reproducible memberships and uncertainty/significance metadata.
+
+The gate above is quoted verbatim from the RS11 row of `docs/plans/2026-11-12-reporting-refresh-research-register.md`.
+
+- **Weights/neighbour definition:** Recorded at `areaMoran.weights.definition`, with `areaMoran.weights.kUsed`, `areaMoran.weights.transform` and `areaMoran.weights.kRule`. This remeasurement uses K-nearest-neighbours over planning-area mean coordinates.
+- **Disconnected areas:** `areaMoran.weights.connectedComponentsUndirected` and `areaMoran.weights.islands` record the area graph; the same clause measured at transaction level is at `pointLevel.disconnectedAreas` and `pointLevel.fullPopulation.weights`. The result is for the measured weights graph only.
+- **Permutation settings:** Count, fixed seed and seed mechanism are at `areaMoran.permutations`, `areaMoran.seed` and `areaMoran.seedMechanism`; the local implementations record the same values at `areaLisa.implementation` and `areaGiStar.implementation`.
+- **Sample adequacy:** This is the full frame through the measured cutoff, not a random subsample at area level (`cutoff.meaning`, `areaPanel.windowDefinition`). The inclusion rule and area-level minimum are at `areaPanel.floor`, and the per-area window counts are at `areaPanel.members`.
+- **Multiplicity correction:** Local significance uses the recorded Benjamini–Hochberg adjustment at `areaLisa.multiplicityCorrection`; raw and adjusted p-values are retained per membership at `areaLisa.members`.
+- **Interpretation:** High-high labels are not future return or demand predictions (`notEstablished[N1]`). These memberships describe a spatial pattern in the measured two-window appreciation statistic only.
+- **Reproducibility/uncertainty:** Every analyzed planning area has its window transaction counts, window median PSFs, quadrant, simulated p-value, BH-adjusted p-value and significance flags in `areaPanel.members` and `areaLisa.members`.
+
+## What was measured
+
+The ledger at `docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json` has current SHA-256 `3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a` (93,324 bytes); it reads the unified transaction parquet after first recording its metadata schema (`population.frameColumns`, `population.frameRows`). It measures global Moran's I and local Moran (LISA), plus Getis-Ord Gi\*, over planning-area appreciation — `medianPsfW1 / medianPsfW0 - 1` across two 12-month windows that both stop at the measured cutoff (`areaPanel.appreciationFormula`, `areaPanel.windowDefinition`, `cutoff.meaning`). The legacy does not define a reproducible appreciation population, unit, or window, and its technical appendix names a rental input (`legacyMethodRecovery.globalMoran.variable`, `absenceScans.legacyNamedInput`). The result therefore does not reproduce or validate the article's appreciation claims.
+
+The exact input hashes, bytes, parquet row count, cutoff, missingness states, measured values, local memberships, and legacy-claim statuses are in the ledger (`inputs`, `cutoff`, `population.missingness`, `areaMoran`, `areaLisa`, `legacyClaims`). The cutoff records the terminal month against the preceding twelve-month median and bounds every aggregation at `cutoff.lastCompleteMonth` (`cutoff.basis`, `cutoff.meaning`). It is a measured data boundary, not a claim about calendar completeness beyond that rule.
+
+## Legacy claims and limits
+
+The frozen article's phrases are checked verbatim by `legacyQuoteCheck` (28 claims checked, all quotes found, against the single named and hashed file); the ledger has `claimKeyCheck` with **syntactic** key resolution only. Quantitative claims are individually listed in `legacyClaims`, each with its own `status`, `ledgerKey` and `note`. The global legacy Moran/Z values and listed cluster counts are not recoverable from the absent input and the unlinked served asset; they are not presented as confirmed. The listed appreciation levels and property-type correlations have underspecified units, windows and/or populations and are not reproducible as stated. Transition/persistence language is withdrawn (`legacyClaims[C24].status`): no linked asset carries a time dimension from which to establish transitions.
+
+`servedAssetInventory` records the inspected asset and its example placeholder fields. No rental content was added to or written into that owned asset; the asset was read-only. The remeasurement does not infer what produced the placeholder or any legacy pattern (`servedAssetInventory.meaning`, `notEstablished[N3]`).
+
+## Scan boundary and absence statements
+
+Quote verification and absence measurement are separate boundaries. Quote verification is bounded to the frozen legacy article named in `legacyQuoteCheck.legacyFile` and hashed at `legacyQuoteCheck.legacyFileSha256`. Absence claims rest on the four scans recorded under `absenceScans`, each with its own roots, filename or token patterns, match lists and disclosed exclusions:
+
+- `absenceScans.legacyNamedInput` — recursive filename scan from the repository root for `housing_hdb_rental*` and `housing_hdb*`: no match recorded, empty list (`matchedFileCount`, `matchedFiles`). Before this correction, exclusions disclosed prefixes only: `.git/`, `node_modules/`, `.venv/`, `__pycache__/`, `docs/implementation/`, `scripts/tools/`, `prompts/`, `app/src/components/studies/`, and `app/tests/`. The regenerated ledger retains those prefixes and now separately records `docs/plans/2026-11-12-reporting-refresh-decisions.md` and `.secrets.baseline` in `exclusions.paths`.
+- `absenceScans.methodImplementationScan` — seven roots over `.md`, `.py`, `.ts` and `.tsx` against `moran|esda|libpysal|getis|lisa`: the matched-file and token-match totals are `matchedFileCount` and `totalMatches`, every matched file listed with its count at `matchedFiles`, with the programme-surface exclusions, the edition rule and the self-exclusion at `absenceScans.methodImplementationScan.exclusions`.
+- `absenceScans.dataSpatialArtefactScan` — the `data/` tree against `*lisa*`, `*moran*`, `*spatial*`, `*transition*` and `*persistence*`: no match recorded, empty list (`matchedFileCount`, `matchedFiles`).
+- `absenceScans.frameSchemaRentScan` — the 97-column shipped frame schema read by metadata: no exact `monthly_rent` match, one rent-substring match (`rental_yield_pct`).
+
+The ledger does **not** make a repository-wide absence claim (`notEstablished[N6]`); every absence statement is bounded to its recorded roots and exclusions. No hash-pinned scan was run across the programme's own surfaces; those exclusions are disclosed rather than silent. Accordingly, absence statements here are limited to the named scans; unlinkage or non-discovery elsewhere is not evidence for or against an origin claim.
+
+The missingness fields distinguish null values, recorded zero PSF, rows present in the file but outside every window, and absent columns (`population.missingness`). The parquet row count describes the file, not the analyzed series (`population.frameRows`).
+
+## Decision boundary
+
+This evidence pack supports a reproducible descriptive spatial screen on the stated two-window appreciation aggregation. It does not establish a return series, future returns, demand, a time transition, causation, or origin. A high-high label is a local statistical category under the recorded weights and correction, not an investment recommendation.
+
+## Change log
+
+| Round | Change | Ledger |
+|---|---|---|
+| scan-stabilisation citation round (2026-11-22) | The earlier scan-stabilisation regeneration was never logged in this pack; it is recorded here. This pack and the edition text no longer restate scan-scope counts: the method-implementation scan's matched-file and token-match totals are cited as `absenceScans.methodImplementationScan.matchedFileCount` and `.totalMatches`, with every matched path and its per-file count at `.matchedFiles`, and the two empty filename scans are stated as no match with their lists at `matchedFileCount`/`matchedFiles` (`legacyNamedInput`, `dataSpatialArtefactScan`). **No producer change and no ledger regeneration**: the producer re-measures byte-identically at these bytes (`--check` green), so the prose was what had drifted from the field. | `artifacts/rs11-spatial-autocorrelation-evidence.json` sha256 `3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a`, 93,324 bytes |

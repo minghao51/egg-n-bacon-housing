@@ -1,15 +1,28 @@
 # RF08 remaining-studies runbook — taking the last 10 from `historical` to signed
 
 - **Written:** 2026-11-18
+- **Updated:** 2026-11-18 — the §0 gate is **recorded** (three D12 rows, below); the split in §2.7 is reduced to two writers; RS06/RS07/RS13 have a recorded disposition when a gate input is absent.
 - **For:** a fresh agent (and the repo owner) finishing RF08 after RS01–RS05
+- **State now (2026-11-21):** **all 15 series signed and published.** RS06, RS07, RS08, RS11, RS12, RS13, RS14 closed on 2026-11-20-21 and RS15 `findings` closed last, under the owner's blanket delegation of the approval hop (D12); the scientific seat stayed an independent `gpt-6-luna` review throughout, and it is the hop that found every defect on the way. Three structural defects were also closed: every producer's hash-pinned scan read `app/src`, so signing any study drifted the others; RS14's filename scan counted `.pytest_cache/`/`.mypy_cache/`, making its ledger a function of whether tests had run; and a new `scripts/tools/refresh_ledger_citation.py` re-points a study's ledger citation after any regeneration, exiting non-zero on a surviving stale hash.
 - **State at handoff:** **5 of 15 series signed and published** (`data-sources`, `rental-yields`, `temporal-evolution`, `amenity-impact`, `facility-premiums`). **10 remain.**
-- **Read first:** [continuation brief](../docs/implementation/2026-11-14-rf08-continuation-brief.md) (gate sequence, mechanics, traps) · [worker prompt](rf08-study-worker-prompt.md) (the per-study specification the orchestrator follows) · [handoff §4a–§4d](../prompts/handoffs.md) (what each completed study cost and taught) · [decision ledger D12](../docs/plans/2026-11-12-reporting-refresh-decisions.md)
+- **Read first:** [remaining-nine handoffs](rf08-remaining-nine-handoffs.md) (per-study briefs, instruments, traps) · [continuation brief](../docs/implementation/2026-11-14-rf08-continuation-brief.md) (gate sequence, mechanics, traps) · [worker prompt](rf08-study-worker-prompt.md) (the per-study specification the orchestrator follows) · [handoff §4a–§4d](../prompts/handoffs.md) (what each completed study cost and taught) · [decision ledger D12](../docs/plans/2026-11-12-reporting-refresh-decisions.md)
 
 This runbook is the operating manual. It assumes you will run the same loop the first five studies proved: **you produce → you verify → independent reviewer re-derives → fix pass → narrow re-review → owner signs → verify and ship.**
 
 ---
 
-## 0. The one decision the owner must make before anything starts
+## 0. The decision the owner recorded before anything started — **now recorded**
+
+> **Status: recorded 2026-11-18.** Three rows in the [decision ledger's](../plans/2026-11-12-reporting-refresh-decisions.md#recorded-decisions)
+> "Recorded decisions" table now carry this: the **named scientific reviewer** for
+> RS06–RS15, a **draft-record pass-through** for the orchestrator, and the
+> **RS06/RS07/RS13 disposition** when a gate input is absent. The gate below is
+> therefore satisfied — a study may be measured, drafted **and** presented for
+> signature. What has **not** changed: the orchestrator still never writes `approved`,
+> `signoffs` or `editionSha256`, never signs, and never reviews its own text.
+>
+> A measured account of all ten remaining studies — inputs present, inputs absent,
+> claims at risk — is in [the remaining-studies account](../implementation/2026-11-18-rf08-remaining-studies-account.md).
 
 Every remaining study's register row names a specialist gate: **model approval** (`lease-decay`, `mrt-impact`, `macro-sensitivity`, `price-forecasts`), **causal/RDD review** (`school-quality`, `causal-inference-overview`), **spatial method review** (`spatial-autocorrelation`, `spatial-hotspots`), **segment/scoring owner approval** (`market-segments`), and RS15 gates on the rest.
 
@@ -43,7 +56,7 @@ The orchestrator performs the producer role directly and is the edition's prepar
 
 If the owner prefers a different reviewer, the row must name that reviewer's exact `provider/model (effort)` string — that string is what gets recorded.
 
-**If the row is absent:** you may still measure and draft, but **you must not** present a signature packet for a model-gated study. A reviewer must not be substituted or invented, and "the agent ran it" is not approval.
+If the record were absent, you could still measure and draft, but you **could not** present a signature packet for a model-gated study — a reviewer must not be substituted or invented, and "the agent ran it" is not approval. That case is now historical: the row exists, dated 2026-11-18, and names the reviewer below.
 
 **Per-study names to instantiate** — register row, series slug, and the registry `editionId` (`<series>-<YYYY-MM-DD>`):
 
@@ -70,18 +83,18 @@ Also agree the operating envelope with the owner before the first study:
 
 ## 1. The queue
 
-| #   | Series                                | Register gate                                               | Suggested order                           | What "done" may look like                                                            |
-| --- | ------------------------------------- | ----------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------ |
-| 1   | `macro-sensitivity`                   | real release vintages; fallback series excluded from claims | **first** — mostly a source-vintage audit | measured vintages + withdrawal of any claim resting on a generated/fallback series   |
-| 2   | `segment/scoring` → `market-segments` | recover scaling, model version, cohort counts               | second — data archaeology                 | recovered or withdrawn segments; never reuse an old segment ID for a new population  |
-| 3   | `lease-decay`                         | resolve PSF/PSM and total vs per-area **before fitting**    | third                                     | unit reconciliation + a refit or an explicit unit-withdrawal                         |
-| 4   | `mrt-impact`                          | confirm metres/km and response variable; no "15×"           | fourth                                    | a stated response/log/PSF design, or withdrawal                                      |
-| 5   | `price-forecasts`                     | rolling-origin validation, leakage, score expired 2025      | fifth                                     | validation harness + accuracy table, or withdrawal of dated forecasts                |
-| 6   | `school-quality`                      | tiers, bandwidth, assignment, multiple testing              | sixth                                     | identification audit; almost certainly a withdrawal of causal language               |
-| 7   | `spatial-autocorrelation`             | weights, disconnected areas, permutations                   | seventh                                   | reproducible weights + significance metadata                                         |
-| 8   | `spatial-hotspots`                    | keep Jan 2024–Jan 2025 as its own window                    | eighth                                    | rerun of the stated method + instability disclosure                                  |
-| 9   | `causal-inference-overview`           | estimand, pretrends, placebos                               | ninth                                     | identification audit; withdrawals likely                                             |
-| 10  | `findings`                            | every sentence links to a reviewed edition                  | **last, always**                          | a summary whose every claim cites an approved edition and its population/window/unit |
+| #   | Series                                | Register gate                                               | Suggested order      | What "done" may look like                                                                         |
+| --- | ------------------------------------- | ----------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------- |
+| 1   | `macro-sensitivity`                   | real release vintages; fallback series excluded from claims | ~~done~~             | **SIGNED 2026-11-18** — 14 ledger rounds, 7 text rounds; ledger `ae403f11…`, text `0741e45b…`     |
+| 2   | `segment/scoring` → `market-segments` | recover scaling, model version, cohort counts               | **next — text only** | **ledger PASSED r14** (`96054968…`, 102,541 B); KMeans 2.0 lineage recovered; text still to write |
+| 3   | `lease-decay`                         | resolve PSF/PSM and total vs per-area **before fitting**    | third                | unit reconciliation + a refit or an explicit unit-withdrawal                                      |
+| 4   | `mrt-impact`                          | confirm metres/km and response variable; no "15×"           | fourth               | a stated response/log/PSF design, or withdrawal                                                   |
+| 5   | `price-forecasts`                     | rolling-origin validation, leakage, score expired 2025      | fifth                | validation harness + accuracy table, or withdrawal of dated forecasts                             |
+| 6   | `school-quality`                      | tiers, bandwidth, assignment, multiple testing              | sixth                | identification audit; almost certainly a withdrawal of causal language                            |
+| 7   | `spatial-autocorrelation`             | weights, disconnected areas, permutations                   | seventh              | reproducible weights + significance metadata                                                      |
+| 8   | `spatial-hotspots`                    | keep Jan 2024–Jan 2025 as its own window                    | eighth               | rerun of the stated method + instability disclosure                                               |
+| 9   | `causal-inference-overview`           | estimand, pretrends, placebos                               | ninth                | identification audit; withdrawals likely                                                          |
+| 10  | `findings`                            | every sentence links to a reviewed edition                  | **last, always**     | a summary whose every claim cites an approved edition and its population/window/unit              |
 
 Order rationale: front-load studies whose gate is a **source/vintage audit** (cheap, mechanical, high certainty), and push the ones whose gate is **identification** (expensive, likely withdrawal) later. `findings` must not start until every claim it cites is signed — if a dependency is unresolved, omit it or flag it, never summarize an unresolved model as settled.
 
@@ -157,14 +170,16 @@ Give the owner, in one message: the two **full** digests (ledger and text), what
 
 ### 2.7 Who writes what
 
-Three actors, no producer subagent:
+Two writers and one signatory, no producer subagent:
 
-- **Orchestrator (you)** — code and numbers, and the edition text: the measurement tool, the canonical ledger, the evidence pack and the edition text (anything where a number must trace to a ledger key).
-- **`doc-writer`** (`opencode-go/mimo-v2.6-pro`) — records and state docs: the sign-off record (§2.6 step 4), the implementation-README entry, the `prompts/handoffs.md` updates, and any revision of this runbook. Dispatch with `Agent`, `subagent_type: "doc-writer"`, `run_in_background: true`.
+- **Orchestrator (you)** — code and numbers, and the edition text: the measurement tool, the canonical ledger, the evidence pack and the edition text (anything where a number must trace to a ledger key). By the 2026-11-18 D12 pass-through row you may also author the **draft** records and state docs directly: the draft sign-off record (§2.6 step 4), the implementation-README entry, the `prompts/handoffs.md` updates, and revisions of this runbook.
+- **`doc-writer`** (`opencode-go/mimo-v2.6-pro`) — still available and still the better choice for long-form prose, but no longer a required hop. Dispatch with `Agent`, `subagent_type: "doc-writer"`, `run_in_background: true` when you use it.
 - **The reviewer** (`codex-luna-reviewer`, §2.3) writes nothing — it reviews and reports.
 - **The owner** signs (§2.5); nobody else may.
 
-In `doc-writer`'s prompt, state the instruction it needs: read the neighbouring sign-off records first (`docs/implementation/2026-11-16-rs04-editions-signoff.md`, `docs/implementation/2026-11-17-rs05-editions-signoff.md`) and match their section shape; cite measured numbers and file paths only; never restate a figure it cannot see in the ledger; never edit code, JSON, artifacts or hashed files.
+The pass-through does not reach `approved`, `signoffs[]`, `editionSha256` or any signature, and it does not touch the independence rule: the orchestrator authors the text that would be signed, so it may never review that text.
+
+In `doc-writer`'s prompt, when you do dispatch it: read the neighbouring sign-off records first (`docs/implementation/2026-11-16-rs04-editions-signoff.md`, `docs/implementation/2026-11-17-rs05-editions-signoff.md`) and match their section shape; cite measured numbers and file paths only; never restate a figure it cannot see in the ledger; never edit code, JSON, artifacts or hashed files.
 
 ---
 
