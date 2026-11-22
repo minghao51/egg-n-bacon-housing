@@ -78,6 +78,7 @@ import sys
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -285,7 +286,7 @@ def safe_float(val, default=None):
 def sanitize_for_json(obj):
     """Recursively replace NaN/Inf (and numpy scalars) with JSON-safe values."""
     if isinstance(obj, (float, np.floating)):
-        if pd.isna(obj) or np.isinf(obj):
+        if pd.isna(cast(float, obj)) or np.isinf(obj):
             return None
         return float(obj)
     if isinstance(obj, (int, np.integer)):
@@ -344,7 +345,7 @@ def parse_last_complete_month(raw: str) -> pd.Period:
     text = raw.strip()
     if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", text):
         raise ValueError(f"expected YYYY-MM, got {raw!r}")
-    return pd.Period(text, freq="M")
+    return cast(pd.Period, pd.Period(text, freq="M"))
 
 
 def resolve_month_policy(
@@ -367,8 +368,8 @@ def resolve_month_policy(
             if isinstance(last_complete_month, pd.Period)
             else parse_last_complete_month(str(last_complete_month))
         )
-        month = pd.Period(month, freq="M")
-        if month > latest_source_month:
+        month = cast(pd.Period, pd.Period(month, freq="M"))
+        if cast(Any, month) > latest_source_month:
             raise ValueError(
                 f"declared last complete month {month} is after the latest source month "
                 f"{latest_source_month}"
@@ -380,7 +381,7 @@ def resolve_month_policy(
         )
     as_of = today if today is not None else datetime.now(UTC).date()
     return MonthPolicy(
-        last_complete_month=pd.Period(as_of, freq="M") - 1,
+        last_complete_month=cast(pd.Period, cast(Any, pd.Period(as_of, freq="M")) - 1),
         as_of=as_of,
         resolved_from="utc-clock",
     )
@@ -742,7 +743,7 @@ def type_subset(df: pd.DataFrame, prop: str | None) -> pd.DataFrame:
     """Filter a frame by dashboard property-type key (None = all types)."""
     if prop is None:
         return df
-    return df[df["property_label"] == PROPERTY_TYPE_FILTERS[prop]]
+    return cast(pd.DataFrame, df[df["property_label"] == PROPERTY_TYPE_FILTERS[prop]])
 
 
 # ---------------------------------------------------------------------------
@@ -795,7 +796,9 @@ def drop_non_residential(df: pd.DataFrame) -> pd.DataFrame:
     """
     if "planning_area" not in df.columns:
         return df
-    return df[~df["planning_area"].astype(str).str.upper().isin(NON_RESIDENTIAL_AREAS)]
+    return cast(
+        pd.DataFrame, df[~df["planning_area"].astype(str).str.upper().isin(NON_RESIDENTIAL_AREAS)]
+    )
 
 
 def recent_volume_by_area(
@@ -812,7 +815,7 @@ def recent_volume_by_area(
     if today is None:
         today = datetime.now(UTC).date()
     months = pd.PeriodIndex(pd.to_datetime(df[month_col]), freq="M")
-    window_start = pd.Period(today, freq="M") - 12
+    window_start = cast(pd.Period, pd.Period(today, freq="M")) - 12
     window = df.loc[(months >= window_start) & (months < pd.Period(today, freq="M"))]
     return window.groupby("planning_area").size()
 
@@ -844,9 +847,10 @@ def latest_growth_by_area(growth: pd.DataFrame) -> dict[str, dict]:
     """Latest-month growth snapshot per planning area (lowercased keys)."""
     latest = growth.sort_values("month").groupby("planning_area").last()
     latest.index = latest.index.astype(str).str.lower()
-    return latest[["mom_change_pct", "yoy_change_pct", "momentum", "momentum_signal"]].to_dict(
-        "index"
-    )
+    return cast(
+        pd.DataFrame,
+        latest[["mom_change_pct", "yoy_change_pct", "momentum", "momentum_signal"]],
+    ).to_dict(orient="index")
 
 
 def rental_yield_stats(df: pd.DataFrame) -> pd.DataFrame:
@@ -861,7 +865,7 @@ def rental_yield_stats(df: pd.DataFrame) -> pd.DataFrame:
         .agg([("count", "count"), ("mean", "mean"), ("median", "median"), ("std", "std")])
         .reset_index()
     )
-    return stats[stats["count"] >= 10]
+    return cast(pd.DataFrame, stats[stats["count"] >= 10])
 
 
 def yield_lookup(df: pd.DataFrame, value_cols: list[str]) -> dict[str, dict]:
@@ -869,9 +873,9 @@ def yield_lookup(df: pd.DataFrame, value_cols: list[str]) -> dict[str, dict]:
     stats = rental_yield_stats(df)
     if stats.empty:
         return {}
-    indexed = stats.set_index("planning_area")[value_cols].copy()
+    indexed = cast(pd.DataFrame, stats.set_index("planning_area")[value_cols].copy())
     indexed.index = indexed.index.astype(str).str.lower()
-    return indexed.to_dict("index")
+    return indexed.to_dict(orient="index")
 
 
 def monthly_mortgage_payment(price: float) -> float:
@@ -1039,12 +1043,12 @@ def generate_trends_data(df: pd.DataFrame, today: date | None = None) -> list[di
     overall = df.groupby("month")["price"].median()
 
     def cell(pivot: pd.DataFrame, label: str, month: str):
-        value = pivot[label].get(month, np.nan) if label in pivot.columns else np.nan
+        value = cast(float, pivot[label].get(month, np.nan) if label in pivot.columns else np.nan)
         return int(value) if pd.notna(value) else None
 
     trends = []
     for m in sorted(df["month"].unique()):
-        overall_price = overall.get(m)
+        overall_price = cast(float, overall.get(m))
         record: dict = {
             "date": m,
             "Overall Price": int(overall_price) if pd.notna(overall_price) else None,
@@ -1150,18 +1154,18 @@ def generate_segments_data(df: pd.DataFrame, yield_by_area: dict[str, float]) ->
 
     segments = []
     for _, row in agg.iterrows():
-        rental_yield = row["raw_yield"]
+        rental_yield = cast(float, row["raw_yield"])
         label = row["property_label"]
         if pd.isna(rental_yield) or rental_yield == 0:
             if label == "HDB":
                 # HDB: fall back to the area's aggregate yield metric.
-                rental_yield = yield_by_area.get(str(row["planning_area"]).lower())
+                rental_yield = cast(float, yield_by_area.get(str(row["planning_area"]).lower()))
             elif label == "EC":
                 psf = row["psf"]
-                rental_yield = max(2.5, min(4.5, 5.0 - (psf / 2000)))
+                rental_yield = cast(float, max(2.5, min(4.5, 5.0 - (psf / 2000))))
             else:
                 psf = row["psf"]
-                rental_yield = max(2.0, min(4.0, 4.5 - (psf / 2500)))
+                rental_yield = cast(float, max(2.0, min(4.0, 4.5 - (psf / 2500))))
         if rental_yield is None or pd.isna(rental_yield):
             continue
         segments.append(
@@ -1183,9 +1187,9 @@ def _segment_yield_lookup(df_subset: pd.DataFrame) -> dict[str, float]:
     given view, only when it contains HDB rows, aggregated with the same
     minimum-sample filter as the yield stats.
     """
-    if df_subset.empty or not df_subset["property_label"].eq("HDB").any():
+    if df_subset.empty or not cast(pd.Series, df_subset["property_label"]).eq("HDB").any():
         return {}
-    recent = df_subset[df_subset["year"] >= 2022]
+    recent = cast(pd.DataFrame, df_subset[df_subset["year"] >= 2022])
     if recent.empty:
         return {}
     stats = rental_yield_stats(recent)
@@ -1257,10 +1261,14 @@ def generate_leaderboard_data(
     current_year = min(int(df_recent["year"].max()), last_completed_year(today))
     prev_year = current_year - 1
     price_curr = (
-        df_recent[df_recent["year"] == current_year].groupby("planning_area")["price"].median()
+        cast(pd.DataFrame, df_recent[df_recent["year"] == current_year])
+        .groupby("planning_area")["price"]
+        .median()
     )
     price_prev = (
-        df_recent[df_recent["year"] == prev_year].groupby("planning_area")["price"].median()
+        cast(pd.DataFrame, df_recent[df_recent["year"] == prev_year])
+        .groupby("planning_area")["price"]
+        .median()
     )
     yoy = ((price_curr - price_prev) / price_prev * 100).rename("yoy_growth_pct")
     area_metrics = area_metrics.merge(yoy.reset_index(), on="planning_area", how="left")
@@ -1275,6 +1283,8 @@ def generate_leaderboard_data(
         mom_change = safe_float(growth.get("mom_change_pct"))
         momentum = safe_float(growth.get("momentum"))
         aff_ratio = safe_float(affordability.get(area_lower, {}).get("affordability_ratio"))
+        rental_yield_mean = cast(float, row["rental_yield_mean"])
+        yoy_growth_pct = cast(float, row["yoy_growth_pct"])
 
         result.append(
             {
@@ -1285,12 +1295,10 @@ def generate_leaderboard_data(
                 "rank_overall": 0,  # assigned after sorting below
                 "median_price": int(row["median_price"]),
                 "median_psf": int(row["median_psf"]),
-                "rental_yield_mean": round(float(row["rental_yield_mean"]), 2)
-                if row["rental_yield_mean"]
-                else 0,
+                "rental_yield_mean": round(float(rental_yield_mean), 2) if rental_yield_mean else 0,
                 "rental_yield_median": row["rental_yield_median"],
-                "yoy_growth_pct": round(float(row["yoy_growth_pct"]), 2)
-                if pd.notna(row["yoy_growth_pct"])
+                "yoy_growth_pct": round(float(yoy_growth_pct), 2)
+                if pd.notna(yoy_growth_pct)
                 else 0,
                 "mom_change_pct": mom_change if mom_change else 0,
                 "momentum": momentum if momentum else 0,
@@ -1309,7 +1317,7 @@ def generate_leaderboard_data(
     recent_volume = recent_volume_by_area(df, today=today)
     result.sort(
         key=lambda entry: (
-            int(recent_volume.get(entry["planning_area"], 0)) >= MIN_RANKING_VOLUME,
+            int(cast(int, recent_volume.get(entry["planning_area"], 0))) >= MIN_RANKING_VOLUME,
             _ranking_score(entry),
         ),
         reverse=True,
@@ -1322,9 +1330,9 @@ def generate_leaderboard_data(
 def _property_type_breakdown(df: pd.DataFrame, area_name: str) -> dict[str, dict]:
     """Median price + volume per property label within one planning area."""
     breakdown = {}
-    area_df = df[df["planning_area"] == area_name]
+    area_df = cast(pd.DataFrame, df[df["planning_area"] == area_name])
     for prop, label in PROPERTY_TYPE_FILTERS.items():
-        prop_area = area_df[area_df["property_label"] == label]
+        prop_area = cast(pd.DataFrame, area_df[area_df["property_label"] == label])
         if prop_area.empty:
             breakdown[prop] = {"median_price": None, "volume": 0}
         else:
@@ -1339,8 +1347,8 @@ def _time_period_breakdown(
     df: pd.DataFrame, area_name: str, today: date | None = None
 ) -> dict[str, dict]:
     """Median price + YoY growth per era within one planning area."""
-    breakdown = {}
-    area_df = df[df["planning_area"] == area_name]
+    breakdown: dict[str, dict] = {}
+    area_df = cast(pd.DataFrame, df[df["planning_area"] == area_name])
     for era in ERA_FILTERS:
         period_df = era_subset(area_df, era)
         if period_df.empty:
@@ -1350,8 +1358,14 @@ def _time_period_breakdown(
         # Pair completed years only; a partial current year would skew the
         # published growth (same rule as the monthly growth table).
         period_year = min(int(period_df["year"].max()), last_completed_year(today))
-        price_curr = period_df[period_df["year"] == period_year]["price"].median()
-        price_prev = period_df[period_df["year"] == period_year - 1]["price"].median()
+        price_curr = cast(
+            float,
+            cast(pd.DataFrame, period_df[period_df["year"] == period_year])["price"].median(),
+        )
+        price_prev = cast(
+            float,
+            cast(pd.DataFrame, period_df[period_df["year"] == period_year - 1])["price"].median(),
+        )
         if pd.notna(price_curr) and pd.notna(price_prev) and price_prev > 0:
             yoy = round(((price_curr - price_prev) / price_prev) * 100, 2)
         else:
@@ -1524,7 +1538,7 @@ def _validate_overview(payload, errors: list[str]) -> None:
                 if key not in entry:
                     errors.append(f"overview: stats '{block}' missing '{key}'")
     total_records = (payload.get("metadata") or {}).get("total_records")
-    if not _is_number(total_records) or total_records <= 0:
+    if not _is_number(total_records) or cast(float, total_records) <= 0:
         errors.append("overview: metadata.total_records must be > 0")
     if not (payload.get("distributions") or {}).get("property_type"):
         errors.append("overview: empty distributions.property_type")
@@ -1561,7 +1575,7 @@ def _validate_leaderboard(entries, errors: list[str]) -> None:
         if not (isinstance(coords, list) and len(coords) == 2 and all(map(_is_number, coords))):
             errors.append(f"leaderboard entry {i}: coordinates must be a non-null [lon, lat] pair")
         median_price = entry.get("median_price")
-        if not _is_number(median_price) or median_price <= 0:
+        if not _is_number(median_price) or cast(float, median_price) <= 0:
             errors.append(f"leaderboard entry {i}: median_price must be > 0")
 
 
@@ -1635,7 +1649,9 @@ def export_app_data(
     source_identities = describe_source_identities(unified, pa_metrics)
     df = prepare_unified(unified)
 
-    latest_source_month = pd.PeriodIndex(pd.to_datetime(df["month"]), freq="M").max()
+    latest_source_month = cast(
+        pd.Period, pd.PeriodIndex(pd.to_datetime(df["month"]), freq="M").max()
+    )
     try:
         month_policy = resolve_month_policy(latest_source_month, last_complete_month)
     except ValueError as exc:
@@ -1663,7 +1679,9 @@ def export_app_data(
     growth = build_growth_table(pa_metrics, today=today)
     latest_growth = latest_growth_by_area(growth)
     whole_yield = yield_lookup(df, ["mean", "median", "std"])
-    recent_yield = yield_lookup(df[df["year"] >= 2022], ["mean", "median", "std"])
+    recent_yield = yield_lookup(
+        cast(pd.DataFrame, df[df["year"] >= 2022]), ["mean", "median", "std"]
+    )
     affordability = affordability_lookup(df)
     hotspots = build_hotspots(growth)
     area_metadata = load_area_metadata()

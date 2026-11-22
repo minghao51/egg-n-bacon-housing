@@ -447,7 +447,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     assetsPinned: 0,
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
-      "2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5",
+      "efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167",
     signoffs: [
       {
         role: "source",
@@ -499,7 +499,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     assetsPinned: 0,
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
-      "20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b",
+      "7cc937aecca5886cd693eb79e7e72a7879e75bc95cc0b23493703e7f127af616",
     signoffs: [
       {
         role: "source",
@@ -551,7 +551,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     assetsPinned: 0,
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
-      "ab591689af641175ac8f0298d10ddda068911c490d1fcab35018daf93d44543b",
+      "c772a1643a1f968b07f06598c07787adc1032488a1862cded9ed723f1b368918",
     signoffs: [
       {
         role: "source",
@@ -654,14 +654,14 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     assetsPinned: 0,
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
-      "639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf",
+      "5306546ca5ba30230823c5b8cac24bf1867381fcb032f43032ca49a0e322ad9d",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -673,7 +673,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "openai-codex/gpt-6-luna (xhigh)",
         date: "2026-11-20",
         artifactSha256:
-          "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5",
         statement:
           "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
         automated: true,
@@ -685,7 +685,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8",
+          "74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -758,7 +758,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     assetsPinned: 1,
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
-      "8e9e9a876e5708296ea415fce70e0c577a148fde0f37cb33e44ec96ba9f1a6e8",
+      "81236f9abc1214424e6ef7a0ad1c0bed98300c0b6291ab167958a38f6cdea072",
     signoffs: [
       {
         role: "source",
@@ -810,14 +810,14 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     assetsPinned: 0,
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
-      "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2",
+      "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -829,7 +829,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "openai-codex/gpt-6-luna (xhigh)",
         date: "2026-11-20",
         artifactSha256:
-          "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
         statement:
           "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
         automated: true,
@@ -841,7 +841,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba",
+          "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,

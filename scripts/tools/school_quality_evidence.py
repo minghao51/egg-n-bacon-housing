@@ -914,7 +914,9 @@ def policy_eligibility(
         "srcConsumptionScan": {
             "roots": ["src/"],
             "filesScanned": len(src_paths),
-            "manifestKey": "scanManifests.srcRoots",
+            # the src/ entries of codeRoots are these files' pins: srcRoots is not a
+            # manifest this ledger carries
+            "manifestKey": "scanManifests.codeRoots",
             "tokens": flags_scan,
             "totalOccurrences": total_src_hits,
             "meaning": (

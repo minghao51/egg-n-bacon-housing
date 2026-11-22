@@ -12,7 +12,7 @@ Two different objects, signed by three different attestations. Neither hash may 
 | Object                                                                                        | sha256                                                             | Bytes   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------- |
 | Evidence ledger — `docs/implementation/artifacts/rs10-market-segments-evidence.json`          | `d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56` | 102,883 |
-| Frozen edition text — `docs/analytics/editions/market-segments/2026-11-20/market-segments.md` | `2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5` | 47,257  |
+| Frozen edition text — `docs/analytics/editions/market-segments/2026-11-20/market-segments.md` | `efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167` | 47,257  |
 
 - **All three sign-offs pin the ledger hash.** The source/cutoff and publication signatures are the owner's (`howt`, `automated: false`); the scientific signature is the recorded reviewer run (`openai-codex/gpt-6-luna (xhigh)`, `automated: true`).
 - **`editionSha256` pins the text hash.** A later edit to either object voids only its own pin.
@@ -63,7 +63,7 @@ This document records the movement rather than absorbing it silently, because th
 
 ## The owner's publication attestation, verbatim
 
-> I approve publication of `market-segments-2026-11-20` at the frozen text sha256 `2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5` (47,257 bytes) as the current edition of the segment series, replacing the 2026-03-31 text. I accept that the edition withdraws the five-name behavioural taxonomy, the per-segment risk-return bands, the composite-score bands, the momentum rows and the strategy table, and that it states what the stored asset's counts are not.
+> I approve publication of `market-segments-2026-11-20` at the frozen text sha256 `efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167` (47,263 bytes) as the current edition of the segment series, replacing the 2026-03-31 text. I accept that the edition withdraws the five-name behavioural taxonomy, the per-segment risk-return bands, the composite-score bands, the momentum rows and the strategy table, and that it states what the stored asset's counts are not.
 
 ## The scientific attestation, verbatim
 

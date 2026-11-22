@@ -170,39 +170,39 @@ For each searched token, the ledger's `methodRecovery.tokens.<token>` record car
 
 | Token | Ledger record |
 |---|---|
-| `1,350` | `methodRecovery.tokens.1,350` |
-| `1,850` | `methodRecovery.tokens.1,850` |
-| `1.96` | `methodRecovery.tokens.1.96` |
-| `12 h3` | `methodRecovery.tokens.12 h3` |
-| `2,000` | `methodRecovery.tokens.2,000` |
-| `2,050` | `methodRecovery.tokens.2,050` |
-| `2,100` | `methodRecovery.tokens.2,100` |
-| `2.58` | `methodRecovery.tokens.2.58` |
-| `2.67` | `methodRecovery.tokens.2.67` |
-| `2.98` | `methodRecovery.tokens.2.98` |
-| `3,100` | `methodRecovery.tokens.3,100` |
-| `3,200` | `methodRecovery.tokens.3,200` |
-| `3,450` | `methodRecovery.tokens.3,450` |
-| `3.21` | `methodRecovery.tokens.3.21` |
-| `3.45` | `methodRecovery.tokens.3.45` |
-| `3.89` | `methodRecovery.tokens.3.89` |
-| `4.21` | `methodRecovery.tokens.4.21` |
-| `55-60` | `methodRecovery.tokens.55-60` |
-| `58-62` | `methodRecovery.tokens.58-62` |
+| `1,350` | `methodRecovery.tokens["1,350"]` |
+| `1,850` | `methodRecovery.tokens["1,850"]` |
+| `1.96` | `methodRecovery.tokens["1.96"]` |
+| `12 h3` | `methodRecovery.tokens["12 h3"]` |
+| `2,000` | `methodRecovery.tokens["2,000"]` |
+| `2,050` | `methodRecovery.tokens["2,050"]` |
+| `2,100` | `methodRecovery.tokens["2,100"]` |
+| `2.58` | `methodRecovery.tokens["2.58"]` |
+| `2.67` | `methodRecovery.tokens["2.67"]` |
+| `2.98` | `methodRecovery.tokens["2.98"]` |
+| `3,100` | `methodRecovery.tokens["3,100"]` |
+| `3,200` | `methodRecovery.tokens["3,200"]` |
+| `3,450` | `methodRecovery.tokens["3,450"]` |
+| `3.21` | `methodRecovery.tokens["3.21"]` |
+| `3.45` | `methodRecovery.tokens["3.45"]` |
+| `3.89` | `methodRecovery.tokens["3.89"]` |
+| `4.21` | `methodRecovery.tokens["4.21"]` |
+| `55-60` | `methodRecovery.tokens["55-60"]` |
+| `58-62` | `methodRecovery.tokens["58-62"]` |
 | `623` | `methodRecovery.tokens.623` |
-| `8-10` | `methodRecovery.tokens.8-10` |
+| `8-10` | `methodRecovery.tokens["8-10"]` |
 | `847` | `methodRecovery.tokens.847` |
 | `esda` | `methodRecovery.tokens.esda` |
 | `g_local` | `methodRecovery.tokens.g_local` |
 | `getis` | `methodRecovery.tokens.getis` |
-| `h3 resolution` | `methodRecovery.tokens.h3 resolution` |
+| `h3 resolution` | `methodRecovery.tokens["h3 resolution"]` |
 | `hotspot` | `methodRecovery.tokens.hotspot` |
 | `knn` | `methodRecovery.tokens.knn` |
 | `libpysal` | `methodRecovery.tokens.libpysal` |
-| `persistence of hotspot` | `methodRecovery.tokens.persistence of hotspot` |
+| `persistence of hotspot` | `methodRecovery.tokens["persistence of hotspot"]` |
 | `queen` | `methodRecovery.tokens.queen` |
-| `transition matrix` | `methodRecovery.tokens.transition matrix` (no match recorded) |
-| `transition probabilit` | `methodRecovery.tokens.transition probabilit` |
+| `transition matrix` | `methodRecovery.tokens["transition matrix"]` (no match recorded) |
+| `transition probabilit` | `methodRecovery.tokens["transition probabilit"]` |
 
 Within these declared roots, suffixes, and exclusions, the producer screened Gi* implementation as absent: the relevant code-token hits, with every matched path and its per-file count, are recorded in `methodRecovery.tokens`, and identified hits may be coincidental strings, labels or prose. This does not establish where the legacy values came from. H3 cell tables were screened as absent within the same boundary; each token's matched paths are at `methodRecovery.tokens.<token>.matchedFiles`, and this is not a complete inventory outside the scan. Transition probability artefacts were likewise screened as absent within the declared boundary; the transition-probability token matches the frozen legacy text, while the transition-matrix token has no matches. No transition probability is measured. These statements are bounded to `methodRecovery.scan`; they do not assert repository-wide absence. (`methodRecovery.giStarImplementation`, `.h3CellTables`, `.transitionProbabilities`, `.tokens`)
 

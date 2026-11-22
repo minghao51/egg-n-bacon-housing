@@ -1585,7 +1585,7 @@
     "gateClause": "Keep policy eligibility outside model outputs.",
     "srcConsumptionScan": {
       "filesScanned": 48,
-      "manifestKey": "scanManifests.srcRoots",
+      "manifestKey": "scanManifests.codeRoots",
       "meaning": "zero occurrences of the four bronze policy-flag column names anywhere under src/: the bronze admission-policy flags are counted in schoolDirectory.policyFlags but are consumed by no pipeline node",
       "roots": [
         "src/"

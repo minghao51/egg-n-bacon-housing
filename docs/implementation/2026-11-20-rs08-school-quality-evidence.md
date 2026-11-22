@@ -3,7 +3,7 @@
 - **Date:** 2026-11-20
 - **Status:** **Prepared for review, not signed off.** The ledger is measured and `--check`-able; nothing here re-fits the legacy's models, and every quantitative claim of the frozen legacy text is disposed with a stated reason. No signature in this pack is an approval. Register row: RS08. Gate (research register, quoted verbatim): _"Recheck tier provenance, bandwidth, treatment assignment, covariate balance and multiple-testing policy. School-quality model fit does not establish a causal admissions premium. Keep policy eligibility outside model outputs."_
 - **Prepared by:** `repo-agent/session-2026-11-20`. The producer and the ledger were already on disk when this stage began and `--check` passed at stage start; this pack was written from the ledger **without re-measuring and without touching any measured value**.
-- **Machine-readable ledger:** [`artifacts/rs08-school-quality-evidence.json`](artifacts/rs08-school-quality-evidence.json) — sha256 `bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8`, 252,384 bytes (canonical JSON, sorted keys, no timestamps, no absolute paths; schemaVersion 1.1.0). **Round 2 (2026-11-20 review):** the first-stage ledger (`71f78ece…`, 94,668 bytes) is retained at [`artifacts/superseded/rs08-school-quality-evidence.stage1-71f78ece.json`](artifacts/superseded/rs08-school-quality-evidence.stage1-71f78ece.json); the review-driven producer change and its field-by-field diff are recorded at the end of this pack (§13). Three intermediate round-2 ledger states (…`bc5afb50`, `dcbdfd69`, `16c3ae9c`…) were generated and superseded within the session while the scan-stability exclusions of §13b were being hardened against concurrent sibling activity; none was ever signed, and the final state re-measures green (§13c).
+- **Machine-readable ledger:** [`artifacts/rs08-school-quality-evidence.json`](artifacts/rs08-school-quality-evidence.json) — sha256 `74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5`, 252,385 bytes (canonical JSON, sorted keys, no timestamps, no absolute paths; schemaVersion 1.1.0). **Round 2 (2026-11-20 review):** the first-stage ledger (`71f78ece…`, 94,668 bytes) is retained at [`artifacts/superseded/rs08-school-quality-evidence.stage1-71f78ece.json`](artifacts/superseded/rs08-school-quality-evidence.stage1-71f78ece.json); the review-driven producer change and its field-by-field diff are recorded at the end of this pack (§13). Three intermediate round-2 ledger states (…`bc5afb50`, `dcbdfd69`, `16c3ae9c`…) were generated and superseded within the session while the scan-stability exclusions of §13b were being hardened against concurrent sibling activity; none was ever signed, and the final state re-measures green (§13c).
 - **Producer:** `scripts/tools/school_quality_evidence.py`. Run twice → byte-identical; `uv run python scripts/tools/school_quality_evidence.py --check` re-measures the checkout and passes (output recorded twice at the end of this pack). It never runs the pipeline, never geocodes, never re-fits the legacy's models, and never writes outside `--output`.
 - **Frozen legacy text:** `docs/analytics/editions/legacy/2026-11-12/school-quality.md` — sha256 `ec5fc939efa4a0b6604d57eff630f99d8d65f578a00899a0e856c2bce9dffcf9`, 7,200 bytes. All **36** quoted phrases verified to appear verbatim (46 recorded occurrences across the 36 quotes; sum of `legacyQuoteCheck.quotes[].occurrences`).
 - **Upstream:** the cutoff rule and the "measured, never cited" lineage discipline from RS03/RS04/RS05/RS09/RS10; the claim-inventory and quote-check pattern from RS05/RS09/RS10. `unified_dataset.parquet` sha256 `39d234f703c9d6e098acc885eaadfdc965a6ac217189277c066676b3b117cefe` (1,236,310 × 97, `inputs`) is the same platinum dataset the sibling studies pinned.
@@ -55,8 +55,8 @@ The 2026-11-18 checkout lead said no tier artefact exists. **This scan corrects 
 ## 3. Policy eligibility stays outside model outputs (`policyEligibility`)
 
 - **The bronze flags are counted, never used** (`policyEligibility.bronzeFlags`, against the 337-row directory): `sap_ind` 23 yes / 314 no, `gifted_ind` 16 / 321, `ip_ind` 19 / 318, `autonomous_ind` 28 / 309. They are admission-policy eligibility flags; `schoolDirectory.policyFlagMeaning` states they are counted only.
-- **Zero consumption under `src/`** (`policyEligibility.srcConsumptionScan`): the four flag names scanned over the code files under `src/` (`filesScanned`, per-file pins at `scanManifests.srcRoots`) return no occurrence, the total being `totalOccurrences`.
-- **The tier lists themselves carry policy columns, and the quality formula consumes them** (`policyEligibility.tierListPolicyColumns`): primary gep Yes 8 / sap Yes 18; secondary sap Yes 12 / autonomous Yes 16 / ip Yes 20. The producer's quality formula consumes these columns (`qualityScoreFormula.producerImplementation`), so the shipped `school_accessibility_score` is **screened as embedding policy-status flags** — which is why it is excluded from this pack's one association model (`association.accessibilityExclusion`).
+- **Zero consumption under `src/`** (`policyEligibility.srcConsumptionScan`): the four flag names scanned over the code files under `src/` (`filesScanned`, per-file pins at the `src/` entries of `scanManifests.codeRoots`) return no occurrence, the total being `totalOccurrences`.
+- **The tier lists themselves carry policy columns, and the quality formula consumes them** (`policyEligibility.tierListPolicyColumns`): primary gep Yes 8 / sap Yes 18; secondary sap Yes 12 / autonomous Yes 16 / ip Yes 20. The producer's quality formula consumes these columns (`qualityScoreFormula.producerImplementation`), so the shipped `school_accessibility_score` is **screened as embedding policy-status flags** — which is why it is excluded from this pack's one association model (`association.accessibilityExcluded`).
 - **Compliance** (`policyEligibility.compliance`): no model output in this pack uses a policy-eligibility flag. The association regressors are three shipped distance columns; the controls are floor area, lease commencement, storey band, flat type, town and year.
 
 ## 4. What the shipped school columns actually contain (`columnHealth`)
@@ -228,7 +228,7 @@ The 2026-11-20 independent review returned FAIL with eight findings against the 
 
 ### 13b. The field-by-field diff (superseded → current)
 
-The full diff (superseded `71f78ece…` → prior round-2 state `36740efe…`) touches only the fields the findings name plus the new scan bookkeeping. The current checkout ledger is `bf7825f8…` (252,384 bytes); the prior round-2 hash is historical, not current.
+The full diff (superseded `71f78ece…` → prior round-2 state `36740efe…`) touches only the fields the findings name plus the new scan bookkeeping. The current checkout ledger is `74ab4e0c…` (252,385 bytes); the prior round-2 hash is historical, not current.
 
 - **Measured-value changes (cutoff bound, 17 leaf fields):** `columnHealth.columns.*.frame.rowCount` 1,236,310 → 1,235,099 (×7); `nearest_schoolPRIMARY_dist.frame.median` 409.0697 → 409.0648; `nearest_schoolSECONDARY_dist.frame.median` 518.4282 → 518.2853 and `.p95` 1,588.5227 → 1,586.7301; `nearest_top_secondary_school_dist.frame.p95` 12,375.7876 → 12,375.9521; `school_accessibility_score.frame.recordedZeroCount` 969,982 → 969,151 (= `accessibilityZeroMass.frameRecordedZeros`). Nothing outside `columnHealth` moved.
 - **New bound fields:** `columnHealth.frameStatsBound`, `frameRowsThroughBound`, `frameRowsBeyondBound`, `boundNote`, `accessibilityZeroMass.frameStatsBound`.
@@ -242,14 +242,14 @@ The full diff (superseded `71f78ece…` → prior round-2 state `36740efe…`) t
 
 ### 13c. Check runs at the current ledger
 
-`uv run python scripts/tools/school_quality_evidence.py --check` is run twice against the current checkout ledger — both green, ledger sha256 `bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8` (252,384 bytes):
+`uv run python scripts/tools/school_quality_evidence.py --check` is run twice against the current checkout ledger — both green, ledger sha256 `74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5` (252,385 bytes):
 
 ```text
 Pass: RS08 ledger re-measures byte-identically from this checkout.
-Ledger sha256: bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8
+Ledger sha256: 74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5
 
 Pass: RS08 ledger re-measures byte-identically from this checkout.
-Ledger sha256: bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8
+Ledger sha256: 74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5
 ```
 
 Determinism: producer runs are byte-identical (`cmp` clean) and byte-identical to the pinned ledger. Getting there took two stability hardenings beyond the review findings themselves, both instances of the RS10 §6a/§6b lesson: (1) an early round-2 ledger pinned `scripts/tools/` code files — including this producer's own bytes — so the act of formatting the producer moved the ledger (a self-reference fixed point, proven converged, then removed by excluding the instrument surface); (2) a sibling stage rewrote `app/public/data/analytics/rental_hotspots_2024-01_2025-01.json.gz` between two runs, moving the data-artefact manifest, so that actively rewritten surface was excluded and disclosed. Both intermediate ledger states were superseded before any signature. The stage-1 pack text (superseded values 409.0697 / 969,982 / full-frame language) was updated to the round-2 ledger in the same pass; the edition text was corrected against the same fields.
@@ -258,4 +258,18 @@ Determinism: producer runs are byte-identical (`cmp` clean) and byte-identical t
 
 The scan-stabilisation round regenerated every ledger in this programme and was never logged in this pack; it is recorded here with the prose round that followed. The text-roots scan is now recorded as `scanManifests.textRoots.fileCount`, and this pack and the edition text no longer restate it or any other scan-scope count: each block cites the field that carries it (`rddRecovery.tokenScan.filesScanned`, `multiplicityPolicy.legacyRecordedCorrection.filesScanned`, `legacyFeatureNames.textScan.filesScanned`, `legacyFeatureNames.schemaScan.filesScanned`, `policyEligibility.srcConsumptionScan.filesScanned`, `tierProvenance.origin.callSiteScan.filesScanned`, `rddRecovery.bandwidth.artefactScan.filenameScan.filesEnumerated`, `.contentScan.filesScanned`/`.occurrences`, `rddRecovery.treatmentAssignment.boundaryArtefact.filenameScan.filesEnumerated`, `.contentScan.filesScanned`/`.occurrences`, `scanManifests.{textRoots,schemaRoots,dataArtefactRoots,codeRoots}.fileCount`). **No producer change and no ledger regeneration:** the RS08 producer re-measures byte-identically at these bytes (`--check` green, §13c), so the fields were already correct and the prose was what had drifted.
 
-**One identity defect was also repaired.** The edition text had recorded the same SHA-256 and byte count for two different artefacts — this pack and the ledger — which is the ledger's identity applied to a prose document that is not the ledger. Each artefact now carries its own: the ledger is `bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8` at 252,384 bytes (unchanged, `--check` green), and this pack's own bytes are pinned in the edition's provenance paragraph. Because editing this pack moves its bytes, that pin is written after the last edit to this file.
+**One identity defect was also repaired.** The edition text had recorded the same SHA-256 and byte count for two different artefacts — this pack and the ledger — which is the ledger's identity applied to a prose document that is not the ledger. Each artefact now carries its own: the pack's bytes are pinned in the edition's provenance paragraph. Because editing this pack moves its bytes, that pin is written after the last edit to this file.
+
+### 13e. Citation-path round (2026-11-22)
+
+One defect was in the ledger rather than in the sentence, so it was fixed at the producer. `policyEligibility.srcConsumptionScan.manifestKey` read `scanManifests.srcRoots`, a key this ledger has never carried; the pins for that scan are the `src/` entries of `scanManifests.codeRoots`, which the edition sentence already named. `scripts/tools/school_quality_evidence.py` now emits `scanManifests.codeRoots` there, and the edition sentence no longer discloses a dangling pointer: it states that this scan's own `manifestKey`, its `roots`, and its `filesScanned` agree, with the pins at the `src/` entries of `scanManifests.codeRoots`.
+
+Field diff (one leaf, no measured value touched):
+
+```text
+policyEligibility.srcConsumptionScan.manifestKey
+   - 'scanManifests.srcRoots'
+   + 'scanManifests.codeRoots'
+```
+
+Superseded bytes: `artifacts/superseded/rs08-school-quality-evidence.pre-manifest-key-fix.json` (sha256 `74ab4e0ccba58045e9bfc47c94caf1ed6a95b73897c4cd34094a2bdb2538cae5`, 252,385 bytes). The producer's `--check` is green twice at the new bytes (§13c), and two non-check runs are `cmp`-identical and byte-identical to the pinned ledger.

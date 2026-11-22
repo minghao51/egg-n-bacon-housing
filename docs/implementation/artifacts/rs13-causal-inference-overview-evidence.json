@@ -342,7 +342,7 @@
   },
   "definition": "An identification audit of the frozen policy-impact article, measured against this checkout. Every gate input is recorded in one of two states: ABSENT (the artefact that would carry it matches zero files in a stated scan) or UNMEASURABLE (the quantity needs a run or an artefact this checkout does not hold). The two headline numbers — the CCR-vs-OCR condominium DiD estimate of about -$137,743 and the HDB RDiT jump of about +$13,118 — are WITHDRAWN as unreconstructable identification per the recorded D12/RF08 disposition of 2026-11-18, and the reason is published with them. What is measured here is the frame the two cohorts would be drawn from (screend for size inside the measured cutoff), the shipped region labels' planning-area spans, and the absences. A screen is not a finding about origin: nothing here says how the retired analysis assigned treatment or produced its numbers, and no estimate is reconstructed. What WOULD make the two numbers reconstructable — a dated policy artefact with a bandwidth rule and an estimator record — is recorded as a requirement, not a plan.",
   "editionText": {
-    "bytes": 50822,
+    "bytes": 50838,
     "meaning": "pins the exact edition-text bytes this ledger describes; the producer reads the file at build time, so any edit to the edition text must be followed by a producer re-run or --check fails. A review hand-off citing a sha256 in `revisions` identifies a superseded revision, not the reviewable object: the current reviewable bytes are `sha256`/`bytes` above. The edition text carries no self-hash (a file cannot contain its own sha256); the pack and the review hand-off cite this field for the edition's identity",
     "path": "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md",
     "readingTimeBasis": "wordCount / 200 words per minute, rounded up; measured at build time from the same bytes the sha256 pins",
@@ -361,13 +361,13 @@
         "sha256": "131350caaa11be6455fef62908522e0091e616c1578e513c1595ff6d84084ca2"
       },
       {
-        "bytes": 50822,
+        "bytes": 50838,
         "disposition": "the reviewable object; --check fails if the checked-out text is not exactly these bytes",
         "label": "current",
-        "sha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2"
+        "sha256": "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd"
       }
     ],
-    "sha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2",
+    "sha256": "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd",
     "wordCount": 5972
   },
   "frameInventory": {
@@ -848,8 +848,8 @@
       "sha256": "bd2e2f6898aae548168db7b8d3bde446c8750f01897de24d1b37aec7f2805c89"
     },
     "docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md": {
-      "bytes": 50822,
-      "sha256": "72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2"
+      "bytes": 50838,
+      "sha256": "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd"
     },
     "docs/analytics/editions/legacy/2026-11-12/causal-inference-overview.md": {
       "bytes": 6574,

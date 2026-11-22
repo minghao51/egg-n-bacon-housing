@@ -12,7 +12,7 @@ import sys
 from datetime import UTC, datetime
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 import yaml
@@ -143,7 +143,7 @@ def collect_schema_info() -> dict[str, dict]:
     models = _discover_catalog_models()
 
     result: dict[str, dict] = {}
-    for model_cls in models:
+    for model_cls in cast(list[Any], models):
         dataset_name = model_cls.catalog_dataset_id
 
         fields: dict[str, dict] = {}
@@ -315,11 +315,12 @@ def collect_lineage() -> dict[str, dict]:
 
 def _human_size(size_bytes: int) -> str:
     """Convert bytes to human-readable string."""
+    value: float = size_bytes
     for unit in ("B", "KB", "MB", "GB"):
-        if size_bytes < 1024:
-            return f"{size_bytes:.1f} {unit}"
-        size_bytes /= 1024
-    return f"{size_bytes:.1f} TB"
+        if value < 1024:
+            return f"{value:.1f} {unit}"
+        value /= 1024
+    return f"{value:.1f} TB"
 
 
 # Known gold-tier dataset names without a parquet file to anchor them.

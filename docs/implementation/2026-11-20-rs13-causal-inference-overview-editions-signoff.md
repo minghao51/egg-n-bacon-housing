@@ -9,8 +9,8 @@
 
 | Object                                                                                                            | sha256                                                             |  Bytes |
 | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -----: |
-| Evidence ledger — `docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json`                    | `ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba` | 97,812 |
-| Frozen edition text — `docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md` | `72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2` | 50,822 |
+| Evidence ledger — `docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json`                    | `d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3` | 97,812 |
+| Frozen edition text — `docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md` | `73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd` | 50,822 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.
 

@@ -4,7 +4,7 @@ import logging
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import UnionType
-from typing import Any, Union, get_args, get_origin
+from typing import Any, Union, cast, get_args, get_origin
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
@@ -181,7 +181,7 @@ def build_pipeline(
         assert settings.tracking_project_id is not None
         assert settings.tracking_username is not None
         assert settings.tracking_environment is not None
-        tracker = _sdk_adapters.HamiltonTracker(
+        tracker = cast(Any, _sdk_adapters).HamiltonTracker(
             project_id=settings.tracking_project_id,
             username=settings.tracking_username,
             dag_name="medallion_pipeline",
