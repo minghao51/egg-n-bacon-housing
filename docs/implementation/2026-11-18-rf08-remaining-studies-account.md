@@ -1,7 +1,7 @@
 # RF08 remaining-studies account — the 10 `historical` series
 
 - **Measured:** 2026-11-18 by the orchestrator (producer role, [runbook §2.1](../../prompts/rf08-remaining-studies-runbook.md))
-- **State:** 5 of 15 approved/published (`data-sources`, `rental-yields`, `temporal-evolution`,
+- **State at writing:** 5 of 15 approved/published (`data-sources`, `rental-yields`, `temporal-evolution`, `amenity-impact`, `facility-premiums`). **Superseded:** all fifteen are signed as of 2026-11-21 — this account is retained as the measured input register for the studies it describes, not as a current status.
   `amenity-impact`, `facility-premiums`); **10 remain**, all still `historical`/`archived`.
 - **Status:** **accounting only.** No evidence pack, no edition text, no client-side change.
   A signature packet is **not** presented for any study here — the D12 reviewer row is absent (§0).
@@ -116,16 +116,16 @@ ip_ind, …`.
 
 - **Present (measured today):**
 
-  | Bronze series                    | Rows   | Span                  |
-  | -------------------------------- | ------ | --------------------- |
-  | `cpi.parquet`                    | 789    | 1961-01 → 2026-09     |
-  | `gdp.parquet`                    | 202    | 1976Q1 → 2026Q2       |
-  | `sora_rates.parquet`             | **60** | **2021-01 → 2025-12** |
+  | Bronze series                    | Rows                                 | Span                                                 |
+  | -------------------------------- | ------------------------------------ | ---------------------------------------------------- |
+  | `cpi.parquet`                    | 789                                  | 1961-01 → 2026-09                                    |
+  | `gdp.parquet`                    | 202                                  | 1976Q1 → 2026Q2                                      |
+  | `sora_rates.parquet`             | **60**                               | **2021-01 → 2025-12**                                |
   | `bank_rates.parquet` (`sora_3m`) | 465 file rows / **252 with a value** | file 1988-01 → 2026-09; **values 2005-10 → 2026-09** |
-  | `unemployment.parquet`           | 139    | 1992Q1 → 2026Q3       |
-  | `hdb_rpi.parquet`                | 147    | 1990Q1 → 2026Q3       |
-  | `ura_ppi.parquet`                | 207    | 1975Q1 → 2026Q3       |
-  | `wage_growth.parquet`            | 100    | 2001Q1 → 2025Q4       |
+  | `unemployment.parquet`           | 139                                  | 1992Q1 → 2026Q3                                      |
+  | `hdb_rpi.parquet`                | 147                                  | 1990Q1 → 2026Q3                                      |
+  | `ura_ppi.parquet`                | 207                                  | 1975Q1 → 2026Q3                                      |
+  | `wage_growth.parquet`            | 100                                  | 2001Q1 → 2025Q4                                      |
 
 - **The conflict the gate is aimed at:** two SORA series with different spans (`sora_rates`
   60 monthly rows ending 2025-12 vs `bank_rates.sora_3m` 465 rows ending 2026-09), and **both**

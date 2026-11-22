@@ -7,9 +7,9 @@
 
 ## The two pins
 
-| Object | sha256 | Bytes |
-| --- | --- | ---: |
-| Evidence ledger — `docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json` | `ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba` | 97,812 |
+| Object                                                                                                            | sha256                                                             |  Bytes |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -----: |
+| Evidence ledger — `docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json`                    | `ccdd9f9f0827bd6128b23674f65f7f4352070dabf907e43876409814a46fdeba` | 97,812 |
 | Frozen edition text — `docs/analytics/editions/causal-inference-overview/2026-11-20/causal-inference-overview.md` | `72b88741e519584184496a0ec3c66f000ef426c8eaaef6e5b7e62486dedd9fd2` | 50,822 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.

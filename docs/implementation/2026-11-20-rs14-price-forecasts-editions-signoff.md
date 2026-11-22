@@ -7,10 +7,10 @@
 
 ## The two pins
 
-| Object | sha256 | Bytes |
-| --- | --- | ---: |
-| Evidence ledger — `docs/implementation/artifacts/rs14-price-forecasts-evidence.json` | `8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc` | 193,110 |
-| Frozen edition text — `docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md` | `20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b` | 44,787 |
+| Object                                                                                        | sha256                                                             |   Bytes |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------: |
+| Evidence ledger — `docs/implementation/artifacts/rs14-price-forecasts-evidence.json`          | `8a7234723fc5d34ce741c99df9b22dfb2d6f2b740f407518c29e53846836b6dc` | 193,110 |
+| Frozen edition text — `docs/analytics/editions/price-forecasts/2026-11-20/price-forecasts.md` | `20409c60de828c6ea520ffbb325be0b512572f907ea6c7b6df1fbbef733c6d4b` |  44,787 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.
 

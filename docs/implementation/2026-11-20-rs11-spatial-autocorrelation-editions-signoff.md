@@ -7,9 +7,9 @@
 
 ## The two pins
 
-| Object | sha256 | Bytes |
-| --- | --- | ---: |
-| Evidence ledger — `docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json` | `3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a` | 93,324 |
+| Object                                                                                                        | sha256                                                             |  Bytes |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -----: |
+| Evidence ledger — `docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json`                  | `3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a` | 93,324 |
 | Frozen edition text — `docs/analytics/editions/spatial-autocorrelation/2026-11-20/spatial-autocorrelation.md` | `d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee` | 54,274 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.

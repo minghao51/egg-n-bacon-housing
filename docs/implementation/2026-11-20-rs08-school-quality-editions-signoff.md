@@ -7,10 +7,10 @@
 
 ## The two pins
 
-| Object | sha256 | Bytes |
-| --- | --- | ---: |
-| Evidence ledger — `docs/implementation/artifacts/rs08-school-quality-evidence.json` | `bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8` | 252,384 |
-| Frozen edition text — `docs/analytics/editions/school-quality/2026-11-20/school-quality.md` | `639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf` | 54,228 |
+| Object                                                                                      | sha256                                                             |   Bytes |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------: |
+| Evidence ledger — `docs/implementation/artifacts/rs08-school-quality-evidence.json`         | `bf7825f8d23c745b18e564bfe3abe018ed26e927f2aa3e41afce646d55b36ef8` | 252,384 |
+| Frozen edition text — `docs/analytics/editions/school-quality/2026-11-20/school-quality.md` | `639f56ea199d40e06183d5c6e502053bef29a6aa315660de62275e9baf4fbdcf` |  54,228 |
 
 All three attestations pin the ledger hash; `editionSha256` pins the text hash. A later edit to either object voids only its own pin.
 

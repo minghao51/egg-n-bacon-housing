@@ -4,7 +4,7 @@
 - **Updated:** 2026-11-18 — the §0 gate is **recorded** (three D12 rows, below); the split in §2.7 is reduced to two writers; RS06/RS07/RS13 have a recorded disposition when a gate input is absent.
 - **For:** a fresh agent (and the repo owner) finishing RF08 after RS01–RS05
 - **State now (2026-11-21):** **all 15 series signed and published.** RS06, RS07, RS08, RS11, RS12, RS13, RS14 closed on 2026-11-20-21 and RS15 `findings` closed last, under the owner's blanket delegation of the approval hop (D12); the scientific seat stayed an independent `gpt-6-luna` review throughout, and it is the hop that found every defect on the way. Three structural defects were also closed: every producer's hash-pinned scan read `app/src`, so signing any study drifted the others; RS14's filename scan counted `.pytest_cache/`/`.mypy_cache/`, making its ledger a function of whether tests had run; and a new `scripts/tools/refresh_ledger_citation.py` re-points a study's ledger citation after any regeneration, exiting non-zero on a surviving stale hash.
-- **State at handoff:** **5 of 15 series signed and published** (`data-sources`, `rental-yields`, `temporal-evolution`, `amenity-impact`, `facility-premiums`). **10 remain.**
+- **State at handoff:** 5 of 15 series signed and published — **superseded:** all fifteen are signed as of 2026-11-21 (see the state line above).
 - **Read first:** [remaining-nine handoffs](rf08-remaining-nine-handoffs.md) (per-study briefs, instruments, traps) · [continuation brief](../docs/implementation/2026-11-14-rf08-continuation-brief.md) (gate sequence, mechanics, traps) · [worker prompt](rf08-study-worker-prompt.md) (the per-study specification the orchestrator follows) · [handoff §4a–§4d](../prompts/handoffs.md) (what each completed study cost and taught) · [decision ledger D12](../docs/plans/2026-11-12-reporting-refresh-decisions.md)
 
 This runbook is the operating manual. It assumes you will run the same loop the first five studies proved: **you produce → you verify → independent reviewer re-derives → fix pass → narrow re-review → owner signs → verify and ship.**
@@ -21,7 +21,7 @@ This runbook is the operating manual. It assumes you will run the same loop the 
 > signature. What has **not** changed: the orchestrator still never writes `approved`,
 > `signoffs` or `editionSha256`, never signs, and never reviews its own text.
 >
-> A measured account of all ten remaining studies — inputs present, inputs absent,
+> (Historical.) A measured account of the ten studies that were then remaining — inputs present, inputs absent,
 > claims at risk — is in [the remaining-studies account](../implementation/2026-11-18-rf08-remaining-studies-account.md).
 
 Every remaining study's register row names a specialist gate: **model approval** (`lease-decay`, `mrt-impact`, `macro-sensitivity`, `price-forecasts`), **causal/RDD review** (`school-quality`, `causal-inference-overview`), **spatial method review** (`spatial-autocorrelation`, `spatial-hotspots`), **segment/scoring owner approval** (`market-segments`), and RS15 gates on the rest.

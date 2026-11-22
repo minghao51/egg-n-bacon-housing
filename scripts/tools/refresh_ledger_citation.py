@@ -181,12 +181,13 @@ def main(argv: list[str] | None = None) -> int:
 
     unresolved = False
     for target in targets:
-        content = target.read_text(encoding="utf-8") if not args.dry_run else rewrite(
-            target.read_text(encoding="utf-8"), name, sha, size, args.mode
-        )[0]
+        content = (
+            target.read_text(encoding="utf-8")
+            if not args.dry_run
+            else rewrite(target.read_text(encoding="utf-8"), name, sha, size, args.mode)[0]
+        )
         unresolved |= any(
-            name in line and HEX.search(line) and sha not in line
-            for line in content.splitlines()
+            name in line and HEX.search(line) and sha not in line for line in content.splitlines()
         )
     return 1 if unresolved else 0
 

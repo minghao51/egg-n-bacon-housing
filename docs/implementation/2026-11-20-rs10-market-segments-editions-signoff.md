@@ -9,10 +9,10 @@
 
 Two different objects, signed by three different attestations. Neither hash may be inferred from the other.
 
-| Object                                                                                       | sha256                                                             | Bytes  |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------ |
-| Evidence ledger — `docs/implementation/artifacts/rs10-market-segments-evidence.json`         | `d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56` | 102,883 |
-| Frozen edition text — `docs/analytics/editions/market-segments/2026-11-20/market-segments.md` | `2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5` | 47,257 |
+| Object                                                                                        | sha256                                                             | Bytes   |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------- |
+| Evidence ledger — `docs/implementation/artifacts/rs10-market-segments-evidence.json`          | `d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56` | 102,883 |
+| Frozen edition text — `docs/analytics/editions/market-segments/2026-11-20/market-segments.md` | `2cb199173d75b540dfa5f1683aea619504746002de05c0f9664c66b93883b6b5` | 47,257  |
 
 - **All three sign-offs pin the ledger hash.** The source/cutoff and publication signatures are the owner's (`howt`, `automated: false`); the scientific signature is the recorded reviewer run (`openai-codex/gpt-6-luna (xhigh)`, `automated: true`).
 - **`editionSha256` pins the text hash.** A later edit to either object voids only its own pin.
@@ -42,14 +42,14 @@ Rounds 1–4 are tabulated in the [evidence pack](../2026-11-18-rs10-market-segm
 
 The review that gates this edition is rounds **16–18**, all against final bytes:
 
-| Round | Verdict  | What it found                                                                                                                                                                                                                                                 |
-| ----- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Round | Verdict  | What it found                                                                                                                                                                                                                                                                            |
+| ----- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 16    | **FAIL** | three findings, **all prose, no measurement**: a stated 25× cluster-count ratio where the ledger gives 9.54×; "five of the six areas fall outside the band" where the ledger gives four of five measurable outside with Bukit Timah unmeasurable; an unnamed "closest" cohort candidate. |
-| 17    | **PASS** | narrow re-review of the three fixes: confirmed each corrected sentence against `clusteringArtefacts.countRatios`, `cagrWindow.areaCagr.areas[].withinLegacyBand` and `cohortReconciliation.candidatePopulations`, and that nothing else in the text had changed. |
-| 18    | **PASS** | final confirmation after the reviewer's own non-blocking warning was taken — the cohort sentence now names the full-frame candidate (+324,856) beside the dated-window one (−422,353). Attested text `ad4eceba…`, 47,257 bytes; ledger `50fbe7e8…`. |
-| 19    | **PASS** | re-attestation after the second scan-boundary change, which the signature record itself triggered: ledger `d8f06588…` on a two-field diff with token blocks byte-identical, text `2cb19917…` on two hash citations only. |
+| 17    | **PASS** | narrow re-review of the three fixes: confirmed each corrected sentence against `clusteringArtefacts.countRatios`, `cagrWindow.areaCagr.areas[].withinLegacyBand` and `cohortReconciliation.candidatePopulations`, and that nothing else in the text had changed.                         |
+| 18    | **PASS** | final confirmation after the reviewer's own non-blocking warning was taken — the cohort sentence now names the full-frame candidate (+324,856) beside the dated-window one (−422,353). Attested text `ad4eceba…`, 47,257 bytes; ledger `50fbe7e8…`.                                      |
+| 19    | **PASS** | re-attestation after the second scan-boundary change, which the signature record itself triggered: ledger `d8f06588…` on a two-field diff with token blocks byte-identical, text `2cb19917…` on two hash citations only.                                                                 |
 
-**The distribution is the finding worth recording**: the study's measurements were right on their first audited pass (round 1 re-derived them; rounds 2–4 and 16–19 changed claims, absence statements, references and pins), while every text defect was arithmetic the author did in prose instead of reading from the ledger. Neither blocking finding required a ledger *value* to change — which is exactly the failure mode the programme's own rules warn about: a number that can be re-derived was instead inferred.
+**The distribution is the finding worth recording**: the study's measurements were right on their first audited pass (round 1 re-derived them; rounds 2–4 and 16–19 changed claims, absence statements, references and pins), while every text defect was arithmetic the author did in prose instead of reading from the ledger. Neither blocking finding required a ledger _value_ to change — which is exactly the failure mode the programme's own rules warn about: a number that can be re-derived was instead inferred.
 
 ## Pin movement after the signature
 
@@ -102,15 +102,15 @@ No behavioural segmentation of this market; no verified cohort; no old→new ide
 
 ## Verification at sign-off
 
-| Check         | Result                                                                          |
-| ------------- | ------------------------------------------------------------------------------- |
-| Producer      | `market_segments_evidence.py --check` passes; two runs byte-identical            |
-| Unit          | 534 pass / 0 fail / 34 files                                                     |
-| Types         | `astro check` 0 errors / 0 warnings / 22 hints                                   |
+| Check         | Result                                                                                                |
+| ------------- | ----------------------------------------------------------------------------------------------------- |
+| Producer      | `market_segments_evidence.py --check` passes; two runs byte-identical                                 |
+| Unit          | 534 pass / 0 fail / 34 files                                                                          |
+| Types         | `astro check` 0 errors / 0 warnings / 22 hints                                                        |
 | Build         | 226 pages; the new archive route renders `data-edition-status="approved"` with three sign-off records |
-| E2E analytics | 57 passed                                                                        |
-| Python        | 1136 passed                                                                      |
-| Baseline      | 15 frozen sources / 72 assets, bytes match                                       |
-| Docs layout   | no findings                                                                      |
-| Lexicon       | 0 forbidden / 1 review-required (judged by the reviewer)                          |
-| Hooks         | 13 pass on two consecutive runs                                                   |
+| E2E analytics | 57 passed                                                                                             |
+| Python        | 1136 passed                                                                                           |
+| Baseline      | 15 frozen sources / 72 assets, bytes match                                                            |
+| Docs layout   | no findings                                                                                           |
+| Lexicon       | 0 forbidden / 1 review-required (judged by the reviewer)                                              |
+| Hooks         | 13 pass on two consecutive runs                                                                       |
