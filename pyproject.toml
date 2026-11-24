@@ -15,7 +15,6 @@ dependencies = [
     "geopandas",
     "requests",
     "boto3",
-    "rapidfuzz>=3.14.3",
     "scipy>=1.17.0",
     "sf-hamilton>=1.0",
     "tenacity",
@@ -32,8 +31,6 @@ dev = [
     "ipykernel>=6.0.0",
     "pytest>=8.0",
     "pytest-cov>=4.0.0",
-    "pytest-mock>=3.10.0",
-    "pytest-asyncio>=0.21.0",
     "coverage[toml]>=7.0.0",
     "ruff>=0.3",
     "geopandas>=1.1.2",
@@ -47,6 +44,11 @@ dev = [
 
 research = [
     "beautifulsoup4",
+    # DEP-1: no code reference, but retained deliberately. The research group is
+    # a notebook/analysis surface (docs/plans/master-audit-2026-11-23/handoffs/
+    # WS-D2-dependency-hygiene.md §8: nothing is removed from this group in this
+    # order); removal needs the research-group review that also owns its other
+    # unexercised members. Revisit together, not alone.
     "cachetools>=6.2.4",
     "esda>=2.8.1",
     "h3==4.1.0b2",
@@ -119,6 +121,7 @@ markers = [
     "integration: Integration tests (slower, may use external resources)",
     "slow: Slow tests (should be run infrequently)",
     "api: Tests that make API calls (may need mocking)",
+    "live: Opt-in real-network tests against data.gov.sg / OneMap / R2; skipped unless EGG_LIVE=1 (see docs/guides/r2-sync-guide.md)",
 ]
 
 [tool.coverage.run]
@@ -149,6 +152,7 @@ python_version = "3.12"
 files = [
     "src/egg_n_bacon_housing/components",
     "src/egg_n_bacon_housing/adapters",
+    "src/egg_n_bacon_housing/schemas",
     "src/egg_n_bacon_housing/utils/cache.py",
     "src/egg_n_bacon_housing/utils/contracts.py",
     "src/egg_n_bacon_housing/utils/geocoding.py",
@@ -156,6 +160,19 @@ files = [
     "src/egg_n_bacon_housing/utils/proximity.py",
     "src/egg_n_bacon_housing/utils/time_index.py",
     "src/egg_n_bacon_housing/utils/validation_gateway.py",
+    "src/egg_n_bacon_housing/utils/validation.py",
+    "src/egg_n_bacon_housing/utils/bronze.py",
+    "src/egg_n_bacon_housing/utils/output_registry.py",
+    "src/egg_n_bacon_housing/utils/data_loader.py",
+    "src/egg_n_bacon_housing/utils/school_features.py",
+    "src/egg_n_bacon_housing/utils/mrt_line_mapping.py",
+    "src/egg_n_bacon_housing/utils/hdb_lookups.py",
+    "src/egg_n_bacon_housing/utils/regional_mapping.py",
+    "src/egg_n_bacon_housing/utils/geo.py",
+    "src/egg_n_bacon_housing/utils/logging_config.py",
+    "src/egg_n_bacon_housing/utils/runtime.py",
+    "src/egg_n_bacon_housing/utils/cache_fingerprints.py",
+    "src/egg_n_bacon_housing/utils/data_quality.py",
     "src/egg_n_bacon_housing/pipeline.py",
     "src/egg_n_bacon_housing/config.py",
 ]

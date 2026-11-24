@@ -1,0 +1,156 @@
+name: Evidence
+
+# REL-3: the read-only evidence producers re-measure every ledger. This gate
+# lives in its own workflow because it needs pipeline data that a fresh checkout
+# does not have: `data/pipeline/**` is gitignored (0 tracked files) and the R2
+# sync (`scripts/00_sync_data.py`) carries only `data/manual/**`. Running it on
+# every pull request would make CI red by construction for an input-provisioning
+# gap that is an owner decision, not a code defect — and a permanently red gate
+# gets ignored, which is worse than no gate.
+#
+# So it runs on demand and weekly. When it runs it either re-measures every
+# ledger or FAILS LOUDLY with the missing inputs named; there is no silent skip.
+# Once the pipeline layers are provisioned (run the pipeline in CI, or upload
+# `data/pipeline/**` to R2 and extend the sync), add `pull_request:` and
+# `push:` triggers here to gate every change.
+#
+# DRIFT DEBT, CLOSED. Nine producers drifted when this gate was first wired:
+# five at baseline 449b921 and four more because concurrent remediation changed
+# files their bounded scans read. Every one was classified and resolved — the
+# prose-caused half by narrowing the drifting scan (the planning/spec surface
+# `docs/plans/**`, disclosed in each ledger's own scan metadata), the code-caused
+# half by regenerating the ledger with a reviewed diff. There is now NO allowlist:
+# any drift fails the job. If a producer drifts, review the diff and either fix
+# the scan or re-pin the ledger in the same commit — do not allowlist it.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # REL-3: the evidence producers are the read-only re-measurement of every
+  # ledger. Before this job they never ran in CI, so ledger drift could sit
+  # unnoticed. Each producer's `--check` re-derives its ledger from this checkout
+  # and compares; a mismatch is drift.
+  #
+  # No allowlist. Every producer with a compare mode must re-measure its ledger
+  # byte-identically; one drifting key fails the job. The nine drifted ledgers
+  # this job was wired around are resolved (see docs/guides/ci-cd-pipeline.md,
+  # "Evidence producer drift (REL-3)"): the scan-boundary drift was narrowed and
+  # disclosed in each ledger, the source-hash drift was re-pinned with a reviewed
+  # diff. Do not regenerate a ledger to silence a check; review the diff first.
+  #
+  # INPUT PREREQUISITE: every producer re-measures from the pipeline outputs
+  # under data/pipeline/** and the derived tables under data/analysis/**, which
+  # .gitignore excludes. A fresh checkout has none, and the R2 sync
+  # (scripts/00_sync_data.py) carries only data/manual/**. The job restores what
+  # R2 can and then FAILS CLOSED with an actionable error if the pipeline
+  # layers are still absent, so "no drift reported" can never mean "no inputs to
+  # measure".
+  evidence:
+    name: Evidence producers (read-only --check)
+    runs-on: ubuntu-24.04
+    # Locally the 13 producers take ~4 min; 20 min bounds a pathological
+    # re-computation without leaving the job to hang a runner.
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - run: uv sync --dev --locked
+
+      - name: Restore the inputs the producers read
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          set -u
+          if [ -n "${R2_ACCOUNT_ID:-}" ] && [ -n "${R2_ACCESS_KEY_ID:-}" ]; then
+            uv run python scripts/00_sync_data.py --only manual || true
+          else
+            echo "::warning::R2 credentials are not configured; data/manual/** will be missing."
+          fi
+          missing=""
+          for f in \
+            data/pipeline/04_platinum/unified_dataset.parquet \
+            data/pipeline/01_bronze/raw_hdb_rental.parquet \
+            data/pipeline/02_silver/geocoded_validated.parquet \
+            data/pipeline/01_bronze/raw_hdb_resale.parquet \
+            data/pipeline/01_bronze/raw_condo_transactions.parquet \
+            data/pipeline/01_bronze/raw_school_directory.parquet \
+            data/pipeline/01_bronze/raw_mrt_stations.parquet; do
+            [ -f "$f" ] || missing="$missing $f"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Evidence producers need pipeline layers a fresh checkout does not have:$missing"
+            echo "::error::data/pipeline/** is gitignored and the R2 sync carries only data/manual/**. Run the pipeline or upload the layers to R2 and extend the sync before this job can re-measure the ledgers. See docs/guides/ci-cd-pipeline.md."
+            exit 1
+          fi
+
+      - name: Check evidence producers for drift
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          # Producers with no --check mode cannot be drift-checked here;
+          # rental_yield_evidence.py only writes, so it is excluded by NAME
+          # (not by a glob that could silently drop a producer).
+          declare -A NO_CHECK=(
+            [rental_yield]="only writes; no --check compare mode"
+          )
+
+          run_producer() {
+            local producer="$1"
+            local script="scripts/tools/${producer}_evidence.py"
+            local out rc
+            out="$(timeout 300 uv run python "$script" --check 2>&1)" && rc=0 || rc=$?
+            if [ "$rc" -eq 0 ]; then
+              printf 'PASS    %s\n' "$producer"
+              return 0
+            fi
+            if [ "$rc" -ne 1 ]; then
+              printf 'FAIL    %s: --check exited %d (expected 0 clean or 1 drift)\n' "$producer" "$rc"
+              printf '%s\n' "$out" | tail -25
+              return 1
+            fi
+            printf 'FAIL    %s: drift\n' "$producer"
+            printf '%s\n' "$out" | tail -25
+            return 1
+          }
+
+          status=0
+          # Every producer with a --check mode is listed explicitly below. A
+          # glob (scripts/tools/*_evidence.py) could silently drop a producer if
+          # one is renamed or removed, so the list is spelled out.
+          for producer in \
+            amenity_impact \
+            causal_inference \
+            facility_premiums \
+            findings \
+            lease_decay \
+            macro_sensitivity \
+            market_segments \
+            mrt_impact \
+            price_forecasts \
+            school_quality \
+            spatial_autocorrelation \
+            spatial_hotspots \
+            temporal_evolution; do
+            run_producer "$producer" || status=1
+          done
+
+          for producer in "${!NO_CHECK[@]}"; do
+            printf 'SKIP    %s (%s)\n' "$producer" "${NO_CHECK[$producer]}"
+          done
+
+          exit "$status"

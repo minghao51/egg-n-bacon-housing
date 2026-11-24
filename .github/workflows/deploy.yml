@@ -38,7 +38,45 @@ jobs:
         working-directory: ./app
         env:
           ASTRO_PAGES: "true"
+          # `PUBLIC_`-prefixed values are inlined into the client bundle at build
+          # time, so the map basemap key has to be present HERE, not just in a
+          # local `.env` (which is gitignored and never reaches CI). Define it as
+          # a repository *variable* named `PUBLIC_CARTO_API_KEY`; when it is
+          # unset this expands to an empty string and the keyless CARTO
+          # basemaps endpoint is used, so the build works either way.
+          # See app/src/config/map-tiles.ts.
+          PUBLIC_CARTO_API_KEY: ${{ vars.PUBLIC_CARTO_API_KEY }}
         run: bun run build
+
+      # The build regenerates this asset from `data/`; a byte-level drift means
+      # the committed artifact is stale and must fail before it is published.
+      - name: Assert the generated catalog did not drift
+        run: git diff --exit-code -- app/public/data/catalog.jsonl.gz
+
+      - name: Install Playwright browsers
+        working-directory: ./app
+        run: bunx playwright install chromium --with-deps
+
+      # This build IS the Pages build (`ASTRO_PAGES=true`), so running the
+      # prefixed suite here gates publication on the same base-path guarantees
+      # CI enforces. `deploy` needs `build`, so a failure blocks the deploy.
+      - name: Run Pages-prefixed E2E tests
+        working-directory: ./app
+        env:
+          PLAYWRIGHT_HTML_OPEN: never
+          PLAYWRIGHT_SERVER_COMMAND: bun run serve:pages
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:4402/egg-n-bacon-housing/
+          PAGES_ORIGIN: http://127.0.0.1:4402
+          PAGES_BASE_PATH: /egg-n-bacon-housing
+        run: bunx playwright test tests/e2e/pages-base.spec.ts
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-deploy
+          path: app/playwright-report/
+          retention-days: 7
 
       - name: Verify build output
         working-directory: ./app
@@ -76,6 +114,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-24.04
+    # `build` now runs the Pages-prefixed suite and the catalog drift check, so
+    # deployment cannot proceed without that base-path coverage passing.
     needs: build
     steps:
       - name: Deploy to GitHub Pages
