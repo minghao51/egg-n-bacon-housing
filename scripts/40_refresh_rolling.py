@@ -21,7 +21,11 @@ Behavior:
   ``src/egg_n_bacon_housing/utils/bronze.py``.
 - ``--stale-only``: consult ``bronze_manifest.json`` and refresh only the
   datasets already past their ``STALE_WARN_DAYS`` threshold. With ``--run``,
-  the pipeline rerun is skipped when nothing was stale (idempotent no-op).
+  the pipeline rerun is decided from the rolling datasets that still need
+  data — stale, or their bronze parquet is missing — not from what the
+  invalidation step deleted, so a run whose fetch failed is retried by the
+  next identical run. Nothing stale and nothing missing is the idempotent
+  no-op (exit 0, no rerun).
 - ``--all``: full ``refresh_all`` — ALL bronze parquets + Hamilton DAG cache +
   API response cache. Nuclear: every source is re-fetched on the next run.
 - ``--run``: rerun the pipeline afterwards via the supported entrypoint
@@ -98,6 +102,41 @@ def stale_names(bronze_dir: Path) -> list[str]:
     ]
 
 
+def missing_parquet_names(bronze_dir: Path) -> list[str]:
+    """Rolling sources the manifest says were fetched but whose parquet is gone.
+
+    Requires a manifest entry so a dataset that was *never* fetched (no entry,
+    no parquet — the first-run case) is not mistaken for a lost one; that case
+    is not a no-op *failure*, it is just an empty install.
+    """
+    manifest = _load_manifest(bronze_dir)
+    return [
+        name
+        for name in STALE_WARN_DAYS
+        if manifest.get(name) is not None and not _matching_files(bronze_dir, name)
+    ]
+
+
+def pending_names(bronze_dir: Path) -> list[str]:
+    """Rolling sources that still need data: stale, or their parquet is missing.
+
+    This is the ``--stale-only --run`` rerun criterion, evaluated after the
+    invalidation step. It is deliberately *not* "what did the invalidation
+    delete": a run that deletes a parquet and then fails its fetch leaves
+    nothing to delete on the next identical run, so a deletion-based criterion
+    turns every later run into a no-op and the dataset never comes back. The
+    missing-parquet half also covers a dataset whose manifest entry is still
+    fresh while its parquet is gone (cleared by ``--all`` or a partial run),
+    which staleness alone would not select.
+    """
+    missing = set(missing_parquet_names(bronze_dir))
+    return [
+        name
+        for name, max_age_days in STALE_WARN_DAYS.items()
+        if name in missing or is_stale(bronze_dir, name, max_age_days)
+    ]
+
+
 def _matching_files(bronze_dir: Path, pattern: str) -> list[Path]:
     """Bronze parquets matching ``pattern`` (same matching rules as clear_bronze)."""
     return [
@@ -151,7 +190,8 @@ def run_refresh(settings: Settings, *, stale_only: bool, everything: bool) -> li
     """Invalidate caches for the selected rolling sources (or everything).
 
     Returns the removed bronze paths. An empty return with ``stale_only``
-    means nothing was past its threshold.
+    means nothing was past its threshold; it is not the ``--run`` rerun
+    criterion — ``pending_names`` is, so a partially-failed refresh retries.
     """
     removed: list[Path]
     if everything:
@@ -237,9 +277,15 @@ def main(argv: list[str] | None = None, settings: Settings | None = None) -> int
         logger.info("Refresh complete: %d bronze parquet(s) removed", len(removed))
 
         if args.run:
-            if args.stale_only and not removed:
-                logger.info("Nothing was stale — skipping pipeline rerun (idempotent no-op).")
-                return 0
+            if args.stale_only:
+                pending = pending_names(resolved.bronze_dir)
+                if not pending:
+                    logger.info(
+                        "Nothing is stale and no rolling bronze parquet is missing — "
+                        "skipping pipeline rerun (idempotent no-op)."
+                    )
+                    return 0
+                logger.info("Rolling datasets still needing data: %s", ", ".join(pending))
             logger.info("Running pipeline (stage=all)…")
             run_pipeline(resolved, stage="all")
             logger.info("Pipeline complete.")

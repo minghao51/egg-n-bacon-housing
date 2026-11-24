@@ -741,9 +741,9 @@ class TestDatagov413PageShrink:
                     "result": {
                         "records": [{"id": 1}, {"id": 2}],
                         "_links": {
-                            "next": "/api/action/datastore_search?resource_id=d_mid413&offset=2000"
+                            "next": "/api/action/datastore_search?resource_id=d_mid413&offset=2"
                         },
-                        "total": 4000,
+                        "total": 4,
                     }
                 }
                 return response
@@ -758,7 +758,7 @@ class TestDatagov413PageShrink:
             response.status_code = 200
             response.raise_for_status.return_value = None
             response.json.return_value = {
-                "result": {"records": [{"id": 3}, {"id": 4}], "_links": {}, "total": 4000}
+                "result": {"records": [{"id": 3}, {"id": 4}], "_links": {}, "total": 4}
             }
             return response
 
@@ -774,7 +774,242 @@ class TestDatagov413PageShrink:
         assert list(result["id"]) == [1, 2, 3, 4]
         # Page 1 went out at the default limit and followed the next link.
         assert "limit=2000" in requested_urls[0]
-        assert requested_urls[1].endswith("offset=2000")
-        # The mid-pagination 413 retry halved the limit and kept offset=2000.
+        assert requested_urls[1].endswith("offset=2")
+        # The mid-pagination 413 retry halved the limit and kept offset=2.
         assert "limit=1000" in requested_urls[2]
-        assert "offset=2000" in requested_urls[2]
+        assert "offset=2" in requested_urls[2]
+
+
+class TestPaginationCompleteness:
+    """CORE-2: a partial or malformed pagination must raise, never return rows.
+
+    Before this contract a later page that answered HTTP 200 without
+    ``result.records`` ended pagination normally (``logger.warning`` + ``break``)
+    and the accumulated rows were returned and cached as a complete bronze
+    dataset with a fresh manifest, making the partial fetch a permanent hit.
+    """
+
+    DATASET_ID = "d_pag"
+    PREFIX = "https://data.gov.sg/api/action/datastore_search?resource_id="
+
+    @staticmethod
+    def _ok(body):
+        response = MagicMock()
+        response.status_code = 200
+        response.raise_for_status.return_value = None
+        response.json.return_value = body
+        return response
+
+    @classmethod
+    def _page(cls, records=None, *, next_link=None, total=None, **extra):
+        result = {"_links": {"next": next_link} if next_link else {}}
+        if records is not None:
+            result["records"] = records
+        if total is not None:
+            result["total"] = total
+        body = {"result": result}
+        body.update(extra)
+        return body
+
+    def _install(self, monkeypatch, datagov, responses):
+        calls = iter(responses)
+        requested_urls = []
+
+        def fake_get(url, timeout=60):
+            requested_urls.append(url)
+            return next(calls)
+
+        monkeypatch.setattr(requests.Session, "get", MagicMock(side_effect=fake_get))
+        monkeypatch.setattr(datagov.time, "sleep", lambda *_: None)
+        return requested_urls
+
+    def test_http_200_error_envelope_raises_and_persists_nothing(self, monkeypatch, tmp_path):
+        """A ``success: false`` page is a fetch failure; the node must not cache."""
+        from egg_n_bacon_housing.components.ingestion import datagov as datagov_nodes
+
+        datagov = _get_datagov_module()
+        self._install(
+            monkeypatch,
+            datagov,
+            [
+                self._ok(
+                    self._page(
+                        [{"id": 1}, {"id": 2}],
+                        next_link=f"/api/action/datastore_search?resource_id={self.DATASET_ID}&offset=2",
+                        total=4,
+                    )
+                ),
+                # HTTP 200, but the API rejected the second page.
+                self._ok(
+                    {
+                        "success": False,
+                        "error": {"code": "NOT_FOUND", "message": "resource not found"},
+                    }
+                ),
+            ],
+        )
+
+        bronze_dir = tmp_path / "bronze"
+        # raw_hdb_property_info is an OPTIONAL source (required=False): the
+        # optional path must still not cache a partial result.
+        with pytest.raises(DatasetFetchError, match="success=false"):
+            datagov_nodes.raw_hdb_property_info(bronze_dir)
+
+        assert not list(bronze_dir.rglob("*.parquet"))
+        assert not (bronze_dir / "bronze_manifest.json").exists()
+
+    def test_later_page_without_records_raises_with_counts(self, monkeypatch):
+        """A post-first-page envelope without ``result.records`` raises, not truncates."""
+        datagov = _get_datagov_module()
+        requested_urls = self._install(
+            monkeypatch,
+            datagov,
+            [
+                self._ok(
+                    self._page(
+                        [{"id": 1}, {"id": 2}],
+                        next_link=f"/api/action/datastore_search?resource_id={self.DATASET_ID}&offset=2",
+                        total=4,
+                    )
+                ),
+                # Valid envelope, advertised total preserved, no records key.
+                self._ok(self._page(total=4)),
+            ],
+        )
+
+        with pytest.raises(datagov.IncompleteDatasetFetchError) as excinfo:
+            datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+        message = str(excinfo.value)
+        assert self.DATASET_ID in message
+        assert "fetched 2" in message
+        assert "advertised 4" in message
+        assert "url=" in message
+        assert "result.records" in message
+        # Two requests only: pagination stopped at the malformed page.
+        assert len(requested_urls) == 2
+
+    def test_terminal_reconciliation_raises_when_fewer_rows_than_advertised(self, monkeypatch):
+        """Pagination that ends early with partial rows must raise (the audit probe)."""
+        datagov = _get_datagov_module()
+        self._install(
+            monkeypatch,
+            datagov,
+            [
+                self._ok(
+                    self._page(
+                        [{"id": 1}],
+                        next_link=f"/api/action/datastore_search?resource_id={self.DATASET_ID}&offset=1",
+                        total=4,
+                    )
+                ),
+                # Well-formed page, well-formed end of pagination — but short.
+                self._ok(self._page([{"id": 2}], total=4)),
+            ],
+        )
+
+        with pytest.raises(datagov.IncompleteDatasetFetchError) as excinfo:
+            datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+        message = str(excinfo.value)
+        assert "fetched 2" in message
+        assert "advertised 4" in message
+        assert "pagination ended before the advertised total" in message
+
+    def test_repeated_next_link_raises_instead_of_looping(self, monkeypatch):
+        """A next link pointing back at a served page fails instead of looping."""
+        datagov = _get_datagov_module()
+        page_two_url = f"/api/action/datastore_search?resource_id={self.DATASET_ID}&offset=2"
+        requested_urls = self._install(
+            monkeypatch,
+            datagov,
+            [
+                self._ok(self._page([{"id": 1}, {"id": 2}], next_link=page_two_url, total=4)),
+                # Page two advertises ITSELF as the next page.
+                self._ok(self._page([{"id": 3}, {"id": 4}], next_link=page_two_url, total=4)),
+            ],
+        )
+
+        with pytest.raises(datagov.IncompleteDatasetFetchError, match="repeated"):
+            datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+        assert len(requested_urls) == 2  # no infinite loop
+
+    def test_next_link_whose_offset_does_not_advance_raises(self, monkeypatch):
+        """A different URL carrying the same offset is non-progressing too."""
+        datagov = _get_datagov_module()
+        self._install(
+            monkeypatch,
+            datagov,
+            [
+                self._ok(
+                    self._page(
+                        [{"id": 1}, {"id": 2}],
+                        next_link=f"/api/action/datastore_search?resource_id={self.DATASET_ID}&offset=2",
+                        total=4,
+                    )
+                ),
+                # Same offset, different URL, so only the offset guard can fire.
+                self._ok(
+                    self._page(
+                        [{"id": 3}, {"id": 4}],
+                        next_link=(
+                            f"/api/action/datastore_search?resource_id={self.DATASET_ID}"
+                            "&offset=2&limit=100"
+                        ),
+                        total=4,
+                    )
+                ),
+            ],
+        )
+
+        with pytest.raises(datagov.IncompleteDatasetFetchError, match="offset did not advance"):
+            datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+    def test_first_page_success_false_raises(self, monkeypatch):
+        """First page ``success: false`` is an error, not an empty dataset."""
+        datagov = _get_datagov_module()
+        self._install(
+            monkeypatch,
+            datagov,
+            [
+                self._ok(
+                    {
+                        "success": False,
+                        "error": {"code": "NOT_FOUND", "message": "resource not found"},
+                    }
+                )
+            ],
+        )
+
+        with pytest.raises(DatasetFetchError, match="success=false"):
+            datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+    def test_first_page_without_result_raises(self, monkeypatch):
+        """A first page with no ``result`` object is a malformed response."""
+        datagov = _get_datagov_module()
+        self._install(monkeypatch, datagov, [self._ok({"success": True})])
+
+        with pytest.raises(DatasetFetchError, match="missing 'result'"):
+            datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+    def test_first_page_without_records_and_zero_total_is_empty(self, monkeypatch):
+        """Deliberate empty-dataset shape: no records AND no rows advertised."""
+        datagov = _get_datagov_module()
+        self._install(monkeypatch, datagov, [self._ok(self._page(total=0))])
+
+        result = datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+        assert isinstance(result, pd.DataFrame)
+        assert result.empty
+
+    def test_first_page_without_records_but_advertised_rows_raises(self, monkeypatch):
+        """No records while rows are advertised is malformed, not empty."""
+        datagov = _get_datagov_module()
+        self._install(monkeypatch, datagov, [self._ok(self._page(total=4))])
+
+        with pytest.raises(datagov.IncompleteDatasetFetchError) as excinfo:
+            datagov.fetch_datagovsg_dataset(self.PREFIX, self.DATASET_ID, use_cache=False)
+
+        assert "fetched 0" in str(excinfo.value)
+        assert "advertised 4" in str(excinfo.value)

@@ -45,6 +45,58 @@ _DEFAULT_PAGE_SIZE = 2000
 _MIN_PAGE_SIZE = 250
 
 
+_OFFSET_PATTERN = re.compile(r"[?&]offset=(\d+)")
+
+
+def _parse_offset(request_url: str) -> int | None:
+    """Page offset carried by a datastore_search URL, or ``None`` when absent."""
+    match = _OFFSET_PATTERN.search(request_url)
+    return int(match.group(1)) if match else None
+
+
+def _validate_page_envelope(payload: object, dataset_id: str, request_url: str) -> dict:
+    """Validate one ``datastore_search`` page envelope and return its ``result``.
+
+    data.gov.sg reports a rejected request with HTTP 200 and a body like
+    ``{"success": false, "error": {"code": ..., "message": ...}}``; a page
+    can also arrive without a ``result`` object at all. Both are malformed
+    responses for the dataset — never an empty dataset — so they raise at any
+    offset instead of silently ending pagination with the rows accumulated so
+    far (which would publish a partial dataset as complete).
+
+    Args:
+        payload: Decoded JSON body of the page response.
+        dataset_id: Dataset/resource id, for the error message.
+        request_url: URL of the page that produced ``payload``.
+
+    Returns:
+        The ``result`` mapping of a well-formed page.
+
+    Raises:
+        DatasetFetchError: The body is not a JSON object, reports
+            ``success: false``, or has no ``result`` object.
+    """
+    if not isinstance(payload, dict):
+        raise DatasetFetchError(
+            f"Malformed data.gov.sg response for {dataset_id}: expected a JSON object, "
+            f"got {type(payload).__name__} (url={request_url})"
+        )
+    success = payload.get("success")
+    if success is not None and not success:
+        raise DatasetFetchError(
+            f"data.gov.sg returned success=false for {dataset_id} "
+            f"({payload.get('error') or payload.get('message') or 'no error detail'}; "
+            f"url={request_url})"
+        )
+    result = payload.get("result")
+    if not isinstance(result, dict):
+        raise DatasetFetchError(
+            f"Malformed data.gov.sg response for {dataset_id}: missing 'result' object "
+            f"(url={request_url})"
+        )
+    return result
+
+
 def resource_url(resource_id: str) -> str:
     """Canonical datastore_search request URL for one dataset/resource id.
 
@@ -169,7 +221,17 @@ def fetch_datagovsg_dataset(
         use_cache: Whether to use caching (default: True)
 
     Returns:
-        DataFrame with fetched data, or empty DataFrame if no data
+        DataFrame with fetched data, or empty DataFrame if the source advertises
+        an empty dataset (first page with no ``result.records`` and no rows
+        claimed). Incomplete or malformed responses raise instead of returning
+        rows, so a partial fetch can never be cached as complete bronze.
+
+    Raises:
+        IncompleteDatasetFetchError: A later page is malformed, pagination does
+            not progress, or fewer rows were fetched than the source's
+            advertised ``total``.
+        DatasetFetchError: The first page is a malformed envelope
+            (``success: false``, or no ``result`` object) or the request fails.
 
     Example:
         >>> df = fetch_datagovsg_dataset(
@@ -192,9 +254,10 @@ def fetch_datagovsg_dataset(
         time.sleep(sleep_seconds)
 
     def _fetch_from_api():
-        response_agg = []
+        response_agg: list[pd.DataFrame] = []
         offset_value = 0
-        total_records = 0
+        total_records: int | None = None
+        fetched_rows = 0
         page_size = _DEFAULT_PAGE_SIZE
         # Accept either resource_url(dataset_id) or the legacy
         # "...?resource_id=" prefix; the id is joined exactly once.
@@ -203,14 +266,22 @@ def fetch_datagovsg_dataset(
         if "datastore_search" in request_url and "limit=" not in request_url:
             request_url = f"{request_url}&limit={page_size}"
         retry_attempts = 0
+        # Every page URL already served; a next link pointing back at one of
+        # them is non-progressing pagination and must fail, not loop.
+        seen_urls: set[str] = set()
 
         def _shrink_page_size() -> str:
-            cur_offset = 0
-            match = re.search(r"offset=(\d+)", request_url)
-            if match:
-                cur_offset = int(match.group(1))
+            cur_offset = _parse_offset(request_url) or 0
             sep = "&" if "?" in base_url else "?"
             return f"{base_url}{sep}limit={page_size}&offset={cur_offset}"
+
+        def _incomplete(reason: str, offending_url: str) -> IncompleteDatasetFetchError:
+            """Completeness error naming dataset id, advertised/fetched counts and URL."""
+            advertised = f"{total_records:,}" if total_records is not None else "unknown"
+            return IncompleteDatasetFetchError(
+                f"Incomplete paginated fetch for {dataset_id}: fetched {fetched_rows:,} of "
+                f"advertised {advertised} rows ({reason}; url={offending_url})"
+            )
 
         while True:
             try:
@@ -219,31 +290,66 @@ def fetch_datagovsg_dataset(
                 response_text = response.json()
                 retry_attempts = 0
 
-                if "result" not in response_text or "records" not in response_text["result"]:
+                result = _validate_page_envelope(response_text, dataset_id, request_url)
+
+                page_total = result.get("total")
+                if isinstance(page_total, int) and not isinstance(page_total, bool):
+                    total_records = page_total
+                elif isinstance(page_total, str) and page_total.isdigit():
+                    total_records = int(page_total)
+
+                records = result.get("records")
+                if records is None:
+                    # Two shapes share "no records": an empty dataset (first
+                    # page advertising an empty/absent total) and a malformed
+                    # page (any later page, or a first page that still claims
+                    # rows). The second must never masquerade as the first.
+                    if response_agg or (total_records or 0) > 0:
+                        raise _incomplete("page response has no result.records", request_url)
                     logger.warning(
-                        "No records found in dataset %s (url=%s)", dataset_id, request_url
+                        "Dataset %s advertises no records — empty dataset (url=%s)",
+                        dataset_id,
+                        request_url,
                     )
                     break
+                if not isinstance(records, list):
+                    raise DatasetFetchError(
+                        f"Malformed data.gov.sg response for {dataset_id}: "
+                        f"result.records is not a list (url={request_url})"
+                    )
 
-                records = response_text["result"]["records"]
+                seen_urls.add(request_url)
                 response_agg.append(pd.DataFrame(records))
+                fetched_rows += len(records)
 
-                if "next" not in response_text["result"].get("_links", {}):
+                links = result.get("_links")
+                next_url = links.get("next") if isinstance(links, dict) else None
+                if not next_url or not isinstance(next_url, str):
                     break
 
-                next_url = response_text["result"]["_links"]["next"]
-                if next_url.startswith("http"):
-                    request_url = next_url
-                else:
-                    request_url = "https://data.gov.sg" + next_url
+                next_request = (
+                    next_url if next_url.startswith("http") else "https://data.gov.sg" + next_url
+                )
 
-                match = re.search(r"offset=(\d+)", request_url)
-                if match:
-                    offset_value = int(match.group(1))
-                    total_records = response_text["result"]["total"]
+                # Non-progressing pagination fails loudly instead of looping or
+                # silently truncating the dataset.
+                if next_request in seen_urls:
+                    raise _incomplete(
+                        "pagination repeated an already-fetched page URL", next_request
+                    )
 
-                    if offset_value > total_records:
+                next_offset = _parse_offset(next_request)
+                served_offset = _parse_offset(request_url)
+                if next_offset is not None:
+                    offset_value = next_offset
+                    if served_offset is not None and next_offset <= served_offset:
+                        raise _incomplete(
+                            f"pagination offset did not advance ({served_offset} -> {next_offset})",
+                            next_request,
+                        )
+                    if total_records is not None and next_offset > total_records:
                         break
+                request_url = next_request
 
             except requests.HTTPError as e:
                 status = e.response.status_code if e.response is not None else None
@@ -264,9 +370,12 @@ def fetch_datagovsg_dataset(
                     if e.response is not None:
                         # Retry-After may be delta-seconds or an HTTP-date (RFC 7231);
                         # unparseable/missing headers fall back to exponential backoff.
-                        retry_after = parse_retry_after(
+                        parsed_retry_after = parse_retry_after(
                             e.response.headers.get("Retry-After"), default=0.0
                         )
+                        # ``parse_retry_after`` returns ``None`` only when no default is
+                        # given; keep the type narrow for the comparison below.
+                        retry_after = 0.0 if parsed_retry_after is None else parsed_retry_after
                     retry_attempts += 1
                     # Cap at the shared MAX_RETRY_AFTER_WAIT so a hostile
                     # gateway cannot stall the run.
@@ -332,6 +441,15 @@ def fetch_datagovsg_dataset(
         if not response_agg:
             logger.warning("No data fetched for dataset %s", dataset_id)
             return pd.DataFrame()
+
+        # Terminal reconciliation: the only place a "successful" pagination is
+        # checked against the source's advertised total. Without this, a page
+        # that ends pagination early (missing next link, truncated page) return
+        # rows silently and gets cached as a complete bronze dataset.
+        if total_records is not None and fetched_rows < total_records:
+            raise _incomplete(
+                "pagination ended before the advertised total was fetched", request_url
+            )
 
         return pd.concat(response_agg, ignore_index=True)
 

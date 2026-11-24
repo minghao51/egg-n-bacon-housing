@@ -23,8 +23,9 @@ _SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "40_refresh_rolli
 def _load_script():
     """Load 40_refresh_rolling.py as a module (scripts/ is not a package)."""
     spec = importlib.util.spec_from_file_location("refresh_rolling", _SCRIPT)
-    mod = importlib.util.module_from_spec(spec)
+    assert spec is not None
     assert spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
 
@@ -97,6 +98,20 @@ def _make_bronze_tree(
     return settings, bronze_dir
 
 
+def _populate_all_rolling(bronze_dir: Path, *, age_days: int = 1) -> None:
+    """Give every rolling source a parquet and a manifest entry ``age_days`` old."""
+    manifest_path = bronze_dir / MANIFEST_FILENAME
+    manifest = _read_manifest(bronze_dir) if manifest_path.exists() else {}
+    for name in STALE_WARN_DAYS:
+        (bronze_dir / f"{name}.parquet").touch()
+        manifest[name] = {
+            "fetched_at": _fetched_at(age_days),
+            "source": "test",
+            "rows": 1,
+        }
+    _write_manifest(bronze_dir, manifest)
+
+
 # ---------------------------------------------------------------------------
 # Pattern derivation (single-sourced from STALE_WARN_DAYS)
 # ---------------------------------------------------------------------------
@@ -119,6 +134,48 @@ class TestRollingPatterns:
 
         assert script.stale_names(bronze_dir) == ["raw_condo_transactions"]
         assert settings.data_dir.exists()  # sanity: tmp tree in place
+
+
+class TestPendingSelection:
+    """The rerun criterion: stale *or* parquet missing (never "what got deleted")."""
+
+    def test_fresh_and_present_is_not_pending(self, script, tmp_path):
+        _settings, bronze_dir = _make_bronze_tree(tmp_path, condo_age_days=1, resale_age_days=1)
+        _populate_all_rolling(bronze_dir)
+
+        assert script.stale_names(bronze_dir) == []
+        assert script.missing_parquet_names(bronze_dir) == []
+        assert script.pending_names(bronze_dir) == []
+
+    def test_stale_only_is_pending(self, script, tmp_path):
+        _settings, bronze_dir = _make_bronze_tree(tmp_path, condo_age_days=1, resale_age_days=1)
+        _populate_all_rolling(bronze_dir)
+        manifest = _read_manifest(bronze_dir)
+        manifest["raw_condo_transactions"]["fetched_at"] = _fetched_at(40)
+        _write_manifest(bronze_dir, manifest)
+
+        assert script.missing_parquet_names(bronze_dir) == []
+        assert script.stale_names(bronze_dir) == ["raw_condo_transactions"]
+        assert script.pending_names(bronze_dir) == ["raw_condo_transactions"]
+
+    def test_missing_parquet_is_pending_even_with_a_fresh_manifest(self, script, tmp_path):
+        """Parquet cleared by --all/partial run: staleness alone would not select it."""
+        _settings, bronze_dir = _make_bronze_tree(tmp_path, condo_age_days=1, resale_age_days=1)
+        _populate_all_rolling(bronze_dir)
+        (bronze_dir / "raw_condo_transactions.parquet").unlink()
+
+        assert script.stale_names(bronze_dir) == []
+        assert script.missing_parquet_names(bronze_dir) == ["raw_condo_transactions"]
+        assert script.pending_names(bronze_dir) == ["raw_condo_transactions"]
+
+    def test_never_fetched_sources_are_not_pending(self, script, tmp_path):
+        """A never-fetched dataset is an empty install, not a lost dataset."""
+        settings = Settings(data_path=str(tmp_path))
+        bronze_dir = settings.bronze_dir
+        bronze_dir.mkdir(parents=True, exist_ok=True)
+
+        assert script.missing_parquet_names(bronze_dir) == []
+        assert script.pending_names(bronze_dir) == []
 
 
 # ---------------------------------------------------------------------------
@@ -231,6 +288,73 @@ class TestStaleOnly:
         assert calls == []  # idempotent no-op: no refresh, no rerun
         assert (bronze_dir / "raw_condo_transactions.parquet").exists()
         assert (settings.data_dir / "cache" / "hamilton" / "cache.db").exists()
+
+    def test_genuine_no_op_exits_zero_without_pipeline(self, script, tmp_path, monkeypatch, capsys):
+        """Fresh + present everything: scheduled target stays a silent no-op."""
+        settings, bronze_dir = _make_bronze_tree(tmp_path, condo_age_days=1, resale_age_days=1)
+        calls: list[str] = []
+        monkeypatch.setattr(script, "run_pipeline", lambda s, stage: calls.append(stage))
+
+        rc = script.main(["--stale-only", "--run"], settings=settings)
+
+        assert rc == 0
+        assert calls == []
+        assert script.pending_names(bronze_dir) == []
+        assert "idempotent no-op" in capsys.readouterr().out
+        assert (bronze_dir / "raw_condo_transactions.parquet").exists()
+        assert (bronze_dir / "raw_hdb_resale.parquet").exists()
+
+    def test_missing_parquet_reruns_pipeline_even_when_nothing_is_stale(
+        self, script, tmp_path, monkeypatch
+    ):
+        """The dataset is gone but its manifest is fresh: staleness alone selects nothing."""
+        settings, bronze_dir = _make_bronze_tree(tmp_path, condo_age_days=1, resale_age_days=1)
+        (bronze_dir / "raw_condo_transactions.parquet").unlink()
+        calls: list[str] = []
+        monkeypatch.setattr(script, "run_pipeline", lambda s, stage: calls.append(stage))
+
+        rc = script.main(["--stale-only", "--run"], settings=settings)
+
+        assert rc == 0
+        assert script.stale_names(bronze_dir) == []
+        assert calls == ["all"]
+
+    def test_failed_fetch_is_retried_by_the_next_identical_run(self, script, tmp_path, monkeypatch):
+        """CORE-5: a deleted-but-unfetched dataset must not become a permanent no-op."""
+        settings, bronze_dir = _make_bronze_tree(tmp_path, condo_age_days=40, resale_age_days=1)
+        condo = bronze_dir / "raw_condo_transactions.parquet"
+        calls: list[str] = []
+
+        def failing_pipeline(_settings, stage):
+            calls.append("failed")
+            raise RuntimeError("URA fetch failed after the parquet was invalidated")
+
+        monkeypatch.setattr(script, "run_pipeline", failing_pipeline)
+        assert script.main(["--stale-only", "--run"], settings=settings) == 1
+
+        assert len(calls) == 1
+        assert not condo.exists()  # deleted by the refresh, never rewritten
+        assert script.stale_names(bronze_dir) == ["raw_condo_transactions"]
+
+        def succeeding_pipeline(_settings, stage):
+            calls.append("ok")
+            # A real pipeline run refetches bronze: parquet + fresh manifest entry.
+            condo.touch()
+            manifest = _read_manifest(bronze_dir)
+            manifest["raw_condo_transactions"] = {
+                "fetched_at": _fetched_at(0),
+                "source": "ura_api+manual_csv",
+                "rows": 11,
+            }
+            _write_manifest(bronze_dir, manifest)
+
+        monkeypatch.setattr(script, "run_pipeline", succeeding_pipeline)
+        assert script.main(["--stale-only", "--run"], settings=settings) == 0
+
+        assert len(calls) == 2  # second identical invocation reran the pipeline
+        assert script.stale_names(bronze_dir) == []
+        assert script.pending_names(bronze_dir) == []
+        assert condo.exists()
 
 
 # ---------------------------------------------------------------------------
