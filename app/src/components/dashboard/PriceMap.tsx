@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MAP_TILES_ATTRIBUTION, MAP_TILES_URL } from "@/config/map-tiles";
 import { decompressGzip } from "@/utils/gzip";
 import {
   EMPTY_MAP_SELECTION,
   MAP_LAYER_IDS,
+  MAP_METRICS,
   MAP_SELECTION_KEYS,
   isSameMapSelection,
   parseMapSelection,
@@ -16,6 +18,7 @@ import "leaflet/dist/leaflet.css";
 // the observed transaction metric remains the map's single fill.
 import ArchiveLayerControl from "./map/ArchiveLayerControl";
 import ArchiveInspector from "./map/ArchiveInspector";
+import { MAP_METRIC_LABELS, buildMapHandoff } from "./map/lib/handoff";
 import {
   archiveLayerStatuses,
   inspectArchiveArea,
@@ -82,6 +85,49 @@ const MAP_PRESETS = [
     ] as LayerId[],
   },
 ];
+
+/**
+ * Escape text interpolated into a Leaflet tooltip's HTML string.
+ *
+ * Leaflet renders `bindTooltip(content)` as HTML, so a feature name or a stored
+ * label containing `<` or `&` would be parsed as markup. Every input here is a
+ * static published asset, so this is defence in depth rather than a live XSS
+ * fix — but the tooltip is a string template, which is exactly the place where
+ * one careless future addition becomes an injection point.
+ */
+const HTML_ESCAPES: Readonly<Record<string, string>> = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+};
+
+function escapeHtml(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  return String(value).replace(/[&<>"']/g, (character) => HTML_ESCAPES[character]);
+}
+
+/**
+ * Planning-area names present in the map's own GeoJSON, uppercased and sorted.
+ *
+ * These are the features a reader can actually select, so the keyboard control
+ * offers exactly the polygon set the pointer path offers.
+ */
+function planningAreaNames(
+  geoJsonData: GeoJSONFeatureCollection | null,
+): string[] {
+  const names = new Set<string>();
+
+  for (const feature of geoJsonData?.features ?? []) {
+    const rawName =
+      feature.properties?.pln_area_n ?? feature.properties?.PLN_AREA_N;
+    const name = rawName ? String(rawName).trim().toUpperCase() : "";
+    if (name.length > 0) names.add(name);
+  }
+
+  return [...names].sort((a, b) => a.localeCompare(b));
+}
 
 /** Read the incoming map selection once, before the first render commit. */
 function readMapSelectionFromUrl(): MapSelection {
@@ -310,12 +356,6 @@ export default function PriceMap({
   };
 
   const values = getValues();
-  // Filter out zero values for better geometric color scale if needed
-  // For growth (yoy_change_pct), values can be negative, so we adjust filter logic
-  const validValues = values.filter(
-    (v) => v !== 0 && v !== undefined && !isNaN(v),
-  );
-  const min = validValues.length > 0 ? Math.min(...validValues) : 0;
   const max = Math.max(...values);
 
   const hasObservedValue = (val: unknown): val is number =>
@@ -330,10 +370,8 @@ export default function PriceMap({
   const getColor = (val: number | undefined) => {
     if (!hasObservedValue(val)) return "#cccccc";
 
-    // Simple normalization for now
-    const normalized = (val - min) / (max - min);
-
-    // Custom buckets based on distribution
+    // Custom buckets based on distribution: each threshold is a fraction of
+    // the observed maximum, so no minimum/normalisation term is needed.
     // High-end areas shouldn't drown out the differences in the mid-range
     return val > max * 0.9
       ? "#800026"
@@ -379,7 +417,8 @@ export default function PriceMap({
     const name = rawName ? String(rawName).toUpperCase() : "Unknown Area";
     const data = currentMetrics[name];
 
-    // Format label for metric selector
+    // Short labels for the tooltip's rank line. The metric selector's longer
+    // names live in `MAP_METRIC_LABELS` (shared with the handoff note).
     const metricLabels: Record<string, string> = {
       median_price: "Price",
       median_psf: "PSF",
@@ -395,30 +434,33 @@ export default function PriceMap({
         (data.yoy_change_pct || 0) >= 0 ? "text-green-600" : "text-red-600";
       const momentumSignal = data.momentum_signal || "N/A";
 
+      // Every interpolated value is escaped: Leaflet renders the tooltip as
+      // HTML, so a stored label containing markup characters would otherwise
+      // be parsed as markup rather than shown.
       const content = `
         <div class="text-sm min-w-[200px]">
           <div class="font-bold border-b pb-1 mb-2 text-base flex justify-between">
-            <span>${name}</span>
-            <span class="text-xs font-normal text-muted-foreground self-center">${data.affordability_class || ""}</span>
+            <span>${escapeHtml(name)}</span>
+            <span class="text-xs font-normal text-muted-foreground self-center">${escapeHtml(data.affordability_class)}</span>
           </div>
           <div class="grid grid-cols-2 gap-x-4 gap-y-1">
             <span class="text-muted-foreground">Price:</span>
-            <span class="font-medium text-right">${formatTooltipValue(data.median_price, "sgd")}</span>
+            <span class="font-medium text-right">${escapeHtml(formatTooltipValue(data.median_price, "sgd"))}</span>
 
             <span class="text-muted-foreground">PSF:</span>
-            <span class="font-medium text-right">${formatTooltipValue(data.median_psf, "sgd")}</span>
+            <span class="font-medium text-right">${escapeHtml(formatTooltipValue(data.median_psf, "sgd"))}</span>
 
             <span class="text-muted-foreground">Volume:</span>
-            <span class="font-medium text-right">${formatTooltipValue(data.volume, "count")}</span>
+            <span class="font-medium text-right">${escapeHtml(formatTooltipValue(data.volume, "count"))}</span>
 
             <span class="text-muted-foreground">Rental Yield:</span>
-            <span class="font-medium text-right">${formatTooltipValue(data.rental_yield_median, "pct")}</span>
+            <span class="font-medium text-right">${escapeHtml(formatTooltipValue(data.rental_yield_median, "pct"))}</span>
 
             <span class="text-muted-foreground">YoY Growth:</span>
-            <span class="font-medium text-right ${growthColor}">${formatTooltipValue(data.yoy_change_pct, "pct")}</span>
+            <span class="font-medium text-right ${growthColor}">${escapeHtml(formatTooltipValue(data.yoy_change_pct, "pct"))}</span>
 
             <span class="text-muted-foreground">Affordability:</span>
-            <span class="font-medium text-right">${formatTooltipValue(data.affordability_ratio, "ratio")}</span>
+            <span class="font-medium text-right">${escapeHtml(formatTooltipValue(data.affordability_ratio, "ratio"))}</span>
           </div>
 
           ${
@@ -427,7 +469,7 @@ export default function PriceMap({
           <div class="mt-2 text-xs bg-muted/50 p-1 rounded flex justify-between items-center">
              <span>Momentum:</span>
              <span class="font-semibold ${momentumSignal === "Bullish" ? "text-green-600" : momentumSignal === "Bearish" ? "text-red-600" : "text-yellow-600"}">
-               ${momentumSignal}
+               ${escapeHtml(momentumSignal)}
              </span>
           </div>
           `
@@ -435,7 +477,7 @@ export default function PriceMap({
           }
 
           <div class="mt-2 pt-2 border-t text-xs text-muted-foreground text-center">
-             ${metricLabel} Rank: ${getColor(data[metric]) === "#800026" ? "Top Tier" : "Standard"}
+             ${escapeHtml(metricLabel)} Rank: ${getColor(data[metric]) === "#800026" ? "Top Tier" : "Standard"}
           </div>
         </div>
       `;
@@ -454,7 +496,7 @@ export default function PriceMap({
         bindTooltip: (content: string, options: unknown) => void;
       };
       leafletLayer.bindTooltip(
-        `<div class="font-bold">${name}</div><div class="text-xs text-muted-foreground">No transaction data available</div>`,
+        `<div class="font-bold">${escapeHtml(name)}</div><div class="text-xs text-muted-foreground">No transaction data available</div>`,
         { sticky: true },
       );
     }
@@ -557,6 +599,17 @@ export default function PriceMap({
         }
       : null;
 
+  const planningAreas = planningAreaNames(geoJsonData);
+
+  // The handoff is derived from the same state the map renders, so the link can
+  // never describe a different scope than the polygons beside it.
+  const handoff = buildMapHandoff({
+    area: selectedArea,
+    metric,
+    timeBasis: temporalFilter,
+    propertyType: propertyTypeFilter,
+  });
+
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border border-border bg-card p-4">
@@ -585,29 +638,67 @@ export default function PriceMap({
       </div>
 
       <div className="flex flex-wrap gap-4 justify-between items-center bg-card p-4 rounded-lg border border-border">
-        {/* Metric Selector */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">
-            Metric:
-          </span>
-          <select
-            value={metric}
-            onChange={(e) => setMetric(e.target.value as MetricType)}
-            className="p-2 border border-border rounded bg-background text-foreground text-sm focus:ring-2 focus:ring-primary"
-          >
-            <option value="median_price">Median Price</option>
-            <option value="median_psf">Median PSF</option>
-            <option value="volume">Volume</option>
-            <option value="rental_yield_median">Rental Yield</option>
-            <option value="yoy_change_pct">YoY Growth</option>
-            <option value="affordability_ratio">Affordability Ratio</option>
-          </select>
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Metric Selector */}
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="map-metric-select"
+              className="text-sm font-medium text-muted-foreground"
+            >
+              Metric
+            </label>
+            <select
+              id="map-metric-select"
+              value={metric}
+              onChange={(e) => setMetric(e.target.value as MetricType)}
+              className="p-2 border border-border rounded bg-background text-foreground text-sm focus:ring-2 focus:ring-primary"
+            >
+              {MAP_METRICS.map((metricKey) => (
+                <option key={metricKey} value={metricKey}>
+                  {MAP_METRIC_LABELS[metricKey]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Area selector — the keyboard path to the same selection the map's
+              polygon click sets. A native <select> gets arrow keys, type-ahead
+              and an accessible name from the real <label> for free. It follows
+              the metric control so the metric select stays the first select in
+              the filter bar, which existing deep-link tests assert on. */}
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="map-area-select"
+              className="text-sm font-medium text-muted-foreground"
+            >
+              Area
+            </label>
+            <select
+              id="map-area-select"
+              value={selectedArea ?? ""}
+              onChange={(e) =>
+                setSelectedArea(e.target.value === "" ? null : e.target.value)
+              }
+              className="max-w-[16rem] p-2 border border-border rounded bg-background text-foreground text-sm focus:ring-2 focus:ring-primary"
+            >
+              <option value="">No area selected</option>
+              {planningAreas.map((areaName) => (
+                <option key={areaName} value={areaName}>
+                  {areaName}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Temporal & Property Type Filters */}
         <div className="flex flex-wrap gap-2">
           {/* Temporal Filter */}
-          <div className="flex items-center gap-2">
+          <div
+            role="group"
+            aria-label="Period"
+            className="flex items-center gap-2"
+          >
             <span className="text-sm font-medium text-muted-foreground">
               Period:
             </span>
@@ -616,6 +707,8 @@ export default function PriceMap({
                 (key) => (
                   <button
                     key={key}
+                    type="button"
+                    aria-pressed={temporalFilter === key}
                     onClick={() => setTemporalFilter(key)}
                     className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all whitespace-nowrap ${
                       temporalFilter === key
@@ -639,7 +732,11 @@ export default function PriceMap({
           </div>
 
           {/* Property Type Filter */}
-          <div className="flex items-center gap-2">
+          <div
+            role="group"
+            aria-label="Type"
+            className="flex items-center gap-2"
+          >
             <span className="text-sm font-medium text-muted-foreground">
               Type:
             </span>
@@ -647,6 +744,8 @@ export default function PriceMap({
               {(["all", "hdb", "ec", "condo"] as const).map((key) => (
                 <button
                   key={key}
+                  type="button"
+                  aria-pressed={propertyTypeFilter === key}
                   onClick={() => setPropertyTypeFilter(key)}
                   className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all whitespace-nowrap ${
                     propertyTypeFilter === key
@@ -678,8 +777,8 @@ export default function PriceMap({
             zoomControl={false}
           >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              attribution={MAP_TILES_ATTRIBUTION}
+              url={MAP_TILES_URL}
             />
             <GeoJSON
               key={`${dataKey}-${metric}`} // Force re-render when data changes
@@ -729,8 +828,9 @@ export default function PriceMap({
             Area Inspector
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Click a planning area to lock the highlight and hand it off to the
-            ranking or segment pages.
+            Choose a planning area to lock the highlight and hand it off to
+            the ranking or segment pages. Use the Area list or click a
+            polygon; both set the same selection.
           </p>
 
           {selectedAreaSummary ? (
@@ -744,41 +844,54 @@ export default function PriceMap({
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <InspectorItem
-                  label="Current Metric"
-                  value={formatInspectorValue(
-                    selectedAreaSummary.metricValue,
-                    metric,
-                  )}
-                />
-                <InspectorItem
-                  label="Rank"
-                  value={selectedAreaRank > 0 ? `#${selectedAreaRank}` : "N/A"}
-                />
-                <InspectorItem
-                  label="YoY Growth"
-                  value={`${selectedAreaSummary.growth?.toFixed(1) ?? "—"}%`}
-                />
-                <InspectorItem
-                  label="Volume"
-                  value={selectedAreaSummary.volume?.toLocaleString() ?? "—"}
-                />
-                <InspectorItem
-                  label="Momentum"
-                  value={selectedAreaSummary.momentumSignal}
-                />
-                <InspectorItem
-                  label="Affordability"
-                  value={selectedAreaSummary.affordabilityClass}
-                />
+                <dl className="col-span-2 grid grid-cols-2 gap-3">
+                  <InspectorItem
+                    label="Current Metric"
+                    value={formatInspectorValue(
+                      selectedAreaSummary.metricValue,
+                      metric,
+                    )}
+                  />
+                  <InspectorItem
+                    label="Rank"
+                    value={selectedAreaRank > 0 ? `#${selectedAreaRank}` : "N/A"}
+                  />
+                  <InspectorItem
+                    label="YoY Growth"
+                    value={`${selectedAreaSummary.growth?.toFixed(1) ?? "—"}%`}
+                  />
+                  <InspectorItem
+                    label="Volume"
+                    value={selectedAreaSummary.volume?.toLocaleString() ?? "—"}
+                  />
+                  <InspectorItem
+                    label="Momentum"
+                    value={selectedAreaSummary.momentumSignal}
+                  />
+                  <InspectorItem
+                    label="Affordability"
+                    value={selectedAreaSummary.affordabilityClass}
+                  />
+                </dl>
               </div>
               <div className="grid gap-2">
                 <a
-                  href={`${baseUrl}explore?area=${encodeURIComponent(selectedArea ?? "")}&metric=${encodeURIComponent(metric)}`}
+                  href={`${baseUrl}${handoff.path}`}
+                  aria-describedby={
+                    handoff.note === null ? undefined : "handoff-metric-note"
+                  }
                   className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
                 >
                   Open observed comparison
                 </a>
+                {handoff.note === null ? null : (
+                  <p
+                    id="handoff-metric-note"
+                    className="text-xs text-muted-foreground"
+                  >
+                    {handoff.note}
+                  </p>
+                )}
                 <a
                   href={`${baseUrl}research/segments?area=${encodeURIComponent(selectedArea ?? "")}`}
                   className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
@@ -789,8 +902,8 @@ export default function PriceMap({
             </div>
           ) : (
             <div className="mt-4 rounded-2xl bg-muted/20 p-4 text-sm text-muted-foreground">
-              No area selected yet. Start with a preset, then click an area on
-              the map.
+              No area selected yet. Start with a preset, then choose an area
+              from the Area list or click a polygon on the map.
             </div>
           )}
         </aside>
@@ -839,13 +952,21 @@ function formatInspectorValue(
   return `${value.toFixed(1)}%`;
 }
 
+/**
+ * One inspector value.
+ *
+ * Rendered as a `<dt>`/`<dd>` pair inside the surrounding `<dl>` so the label
+ * and the value are one programmatically associated pair — not two adjacent
+ * `<div>`s that only look associated. Previous sibling text is not a label, so
+ * anything reading the DOM gets the pairing for free.
+ */
 function InspectorItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-muted/30 p-3">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">
+      <dt className="text-xs uppercase tracking-wide text-muted-foreground">
         {label}
-      </div>
-      <div className="mt-1 font-medium text-foreground">{value}</div>
+      </dt>
+      <dd className="mt-1 font-medium text-foreground">{value}</dd>
     </div>
   );
 }

@@ -12,6 +12,16 @@
  * - A blank, non-finite or out-of-range input withholds **every** output and
  *   names the field, rather than substituting a default or a zero.
  * - The zero-interest branch is `principal / months`, not a division by zero.
+ * - A 100% down payment is a **valid cash purchase**, not a validation
+ *   failure: the principal is 0 and the monthly payment is 0 at every rate.
+ *   `price` is never blamed for a principal that is legitimately zero.
+ * - The payment is evaluated as `P × r / −expm1(−n × log1p(r))`, the
+ *   cancellation-free form of `P × r / (1 − (1 + r)^−n)`, so an arbitrarily
+ *   small positive rate still yields a finite payment approaching `P / n`.
+ * - A derived value that is not finite (reachable only by overflowing the
+ *   double range) fails closed and names the input whose magnitude drives it:
+ *   `price` for the loan figures, `annualIncome` for the ratios, `termYears`
+ *   for the term.
  */
 
 export interface FinancingInputs {
@@ -70,10 +80,13 @@ function isFiniteNumber(value: number | null): value is number {
 
 /**
  * Standard amortizing payment:
- * `P × r / (1 − (1 + r)^−n)` with `r = annualRate/12` and `n = years × 12`.
- * At `r = 0` the payment is `P / n`.
+ * `P × r / (1 − (1 + r)^−n)` with `r = annualRate/12` and `n = years × 12`,
+ * evaluated as `P × r / −expm1(−n × log1p(r))`. At `r = 0` the payment is
+ * `P / n`.
  *
  * Returns `null` for a non-positive principal/term or a negative rate.
+ * A non-positive principal is not a payment failure at the scenario level —
+ * `computeFinancingScenario` treats a 100% down payment as a cash purchase.
  */
 export function monthlyPayment(
   principal: number,
@@ -93,13 +106,16 @@ export function monthlyPayment(
   if (monthlyRate === 0) {
     return principal / months;
   }
-  return (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
+  // `-expm1(-n·log1p(r))` is `1 − (1 + r)^−n` without catastrophic
+  // cancellation: once `1 + r` rounds to 1 the naive form divides by zero and
+  // reports `Infinity` for a perfectly ordinary payment.
+  return (
+    (principal * monthlyRate) / -Math.expm1(-months * Math.log1p(monthlyRate))
+  );
 }
 
-/** Validate every field and, only when all are valid, compute the scenario. */
-export function computeFinancingScenario(
-  inputs: FinancingInputs,
-): FinancingResult {
+/** Every field whose value is blank, non-finite or outside its UI bound. */
+function collectInvalidFields(inputs: FinancingInputs): FinancingField[] {
   const invalidFields: FinancingField[] = [];
   const {
     price,
@@ -140,9 +156,25 @@ export function computeFinancingScenario(
     invalidFields.push("annualRatePercent");
   }
 
+  return invalidFields;
+}
+
+/** Validate every field and, only when all are valid, compute the scenario. */
+export function computeFinancingScenario(
+  inputs: FinancingInputs,
+): FinancingResult {
+  const invalidFields = collectInvalidFields(inputs);
   if (invalidFields.length > 0) {
     return { ok: false, invalidFields };
   }
+
+  const {
+    price,
+    annualIncome,
+    downPaymentPercent,
+    termYears,
+    annualRatePercent,
+  } = inputs;
 
   // Every field is a finite number beyond this point; the assertions keep the
   // arithmetic readable for the compiler without changing behaviour.
@@ -153,20 +185,55 @@ export function computeFinancingScenario(
   const validRate = annualRatePercent as number;
 
   const downPaymentAmount = (validPrice * validDown) / 100;
-  const principal = validPrice - downPaymentAmount;
+  // `downPaymentPercent` is bounded at 100, so the principal cannot be
+  // negative; clamping only removes the float residue of `price × 100 / 100`
+  // so that a 100% down payment is exactly a cash purchase, not a loan of
+  // −1e−17.
+  const principal = Math.max(0, validPrice - downPaymentAmount);
   const monthlyIncome = validIncome / 12;
   const totalMonths = validYears * 12;
 
-  const payment = monthlyPayment(principal, validRate, validYears);
-  if (payment === null) {
-    // Unreachable with the bounds above; fail closed rather than render 0.
+  // A cash purchase has no loan, so its payment is 0 at every rate. This is a
+  // valid scenario, not a validation failure: the price was valid all along.
+  const paymentFor = (ratePercent: number): number | null =>
+    principal === 0 ? 0 : monthlyPayment(principal, ratePercent, validYears);
+
+  const payment = paymentFor(validRate);
+  const sensitivity = SENSITIVITY_RATES.map((ratePercent) => ({
+    ratePercent,
+    monthlyPayment: paymentFor(ratePercent),
+  }));
+
+  // Defence in depth. The bounds above keep these finite for every realistic
+  // input; a magnitude that overflows the double range fails closed with the
+  // input whose magnitude drives the offending value named, rather than
+  // rendering `Infinity` or `NaN`.
+  if (
+    !Number.isFinite(downPaymentAmount) ||
+    !Number.isFinite(principal) ||
+    payment === null ||
+    !Number.isFinite(payment) ||
+    sensitivity.some(
+      (row) =>
+        row.monthlyPayment === null || !Number.isFinite(row.monthlyPayment),
+    )
+  ) {
     return { ok: false, invalidFields: ["price"] };
   }
 
-  const sensitivity = SENSITIVITY_RATES.map((ratePercent) => ({
-    ratePercent,
-    monthlyPayment: monthlyPayment(principal, ratePercent, validYears),
-  }));
+  const paymentToIncomePercent = (payment / monthlyIncome) * 100;
+  const priceToAnnualIncome = validPrice / validIncome;
+
+  if (
+    !Number.isFinite(monthlyIncome) ||
+    !Number.isFinite(paymentToIncomePercent) ||
+    !Number.isFinite(priceToAnnualIncome)
+  ) {
+    return { ok: false, invalidFields: ["annualIncome"] };
+  }
+  if (!Number.isFinite(totalMonths)) {
+    return { ok: false, invalidFields: ["termYears"] };
+  }
 
   return {
     ok: true,
@@ -175,8 +242,8 @@ export function computeFinancingScenario(
       principal,
       monthlyPayment: payment,
       monthlyIncome,
-      paymentToIncomePercent: (payment / monthlyIncome) * 100,
-      priceToAnnualIncome: validPrice / validIncome,
+      paymentToIncomePercent,
+      priceToAnnualIncome,
       totalMonths,
       sensitivity,
     },

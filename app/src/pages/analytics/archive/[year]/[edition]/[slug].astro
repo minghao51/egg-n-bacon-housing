@@ -18,8 +18,10 @@ import { studyEvidence } from '@/components/studies/lib/studies';
 import {
   ANALYTICS_EDITIONS,
   archiveYearSegment,
+  canonicalJsonText,
   validateEditionRegistry,
   verifyEditionArtifacts,
+  verifyEditionEvidenceArtifacts,
   type AnalyticsEdition,
 } from '@/components/studies/lib/edition-registry';
 import { getCollection, render } from 'astro:content';
@@ -59,6 +61,38 @@ export async function getStaticPaths() {
   if (artifactErrors.length > 0) {
     throw new Error(
       `analytics edition artifacts do not match their approvals:\n- ${artifactErrors.join('\n- ')}`,
+    );
+  }
+
+  // The evidence pin is a *content* hash: the producers write canonical JSON
+  // (sorted keys, two-space indent, trailing newline), so a formatter run that
+  // moves a ledger's raw bytes without touching its content must not read as a
+  // stale signature. Re-derive the canonical text here, at build time only, and
+  // hash that — never hash the on-disk bytes, and never do this in the browser.
+  const sha256OfCanonicalJson = (repoRelativePath: string): string | null => {
+    try {
+      const source = readFileSync(
+        join(process.cwd(), '..', repoRelativePath),
+        'utf8',
+      );
+      return createHash('sha256')
+        .update(canonicalJsonText(source))
+        .digest('hex');
+    } catch {
+      return null;
+    }
+  };
+
+  // The other half of the approval: the sign-off hashes must still cover the
+  // evidence artifact they cite. Without this an approved edition would publish
+  // even if the ledger behind it had changed.
+  const evidenceErrors = verifyEditionEvidenceArtifacts(
+    ANALYTICS_EDITIONS,
+    sha256OfCanonicalJson,
+  );
+  if (evidenceErrors.length > 0) {
+    throw new Error(
+      `analytics edition evidence artifacts do not match their sign-offs:\n- ${evidenceErrors.join('\n- ')}`,
     );
   }
 

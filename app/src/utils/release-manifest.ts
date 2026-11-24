@@ -55,10 +55,42 @@ export interface ReleaseManifest {
   assets: ReleaseManifestAsset[];
 }
 
+/**
+ * Digest evidence for one asset whose bytes were hashed during a load.
+ *
+ * This describes the exact response this call received, which is what the
+ * digests below were taken from — not what the manifest predicted.
+ */
+export interface ReleaseAssetEvidence {
+  /** SHA-256 of exactly the bytes served for the path. */
+  sha256: string;
+  /** SHA-256 of the decoded JSON text, when the raw digest was the one that matched. */
+  contentSha256: string | null;
+  /** Length of the served body (before any decompression). */
+  byteLength: number;
+}
+
+/**
+ * One release verification result.
+ *
+ * `status`, `manifest` and `mismatches` are the original contract every caller
+ * already reads. `payloads` and `evidence` are the same bytes the digests were
+ * taken from: a screen renders `payloads` instead of fetching the URL a second
+ * time, so what is displayed is what was verified (UI-1).
+ */
 export interface ReleaseCheck {
   status: ReleaseStatus;
   manifest: ReleaseManifest | null;
   mismatches: string[];
+  /**
+   * Decoded payload per asset path, from the exact bytes that verified.
+   *
+   * Empty for every status other than `verified` — in particular a `mismatch`
+   * exposes no payload at all, so a rejected response can never be rendered.
+   */
+  payloads: Record<string, unknown>;
+  /** Digest/size evidence for the paths in `payloads`. */
+  evidence: Record<string, ReleaseAssetEvidence>;
 }
 
 /** The only manifest schema this build understands (RELEASE_SCHEMA_VERSION in the exporter). */
@@ -260,22 +292,41 @@ export async function computeReleaseGeneration(
 }
 
 /**
- * Compare supplied asset bytes against the manifest's recorded sha256 and size.
+ * One asset whose served bytes matched the manifest, with the bytes retained.
  *
- * `only` limits the check to those paths (the manifest entries still decide the
- * expected values); the default checks every asset the manifest lists. Returns
- * one human-readable line per problem, empty when everything matches.
+ * `content` is the same buffer the digests were taken from, so decoding it is
+ * not a second chance to see different bytes: whatever a caller renders from
+ * `content` is provably the response that verified (UI-1).
  */
-export async function verifyReleaseAssets(
+interface VerifiedAssetBytes {
+  sha256: string;
+  contentSha256: string | null;
+  byteLength: number;
+  content: Uint8Array<ArrayBuffer>;
+}
+
+interface AssetVerification {
+  problems: string[];
+  verified: Map<string, VerifiedAssetBytes>;
+}
+
+/**
+ * Compare supplied asset bytes against the manifest's recorded hashes and size.
+ *
+ * Returns the problem lines plus, for every path that matched, the digest
+ * evidence and the decoded buffer those digests were taken from.
+ */
+async function verifyAssetsDetailed(
   manifest: ReleaseManifest,
   assets: Record<string, ArrayBuffer | Uint8Array>,
   only?: string[],
-): Promise<string[]> {
+): Promise<AssetVerification> {
   const targets = only ?? manifest.assets.map((asset) => asset.path);
   const recorded = new Map(
     manifest.assets.map((asset) => [asset.path, asset] as const),
   );
   const problems: string[] = [];
+  const verified = new Map<string, VerifiedAssetBytes>();
 
   for (const path of targets) {
     const entry = recorded.get(path);
@@ -290,40 +341,101 @@ export async function verifyReleaseAssets(
     }
     const view = toByteView(bytes);
     const rawSha = await sha256Hex(view);
+    // Decode once, so the digest and the payload a caller renders come from the
+    // same buffer.
+    const content = await decodedContent(view);
+    const contentSha = content === null ? null : await sha256Hex(content);
+    let ok = false;
+
     if (rawSha === entry.sha256) {
       if (view.byteLength !== entry.bytes) {
         problems.push(
           `size mismatch: ${path} (recorded ${entry.bytes}, actual ${view.byteLength})`,
         );
+      } else if (
+        entry.contentSha256 !== undefined &&
+        contentSha !== entry.contentSha256
+      ) {
+        problems.push(
+          content === null
+            ? `content unreadable: ${path}`
+            : `content hash mismatch: ${path}`,
+        );
+      } else {
+        ok = true;
       }
-      if (entry.contentSha256 !== undefined) {
-        const content = await decodedContent(view);
-        if (content === null) {
-          problems.push(`content unreadable: ${path}`);
-        } else if ((await sha256Hex(content)) !== entry.contentSha256) {
-          problems.push(`content hash mismatch: ${path}`);
-        }
-      }
-      continue;
+    } else if (
+      // The served bytes are not the `.gz` file (the host decompressed it), so
+      // verify the content hash the manifest records for the decoded text.
+      entry.contentSha256 !== undefined &&
+      content !== null &&
+      contentSha === entry.contentSha256
+    ) {
+      ok = true;
+    } else {
+      problems.push(
+        `hash mismatch: ${path} (recorded ${entry.sha256}, actual ${rawSha})`,
+      );
     }
 
-    // The served bytes are not the `.gz` file (the host decompressed it), so
-    // verify the content hash the manifest records for the decoded text.
-    if (entry.contentSha256 !== undefined) {
-      const content = await decodedContent(view);
-      if (
-        content !== null &&
-        (await sha256Hex(content)) === entry.contentSha256
-      ) {
-        continue;
-      }
+    if (ok) {
+      verified.set(path, {
+        sha256: rawSha,
+        contentSha256: contentSha,
+        byteLength: view.byteLength,
+        // `content` is only null when the digest path did not need it (a raw
+        // match), in which case the served bytes are the JSON text.
+        content: content ?? view,
+      });
     }
-    problems.push(
-      `hash mismatch: ${path} (recorded ${entry.sha256}, actual ${rawSha})`,
-    );
   }
 
-  return problems;
+  return { problems, verified };
+}
+
+/**
+ * Compare supplied asset bytes against the manifest's recorded sha256 and size.
+ *
+ * `only` limits the check to those paths (the manifest entries still decide the
+ * expected values); the default checks every asset the manifest lists. Returns
+ * one human-readable line per problem, empty when everything matches.
+ */
+export async function verifyReleaseAssets(
+  manifest: ReleaseManifest,
+  assets: Record<string, ArrayBuffer | Uint8Array>,
+  only?: string[],
+): Promise<string[]> {
+  return (await verifyAssetsDetailed(manifest, assets, only)).problems;
+}
+
+/**
+ * Decode a verified payload from the bytes its digest was taken from.
+ *
+ * Returns `null` when those bytes are not JSON. The bytes are still verified —
+ * this only says they cannot be rendered, so the caller gets no payload rather
+ * than an unchecked substitute.
+ */
+function decodePayload(content: Uint8Array<ArrayBuffer>): {
+  ok: boolean;
+  value: unknown;
+} {
+  try {
+    return {
+      ok: true,
+      value: JSON.parse(new TextDecoder().decode(content)) as unknown,
+    };
+  } catch {
+    return { ok: false, value: null };
+  }
+}
+
+/** The status/evidence shape every non-verified return shares. */
+function unverifiedCheck(
+  status: ReleaseStatus,
+  mismatches: string[],
+  manifest: ReleaseManifest | null,
+): ReleaseCheck {
+  return { status, manifest, mismatches, payloads: {}, evidence: {} };
 }
 
 /** Decode a response body that may or may not still be gzip-compressed. */
@@ -380,6 +492,11 @@ function describeError(error: unknown): string {
  *
  * `verifyOnly` narrows the asset check (a page that loads three of the seven
  * assets); the generation id is always recomputed.
+ *
+ * The returned `payloads` are decoded from exactly the response bodies the
+ * digests were taken from, so a caller renders the verified bytes instead of
+ * fetching the same URL again (UI-1). Every non-`verified` status returns an
+ * empty `payloads` map.
  */
 export async function loadReleaseCheck(options: {
   manifestUrl: string;
@@ -393,60 +510,51 @@ export async function loadReleaseCheck(options: {
   try {
     manifestResponse = await doFetch(options.manifestUrl);
   } catch (error) {
-    return {
-      status: "unverified",
-      manifest: null,
-      mismatches: [
-        `release manifest could not be fetched: ${describeError(error)}`,
-      ],
-    };
+    return unverifiedCheck("unverified", [
+      `release manifest could not be fetched: ${describeError(error)}`,
+    ], null);
   }
 
   if (manifestResponse.status === 404) {
-    return { status: "absent", manifest: null, mismatches: [] };
+    return unverifiedCheck("absent", [], null);
   }
   if (!manifestResponse.ok) {
-    return {
-      status: "unverified",
-      manifest: null,
-      mismatches: [
-        `release manifest request failed with HTTP ${manifestResponse.status}`,
-      ],
-    };
+    return unverifiedCheck(
+      "unverified",
+      [`release manifest request failed with HTTP ${manifestResponse.status}`],
+      null,
+    );
   }
 
   let raw: unknown;
   try {
     raw = JSON.parse(await manifestResponse.text());
   } catch (error) {
-    return {
-      status: "unverified",
-      manifest: null,
-      mismatches: [
-        `release manifest is not valid JSON: ${describeError(error)}`,
-      ],
-    };
+    return unverifiedCheck(
+      "unverified",
+      [`release manifest is not valid JSON: ${describeError(error)}`],
+      null,
+    );
   }
 
   const manifest = parseReleaseManifest(raw);
   if (manifest === null || !isRecord(raw)) {
     const recordedVersion = isRecord(raw) ? raw["schemaVersion"] : undefined;
-    return {
-      status: "unverified",
-      manifest: null,
-      mismatches: [
+    return unverifiedCheck(
+      "unverified",
+      [
         typeof recordedVersion === "string"
           ? `release manifest schemaVersion ${recordedVersion} != ${RELEASE_SCHEMA_VERSION}`
           : "release manifest does not match the release manifest contract",
       ],
-    };
+      null,
+    );
   }
 
   try {
     const targets = options.verifyOnly ?? manifest.assets.map((a) => a.path);
     const supplied: Record<string, ArrayBuffer> = {};
     const fetchedTargets: string[] = [];
-    const mismatches: string[] = [];
     const fetchProblems: string[] = [];
 
     for (const path of targets) {
@@ -473,16 +581,15 @@ export async function loadReleaseCheck(options: {
     if (fetchProblems.length > 0) {
       // Not being able to download the assets proves nothing about whether the
       // published generation is mixed, so it must not read as incompatibility.
-      return {
-        status: "unverified",
-        manifest,
-        mismatches: fetchProblems,
-      };
+      return unverifiedCheck("unverified", fetchProblems, manifest);
     }
 
-    mismatches.push(
-      ...(await verifyReleaseAssets(manifest, supplied, fetchedTargets)),
+    const { problems, verified } = await verifyAssetsDetailed(
+      manifest,
+      supplied,
+      fetchedTargets,
     );
+    const mismatches: string[] = [...problems];
 
     const recomputed = await computeReleaseGeneration(raw);
     if (recomputed !== manifest.generation) {
@@ -491,16 +598,36 @@ export async function loadReleaseCheck(options: {
       );
     }
 
+    if (mismatches.length > 0) {
+      // A rejected release exposes no payload: nothing from it may be rendered
+      // under a "verified" claim.
+      return unverifiedCheck("mismatch", mismatches, manifest);
+    }
+
+    const payloads: Record<string, unknown> = {};
+    const evidence: Record<string, ReleaseAssetEvidence> = {};
+    for (const [path, bytes] of verified) {
+      evidence[path] = {
+        sha256: bytes.sha256,
+        contentSha256: bytes.contentSha256,
+        byteLength: bytes.byteLength,
+      };
+      const decoded = decodePayload(bytes.content);
+      if (decoded.ok) payloads[path] = decoded.value;
+    }
+
     return {
-      status: mismatches.length === 0 ? "verified" : "mismatch",
+      status: "verified",
       manifest,
-      mismatches,
+      mismatches: [],
+      payloads,
+      evidence,
     };
   } catch (error) {
-    return {
-      status: "unverified",
+    return unverifiedCheck(
+      "unverified",
+      [`release verification failed: ${describeError(error)}`],
       manifest,
-      mismatches: [`release verification failed: ${describeError(error)}`],
-    };
+    );
   }
 }

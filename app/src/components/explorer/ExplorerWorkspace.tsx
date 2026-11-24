@@ -26,8 +26,10 @@ import PublishedWindowsPanel from "@/components/observed/PublishedWindowsPanel";
 import type { WindowsByType } from "@/utils/observed-pack-build";
 import { type PackLoad } from "@/utils/observed-pack-loader";
 import { useObservedPack } from "@/hooks/useObservedPack";
-import { useGzipJson } from "@/hooks/useGzipJson";
 import {
+  useVerifiedRelease,
+  type VerifiedReleaseLoad,
+} from "@/hooks/useGzipJson";import {
   EXPLORER_DEFAULTS,
   isConcretePeriod,
   isLegacyPeriod,
@@ -44,7 +46,6 @@ import {
   type ExplorerDataset,
 } from "@/utils/observed-rows";
 import {
-  loadReleaseCheck,
   type ReleaseCheck,
   type ReleaseStatus,
 } from "@/utils/release-manifest";
@@ -136,9 +137,23 @@ export interface ExplorerWorkspaceProps {
   previousDefault?: { label: string; query: string } | null;
 }
 
+/** Manifest path of the area payload this screen plots. */
+const MAP_METRICS_ASSET = "map_metrics.json.gz";
+/** Manifest path of the national aggregate this screen compares against. */
+const OVERVIEW_ASSET = "dashboard_overview.json.gz";
+
 /**
- * Release identity is resolved before any data is fetched, so the datasets are
- * cached under the verified generation rather than an unqualified URL key.
+ * Release identity and payloads are resolved by one verified load, so what is
+ * rendered is the response that was hashed — never a second fetch of the same
+ * URL (UI-1). The cache entries are generation-qualified per asset.
+ */
+function releaseScope(path: string): string {
+  return `explore:${path}`;
+}
+
+/**
+ * Release identity is resolved before any figure is shown, and the decoded
+ * payloads come from exactly the bytes that verified.
  */
 export default function ExplorerWorkspace({
   mapMetricsUrl,
@@ -149,42 +164,21 @@ export default function ExplorerWorkspace({
   observedDefault = null,
   previousDefault = null,
 }: ExplorerWorkspaceProps) {
-  const [releaseCheck, setReleaseCheck] = useState<ReleaseCheck | null>(null);
+  const release = useVerifiedRelease({
+    manifestUrl,
+    assetUrls: {
+      [MAP_METRICS_ASSET]: mapMetricsUrl,
+      [OVERVIEW_ASSET]: overviewUrl,
+    },
+    verifyOnly: [MAP_METRICS_ASSET, OVERVIEW_ASSET],
+    scopeFor: releaseScope,
+  });
   // `null` while the pack is still being verified; the v2 payloads are hashed
   // in this request, so nothing is rendered from an unverified response.
   const packLoad = useObservedPack();
 
-  useEffect(() => {
-    let cancelled = false;
-    const assetUrls: Record<string, string> = {
-      "map_metrics.json.gz": mapMetricsUrl,
-      "dashboard_overview.json.gz": overviewUrl,
-    };
-
-    void loadReleaseCheck({
-      manifestUrl,
-      assetUrls,
-      verifyOnly: Object.keys(assetUrls),
-    })
-      .then((check) => {
-        if (!cancelled) setReleaseCheck(check);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setReleaseCheck({
-            status: "unverified",
-            manifest: null,
-            mismatches: [],
-          });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [manifestUrl, mapMetricsUrl, overviewUrl]);
-
-  if (releaseCheck === null) {
+  const check = release.check;
+  if (check === null) {
     return (
       <p
         role="status"
@@ -196,11 +190,14 @@ export default function ExplorerWorkspace({
     );
   }
 
+  const ready: VerifiedReleaseLoad & { check: ReleaseCheck } = {
+    ...release,
+    check,
+  };
+
   return (
     <ExplorerData
-      mapMetricsUrl={mapMetricsUrl}
-      overviewUrl={overviewUrl}
-      releaseCheck={releaseCheck}
+      release={ready}
       packLoad={packLoad}
       publishedWindows={publishedWindows}
       observedCutoff={observedCutoff}
@@ -211,24 +208,21 @@ export default function ExplorerWorkspace({
 }
 
 function ExplorerData({
-  mapMetricsUrl,
-  overviewUrl,
-  releaseCheck,
+  release,
   packLoad,
   publishedWindows,
   observedCutoff,
   observedDefault,
   previousDefault,
 }: {
-  mapMetricsUrl: string;
-  overviewUrl: string;
-  releaseCheck: ReleaseCheck;
+  release: VerifiedReleaseLoad & { check: ReleaseCheck };
   packLoad: PackLoad | null;
   publishedWindows: WindowsByType | null;
   observedCutoff: { cutoffMonth: string; generation: string } | null;
   observedDefault: { periodId: string; label: string } | null;
   previousDefault: { label: string; query: string } | null;
 }) {
+  const releaseCheck = release.check;
   const defaultPeriodId =
     observedDefault !== null && isConcretePeriod(observedDefault.periodId)
       ? observedDefault.periodId
@@ -256,19 +250,13 @@ function ExplorerData({
     [defaultPeriodId],
   );
 
-  const generationKey =
-    releaseCheck.status === "verified" && releaseCheck.manifest !== null
-      ? releaseCheck.manifest.generation
-      : `${releaseCheck.status}-unverified`;
-
-  const mapMetrics = useGzipJson<unknown>(
-    mapMetricsUrl,
-    `explore:map_metrics:${generationKey}`,
-  );
-  const overview = useGzipJson<unknown>(
-    overviewUrl,
-    `explore:dashboard_overview:${generationKey}`,
-  );
+  /**
+   * The figures below are the payloads whose digests were checked in this load.
+   * There is no second fetch of `map_metrics`/`dashboard_overview`: the verified
+   * bytes are the rendered bytes (UI-1), and they are cached per generation.
+   */
+  const mapMetricsData = release.payloads[MAP_METRICS_ASSET]?.data ?? null;
+  const overviewData = release.payloads[OVERVIEW_ASSET]?.data ?? null;
 
   const update = useCallback((patch: Partial<ExplorerSelection>) => {
     setSelection((current) => withSelection(current, patch));
@@ -295,8 +283,8 @@ function ExplorerData({
       legacyPeriod === null
         ? null
         : buildExplorerDataset({
-            mapMetrics: mapMetrics.data,
-            overviewStats: overview.data,
+            mapMetrics: mapMetricsData,
+            overviewStats: overviewData,
             selection: {
               property: selection.property,
               period: legacyPeriod,
@@ -305,9 +293,20 @@ function ExplorerData({
               sort: selection.sort,
               direction: selection.direction,
             },
-            baselineCompatible: releaseStatus === "verified",
+            // Only a verified pair may drive a comparison, and only when both
+            // payloads came from those verified bytes.
+            baselineCompatible:
+              releaseStatus === "verified" &&
+              mapMetricsData !== null &&
+              overviewData !== null,
           }),
-    [legacyPeriod, mapMetrics.data, overview.data, selection, releaseStatus],
+    [
+      legacyPeriod,
+      mapMetricsData,
+      overviewData,
+      selection,
+      releaseStatus,
+    ],
   );
 
   const packResult = useMemo(
@@ -437,20 +436,17 @@ function ExplorerData({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  const loadingData = mapMetrics.loading && mapMetrics.data === null;
-  const dataError = mapMetrics.error;
+  const loadingData = release.loading && mapMetricsData === null;
+  const dataError = release.error;
 
-  const reloadMapMetrics = mapMetrics.reload;
-  const reloadOverview = overview.reload;
-
+  const reloadAll = release.reload;
   const retryAll = useCallback(() => {
-    void reloadMapMetrics();
-    void reloadOverview();
-  }, [reloadMapMetrics, reloadOverview]);
+    void reloadAll();
+  }, [reloadAll]);
 
   const retryNational = useCallback(() => {
-    void reloadOverview();
-  }, [reloadOverview]);
+    void reloadAll();
+  }, [reloadAll]);
 
   return (
     <div className="mt-8">
@@ -521,131 +517,137 @@ function ExplorerData({
         </div>
       ) : null}
 
-      {legacyPeriod === null || mapMetrics.data !== null ? (
-        <>
-          <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-8">
-            <ExplorerSettings
+      {/*
+        The grid renders even when nothing verified: the period selector has
+        to stay usable, and the release-status disclosure below explains why
+        the table is empty rather than leaving a silent blank.
+      */}
+      <>
+        <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-8">
+          <ExplorerSettings
+            selection={selection}
+            periodGroups={periodGroups}
+            summary={
+              windowView.state === "ready"
+                ? {
+                    shown: windowView.dataset.filtered.length,
+                    total: windowView.dataset.totalAreas,
+                    thin: windowView.dataset.thinCount,
+                  }
+                : null
+            }
+            onChange={update}
+            onReset={reset}
+          />
+          {windowView.state === "ready" ? (
+            <ExplorerView
+              view={view}
+              onViewChange={setView}
+              dataset={windowView.dataset}
               selection={selection}
-              periodGroups={periodGroups}
-              summary={
-                windowView.state === "ready"
-                  ? {
-                      shown: windowView.dataset.filtered.length,
-                      total: windowView.dataset.totalAreas,
-                      thin: windowView.dataset.thinCount,
-                    }
-                  : null
-              }
+              releaseStatus={releaseStatus}
+              nationalLoading={release.loading && overviewData === null}
+              nationalError={release.error}
+              onRetryNational={retryNational}
               onChange={update}
               onReset={reset}
             />
-            {windowView.state === "ready" ? (
-              <ExplorerView
-                view={view}
-                onViewChange={setView}
-                dataset={windowView.dataset}
-                selection={selection}
-                releaseStatus={releaseStatus}
-                nationalLoading={overview.loading && overview.data === null}
-                nationalError={overview.error}
-                onRetryNational={retryNational}
-                onChange={update}
-                onReset={reset}
-              />
-            ) : (
-              <div
-                role={windowView.state === "pending" ? "status" : "alert"}
-                className="rounded-lg border border-border bg-card p-6 text-sm"
-              >
-                <p className="font-bold text-foreground">
-                  {windowView.state === "pending"
-                    ? `Checking the published ${period} window`
-                    : `${period} is not available in this build`}
-                </p>
-                <p className="mt-2 text-muted-foreground">
-                  {windowView.message}
-                </p>
-              </div>
-            )}
-          </div>
+          ) : (
+            <div
+              role={windowView.state === "pending" ? "status" : "alert"}
+              className="rounded-lg border border-border bg-card p-6 text-sm"
+            >
+              <p className="font-bold text-foreground">
+                {windowView.state === "pending"
+                  ? `Checking the published ${period} window`
+                  : `${period} is not available in this build`}
+              </p>
+              <p className="mt-2 text-muted-foreground">
+                {windowView.message}
+              </p>
+            </div>
+          )}
+        </div>
 
-          <footer className="mt-10 border-t border-border pt-4 text-xs text-muted-foreground">
-            {windowView.state === "ready" &&
-            windowView.dataset.kind === "pack" ? (
-              <>
-                <p>
-                  Area values: the verified{" "}
-                  <code className="font-mono">observed pack</code> &mdash;{" "}
-                  <code className="font-mono">
-                    {windowView.dataset.periodId}
-                  </code>{" "}
-                  ({windowView.dataset.label}), generation{" "}
-                  <code className="font-mono">
-                    {windowView.dataset.generation}
-                  </code>{" "}
-                  &mdash; one row per planning area, read from the payload this
-                  page verified.
-                </p>
+        <footer className="mt-10 border-t border-border pt-4 text-xs text-muted-foreground">
+          {windowView.state === "ready" &&
+          windowView.dataset.kind === "pack" ? (
+            <>
+              <p>
+                Area values: the verified{" "}
+                <code className="font-mono">observed pack</code> &mdash;{" "}
+                <code className="font-mono">
+                  {windowView.dataset.periodId}
+                </code>{" "}
+                ({windowView.dataset.label}), generation{" "}
+                <code className="font-mono">
+                  {windowView.dataset.generation}
+                </code>{" "}
+                &mdash; one row per planning area, read from the payload this
+                page verified.
+              </p>
+              <p className="mt-1">
+                National value: the pack's own{" "}
+                <code className="font-mono">SG</code> scope for the same
+                window &mdash; read from the national aggregate, never
+                computed from these area rows.
+              </p>
+              <p className="mt-1">
+                The manifest, payload sizes and sha256 digests were checked
+                before these numbers were read. The legacy{" "}
+                <code className="font-mono">map_metrics</code> assets were not
+                used for this view.
+              </p>
+            </>
+          ) : null}
+          {windowView.state === "ready" &&
+          windowView.dataset.kind === "legacy" ? (
+            <>
+              <p>
+                Area values:{" "}
+                <code className="font-mono">
+                  map_metrics.{windowView.dataset.section}
+                </code>{" "}
+                &mdash; one row per planning area in that joint period and
+                property section.
+              </p>
+              {windowView.dataset.baselineCompatible &&
+              windowView.dataset.national !== null ? (
                 <p className="mt-1">
-                  National value: the pack's own{" "}
-                  <code className="font-mono">SG</code> scope for the same
-                  window &mdash; read from the national aggregate, never
-                  computed from these area rows.
-                </p>
-                <p className="mt-1">
-                  The manifest, payload sizes and sha256 digests were checked
-                  before these numbers were read. The legacy{" "}
-                  <code className="font-mono">map_metrics</code> assets were not
-                  used for this view.
-                </p>
-              </>
-            ) : null}
-            {windowView.state === "ready" &&
-            windowView.dataset.kind === "legacy" ? (
-              <>
-                <p>
-                  Area values:{" "}
+                  National value:{" "}
                   <code className="font-mono">
-                    map_metrics.{windowView.dataset.section}
+                    dashboard_overview.stats.{windowView.dataset.section}
                   </code>{" "}
-                  &mdash; one row per planning area in that joint period and
-                  property section.
+                  &mdash; read from the national aggregate, never computed
+                  from these area rows.
                 </p>
-                {windowView.dataset.baselineCompatible &&
-                windowView.dataset.national !== null ? (
-                  <p className="mt-1">
-                    National value:{" "}
-                    <code className="font-mono">
-                      dashboard_overview.stats.{windowView.dataset.section}
-                    </code>{" "}
-                    &mdash; read from the national aggregate, never computed
-                    from these area rows.
-                  </p>
-                ) : null}
-                {releaseStatus === "verified" ? (
-                  <p className="mt-1">
-                    Publication generation verified for{" "}
-                    <code className="font-mono">map_metrics</code> and{" "}
-                    <code className="font-mono">dashboard_overview</code> (the
-                    two assets this screen compares). The other dashboard files
-                    were not checked by this screen.
-                  </p>
-                ) : (
-                  <p className="mt-1">
-                    Release generation could not be verified (status:{" "}
-                    {releaseStatus}). National comparison stays withheld until
-                    one publication generation is proven.
-                  </p>
-                )}
-              </>
-            ) : null}
-            <p className="mt-1">
-              Observed sale records from the published snapshot, not asking
-              prices, live listings or a valuation.
-            </p>
-          </footer>
-        </>
-      ) : null}
+              ) : null}
+              {releaseStatus === "verified" ? (
+                <p className="mt-1">
+                  Publication generation verified for{" "}
+                  <code className="font-mono">map_metrics</code> and{" "}
+                  <code className="font-mono">dashboard_overview</code> (the
+                  two assets this screen compares): the values above are read
+                  from the very responses whose sizes and sha256 digests were
+                  checked, not from a second download. The other dashboard
+                  files were not checked by this screen.
+                </p>
+              ) : (
+                <p className="mt-1">
+                  Release generation could not be verified (status:{" "}
+                  {releaseStatus}). National comparison stays withheld until
+                  one publication generation is proven, and no area or
+                  national figure above is drawn from unchecked bytes.
+                </p>
+              )}
+            </>
+          ) : null}
+          <p className="mt-1">
+            Observed sale records from the published snapshot, not asking
+            prices, live listings or a valuation.
+          </p>
+        </footer>
+      </>
     </div>
   );
 }

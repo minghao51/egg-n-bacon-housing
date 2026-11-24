@@ -20,6 +20,35 @@ async function openMap(page: import("@playwright/test").Page, query = "") {
   });
 }
 
+/**
+ * Reach a control using only the Tab key.
+ *
+ * The work order's keyboard claim is about the page's real tab order, so the
+ * test walks it rather than calling `focus()` — a control that is focusable in
+ * a script but never reached by Tab would otherwise pass.
+ */
+async function tabToId(
+  page: import("@playwright/test").Page,
+  id: string,
+  maxTabs = 80,
+) {
+  for (let index = 0; index <= maxTabs; index += 1) {
+    const focused = await page.evaluate(
+      () => document.activeElement?.id ?? "",
+    );
+    if (focused === id) return;
+    await page.keyboard.press("Tab");
+  }
+  throw new Error(`Tab order never reached #${id}`);
+}
+
+/** The Area Inspector rail, scoped so its text cannot match the map's. */
+function areaInspector(page: import("@playwright/test").Page) {
+  return page
+    .locator("aside")
+    .filter({ has: page.getByRole("heading", { name: "Area Inspector" }) });
+}
+
 test.describe("Research map", () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
 
@@ -182,6 +211,155 @@ test.describe("Research map", () => {
 
   test("does not log errors", async ({ page }) => {
     await expectPageToLoadWithoutErrors(page, "/research/map");
+  });
+});
+
+test.describe("Research map — keyboard and handoff (WS-B2)", () => {
+  test.use({ viewport: { width: 1440, height: 1000 } });
+
+  test("a keyboard user selects an area and inspects a layer without the pointer", async ({
+    page,
+  }) => {
+    await openMap(page);
+
+    // Tab to the area control: the polygons are not focusable, so this is the
+    // keyboard path to the same `selectedArea` state a polygon click sets.
+    await tabToId(page, "map-area-select");
+    const areaSelect = page.getByLabel("Area", { exact: true });
+    await expect(areaSelect).toBeFocused();
+    await expect(areaSelect).toHaveValue("");
+
+    // A native <select> changes on ArrowDown and fires `change` — no pointer.
+    await page.keyboard.press("ArrowDown");
+    await expect(areaSelect).not.toHaveValue("");
+    const chosen = await areaSelect.inputValue();
+    expect(chosen.length).toBeGreaterThan(0);
+
+    // The inspector updates with no pointer input at all.
+    const inspector = areaInspector(page);
+    await expect(inspector.getByText(chosen, { exact: true }).first()).toBeVisible();
+
+    // Every inspector value is a real dt/dd pair, so the label and the value
+    // are programmatically associated rather than visually adjacent.
+    await expect(inspector.locator("dl dt")).toHaveCount(6);
+    await expect(inspector.locator("dl dd")).toHaveCount(6);
+    await expect(inspector.locator("dl dt").first()).toHaveText(
+      "Current Metric",
+    );
+
+    // The selection reached the URL the same way a polygon click does.
+    expect(new URL(page.url()).searchParams.get("area")).toBe(chosen);
+
+    // Toggle an archived layer with the keyboard and confirm the archive
+    // inspector follows the same area.
+    await tabToId(page, "archive-layer-spatial.lisa");
+    await page.keyboard.press(" ");
+    await expect(page.locator('[id="archive-layer-spatial.lisa"]')).toBeChecked();
+    await expect(
+      page
+        .getByRole("region", { name: "Archived field inspector" })
+        .getByText(chosen),
+    ).toBeVisible();
+  });
+
+  test("the metric control has an accessible name and the filters expose pressed state", async ({
+    page,
+  }) => {
+    await openMap(page);
+
+    // A real <label for> gives the select its name — not adjacent text.
+    const metric = page.getByLabel("Metric", { exact: true });
+    await expect(metric).toBeVisible();
+    await expect(metric).toHaveAccessibleName("Metric");
+    await expect(metric).toHaveValue("median_price");
+
+    // Period: exactly one option is pressed, and selecting another moves it.
+    const allTime = page.getByRole("button", { name: "All Time", exact: true });
+    const preCovid = page.getByRole("button", {
+      name: "Pre-COVID",
+      exact: true,
+    });
+    await expect(allTime).toHaveAttribute("aria-pressed", "true");
+    await expect(preCovid).toHaveAttribute("aria-pressed", "false");
+
+    await preCovid.click();
+    await expect(preCovid).toHaveAttribute("aria-pressed", "true");
+    await expect(allTime).toHaveAttribute("aria-pressed", "false");
+
+    // Type: same contract, and the controls stay real buttons.
+    const allTypes = page.getByRole("button", { name: "All", exact: true });
+    const condo = page.getByRole("button", { name: "CONDO", exact: true });
+    await expect(allTypes).toHaveAttribute("aria-pressed", "true");
+    await expect(allTypes).toHaveAttribute("type", "button");
+    await expect(condo).toHaveAttribute("type", "button");
+
+    await condo.click();
+    await expect(condo).toHaveAttribute("aria-pressed", "true");
+    await expect(allTypes).toHaveAttribute("aria-pressed", "false");
+
+    // Changing the metric keeps the name and the value in step.
+    await metric.selectOption("median_psf");
+    await expect(metric).toHaveValue("median_psf");
+  });
+
+  test("the handoff preserves the property type and period the map showed", async ({
+    page,
+  }) => {
+    // The reported link: condo + pre-COVID used to arrive as HDB + 2025.
+    await openMap(
+      page,
+      "?area=TAMPINES&metric=median_price&timeBasis=pre_covid&propertyType=condo",
+    );
+
+    const link = page.getByRole("link", {
+      name: "Open observed comparison",
+    });
+    await expect(link).toHaveAttribute("href", /area=TAMPINES/);
+    await expect(link).toHaveAttribute("href", /property=condo/);
+    await expect(link).toHaveAttribute("href", /period=pre_covid/);
+    // No silent substitution on a metric the explorer does compare.
+    await expect(link).not.toHaveAttribute("href", /metric=/);
+
+    await link.click();
+    await expect(page).toHaveURL(/\/explore\?/);
+
+    // The destination's controls match the map's scope ...
+    await expect(page.getByRole("radio", { name: "Condo" })).toBeChecked();
+    await expect(
+      page.getByRole("radio", { name: "Through 2021" }),
+    ).toBeChecked();
+    await expect(page.getByRole("radio", { name: "HDB" })).not.toBeChecked();
+
+    // ... and the source section is the joint section the map drew.
+    await expect(
+      page.getByText("map_metrics.pre_covid_condo").first(),
+    ).toBeVisible();
+  });
+
+  test("an unsupported metric discloses the substitution instead of hiding it", async ({
+    page,
+  }) => {
+    // YoY growth has no observed-comparison equivalent in the explorer.
+    await openMap(
+      page,
+      "?area=TAMPINES&metric=yoy_change_pct&timeBasis=pre_covid&propertyType=condo",
+    );
+
+    const link = page.getByRole("link", {
+      name: "Open observed comparison",
+    });
+    await expect(link).toHaveAccessibleDescription(
+      /has no observed-comparison equivalent/,
+    );
+    await expect(
+      page.getByText(/The map's YoY Growth has no observed-comparison equivalent/),
+    ).toBeVisible();
+
+    // It never claims to carry the unsupported metric through.
+    await expect(link).not.toHaveAttribute("href", /yoy_change_pct/);
+    // The scope it can preserve is still preserved.
+    await expect(link).toHaveAttribute("href", /property=condo/);
+    await expect(link).toHaveAttribute("href", /period=pre_covid/);
   });
 });
 

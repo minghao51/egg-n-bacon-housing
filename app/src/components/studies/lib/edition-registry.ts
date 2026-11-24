@@ -87,6 +87,20 @@ export interface AnalyticsEdition {
    * manifest (`docs/analytics/editions/legacy/2026-11-12/manifest.json`).
    */
   editionSha256: string | null;
+  /**
+   * Repo-relative path of the machine-readable evidence artifact (the ledger
+   * JSON) the three sign-offs pin by `artifactSha256`, or `null` when nothing is
+   * pinned.
+   *
+   * The sign-offs already carry an `evidencePath`, but that points at the human
+   * review record (a markdown sign-off note), not at the ledger whose canonical
+   * content hash `artifactSha256` records. This field names that ledger
+   * explicitly, so the archive route can re-derive its canonical content hash at
+   * build time and refuse to publish an "approved" edition whose cited evidence
+   * no longer hashes to the pin. It is required for an approved edition and
+   * forbidden otherwise.
+   */
+  evidenceArtifactPath: string | null;
   /** Who prepared the evidence pack; `null` for a frozen historical edition. */
   preparedBy: string | null;
   /**
@@ -147,6 +161,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-14",
     editionSha256:
       "bde11c61b720c2504cdf78bde9238c5e57925e319457d52356cde0bcdeeafb81",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs01-source-inventory.json",
     signoffs: [
       {
         role: "source",
@@ -196,6 +212,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-14",
     editionSha256:
       "f6b0bd9d811bb9b348b0e897b66a482add281e38f2803c61193978c97ca0ab67",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs02-rental-yield-evidence.json",
     signoffs: [
       {
         role: "source",
@@ -246,6 +264,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-15",
     editionSha256:
       "d95beefc8386291ffa60c94db6c0d9a5b9f9b289e52cf9c6a74c5517d4b02b8d",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs03-temporal-evolution-evidence.json",
     signoffs: [
       {
         role: "source",
@@ -296,6 +316,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-16",
     editionSha256:
       "3a5ef72d97af0c0004491567314e180bf3238bdaaff11457707a3138657b4507",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs04-amenity-impact-evidence.json",
     signoffs: [
       {
         role: "source",
@@ -346,6 +368,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-17",
     editionSha256:
       "8027e19e6d4cc8fd2402b7dd1691d1e5ab7eaf4baae547605914380fbe38f6ea",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs05-facility-premiums-evidence.json",
     signoffs: [
       {
         role: "source",
@@ -396,6 +420,8 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-18",
     editionSha256:
       "0741e45bde949357c9bd39fdbd59e40a341c7b86597223ad9ff0484b157f002c",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs09-macro-sensitivity-evidence.json",
     signoffs: [
       {
         role: "source",
@@ -448,13 +474,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "efc8841e4420084072c926e19bbf36ed42b53603dd9661a23e00c0a6257f4167",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs10-market-segments-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167",
         statement:
           "I attest that the RS10 measured ledger matches this checkout and accept the cutoff and the dispositions it implies: 2026-10 as the last complete month, the six stored segments' counts as the asset's own unverified figures, zero per-transaction membership for the six ids, the many-to-many area block, the two-part provenance, the CAGR window per property type with Bukit Timah refused under the article's own floor, the app matching weights unchanged, and the disposition of all 36 legacy claims. I also accept the round-15 scan-boundary regeneration, whose diff against the retained round-14 ledger is confined to the scan's declaration.",
         automated: false,
@@ -463,22 +491,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims and the withdrawals were verified, the three round-16 defects are closed, the correspondence-versus-lineage distinction is preserved, the unlinked selection sweep is treated symmetrically in both directions, every absence cites a scan that lists its matches, and no edition-facing sentence widens the statement to the checkout. I verified the round-15 scan claim by programmatic diff of the two ledgers rather than by reading its description. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs10-market-segments-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current, approved edition.",
         automated: false,
@@ -500,13 +527,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "7cc937aecca5886cd693eb79e7e72a7879e75bc95cc0b23493703e7f127af616",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs14-price-forecasts-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
+          "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -515,22 +544,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
+          "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs14-price-forecasts-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
+          "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -552,13 +580,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "c772a1643a1f968b07f06598c07787adc1032488a1862cded9ed723f1b368918",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs06-lease-decay-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
+          "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -567,22 +597,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
+          "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs06-lease-decay-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
+          "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -603,13 +632,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "40a5004c51fa0670f4e4cc2c7d9cc178996632aad2446a7cf9bcc25af5a93a05",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs07-mrt-impact-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
+          "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -618,22 +649,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
+          "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs07-mrt-impact-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
+          "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -655,13 +685,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "5306546ca5ba30230823c5b8cac24bf1867381fcb032f43032ca49a0e322ad9d",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs08-school-quality-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
+          "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -670,22 +702,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
+          "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs08-school-quality-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
+          "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -707,13 +738,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "d1363aafce5489f6a4e5bdb663f0f93fa29746ef972177ad8ae91483550d84ee",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -722,22 +755,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs11-spatial-autocorrelation-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -759,13 +791,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "81236f9abc1214424e6ef7a0ad1c0bed98300c0b6291ab167958a38f6cdea072",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
+          "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -774,22 +808,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
+          "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs12-spatial-hotspots-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
+          "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -811,13 +844,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "73b02d4843ee5ecd1873c73054b3889380ef286ec5f4274a0662a6b8de2290cd",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
+          "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -826,22 +861,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
+          "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059",
         statement:
-          "I reviewed the edition text against this ledger hash: the ledger-backed numerical claims, the withdrawals, the absence scans with their boundaries, and the claim dispositions were verified by running the producer and re-deriving values from the pinned data. A screen is not treated as a finding about origin, and no edition-facing sentence claims more than its scan. I do not attest to source completeness beyond this checkout, other editions, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs13-causal-inference-overview-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
+          "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -862,13 +896,15 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
     preparedBy: "repo-agent/session-2026-11-20",
     editionSha256:
       "a2c20043c55e9497082be96c534d9fc46b614f028dd5b5830362c7fc16897073",
+    evidenceArtifactPath:
+      "docs/implementation/artifacts/rs15-findings-evidence.json",
     signoffs: [
       {
         role: "source",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "f20b2a6221f8c563b661725726931f299fc7d4f53831bbf03063f04e9c143086",
+          "1366c746a8785a79e8902e66ee728fbf744c7cee6ef334f8ac9f906e11046be6",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this checkout and accept the cutoff and the dispositions it implies, including that this page records its own series as not yet signed. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -877,22 +913,21 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
       },
       {
         role: "scientific",
-        name: "openai-codex/gpt-6-luna (xhigh)",
-        date: "2026-11-20",
+        name: "openai-codex/gpt-6-luna (high)",
+        date: "2026-11-24",
         artifactSha256:
-          "f20b2a6221f8c563b661725726931f299fc7d4f53831bbf03063f04e9c143086",
+          "1366c746a8785a79e8902e66ee728fbf744c7cee6ef334f8ac9f906e11046be6",
         statement:
-          "I reviewed the edition text against this ledger hash by running the producer and re-deriving the register myself: the fourteen edition hashes against their files, the fourteen ledger pins, the 85-row placeholder split recounted from the sibling ledgers, and the page's own claims. The register presents no unresolved model as settled, every quantitative sentence names its edition with population, window and unit, and the series is recorded as not signed on the page that lists it. I do not attest to sibling studies' reasoning, source completeness beyond this checkout, or later edits.",
+          "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
-        evidencePath:
-          "docs/implementation/2026-11-20-rs15-findings-editions-signoff.md",
+        evidencePath: "docs/implementation/2026-11-24-ledger-repin-review.md",
       },
       {
         role: "publication",
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "f20b2a6221f8c563b661725726931f299fc7d4f53831bbf03063f04e9c143086",
+          "1366c746a8785a79e8902e66ee728fbf744c7cee6ef334f8ac9f906e11046be6",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -916,6 +951,7 @@ export const ANALYTICS_EDITIONS: readonly AnalyticsEdition[] = [
       assetsPinned: 72,
       preparedBy: null,
       editionSha256: null,
+      evidenceArtifactPath: null,
       signoffs: [],
       note: LEGACY_NOTE,
     }),
@@ -950,6 +986,11 @@ function validateSignoffs(edition: AnalyticsEdition): string[] {
         `${label}: ${edition.evidenceStatus} edition pins an edition sha256; only an approved edition claims reviewed bytes`,
       );
     }
+    if (edition.evidenceArtifactPath !== null) {
+      errors.push(
+        `${label}: ${edition.evidenceStatus} edition names an evidence artifact; only an approved edition names reviewed evidence`,
+      );
+    }
     return errors;
   }
 
@@ -959,6 +1000,18 @@ function validateSignoffs(edition: AnalyticsEdition): string[] {
     );
   } else if (!SHA256_PATTERN.test(edition.editionSha256)) {
     errors.push(`${label}: editionSha256 is not a sha256`);
+  }
+
+  // An approved edition claims a reviewed evidence artifact; without an explicit
+  // path there is nothing for the build-time content-hash check to verify, so a
+  // null here would silently ship an unverifiable approval.
+  if (
+    edition.evidenceArtifactPath === null ||
+    edition.evidenceArtifactPath.trim() === ""
+  ) {
+    errors.push(
+      `${label}: approved edition does not name its evidence artifact (evidenceArtifactPath)`,
+    );
   }
 
   const byRole = new Map<EditionSignoffRole, EditionSignoff>();
@@ -1116,17 +1169,247 @@ export function verifyEditionArtifacts(
     const actual = sha256OfFile(edition.frozenSource);
     if (actual === null) {
       errors.push(
-        `${label}: frozen source ${edition.frozenSource} is unreadable`,
+        `${label}: edition prose hash — frozen source ${edition.frozenSource} is unreadable`,
       );
       continue;
     }
     if (actual !== edition.editionSha256) {
       errors.push(
-        `${label}: frozen source ${edition.frozenSource} is sha256 ${actual}, but the approved edition pins ${edition.editionSha256}`,
+        `${label}: edition prose hash — frozen source ${edition.frozenSource} is sha256 ${actual}, but the approved edition pins ${edition.editionSha256}`,
       );
     }
   }
   return errors;
+}
+
+/**
+ * Verify that every approved edition still pins the evidence artifact it cites.
+ *
+ * The prose pin above answers "are these the bytes the signatories published?".
+ * This pin answers the other half of the claim: "is this the evidence pack the
+ * signatories read?". It re-derives the canonical content hash of the cited
+ * ledger and compares it to the sha256 all three sign-offs recorded. It is the
+ * gap REL-2 closed: before this, a sign-off could cite an artifact whose bytes
+ * had changed and the build still published `approved`.
+ *
+ * `sha256OfCanonicalJson` is injected for the same reason as `sha256OfFile`: the
+ * registry stays pure, and only the archive route (build time) supplies a real
+ * `node:crypto` + `node:fs` reader. This never runs in the browser bundle.
+ */
+export function verifyEditionEvidenceArtifacts(
+  editions: readonly AnalyticsEdition[],
+  sha256OfCanonicalJson: (repoRelativePath: string) => string | null,
+): string[] {
+  const errors: string[] = [];
+  for (const edition of editions) {
+    if (edition.evidenceStatus !== "approved") {
+      continue;
+    }
+    const label = `edition ${edition.editionId} (${edition.seriesSlug})`;
+    if (edition.evidenceArtifactPath === null) {
+      errors.push(
+        `${label}: evidence artifact hash — the approved edition names no evidence artifact (evidenceArtifactPath)`,
+      );
+      continue;
+    }
+    const pinned = new Set(
+      edition.signoffs.map((signoff) => signoff.artifactSha256),
+    );
+    if (pinned.size !== 1) {
+      // validateSignoffs already rejects this; the guard keeps the hash below
+      // unambiguous even if a caller verifies an unvalidated record.
+      errors.push(
+        `${label}: evidence artifact hash — the sign-offs do not all cover the same evidence artifact`,
+      );
+      continue;
+    }
+    const expected = edition.signoffs[0]!.artifactSha256;
+    const actual = sha256OfCanonicalJson(edition.evidenceArtifactPath);
+    if (actual === null) {
+      errors.push(
+        `${label}: evidence artifact hash — evidence artifact ${edition.evidenceArtifactPath} is missing or unreadable`,
+      );
+      continue;
+    }
+    if (actual !== expected) {
+      errors.push(
+        `${label}: evidence artifact hash — evidence artifact ${edition.evidenceArtifactPath} canonicalises to sha256 ${actual}, but the sign-offs pin ${expected}`,
+      );
+    }
+  }
+  return errors;
+}
+
+/**
+ * Canonical JSON text of a document, byte-identical to the form the evidence
+ * producers write: `json.dumps(payload, sort_keys=True, indent=2,
+ * ensure_ascii=False)` followed by one trailing newline.
+ *
+ * Wiring a ledger to its sign-off hash means reproducing *that* encoder in the
+ * build, not hashing whatever formatting happens to be on disk: a formatter run
+ * may move a ledger's raw bytes without touching a byte of its content (see the
+ * `data-sources` serialisation drift the RS15 producer pins). This function is
+ * pure — it takes the file's text and returns canonical text, so the caller can
+ * hash it with `node:crypto` at build time and it never reaches the browser.
+ *
+ * Objects are re-sorted by decoded key; array order is preserved. Strings are
+ * re-encoded the way `ensure_ascii=False` writes them (`JSON.stringify` matches
+ * Python for every escape these producers emit). Number tokens are kept verbatim
+ * because a JS round-trip through `Number` would turn Python's `0.0` into `0` and
+ * change the hash.
+ *
+ * Throws on malformed input; the caller treats that as an unreadable artifact.
+ */
+export function canonicalJsonText(source: string): string {
+  type Node =
+    | { kind: "token"; text: string }
+    | { kind: "array"; items: Node[] }
+    | { kind: "object"; entries: Array<{ key: string; value: Node }> };
+
+  let index = 0;
+  const length = source.length;
+
+  const skipWhitespace = (): void => {
+    while (index < length) {
+      const ch = source[index];
+      if (ch === " " || ch === "\t" || ch === "\n" || ch === "\r") {
+        index += 1;
+      } else {
+        return;
+      }
+    }
+  };
+
+  const readString = (): { raw: string; decoded: string } => {
+    const start = index;
+    index += 1;
+    while (index < length) {
+      const ch = source[index];
+      if (ch === "\\") {
+        index += 2;
+        continue;
+      }
+      if (ch === '"') {
+        index += 1;
+        const raw = source.slice(start, index);
+        return { raw, decoded: JSON.parse(raw) as string };
+      }
+      index += 1;
+    }
+    throw new Error("canonicalJsonText: unterminated string");
+  };
+
+  const readNumber = (): string => {
+    const start = index;
+    while (index < length && /[-+0-9.eE]/.test(source[index]!)) {
+      index += 1;
+    }
+    if (index === start) {
+      throw new Error("canonicalJsonText: expected a value");
+    }
+    return source.slice(start, index);
+  };
+
+  const readValue = (): Node => {
+    skipWhitespace();
+    const ch = source[index];
+    if (ch === "{") return readObject();
+    if (ch === "[") return readArray();
+    if (ch === '"')
+      return { kind: "token", text: JSON.stringify(readString().decoded) };
+    if (source.startsWith("true", index)) {
+      index += 4;
+      return { kind: "token", text: "true" };
+    }
+    if (source.startsWith("false", index)) {
+      index += 5;
+      return { kind: "token", text: "false" };
+    }
+    if (source.startsWith("null", index)) {
+      index += 4;
+      return { kind: "token", text: "null" };
+    }
+    return { kind: "token", text: readNumber() };
+  };
+
+  const readArray = (): Node => {
+    index += 1;
+    skipWhitespace();
+    const items: Node[] = [];
+    if (source[index] === "]") {
+      index += 1;
+      return { kind: "array", items };
+    }
+    for (;;) {
+      items.push(readValue());
+      skipWhitespace();
+      if (source[index] === ",") {
+        index += 1;
+        continue;
+      }
+      if (source[index] === "]") {
+        index += 1;
+        return { kind: "array", items };
+      }
+      throw new Error("canonicalJsonText: expected , or ] in array");
+    }
+  };
+
+  const readObject = (): Node => {
+    index += 1;
+    skipWhitespace();
+    const entries: Array<{ key: string; value: Node }> = [];
+    if (source[index] === "}") {
+      index += 1;
+      return { kind: "object", entries };
+    }
+    for (;;) {
+      skipWhitespace();
+      const key = readString().decoded;
+      skipWhitespace();
+      if (source[index] !== ":") {
+        throw new Error("canonicalJsonText: expected : after object key");
+      }
+      index += 1;
+      entries.push({ key, value: readValue() });
+      skipWhitespace();
+      if (source[index] === ",") {
+        index += 1;
+        continue;
+      }
+      if (source[index] === "}") {
+        index += 1;
+        entries.sort((left, right) =>
+          left.key < right.key ? -1 : left.key > right.key ? 1 : 0,
+        );
+        return { kind: "object", entries };
+      }
+      throw new Error("canonicalJsonText: expected , or } in object");
+    }
+  };
+
+  const emit = (node: Node, depth: number): string => {
+    const pad = "  ".repeat(depth);
+    if (node.kind === "token") return node.text;
+    if (node.kind === "array") {
+      if (node.items.length === 0) return "[]";
+      const inner = node.items
+        .map((item) => `${`  `.repeat(depth + 1)}${emit(item, depth + 1)}`)
+        .join(",\n");
+      return `[\n${inner}\n${pad}]`;
+    }
+    if (node.entries.length === 0) return "{}";
+    const inner = node.entries
+      .map(
+        (entry) =>
+          `${`  `.repeat(depth + 1)}${JSON.stringify(entry.key)}: ${emit(entry.value, depth + 1)}`,
+      )
+      .join(",\n");
+    return `{\n${inner}\n${pad}}`;
+  };
+
+  const canonical = emit(readValue(), 0);
+  return `${canonical}\n`;
 }
 
 /** Every edition of one series, newest publication year first. */ export function editionsForSeries(

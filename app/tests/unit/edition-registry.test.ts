@@ -19,10 +19,12 @@ import {
   approvedEditionFor,
   archivePath,
   archiveYearSegment,
+  canonicalJsonText,
   editionsForSeries,
   signoffFor,
   validateEditionRegistry,
   verifyEditionArtifacts,
+  verifyEditionEvidenceArtifacts,
   type AnalyticsEdition,
   type EditionSignoff,
 } from "../../src/components/studies/lib/edition-registry";
@@ -167,6 +169,7 @@ describe("selection and paths", () => {
         assetsPinned: 1,
         preparedBy: null,
         editionSha256: null,
+        evidenceArtifactPath: null,
         signoffs: [],
         note: "newer but unapproved",
       },
@@ -180,6 +183,7 @@ describe("selection and paths", () => {
         assetsPinned: 1,
         preparedBy: null,
         editionSha256: "c".repeat(64),
+        evidenceArtifactPath: null,
         signoffs: [],
         note: "approved",
       },
@@ -212,6 +216,7 @@ describe("registry validation rejects bad identities", () => {
     assetsPinned: 72,
     preparedBy: null,
     editionSha256: null,
+    evidenceArtifactPath: null,
     signoffs: [],
     note: "test",
   };
@@ -286,6 +291,7 @@ describe("D12 sign-off record", () => {
       assetsPinned: 4,
       preparedBy: "repo-agent/session-2026-11-14",
       editionSha256: "c".repeat(64),
+      evidenceArtifactPath: "docs/implementation/artifacts/rs01.json",
       signoffs: [
         signoff("source"),
         signoff("scientific"),
@@ -453,6 +459,8 @@ describe("approved editions pin their frozen text", () => {
       assetsPinned: 0,
       preparedBy: "repo-agent/session-2026-11-14",
       editionSha256: "c".repeat(64),
+      evidenceArtifactPath:
+        "docs/implementation/artifacts/rs01-source-inventory.json",
       signoffs: ["source", "scientific", "publication"].map((role) => ({
         role: role as EditionSignoff["role"],
         name:
@@ -584,5 +592,181 @@ describe("approved editions pin their frozen text", () => {
             .digest("hex"),
       ).join(" "),
     ).toContain("but the approved edition pins");
+  });
+});
+
+/**
+ * REL-2: an approval covers an evidence artifact as well as the prose it
+ * published. The two pins are distinct — `editionSha256` is the raw-byte hash of
+ * the frozen text, `artifactSha256` is the canonical-JSON content hash of the
+ * ledger the signatories read — so the archive route verifies both and each error
+ * says which one it failed.
+ */
+describe("approved editions pin their cited evidence artifact", () => {
+  function approvedEdition(
+    overrides: Partial<AnalyticsEdition> = {},
+  ): AnalyticsEdition {
+    return {
+      seriesSlug: "data-sources",
+      editionId: "data-sources-2026-11-14",
+      publicationYear: 2026,
+      evidenceStatus: "approved",
+      editorialStatus: "published",
+      frozenSource:
+        "docs/analytics/editions/data-sources/2026-11-14/data-sources.md",
+      assetsPinned: 0,
+      preparedBy: "repo-agent/session-2026-11-14",
+      editionSha256: "c".repeat(64),
+      evidenceArtifactPath:
+        "docs/implementation/artifacts/rs01-source-inventory.json",
+      signoffs: ["source", "scientific", "publication"].map((role) => ({
+        role: role as EditionSignoff["role"],
+        name:
+          role === "scientific"
+            ? "openai-codex/gpt-6-luna (xhigh)"
+            : `owner-${role}`,
+        date: "2026-11-14",
+        artifactSha256: "a".repeat(64),
+        statement: `${role} attestation`,
+        automated: role === "scientific",
+        evidencePath: "docs/implementation/2026-11-14-rs01-source-inventory.md",
+      })),
+      note: "test",
+      ...overrides,
+    };
+  }
+
+  test("passes when the artifact canonicalises to the pinned hash", () => {
+    expect(
+      verifyEditionEvidenceArtifacts([approvedEdition()], () => "a".repeat(64)),
+    ).toEqual([]);
+  });
+
+  test("fails when the artifact content no longer matches the pin", () => {
+    const errors = verifyEditionEvidenceArtifacts(
+      [approvedEdition()],
+      () => "b".repeat(64),
+    ).join(" ");
+
+    expect(errors).toContain("evidence artifact hash");
+    expect(errors).toContain(
+      "docs/implementation/artifacts/rs01-source-inventory.json",
+    );
+    expect(errors).toContain("but the sign-offs pin");
+  });
+
+  test("fails when the artifact is missing", () => {
+    const errors = verifyEditionEvidenceArtifacts(
+      [approvedEdition()],
+      () => null,
+    ).join(" ");
+
+    expect(errors).toContain("evidence artifact hash");
+    expect(errors).toContain("is missing or unreadable");
+    expect(errors).toContain(
+      "docs/implementation/artifacts/rs01-source-inventory.json",
+    );
+  });
+
+  test("fails when an approved edition names no evidence artifact", () => {
+    const errors = verifyEditionEvidenceArtifacts(
+      [approvedEdition({ evidenceArtifactPath: null })],
+      () => "a".repeat(64),
+    ).join(" ");
+
+    expect(errors).toContain("names no evidence artifact");
+  });
+
+  test("ignores editions that claim no approval", () => {
+    const historical: AnalyticsEdition = {
+      ...approvedEdition(),
+      evidenceStatus: "historical",
+      editorialStatus: "archived",
+      signoffs: [],
+      preparedBy: null,
+      editionSha256: null,
+      evidenceArtifactPath: null,
+    };
+
+    expect(
+      verifyEditionEvidenceArtifacts([historical], () => null),
+    ).toEqual([]);
+  });
+
+  test("the two pins fail with distinct, unambiguous messages", () => {
+    const edition = approvedEdition();
+
+    const prose = verifyEditionArtifacts([edition], () => null).join(" ");
+    const evidence = verifyEditionEvidenceArtifacts(
+      [edition],
+      () => null,
+    ).join(" ");
+
+    // Each message names its own hash kind, and neither borrows the other's.
+    expect(prose).toContain("edition prose hash");
+    expect(prose).not.toContain("evidence artifact hash");
+    expect(evidence).toContain("evidence artifact hash");
+    expect(evidence).not.toContain("edition prose hash");
+
+    // The prose pin still names the frozen source; the evidence pin names the ledger.
+    expect(prose).toContain(edition.frozenSource);
+    expect(evidence).toContain(edition.evidenceArtifactPath!);
+  });
+
+  test("rejects an approved edition with no evidence path at validation time", () => {
+    const errors = validateEditionRegistry([
+      approvedEdition({ evidenceArtifactPath: null }),
+    ]).join(" ");
+
+    expect(errors).toContain("does not name its evidence artifact");
+  });
+
+  test("rejects an evidence path on an edition that claims nothing", () => {
+    const errors = validateEditionRegistry([
+      approvedEdition({
+        evidenceStatus: "historical",
+        editorialStatus: "archived",
+        signoffs: [],
+        preparedBy: null,
+        editionSha256: null,
+      }),
+    ]).join(" ");
+
+    expect(errors).toContain("only an approved edition names reviewed evidence");
+  });
+});
+
+describe("canonical JSON text matches the evidence producers", () => {
+  test("sorts keys, keeps two-space indent and adds one trailing newline", () => {
+    expect(canonicalJsonText('{"b":1,"a":2}')).toBe('{\n  "a": 2,\n  "b": 1\n}\n');
+    expect(canonicalJsonText("[]")).toBe("[]\n");
+    expect(canonicalJsonText("{}")).toBe("{}\n");
+    expect(canonicalJsonText('{"list":[1,2]}')).toBe(
+      '{\n  "list": [\n    1,\n    2\n  ]\n}\n',
+    );
+  });
+
+  test("keeps number tokens verbatim so floats do not collapse", () => {
+    // A JS round-trip through Number would turn Python's 0.0 into 0 and move the
+    // hash; the canonical text must keep the producer's token.
+    expect(canonicalJsonText('{"z":0.0,"i":103}')).toBe(
+      '{\n  "i": 103,\n  "z": 0.0\n}\n',
+    );
+  });
+
+  test("the shipped register's evidence pins match the files on disk", () => {
+    const errors = verifyEditionEvidenceArtifacts(ANALYTICS_EDITIONS, (path) => {
+      const absolute = join(process.cwd(), "..", path);
+      if (!existsSync(absolute)) return null;
+      try {
+        return createHash("sha256")
+          .update(canonicalJsonText(readFileSync(absolute, "utf8")))
+          .digest("hex");
+      } catch {
+        return null;
+      }
+    });
+
+    expect(errors).toEqual([]);
   });
 });

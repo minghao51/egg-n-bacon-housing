@@ -17,6 +17,7 @@ import {
   monthlyPayment,
   SENSITIVITY_RATES,
   type FinancingInputs,
+  type FinancingScenario,
 } from "../../src/components/tools/lib/tool-amortization";
 import {
   formatPercentValue,
@@ -82,6 +83,178 @@ describe("standard amortization", () => {
     expect(monthlyPayment(-1000, 3, 25)).toBeNull();
     expect(monthlyPayment(1000, 3, 0)).toBeNull();
     expect(monthlyPayment(1000, -1, 25)).toBeNull();
+  });
+
+  test("a tiny interest rate stays finite and approaches principal ÷ months", () => {
+    const principal = 497_000;
+    const months = 300;
+    const unitPayment = principal / months;
+    const payments = [1e-14, 1e-9, 1e-6].map((annualRatePercent) => {
+      const payment = monthlyPayment(principal, annualRatePercent, 25);
+      expect(payment).not.toBeNull();
+      expect(Number.isFinite(payment as number)).toBe(true);
+      return payment as number;
+    });
+
+    for (const payment of payments) {
+      // Any positive rate costs a little more than the zero-rate payment, and
+      // at these rates the difference is far below a cent.
+      expect(payment).toBeGreaterThanOrEqual(unitPayment);
+      expect(Math.abs(payment / unitPayment - 1)).toBeLessThan(1e-6);
+    }
+    // Raising the rate never lowers the payment.
+    expect(payments[0]).toBeLessThanOrEqual(payments[1]);
+    expect(payments[1]).toBeLessThanOrEqual(payments[2]);
+  });
+
+  test("a scenario with a tiny interest rate returns finite fields", () => {
+    for (const annualRatePercent of [1e-14, 1e-9, 1e-6]) {
+      const result = computeFinancingScenario({
+        ...SCENARIO,
+        annualRatePercent,
+      });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+
+      expect(Number.isFinite(result.scenario.monthlyPayment)).toBe(true);
+      expect(Number.isFinite(result.scenario.paymentToIncomePercent)).toBe(
+        true,
+      );
+      // A positive rate costs more than the zero-rate payment, but at these
+      // rates the difference is well under a thousandth of a percent.
+      expect(
+        Math.abs(result.scenario.monthlyPayment / (497_000 / 300) - 1),
+      ).toBeLessThan(1e-6);
+      for (const row of result.scenario.sensitivity) {
+        expect(Number.isFinite(row.monthlyPayment as number)).toBe(true);
+      }
+    }
+  });
+
+  test("a 100% down payment is a valid cash purchase, not an invalid price", () => {
+    const result = computeFinancingScenario({
+      ...SCENARIO,
+      downPaymentPercent: 100,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    expect(result.scenario.downPaymentAmount).toBe(710_000);
+    expect(result.scenario.principal).toBe(0);
+    expect(result.scenario.monthlyPayment).toBe(0);
+    expect(result.scenario.monthlyIncome).toBe(10_000);
+    expect(result.scenario.paymentToIncomePercent).toBe(0);
+    expect(result.scenario.priceToAnnualIncome).toBeCloseTo(
+      710_000 / 120_000,
+      12,
+    );
+    expect(result.scenario.totalMonths).toBe(300);
+    // No loan means no principal-and-interest at any rate.
+    expect(
+      result.scenario.sensitivity.map((row) => row.monthlyPayment),
+    ).toEqual([0, 0, 0, 0, 0]);
+  });
+
+  test("a 100% down payment never names a valid price as invalid", () => {
+    const result = computeFinancingScenario({
+      ...SCENARIO,
+      downPaymentPercent: 100,
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) return;
+    expect(result.invalidFields).not.toContain("price");
+  });
+
+  test("a cash purchase of a fractional price has an exactly zero principal", () => {
+    const result = computeFinancingScenario({
+      ...SCENARIO,
+      price: 0.1,
+      downPaymentPercent: 100,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    expect(result.scenario.principal).toBe(0);
+    expect(result.scenario.monthlyPayment).toBe(0);
+  });
+
+  test("a derived value that overflows fails closed and names its input", () => {
+    // A finite, positive income can still be too small to carry the
+    // payment/income ratio inside the double range; the module withholds every
+    // output instead of returning Infinity.
+    const result = computeFinancingScenario({
+      ...SCENARIO,
+      price: 1,
+      annualIncome: 5e-324,
+      downPaymentPercent: 0,
+      annualRatePercent: 0,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.invalidFields).toEqual(["annualIncome"]);
+  });
+});
+
+/** Every numeric field of a returned scenario must be a finite number. */
+function expectFiniteScenario(scenario: FinancingScenario): void {
+  for (const [key, value] of Object.entries(scenario)) {
+    if (key === "sensitivity") continue;
+    expect(Number.isFinite(value as number)).toBe(true);
+  }
+  expect(scenario.sensitivity.length).toBe(SENSITIVITY_RATES.length);
+  for (const row of scenario.sensitivity) {
+    expect(Number.isFinite(row.ratePercent)).toBe(true);
+    expect(row.monthlyPayment).not.toBeNull();
+    expect(Number.isFinite(row.monthlyPayment as number)).toBe(true);
+  }
+}
+
+describe("no accepted input produces a non-finite output", () => {
+  const prices = [0.01, 1, 1_000, 710_000, 1e12];
+  const incomes = [1e-300, 1, 5_000, 120_000, 1e300];
+  const downs = [0, 0.5, 30, 99.9, 100];
+  const terms = [1, 25, 50];
+  const rates = [0, 1e-14, 1e-9, 1e-6, 3, 20];
+  const fields: Array<keyof FinancingInputs> = [
+    "price",
+    "annualIncome",
+    "downPaymentPercent",
+    "termYears",
+    "annualRatePercent",
+  ];
+
+  test("every in-bounds combination returns finite numbers or names a field", () => {
+    let accepted = 0;
+    for (const price of prices) {
+      for (const annualIncome of incomes) {
+        for (const downPaymentPercent of downs) {
+          for (const termYears of terms) {
+            for (const annualRatePercent of rates) {
+              const result = computeFinancingScenario({
+                price,
+                annualIncome,
+                downPaymentPercent,
+                termYears,
+                annualRatePercent,
+              });
+
+              if (result.ok) {
+                accepted += 1;
+                expectFiniteScenario(result.scenario);
+              } else {
+                // Fail closed, never silently substitute a value.
+                expect(result.invalidFields.length).toBeGreaterThan(0);
+                for (const field of result.invalidFields) {
+                  expect(fields).toContain(field);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // The grid is mostly ordinary, so the success path is genuinely exercised.
+    expect(accepted).toBeGreaterThan(500);
   });
 });
 

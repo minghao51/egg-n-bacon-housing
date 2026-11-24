@@ -3,8 +3,10 @@
  * `/areas/[slug]` — static area fieldnote (slice S6).
  *
  * One page per planning area, rendered at build time from the published assets
- * through `src/utils/area-page.ts`. There is no client island: the numbers, the
- * availability states and the withheld-baseline notice are all in the HTML.
+ * through `src/utils/area-page.ts`. Every published number, availability state
+ * and the withheld-baseline notice are in the build-time HTML; the two panels
+ * below (`AreaSectionPanel`, `AreaHistoryPanel`) are the page's only client
+ * islands, mounted for interaction on already-rendered content.
  *
  * The only browser code is the inline return-link enhancer below. A static
  * build cannot read the incoming query string, so a JS-disabled reader gets the

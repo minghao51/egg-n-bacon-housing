@@ -32,9 +32,11 @@ test.describe("S1 evidence boundary", () => {
     expect(url.searchParams.get("layers")).toBe("spatial.lisa");
 
     // The selection must also be applied to the hydrated controls, not only
-    // preserved in the address bar.
+    // preserved in the address bar. The area is read from the labelled Area
+    // control (WS-B2 added it, and its options repeat every planning-area name
+    // as text, so a page-wide text match would hit a hidden <option>).
     await expect(page.locator("select").first()).toHaveValue("median_psf");
-    await expect(page.getByText("TAMPINES").first()).toBeVisible();
+    await expect(page.getByLabel("Area")).toHaveValue("TAMPINES");
     await expect
       .poll(() => page.url(), { timeout: 10_000 })
       .toContain("metric=median_psf&timeBasis=year_2025&propertyType=hdb");

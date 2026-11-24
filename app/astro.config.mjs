@@ -2,8 +2,8 @@ import { defineConfig } from "astro/config";
 import { fileURLToPath } from "url";
 import path from "path";
 import react from "@astrojs/react";
-import tailwind from "@astrojs/tailwind";
 
+import { unified } from "@astrojs/markdown-remark";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
@@ -46,15 +46,26 @@ function remarkFixImagePaths() {
 }
 
 export default defineConfig({
-  integrations: [
-    react(),
-    tailwind({
-      applyBaseStyles: false,
-    }),
-  ],
+  // One env file for the whole repository: the Python pipeline reads `.env` at
+  // the repo root (pydantic-settings), so Vite's env dir is pointed at the
+  // parent and the map values live in that same file instead of a second,
+  // easily-forgotten `app/.env`. This is a **Vite** option, not an Astro one —
+  // a top-level `envDir` is silently ignored, which is how this was first
+  // wired wrong. Only `PUBLIC_`-prefixed variables reach the client bundle, so
+  // the pipeline's secrets in that file are never exposed by this.
+  // Tailwind v3 is compiled by the project-local `postcss.config.mjs`.
+  // Astro 6 dropped the deprecated `@astrojs/tailwind` integration, so the
+  // same chain runs through Vite's PostCSS pipeline with no behaviour change.
+  integrations: [react()],
   markdown: {
-    remarkPlugins: [remarkMath, remarkStripLeadingH1, remarkFixImagePaths],
-    rehypePlugins: [rehypeKatex],
+    // Astro 7 made the `unified` processor explicit: `markdown.remarkPlugins`
+    // and `markdown.rehypePlugins` are deprecated top-level keys. The factory
+    // below is the same pipeline they were folded into (GFM and SmartyPants
+    // defaults included), so rendering is unchanged.
+    processor: unified({
+      remarkPlugins: [remarkMath, remarkStripLeadingH1, remarkFixImagePaths],
+      rehypePlugins: [rehypeKatex],
+    }),
   },
   site: isPagesDeploy
     ? "https://minghao51.github.io/egg-n-bacon-housing"
@@ -70,6 +81,8 @@ export default defineConfig({
   },
   cacheDir: "./.astro-cache",
   vite: {
+    // Read `PUBLIC_*` from the repository-root `.env` (see the note above).
+    envDir: "..",
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
