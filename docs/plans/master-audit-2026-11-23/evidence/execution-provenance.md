@@ -1,0 +1,31 @@
+# Audit execution provenance
+
+Baseline: `449b921d499a8c55ec1eacb1a423baa7632456d3`, 2026-11-23 UTC. Initial `git status --short` empty. Audit writes are new report/tooling artifacts only. No authorised source/data refresh or commits.
+
+| Command | Result | Evidence |
+| --- | --- | --- |
+| `uv run --locked pytest tests/ --no-cov -q` | 1136 passed; 177 warnings | master-audit-pytest.log |
+| `cd app && PATH="$HOME/.bun/bin:$PATH" bun install --frozen-lockfile` | Bun 1.2.23; succeeded; no tracked lock change | master-audit-frontend.log |
+| `cd app && bun run test:unit` | 534 passed; 0 failed; 34 files | master-audit-frontend.log |
+| `cd app && bun run astro check` | 222 files; 0 errors / 0 warnings / 22 hints | master-audit-frontend.log |
+| `cd app && bun run validate-data` | 19 assets; legacy release `0e1013ee485f`; v2 `2c30e2aa836c`; cutoff 2026-10; 10 periods; 1840 observations; 47104 month cells | data-validation.log |
+| `uv run --locked ruff check .` | passed | master-audit-quality.log |
+| `uv run --locked ruff format --check .` | 128 files formatted | master-audit-quality.log |
+| `uv run --locked mypy` | passed; 29 source files in configured scope | master-audit-quality.log |
+| `uv run --locked python scripts/tools/validate_docs_layout.py` | passed | master-audit-quality.log |
+| `uv run --locked python scripts/tools/validate_agent_skills.py` | 2 required skills valid | master-audit-quality.log |
+| `uv run --locked python scripts/tools/check_catalog.py` | 4 layers;125 datasets;2333 edges valid | master-audit-quality.log |
+| `uv run --locked python scripts/tools/verify_reporting_baseline.py --assets` | 15 frozen sources; 0 live sources; 72 pinned assets; bytes match | reporting-baseline.log |
+| `uv run --locked pytest tests/ -q --cov=egg_n_bacon_housing --cov-report=xml:/tmp/master-audit-coverage.xml --cov-report=term:skip-covered` | 1136 passed; 3894/4076 statements; 95.53% line coverage (CLI rounds 96%); no branch coverage | fresh-coverage.log |
+| `uv run --locked python scripts/tools/check_core_coverage.py --coverage-xml /tmp/master-audit-coverage.xml --min-coverage 70` | 15 core modules passed | core-coverage.log |
+
+## Phase 2 runtime verification
+
+- `cd app && bun run build`: **234 pages built**, exit 0 (`build.log`).
+- `cd app && PLAYWRIGHT_HTML_OPEN=never PLAYWRIGHT_SERVER_COMMAND='bun run preview -- --host 127.0.0.1' PLAYWRIGHT_BASE_URL='http://127.0.0.1:4321' bunx playwright test --workers=2`: **237 passed; 9 Pages-prefix tests skipped**, exit 0 (`e2e.log`).
+- `cd app && bun run build:pages`: **234 pages built**, exit 0 (`pages-build.log`).
+- `cd app && PLAYWRIGHT_HTML_OPEN=never PLAYWRIGHT_SERVER_COMMAND='bun run serve:pages' PLAYWRIGHT_BASE_URL='http://127.0.0.1:4402/egg-n-bacon-housing/' PAGES_ORIGIN='http://127.0.0.1:4402' PAGES_BASE_PATH='/egg-n-bacon-housing' bunx playwright test tests/e2e/pages-base.spec.ts --workers=2`: **9 passed; 0 skipped**, exit 0 (`pages-e2e.log`).
+- Bun 1.2.23 from `~/.bun/bin` used throughout. Playwright managed its own local servers and browser teardown. These are local Chromium checks, not live deployment checks or a complete assistive-technology audit.
+- Both builds temporarily rewrote `app/public/data/catalog.jsonl.gz`; restored after each build under an EXIT trap. Verified original/restored git blob hash `26bff6954d570407db881707aca2cdda838691a2`. No tracked production changes.
+
+Fresh XML first element: `version=7.13.2 timestamp=1795407026109 lines-valid=4076 lines-covered=3894 line-rate=0.9553 branches-covered=0 branches-valid=0`. Existing ignored `coverage.xml` is stale and genuinely records `lines-covered=96 lines-valid=4076 line-rate=0.02355 timestamp=1795344885225`; it is not the current executed suite result. Reports/coverage caches are ignored local build artifacts, not production changes. Directly observed tracked secret-template scope: `git ls-files '*env*' '*key*' '*credential*'` listed `.env.example` and two non-secret image/evidence names; `git check-ignore .env` returned `.env`. This is not a git-history or complete secret scan.

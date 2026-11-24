@@ -489,8 +489,8 @@
       "status": "unmeasurable",
       "tokenScan": {
         "ABSD": {
-          "files": 9,
-          "occurrences": 30,
+          "files": 4,
+          "occurrences": 10,
           "perFile": [
             {
               "occurrences": 4,
@@ -507,32 +507,12 @@
             {
               "occurrences": 1,
               "path": "docs/analytics/macro-sensitivity.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
-            },
-            {
-              "occurrences": 3,
-              "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2025-02-17-var-implementation-report.md"
-            },
-            {
-              "occurrences": 5,
-              "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-            },
-            {
-              "occurrences": 10,
-              "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
             }
           ]
         },
         "housing_policy_dates": {
-          "files": 5,
-          "occurrences": 5,
+          "files": 2,
+          "occurrences": 2,
           "perFile": [
             {
               "occurrences": 1,
@@ -541,18 +521,6 @@
             {
               "occurrences": 1,
               "path": "docs/analytics/macro-sensitivity.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-03-04-data-quality-handoff.md"
             }
           ]
         }
@@ -588,8 +556,8 @@
       "status": "unmeasurable",
       "tokenScan": {
         "placebo": {
-          "files": 5,
-          "occurrences": 33,
+          "files": 2,
+          "occurrences": 2,
           "perFile": [
             {
               "occurrences": 1,
@@ -598,18 +566,6 @@
             {
               "occurrences": 1,
               "path": "docs/analytics/school-quality.md"
-            },
-            {
-              "occurrences": 3,
-              "path": "docs/plans/2025-02-02-school-impact-analysis.md"
-            },
-            {
-              "occurrences": 4,
-              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
-            },
-            {
-              "occurrences": 24,
-              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
             }
           ]
         }
@@ -638,8 +594,8 @@
       "status": "unmeasurable",
       "tokenScan": {
         "bandwidth": {
-          "files": 10,
-          "occurrences": 53,
+          "files": 6,
+          "occurrences": 12,
           "perFile": [
             {
               "occurrences": 3,
@@ -664,22 +620,6 @@
             {
               "occurrences": 2,
               "path": "docs/analytics/school-quality.md"
-            },
-            {
-              "occurrences": 4,
-              "path": "docs/plans/2025-02-02-school-impact-analysis.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-            },
-            {
-              "occurrences": 6,
-              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
-            },
-            {
-              "occurrences": 30,
-              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
             }
           ]
         }
@@ -692,8 +632,8 @@
       "status": "unmeasurable",
       "tokenScan": {
         "DiD": {
-          "files": 11,
-          "occurrences": 24,
+          "files": 5,
+          "occurrences": 11,
           "perFile": [
             {
               "occurrences": 4,
@@ -714,36 +654,12 @@
             {
               "occurrences": 1,
               "path": "docs/archive/20260127-mrt-complete-summary.md"
-            },
-            {
-              "occurrences": 2,
-              "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-            },
-            {
-              "occurrences": 5,
-              "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
-            },
-            {
-              "occurrences": 3,
-              "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-17-analytics-component-library.md"
             }
           ]
         },
         "RDiT": {
-          "files": 8,
-          "occurrences": 18,
+          "files": 4,
+          "occurrences": 12,
           "perFile": [
             {
               "occurrences": 5,
@@ -760,28 +676,12 @@
             {
               "occurrences": 1,
               "path": "docs/analytics/findings.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
-            },
-            {
-              "occurrences": 3,
-              "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-17-analytics-component-library.md"
             }
           ]
         },
         "difference-in-differences": {
-          "files": 10,
-          "occurrences": 12,
+          "files": 6,
+          "occurrences": 8,
           "perFile": [
             {
               "occurrences": 2,
@@ -806,22 +706,6 @@
             {
               "occurrences": 1,
               "path": "docs/archive/20260127-property-type-mrt-comparison-final-results.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-            },
-            {
-              "occurrences": 1,
-              "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
             }
           ]
         }
@@ -870,8 +754,8 @@
       "meaning": "the theoretical schedule the frozen text compares against exists as prose only. No data artefact named Bala matches in the data roots (artefactNameScan.bala), and the token's documentation matches are prose references, not the schedule",
       "status": "absent",
       "tokenScan": {
-        "files": 23,
-        "occurrences": 40
+        "files": 15,
+        "occurrences": 23
       }
     },
     "bands": {
@@ -1428,12 +1312,14 @@
     },
     "excludedPrefixes": [
       "docs/implementation/",
+      "docs/plans/",
+      "docs/guides/",
       "scripts/tools/",
       "prompts/",
       "app/src/components/studies/",
       "app/tests/"
     ],
-    "meaning": "the token and code scans are hash-pinned over these declarations; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs and excluded; .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are excluded explicitly; a count can only move if a scanned file changes",
+    "meaning": "the token and code scans are hash-pinned over these declarations; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs and excluded; docs/plans/ (the planning/spec surface: plan and audit prose about this study's method, which mentions it in the method's own vocabulary) is excluded; docs/guides/ (the operational surface: runbooks and setup/CI documentation about the programme, whose prose can name a study without implementing or evidencing its method) is excluded too, so a guide edit cannot move a pinned count; these scans establish absence FROM CODE, not absence from documentation; .secrets.baseline and the two D12 registers called out in excludedPaths are excluded; a count can only move if a scanned file changes",
     "roots": [
       "docs",
       "scripts",
@@ -1457,7 +1343,7 @@
   "tokenScan": {
     "13,118": {
       "caseSensitive": false,
-      "files": 5,
+      "files": 4,
       "firstMatches": [
         {
           "line": 40,
@@ -1500,7 +1386,7 @@
           "quote": "| HDB policy response               | RDiT jump (Dec 2023)              | ~+$13,118        | Moderate — bandwidth-sensitive                         |"
         }
       ],
-      "occurrences": 9,
+      "occurrences": 8,
       "perFile": [
         {
           "occurrences": 2,
@@ -1517,16 +1403,12 @@
         {
           "occurrences": 2,
           "path": "docs/analytics/findings.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
         }
       ]
     },
     "137,743": {
       "caseSensitive": false,
-      "files": 5,
+      "files": 4,
       "firstMatches": [
         {
           "line": 39,
@@ -1569,7 +1451,7 @@
           "quote": "| CCR condo policy effect           | DiD estimate (Sep 2022)           | ~-$137,743       | Moderate — regime-specific                             |"
         }
       ],
-      "occurrences": 9,
+      "occurrences": 8,
       "perFile": [
         {
           "occurrences": 2,
@@ -1586,16 +1468,12 @@
         {
           "occurrences": 2,
           "path": "docs/analytics/findings.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
         }
       ]
     },
     "ABSD": {
       "caseSensitive": true,
-      "files": 9,
+      "files": 4,
       "firstMatches": [
         {
           "line": 39,
@@ -1638,7 +1516,7 @@
           "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
         }
       ],
-      "occurrences": 30,
+      "occurrences": 10,
       "perFile": [
         {
           "occurrences": 4,
@@ -1655,32 +1533,12 @@
         {
           "occurrences": 1,
           "path": "docs/analytics/macro-sensitivity.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
-        },
-        {
-          "occurrences": 3,
-          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-17-var-implementation-report.md"
-        },
-        {
-          "occurrences": 5,
-          "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-        },
-        {
-          "occurrences": 10,
-          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
         }
       ]
     },
     "Bala": {
       "caseSensitive": true,
-      "files": 23,
+      "files": 15,
       "firstMatches": [
         {
           "line": 112,
@@ -1723,7 +1581,7 @@
           "quote": "- **Spline-based arbitrage**: identifies BUY/SELL/HOLD signals at lease years where market deviates ≥5% from theoretical Bala curve"
         }
       ],
-      "occurrences": 40,
+      "occurrences": 23,
       "perFile": [
         {
           "occurrences": 3,
@@ -1784,44 +1642,12 @@
         {
           "occurrences": 1,
           "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
-        },
-        {
-          "occurrences": 2,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
-        },
-        {
-          "occurrences": 3,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-design.md"
-        },
-        {
-          "occurrences": 4,
-          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
-        },
-        {
-          "occurrences": 3,
-          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md"
-        },
-        {
-          "occurrences": 2,
-          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
         }
       ]
     },
     "DiD": {
       "caseSensitive": true,
-      "files": 11,
+      "files": 5,
       "firstMatches": [
         {
           "line": 95,
@@ -1864,7 +1690,7 @@
           "quote": "The causal evidence supports segment-specific policy transmission: prime condos absorbed a measurable price suppression (~$138K) from ABSD changes, while HDB sh"
         }
       ],
-      "occurrences": 24,
+      "occurrences": 11,
       "perFile": [
         {
           "occurrences": 4,
@@ -1885,36 +1711,12 @@
         {
           "occurrences": 1,
           "path": "docs/archive/20260127-mrt-complete-summary.md"
-        },
-        {
-          "occurrences": 2,
-          "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-        },
-        {
-          "occurrences": 5,
-          "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
-        },
-        {
-          "occurrences": 3,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-component-library.md"
         }
       ]
     },
     "RDiT": {
       "caseSensitive": true,
-      "files": 8,
+      "files": 4,
       "firstMatches": [
         {
           "line": 96,
@@ -1957,7 +1759,7 @@
           "quote": "- **HDB RDiT**: ~+$13,118 immediate jump after Dec 2023 measures — HDB did not show intended cooling"
         }
       ],
-      "occurrences": 18,
+      "occurrences": 12,
       "perFile": [
         {
           "occurrences": 5,
@@ -1974,22 +1776,6 @@
         {
           "occurrences": 1,
           "path": "docs/analytics/findings.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-design.md"
-        },
-        {
-          "occurrences": 3,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-component-library.md"
         }
       ]
     },
@@ -2002,7 +1788,7 @@
     },
     "bandwidth": {
       "caseSensitive": false,
-      "files": 10,
+      "files": 6,
       "firstMatches": [
         {
           "line": 109,
@@ -2045,7 +1831,7 @@
           "quote": "- Bandwidth: 200 m on each side of boundary"
         }
       ],
-      "occurrences": 53,
+      "occurrences": 12,
       "perFile": [
         {
           "occurrences": 3,
@@ -2070,28 +1856,12 @@
         {
           "occurrences": 2,
           "path": "docs/analytics/school-quality.md"
-        },
-        {
-          "occurrences": 4,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-        },
-        {
-          "occurrences": 6,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
-        },
-        {
-          "occurrences": 30,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
         }
       ]
     },
     "difference-in-differences": {
       "caseSensitive": false,
-      "files": 10,
+      "files": 6,
       "firstMatches": [
         {
           "line": 53,
@@ -2134,7 +1904,7 @@
           "quote": "- Difference-in-differences (new MRT line openings)"
         }
       ],
-      "occurrences": 12,
+      "occurrences": 8,
       "perFile": [
         {
           "occurrences": 2,
@@ -2159,22 +1929,6 @@
         {
           "occurrences": 1,
           "path": "docs/archive/20260127-property-type-mrt-comparison-final-results.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md"
         }
       ]
     },
@@ -2187,7 +1941,7 @@
     },
     "housing_policy_dates": {
       "caseSensitive": false,
-      "files": 5,
+      "files": 2,
       "firstMatches": [
         {
           "line": 131,
@@ -2198,24 +1952,9 @@
           "line": 131,
           "path": "docs/analytics/macro-sensitivity.md",
           "quote": "- `housing_policy_dates.parquet` — 5 major policy events (2021-2023)"
-        },
-        {
-          "line": 174,
-          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md",
-          "quote": "- Files: `singapore_cpi_monthly.parquet`, `sora_rates_monthly.parquet`, `sgdp_quarterly.parquet`, `housing_policy_dates.parquet`"
-        },
-        {
-          "line": 520,
-          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md",
-          "quote": "save_path=output_dir / 'housing_policy_dates.parquet'"
-        },
-        {
-          "line": 28,
-          "path": "docs/plans/2026-03-04-data-quality-handoff.md",
-          "quote": "- `raw_macro_housing_policy_dates`"
         }
       ],
-      "occurrences": 5,
+      "occurrences": 2,
       "perFile": [
         {
           "occurrences": 1,
@@ -2224,18 +1963,6 @@
         {
           "occurrences": 1,
           "path": "docs/analytics/macro-sensitivity.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
-        },
-        {
-          "occurrences": 1,
-          "path": "docs/plans/2026-03-04-data-quality-handoff.md"
         }
       ]
     },
@@ -2255,7 +1982,7 @@
     },
     "placebo": {
       "caseSensitive": false,
-      "files": 5,
+      "files": 2,
       "firstMatches": [
         {
           "line": 115,
@@ -2266,39 +1993,9 @@
           "line": 115,
           "path": "docs/analytics/school-quality.md",
           "quote": "- **Bandwidth sensitivity**: tested at 100-300 m; placebo tests at 800 m and 1200 m fake cutoffs"
-        },
-        {
-          "line": 211,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-          "quote": "- Placebo tests at fake cutoffs (800m, 1200m)"
-        },
-        {
-          "line": 225,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-          "quote": "- `rdd_placebo_tests.csv`: Fake cutoff results (should be null)"
-        },
-        {
-          "line": 238,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-          "quote": "- **Placebo tests null**: No effect at fake cutoffs (RDD specification valid)"
-        },
-        {
-          "line": 70,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
-          "quote": "3. **Placebo Tests:** Fake cutoffs at 800m and 1200m (should show null effect)"
-        },
-        {
-          "line": 84,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
-          "quote": "- `rdd_placebo_tests.csv`: Fake cutoff results"
-        },
-        {
-          "line": 193,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
-          "quote": "- Create validation tests (placebo, balance, density)"
         }
       ],
-      "occurrences": 33,
+      "occurrences": 2,
       "perFile": [
         {
           "occurrences": 1,
@@ -2307,18 +2004,6 @@
         {
           "occurrences": 1,
           "path": "docs/analytics/school-quality.md"
-        },
-        {
-          "occurrences": 3,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
-        },
-        {
-          "occurrences": 4,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
-        },
-        {
-          "occurrences": 24,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
         }
       ]
     },

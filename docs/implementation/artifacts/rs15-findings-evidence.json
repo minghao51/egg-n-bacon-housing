@@ -26,6 +26,8 @@
         ],
         "prefixes": [
           "docs/implementation/",
+          "docs/plans/",
+          "docs/guides/",
           "prompts/",
           "scripts/tools/",
           "app/src/components/studies/",
@@ -40,22 +42,11 @@
         "meta_analysis",
         "cross_study"
       ],
-      "filesScanned": 326,
-      "matchCount": 2,
-      "matches": [
-        {
-          "line": 18,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
-          "quote": "3. **Heterogeneity Masked:** Pooled models average across diverse market segments (HDB vs Condo, CCR vs OCR), hiding critical differences in how buyers value sc"
-        },
-        {
-          "line": 964,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-          "quote": "Run pooled model with interaction terms."
-        }
-      ],
+      "filesScanned": 273,
+      "matchCount": 0,
+      "matches": [],
       "matchesTruncated": false,
-      "meaning": "a bounded scan, not proof of universal absence: it reads the listed roots and suffixes, excludes the programme's own output surfaces as disclosed, and records every match it found. A screen is not a finding about origin, and an unlinked artefact adjudicates nothing",
+      "meaning": "a bounded scan, not proof of universal absence: it reads the listed roots and suffixes, excludes the programme's own output surfaces as disclosed, and records every match it found. The planning/spec surface docs/plans/ is one of the excluded prefixes: the two matches this scan used to record were plan prose proposing a pooled model ('Run pooled model with interaction terms'), which is a plan, not a model in the checkout — excluding that surface is why matchCount is now zero, and it changes no disposition. The operational surface docs/guides/ (runbooks and setup/CI documentation about the programme) is excluded as a second disclosed prefix for the same reason: a guide that names a series is not an implementation of its method, because this scan establishes absence FROM CODE rather than absence from documentation. A screen is not a finding about origin, and an unlinked artefact adjudicates nothing",
       "question": "does this checkout hold a joint or pooled model over the series that could carry a cross-study ranking?",
       "roots": [
         "docs",
@@ -851,40 +842,40 @@
       "sha256": "8bdc5b8465907bbbe98851841b4080caa4fb246b8ed8e61503d59bcedf348970"
     },
     "docs/implementation/artifacts/rs06-lease-decay-evidence.json": {
-      "bytes": 197825,
-      "sha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a"
+      "bytes": 185159,
+      "sha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f"
     },
     "docs/implementation/artifacts/rs07-mrt-impact-evidence.json": {
-      "bytes": 205688,
-      "sha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53"
+      "bytes": 195923,
+      "sha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f"
     },
     "docs/implementation/artifacts/rs08-school-quality-evidence.json": {
-      "bytes": 252385,
-      "sha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad"
+      "bytes": 240533,
+      "sha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d"
     },
     "docs/implementation/artifacts/rs09-macro-sensitivity-evidence.json": {
       "bytes": 96351,
       "sha256": "ae403f11db8786e4258418d8791c6e0255fe2f4800d32e624f4014b6af629d7b"
     },
     "docs/implementation/artifacts/rs10-market-segments-evidence.json": {
-      "bytes": 102883,
-      "sha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56"
+      "bytes": 103106,
+      "sha256": "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167"
     },
     "docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json": {
-      "bytes": 93324,
-      "sha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a"
+      "bytes": 92531,
+      "sha256": "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7"
     },
     "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json": {
-      "bytes": 202192,
-      "sha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7"
+      "bytes": 188618,
+      "sha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74"
     },
     "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json": {
-      "bytes": 97812,
-      "sha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3"
+      "bytes": 87284,
+      "sha256": "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059"
     },
     "docs/implementation/artifacts/rs14-price-forecasts-evidence.json": {
-      "bytes": 193110,
-      "sha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f"
+      "bytes": 190694,
+      "sha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852"
     }
   },
   "legacyClaims": [
@@ -1751,7 +1742,7 @@
           }
         }
       },
-      "stringValuesCompared": 16033
+      "stringValuesCompared": 15458
     },
     "meaning": "the sentinel-string state is measured on whole values, not by substring, and the two scopes are reported apart: a placeholder in a field this register cites would appear under citedFields, and the ledger-wide scan is a disclosure of the same test elsewhere, split by ledger and by field path. The scan's sibling set is the register's series list minus the page's own series, so adding a signature elsewhere can only change it by changing the register, and signing this page cannot change it at all",
     "siblingSet": {
@@ -1924,7 +1915,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3"
+          "sharedArtifactSha256": "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059"
         },
         "claimDispositions": {
           "byValue": {
@@ -1984,13 +1975,13 @@
         },
         "id": "causal-inference-overview",
         "ledger": {
-          "bytes": 97812,
+          "bytes": 87284,
           "contentMatchesPin": true,
-          "contentSha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
+          "contentSha256": "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059",
           "path": "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json",
-          "pin": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
+          "pin": "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059",
           "rawMatchesPin": true,
-          "rawSha256": "d65c014401b58b5eb4bfd92360bfd63c3ac159eac05bd5b3d85bdf9fad3a4bf3",
+          "rawSha256": "d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2311,7 +2302,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a"
+          "sharedArtifactSha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f"
         },
         "claimDispositions": {
           "byValue": {
@@ -2371,13 +2362,13 @@
         },
         "id": "lease-decay",
         "ledger": {
-          "bytes": 197825,
+          "bytes": 185159,
           "contentMatchesPin": true,
-          "contentSha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
+          "contentSha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
           "path": "docs/implementation/artifacts/rs06-lease-decay-evidence.json",
-          "pin": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
+          "pin": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
           "rawMatchesPin": true,
-          "rawSha256": "5ec0e88269172595e1bf7585f7cb4c499d7944792591c3b69d10886bfbd0177a",
+          "rawSha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2512,7 +2503,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56"
+          "sharedArtifactSha256": "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167"
         },
         "claimDispositions": {
           "byValue": {
@@ -2572,13 +2563,13 @@
         },
         "id": "market-segments",
         "ledger": {
-          "bytes": 102883,
+          "bytes": 103106,
           "contentMatchesPin": true,
-          "contentSha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "contentSha256": "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167",
           "path": "docs/implementation/artifacts/rs10-market-segments-evidence.json",
-          "pin": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "pin": "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167",
           "rawMatchesPin": true,
-          "rawSha256": "d8f0658807b4864c049481d289f7dd1312be8fb052eeddcbdcdb5c6e0b0f8c56",
+          "rawSha256": "163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2613,7 +2604,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53"
+          "sharedArtifactSha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f"
         },
         "claimDispositions": {
           "byValue": {
@@ -2660,13 +2651,13 @@
         },
         "id": "mrt-impact",
         "ledger": {
-          "bytes": 205688,
+          "bytes": 195923,
           "contentMatchesPin": true,
-          "contentSha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
+          "contentSha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
           "path": "docs/implementation/artifacts/rs07-mrt-impact-evidence.json",
-          "pin": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
+          "pin": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
           "rawMatchesPin": true,
-          "rawSha256": "3c1230431aad7ef508b5e2a575b4b7860eada1a5f0582bb5f910db98ef804d53",
+          "rawSha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2701,7 +2692,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f"
+          "sharedArtifactSha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852"
         },
         "claimDispositions": {
           "byValue": {
@@ -2760,13 +2751,13 @@
         },
         "id": "price-forecasts",
         "ledger": {
-          "bytes": 193110,
+          "bytes": 190694,
           "contentMatchesPin": true,
-          "contentSha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
+          "contentSha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
           "path": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json",
-          "pin": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
+          "pin": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
           "rawMatchesPin": true,
-          "rawSha256": "2c4abaf556daed7a46a19ab5ce219d5d98c2a757ed2a068cdb721f9da2e9760f",
+          "rawSha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2897,7 +2888,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad"
+          "sharedArtifactSha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d"
         },
         "claimDispositions": {
           "byValue": {
@@ -2957,13 +2948,13 @@
         },
         "id": "school-quality",
         "ledger": {
-          "bytes": 252385,
+          "bytes": 240533,
           "contentMatchesPin": true,
-          "contentSha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
+          "contentSha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
           "path": "docs/implementation/artifacts/rs08-school-quality-evidence.json",
-          "pin": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
+          "pin": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
           "rawMatchesPin": true,
-          "rawSha256": "c25c4b64b942e9b920eaa7a075be5abfbbabd8dc28b28650f410695d44bee4ad",
+          "rawSha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2998,7 +2989,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a"
+          "sharedArtifactSha256": "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7"
         },
         "claimDispositions": {
           "byValue": {
@@ -3058,13 +3049,13 @@
         },
         "id": "spatial-autocorrelation",
         "ledger": {
-          "bytes": 93324,
+          "bytes": 92531,
           "contentMatchesPin": true,
-          "contentSha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "contentSha256": "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7",
           "path": "docs/implementation/artifacts/rs11-spatial-autocorrelation-evidence.json",
-          "pin": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "pin": "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7",
           "rawMatchesPin": true,
-          "rawSha256": "3af671b1dc437121d3c2d98d45cc3ec1fecf93fda99ff4fb4a69a50e1796e36a",
+          "rawSha256": "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -3099,7 +3090,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7"
+          "sharedArtifactSha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74"
         },
         "claimDispositions": {
           "byValue": {
@@ -3159,13 +3150,13 @@
         },
         "id": "spatial-hotspots",
         "ledger": {
-          "bytes": 202192,
+          "bytes": 188618,
           "contentMatchesPin": true,
-          "contentSha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
+          "contentSha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
           "path": "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json",
-          "pin": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
+          "pin": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
           "rawMatchesPin": true,
-          "rawSha256": "28f19962956212c81032d3ba8e18ec389e7ff78e0cf5bea7c168f2410e3803c7",
+          "rawSha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"

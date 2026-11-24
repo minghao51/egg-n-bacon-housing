@@ -1,0 +1,89 @@
+No records found in dataset d_test (url=https://data.gov.sg/api/action/datastore_search?resource_id=d_test&offset=2)
+2026-11-23 12:26:33 - audit_refresh - ERROR - Rolling refresh failed
+Traceback (most recent call last):
+  File "/home/howt/work/egg-n-bacon-housing/scripts/40_refresh_rolling.py", line 244, in main
+    run_pipeline(resolved, stage="all")
+  File "/usr/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 1199, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/master-audit-core-poc.py", line 132, in fail_pipeline
+    raise RuntimeError('mock fetch outage before re-writing bronze')
+RuntimeError: mock fetch outage before re-writing bronze
+{
+  "containment": {
+    "escaped_base": "owned",
+    "geocache_hamilton_written": true,
+    "downloads": [
+      "manual/../escaped.txt",
+      "geocache/hamilton/injected.json"
+    ]
+  },
+  "size_integrity": {
+    "local_bytes": "price\n1\n",
+    "remote_bytes": "price\n2\n3\n",
+    "downloads": [],
+    "uploads": [],
+    "stdout": "Found 1 file(s) in R2 (manual/). Checking local...\nDone (manual): 0 downloaded, 1 skipped (already exist).\nUploading to R2 bucket 'egg-bacon-housing-data' (manual/): 1 local file(s)\nDone (manual): 0 uploaded, 1 unchanged (skipped).\n\nSummary: 1 OK, 0 missing locally, 0 missing in R2, 0 size mismatches\n"
+  },
+  "partial_fetch": {
+    "advertised_total": 4,
+    "returned_rows": 2,
+    "cached_rows": 2,
+    "manifest_rows": 2
+  },
+  "cache_plausibility": {
+    "cold_coords": [
+      [
+        1.33,
+        103.83
+      ]
+    ],
+    "warm_coords": [
+      [
+        1.31,
+        103.81
+      ]
+    ],
+    "warm_metadata": [
+      {
+        "matched_name": null,
+        "address": "ORCHID RESIDENCES EXAMPLE ROAD Singapore"
+      }
+    ],
+    "api_calls": [
+      "ORCHID RESIDENCES EXAMPLE ROAD Singapore",
+      "EXAMPLE ROAD"
+    ]
+  },
+  "rate_limiter": {
+    "interval": 0.08,
+    "five_releases_after_seconds": [
+      0.0,
+      0.08011,
+      0.08019,
+      0.08021,
+      0.08029
+    ],
+    "release_gaps": [
+      0.08011,
+      8e-05,
+      2e-05,
+      8e-05
+    ]
+  },
+  "refresh_retry": {
+    "first_exit": 1,
+    "second_exit": 0,
+    "pipeline_calls": 1,
+    "bronze_still_missing": true,
+    "still_selected_stale": [
+      "raw_hdb_resale"
+    ]
+  }
+}

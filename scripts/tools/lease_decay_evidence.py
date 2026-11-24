@@ -140,10 +140,30 @@ GATE_CLAUSE = (
 # study signs (the frozen legacy originals stay IN the scan, because the
 # article's own method claims are what these tokens are matched against), and
 # the D12 decision register records reviewers' verdicts in their own vocabulary.
+#
+# `docs/plans/` generalises that last exclusion from one register to the whole
+# planning/spec surface. A plan or audit pack is prose ABOUT the method, not an
+# implementation of it: a filename scan read
+# `docs/plans/.../WS-C1-pages-release-gate.md` and `.../analysis-release.md` as
+# lease-named matches purely because the word "release" contains "lease", and
+# the programme's own drift notes mention `lease_decay` in the method's own
+# vocabulary. Pinning that surface made the ledger drift on the act of recording
+# WHY it drifted. The planning surface is therefore excluded and disclosed in
+# the ledger's own scan metadata (absenceScans.*.excludedPrefixes).
+#
+# `docs/guides/` is the operational surface and is excluded on the same
+# principle: runbooks, setup notes and CI descriptions are prose about operating
+# the programme, not an implementation of a study method and not evidence about
+# one. A guide that names this study (the CI pipeline guide lists the study's
+# `--check` command) is not a counter-example to an absence claim, because these
+# scans establish absence FROM CODE. Pinning operator documentation re-drifted
+# this signed ledger on a pure documentation edit.
 SCAN_ROOTS = ("docs", "scripts", "src", "app/src")
 SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx")
 EXCLUDED_SCAN_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "scripts/tools/",
     "prompts/",
     "docs/analytics/editions/",
@@ -160,9 +180,16 @@ FILENAME_SCAN_ROOTS = ("data", "app/public/data", "scripts", "src", "docs")
 # Same programme-surface exclusion the token scan declares: a hash-pinned
 # filename scan cannot read this programme's own output (sibling evidence
 # tools, runbooks, records, published editions land and drift the count),
-# while the frozen legacy corpus stays IN the scan.
+# while the frozen legacy corpus stays IN the scan. `docs/plans/` is the
+# planning/spec surface: its file NAMES are about the method, not artefacts of
+# it (`WS-C1-pages-release-gate.md` and `analysis-release.md` matched the
+# `lease` filename token only because "release" contains "lease").
+# `docs/guides/` is excluded here too, for the same reason the token scan
+# excludes it: an operator guide's prose is not an artefact of this study.
 FILENAME_SCAN_EXCLUDED_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "scripts/tools/",
     "prompts/",
     "docs/analytics/editions/",
@@ -1832,11 +1859,19 @@ def absence_scans() -> dict[str, Any]:
                     "evidence prose, whose file names contain 'lease' — a "
                     "hash-pinned scan cannot read its own output), "
                     "scripts/tools/ (this producer and its sibling evidence "
-                    "tools), prompts/ (the programme's runbooks), the D12 "
-                    "decision register docs/plans/2026-11-12-reporting-refresh-"
-                    "decisions.md, and published edition texts under "
-                    "docs/analytics/editions/ except editions/legacy/ — the "
-                    "frozen legacy corpus stays IN the scan"
+                    "tools), prompts/ (the programme's runbooks), the "
+                    "planning/spec surface docs/plans/ (plan and audit prose "
+                    "about the method: release-named plans matched the 'lease' "
+                    "filename token only because 'release' contains 'lease'), "
+                    "the operational surface docs/guides/ (runbooks, setup "
+                    "notes and CI descriptions about the programme — prose "
+                    "about operating the checkout, not an artefact of this "
+                    "study), "
+                    "the D12 decision register "
+                    "docs/plans/2026-11-12-reporting-refresh-decisions.md, and "
+                    "published edition texts under docs/analytics/editions/ "
+                    "except editions/legacy/ — the frozen legacy corpus stays "
+                    "IN the scan"
                 ),
                 "matchCount": filename_scan["matchCount"],
                 "matches": filename_scan["matches"],
@@ -1845,10 +1880,13 @@ def absence_scans() -> dict[str, Any]:
                 "absence is supported among the filename scan's lease-named "
                 "matches only — a filename-token scan, not an inventory of "
                 "every file name or artefact content in the scanned roots. "
-                "The matches are this series' stored CSV/PNG/JSON artefacts, "
-                "the article texts, and two release-named files whose names "
-                "merely contain the substring 'lease' (recorded, not "
-                "filtered); no match is a fitted lease-decay model artefact "
+                "The matches are this series' stored CSV/PNG/JSON artefacts "
+                "and the article texts; the planning surface docs/plans/ and "
+                "the operational surface docs/guides/ are "
+                "excluded (disclosed above), so release-named plans that "
+                "matched the 'lease' substring, and operator guides that "
+                "describe running the programme, are no longer counted as "
+                "matches. No match is a fitted lease-decay model artefact "
                 "(coefficients, pickle, joblib, parameter file). The "
                 "coefficient therefore has no stored source located by this "
                 "scan and no refit is attempted"
@@ -1880,13 +1918,21 @@ def absence_scans() -> dict[str, Any]:
             "meaning": (
                 "no lease-decay implementation was found on the scanned "
                 "surface: every token match is prose (the frozen legacy texts, "
-                "their live twins, plan/archive documents) or this series' "
-                "stored-asset wiring in the app. Hits are NOT claimed to be "
-                "uniformly prose or false positives — the files list records "
-                "every one. The programme's own surfaces are excluded and the "
-                "exclusion is disclosed here: app/src/components/studies/ "
-                "(edition registry/pages), app/tests/ (fixtures), "
-                ".secrets.baseline, and "
+                "their live twins) or this series' stored-asset wiring in the "
+                "app. Hits are NOT claimed to be uniformly prose or false "
+                "positives — the files list records every one. The programme's "
+                "own surfaces are excluded and the exclusion is disclosed "
+                "here: app/src/components/studies/ (edition registry/pages), "
+                "app/tests/ (fixtures), .secrets.baseline, "
+                "docs/plans/ (the planning/spec surface: plan and audit prose "
+                "about the method, which mentions lease_decay in the method's "
+                "own vocabulary — pinning it made this ledger drift on the act "
+                "of recording why it drifted), "
+                "docs/guides/ (the operational surface: runbooks, setup notes "
+                "and CI descriptions about the programme, whose prose names "
+                "this study's --check command without implementing or "
+                "evidencing its method — these scans establish absence FROM "
+                "CODE, not absence from documentation), and "
                 "docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 "
                 "register) are excluded; the frozen legacy originals stay "
                 "IN the scan because the article's method claims are what the "

@@ -21,7 +21,7 @@
       ],
       "exclusions": {
         "editionRule": "docs/analytics/editions/** excluded except docs/analytics/editions/legacy/**",
-        "meaning": "any directory component matching the disclosed cache/build prefixes is excluded so filesScanned is independent of local test, type-check, lint and frontend build runs; programme surfaces and non-legacy editions are separately excluded",
+        "meaning": "any directory component matching the disclosed cache/build prefixes (including pytest's htmlcov/, .hypothesis/ and the Astro build cache) is excluded so filesScanned is independent of local test, type-check, lint and frontend build runs; programme surfaces and non-legacy editions are separately excluded",
         "paths": [
           "docs/plans/2026-11-12-reporting-refresh-decisions.md"
         ],
@@ -35,17 +35,24 @@
           ".ruff_cache/",
           "dist/",
           ".astro/",
+          "htmlcov/",
+          ".hypothesis/",
+          ".astro-cache/",
           "app/node_modules/",
           "scripts/tools/",
           "prompts/",
-          "docs/implementation/"
+          "docs/implementation/",
+          "docs/plans/",
+          "docs/guides/",
+          "coverage.xml",
+          ".coverage"
         ]
       },
-      "filesScanned": 18354,
+      "filesScanned": 18165,
       "matchCount": 0,
       "matches": [],
       "meaning": "an ABSENT FILE state within the declared filename-scan boundary: the split datasets the article names have no matching filenames. What DOES exist is a comparison file recording train/test METRICS for an unlinked run (featureImportanceArtefacts.modelComparison) — metrics without their split files, kept as separate states",
-      "roots": "whole checkout tree, excluding transient caches/build outputs, programme surfaces, the D12 register path, and docs/analytics/editions/** except editions/legacy/**"
+      "roots": "whole checkout tree, excluding transient tooling caches/build outputs, programme surfaces (including the planning/spec surface docs/plans/ and the operational surface docs/guides/), the D12 register path, and docs/analytics/editions/** except editions/legacy/**"
     },
     "yoyChangePctColumn": {
       "columnPresent": false,
@@ -138,7 +145,7 @@
         "price_forecast"
       ],
       "inStoredAsset": false,
-      "meaning": "the stored asset's per-area blocks carry only price_forecast, policy_risk and lease_arbitrage keys; zero occurrences of any of the five segment labels; and the corroboration scan finds the table's values only in the article's own copies, sibling legacy articles and one plan document — so the per-segment model outputs the article's tables presuppose are absent from this checkout, and the table is withdrawn rather than re-estimated",
+      "meaning": "the stored asset's per-area blocks carry only price_forecast, policy_risk and lease_arbitrage keys; zero occurrences of any of the five segment labels; and the corroboration scan finds the table's values only in the article's own copies and sibling legacy articles (the planning/spec surface docs/plans/, which also mentions one of them, is excluded from that scan and disclosed at corroborationScan.excludedPrefixes) — so the per-segment model outputs the article's tables presuppose are absent from this checkout, and the table is withdrawn rather than re-estimated",
       "segmentNameOccurrencesInStoredAsset": {
         "Executive Condos": 0,
         "HDB flats": 0,
@@ -263,23 +270,23 @@
     ],
     "excludedPrefixes": [
       "docs/implementation/",
+      "docs/plans/",
+      "docs/guides/",
       "scripts/tools/",
       "prompts/",
       "app/src/components/studies/",
       "app/tests/"
     ],
-    "filesScanned": 331,
+    "filesScanned": 278,
     "independentMatchFiles": [
       "app/src/components/charts/InlineChartRenderer.tsx",
       "app/src/utils/data-parser.ts",
       "docs/analytics/editions/legacy/2026-11-12/findings.md",
       "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
       "docs/analytics/findings.md",
-      "docs/analytics/school-quality.md",
-      "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-      "docs/plans/2026-02-19-pipeline-improvements-plan.md"
+      "docs/analytics/school-quality.md"
     ],
-    "meaning": "outside the article's own two copies (the frozen text and the working copy docs/analytics/price-forecasts.md), the table values appear only in sibling legacy articles that quote the same numbers (findings.md for the segment table, school-quality.md for the XGBoost parameters) and one plan document (ARIMA(1,1,1) in docs/plans/2026-02-19-pipeline-improvements-plan.md) — cross-citation inside documents, never a data or code artefact. NO JSON, CSV or producer output in the scanned roots carries any of the table's values, which is the measured boundary of the per-segment table's provenance: absent, not merely unstated. Cross-citation between articles is corroboration of neither direction and is not claimed as any",
+    "meaning": "outside the article's own two copies (the frozen text and the working copy docs/analytics/price-forecasts.md), the table values appear only in sibling legacy articles that quote the same numbers (findings.md for the segment table, school-quality.md for the XGBoost parameters) — cross-citation inside documents, never a data or code artefact; the planning/spec surface docs/plans/ is excluded from this scan (disclosed at excludedPrefixes), so the ARIMA(1,1,1) mention it also holds is no longer counted, and the operational surface docs/guides/ (runbooks and setup/CI documentation about the programme) is excluded by the same rule. NO JSON, CSV or producer output in the scanned roots carries any of the table's values, which is the measured boundary of the per-segment table's provenance: absent, not merely unstated. Cross-citation between articles is corroboration of neither direction and is not claimed as any",
     "methodTokens": {
       "feature_importance_yoy_change_pct": {
         "allMatches": [],
@@ -360,19 +367,9 @@
             "line": 348,
             "path": "docs/analytics/editions/legacy/2026-11-12/manifest.json",
             "quote": "\"path\": \"app/public/data/analytics/predictive_analytics.json.gz\","
-          },
-          {
-            "line": 435,
-            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md",
-            "quote": "- `predictive_analytics.json.gz` (~250-400KB)"
-          },
-          {
-            "line": 65,
-            "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md",
-            "quote": "| RA02 | `app/public/data/analytics/predictive_analytics.json.gz`                       | RF07 archive, RS14 for replacement                                    "
           }
         ],
-        "files": 6,
+        "files": 4,
         "firstMatches": [
           {
             "line": 19,
@@ -403,19 +400,9 @@
             "line": 348,
             "path": "docs/analytics/editions/legacy/2026-11-12/manifest.json",
             "quote": "\"path\": \"app/public/data/analytics/predictive_analytics.json.gz\","
-          },
-          {
-            "line": 435,
-            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md",
-            "quote": "- `predictive_analytics.json.gz` (~250-400KB)"
-          },
-          {
-            "line": 65,
-            "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md",
-            "quote": "| RA02 | `app/public/data/analytics/predictive_analytics.json.gz`                       | RF07 archive, RS14 for replacement                                    "
           }
         ],
-        "occurrences": 8
+        "occurrences": 6
       },
       "price_appreciation_train": {
         "allMatches": [
@@ -436,7 +423,7 @@
         "occurrences": 1
       }
     },
-    "methodTokensMeaning": "predictive_analytics appears in app/src consumers and plan/register documents but in NO script under scripts/; price_appreciation_train appears nowhere outside the frozen and working article copies; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are excluded programme outputs; .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are also excluded; hdb_price_forecasts appears only in the archive reorganization listing. These are counts of references in the scanned roots, disclosed file by file",
+    "methodTokensMeaning": "predictive_analytics appears in app/src consumers and plan/register documents but in NO script under scripts/; price_appreciation_train appears nowhere outside the frozen and working article copies; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are excluded programme outputs; .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are also excluded, and docs/plans/ excludes the rest of the planning/spec surface (plan and audit prose about the method, not an implementation or artefact of it); docs/guides/ excludes the operational surface (runbooks, setup notes and CI descriptions, prose about operating the programme — these scans establish absence FROM CODE); hdb_price_forecasts appears only in the archive reorganization listing. These are counts of references in the scanned roots, disclosed file by file",
     "ownCopies": {
       "30.1%": {
         "inArticleCopies": 3,
@@ -545,21 +532,17 @@
       },
       "ARIMA(1,1,1)": {
         "inArticleCopies": 1,
-        "occurrences": 2,
-        "outsideArticleCopies": 1,
-        "outsideFiles": [
-          "docs/plans/2026-02-19-pipeline-improvements-plan.md"
-        ]
+        "occurrences": 1,
+        "outsideArticleCopies": 0,
+        "outsideFiles": []
       },
       "n_estimators=100": {
         "inArticleCopies": 1,
-        "occurrences": 7,
-        "outsideArticleCopies": 6,
+        "occurrences": 3,
+        "outsideArticleCopies": 2,
         "outsideFiles": [
           "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
-          "docs/analytics/school-quality.md",
-          "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-          "docs/plans/2026-02-19-pipeline-improvements-plan.md"
+          "docs/analytics/school-quality.md"
         ]
       },
       "±1076.24%": {
@@ -1278,27 +1261,17 @@
             "line": 102,
             "path": "docs/analytics/price-forecasts.md",
             "quote": "- **ARIMA(1,1,1)** for time-series forecasting per planning area"
-          },
-          {
-            "line": 1124,
-            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-            "quote": "f'Used ARIMA(1,1,1) model with 6-month horizon'"
           }
         ],
-        "files": 2,
+        "files": 1,
         "firstMatches": [
           {
             "line": 102,
             "path": "docs/analytics/price-forecasts.md",
             "quote": "- **ARIMA(1,1,1)** for time-series forecasting per planning area"
-          },
-          {
-            "line": 1124,
-            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-            "quote": "f'Used ARIMA(1,1,1) model with 6-month horizon'"
           }
         ],
-        "occurrences": 2
+        "occurrences": 1
       },
       "n_estimators=100": {
         "allMatches": [
@@ -1316,29 +1289,9 @@
             "line": 109,
             "path": "docs/analytics/school-quality.md",
             "quote": "- XGBoost parameters: n_estimators=100, max_depth=6, learning_rate=0.1"
-          },
-          {
-            "line": 158,
-            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-            "quote": "model = RandomForestRegressor(n_estimators=100, n_jobs=-1, random_state=42)"
-          },
-          {
-            "line": 160,
-            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-            "quote": "model = xgb.XGBRegressor(n_estimators=100, max_depth=6, n_jobs=-1, random_state=42)"
-          },
-          {
-            "line": 909,
-            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-            "quote": "n_estimators=100,"
-          },
-          {
-            "line": 1283,
-            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-            "quote": "n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42"
           }
         ],
-        "files": 5,
+        "files": 3,
         "firstMatches": [
           {
             "line": 109,
@@ -1354,29 +1307,9 @@
             "line": 109,
             "path": "docs/analytics/school-quality.md",
             "quote": "- XGBoost parameters: n_estimators=100, max_depth=6, learning_rate=0.1"
-          },
-          {
-            "line": 158,
-            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-            "quote": "model = RandomForestRegressor(n_estimators=100, n_jobs=-1, random_state=42)"
-          },
-          {
-            "line": 160,
-            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-            "quote": "model = xgb.XGBRegressor(n_estimators=100, max_depth=6, n_jobs=-1, random_state=42)"
-          },
-          {
-            "line": 909,
-            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-            "quote": "n_estimators=100,"
-          },
-          {
-            "line": 1283,
-            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-            "quote": "n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42"
           }
         ],
-        "occurrences": 7
+        "occurrences": 3
       },
       "±1076.24%": {
         "allMatches": [

@@ -1,0 +1,715 @@
+bun install v1.2.23 (cf136713)
+
+Checked 572 installs across 655 packages (no changes) [73.00ms]
+$ bun test tests/unit
+bun test v1.2.23 (cf136713)
+
+tests/unit/explorer-pack-rows.test.ts:
+(pass) buildPackExplorerDataset — published window > builds rows from the pack, never from the national scope [2.00ms]
+(pass) buildPackExplorerDataset — published window > carries the pack's own national baseline, with its disposition note [1.00ms]
+(pass) buildPackExplorerDataset — published window > the thin-sample rule reads the joint volume
+(pass) buildPackExplorerDataset — published window > a verified no-sales window is a real zero, not a missing row
+(pass) buildPackExplorerDataset — published window > nulls sort last in both directions
+(pass) buildPackExplorerDataset — published window > search still narrows the rows
+(pass) buildPackExplorerDataset — published window > a window with no area rows is empty, not a fallback to another window
+(pass) buildPackExplorerDataset — ranking gate > a publish scope is rankable and orders by value
+(pass) buildPackExplorerDataset — ranking gate > a limited-display scope keeps its values but is never ranked
+(pass) buildPackExplorerDataset — unpublished and malformed ids > an unpublished but well-formed id is reported, not substituted
+(pass) buildPackExplorerDataset — unpublished and malformed ids > a malformed id is rejected before the pack is consulted [1.00ms]
+(pass) publishedPeriodOptions > offers every published concrete id, legacy-shadowed ids excluded
+(pass) publishedPeriodOptions > period labels resolve through the pack, or not at all
+(pass) buildPackExplorerDataset — activity column > an eligible area carries both denominators and the signed change
+(pass) buildPackExplorerDataset — activity column > a limited-display scope shows activity but is still never ranked
+(pass) buildPackExplorerDataset — activity column > a window with no comparator carries no activity, not a zero change
+(pass) buildPackExplorerDataset — activity column > a missing prior-year observation states the reason
+
+tests/unit/catalog-payload.test.ts:
+(pass) catalog table rows > carry only the six rendered fields
+(pass) catalog table rows > preserve catalog order and values [1.00ms]
+(pass) catalog table rows > an unobserved parquet stays null rather than becoming zero
+(pass) catalog table rows > is a projection: the source datasets are not mutated
+(pass) catalog DAG projections > nodes keep id, layer and label in catalog order
+(pass) catalog DAG projections > edges keep every endpoint pair in catalog order [2.00ms]
+(pass) catalog payload size > is materially smaller than the full catalog records [3.00ms]
+
+tests/unit/area-history.test.ts:
+(pass) monthly history view > renders the newest grid months in ascending order [1.00ms]
+(pass) monthly history view > honours a smaller month limit
+(pass) monthly history view > carries the payload's own coverage statement and cutoff
+(pass) monthly history view > returns an empty view for an area the release does not carry
+(pass) monthly history view > counts verified zero months without turning them into a value [1.00ms]
+(pass) monthly history view > distinguishes an all-zero area from a missing one
+(pass) monthly history view > labels missing source differently from a zero
+
+tests/unit/segment-evidence.test.ts:
+(pass) published manifest boundary > the dashboard release lists its seven dashboard assets
+(pass) published manifest boundary > the segment archive is unverified, so it cannot be cross-compared
+(pass) published manifest boundary > the gate is symmetric: listing the archive would flip the status
+(pass) published manifest boundary > the asset name the surface reads is the archive filename
+(pass) field evidence > only the stored average PSF is a non-gated field
+(pass) field evidence > every gated field carries a caveat that denies currentness [1.00ms]
+(pass) field evidence > no metric label claims a current median
+(pass) field evidence > the shared copy names the manifest and the missing period
+(pass) formatSegmentMetric > renders stored archive values with their unit
+(pass) formatSegmentMetric > a missing value is N/A, never zero
+
+tests/unit/financing-draft.test.ts:
+(pass) financing draft defaults > the documented defaults are the plan's assumptions
+(pass) financing draft defaults > a resolved reference seeds the price and records its key
+(pass) financing draft defaults > no reference at all still yields a usable default draft
+(pass) financing draft merge > a partial patch leaves the other fields alone
+(pass) financing draft merge > a blank or invalid string is preserved, never repaired
+(pass) financing draft merge > an explicit undefined patch value cannot blank a field
+(pass) financing draft merge > merge is immutable
+(pass) reference-key change detection > keys identify the area and property type
+(pass) reference-key change detection > the same reference does not re-import, even as a new object
+(pass) reference-key change detection > a manual price survives a tool switch (same key, new entry object)
+(pass) reference-key change detection > a changed reference imports the new observed median
+(pass) reference-key change detection > a manual price is replaced only when the key actually changes
+(pass) reference-key change detection > going back to no reference clears the imported price and keys to none
+(pass) reference resolution > an explicit selection resolves to that entry
+(pass) reference resolution > no selection resolves to the documented default
+(pass) reference resolution > an unpublished selection falls back and says so
+(pass) reference resolution > the same selection resolves to the same key across calls
+
+tests/unit/observed-monthly.test.ts:
+(pass) roles > maps every property type to one declared role
+(pass) parsing the real history payload > accepts the published fixture
+(pass) parsing the real history payload > keeps the cell grid aligned to the month grid
+(pass) parsing the real history payload > reads a covered month without averaging or zero-filling
+(pass) parsing the real history payload > declares which ids are areas rather than leaving it to the id string
+(pass) parsing the real history payload > reports an uncovered month as missing source, never as zero sales [1.00ms]
+(pass) rejection > rejects an unsupported schema version
+(pass) rejection > rejects a reordered cell field list
+(pass) rejection > rejects a cell grid that is not aligned to the month grid
+(pass) rejection > rejects a short cell tuple
+(pass) rejection > rejects a median without its observation count
+(pass) rejection > rejects more observations than transactions
+(pass) rejection > rejects a month grid that is not strictly ascending
+(pass) rejection > rejects coverage that disagrees with the grid [1.00ms]
+(pass) rejection > rejects a no-sales count that does not match the cells
+(pass) rejection > rejects a payload with no national series
+(pass) rejection > rejects a payload that declares another property type
+(pass) rejection > rejects a cutoff that disagrees with the manifest
+(pass) rejection > rejects a payload that does not declare its geographies
+(pass) rejection > rejects an unassigned id with no series
+(pass) rejection > rejects an area count that disagrees with the declared series
+(pass) rejection > rejects a duplicate series
+
+tests/unit/area-activity.test.ts:
+(pass) rolling-quarter selection > picks the newest published rolling quarter
+(pass) rolling-quarter selection > returns null when the pack publishes no rolling quarter [1.00ms]
+(pass) area activity rows (published pack) > uses the quarter and its prior-year comparator with explicit ranges
+(pass) area activity rows (published pack) > reports both denominators and the year-on-year change
+(pass) area activity rows (published pack) > marks a thin property type ineligible without hiding its numbers
+(pass) area activity rows (published pack) > lists one row per published property type, specific types first
+(pass) area activity rows (published pack) > says counts are observed transactions and publishes no directional label [1.00ms]
+(pass) area activity states > keeps a verified no-sales quarter as an absence, not a zero
+(pass) area activity states > states a missing comparator instead of dropping the change
+(pass) area activity states > applies the floor to both windows
+(pass) area activity states > reports a zero prior-year denominator rather than dividing by zero
+(pass) area activity states > emits no row for a property type the quarter does not report
+(pass) area activity states > returns notes but no rows for an area the quarter does not report
+(pass) activityForObservation parity > matches the fieldnote row for the same observation
+(pass) activityForObservation parity > reports the same absence for a no-sales window as the table
+
+tests/unit/trend-series.test.ts:
+(pass) published dashboard_trends payload > builds 442 monthly HDB points from 1990-01 to 2026-10
+(pass) published dashboard_trends payload > 2025 HDB is twelve points whose volumes sum to 25,084 [1.00ms]
+(pass) published dashboard_trends payload > December 2025 is 635,000 / 2,024
+(pass) published dashboard_trends payload > the latest published month is 2026-10, not the end of 2025 [1.00ms]
+(pass) published dashboard_trends payload > EC keeps the calendar and leaves pre-2021 months unpublished
+(pass) published dashboard_trends payload > the combined series publishes a price but no invented count [1.00ms]
+(pass) buildTrendSeries > a missing value keeps a null point and the calendar does not shift
+(pass) buildTrendSeries > rows are sorted by month and an omitted month becomes an explicit gap
+(pass) buildTrendSeries > an unusable value becomes null, never zero and never negative
+(pass) buildTrendSeries > a real zero is kept as a measurement
+(pass) buildTrendSeries > a malformed payload returns null instead of a partial series
+(pass) filterWindow > year_2025 keeps exactly the 2025 months
+(pass) filterWindow > recent starts at 2022-01 and ends at the series coverage
+(pass) filterWindow > all history keeps every point in order
+(pass) filterWindow > a window with no published month is empty, not zero-filled
+(pass) summarize > reports the last month in the window, gaps included
+(pass) summarize > flags a partial window when a calendar boundary is unpublished
+(pass) summarize > an unbounded window is never partial and an empty range always is
+(pass) summarize > an empty series has no latest values
+(pass) yearSum > sums a complete year without rounding
+(pass) yearSum > returns null when the year is incomplete
+(pass) yearSum > returns null when one month is unpublished or duplicated
+(pass) yearSum > rejects a year that is not four digits
+(pass) formatTrendNumber > groups digits without rounding [1.00ms]
+(pass) formatTrendNumber > renders an absent value as N/A
+(pass) selection constants > the default is a selectable series and window
+(pass) yearSum calendar integrity > rejects an out-of-range month instead of counting it as a month
+(pass) yearSum calendar integrity > still sums a complete twelve-month year
+
+tests/unit/catalog-audit.test.ts:
+(pass) catalog audit > the regenerated catalog and the artifact now agree [2.00ms]
+(pass) catalog audit > the earlier S0 finding is preserved, not overwritten
+(pass) catalog audit > lookup is exact and the date falls back closed [12.00ms]
+
+tests/unit/observed-periods.test.ts:
+(pass) monthsBetween > builds inclusive month lists across year boundaries [1.00ms]
+(pass) monthsBetween > handles a single month and a leap February
+(pass) monthsBetween > rejects reversed or malformed bounds
+(pass) parsing the real pack > accepts the published fixture
+(pass) parsing the real pack > publishes the rolling quarter with its prior-year comparator
+(pass) parsing the real pack > keeps concrete period windows and comparator links
+(pass) parse rejection > rejects an unsupported schema version [1.00ms]
+(pass) parse rejection > rejects a duplicate period id
+(pass) parse rejection > rejects an observation that references an unpublished period
+(pass) parse rejection > rejects months that disagree with the bounds
+(pass) parse rejection > rejects a no-sales observation that carries a price
+(pass) parse rejection > rejects periods and summary that disagree about the cutoff
+(pass) alias resolution > resolves latest, ytd and ttm to concrete period ids
+(pass) alias resolution > never resolves to a comparator window with an older end month
+(pass) alias resolution > uses the ratified default window per surface
+(pass) observation lookup > finds a published observation and reports absence otherwise [1.00ms]
+(pass) observation lookup > builds the same key the index uses
+(pass) comparisons > compares a published window with its comparator
+(pass) comparisons > returns null when the period has no comparator
+(pass) comparisons > returns null when the comparator observation is absent
+(pass) comparisons > skips metrics that cannot be compared instead of inventing them
+(pass) comparisons > refuses a zero comparator denominator
+(pass) comparisons > computes a percentage change for an available scope
+(pass) dispositions > treats only cleared, observed scopes as publishable [1.00ms]
+(pass) dispositions > explains why a scope is limited
+(pass) coverage > reports covered months from observations
+(pass) coverage > detects a pack whose cutoff month has no observation [1.00ms]
+
+tests/unit/area-page.test.ts:
+(pass) area page sections > covers the full joint-section matrix in reading order
+(pass) area page sections > loads one page per area, 31 of which publish a 2025 HDB block [4.00ms]
+(pass) area page sections > reads Tampines 2025 HDB and the national baseline from one joint section [2.00ms]
+(pass) area page sections > never substitutes the property-only or period-only blocks [2.00ms]
+(pass) area page sections > an area without EC transactions has a null EC record, not a zero [1.00ms]
+(pass) area page sections > a combination with no national block keeps national null [1.00ms]
+(pass) baseline verdict at build time > no manifest is absent, never compatible [1.00ms]
+(pass) baseline verdict at build time > a matching manifest is compatible and carries the generation [4.00ms]
+(pass) baseline verdict at build time > a one-byte tamper is a mismatch, not an unverified guess [4.00ms]
+(pass) baseline verdict at build time > a manifest whose generation disagrees with its content is a mismatch [3.00ms]
+(pass) baseline verdict at build time > an unparseable manifest is unverified [1.00ms]
+(pass) baseline verdict at build time > the page data carries the verdict it was built under [2.00ms]
+(pass) areaHref > builds the fieldnote path with the explorer return marker
+(pass) areaHref > carries the validated property and period
+(pass) areaHref > never echoes a value outside the explorer vocabulary
+(pass) fieldnote selection > offers the whole joint matrix in reading order, defaults to 2025 HDB [2.00ms]
+(pass) fieldnote selection > an empty combination stays selectable with its own note [1.00ms]
+(pass) fieldnote selection > resolves a requested property and period together [1.00ms]
+(pass) fieldnote selection > a concrete v2 window is reported, never substituted silently [1.00ms]
+(pass) fieldnote selection > an unknown period or property is reported with the default fallback [1.00ms]
+(pass) fieldnote route union > two identities that share a slug stop the build [1.00ms]
+(pass) return-link contract > the fieldnote carries the explorer allow-list, not a second copy
+(pass) return-link contract > returns the plain explorer route for a direct visit
+(pass) return-link contract > keeps the validated explorer query, including a concrete period
+(pass) return-link contract > drops values outside the published vocabularies
+(pass) return-link contract > keeps a base-prefixed explorer path
+(pass) return-link contract > the exported list is what the shared function reads [1.00ms]
+
+tests/unit/tool-url-state.test.ts:
+(pass) parseToolQuery > an empty query string is the documented default
+(pass) parseToolQuery > reads a tool and a complete named reference [1.00ms]
+(pass) parseToolQuery > an unknown tool falls back to financing without throwing
+(pass) parseToolQuery > a partial or unversioned reference is ignored
+(pass) parseToolQuery > the area is canonicalised to uppercase
+(pass) serializeToolQuery > omits defaults
+(pass) serializeToolQuery > writes the tool and the versioned reference
+(pass) serializeToolQuery > round-trips
+(pass) applyToolQuery > replaces its own keys and keeps parameters owned by others
+(pass) applyToolQuery > every owned key is removable when the state returns to defaults
+(pass) applyToolQuery > an unparseable href is returned untouched
+
+tests/unit/leaderboard-observed.test.ts:
+(pass) scoped metric reads > reads Punggol HDB 2025 from the joint section
+(pass) scoped metric reads > never falls back to the property-only or period-only margins
+(pass) scoped metric reads > returns null when the joint section is absent
+(pass) scoped metric reads > treats an exporter zero block as empty, not S$0
+(pass) sample caution rule > flags 12 sales as thin and 1,538 as sufficient
+(pass) sample caution rule > treats an unknown count as thin
+(pass) geography > resolves the five published planning regions
+(pass) geography > does not invent a region for CCR/RCR/OCR or unknown labels
+(pass) metric availability > supports only the jointly published metrics
+(pass) metric availability > explains why an unsupported metric cannot be ranked
+(pass) ranking rows > ranks published areas by the scoped metric
+(pass) ranking rows > reports an area the release does not publish for the scope
+(pass) ranking rows > keeps a thin row visible but unranked, after the ranked rows
+(pass) ranking rows > drops rows whose region label cannot be resolved when filtering [1.00ms]
+(pass) ranking rows > uses the scoped median price for the price filter
+(pass) ranking rows > builds property mix from the same period, not all-time volumes
+(pass) ranking rows > marks unranked rows without a numeric ranking value
+(pass) pack-backed rankings > ranks a publish scope from the pack and keeps thin rows unranked
+(pass) pack-backed rankings > keeps a verified no-sales window as zero sales with null prices
+(pass) pack-backed rankings > reads the same-window property mix from the pack
+(pass) pack-backed rankings > never ranks a limited-display scope and lists rows by name
+(pass) pack-backed rankings > reports an unpublished or malformed period instead of another window
+(pass) pack-backed rankings > legacy eras stay rankable, so the old view is unchanged
+(pass) pack-backed rankings > applies the region and price filters to pack rows too
+
+tests/unit/request-state.test.ts:
+(pass) resolveLoadIntent > uses a fresh cache for an initial load without showing loading [1.00ms]
+(pass) resolveLoadIntent > bypasses a stale cache for an initial load and shows loading
+(pass) resolveLoadIntent > never uses the cache for a retry, even when it is fresh
+(pass) resolveLoadIntent > refreshes displayed data without blocking loading or clearing on failure
+(pass) resolveLoadIntent > surfaces a refresh error when nothing is displayed
+(pass) cacheKey > differs per generation and is stable for the same inputs
+(pass) cacheKey > treats an absent or empty generation as no generation
+(pass) isCacheFresh > is fresh at exactly the ttl and stale one millisecond later
+(pass) isCacheFresh > treats a missing entry as stale
+(pass) createRequestTracker > makes an older token stale once a newer request starts
+(pass) createRequestTracker > ignores an old result that resolves after a new request starts
+
+tests/unit/observed-pack-loader.test.ts:
+(pass) canonical identity > matches the Python generation for the same identity [1.00ms]
+(pass) canonical identity > is insensitive to key order
+(pass) canonical identity > refuses non-finite numbers
+(pass) manifest parsing > accepts a well-formed manifest [1.00ms]
+(pass) manifest parsing > rejects an unsafe asset path [1.00ms]
+(pass) manifest parsing > rejects duplicate roles and missing roles
+(pass) manifest parsing > rejects identity roles that disagree with asset hashes [1.00ms]
+(pass) loading > reports absent when no v2 manifest is published
+(pass) loading > returns a verified pack [1.00ms]
+(pass) loading > rejects tampered payload bytes [1.00ms]
+(pass) loading > names transport decoding when the host inflated the payload [1.00ms]
+(pass) loading > rejects a manifest whose generation does not match its identity
+(pass) loading > rejects a missing payload rather than degrading [1.00ms]
+(pass) loading > rejects a manifest cutoff that disagrees with the pack
+(pass) loading > propagates a manifest fetch failure as invalid, not absent [1.00ms]
+(pass) monthly history > verifies one property payload against the manifest generation [1.00ms]
+(pass) monthly history > does not download the other property payloads on the eager path [1.00ms]
+(pass) monthly history > rejects a monthly payload whose bytes were altered [1.00ms]
+(pass) monthly history > reports a missing monthly payload instead of an empty history [1.00ms]
+
+tests/unit/data-parser-charts.test.ts:
+(pass) inferChartUnit > recognises percentages, currency, counts and scores
+(pass) splitDatasetsByUnit > keeps a single-unit table as one group
+(pass) splitDatasetsByUnit > separates a currency premium from a transaction count
+(pass) dropEmptyDatasets > drops an all-missing series and reports its label
+(pass) dropEmptyDatasets > keeps a partially missing series
+(pass) parseNumericValue > parses currency and counts [1.00ms]
+(pass) parseNumericValue > parses plain percentages
+(pass) parseNumericValue > refuses uncertainty notation instead of turning it into a point estimate
+(pass) parseNumericValue > refuses ranges and descriptive cells
+(pass) tableToChartData > returns null when the requested columns are absent
+(pass) tableToChartData > yields an all-missing dataset for range-only columns, which the caller drops
+(pass) tableToChartData > keeps null cells for partially published columns
+
+tests/unit/observed-defaults.test.ts:
+(pass) resolveObservedRouteDefault > keeps the legacy default while the release switch is off
+(pass) resolveObservedRouteDefault > never invents a default without a verified pack
+(pass) resolveObservedRouteDefault > resolves D03's trailing-12-month window when v2 is enabled
+(pass) resolveObservedRouteDefault > resolves another alias through the same pack
+(pass) resolveObservedRouteDefault > a pack without that window yields no default, not a nearby one
+
+tests/unit/map-url-state.test.ts:
+(pass) parseMapSelection > round-trips all five groups from the reported URL
+(pass) parseMapSelection > drops values that are not accepted instead of substituting another value
+(pass) parseMapSelection > keeps known layer ids, drops unknown ids and duplicates, preserves order
+(pass) parseMapSelection > accepts every layer id declared by the map layer metadata
+(pass) parseMapSelection > uppercases and trims the area, and treats a missing area as null
+(pass) parseMapSelection > tolerates a leading '?', a bare query string, an empty string and broken encoding [1.00ms]
+(pass) parseMapSelection > ignores unknown query keys
+(pass) serializeMapSelection > omits null and empty groups
+(pass) serializeMapSelection > never emits area=null or layers=
+(pass) serializeMapSelection > writes the full selection in a stable key order
+(pass) serializeMapSelection > uppercases and trims the area
+(pass) serializeMapSelection > joins multiple layers with a comma
+(pass) mergeMapSelection > keeps base values when the incoming groups are absent or null
+(pass) mergeMapSelection > applies incoming values and clears layers only for an explicit empty array
+(pass) mergeMapSelection > does not alias the base layer array
+(pass) isSameMapSelection > compares layer lists order-insensitively
+(pass) isSameMapSelection > detects differences in any group
+(pass) isSameMapSelection > treats a parsed URL and the re-serialized selection as equal
+
+tests/unit/map-archive.test.ts:
+(pass) retained layer IDs > exactly the nine published layer IDs are declared
+(pass) retained layer IDs > every layer names its asset, units and gate
+(pass) per-layer status > all nine are ready when every group loaded
+(pass) per-layer status > a spatial failure marks only the spatial layers
+(pass) per-layer status > a pending group reports loading, not an empty value
+(pass) archive inspection > Bishan exposes the stored placeholders for active layers [1.00ms]
+(pass) archive inspection > the archived forecast keeps its past target and signal labels
+(pass) archive inspection > does not call a pattern uniform while any claimed field varies
+(pass) archive inspection > warnings follow the active groups only
+(pass) archive inspection > no selected area yields no rows and no invented value
+(pass) archive inspection > an absent area is unavailable, not neutral [1.00ms]
+(pass) archive inspection > metadata names the source assets and generation times
+(pass) observed legend > names the quantity, unit, period and evidence status
+
+tests/unit/tool-evidence.test.ts:
+(pass) published lease archive > the asset validates and keeps its stored bands
+(pass) published lease archive > 75 remaining years resolves to the stored 74–79 band
+(pass) published lease archive > shared endpoints are exposed, not silently resolved
+(pass) published lease archive > negative statistics are premiums and format with a sign
+(pass) published lease archive > the stored domain has a documented coverage gap [1.00ms]
+(pass) published lease archive > stored risk labels conflict with the archive's own insight prose
+(pass) published MRT/CBD archive > the asset validates
+(pass) published MRT/CBD archive > title-case labels resolve to the stored canonical key
+(pass) published MRT/CBD archive > the stored formula is disclosed with units and the 500 m stop
+(pass) published MRT/CBD archive > a missing town or type yields no term, never a fallback
+(pass) published spatial archive > the published towns[] shape validates
+(pass) published spatial archive > a clusters[]-only payload is unavailable, not coerced
+(pass) published spatial archive > portfolio allocations are never surfaced
+(pass) archive release boundary > none of the three research assets is in the release manifest
+(pass) archive release boundary > listing them would flip the gate, so promotion stays deliberate
+(pass) archive release boundary > archive copy names the missing period and sample
+(pass) no invention copy > retired 7×/15× boilerplate is gone
+(pass) no invention copy > the financing disclaimer is an exclusion, not an eligibility claim
+
+tests/unit/observed-data.test.ts:
+(pass) sectionKey > returns joint keys for property subsets and bare era keys for all
+(pass) sectionKey > never collapses a property subset onto a property-only or period-only key
+(pass) missing sections > returns null for an area when the requested section is absent (no all-history fallback)
+(pass) missing sections > returns null for the national baseline when the requested section is absent
+(pass) missing sections > returns null for non-object payloads, non-object sections and non-object area entries
+(pass) area coverage > returns a record for an area present in the joint section
+(pass) area coverage > returns null for a property subset that exists but lacks the requested area
+(pass) availability states > classifies null, undefined, NaN and Infinity as missing
+(pass) availability states > classifies an exact 0 as empty with a null value
+(pass) availability states > classifies positive finite numbers as available without rounding
+(pass) availability states > uses volume as the count field and ignores count
+(pass) source identity > carries section, era, propertyType and asset on an available area record
+(pass) source identity > carries dashboard_overview identity on the national baseline
+(pass) national baseline > reads the overview block instead of averaging area medians
+(pass) national baseline > accepts the bare stats block as well as the full overview payload
+(pass) compareWithBaseline > returns the unrounded difference and percent of baseline
+(pass) compareWithBaseline > returns null when either value is missing or empty
+(pass) compareWithBaseline > returns null when the baseline is 0
+(pass) area identity > formats multi-word names for display
+(pass) area identity > normalises already-canonical and untidy input to the same id
+(pass) area identity > round-trips id -> display -> id and id -> slug for all 55 planning areas
+(pass) era definitions > uses literal labels and boundaries that never depend on today
+(pass) published asset spot check > reads Tampines 2025 HDB and the national 2025 HDB baseline
+
+tests/unit/release-manifest.test.ts:
+(pass) computeReleaseGeneration > recomputes the exporter's recorded generation from a real manifest [1.00ms]
+(pass) computeReleaseGeneration > canonicalizes nested, unicode and null values exactly like Python
+(pass) computeReleaseGeneration > excludes generatedAt from the id but not published content
+(pass) parseReleaseManifest > accepts the real exporter manifest
+(pass) parseReleaseManifest > rejects payloads outside the 1.0.0 contract
+(pass) verifyReleaseAssets > accepts matching bytes and reports a tampered asset [1.00ms]
+(pass) verifyReleaseAssets > honours the only list
+(pass) verifyReleaseAssets > reports missing bytes and unknown asset entries
+(pass) loadReleaseCheck > reports an absent manifest for HTTP 404 [1.00ms]
+(pass) loadReleaseCheck > reports unverified for malformed JSON, wrong schema and a failed fetch [1.00ms]
+(pass) loadReleaseCheck > verifies a matching release and only fetches the requested assets
+(pass) loadReleaseCheck > reports mismatch when the manifest content was edited after publication
+(pass) loadReleaseCheck > reports mismatch when a served asset is from another generation [1.00ms]
+(pass) loadReleaseCheck > treats a missing or unfetchable asset as unverified, not mixed
+
+tests/unit/geo-projection.test.ts:
+(pass) projectPlanningAreas — published asset > projects all 55 published features to 55 areas
+(pass) projectPlanningAreas — published asset > uses canonical ids, display names and slugs
+(pass) projectPlanningAreas — published asset > every path is a well-formed, two-decimal SVG path that starts with M [15.00ms]
+(pass) projectPlanningAreas — published asset > every coordinate and centroid stays inside the canvas [9.00ms]
+(pass) projectPlanningAreas — published asset > preserves the projected aspect ratio of the island [6.00ms]
+(pass) projectPlanningAreas — published asset > keeps the published holes as separate subpaths
+(pass) projectPlanningAreas — fixtures > accepts Polygon and MultiPolygon and keeps source order
+(pass) projectPlanningAreas — fixtures > emits one subpath per ring, so holes can be filled with evenodd
+(pass) projectPlanningAreas — fixtures > respects the requested canvas and padding [1.00ms]
+(pass) projectPlanningAreas — fixtures > leaves the default padding free of geometry
+(pass) projectPlanningAreas — fixtures > shrinks longitude by cos(mean latitude) so the map is not stretched
+(pass) projectPlanningAreas — fixtures > puts north at the top
+(pass) projectPlanningAreas — fixtures > skips features without a usable planning-area name
+(pass) projectPlanningAreas — fixtures > sanitises lowercase ids from exporters that write pln_area_n
+(pass) projectPlanningAreas — fixtures > skips features with no usable ring instead of throwing
+(pass) projectPlanningAreas — fixtures > collapses a duplicated area to its first feature
+(pass) projectPlanningAreas — fixtures > returns an empty map for payloads it cannot read
+(pass) projectPlanningAreas — fixtures > ignores features that are not objects
+(pass) quantileBins > returns no bins for empty or entirely unusable input
+(pass) quantileBins > yields a single bin for one value
+(pass) quantileBins > yields a single bin when every value is identical
+(pass) quantileBins > cuts five values into ascending, non-overlapping bins covering all of them
+(pass) quantileBins > cuts thirty values into the default five bins [1.00ms]
+(pass) quantileBins > assigns every value to exactly one bin, lower boundary inclusive
+(pass) quantileBins > honours a smaller bin count
+(pass) quantileBins > keeps labels numeric-neutral and free of separators
+(pass) quantileBins > ignores negative and non-finite values before binning
+(pass) quantileBins > returns null for values outside the bins
+(pass) quantileBins > places the maximum in the last bin
+(pass) palette > has one step per default bin
+(pass) palette > runs low to high, last step darkest
+(pass) palette > no-data fill differs from every palette step
+
+tests/unit/explorer-selection.test.ts:
+(pass) EXPLORER_DEFAULTS > is 2025 HDB at the thin-sample threshold, cheapest first
+(pass) the period vocabulary > recognises the four legacy era ids and nothing around them
+(pass) the period vocabulary > accepts concrete ids in the published shapes only
+(pass) the period vocabulary > a legacy id wins over a pack period of the same name
+(pass) the period vocabulary > keeps an explicit concrete id and falls back only on nonsense
+(pass) the period vocabulary > a concrete id round-trips through the query string verbatim [1.00ms]
+(pass) parseExplorerSelection > an empty query is the defaults
+(pass) parseExplorerSelection > round-trips the defaults through an empty query string
+(pass) parseExplorerSelection > round-trips a non-default selection
+(pass) parseExplorerSelection > accepts a full URL and a bare query string
+(pass) parseExplorerSelection > a bare query string is never split on a question mark inside a value
+(pass) parseExplorerSelection > unknown values fall back to the default, never to another valid value
+(pass) parseExplorerSelection > a partially valid query keeps only the valid parts
+(pass) parseExplorerSelection > minSales=all means no threshold
+(pass) parseExplorerSelection > minSales accepts only a non-negative integer and clamps at 100000
+(pass) parseExplorerSelection > page is an integer of at least 1
+(pass) parseExplorerSelection > search is trimmed and capped at 80 characters
+(pass) parseExplorerSelection > area is trimmed and uppercased, or null
+(pass) parseExplorerSelection > tolerates malformed percent-encoding without throwing
+(pass) serializeExplorerSelection > omits every default value
+(pass) serializeExplorerSelection > writes only the non-default fields, in a stable order
+(pass) withSelection > keeps the page when nothing filtered changes
+(pass) withSelection > resets the page when a filter, search, threshold or sort changes
+(pass) withSelection > does not reset when a patched value equals the current one
+(pass) withSelection > an explicit page in the same patch wins
+(pass) withSelection > clearing the area works
+
+tests/unit/edition-registry.test.ts:
+(pass) edition registry matches the frozen sources > every frozen study has exactly one registered identity [1.00ms]
+(pass) edition registry matches the frozen sources > every frozen edition file on disk has exactly one identity
+(pass) edition registry matches the frozen sources > every registered edition points at a file that exists
+(pass) edition registry matches the frozen sources > the register validates and uses one legacy edition identity
+(pass) selection and paths > only the signed series claim an approved current edition [1.00ms]
+(pass) selection and paths > an approved edition is chosen over a newer unapproved one
+(pass) selection and paths > archive paths carry year, edition and series
+(pass) registry validation rejects bad identities > rejects a reserved analytics segment
+(pass) registry validation rejects bad identities > rejects duplicate series + edition pairs
+(pass) registry validation rejects bad identities > rejects malformed identifiers and years
+(pass) D12 sign-off record > accepts a complete, distinct three-way record
+(pass) D12 sign-off record > an approved edition is promoted by the series entry
+(pass) D12 sign-off record > requires all three roles
+(pass) D12 sign-off record > rejects a duplicate role
+(pass) D12 sign-off record > refuses self-approval by the preparer
+(pass) D12 sign-off record > refuses the scientific reviewer as publication approver
+(pass) D12 sign-off record > refuses signatures on different artifacts
+(pass) D12 sign-off record > rejects a malformed attestation
+(pass) D12 sign-off record > rejects sign-offs on an edition that is not approved
+(pass) D12 sign-off record > the shipped register's claims match each edition's status
+(pass) approved editions pin their frozen text > rejects an approved edition that pins no text
+(pass) approved editions pin their frozen text > rejects a malformed edition sha256
+(pass) approved editions pin their frozen text > rejects a pin on an edition that claims nothing
+(pass) approved editions pin their frozen text > accepts a record whose text pin is well formed
+(pass) approved editions pin their frozen text > verifyEditionArtifacts reports a drifted or unreadable text [1.00ms]
+(pass) approved editions pin their frozen text > verifyEditionArtifacts ignores editions that claim nothing
+(pass) approved editions pin their frozen text > the shipped register's text pins match the files on disk
+(pass) approved editions pin their frozen text > detects a real file whose bytes no longer match the pin
+
+tests/unit/observed-rows.test.ts:
+(pass) buildExplorerDataset — published 2025 HDB section > reads only the joint section
+(pass) buildExplorerDataset — published 2025 HDB section > Tampines 2025 HDB carries the published values
+(pass) buildExplorerDataset — published 2025 HDB section > keeps published values unrounded
+(pass) buildExplorerDataset — published 2025 HDB section > the national baseline is the joint overview block, not the area mean
+(pass) buildExplorerDataset — published 2025 HDB section > threshold 150 hides exactly the thin areas and counts them
+(pass) buildExplorerDataset — published 2025 HDB section > a higher threshold hides exactly the areas below it
+(pass) buildExplorerDataset — published 2025 HDB section > no threshold keeps every area and reports no thin rows
+(pass) buildExplorerDataset — published 2025 HDB section > search matches the display name case-insensitively
+(pass) buildExplorerDataset — published 2025 HDB section > an incompatible baseline keeps the rows and withholds the baseline [1.00ms]
+(pass) buildExplorerDataset — no fallback sections > a missing joint section yields no rows and no baseline
+(pass) buildExplorerDataset — no fallback sections > a property-only or period-only key never stands in for the joint section
+(pass) buildExplorerDataset — no fallback sections > a non-object section is treated as missing
+(pass) buildExplorerDataset — missing metrics and ordering > a row with a missing volume is kept and never counted thin
+(pass) buildExplorerDataset — missing metrics and ordering > an area with no available metric is not a row
+(pass) buildExplorerDataset — missing metrics and ordering > nulls sort last in both directions
+(pass) buildExplorerDataset — missing metrics and ordering > equal values fall back to the name in both directions
+
+tests/unit/segment-rows.test.ts:
+(pass) buildSegmentAreaRows > returns only the areas the segment declares [1.00ms]
+(pass) buildSegmentAreaRows > a declared area missing from the archive is skipped, not invented
+(pass) buildSegmentAreaRows > sorts by the selected stored field, descending
+(pass) buildSegmentAreaRows > applies the hard filters: region, spatial class and PSF range
+(pass) buildSegmentAreaRows > a property-type mismatch yields no rows instead of a fallback
+(pass) buildSegmentAreaRows > filters that exclude every declared area produce an empty list
+
+tests/unit/observed-pack-build.test.ts:
+(pass) loading the published pack > verifies and parses the published pack [6.00ms]
+(pass) loading the published pack > reports absent when no manifest is published [1.00ms]
+(pass) loading the published pack > rejects a tampered payload [13.00ms]
+(pass) loading the published pack > rejects a manifest edited to point at a different generation [11.00ms]
+(pass) dashboard summary > summarises the HDB year-to-date window with a prior-year comparison [7.00ms]
+(pass) dashboard summary > marks the latest month with its prior-year comparator [6.00ms]
+(pass) dashboard summary > keeps a limited private scope unpublishable with a reason [6.00ms]
+
+tests/unit/geometry.test.ts:
+(pass) planningAreaName > reads the uppercase PLN_AREA_N key served by planning_areas.geojson [1.00ms]
+(pass) planningAreaName > reads the lowercase pln_area_n key written by some exporters
+(pass) planningAreaName > prefers PLN_AREA_N when both casings are present
+(pass) planningAreaName > returns null when no name key is present
+(pass) planningAreaName > returns null for an empty string value
+(pass) planningAreaName > returns null for a whitespace-only value
+(pass) planningAreaName > returns null for non-string values
+(pass) planningAreaName > returns null when properties are absent or not an object
+(pass) planningAreaName > trims and uppercases the published name
+(pass) planningAreaName > tolerates prefixed keys
+(pass) planningAreaName > falls through an empty preferred key to a populated variant
+(pass) samePlanningArea > matches names that differ only by case
+(pass) samePlanningArea > matches names that differ only by surrounding whitespace
+(pass) samePlanningArea > rejects different areas
+(pass) samePlanningArea > never matches when either side is null
+(pass) samePlanningArea > never matches when either side is empty
+
+tests/unit/tool-amortization.test.ts:
+(pass) standard amortization > the documented scenario reproduces the exit values
+(pass) standard amortization > sensitivity uses the same principal and term at 2–6%
+(pass) standard amortization > a zero interest rate uses principal ÷ months, not a division by zero
+(pass) standard amortization > monthlyPayment rejects a non-positive principal or term
+(pass) invalid inputs withhold every output > blank income
+(pass) invalid inputs withhold every output > zero income
+(pass) invalid inputs withhold every output > blank price
+(pass) invalid inputs withhold every output > zero price
+(pass) invalid inputs withhold every output > down payment above 100%
+(pass) invalid inputs withhold every output > negative down payment
+(pass) invalid inputs withhold every output > zero term
+(pass) invalid inputs withhold every output > term beyond the UI bound
+(pass) invalid inputs withhold every output > non-numeric ratio parse
+(pass) invalid inputs withhold every output > negative rate
+(pass) invalid inputs withhold every output > all invalid fields are named, not just the first
+(pass) display formatting > missing values stay N/A and a real zero is a number
+(pass) display formatting > signed lease statistics always state their sign
+
+tests/unit/segment-url-state.test.ts:
+(pass) parseSegmentQuery > an empty query string is the documented default [1.00ms]
+(pass) parseSegmentQuery > keeps the five legacy IDs
+(pass) parseSegmentQuery > unknown or malformed values fall back without throwing
+(pass) parseSegmentQuery > drops unknown segment IDs only when the known list is supplied
+(pass) parseSegmentQuery > de-duplicates and caps the shortlist at four, keeping order
+(pass) parseSegmentQuery > ignores constraints without the version tag
+(pass) parseSegmentQuery > applies versioned constraints over the persona preset
+(pass) parseSegmentQuery > invalid constraint values fall back field by field
+(pass) parseSegmentQuery > out-of-range PSF bounds are rejected rather than clamped
+(pass) serializeSegmentQuery > omits defaults
+(pass) serializeSegmentQuery > writes only non-default IDs
+(pass) serializeSegmentQuery > round-trips a selection with constraints
+(pass) serializeSegmentQuery > reset to persona settings stops emitting constraints
+(pass) applySegmentQuery > replaces its own keys and keeps parameters owned by others
+(pass) applySegmentQuery > every owned key is removable [1.00ms]
+(pass) applySegmentQuery > an unparseable href is returned untouched
+
+tests/unit/studies.test.ts:
+(pass) filterStudies > the default filters keep every study
+(pass) filterStudies > free text matches title, description and slug
+(pass) filterStudies > topic filters to the exact category
+(pass) filterStudies > audience uses published persona entry points only
+(pass) filterStudies > filters combine and never invent a fallback list
+(pass) filterStudies > every declared topic exists in the label map
+(pass) studyEvidence > the lease study withholds charts for a unit review
+(pass) studyEvidence > other studies keep their opt-in charts
+
+tests/unit/format.test.ts:
+(pass) formatNumber > formats a real zero instead of treating it as absent
+(pass) formatNumber > formats finite values with the requested precision
+(pass) formatNumber > never renders a missing measurement as a number
+(pass) formatPercent > converts a fractional ratio and keeps a real zero
+(pass) formatPercent > supports negative ratios without hiding the sign
+(pass) formatPercent > never renders a missing ratio as 0%
+
+tests/unit/tool-reference.test.ts:
+(pass) published reference table > Tampines HDB is the documented S$710,000 from year_2025_hdb
+(pass) published reference table > the documented default reference resolves
+(pass) published reference table > every value comes from a joint 2025 section
+(pass) published reference table > areas are listed per property type and lookup is canonical
+(pass) joint-section guard > a property-only or period-only block never stands in
+(pass) joint-section guard > an exporter empty block is omitted, never a S$0 reference
+(pass) joint-section guard > an unreadable payload yields an empty table
+(pass) joint-section guard > asset failure is distinguished from an absent 2025 section
+
+ 534 pass
+ 0 fail
+ 87331 expect() calls
+Ran 534 tests across 34 files. [433.00ms]
+$ astro check
+12:08:01 [content] Syncing content
+12:08:01 [content] Synced content
+12:08:01 [types] Generated 288ms
+12:08:01 [check] Getting diagnostics for Astro files in /home/howt/work/egg-n-bacon-housing/app...
+[96msrc/components/DarkModeToggle.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useEffect, useState } from "react";
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/MarkdownContent.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/charts/ChartRenderer.tsx[0m:[93m7[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'TableData' is declared but its value is never read.
+
+[7m7[0m   type TableData,
+[7m [0m [93m       ~~~~~~~~~[0m
+[96msrc/components/charts/ChartRenderer.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/charts/ComparisonChart.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/charts/InlineChartRenderer.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useEffect, useRef } from "react";
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/charts/InteractiveTable.tsx[0m:[93m8[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'createColumnHelper' is declared but its value is never read.
+
+[7m8[0m   createColumnHelper,
+[7m [0m [93m  ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/charts/InteractiveTable.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useMemo, useState } from "react";
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/charts/StatisticalPlot.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/charts/TimeSeriesChart.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/dashboard/MarketOverviewDashboard.tsx[0m:[93m643[0m:[93m22[0m - [93mwarning[0m[90m ts(6385): [0m'Cell' is deprecated.
+
+[7m643[0m                     <Cell
+[7m   [0m [93m                     ~~~~[0m
+[96msrc/components/dashboard/MarketOverviewDashboard.tsx[0m:[93m12[0m:[93m3[0m - [93mwarning[0m[90m ts(6385): [0m'Cell' is deprecated.
+
+[7m12[0m   Cell,
+[7m  [0m [93m  ~~~~[0m
+
+[96msrc/components/dashboard/PersonaSelector.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'useState' is declared but its value is never read.
+
+[7m1[0m import { useState } from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/dashboard/PriceMap.tsx[0m:[93m334[0m:[93m11[0m - [93mwarning[0m[90m ts(6133): [0m'normalized' is declared but its value is never read.
+
+[7m334[0m     const normalized = (val - min) / (max - min);
+[7m   [0m [93m          ~~~~~~~~~~[0m
+[96msrc/components/dashboard/PriceMap.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useEffect, useMemo, useState } from "react";
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/dashboard/PriceTrendsChart.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/dashboard/SegmentsAnalysis.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useState } from "react";
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/dashboard/TownLeaderboard.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useMemo, useState } from "react";
+[7m [0m [93m       ~~~~~[0m
+
+[96msrc/components/dashboard/TransactionVolumeChart.tsx[0m:[93m1[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React from "react";
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/dashboard/leaderboard/LeaderboardDashboard.tsx[0m:[93m1[0m:[93m8[0m - [93mwarning[0m[90m ts(6133): [0m'React' is declared but its value is never read.
+
+[7m1[0m import React, { useEffect, useMemo, useState } from "react";
+[7m [0m [93m       ~~~~~[0m
+
+
+[Showing lines 1-713 of 729 (50.0KB limit). Use offset=714 to continue.]

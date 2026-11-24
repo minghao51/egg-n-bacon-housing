@@ -40,6 +40,8 @@
           ".venv/",
           "__pycache__/",
           "docs/implementation/",
+          "docs/plans/",
+          "docs/guides/",
           "scripts/tools/",
           "prompts/",
           "app/src/components/studies/",
@@ -69,14 +71,16 @@
         ],
         "prefixes": [
           "docs/implementation/",
+          "docs/plans/",
+          "docs/guides/",
           "scripts/tools/",
           "prompts/",
           "app/src/components/studies/",
           "app/tests/"
         ],
-        "selfExclusion": "this tool lives under scripts/tools/ and quotes the tokens it searches for, so it cannot scan itself; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs; .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are explicitly excluded"
+        "selfExclusion": "this tool lives under scripts/tools/ and quotes the tokens it searches for, so it cannot scan itself; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs; the planning/spec surface docs/plans/ (plan and audit prose about the method) is excluded, as is the operational surface docs/guides/ (runbooks and setup/CI documentation about the programme; these scans establish absence FROM CODE), along with .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register)"
       },
-      "matchedFileCount": 31,
+      "matchedFileCount": 22,
       "matchedFiles": [
         {
           "matchCount": 3,
@@ -93,6 +97,10 @@
         {
           "matchCount": 1,
           "path": "app/src/components/charts/InteractiveTable.tsx"
+        },
+        {
+          "matchCount": 1,
+          "path": "app/src/components/dashboard/PriceMap.tsx"
         },
         {
           "matchCount": 1,
@@ -159,51 +167,11 @@
           "path": "docs/archive/20260127-mrt-impact-analysis-report.md"
         },
         {
-          "matchCount": 3,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md"
-        },
-        {
-          "matchCount": 2,
-          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
-        },
-        {
-          "matchCount": 1,
-          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
-        },
-        {
-          "matchCount": 9,
-          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
-        },
-        {
-          "matchCount": 20,
-          "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-        },
-        {
-          "matchCount": 46,
-          "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-        },
-        {
-          "matchCount": 2,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md"
-        },
-        {
-          "matchCount": 13,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
-        },
-        {
-          "matchCount": 1,
-          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md"
-        },
-        {
-          "matchCount": 6,
-          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
-        },
-        {
           "matchCount": 2,
           "path": "docs/research/singapore-open-datasets.md"
         }
       ],
-      "meaning": "matches are prose, plan and UI references (including the frozen legacy originals and the sibling spatial-hotspots article), not executable spatial code: no .py file outside the excluded programme surfaces implements the legacy method, which is why the legacy numbers cannot be re-derived from any surviving script",
+      "meaning": "matches are prose and UI references (including the frozen legacy originals, the sibling spatial-hotspots article and one app comment whose word 'normalisation' contains the substring 'lisa'), not executable spatial code: no .py file outside the excluded programme surfaces implements the legacy method, which is why the legacy numbers cannot be re-derived from any surviving script",
       "purpose": "the legacy provenance says its Python spatial scripts were retired; this scan measures whether any implementation of the legacy method survives outside the programme's own surfaces",
       "rootsSearched": [
         "docs",
@@ -221,7 +189,7 @@
         ".tsx"
       ],
       "tokenPattern": "moran|esda|libpysal|getis|lisa (case-insensitive)",
-      "totalMatches": 188
+      "totalMatches": 86
     }
   },
   "areaGiStar": {
@@ -1799,8 +1767,8 @@
       "sha256": "efea427d37df07b7a5363ca6622b33087d80d6d166adf3774a421e9b60bcbc22"
     },
     "pyproject.toml": {
-      "bytes": 4131,
-      "sha256": "f09dea44109e452748e08f9690d9686a56493a04b8e991f4af73de667b82f1a5"
+      "bytes": 5288,
+      "sha256": "a958bc19d7b85c2e3e5b24f79ee2774191f6dae4875067669621c0841e6ec4b6"
     }
   },
   "legacyClaims": [

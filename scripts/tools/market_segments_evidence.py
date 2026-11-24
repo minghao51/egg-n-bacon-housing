@@ -130,7 +130,24 @@ SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx")
 # recorded 348 scanned files and this checkout measured 349 (the +1 was
 # `scripts/tools/check_edition_lexicon.py`) with an unchanged token match list.
 # If production code is ever placed under `scripts/tools/`, narrow this again.
-EXCLUDED_SCAN_PREFIXES = ("docs/implementation/", "scripts/tools/", "prompts/")
+EXCLUDED_SCAN_PREFIXES = (
+    "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
+    "scripts/tools/",
+    "prompts/",
+)
+# `docs/plans/` is the planning/spec surface: plan and audit prose ABOUT the
+# method, not an implementation of it. It holds the D12 decision register this
+# scan already excluded by path, so the prefix generalises that same intent — a
+# plan that describes a KMeans/StandardScaler block is an illustration in a
+# plan, and pinning it made this ledger drift whenever a plan or audit pack
+# restated the method's vocabulary.
+# `docs/guides/` is the operational surface and is excluded on the same
+# principle: runbooks, setup notes and CI descriptions are prose about operating
+# the programme, not an implementation of RS10's method and not evidence about
+# it. A guide that names the study is not a counter-example to an absence claim,
+# because these scans establish absence FROM CODE.
 # Published edition texts are programme outputs too: a study that signs after
 # RS10 must not drift this ledger. The frozen legacy originals stay IN the scan,
 # because the article's own method claims are what these tokens are matched
@@ -1068,11 +1085,20 @@ def method_recovery(paths: list[Path], asset: dict[str, Any]) -> dict[str, Any]:
                 "no call site that fits, scales or validates a segment model exists "
                 "there, and the records that produce the asset are hand-written "
                 "literals. Hits are NOT claimed to be uniformly prose or false "
-                "positives — a plan document inside the scanned docs root "
-                "(docs/plans/2026-02-19-pipeline-improvements-plan.md) contains a "
-                "KMeans/StandardScaler code EXAMPLE, and it is counted among the "
-                "hits below. It is an illustration in a plan, not evidence that RS10 "
-                "used that model, and nothing connects it to the shipped values"
+                "positives: the token scan counts code hits under app/src (see the "
+                "files lists below), and nothing connects any of them to the shipped "
+                "values. The planning/spec surface docs/plans/ is excluded and "
+                "disclosed here (excludedPrefixes): it is plan and audit prose "
+                "ABOUT the method, including "
+                "docs/plans/2026-02-19-pipeline-improvements-plan.md, whose "
+                "KMeans/StandardScaler block is a code EXAMPLE in a plan. That "
+                "example is no longer counted, which is why the counts below are "
+                "narrower than the round-14 ledger's — the exclusion is a scan "
+                "boundary, not a change to any RS10 claim. The operational "
+                "surface docs/guides/ is excluded for the same reason "
+                "(runbooks and setup/CI documentation about the programme; a "
+                "guide that names a method is not an implementation of it, and "
+                "this scan establishes absence FROM CODE)"
             ),
         },
         "generatorProvenance": {

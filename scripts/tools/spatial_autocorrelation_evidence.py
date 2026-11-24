@@ -133,6 +133,13 @@ FRAME_COLUMNS = ("month", "property_type", "is_ec", "planning_area", "psf", "lat
 # The hash-pinned token scan bounds and exclusions. The excluded prefixes are
 # the programme's own output surfaces, not evidence of any method: their
 # exclusion is disclosed at absenceScans.methodImplementationScan.exclusions.
+# `docs/plans/` is the planning/spec surface (plan and audit prose ABOUT the
+# method, not an implementation of it) and generalises the D12 register this
+# scan already excluded by path; pinning it made the ledger drift whenever a
+# plan recorded the method's name. `docs/guides/` is the operational surface and
+# is excluded by the same rule: runbooks, setup notes and CI descriptions are
+# prose about operating the programme, not an implementation or an artefact of
+# the legacy spatial method, and this scan establishes absence FROM CODE.
 # The frozen legacy originals stay IN the scan: the article's own method words
 # are what the tokens are matched against. This tool quotes the tokens it
 # searches for and lives under an excluded prefix, so it cannot scan itself.
@@ -140,6 +147,8 @@ SCAN_ROOTS = ("docs", "scripts", "src", "assets", "app/src", ".claude/handoffs",
 SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx")
 EXCLUDED_SCAN_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "scripts/tools/",
     "prompts/",
     "app/src/components/studies/",
@@ -1186,14 +1195,21 @@ def absence_scans(
                 "this tool lives under scripts/tools/ and quotes the tokens it "
                 "searches for, so it cannot scan itself; app/src/components/"
                 "studies/ (edition registry/pages) and app/tests/ (fixtures) "
-                "are programme outputs; .secrets.baseline and "
+                "are programme outputs; the planning/spec surface docs/plans/ "
+                "(plan and audit prose about the method) is excluded, as is "
+                "the operational surface docs/guides/ (runbooks and setup/CI "
+                "documentation about the programme; these scans establish "
+                "absence FROM CODE), along with "
+                ".secrets.baseline and "
                 "docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 "
-                "register) are explicitly excluded"
+                "register)"
             ),
         },
         "meaning": (
-            "matches are prose, plan and UI references (including the frozen "
-            "legacy originals and the sibling spatial-hotspots article), not "
+            "matches are prose and UI references (including the frozen "
+            "legacy originals, the sibling spatial-hotspots article and one "
+            "app comment whose word 'normalisation' contains the substring "
+            "'lisa'), not "
             "executable spatial code: no .py file outside the excluded "
             "programme surfaces implements the legacy method, which is why the "
             "legacy numbers cannot be re-derived from any surviving script"

@@ -1,0 +1,9 @@
+### Result
+{"mapUrl":"http://127.0.0.1:4402/egg-n-bacon-housing/research/map/?area=TAMPINES&metric=median_price&timeBasis=pre_covid&propertyType=condo","handoff":"/egg-n-bacon-housing/explore?area=TAMPINES&metric=median_price","selectionControls":[{"value":"median_price","ariaLabel":null,"labels":[]}],"polygonPaths":55,"keyboardPolygonPaths":0,"condoPressed":null}
+### Ran Playwright code
+```js
+await (async page => { await page.getByRole("button", { name: "CONDO", exact: true }).focus(); await page.keyboard.press("Enter"); await page.getByRole("button", { name: "Pre-COVID", exact: true }).focus(); await page.keyboard.press("Enter"); await page.getByRole("link", {name:"Open observed comparison"}).waitFor(); return {mapUrl: page.url(), handoff: await page.getByRole("link", {name:"Open observed comparison"}).getAttribute("href"), selectionControls: await page.locator("select").evaluateAll(nodes => nodes.map(n => ({value:n.value,ariaLabel:n.getAttribute("aria-label"),labels:Array.from(n.labels || []).map(l=>l.textContent)}))), polygonPaths: await page.locator(".leaflet-overlay-pane path").count(), keyboardPolygonPaths: await page.locator(".leaflet-overlay-pane path[tabindex]").count(), condoPressed: await page.getByRole("button", {name:"CONDO",exact:true}).getAttribute("aria-pressed")}; })(page);
+```
+### Page
+- Page URL: http://127.0.0.1:4402/egg-n-bacon-housing/research/map/?area=TAMPINES&metric=median_price&timeBasis=pre_covid&propertyType=condo
+- Page Title: Research map - Egg n Bacon Housing

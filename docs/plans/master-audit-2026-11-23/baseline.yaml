@@ -1,0 +1,54 @@
+audit: master-audit-2026-11-23
+baseline_commit: 449b921d499a8c55ec1eacb1a423baa7632456d3
+phase: 3-synthesis
+verdict: concerns
+score: 7
+evidence:
+  python_tests: 1136 passed
+  frontend_unit_tests: 534 passed
+  e2e_root: 237 passed, 9 skipped
+  e2e_pages_prefixed: 9 passed
+  astro_check: 0 errors, 0 warnings, 22 hints
+  line_coverage: 95.53 percent (3894/4076, no branch coverage)
+  build_pages: 234
+findings:
+  - {id: CORE-1, severity: high,   score: 16, category: correctness-cache,    path: src/egg_n_bacon_housing/utils/geocoding.py:343, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-A1}
+  - {id: CORE-2, severity: high,   score: 12, category: ingestion-integrity,  path: src/egg_n_bacon_housing/adapters/datagovsg.py:222, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-A2}
+  - {id: CORE-3, severity: high,   score: 16, category: backup-integrity,     path: scripts/00_sync_data.py:42, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-A3}
+  - {id: CORE-4, severity: medium, score: 8,  category: path-containment,     path: scripts/00_sync_data.py:216, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-A3}
+  - {id: CORE-5, severity: medium, score: 9,  category: operational-recovery, path: scripts/40_refresh_rolling.py:240, status: open, effort: S, phase: 0, confidence: confirmed, work_order: WS-A4}
+  - {id: CORE-6, severity: medium, score: 8,  category: concurrency,          path: src/egg_n_bacon_housing/utils/geocoding.py:194, status: open, effort: S, phase: 0, confidence: confirmed, work_order: WS-A4}
+  - {id: UI-1,   severity: medium, score: 9,  category: data-trust,           path: app/src/utils/release-manifest.ts:484, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-B1}
+  - {id: UI-2,   severity: medium, score: 9,  category: accessibility,        path: app/src/components/dashboard/PriceMap.tsx:464, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-B2}
+  - {id: UI-3,   severity: medium, score: 9,  category: handoff-scope,        path: app/src/components/dashboard/PriceMap.tsx:777, status: open, effort: S, phase: 1, confidence: confirmed, work_order: WS-B2}
+  - {id: UI-4,   severity: medium, score: 6,  category: ui-arithmetic,        path: app/src/components/tools/lib/tool-amortization.ts:156, status: open, effort: S, phase: 0, confidence: confirmed, work_order: WS-B3}
+  - {id: REL-1,  severity: medium, score: 6,  category: release-gate,         path: .github/workflows/ci.yml:142, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-C1}
+  - {id: REL-2,  severity: medium, score: 6,  category: evidence-integrity,   path: app/src/components/studies/lib/edition-registry.ts:1103, status: open, effort: M, phase: 2, confidence: confirmed, work_order: WS-C2}
+  - {id: REL-3,  severity: medium, score: 9,  category: reproducibility,      path: .github/workflows/ci.yml:11, status: open, effort: M, phase: 2, confidence: confirmed, work_order: WS-C2}
+  - {id: REL-4,  severity: medium, score: 9,  category: supply-chain,         path: .github/workflows/ci.yml:34, status: open, effort: M, phase: 2, confidence: confirmed, work_order: WS-D2}
+  - {id: ARCH-1, severity: medium, score: 6,  category: type-coverage,        path: pyproject.toml:149, status: open, effort: M, phase: 1, confidence: confirmed, work_order: WS-D1}
+  - {id: ARCH-2, severity: low,    score: 4,  category: duplication,          path: src/egg_n_bacon_housing/utils/layer_writer.py:49, status: open, effort: S, phase: 1, confidence: confirmed, work_order: WS-D1}
+  - {id: DEP-1,  severity: low,    score: 3,  category: dependency-hygiene,   path: pyproject.toml:35, status: open, effort: S, phase: 2, confidence: likely, work_order: WS-D2}
+  - {id: DOC-1,  severity: medium, score: 6,  category: documentation,        path: docs/implementation/README.md:47, status: open, effort: S, phase: 2, confidence: confirmed, work_order: WS-D1}
+gates:
+  - {gate: next-data-refresh, requires: [CORE-1, CORE-2]}
+  - {gate: next-r2-sync,      requires: [CORE-3, CORE-4]}
+  - {gate: next-deploy,       requires: [REL-1]}
+rejected_candidates:
+  - cross-process bronze atomic writes (serial execution is documented)
+  - layer writer atomicity (uuid temporaries)
+  - cleanup script cache clearing (documented intent)
+  - sample validation policy (documented with full/fail escape hatch)
+  - spatial memory scaling (no measured failure)
+  - astro/dompurify advisories as exploitable here (static output, no astro:assets)
+  - leaflet tooltip interpolation as public xss (static published inputs; hardening only)
+  - financing input exfiltration (state-only, no fetch/storage/log)
+gaps:
+  - no live provider/bucket access (mock-only)
+  - no ci/branch-protection settings access
+  - no live deployment verification
+  - static analysis only for performance
+  - 2596 entry rows / 596 error rows not semantically reviewed
+  - dependency maintenance/licence and other-platform audit incomplete
+  - spatial_hotspots producer check not run (write side effect)
+  - no assistive-technology matrix, no penetration test

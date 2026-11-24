@@ -1991,12 +1991,14 @@
       ],
       "excludedPrefixes": [
         "docs/implementation/",
+        "docs/plans/",
+        "docs/guides/",
         "scripts/tools/",
         "prompts/"
       ],
-      "filesScanned": 325,
+      "filesScanned": 272,
       "matchCase": false,
-      "meaning": "no RS10 implementation or evidence was found in the scanned roots: no call site that fits, scales or validates a segment model exists there, and the records that produce the asset are hand-written literals. Hits are NOT claimed to be uniformly prose or false positives — a plan document inside the scanned docs root (docs/plans/2026-02-19-pipeline-improvements-plan.md) contains a KMeans/StandardScaler code EXAMPLE, and it is counted among the hits below. It is an illustration in a plan, not evidence that RS10 used that model, and nothing connects it to the shipped values",
+      "meaning": "no RS10 implementation or evidence was found in the scanned roots: no call site that fits, scales or validates a segment model exists there, and the records that produce the asset are hand-written literals. Hits are NOT claimed to be uniformly prose or false positives: the token scan counts code hits under app/src (see the files lists below), and nothing connects any of them to the shipped values. The planning/spec surface docs/plans/ is excluded and disclosed here (excludedPrefixes): it is plan and audit prose ABOUT the method, including docs/plans/2026-02-19-pipeline-improvements-plan.md, whose KMeans/StandardScaler block is a code EXAMPLE in a plan. That example is no longer counted, which is why the counts below are narrower than the round-14 ledger's — the exclusion is a scan boundary, not a change to any RS10 claim. The operational surface docs/guides/ is excluded for the same reason (runbooks and setup/CI documentation about the programme; a guide that names a method is not an implementation of it, and this scan establishes absence FROM CODE)",
       "roots": [
         "docs",
         "scripts",
@@ -2046,7 +2048,7 @@
           "occurrences": 2
         },
         "Silhouette": {
-          "files": 4,
+          "files": 3,
           "firstMatches": [
             {
               "line": 25,
@@ -2072,27 +2074,12 @@
               "line": 145,
               "path": "docs/analytics/market-segments.md",
               "quote": "- **5-cluster solution** provides the best balance of interpretability and granularity based on silhouette analysis"
-            },
-            {
-              "line": 54,
-              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
-              "quote": "| `data/analysis/analyze_h3_clusters/silhouette_plot.png`   | Cluster quality assessment            |"
-            },
-            {
-              "line": 140,
-              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
-              "quote": "Silhouette Score: 0.67 (Good cluster separation)"
-            },
-            {
-              "line": 186,
-              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
-              "quote": "\"Silhouette score: 0.67 (good separation)\""
             }
           ],
-          "occurrences": 10
+          "occurrences": 5
         },
         "StandardScaler": {
-          "files": 5,
+          "files": 4,
           "firstMatches": [
             {
               "line": 133,
@@ -2113,22 +2100,12 @@
               "line": 138,
               "path": "docs/analytics/market-segments.md",
               "quote": "- **Feature preprocessing**: Log-transform for skewed variables, StandardScaler normalization"
-            },
-            {
-              "line": 976,
-              "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-              "quote": "from sklearn.preprocessing import StandardScaler"
-            },
-            {
-              "line": 1000,
-              "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-              "quote": "scaler = StandardScaler()"
             }
           ],
-          "occurrences": 6
+          "occurrences": 4
         },
         "elbow": {
-          "files": 3,
+          "files": 2,
           "firstMatches": [
             {
               "line": 135,
@@ -2139,22 +2116,38 @@
               "line": 135,
               "path": "docs/analytics/market-segments.md",
               "quote": "- **K-means clustering** (MiniBatchKMeans) with optimal K selection via elbow method and silhouette scores"
-            },
-            {
-              "line": 250,
-              "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
-              "quote": "# Plot k-distances and find elbow"
             }
           ],
-          "occurrences": 3
+          "occurrences": 2
         },
         "log1p": {
-          "files": 0,
-          "firstMatches": [],
-          "occurrences": 0
+          "files": 1,
+          "firstMatches": [
+            {
+              "line": 18,
+              "path": "app/src/components/tools/lib/tool-amortization.ts",
+              "quote": "* - The payment is evaluated as `P × r / −expm1(−n × log1p(r))`, the"
+            },
+            {
+              "line": 84,
+              "path": "app/src/components/tools/lib/tool-amortization.ts",
+              "quote": "* evaluated as `P × r / −expm1(−n × log1p(r))`. At `r = 0` the payment is"
+            },
+            {
+              "line": 109,
+              "path": "app/src/components/tools/lib/tool-amortization.ts",
+              "quote": "// `-expm1(-n·log1p(r))` is `1 − (1 + r)^−n` without catastrophic"
+            },
+            {
+              "line": 113,
+              "path": "app/src/components/tools/lib/tool-amortization.ts",
+              "quote": "(principal * monthlyRate) / -Math.expm1(-months * Math.log1p(monthlyRate))"
+            }
+          ],
+          "occurrences": 4
         },
         "n_clusters": {
-          "files": 3,
+          "files": 2,
           "firstMatches": [
             {
               "line": 327,
@@ -2197,7 +2190,7 @@
               "quote": "/** `town_clusters` — uppercase planning area name to LISA cluster type. */"
             }
           ],
-          "occurrences": 10
+          "occurrences": 9
         }
       }
     }

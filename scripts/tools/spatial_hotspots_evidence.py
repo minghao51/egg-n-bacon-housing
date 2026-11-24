@@ -147,11 +147,20 @@ SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx", ".json", ".csv", ".txt", ".ipynb")
 # and runbooks. Frozen legacy editions STAY IN the scan (their literals are what
 # the token search is matched against); other edition directories are programme
 # outputs signed after this study started and are excluded so a later edition
-# cannot drift this ledger.
+# cannot drift this ledger. `docs/plans/` is the planning/spec surface — plan and
+# audit prose ABOUT the method, not an implementation or an artefact of it — and
+# generalises the D12 register this scan already excluded by path. `docs/guides/`
+# is the operational surface and is excluded by the same rule: runbooks, setup
+# notes and CI descriptions are prose about operating the programme, not an
+# implementation or an artefact of the legacy hotspot method (the two guides
+# that matched only carried the words in a dataset table and inside a UUID), and
+# these scans establish absence FROM CODE.
 EXCLUDED_SCAN_PREFIXES = (
     "scripts/tools/",
     "prompts/",
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "docs/analytics/editions/",
     "app/src/components/studies/",
     "app/tests/",
@@ -1014,9 +1023,16 @@ def method_recovery(paths: list[Path]) -> dict[str, Any]:
                 "scans for; the prefix exclusion keeps the ledger out of its "
                 "own evidence; app/src/components/studies/ (edition "
                 "registry/pages) and app/tests/ (fixtures) are programme "
-                "outputs; .secrets.baseline and "
+                "outputs; the planning/spec surface docs/plans/ (plan and "
+                "audit prose about the method) is excluded, as is "
+                "the operational surface docs/guides/ (runbooks and setup/CI "
+                "documentation about the programme: prose about operating the "
+                "checkout, which can carry a token in an example table or a "
+                "hash string without implementing or evidencing the method — "
+                "these scans establish absence FROM CODE); "
+                ".secrets.baseline and "
                 "docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 "
-                "register) are explicitly excluded"
+                "register)"
             ),
             "method": (
                 "case-insensitive substring count per file; every matched file "
@@ -1191,13 +1207,18 @@ def build_rental_asset(
     }
 
 
-def rental_asset_fields() -> dict[str, Any]:
-    if not RENTAL_ASSET.is_file():
-        raise SystemExit(f"rental asset missing at {_relative(RENTAL_ASSET)}")
+def rental_asset_fields(asset_bytes: bytes) -> dict[str, Any]:
+    """Pin the rental asset by the bytes this run *derived*, not by disk.
+
+    Passed the in-memory gzip bytes so the ledger is reproducible without the
+    asset being written first. `--check` can therefore re-derive the same bytes
+    and compare, instead of rewriting a tracked, signed asset as a side effect
+    of a read-only check (REL-3).
+    """
     return {
         "path": _relative(RENTAL_ASSET),
-        "sha256": sha256_of(RENTAL_ASSET),
-        "bytes": int(RENTAL_ASSET.stat().st_size),
+        "sha256": hashlib.sha256(asset_bytes).hexdigest(),
+        "bytes": len(asset_bytes),
         "determinism": "gzip.compress(..., mtime=0) over canonical_bytes (sorted keys, indent 2, no timestamps, no absolute paths)",
     }
 
@@ -1608,7 +1629,7 @@ def not_measurable() -> dict[str, Any]:
     }
 
 
-def build() -> dict[str, Any]:
+def build() -> tuple[dict[str, Any], bytes]:
     cutoff_fields = cutoff(pd.read_parquet(RENTAL, columns=["rent_approval_date"]))
     pops = populations(cutoff_fields)
     gw = gate_window(pd.read_parquet(RENTAL, columns=["rent_approval_date"]), cutoff_fields)
@@ -1644,15 +1665,17 @@ def build() -> dict[str, Any]:
 
     hotspot["thresholdBasisNote"] = hotspot["method"]["thresholdBasis"]
 
-    # The rental-only asset is written FIRST so the ledger can pin its bytes.
+    # Derive the rental-only asset's bytes in memory; the ledger pins those, so
+    # the same ledger re-measures on a checkout where the asset was never
+    # rewritten. `main()` writes the returned bytes, and `check()` only compares
+    # them — a read-only check must not touch a tracked, signed asset (REL-3).
     asset_payload = build_rental_asset(
         hotspot=hotspot,
         cutoff_fields=cutoff_fields,
         join=join,
     )
-    RENTAL_ASSET.parent.mkdir(parents=True, exist_ok=True)
-    RENTAL_ASSET.write_bytes(gz_bytes(asset_payload))
-    asset_fields = rental_asset_fields()
+    asset_bytes = gz_bytes(asset_payload)
+    asset_fields = rental_asset_fields(asset_bytes)
 
     claims = legacy_claims()
     inputs = {}
@@ -1742,7 +1765,7 @@ def build() -> dict[str, Any]:
         "legacyQuoteCheck": legacy_quote_check(claims),
     }
     payload["claimKeyCheck"] = check_claim_keys(payload, claims)
-    return payload
+    return payload, asset_bytes
 
 
 def check(output: Path) -> int:
@@ -1750,8 +1773,13 @@ def check(output: Path) -> int:
         print(f"FAILED: no ledger at {output}; run the tool without --check first")
         return 1
     recorded = output.read_bytes()
-    measured = canonical_bytes(build())
-    if recorded == measured:
+    evidence, asset_bytes = build()
+    measured = canonical_bytes(evidence)
+    # Compare-only: the asset is re-derived in memory above and never written.
+    # A read-only check must not rewrite a tracked, signed asset, so drift in the
+    # on-disk copy is reported here rather than silently repaired.
+    asset_drift = (not RENTAL_ASSET.is_file()) or RENTAL_ASSET.read_bytes() != asset_bytes
+    if recorded == measured and not asset_drift:
         print("Pass: RS12 ledger re-measures byte-identically from this checkout.")
         print(f"Ledger sha256: {hashlib.sha256(measured).hexdigest()}")
         return 0
@@ -1764,6 +1792,8 @@ def check(output: Path) -> int:
     for key in sorted(set(old) | set(new)):
         if old.get(key) != new.get(key):
             print(f"  - drift in {key}")
+    if asset_drift:
+        print(f"  - drift in the tracked rental asset {_relative(RENTAL_ASSET)}")
     print("FAILED: RS12 ledger does not match this checkout")
     return 1
 
@@ -1777,8 +1807,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.check:
         return check(args.output)
 
-    evidence = build()
+    evidence, asset_bytes = build()
     payload = canonical_bytes(evidence)
+    # The write path is the only place the rental asset is written; `--check`
+    # derives the same bytes in memory and never touches the tracked file.
+    RENTAL_ASSET.parent.mkdir(parents=True, exist_ok=True)
+    RENTAL_ASSET.write_bytes(asset_bytes)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(payload)
 

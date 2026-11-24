@@ -1,0 +1,79 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/howt/work/egg-n-bacon-housing
+configfile: pyproject.toml
+plugins: hypothesis-6.155.1, mock-3.15.1, timeout-2.4.0, asyncio-1.3.0, langsmith-0.6.4, cov-7.0.0, anyio-4.14.2
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 1136 items
+
+tests/test_bronze.py ................................................    [  4%]
+tests/test_cache.py .............                                        [  5%]
+tests/test_cache_fingerprints.py ....................................    [  8%]
+tests/test_catalog_generator.py ..............................           [ 11%]
+tests/test_cleaning_validation.py ...................................... [ 14%]
+....                                                                     [ 14%]
+tests/test_condo_ingestion.py ........................                   [ 16%]
+tests/test_config.py .........................                           [ 19%]
+tests/test_contracts.py ........                                         [ 19%]
+tests/test_dag_smoke.py ..                                               [ 20%]
+tests/test_data_loader.py ...................                            [ 21%]
+tests/test_data_quality.py .......                                       [ 22%]
+tests/test_datagov.py ............                                       [ 23%]
+tests/test_datagovsg.py ....................                             [ 25%]
+tests/test_export.py ............                                        [ 26%]
+tests/test_export_app_data.py .......................................... [ 29%]
+..                                                                       [ 30%]
+tests/test_feature_profiles.py .........                                 [ 30%]
+tests/test_feature_transactions.py ...........                           [ 31%]
+tests/test_features.py ................................................. [ 36%]
+......................                                                   [ 38%]
+tests/test_geo.py .........                                              [ 38%]
+tests/test_geocoding.py .........................                        [ 41%]
+tests/test_geojson.py ..................                                 [ 42%]
+tests/test_hdb_lookups.py ...............................                [ 45%]
+tests/test_http.py ..........................................            [ 49%]
+tests/test_ingestion.py ................................................ [ 53%]
+.......................................                                  [ 56%]
+tests/test_logging_config.py ..............                              [ 58%]
+tests/test_macro.py ....................                                 [ 59%]
+tests/test_materialization.py .......................................... [ 63%]
+......................                                                   [ 65%]
+tests/test_metrics.py ....................................               [ 68%]
+tests/test_mrt_line_mapping.py ...........                               [ 69%]
+tests/test_onemap.py ..........................                          [ 71%]
+tests/test_pipeline.py ..................                                [ 73%]
+tests/test_pipeline_integration.py .............                         [ 74%]
+tests/test_property_based.py ........                                    [ 75%]
+tests/test_proximity.py ......................                           [ 77%]
+tests/test_quality_report.py ...............                             [ 78%]
+tests/test_refresh_rolling.py ..................                         [ 80%]
+tests/test_regional_mapping.py ...........                               [ 81%]
+tests/test_rental_yield_metrics.py ...............                       [ 82%]
+tests/test_reporting_baseline.py ..........                              [ 83%]
+tests/test_research_evidence_tools.py ..........                         [ 84%]
+tests/test_runtime_dependencies.py ........                              [ 84%]
+tests/test_school_features.py ..........................                 [ 87%]
+tests/test_sync_data.py ........                                         [ 87%]
+tests/test_time_index.py ...........                                     [ 88%]
+tests/test_ura.py ...............................................        [ 92%]
+tests/test_v2_observed.py .............................................. [ 97%]
+                                                                         [ 97%]
+tests/test_validate_agent_skills.py ...                                  [ 97%]
+tests/test_validation.py ...............                                 [ 98%]
+tests/test_validation_gateway.py ................                        [100%]
+
+=============================== warnings summary ===============================
+tests/test_cleaning_validation.py::TestGeocodedValidation::test_geocoded_properties_fails_on_low_coordinate_coverage
+  /home/howt/work/egg-n-bacon-housing/src/egg_n_bacon_housing/components/cleaning.py:377: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value '[None]' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+    combined.loc[hdb_rows, "lat"] = combined.loc[hdb_rows, address_col].map(coord_map["lat"])
+
+tests/test_cleaning_validation.py::TestGeocodedValidation::test_geocoded_properties_fails_on_low_coordinate_coverage
+  /home/howt/work/egg-n-bacon-housing/src/egg_n_bacon_housing/components/cleaning.py:378: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value '[None]' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+    combined.loc[hdb_rows, "lon"] = combined.loc[hdb_rows, address_col].map(coord_map["lon"])
+
+tests/test_dag_smoke.py: 175 warnings
+  /home/howt/work/egg-n-bacon-housing/.venv/lib/python3.12/site-packages/hamilton/graph_types.py:73: DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    if not hasattr(n.body[0], "value") or not isinstance(n.body[0].value, ast.Str):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================ 1136 passed, 177 warnings in 67.61s (0:01:07) =================

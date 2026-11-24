@@ -942,14 +942,16 @@
       ],
       "excludedPrefixes": [
         "docs/implementation/",
+        "docs/plans/",
+        "docs/guides/",
         "scripts/tools/",
         "prompts/",
         "app/src/components/studies/",
         "app/tests/"
       ],
-      "filesScanned": 322,
+      "filesScanned": 269,
       "manifestKey": "scanManifests.textRoots",
-      "meaning": "outside the excluded programme surfaces the three legacy feature names occur only in the frozen legacy article, its live twin and the retired programme's plan documents (docs/plans/2025-02-02-school-impact-analysis.md and docs/plans/2026-02-05-enhanced-school-impact-analysis.md, sha-pinned at methodRecordSurfaces) — prose, not shipped columns",
+      "meaning": "outside the excluded programme surfaces the three legacy feature names occur in the frozen legacy article and its live twin. The retired programme's plan documents (docs/plans/2025-02-02-school-impact-analysis.md and docs/plans/2026-02-05-enhanced-school-impact-analysis.md) mention them too, but docs/plans/ is the planning/spec surface and is excluded from this scan (excludedPrefixes); those two documents stay recorded and sha-pinned by path at methodRecordSurfaces rather than counted here. The operational surface docs/guides/ (runbooks and setup/CI documentation about the programme) is excluded too, for the same reason: this scan establishes absence FROM CODE, and a guide that names the method is not an implementation of it. All of it is prose, not shipped columns",
       "roots": [
         "docs",
         "scripts",
@@ -961,7 +963,7 @@
       ],
       "tokens": {
         "school_primary_dist_score": {
-          "files": 3,
+          "files": 2,
           "firstMatches": [
             {
               "line": 40,
@@ -992,22 +994,16 @@
               "line": 120,
               "path": "docs/analytics/school-quality.md",
               "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
-            },
-            {
-              "line": 34,
-              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-              "quote": "- `school_primary_dist_score`: Primary school distance score"
             }
           ],
-          "occurrences": 7,
+          "occurrences": 6,
           "surfacesFirst": [
             "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
-            "docs/analytics/school-quality.md",
-            "docs/plans/2025-02-02-school-impact-analysis.md"
+            "docs/analytics/school-quality.md"
           ]
         },
         "school_primary_quality_score": {
-          "files": 5,
+          "files": 2,
           "firstMatches": [
             {
               "line": 39,
@@ -1038,27 +1034,16 @@
               "line": 120,
               "path": "docs/analytics/school-quality.md",
               "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
-            },
-            {
-              "line": 35,
-              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-              "quote": "- `school_primary_quality_score`: Primary school quality score (based on school awards/achievements)"
-            },
-            {
-              "line": 357,
-              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-              "quote": "- **Primary feature:** `school_accessibility_score` or `school_primary_quality_score`"
             }
           ],
-          "occurrences": 22,
+          "occurrences": 6,
           "surfacesFirst": [
             "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
-            "docs/analytics/school-quality.md",
-            "docs/plans/2025-02-02-school-impact-analysis.md"
+            "docs/analytics/school-quality.md"
           ]
         },
         "school_secondary_dist_score": {
-          "files": 3,
+          "files": 2,
           "firstMatches": [
             {
               "line": 41,
@@ -1089,18 +1074,12 @@
               "line": 120,
               "path": "docs/analytics/school-quality.md",
               "quote": "- **OLS coefficients**: `school_primary_quality_score` +$9.66 PSF, `school_primary_dist_score` +$6.27 PSF, `school_secondary_dist_score` +$3.52 PSF"
-            },
-            {
-              "line": 36,
-              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-              "quote": "- `school_secondary_dist_score`: Secondary school distance score"
             }
           ],
-          "occurrences": 7,
+          "occurrences": 6,
           "surfacesFirst": [
             "docs/analytics/editions/legacy/2026-11-12/school-quality.md",
-            "docs/analytics/school-quality.md",
-            "docs/plans/2025-02-02-school-impact-analysis.md"
+            "docs/analytics/school-quality.md"
           ]
         }
       }
@@ -1445,7 +1424,7 @@
   },
   "multiplicityPolicy": {
     "legacyRecordedCorrection": {
-      "filesScanned": 322,
+      "filesScanned": 269,
       "legacyNamedTestFamilies": [
         "one headline OLS (+ one XGBoost)",
         "three regional fits (OCR/RCR/CCR)",
@@ -1456,7 +1435,7 @@
       ],
       "manifestKey": "scanManifests.textRoots",
       "meaning": "the legacy names at least six test families and records no multiple-testing correction anywhere in the scanned roots; the regional split whose sign flips in RCR is one of these uncorrected families",
-      "scanBoundary": "the scanned text roots with the programme's own surfaces excluded (tokenScan.excludedPrefixes): app/src/components/studies/ (edition registry/pages), app/tests/ (fixtures), .secrets.baseline, and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are excluded; a correction recorded only inside those excluded surfaces would not be found, and that boundary is disclosed rather than widened",
+      "scanBoundary": "the scanned text roots with the programme's own surfaces excluded (tokenScan.excludedPrefixes): app/src/components/studies/ (edition registry/pages), app/tests/ (fixtures), .secrets.baseline, the planning/spec surface docs/plans/ and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register), and the operational surface docs/guides/ (runbooks and setup/CI documentation about the programme) are excluded; a correction recorded only inside those excluded surfaces would not be found, and that boundary is disclosed rather than widened",
       "status": "absent",
       "tokens": {
         "bonferroni": {
@@ -1754,12 +1733,14 @@
       ],
       "excludedPrefixes": [
         "docs/implementation/",
+        "docs/plans/",
+        "docs/guides/",
         "scripts/tools/",
         "prompts/",
         "app/src/components/studies/",
         "app/tests/"
       ],
-      "filesScanned": 322,
+      "filesScanned": 269,
       "manifestKey": "scanManifests.textRoots",
       "roots": [
         "docs",
@@ -1772,7 +1753,7 @@
       ],
       "tokens": {
         "RDD": {
-          "files": 21,
+          "files": 14,
           "firstMatches": [
             {
               "line": 45,
@@ -1810,15 +1791,15 @@
               "quote": "} = useLeaderboardData(controls, initialData);"
             },
             {
-              "line": 3,
+              "line": 4,
               "path": "app/src/components/dashboard/leaderboard/LeaderboardMap.tsx",
               "quote": "LeaderboardDisplayRow,"
             }
           ],
-          "occurrences": 187
+          "occurrences": 49
         },
         "RDD-case-sensitive": {
-          "files": 10,
+          "files": 4,
           "firstMatches": [
             {
               "line": 240,
@@ -1861,10 +1842,10 @@
               "quote": "School quality shows up clearly in predictive models (OLS and XGBoost agree on direction and magnitude), but the causal read is much weaker. The RDD at the 1 km"
             }
           ],
-          "occurrences": 80
+          "occurrences": 16
         },
         "admission boundary": {
-          "files": 4,
+          "files": 2,
           "firstMatches": [
             {
               "line": 110,
@@ -1875,19 +1856,9 @@
               "line": 110,
               "path": "docs/analytics/school-quality.md",
               "quote": "- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)"
-            },
-            {
-              "line": 204,
-              "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-              "quote": "**Purpose:** Establish causal effect of school proximity using Regression Discontinuity Design at 1km admission boundary."
-            },
-            {
-              "line": 1760,
-              "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-              "quote": "**Purpose:** Establish causal effect of school proximity using Regression Discontinuity Design at 1km admission boundary."
             }
           ],
-          "occurrences": 4
+          "occurrences": 2
         },
         "admissions boundary": {
           "files": 2,
@@ -1906,7 +1877,7 @@
           "occurrences": 2
         },
         "covariate balance": {
-          "files": 8,
+          "files": 4,
           "firstMatches": [
             {
               "line": 265,
@@ -1949,7 +1920,7 @@
               "quote": "Across all thirteen analysis domains, the most decision-useful findings share a common pattern: segment-level specificity matters far more than model sophistica"
             }
           ],
-          "occurrences": 21
+          "occurrences": 12
         },
         "rdrobust": {
           "files": 0,
@@ -1957,7 +1928,7 @@
           "occurrences": 0
         },
         "regression discontinuity": {
-          "files": 9,
+          "files": 5,
           "firstMatches": [
             {
               "line": 54,
@@ -2000,7 +1971,7 @@
               "quote": "- **Regression discontinuity design (RDD)** at the 1 km cutoff (Singapore primary school admission boundary)"
             }
           ],
-          "occurrences": 15
+          "occurrences": 9
         }
       }
     },
@@ -2065,14 +2036,14 @@
       "fileCount": 54,
       "files": [
         {
-          "bytes": 10677,
+          "bytes": 22550,
           "path": "scripts/00_sync_data.py",
-          "sha256": "3dcc0485d52835f7bb66ba852f3c9471978b142f4bedab3dfa573929b978dac6"
+          "sha256": "ae0232bb3f60060bcedc8dc57d24d62f6bf7de789433a4c547842626823ccd61"
         },
         {
-          "bytes": 10034,
+          "bytes": 12181,
           "path": "scripts/40_refresh_rolling.py",
-          "sha256": "dc0cbbd79d1403a91ec6e60ef11429137dc6387db7a6617d551140334cc6fb4d"
+          "sha256": "ad4d2e6ec72ac623df554b20ea976bf2e2b4ab24400898c6c7ea2cfcc2554b5c"
         },
         {
           "bytes": 1485,
@@ -2110,9 +2081,9 @@
           "sha256": "fb6a32c275490b3404fec9b50af82a1d14c1dab5dec509b75c6afb79ec12b8a8"
         },
         {
-          "bytes": 13617,
+          "bytes": 19682,
           "path": "src/egg_n_bacon_housing/adapters/datagovsg.py",
-          "sha256": "20878c6c72458d7d3c29b82830fbeb6b40b7ce0b3bdc8bb72cfa5c8825f0e131"
+          "sha256": "6a5013392d1ed74d124f852aa25aeb769a36e0e7e876cfd9b663d7c0bd4e93d9"
         },
         {
           "bytes": 665,
@@ -2200,9 +2171,9 @@
           "sha256": "6071b749c13996ec771b8ebf0977695315fff1c5fc1350e1641f05e54c1b0237"
         },
         {
-          "bytes": 9233,
+          "bytes": 10193,
           "path": "src/egg_n_bacon_housing/config.py",
-          "sha256": "6b1d9742d446d8007422cb590bc1ed3d835e0dcfb07c4f1b8aa0dc0bb54d4feb"
+          "sha256": "4fbbce5092bf99f87d41ab562b460f964160101c2d7efacfbf56e814e206a514"
         },
         {
           "bytes": 12314,
@@ -2260,19 +2231,19 @@
           "sha256": "62d4ebf0b46ae56d794de55e28b64b03f4341b4f10058a758d928245eab78667"
         },
         {
-          "bytes": 13896,
+          "bytes": 13904,
           "path": "src/egg_n_bacon_housing/utils/data_quality.py",
-          "sha256": "a69d59b0448f07f448fa777159e81532751cde446a999efbbec35ec0161fef94"
+          "sha256": "f04261edd031fd3fa5049eca23d35255be56a72d4b860b2f377ae83bce27b38b"
         },
         {
-          "bytes": 1262,
+          "bytes": 1435,
           "path": "src/egg_n_bacon_housing/utils/geo.py",
-          "sha256": "5d38b3f0c7c8165556be7c3d6846a31117156b802db731d5abf98aea33dd9f35"
+          "sha256": "b46083cdf3bfcfcbea8fc5d5c537c3586ebe9e8e3419092457abb410da4bdd52"
         },
         {
-          "bytes": 16916,
+          "bytes": 21178,
           "path": "src/egg_n_bacon_housing/utils/geocoding.py",
-          "sha256": "1d47121f2d5c7fef8f183fd49bbbe8f393a3fe06e9d685ae25d23f649767803a"
+          "sha256": "bc762a63d362769cfee05c1906df843958162913c37ceadac5d39fc1563cd3dd"
         },
         {
           "bytes": 9848,
@@ -2280,9 +2251,9 @@
           "sha256": "27302f58580fae302acdfd32d334531c73882b591f0fe034cce2df9d3b8d881f"
         },
         {
-          "bytes": 6681,
+          "bytes": 6329,
           "path": "src/egg_n_bacon_housing/utils/layer_writer.py",
-          "sha256": "3c4387e46e81ff944ff983b52279aaefcca4eb45d547d8075c6d842b034b8a93"
+          "sha256": "87f3a7c8d07268b6196b896b7e02e3f2c41771ca0b4745c0f705951e5dead502"
         },
         {
           "bytes": 4614,
@@ -3934,12 +3905,14 @@
       ],
       "excludedPrefixes": [
         "docs/implementation/",
+        "docs/plans/",
+        "docs/guides/",
         "scripts/tools/",
         "prompts/",
         "app/src/components/studies/",
         "app/tests/"
       ],
-      "fileCount": 322,
+      "fileCount": 269,
       "files": [
         {
           "bytes": 18776,
@@ -4047,9 +4020,9 @@
           "sha256": "113d59b244578d8811d47ba2fdd03405f29601698841b5d1dba85314d92d3135"
         },
         {
-          "bytes": 30056,
+          "bytes": 34634,
           "path": "app/src/components/dashboard/PriceMap.tsx",
-          "sha256": "426732a3f499584fb9cab22a63c9012f900afa6c55bd1a0650c0b478d0f7009e"
+          "sha256": "af75682e6d2c112ee24d2fdd6aef7d9a44dc0e5e270e4b75fa6b9b9175bb0aad"
         },
         {
           "bytes": 2330,
@@ -4082,9 +4055,9 @@
           "sha256": "faaf07ab746197f03e19ea5be274dff2fc1ca7ab7664d34f395313e5df70581c"
         },
         {
-          "bytes": 12977,
+          "bytes": 12879,
           "path": "app/src/components/dashboard/leaderboard/LeaderboardMap.tsx",
-          "sha256": "5bd07f6559d578ef3797195c9a764ef2468f411c4477821f37d874f114318120"
+          "sha256": "baa1a588646cc41dd37f1d91c6e9d4e701ccddf6badcbe2cceab5e94400b2193"
         },
         {
           "bytes": 8054,
@@ -4105,6 +4078,11 @@
           "bytes": 5404,
           "path": "app/src/components/dashboard/map/ArchiveLayerControl.tsx",
           "sha256": "08d819db78074d44ea87c95f9bd49367c44c45bd134607c2af0f76e836fb52ab"
+        },
+        {
+          "bytes": 7315,
+          "path": "app/src/components/dashboard/map/lib/handoff.ts",
+          "sha256": "2e7f9c0f4c7da5b1501d87948592844f3a222106c6e152fa0ac60551f78fd5ed"
         },
         {
           "bytes": 10839,
@@ -4177,9 +4155,9 @@
           "sha256": "624d57081975fabbe06c28f05f4d6040046920490ac10d11ff0b5fac3d286b4e"
         },
         {
-          "bytes": 9075,
+          "bytes": 8977,
           "path": "app/src/components/dashboard/segments/investigate/SegmentAreaMap.tsx",
-          "sha256": "ad06465aaa409a01a9e52a509ed456827ff54c146ae3580071dacf4b30ea8e88"
+          "sha256": "bab5b38f8d424c9e377355d8c33ed1245de34415d8a410cf313b461de3d7a3eb"
         },
         {
           "bytes": 4666,
@@ -4232,9 +4210,9 @@
           "sha256": "e86f3a29aeaff5dab8d24b5c88792e8175a0d9b6479735c85291662548bc0b8b"
         },
         {
-          "bytes": 23515,
+          "bytes": 23844,
           "path": "app/src/components/explorer/ExplorerWorkspace.tsx",
-          "sha256": "279a133ce5f36cd2c99e3cedb100d2f2fa36d9cc2bb6ffa48f6e5ebb26a66139"
+          "sha256": "1248772b10b778ea8ffcce56c959a52a16528765fb5abfdf957ed4b58f454fbe"
         },
         {
           "bytes": 5202,
@@ -4242,9 +4220,9 @@
           "sha256": "744de7225a2b430822b7c207d77507c7d552acc0a9204f4824b160224844b002"
         },
         {
-          "bytes": 21783,
+          "bytes": 22160,
           "path": "app/src/components/tools/FinancingScenario.tsx",
-          "sha256": "550592ff99d9511f0666f8d85f91b673697243bc0107879db85b72045191cc73"
+          "sha256": "bf0986c1eb1629c40b3000b172d67009518f981f8fd49f67f29fb502db1aeacf"
         },
         {
           "bytes": 5642,
@@ -4287,9 +4265,9 @@
           "sha256": "092fb915816260d0ed2d6794b400033e6001c1a2f15e47bf9e06677bbe7a3f78"
         },
         {
-          "bytes": 6790,
+          "bytes": 9581,
           "path": "app/src/components/tools/lib/tool-amortization.ts",
-          "sha256": "dab1cc6056446f48583c7443705fe2c0f4958574f6c1c490b1357cd234c6ef11"
+          "sha256": "1407deb7c5aacd388997f8af8591d430070c7878bcf6ee8485e1789704a8ae8e"
         },
         {
           "bytes": 10112,
@@ -4332,6 +4310,11 @@
           "sha256": "282a8c4f1f3c78218da0ffa94eaadc80081a7961ee77704d2e7fdd9c8738de3f"
         },
         {
+          "bytes": 3623,
+          "path": "app/src/config/map-tiles.ts",
+          "sha256": "9bdd70c97f40957a580a8ab71b8f1be97ea526a0d5a73ee494a4b2c762a176cf"
+        },
+        {
           "bytes": 1229,
           "path": "app/src/config/observed-release.ts",
           "sha256": "0b510efcda4241a9a0134048a14a6804a80b5429a17b906ba702fde19552ddf6"
@@ -4367,9 +4350,9 @@
           "sha256": "de381711ecdbaef4498d2f608a8c0bde7e119743432a3c324305b99319443af5"
         },
         {
-          "bytes": 5880,
+          "bytes": 15284,
           "path": "app/src/hooks/useGzipJson.ts",
-          "sha256": "97a57f6cbe92ea94839f7499c3b508cc49210bf396eac720a302877ab9a51053"
+          "sha256": "a3b2de7b96d2b852e2ce3bbf5d70b40d44d508c97aac241653f84fc52647db1f"
         },
         {
           "bytes": 8166,
@@ -4552,9 +4535,9 @@
           "sha256": "2a8817812164b6da55b86538da6e93dc5b6cc9573190cc80421a99f9ca43cb63"
         },
         {
-          "bytes": 17343,
+          "bytes": 21763,
           "path": "app/src/utils/release-manifest.ts",
-          "sha256": "f478770b396a6cd7922242f98fe634b4c76d6da677e327bc6c97e5e9e727d9b2"
+          "sha256": "524d1047a0d993b725b203e339ceafcedb3d954114217ff5143795a76c6aeb5a"
         },
         {
           "bytes": 2926,
@@ -5002,294 +4985,19 @@
           "sha256": "869409778229e0b581a5b0c327f95001fee46e38e5fc61ab04695fe5969e6d3f"
         },
         {
-          "bytes": 1951,
-          "path": "docs/guides/README.md",
-          "sha256": "5cc7b0d4f095ca3618a59e5f4294fa789831863f88054cfcb8dd1294b7d34122"
-        },
-        {
-          "bytes": 2214,
-          "path": "docs/guides/ci-cd-pipeline.md",
-          "sha256": "68989559193e5ed2727ea68012baa3b931f1fa3680cdfbb2dcc437719ced946f"
-        },
-        {
-          "bytes": 25006,
-          "path": "docs/guides/data-ingestion-development.md",
-          "sha256": "f8d65ad79e5b4539204a4549375ed07a08f7392567891980ee370f46fac53544"
-        },
-        {
-          "bytes": 10678,
-          "path": "docs/guides/datagovsg-resource-migration.md",
-          "sha256": "86befc43d4eed08723b9d5849085bdb1f49f2d483fe988ab062fb0070106ccb7"
-        },
-        {
-          "bytes": 1953,
-          "path": "docs/guides/e2e-testing.md",
-          "sha256": "66f41e6219bd327c2d2a0f8fe5c5b3c16588a70249d4d512c058710530f37c89"
-        },
-        {
-          "bytes": 2842,
-          "path": "docs/guides/github-secrets-setup.md",
-          "sha256": "00b356c90d4e52b1e0cbb281f06a9036efe5a4183b1e4d37247144aa1746e253"
-        },
-        {
-          "bytes": 9347,
-          "path": "docs/guides/operations-runbook.md",
-          "sha256": "4e236cb62096720b3bd23785e0875028cc8c3a5f77cf1cb3faa1f55e5c757f76"
-        },
-        {
-          "bytes": 6962,
-          "path": "docs/guides/ops-scheduling.md",
-          "sha256": "44a183fc7dfac621cd52664cf31b6b21cb587fdabc9024ae03fa3a54732955b4"
-        },
-        {
-          "bytes": 10503,
-          "path": "docs/guides/pipeline-development.md",
-          "sha256": "4894241e6ec4a729e64f9435d830f63dbc8b24c6b95e03b81aa4c1e82b12c253"
-        },
-        {
-          "bytes": 853,
-          "path": "docs/guides/quick-start.md",
-          "sha256": "f599597288455617b9d4cef99f37138e8ff8d76c5dd36de16b13b86d5fae15e7"
-        },
-        {
-          "bytes": 7028,
-          "path": "docs/guides/r2-sync-guide.md",
-          "sha256": "d352b04efb45870aefbd6c94b36af772acfbd82678cfecb8086d45a7c2dd6533"
-        },
-        {
-          "bytes": 1990,
-          "path": "docs/guides/testing-guide.md",
-          "sha256": "677f474b7d79c5fe23f3a987cde510802cd3dc0409d7fe1687e991308c449213"
-        },
-        {
-          "bytes": 4893,
-          "path": "docs/guides/usage-guide.md",
-          "sha256": "b982b2c1ee81f25c25a635823a9fd4ca70fdfafa4dd03a4d9e9a3e57dca50b8e"
-        },
-        {
-          "bytes": 14414,
-          "path": "docs/plans/2025-02-02-school-impact-analysis.md",
-          "sha256": "bd8ce78b02cf75b19057a7dac9c3f58645af14bb1e1e03e9fd943dc09562285f"
-        },
-        {
-          "bytes": 25885,
-          "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md",
-          "sha256": "fa4c30671ebbf32e838bb89ece4cc70b74614a5753c4d4a75200d47890ca5cf9"
-        },
-        {
-          "bytes": 78322,
-          "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md",
-          "sha256": "ac40178ddde4ec877db9468a9bfd5549e6169e1af0e677ea43c5f388b966427d"
-        },
-        {
-          "bytes": 17066,
-          "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md",
-          "sha256": "17b3f5f286d6d34c0e75bdc0007780cc34be655523a0baac25e610e6c5e81dd9"
-        },
-        {
-          "bytes": 10384,
-          "path": "docs/plans/2025-02-17-var-implementation-report.md",
-          "sha256": "3b50236ecce970ffe79fd0c7a9c5592af790bc385ffb0a3ab2a34b33c07e79e4"
-        },
-        {
-          "bytes": 6568,
-          "path": "docs/plans/2025-02-24-sidebar-improvement-design.md",
-          "sha256": "c6cc20871a87471fd39f8609ccec5605f105490fcb9c4a017367da5d92ea6646"
-        },
-        {
-          "bytes": 14411,
-          "path": "docs/plans/2025-02-24-sidebar-improvement.md",
-          "sha256": "d3b163982e98b33736057cb4f509a184b3fb41290ebfc14ed5ddf55e9e1c716f"
-        },
-        {
-          "bytes": 9325,
-          "path": "docs/plans/2026-01-24-analytics-scripts-design.md",
-          "sha256": "5da5267d3c33075f1805ee8d91296d031eca6ce0b05120b13aac8d73c594b79b"
-        },
-        {
-          "bytes": 23481,
-          "path": "docs/plans/2026-01-24-spatial-analytics-overview.md",
-          "sha256": "caf7df5bbda45525ee12b20329de0ddb0fc6a831d6d44bd8981464a4a10146ea"
-        },
-        {
-          "bytes": 28621,
-          "path": "docs/plans/2026-02-04-analyze-policy-impact.md",
-          "sha256": "d8acf8fbf136649453f2c4e481a46d62015897fb8268542d97aa372db0e7bd65"
-        },
-        {
-          "bytes": 10426,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis-design.md",
-          "sha256": "1eb10345bfbe12b6f515cb35a18d0d087cb139b492cdd90d2769648222ccd6d9"
-        },
-        {
-          "bytes": 61859,
-          "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md",
-          "sha256": "d84e01945e1588ecd7f6dd39993305ef5ba452d7a5ba6137fc546719e1200078"
-        },
-        {
-          "bytes": 11949,
-          "path": "docs/plans/2026-02-15-analytics-content-organization-design.md",
-          "sha256": "9cccb93a9281b8119e4fe1535fe33c8c547c327a905e2871dc3207dceda3dd87"
-        },
-        {
-          "bytes": 20101,
-          "path": "docs/plans/2026-02-15-analytics-content-organization.md",
-          "sha256": "0a3ec5afa74948e9a69a5e390090cde43bf8d48030beb057ef24e9fd261de086"
-        },
-        {
-          "bytes": 8406,
-          "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md",
-          "sha256": "14c0c7b56b63ef86a9c0aa475c1866b8d384544967aac27f7869d5abd6d88f76"
-        },
-        {
-          "bytes": 10487,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-design.md",
-          "sha256": "3db5f973bbc7c439af838cd83d2ccd06c0f429845d615acb8731ea79492456fc"
-        },
-        {
-          "bytes": 83023,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-implementation.md",
-          "sha256": "7b2ff6f25d71fb9c92d03792b0b73ff45c6de38a495540d1925e3db26aa58920"
-        },
-        {
-          "bytes": 13392,
-          "path": "docs/plans/2026-02-17-analytics-accessibility-summary.md",
-          "sha256": "bfb0ea3d1af5b140c3933f6a57f2ab179c37d9791b5386c1d807956faaf2ee44"
-        },
-        {
-          "bytes": 10142,
-          "path": "docs/plans/2026-02-17-analytics-component-library.md",
-          "sha256": "9fc998b8301691ab6e659a123a7fe9377c804024f81c00702b69c0b3ff2104ce"
-        },
-        {
-          "bytes": 49297,
-          "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md",
-          "sha256": "499e2744fe43e3ecc93d6059dee2abe916ff99c2f1a389ff60a183a3be886387"
-        },
-        {
-          "bytes": 20149,
-          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-design.md",
-          "sha256": "48317b30627922b6872590dde59454384728998ccae293156571031960eaad31"
-        },
-        {
-          "bytes": 94769,
-          "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md",
-          "sha256": "df11d5266649561b032c13d0c21bc9d284973d388fb7fb31d991ad5a7ccee9f3"
-        },
-        {
-          "bytes": 71829,
-          "path": "docs/plans/2026-02-21-interactive-tools-dashboard.md",
-          "sha256": "bc7b7d1c0b8fc2a8c3357112307c2c8d93a19ff672c82b60da7d990aec81f50b"
-        },
-        {
-          "bytes": 39388,
-          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md",
-          "sha256": "5c89e7c1eff23263f5ad025b6348c004820b988a70bdd82041464fcb0b1c2c38"
-        },
-        {
-          "bytes": 119230,
-          "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md",
-          "sha256": "961f173ebe10a35525b3b4f2b5a78c847089ddb2b19bc6e4157e84399d6142a6"
-        },
-        {
-          "bytes": 2741,
-          "path": "docs/plans/2026-02-24-scripts-docs-simplification-plan.md",
-          "sha256": "8f6dab5437059316677dbcc54ca3d75792ec4a47844816ec7e4626f5f948360d"
-        },
-        {
-          "bytes": 8044,
-          "path": "docs/plans/2026-03-04-data-quality-handoff.md",
-          "sha256": "7c2c1382d3cfcf47a655f991595738601080228b0b1088d3600a29f4f91e262f"
-        },
-        {
-          "bytes": 10206,
-          "path": "docs/plans/2026-04-28-code-audit-findings.md",
-          "sha256": "51666efb50947fb69f1dffbdceb7cbb73a2bd336e1b25b90c4c22dc948c9c9ef"
-        },
-        {
-          "bytes": 17303,
-          "path": "docs/plans/2026-06-15-gold-entity-restructure.md",
-          "sha256": "7f8976c58ba1a272eb154bada91e6aa80ee11d948c3b29419c4e44e67a613e7f"
-        },
-        {
-          "bytes": 12354,
-          "path": "docs/plans/2026-06-17-architecture-deepening-plan.md",
-          "sha256": "3608eb97dc628505b9cdc9a511b665fe56b0872c89f301530654684da4b84bc5"
-        },
-        {
-          "bytes": 16326,
-          "path": "docs/plans/2026-09-01-pipeline-refresh-handoff.md",
-          "sha256": "3e4d2b1fca8e835e52b80061f4b744b6367dd1662c95781d6e4060d51b49138d"
-        },
-        {
-          "bytes": 9246,
-          "path": "docs/plans/2026-09-03-runtime-dependency-injection-handoff.md",
-          "sha256": "caffbcb249f89691862b3d40428b2adebd1d7c46f6cfa789db24e84eea1ebcc6"
-        },
-        {
-          "bytes": 43727,
-          "path": "docs/plans/2026-09-07-src-audit-improvement-program.md",
-          "sha256": "4a06c592e027486baf019886cc3de9d1da13d4508b68dc0c99553e30c0f47cd4"
-        },
-        {
-          "bytes": 20841,
-          "path": "docs/plans/2026-09-10-code-audit-remediation-roadmap.md",
-          "sha256": "84a6be3927123edd773b095ed3aea06fd15721f1a97ab480cb04332b115c4276"
-        },
-        {
-          "bytes": 7980,
-          "path": "docs/plans/2026-09-10-hamilton-dag-next-thread-handoff.md",
-          "sha256": "723c790a40601b8d09901fdbfc26ab5f699ef8863ccc132d9d6e28026c943463"
-        },
-        {
-          "bytes": 11911,
-          "path": "docs/plans/2026-09-11-code-audit-remediation-handoff.md",
-          "sha256": "5f61018ff4f6779ea0669bb9a6150596b8392c380b4fb4d80ed819e86628bf90"
-        },
-        {
-          "bytes": 11549,
-          "path": "docs/plans/2026-09-11-hamilton-dag-e2e-evidence.md",
-          "sha256": "a7b996252058a00597a06fe9ba53506f2f44553528b45200969a3f6bee005319"
-        },
-        {
-          "bytes": 4053,
-          "path": "docs/plans/2026-09-12-remediation-followups-handoff.md",
-          "sha256": "a9db830e2f2de7327cc32e5d2c320ef0444c51b80042ca37fd6796659f8b5f21"
-        },
-        {
-          "bytes": 41201,
-          "path": "docs/plans/2026-11-12-reporting-refresh-handoffs.md",
-          "sha256": "9b9db73bc72206e0379128146cfbd833d1b2c31a08602fe6eb5affd6f1ce00dd"
-        },
-        {
-          "bytes": 44900,
-          "path": "docs/plans/2026-11-12-reporting-refresh-implementation-map.md",
-          "sha256": "1e28d3c9279994f9eb24616cfcfa6c6fa3baa78787165d1dea7c9d4dbef1cf0e"
-        },
-        {
-          "bytes": 20174,
-          "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md",
-          "sha256": "9c80a6516588d5b93e15773a62b391adeb184ae3099f6025c9dabd9aa541c735"
-        },
-        {
-          "bytes": 3024,
-          "path": "docs/plans/README.md",
-          "sha256": "d71a050c062f3d25a7bb78cc574c221522ead07d6161cefd2c406aae2cd43503"
-        },
-        {
           "bytes": 46952,
           "path": "docs/research/singapore-open-datasets.md",
           "sha256": "0f069dabc4f50599b57ca8cbaff1104bbc04b6f61beb1de90ebb56818e17234a"
         },
         {
-          "bytes": 10677,
+          "bytes": 22550,
           "path": "scripts/00_sync_data.py",
-          "sha256": "3dcc0485d52835f7bb66ba852f3c9471978b142f4bedab3dfa573929b978dac6"
+          "sha256": "ae0232bb3f60060bcedc8dc57d24d62f6bf7de789433a4c547842626823ccd61"
         },
         {
-          "bytes": 10034,
+          "bytes": 12181,
           "path": "scripts/40_refresh_rolling.py",
-          "sha256": "dc0cbbd79d1403a91ec6e60ef11429137dc6387db7a6617d551140334cc6fb4d"
+          "sha256": "ad4d2e6ec72ac623df554b20ea976bf2e2b4ab24400898c6c7ea2cfcc2554b5c"
         },
         {
           "bytes": 1485,
@@ -5327,9 +5035,9 @@
           "sha256": "fb6a32c275490b3404fec9b50af82a1d14c1dab5dec509b75c6afb79ec12b8a8"
         },
         {
-          "bytes": 13617,
+          "bytes": 19682,
           "path": "src/egg_n_bacon_housing/adapters/datagovsg.py",
-          "sha256": "20878c6c72458d7d3c29b82830fbeb6b40b7ce0b3bdc8bb72cfa5c8825f0e131"
+          "sha256": "6a5013392d1ed74d124f852aa25aeb769a36e0e7e876cfd9b663d7c0bd4e93d9"
         },
         {
           "bytes": 665,
@@ -5417,9 +5125,9 @@
           "sha256": "6071b749c13996ec771b8ebf0977695315fff1c5fc1350e1641f05e54c1b0237"
         },
         {
-          "bytes": 9233,
+          "bytes": 10193,
           "path": "src/egg_n_bacon_housing/config.py",
-          "sha256": "6b1d9742d446d8007422cb590bc1ed3d835e0dcfb07c4f1b8aa0dc0bb54d4feb"
+          "sha256": "4fbbce5092bf99f87d41ab562b460f964160101c2d7efacfbf56e814e206a514"
         },
         {
           "bytes": 12314,
@@ -5477,19 +5185,19 @@
           "sha256": "62d4ebf0b46ae56d794de55e28b64b03f4341b4f10058a758d928245eab78667"
         },
         {
-          "bytes": 13896,
+          "bytes": 13904,
           "path": "src/egg_n_bacon_housing/utils/data_quality.py",
-          "sha256": "a69d59b0448f07f448fa777159e81532751cde446a999efbbec35ec0161fef94"
+          "sha256": "f04261edd031fd3fa5049eca23d35255be56a72d4b860b2f377ae83bce27b38b"
         },
         {
-          "bytes": 1262,
+          "bytes": 1435,
           "path": "src/egg_n_bacon_housing/utils/geo.py",
-          "sha256": "5d38b3f0c7c8165556be7c3d6846a31117156b802db731d5abf98aea33dd9f35"
+          "sha256": "b46083cdf3bfcfcbea8fc5d5c537c3586ebe9e8e3419092457abb410da4bdd52"
         },
         {
-          "bytes": 16916,
+          "bytes": 21178,
           "path": "src/egg_n_bacon_housing/utils/geocoding.py",
-          "sha256": "1d47121f2d5c7fef8f183fd49bbbe8f393a3fe06e9d685ae25d23f649767803a"
+          "sha256": "bc762a63d362769cfee05c1906df843958162913c37ceadac5d39fc1563cd3dd"
         },
         {
           "bytes": 9848,
@@ -5497,9 +5205,9 @@
           "sha256": "27302f58580fae302acdfd32d334531c73882b591f0fe034cce2df9d3b8d881f"
         },
         {
-          "bytes": 6681,
+          "bytes": 6329,
           "path": "src/egg_n_bacon_housing/utils/layer_writer.py",
-          "sha256": "3c4387e46e81ff944ff983b52279aaefcca4eb45d547d8075c6d842b034b8a93"
+          "sha256": "87f3a7c8d07268b6196b896b7e02e3f2c41771ca0b4745c0f705951e5dead502"
         },
         {
           "bytes": 4614,
@@ -5653,7 +5361,7 @@
     "schoolsMoeGeojson": {
       "bytes": 231573,
       "consumerScan": {
-        "filesScanned": 322,
+        "filesScanned": 269,
         "manifestKey": "scanManifests.textRoots",
         "meaning": "zero call sites under src/ reference this artefact, so it is unlinked to the shipped distance columns in BOTH directions: it is neither evidence that the shipped distances were produced from it, nor evidence that they were not",
         "occurrencesUnderSrc": 0,

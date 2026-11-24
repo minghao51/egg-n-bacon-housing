@@ -116,8 +116,25 @@ SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx")
 # study signed after RS13 must not drift this ledger. The frozen legacy
 # originals stay IN the scan, because the article's own method prose is what
 # this audit audits.
+#
+# `docs/plans/` is the planning/spec surface: plan and audit prose ABOUT the
+# method, not an implementation or an artefact of it. It holds the D12 registers
+# this scan already excluded by path (see EXCLUDED_SCAN_PATHS), so the prefix
+# generalises that existing intent — otherwise every audit pack adds markdown
+# that mentions the method's name and every measurement helper it ships is
+# counted as a scanned python file.
+#
+# `docs/guides/` is the operational surface for the same reason: runbooks,
+# setup notes and CI descriptions are prose about operating the programme, not
+# an implementation of a study method and not evidence about one. A guide that
+# names a study (or whose example table happens to carry a token) is not a
+# counter-example to an absence claim, because the scan establishes absence FROM
+# CODE; pinning operator documentation made every documentation edit re-drift a
+# signed ledger without moving a measurement.
 EXCLUDED_SCAN_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "scripts/tools/",
     "prompts/",
     "app/src/components/studies/",
@@ -618,7 +635,7 @@ def scan_declaration() -> dict[str, Any]:
         },
         "meaning": (
             "the token and code scans are hash-pinned over these declarations; "
-            "app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs and excluded; .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are excluded explicitly; a count can only move if a scanned file changes"
+            "app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs and excluded; docs/plans/ (the planning/spec surface: plan and audit prose about this study's method, which mentions it in the method's own vocabulary) is excluded; docs/guides/ (the operational surface: runbooks and setup/CI documentation about the programme, whose prose can name a study without implementing or evidencing its method) is excluded too, so a guide edit cannot move a pinned count; these scans establish absence FROM CODE, not absence from documentation; .secrets.baseline and the two D12 registers called out in excludedPaths are excluded; a count can only move if a scanned file changes"
         ),
     }
 

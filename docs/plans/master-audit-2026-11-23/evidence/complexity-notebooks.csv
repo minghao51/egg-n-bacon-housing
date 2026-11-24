@@ -1,0 +1,7 @@
+path,lines,code_cells,markdown_cells,code_lines,call_sites,method,limitations
+notebooks/L0_datagovsg.ipynb,1772,19,15,173,64,ipynb-json+lexical-code-cells,not executed; cell magics/shell escapes not parsed as Python
+notebooks/L2_sales_facilities.ipynb,1006,28,12,402,166,ipynb-json+lexical-code-cells,not executed; cell magics/shell escapes not parsed as Python
+notebooks/L0_onemap.ipynb,1005,12,11,123,66,ipynb-json+lexical-code-cells,not executed; cell magics/shell escapes not parsed as Python
+notebooks/L1_utilities_processing.ipynb,602,23,8,275,93,ipynb-json+lexical-code-cells,not executed; cell magics/shell escapes not parsed as Python
+notebooks/L1_ura_transactions_processing.ipynb,217,7,4,84,30,ipynb-json+lexical-code-cells,not executed; cell magics/shell escapes not parsed as Python
+notebooks/L0_wiki.ipynb,102,2,2,34,20,ipynb-json+lexical-code-cells,not executed; cell magics/shell escapes not parsed as Python

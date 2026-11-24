@@ -114,9 +114,18 @@ SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx", ".json", ".csv", ".txt", ".yml", "
 # `scripts/tools/` holds the evidence producers themselves, and `prompts/` holds
 # the handoffs and runbooks. A hash-pinned scan that counted them drifted the
 # moment a sibling instrument appeared (the RS10 lesson, recorded in that
-# study's pack §6a/§6b).
+# study's pack §6a/§6b). `docs/plans/` generalises that further: it is the
+# planning/spec surface, prose ABOUT the method rather than an implementation or
+# an artefact of it, so pinning it made this ledger drift whenever a plan or an
+# audit pack mentioned a token it counts. `docs/guides/` is the operational
+# surface and is excluded for the same reason: runbooks, setup notes and CI
+# descriptions are prose about operating the programme, not an implementation of
+# RS14's method; these scans establish absence FROM CODE, so a guide that names a
+# study is not a counter-example to an absence claim.
 EXCLUDED_SCAN_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "scripts/tools/",
     "prompts/",
     "app/src/components/studies/",
@@ -139,12 +148,29 @@ TRANSIENT_SCAN_DIRS = (
     ".ruff_cache",
     "dist",
     ".astro",
+    # The filename scan walks the whole checkout, so it must also drop the
+    # artefacts a local test/type-check/lint/frontend build leaves behind. It
+    # claimed to be independent of those runs while still counting `htmlcov/`
+    # (written by pytest's own `--cov-report=html`), `.hypothesis/` and the
+    # Astro build cache, so `filesScanned` moved whenever anyone ran the suite.
+    "htmlcov",
+    ".hypothesis",
+    ".astro-cache",
 )
 FILENAME_SCAN_EXCLUDED_PREFIXES = tuple(f"{name}/" for name in TRANSIENT_SCAN_DIRS) + (
     "app/node_modules/",
     "scripts/tools/",
     "prompts/",
     "docs/implementation/",
+    # Planning/spec surface, the same surface the token scan excludes; see the
+    # comment above EXCLUDED_SCAN_PREFIXES.
+    "docs/plans/",
+    # Operational surface, excluded by the same rule (runbooks and setup/CI
+    # documentation are prose about operating the programme, not artefacts).
+    "docs/guides/",
+    # Single-file test/coverage outputs of the same kind.
+    "coverage.xml",
+    ".coverage",
 )
 # This tool quotes the tokens it searches for; scanning itself would make the
 # ledger its own evidence. The D12 decision register records reviewer findings
@@ -574,8 +600,11 @@ def article_vs_asset(asset: dict[str, Any]) -> dict[str, Any]:
                 "the stored asset's per-area blocks carry only price_forecast, "
                 "policy_risk and lease_arbitrage keys; zero occurrences of any "
                 "of the five segment labels; and the corroboration scan finds "
-                "the table's values only in the article's own copies, sibling "
-                "legacy articles and one plan document — so the per-segment "
+                "the table's values only in the article's own copies and "
+                "sibling legacy articles (the planning/spec surface "
+                "docs/plans/, which also mentions one of them, is excluded "
+                "from that scan and disclosed at "
+                "corroborationScan.excludedPrefixes) — so the per-segment "
                 "model outputs the article's tables presuppose are absent from "
                 "this checkout, and the table is withdrawn rather than "
                 "re-estimated"
@@ -1702,9 +1731,12 @@ def corroboration_scan(asset: dict[str, Any]) -> dict[str, Any]:
             "working copy docs/analytics/price-forecasts.md), the table values "
             "appear only in sibling legacy articles that quote the same numbers "
             "(findings.md for the segment table, school-quality.md for the "
-            "XGBoost parameters) and one plan document (ARIMA(1,1,1) in "
-            "docs/plans/2026-02-19-pipeline-improvements-plan.md) — cross-"
-            "citation inside documents, never a data or code artefact. NO "
+            "XGBoost parameters) — cross-citation inside documents, never a "
+            "data or code artefact; the planning/spec surface docs/plans/ is "
+            "excluded from this scan (disclosed at excludedPrefixes), so the "
+            "ARIMA(1,1,1) mention it also holds is no longer counted, and the "
+            "operational surface docs/guides/ (runbooks and setup/CI "
+            "documentation about the programme) is excluded by the same rule. NO "
             "JSON, CSV or producer output in the scanned roots carries any of "
             "the table's values, which is the measured boundary of the "
             "per-segment table's provenance: absent, not merely unstated. "
@@ -1718,8 +1750,14 @@ def corroboration_scan(asset: dict[str, Any]) -> dict[str, Any]:
             "price_appreciation_train appears nowhere outside the frozen and "
             "working article copies; app/src/components/studies/ (edition "
             "registry/pages) and app/tests/ (fixtures) are excluded programme "
-            "outputs; .secrets.baseline and docs/plans/2026-11-12-reporting-"
-            "refresh-decisions.md (D12 register) are also excluded; "
+            "outputs; .secrets.baseline and "
+            "docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 "
+            "register) are also excluded, and docs/plans/ excludes the rest "
+            "of the planning/spec surface (plan and audit prose about the "
+            "method, not an implementation or artefact of it); "
+            "docs/guides/ excludes the operational surface (runbooks, setup "
+            "notes and CI descriptions, prose about operating the programme — "
+            "these scans establish absence FROM CODE); "
             "hdb_price_forecasts appears only in the "
             "archive reorganization listing. These are counts of references in "
             "the scanned roots, disclosed file by file"
@@ -1767,12 +1805,12 @@ def absence_scans(frame_schema_names: list[str]) -> dict[str, Any]:
                 "price_appreciation_train.parquet",
                 "price_appreciation_test.parquet",
             ],
-            "roots": "whole checkout tree, excluding transient caches/build outputs, programme surfaces, the D12 register path, and docs/analytics/editions/** except editions/legacy/**",
+            "roots": "whole checkout tree, excluding transient tooling caches/build outputs, programme surfaces (including the planning/spec surface docs/plans/ and the operational surface docs/guides/), the D12 register path, and docs/analytics/editions/** except editions/legacy/**",
             "exclusions": {
                 "prefixes": list(FILENAME_SCAN_EXCLUDED_PREFIXES),
                 "paths": ["docs/plans/2026-11-12-reporting-refresh-decisions.md"],
                 "editionRule": "docs/analytics/editions/** excluded except docs/analytics/editions/legacy/**",
-                "meaning": "any directory component matching the disclosed cache/build prefixes is excluded so filesScanned is independent of local test, type-check, lint and frontend build runs; programme surfaces and non-legacy editions are separately excluded",
+                "meaning": "any directory component matching the disclosed cache/build prefixes (including pytest's htmlcov/, .hypothesis/ and the Astro build cache) is excluded so filesScanned is independent of local test, type-check, lint and frontend build runs; programme surfaces and non-legacy editions are separately excluded",
             },
             "filesScanned": scanned_names,
             "matches": train_matches,
