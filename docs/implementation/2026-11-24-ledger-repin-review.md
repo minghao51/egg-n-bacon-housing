@@ -70,15 +70,15 @@ were `docs/plans/*`.
 
 | Ledger                           | Canonical sha256                                                   |
 | -------------------------------- | ------------------------------------------------------------------ |
-| `rs06` lease-decay               | `868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f` |
-| `rs07` mrt-impact                | `d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f` |
-| `rs08` school-quality            | `800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d` |
+| `rs06` lease-decay               | `496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e` |
+| `rs07` mrt-impact                | `bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40` |
+| `rs08` school-quality            | `1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d` |
 | `rs10` market-segments           | `163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167` |
 | `rs11` spatial-autocorrelation   | `0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7` |
 | `rs12` spatial-hotspots          | `1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74` |
 | `rs13` causal-inference-overview | `d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059` |
-| `rs14` price-forecasts           | `c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852` |
-| `rs15` findings                  | `1366c746a8785a79e8902e66ee728fbf744c7cee6ef334f8ac9f906e11046be6` |
+| `rs14` price-forecasts           | `8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386` |
+| `rs15` findings                  | `c22d2de7c3452bf8d9e0b83aa0fdfc54fd19d336615cab18086d2d099d718b3c` |
 
 Hashing rule: `json.dumps(obj, sort_keys=True, indent=2, ensure_ascii=False)` +
 a trailing newline, then sha256.
@@ -93,6 +93,20 @@ token matched inside the new file, and the set of changed top-level keys is
 **identical** to the set this review approved — no substantive key appeared. The
 artifacts were regenerated under the same scrutiny and the pins re-derived; the
 table above holds the final hashes.
+
+### Third re-pin, same cause one level down
+
+A `pre-commit run --all-files` pass reformatted five app source files
+(`PriceMap.tsx`, `LeaderboardMap.tsx`, `SegmentAreaMap.tsx`, `useGzipJson.ts`,
+`release-manifest.ts`) after the second re-pin. Those files are inside the
+producers' `scannedFiles`, so four ledgers re-drifted on their **pre-format**
+hashes and were re-pinned again. Same permitted cause as before — a file this
+tree genuinely changed — and again no substantive number moved; the changed keys
+are `absenceScans` and `scanManifests` only.
+
+Sequence matters here and cost two extra cycles: formatting has to land **before**
+the last ledger re-pin, because a whitespace-only source change still moves a
+pinned hash.
 
 This is a design property worth stating plainly rather than treating as review
 sloppiness: **any new file re-pins the census-based ledgers**, which is precisely

@@ -76,7 +76,11 @@ jobs:
         with:
           enable-cache: true
 
-      - run: uv sync --dev --locked
+      # The producers are analysis code, not just tooling: `spatial_autocorrelation`
+      # and `spatial_hotspots` import `esda`, which lives in the `research` group.
+      # Installing only `dev` made both die with ModuleNotFoundError and be
+      # reported as drift — the sync must cover the group the producers need.
+      - run: uv sync --dev --group research --locked
 
       - name: Restore the inputs the producers read
         env:

@@ -999,9 +999,9 @@
           "sha256": "113d59b244578d8811d47ba2fdd03405f29601698841b5d1dba85314d92d3135"
         },
         {
-          "bytes": 34634,
+          "bytes": 34691,
           "path": "app/src/components/dashboard/PriceMap.tsx",
-          "sha256": "af75682e6d2c112ee24d2fdd6aef7d9a44dc0e5e270e4b75fa6b9b9175bb0aad"
+          "sha256": "62357c4f7ce4a770d16a2a8a1e0a9f8e778fe81af3c0b6eefd9a18c58571f17c"
         },
         {
           "bytes": 2330,
@@ -1034,9 +1034,9 @@
           "sha256": "faaf07ab746197f03e19ea5be274dff2fc1ca7ab7664d34f395313e5df70581c"
         },
         {
-          "bytes": 12879,
+          "bytes": 12851,
           "path": "app/src/components/dashboard/leaderboard/LeaderboardMap.tsx",
-          "sha256": "baa1a588646cc41dd37f1d91c6e9d4e701ccddf6badcbe2cceab5e94400b2193"
+          "sha256": "5cef8287e49f5af664a67085bb01af7bbe548c58db228555aeb8d8c6879d2f69"
         },
         {
           "bytes": 8054,
@@ -1134,9 +1134,9 @@
           "sha256": "624d57081975fabbe06c28f05f4d6040046920490ac10d11ff0b5fac3d286b4e"
         },
         {
-          "bytes": 8977,
+          "bytes": 8949,
           "path": "app/src/components/dashboard/segments/investigate/SegmentAreaMap.tsx",
-          "sha256": "bab5b38f8d424c9e377355d8c33ed1245de34415d8a410cf313b461de3d7a3eb"
+          "sha256": "02ab1200373f73a7e00edee415f835e31f4d2f97b4954f53fc2f8cd0a3df839c"
         },
         {
           "bytes": 4666,
@@ -1189,9 +1189,9 @@
           "sha256": "e86f3a29aeaff5dab8d24b5c88792e8175a0d9b6479735c85291662548bc0b8b"
         },
         {
-          "bytes": 23844,
+          "bytes": 23740,
           "path": "app/src/components/explorer/ExplorerWorkspace.tsx",
-          "sha256": "1248772b10b778ea8ffcce56c959a52a16528765fb5abfdf957ed4b58f454fbe"
+          "sha256": "496b09b0d4eff5787357038e2631d675b87d44a4c7648d31fe80ae06d6a62ca6"
         },
         {
           "bytes": 5202,
@@ -1354,9 +1354,9 @@
           "sha256": "de381711ecdbaef4498d2f608a8c0bde7e119743432a3c324305b99319443af5"
         },
         {
-          "bytes": 15284,
+          "bytes": 15289,
           "path": "app/src/hooks/useGzipJson.ts",
-          "sha256": "a3b2de7b96d2b852e2ce3bbf5d70b40d44d508c97aac241653f84fc52647db1f"
+          "sha256": "fb78fdfba87dde25b1243ed6c5478b7553c48b4b49f565885d155b10cf697b30"
         },
         {
           "bytes": 8166,
@@ -1639,9 +1639,9 @@
           "sha256": "2a8817812164b6da55b86538da6e93dc5b6cc9573190cc80421a99f9ca43cb63"
         },
         {
-          "bytes": 21763,
+          "bytes": 21775,
           "path": "app/src/utils/release-manifest.ts",
-          "sha256": "524d1047a0d993b725b203e339ceafcedb3d954114217ff5143795a76c6aeb5a"
+          "sha256": "ebd126c0835fb900e784fa91e31252b7e67f528b49082762e5815c56bbfb8f4b"
         },
         {
           "bytes": 2926,

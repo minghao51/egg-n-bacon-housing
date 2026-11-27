@@ -535,7 +535,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
+          "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -547,7 +547,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "openai-codex/gpt-6-luna (high)",
         date: "2026-11-24",
         artifactSha256:
-          "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
+          "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386",
         statement:
           "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
@@ -558,7 +558,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
+          "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -588,7 +588,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
+          "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -600,7 +600,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "openai-codex/gpt-6-luna (high)",
         date: "2026-11-24",
         artifactSha256:
-          "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
+          "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e",
         statement:
           "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
@@ -611,7 +611,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
+          "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -640,7 +640,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
+          "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -652,7 +652,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "openai-codex/gpt-6-luna (high)",
         date: "2026-11-24",
         artifactSha256:
-          "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
+          "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40",
         statement:
           "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
@@ -663,7 +663,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
+          "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -693,7 +693,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
+          "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this study's checkout and accept the cutoff and the dispositions it implies. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -705,7 +705,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "openai-codex/gpt-6-luna (high)",
         date: "2026-11-24",
         artifactSha256:
-          "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
+          "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d",
         statement:
           "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
@@ -716,7 +716,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
+          "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,
@@ -904,7 +904,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "1366c746a8785a79e8902e66ee728fbf744c7cee6ef334f8ac9f906e11046be6",
+          "c22d2de7c3452bf8d9e0b83aa0fdfc54fd19d336615cab18086d2d099d718b3c",
         statement:
           "Recorded under the owner's blanket delegation of 2026-11-20 (D12), which dropped the per-study approval hop and expressly kept the scientific review: I attest that the measured ledger pins this checkout and accept the cutoff and the dispositions it implies, including that this page records its own series as not yet signed. The session materialised this attestation; the owner accepted the hash without reading the ledger first, and the statement says so.",
         automated: false,
@@ -916,7 +916,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "openai-codex/gpt-6-luna (high)",
         date: "2026-11-24",
         artifactSha256:
-          "1366c746a8785a79e8902e66ee728fbf744c7cee6ef334f8ac9f906e11046be6",
+          "c22d2de7c3452bf8d9e0b83aa0fdfc54fd19d336615cab18086d2d099d718b3c",
         statement:
           "I reviewed the re-pinned evidence ledger at this hash after the 2026-11-24 remediation: every changed value is attributable to the disclosed scan-surface narrowing, a source or test file re-hashed by that remediation, or a sibling-ledger re-pin, and no coefficient, statistic, sample size, cutoff or disposition changed. I do not re-attest the edition text, other studies, or later edits.",
         automated: true,
@@ -927,7 +927,7 @@ export const REFRESHED_EDITIONS: readonly AnalyticsEdition[] = [
         name: "howt",
         date: "2026-11-20",
         artifactSha256:
-          "1366c746a8785a79e8902e66ee728fbf744c7cee6ef334f8ac9f906e11046be6",
+          "c22d2de7c3452bf8d9e0b83aa0fdfc54fd19d336615cab18086d2d099d718b3c",
         statement:
           "I approve publication of this edition at the frozen text sha256 recorded here as its current edition; recorded under the same delegation.",
         automated: false,

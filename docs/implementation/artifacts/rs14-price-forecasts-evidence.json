@@ -48,7 +48,7 @@
           ".coverage"
         ]
       },
-      "filesScanned": 18165,
+      "filesScanned": 18166,
       "matchCount": 0,
       "matches": [],
       "meaning": "an ABSENT FILE state within the declared filename-scan boundary: the split datasets the article names have no matching filenames. What DOES exist is a comparison file recording train/test METRICS for an unlinked run (featureImportanceArtefacts.modelComparison) — metrics without their split files, kept as separate states",

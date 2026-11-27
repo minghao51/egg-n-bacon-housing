@@ -843,15 +843,15 @@
     },
     "docs/implementation/artifacts/rs06-lease-decay-evidence.json": {
       "bytes": 185159,
-      "sha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f"
+      "sha256": "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e"
     },
     "docs/implementation/artifacts/rs07-mrt-impact-evidence.json": {
       "bytes": 195923,
-      "sha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f"
+      "sha256": "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40"
     },
     "docs/implementation/artifacts/rs08-school-quality-evidence.json": {
       "bytes": 240533,
-      "sha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d"
+      "sha256": "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d"
     },
     "docs/implementation/artifacts/rs09-macro-sensitivity-evidence.json": {
       "bytes": 96351,
@@ -875,7 +875,7 @@
     },
     "docs/implementation/artifacts/rs14-price-forecasts-evidence.json": {
       "bytes": 190694,
-      "sha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852"
+      "sha256": "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386"
     }
   },
   "legacyClaims": [
@@ -2302,7 +2302,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f"
+          "sharedArtifactSha256": "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e"
         },
         "claimDispositions": {
           "byValue": {
@@ -2364,11 +2364,11 @@
         "ledger": {
           "bytes": 185159,
           "contentMatchesPin": true,
-          "contentSha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
+          "contentSha256": "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e",
           "path": "docs/implementation/artifacts/rs06-lease-decay-evidence.json",
-          "pin": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
+          "pin": "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e",
           "rawMatchesPin": true,
-          "rawSha256": "868fbcfb5e918211bc1d5ad71bfe7f59d4933956c205e85393a7dfe7325e6c5f",
+          "rawSha256": "496b63b5e1a4d7fc8d2399e70d81f063203fd6777ed73f7801ac1839db78560e",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2604,7 +2604,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f"
+          "sharedArtifactSha256": "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40"
         },
         "claimDispositions": {
           "byValue": {
@@ -2653,11 +2653,11 @@
         "ledger": {
           "bytes": 195923,
           "contentMatchesPin": true,
-          "contentSha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
+          "contentSha256": "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40",
           "path": "docs/implementation/artifacts/rs07-mrt-impact-evidence.json",
-          "pin": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
+          "pin": "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40",
           "rawMatchesPin": true,
-          "rawSha256": "d760942ce1d7767f2fecb432db7d39a129e7dd2ab2ccfced112a2f3df200ba5f",
+          "rawSha256": "bfb2c51800a65c622a402c130728efc0cebe1e84d0e36e6713223a96b9099e40",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2692,7 +2692,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852"
+          "sharedArtifactSha256": "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386"
         },
         "claimDispositions": {
           "byValue": {
@@ -2753,11 +2753,11 @@
         "ledger": {
           "bytes": 190694,
           "contentMatchesPin": true,
-          "contentSha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
+          "contentSha256": "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386",
           "path": "docs/implementation/artifacts/rs14-price-forecasts-evidence.json",
-          "pin": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
+          "pin": "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386",
           "rawMatchesPin": true,
-          "rawSha256": "c29df23e6d5bf6e30f1d157aabfb05f71c820a9c3cc47e4cf2bed0f4e135a852",
+          "rawSha256": "8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
@@ -2888,7 +2888,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d"
+          "sharedArtifactSha256": "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d"
         },
         "claimDispositions": {
           "byValue": {
@@ -2950,11 +2950,11 @@
         "ledger": {
           "bytes": 240533,
           "contentMatchesPin": true,
-          "contentSha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
+          "contentSha256": "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d",
           "path": "docs/implementation/artifacts/rs08-school-quality-evidence.json",
-          "pin": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
+          "pin": "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d",
           "rawMatchesPin": true,
-          "rawSha256": "800a4861c3cc0812b64e185a68ab465f26ab613713c5fec80092c8cfa176806d",
+          "rawSha256": "1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"
