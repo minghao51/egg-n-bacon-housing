@@ -105,7 +105,10 @@ const HTML_ESCAPES: Readonly<Record<string, string>> = {
 
 function escapeHtml(value: unknown): string {
   if (value === null || value === undefined) return "";
-  return String(value).replace(/[&<>"']/g, (character) => HTML_ESCAPES[character]);
+  return String(value).replace(
+    /[&<>"']/g,
+    (character) => HTML_ESCAPES[character],
+  );
 }
 
 /**
@@ -828,9 +831,9 @@ export default function PriceMap({
             Area Inspector
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Choose a planning area to lock the highlight and hand it off to
-            the ranking or segment pages. Use the Area list or click a
-            polygon; both set the same selection.
+            Choose a planning area to lock the highlight and hand it off to the
+            ranking or segment pages. Use the Area list or click a polygon; both
+            set the same selection.
           </p>
 
           {selectedAreaSummary ? (
@@ -854,7 +857,9 @@ export default function PriceMap({
                   />
                   <InspectorItem
                     label="Rank"
-                    value={selectedAreaRank > 0 ? `#${selectedAreaRank}` : "N/A"}
+                    value={
+                      selectedAreaRank > 0 ? `#${selectedAreaRank}` : "N/A"
+                    }
                   />
                   <InspectorItem
                     label="YoY Growth"

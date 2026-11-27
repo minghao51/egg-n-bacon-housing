@@ -253,10 +253,7 @@ export default function SegmentAreaMap({
         style={{ width: "100%", height: "100%" }}
         zoomControl={false}
       >
-        <TileLayer
-          attribution={MAP_TILES_ATTRIBUTION}
-          url={MAP_TILES_URL}
-        />
+        <TileLayer attribution={MAP_TILES_ATTRIBUTION} url={MAP_TILES_URL} />
         <GeoJSON
           data={geoJsonData}
           style={style}

@@ -29,7 +29,8 @@ import { useObservedPack } from "@/hooks/useObservedPack";
 import {
   useVerifiedRelease,
   type VerifiedReleaseLoad,
-} from "@/hooks/useGzipJson";import {
+} from "@/hooks/useGzipJson";
+import {
   EXPLORER_DEFAULTS,
   isConcretePeriod,
   isLegacyPeriod,
@@ -300,13 +301,7 @@ function ExplorerData({
               mapMetricsData !== null &&
               overviewData !== null,
           }),
-    [
-      legacyPeriod,
-      mapMetricsData,
-      overviewData,
-      selection,
-      releaseStatus,
-    ],
+    [legacyPeriod, mapMetricsData, overviewData, selection, releaseStatus],
   );
 
   const packResult = useMemo(
@@ -562,9 +557,7 @@ function ExplorerData({
                   ? `Checking the published ${period} window`
                   : `${period} is not available in this build`}
               </p>
-              <p className="mt-2 text-muted-foreground">
-                {windowView.message}
-              </p>
+              <p className="mt-2 text-muted-foreground">{windowView.message}</p>
             </div>
           )}
         </div>
@@ -576,9 +569,7 @@ function ExplorerData({
               <p>
                 Area values: the verified{" "}
                 <code className="font-mono">observed pack</code> &mdash;{" "}
-                <code className="font-mono">
-                  {windowView.dataset.periodId}
-                </code>{" "}
+                <code className="font-mono">{windowView.dataset.periodId}</code>{" "}
                 ({windowView.dataset.label}), generation{" "}
                 <code className="font-mono">
                   {windowView.dataset.generation}
@@ -588,9 +579,9 @@ function ExplorerData({
               </p>
               <p className="mt-1">
                 National value: the pack's own{" "}
-                <code className="font-mono">SG</code> scope for the same
-                window &mdash; read from the national aggregate, never
-                computed from these area rows.
+                <code className="font-mono">SG</code> scope for the same window
+                &mdash; read from the national aggregate, never computed from
+                these area rows.
               </p>
               <p className="mt-1">
                 The manifest, payload sizes and sha256 digests were checked
@@ -618,26 +609,26 @@ function ExplorerData({
                   <code className="font-mono">
                     dashboard_overview.stats.{windowView.dataset.section}
                   </code>{" "}
-                  &mdash; read from the national aggregate, never computed
-                  from these area rows.
+                  &mdash; read from the national aggregate, never computed from
+                  these area rows.
                 </p>
               ) : null}
               {releaseStatus === "verified" ? (
                 <p className="mt-1">
                   Publication generation verified for{" "}
                   <code className="font-mono">map_metrics</code> and{" "}
-                  <code className="font-mono">dashboard_overview</code> (the
-                  two assets this screen compares): the values above are read
-                  from the very responses whose sizes and sha256 digests were
-                  checked, not from a second download. The other dashboard
-                  files were not checked by this screen.
+                  <code className="font-mono">dashboard_overview</code> (the two
+                  assets this screen compares): the values above are read from
+                  the very responses whose sizes and sha256 digests were
+                  checked, not from a second download. The other dashboard files
+                  were not checked by this screen.
                 </p>
               ) : (
                 <p className="mt-1">
                   Release generation could not be verified (status:{" "}
-                  {releaseStatus}). National comparison stays withheld until
-                  one publication generation is proven, and no area or
-                  national figure above is drawn from unchecked bytes.
+                  {releaseStatus}). National comparison stays withheld until one
+                  publication generation is proven, and no area or national
+                  figure above is drawn from unchecked bytes.
                 </p>
               )}
             </>

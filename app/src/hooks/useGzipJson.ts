@@ -12,10 +12,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { fetchGzipJson } from "@/utils/gzip";
-import {
-  loadReleaseCheck,
-  type ReleaseCheck,
-} from "@/utils/release-manifest";
+import { loadReleaseCheck, type ReleaseCheck } from "@/utils/release-manifest";
 import {
   cacheKey as buildCacheKey,
   createRequestTracker,
@@ -268,7 +265,9 @@ export function readVerifiedPayload(
   scope: string,
   generation: string,
 ): VerifiedPayload | null {
-  return verifiedPayloadStore.get(verifiedPayloadKey(scope, generation)) ?? null;
+  return (
+    verifiedPayloadStore.get(verifiedPayloadKey(scope, generation)) ?? null
+  );
 }
 
 /** Clear the verified-payload store (tests, or a forced reload). */

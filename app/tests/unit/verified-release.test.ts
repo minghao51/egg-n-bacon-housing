@@ -45,12 +45,18 @@ const encoder = new TextEncoder();
 
 /** The payloads one release serves, as JSON text. */
 const PAYLOAD_A: Record<string, string> = {
-  [MAP_METRICS]: JSON.stringify({ whole: { hdb: { TAMPINES: { volume: 3 } } } }),
-  [OVERVIEW]: JSON.stringify({ stats: { whole_hdb: { median_price: 628000 } } }),
+  [MAP_METRICS]: JSON.stringify({
+    whole: { hdb: { TAMPINES: { volume: 3 } } },
+  }),
+  [OVERVIEW]: JSON.stringify({
+    stats: { whole_hdb: { median_price: 628000 } },
+  }),
 };
 /** A different release: same URLs, same shapes, different numbers. */
 const PAYLOAD_B: Record<string, string> = {
-  [MAP_METRICS]: JSON.stringify({ whole: { hdb: { TAMPINES: { volume: 999 } } } }),
+  [MAP_METRICS]: JSON.stringify({
+    whole: { hdb: { TAMPINES: { volume: 999 } } },
+  }),
   [OVERVIEW]: JSON.stringify({
     stats: { whole_hdb: { median_price: 999999 } },
   }),
@@ -152,8 +158,12 @@ describe("loadVerifiedRelease — verified bytes are the rendered bytes (UI-1)",
     // First load: the served bytes are the ones the manifest records.
     const first = await load(server);
     expect(first.check.status).toBe("verified");
-    expect(first.payloads[MAP_METRICS].data).toEqual(JSON.parse(PAYLOAD_A[MAP_METRICS]));
-    expect(first.payloads[OVERVIEW].data).toEqual(JSON.parse(PAYLOAD_A[OVERVIEW]));
+    expect(first.payloads[MAP_METRICS].data).toEqual(
+      JSON.parse(PAYLOAD_A[MAP_METRICS]),
+    );
+    expect(first.payloads[OVERVIEW].data).toEqual(
+      JSON.parse(PAYLOAD_A[OVERVIEW]),
+    );
 
     // The same URL now answers with different bytes. This is exactly the
     // response the old code fetched separately and rendered unchecked.
@@ -171,11 +181,16 @@ describe("loadVerifiedRelease — verified bytes are the rendered bytes (UI-1)",
     const generationA = first.check.manifest!.generation;
     const cachedA = readVerifiedPayload(scope(MAP_METRICS), generationA);
     expect(cachedA?.data).toEqual(JSON.parse(PAYLOAD_A[MAP_METRICS]));
-    expect(cachedA?.sha256).toBe(digest(encoder.encode(PAYLOAD_A[MAP_METRICS])));
+    expect(cachedA?.sha256).toBe(
+      digest(encoder.encode(PAYLOAD_A[MAP_METRICS])),
+    );
 
     // And no key reaches B at all.
     const storedB = JSON.stringify(JSON.parse(PAYLOAD_B[MAP_METRICS]));
-    for (const generation of [generationA, refreshed.check.manifest!.generation]) {
+    for (const generation of [
+      generationA,
+      refreshed.check.manifest!.generation,
+    ]) {
       const entry = readVerifiedPayload(scope(MAP_METRICS), generation);
       if (entry === null) continue;
       expect(JSON.stringify(entry.data)).not.toBe(storedB);
@@ -202,7 +217,9 @@ describe("loadVerifiedRelease — verified bytes are the rendered bytes (UI-1)",
     expect(refreshed.check.status).toBe("verified");
     const generationB = refreshed.check.manifest!.generation;
     expect(generationB).not.toBe(generationA);
-    expect(refreshed.payloads[OVERVIEW].data).toEqual(JSON.parse(PAYLOAD_B[OVERVIEW]));
+    expect(refreshed.payloads[OVERVIEW].data).toEqual(
+      JSON.parse(PAYLOAD_B[OVERVIEW]),
+    );
 
     // One generation-qualified key per payload: the old generation is no longer
     // readable, so A can never be shown as B.
@@ -231,7 +248,9 @@ describe("loadVerifiedRelease — verified bytes are the rendered bytes (UI-1)",
     expect(readVerifiedPayload(scope(MAP_METRICS), generation)).not.toBeNull();
     // Any other generation is a different key, and has no payload.
     expect(readVerifiedPayload(scope(MAP_METRICS), "0".repeat(64))).toBeNull();
-    expect(readVerifiedPayload(scope(MAP_METRICS), `${generation}-other`)).toBeNull();
+    expect(
+      readVerifiedPayload(scope(MAP_METRICS), `${generation}-other`),
+    ).toBeNull();
   });
 
   test("each URL is fetched once per load — no second fetch for display", async () => {

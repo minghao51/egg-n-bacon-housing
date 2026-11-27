@@ -6,26 +6,26 @@ Baseline `449b921`. Discovery: [01-discovery.md](01-discovery.md). Every row bel
 
 **Verdict headline:** no CRITICAL finding. Three HIGH findings are all data-integrity defects in the offline pipeline/operations path. The published static site is independently green (1,136 Python tests, 534 frontend tests, 237 E2E, 9 Pages-base E2E, build 234 pages, validators, frozen-asset baseline).
 
-| ID | Sev | Score | Category | Confidence |
-| --- | --- | --- | --- | --- |
-| CORE-1 | HIGH | 16 (4×4) | Correctness / cache contract | CONFIRMED (PoC ×2) |
-| CORE-2 | HIGH | 12 (4×3) | Ingestion integrity | CONFIRMED (PoC ×2) |
-| CORE-3 | HIGH | 16 (4×4) | Persistence / backup integrity | CONFIRMED (PoC ×2) |
-| CORE-4 | MEDIUM | 8 (4×2) | Path containment | CONFIRMED (PoC, requires bucket influence) |
-| CORE-5 | MEDIUM | 9 (3×3) | Operational recovery | CONFIRMED (PoC ×2) |
-| CORE-6 | MEDIUM | 8 (2×4) | Concurrency / external service | CONFIRMED (PoC ×2) |
-| UI-1 | MEDIUM | 9 (3×3) | Data trust boundary | CONFIRMED (code path) |
-| UI-2 | MEDIUM | 9 (3×3) | Accessibility | CONFIRMED (code + browser) |
-| UI-3 | MEDIUM | 9 (3×3) | Correctness / handoff | CONFIRMED (browser) |
-| UI-4 | MEDIUM | 6 (2×3) | Correctness / UI arithmetic | CONFIRMED (PoC ×2) |
-| REL-1 | MEDIUM | 6 (3×2) | Release gate | CONFIRMED (workflow + skip behaviour) |
-| REL-2 | MEDIUM | 6 (3×2) | Evidence integrity | CONFIRMED (code path) |
-| REL-3 | MEDIUM | 9 (3×3) | Reproducibility control | CONFIRMED (5 checks reproduced failing) |
-| REL-4 | MEDIUM | 9 (3×3) | Supply-chain control | CONFIRMED (no job; audits non-empty) |
-| ARCH-1 | MEDIUM | 6 (2×3) | Type-safety coverage | CONFIRMED (measured list) |
-| ARCH-2 | LOW | 4 (2×2) | Duplication | CONFIRMED (two implementations) |
-| DEP-1 | LOW | 3 (1×3) | Dependency hygiene | LIKELY (no reference found; removal unverified) |
-| DOC-1 | MEDIUM | 6 (2×3) | Documentation drift | CONFIRMED (contradictions read) |
+| ID     | Sev    | Score    | Category                       | Confidence                                      |
+| ------ | ------ | -------- | ------------------------------ | ----------------------------------------------- |
+| CORE-1 | HIGH   | 16 (4×4) | Correctness / cache contract   | CONFIRMED (PoC ×2)                              |
+| CORE-2 | HIGH   | 12 (4×3) | Ingestion integrity            | CONFIRMED (PoC ×2)                              |
+| CORE-3 | HIGH   | 16 (4×4) | Persistence / backup integrity | CONFIRMED (PoC ×2)                              |
+| CORE-4 | MEDIUM | 8 (4×2)  | Path containment               | CONFIRMED (PoC, requires bucket influence)      |
+| CORE-5 | MEDIUM | 9 (3×3)  | Operational recovery           | CONFIRMED (PoC ×2)                              |
+| CORE-6 | MEDIUM | 8 (2×4)  | Concurrency / external service | CONFIRMED (PoC ×2)                              |
+| UI-1   | MEDIUM | 9 (3×3)  | Data trust boundary            | CONFIRMED (code path)                           |
+| UI-2   | MEDIUM | 9 (3×3)  | Accessibility                  | CONFIRMED (code + browser)                      |
+| UI-3   | MEDIUM | 9 (3×3)  | Correctness / handoff          | CONFIRMED (browser)                             |
+| UI-4   | MEDIUM | 6 (2×3)  | Correctness / UI arithmetic    | CONFIRMED (PoC ×2)                              |
+| REL-1  | MEDIUM | 6 (3×2)  | Release gate                   | CONFIRMED (workflow + skip behaviour)           |
+| REL-2  | MEDIUM | 6 (3×2)  | Evidence integrity             | CONFIRMED (code path)                           |
+| REL-3  | MEDIUM | 9 (3×3)  | Reproducibility control        | CONFIRMED (5 checks reproduced failing)         |
+| REL-4  | MEDIUM | 9 (3×3)  | Supply-chain control           | CONFIRMED (no job; audits non-empty)            |
+| ARCH-1 | MEDIUM | 6 (2×3)  | Type-safety coverage           | CONFIRMED (measured list)                       |
+| ARCH-2 | LOW    | 4 (2×2)  | Duplication                    | CONFIRMED (two implementations)                 |
+| DEP-1  | LOW    | 3 (1×3)  | Dependency hygiene             | LIKELY (no reference found; removal unverified) |
+| DOC-1  | MEDIUM | 6 (2×3)  | Documentation drift            | CONFIRMED (contradictions read)                 |
 
 ---
 
@@ -34,7 +34,7 @@ Baseline `449b921`. Discovery: [01-discovery.md](01-discovery.md). Every row bel
 ### CORE-1 — Warm geocode cache bypasses condo project-plausibility checks
 
 - **Paths:** `src/egg_n_bacon_housing/utils/geocoding.py:340-345` (cache hit path), `:299-317` (`_row_from_result` vs `_empty_row`); `src/egg_n_bacon_housing/components/cleaning.py:418-444` (`_accept_plausible_project_coords`, `plausible_project_match`).
-- **Evidence:** the cache-hit branch returns `{**self._empty_row(addr), "lat": cached[0], "lon": cached[1]}`. `_empty_row` sets `matched_name=None` and `address=str(addr)` — the *query*, not OneMap's matched address. `_accept_plausible_project_coords` decides acceptance from `matched_name` and `address`, so on the warm path it compares the query with itself. Cold path uses `_row_from_result`, which keeps the real `SEARCHVAL`/`ADDRESS`.
+- **Evidence:** the cache-hit branch returns `{**self._empty_row(addr), "lat": cached[0], "lon": cached[1]}`. `_empty_row` sets `matched_name=None` and `address=str(addr)` — the _query_, not OneMap's matched address. `_accept_plausible_project_coords` decides acceptance from `matched_name` and `address`, so on the warm path it compares the query with itself. Cold path uses `_row_from_result`, which keeps the real `SEARCHVAL`/`ADDRESS`.
 - **Probe (`evidence/core-poc-results.json`, `cache_plausibility`):** a project-aware query whose OneMap hit is an unrelated project is rejected cold and produces the street-fallback coordinate `(1.33, 103.83)`; the same run re-executed warm accepts the rejected project coordinate `(1.31, 103.81)` with `matched_name=null`.
 - **Impact:** repeated pipeline runs can change which coordinate a condominium transaction receives, silently moving proximity/amenity features and spatial aggregates. Coverage gates still pass, so nothing reports the change. Published data already produced from a cold run is not retroactively wrong — the defect is run-to-run instability.
 - **Fix:** carry the cached response's metadata, not just coordinates (cache the full row set or re-derive via `_row_from_result` from a cached frame). Never substitute query text for matched-address evidence.
@@ -73,10 +73,10 @@ Baseline `449b921`. Discovery: [01-discovery.md](01-discovery.md). Every row bel
 ### CORE-5 — A failed scheduled refresh becomes a successful no-op
 
 - **Paths:** `scripts/40_refresh_rolling.py:240-242` (`if args.stale_only and not removed: return 0`), decision input `:236`; `src/egg_n_bacon_housing/utils/bronze.py` refresh helpers.
-- **Evidence:** the rerun decision counts *deleted parquets*, not *selected stale/missing datasets*. When invalidation succeeds but the fetch fails before bronze is rewritten, the next identical invocation deletes nothing, so it returns 0 without running the pipeline.
+- **Evidence:** the rerun decision counts _deleted parquets_, not _selected stale/missing datasets_. When invalidation succeeds but the fetch fails before bronze is rewritten, the next identical invocation deletes nothing, so it returns 0 without running the pipeline.
 - **Probe (`refresh_retry`):** 40-day-old parquet selected and deleted → mocked failure → exit 1; identical second run → exit 0, `pipeline_calls=1`, parquet still missing, dataset still selected by `stale_names`.
 - **Impact:** the documented cron target reports success while the source stays missing, until manual intervention.
-- **Fix:** separate "work selected" from "files removed"; run when any selected dataset is stale *or absent*.
+- **Fix:** separate "work selected" from "files removed"; run when any selected dataset is stale _or absent_.
 - **Test:** two invocations (failure then success) must both invoke the pipeline and end with restored bronze.
 
 ### CORE-6 — Geocoder pacing releases a burst instead of spaced requests

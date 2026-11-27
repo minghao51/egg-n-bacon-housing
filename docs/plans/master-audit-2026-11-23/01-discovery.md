@@ -21,32 +21,32 @@ Automated census: [`evidence/inventory.json`](evidence/inventory.json), [`eviden
 
 Category tree (820 tracked files):
 
-| Category | Files | | Category | Files |
-|---|---:|---|---|---:|
-| docs:evidence-and-plans | 270 | | data:tracked-input | 12 |
-| web:source | 156 | | web:config | 8 |
-| artifact:published-web-data | 88 | | notebook | 6 |
-| web:test | 65 | | docs:root | 5 |
-| python:test | 49 | | web:script | 4 |
-| python:source | 48 | | config:repo | 3 |
-| design-asset | 34 | | ci:workflow | 2 |
-| docs:agent-context | 32 | | docs:web | 2 |
-| python:script | 30 | | config:python-manifest | 2 |
-| | | | config:env-template / config:secret-scan-baseline / python:entrypoint / config:web-manifest | 1 each |
+| Category                    | Files |     | Category                                                                                    |  Files |
+| --------------------------- | ----: | --- | ------------------------------------------------------------------------------------------- | -----: |
+| docs:evidence-and-plans     |   270 |     | data:tracked-input                                                                          |     12 |
+| web:source                  |   156 |     | web:config                                                                                  |      8 |
+| artifact:published-web-data |    88 |     | notebook                                                                                    |      6 |
+| web:test                    |    65 |     | docs:root                                                                                   |      5 |
+| python:test                 |    49 |     | web:script                                                                                  |      4 |
+| python:source               |    48 |     | config:repo                                                                                 |      3 |
+| design-asset                |    34 |     | ci:workflow                                                                                 |      2 |
+| docs:agent-context          |    32 |     | docs:web                                                                                    |      2 |
+| python:script               |    30 |     | config:python-manifest                                                                      |      2 |
+|                             |       |     | config:env-template / config:secret-scan-baseline / python:entrypoint / config:web-manifest | 1 each |
 
 Source LOC (350 measured files; 6 notebooks separate):
 
-| Area | Files | Physical | Code |
-|---|---:|---:|---:|
-| Python `src/` | 48 | 10,248 | 8,181 |
-| Python `tests/` | 49 | 20,277 | 15,830 |
-| Python `scripts/` (incl. `scripts/tools`) | 30 | 33,699 | 30,404 |
-| `main.py` | 1 | 109 | 88 |
-| Web `app/src` | 153 | 33,485 | 27,607 |
-| Web `app/tests` | 61 | 15,889 | 13,124 |
-| Web `app/scripts` | 4 | 891 | 758 |
-| CSS | 1 | 266 | 232 |
-| **Total** | **350** | **115,034** | **96,376** |
+| Area                                      |   Files |    Physical |       Code |
+| ----------------------------------------- | ------: | ----------: | ---------: |
+| Python `src/`                             |      48 |      10,248 |      8,181 |
+| Python `tests/`                           |      49 |      20,277 |     15,830 |
+| Python `scripts/` (incl. `scripts/tools`) |      30 |      33,699 |     30,404 |
+| `main.py`                                 |       1 |         109 |         88 |
+| Web `app/src`                             |     153 |      33,485 |     27,607 |
+| Web `app/tests`                           |      61 |      15,889 |     13,124 |
+| Web `app/scripts`                         |       4 |         891 |        758 |
+| CSS                                       |       1 |         266 |        232 |
+| **Total**                                 | **350** | **115,034** | **96,376** |
 
 Test:source ratio — Python 1.94× by code lines (1.02× by files); web 0.48× (0.40× by files).
 
@@ -145,12 +145,12 @@ Open item recorded for Phase 2 (not decided here): pinned approved-editions gate
 
 ## Evidence index
 
-| Artifact | Content |
-|---|---|
-| [`evidence/execution-provenance.md`](evidence/execution-provenance.md) | commands, results, log map, coverage XML headers |
-| [`evidence/inventory.json`](evidence/inventory.json) · [`full-file-tree.txt`](evidence/full-file-tree.txt) · [`raw-measurements.json`](evidence/raw-measurements.json) | scope, categories, LOC, manifests, thresholds |
-| [`evidence/complexity.csv`](evidence/complexity.csv) · [`complexity-notebooks.csv`](evidence/complexity-notebooks.csv) | per-file size/nesting/imports |
-| [`evidence/public-entrypoints.csv`](evidence/public-entrypoints.csv) · [`error-surfaces.csv`](evidence/error-surfaces.csv) · [`observability.csv`](evidence/observability.csv) · [`schema-declarations.csv`](evidence/schema-declarations.csv) | mechanical indexes (unreviewed) |
-| [`evidence/discovery-core.md`](evidence/discovery-core.md) · [`discovery-ui.md`](evidence/discovery-ui.md) · [`discovery-inventory.md`](evidence/discovery-inventory.md) · [`discovery-dependencies.md`](evidence/discovery-dependencies.md) | bounded semantic reads / worker reports |
-| `evidence/*.log` | fresh pytest, frontend, quality, coverage, data-validation, reporting-baseline output |
-| [`evidence/measurement/`](evidence/measurement/) | re-runnable census tooling (`measure.py`, `indexes.py`, `ts_measure.mjs`) |
+| Artifact                                                                                                                                                                                                                                       | Content                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [`evidence/execution-provenance.md`](evidence/execution-provenance.md)                                                                                                                                                                         | commands, results, log map, coverage XML headers                                      |
+| [`evidence/inventory.json`](evidence/inventory.json) · [`full-file-tree.txt`](evidence/full-file-tree.txt) · [`raw-measurements.json`](evidence/raw-measurements.json)                                                                         | scope, categories, LOC, manifests, thresholds                                         |
+| [`evidence/complexity.csv`](evidence/complexity.csv) · [`complexity-notebooks.csv`](evidence/complexity-notebooks.csv)                                                                                                                         | per-file size/nesting/imports                                                         |
+| [`evidence/public-entrypoints.csv`](evidence/public-entrypoints.csv) · [`error-surfaces.csv`](evidence/error-surfaces.csv) · [`observability.csv`](evidence/observability.csv) · [`schema-declarations.csv`](evidence/schema-declarations.csv) | mechanical indexes (unreviewed)                                                       |
+| [`evidence/discovery-core.md`](evidence/discovery-core.md) · [`discovery-ui.md`](evidence/discovery-ui.md) · [`discovery-inventory.md`](evidence/discovery-inventory.md) · [`discovery-dependencies.md`](evidence/discovery-dependencies.md)   | bounded semantic reads / worker reports                                               |
+| `evidence/*.log`                                                                                                                                                                                                                               | fresh pytest, frontend, quality, coverage, data-validation, reporting-baseline output |
+| [`evidence/measurement/`](evidence/measurement/)                                                                                                                                                                                               | re-runnable census tooling (`measure.py`, `indexes.py`, `ts_measure.mjs`)             |

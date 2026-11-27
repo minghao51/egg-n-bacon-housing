@@ -27,7 +27,8 @@
     "test:e2e:report": "playwright show-report"
   },
   "devDependencies": {
-    "@playwright/test": "^1.65.1"
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.11"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"

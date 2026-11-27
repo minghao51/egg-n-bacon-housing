@@ -12,6 +12,7 @@ Scoring: impact × likelihood; critical ≥20, high ≥12, medium ≥6. No high/
 ## Findings
 
 ### UI-1 — Legacy verification does not cover the responses actually displayed
+
 **Medium — impact 3 × likelihood 3 = 9. Confidence: high.**
 
 - **Evidence:** `app/src/utils/release-manifest.ts:395` downloads and verifies assets, but returns only status/manifest—not their decoded contents. `app/src/components/explorer/ExplorerWorkspace.tsx:172` runs that verifier; `:278` subsequently loads the same URLs through separate `useGzipJson` calls. `app/src/hooks/useGzipJson.ts:127` fetches and parses those responses without checking their hashes.
@@ -25,6 +26,7 @@ Scoring: impact × likelihood; critical ≥20, high ≥12, medium ≥6. No high/
 **Positive contrast:** `app/src/utils/observed-pack-loader.ts:357` and `:481` hash the response bytes and decode those same buffers. `useObservedPack` consumers receive the resulting parsed pack, not a second unverified asset fetch.
 
 ### UI-2 — Research-map selection/inspection is pointer-only
+
 **Medium — impact 3 × likelihood 3 = 9. Confidence: high from source; browser verification outstanding.**
 
 - **Evidence:** `app/src/components/dashboard/PriceMap.tsx:464` registers polygon mouseover, mouseout and click handlers, but no keyboard activation or focus mechanism. The inspector instructs users to click an area (`:741`). The complete component contains no alternate area selector or table.
@@ -38,6 +40,7 @@ Scoring: impact × likelihood; critical ≥20, high ≥12, medium ≥6. No high/
 **Rejected extension:** `/explore` is not affected by this same claim: its SVG supplies focusable area links and accessible names, and its workspace offers list/table alternatives (`app/src/components/explorer/ExplorerMap.tsx:375–461`).
 
 ### UI-3 — Research-map handoff silently changes the comparison scope
+
 **Medium — impact 3 × likelihood 3 = 9. Confidence: high.**
 
 - **Evidence:** `app/src/components/dashboard/PriceMap.tsx:294` selects metrics using both temporal and property filters. Its “Open observed comparison” link (`:788`) serializes only `area` and `metric`, omitting both selected period and property.
@@ -48,6 +51,7 @@ Scoring: impact × likelihood; critical ≥20, high ≥12, medium ≥6. No high/
 - **Regression:** Follow the handoff for each property and historical period; assert the destination’s selected controls, source section and displayed figures preserve scope.
 
 ### UI-4 — Financing accepts inputs whose arithmetic contradicts its validation contract
+
 **Medium — impact 2 × likelihood 3 = 6. Confidence: high; hermetically reproduced.**
 
 - **Evidence:** `app/src/components/tools/lib/tool-amortization.ts:37` allows down payment through 100%. `:169` computes zero principal for 100%; `monthlyPayment` rejects that principal (`:92`), and `:178` incorrectly reports the valid price as invalid.

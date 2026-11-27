@@ -4,49 +4,49 @@ HEAD `449b921d499a8c55ec1eacb1a423baa7632456d3`. Read-only measurement. No sever
 
 ## 1. Snapshot and scope
 
-| Item | Value |
-|---|---|
-| Canonical scope | fixed git-tracked snapshot at HEAD (`git ls-files`); content read from a **`git archive HEAD` snapshot**, never the worktree |
-| Files in scope | **820** |
-| Self-excluded audit artifacts | 31 files under `docs/plans/master-audit-2026-11-23/` at run time (count grows as workers write; never counted) |
-| Revision verification | `git rev-parse HEAD` = pinned sha; `git status --porcelain --untracked-files=no` empty (tracked worktree clean); snapshot 820 files / 38,292,684 bytes |
-| Supplemental untracked (non-ignored, not counted) | 0 at snapshot time |
-| Excluded by design (ignored, never read) | `.git`, `.env`/`.env.keys`, `node_modules`, `app/node_modules`, `.venv`, `__pycache__`, `.pytest_cache`, `.ruff_cache`, `.mypy_cache`, `.hypothesis`, `build/`, `dist/`, `app/dist`, `app/.astro`, `data/pipeline|analysis|forecasts|cache|logs|manual`, `htmlcov/`, `coverage.xml`, `playwright-report/`, `test-results/`, `.worktrees/` |
+| Item                                              | Value                                                                                                                                                                                                             |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------- | ----- | ---- | ----------------------------------------------------------------------------------------- |
+| Canonical scope                                   | fixed git-tracked snapshot at HEAD (`git ls-files`); content read from a **`git archive HEAD` snapshot**, never the worktree                                                                                      |
+| Files in scope                                    | **820**                                                                                                                                                                                                           |
+| Self-excluded audit artifacts                     | 31 files under `docs/plans/master-audit-2026-11-23/` at run time (count grows as workers write; never counted)                                                                                                    |
+| Revision verification                             | `git rev-parse HEAD` = pinned sha; `git status --porcelain --untracked-files=no` empty (tracked worktree clean); snapshot 820 files / 38,292,684 bytes                                                            |
+| Supplemental untracked (non-ignored, not counted) | 0 at snapshot time                                                                                                                                                                                                |
+| Excluded by design (ignored, never read)          | `.git`, `.env`/`.env.keys`, `node_modules`, `app/node_modules`, `.venv`, `__pycache__`, `.pytest_cache`, `.ruff_cache`, `.mypy_cache`, `.hypothesis`, `build/`, `dist/`, `app/dist`, `app/.astro`, `data/pipeline | analysis | forecasts | cache | logs | manual`, `htmlcov/`, `coverage.xml`, `playwright-report/`, `test-results/`, `.worktrees/` |
 
 No tracked vendored source tree exists. `data/raw/external/datagov/*.geojson` are downloaded upstream datasets (data category). Reproducible from the pinned HEAD via `evidence/measurement/` (`measure.py` → `indexes.py`), which refuse to count their own output.
 
 ## 2. Category census (820 files)
 
-| Category | Files |
-|---|---|
-| docs:evidence-and-plans | 270 |
-| web:source | 156 |
-| artifact:published-web-data | 88 |
-| web:test | 65 |
-| python:test | 49 |
-| python:source | 48 |
-| design-asset | 34 |
-| docs:agent-context | 32 |
-| python:script | 30 |
-| data:tracked-input | 12 |
-| web:config 8 · notebook 6 · docs:root 5 · web:script 4 · config:repo 3 · ci:workflow 2 · docs:web 2 · config:python-manifest 2 · config:env-template 1 · config:secret-scan-baseline 1 · python:entrypoint 1 · config:web-manifest 1 | 45 |
+| Category                                                                                                                                                                                                                             | Files |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
+| docs:evidence-and-plans                                                                                                                                                                                                              | 270   |
+| web:source                                                                                                                                                                                                                           | 156   |
+| artifact:published-web-data                                                                                                                                                                                                          | 88    |
+| web:test                                                                                                                                                                                                                             | 65    |
+| python:test                                                                                                                                                                                                                          | 49    |
+| python:source                                                                                                                                                                                                                        | 48    |
+| design-asset                                                                                                                                                                                                                         | 34    |
+| docs:agent-context                                                                                                                                                                                                                   | 32    |
+| python:script                                                                                                                                                                                                                        | 30    |
+| data:tracked-input                                                                                                                                                                                                                   | 12    |
+| web:config 8 · notebook 6 · docs:root 5 · web:script 4 · config:repo 3 · ci:workflow 2 · docs:web 2 · config:python-manifest 2 · config:env-template 1 · config:secret-scan-baseline 1 · python:entrypoint 1 · config:web-manifest 1 | 45    |
 
 ## 3. Source size and test ratio
 
 350 source files measured (Python 128, web ts/tsx/mjs/astro 221, CSS 1); 6 notebooks measured separately.
 
-| Area | Files | Physical lines | Code lines |
-|---|---|---|---|
-| Python `src/` | 48 | 10,248 | 8,181 |
-| Python `tests/` | 49 | 20,277 | 15,830 |
-| Python `scripts/` | 30 | 33,699 | 30,404 |
-| Python `main.py` | 1 | 109 | 88 |
-| Web `app/src` | 153 | 33,485 | 27,607 |
-| Web `app/tests` | 61 | 15,889 | 13,124 |
-| Web `app/scripts` | 4 | 891 | 758 |
-| CSS | 1 | 266 | 232 |
-| **Total** | **350** | **115,034** | **96,376** |
-| Notebooks (separate) | 6 | 4,704 raw | 1,091 code-cell |
+| Area                 | Files   | Physical lines | Code lines      |
+| -------------------- | ------- | -------------- | --------------- |
+| Python `src/`        | 48      | 10,248         | 8,181           |
+| Python `tests/`      | 49      | 20,277         | 15,830          |
+| Python `scripts/`    | 30      | 33,699         | 30,404          |
+| Python `main.py`     | 1       | 109            | 88              |
+| Web `app/src`        | 153     | 33,485         | 27,607          |
+| Web `app/tests`      | 61      | 15,889         | 13,124          |
+| Web `app/scripts`    | 4       | 891            | 758             |
+| CSS                  | 1       | 266            | 232             |
+| **Total**            | **350** | **115,034**    | **96,376**      |
+| Notebooks (separate) | 6       | 4,704 raw      | 1,091 code-cell |
 
 Test:source — Python **1.94x** by code lines (1.02x by files); web **0.48x** by code lines (0.40x by files).
 
@@ -69,10 +69,10 @@ Largest: `scripts/tools/school_quality_evidence.py` 2,846 · `lease_decay_eviden
 
 ## 7. Test/coverage report freshness
 
-| Artifact | Generated (UTC) | lines-valid | covered | missed | line-rate (header) |
-|---|---|---|---|---|---|
-| `coverage.xml` (stale worktree artifact, git-ignored) | 2026-11-22T10:54:45Z | 4,076 | **96** | 3,980 | **0.02355** |
-| `/tmp/master-audit-coverage.xml` (fresh audit execution) | 2026-11-23T04:10:26Z | 4,076 | **3,894** | 182 | **0.9553** |
+| Artifact                                                 | Generated (UTC)      | lines-valid | covered   | missed | line-rate (header) |
+| -------------------------------------------------------- | -------------------- | ----------- | --------- | ------ | ------------------ |
+| `coverage.xml` (stale worktree artifact, git-ignored)    | 2026-11-22T10:54:45Z | 4,076       | **96**    | 3,980  | **0.02355**        |
+| `/tmp/master-audit-coverage.xml` (fresh audit execution) | 2026-11-23T04:10:26Z | 4,076       | **3,894** | 182    | **0.9553**         |
 
 Both headers quoted verbatim; recomputed rates match declared rates. 48 files/classes in each. `htmlcov/` present. These are two runs of the same suite, not two readings of one file.
 
@@ -82,15 +82,15 @@ Both headers quoted verbatim; recomputed rates match declared rates. 48 files/cl
 
 ## 9. Generated indexes (mechanical, exhaustive, **unreviewed**)
 
-| Artifact | Rows | Coverage |
-|---|---|---|
-| `complexity.csv` | 350 | all source files |
-| `public-entrypoints.csv` | 2,596 | 272 files |
-| `error-surfaces.csv` | 596 | 117 files |
-| `observability.csv` | 349 | all source files |
-| `schema-declarations.csv` | 432 | 106 files |
-| `complexity-notebooks.csv` | 6 | notebooks |
-| `full-file-tree.txt`, `inventory.json`, `raw-measurements.json` | — | scope + per-file detail |
+| Artifact                                                        | Rows  | Coverage                |
+| --------------------------------------------------------------- | ----- | ----------------------- |
+| `complexity.csv`                                                | 350   | all source files        |
+| `public-entrypoints.csv`                                        | 2,596 | 272 files               |
+| `error-surfaces.csv`                                            | 596   | 117 files               |
+| `observability.csv`                                             | 349   | all source files        |
+| `schema-declarations.csv`                                       | 432   | 106 files               |
+| `complexity-notebooks.csv`                                      | 6     | notebooks               |
+| `full-file-tree.txt`, `inventory.json`, `raw-measurements.json` | —     | scope + per-file detail |
 
 Harness lives in `measurement/` (`measure.py` → `indexes.py`, plus `ts_measure.mjs`). It is portable: repo root from `git rev-parse --show-toplevel`, sibling-relative script lookup, no absolute paths, and all measured content comes from the pinned `git archive HEAD` snapshot, so a dirty worktree cannot change the numbers. Re-running it reproduced the five metric CSVs byte-identically (`sha256sum -c`), changing only provenance fields in `inventory.json` / `full-file-tree.txt`.
 

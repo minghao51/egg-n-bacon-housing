@@ -4,10 +4,10 @@
 
 ## Problem
 
-1. **Sign-off hashes are never checked against evidence bytes.** `app/src/components/studies/lib/edition-registry.ts:983-985` validates only the *shape* of `artifactSha256`; `:1023-1029` requires the three sign-offs to agree with each other; `:1103-1130` hashes only `edition.frozenSource`. The archive route (`app/src/pages/analytics/archive/[year]/[edition]/[slug].astro:55-74`) therefore verifies prose bytes and publishes "approved" regardless of the cited evidence artifact.
+1. **Sign-off hashes are never checked against evidence bytes.** `app/src/components/studies/lib/edition-registry.ts:983-985` validates only the _shape_ of `artifactSha256`; `:1023-1029` requires the three sign-offs to agree with each other; `:1103-1130` hashes only `edition.frozenSource`. The archive route (`app/src/pages/analytics/archive/[year]/[edition]/[slug].astro:55-74`) therefore verifies prose bytes and publishes "approved" regardless of the cited evidence artifact.
 2. **Evidence-producer checks never run in CI.** `.github/workflows/ci.yml` has lint, typecheck, security, catalog, test, frontend and e2e jobs — no evidence job. At this baseline, five safe producers fail their `--check` (`lease_decay`, `mrt_impact`, `school_quality`, `price_forecasts`, `findings`); `school_quality` drifts in more keys than `docs/implementation/2026-11-22-dependency-audit.md:132-148` records. `spatial_hotspots` was not run because its check rewrites a tracked rental asset (`:150-153`).
 
-Neither finding claims any current scientific conclusion is wrong. They claim the *control* is missing.
+Neither finding claims any current scientific conclusion is wrong. They claim the _control_ is missing.
 
 ## Required change
 
@@ -23,7 +23,7 @@ Neither finding claims any current scientific conclusion is wrong. They claim th
 
 6. Convert the one write-side-effect check (`spatial_hotspots`) to compare-only: it must produce the same derived bytes in memory and compare, never rewrite a tracked asset. If that is not feasible without a redesign, gate it behind an explicit flag and document why it stays out of CI.
 7. Add a CI job that runs the read-only `--check` producers and fails on drift. Give it a bounded runtime; list the exact producer commands in the job, not a glob that silently skips one.
-8. **Owner decision required** for the five currently-drifting producers: re-pin the ledger with a reviewed diff, or narrow the drifting scan and record the reason. Do not paper over drift by regenerating ledgers without review, and do not delete the check. If no decision is available, wire the job with the drifting producers in a documented, named allowlist that fails on any *new* drift — and record the outstanding debt.
+8. **Owner decision required** for the five currently-drifting producers: re-pin the ledger with a reviewed diff, or narrow the drifting scan and record the reason. Do not paper over drift by regenerating ledgers without review, and do not delete the check. If no decision is available, wire the job with the drifting producers in a documented, named allowlist that fails on any _new_ drift — and record the outstanding debt.
 
 ## Tests
 

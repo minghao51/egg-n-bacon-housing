@@ -368,10 +368,7 @@ export default function LeaderboardMap({
         zoomControl={false}
         aria-label={`Map showing ${metricMeta.label} by planning area`}
       >
-        <TileLayer
-          attribution={MAP_TILES_ATTRIBUTION}
-          url={MAP_TILES_URL}
-        />
+        <TileLayer attribution={MAP_TILES_ATTRIBUTION} url={MAP_TILES_URL} />
         <GeoJSON
           data={geoJsonData}
           style={style}

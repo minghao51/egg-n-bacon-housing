@@ -4,7 +4,7 @@
 
 ## Problem
 
-The warm-cache branch of the OneMap geocoder returns coordinates only, stitched onto an "empty" metadata row whose `address` is the *query*, not OneMap's matched address. Condo project plausibility is then judged from `matched_name`/`address`, so the warm path compares the query with itself and accepts results the cold path rejects.
+The warm-cache branch of the OneMap geocoder returns coordinates only, stitched onto an "empty" metadata row whose `address` is the _query_, not OneMap's matched address. Condo project plausibility is then judged from `matched_name`/`address`, so the warm path compares the query with itself and accepts results the cold path rejects.
 
 - `src/egg_n_bacon_housing/utils/geocoding.py:340-345` — cache hit returns `{**self._empty_row(addr), "lat": …, "lon": …}`.
 - `src/egg_n_bacon_housing/utils/geocoding.py:299-317` — `_row_from_result` (full metadata) vs `:306-315` `_empty_row`.

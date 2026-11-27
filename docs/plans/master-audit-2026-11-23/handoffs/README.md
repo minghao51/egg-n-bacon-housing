@@ -6,12 +6,12 @@ Source of truth: [02-findings.md](../02-findings.md) and [03-remediation-spec.md
 
 ## Waves
 
-| Wave | Work orders | Why grouped |
-| --- | --- | --- |
-| 0 | [WS-A4](WS-A4-pacing-and-refresh.md), [WS-B3](WS-B3-financing-hardening.md) | Small, independent, no shared files |
-| 1 | [WS-A1](WS-A1-geocode-cache-contract.md), [WS-A2](WS-A2-pagination-completeness.md), [WS-A3](WS-A3-sync-integrity.md), [WS-C1](WS-C1-pages-release-gate.md), [WS-D1](WS-D1-types-and-docs.md) | Independent file ownership |
-| 2 | [WS-B1](WS-B1-verified-bytes.md), then [WS-B2](WS-B2-map-accessibility.md) | Both touch `ExplorerWorkspace.tsx`; B2 reads B1's result |
-| 3 | [WS-C2](WS-C2-evidence-reproducibility.md), [WS-D2](WS-D2-dependency-hygiene.md) | C2 owns `.github/workflows/ci.yml` alone; D2 owns dependency manifests |
+| Wave | Work orders                                                                                                                                                                                   | Why grouped                                                            |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| 0    | [WS-A4](WS-A4-pacing-and-refresh.md), [WS-B3](WS-B3-financing-hardening.md)                                                                                                                   | Small, independent, no shared files                                    |
+| 1    | [WS-A1](WS-A1-geocode-cache-contract.md), [WS-A2](WS-A2-pagination-completeness.md), [WS-A3](WS-A3-sync-integrity.md), [WS-C1](WS-C1-pages-release-gate.md), [WS-D1](WS-D1-types-and-docs.md) | Independent file ownership                                             |
+| 2    | [WS-B1](WS-B1-verified-bytes.md), then [WS-B2](WS-B2-map-accessibility.md)                                                                                                                    | Both touch `ExplorerWorkspace.tsx`; B2 reads B1's result               |
+| 3    | [WS-C2](WS-C2-evidence-reproducibility.md), [WS-D2](WS-D2-dependency-hygiene.md)                                                                                                              | C2 owns `.github/workflows/ci.yml` alone; D2 owns dependency manifests |
 
 ## Standing rules (every work order)
 

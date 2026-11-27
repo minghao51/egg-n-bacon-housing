@@ -643,9 +643,8 @@ describe("approved editions pin their cited evidence artifact", () => {
   });
 
   test("fails when the artifact content no longer matches the pin", () => {
-    const errors = verifyEditionEvidenceArtifacts(
-      [approvedEdition()],
-      () => "b".repeat(64),
+    const errors = verifyEditionEvidenceArtifacts([approvedEdition()], () =>
+      "b".repeat(64),
     ).join(" ");
 
     expect(errors).toContain("evidence artifact hash");
@@ -688,19 +687,18 @@ describe("approved editions pin their cited evidence artifact", () => {
       evidenceArtifactPath: null,
     };
 
-    expect(
-      verifyEditionEvidenceArtifacts([historical], () => null),
-    ).toEqual([]);
+    expect(verifyEditionEvidenceArtifacts([historical], () => null)).toEqual(
+      [],
+    );
   });
 
   test("the two pins fail with distinct, unambiguous messages", () => {
     const edition = approvedEdition();
 
     const prose = verifyEditionArtifacts([edition], () => null).join(" ");
-    const evidence = verifyEditionEvidenceArtifacts(
-      [edition],
-      () => null,
-    ).join(" ");
+    const evidence = verifyEditionEvidenceArtifacts([edition], () => null).join(
+      " ",
+    );
 
     // Each message names its own hash kind, and neither borrows the other's.
     expect(prose).toContain("edition prose hash");
@@ -732,13 +730,17 @@ describe("approved editions pin their cited evidence artifact", () => {
       }),
     ]).join(" ");
 
-    expect(errors).toContain("only an approved edition names reviewed evidence");
+    expect(errors).toContain(
+      "only an approved edition names reviewed evidence",
+    );
   });
 });
 
 describe("canonical JSON text matches the evidence producers", () => {
   test("sorts keys, keeps two-space indent and adds one trailing newline", () => {
-    expect(canonicalJsonText('{"b":1,"a":2}')).toBe('{\n  "a": 2,\n  "b": 1\n}\n');
+    expect(canonicalJsonText('{"b":1,"a":2}')).toBe(
+      '{\n  "a": 2,\n  "b": 1\n}\n',
+    );
     expect(canonicalJsonText("[]")).toBe("[]\n");
     expect(canonicalJsonText("{}")).toBe("{}\n");
     expect(canonicalJsonText('{"list":[1,2]}')).toBe(
@@ -755,17 +757,20 @@ describe("canonical JSON text matches the evidence producers", () => {
   });
 
   test("the shipped register's evidence pins match the files on disk", () => {
-    const errors = verifyEditionEvidenceArtifacts(ANALYTICS_EDITIONS, (path) => {
-      const absolute = join(process.cwd(), "..", path);
-      if (!existsSync(absolute)) return null;
-      try {
-        return createHash("sha256")
-          .update(canonicalJsonText(readFileSync(absolute, "utf8")))
-          .digest("hex");
-      } catch {
-        return null;
-      }
-    });
+    const errors = verifyEditionEvidenceArtifacts(
+      ANALYTICS_EDITIONS,
+      (path) => {
+        const absolute = join(process.cwd(), "..", path);
+        if (!existsSync(absolute)) return null;
+        try {
+          return createHash("sha256")
+            .update(canonicalJsonText(readFileSync(absolute, "utf8")))
+            .digest("hex");
+        } catch {
+          return null;
+        }
+      },
+    );
 
     expect(errors).toEqual([]);
   });

@@ -33,9 +33,7 @@ async function tabToId(
   maxTabs = 80,
 ) {
   for (let index = 0; index <= maxTabs; index += 1) {
-    const focused = await page.evaluate(
-      () => document.activeElement?.id ?? "",
-    );
+    const focused = await page.evaluate(() => document.activeElement?.id ?? "");
     if (focused === id) return;
     await page.keyboard.press("Tab");
   }
@@ -237,7 +235,9 @@ test.describe("Research map — keyboard and handoff (WS-B2)", () => {
 
     // The inspector updates with no pointer input at all.
     const inspector = areaInspector(page);
-    await expect(inspector.getByText(chosen, { exact: true }).first()).toBeVisible();
+    await expect(
+      inspector.getByText(chosen, { exact: true }).first(),
+    ).toBeVisible();
 
     // Every inspector value is a real dt/dd pair, so the label and the value
     // are programmatically associated rather than visually adjacent.
@@ -254,7 +254,9 @@ test.describe("Research map — keyboard and handoff (WS-B2)", () => {
     // inspector follows the same area.
     await tabToId(page, "archive-layer-spatial.lisa");
     await page.keyboard.press(" ");
-    await expect(page.locator('[id="archive-layer-spatial.lisa"]')).toBeChecked();
+    await expect(
+      page.locator('[id="archive-layer-spatial.lisa"]'),
+    ).toBeChecked();
     await expect(
       page
         .getByRole("region", { name: "Archived field inspector" })
@@ -352,7 +354,9 @@ test.describe("Research map — keyboard and handoff (WS-B2)", () => {
       /has no observed-comparison equivalent/,
     );
     await expect(
-      page.getByText(/The map's YoY Growth has no observed-comparison equivalent/),
+      page.getByText(
+        /The map's YoY Growth has no observed-comparison equivalent/,
+      ),
     ).toBeVisible();
 
     // It never claims to carry the unsupported metric through.

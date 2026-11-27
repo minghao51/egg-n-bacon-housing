@@ -13,32 +13,32 @@ Description: Discover frontend contracts and tests
 
 Tracked-file enumeration measured:
 
-| Scope | Count |
-|---|---:|
-| `app/src/` files, including JSON/CSS | 156 |
-| Astro route source files | 19 |
-| Unit-test files matching `*.test.ts` | 34 |
-| E2E spec files | 24 |
-| `app/public/data/` tracked files | 86 |
+| Scope                                                                  |  Count |
+| ---------------------------------------------------------------------- | -----: |
+| `app/src/` files, including JSON/CSS                                   |    156 |
+| Astro route source files                                               |     19 |
+| Unit-test files matching `*.test.ts`                                   |     34 |
+| E2E spec files                                                         |     24 |
+| `app/public/data/` tracked files                                       |     86 |
 | Lines across `app/src`, `app/tests`, `app/scripts`, including fixtures | 57,483 |
 
 These are source inventory counts, **not executed-test counts or generated-route counts**.
 
 ### Astro routes
 
-| Surface | Route source inventory | Main browser interface |
-|---|---|---|
-| Entry | `/` | Static published statistics, navigation cards, animated counter |
-| Observed comparison | `/explore` | Property/period/metric selection; list/map/table; search, threshold and pagination state |
-| Overview | `/dashboard` | SSR data passed to hydrated overview |
-| Rankings | `/dashboard/leaderboard` | SSR initial leaderboard plus browser fetching |
-| Research | `/research/{trends,map,segments,tools}` | Monthly trends, research map, segment workspace, four-tool workspace |
-| Compatibility | `/dashboard/{map,segments,trends}` | Shared research surfaces; `trends` means decision tools |
-| Studies | `/analytics`, `/analytics/[slug]` | Searchable library; markdown article, evidence/edition panels, optional charts |
-| Editions | `/analytics/archive/[year]/[edition]/[slug]` | Registered frozen markdown editions |
-| Personas | `/analytics/personas/[persona]` | Three static personas; filtered article recommendations |
-| Catalog | `/catalog`, `/catalog/[layer]`, `/catalog/[layer]/[...dataset]` | Lineage graph, searchable dataset tables, schema inspection |
-| Area fieldnotes | `/areas/[slug]` | Static area figures, hydrated section selection, on-demand monthly history |
+| Surface             | Route source inventory                                          | Main browser interface                                                                   |
+| ------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Entry               | `/`                                                             | Static published statistics, navigation cards, animated counter                          |
+| Observed comparison | `/explore`                                                      | Property/period/metric selection; list/map/table; search, threshold and pagination state |
+| Overview            | `/dashboard`                                                    | SSR data passed to hydrated overview                                                     |
+| Rankings            | `/dashboard/leaderboard`                                        | SSR initial leaderboard plus browser fetching                                            |
+| Research            | `/research/{trends,map,segments,tools}`                         | Monthly trends, research map, segment workspace, four-tool workspace                     |
+| Compatibility       | `/dashboard/{map,segments,trends}`                              | Shared research surfaces; `trends` means decision tools                                  |
+| Studies             | `/analytics`, `/analytics/[slug]`                               | Searchable library; markdown article, evidence/edition panels, optional charts           |
+| Editions            | `/analytics/archive/[year]/[edition]/[slug]`                    | Registered frozen markdown editions                                                      |
+| Personas            | `/analytics/personas/[persona]`                                 | Three static personas; filtered article recommendations                                  |
+| Catalog             | `/catalog`, `/catalog/[layer]`, `/catalog/[layer]/[...dataset]` | Lineage graph, searchable dataset tables, schema inspection                              |
+| Area fieldnotes     | `/areas/[slug]`                                                 | Static area figures, hydrated section selection, on-demand monthly history               |
 
 Evidence: `app/src/pages/index.astro:1`, `app/src/pages/explore.astro:1`, `app/src/pages/dashboard/index.astro:1`, `app/src/pages/dashboard/leaderboard.astro:1`, `app/src/pages/analytics/[slug].astro:14`, `app/src/pages/analytics/archive/[year]/[edition]/[slug].astro:30`, `app/src/pages/catalog/[layer].astro:9`, `app/src/pages/areas/[slug].astro:34`.
 
@@ -110,16 +110,16 @@ The gzip utility accepts already-decoded JSON-looking text, otherwise attempts `
 
 **Test links below are inventory-based leads only: test bodies were not read, so coverage is not established.**
 
-| Critical path | Inspected error boundary | Candidate tests |
-|---|---|---|
-| Fetch/cache/retry/refresh | `hooks/useGzipJson.ts:146`; `utils/request-state.ts:1` | `tests/unit/request-state.test.ts` |
-| Legacy generation verification | `utils/release-manifest.ts:395` | `tests/unit/release-manifest.test.ts`; `tests/e2e/s1-evidence-boundary.spec.ts` |
+| Critical path                            | Inspected error boundary                                               | Candidate tests                                                                                                                  |
+| ---------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Fetch/cache/retry/refresh                | `hooks/useGzipJson.ts:146`; `utils/request-state.ts:1`                 | `tests/unit/request-state.test.ts`                                                                                               |
+| Legacy generation verification           | `utils/release-manifest.ts:395`                                        | `tests/unit/release-manifest.test.ts`; `tests/e2e/s1-evidence-boundary.spec.ts`                                                  |
 | V2 manifest/payload/history verification | `utils/observed-pack-loader.ts:303`; `utils/observed-pack-build.ts:67` | `tests/unit/observed-pack-loader.test.ts`; `observed-pack-build.test.ts`; `observed-periods.test.ts`; `observed-monthly.test.ts` |
-| Explorer selection/data availability | `components/explorer/ExplorerWorkspace.tsx:172` | `tests/unit/explorer-selection.test.ts`; `explorer-pack-rows.test.ts`; `tests/e2e/explore.spec.ts` |
-| Monthly trend loading/shape | `components/trends/TrendsWorkspace.tsx:280` | `tests/unit/trend-series.test.ts`; `tests/e2e/trends.spec.ts` |
-| Build-time dashboard reads | `pages/dashboard/index.astro:26`; `leaderboard.astro:26` | `tests/e2e/dashboard-overview.spec.ts`; `dashboard/leaderboard.spec.ts` |
-| Catalog load/parse | `utils/catalog.ts:16`; `types/catalog.ts:114` | `tests/unit/catalog-payload.test.ts`; `catalog-audit.test.ts`; `tests/e2e/catalog.spec.ts` |
-| Edition publication gate | Archive route throws at registry/artifact checks | `tests/unit/edition-registry.test.ts`; `tests/e2e/analytics/archive.spec.ts` |
+| Explorer selection/data availability     | `components/explorer/ExplorerWorkspace.tsx:172`                        | `tests/unit/explorer-selection.test.ts`; `explorer-pack-rows.test.ts`; `tests/e2e/explore.spec.ts`                               |
+| Monthly trend loading/shape              | `components/trends/TrendsWorkspace.tsx:280`                            | `tests/unit/trend-series.test.ts`; `tests/e2e/trends.spec.ts`                                                                    |
+| Build-time dashboard reads               | `pages/dashboard/index.astro:26`; `leaderboard.astro:26`               | `tests/e2e/dashboard-overview.spec.ts`; `dashboard/leaderboard.spec.ts`                                                          |
+| Catalog load/parse                       | `utils/catalog.ts:16`; `types/catalog.ts:114`                          | `tests/unit/catalog-payload.test.ts`; `catalog-audit.test.ts`; `tests/e2e/catalog.spec.ts`                                       |
+| Edition publication gate                 | Archive route throws at registry/artifact checks                       | `tests/unit/edition-registry.test.ts`; `tests/e2e/analytics/archive.spec.ts`                                                     |
 
 A source-text scan also located catches/logging in map implementations, area loaders/history and math rendering. Those map/area implementations were not fully inspected.
 

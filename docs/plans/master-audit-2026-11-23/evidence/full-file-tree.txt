@@ -924,4 +924,3 @@ PER-FILE METRICS for source files are in complexity.csv (lines, code_lines, expo
 
 === python:entrypoint — 1 files, 3.4 KiB, 109 text lines ===
     main.py  [109 lines, 3521 B]
-

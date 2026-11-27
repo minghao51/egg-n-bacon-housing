@@ -5,7 +5,8 @@ Description: Audit release and supply-chain gates
 
 ## Findings
 
-### REL-1 — Pages-base browser checks are not part of the release gate  
+### REL-1 — Pages-base browser checks are not part of the release gate
+
 **Medium (impact 3 × likelihood 2 = 6); confidence: high.**
 
 - **Evidence:** CI’s E2E job builds the default site and runs Playwright against `astro preview` at `/` (`.github/workflows/ci.yml:142-151`). The Pages-base spec requires `PAGES_ORIGIN` and is skipped when it is absent (`app/tests/e2e/pages-base.spec.ts:17-27`). Deploy builds with `ASTRO_PAGES=true`, but checks routes mostly by grepping headings and checks only that one base-prefixed CSS asset loads (`.github/workflows/deploy.yml:37-41,52-67,85-121`).
@@ -13,7 +14,8 @@ Description: Audit release and supply-chain gates
 - **Minimal fix/test:** Run the Pages-base build and `pages-base.spec.ts` against the static mount in CI or the deploy build job; verify the deployment is gated on that job. Confirm the job fails on a deliberately broken base-prefixed asset/link in an isolated test environment.
 - **Gap:** Branch-protection settings are outside repository access, so whether CI checks are required before merge is unknown. The deploy workflow itself has no dependency on CI.
 
-### REL-2 — Edition “evidence” sign-off hashes are not checked against evidence bytes  
+### REL-2 — Edition “evidence” sign-off hashes are not checked against evidence bytes
+
 **Medium (impact 3 × likelihood 2 = 6); confidence: high.**
 
 - **Evidence:** Registry validation checks that sign-off hashes are well-formed and equal to one another, but does not resolve or hash an evidence artifact (`app/src/components/studies/lib/edition-registry.ts:983-985,1023-1029`). At build time, the archive route verifies the frozen **edition text** hash, not the sign-off evidence hash (`app/src/pages/analytics/archive/[year]/[edition]/[slug].astro:34-62`). Registry unit tests accept a complete sign-off record with a synthetic hash (`app/tests/unit/edition-registry.test.ts:257-304`).

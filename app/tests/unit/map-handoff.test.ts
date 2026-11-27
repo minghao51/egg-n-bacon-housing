@@ -171,7 +171,9 @@ describe("buildMapHandoff — round trip for every combination", () => {
           expect(handoff.note).toContain(
             MAP_METRIC_LABELS[HANDOFF_FALLBACK_METRIC],
           );
-          expect(handoff.note).toContain("has no observed-comparison equivalent");
+          expect(handoff.note).toContain(
+            "has no observed-comparison equivalent",
+          );
 
           // The scope that *can* be preserved still is.
           expect(destination.property).toBe(

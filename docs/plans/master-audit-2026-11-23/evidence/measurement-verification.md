@@ -7,15 +7,15 @@ All outstanding items are closed. Final results:
 
 ## Verification commands (all run at repo root, `uv run`)
 
-| Command | Result |
-|---|---|
-| `ruff check .` | **All checks passed!** |
-| `ruff format --check .` | **130 files already formatted** |
-| `uv run python …/evidence/measurement/measure.py` | executes; in scope **820** (tracked HEAD 820, self-excluded 31, supplemental 0); 350 source files; 0 parse failures |
-| `uv run python …/evidence/measurement/indexes.py` | executes; 2,596 / 596 / 349 / 432 rows; `parse issues: []` |
-| `sha256sum -c /tmp/bak/hashes_before.txt` | `complexity.csv` OK · `public-entrypoints.csv` OK · `error-surfaces.csv` OK · `observability.csv` OK · `schema-declarations.csv` OK · `raw-measurements.json` OK — **metric data byte-identical** |
-| Independent threshold recompute | CSV `lines` column **116 →300, 62 →500**; pinned `git cat-file --batch HEAD:<path>` blobs **116 / 62**; **0 of 350 files mismatched** |
-| LSP diagnostics (`source=lsp`, explicit `paths` batch) | **0 pyright errors**; only 3 heuristic aux findings remain (documented, not silenced) |
+| Command                                                | Result                                                                                                                                                                                            |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ruff check .`                                         | **All checks passed!**                                                                                                                                                                            |
+| `ruff format --check .`                                | **130 files already formatted**                                                                                                                                                                   |
+| `uv run python …/evidence/measurement/measure.py`      | executes; in scope **820** (tracked HEAD 820, self-excluded 31, supplemental 0); 350 source files; 0 parse failures                                                                               |
+| `uv run python …/evidence/measurement/indexes.py`      | executes; 2,596 / 596 / 349 / 432 rows; `parse issues: []`                                                                                                                                        |
+| `sha256sum -c /tmp/bak/hashes_before.txt`              | `complexity.csv` OK · `public-entrypoints.csv` OK · `error-surfaces.csv` OK · `observability.csv` OK · `schema-declarations.csv` OK · `raw-measurements.json` OK — **metric data byte-identical** |
+| Independent threshold recompute                        | CSV `lines` column **116 →300, 62 →500**; pinned `git cat-file --batch HEAD:<path>` blobs **116 / 62**; **0 of 350 files mismatched**                                                             |
+| LSP diagnostics (`source=lsp`, explicit `paths` batch) | **0 pyright errors**; only 3 heuristic aux findings remain (documented, not silenced)                                                                                                             |
 
 Two hashes intentionally differ — `inventory.json` and `full-file-tree.txt` — confined to provenance: new `revision_verification` block, `generated_by` path (`evidence/measurement/measure.py`), self-excluded count 31, portable file-tree header. No metric value changed.
 
@@ -29,6 +29,7 @@ Two hashes intentionally differ — `inventory.json` and `full-file-tree.txt` �
 - **`discovery-inventory.md`** corrected: §1 pin/snapshot + revision-verification row; §5 threshold semantics ("116 >300, of which 62 >500; 54 in the 300–500 band; `size_flag` buckets are mutually exclusive so 62 + 54 = 116", plus the dual independent recompute); §9 harness portability and byte-identical reproduction; §11 documents the heuristic warnings.
 
 ## Files Changed
+
 - `docs/plans/master-audit-2026-11-23/evidence/measurement/measure.py` — type fixes, snapshot pinning, portable paths
 - `docs/plans/master-audit-2026-11-23/evidence/measurement/indexes.py` — F401/N812 fixes, portable import, snapshot reads
 - `docs/plans/master-audit-2026-11-23/evidence/measurement/ts_measure.mjs` — unused-param removal, module-root arg
@@ -37,4 +38,5 @@ Two hashes intentionally differ — `inventory.json` and `full-file-tree.txt` �
 - `docs/plans/master-audit-2026-11-23/evidence/{complexity,public-entrypoints,error-surfaces,observability,schema-declarations,complexity-notebooks}.csv`, `full-file-tree.txt`, `inventory.json`, `raw-measurements.json` — regenerated from pinned snapshot (metric CSVs byte-identical to prior run)
 
 ## Notes
+
 Remaining static-analysis items are **heuristic false positives, documented rather than silenced** (§11): semgrep `tarfile.extractall` (source is this repo's own pinned archive, `filter="data"` applied) and two ast-grep `unchecked-throwing-call` hits (`read_text`/`json.loads`) that are intentionally fail-fast. No application code, no commits, no delegation; `docs/plans/master-audit-2026-11-23/evidence/discovery-core.md`, `discovery-ui.md`, `inventory-agent.md` and the `master-audit-*.log` files belong to concurrent Phase-1 writers and were left untouched.

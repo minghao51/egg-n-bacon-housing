@@ -13,9 +13,7 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "main"
-      ],
+      "exported_names": ["main"],
       "external_imports": 0,
       "external_import_names": [],
       "internal_imports": 4,
@@ -24,12 +22,8 @@
       "methods": 0,
       "has_all": false,
       "max_nesting": 3,
-      "toplevel_public": [
-        "main"
-      ],
-      "stdlib_imports": [
-        "argparse"
-      ]
+      "toplevel_public": ["main"],
+      "stdlib_imports": ["argparse"]
     },
     {
       "path": "scripts/00_sync_data.py",
@@ -54,10 +48,7 @@
         "main"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "boto3",
-        "botocore"
-      ],
+      "external_import_names": ["boto3", "botocore"],
       "internal_imports": 1,
       "defs": 10,
       "classes": 0,
@@ -74,12 +65,7 @@
         "verify",
         "main"
       ],
-      "stdlib_imports": [
-        "argparse",
-        "concurrent",
-        "pathlib",
-        "sys"
-      ]
+      "stdlib_imports": ["argparse", "concurrent", "pathlib", "sys"]
     },
     {
       "path": "scripts/40_refresh_rolling.py",
@@ -117,12 +103,7 @@
         "run_refresh",
         "main"
       ],
-      "stdlib_imports": [
-        "argparse",
-        "fnmatch",
-        "pathlib",
-        "sys"
-      ]
+      "stdlib_imports": ["argparse", "fnmatch", "pathlib", "sys"]
     },
     {
       "path": "scripts/99_cleanup.py",
@@ -136,9 +117,7 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "main"
-      ],
+      "exported_names": ["main"],
       "external_imports": 0,
       "external_import_names": [],
       "internal_imports": 3,
@@ -147,14 +126,8 @@
       "methods": 0,
       "has_all": false,
       "max_nesting": 4,
-      "toplevel_public": [
-        "main"
-      ],
-      "stdlib_imports": [
-        "datetime",
-        "pathlib",
-        "sys"
-      ]
+      "toplevel_public": ["main"],
+      "stdlib_imports": ["datetime", "pathlib", "sys"]
     },
     {
       "path": "scripts/export_app_data.py",
@@ -246,10 +219,7 @@
         "main"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "numpy",
-        "pandas"
-      ],
+      "external_import_names": ["numpy", "pandas"],
       "internal_imports": 2,
       "defs": 64,
       "classes": 1,
@@ -600,11 +570,7 @@
         "main"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow"],
       "internal_imports": 0,
       "defs": 30,
       "classes": 0,
@@ -693,9 +659,7 @@
         "validate"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "yaml"
-      ],
+      "external_import_names": ["yaml"],
       "internal_imports": 0,
       "defs": 4,
       "classes": 0,
@@ -711,13 +675,7 @@
         "parse_args",
         "validate"
       ],
-      "stdlib_imports": [
-        "__future__",
-        "argparse",
-        "json",
-        "pathlib",
-        "sys"
-      ]
+      "stdlib_imports": ["__future__", "argparse", "json", "pathlib", "sys"]
     },
     {
       "path": "scripts/tools/check_core_coverage.py",
@@ -753,13 +711,7 @@
         "load_line_rates",
         "main"
       ],
-      "stdlib_imports": [
-        "__future__",
-        "argparse",
-        "pathlib",
-        "sys",
-        "xml"
-      ]
+      "stdlib_imports": ["__future__", "argparse", "pathlib", "sys", "xml"]
     },
     {
       "path": "scripts/tools/check_edition_lexicon.py",
@@ -773,13 +725,7 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 5,
-      "exported_names": [
-        "FORBIDDEN",
-        "REVIEW",
-        "QUOTE_HINT",
-        "scan",
-        "main"
-      ],
+      "exported_names": ["FORBIDDEN", "REVIEW", "QUOTE_HINT", "scan", "main"],
       "external_imports": 0,
       "external_import_names": [],
       "internal_imports": 0,
@@ -788,13 +734,7 @@
       "methods": 0,
       "has_all": false,
       "max_nesting": 5,
-      "toplevel_public": [
-        "FORBIDDEN",
-        "REVIEW",
-        "QUOTE_HINT",
-        "scan",
-        "main"
-      ],
+      "toplevel_public": ["FORBIDDEN", "REVIEW", "QUOTE_HINT", "scan", "main"],
       "stdlib_imports": [
         "__future__",
         "argparse",
@@ -920,12 +860,7 @@
         "main"
       ],
       "external_imports": 4,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow",
-        "statsmodels"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow", "statsmodels"],
       "internal_imports": 0,
       "defs": 30,
       "classes": 0,
@@ -1066,10 +1001,7 @@
         "main"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pyarrow"
-      ],
+      "external_import_names": ["pandas", "pyarrow"],
       "internal_imports": 0,
       "defs": 47,
       "classes": 0,
@@ -1233,11 +1165,7 @@
         "main"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow"],
       "internal_imports": 0,
       "defs": 40,
       "classes": 0,
@@ -1512,11 +1440,7 @@
         "main"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow"],
       "internal_imports": 0,
       "defs": 35,
       "classes": 0,
@@ -1659,12 +1583,7 @@
         "main"
       ],
       "external_imports": 4,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow",
-        "statsmodels"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow", "statsmodels"],
       "internal_imports": 0,
       "defs": 31,
       "classes": 0,
@@ -1811,11 +1730,7 @@
         "main"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow"],
       "internal_imports": 0,
       "defs": 41,
       "classes": 1,
@@ -1905,16 +1820,9 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 4,
-      "exported_names": [
-        "REPO_ROOT",
-        "QUARANTINE_DIR",
-        "build_report",
-        "main"
-      ],
+      "exported_names": ["REPO_ROOT", "QUARANTINE_DIR", "build_report", "main"],
       "external_imports": 1,
-      "external_import_names": [
-        "pyarrow"
-      ],
+      "external_import_names": ["pyarrow"],
       "internal_imports": 3,
       "defs": 25,
       "classes": 0,
@@ -2027,9 +1935,7 @@
         "main"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 1,
       "defs": 13,
       "classes": 0,
@@ -2144,12 +2050,7 @@
         "main"
       ],
       "external_imports": 4,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow",
-        "statsmodels"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow", "statsmodels"],
       "internal_imports": 0,
       "defs": 50,
       "classes": 0,
@@ -2278,9 +2179,7 @@
         "main"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 0,
       "defs": 16,
       "classes": 1,
@@ -2685,11 +2584,7 @@
         "main"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pyarrow"
-      ],
+      "external_import_names": ["numpy", "pandas", "pyarrow"],
       "internal_imports": 2,
       "defs": 27,
       "classes": 0,
@@ -2763,12 +2658,7 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 4,
-      "exported_names": [
-        "REPO_ROOT",
-        "REQUIRED_SKILLS",
-        "validate",
-        "main"
-      ],
+      "exported_names": ["REPO_ROOT", "REQUIRED_SKILLS", "validate", "main"],
       "external_imports": 0,
       "external_import_names": [],
       "internal_imports": 0,
@@ -2777,18 +2667,8 @@
       "methods": 0,
       "has_all": false,
       "max_nesting": 3,
-      "toplevel_public": [
-        "REPO_ROOT",
-        "REQUIRED_SKILLS",
-        "validate",
-        "main"
-      ],
-      "stdlib_imports": [
-        "__future__",
-        "pathlib",
-        "re",
-        "sys"
-      ]
+      "toplevel_public": ["REPO_ROOT", "REQUIRED_SKILLS", "validate", "main"],
+      "stdlib_imports": ["__future__", "pathlib", "re", "sys"]
     },
     {
       "path": "scripts/tools/validate_docs_layout.py",
@@ -2858,13 +2738,7 @@
         "check_analytics_loader_contract",
         "main"
       ],
-      "stdlib_imports": [
-        "__future__",
-        "dataclasses",
-        "pathlib",
-        "re",
-        "sys"
-      ]
+      "stdlib_imports": ["__future__", "dataclasses", "pathlib", "re", "sys"]
     },
     {
       "path": "scripts/tools/verify_reporting_baseline.py",
@@ -2973,10 +2847,7 @@
         "months_present_of"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "numpy",
-        "pandas"
-      ],
+      "external_import_names": ["numpy", "pandas"],
       "internal_imports": 0,
       "defs": 32,
       "classes": 3,
@@ -3110,10 +2981,7 @@
         "retry_after_wait"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "requests",
-        "tenacity"
-      ],
+      "external_import_names": ["requests", "tenacity"],
       "internal_imports": 0,
       "defs": 5,
       "classes": 0,
@@ -3127,11 +2995,7 @@
         "is_retryable_exception",
         "retry_after_wait"
       ],
-      "stdlib_imports": [
-        "collections",
-        "email",
-        "time"
-      ]
+      "stdlib_imports": ["collections", "email", "time"]
     },
     {
       "path": "src/egg_n_bacon_housing/adapters/datagovsg.py",
@@ -3152,11 +3016,7 @@
         "fetch_datagovsg_dataset"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "requests",
-        "tenacity"
-      ],
+      "external_import_names": ["pandas", "requests", "tenacity"],
       "internal_imports": 3,
       "defs": 8,
       "classes": 0,
@@ -3169,12 +3029,7 @@
         "fetch_datagovsg_geojson",
         "fetch_datagovsg_dataset"
       ],
-      "stdlib_imports": [
-        "json",
-        "logging",
-        "re",
-        "time"
-      ]
+      "stdlib_imports": ["json", "logging", "re", "time"]
     },
     {
       "path": "src/egg_n_bacon_housing/adapters/exceptions.py",
@@ -3234,11 +3089,7 @@
         "fetch_data_cached"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "requests",
-        "tenacity"
-      ],
+      "external_import_names": ["pandas", "requests", "tenacity"],
       "internal_imports": 4,
       "defs": 9,
       "classes": 0,
@@ -3279,10 +3130,7 @@
         "fetch_all_resi_transactions"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "requests",
-        "tenacity"
-      ],
+      "external_import_names": ["requests", "tenacity"],
       "internal_imports": 3,
       "defs": 8,
       "classes": 0,
@@ -3294,11 +3142,7 @@
         "fetch_resi_transactions",
         "fetch_all_resi_transactions"
       ],
-      "stdlib_imports": [
-        "contextlib",
-        "hashlib",
-        "logging"
-      ]
+      "stdlib_imports": ["contextlib", "hashlib", "logging"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/__init__.py",
@@ -3349,10 +3193,7 @@
         "validate_geocoded"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "hamilton",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "pandas"],
       "internal_imports": 5,
       "defs": 13,
       "classes": 1,
@@ -3371,10 +3212,7 @@
         "geocoded_properties",
         "validate_geocoded"
       ],
-      "stdlib_imports": [
-        "logging",
-        "typing"
-      ]
+      "stdlib_imports": ["logging", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/export.py",
@@ -3388,29 +3226,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 2,
-      "exported_names": [
-        "unified_dataset",
-        "validate_unified_dataset"
-      ],
+      "exported_names": ["unified_dataset", "validate_unified_dataset"],
       "external_imports": 2,
-      "external_import_names": [
-        "hamilton",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "pandas"],
       "internal_imports": 3,
       "defs": 2,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 2,
-      "toplevel_public": [
-        "unified_dataset",
-        "validate_unified_dataset"
-      ],
-      "stdlib_imports": [
-        "logging",
-        "typing"
-      ]
+      "toplevel_public": ["unified_dataset", "validate_unified_dataset"],
+      "stdlib_imports": ["logging", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/feature_profiles.py",
@@ -3433,10 +3259,7 @@
         "validate_block_profile"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "hamilton",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "pandas"],
       "internal_imports": 3,
       "defs": 6,
       "classes": 0,
@@ -3451,9 +3274,7 @@
         "validate_town_360",
         "validate_block_profile"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/feature_rental.py",
@@ -3473,11 +3294,7 @@
         "validate_rental_yield"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "hamilton",
-        "numpy",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "numpy", "pandas"],
       "internal_imports": 4,
       "defs": 3,
       "classes": 0,
@@ -3489,10 +3306,7 @@
         "rental_yield",
         "validate_rental_yield"
       ],
-      "stdlib_imports": [
-        "logging",
-        "typing"
-      ]
+      "stdlib_imports": ["logging", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/feature_transactions.py",
@@ -3511,11 +3325,7 @@
         "validate_transactions_enriched"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "hamilton",
-        "numpy",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "numpy", "pandas"],
       "internal_imports": 4,
       "defs": 4,
       "classes": 0,
@@ -3526,11 +3336,7 @@
         "transactions_enriched",
         "validate_transactions_enriched"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "logging",
-        "typing"
-      ]
+      "stdlib_imports": ["datetime", "logging", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/features.py",
@@ -3544,29 +3350,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 2,
-      "exported_names": [
-        "location_dim",
-        "validate_location_dim"
-      ],
+      "exported_names": ["location_dim", "validate_location_dim"],
       "external_imports": 2,
-      "external_import_names": [
-        "hamilton",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "pandas"],
       "internal_imports": 8,
       "defs": 3,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 4,
-      "toplevel_public": [
-        "location_dim",
-        "validate_location_dim"
-      ],
-      "stdlib_imports": [
-        "inspect",
-        "logging"
-      ]
+      "toplevel_public": ["location_dim", "validate_location_dim"],
+      "stdlib_imports": ["inspect", "logging"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/ingestion/__init__.py",
@@ -3625,12 +3419,7 @@
         "raw_shopping_malls"
       ],
       "external_imports": 4,
-      "external_import_names": [
-        "hamilton",
-        "pandas",
-        "requests",
-        "shapely"
-      ],
+      "external_import_names": ["hamilton", "pandas", "requests", "shapely"],
       "internal_imports": 4,
       "defs": 17,
       "classes": 0,
@@ -3657,11 +3446,7 @@
         "MP25_MALLS_DATASET_ID",
         "raw_shopping_malls"
       ],
-      "stdlib_imports": [
-        "collections",
-        "logging",
-        "pathlib"
-      ]
+      "stdlib_imports": ["collections", "logging", "pathlib"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/ingestion/geojson.py",
@@ -3690,11 +3475,7 @@
         "raw_community_clubs"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "requests",
-        "shapely"
-      ],
+      "external_import_names": ["pandas", "requests", "shapely"],
       "internal_imports": 5,
       "defs": 26,
       "classes": 0,
@@ -3749,10 +3530,7 @@
         "raw_macro_data"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "requests"
-      ],
+      "external_import_names": ["pandas", "requests"],
       "internal_imports": 3,
       "defs": 14,
       "classes": 1,
@@ -3790,27 +3568,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "raw_condo_transactions"
-      ],
+      "exported_names": ["raw_condo_transactions"],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "requests"
-      ],
+      "external_import_names": ["pandas", "requests"],
       "internal_imports": 5,
       "defs": 4,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 4,
-      "toplevel_public": [
-        "raw_condo_transactions"
-      ],
-      "stdlib_imports": [
-        "logging",
-        "pathlib"
-      ]
+      "toplevel_public": ["raw_condo_transactions"],
+      "stdlib_imports": ["logging", "pathlib"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/materialization.py",
@@ -3824,30 +3592,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 2,
-      "exported_names": [
-        "materialize_published",
-        "materialize_quarantine"
-      ],
+      "exported_names": ["materialize_published", "materialize_quarantine"],
       "external_imports": 2,
-      "external_import_names": [
-        "hamilton",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "pandas"],
       "internal_imports": 2,
       "defs": 7,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 3,
-      "toplevel_public": [
-        "materialize_published",
-        "materialize_quarantine"
-      ],
-      "stdlib_imports": [
-        "collections",
-        "logging",
-        "pathlib"
-      ]
+      "toplevel_public": ["materialize_published", "materialize_quarantine"],
+      "stdlib_imports": ["collections", "logging", "pathlib"]
     },
     {
       "path": "src/egg_n_bacon_housing/components/metrics.py",
@@ -3868,11 +3623,7 @@
         "validate_appreciation_hotspots"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "hamilton",
-        "numpy",
-        "pandas"
-      ],
+      "external_import_names": ["hamilton", "numpy", "pandas"],
       "internal_imports": 4,
       "defs": 4,
       "classes": 0,
@@ -3885,9 +3636,7 @@
         "validate_pa_monthly_metrics",
         "validate_appreciation_hotspots"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "src/egg_n_bacon_housing/config.py",
@@ -3910,10 +3659,7 @@
         "Settings"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pydantic",
-        "pydantic_settings"
-      ],
+      "external_import_names": ["pydantic", "pydantic_settings"],
       "internal_imports": 0,
       "defs": 13,
       "classes": 5,
@@ -3928,11 +3674,7 @@
         "LayerDirs",
         "Settings"
       ],
-      "stdlib_imports": [
-        "logging",
-        "pathlib",
-        "typing"
-      ]
+      "stdlib_imports": ["logging", "pathlib", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/pipeline.py",
@@ -3953,10 +3695,7 @@
         "run_pipeline"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "hamilton",
-        "hamilton_sdk"
-      ],
+      "external_import_names": ["hamilton", "hamilton_sdk"],
       "internal_imports": 12,
       "defs": 6,
       "classes": 1,
@@ -4022,9 +3761,7 @@
         "GeocodedProperty"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pydantic"
-      ],
+      "external_import_names": ["pydantic"],
       "internal_imports": 0,
       "defs": 0,
       "classes": 4,
@@ -4037,10 +3774,7 @@
         "HCleanCondoTransaction",
         "GeocodedProperty"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "typing"
-      ]
+      "stdlib_imports": ["datetime", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/schemas/feature_models.py",
@@ -4063,9 +3797,7 @@
         "BlockProfile"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pydantic"
-      ],
+      "external_import_names": ["pydantic"],
       "internal_imports": 1,
       "defs": 0,
       "classes": 6,
@@ -4080,10 +3812,7 @@
         "Town360",
         "BlockProfile"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "typing"
-      ]
+      "stdlib_imports": ["datetime", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/schemas/platinum_models.py",
@@ -4103,9 +3832,7 @@
         "AppreciationHotspot"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pydantic"
-      ],
+      "external_import_names": ["pydantic"],
       "internal_imports": 1,
       "defs": 0,
       "classes": 3,
@@ -4117,9 +3844,7 @@
         "PaMonthlyMetric",
         "AppreciationHotspot"
       ],
-      "stdlib_imports": [
-        "typing"
-      ]
+      "stdlib_imports": ["typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/__init__.py",
@@ -4172,9 +3897,7 @@
         "refresh_all"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 2,
       "defs": 13,
       "classes": 0,
@@ -4218,24 +3941,16 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 2,
-      "exported_names": [
-        "CacheManager",
-        "cached_call"
-      ],
+      "exported_names": ["CacheManager", "cached_call"],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 0,
       "defs": 15,
       "classes": 1,
       "methods": 13,
       "has_all": false,
       "max_nesting": 6,
-      "toplevel_public": [
-        "CacheManager",
-        "cached_call"
-      ],
+      "toplevel_public": ["CacheManager", "cached_call"],
       "stdlib_imports": [
         "collections",
         "dataclasses",
@@ -4261,28 +3976,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "register_cache_fingerprints"
-      ],
+      "exported_names": ["register_cache_fingerprints"],
       "external_imports": 1,
-      "external_import_names": [
-        "hamilton"
-      ],
+      "external_import_names": ["hamilton"],
       "internal_imports": 5,
       "defs": 11,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 3,
-      "toplevel_public": [
-        "register_cache_fingerprints"
-      ],
-      "stdlib_imports": [
-        "hashlib",
-        "json",
-        "pathlib",
-        "typing"
-      ]
+      "toplevel_public": ["register_cache_fingerprints"],
+      "stdlib_imports": ["hashlib", "json", "pathlib", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/contracts.py",
@@ -4296,25 +4000,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "require_columns"
-      ],
+      "exported_names": ["require_columns"],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 0,
       "defs": 1,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 2,
-      "toplevel_public": [
-        "require_columns"
-      ],
-      "stdlib_imports": [
-        "__future__"
-      ]
+      "toplevel_public": ["require_columns"],
+      "stdlib_imports": ["__future__"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/data_loader.py",
@@ -4328,24 +4024,16 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "SpatialReferenceRepository"
-      ],
+      "exported_names": ["SpatialReferenceRepository"],
       "external_imports": 3,
-      "external_import_names": [
-        "geopandas",
-        "pandas",
-        "shapely"
-      ],
+      "external_import_names": ["geopandas", "pandas", "shapely"],
       "internal_imports": 0,
       "defs": 5,
       "classes": 1,
       "methods": 3,
       "has_all": false,
       "max_nesting": 4,
-      "toplevel_public": [
-        "SpatialReferenceRepository"
-      ],
+      "toplevel_public": ["SpatialReferenceRepository"],
       "stdlib_imports": [
         "dataclasses",
         "json",
@@ -4375,9 +4063,7 @@
         "DataQualityCollector"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 0,
       "defs": 9,
       "classes": 3,
@@ -4412,24 +4098,16 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 2,
-      "exported_names": [
-        "haversine_metres",
-        "haversine_distance"
-      ],
+      "exported_names": ["haversine_metres", "haversine_distance"],
       "external_imports": 1,
-      "external_import_names": [
-        "numpy"
-      ],
+      "external_import_names": ["numpy"],
       "internal_imports": 0,
       "defs": 2,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 1,
-      "toplevel_public": [
-        "haversine_metres",
-        "haversine_distance"
-      ],
+      "toplevel_public": ["haversine_metres", "haversine_distance"],
       "stdlib_imports": []
     },
     {
@@ -4453,9 +4131,7 @@
         "InMemoryGeocoder"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 5,
       "defs": 23,
       "classes": 4,
@@ -4503,10 +4179,7 @@
         "normalize_hdb_flat_type"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "numpy",
-        "pandas"
-      ],
+      "external_import_names": ["numpy", "pandas"],
       "internal_imports": 0,
       "defs": 8,
       "classes": 0,
@@ -4523,9 +4196,7 @@
         "merge_median_income",
         "normalize_hdb_flat_type"
       ],
-      "stdlib_imports": [
-        "typing"
-      ]
+      "stdlib_imports": ["typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/layer_writer.py",
@@ -4547,9 +4218,7 @@
         "TrackedWriter"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 3,
       "defs": 11,
       "classes": 3,
@@ -4608,12 +4277,7 @@
         "get_logger",
         "setup_logging_from_env"
       ],
-      "stdlib_imports": [
-        "logging",
-        "os",
-        "pathlib",
-        "sys"
-      ]
+      "stdlib_imports": ["logging", "os", "pathlib", "sys"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/mrt_line_mapping.py",
@@ -4627,24 +4291,16 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 2,
-      "exported_names": [
-        "MrtReferenceRepository",
-        "station_score_basis"
-      ],
+      "exported_names": ["MrtReferenceRepository", "station_score_basis"],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 0,
       "defs": 10,
       "classes": 1,
       "methods": 5,
       "has_all": false,
       "max_nesting": 6,
-      "toplevel_public": [
-        "MrtReferenceRepository",
-        "station_score_basis"
-      ],
+      "toplevel_public": ["MrtReferenceRepository", "station_score_basis"],
       "stdlib_imports": [
         "dataclasses",
         "json",
@@ -4693,9 +4349,7 @@
         "TERMINAL_OUTPUTS",
         "outputs_for_stage"
       ],
-      "stdlib_imports": [
-        "dataclasses"
-      ]
+      "stdlib_imports": ["dataclasses"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/proximity.py",
@@ -4709,27 +4363,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "compute_proximity_features"
-      ],
+      "exported_names": ["compute_proximity_features"],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "sklearn"
-      ],
+      "external_import_names": ["numpy", "pandas", "sklearn"],
       "internal_imports": 3,
       "defs": 4,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 3,
-      "toplevel_public": [
-        "compute_proximity_features"
-      ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "toplevel_public": ["compute_proximity_features"],
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/regional_mapping.py",
@@ -4780,9 +4424,7 @@
         "SpatialReference"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 1,
       "defs": 8,
       "classes": 4,
@@ -4795,11 +4437,7 @@
         "SchoolReference",
         "SpatialReference"
       ],
-      "stdlib_imports": [
-        "dataclasses",
-        "pathlib",
-        "typing"
-      ]
+      "stdlib_imports": ["dataclasses", "pathlib", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/school_features.py",
@@ -4823,11 +4461,7 @@
         "calculate_school_features"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "scipy"
-      ],
+      "external_import_names": ["numpy", "pandas", "scipy"],
       "internal_imports": 2,
       "defs": 18,
       "classes": 1,
@@ -4863,25 +4497,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "ensure_month_column"
-      ],
+      "exported_names": ["ensure_month_column"],
       "external_imports": 1,
-      "external_import_names": [
-        "pandas"
-      ],
+      "external_import_names": ["pandas"],
       "internal_imports": 0,
       "defs": 2,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 3,
-      "toplevel_public": [
-        "ensure_month_column"
-      ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "toplevel_public": ["ensure_month_column"],
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/validation.py",
@@ -4895,27 +4521,17 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "validate_schema"
-      ],
+      "exported_names": ["validate_schema"],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pydantic"
-      ],
+      "external_import_names": ["pandas", "pydantic"],
       "internal_imports": 0,
       "defs": 1,
       "classes": 0,
       "methods": 0,
       "has_all": false,
       "max_nesting": 5,
-      "toplevel_public": [
-        "validate_schema"
-      ],
-      "stdlib_imports": [
-        "logging",
-        "typing"
-      ]
+      "toplevel_public": ["validate_schema"],
+      "stdlib_imports": ["logging", "typing"]
     },
     {
       "path": "src/egg_n_bacon_housing/utils/validation_gateway.py",
@@ -4937,10 +4553,7 @@
         "validate_and_quarantine"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "annotated_types",
-        "pandas"
-      ],
+      "external_import_names": ["annotated_types", "pandas"],
       "internal_imports": 1,
       "defs": 5,
       "classes": 1,
@@ -4954,10 +4567,7 @@
         "vectorized_precheck",
         "validate_and_quarantine"
       ],
-      "stdlib_imports": [
-        "logging",
-        "typing"
-      ]
+      "stdlib_imports": ["logging", "typing"]
     },
     {
       "path": "tests/test_bronze.py",
@@ -4984,10 +4594,7 @@
         "TestExternalFileRegistry"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 13,
       "defs": 42,
       "classes": 10,
@@ -5006,13 +4613,7 @@
         "TestStaleWarnDaysGates",
         "TestExternalFileRegistry"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "json",
-        "logging",
-        "pathlib",
-        "re"
-      ]
+      "stdlib_imports": ["datetime", "json", "logging", "pathlib", "re"]
     },
     {
       "path": "tests/test_cache.py",
@@ -5040,10 +4641,7 @@
         "test_clear_all_sweeps_atomic_write_tmp_orphans"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 1,
       "defs": 15,
       "classes": 0,
@@ -5091,11 +4689,7 @@
         "TestRegisteredTypeDispatch"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "hamilton",
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["hamilton", "pandas", "pytest"],
       "internal_imports": 6,
       "defs": 34,
       "classes": 6,
@@ -5108,13 +4702,7 @@
         "TestInputSensitivity",
         "TestRegisteredTypeDispatch"
       ],
-      "stdlib_imports": [
-        "hashlib",
-        "json",
-        "os",
-        "pathlib",
-        "re"
-      ]
+      "stdlib_imports": ["hashlib", "json", "os", "pathlib", "re"]
     },
     {
       "path": "tests/test_catalog_generator.py",
@@ -5140,10 +4728,7 @@
         "TestMergeAndWrite"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pydantic",
-        "pytest"
-      ],
+      "external_import_names": ["pydantic", "pytest"],
       "internal_imports": 0,
       "defs": 32,
       "classes": 17,
@@ -5161,12 +4746,7 @@
         "TestCollectSchemaInfo",
         "TestMergeAndWrite"
       ],
-      "stdlib_imports": [
-        "importlib",
-        "json",
-        "pathlib",
-        "typing"
-      ]
+      "stdlib_imports": ["importlib", "json", "pathlib", "typing"]
     },
     {
       "path": "tests/test_cleaning_validation.py",
@@ -5190,10 +4770,7 @@
         "TestSilverMaterializationEquivalence"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 6,
       "defs": 43,
       "classes": 7,
@@ -5209,9 +4786,7 @@
         "TestSilverContractTightening",
         "TestSilverMaterializationEquivalence"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "tests/test_condo_ingestion.py",
@@ -5232,10 +4807,7 @@
         "TestCondoProjectGeocoding"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 4,
       "defs": 29,
       "classes": 4,
@@ -5290,11 +4862,7 @@
         "test_layer_dirs_silent_for_standard_and_absolute_paths"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pydantic",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pydantic", "pytest"],
       "internal_imports": 11,
       "defs": 25,
       "classes": 0,
@@ -5328,11 +4896,7 @@
         "test_layer_dirs_warns_once_for_nonstandard_relative_paths",
         "test_layer_dirs_silent_for_standard_and_absolute_paths"
       ],
-      "stdlib_imports": [
-        "logging",
-        "pathlib",
-        "sys"
-      ]
+      "stdlib_imports": ["logging", "pathlib", "sys"]
     },
     {
       "path": "tests/test_contracts.py",
@@ -5346,23 +4910,16 @@
       "parse_ok": true,
       "parse_errors": [],
       "exported_symbols": 1,
-      "exported_names": [
-        "TestRequireColumns"
-      ],
+      "exported_names": ["TestRequireColumns"],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 1,
       "defs": 8,
       "classes": 1,
       "methods": 8,
       "has_all": false,
       "max_nesting": 3,
-      "toplevel_public": [
-        "TestRequireColumns"
-      ],
+      "toplevel_public": ["TestRequireColumns"],
       "stdlib_imports": []
     },
     {
@@ -5403,13 +4960,7 @@
         "test_full_dag_end_to_end",
         "test_main_cli_stage_all_end_to_end"
       ],
-      "stdlib_imports": [
-        "collections",
-        "json",
-        "pathlib",
-        "sys",
-        "typing"
-      ]
+      "stdlib_imports": ["collections", "json", "pathlib", "sys", "typing"]
     },
     {
       "path": "tests/test_data_loader.py",
@@ -5435,11 +4986,7 @@
         "TestSpatialReferenceRepository"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pytest",
-        "shapely"
-      ],
+      "external_import_names": ["pandas", "pytest", "shapely"],
       "internal_imports": 1,
       "defs": 23,
       "classes": 4,
@@ -5457,10 +5004,7 @@
         "TestDegenerateCandidateSets",
         "TestSpatialReferenceRepository"
       ],
-      "stdlib_imports": [
-        "json",
-        "logging"
-      ]
+      "stdlib_imports": ["json", "logging"]
     },
     {
       "path": "tests/test_data_quality.py",
@@ -5484,10 +5028,7 @@
         "test_duplicate_scan_exact_below_row_limit"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 3,
       "defs": 7,
       "classes": 0,
@@ -5503,10 +5044,7 @@
         "test_duplicate_scan_samples_above_row_limit",
         "test_duplicate_scan_exact_below_row_limit"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "sqlite3"
-      ]
+      "stdlib_imports": ["datetime", "sqlite3"]
     },
     {
       "path": "tests/test_datagov.py",
@@ -5525,10 +5063,7 @@
         "TestGreenMarkPostalCodeFilter"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 1,
       "defs": 14,
       "classes": 2,
@@ -5539,9 +5074,7 @@
         "TestGroupedMedianIncome",
         "TestGreenMarkPostalCodeFilter"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "tests/test_datagovsg.py",
@@ -5563,11 +5096,7 @@
         "TestDatagov413PageShrink"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pytest",
-        "requests"
-      ],
+      "external_import_names": ["pandas", "pytest", "requests"],
       "internal_imports": 1,
       "defs": 49,
       "classes": 5,
@@ -5581,12 +5110,7 @@
         "TestInitiateDownloadRetry",
         "TestDatagov413PageShrink"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "email",
-        "importlib",
-        "unittest"
-      ]
+      "stdlib_imports": ["datetime", "email", "importlib", "unittest"]
     },
     {
       "path": "tests/test_export.py",
@@ -5605,11 +5129,7 @@
         "TestUnifiedDatasetPlatinumContract"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pydantic",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pydantic", "pytest"],
       "internal_imports": 4,
       "defs": 14,
       "classes": 2,
@@ -5620,10 +5140,7 @@
         "TestPlatinumLayer",
         "TestUnifiedDatasetPlatinumContract"
       ],
-      "stdlib_imports": [
-        "inspect",
-        "logging"
-      ]
+      "stdlib_imports": ["inspect", "logging"]
     },
     {
       "path": "tests/test_export_app_data.py",
@@ -5654,10 +5171,7 @@
         "TestReleaseContractSync"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 0,
       "defs": 51,
       "classes": 13,
@@ -5709,10 +5223,7 @@
         "TestTown360MergeTownContextRefactor"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 1,
       "defs": 9,
       "classes": 5,
@@ -5726,9 +5237,7 @@
         "TestTown360SharedLookups",
         "TestTown360MergeTownContextRefactor"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "tests/test_feature_transactions.py",
@@ -5748,11 +5257,7 @@
         "TestMonthDerivationEquivalence"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["numpy", "pandas", "pytest"],
       "internal_imports": 2,
       "defs": 21,
       "classes": 3,
@@ -5764,10 +5269,7 @@
         "TestValidateTransactionsEnrichedTownMerge",
         "TestMonthDerivationEquivalence"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "inspect"
-      ]
+      "stdlib_imports": ["datetime", "inspect"]
     },
     {
       "path": "tests/test_features.py",
@@ -5798,11 +5300,7 @@
         "TestPriceStratum"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pydantic",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pydantic", "pytest"],
       "internal_imports": 17,
       "defs": 75,
       "classes": 19,
@@ -5825,10 +5323,7 @@
         "TestLocationDimSchoolQuality",
         "TestPriceStratum"
       ],
-      "stdlib_imports": [
-        "inspect",
-        "logging"
-      ]
+      "stdlib_imports": ["inspect", "logging"]
     },
     {
       "path": "tests/test_geo.py",
@@ -5847,10 +5342,7 @@
         "TestHaversineDistanceScalarWrapper"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "numpy",
-        "pytest"
-      ],
+      "external_import_names": ["numpy", "pytest"],
       "internal_imports": 1,
       "defs": 9,
       "classes": 2,
@@ -5885,10 +5377,7 @@
         "TestOneMapGeocoderAuthRefresh"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 17,
       "defs": 44,
       "classes": 9,
@@ -5904,10 +5393,7 @@
         "TestOneMapGeocoderRateLimiting",
         "TestOneMapGeocoderAuthRefresh"
       ],
-      "stdlib_imports": [
-        "pathlib",
-        "threading"
-      ]
+      "stdlib_imports": ["pathlib", "threading"]
     },
     {
       "path": "tests/test_geojson.py",
@@ -5928,10 +5414,7 @@
         "TestCoordinateValidity"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 2,
       "defs": 24,
       "classes": 4,
@@ -5944,10 +5427,7 @@
         "TestPointOrCentroidHelper",
         "TestCoordinateValidity"
       ],
-      "stdlib_imports": [
-        "json",
-        "logging"
-      ]
+      "stdlib_imports": ["json", "logging"]
     },
     {
       "path": "tests/test_hdb_lookups.py",
@@ -5972,11 +5452,7 @@
         "TestNormalizeHdbFlatType"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["numpy", "pandas", "pytest"],
       "internal_imports": 1,
       "defs": 20,
       "classes": 8,
@@ -6016,11 +5492,7 @@
         "test_resource_url_builds_canonical_datastore_url"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pytest",
-        "requests",
-        "tenacity"
-      ],
+      "external_import_names": ["pytest", "requests", "tenacity"],
       "internal_imports": 1,
       "defs": 27,
       "classes": 4,
@@ -6035,11 +5507,7 @@
         "test_max_retry_after_wait_is_single_sourced",
         "test_resource_url_builds_canonical_datastore_url"
       ],
-      "stdlib_imports": [
-        "email",
-        "time",
-        "unittest"
-      ]
+      "stdlib_imports": ["email", "time", "unittest"]
     },
     {
       "path": "tests/test_ingestion.py",
@@ -6069,11 +5537,7 @@
         "TestManualDirInjection"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pytest",
-        "requests"
-      ],
+      "external_import_names": ["pandas", "pytest", "requests"],
       "internal_imports": 51,
       "defs": 115,
       "classes": 13,
@@ -6126,9 +5590,7 @@
         "TestSetupLoggingFromEnv"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pytest"
-      ],
+      "external_import_names": ["pytest"],
       "internal_imports": 1,
       "defs": 16,
       "classes": 4,
@@ -6141,10 +5603,7 @@
         "TestLevelMap",
         "TestSetupLoggingFromEnv"
       ],
-      "stdlib_imports": [
-        "logging",
-        "sys"
-      ]
+      "stdlib_imports": ["logging", "sys"]
     },
     {
       "path": "tests/test_macro.py",
@@ -6164,10 +5623,7 @@
         "TestStrictQuarterParsing"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 1,
       "defs": 12,
       "classes": 3,
@@ -6179,9 +5635,7 @@
         "TestLabelColumnFallback",
         "TestStrictQuarterParsing"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "tests/test_materialization.py",
@@ -6208,11 +5662,7 @@
         "test_compat_surface_resolves_quarantine_names_and_rejects_unknown"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "hamilton",
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["hamilton", "pandas", "pytest"],
       "internal_imports": 4,
       "defs": 11,
       "classes": 0,
@@ -6256,11 +5706,7 @@
         "TestAffordabilityClassificationVectorized"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pydantic",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pydantic", "pytest"],
       "internal_imports": 4,
       "defs": 33,
       "classes": 8,
@@ -6277,9 +5723,7 @@
         "TestPlatinumModelConstraints",
         "TestAffordabilityClassificationVectorized"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "tests/test_mrt_line_mapping.py",
@@ -6298,9 +5742,7 @@
         "TestStationScoreBasis"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pytest"
-      ],
+      "external_import_names": ["pytest"],
       "internal_imports": 6,
       "defs": 7,
       "classes": 2,
@@ -6311,10 +5753,7 @@
         "TestFallbackStationLinesWarning",
         "TestStationScoreBasis"
       ],
-      "stdlib_imports": [
-        "json",
-        "logging"
-      ]
+      "stdlib_imports": ["json", "logging"]
     },
     {
       "path": "tests/test_onemap.py",
@@ -6337,12 +5776,7 @@
         "TestRetryPolicy"
       ],
       "external_imports": 4,
-      "external_import_names": [
-        "pandas",
-        "pydantic",
-        "pytest",
-        "requests"
-      ],
+      "external_import_names": ["pandas", "pydantic", "pytest", "requests"],
       "internal_imports": 4,
       "defs": 38,
       "classes": 6,
@@ -6405,10 +5839,7 @@
         "test_run_pipeline_with_writer_requests_companions"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 5,
       "defs": 31,
       "classes": 8,
@@ -6436,12 +5867,7 @@
         "test_run_pipeline_without_writer_still_injects_lazy_inputs",
         "test_run_pipeline_with_writer_requests_companions"
       ],
-      "stdlib_imports": [
-        "importlib",
-        "sys",
-        "types",
-        "typing"
-      ]
+      "stdlib_imports": ["importlib", "sys", "types", "typing"]
     },
     {
       "path": "tests/test_pipeline_integration.py",
@@ -6461,11 +5887,7 @@
         "TestMainCLIStagePassthrough"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "main",
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["main", "pandas", "pytest"],
       "internal_imports": 5,
       "defs": 19,
       "classes": 6,
@@ -6477,12 +5899,7 @@
         "TestStageValidation",
         "TestMainCLIStagePassthrough"
       ],
-      "stdlib_imports": [
-        "importlib",
-        "pathlib",
-        "sys",
-        "types"
-      ]
+      "stdlib_imports": ["importlib", "pathlib", "sys", "types"]
     },
     {
       "path": "tests/test_property_based.py",
@@ -6502,12 +5919,7 @@
         "TestSchemaRoundTrip"
       ],
       "external_imports": 4,
-      "external_import_names": [
-        "hypothesis",
-        "pandas",
-        "pydantic",
-        "pytest"
-      ],
+      "external_import_names": ["hypothesis", "pandas", "pydantic", "pytest"],
       "internal_imports": 6,
       "defs": 8,
       "classes": 3,
@@ -6543,11 +5955,7 @@
         "TestPoiDropCountLogging"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["numpy", "pandas", "pytest"],
       "internal_imports": 4,
       "defs": 29,
       "classes": 8,
@@ -6563,10 +5971,7 @@
         "TestGenericAmenityProximity",
         "TestPoiDropCountLogging"
       ],
-      "stdlib_imports": [
-        "logging",
-        "sys"
-      ]
+      "stdlib_imports": ["logging", "sys"]
     },
     {
       "path": "tests/test_quality_report.py",
@@ -6592,10 +5997,7 @@
         "TestCli"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 4,
       "defs": 20,
       "classes": 5,
@@ -6644,9 +6046,7 @@
         "TestRunFlag"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pytest"
-      ],
+      "external_import_names": ["pytest"],
       "internal_imports": 2,
       "defs": 25,
       "classes": 6,
@@ -6662,13 +6062,7 @@
         "TestAllFlag",
         "TestRunFlag"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "importlib",
-        "json",
-        "pathlib",
-        "typing"
-      ]
+      "stdlib_imports": ["datetime", "importlib", "json", "pathlib", "typing"]
     },
     {
       "path": "tests/test_regional_mapping.py",
@@ -6688,9 +6082,7 @@
         "TestLookupNormalization"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pytest"
-      ],
+      "external_import_names": ["pytest"],
       "internal_imports": 1,
       "defs": 12,
       "classes": 3,
@@ -6702,10 +6094,7 @@
         "TestRegionAssignments",
         "TestLookupNormalization"
       ],
-      "stdlib_imports": [
-        "json",
-        "pathlib"
-      ]
+      "stdlib_imports": ["json", "pathlib"]
     },
     {
       "path": "tests/test_rental_yield_metrics.py",
@@ -6726,10 +6115,7 @@
         "TestRentalIndexSeriesSelection"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 14,
       "defs": 19,
       "classes": 4,
@@ -6742,9 +6128,7 @@
         "TestRentalYieldNodeMaterialization",
         "TestRentalIndexSeriesSelection"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "tests/test_reporting_baseline.py",
@@ -6770,9 +6154,7 @@
         "test_default_manifest_points_at_preserved_edition"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pytest"
-      ],
+      "external_import_names": ["pytest"],
       "internal_imports": 0,
       "defs": 11,
       "classes": 0,
@@ -6826,10 +6208,7 @@
         "test_rental_block_overlap_states_that_units_cannot_be_matched"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 0,
       "defs": 16,
       "classes": 0,
@@ -6880,10 +6259,7 @@
         "test_cached_adapters_forward_explicit_manager"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 7,
       "defs": 9,
       "classes": 0,
@@ -6898,10 +6274,7 @@
         "test_spatial_repositories_do_not_share_polygons",
         "test_cached_adapters_forward_explicit_manager"
       ],
-      "stdlib_imports": [
-        "concurrent",
-        "json"
-      ]
+      "stdlib_imports": ["concurrent", "json"]
     },
     {
       "path": "tests/test_school_features.py",
@@ -6924,10 +6297,7 @@
         "TestSecondaryPoolMoeLevelCodes"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 2,
       "defs": 34,
       "classes": 5,
@@ -6942,9 +6312,7 @@
         "TestSchoolQualityFeatures",
         "TestSecondaryPoolMoeLevelCodes"
       ],
-      "stdlib_imports": [
-        "inspect"
-      ]
+      "stdlib_imports": ["inspect"]
     },
     {
       "path": "tests/test_sync_data.py",
@@ -6968,9 +6336,7 @@
         "TestVerify"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pytest"
-      ],
+      "external_import_names": ["pytest"],
       "internal_imports": 0,
       "defs": 17,
       "classes": 7,
@@ -6986,11 +6352,7 @@
         "TestDownload",
         "TestVerify"
       ],
-      "stdlib_imports": [
-        "importlib",
-        "os",
-        "pathlib"
-      ]
+      "stdlib_imports": ["importlib", "os", "pathlib"]
     },
     {
       "path": "tests/test_time_index.py",
@@ -7011,10 +6373,7 @@
         "TestMissingColumns"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 1,
       "defs": 12,
       "classes": 3,
@@ -7027,9 +6386,7 @@
         "TestExistingMonthColumn",
         "TestMissingColumns"
       ],
-      "stdlib_imports": [
-        "logging"
-      ]
+      "stdlib_imports": ["logging"]
     },
     {
       "path": "tests/test_ura.py",
@@ -7054,11 +6411,7 @@
         "TestUraRequestRetryPolicy"
       ],
       "external_imports": 3,
-      "external_import_names": [
-        "pandas",
-        "pytest",
-        "requests"
-      ],
+      "external_import_names": ["pandas", "pytest", "requests"],
       "internal_imports": 6,
       "defs": 65,
       "classes": 6,
@@ -7109,10 +6462,7 @@
         "months_of"
       ],
       "external_imports": 2,
-      "external_import_names": [
-        "pandas",
-        "pytest"
-      ],
+      "external_import_names": ["pandas", "pytest"],
       "internal_imports": 0,
       "defs": 50,
       "classes": 7,
@@ -7163,9 +6513,7 @@
         "test_validate_rejects_invalid_frontmatter_and_missing_route"
       ],
       "external_imports": 1,
-      "external_import_names": [
-        "pytest"
-      ],
+      "external_import_names": ["pytest"],
       "internal_imports": 0,
       "defs": 5,
       "classes": 0,
@@ -7180,10 +6528,7 @@
         "test_validate_rejects_missing_routed_skill",
         "test_validate_rejects_invalid_frontmatter_and_missing_route"
       ],
-      "stdlib_imports": [
-        "importlib",
-        "pathlib"
-      ]
+      "stdlib_imports": ["importlib", "pathlib"]
     },
     {
       "path": "tests/test_validation.py",
@@ -7207,12 +6552,7 @@
         "TestVectorizedNullScrub"
       ],
       "external_imports": 4,
-      "external_import_names": [
-        "numpy",
-        "pandas",
-        "pydantic",
-        "pytest"
-      ],
+      "external_import_names": ["numpy", "pandas", "pydantic", "pytest"],
       "internal_imports": 1,
       "defs": 18,
       "classes": 8,
@@ -7228,10 +6568,7 @@
         "TestIndexSafety",
         "TestVectorizedNullScrub"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "logging"
-      ]
+      "stdlib_imports": ["datetime", "logging"]
     },
     {
       "path": "tests/test_validation_gateway.py",
@@ -7282,10 +6619,7 @@
         "TestModelDerivedPrecheckConstraints",
         "test_empty_extracted_retains_source_schema_and_quarantine_columns"
       ],
-      "stdlib_imports": [
-        "datetime",
-        "logging"
-      ]
+      "stdlib_imports": ["datetime", "logging"]
     }
   ],
   "web": [
@@ -7298,9 +6632,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -7328,9 +6660,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -7959,9 +7289,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -7989,9 +7317,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8026,9 +7352,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8165,10 +7489,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "AreaHistoryPanelProps",
-        "default"
-      ],
+      "exported_names": ["AreaHistoryPanelProps", "default"],
       "exports_detail": [
         {
           "name": "AreaHistoryPanelProps",
@@ -8222,10 +7543,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "AreaSectionPanelProps",
-        "default"
-      ],
+      "exported_names": ["AreaSectionPanelProps", "default"],
       "exports_detail": [
         {
           "name": "AreaSectionPanelProps",
@@ -8273,9 +7591,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8345,9 +7661,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8382,9 +7696,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8419,9 +7731,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8468,9 +7778,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8505,9 +7813,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8548,9 +7854,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8585,9 +7889,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8615,9 +7917,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8652,9 +7952,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8689,9 +7987,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8726,9 +8022,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8763,10 +8057,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "MarketOverviewDashboardData",
-        "default"
-      ],
+      "exported_names": ["MarketOverviewDashboardData", "default"],
       "exports_detail": [
         {
           "name": "MarketOverviewDashboardData",
@@ -8813,10 +8104,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "Persona",
-        "default"
-      ],
+      "exported_names": ["Persona", "default"],
       "exports_detail": [
         {
           "name": "Persona",
@@ -8869,9 +8157,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8921,9 +8207,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -8964,9 +8248,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9007,9 +8289,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9044,9 +8324,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9087,9 +8365,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9124,9 +8400,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9161,9 +8435,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9237,9 +8509,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9274,10 +8544,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "default",
-        "METRICS"
-      ],
+      "exported_names": ["default", "METRICS"],
       "exports_detail": [
         {
           "name": "default",
@@ -9318,9 +8585,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9355,9 +8620,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9392,9 +8655,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9429,9 +8690,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9466,10 +8725,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "archiveExtractionLabel",
-        "default"
-      ],
+      "exported_names": ["archiveExtractionLabel", "default"],
       "exports_detail": [
         {
           "name": "archiveExtractionLabel",
@@ -9510,9 +8766,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9553,9 +8807,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "CompareTab"
-      ],
+      "exported_names": ["CompareTab"],
       "exports_detail": [
         {
           "name": "CompareTab",
@@ -9590,9 +8842,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "ComparisonTable"
-      ],
+      "exported_names": ["ComparisonTable"],
       "exports_detail": [
         {
           "name": "ComparisonTable",
@@ -9627,9 +8877,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "DetailsTab"
-      ],
+      "exported_names": ["DetailsTab"],
       "exports_detail": [
         {
           "name": "DetailsTab",
@@ -9664,9 +8912,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "GeographicDistribution"
-      ],
+      "exported_names": ["GeographicDistribution"],
       "exports_detail": [
         {
           "name": "GeographicDistribution",
@@ -9701,9 +8947,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "RiskFactors"
-      ],
+      "exported_names": ["RiskFactors"],
       "exports_detail": [
         {
           "name": "RiskFactors",
@@ -9738,9 +8982,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "SegmentOverview"
-      ],
+      "exported_names": ["SegmentOverview"],
       "exports_detail": [
         {
           "name": "SegmentOverview",
@@ -9775,9 +9017,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "DiscoverTab"
-      ],
+      "exported_names": ["DiscoverTab"],
       "exports_detail": [
         {
           "name": "DiscoverTab",
@@ -9818,9 +9058,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "InsightCard"
-      ],
+      "exported_names": ["InsightCard"],
       "exports_detail": [
         {
           "name": "InsightCard",
@@ -9855,9 +9093,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "SegmentGrid"
-      ],
+      "exported_names": ["SegmentGrid"],
       "exports_detail": [
         {
           "name": "SegmentGrid",
@@ -9892,9 +9128,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "InvestigateTab"
-      ],
+      "exported_names": ["InvestigateTab"],
       "exports_detail": [
         {
           "name": "InvestigateTab",
@@ -9929,9 +9163,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -9987,9 +9219,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -10024,9 +9254,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -10061,9 +9289,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "buildSegmentAreaRows"
-      ],
+      "exported_names": ["buildSegmentAreaRows"],
       "exports_detail": [
         {
           "name": "buildSegmentAreaRows",
@@ -10421,10 +9647,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "ExplorerListProps",
-        "default"
-      ],
+      "exported_names": ["ExplorerListProps", "default"],
       "exports_detail": [
         {
           "name": "ExplorerListProps",
@@ -10465,10 +9688,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "ExplorerMapProps",
-        "default"
-      ],
+      "exported_names": ["ExplorerMapProps", "default"],
       "exports_detail": [
         {
           "name": "ExplorerMapProps",
@@ -10764,10 +9984,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "ExplorerWorkspaceProps",
-        "default"
-      ],
+      "exported_names": ["ExplorerWorkspaceProps", "default"],
       "exports_detail": [
         {
           "name": "ExplorerWorkspaceProps",
@@ -10944,9 +10161,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -11312,10 +10527,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "ToolsReleaseInfo",
-        "default"
-      ],
+      "exported_names": ["ToolsReleaseInfo", "default"],
       "exports_detail": [
         {
           "name": "ToolsReleaseInfo",
@@ -11362,9 +10574,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -11399,9 +10609,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -11429,9 +10637,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -11459,9 +10665,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -11496,9 +10700,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -11640,10 +10842,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "ToolsWorkspaceProps",
-        "default"
-      ],
+      "exported_names": ["ToolsWorkspaceProps", "default"],
       "exports_detail": [
         {
           "name": "ToolsWorkspaceProps",
@@ -12699,10 +11898,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "TrendsChartProps",
-        "default"
-      ],
+      "exported_names": ["TrendsChartProps", "default"],
       "exports_detail": [
         {
           "name": "TrendsChartProps",
@@ -12743,10 +11939,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "TrendsTableProps",
-        "default"
-      ],
+      "exported_names": ["TrendsTableProps", "default"],
       "exports_detail": [
         {
           "name": "TrendsTableProps",
@@ -13027,10 +12220,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "DashboardNavItem",
-        "DASHBOARD_NAV_ITEMS"
-      ],
+      "exported_names": ["DashboardNavItem", "DASHBOARD_NAV_ITEMS"],
       "exports_detail": [
         {
           "name": "DashboardNavItem",
@@ -13135,9 +12325,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "collections"
-      ],
+      "exported_names": ["collections"],
       "exports_detail": [
         {
           "name": "collections",
@@ -13287,11 +12475,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 3,
-      "exported_names": [
-        "setDataGeneration",
-        "useGzipJson",
-        "clearGzipCache"
-      ],
+      "exported_names": ["setDataGeneration", "useGzipJson", "clearGzipCache"],
       "exports_detail": [
         {
           "name": "setDataGeneration",
@@ -13402,9 +12586,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "useModalDialog"
-      ],
+      "exported_names": ["useModalDialog"],
       "exports_detail": [
         {
           "name": "useModalDialog",
@@ -13432,9 +12614,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "useObservedPack"
-      ],
+      "exported_names": ["useObservedPack"],
       "exports_detail": [
         {
           "name": "useObservedPack",
@@ -13506,9 +12686,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "useSegmentsData"
-      ],
+      "exported_names": ["useSegmentsData"],
       "exports_detail": [
         {
           "name": "useSegmentsData",
@@ -13565,9 +12743,7 @@
       "method": "astro-frontmatter-ts-parse+lexical-template",
       "limitations": "template markup/expressions not AST-analyzed; frontmatter only",
       "exported_symbols": 1,
-      "exported_names": [
-        "getStaticPaths"
-      ],
+      "exported_names": ["getStaticPaths"],
       "exports_detail": [
         {
           "name": "getStaticPaths",
@@ -13596,9 +12772,7 @@
       "method": "astro-frontmatter-ts-parse+lexical-template",
       "limitations": "template markup/expressions not AST-analyzed; frontmatter only",
       "exported_symbols": 1,
-      "exported_names": [
-        "getStaticPaths"
-      ],
+      "exported_names": ["getStaticPaths"],
       "exports_detail": [
         {
           "name": "getStaticPaths",
@@ -13674,9 +12848,7 @@
       "method": "astro-frontmatter-ts-parse+lexical-template",
       "limitations": "template markup/expressions not AST-analyzed; frontmatter only",
       "exported_symbols": 1,
-      "exported_names": [
-        "getStaticPaths"
-      ],
+      "exported_names": ["getStaticPaths"],
       "exports_detail": [
         {
           "name": "getStaticPaths",
@@ -13705,9 +12877,7 @@
       "method": "astro-frontmatter-ts-parse+lexical-template",
       "limitations": "template markup/expressions not AST-analyzed; frontmatter only",
       "exported_symbols": 1,
-      "exported_names": [
-        "getStaticPaths"
-      ],
+      "exported_names": ["getStaticPaths"],
       "exports_detail": [
         {
           "name": "getStaticPaths",
@@ -13743,9 +12913,7 @@
       "method": "astro-frontmatter-ts-parse+lexical-template",
       "limitations": "template markup/expressions not AST-analyzed; frontmatter only",
       "exported_symbols": 1,
-      "exported_names": [
-        "getStaticPaths"
-      ],
+      "exported_names": ["getStaticPaths"],
       "exports_detail": [
         {
           "name": "getStaticPaths",
@@ -13774,9 +12942,7 @@
       "method": "astro-frontmatter-ts-parse+lexical-template",
       "limitations": "template markup/expressions not AST-analyzed; frontmatter only",
       "exported_symbols": 1,
-      "exported_names": [
-        "getStaticPaths"
-      ],
+      "exported_names": ["getStaticPaths"],
       "exports_detail": [
         {
           "name": "getStaticPaths",
@@ -16147,9 +15313,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "loadCatalog"
-      ],
+      "exported_names": ["loadCatalog"],
       "exports_detail": [
         {
           "name": "loadCatalog",
@@ -16186,9 +15350,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "cn"
-      ],
+      "exported_names": ["cn"],
       "exports_detail": [
         {
           "name": "cn",
@@ -16738,10 +15900,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "formatNumber",
-        "formatPercent"
-      ],
+      "exported_names": ["formatNumber", "formatPercent"],
       "exports_detail": [
         {
           "name": "formatNumber",
@@ -16898,10 +16057,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "planningAreaName",
-        "samePlanningArea"
-      ],
+      "exported_names": ["planningAreaName", "samePlanningArea"],
       "exports_detail": [
         {
           "name": "planningAreaName",
@@ -16935,10 +16091,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 2,
-      "exported_names": [
-        "decompressGzip",
-        "fetchGzipJson"
-      ],
+      "exported_names": ["decompressGzip", "fetchGzipJson"],
       "exports_detail": [
         {
           "name": "decompressGzip",
@@ -19421,9 +18574,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "default"
-      ],
+      "exported_names": ["default"],
       "exports_detail": [
         {
           "name": "default",
@@ -19969,9 +19120,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "expectPageToLoadWithoutErrors"
-      ],
+      "exported_names": ["expectPageToLoadWithoutErrors"],
       "exports_detail": [
         {
           "name": "expectPageToLoadWithoutErrors",
@@ -20012,9 +19161,7 @@
       "method": "typescript-compiler-ast",
       "limitations": "nesting = max AST block-owner depth from file root (functions/classes count as 1 level); not cyclomatic complexity",
       "exported_symbols": 1,
-      "exported_names": [
-        "servePackBytesFromDisk"
-      ],
+      "exported_names": ["servePackBytesFromDisk"],
       "exports_detail": [
         {
           "name": "servePackBytesFromDisk",
@@ -21384,21 +20531,10 @@
       "prompts/rf08-remaining-studies-runbook.md",
       "prompts/rf08-study-worker-prompt.md"
     ],
-    "config:repo": [
-      ".bun-version",
-      ".gitignore",
-      ".pre-commit-config.yaml"
-    ],
-    "config:env-template": [
-      ".env.example"
-    ],
-    "ci:workflow": [
-      ".github/workflows/ci.yml",
-      ".github/workflows/deploy.yml"
-    ],
-    "config:secret-scan-baseline": [
-      ".secrets.baseline"
-    ],
+    "config:repo": [".bun-version", ".gitignore", ".pre-commit-config.yaml"],
+    "config:env-template": [".env.example"],
+    "ci:workflow": [".github/workflows/ci.yml", ".github/workflows/deploy.yml"],
+    "config:secret-scan-baseline": [".secrets.baseline"],
     "docs:root": [
       "AGENTS.md",
       "CLAUDE.md",
@@ -21416,10 +20552,7 @@
       "app/tailwind.config.mjs",
       "app/tsconfig.json"
     ],
-    "docs:web": [
-      "app/CHANGELOG.md",
-      "app/README.md"
-    ],
+    "docs:web": ["app/CHANGELOG.md", "app/README.md"],
     "artifact:published-web-data": [
       "app/public/.nojekyll",
       "app/public/data/README.md",
@@ -22063,9 +21196,7 @@
       "docs/plans/README.md",
       "docs/research/singapore-open-datasets.md"
     ],
-    "python:entrypoint": [
-      "main.py"
-    ],
+    "python:entrypoint": ["main.py"],
     "notebook": [
       "notebooks/L0_datagovsg.ipynb",
       "notebooks/L0_onemap.ipynb",
@@ -22074,13 +21205,8 @@
       "notebooks/L1_utilities_processing.ipynb",
       "notebooks/L2_sales_facilities.ipynb"
     ],
-    "config:web-manifest": [
-      "package.json"
-    ],
-    "config:python-manifest": [
-      "pyproject.toml",
-      "uv.lock"
-    ],
+    "config:web-manifest": ["package.json"],
+    "config:python-manifest": ["pyproject.toml", "uv.lock"],
     "python:script": [
       "scripts/00_sync_data.py",
       "scripts/40_refresh_rolling.py",

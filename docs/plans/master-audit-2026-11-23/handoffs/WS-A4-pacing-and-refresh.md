@@ -13,7 +13,7 @@ delay = max(0.0, self._next_slot - now)
 self._next_slot = now + self._interval
 ```
 
-Every waiter overwrites `_next_slot` from *its own* arrival time, discarding earlier reservations, so concurrent waiters release together after the first slot.
+Every waiter overwrites `_next_slot` from _its own_ arrival time, discarding earlier reservations, so concurrent waiters release together after the first slot.
 
 Probe: `../evidence/core-poc-results.json` → `rate_limiter` (80 ms interval; releases at 0.00000, 0.08011, 0.08019, 0.08021, 0.08029 → 20–80 µs gaps).
 
@@ -45,7 +45,7 @@ if args.stale_only and not removed:
 
 Probe: `../evidence/core-poc-results.json` → `refresh_retry` (first exit 1, second exit 0, `pipeline_calls=1`, bronze still missing, still stale-selected).
 
-**Required change:** decide the rerun from *selected work*, not *deletions*. Under `--stale-only`, run the pipeline when any selected dataset is stale **or** its parquet is missing. Keep `--dry-run`, `--all`, `--pattern` behaviour and the exit codes unchanged (0 success/no-op, 1 failure, 2 usage).
+**Required change:** decide the rerun from _selected work_, not _deletions_. Under `--stale-only`, run the pipeline when any selected dataset is stale **or** its parquet is missing. Keep `--dry-run`, `--all`, `--pattern` behaviour and the exit codes unchanged (0 success/no-op, 1 failure, 2 usage).
 
 **Test** (`tests/test_refresh_rolling.py`): two invocations — first with a mocked fetch failure, second with success — assert two pipeline invocations, `stale_names` no longer selects the dataset, and the parquet exists. Add a genuine no-op case (nothing stale, nothing missing) that still exits 0 without running the pipeline.
 

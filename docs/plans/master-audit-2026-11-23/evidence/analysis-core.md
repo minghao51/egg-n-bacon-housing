@@ -14,13 +14,14 @@ Description: Audit pipeline correctness and state
 
 ### CORE-1 — Cached geocodes bypass condo project-plausibility checks
 
-**HIGH — impact 4, likelihood 4, score 16 — CONFIRMED**  
-**Category:** correctness / cache-contract violation  
+**HIGH — impact 4, likelihood 4, score 16 — CONFIRMED**
+**Category:** correctness / cache-contract violation
 **Paths:** `src/egg_n_bacon_housing/utils/geocoding.py:190-410` (`_empty_row`, `_geocode_via_api`); `components/cleaning.py:419-454` (`_accept_plausible_project_coords`).
 
 **Evidence:** The warm-cache branch retrieves coordinates only, then supplies `_empty_row(addr)` metadata. Its `address` is the original query—not OneMap’s matched address. Condo validation consequently checks project/street tokens against its own query.
 
 The probe returned an unrelated project result:
+
 - Cold run: project result rejected; street fallback produced `(1.33, 103.83)`.
 - Warm run: the same rejected project coordinates `(1.31, 103.81)` were accepted.
 - Warm metadata: `matched_name=null`, `address="ORCHID RESIDENCES EXAMPLE ROAD Singapore"`.
@@ -35,19 +36,20 @@ The probe returned an unrelated project result:
 
 ### CORE-2 — Successful malformed pagination publishes and permanently caches partial datasets
 
-**HIGH — impact 4, likelihood 3, score 12 — CONFIRMED**  
-**Category:** ingestion integrity  
+**HIGH — impact 4, likelihood 3, score 12 — CONFIRMED**
+**Category:** ingestion integrity
 **Paths:** `src/egg_n_bacon_housing/adapters/datagovsg.py` — `fetch_datagovsg_dataset`, missing-records `break` and terminal concatenation; `components/ingestion/datagov.py:109-125`.
 
 **Evidence:** After collecting a page, a subsequent HTTP-200 payload without `result.records` exits pagination normally. The adapter returns accumulated rows instead of raising `IncompleteDatasetFetchError`.
 
 Probe:
+
 - Page one advertised four records and supplied two plus a next link.
 - Page two returned `{"success":false,"error":…}`.
 - Required ingestion returned two rows, persisted two rows, and recorded a fresh two-row manifest.
 - The next invocation served those two rows directly from bronze.
 
-**Reachability/conditions:** A paginated source returns an application-level error/malformed success response after at least one valid page. Missing terminal links also lack a final advertised-total reconciliation. Existing tests cover HTTP failures after pagination and missing records on the *first* page, not this combination.
+**Reachability/conditions:** A paginated source returns an application-level error/malformed success response after at least one valid page. Missing terminal links also lack a final advertised-total reconciliation. Existing tests cover HTTP failures after pagination and missing records on the _first_ page, not this combination.
 
 **Impact:** Incomplete transaction/reference populations become ordinary non-expiring bronze cache hits. Required-source and empty-response guards do not catch nonempty partial data.
 
@@ -57,13 +59,14 @@ Probe:
 
 ### CORE-3 — Size tolerance silently suppresses real changes in both sync directions
 
-**HIGH — impact 4, likelihood 4, score 16 — CONFIRMED**  
-**Category:** persistence / integrity  
+**HIGH — impact 4, likelihood 4, score 16 — CONFIRMED**
+**Category:** persistence / integrity
 **Paths:** `scripts/00_sync_data.py:121-127,170-179,226-239`.
 
 **Evidence:** Upload/download skip differences below 100 bytes; verification reports differences up to 100 bytes as OK. Content is never compared.
 
 Probe:
+
 - Local: `"price\n1\n"` — 8 bytes.
 - Remote: `"price\n2\n3\n"` — 10 bytes.
 - Download: zero transfers.
@@ -82,13 +85,14 @@ Thus even a detectable size change containing an added record is ignored. Equal-
 
 ### CORE-4 — R2 object names escape local roots and violate flat-geocache exclusion
 
-**MEDIUM — impact 4, likelihood 2, score 8 — CONFIRMED**  
-**Category:** security / path containment  
+**MEDIUM — impact 4, likelihood 2, score 8 — CONFIRMED**
+**Category:** security / path containment
 **Paths:** `scripts/00_sync_data.py:103-111,165-172,191-194`.
 
 **Evidence:** Object keys are converted directly to local paths after `removeprefix`, without validating the prefix boundary, relative components, resolved containment, or flat-geocache shape.
 
 Safe probe, entirely inside a disposable directory:
+
 - `manual/../escaped.txt` wrote outside the manual root.
 - `geocache/hamilton/injected.json` wrote inside the explicitly excluded Hamilton subtree.
 
@@ -102,13 +106,14 @@ Safe probe, entirely inside a disposable directory:
 
 ### CORE-5 — Failed scheduled refresh becomes a successful no-op instead of retrying
 
-**MEDIUM — impact 3, likelihood 3, score 9 — CONFIRMED**  
-**Category:** operational recovery  
+**MEDIUM — impact 3, likelihood 3, score 9 — CONFIRMED**
+**Category:** operational recovery
 **Paths:** `scripts/40_refresh_rolling.py:157-166,235-242`; `src/egg_n_bacon_housing/utils/bronze.py:379-429`.
 
 **Evidence:** `--stale-only --run` uses the number of deleted parquets to decide whether work is needed, rather than selected stale/missing datasets.
 
 Probe:
+
 1. A 40-day-old HDB parquet was selected and deleted.
 2. Mocked pipeline failed before rewriting it: exit 1.
 3. Repeating the identical scheduled command returned exit 0 without invoking the pipeline.
@@ -124,8 +129,8 @@ Probe:
 
 ### CORE-6 — Parallel geocoder pacing releases a burst rather than spaced requests
 
-**MEDIUM — impact 2, likelihood 4, score 8 — CONFIRMED**  
-**Category:** concurrency / external-service reliability  
+**MEDIUM — impact 2, likelihood 4, score 8 — CONFIRMED**
+**Category:** concurrency / external-service reliability
 **Path:** `src/egg_n_bacon_housing/utils/geocoding.py:190-227` (`_RateLimiter.wait`).
 
 **Evidence:** Each caller assigns `_next_slot = now + interval`, discarding reservations made by previous waiting callers.

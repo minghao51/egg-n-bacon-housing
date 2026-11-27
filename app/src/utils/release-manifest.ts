@@ -510,9 +510,11 @@ export async function loadReleaseCheck(options: {
   try {
     manifestResponse = await doFetch(options.manifestUrl);
   } catch (error) {
-    return unverifiedCheck("unverified", [
-      `release manifest could not be fetched: ${describeError(error)}`,
-    ], null);
+    return unverifiedCheck(
+      "unverified",
+      [`release manifest could not be fetched: ${describeError(error)}`],
+      null,
+    );
   }
 
   if (manifestResponse.status === 404) {
