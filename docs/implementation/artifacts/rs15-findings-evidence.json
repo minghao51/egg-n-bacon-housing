@@ -866,8 +866,8 @@
       "sha256": "0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7"
     },
     "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json": {
-      "bytes": 188618,
-      "sha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74"
+      "bytes": 170755,
+      "sha256": "8103ac7579050a1f70aea713a4d23b673738684f550d5ef6769436baebc18567"
     },
     "docs/implementation/artifacts/rs13-causal-inference-overview-evidence.json": {
       "bytes": 87284,
@@ -1742,7 +1742,7 @@
           }
         }
       },
-      "stringValuesCompared": 15458
+      "stringValuesCompared": 15327
     },
     "meaning": "the sentinel-string state is measured on whole values, not by substring, and the two scopes are reported apart: a placeholder in a field this register cites would appear under citedFields, and the ledger-wide scan is a disclosure of the same test elsewhere, split by ledger and by field path. The scan's sibling set is the register's series list minus the page's own series, so adding a signature elsewhere can only change it by changing the register, and signing this page cannot change it at all",
     "siblingSet": {
@@ -3090,7 +3090,7 @@
             "publication"
           ],
           "rolesComplete": true,
-          "sharedArtifactSha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74"
+          "sharedArtifactSha256": "8103ac7579050a1f70aea713a4d23b673738684f550d5ef6769436baebc18567"
         },
         "claimDispositions": {
           "byValue": {
@@ -3150,13 +3150,13 @@
         },
         "id": "spatial-hotspots",
         "ledger": {
-          "bytes": 188618,
+          "bytes": 170755,
           "contentMatchesPin": true,
-          "contentSha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
+          "contentSha256": "8103ac7579050a1f70aea713a4d23b673738684f550d5ef6769436baebc18567",
           "path": "docs/implementation/artifacts/rs12-spatial-hotspots-evidence.json",
-          "pin": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
+          "pin": "8103ac7579050a1f70aea713a4d23b673738684f550d5ef6769436baebc18567",
           "rawMatchesPin": true,
-          "rawSha256": "1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74",
+          "rawSha256": "8103ac7579050a1f70aea713a4d23b673738684f550d5ef6769436baebc18567",
           "resolution": "raw-bytes",
           "serialisationDrift": null,
           "state": "measured"

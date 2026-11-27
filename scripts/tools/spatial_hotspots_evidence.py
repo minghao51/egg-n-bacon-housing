@@ -135,7 +135,12 @@ SCAN_ROOTS = (
     "assets",
     "app/src",
     "app/public",
-    "data/analysis",
+    # `data/analysis/` is deliberately NOT a scan root: it is gitignored,
+    # pipeline-generated output that exists on a working checkout and not on a
+    # clean one, so its file census can never be reproduced between a developer
+    # machine and CI. The census establishes absence from *tracked* surfaces;
+    # the legacy claims that cite `data/analysis/...` paths are recorded as
+    # text with their own "does not exist" notes and are unaffected.
     "notebooks",
     "tests",
     ".claude",

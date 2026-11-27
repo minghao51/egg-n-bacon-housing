@@ -75,42 +75,47 @@ were `docs/plans/*`.
 | `rs08` school-quality            | `1a02b6fa089d7d0f0f4767c173d4f476c38639d2123537fa231e71aa2b387e1d` |
 | `rs10` market-segments           | `163273c4524bea3b45b2f53a0219ee459a7ce69812f49524218c2eda76bc9167` |
 | `rs11` spatial-autocorrelation   | `0f2442ce74c2c6255b70ffd4b7ff94dc59b59c663af9e5de11519363e10fa4f7` |
-| `rs12` spatial-hotspots          | `1872e0a2231d72b062c546b125940eff855040f35da8d8257196a9ffcb1abf74` |
+| `rs12` spatial-hotspots          | `8103ac7579050a1f70aea713a4d23b673738684f550d5ef6769436baebc18567` |
 | `rs13` causal-inference-overview | `d01d9d5f440a07a82f575fe3bc19c3e693ac315600097b304c39aba24130d059` |
 | `rs14` price-forecasts           | `8d309700ff15a10501e758e27adb3d80409b745ce6d004803904f3828ff3a386` |
-| `rs15` findings                  | `c22d2de7c3452bf8d9e0b83aa0fdfc54fd19d336615cab18086d2d099d718b3c` |
+| `rs15` findings                  | `d0cabbf233efcc38e5ae989911a83c35ee99b0577cf14f93dae5dc42ee23e667` |
 
 Hashing rule: `json.dumps(obj, sort_keys=True, indent=2, ensure_ascii=False)` +
 a trailing newline, then sha256.
 
-### Second re-pin, same working tree
+### Re-pins in this branch: four causes, all permitted
 
-Adding `app/src/config/map-tiles.ts` (the basemap/key module) moved seven ledgers
-again, for the same permitted cause: those scans census the tree, so a
-deliberately added source file raises `filesScanned` by one (e.g. `rs15`
-`jointModel` 272 → 273) and appears in `scannedFiles` with its own sha256. No
-token matched inside the new file, and the set of changed top-level keys is
-**identical** to the set this review approved — no substantive key appeared. The
-artifacts were regenerated under the same scrutiny and the pins re-derived; the
-table above holds the final hashes.
+The ledgers were re-pinned four times. Each is the same permitted class — the
+pinned surface genuinely changed — and none moved a coefficient, statistic,
+sample size, cutoff or disposition. Recorded because the sequence is a real
+property of this design, not tidying:
 
-### Third re-pin, same cause one level down
+1. **Scan-surface narrowing + remediation code changes.** The original drift:
+   `docs/plans/` and `docs/guides/` prose left the scans; six source files were
+   re-hashed by the remediation itself.
+2. **A new file.** `app/src/config/map-tiles.ts` raised `filesScanned` by one in
+   seven ledgers — a census counts files, so adding one moves it.
+3. **Formatting.** A `pre-commit run --all-files` pass reformatted five app
+   source files _after_ re-pin 2, so four ledgers drifted onto their pre-format
+   hashes. **Ordering matters:** format first, re-pin last. A whitespace-only
+   source change still moves a pinned hash.
+4. **A gitignored directory in a scan root.** `spatial_hotspots` scanned
+   `data/analysis`, which is pipeline-generated and gitignored — present on a
+   working checkout, absent on a clean one. Its census could never agree between
+   a developer machine and CI. `data/analysis` is no longer a scan root; the
+   census establishes absence from _tracked_ surfaces, and the legacy claims that
+   cite `data/analysis/...` paths are recorded as text with their own
+   "does not exist" notes.
 
-A `pre-commit run --all-files` pass reformatted five app source files
-(`PriceMap.tsx`, `LeaderboardMap.tsx`, `SegmentAreaMap.tsx`, `useGzipJson.ts`,
-`release-manifest.ts`) after the second re-pin. Those files are inside the
-producers' `scannedFiles`, so four ledgers re-drifted on their **pre-format**
-hashes and were re-pinned again. Same permitted cause as before — a file this
-tree genuinely changed — and again no substantive number moved; the changed keys
-are `absenceScans` and `scanManifests` only.
+Two consequences worth carrying into the next audit:
 
-Sequence matters here and cost two extra cycles: formatting has to land **before**
-the last ledger re-pin, because a whitespace-only source change still moves a
-pinned hash.
-
-This is a design property worth stating plainly rather than treating as review
-sloppiness: **any new file re-pins the census-based ledgers**, which is precisely
-why the evidence gate runs weekly and on demand instead of on every pull request.
+- **A pin on a file census is a maintenance cost, not a bug.** Every added file,
+  every formatting pass and every generated directory is a re-pin event. That is
+  the strongest argument for the evidence gate running weekly and on demand
+  rather than in the path of every pull request.
+- **The gate must be reproducible in the environment it runs in.** Anything
+  untracked — generated output, prose, local caches — cannot be part of a hash
+  that CI is expected to match.
 
 ## What this approval does and does not cover
 
