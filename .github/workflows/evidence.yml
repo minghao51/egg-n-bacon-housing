@@ -7,13 +7,27 @@ name: Evidence
 # producers read, and the job FAILS CLOSED rather than silently measuring
 # nothing.
 #
-# It runs on pull requests, weekly, and on demand. Two deliberate constraints:
+# It runs weekly and on demand, NOT on pull requests, and that is a measured
+# decision rather than a placeholder. The `pull_request` trigger was added and
+# then reverted: with the trigger on, the job failed for a reason worth recording.
 #
-# - **Fork PRs are skipped.** GitHub does not expose repository secrets to a
-#   `pull_request` from a fork, so the artifacts cannot be fetched there; the job
-#   would fail on an authentication gap rather than on drift. The skip is stated
-#   in the job's `if:` and logged, not silent. Same-repository branches (which is
-#   where this repo's work happens) run it normally.
+# The producers need more than the seven enumerated artifacts. A run of this job
+# from a clean checkout asked for, and did not find:
+#
+#   data/pipeline/01_bronze/external/HawkerCentresGEOJSON.parquet
+#   data/pipeline/01_bronze/bronze_manifest.json
+#   data/analysis/lease_decay/lease_decay_analysis.csv
+#   data/analysis/feature_importance/model_comparison.csv
+#   data/forecasts/hdb_price_forecasts.csv
+#   app/dist/data/analysis/causal_did_analysis.png   <- a BUILD OUTPUT
+#
+# The last one is the blocker: a producer reads a shipped asset from `app/dist`,
+# so a faithful CI run needs the app built as well as the data provisioned.
+# Making this a pull-request gate is therefore its own piece of work — extend the
+# `evidence/` sync scope to cover the generated analysis/forecast surfaces, add a
+# build step, and re-verify — not a trigger flag. Until then the gate stays where
+# it can actually measure: on demand and weekly.
+#
 # - **A run either re-measures or fails loudly.** There is no allowlist and no
 #   silent skip: missing inputs name themselves and fail the job.
 #
@@ -27,8 +41,6 @@ name: Evidence
 # the scan or re-pin the ledger in the same commit — do not allowlist it.
 
 on:
-  pull_request:
-    branches: [main, develop]
   schedule:
     - cron: "0 6 * * 1"   # Mondays 06:00 UTC
   workflow_dispatch:
@@ -59,10 +71,10 @@ jobs:
   evidence:
     name: Evidence producers (read-only --check)
     runs-on: ubuntu-24.04
-    # Fork PRs cannot work here: secrets are not exposed to `pull_request` from a
-    # fork, so the artifact sync would fail on authentication rather than on
-    # drift. Skip them explicitly rather than reporting a false red; the same-
-    # repository branches this project works on are unaffected.
+    # Kept deliberately: if the `pull_request` trigger is reinstated once the
+    # inputs above are provisioned, fork PRs still cannot work (GitHub does not
+    # expose repository secrets to them) and must be skipped explicitly rather
+    # than reported as drift.
     if: >-
       github.event_name != 'pull_request' ||
       github.event.pull_request.head.repo.full_name == github.repository
