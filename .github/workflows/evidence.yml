@@ -2,17 +2,20 @@ name: Evidence
 
 # REL-3: the read-only evidence producers re-measure every ledger. This gate
 # lives in its own workflow because it needs pipeline data that a fresh checkout
-# does not have: `data/pipeline/**` is gitignored (0 tracked files) and the R2
-# sync (`scripts/00_sync_data.py`) carries only `data/manual/**`. Running it on
-# every pull request would make CI red by construction for an input-provisioning
-# gap that is an owner decision, not a code defect — and a permanently red gate
-# gets ignored, which is worse than no gate.
+# does not have: `data/pipeline/**` is gitignored (0 tracked files). The narrow
+# `--only evidence` sync scope provisions exactly the seven artifacts the
+# producers read, and the job FAILS CLOSED rather than silently measuring
+# nothing.
 #
-# So it runs on demand and weekly. When it runs it either re-measures every
-# ledger or FAILS LOUDLY with the missing inputs named; there is no silent skip.
-# Once the pipeline layers are provisioned (run the pipeline in CI, or upload
-# `data/pipeline/**` to R2 and extend the sync), add `pull_request:` and
-# `push:` triggers here to gate every change.
+# It runs on pull requests, weekly, and on demand. Two deliberate constraints:
+#
+# - **Fork PRs are skipped.** GitHub does not expose repository secrets to a
+#   `pull_request` from a fork, so the artifacts cannot be fetched there; the job
+#   would fail on an authentication gap rather than on drift. The skip is stated
+#   in the job's `if:` and logged, not silent. Same-repository branches (which is
+#   where this repo's work happens) run it normally.
+# - **A run either re-measures or fails loudly.** There is no allowlist and no
+#   silent skip: missing inputs name themselves and fail the job.
 #
 # DRIFT DEBT, CLOSED. Nine producers drifted when this gate was first wired:
 # five at baseline 449b921 and four more because concurrent remediation changed
@@ -24,6 +27,8 @@ name: Evidence
 # the scan or re-pin the ledger in the same commit — do not allowlist it.
 
 on:
+  pull_request:
+    branches: [main, develop]
   schedule:
     - cron: "0 6 * * 1"   # Mondays 06:00 UTC
   workflow_dispatch:
@@ -54,6 +59,13 @@ jobs:
   evidence:
     name: Evidence producers (read-only --check)
     runs-on: ubuntu-24.04
+    # Fork PRs cannot work here: secrets are not exposed to `pull_request` from a
+    # fork, so the artifact sync would fail on authentication rather than on
+    # drift. Skip them explicitly rather than reporting a false red; the same-
+    # repository branches this project works on are unaffected.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     # Locally the 13 producers take ~4 min; 20 min bounds a pathological
     # re-computation without leaving the job to hang a runner.
     timeout-minutes: 20
@@ -76,9 +88,14 @@ jobs:
         run: |
           set -u
           if [ -n "${R2_ACCOUNT_ID:-}" ] && [ -n "${R2_ACCESS_KEY_ID:-}" ]; then
+            # `manual` is best-effort (some producers tolerate its absence);
+            # the enumerated evidence set is REQUIRED and its failure is fatal.
             uv run python scripts/00_sync_data.py --only manual || true
+            uv run python scripts/00_sync_data.py --only evidence
           else
-            echo "::warning::R2 credentials are not configured; data/manual/** will be missing."
+            echo "::error::R2 credentials are not configured; the producers cannot be re-measured."
+            echo "::error::Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT and R2_BUCKET as repository secrets."
+            exit 1
           fi
           missing=""
           for f in \
