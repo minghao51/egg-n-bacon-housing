@@ -61,7 +61,16 @@ repos:
         # Scanning them only produces line-number churn that silently invalidates a
         # signed `artifactSha256`-adjacent baseline; their integrity is enforced by the
         # producers' `--check` modes instead.
-        exclude: (package-lock\.json|pnpm-lock\.yaml|uv\.lock|^docs/implementation/artifacts/)
+        #
+        # `edition-registry.ts` is excluded for the same reason. It is the pinned
+        # registry of those ledgers: every long literal in it is a sha256
+        # (`editionSha256`, `artifactSha256`) or a ledger path. Re-pinning a ledger,
+        # which a legitimate re-measurement requires, therefore adds new high-entropy
+        # strings on every occasion and each one had to be hand-baselined — three
+        # times in one branch. Its integrity is enforced by the evidence-pin test
+        # (`app/tests/unit/edition-registry.test.ts`) and by the producers, not by
+        # entropy heuristics.
+        exclude: (package-lock\.json|pnpm-lock\.yaml|uv\.lock|^docs/implementation/artifacts/|^app/src/components/studies/lib/edition-registry\.ts$)
 
   # Local hooks (venv-dependent)
   - repo: local

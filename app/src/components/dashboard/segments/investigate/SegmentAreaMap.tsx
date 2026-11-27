@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { MAP_TILES_ATTRIBUTION, MAP_TILES_URL } from "@/config/map-tiles";
 import type {
   SegmentAreaRow,
   SegmentInvestigationMetric,
@@ -252,10 +253,7 @@ export default function SegmentAreaMap({
         style={{ width: "100%", height: "100%" }}
         zoomControl={false}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        />
+        <TileLayer attribution={MAP_TILES_ATTRIBUTION} url={MAP_TILES_URL} />
         <GeoJSON
           data={geoJsonData}
           style={style}

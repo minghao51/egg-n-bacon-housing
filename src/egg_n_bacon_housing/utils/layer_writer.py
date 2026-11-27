@@ -17,46 +17,34 @@ from pathlib import Path
 
 import pandas as pd
 
-from egg_n_bacon_housing.config import LayerDirs, Settings
+from egg_n_bacon_housing.config import (
+    LayerDirs,
+    Settings,
+)
+from egg_n_bacon_housing.config import (
+    resolve_layer_paths as resolve_layer_paths,
+)
 from egg_n_bacon_housing.utils.output_registry import (
     PUBLISHED_LAYERS as PUBLISHED_LAYERS,
 )
 
 logger = logging.getLogger(__name__)
 
-_LAYER_KEYS: tuple[str, ...] = (
-    "bronze",
-    "silver",
-    "gold",
-    "platinum",
-    "platinum_metrics",
-)
-
 
 def _atomic_parquet_write(df: pd.DataFrame, path: Path, compression: str | None = None) -> None:
     """Write parquet beside the destination and atomically publish it."""
     tmp = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
     try:
-        kwargs: dict[str, object] = {"index": False}
-        if compression is not None:
-            kwargs["compression"] = compression
-        df.to_parquet(tmp, **kwargs)
+        # Pass the kwargs directly rather than through a dict[str, object]: the
+        # dict form widened every value to ``object`` and defeated the stub
+        # overloads, hiding real argument mistakes.
+        if compression is None:
+            df.to_parquet(tmp, index=False)
+        else:
+            df.to_parquet(tmp, index=False, compression=compression)
         os.replace(tmp, path)
     finally:
         tmp.unlink(missing_ok=True)
-
-
-def resolve_layer_paths(layer_dirs: LayerDirs, data_dir: Path) -> dict[str, Path]:
-    """Resolve every layer key to its concrete directory under ``data_dir``.
-
-    Mirrors ``Settings.layer_paths`` anchored at the pipeline directory
-    ``data_dir``. Absolute configured paths are returned unchanged.
-    """
-    resolved: dict[str, Path] = {}
-    for layer in _LAYER_KEYS:
-        relative = layer_dirs.relative_path(layer)
-        resolved[layer] = relative if relative.is_absolute() else data_dir / relative
-    return resolved
 
 
 class LayerWriter(ABC):

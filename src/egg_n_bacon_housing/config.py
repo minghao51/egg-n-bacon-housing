@@ -127,6 +127,32 @@ class LayerDirs(BaseSettings):
 
 LayerName = Literal["bronze", "silver", "gold", "platinum", "platinum_metrics"]
 
+#: Every output-layer key the pipeline publishes, in canonical order.
+LAYER_KEYS: tuple[LayerName, ...] = (
+    "bronze",
+    "silver",
+    "gold",
+    "platinum",
+    "platinum_metrics",
+)
+
+
+def resolve_layer_path(layer_dirs: LayerDirs, layer: str, pipeline_root: Path) -> Path:
+    """Resolve one layer key to its concrete directory under ``pipeline_root``.
+
+    This is the single implementation of layer-path resolution: both
+    ``Settings.layer_dir``/``Settings.layer_paths`` and the writer's
+    ``resolve_layer_paths`` delegate here, so the configured semantics cannot
+    drift. Absolute configured paths are returned unchanged.
+    """
+    configured = layer_dirs.relative_path(layer)
+    return configured if configured.is_absolute() else pipeline_root / configured
+
+
+def resolve_layer_paths(layer_dirs: LayerDirs, pipeline_root: Path) -> dict[str, Path]:
+    """Resolve every :data:`LAYER_KEYS` entry under ``pipeline_root``."""
+    return {layer: resolve_layer_path(layer_dirs, layer, pipeline_root) for layer in LAYER_KEYS}
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -175,23 +201,16 @@ class Settings(BaseSettings):
         path = Path(data_path)
         return path if path.is_absolute() else self.base_dir / path
 
+    def _pipeline_root(self, data_path: str | Path | None = None) -> Path:
+        """The runtime pipeline directory every layer is anchored beneath."""
+        return self.resolve_data_path(data_path) / "pipeline"
+
     def layer_dir(self, layer: str, data_path: str | Path | None = None) -> Path:
-        configured = self.layer_dirs.relative_path(layer)
-        root = self.resolve_data_path(data_path)
-        if configured.is_absolute():
-            return configured
-        return root / "pipeline" / configured
+        return resolve_layer_path(self.layer_dirs, layer, self._pipeline_root(data_path))
 
     def layer_paths(self, data_path: str | Path | None = None) -> dict[str, Path]:
         """Return the authoritative runtime paths for every output layer."""
-        layers: tuple[LayerName, ...] = (
-            "bronze",
-            "silver",
-            "gold",
-            "platinum",
-            "platinum_metrics",
-        )
-        return {layer: self.layer_dir(layer, data_path) for layer in layers}
+        return resolve_layer_paths(self.layer_dirs, self._pipeline_root(data_path))
 
     @model_validator(mode="after")
     def validate_tracking_configuration(self) -> "Settings":

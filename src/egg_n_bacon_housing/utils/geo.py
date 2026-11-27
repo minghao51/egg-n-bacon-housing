@@ -1,6 +1,7 @@
 """Geodesic helpers shared by the proximity and school feature modules."""
 
 import numpy as np
+import numpy.typing as npt
 
 _EARTH_RADIUS_M = 6_371_000
 
@@ -8,7 +9,7 @@ __all__ = ["haversine_metres", "haversine_distance"]
 
 
 def haversine_metres(
-    lat1: np.ndarray, lon1: np.ndarray, lat2: np.ndarray, lon2: np.ndarray
+    lat1: npt.ArrayLike, lon1: npt.ArrayLike, lat2: npt.ArrayLike, lon2: npt.ArrayLike
 ) -> np.ndarray:
     """Vectorized great-circle distance in metres (haversine formula).
 
@@ -17,12 +18,13 @@ def haversine_metres(
     implementation behind ``haversine_distance`` and the proximity/school
     feature computations.
     """
-    lat1, lon1, lat2, lon2 = (
-        np.radians(np.asarray(a, dtype=float)) for a in (lat1, lon1, lat2, lon2)
-    )
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
+    lat1_rad = np.radians(np.asarray(lat1, dtype=float))
+    lon1_rad = np.radians(np.asarray(lon1, dtype=float))
+    lat2_rad = np.radians(np.asarray(lat2, dtype=float))
+    lon2_rad = np.radians(np.asarray(lon2, dtype=float))
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1_rad) * np.cos(lat2_rad) * np.sin(dlon / 2) ** 2
     return 2 * np.arcsin(np.sqrt(a)) * _EARTH_RADIUS_M
 
 

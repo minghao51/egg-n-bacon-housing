@@ -33,6 +33,7 @@
  */
 
 import { describe, expect, test } from "bun:test";
+import { createHash } from "node:crypto";
 
 import {
   RELEASE_SCHEMA_VERSION,
@@ -467,6 +468,204 @@ describe("loadReleaseCheck", () => {
     expect(unfetchable.mismatches[0]).toContain(
       "could not fetch b.json.gz (HTTP 404)",
     );
+  });
+});
+
+/**
+ * UI-1: the loader used to download and hash the assets and then throw the
+ * bytes away, so the screen fetched the same URLs again and rendered responses
+ * no digest had ever covered. These tests pin the single path: what verifies is
+ * what is handed back for rendering.
+ */
+describe("loadReleaseCheck — verified payloads (UI-1)", () => {
+  const PAYLOADS: Record<string, string> = {
+    "map_metrics.json.gz": JSON.stringify({
+      whole: { hdb: { TAMPINES: { volume: 3 } } },
+    }),
+    "dashboard_overview.json.gz": JSON.stringify({
+      stats: { whole_hdb: { median_price: 628000 } },
+    }),
+  };
+  const PAYLOAD_URLS: Record<string, string> = {
+    "map_metrics.json.gz": "https://example.test/data/map_metrics.json.gz",
+    "dashboard_overview.json.gz":
+      "https://example.test/data/dashboard_overview.json.gz",
+  };
+  const encoder = new TextEncoder();
+
+  /** Independent digest: node:crypto, not the module's Web Crypto helper. */
+  function digest(bytes: Uint8Array): string {
+    return createHash("sha256").update(bytes).digest("hex");
+  }
+
+  /**
+   * A manifest whose recorded sha256/size describe `payloads` exactly, with the
+   * generation recomputed over that content.
+   */
+  async function payloadRelease(
+    payloads: Record<string, string>,
+  ): Promise<Record<string, unknown>> {
+    const assets = Object.entries(payloads).map(([path, text]) => {
+      const bytes = encoder.encode(text);
+      return {
+        path,
+        sha256: digest(bytes),
+        bytes: bytes.byteLength,
+        shape: text.trimStart().startsWith("[") ? "array" : "object",
+        metricScopes: [],
+      };
+    });
+    const body: Record<string, unknown> = {
+      schemaVersion: RELEASE_SCHEMA_VERSION,
+      generatedAt: "2026-11-02T00:00:00Z",
+      observationRange: {
+        startMonth: "1990-01",
+        endMonth: "2026-10",
+        completeYear: 2025,
+      },
+      periodDefinitions: {},
+      inclusionRules: {},
+      provenance: { sources: [] },
+      assets,
+    };
+    return { ...body, generation: await computeReleaseGeneration(body) };
+  }
+
+  function payloadRoutes(
+    manifest: Record<string, unknown>,
+    served: Record<string, string>,
+  ): Record<string, () => Response> {
+    const routes: Record<string, () => Response> = {
+      [MANIFEST_URL]: () => jsonResponse(manifest),
+    };
+    for (const [path, url] of Object.entries(PAYLOAD_URLS)) {
+      const text = served[path];
+      if (text === undefined) continue;
+      routes[url] = () => bytesResponse(encoder.encode(text));
+    }
+    return routes;
+  }
+
+  test("returns the decoded payload and digest evidence for each verified asset", async () => {
+    const manifest = await payloadRelease(PAYLOADS);
+    const { fetcher, calls } = makeFetcher(payloadRoutes(manifest, PAYLOADS));
+
+    const check = await loadReleaseCheck({
+      manifestUrl: MANIFEST_URL,
+      assetUrls: PAYLOAD_URLS,
+      fetcher,
+    });
+
+    expect(check.status).toBe("verified");
+    expect(check.mismatches).toHaveLength(0);
+    expect(Object.keys(check.payloads).sort()).toEqual([
+      "dashboard_overview.json.gz",
+      "map_metrics.json.gz",
+    ]);
+    expect(check.payloads["map_metrics.json.gz"]).toEqual(
+      JSON.parse(PAYLOADS["map_metrics.json.gz"]),
+    );
+    expect(check.payloads["dashboard_overview.json.gz"]).toEqual(
+      JSON.parse(PAYLOADS["dashboard_overview.json.gz"]),
+    );
+
+    // The evidence describes exactly the bytes decoded into those payloads.
+    const mapBytes = encoder.encode(PAYLOADS["map_metrics.json.gz"]);
+    expect(check.evidence["map_metrics.json.gz"]).toEqual({
+      sha256: digest(mapBytes),
+      contentSha256: digest(mapBytes),
+      byteLength: mapBytes.byteLength,
+    });
+
+    // One request per URL: nothing is fetched a second time for display.
+    expect(calls).toEqual([
+      MANIFEST_URL,
+      PAYLOAD_URLS["map_metrics.json.gz"],
+      PAYLOAD_URLS["dashboard_overview.json.gz"],
+    ]);
+    expect(new Set(calls).size).toBe(calls.length);
+  });
+
+  test("preserves all four statuses and only verified exposes payloads", async () => {
+    // absent — no manifest published.
+    const absent = await loadReleaseCheck({
+      manifestUrl: MANIFEST_URL,
+      assetUrls: PAYLOAD_URLS,
+      fetcher: makeFetcher({}).fetcher,
+    });
+    expect(absent.status).toBe("absent");
+    expect(absent.payloads).toEqual({});
+    expect(absent.evidence).toEqual({});
+
+    // unverified — an asset could not be fetched at all.
+    const manifest = await payloadRelease(PAYLOADS);
+    const unverified = await loadReleaseCheck({
+      manifestUrl: MANIFEST_URL,
+      assetUrls: PAYLOAD_URLS,
+      fetcher: makeFetcher({
+        [MANIFEST_URL]: () => jsonResponse(manifest),
+        [PAYLOAD_URLS["dashboard_overview.json.gz"]]: () =>
+          bytesResponse(encoder.encode(PAYLOADS["dashboard_overview.json.gz"])),
+      }).fetcher,
+    });
+    expect(unverified.status).toBe("unverified");
+    expect(unverified.payloads).toEqual({});
+    expect(unverified.evidence).toEqual({});
+
+    // mismatch — one served asset is from another generation.
+    const mismatch = await loadReleaseCheck({
+      manifestUrl: MANIFEST_URL,
+      assetUrls: PAYLOAD_URLS,
+      fetcher: makeFetcher(
+        payloadRoutes(manifest, {
+          ...PAYLOADS,
+          "map_metrics.json.gz": JSON.stringify({ tampered: true }),
+        }),
+      ).fetcher,
+    });
+    expect(mismatch.status).toBe("mismatch");
+    expect(mismatch.payloads).toEqual({});
+    expect(mismatch.evidence).toEqual({});
+
+    // verified — payloads for exactly the requested assets.
+    const verified = await loadReleaseCheck({
+      manifestUrl: MANIFEST_URL,
+      assetUrls: PAYLOAD_URLS,
+      fetcher: makeFetcher(payloadRoutes(manifest, PAYLOADS)).fetcher,
+    });
+    expect(verified.status).toBe("verified");
+    expect(Object.keys(verified.payloads)).toHaveLength(2);
+  });
+
+  test("a mismatched asset yields mismatch and exposes no payload for either asset", async () => {
+    const manifest = await payloadRelease(PAYLOADS);
+    const { fetcher } = makeFetcher(
+      payloadRoutes(manifest, {
+        ...PAYLOADS,
+        // Same shape, different bytes: a payload from another generation.
+        "dashboard_overview.json.gz": JSON.stringify({
+          stats: { whole_hdb: { median_price: 999999 } },
+        }),
+      }),
+    );
+
+    const check = await loadReleaseCheck({
+      manifestUrl: MANIFEST_URL,
+      assetUrls: PAYLOAD_URLS,
+      fetcher,
+    });
+
+    expect(check.status).toBe("mismatch");
+    expect(
+      check.mismatches.some((line) =>
+        line.includes("hash mismatch: dashboard_overview.json.gz"),
+      ),
+    ).toBe(true);
+    // Not even the asset that matched is offered for rendering: the release as
+    // a whole did not verify.
+    expect(check.payloads).toEqual({});
+    expect(check.evidence).toEqual({});
+    expect(check.manifest).not.toBeNull();
   });
 });
 

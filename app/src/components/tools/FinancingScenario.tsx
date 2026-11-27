@@ -375,7 +375,8 @@ export default function FinancingScenario({
           />
           <p className="mt-1 text-xs text-muted-foreground">
             {FINANCING_LIMITS.downPaymentPercent.min}&ndash;
-            {FINANCING_LIMITS.downPaymentPercent.max}% of the price.
+            {FINANCING_LIMITS.downPaymentPercent.max}% of the price; 100% is a
+            cash purchase with no loan.
           </p>
           {isInvalid("downPaymentPercent") ? (
             <p
@@ -469,6 +470,13 @@ export default function FinancingScenario({
                 / month
               </span>
             </p>
+            {result.scenario.principal === 0 ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                A 100% down payment is a cash purchase: with no loan, the
+                illustrative principal-and-interest payment is S$0 at every
+                rate.
+              </p>
+            ) : null}
             <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
               <div>
                 <dt className="text-muted-foreground">Down payment</dt>

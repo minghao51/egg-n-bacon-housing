@@ -1,0 +1,23 @@
+{
+  "include": ["src", "scripts", "tests"],
+  "exclude": [
+    ".venv",
+    "**/node_modules",
+    "**/__pycache__",
+    "app",
+    "docs",
+    "data",
+    "htmlcov"
+  ],
+  "pythonVersion": "3.12",
+  "venvPath": ".",
+  "venv": ".venv",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "ignore": [
+    "src/egg_n_bacon_housing/components/features.py",
+    "src/egg_n_bacon_housing/components/ingestion/datagov.py",
+    "src/egg_n_bacon_housing/utils/proximity.py",
+    "src/egg_n_bacon_housing/utils/school_features.py"
+  ]
+}

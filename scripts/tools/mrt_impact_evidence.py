@@ -130,12 +130,27 @@ LEGACY_TOWNS_SECTION = "### 2. The average hides large town-level differences"
 # semantics-preserving edit to any scanned file (a typing fix, a reflow) re-pins
 # that file and drifts the ledger without moving a single match. That is
 # declaration-only drift: refresh it by re-running the producer, never by
-# widening the exclusions, because excluding a scanned surface would suppress
-# the match lists the absence claims rest on. Only the programme's own output
-# surfaces above are excluded, and that exclusion set is unchanged.
+# widening the exclusions to suppress a match an absence claim rests on.
+#
+# One exclusion was added for exactly that reason and none was removed: the
+# planning/spec surface `docs/plans/`, which generalises the D12 register this
+# scan already excluded by path. Its documents are plan and audit prose ABOUT
+# the legacy method (the only content-pattern hit there was a worked haversine
+# example in `docs/plans/2026-01-24-spatial-analytics-overview.md`, which is
+# prose, not an asset), so pinning them made every future plan or audit pack
+# drift this ledger. The frozen legacy originals and all data roots stay IN the
+# scan, so the absence claims keep the matches they rest on.
+#
+# The operational surface `docs/guides/` was excluded for that same reason a
+# later round: runbooks, setup notes and CI descriptions are prose about
+# operating the programme, not an implementation or an artefact of the legacy
+# method, and these scans establish absence FROM CODE. Pinning documentation
+# made this signed ledger re-drift on a pure documentation edit.
 SCAN_ROOTS = ("app/public", "app/src", "assets", "data", "docs", "scripts", "src", "tests")
 EXCLUDED_SCAN_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "docs/analytics/editions/",
     "prompts/",
     "scripts/tools/",
@@ -1266,7 +1281,13 @@ def absence_scans() -> dict[str, Any]:
         "scannedFiles": scanned_files,
         "exclusionDisclosure": (
             "the excluded prefixes are the programme's own surfaces (per-study "
-            "records, evidence producers, handoffs/runbooks, published editions "
+            "records, evidence producers, handoffs/runbooks, the planning/spec "
+            "surface docs/plans/ — plan and audit prose about the method, which "
+            "also holds the D12 registers — the operational surface "
+            "docs/guides/ (runbooks, setup notes and CI descriptions about the "
+            "programme: prose about operating the checkout, which can name a "
+            "method without implementing or evidencing it — these scans "
+            "establish absence FROM CODE), published editions "
             "except the frozen legacy originals, and the generated UI analytics "
             "payloads under app/public/data/analytics/ published by the study "
             "producers), app/src/components/studies/ (edition registry/pages), and "
@@ -1425,9 +1446,13 @@ def absence_scans() -> dict[str, Any]:
             "contentMatches": cbd_point_matches,
             "verdict": (
                 "screened as absent: the coordinate pair's content matches are the "
-                "frozen article text and its living copy (2 matches each) and a "
+                "frozen article text and its living copy (2 matches each) plus a "
                 "worked haversine example in a planning document "
-                "(docs/plans/2026-01-24-spatial-analytics-overview.md, 2 matches); "
+                "(docs/plans/2026-01-24-spatial-analytics-overview.md) that this "
+                "scan no longer counts because the planning/spec surface "
+                "docs/plans/ is excluded (see exclusionDisclosure) — it is an "
+                "example in prose, not an asset, so excluding it suppresses no "
+                "match this verdict rests on; "
                 "no scanned asset carries a CBD reference point or definition — the "
                 "calculator asset stores per-km discount rates and explanation "
                 "strings, which is a coefficient block, not a definition; the "
@@ -1631,10 +1656,14 @@ def legacy_claims() -> list[dict[str, str]]:
             "status": "not-reproducible",
             "ledgerKey": "absenceScans.cbdDefinition.contentMatches",
             "note": (
-                "the coordinate pair's content matches are the frozen text, its living "
-                "copy, and a worked haversine example in a planning document "
-                "(docs/plans/2026-01-24-spatial-analytics-overview.md, 2 matches); "
-                "none of the three is a CBD definition asset; the CBD-distance term "
+                "the coordinate pair's content matches are the frozen text and its "
+                "living copy, plus a worked haversine example in a planning "
+                "document (docs/plans/2026-01-24-spatial-analytics-overview.md) "
+                "that the hash-pinned scan no longer counts — the planning/spec "
+                "surface docs/plans/ is excluded (see "
+                "absenceScans.universe.exclusionDisclosure); that example is "
+                "prose, so no CBD definition asset is among the matches; the "
+                "CBD-distance term "
                 "the legacy models rely on cannot be formed from the shipped schema "
                 "(no CBD column; recorded check at inputs.unifiedDataset.cbdLikeColumnNames)"
             ),

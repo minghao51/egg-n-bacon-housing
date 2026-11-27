@@ -1,0 +1,5 @@
+$ bun scripts/validate-data.mjs
+Validated 19 app data assets
+Verified dashboard release 0e1013ee485f (7 assets)
+Verified v2 observed pack 2c30e2aa836c (cutoff 2026-10, 10 periods, 1840 observations)
+Verified v2 monthly history (4 property payloads, 47104 month cells)

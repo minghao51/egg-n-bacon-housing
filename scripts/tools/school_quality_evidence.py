@@ -145,8 +145,23 @@ SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx")
 # `docs/analytics/editions/` are excluded except the frozen legacy originals
 # under `docs/analytics/editions/legacy/`. The RS08 producer itself is under an
 # excluded prefix, which is also why it cannot drift its own counts.
+#
+# `docs/plans/` generalises the D12 register this scan already excluded by path:
+# the planning/spec documents are prose ABOUT the method (the retired programme's
+# plan documents mention the legacy feature names), so recording a plan or an
+# audit pack must not move a pinned count. The two plan documents this ledger
+# cites are still pinned by sha256, but by path at `methodRecordSurfaces` rather
+# than by the scan.
+#
+# `docs/guides/` is the operational surface and is excluded by the same rule:
+# runbooks, setup notes and CI descriptions are prose about operating the
+# programme, not an implementation or an artefact of the legacy school method.
+# These scans establish absence FROM CODE, so a guide that names the study is not
+# a counter-example to an absence claim.
 EXCLUDED_SCAN_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "scripts/tools/",
     "prompts/",
     "app/src/components/studies/",
@@ -1144,12 +1159,19 @@ def legacy_feature_names(paths: list[Path]) -> dict[str, Any]:
             "tokens": text_scan,
             "meaning": (
                 "outside the excluded programme surfaces the three legacy "
-                "feature names occur only in the frozen legacy article, its "
-                "live twin and the retired programme's plan documents "
+                "feature names occur in the frozen legacy article and its "
+                "live twin. The retired programme's plan documents "
                 "(docs/plans/2025-02-02-school-impact-analysis.md and "
-                "docs/plans/2026-02-05-enhanced-school-impact-analysis.md, "
-                "sha-pinned at methodRecordSurfaces) — prose, not shipped "
-                "columns"
+                "docs/plans/2026-02-05-enhanced-school-impact-analysis.md) "
+                "mention them too, but docs/plans/ is the planning/spec "
+                "surface and is excluded from this scan ("
+                "excludedPrefixes); those two documents stay recorded and "
+                "sha-pinned by path at methodRecordSurfaces rather than "
+                "counted here. The operational surface docs/guides/ "
+                "(runbooks and setup/CI documentation about the programme) is "
+                "excluded too, for the same reason: this scan establishes "
+                "absence FROM CODE, and a guide that names the method is not "
+                "an implementation of it. All of it is prose, not shipped columns"
             ),
         },
     }
@@ -1953,8 +1975,11 @@ def multiplicity_policy(paths: list[Path]) -> dict[str, Any]:
                 "the scanned text roots with the programme's own surfaces "
                 "excluded (tokenScan.excludedPrefixes): app/src/components/studies/ "
                 "(edition registry/pages), app/tests/ (fixtures), .secrets.baseline, "
-                "and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 "
-                "register) are excluded; a correction recorded "
+                "the planning/spec surface docs/plans/ and "
+                "docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 "
+                "register), and the operational surface docs/guides/ "
+                "(runbooks and setup/CI documentation about the programme) "
+                "are excluded; a correction recorded "
                 "only inside those excluded surfaces would not be found, and "
                 "that boundary is disclosed rather than widened"
             ),

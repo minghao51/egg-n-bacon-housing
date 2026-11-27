@@ -1,0 +1,2533 @@
+{
+  "audit": "master-audit-2026-11-23",
+  "phase": "1-discovery-read-only",
+  "head_commit": "449b921d499a8c55ec1eacb1a423baa7632456d3",
+  "revision_verification": {
+    "content_source": "git archive HEAD materialised snapshot (pinned revision)",
+    "snapshot_dir": "/tmp/audit-snapshot-449b921d499a",
+    "head": "449b921d499a8c55ec1eacb1a423baa7632456d3",
+    "snapshot_files": 820,
+    "snapshot_bytes": 38292684,
+    "worktree_tracked_changes": "",
+    "worktree_tracked_clean": true,
+    "verification_commands": [
+      "git rev-parse HEAD",
+      "git archive --format=tar HEAD | tar -tf -",
+      "git status --porcelain --untracked-files=no"
+    ]
+  },
+  "generated_by": "evidence/measurement/measure.py (uv run python 3.12)",
+  "scope": {
+    "definition": "canonical scope = fixed git-tracked snapshot at HEAD (git ls-files). Audit-written artifacts and any other non-ignored untracked file are reported as supplemental/unscored and are excluded from every statistic.",
+    "tracked_files_at_head": 820,
+    "total_in_scope_files": 820,
+    "self_excluded_audit_artifacts": {
+      "prefix": "docs/plans/master-audit-2026-11-23/",
+      "count": 31,
+      "files": [
+        "docs/plans/master-audit-2026-11-23/01-discovery.md",
+        "docs/plans/master-audit-2026-11-23/README.md",
+        "docs/plans/master-audit-2026-11-23/evidence/complexity-notebooks.csv",
+        "docs/plans/master-audit-2026-11-23/evidence/complexity.csv",
+        "docs/plans/master-audit-2026-11-23/evidence/core-coverage.log",
+        "docs/plans/master-audit-2026-11-23/evidence/data-validation.log",
+        "docs/plans/master-audit-2026-11-23/evidence/dependency-bun-audit.txt",
+        "docs/plans/master-audit-2026-11-23/evidence/dependency-pip-audit.txt",
+        "docs/plans/master-audit-2026-11-23/evidence/dependency-registry.jsonl",
+        "docs/plans/master-audit-2026-11-23/evidence/discovery-core.md",
+        "docs/plans/master-audit-2026-11-23/evidence/discovery-dependencies.md",
+        "docs/plans/master-audit-2026-11-23/evidence/discovery-inventory.md",
+        "docs/plans/master-audit-2026-11-23/evidence/discovery-ui.md",
+        "docs/plans/master-audit-2026-11-23/evidence/error-surfaces.csv",
+        "docs/plans/master-audit-2026-11-23/evidence/execution-provenance.md",
+        "docs/plans/master-audit-2026-11-23/evidence/fresh-coverage.log",
+        "docs/plans/master-audit-2026-11-23/evidence/full-file-tree.txt",
+        "docs/plans/master-audit-2026-11-23/evidence/inventory-agent.md",
+        "docs/plans/master-audit-2026-11-23/evidence/inventory.json",
+        "docs/plans/master-audit-2026-11-23/evidence/master-audit-frontend.log",
+        "docs/plans/master-audit-2026-11-23/evidence/master-audit-pytest.log",
+        "docs/plans/master-audit-2026-11-23/evidence/master-audit-quality.log",
+        "docs/plans/master-audit-2026-11-23/evidence/measurement/README.md",
+        "docs/plans/master-audit-2026-11-23/evidence/measurement/indexes.py",
+        "docs/plans/master-audit-2026-11-23/evidence/measurement/measure.py",
+        "docs/plans/master-audit-2026-11-23/evidence/measurement/ts_measure.mjs",
+        "docs/plans/master-audit-2026-11-23/evidence/observability.csv",
+        "docs/plans/master-audit-2026-11-23/evidence/public-entrypoints.csv",
+        "docs/plans/master-audit-2026-11-23/evidence/raw-measurements.json",
+        "docs/plans/master-audit-2026-11-23/evidence/reporting-baseline.log",
+        "docs/plans/master-audit-2026-11-23/evidence/schema-declarations.csv"
+      ]
+    },
+    "supplemental_untracked_not_counted": {
+      "count": 0,
+      "files": []
+    },
+    "excluded_ignored_paths": [
+      ".git/",
+      ".env",
+      ".env.keys",
+      "node_modules/",
+      "app/node_modules/",
+      ".venv/",
+      "__pycache__/",
+      ".pytest_cache/",
+      ".ruff_cache/",
+      ".mypy_cache/",
+      ".hypothesis/",
+      ".coverage",
+      "coverage.xml",
+      "htmlcov/",
+      "build/",
+      "dist/",
+      "app/dist/",
+      "app/.astro/",
+      "data/pipeline/",
+      "data/analysis/",
+      "data/forecasts/",
+      "data/cache/",
+      "data/logs/",
+      "data/manual/ (except tracked *.md)",
+      "playwright-report/",
+      "test-results/",
+      ".claude/ (ignored copy; tracked .claude/*.md still in scope)",
+      ".context7/ (ignored; tracked .context7/*.md still in scope)",
+      ".worktrees/",
+      "*.parquet under data/pipeline, *.pkl, *.bak"
+    ],
+    "vendored_note": "No tracked vendored/third-party source trees exist. node_modules, .venv and app/node_modules are git-ignored and were not enumerated. data/raw/external/datagov/*.geojson are downloaded upstream datasets (tracked, data category), not source.",
+    "binary_and_data_artifacts_counted_but_not_parsed": 119
+  },
+  "categories": {
+    "docs:evidence-and-plans": 270,
+    "web:source": 156,
+    "artifact:published-web-data": 88,
+    "web:test": 65,
+    "python:test": 49,
+    "python:source": 48,
+    "design-asset": 34,
+    "docs:agent-context": 32,
+    "python:script": 30,
+    "data:tracked-input": 12,
+    "web:config": 8,
+    "notebook": 6,
+    "docs:root": 5,
+    "web:script": 4,
+    "config:repo": 3,
+    "ci:workflow": 2,
+    "docs:web": 2,
+    "config:python-manifest": 2,
+    "config:env-template": 1,
+    "config:secret-scan-baseline": 1,
+    "python:entrypoint": 1,
+    "config:web-manifest": 1
+  },
+  "source_file_counts": {
+    "python": 128,
+    "web_ts_tsx_js_mjs_astro": 221,
+    "css": 1,
+    "notebooks": 6,
+    "total_measured_source_files": 350
+  },
+  "loc": {
+    "python_source_src": {
+      "files": 48,
+      "lines": 10248,
+      "code_lines": 8181,
+      "comment_lines": 452,
+      "blank_lines": 1663
+    },
+    "python_tests": {
+      "files": 49,
+      "lines": 20277,
+      "code_lines": 15830,
+      "comment_lines": 582,
+      "blank_lines": 3914
+    },
+    "python_scripts": {
+      "files": 30,
+      "lines": 33699,
+      "code_lines": 30404,
+      "comment_lines": 702,
+      "blank_lines": 2623
+    },
+    "python_entrypoint": {
+      "files": 1,
+      "lines": 109,
+      "code_lines": 88,
+      "comment_lines": 4,
+      "blank_lines": 18
+    },
+    "python_total": {
+      "files": 128,
+      "lines": 64333,
+      "code_lines": 54503,
+      "comment_lines": 1740,
+      "blank_lines": 8218
+    },
+    "web_src": {
+      "files": 153,
+      "lines": 33485,
+      "code_lines": 27607,
+      "comment_lines": 3261,
+      "blank_lines": 2770
+    },
+    "web_tests": {
+      "files": 61,
+      "lines": 15889,
+      "code_lines": 13124,
+      "comment_lines": 1032,
+      "blank_lines": 1794
+    },
+    "web_scripts": {
+      "files": 4,
+      "lines": 891,
+      "code_lines": 758,
+      "comment_lines": 67,
+      "blank_lines": 70
+    },
+    "web_config_other": {
+      "files": 3,
+      "lines": 170,
+      "code_lines": 152,
+      "comment_lines": 11,
+      "blank_lines": 10
+    },
+    "web_total": {
+      "files": 221,
+      "lines": 50435,
+      "code_lines": 41641,
+      "comment_lines": 4371,
+      "blank_lines": 4644
+    },
+    "css": {
+      "files": 1,
+      "lines": 266,
+      "code_lines": 232,
+      "comment_lines": 0,
+      "blank_lines": 0
+    },
+    "all_source_total": {
+      "files": 350,
+      "lines": 115034,
+      "code_lines": 96376,
+      "comment_lines": 6111,
+      "blank_lines": 12862
+    },
+    "notebooks": {
+      "files": 6,
+      "raw_lines": 4704,
+      "code_cell_lines": 1091
+    }
+  },
+  "tests_to_source_ratio": {
+    "python": {
+      "test_files": 49,
+      "source_files_src": 48,
+      "test_code_lines": 15830,
+      "source_code_lines_src": 8181,
+      "ratio_by_code_lines": 1.935,
+      "ratio_by_files": 1.021
+    },
+    "web": {
+      "test_files": 61,
+      "source_files_src": 153,
+      "test_code_lines": 13124,
+      "source_code_lines_src": 27607,
+      "ratio_by_code_lines": 0.475,
+      "ratio_by_files": 0.399
+    }
+  },
+  "top_level_modules": {
+    "python": {
+      "scripts/tools": {
+        "files": 24,
+        "lines": 29694,
+        "code_lines": 27200
+      },
+      "tests": {
+        "files": 49,
+        "lines": 20277,
+        "code_lines": 15830
+      },
+      "components": {
+        "files": 14,
+        "lines": 4206,
+        "code_lines": 3356
+      },
+      "utils": {
+        "files": 21,
+        "lines": 4107,
+        "code_lines": 3299
+      },
+      "scripts": {
+        "files": 6,
+        "lines": 4005,
+        "code_lines": 3204
+      },
+      "adapters": {
+        "files": 6,
+        "lines": 981,
+        "code_lines": 803
+      },
+      "<root>": {
+        "files": 3,
+        "lines": 546,
+        "code_lines": 431
+      },
+      "schemas": {
+        "files": 4,
+        "lines": 408,
+        "code_lines": 292
+      },
+      "<entrypoint main.py>": {
+        "files": 1,
+        "lines": 109,
+        "code_lines": 88
+      }
+    },
+    "web": {
+      "components": {
+        "files": 86,
+        "lines": 20107,
+        "code_lines": 17411
+      },
+      "tests/unit": {
+        "files": 35,
+        "lines": 10692,
+        "code_lines": 9068
+      },
+      "utils": {
+        "files": 29,
+        "lines": 8778,
+        "code_lines": 6419
+      },
+      "tests/e2e": {
+        "files": 26,
+        "lines": 5197,
+        "code_lines": 4056
+      },
+      "pages": {
+        "files": 19,
+        "lines": 2452,
+        "code_lines": 2168
+      },
+      "types": {
+        "files": 5,
+        "lines": 948,
+        "code_lines": 720
+      },
+      "app/scripts": {
+        "files": 4,
+        "lines": 891,
+        "code_lines": 758
+      },
+      "hooks": {
+        "files": 8,
+        "lines": 877,
+        "code_lines": 662
+      },
+      "constants": {
+        "files": 3,
+        "lines": 193,
+        "code_lines": 145
+      },
+      "app/astro.config.mjs": {
+        "files": 1,
+        "lines": 88,
+        "code_lines": 73
+      },
+      "<root>": {
+        "files": 1,
+        "lines": 57,
+        "code_lines": 34
+      },
+      "app/tailwind.config.mjs": {
+        "files": 1,
+        "lines": 50,
+        "code_lines": 49
+      },
+      "layouts": {
+        "files": 1,
+        "lines": 40,
+        "code_lines": 36
+      },
+      "config": {
+        "files": 1,
+        "lines": 33,
+        "code_lines": 12
+      },
+      "app/playwright.config.ts": {
+        "files": 1,
+        "lines": 32,
+        "code_lines": 30
+      }
+    }
+  },
+  "size_thresholds": {
+    "files_over_300_lines": [
+      {
+        "path": "scripts/tools/school_quality_evidence.py",
+        "lines": 2846
+      },
+      {
+        "path": "scripts/tools/lease_decay_evidence.py",
+        "lines": 2681
+      },
+      {
+        "path": "scripts/tools/findings_evidence.py",
+        "lines": 2630
+      },
+      {
+        "path": "scripts/tools/price_forecasts_evidence.py",
+        "lines": 2529
+      },
+      {
+        "path": "scripts/tools/market_segments_evidence.py",
+        "lines": 2360
+      },
+      {
+        "path": "scripts/tools/mrt_impact_evidence.py",
+        "lines": 2071
+      },
+      {
+        "path": "tests/test_ingestion.py",
+        "lines": 2026
+      },
+      {
+        "path": "scripts/tools/causal_inference_evidence.py",
+        "lines": 1887
+      },
+      {
+        "path": "scripts/tools/spatial_autocorrelation_evidence.py",
+        "lines": 1853
+      },
+      {
+        "path": "scripts/tools/facility_premiums_evidence.py",
+        "lines": 1840
+      },
+      {
+        "path": "scripts/tools/spatial_hotspots_evidence.py",
+        "lines": 1828
+      },
+      {
+        "path": "scripts/export_app_data.py",
+        "lines": 1817
+      },
+      {
+        "path": "tests/test_features.py",
+        "lines": 1805
+      },
+      {
+        "path": "scripts/tools/macro_sensitivity_evidence.py",
+        "lines": 1757
+      },
+      {
+        "path": "scripts/tools/amenity_impact_evidence.py",
+        "lines": 1584
+      },
+      {
+        "path": "app/src/components/studies/lib/edition-registry.ts",
+        "lines": 1173
+      },
+      {
+        "path": "scripts/tools/temporal_evolution_evidence.py",
+        "lines": 1001
+      },
+      {
+        "path": "scripts/v2_observed.py",
+        "lines": 990
+      },
+      {
+        "path": "tests/test_cleaning_validation.py",
+        "lines": 898
+      },
+      {
+        "path": "app/src/components/dashboard/MarketOverviewDashboard.tsx",
+        "lines": 858
+      },
+      {
+        "path": "app/src/components/dashboard/PriceMap.tsx",
+        "lines": 851
+      },
+      {
+        "path": "tests/test_datagovsg.py",
+        "lines": 780
+      },
+      {
+        "path": "app/tests/unit/area-page.test.ts",
+        "lines": 779
+      },
+      {
+        "path": "app/src/utils/map-archive.ts",
+        "lines": 774
+      },
+      {
+        "path": "tests/test_export_app_data.py",
+        "lines": 757
+      },
+      {
+        "path": "app/tests/unit/release-manifest.test.ts",
+        "lines": 744
+      },
+      {
+        "path": "tests/test_dag_smoke.py",
+        "lines": 710
+      },
+      {
+        "path": "app/tests/unit/observed-data.test.ts",
+        "lines": 707
+      },
+      {
+        "path": "app/src/components/dashboard/leaderboard/LeaderboardDashboard.tsx",
+        "lines": 679
+      },
+      {
+        "path": "tests/test_ura.py",
+        "lines": 677
+      },
+      {
+        "path": "app/src/utils/observed-periods.ts",
+        "lines": 675
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/ingestion/geojson.py",
+        "lines": 674
+      },
+      {
+        "path": "app/src/components/explorer/ExplorerWorkspace.tsx",
+        "lines": 651
+      },
+      {
+        "path": "tests/test_metrics.py",
+        "lines": 643
+      },
+      {
+        "path": "tests/test_v2_observed.py",
+        "lines": 640
+      },
+      {
+        "path": "scripts/tools/quality_report.py",
+        "lines": 637
+      },
+      {
+        "path": "app/tests/unit/explorer-pack-rows.test.ts",
+        "lines": 629
+      },
+      {
+        "path": "scripts/generate_catalog.py",
+        "lines": 626
+      },
+      {
+        "path": "app/tests/unit/geo-projection.test.ts",
+        "lines": 618
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/ingestion/datagov.py",
+        "lines": 616
+      },
+      {
+        "path": "app/src/components/tools/FinancingScenario.tsx",
+        "lines": 597
+      },
+      {
+        "path": "app/tests/unit/edition-registry.test.ts",
+        "lines": 588
+      },
+      {
+        "path": "app/tests/e2e/areas.spec.ts",
+        "lines": 580
+      },
+      {
+        "path": "tests/test_bronze.py",
+        "lines": 574
+      },
+      {
+        "path": "app/src/utils/observed-pack-loader.ts",
+        "lines": 568
+      },
+      {
+        "path": "app/tests/unit/leaderboard-observed.test.ts",
+        "lines": 563
+      },
+      {
+        "path": "app/src/utils/geo-projection.ts",
+        "lines": 556
+      },
+      {
+        "path": "app/src/components/dashboard/segments/SegmentsDashboard.tsx",
+        "lines": 553
+      },
+      {
+        "path": "tests/test_feature_transactions.py",
+        "lines": 549
+      },
+      {
+        "path": "app/src/components/explorer/ExplorerMap.tsx",
+        "lines": 549
+      },
+      {
+        "path": "app/tests/unit/observed-pack-loader.test.ts",
+        "lines": 532
+      },
+      {
+        "path": "tests/test_onemap.py",
+        "lines": 530
+      },
+      {
+        "path": "app/src/components/trends/TrendsWorkspace.tsx",
+        "lines": 529
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/cleaning.py",
+        "lines": 526
+      },
+      {
+        "path": "tests/test_school_features.py",
+        "lines": 520
+      },
+      {
+        "path": "app/src/components/explorer/ExplorerList.tsx",
+        "lines": 520
+      },
+      {
+        "path": "app/scripts/validate-data.mjs",
+        "lines": 519
+      },
+      {
+        "path": "app/src/utils/leaderboard-observed.ts",
+        "lines": 518
+      },
+      {
+        "path": "app/src/utils/observed-monthly.ts",
+        "lines": 516
+      },
+      {
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "lines": 515
+      },
+      {
+        "path": "tests/test_geocoding.py",
+        "lines": 514
+      },
+      {
+        "path": "app/src/utils/release-manifest.ts",
+        "lines": 506
+      },
+      {
+        "path": "tests/test_geojson.py",
+        "lines": 500
+      },
+      {
+        "path": "app/src/components/Sidebar.astro",
+        "lines": 488
+      },
+      {
+        "path": "app/src/pages/areas/[slug].astro",
+        "lines": 487
+      },
+      {
+        "path": "app/tests/e2e/explore.spec.ts",
+        "lines": 478
+      },
+      {
+        "path": "app/tests/e2e/research/tools.spec.ts",
+        "lines": 475
+      },
+      {
+        "path": "scripts/tools/source_inventory.py",
+        "lines": 460
+      },
+      {
+        "path": "app/tests/unit/observed-periods.test.ts",
+        "lines": 460
+      },
+      {
+        "path": "app/tests/unit/observed-rows.test.ts",
+        "lines": 457
+      },
+      {
+        "path": "tests/test_proximity.py",
+        "lines": 452
+      },
+      {
+        "path": "src/egg_n_bacon_housing/utils/bronze.py",
+        "lines": 447
+      },
+      {
+        "path": "tests/test_rental_yield_metrics.py",
+        "lines": 446
+      },
+      {
+        "path": "app/src/utils/data-parser.ts",
+        "lines": 444
+      },
+      {
+        "path": "app/tests/unit/trend-series.test.ts",
+        "lines": 442
+      },
+      {
+        "path": "app/src/components/areas/AreaSectionPanel.tsx",
+        "lines": 440
+      },
+      {
+        "path": "app/src/components/dashboard/leaderboard/LeaderboardMap.tsx",
+        "lines": 438
+      },
+      {
+        "path": "tests/test_condo_ingestion.py",
+        "lines": 432
+      },
+      {
+        "path": "src/egg_n_bacon_housing/utils/geocoding.py",
+        "lines": 431
+      },
+      {
+        "path": "tests/test_catalog_generator.py",
+        "lines": 404
+      },
+      {
+        "path": "src/egg_n_bacon_housing/utils/data_quality.py",
+        "lines": 403
+      },
+      {
+        "path": "app/src/utils/trend-series.ts",
+        "lines": 403
+      },
+      {
+        "path": "tests/test_pipeline.py",
+        "lines": 388
+      },
+      {
+        "path": "app/src/components/catalog/SchemaTable.tsx",
+        "lines": 388
+      },
+      {
+        "path": "app/src/components/dashboard/segments/investigate/InvestigateTab.tsx",
+        "lines": 379
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/ingestion/macro.py",
+        "lines": 370
+      },
+      {
+        "path": "app/tests/unit/area-activity.test.ts",
+        "lines": 368
+      },
+      {
+        "path": "app/src/utils/area-page.ts",
+        "lines": 362
+      },
+      {
+        "path": "app/src/utils/area-selection.ts",
+        "lines": 362
+      },
+      {
+        "path": "app/src/utils/observed-pack-build.ts",
+        "lines": 361
+      },
+      {
+        "path": "app/src/components/tools/lib/tool-evidence.ts",
+        "lines": 359
+      },
+      {
+        "path": "app/src/utils/explorer-selection.ts",
+        "lines": 358
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/feature_transactions.py",
+        "lines": 356
+      },
+      {
+        "path": "app/src/components/tools/lib/tool-assets.ts",
+        "lines": 356
+      },
+      {
+        "path": "app/src/utils/observed-rows.ts",
+        "lines": 350
+      },
+      {
+        "path": "app/src/types/analytics.ts",
+        "lines": 348
+      },
+      {
+        "path": "app/tests/e2e/integration.spec.ts",
+        "lines": 346
+      },
+      {
+        "path": "src/egg_n_bacon_housing/adapters/datagovsg.py",
+        "lines": 342
+      },
+      {
+        "path": "scripts/tools/rental_yield_evidence.py",
+        "lines": 341
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/features.py",
+        "lines": 333
+      },
+      {
+        "path": "app/src/components/tools/LeaseBands.tsx",
+        "lines": 332
+      },
+      {
+        "path": "app/src/utils/area-activity.ts",
+        "lines": 332
+      },
+      {
+        "path": "tests/test_refresh_rolling.py",
+        "lines": 327
+      },
+      {
+        "path": "app/src/components/explorer/ExplorerView.tsx",
+        "lines": 322
+      },
+      {
+        "path": "app/src/components/trends/TrendsChart.tsx",
+        "lines": 322
+      },
+      {
+        "path": "app/src/components/dashboard/segments/FilterPanel.tsx",
+        "lines": 320
+      },
+      {
+        "path": "tests/test_pipeline_integration.py",
+        "lines": 317
+      },
+      {
+        "path": "app/src/components/tools/MrtCbdInspection.tsx",
+        "lines": 317
+      },
+      {
+        "path": "app/tests/unit/explorer-selection.test.ts",
+        "lines": 315
+      },
+      {
+        "path": "src/egg_n_bacon_housing/pipeline.py",
+        "lines": 313
+      },
+      {
+        "path": "tests/test_quality_report.py",
+        "lines": 313
+      },
+      {
+        "path": "tests/test_validation.py",
+        "lines": 312
+      },
+      {
+        "path": "tests/test_cache_fingerprints.py",
+        "lines": 310
+      },
+      {
+        "path": "tests/test_research_evidence_tools.py",
+        "lines": 305
+      },
+      {
+        "path": "app/src/components/areas/AreaHistoryPanel.tsx",
+        "lines": 305
+      },
+      {
+        "path": "app/src/utils/observed-data.ts",
+        "lines": 301
+      }
+    ],
+    "files_over_500_lines": [
+      {
+        "path": "scripts/tools/school_quality_evidence.py",
+        "lines": 2846
+      },
+      {
+        "path": "scripts/tools/lease_decay_evidence.py",
+        "lines": 2681
+      },
+      {
+        "path": "scripts/tools/findings_evidence.py",
+        "lines": 2630
+      },
+      {
+        "path": "scripts/tools/price_forecasts_evidence.py",
+        "lines": 2529
+      },
+      {
+        "path": "scripts/tools/market_segments_evidence.py",
+        "lines": 2360
+      },
+      {
+        "path": "scripts/tools/mrt_impact_evidence.py",
+        "lines": 2071
+      },
+      {
+        "path": "tests/test_ingestion.py",
+        "lines": 2026
+      },
+      {
+        "path": "scripts/tools/causal_inference_evidence.py",
+        "lines": 1887
+      },
+      {
+        "path": "scripts/tools/spatial_autocorrelation_evidence.py",
+        "lines": 1853
+      },
+      {
+        "path": "scripts/tools/facility_premiums_evidence.py",
+        "lines": 1840
+      },
+      {
+        "path": "scripts/tools/spatial_hotspots_evidence.py",
+        "lines": 1828
+      },
+      {
+        "path": "scripts/export_app_data.py",
+        "lines": 1817
+      },
+      {
+        "path": "tests/test_features.py",
+        "lines": 1805
+      },
+      {
+        "path": "scripts/tools/macro_sensitivity_evidence.py",
+        "lines": 1757
+      },
+      {
+        "path": "scripts/tools/amenity_impact_evidence.py",
+        "lines": 1584
+      },
+      {
+        "path": "app/src/components/studies/lib/edition-registry.ts",
+        "lines": 1173
+      },
+      {
+        "path": "scripts/tools/temporal_evolution_evidence.py",
+        "lines": 1001
+      },
+      {
+        "path": "scripts/v2_observed.py",
+        "lines": 990
+      },
+      {
+        "path": "tests/test_cleaning_validation.py",
+        "lines": 898
+      },
+      {
+        "path": "app/src/components/dashboard/MarketOverviewDashboard.tsx",
+        "lines": 858
+      },
+      {
+        "path": "app/src/components/dashboard/PriceMap.tsx",
+        "lines": 851
+      },
+      {
+        "path": "tests/test_datagovsg.py",
+        "lines": 780
+      },
+      {
+        "path": "app/tests/unit/area-page.test.ts",
+        "lines": 779
+      },
+      {
+        "path": "app/src/utils/map-archive.ts",
+        "lines": 774
+      },
+      {
+        "path": "tests/test_export_app_data.py",
+        "lines": 757
+      },
+      {
+        "path": "app/tests/unit/release-manifest.test.ts",
+        "lines": 744
+      },
+      {
+        "path": "tests/test_dag_smoke.py",
+        "lines": 710
+      },
+      {
+        "path": "app/tests/unit/observed-data.test.ts",
+        "lines": 707
+      },
+      {
+        "path": "app/src/components/dashboard/leaderboard/LeaderboardDashboard.tsx",
+        "lines": 679
+      },
+      {
+        "path": "tests/test_ura.py",
+        "lines": 677
+      },
+      {
+        "path": "app/src/utils/observed-periods.ts",
+        "lines": 675
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/ingestion/geojson.py",
+        "lines": 674
+      },
+      {
+        "path": "app/src/components/explorer/ExplorerWorkspace.tsx",
+        "lines": 651
+      },
+      {
+        "path": "tests/test_metrics.py",
+        "lines": 643
+      },
+      {
+        "path": "tests/test_v2_observed.py",
+        "lines": 640
+      },
+      {
+        "path": "scripts/tools/quality_report.py",
+        "lines": 637
+      },
+      {
+        "path": "app/tests/unit/explorer-pack-rows.test.ts",
+        "lines": 629
+      },
+      {
+        "path": "scripts/generate_catalog.py",
+        "lines": 626
+      },
+      {
+        "path": "app/tests/unit/geo-projection.test.ts",
+        "lines": 618
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/ingestion/datagov.py",
+        "lines": 616
+      },
+      {
+        "path": "app/src/components/tools/FinancingScenario.tsx",
+        "lines": 597
+      },
+      {
+        "path": "app/tests/unit/edition-registry.test.ts",
+        "lines": 588
+      },
+      {
+        "path": "app/tests/e2e/areas.spec.ts",
+        "lines": 580
+      },
+      {
+        "path": "tests/test_bronze.py",
+        "lines": 574
+      },
+      {
+        "path": "app/src/utils/observed-pack-loader.ts",
+        "lines": 568
+      },
+      {
+        "path": "app/tests/unit/leaderboard-observed.test.ts",
+        "lines": 563
+      },
+      {
+        "path": "app/src/utils/geo-projection.ts",
+        "lines": 556
+      },
+      {
+        "path": "app/src/components/dashboard/segments/SegmentsDashboard.tsx",
+        "lines": 553
+      },
+      {
+        "path": "tests/test_feature_transactions.py",
+        "lines": 549
+      },
+      {
+        "path": "app/src/components/explorer/ExplorerMap.tsx",
+        "lines": 549
+      },
+      {
+        "path": "app/tests/unit/observed-pack-loader.test.ts",
+        "lines": 532
+      },
+      {
+        "path": "tests/test_onemap.py",
+        "lines": 530
+      },
+      {
+        "path": "app/src/components/trends/TrendsWorkspace.tsx",
+        "lines": 529
+      },
+      {
+        "path": "src/egg_n_bacon_housing/components/cleaning.py",
+        "lines": 526
+      },
+      {
+        "path": "tests/test_school_features.py",
+        "lines": 520
+      },
+      {
+        "path": "app/src/components/explorer/ExplorerList.tsx",
+        "lines": 520
+      },
+      {
+        "path": "app/scripts/validate-data.mjs",
+        "lines": 519
+      },
+      {
+        "path": "app/src/utils/leaderboard-observed.ts",
+        "lines": 518
+      },
+      {
+        "path": "app/src/utils/observed-monthly.ts",
+        "lines": 516
+      },
+      {
+        "path": "src/egg_n_bacon_housing/utils/school_features.py",
+        "lines": 515
+      },
+      {
+        "path": "tests/test_geocoding.py",
+        "lines": 514
+      },
+      {
+        "path": "app/src/utils/release-manifest.ts",
+        "lines": 506
+      }
+    ]
+  },
+  "parse_failures": [],
+  "external_import_usage": {
+    "python_module_to_file_count": {
+      "pandas": 86,
+      "pytest": 49,
+      "numpy": 26,
+      "hamilton": 15,
+      "pyarrow": 15,
+      "pydantic": 15,
+      "requests": 14,
+      "statsmodels": 5,
+      "tenacity": 5,
+      "shapely": 4,
+      "scipy": 3,
+      "yaml": 2,
+      "sklearn": 2,
+      "esda": 2,
+      "h3": 2,
+      "libpysal": 2,
+      "annotated_types": 2,
+      "main": 2,
+      "boto3": 1,
+      "botocore": 1,
+      "pydantic_settings": 1,
+      "hamilton_sdk": 1,
+      "geopandas": 1,
+      "hypothesis": 1
+    },
+    "web_module_to_file_count": {
+      "react": 55,
+      "@playwright/test": 27,
+      "recharts": 7,
+      "astro:content": 6,
+      "@tanstack/react-table": 4,
+      "lucide-react": 3,
+      "leaflet/dist/leaflet.css": 3,
+      "react-leaflet": 3,
+      "clsx": 3,
+      "@astrojs/react": 1,
+      "@astrojs/tailwind": 1,
+      "astro/config": 1,
+      "rehype-katex": 1,
+      "remark-math": 1,
+      "dompurify": 1,
+      "react-markdown": 1,
+      "remark-gfm": 1,
+      "katex": 1,
+      "@xyflow/react": 1,
+      "@xyflow/react/dist/style.css": 1,
+      "react-dom/client": 1,
+      "astro/loaders": 1,
+      "astro/zod": 1,
+      "tailwind-merge": 1
+    },
+    "web_parser": {
+      "ts_version": "5.9.3"
+    }
+  },
+  "coverage_report": {
+    "stale_worktree_artifact": {
+      "artifact": "stale-worktree-artifact",
+      "path": "/home/howt/work/egg-n-bacon-housing/coverage.xml",
+      "present": true,
+      "file_mtime_utc": "2026-11-22T10:54:45.601875+00:00",
+      "size_bytes": 155720,
+      "header_attributes": {
+        "version": "7.13.2",
+        "timestamp": "1795344885225",
+        "lines-valid": "4076",
+        "lines-covered": "96",
+        "line-rate": "0.02355",
+        "branches-covered": "0",
+        "branches-valid": "0",
+        "branch-rate": "0",
+        "complexity": "0"
+      },
+      "classes_reported": 48,
+      "files_reported": 48,
+      "generated_utc": "2026-11-22T10:54:45.225000+00:00",
+      "lines_valid": 4076,
+      "lines_covered": 96,
+      "lines_missed": 3980,
+      "line_rate_recomputed": 0.0236,
+      "line_rate_declared": "0.02355",
+      "declared_matches_recomputed": true
+    },
+    "fresh_audit_execution": {
+      "artifact": "fresh-audit-execution",
+      "path": "/tmp/master-audit-coverage.xml",
+      "present": true,
+      "file_mtime_utc": "2026-11-23T04:10:26.513792+00:00",
+      "size_bytes": 155837,
+      "header_attributes": {
+        "version": "7.13.2",
+        "timestamp": "1795407026109",
+        "lines-valid": "4076",
+        "lines-covered": "3894",
+        "line-rate": "0.9553",
+        "branches-covered": "0",
+        "branches-valid": "0",
+        "branch-rate": "0",
+        "complexity": "0"
+      },
+      "classes_reported": 48,
+      "files_reported": 48,
+      "generated_utc": "2026-11-23T04:10:26.109000+00:00",
+      "lines_valid": 4076,
+      "lines_covered": 3894,
+      "lines_missed": 182,
+      "line_rate_recomputed": 0.9553,
+      "line_rate_declared": "0.9553",
+      "declared_matches_recomputed": true
+    },
+    "htmlcov_present": true,
+    "note": "These are two different runs of the same suite. The worktree artifact is stale (timestamp 2026-11-22) and reports 96/4076 covered; the fresh audit execution (timestamp 2026-11-23) reports 3894/4076. Neither is a code finding; both are reported verbatim from the XML headers."
+  },
+  "manifests": [
+    {
+      "path": "pyproject.toml",
+      "bytes": 4131,
+      "tracked": true
+    },
+    {
+      "path": "uv.lock",
+      "bytes": 1004081,
+      "tracked": true
+    },
+    {
+      "path": "package.json",
+      "bytes": 132,
+      "tracked": true
+    },
+    {
+      "path": "app/package.json",
+      "bytes": 2046,
+      "tracked": true
+    },
+    {
+      "path": "app/bun.lock",
+      "bytes": 161694,
+      "tracked": true
+    },
+    {
+      "path": "app/tsconfig.json",
+      "bytes": 426,
+      "tracked": true
+    },
+    {
+      "path": "app/astro.config.mjs",
+      "bytes": 2603,
+      "tracked": true
+    },
+    {
+      "path": "app/tailwind.config.mjs",
+      "bytes": 1472,
+      "tracked": true
+    },
+    {
+      "path": "app/playwright.config.ts",
+      "bytes": 861,
+      "tracked": true
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "bytes": 3033,
+      "tracked": true
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 4231,
+      "tracked": true
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "bytes": 5514,
+      "tracked": true
+    },
+    {
+      "path": ".secrets.baseline",
+      "bytes": 76930,
+      "tracked": true
+    },
+    {
+      "path": ".env.example",
+      "bytes": 1465,
+      "tracked": true
+    },
+    {
+      "path": ".bun-version",
+      "bytes": 7,
+      "tracked": true
+    },
+    {
+      "path": "app/.bun-version",
+      "bytes": 7,
+      "tracked": true
+    },
+    {
+      "path": "app/.gitignore",
+      "bytes": 388,
+      "tracked": true
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 2047,
+      "tracked": true
+    },
+    {
+      "path": "data/catalog/descriptions.yml",
+      "bytes": 21939,
+      "tracked": true
+    }
+  ],
+  "dead_code_candidates_unconfirmed": {
+    "method": "identifier word-boundary grep across all measured source files; a symbol with zero references outside its defining file is listed. NOT proof of dead code: dynamic access (getattr, importlib, string refs), framework entry points, test-only imports and re-exports are not resolved.",
+    "python_count": 25,
+    "python": [
+      {
+        "symbol": "DATAGOVSG_BASE_URL",
+        "defined_in": "src/egg_n_bacon_housing/adapters/datagovsg.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "resource_url",
+        "defined_in": "src/egg_n_bacon_housing/adapters/datagovsg.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "INITIAL_BACKOFF",
+        "defined_in": "src/egg_n_bacon_housing/adapters/onemap.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MAX_BACKOFF",
+        "defined_in": "src/egg_n_bacon_housing/adapters/onemap.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentCoverage",
+        "defined_in": "src/egg_n_bacon_housing/components/cleaning.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_hdb",
+        "defined_in": "src/egg_n_bacon_housing/components/cleaning.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_condo",
+        "defined_in": "src/egg_n_bacon_housing/components/cleaning.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_geocoded",
+        "defined_in": "src/egg_n_bacon_housing/components/cleaning.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_unified_dataset",
+        "defined_in": "src/egg_n_bacon_housing/components/export.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_planning_area_360",
+        "defined_in": "src/egg_n_bacon_housing/components/feature_profiles.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_block_profile",
+        "defined_in": "src/egg_n_bacon_housing/components/feature_profiles.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "RENTAL_INDEX_SERIES_PREFERENCE",
+        "defined_in": "src/egg_n_bacon_housing/components/feature_rental.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_rental_yield",
+        "defined_in": "src/egg_n_bacon_housing/components/feature_rental.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "GDP_PREFERRED_SERIES",
+        "defined_in": "src/egg_n_bacon_housing/components/ingestion/macro.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "materialize_published",
+        "defined_in": "src/egg_n_bacon_housing/components/materialization.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "materialize_quarantine",
+        "defined_in": "src/egg_n_bacon_housing/components/materialization.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_pa_monthly_metrics",
+        "defined_in": "src/egg_n_bacon_housing/components/metrics.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "validate_appreciation_hotspots",
+        "defined_in": "src/egg_n_bacon_housing/components/metrics.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MIN_BASELINE_SAMPLES",
+        "defined_in": "src/egg_n_bacon_housing/utils/data_quality.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "QualityBaseline",
+        "defined_in": "src/egg_n_bacon_housing/utils/data_quality.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "get_collector",
+        "defined_in": "src/egg_n_bacon_housing/utils/data_quality.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "normalize_name_tokens",
+        "defined_in": "src/egg_n_bacon_housing/utils/geocoding.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "DEFAULT_FORMAT",
+        "defined_in": "src/egg_n_bacon_housing/utils/logging_config.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "DEFAULT_DATE_FORMAT",
+        "defined_in": "src/egg_n_bacon_housing/utils/logging_config.py",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SCHOOL_LEVELS",
+        "defined_in": "src/egg_n_bacon_housing/utils/school_features.py",
+        "referencing_files": 0
+      }
+    ],
+    "web_count": 207,
+    "web": [
+      {
+        "symbol": "AreaHistoryPanelProps",
+        "defined_in": "app/src/components/areas/AreaHistoryPanel.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AreaSectionPanelProps",
+        "defined_in": "app/src/components/areas/AreaSectionPanel.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MarketOverviewDashboardData",
+        "defined_in": "app/src/components/dashboard/MarketOverviewDashboard.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "archiveExtractionLabel",
+        "defined_in": "app/src/components/dashboard/segments/SegmentsDashboard.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "DetailsTab",
+        "defined_in": "app/src/components/dashboard/segments/details/DetailsTab.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentFieldStatus",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentEvidenceStatus",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentMetricEvidence",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SEGMENT_TABS",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SEGMENT_CONSTRAINTS_VERSION",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PersonaLike",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SEGMENT_PERSONAS",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ParseSegmentQueryOptions",
+        "defined_in": "app/src/components/dashboard/segments/lib/segment-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ExplorerMapProps",
+        "defined_in": "app/src/components/explorer/ExplorerMap.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ExplorerOption",
+        "defined_in": "app/src/components/explorer/ExplorerSettings.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PROPERTY_OPTIONS",
+        "defined_in": "app/src/components/explorer/ExplorerSettings.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PERIOD_OPTIONS",
+        "defined_in": "app/src/components/explorer/ExplorerSettings.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MetricOption",
+        "defined_in": "app/src/components/explorer/ExplorerSettings.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ExplorerSettingsProps",
+        "defined_in": "app/src/components/explorer/ExplorerSettings.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "EXPLORER_VIEW_DEFAULT",
+        "defined_in": "app/src/components/explorer/ExplorerView.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "EXPLORER_VIEW_TABS",
+        "defined_in": "app/src/components/explorer/ExplorerView.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ExplorerViewProps",
+        "defined_in": "app/src/components/explorer/ExplorerView.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ExplorerWorkspaceProps",
+        "defined_in": "app/src/components/explorer/ExplorerWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PanelSeries",
+        "defined_in": "app/src/components/observed/PublishedWindowsPanel.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PublishedWindowsPanelProps",
+        "defined_in": "app/src/components/observed/PublishedWindowsPanel.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "EditionEvidenceStatus",
+        "defined_in": "app/src/components/studies/lib/edition-registry.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "EditionEditorialStatus",
+        "defined_in": "app/src/components/studies/lib/edition-registry.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "EditionSignoffRole",
+        "defined_in": "app/src/components/studies/lib/edition-registry.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "EDITION_SIGNOFF_ROLES",
+        "defined_in": "app/src/components/studies/lib/edition-registry.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "REFRESHED_EDITIONS",
+        "defined_in": "app/src/components/studies/lib/edition-registry.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "StudyPersona",
+        "defined_in": "app/src/components/studies/lib/studies.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "StudyFilters",
+        "defined_in": "app/src/components/studies/lib/studies.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "StudyEvidence",
+        "defined_in": "app/src/components/studies/lib/studies.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ToolsWorkspaceProps",
+        "defined_in": "app/src/components/tools/ToolsWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "FINANCING_DRAFT_FIELDS",
+        "defined_in": "app/src/components/tools/lib/financing-draft.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "FinancingSensitivityRow",
+        "defined_in": "app/src/components/tools/lib/tool-amortization.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "FinancingResult",
+        "defined_in": "app/src/components/tools/lib/tool-amortization.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LeaseInsight",
+        "defined_in": "app/src/components/tools/lib/tool-assets.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MrtTypeCoefficient",
+        "defined_in": "app/src/components/tools/lib/tool-assets.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AssetRead",
+        "defined_in": "app/src/components/tools/lib/tool-assets.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ArchiveToolId",
+        "defined_in": "app/src/components/tools/lib/tool-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ToolArchiveStatus",
+        "defined_in": "app/src/components/tools/lib/tool-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LeaseLookup",
+        "defined_in": "app/src/components/tools/lib/tool-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LeaseGap",
+        "defined_in": "app/src/components/tools/lib/tool-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MrtStoredTerms",
+        "defined_in": "app/src/components/tools/lib/tool-evidence.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "REFERENCE_ERA",
+        "defined_in": "app/src/components/tools/lib/tool-reference.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "REFERENCE_PROPERTIES",
+        "defined_in": "app/src/components/tools/lib/tool-reference.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ReferenceResolution",
+        "defined_in": "app/src/components/tools/lib/tool-reference.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TOOL_IDS",
+        "defined_in": "app/src/components/tools/lib/tool-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TOOL_REFERENCE_VERSION",
+        "defined_in": "app/src/components/tools/lib/tool-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TrendsChartProps",
+        "defined_in": "app/src/components/trends/TrendsChart.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TrendsTableProps",
+        "defined_in": "app/src/components/trends/TrendsTable.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TrendSelection",
+        "defined_in": "app/src/components/trends/TrendsWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TrendQueryKey",
+        "defined_in": "app/src/components/trends/TrendsWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TREND_QUERY_KEYS",
+        "defined_in": "app/src/components/trends/TrendsWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "parseTrendSelection",
+        "defined_in": "app/src/components/trends/TrendsWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "serializeTrendSelection",
+        "defined_in": "app/src/components/trends/TrendsWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TrendsWorkspaceProps",
+        "defined_in": "app/src/components/trends/TrendsWorkspace.tsx",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ObservedReleaseMode",
+        "defined_in": "app/src/config/observed-release.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "OBSERVED_RELEASE_ENV",
+        "defined_in": "app/src/config/observed-release.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "resolveObservedReleaseMode",
+        "defined_in": "app/src/config/observed-release.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "OBSERVED_RELEASE_MODE",
+        "defined_in": "app/src/config/observed-release.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "CatalogAuditObservation",
+        "defined_in": "app/src/constants/catalog-audit.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "DataEndpoint",
+        "defined_in": "app/src/constants/data-urls.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "collections",
+        "defined_in": "app/src/content.config.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "setDataGeneration",
+        "defined_in": "app/src/hooks/useGzipJson.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "clearGzipCache",
+        "defined_in": "app/src/hooks/useGzipJson.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LEGACY_TIME_BASIS_LABELS",
+        "defined_in": "app/src/hooks/useLeaderboardData.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LeaderboardDataResult",
+        "defined_in": "app/src/hooks/useLeaderboardData.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AnalyticsMetadata",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SpatialAreaData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "HotspotData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LISAClusterData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "allLISAClusterTypes",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "NeighborhoodEffectData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "FeatureImpactAreaData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MRTImpactData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SchoolQualityData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AmenityScoreData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ForecastMetadata",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PredictiveAreaData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PriceForecastData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TradingSignal",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PolicyRiskData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LeaseArbitrageData",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ALL_LAYER_IDS",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LayerState",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LayerMetadata",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "GeoJSONProperties",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "GeoJSONGeometry",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MapMetrics",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MetricValues",
+        "defined_in": "app/src/types/analytics.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "CatalogMetadata",
+        "defined_in": "app/src/types/catalog.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SchemaInfo",
+        "defined_in": "app/src/types/catalog.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ParquetStats",
+        "defined_in": "app/src/types/catalog.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LineageInfo",
+        "defined_in": "app/src/types/catalog.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "CatalogEntry",
+        "defined_in": "app/src/types/catalog.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PropertyTypeMetrics",
+        "defined_in": "app/src/types/leaderboard.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TimePeriodMetrics",
+        "defined_in": "app/src/types/leaderboard.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LEADERBOARD_DEFAULT_TIME_BASIS",
+        "defined_in": "app/src/types/leaderboard.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentRegion",
+        "defined_in": "app/src/types/leaderboard.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "InvestmentType",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PriceTier",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "RiskLevel",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AppreciationPotential",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SchoolTier",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MrtSensitivity",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "InvestmentGoal",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TimeHorizon",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentMetrics",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentCharacteristics",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SegmentImplications",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PersonaApplicability",
+        "defined_in": "app/src/types/segments.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "HotspotRiskLevel",
+        "defined_in": "app/src/types/spatial-hotspots.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "HotspotPortfolioPersona",
+        "defined_in": "app/src/types/spatial-hotspots.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SpatialHotspotTown",
+        "defined_in": "app/src/types/spatial-hotspots.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TownClusterMap",
+        "defined_in": "app/src/types/spatial-hotspots.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ACTIVITY_PROPERTY_LABELS",
+        "defined_in": "app/src/utils/area-activity.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ActivityWindow",
+        "defined_in": "app/src/utils/area-activity.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ActivityComparison",
+        "defined_in": "app/src/utils/area-activity.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "isExplorerPeriodValue",
+        "defined_in": "app/src/utils/area-links.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "BaselineVerdict",
+        "defined_in": "app/src/utils/area-page.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "RELEASE_ASSET_PATHS",
+        "defined_in": "app/src/utils/area-page.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AreaPageEra",
+        "defined_in": "app/src/utils/area-selection.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AreaPageProperty",
+        "defined_in": "app/src/utils/area-selection.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AreaPageCombination",
+        "defined_in": "app/src/utils/area-selection.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AREA_PRIMARY_PREFERENCE",
+        "defined_in": "app/src/utils/area-selection.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AreaPageSelection",
+        "defined_in": "app/src/utils/area-selection.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "cn",
+        "defined_in": "app/src/utils/cn.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SEQUENTIAL_COLORS",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LISA_CLUSTER_COLORS",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "divergingScale",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "sequentialScale",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "categoricalScale",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "interpolateColor",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "getHotspotColor",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "getForecastSignalColor",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "getPolicyRiskColor",
+        "defined_in": "app/src/utils/colorScales.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ChartConfig",
+        "defined_in": "app/src/utils/data-parser.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ParsedMarkdown",
+        "defined_in": "app/src/utils/data-parser.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ChartUnit",
+        "defined_in": "app/src/utils/data-parser.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PackRowInput",
+        "defined_in": "app/src/utils/explorer-pack-rows.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PackRowResult",
+        "defined_in": "app/src/utils/explorer-pack-rows.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ProjectedArea",
+        "defined_in": "app/src/utils/geo-projection.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "SCOPED_RANK_METRICS",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ScopedRankMetric",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "UNSUPPORTED_METRIC_REASONS",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "isPlanningRegion",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ScopedAreaMetrics",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "scopedMetricValue",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ScopedRankInput",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ScopedRankResult",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "readPackAreaMetrics",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PackScopedRankInput",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PackScopedRankOutcome",
+        "defined_in": "app/src/utils/leaderboard-observed.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ArchiveLayerSource",
+        "defined_in": "app/src/utils/map-archive.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ArchiveLoadState",
+        "defined_in": "app/src/utils/map-archive.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ArchiveFieldRow",
+        "defined_in": "app/src/utils/map-archive.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ArchiveGroupMeta",
+        "defined_in": "app/src/utils/map-archive.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "InspectArchiveArgs",
+        "defined_in": "app/src/utils/map-archive.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MapMetric",
+        "defined_in": "app/src/utils/map-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MapTimeBasis",
+        "defined_in": "app/src/utils/map-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MapPropertyType",
+        "defined_in": "app/src/utils/map-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MapLayerId",
+        "defined_in": "app/src/utils/map-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MAP_TIME_BASES",
+        "defined_in": "app/src/utils/map-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MAP_PROPERTY_TYPES",
+        "defined_in": "app/src/utils/map-url-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "EraDefinition",
+        "defined_in": "app/src/utils/observed-data.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ObservationSource",
+        "defined_in": "app/src/utils/observed-data.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ObservedRouteDefault",
+        "defined_in": "app/src/utils/observed-defaults.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PreviousRouteDefault",
+        "defined_in": "app/src/utils/observed-defaults.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MonthlyCellField",
+        "defined_in": "app/src/utils/observed-monthly.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MonthlyCell",
+        "defined_in": "app/src/utils/observed-monthly.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MonthlyCoverage",
+        "defined_in": "app/src/utils/observed-monthly.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MonthlySeries",
+        "defined_in": "app/src/utils/observed-monthly.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MonthlyParse",
+        "defined_in": "app/src/utils/observed-monthly.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MonthlyParseOptions",
+        "defined_in": "app/src/utils/observed-monthly.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MonthlyStatus",
+        "defined_in": "app/src/utils/observed-monthly.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "V2_MANIFEST_FILE",
+        "defined_in": "app/src/utils/observed-pack-build.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "BuildPackLoad",
+        "defined_in": "app/src/utils/observed-pack-build.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "BuildHistoryLoad",
+        "defined_in": "app/src/utils/observed-pack-build.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "readMonthlyHistoryFromDir",
+        "defined_in": "app/src/utils/observed-pack-build.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "CurrentWindow",
+        "defined_in": "app/src/utils/observed-pack-build.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TypeWindows",
+        "defined_in": "app/src/utils/observed-pack-build.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "V2CoreRole",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "V2_MONTHLY_ROLES",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "V2MonthlyRole",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "V2Role",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "V2ManifestAsset",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ManifestParse",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LoadPackOptions",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "AssetLoad",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "loadManifestAsset",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "HistoryLoad",
+        "defined_in": "app/src/utils/observed-pack-loader.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PeriodKind",
+        "defined_in": "app/src/utils/observed-periods.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PERIOD_KINDS",
+        "defined_in": "app/src/utils/observed-periods.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MetricValue",
+        "defined_in": "app/src/utils/observed-periods.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ObservationCoverage",
+        "defined_in": "app/src/utils/observed-periods.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ObservedSurface",
+        "defined_in": "app/src/utils/observed-periods.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "MetricChange",
+        "defined_in": "app/src/utils/observed-periods.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "PeriodComparison",
+        "defined_in": "app/src/utils/observed-periods.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ExplorerActivity",
+        "defined_in": "app/src/utils/observed-rows.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LegacyExplorerDataset",
+        "defined_in": "app/src/utils/observed-rows.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ExplorerRowRules",
+        "defined_in": "app/src/utils/observed-rows.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "legacyPeriodLabel",
+        "defined_in": "app/src/utils/observed-rows.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "ReleaseManifestAsset",
+        "defined_in": "app/src/utils/release-manifest.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "LoadIntent",
+        "defined_in": "app/src/utils/request-state.ts",
+        "referencing_files": 0
+      },
+      {
+        "symbol": "TrendSummary",
+        "defined_in": "app/src/utils/trend-series.ts",
+        "referencing_files": 0
+      }
+    ]
+  },
+  "methodology_notes": {
+    "loc": "lines = physical lines (splitlines). code_lines excludes blank and comment-only lines (python: tokenize; ts/tsx/mjs: lexical //, /* */ single-line tracking which misclassifies comment text inside template literals).",
+    "nesting": "max_nesting_estimate is block-statement nesting depth, NOT cyclomatic complexity: it ignores boolean operators, comprehension filters and expression lambdas.",
+    "python_parser": "ast (stdlib) on 3.12 via uv run python",
+    "web_parser": "typescript compiler API v5.9.3 loaded from app/node_modules (read-only); .astro files: frontmatter block parsed as TS, template markup not analyzed"
+  },
+  "supplemental_indexes": {
+    "note": "Mechanical, exhaustive indexes generated for all in-scope source files. Rows are automated scans and are NOT semantically reviewed; absence of a row is not proof of absence of behaviour (dynamic dispatch, runtime registration, framework magic are not resolved).",
+    "public-entrypoints.csv": {
+      "rows": 2596,
+      "files_with_rows": 272,
+      "by_kind": {
+        "method": 927,
+        "function": 901,
+        "class": 260,
+        "interface": 174,
+        "const": 138,
+        "type-alias": 115,
+        "cli-main-guard": 31,
+        "async-function": 19,
+        "route": 19,
+        "re-export": 8,
+        "default-export": 3,
+        "star-re-export": 1
+      }
+    },
+    "error-surfaces.csv": {
+      "rows": 596,
+      "files_with_rows": 117,
+      "by_kind": {
+        "raise": 217,
+        "throw": 168,
+        "except": 128,
+        "catch": 56,
+        "sys.exit": 26,
+        "process.exit": 1
+      }
+    },
+    "observability.csv": {
+      "rows": 349,
+      "totals": {
+        "print_calls": 277,
+        "logger_calls": 292,
+        "logging_module_calls": 0,
+        "console_calls": 33,
+        "exception_handlers": 184,
+        "raise_statements": 385,
+        "exit_calls": 27
+      },
+      "files_with_zero_logging": 273
+    },
+    "schema-declarations.csv": {
+      "rows": 432,
+      "by_kind": {
+        "interface": 263,
+        "type-alias": 131,
+        "pydantic-model": 21,
+        "dataclass": 6,
+        "pydantic-settings": 5,
+        "protocol": 3,
+        "namedtuple": 1,
+        "typeddict": 1,
+        "zod-object": 1
+      }
+    },
+    "parse_issues": []
+  }
+}

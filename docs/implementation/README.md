@@ -1,11 +1,33 @@
 # Implementation progress
 
+> **Status-claim rule.** Every status statement in this ledger must cite the
+> code that proves it — a `path/to/file:line` reference or a named test. A
+> claim with no citation is not a status, it is a guess. When a statement is
+> superseded, move it verbatim to [History](#history) under its original date;
+> do not rewrite it in place, because the record of what was believed when is
+> itself evidence.
+
 **Next agent:** start with [`prompts/handoffs.md`](../../prompts/handoffs.md) — state snapshot, task queue, traps and verification for RF05 onward.
+
+**Ledger re-pin after remediation (2026-11-24):** nine evidence ledgers (`docs/implementation/artifacts/rs06`, `rs07`, `rs08`, `rs10`, `rs11`, `rs12`, `rs13`, `rs14`, `rs15`) were re-measured and re-pinned during the `master-audit-2026-11-23` remediation, and the `artifactSha256` values in `app/src/components/studies/lib/edition-registry.ts` were re-derived to match them. The drift had two distinct causes, kept separate on purpose: **(1) a scan-surface defect** — the absence/method scans hashed _human prose_, so a document that merely named a method (including the drift table that documented the drift) moved the ledger. `docs/plans/**` is now excluded and disclosed inside each ledger's own scan metadata, exactly as the D12 decisions register was already excluded by path; `docs/guides/` (the whole guides tree) is excluded by the same rule, because a runbook, setup note or CI description that names a method is prose about operating the programme, not an implementation of it — these scans establish absence _from code_, and the exclusion is disclosed the same way in every producing ledger (`excludedPrefixes` plus the field each producer already uses: `meaning`, `selfExclusion`, `scanBoundary`/`exclusionDisclosure`, `exclusionMeaning`). An integrator edit to two operational guides (`docs/guides/ci-cd-pipeline.md`, `docs/guides/r2-sync-guide.md`, documentation added only) re-drifted `lease_decay`, `mrt_impact` and `school_quality` purely through pinned line numbers, byte counts and sha256s of human prose while no code and no data changed — appending method tokens to a guide and re-running all thirteen `--check`s is now the stability proof, and it passes. `docs/analytics/**` study prose and the frozen legacy corpus stay in every scan: they are evidence, not operations. **(2) genuine code-hash drift** from the remediation itself, which a pin is supposed to follow. All 13 producers with a `--check` mode now pass, run twice consecutively, and `.github/workflows/evidence.yml` carries no drift allowlist.
+**Reviewed and approved 2026-11-24.** The nine artifacts were put through an
+independent evidence review ([record](2026-11-24-ledger-repin-review.md)): every
+changed value traces to the disclosed scan-surface narrowing, a source or test
+file re-hashed by that remediation, or a sibling-ledger re-pin, and no
+coefficient, statistic, sample size, cutoff or disposition changed. The review
+took three passes — the first two returned reject for reasons later refuted in
+the record, and the third approved — and all three are documented because a
+rejected pass that was refuted is itself evidence.
+
+Afterwards the `scientific` attestation on each of the nine editions was
+re-recorded at the review date with the record as its `evidencePath`; signatory
+`name`, `statement` and `date` on the `source` and `publication` attestations
+are unchanged, because those are human signatures about the edition text and the
+remediation did not touch it.
 
 **RF09 complete (2026-11-14):** [area-type-month history](2026-11-14-rf09-area-type-month-history.md) — `rolling3` periods plus one verified monthly-history payload per property type in a **new complete v2 pack** (schema `2.1.0`, method `observed-aggregates-2`, generation `2c30e2aa836c…`); cells are positional arrays aligned to a per-type month grid so they lazy-load by property. Activity thresholds are calibrated in the report; **no directional label ships** (neutral numeric only) pending owner approval. RF04's generation is untouched.
 
-**RF05 in progress (2026-11-13):** [current periods](2026-11-13-rf05-current-periods.md) — v2 pack published beside v1 (generation `6cd4510f…`); dashboard overview, trends, explore and Compare Areas render verified windows via the shared panel, the explorer's list/map/table and the Compare Areas rankings read the pack for a concrete published period (legacy eras kept as a labelled group, limited-display scopes unranked). D03's bare-URL defaults and the migration notice ship behind `PUBLIC_OBSERVED_RELEASE`; only the switch flip remains, and it is gated on RF06.
-**RF05 complete (2026-11-13):** [current periods](2026-11-13-rf05-current-periods.md) — `PUBLIC_OBSERVED_RELEASE=v2` is the shipped build; `/explore` opens on the published window with the updated-default notice, Compare Areas keeps its ranked `recent` default until the `all` scope is cleared to publish (data-driven, §10.2), and the address-bar serialiser pins concrete windows (§10.3).
+**RF05 complete (2026-11-13):** [current periods](2026-11-13-rf05-current-periods.md) — `PUBLIC_OBSERVED_RELEASE=v2` is the shipped build (`app/package.json:14` sets it for `build`); `/explore` opens on the published window with the updated-default notice, Compare Areas keeps its ranked `recent` default until the `all` scope is cleared to publish (data-driven, §10.2), and the address-bar serialiser pins concrete windows (§10.3). The earlier "in progress" entry, which said only the switch flip remained, is superseded — the flip shipped — and is preserved in [History](#history).
 **RF06 complete for the fieldnote scope (2026-11-13):** [area selections](2026-11-13-rf06-fieldnotes.md) — `/areas/<slug>` keeps the whole identity union (historical + current), honours `?property=`/`?period=` for the sections it publishes, states its fixed build-time scope without JavaScript, and hands the explorer one return-link allow-list that accepts concrete published periods. Tools and archived model contracts unchanged.
 **RF11 complete (2026-11-13):** [catalog report](2026-11-13-rf11-catalog-report.md) — catalog regenerated from the current platinum build (125 datasets, 2333 edges, `unified_dataset` 1,236,310 rows), audit reconciled with the S0 finding preserved in history, asset-disposition table recorded for RF12; no boundary or reference asset replaced and `affordability_metrics.json.gz` retained as unused pending approval.
 **RF08 continuation brief (2026-11-14):** [the 13 studies that are still historical](2026-11-14-rf08-continuation-brief.md) — the register rows, the extra model/causal gate each one needs, the gate sequence proven by RS01/RS02, the registry mechanics, the traps that cost time twice, and a per-study definition of done. Written so a fresh agent can take one study without re-deriving the process.
@@ -44,7 +66,7 @@
 
 **RF00 baseline preserved (2026-11-12):** [frozen historical sources and pinned assets](2026-11-12-rf00-baseline.md), verifier `scripts/tools/verify_reporting_baseline.py`, regression fixture `app/tests/fixtures/rf00-observed-contract.json`. Decisions D01–D12 remain open in the [decision ledger](../plans/2026-11-12-reporting-refresh-decisions.md).
 
-**Proposed follow-on program (2026-11-12, Draft):** [reporting refresh implementation map](../plans/2026-11-12-reporting-refresh-implementation-map.md), [slice handoffs](../plans/2026-11-12-reporting-refresh-handoffs.md) and [research register](../plans/2026-11-12-reporting-refresh-research-register.md), based on the [reporting audit](2026-reporting-refresh-audit.md). RF00–RF12 are not started; these planning documents do not change the delivered S0–S10 evidence or authorize a source/model refresh. Start with RF00 preservation/contract decisions, then RF01/RF02 correctness work.
+**Proposed follow-on program (2026-11-12, Draft):** [reporting refresh implementation map](../plans/2026-11-12-reporting-refresh-implementation-map.md), [slice handoffs](../plans/2026-11-12-reporting-refresh-handoffs.md) and [research register](../plans/2026-11-12-reporting-refresh-research-register.md), based on the [reporting audit](2026-reporting-refresh-audit.md). These planning documents do not change the delivered S0–S10 evidence or authorize a source/model refresh. Start with RF00 preservation/contract decisions, then RF01/RF02 correctness work. **Superseded:** this entry originally said "RF00–RF12 are not started"; that was true when written and is no longer — see [History](#history) for the original wording and the status entries above for what has since shipped.
 
 Status of the redesign defined in [`assets/svg/implementation-plan.md`](../../assets/svg/implementation-plan.md). Read this first; the plan is the contract, this file is the ledger.
 
@@ -76,7 +98,7 @@ Branch: `main` — slices S0–S6 are merged (PR #2, merge commit `8ab248a`); S7
 - `/research/tools` — four tools with four output contracts: an illustrative financing scenario with a named observed 2025 reference, stored lease bands with signed statistics and the endpoint policy surfaced, MRT/CBD model inspection with the total withheld, and spatial label inspection only. `/dashboard/trends` is the compatibility wrapper.
 - `/research/map` — observed transaction fill plus nine archived model layers for inspection only; per-layer source/status, uniform-placeholder and historical-forecast warnings, and no analytical polygon fill. `/dashboard/map` is the compatibility wrapper.
 - `/analytics` — searchable studies library (text/topic/audience), one H1 per article, an evidence panel, and the lease study's chart withheld pending unit repair.
-- `/catalog` — snapshot-vintage labels, the catalog-vs-inspected row discrepancy shown with both counts, and declared-requiredness separated from observed nullness.
+- `/catalog` — snapshot-vintage labels, the catalog-vs-inspected row discrepancy shown with both counts **when they differ** (rendered conditionally from `showDiscrepancy`, `app/src/pages/catalog/[layer]/[...dataset].astro:35`), and declared-requiredness separated from observed nullness.
 - `/dashboard` — scoped 2025 medians from one asset, capability strip.
 - Shell — Fieldnotes tokens, skip link, one `aria-current` per route, mobile drawer with focus trap and `inert`.
 
@@ -233,3 +255,21 @@ See [`assets/svg/implementation-plan.md` §6](../../assets/svg/implementation-pl
 2. Inspect `git log` and the working tree first: `git status`, `git diff --stat`, and the relevant files. Do not assume the slice status above matches the branch tip.
 3. Keep slice ownership exclusive; the coordinator owns shared files (`Layout.astro`, nav, `package.json`, route wrappers, `types/*`, `constants/data-urls.ts`).
 4. Verify with the commands above and record the exact counts; never report a fail-closed gate as "passed".
+
+## History
+
+Superseded status statements, preserved verbatim with the date they were written.
+Per the status-claim rule at the top, statements are moved here rather than
+rewritten in place, so the record of what was believed at the time survives.
+
+**RF05 in progress (2026-11-13):** [current periods](2026-11-13-rf05-current-periods.md) — v2 pack published beside v1 (generation `6cd4510f…`); dashboard overview, trends, explore and Compare Areas render verified windows via the shared panel, the explorer's list/map/table and the Compare Areas rankings read the pack for a concrete published period (legacy eras kept as a labelled group, limited-display scopes unranked). D03's bare-URL defaults and the migration notice ship behind `PUBLIC_OBSERVED_RELEASE`; only the switch flip remains, and it is gated on RF06.
+_Superseded 2026-11-13 by the RF05 complete entry: the switch flip shipped — `app/package.json:14` sets `PUBLIC_OBSERVED_RELEASE=v2` for `build`._
+
+**Proposed follow-on program (2026-11-12, Draft):** … RF00–RF12 are not started; these planning documents do not change the delivered S0–S10 evidence or authorize a source/model refresh.
+_Superseded once RF00–RF12 stopped being uniformly unstarted. Corrected in place to point here rather than deleted. Current status is the dated entries above and `## Slice status`._
+
+**`/catalog` (original wording):** snapshot-vintage labels, the catalog-vs-inspected row discrepancy shown with both counts, and declared-requiredness separated from observed nullness.
+_Superseded: the discrepancy block renders only when the counts differ (`showDiscrepancy`, `app/src/pages/catalog/[layer]/[...dataset].astro:35`), not unconditionally._
+
+**`/areas/[slug]` header comment (original wording):** "There is no client island: the numbers, the availability states and the withheld-baseline notice are all in the HTML."
+_Superseded: the page mounts two client islands — `AreaSectionPanel` (`client:load`, `app/src/pages/areas/[slug].astro:213`) and `AreaHistoryPanel` (`client:idle`, `:393`). The build-time HTML claim remains true for the published numbers; only the "no client island" clause was wrong._

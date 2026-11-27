@@ -1,0 +1,332 @@
+$ ASTRO_PAGES=true bun run build
+$ PUBLIC_OBSERVED_RELEASE=v2 bun run build:base
+$ bun run validate-data && bun run sync-catalog && astro build
+$ bun scripts/validate-data.mjs
+Validated 19 app data assets
+Verified dashboard release 0e1013ee485f (7 assets)
+Verified v2 observed pack 2c30e2aa836c (cutoff 2026-10, 10 periods, 1840 observations)
+Verified v2 monthly history (4 property payloads, 47104 month cells)
+$ bun scripts/sync-catalog.mjs
+[sync-catalog] wrote /home/howt/work/egg-n-bacon-housing/app/public/data/catalog.jsonl.gz (30414 bytes)
+12:23:26 [content] Syncing content
+12:23:26 [content] Astro config changed
+12:23:26 [content] Clearing content store
+12:23:28 [content] Synced content
+12:23:28 [types] Generated 1.98s
+12:23:28 [build] output: "static"
+12:23:28 [build] mode: "static"
+12:23:28 [build] directory: /home/howt/work/egg-n-bacon-housing/app/dist/
+12:23:28 [build] Collecting build info...
+12:23:28 [build] ✓ Completed in 2.04s.
+12:23:28 [build] Building static entrypoints...
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+12:23:30 [vite] ✓ built in 1.43s
+12:23:30 [build] ✓ Completed in 1.46s.
+
+ building client (vite)
+12:23:30 [vite] transforming...
+12:23:32 [vite] ✓ 2648 modules transformed.
+12:23:33 [vite] rendering chunks...
+12:23:33 [vite] computing gzip size...
+12:23:33 [vite] dist/_astro/segments.Dgihpmma.css                 15.04 kB │ gzip:   6.38 kB
+12:23:33 [vite] dist/_astro/index.BejJFJvA.js                      0.06 kB │ gzip:   0.08 kB
+12:23:33 [vite] dist/_astro/catalog.Ixj1r9pk.js                    0.31 kB │ gzip:   0.26 kB
+12:23:33 [vite] dist/_astro/clsx.B-dksMZM.js                       0.37 kB │ gzip:   0.24 kB
+12:23:33 [vite] dist/_astro/useObservedPack.CQc9DU62.js            0.38 kB │ gzip:   0.30 kB
+12:23:33 [vite] dist/_astro/data-urls.BKfRIq2q.js                  0.46 kB │ gzip:   0.25 kB
+12:23:33 [vite] dist/_astro/jsx-runtime.D_zvdyIk.js                0.73 kB │ gzip:   0.46 kB
+12:23:33 [vite] dist/_astro/gzip.B6E5aB7i.js                       0.77 kB │ gzip:   0.45 kB
+12:23:33 [vite] dist/_astro/area-links.CiiuTilr.js                 1.23 kB │ gzip:   0.64 kB
+12:23:33 [vite] dist/_astro/DarkModeToggle.BnO5FMeT.js             1.32 kB │ gzip:   0.67 kB
+12:23:33 [vite] dist/_astro/client.7QWwXuiz.js                     1.77 kB │ gzip:   0.90 kB
+12:23:33 [vite] dist/_astro/useGzipJson.Hb5UfPaT.js                1.84 kB │ gzip:   0.90 kB
+12:23:33 [vite] dist/_astro/observed-data.DbcLWQpX.js              2.04 kB │ gzip:   0.93 kB
+12:23:33 [vite] dist/_astro/page.sJrt8mpm.js                       2.25 kB │ gzip:   1.02 kB
+12:23:33 [vite] dist/_astro/PublishedWindowsPanel.B4GzF__Q.js      3.03 kB │ gzip:   1.17 kB
+12:23:33 [vite] dist/_astro/index.CrJHwP2r.js                      3.89 kB │ gzip:   1.52 kB
+12:23:33 [vite] dist/_astro/DatasetTable.aero8Bhn.js               4.20 kB │ gzip:   1.62 kB
+12:23:33 [vite] dist/_astro/useModalDialog.k3K9R-W4.js             5.31 kB │ gzip:   2.03 kB
+12:23:33 [vite] dist/_astro/observed-periods.Dkge86kL.js           5.36 kB │ gzip:   1.99 kB
+12:23:33 [vite] dist/_astro/StudiesLibrary.D8iysLQK.js             5.62 kB │ gzip:   1.96 kB
+12:23:33 [vite] dist/_astro/AreaHistoryPanel.B0FxLzix.js           6.02 kB │ gzip:   2.11 kB
+12:23:33 [vite] dist/_astro/SchemaTable.Du6i5UBy.js                6.72 kB │ gzip:   2.25 kB
+12:23:33 [vite] dist/_astro/index.DQz7sTSm.js                      7.21 kB │ gzip:   2.48 kB
+12:23:33 [vite] dist/_astro/InlineChartRenderer.DwrqjptN.js        7.46 kB │ gzip:   2.86 kB
+12:23:33 [vite] dist/_astro/index.DwQS_Y10.js                      8.37 kB │ gzip:   3.28 kB
+12:23:33 [vite] dist/_astro/AreaSectionPanel.Be7g0eWV.js          11.70 kB │ gzip:   3.14 kB
+12:23:33 [vite] dist/_astro/with-selector.Bi-MV_mn.js             11.79 kB │ gzip:   5.00 kB
+12:23:33 [vite] dist/_astro/observed-pack-loader.eTWeD8uG.js      12.47 kB │ gzip:   4.06 kB
+12:23:33 [vite] dist/_astro/TrendsWorkspace.DeAFdVLS.js           19.33 kB │ gzip:   6.68 kB
+12:23:33 [vite] dist/_astro/PriceMap.CGlHjKK4.js                  34.64 kB │ gzip:  10.35 kB
+12:23:33 [vite] dist/_astro/MarketOverviewDashboard.BeBI22s6.js   35.35 kB │ gzip:  10.38 kB
+12:23:33 [vite] dist/_astro/LeaderboardDashboard.CKxFh6ph.js      42.38 kB │ gzip:  12.53 kB
+12:23:33 [vite] dist/_astro/index.C5jtOMUa.js                     52.88 kB │ gzip:  14.23 kB
+12:23:33 [vite] dist/_astro/ToolsWorkspace.PDzPS1OT.js            53.58 kB │ gzip:  14.23 kB
+12:23:33 [vite] dist/_astro/ExplorerWorkspace.D6yRSVbK.js         55.08 kB │ gzip:  16.36 kB
+12:23:33 [vite] dist/_astro/SegmentsDashboard.TqUt7H4M.js         61.45 kB │ gzip:  15.67 kB
+12:23:33 [vite] dist/_astro/TileLayer.kiROgLmj.js                154.15 kB │ gzip:  45.03 kB
+12:23:33 [vite] dist/_astro/DagGraph.DXWRLC8r.js                 169.35 kB │ gzip:  54.72 kB
+12:23:33 [vite] dist/_astro/client.BjYQ3jnA.js                   181.00 kB │ gzip:  56.87 kB
+12:23:33 [vite] dist/_astro/ClientChart.BTBIKb20.js              359.53 kB │ gzip: 105.43 kB
+12:23:33 [vite] ✓ built in 3.23s
+
+ generating static routes
+12:23:33 ▶ src/pages/analytics/archive/[year]/[edition]/[slug].astro
+12:23:33   ├─ /analytics/archive/2026/amenity-impact-2026-11-16/amenity-impact/index.html (+15ms)
+12:23:33   ├─ /analytics/archive/2026/facility-premiums-2026-11-17/facility-premiums/index.html (+4ms)
+12:23:33   ├─ /analytics/archive/2026/data-sources-2026-11-14/data-sources/index.html (+3ms)
+12:23:33   ├─ /analytics/archive/2026/findings-2026-11-20/findings/index.html (+3ms)
+12:23:33   ├─ /analytics/archive/2026/causal-inference-overview-2026-11-20/causal-inference-overview/index.html (+3ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/amenity-impact/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/lease-decay-2026-11-20/lease-decay/index.html (+3ms)
+12:23:33   ├─ /analytics/archive/2026/macro-sensitivity-2026-11-18/macro-sensitivity/index.html (+3ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/causal-inference-overview/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/data-sources/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/facility-premiums/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/findings/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/lease-decay/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/macro-sensitivity/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/market-segments/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/mrt-impact/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/price-forecasts/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/rental-yields/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/school-quality/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/spatial-autocorrelation/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/spatial-hotspots/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/legacy-2026-11-12/temporal-evolution/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/mrt-impact-2026-11-20/mrt-impact/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/market-segments-2026-11-20/market-segments/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/rental-yields-2026-11-14/rental-yields/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/price-forecasts-2026-11-20/price-forecasts/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/school-quality-2026-11-20/school-quality/index.html (+2ms)
+12:23:33   ├─ /analytics/archive/2026/spatial-autocorrelation-2026-11-20/spatial-autocorrelation/index.html (+3ms)
+12:23:33   ├─ /analytics/archive/2026/spatial-hotspots-2026-11-20/spatial-hotspots/index.html (+2ms)
+12:23:33   └─ /analytics/archive/2026/temporal-evolution-2026-11-15/temporal-evolution/index.html (+2ms)
+12:23:33 ▶ src/pages/analytics/personas/[persona].astro
+12:23:33   ├─ /analytics/personas/first-time-buyer/index.html (+3ms)
+12:23:33   ├─ /analytics/personas/investor/index.html (+2ms)
+12:23:33   └─ /analytics/personas/upgrader/index.html (+2ms)
+12:23:33 ▶ src/pages/analytics/[slug].astro
+12:23:33   ├─ /analytics/amenity-impact/index.html (+9ms)
+12:23:33   ├─ /analytics/causal-inference-overview/index.html (+2ms)
+12:23:33   ├─ /analytics/data-sources/index.html (+2ms)
+12:23:33   ├─ /analytics/facility-premiums/index.html (+2ms)
+12:23:33   ├─ /analytics/lease-decay/index.html (+2ms)
+12:23:33   ├─ /analytics/market-segments/index.html (+2ms)
+12:23:33   ├─ /analytics/findings/index.html (+2ms)
+12:23:33   ├─ /analytics/macro-sensitivity/index.html (+2ms)
+12:23:33   ├─ /analytics/mrt-impact/index.html (+2ms)
+12:23:33   ├─ /analytics/price-forecasts/index.html (+1ms)
+12:23:33   ├─ /analytics/school-quality/index.html (+1ms)
+12:23:33   ├─ /analytics/spatial-autocorrelation/index.html (+1ms)
+12:23:33   ├─ /analytics/rental-yields/index.html (+1ms)
+12:23:33   ├─ /analytics/spatial-hotspots/index.html (+1ms)
+12:23:33   └─ /analytics/temporal-evolution/index.html (+1ms)
+12:23:33 ▶ src/pages/analytics/index.astro
+12:23:33   └─ /analytics/index.html (+7ms)
+12:23:33 ▶ src/pages/areas/[slug].astro
+12:23:33   ├─ /areas/ang-mo-kio/index.html (+5ms)
+12:23:33   ├─ /areas/bedok/index.html (+3ms)
+12:23:33   ├─ /areas/bishan/index.html (+2ms)
+12:23:33   ├─ /areas/bukit-batok/index.html (+2ms)
+12:23:33   ├─ /areas/bukit-merah/index.html (+2ms)
+12:23:33   ├─ /areas/bukit-panjang/index.html (+2ms)
+12:23:33   ├─ /areas/bukit-timah/index.html (+2ms)
+12:23:33   ├─ /areas/central-water-catchment/index.html (+2ms)
+12:23:33   ├─ /areas/changi/index.html (+2ms)
+12:23:33   ├─ /areas/choa-chu-kang/index.html (+2ms)
+12:23:33   ├─ /areas/clementi/index.html (+2ms)
+12:23:33   ├─ /areas/downtown-core/index.html (+2ms)
+12:23:33   ├─ /areas/geylang/index.html (+2ms)
+12:23:33   ├─ /areas/hougang/index.html (+2ms)
+12:23:33   ├─ /areas/jurong-east/index.html (+7ms)
+12:23:33   ├─ /areas/jurong-west/index.html (+3ms)
+12:23:33   ├─ /areas/kallang/index.html (+2ms)
+12:23:33   ├─ /areas/lim-chu-kang/index.html (+2ms)
+12:23:33   ├─ /areas/mandai/index.html (+2ms)
+12:23:33   ├─ /areas/marina-south/index.html (+2ms)
+12:23:33   ├─ /areas/marine-parade/index.html (+2ms)
+12:23:33   ├─ /areas/museum/index.html (+2ms)
+12:23:33   ├─ /areas/newton/index.html (+2ms)
+12:23:33   ├─ /areas/novena/index.html (+2ms)
+12:23:33   ├─ /areas/orchard/index.html (+2ms)
+12:23:33   ├─ /areas/outram/index.html (+2ms)
+12:23:33   ├─ /areas/pasir-ris/index.html (+2ms)
+12:23:33   ├─ /areas/punggol/index.html (+2ms)
+12:23:33   ├─ /areas/queenstown/index.html (+3ms)
+12:23:33   ├─ /areas/river-valley/index.html (+2ms)
+12:23:33   ├─ /areas/rochor/index.html (+2ms)
+12:23:33   ├─ /areas/seletar/index.html (+2ms)
+12:23:33   ├─ /areas/sembawang/index.html (+2ms)
+12:23:33   ├─ /areas/sengkang/index.html (+2ms)
+12:23:33   ├─ /areas/serangoon/index.html (+2ms)
+12:23:33   ├─ /areas/singapore-river/index.html (+2ms)
+12:23:33   ├─ /areas/southern-islands/index.html (+2ms)
+12:23:33   ├─ /areas/sungei-kadut/index.html (+2ms)
+12:23:33   ├─ /areas/tampines/index.html (+2ms)
+12:23:33   ├─ /areas/tanglin/index.html (+2ms)
+12:23:33   ├─ /areas/tengah/index.html (+2ms)
+12:23:33   ├─ /areas/toa-payoh/index.html (+2ms)
+12:23:33   ├─ /areas/woodlands/index.html (+2ms)
+12:23:33   └─ /areas/yishun/index.html (+2ms)
+12:23:33 ▶ src/pages/catalog/[layer].astro
+12:23:33   ├─ /catalog/bronze/index.html (+26ms)
+12:23:33   ├─ /catalog/silver/index.html (+4ms)
+12:23:33   ├─ /catalog/gold/index.html (+3ms)
+12:23:33   └─ /catalog/platinum/index.html (+2ms)
+12:23:33 ▶ src/pages/catalog/[layer]/[...dataset].astro
+12:23:33   ├─ /catalog/platinum/appreciation_hotspots/index.html (+5ms)
+12:23:33   ├─ /catalog/bronze/appreciation_hotspots_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/gold/block_profile/index.html (+4ms)
+12:23:33   ├─ /catalog/bronze/block_profile_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/cache_manager/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/cleaned_condo_transactions/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/cleaned_hdb_transactions/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/condo_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/condo_validated/index.html (+6ms)
+12:23:33   ├─ /catalog/bronze/coordinate_coverage_policy/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/data_path/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/external/BusStops/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/CHASClinics/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/ChildCareServices/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/CommunityClubs/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/HawkerCentresGEOJSON/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/NParksParksandNatureReserves/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/PreSchoolsLocation/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/SportSGFacilities/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/SupermarketsGEOJSON/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/bank_rates/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/cpi/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/gdp/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/hdb_rpi/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/sora_rates/index.html (+10ms)
+12:23:33   ├─ /catalog/bronze/external/unemployment/index.html (+4ms)
+12:23:33   ├─ /catalog/bronze/external/ura_ppi/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/external/wage_growth/index.html (+3ms)
+12:23:33   ├─ /catalog/silver/geocoded_green_mark_buildings/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/geocoded_properties/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/geocoded_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/geocoded_validated/index.html (+8ms)
+12:23:33   ├─ /catalog/bronze/hdb_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/silver/hdb_validated/index.html (+6ms)
+12:23:33   ├─ /catalog/bronze/large_table_validation_policy/index.html (+2ms)
+12:23:33   ├─ /catalog/gold/location_dim/index.html (+10ms)
+12:23:33   ├─ /catalog/bronze/location_dim_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/manual_dir/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_appreciation_hotspots/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_appreciation_hotspots_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_block_profile/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_block_profile_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_condo_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/materialize_condo_validated/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/materialize_geocoded_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/silver/materialize_geocoded_validated/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/materialize_hdb_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/silver/materialize_hdb_validated/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_location_dim/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_location_dim_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_pa_monthly_metrics/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_pa_monthly_metrics_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_planning_area_360/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_planning_area_360_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_rental_yield/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_rental_yield_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_town_360/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_town_360_quarantine/index.html (+9ms)
+12:23:33   ├─ /catalog/bronze/materialize_transactions_enriched/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/materialize_transactions_enriched_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/materialize_unified_dataset/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/materialize_unified_dataset_quarantine/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/max_transaction_age_days/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/min_coordinate_coverage_condo/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/min_coordinate_coverage_hdb/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/min_transactions_for_hotspot/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/mrt_reference/index.html (+2ms)
+12:23:33   ├─ /catalog/platinum/pa_monthly_metrics/index.html (+4ms)
+12:23:33   ├─ /catalog/bronze/pa_monthly_metrics_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/pipeline_as_of_date/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/pipeline_run_id/index.html (+1ms)
+12:23:33   ├─ /catalog/gold/planning_area_360/index.html (+6ms)
+12:23:33   ├─ /catalog/bronze/planning_area_360_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_bus_stops/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_chas_clinics/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_childcare/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_community_clubs/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_condo_transactions/index.html (+6ms)
+12:23:33   ├─ /catalog/bronze/raw_dwelling_units_by_town/index.html (+4ms)
+12:23:33   ├─ /catalog/bronze/raw_green_mark_buildings/index.html (+7ms)
+12:23:33   ├─ /catalog/bronze/raw_green_mark_buildings_geocoded/index.html (+7ms)
+12:23:33   ├─ /catalog/bronze/raw_hawker_centres/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_hdb_property_info/index.html (+6ms)
+12:23:33   ├─ /catalog/bronze/raw_hdb_rental/index.html (+4ms)
+12:23:33   ├─ /catalog/bronze/raw_hdb_resale/index.html (+5ms)
+12:23:33   ├─ /catalog/bronze/raw_hdb_resale_transactions/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_hdb_resident_population/index.html (+11ms)
+12:23:33   ├─ /catalog/bronze/raw_income_by_planning_area/index.html (+6ms)
+12:23:33   ├─ /catalog/bronze/raw_kindergartens/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_macro_data/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/raw_median_annual_value/index.html (+5ms)
+12:23:33   ├─ /catalog/bronze/raw_mp25_malls/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/raw_mrt_stations/index.html (+3ms)
+12:23:33   ├─ /catalog/bronze/raw_parks/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_rental_index/index.html (+4ms)
+12:23:33   ├─ /catalog/bronze/raw_school_directory/index.html (+9ms)
+12:23:33   ├─ /catalog/bronze/raw_shopping_malls/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_sports_facilities/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_supermarkets/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/raw_wiki_shopping_mall/index.html (+1ms)
+12:23:33   ├─ /catalog/bronze/raw_wiki_shopping_mall_geocoded/index.html (+1ms)
+12:23:33   ├─ /catalog/gold/rental_yield/index.html (+4ms)
+12:23:33   ├─ /catalog/bronze/rental_yield_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/sample_validation_size/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/school_reference/index.html (+2ms)
+12:23:33   ├─ /catalog/bronze/spatial_reference/index.html (+2ms)
+12:23:33   ├─ /catalog/gold/town_360/index.html (+6ms)
+12:23:33   ├─ /catalog/bronze/town_360_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/gold/transactions_enriched/index.html (+19ms)
+12:23:33   ├─ /catalog/bronze/transactions_enriched_quarantine/index.html (+2ms)
+12:23:33   ├─ /catalog/platinum/unified_dataset/index.html (+28ms)
+12:23:34   ├─ /catalog/bronze/unified_dataset_quarantine/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/ura_api_access_key/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_appreciation_hotspots/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_block_profile/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_condo/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_geocoded/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_hdb/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_location_dim/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_pa_monthly_metrics/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_planning_area_360/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_rental_yield/index.html (+2ms)
+12:23:34   ├─ /catalog/bronze/validate_town_360/index.html (+1ms)
+12:23:34   ├─ /catalog/bronze/validate_transactions_enriched/index.html (+2ms)
+12:23:34   └─ /catalog/bronze/validate_unified_dataset/index.html (+2ms)
+12:23:34 ▶ src/pages/catalog/index.astro
+12:23:34   └─ /catalog/index.html (+56ms)
+12:23:34 ▶ src/pages/dashboard/leaderboard.astro
+12:23:34   └─ /dashboard/leaderboard/index.html (+17ms)
+12:23:34 ▶ src/pages/dashboard/map.astro
+12:23:34   └─ /dashboard/map/index.html (+3ms)
+12:23:34 ▶ src/pages/dashboard/segments.astro
+12:23:34   └─ /dashboard/segments/index.html (+2ms)
+12:23:34 ▶ src/pages/dashboard/trends.astro
+12:23:34   └─ /dashboard/trends/index.html (+6ms)
+12:23:34 ▶ src/pages/dashboard/index.astro
+12:23:34   └─ /dashboard/index.html (+25ms)
+12:23:34 ▶ src/pages/explore.astro
+12:23:34   └─ /explore/index.html (+10ms)
+12:23:34 ▶ src/pages/research/map.astro
+12:23:34   └─ /research/map/index.html (+2ms)
+12:23:34 ▶ src/pages/research/segments.astro
+12:23:34   └─ /research/segments/index.html (+1ms)
+12:23:34 ▶ src/pages/research/tools.astro
+12:23:34   └─ /research/tools/index.html (+5ms)
+12:23:34 ▶ src/pages/research/trends.astro
+12:23:34   └─ /research/trends/index.html (+10ms)
+12:23:34 ▶ src/pages/index.astro
+12:23:34   └─ /index.html (+1ms)
+12:23:34 ✓ Completed in 1.08s.
+
+12:23:34 [build] 234 page(s) built in 7.84s
+12:23:34 [build] Complete!

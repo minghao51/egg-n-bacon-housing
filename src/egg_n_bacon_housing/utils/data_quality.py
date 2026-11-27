@@ -163,7 +163,7 @@ def _log_quality_summary(snapshot: QualitySnapshot, anomalies: list[str]) -> Non
 class DataQualityCollector:
     """Collects and analyzes data quality metrics."""
 
-    def __init__(self, db_path: Path):
+    def __init__(self, db_path: Path) -> None:
         """Initialize collector with SQLite database."""
         self.db_path = db_path
         self._init_db()

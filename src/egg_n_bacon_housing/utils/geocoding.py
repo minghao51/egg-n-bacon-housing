@@ -16,13 +16,20 @@ import time
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import cast
 
 import pandas as pd
 
 from egg_n_bacon_housing.config import Settings
-from egg_n_bacon_housing.utils.cache import CacheManager
+from egg_n_bacon_housing.utils.cache import _CACHE_MISS, CacheManager
 
 logger = logging.getLogger(__name__)
+
+# OneMap result columns that identify *what was matched*. A cached frame may
+# carry coordinates on their own (a legacy coordinate-only record, or a
+# hand-built entry); such an entry has no metadata to verify against and is
+# read as a miss rather than upgraded into a row with a made-up matched address.
+_ONEMAP_METADATA_COLUMNS = ("SEARCHVAL", "ADDRESS", "BLK_NO", "ROAD_NAME", "BUILDING")
 
 
 def normalize_name_tokens(value: str) -> list[str]:
@@ -186,13 +193,22 @@ class _RateLimiter:
         return self._interval
 
     def wait(self) -> None:
-        """Block until the caller's slot (no-op when pacing is disabled)."""
+        """Block until the caller's slot (no-op when pacing is disabled).
+
+        The slot is *reserved* under the lock and ``_next_slot`` advances from
+        that reservation, so a waiter that arrives while earlier reservations
+        are still pending queues behind them instead of overwriting them. The
+        previous form advanced ``_next_slot`` from the arriving waiter's own
+        clock reading, which discarded outstanding reservations and released
+        concurrent waiters in a burst at the first slot.
+        """
         if self._interval <= 0:
             return
         with self._lock:
             now = time.monotonic()
-            delay = max(0.0, self._next_slot - now)
-            self._next_slot = now + self._interval
+            slot = max(now, self._next_slot)
+            self._next_slot = slot + self._interval
+            delay = slot - now
         if delay:
             time.sleep(delay)
 
@@ -229,7 +245,7 @@ class Geocoder(ABC):
             DataFrame with lat, lon columns added.
         """
         df = df.copy()
-        results = self.geocode(df[address_column])
+        results = self.geocode(cast(pd.Series, df[address_column]))
         df["lat"] = results["lat"].values
         df["lon"] = results["lon"].values
         return df
@@ -263,32 +279,85 @@ class OneMapGeocoder(Geocoder):
         self._auth_lock = threading.Lock()
         self._cache_manager = cache_manager
 
-    def query_geocode_cache(self, address: str) -> tuple[float, float] | None:
+    @staticmethod
+    def _cache_id(address: str) -> str:
+        """Cache identifier for one query.
+
+        Must equal the identifier ``adapters.onemap.fetch_data_cached`` writes:
+        the geocoder's warm path reads the *same* raw OneMap result frame the
+        cold path stores.
+        """
+        return f"onemap_search:{address}"
+
+    def query_geocode_cache(self, address: str) -> dict | None:
         """Read-only lookup of the OneMap cache for one address.
 
-        Returns ``(lat, lon)`` if a cached result exists, else ``None``. Makes
-        no API call. Keeps the OneMap cache-key format inside this module
-        instead of leaking it to callers.
-        """
-        from egg_n_bacon_housing.utils.cache import _CACHE_MISS
+        Returns the full geocode row a live response would have produced
+        (``input``/``lat``/``lon``/``matched_name``/``postal_code``/``address``),
+        reconstructed from the cached OneMap result frame through the same
+        ``_row_from_result`` conversion the API path uses, or ``None`` for a
+        miss. Makes no API call. Keeps the OneMap cache-key format inside this
+        module instead of leaking it to callers.
 
+        The row therefore carries OneMap's *matched* name/address, never the
+        query, so condo project plausibility (``plausible_project_match``)
+        judges warm and cold results by identical inputs.
+
+        A miss is returned for an absent/expired entry, a non-frame or empty
+        value, a frame without parseable coordinates, and — deliberately — a
+        frame that carries coordinates but no OneMap identity metadata. A
+        coordinate-only entry cannot be upgraded into a trustworthy row
+        (fabricating the query as the matched address is what let the warm path
+        accept results the cold path rejects), so it is dropped and re-fetched
+        instead: one extra call, and the entry comes back with full metadata.
+        """
         if self._cache_manager is None:
             raise RuntimeError("OneMapGeocoder requires an injected CacheManager")
         manager = self._cache_manager
-        cached = manager.get(f"onemap_search:{address}", duration_hours=self.cache_duration_hours)
-        if cached is _CACHE_MISS or not isinstance(cached, pd.DataFrame) or cached.empty:
+        cached = manager.get(self._cache_id(address), duration_hours=self.cache_duration_hours)
+        if cached is _CACHE_MISS:
             return None
-        return self._coords_from_row(cached.iloc[0])
+        if not isinstance(cached, pd.DataFrame):
+            self._drop_unusable_entry(address, "not a OneMap result frame")
+            return None
+        if cached.empty:
+            # A cached "no match" (found: 0) is a legitimate negative result.
+            return None
+        if self._coords_from_row(cached.iloc[0]) is None:
+            return None
+        if not any(column in cached.columns for column in _ONEMAP_METADATA_COLUMNS):
+            self._drop_unusable_entry(address, "coordinates without OneMap metadata")
+            return None
+        return self._row_from_result(address, cached)
+
+    def _drop_unusable_entry(self, address: str, reason: str) -> None:
+        """Remove a cache entry this geocoder can never accept as a hit.
+
+        A wrong-shaped or coordinate-only entry cannot be converted into a
+        verifiable row, and the adapter's own cache read would keep handing it
+        back, so no future run would ever refresh it. Dropping it makes the
+        miss real: the next fetch repopulates the entry with full metadata.
+        """
+        logger.debug("onemap_cache_entry_unusable (%s) dropped: %s", reason, address[:100])
+        if self._cache_manager is not None:
+            self._cache_manager.clear(self._cache_id(address))
 
     @staticmethod
     def _coords_from_row(row: pd.Series) -> tuple[float, float] | None:
         lat = pd.to_numeric(row.get("LATITUDE") or row.get("Y"), errors="coerce")
         lon = pd.to_numeric(row.get("LONGITUDE") or row.get("X"), errors="coerce")
-        if pd.isna(lat) or pd.isna(lon):
+        if bool(pd.isna(lat)) or bool(pd.isna(lon)):
             return None
-        return (float(lat), float(lon))
+        return (cast(float, lat), cast(float, lon))
 
     def _row_from_result(self, addr: str, df: pd.DataFrame | None) -> dict:
+        """Convert one OneMap result frame into a geocode row.
+
+        THE single conversion for both paths: a live response frame and a cached
+        response frame go through this method, so a warm run reproduces exactly
+        the row a cold run produced (same coordinates, same matched name, same
+        matched address) instead of stitching coordinates onto an empty row.
+        """
         if df is not None and not df.empty:
             first = df.iloc[0]
             coords = self._coords_from_row(first)
@@ -305,13 +374,21 @@ class OneMapGeocoder(Geocoder):
 
     @staticmethod
     def _empty_row(addr: str) -> dict:
+        """The row for a query with no usable result.
+
+        The query is echoed back in ``input`` only. ``matched_name``/``address``
+        stay null on purpose: filling ``address`` with the query makes
+        ``plausible_project_match`` compare the query with itself and accept
+        coordinates nothing verified. Null metadata fails *closed* — callers
+        reject the row and fall back to street-only geocoding.
+        """
         return {
             "input": addr,
             "lat": None,
             "lon": None,
             "matched_name": None,
             "postal_code": None,
-            "address": str(addr),
+            "address": None,
         }
 
     def _refresh_headers(self, stale_headers: dict[str, str]) -> bool:
@@ -338,13 +415,15 @@ class OneMapGeocoder(Geocoder):
     def _geocode_via_api(self, addr: str) -> dict:
         from egg_n_bacon_housing.adapters.onemap import OneMapAuthError, fetch_data_cached
 
-        cached = self.query_geocode_cache(addr)
-        if cached is not None:
-            return {**self._empty_row(addr), "lat": cached[0], "lon": cached[1]}
+        # Cache hits are served without pacing: the limiter guards outbound
+        # calls only.
+        cached_row = self.query_geocode_cache(addr)
+        if cached_row is not None:
+            return cached_row
         self._limiter.wait()
         for attempt in (1, 2):
+            headers = self.headers
             try:
-                headers = self.headers
                 df = fetch_data_cached(
                     addr,
                     headers=headers,
@@ -365,7 +444,7 @@ class OneMapGeocoder(Geocoder):
 
     def geocode(self, addresses: pd.Series) -> pd.DataFrame:
         addrs = [str(a) for a in addresses]
-        columns = ["input", "lat", "lon", "matched_name", "postal_code", "address"]
+        columns = pd.Index(["input", "lat", "lon", "matched_name", "postal_code", "address"])
         if not addrs:
             return pd.DataFrame(columns=columns)
 
@@ -412,7 +491,7 @@ class InMemoryGeocoder(Geocoder):
         self.lookup = {k.strip().lower(): v for k, v in lookup.items()}
 
     def geocode(self, addresses: pd.Series) -> pd.DataFrame:
-        columns = ["input", "lat", "lon", "matched_name", "postal_code", "address"]
+        columns = pd.Index(["input", "lat", "lon", "matched_name", "postal_code", "address"])
         results = []
         for addr in addresses:
             coords = self.lookup.get(str(addr).strip().lower())

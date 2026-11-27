@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { MAP_TILES_ATTRIBUTION, MAP_TILES_URL } from "@/config/map-tiles";
 import type {
   LeaderboardDisplayRow,
   LeaderboardMetric,
@@ -367,10 +368,7 @@ export default function LeaderboardMap({
         zoomControl={false}
         aria-label={`Map showing ${metricMeta.label} by planning area`}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        />
+        <TileLayer attribution={MAP_TILES_ATTRIBUTION} url={MAP_TILES_URL} />
         <GeoJSON
           data={geoJsonData}
           style={style}

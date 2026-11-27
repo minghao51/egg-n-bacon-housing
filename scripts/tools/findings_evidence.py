@@ -629,11 +629,20 @@ LEGACY_CLAIMS: tuple[dict[str, Any], ...] = (
 # Absence scans are bounded and their exclusions disclosed. A scan that read every
 # file in the checkout would be unpinnable (RS10's and RS14's both drifted on
 # sibling programme outputs), so the programme's own output surfaces are excluded
-# and the exclusion list is a ledger field.
+# and the exclusion list is a ledger field. `docs/plans/` is part of that surface:
+# the planning/spec documents are prose ABOUT the series (including the D12
+# decision register this scan already excluded by path), so recording a plan or
+# an audit pack must not move a pinned count. `docs/guides/` is the operational
+# surface and is excluded for the same reason: a runbook or setup guide that
+# names a series is not an implementation of its method, and these scans
+# establish absence FROM CODE. Pinning operator documentation made a signed
+# ledger re-drift on any documentation edit while no measurement moved.
 SCAN_ROOTS = ("docs", "scripts", "src", "app/src", "prompts", "assets")
 SCAN_SUFFIXES = (".md", ".py", ".ts", ".tsx", ".json")
 EXCLUDED_SCAN_PREFIXES = (
     "docs/implementation/",
+    "docs/plans/",
+    "docs/guides/",
     "prompts/",
     "scripts/tools/",
     "app/src/components/studies/",
@@ -2003,7 +2012,19 @@ def absence_scans() -> dict[str, Any]:
             "meaning": (
                 "a bounded scan, not proof of universal absence: it reads the listed "
                 "roots and suffixes, excludes the programme's own output surfaces as "
-                "disclosed, and records every match it found. A screen is not a "
+                "disclosed, and records every match it found. The planning/spec "
+                "surface docs/plans/ is one of the excluded prefixes: the two "
+                "matches this scan used to record were plan prose proposing a "
+                "pooled model ('Run pooled model with interaction terms'), which "
+                "is a plan, not a model in the checkout — excluding that surface "
+                "is why matchCount is now zero, and it changes no disposition. "
+                "The operational surface docs/guides/ (runbooks and setup/CI "
+                "documentation about the programme) is excluded as a second "
+                "disclosed prefix for the same reason: a guide that names a "
+                "series is not an implementation of its method, because this "
+                "scan establishes absence FROM CODE rather than absence from "
+                "documentation. A "
+                "screen is not a "
                 "finding about origin, and an unlinked artefact adjudicates nothing"
             ),
         },

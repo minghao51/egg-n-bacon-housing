@@ -3527,11 +3527,13 @@
         "scripts/tools/",
         "prompts/",
         "docs/implementation/",
+        "docs/plans/",
+        "docs/guides/",
         "docs/analytics/editions/",
         "app/src/components/studies/",
         "app/tests/"
       ],
-      "filesScanned": 412,
+      "filesScanned": 341,
       "method": "case-insensitive substring count per file; every matched file is listed with its count and first matching line. A match is a string occurrence, not a finding about origin",
       "retainedEditionNote": "frozen legacy editions stay IN the scan (their literals are what the token search is matched against); every other docs/analytics/editions/ path is excluded as programme output signed after this study started",
       "retainedEditionPrefix": "docs/analytics/editions/legacy/",
@@ -3542,12 +3544,11 @@
         "assets",
         "app/src",
         "app/public",
-        "data/analysis",
         "notebooks",
         "tests",
         ".claude"
       ],
-      "selfExclusion": "this tool lives under scripts/tools/ and quotes every token it scans for; the prefix exclusion keeps the ledger out of its own evidence; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs; .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register) are explicitly excluded",
+      "selfExclusion": "this tool lives under scripts/tools/ and quotes every token it scans for; the prefix exclusion keeps the ledger out of its own evidence; app/src/components/studies/ (edition registry/pages) and app/tests/ (fixtures) are programme outputs; the planning/spec surface docs/plans/ (plan and audit prose about the method) is excluded, as is the operational surface docs/guides/ (runbooks and setup/CI documentation about the programme: prose about operating the checkout, which can carry a token in an example table or a hash string without implementing or evidencing the method — these scans establish absence FROM CODE); .secrets.baseline and docs/plans/2026-11-12-reporting-refresh-decisions.md (D12 register)",
       "suffixes": [
         ".md",
         ".py",
@@ -3604,32 +3605,12 @@
         "occurrences": 6
       },
       "1.96": {
-        "files": 10,
+        "files": 3,
         "matchedFiles": [
           {
             "firstQuote": "} else if (abs >= 1.96) {",
             "occurrences": 1,
             "path": "app/src/utils/colorScales.ts"
-          },
-          {
-            "firstQuote": "68 REDHILL CL,BUKIT MERAH,5 ROOM,Improved,115.0,7695.652173913043,7223.688836138593,471.96333777445034,6.533550219014379,54275.78384406179,6",
-            "occurrences": 60,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "1 GHIM MOH RD,QUEENSTOWN,3 ROOM,Improved,65.0,4461.538461538462,5323.502570776277,-861.9641092378151,-16.191672639919904,-56027.667100457984",
-            "occurrences": 1,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
-          {
-            "firstQuote": "momentum_signal_strong_acceleration,1.964243e-06,price_psm,xgboost",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv"
-          },
-          {
-            "firstQuote": "storey_range_46 TO 48,1.965270174606327e-20,rental_yield_pct,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv"
           },
           {
             "firstQuote": "- Weak hotspot: z > 1.96 (95% confidence)",
@@ -3640,24 +3621,9 @@
             "firstQuote": "- Weak hotspot: z > 1.96 (95% confidence)",
             "occurrences": 2,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "# z = 1.96 for 95% CI",
-            "occurrences": 2,
-            "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
-          },
-          {
-            "firstQuote": "- **Confidence levels**: 95% (z > 1.96), 99% (z > 2.58)",
-            "occurrences": 1,
-            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
-          },
-          {
-            "firstQuote": "- Z-score indicates significance: |Z| > 1.96 for 95% confidence, |Z| > 2.58 for 99% confidence",
-            "occurrences": 5,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
           }
         ],
-        "occurrences": 76
+        "occurrences": 5
       },
       "12 h3": {
         "files": 2,
@@ -3676,7 +3642,7 @@
         "occurrences": 4
       },
       "2,000": {
-        "files": 17,
+        "files": 14,
         "matchedFiles": [
           {
             "firstQuote": "Build SVG03/06. Canonical slug lookup; query-selected type/period; direct-route fallback return; independently computed price/PSF medians. W",
@@ -3747,24 +3713,9 @@
             "firstQuote": "- Price difference: **$192,000** for being 100m closer to MRT!",
             "occurrences": 1,
             "path": "docs/archive/20260127-property-type-mrt-comparison-final-results.md"
-          },
-          {
-            "firstQuote": "- **Current price:** $1.8M ($2,000 PSF, 900 sqft)",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
-          },
-          {
-            "firstQuote": "1. Add a failing regression for `propertyType=hdb&timeBasis=year_2025&metric=median_price`: Punggol must read the exact `map_metrics.year_20",
-            "occurrences": 1,
-            "path": "docs/plans/2026-11-12-reporting-refresh-handoffs.md"
-          },
-          {
-            "firstQuote": "| RF01 | Correct scoped area rankings and geography — observed frontend owner                               | RF00                          ",
-            "occurrences": 1,
-            "path": "docs/plans/2026-11-12-reporting-refresh-implementation-map.md"
           }
         ],
-        "occurrences": 19
+        "occurrences": 16
       },
       "2,050": {
         "files": 3,
@@ -3788,18 +3739,8 @@
         "occurrences": 3
       },
       "2,100": {
-        "files": 5,
+        "files": 3,
         "matchedFiles": [
-          {
-            "firstQuote": "737 WOODLANDS CIRCLE,WOODLANDS,4 ROOM,Model A2,100.0,3600.0,3684.6847299919486,-84.68472999194864,-2.2982897099077917,-8468.472999194864,-2.",
-            "occurrences": 8,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "Condo - PUNGGOL CENTRAL,15211.27,15109.83,,,,,,0.6404546242450402,100.0,,,0.6404546242450402,105.0,0.010186757215619695,94.0,227,",
-            "occurrences": 1,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
-          },
           {
             "firstQuote": "| Woodlands    | -3.21          | $2,100              | Strong coldspot |",
             "occurrences": 3,
@@ -3816,10 +3757,10 @@
             "path": "docs/archive/20260123-hdb-comprehensive-investment-analysis.md"
           }
         ],
-        "occurrences": 16
+        "occurrences": 7
       },
       "2.58": {
-        "files": 6,
+        "files": 3,
         "matchedFiles": [
           {
             "firstQuote": "if (abs >= 2.58) {",
@@ -3827,11 +3768,6 @@
             "path": "app/src/utils/colorScales.ts"
           },
           {
-            "firstQuote": "28 TELOK BLANGAH RISE,BUKIT MERAH,3 ROOM,Improved,70.0,3400.0,3724.7512765420397,-324.7512765420397,-8.71873723722917,-22732.58935794278,-8.",
-            "occurrences": 59,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
             "firstQuote": "- Hotspot: z > 2.58 (99% confidence)",
             "occurrences": 2,
             "path": "docs/analytics/editions/legacy/2026-11-12/spatial-hotspots.md"
@@ -3840,33 +3776,13 @@
             "firstQuote": "- Hotspot: z > 2.58 (99% confidence)",
             "occurrences": 2,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "- **Confidence levels**: 95% (z > 1.96), 99% (z > 2.58)",
-            "occurrences": 1,
-            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
-          },
-          {
-            "firstQuote": "- Z-score indicates significance: |Z| > 1.96 for 95% confidence, |Z| > 2.58 for 99% confidence",
-            "occurrences": 5,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
           }
         ],
-        "occurrences": 70
+        "occurrences": 5
       },
       "2.67": {
-        "files": 5,
+        "files": 2,
         "matchedFiles": [
-          {
-            "firstQuote": "817 JURONG WEST ST 81,JURONG WEST,4 ROOM,Model A,107.0,3364.4859813084113,3462.6779292489027,-98.19194794049145,-2.835722811846682,-10506.53",
-            "occurrences": 46,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "Condo - BEDOK CENTRAL,22793.63,22722.67,,,,,,0.3827449434268798,172.0,,,0.3827449434268798,172.0,0.0018594874282480394,166.5,124,",
-            "occurrences": 3,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
-          },
           {
             "firstQuote": "| Sembawang    | -2.67          | $2,000              | Strong coldspot |",
             "occurrences": 2,
@@ -3876,28 +3792,13 @@
             "firstQuote": "| Sembawang    | -2.67          | $2,000              | Strong coldspot |",
             "occurrences": 2,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "| Yishun       | -2.67        | Coldspot       | 99%        |",
-            "occurrences": 1,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
           }
         ],
-        "occurrences": 54
+        "occurrences": 4
       },
       "2.98": {
-        "files": 5,
+        "files": 3,
         "matchedFiles": [
-          {
-            "firstQuote": "588C ANG MO KIO ST 52,ANG MO KIO,5 ROOM,DBSS,112.0,7857.142857142857,7920.127442082348,-62.98458493949147,-0.7952471143940539,-7054.27351322",
-            "occurrences": 52,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "flat_model_2-room,2.9859596975856567e-21,yoy_change_pct,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv"
-          },
           {
             "firstQuote": "| Yishun       | -2.98          | $2,050              | Strong coldspot |",
             "occurrences": 2,
@@ -3914,21 +3815,11 @@
             "path": "docs/archive/20260123-hdb-comprehensive-investment-analysis.md"
           }
         ],
-        "occurrences": 59
+        "occurrences": 6
       },
       "3,100": {
-        "files": 7,
+        "files": 4,
         "matchedFiles": [
-          {
-            "firstQuote": "78 MARINE DR,MARINE PARADE,5 ROOM,Standard,120.0,7083.333333333333,6983.307038993673,100.02629433966013,1.432362830119444,12003.155320759215",
-            "occurrences": 5,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "Condo - MATTAR ROAD,19560.61,19306.72,,,,,,0.4926290101658277,148.0,,,0.4926290101658277,149.0,0.00792303338992643,100.0,199,",
-            "occurrences": 1,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
-          },
           {
             "firstQuote": "| Bukit Timah  | 3.45           | $3,100              | Strong hotspot  |",
             "occurrences": 1,
@@ -3945,31 +3836,16 @@
             "path": "docs/archive/20260123-hdb-comprehensive-investment-analysis.md"
           },
           {
-            "firstQuote": "- **Volume:** 151,945 HDB transactions post-2022 (average ~3,100/month)",
-            "occurrences": 2,
-            "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-          },
-          {
             "firstQuote": "\"Strata,93,1000,10764,-,Condominium\\n\"",
             "occurrences": 1,
             "path": "tests/test_ura.py"
           }
         ],
-        "occurrences": 12
+        "occurrences": 4
       },
       "3,200": {
-        "files": 7,
+        "files": 5,
         "matchedFiles": [
-          {
-            "firstQuote": "3 GHIM MOH RD,QUEENSTOWN,3 ROOM,Improved,65.0,5846.153846153846,5815.322625161229,30.83122099261709,0.5301721500234443,2004.029364520111,0.5",
-            "occurrences": 1,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "Condo - SIMS AVENUE,21130.43,20054.46,,,,,,0.4392738791588635,160.0,,,0.4392738791588635,160.0,0.003395585738539898,144.5,143,",
-            "occurrences": 1,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
-          },
           {
             "firstQuote": "| Multi-generation | 2-3.5%       | $3,200-4,000         | Lowest yield, niche demand |",
             "occurrences": 1,
@@ -3996,16 +3872,11 @@
             "path": "docs/archive/20260123-amenity-impact-analysis.md"
           }
         ],
-        "occurrences": 11
+        "occurrences": 9
       },
       "3,450": {
-        "files": 3,
+        "files": 2,
         "matchedFiles": [
-          {
-            "firstQuote": "69 CIRCUIT RD,GEYLANG,3 ROOM,Standard,56.0,4142.857142857143,4504.4537092472165,-361.59656639007335,-8.027534296728367,-20249.407717844108,-",
-            "occurrences": 1,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
           {
             "firstQuote": "| Marina South | 3.89           | $3,450              | Strong hotspot  |",
             "occurrences": 1,
@@ -4017,31 +3888,11 @@
             "path": "docs/analytics/spatial-hotspots.md"
           }
         ],
-        "occurrences": 3
+        "occurrences": 2
       },
       "3.21": {
-        "files": 6,
+        "files": 2,
         "matchedFiles": [
-          {
-            "firstQuote": "26 DOVER CRES,QUEENSTOWN,5 ROOM,Standard,123.0,5569.1056910569105,6417.043872803394,-847.9381817464837,-13.21384423348266,-104296.3963548175",
-            "occurrences": 43,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "1D CANTONMENT RD,CENTRAL AREA,4 ROOM,Type S1,93.0,13010.752688172042,13923.582989306024,-912.8303011339813,-6.556001438962072,-84893.2180054",
-            "occurrences": 1,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
-          {
-            "firstQuote": "3,3.0,0.0,11866,3,3,564.0134650848325,67.86385977796067,11866,357.31641082811655,899.0541949868739,5.68898133416632,1.0744011019877162,11866",
-            "occurrences": 1,
-            "path": "data/analysis/market_segmentation_2.0/cluster_profiles.csv"
-          },
-          {
-            "firstQuote": "EC - SEMBAWANG CRESCENT,13737.37,13463.21,,,,,,0.6905496208632287,82.0,,,0.6905496208632287,88.0,0.026841296790363005,55.0,433,",
-            "occurrences": 1,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
-          },
           {
             "firstQuote": "| Woodlands    | -3.21          | $2,100              | Strong coldspot |",
             "occurrences": 2,
@@ -4053,21 +3904,11 @@
             "path": "docs/analytics/spatial-hotspots.md"
           }
         ],
-        "occurrences": 50
+        "occurrences": 4
       },
       "3.45": {
-        "files": 4,
+        "files": 2,
         "matchedFiles": [
-          {
-            "firstQuote": "967 HOUGANG AVE 9,HOUGANG,EXECUTIVE,Apartment,137.0,4197.080291970803,4849.3221656298765,-652.2418736590735,-13.450165845484799,-89357.13669",
-            "occurrences": 67,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "613 BEDOK RESERVOIR RD,BEDOK,5 ROOM,Improved,121.0,5206.611570247934,5847.797178577245,-641.1856083293114,-10.964566464073405,-77583.4586078",
-            "occurrences": 2,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
           {
             "firstQuote": "| Bukit Timah  | 3.45           | $3,100              | Strong hotspot  |",
             "occurrences": 2,
@@ -4079,26 +3920,11 @@
             "path": "docs/analytics/spatial-hotspots.md"
           }
         ],
-        "occurrences": 73
+        "occurrences": 4
       },
       "3.89": {
-        "files": 8,
+        "files": 5,
         "matchedFiles": [
-          {
-            "firstQuote": "1 HOUGANG AVE 3,HOUGANG,3 ROOM,Improved,59.0,4033.898305084746,4785.8088884834415,-751.9105833986955,-15.711253853201102,-44362.72442052304,",
-            "occurrences": 56,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "9 PINE CL,GEYLANG,4 ROOM,Model A,102.0,6862.745098039216,7643.897907604463,-781.1528095652475,-10.219299354955076,-79677.58657565524,-10.219",
-            "occurrences": 1,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
-          {
-            "firstQuote": "flat_model_SIMPLIFIED,3.896003049923607e-05,price_psm,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv"
-          },
           {
             "firstQuote": "| Marina South | 3.89           | $3,450              | Strong hotspot  |",
             "occurrences": 2,
@@ -4125,26 +3951,11 @@
             "path": "tests/test_feature_transactions.py"
           }
         ],
-        "occurrences": 889
+        "occurrences": 831
       },
       "4.21": {
-        "files": 5,
+        "files": 2,
         "matchedFiles": [
-          {
-            "firstQuote": "1 GHIM MOH RD,QUEENSTOWN,3 ROOM,Improved,76.0,4184.210526315789,4378.74614274418,-194.53561642839122,-4.4427242431203116,-14784.706848557733",
-            "occurrences": 51,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "1B CANTONMENT RD,CENTRAL AREA,4 ROOM,Type S1,95.0,10084.21052631579,11264.533861496944,-1180.323335181154,-10.478226171573699,-112130.716842",
-            "occurrences": 1,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
-          {
-            "firstQuote": "QUEENSTOWN,EXECUTIVE,4600.0,1310250.0,55200.0,4.212936462507155",
-            "occurrences": 1,
-            "path": "data/analysis/rental_market/rental_vs_resale_comparison.csv"
-          },
           {
             "firstQuote": "| Orchard      | 4.21           | $3,200              | Strong hotspot  |",
             "occurrences": 2,
@@ -4156,7 +3967,7 @@
             "path": "docs/analytics/spatial-hotspots.md"
           }
         ],
-        "occurrences": 57
+        "occurrences": 4
       },
       "55-60": {
         "files": 3,
@@ -4180,7 +3991,7 @@
         "occurrences": 5
       },
       "58-62": {
-        "files": 5,
+        "files": 2,
         "matchedFiles": [
           {
             "firstQuote": "| Hotspot remains hotspot    | 58-62%      |",
@@ -4191,27 +4002,12 @@
             "firstQuote": "| Hotspot remains hotspot    | 58-62%      |",
             "occurrences": 3,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "<li>• <strong>58-62% persistence</strong> - clusters tend to maintain status year-over-year</li>",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-21-interactive-tools-dashboard.md"
-          },
-          {
-            "firstQuote": "| **HH (Hotspots)**  | MATURE_HOTSPOT          | 12.7% YoY    | 58-62%      | Central-south Singapore |",
-            "occurrences": 7,
-            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md"
-          },
-          {
-            "firstQuote": "\"HH\": 0.60,  # Average of 58-62%",
-            "occurrences": 5,
-            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
           }
         ],
-        "occurrences": 19
+        "occurrences": 6
       },
       "623": {
-        "files": 27,
+        "files": 15,
         "matchedFiles": [
           {
             "firstQuote": "note: \"The catalog and the inspected artifact describe the same snapshot. Regenerated after the rental-yield rerun: `rental_yield` now recor",
@@ -4227,61 +4023,6 @@
             "firstQuote": "Outputs: down S$213,000, loan S$497,000, payment S$2,357, monthly income S$10,000, payment/income 23.6%, price/annual income 5.92×. Sensitiv",
             "occurrences": 1,
             "path": "assets/svg/feature-specifications.md"
-          },
-          {
-            "firstQuote": "dist_to_nearest_supermarket,0.007986230823602369,pre_covid,0.8745205908830914",
-            "occurrences": 2,
-            "path": "data/analysis/amenity_impact/temporal_comparison.csv"
-          },
-          {
-            "firstQuote": "MARINE PARADE,1008,0.051316344623114754,0.4940504481734811",
-            "occurrences": 1,
-            "path": "data/analysis/amenity_impact/within_town_effects.csv"
-          },
-          {
-            "firstQuote": "614 ANG MO KIO AVE 4,ANG MO KIO,EXECUTIVE,Apartment,147.0,5408.163265306122,5612.046233288275,-203.88296798215288,-3.632952393955803,-29970.",
-            "occurrences": 745,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "448 BRIGHT HILL DR,BISHAN,5 ROOM,Improved,123.0,5650.40650406504,6300.942742888221,-650.5362388231806,-10.324427079700591,-80015.95737525122",
-            "occurrences": 27,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
-          {
-            "firstQuote": "flat_model_Model A-Maisonette,5.886451276235748e-07,price_psm,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv"
-          },
-          {
-            "firstQuote": "flat_model_Adjoined flat,6.862303534808448e-07,rental_yield_pct,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv"
-          },
-          {
-            "firstQuote": "preschool_within_2km,0.000527623354380022,yoy_change_pct,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv"
-          },
-          {
-            "firstQuote": "XGBoost,0.8952149338512125,0.8829992199782597,14.78794430375252,14.894923761927007,27.6156480148532,28.623719591200665,yoy_change_pct,Year-o",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/model_comparison.csv"
-          },
-          {
-            "firstQuote": "60-70 years,64.62395835243912,446000.0,4729.72972972973,54521,23.8,0.69",
-            "occurrences": 1,
-            "path": "data/analysis/lease_decay/lease_decay_analysis.csv"
-          },
-          {
-            "firstQuote": "1,1.0,0.0,31504,1,1,509.0805221754018,74.01769222517089,31504,289.63647889479097,778.6094742616482,5.966220588505933,0.738367498611106,31504",
-            "occurrences": 4,
-            "path": "data/analysis/market_segmentation_2.0/cluster_profiles.csv"
-          },
-          {
-            "firstQuote": "CLEMENTI,5732.68,6038.73,6.26,37.355456978934676,16.94,0.40877710080052226,15.0,0.8160006163630018,14.0,0.3017971174080586,18.0,0.9626134776",
-            "occurrences": 12,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
           },
           {
             "firstQuote": "The GDP dataset (`d_a5ff719648a0e6d4b4c623ee383ab686`) contains **GDP levels** (e.g. \"GDP In Chained (2015) Dollars\"), not growth rates. The",
@@ -4309,16 +4050,6 @@
             "path": "docs/data-sources.md"
           },
           {
-            "firstQuote": "| GDP          | `d_a5ff719648a0e6d4b4c623ee383ab686` | Quarterly pivot (`20261Q`) | `DataSeries == \"GDP In Chained (2015) Dollars\"` | 201  ",
-            "occurrences": 1,
-            "path": "docs/guides/datagovsg-resource-migration.md"
-          },
-          {
-            "firstQuote": "Cells: 623",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md"
-          },
-          {
             "firstQuote": "| Resale Flat Prices (Mar 2012–Dec 2014) | `d_2d5ff9ea31397b66239f245f57751537` | Available       |",
             "occurrences": 4,
             "path": "docs/research/singapore-open-datasets.md"
@@ -4344,15 +4075,20 @@
             "path": "src/egg_n_bacon_housing/components/ingestion/macro.py"
           },
           {
+            "firstQuote": "IngestedDataset(\"d_17f5382f26140b1fdae0ba2ef6239d2f\", \"raw_hdb_property_info\", \"datagov.py:56\"),",
+            "occurrences": 2,
+            "path": "tests/test_live_datagovsg.py"
+          },
+          {
             "firstQuote": "RS02 found `rental_yield.parquet` carrying 3,623 rows for 1,749 town-months:",
             "occurrences": 1,
             "path": "tests/test_rental_yield_metrics.py"
           }
         ],
-        "occurrences": 1310
+        "occurrences": 514
       },
       "8-10": {
-        "files": 4,
+        "files": 2,
         "matchedFiles": [
           {
             "firstQuote": "| Non-significant to hotspot | 8-10%       |",
@@ -4363,87 +4099,17 @@
             "firstQuote": "| Non-significant to hotspot | 8-10%       |",
             "occurrences": 3,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "- Maps properties to H3 hex grid (resolution 8-10)",
-            "occurrences": 1,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-          },
-          {
-            "firstQuote": "- Still-solid appreciation (8-10% forecast)",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
           }
         ],
-        "occurrences": 8
+        "occurrences": 6
       },
       "847": {
-        "files": 26,
+        "files": 14,
         "matchedFiles": [
           {
             "firstQuote": "\"app/public/data/segments_enhanced.json.gz\": \"76979cc5fdc4e7fff27847147b70520f896c3f344d701f4ef702c252dd571d56\",",
             "occurrences": 1,
             "path": "assets/svg/expanded-data-evidence.json"
-          },
-          {
-            "firstQuote": "childcare_within_1km,0.0023485597160584713,covid,0.8497632627911855",
-            "occurrences": 1,
-            "path": "data/analysis/amenity_impact/temporal_comparison.csv"
-          },
-          {
-            "firstQuote": "PASIR RIS,7405,0.06947512106146803,0.847359695688699",
-            "occurrences": 4,
-            "path": "data/analysis/amenity_impact/within_town_effects.csv"
-          },
-          {
-            "firstQuote": "167 BISHAN ST 13,BISHAN,4 ROOM,Simplified,84.0,4880.952380952381,5926.284763632558,-1045.332382680177,-17.638915853234046,-87807.92014513488",
-            "occurrences": 647,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "366 CLEMENTI AVE 2,CLEMENTI,3 ROOM,Model A,61.0,6721.311475409836,8002.939208476881,-1281.6277330670446,-16.0144629326875,-78179.29171708971",
-            "occurrences": 18,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
-          {
-            "firstQuote": "park_within_1km,3.8478973952210385e-05,price_psm,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv"
-          },
-          {
-            "firstQuote": "mrt_within_1km,7.847697e-06,price_psm,xgboost",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv"
-          },
-          {
-            "firstQuote": "flat_model_Model A-Maisonette,7.978478274120164e-07,rental_yield_pct,random_forest",
-            "occurrences": 3,
-            "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv"
-          },
-          {
-            "firstQuote": "mrt_within_1km,0.034058847,yoy_change_pct,xgboost",
-            "occurrences": 2,
-            "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv"
-          },
-          {
-            "firstQuote": "Linear Regression,0.9120411795712696,0.9122872152318063,104.33335147892575,104.11805179253847,173.8333743898743,173.3286226851379,price_psf,",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/model_comparison.csv"
-          },
-          {
-            "firstQuote": "70-80 years,75.417571847632,548000.0,4844.89545971481,47044,21.9,0.93",
-            "occurrences": 1,
-            "path": "data/analysis/lease_decay/lease_decay_analysis.csv"
-          },
-          {
-            "firstQuote": "1,1.0,0.0,31504,1,1,509.0805221754018,74.01769222517089,31504,289.63647889479097,778.6094742616482,5.966220588505933,0.738367498611106,31504",
-            "occurrences": 2,
-            "path": "data/analysis/market_segmentation_2.0/cluster_profiles.csv"
-          },
-          {
-            "firstQuote": "Condo - BIDADARI PARK DRIVE,23146.07,23277.37,,,,,,0.3707661927598642,175.0,,,0.3707661927598642,175.0,0.013824884792626729,81.5,272,",
-            "occurrences": 18,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
           },
           {
             "firstQuote": "| Rental hotspot selectivity        | 99% confidence cells              | 12 of 847        | High — Gi\\* statistic                    |",
@@ -4469,11 +4135,6 @@
             "firstQuote": "- **Coverage**: 847 total cells, 623 with sufficient data for analysis",
             "occurrences": 1,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "Properties: 2,847",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md"
           },
           {
             "firstQuote": "| Employed Residents by Planning Area of Workplace, Age Group and Sex (Census 2020)                   | `d_22063c84778e6535b92b4d8f93fd2525`",
@@ -4506,15 +4167,20 @@
             "path": "tests/test_ingestion.py"
           },
           {
+            "firstQuote": "IngestedDataset(\"d_64f98475cef1e94300362cb400a50012\", \"macro_wage_growth\", \"macro.py:45\"),",
+            "occurrences": 1,
+            "path": "tests/test_live_datagovsg.py"
+          },
+          {
             "firstQuote": "\"lon\": 103.8478,",
             "occurrences": 3,
             "path": "tests/test_proximity.py"
           }
         ],
-        "occurrences": 1647
+        "occurrences": 948
       },
       "esda": {
-        "files": 4,
+        "files": 2,
         "matchedFiles": [
           {
             "firstQuote": "- **Getis-Ord Gi\\*** local statistic via `esda.getisord.G_Local`",
@@ -4525,22 +4191,12 @@
             "firstQuote": "- **Getis-Ord Gi\\*** local statistic via `esda.getisord.G_Local`",
             "occurrences": 1,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "| `analyze_spatial_hotspots.py`        | Getis-Ord Gi\\* statistic            | H3, pandas, libpysal, esda |",
-            "occurrences": 5,
-            "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-          },
-          {
-            "firstQuote": "esda>=1.5.0        # Spatial autocorrelation",
-            "occurrences": 1,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
           }
         ],
-        "occurrences": 8
+        "occurrences": 2
       },
       "g_local": {
-        "files": 7,
+        "files": 6,
         "matchedFiles": [
           {
             "firstQuote": "FINANCING_LOCAL_NOTE,",
@@ -4563,13 +4219,8 @@
             "path": "docs/analytics/spatial-hotspots.md"
           },
           {
-            "firstQuote": "- **Getis-Ord Gi\\*:** https://pysal.org/libpysal/generated/libpysal.weights.G_Local.html",
-            "occurrences": 1,
-            "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-          },
-          {
-            "firstQuote": "ok = missing_local = missing_remote = size_mismatch = 0",
-            "occurrences": 3,
+            "firstQuote": "missing_local = missing_remote = rejected = 0",
+            "occurrences": 4,
             "path": "scripts/00_sync_data.py"
           },
           {
@@ -4581,7 +4232,7 @@
         "occurrences": 10
       },
       "getis": {
-        "files": 13,
+        "files": 9,
         "matchedFiles": [
           {
             "firstQuote": "- **Spatial analysis concepts**: H3 hexagonal grids, Moran's I (0.766), Getis-Ord Gi*, LISA clusters (HH/LH/LL)",
@@ -4627,32 +4278,12 @@
             "firstQuote": "- **Getis-Ord Gi\\*** local statistic via `esda.getisord.G_Local`",
             "occurrences": 3,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "**Methodology**: Getis-Ord Gi\\* statistic",
-            "occurrences": 1,
-            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
-          },
-          {
-            "firstQuote": "| `analyze_spatial_hotspots.py`        | Getis-Ord Gi\\* statistic            | H3, pandas, libpysal, esda |",
-            "occurrences": 2,
-            "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-          },
-          {
-            "firstQuote": "1. **Hotspot Analysis** - Find high/low value clusters using Getis-Ord Gi\\*",
-            "occurrences": 5,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-          },
-          {
-            "firstQuote": "\"\"\"Load hotspot data from Getis-Ord Gi* analysis.\"\"\"",
-            "occurrences": 2,
-            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
           }
         ],
-        "occurrences": 23
+        "occurrences": 13
       },
       "h3 resolution": {
-        "files": 4,
+        "files": 2,
         "matchedFiles": [
           {
             "firstQuote": "- **Spatial aggregation**: H3 resolution 8, median `monthly_rent` per cell",
@@ -4663,22 +4294,12 @@
             "firstQuote": "- **Spatial aggregation**: H3 resolution 8, median `monthly_rent` per cell",
             "occurrences": 1,
             "path": "docs/analytics/spatial-hotspots.md"
-          },
-          {
-            "firstQuote": "### H3 Resolution",
-            "occurrences": 4,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-          },
-          {
-            "firstQuote": "| `--resolution`  | int   | 8                                                                  | H3 resolution                    |",
-            "occurrences": 2,
-            "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md"
           }
         ],
-        "occurrences": 8
+        "occurrences": 2
       },
       "hotspot": {
-        "files": 85,
+        "files": 61,
         "matchedFiles": [
           {
             "firstQuote": "- Integrating insights from analytics documents in `docs/analytics/` (spatial hotspots, spatial autocorrelation, MRT impact, school quality,",
@@ -4846,16 +4467,6 @@
             "path": "assets/svg/validation.md"
           },
           {
-            "firstQuote": "2,2.0,0.0,5468,2,2,550.4501892731971,76.86957715164557,5468,309.674222717701,936.6376080559974,5.221546402062531,1.0037718208474253,5468,2.9",
-            "occurrences": 1,
-            "path": "data/analysis/market_segmentation_2.0/cluster_profiles.csv"
-          },
-          {
-            "firstQuote": "2,Speculator Hotspots,GROWTH PLAY - High appreciation potential. Consider for capital gains.,5.22,83.93,550.0",
-            "occurrences": 1,
-            "path": "data/analysis/market_segmentation_2.0/investment_strategies.csv"
-          },
-          {
             "firstQuote": "| Rental hotspots                             | `spatial-hotspots.md`          | Hotspot article plus app-served hotspot datasets           ",
             "occurrences": 5,
             "path": "docs/analytics/editions/legacy/2026-11-12/findings.md"
@@ -4919,116 +4530,6 @@
             "firstQuote": "│       │   ├── analyze_spatial_hotspots.py",
             "occurrences": 2,
             "path": "docs/archive/20260128-scripts-reorganization-complete.md"
-          },
-          {
-            "firstQuote": "| `appreciation_hotspots` | `components/metrics.py` | Price appreciation rankings           |",
-            "occurrences": 1,
-            "path": "docs/guides/datagovsg-resource-migration.md"
-          },
-          {
-            "firstQuote": "| Platinum | `unified_dataset` (1,205,504), `pa_monthly_metrics` (13,244), `appreciation_hotspots` (20)                                     ",
-            "occurrences": 2,
-            "path": "docs/guides/operations-runbook.md"
-          },
-          {
-            "firstQuote": "`PaMonthlyMetric`, `AppreciationHotspot`) under the same large-table",
-            "occurrences": 4,
-            "path": "docs/guides/pipeline-development.md"
-          },
-          {
-            "firstQuote": "#### 1.1 Hotspots/Coldspots (`spatial.hotspot`)",
-            "occurrences": 14,
-            "path": "docs/plans/2025-02-16-web-dashboard-analytics-layers.md"
-          },
-          {
-            "firstQuote": "└── Spatial Hotspots",
-            "occurrences": 1,
-            "path": "docs/plans/2025-02-24-sidebar-improvement-design.md"
-          },
-          {
-            "firstQuote": "| `analyze_spatial_hotspots.py`        | Getis-Ord Gi\\* statistic            | H3, pandas, libpysal, esda |",
-            "occurrences": 12,
-            "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-          },
-          {
-            "firstQuote": "**Scripts:** `analyze_spatial_hotspots.py`, `analyze_spatial_autocorrelation.py`, `analyze_h3_clusters.py`",
-            "occurrences": 46,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-          },
-          {
-            "firstQuote": "- `docs/analytics/analyze_spatial_hotspots.md` - Spatial analysis methods",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-          },
-          {
-            "firstQuote": "| `technical-reports` | Methodology and statistical models | `causal-inference-overview.md`, `plan_analyze_h3_clusters.md`, `plan_analyze_po",
-            "occurrences": 2,
-            "path": "docs/plans/2026-02-15-analytics-content-organization-design.md"
-          },
-          {
-            "firstQuote": "- Modify: `docs/analytics/zzz_analyze_spatial_hotspots.md:2-7`",
-            "occurrences": 5,
-            "path": "docs/plans/2026-02-15-analytics-content-organization.md"
-          },
-          {
-            "firstQuote": "- **Uses:** `analyze_spatial_hotspots.py` results (hotspot overlays)",
-            "occurrences": 4,
-            "path": "docs/plans/2026-02-15-analyze-h3-clusters-plan.md"
-          },
-          {
-            "firstQuote": "3. Planning areas in **[Region #3]** consistently outperform their regional averages, creating localized hotspots for targeted investment.",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-19-price-appreciation-forecasting-report-implementation.md"
-          },
-          {
-            "firstQuote": "**Goal:** Add 4 persona-driven interactive analytics tools (MRT/CBD Impact, Lease Decay, Affordability, Spatial Hotspots) to the `/dashboard",
-            "occurrences": 61,
-            "path": "docs/plans/2026-02-21-interactive-tools-dashboard.md"
-          },
-          {
-            "firstQuote": "- Spatial Hotspots (`docs/analytics/spatial-hotspots.md`)",
-            "occurrences": 26,
-            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md"
-          },
-          {
-            "firstQuote": "- **Backend:** Python script generates enhanced JSON data from 5 analytics sources (investment clusters, spatial autocorrelation, hotspots, ",
-            "occurrences": 28,
-            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
-          },
-          {
-            "firstQuote": "The appreciation hotspot computation uses positional `pct_change(3)` and `pct_change(12)` without verifying the `month` column is actually c",
-            "occurrences": 3,
-            "path": "docs/plans/2026-04-28-code-audit-findings.md"
-          },
-          {
-            "firstQuote": "- Keep `appreciation_hotspots` but consume `pa_monthly_metrics`",
-            "occurrences": 2,
-            "path": "docs/plans/2026-06-15-gold-entity-restructure.md"
-          },
-          {
-            "firstQuote": "- Final outputs: `unified_dataset` (1,095,759 × 139), `planning_area_360` (43×27), `town_360` (28×13), `block_profile` (10,002×6), `pa_month",
-            "occurrences": 3,
-            "path": "docs/plans/2026-09-01-pipeline-refresh-handoff.md"
-          },
-          {
-            "firstQuote": "### Perf hotspots (Warning)",
-            "occurrences": 3,
-            "path": "docs/plans/2026-09-07-src-audit-improvement-program.md"
-          },
-          {
-            "firstQuote": "`appreciation_hotspots` (20).",
-            "occurrences": 3,
-            "path": "docs/plans/2026-09-11-hamilton-dag-e2e-evidence.md"
-          },
-          {
-            "firstQuote": "6. Publish a new **complete** immutable v2 pack containing periods, summary and every declared monthly payload under one generation. Rebuild",
-            "occurrences": 1,
-            "path": "docs/plans/2026-11-12-reporting-refresh-handoffs.md"
-          },
-          {
-            "firstQuote": "| RS12 | Rental Hotspots — `docs/analytics/spatial-hotspots.md`              | Current rental population aligned to geography/property/time;",
-            "occurrences": 5,
-            "path": "docs/plans/2026-11-12-reporting-refresh-research-register.md"
           },
           {
             "firstQuote": "hotspots.json.gz                appreciation classification per area",
@@ -5106,10 +4607,10 @@
             "path": "tests/test_pipeline.py"
           }
         ],
-        "occurrences": 651
+        "occurrences": 421
       },
       "knn": {
-        "files": 8,
+        "files": 6,
         "matchedFiles": [
           {
             "firstQuote": "- **Global Moran's I**: KNN weights (k=8), row-standardized, 99 permutations",
@@ -5140,35 +4641,14 @@
             "firstQuote": "- Planning area averages (KNN-style)",
             "occurrences": 1,
             "path": "docs/archive/20250219-phase-validation-summary.md"
-          },
-          {
-            "firstQuote": "WEIGHTS_TYPE = 'knn'  # K-nearest neighbors",
-            "occurrences": 2,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
-          },
-          {
-            "firstQuote": "**Summary:** Add HDB rental data source, implement KNN imputation, add size stratification.",
-            "occurrences": 10,
-            "path": "docs/plans/2026-02-19-pipeline-improvements-plan.md"
-          }
-        ],
-        "occurrences": 18
-      },
-      "libpysal": {
-        "files": 2,
-        "matchedFiles": [
-          {
-            "firstQuote": "| `analyze_spatial_hotspots.py`        | Getis-Ord Gi\\* statistic            | H3, pandas, libpysal, esda |",
-            "occurrences": 5,
-            "path": "docs/plans/2026-01-24-analytics-scripts-design.md"
-          },
-          {
-            "firstQuote": "libpysal>=4.6.0    # Spatial weights and statistics",
-            "occurrences": 1,
-            "path": "docs/plans/2026-01-24-spatial-analytics-overview.md"
           }
         ],
         "occurrences": 6
+      },
+      "libpysal": {
+        "files": 0,
+        "matchedFiles": [],
+        "occurrences": 0
       },
       "persistence of hotspot": {
         "files": 2,
@@ -5187,7 +4667,7 @@
         "occurrences": 2
       },
       "queen": {
-        "files": 35,
+        "files": 17,
         "matchedFiles": [
           {
             "firstQuote": "\"QUEENSTOWN\": {",
@@ -5198,66 +4678,6 @@
             "firstQuote": "\"Queenstown\",",
             "occurrences": 4,
             "path": "assets/svg/expanded-data-evidence.json"
-          },
-          {
-            "firstQuote": "QUEENSTOWN,20935,0.038699927487950404,0.8982444999282505",
-            "occurrences": 1,
-            "path": "data/analysis/amenity_impact/within_town_effects.csv"
-          },
-          {
-            "firstQuote": "5 GHIM MOH RD,QUEENSTOWN,3 ROOM,Improved,65.0,4827.692307692308,4928.8540090070965,-101.16170131478884,-2.0524385816646977,-6575.51058546127",
-            "occurrences": 1617,
-            "path": "data/analysis/anomaly_detection/all_anomalies.csv"
-          },
-          {
-            "firstQuote": "7 GHIM MOH RD,QUEENSTOWN,5 ROOM,Standard,114.0,5526.315789473684,6294.9879615133805,-768.6721720396963,-12.210860080102513,-87628.6276125253",
-            "occurrences": 50,
-            "path": "data/analysis/anomaly_detection/top_opportunities.csv"
-          },
-          {
-            "firstQuote": "town_QUEENSTOWN,0.0005329951465742531,price_psm,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_price_psm_random_forest.csv"
-          },
-          {
-            "firstQuote": "town_QUEENSTOWN,0.00014723596,price_psm,xgboost",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_price_psm_xgboost.csv"
-          },
-          {
-            "firstQuote": "town_QUEENSTOWN,0.06862926377031016,rental_yield_pct,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_random_forest.csv"
-          },
-          {
-            "firstQuote": "town_QUEENSTOWN,0.12826455,rental_yield_pct,xgboost",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_rental_yield_pct_xgboost.csv"
-          },
-          {
-            "firstQuote": "town_QUEENSTOWN,0.01245779485522622,yoy_change_pct,random_forest",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_random_forest.csv"
-          },
-          {
-            "firstQuote": "town_QUEENSTOWN,0.0823162,yoy_change_pct,xgboost",
-            "occurrences": 1,
-            "path": "data/analysis/feature_importance/feature_importance_yoy_change_pct_xgboost.csv"
-          },
-          {
-            "firstQuote": "QUEENSTOWN,EXECUTIVE,4600.0,1310250.0,55200.0,4.212936462507155",
-            "occurrences": 1,
-            "path": "data/analysis/rental_market/rental_vs_resale_comparison.csv"
-          },
-          {
-            "firstQuote": "QUEENSTOWN,6123.08,6694.82,5.02,30.377005105638943,13.49,0.21649018399825523,21.0,0.5563049232254886,127.0,0.18389315167935644,24.0,0.949344",
-            "occurrences": 1,
-            "path": "data/analysis/town_leaderboard/town_leaderboard.csv"
-          },
-          {
-            "firstQuote": "QUEENSTOWN,21.0,127.0,24.0,57.333333333333336",
-            "occurrences": 1,
-            "path": "data/analysis/town_leaderboard/town_leaderboard_summary.csv"
           },
           {
             "firstQuote": "- **Regional classification**: CCR (10 planning areas — Bukit Timah, Downtown Core, Orchard, River Valley, etc.), RCR (12 planning areas — B",
@@ -5320,36 +4740,6 @@
             "path": "docs/analytics/temporal-evolution.md"
           },
           {
-            "firstQuote": "| **RCR**            | Bukit Merah, Queenstown, Geylang, Kallang         | City fringe, mature estates       |",
-            "occurrences": 1,
-            "path": "docs/plans/2025-02-16-plan-autoregression-var-housing-appreciation.md"
-          },
-          {
-            "firstQuote": "'Queenstown': 'RCR',",
-            "occurrences": 1,
-            "path": "docs/plans/2025-02-16-var-housing-appreciation-implementation.md"
-          },
-          {
-            "firstQuote": "| **40** | Queenstown    | -1.45%          | -2.03%            | Price fatigue, mature estate |",
-            "occurrences": 6,
-            "path": "docs/plans/2026-02-04-analyze-policy-impact.md"
-          },
-          {
-            "firstQuote": "'NOVENA', 'QUEENSTOWN', 'TOA PAYOH', 'MARINE PARADE', 'MUSEUM',",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-05-enhanced-school-impact-analysis.md"
-          },
-          {
-            "firstQuote": "\"planningAreas\": [\"Toa Payoh\", \"Queenstown\", \"Serangoon\", \"Bishan\"],",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-design.md"
-          },
-          {
-            "firstQuote": "{\"name\": \"Queenstown\", \"region\": \"RCR\", \"cluster\": \"HH\", \"cbd_distance\": 3.5},",
-            "occurrences": 1,
-            "path": "docs/plans/2026-02-22-interactive-market-segments-dashboard-implementation.md"
-          },
-          {
             "firstQuote": "\"      \\\"pln_area_n\\\": \\\"QUEENSTOWN\\\",\\n\",",
             "occurrences": 4,
             "path": "notebooks/L0_onemap.ipynb"
@@ -5365,7 +4755,7 @@
             "path": "tests/test_regional_mapping.py"
           }
         ],
-        "occurrences": 1715
+        "occurrences": 27
       },
       "transition matrix": {
         "files": 0,

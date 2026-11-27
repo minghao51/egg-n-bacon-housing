@@ -41,6 +41,245 @@ jobs:
       - run: uv sync --dev --locked
       - run: uv run pip-audit --skip-editable
 
+  # REL-4: the `security` job above audits only the environment CI itself runs
+  # (the dev group), where the count is zero. Nothing audited the `research` or
+  # `tracking` groups, so an advisory there could sit unnoticed indefinitely.
+  # This job audits EVERY group and extra in uv.lock from a frozen export and
+  # installs nothing; the CI-parity job above stays exactly as it was, because
+  # it answers a different question ("is the environment we run green?").
+  #
+  # The audit is non-empty, so the job does not assert "zero advisories" -- it
+  # asserts "no advisory we have not reviewed". Every accepted advisory is named
+  # in .github/security-audit-exceptions.yml with an owner role and a hard
+  # expiry date; an unlisted finding, or an entry past expiry that still
+  # suppresses a finding, fails the job. See docs/guides/ci-cd-pipeline.md.
+  audit-python:
+    name: Dependency audit (all groups)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --dev --locked
+
+      - name: Export every group and extra from the frozen lock
+        run: |
+          uv export --frozen --all-groups --all-extras --no-emit-project \
+            --format requirements-txt > "$RUNNER_TEMP/audit-all-groups.txt"
+          grep -c '==' "$RUNNER_TEMP/audit-all-groups.txt" || true
+
+      - name: Audit the frozen export (no install)
+        run: |
+          set -u
+          status=0
+          uv run --frozen pip-audit -r "$RUNNER_TEMP/audit-all-groups.txt" \
+            --no-deps --disable-pip --progress-spinner off \
+            --format json --output "$RUNNER_TEMP/pip-audit-all-groups.json" || status=$?
+          if [ "$status" -gt 1 ]; then
+            echo "::error::pip-audit exited $status (0 = clean, 1 = findings); this is a tool failure, not an advisory count"
+            exit "$status"
+          fi
+
+      # The gate: every finding must be covered by a live, reviewed exception
+      # entry. Unknown ids, expired entries and schema mistakes all fail.
+      - name: Enforce the reviewed exception register
+        run: |
+          uv run --with pyyaml python - \
+            "$RUNNER_TEMP/pip-audit-all-groups.json" \
+            python-all-groups .github/security-audit-exceptions.yml <<'PY'
+          import datetime as dt, json, sys
+          from pathlib import Path
+
+          import yaml
+
+          REQUIRED = ("scope", "package", "owner_role", "expires", "rationale", "advisories")
+          audit_json, scope, register = sys.argv[1:4]
+          raw = Path(audit_json).read_text(encoding="utf-8", errors="replace")
+          start = raw.find("{")
+          if start < 0:
+              raise SystemExit(f"{audit_json}: the audit tool produced no JSON")
+          data = json.loads(raw[start:])
+          findings = []
+          if isinstance(data, dict) and "dependencies" in data:  # pip-audit --format json
+              for dep in data["dependencies"]:
+                  for v in dep.get("vulns") or []:
+                      fix = ", ".join(v.get("fix_versions") or []) or "no fix published"
+                      ids = {v["id"], *(v.get("aliases") or [])}
+                      findings.append((dep["name"], ids, f'{v["id"]} (fixed in {fix})'))
+          else:  # bun audit --json: {package: [advisory, ...]}
+              for pkg, advisories in data.items():
+                  for a in advisories:
+                      ghsa = str(a.get("url") or "").rsplit("/", 1)[-1] or str(a.get("id", "?"))
+                      ids = {ghsa, str(a.get("id", ""))}
+                      detail = f'{ghsa} [{a.get("severity", "?")}] affected {a.get("vulnerable_versions", "?")}'
+                      findings.append((pkg, ids, detail))
+
+          doc = yaml.safe_load(Path(register).read_text(encoding="utf-8")) or {}
+          errors, entries, today = [], [], dt.date.today()
+          if scope not in (doc.get("scopes") or {}):
+              errors.append(f"{register}: scope {scope!r} is not declared")
+          for n, e in enumerate(doc.get("entries") or [], 1):
+              missing = [k for k in REQUIRED if not isinstance(e, dict) or not e.get(k)]
+              if missing:
+                  errors.append(f"entry {n}: missing {', '.join(missing)}")
+                  continue
+              try:
+                  expires = dt.date.fromisoformat(str(e["expires"]))
+              except ValueError:
+                  errors.append(f"entry {n} ({e['package']}): expires {e['expires']!r} is not ISO")
+                  continue
+              if str(e["scope"]).strip() == scope:
+                  entries.append({"n": n, "package": str(e["package"]).strip().lower(),
+                                  "ids": {str(a).strip() for a in e["advisories"]},
+                                  "expires": expires, "hits": 0})
+
+          unreviewed, expired = [], []
+          for pkg, ids, detail in findings:
+              hits = [x for x in entries if x["package"] == pkg.strip().lower() and x["ids"] & ids]
+              if not hits:
+                  unreviewed.append(f"{pkg}: {detail}")
+                  continue
+              for x in hits:
+                  x["hits"] += 1
+                  if x["expires"] < today:
+                      expired.append(f"{pkg}: {detail} -- accepted by entry {x['n']}, expired {x['expires']}")
+
+          print(f"{scope}: {len(findings)} finding(s) in {audit_json}")
+          for m in errors:
+              print(f"::error::{m}")
+          for m in unreviewed:
+              print(f"::error::UNREVIEWED advisory -- {m}")
+          for m in expired:
+              print(f"::error::EXPIRED exception -- {m}")
+          for x in entries:
+              if x["hits"] == 0:
+                  print(f"::notice::stale exception entry {x['n']} ({x['package']}) matches no finding -- delete it")
+          if errors or unreviewed or expired:
+              print(f"FAIL {scope}: {len(unreviewed)} unreviewed, {len(expired)} expired, {len(errors)} schema error(s)")
+              print("See docs/guides/ci-cd-pipeline.md for the triage and fix procedure.")
+              sys.exit(1)
+          print(f"PASS {scope}: {len(findings)} finding(s) covered by {len(entries)} reviewed entr(y/ies)")
+          PY
+
+  # REL-4 (frontend half): `bun audit` never ran in CI. It is as non-empty as the
+  # Python all-groups audit, so it uses the same reviewed-exception contract with
+  # its own `app-bun` scope. The gate body below is kept identical to the one in
+  # `audit-python`; a GitHub workflow cannot share step code without adding a
+  # file outside this change's ownership, so the two copies are deliberately
+  # verbatim and must be edited together.
+  audit-frontend:
+    name: Dependency audit (app)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.23"
+
+      - name: Install dependencies
+        working-directory: ./app
+        run: bun install --frozen-lockfile
+
+      - name: Audit app dependencies
+        working-directory: ./app
+        run: |
+          set -u
+          status=0
+          bun audit --json > "$RUNNER_TEMP/bun-audit.json" 2> "$RUNNER_TEMP/bun-audit.err" || status=$?
+          cat "$RUNNER_TEMP/bun-audit.err"
+          if [ "$status" -gt 1 ]; then
+            echo "::error::bun audit exited $status (0 = clean, 1 = findings); this is a tool failure, not an advisory count"
+            exit "$status"
+          fi
+
+      # Only for the YAML read of the exception register: the JSON parsing is
+      # stdlib. `--no-project` keeps this job from syncing the Python project.
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Enforce the reviewed exception register
+        run: |
+          uv run --no-project --with pyyaml python - \
+            "$RUNNER_TEMP/bun-audit.json" \
+            app-bun .github/security-audit-exceptions.yml <<'PY'
+          import datetime as dt, json, sys
+          from pathlib import Path
+
+          import yaml
+
+          REQUIRED = ("scope", "package", "owner_role", "expires", "rationale", "advisories")
+          audit_json, scope, register = sys.argv[1:4]
+          raw = Path(audit_json).read_text(encoding="utf-8", errors="replace")
+          start = raw.find("{")
+          if start < 0:
+              raise SystemExit(f"{audit_json}: the audit tool produced no JSON")
+          data = json.loads(raw[start:])
+          findings = []
+          if isinstance(data, dict) and "dependencies" in data:  # pip-audit --format json
+              for dep in data["dependencies"]:
+                  for v in dep.get("vulns") or []:
+                      fix = ", ".join(v.get("fix_versions") or []) or "no fix published"
+                      ids = {v["id"], *(v.get("aliases") or [])}
+                      findings.append((dep["name"], ids, f'{v["id"]} (fixed in {fix})'))
+          else:  # bun audit --json: {package: [advisory, ...]}
+              for pkg, advisories in data.items():
+                  for a in advisories:
+                      ghsa = str(a.get("url") or "").rsplit("/", 1)[-1] or str(a.get("id", "?"))
+                      ids = {ghsa, str(a.get("id", ""))}
+                      detail = f'{ghsa} [{a.get("severity", "?")}] affected {a.get("vulnerable_versions", "?")}'
+                      findings.append((pkg, ids, detail))
+
+          doc = yaml.safe_load(Path(register).read_text(encoding="utf-8")) or {}
+          errors, entries, today = [], [], dt.date.today()
+          if scope not in (doc.get("scopes") or {}):
+              errors.append(f"{register}: scope {scope!r} is not declared")
+          for n, e in enumerate(doc.get("entries") or [], 1):
+              missing = [k for k in REQUIRED if not isinstance(e, dict) or not e.get(k)]
+              if missing:
+                  errors.append(f"entry {n}: missing {', '.join(missing)}")
+                  continue
+              try:
+                  expires = dt.date.fromisoformat(str(e["expires"]))
+              except ValueError:
+                  errors.append(f"entry {n} ({e['package']}): expires {e['expires']!r} is not ISO")
+                  continue
+              if str(e["scope"]).strip() == scope:
+                  entries.append({"n": n, "package": str(e["package"]).strip().lower(),
+                                  "ids": {str(a).strip() for a in e["advisories"]},
+                                  "expires": expires, "hits": 0})
+
+          unreviewed, expired = [], []
+          for pkg, ids, detail in findings:
+              hits = [x for x in entries if x["package"] == pkg.strip().lower() and x["ids"] & ids]
+              if not hits:
+                  unreviewed.append(f"{pkg}: {detail}")
+                  continue
+              for x in hits:
+                  x["hits"] += 1
+                  if x["expires"] < today:
+                      expired.append(f"{pkg}: {detail} -- accepted by entry {x['n']}, expired {x['expires']}")
+
+          print(f"{scope}: {len(findings)} finding(s) in {audit_json}")
+          for m in errors:
+              print(f"::error::{m}")
+          for m in unreviewed:
+              print(f"::error::UNREVIEWED advisory -- {m}")
+          for m in expired:
+              print(f"::error::EXPIRED exception -- {m}")
+          for x in entries:
+              if x["hits"] == 0:
+                  print(f"::notice::stale exception entry {x['n']} ({x['package']}) matches no finding -- delete it")
+          if errors or unreviewed or expired:
+              print(f"FAIL {scope}: {len(unreviewed)} unreviewed, {len(expired)} expired, {len(errors)} schema error(s)")
+              print("See docs/guides/ci-cd-pipeline.md for the triage and fix procedure.")
+              sys.exit(1)
+          print(f"PASS {scope}: {len(findings)} finding(s) covered by {len(entries)} reviewed entr(y/ies)")
+          PY
+
   catalog:
     runs-on: ubuntu-24.04
     steps:
@@ -155,5 +394,56 @@ jobs:
         if: failure()
         with:
           name: playwright-report
+          path: app/playwright-report/
+          retention-days: 7
+
+  # The `e2e` job above builds and previews at `/`, where the Pages-prefixed
+  # spec skips itself. This job is the only one that exercises the real
+  # GitHub Pages base path, so it must run and must not skip.
+  pages-e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.23"
+
+      - name: Install dependencies
+        working-directory: ./app
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        working-directory: ./app
+        run: bunx playwright install chromium --with-deps
+
+      - name: Build Astro site with the GitHub Pages base path
+        working-directory: ./app
+        run: bun run build:pages
+
+      # `build:pages` regenerates this asset; a byte-level drift means the
+      # committed artifact no longer matches its source and must fail loudly
+      # instead of shipping silently.
+      - name: Assert the generated catalog did not drift
+        run: git diff --exit-code -- app/public/data/catalog.jsonl.gz
+
+      - name: Run Pages-prefixed E2E tests
+        working-directory: ./app
+        env:
+          PLAYWRIGHT_HTML_OPEN: never
+          PLAYWRIGHT_SERVER_COMMAND: bun run serve:pages
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:4402/egg-n-bacon-housing/
+          PAGES_ORIGIN: http://127.0.0.1:4402
+          PAGES_BASE_PATH: /egg-n-bacon-housing
+        run: bunx playwright test tests/e2e/pages-base.spec.ts
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-pages
           path: app/playwright-report/
           retention-days: 7

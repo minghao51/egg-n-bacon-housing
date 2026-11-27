@@ -1,0 +1,15 @@
+[2m[WebServer] [22m[0m[2m[35m$[0m [2m[1mnode scripts/serve-pages-base.mjs[0m
+
+Running 9 tests using 2 workers
+
+  ✓  1 [chromium] › tests/e2e/pages-base.spec.ts:33:3 › Pages base path › serves HTML, CSS and JS under the repository prefix (405ms)
+  ✓  2 [chromium] › tests/e2e/pages-base.spec.ts:60:3 › Pages base path › hydrates an island and fetches data under the prefix (501ms)
+  ✓  4 [chromium] › tests/e2e/pages-base.spec.ts:129:3 › Pages base path › keeps deep links and their query state (613ms)
+  ✓  3 [chromium] › tests/e2e/pages-base.spec.ts:98:3 › Pages base path › every shipped route renders its heading (1.1s)
+  ✓  5 [chromium] › tests/e2e/pages-base.spec.ts:172:3 › Pages base path › never emits a root-relative internal link (593ms)
+  ✓  6 [chromium] › tests/e2e/pages-base.spec.ts:186:3 › Pages base path › every same-origin home link resolves (362ms)
+  ✓  8 [chromium] › tests/e2e/pages-base.spec.ts:242:3 › Pages base path on a narrow viewport › resolves the verified v2 pack under the prefix (334ms)
+  ✓  9 [chromium] › tests/e2e/pages-base.spec.ts:269:3 › Pages base path on a narrow viewport › opens the drawer and reaches a research route (1.2s)
+  ✓  7 [chromium] › tests/e2e/pages-base.spec.ts:204:3 › Pages base path › key routes load without a same-origin 4xx or page error (7.0s)
+
+  9 passed (9.4s)
