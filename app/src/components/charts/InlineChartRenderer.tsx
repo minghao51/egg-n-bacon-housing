@@ -35,6 +35,12 @@ export default function InlineChartRenderer() {
       const chartConfig = parseChartConfigFromElement(tableElement);
       if (!chartConfig) return;
 
+      // The chart is a *sibling of the table's scroll region*, not a child of
+      // it: inside the 600px-capped region the chart would be hidden behind the
+      // very scroll box the cap creates. The opt-in marker lookup above is
+      // unaffected — it reads `previousElementSibling` on the table.
+      const anchor = tableElement.closest(".table-scroll") ?? tableElement;
+
       const tableData = parseTableFromElement(tableElement);
       if (!tableData) return;
 
@@ -50,7 +56,7 @@ export default function InlineChartRenderer() {
             "No chart is drawn for this table: the selected columns are missing or contain only ranges and text. The table above remains the source of record.",
           ),
         );
-        tableElement.insertAdjacentElement("afterend", noteContainer);
+        anchor.insertAdjacentElement("afterend", noteContainer);
         processedTables.current.add(tableElement);
         return;
       }
@@ -80,7 +86,7 @@ export default function InlineChartRenderer() {
       chartContainer.appendChild(title);
 
       // Insert the container before mounting charts so ResponsiveContainer can measure it.
-      tableElement.insertAdjacentElement("afterend", chartContainer);
+      anchor.insertAdjacentElement("afterend", chartContainer);
 
       if (plottable.datasets.length === 0) {
         chartContainer.appendChild(
