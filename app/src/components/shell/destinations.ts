@@ -25,6 +25,19 @@ export interface Destination {
   label: string;
   description: string;
   href: string;
+  /**
+   * Sections this destination also contains, stored bare like `href`.
+   *
+   * A destination is matched by its own `href`, but a section can live
+   * somewhere else: `Data & methods` is the provenance guide at `/data`, while
+   * the catalog under `/catalog/*` is a sub-page of the same destination. The
+   * same is true of `Research`, which spans both the Studies library at
+   * `/analytics/` and the workspaces under `/research/*`.
+   *
+   * Without these, a reader on a covered page sees no current destination at
+   * all — they have fallen out of the navigation model.
+   */
+  alsoMatches?: readonly string[];
 }
 
 export const DESTINATIONS: Destination[] = [
@@ -58,6 +71,9 @@ export const DESTINATIONS: Destination[] = [
     // period, coverage and export time of each published asset, and links on
     // to `/catalog/` for the per-dataset view rather than replacing it.
     href: "data",
+    // The catalog is reached from the guide and belongs to this destination,
+    // so every `/catalog/*` page still shows where the reader is.
+    alsoMatches: ["catalog"],
   },
 ];
 

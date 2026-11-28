@@ -68,7 +68,11 @@ jobs:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:4402/egg-n-bacon-housing/
           PAGES_ORIGIN: http://127.0.0.1:4402
           PAGES_BASE_PATH: /egg-n-bacon-housing
-        run: bunx playwright test tests/e2e/pages-base.spec.ts
+        # `nav-current` runs here too: it asserts the one-page/one-location
+        # contract on every route, including the catalog pages that the
+        # Data & methods destination covers, and the base-path build is where
+        # a broken current marker would otherwise reach production unseen.
+        run: bunx playwright test tests/e2e/pages-base.spec.ts tests/e2e/nav-current.spec.ts
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

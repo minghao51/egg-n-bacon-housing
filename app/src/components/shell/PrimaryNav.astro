@@ -51,9 +51,17 @@ const destinations = DESTINATIONS.map((destination) => {
   const href = `${base}${destination.href}`;
   // Research's own href only covers the Studies library, so the `/research/*`
   // workspaces are matched through the shared `isResearchPath` predicate.
+  // `alsoMatches` names the other sections a destination contains — the catalog
+  // under Data & methods — so a page in one of them still shows where the
+  // reader is instead of marking no destination at all.
+  const alsoActive = (destination.alsoMatches ?? []).some(
+    (section) =>
+      currentPath === `/${section}` || currentPath.startsWith(`/${section}/`),
+  );
   const active =
     isCurrentPage(currentPath, href, base) ||
-    (destination.key === "research" && isResearchPath(currentPath));
+    (destination.key === "research" && isResearchPath(currentPath)) ||
+    alsoActive;
   return {
     ...destination,
     href,
