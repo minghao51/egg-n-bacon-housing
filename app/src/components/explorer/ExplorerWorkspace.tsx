@@ -518,7 +518,11 @@ function ExplorerData({
         the table is empty rather than leaving a silent blank.
       */}
       <>
-        <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-8">
+        {/* `grid-cols-1` is `repeat(1, minmax(0, 1fr))`: below `lg` the implicit
+            `auto` column took its min-content width, so the settings fieldset's
+            `min-w-[3.5rem]` labels widened the page and made it scroll
+            sideways at 390px. */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-8">
           <ExplorerSettings
             selection={selection}
             periodGroups={periodGroups}
@@ -557,7 +561,11 @@ function ExplorerData({
                   ? `Checking the published ${period} window`
                   : `${period} is not available in this build`}
               </p>
-              <p className="mt-2 text-muted-foreground">{windowView.message}</p>
+              {/* The message can carry a 64-character digest with no break
+                  opportunity; without wrapping it widens the page at 390px. */}
+              <p className="mt-2 break-words text-muted-foreground">
+                {windowView.message}
+              </p>
             </div>
           )}
         </div>
