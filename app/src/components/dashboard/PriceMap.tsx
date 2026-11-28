@@ -1,6 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { MAP_TILES_ATTRIBUTION, MAP_TILES_URL } from "@/config/map-tiles";
+import {
+  MAP_OUTLINE,
+  NO_DATA,
+  SEQUENTIAL_RAMP,
+  SEQUENTIAL_TOP,
+  SURFACE,
+  sequentialStep,
+} from "@/constants/palette";
 import { decompressGzip } from "@/utils/gzip";
 import {
   EMPTY_MAP_SELECTION,
@@ -371,24 +379,30 @@ export default function PriceMap({
     (val !== 0 || metric === "yoy_change_pct");
 
   const getColor = (val: number | undefined) => {
-    if (!hasObservedValue(val)) return "#cccccc";
+    if (!hasObservedValue(val)) return NO_DATA;
 
     // Custom buckets based on distribution: each threshold is a fraction of
     // the observed maximum, so no minimum/normalisation term is needed.
-    // High-end areas shouldn't drown out the differences in the mid-range
-    return val > max * 0.9
-      ? "#800026"
-      : val > max * 0.7
-        ? "#BD0026"
-        : val > max * 0.5
-          ? "#E31A1C"
-          : val > max * 0.35
-            ? "#FC4E2A"
-            : val > max * 0.2
-              ? "#FD8D3C"
-              : val > max * 0.1
-                ? "#FEB24C"
-                : "#FFEDA0";
+    // High-end areas shouldn't drown out the differences in the mid-range.
+    // Seven buckets, seven ramp steps: `sequentialStep` gives every bucket its
+    // own colour, so crossing any of these thresholds stays visible and "Top
+    // Tier" below names exactly one fill.
+    const bucket =
+      val > max * 0.9
+        ? 6
+        : val > max * 0.7
+          ? 5
+          : val > max * 0.5
+            ? 4
+            : val > max * 0.35
+              ? 3
+              : val > max * 0.2
+                ? 2
+                : val > max * 0.1
+                  ? 1
+                  : 0;
+
+    return sequentialStep(bucket, 7);
   };
 
   // Leaflet's style callback receives its own (wider) feature type or
@@ -406,9 +420,9 @@ export default function PriceMap({
 
     return {
       fillColor: getColor(value),
-      weight: isSelected ? 3 : 1,
+      weight: isSelected ? MAP_OUTLINE.selected.weight : 1,
       opacity: 1,
-      color: isSelected ? "#2563eb" : "white",
+      color: isSelected ? MAP_OUTLINE.selected.color : SURFACE.paper,
       dashArray: isSelected ? "" : "3",
       fillOpacity: isSelected ? 0.9 : 0.7,
     };
@@ -480,7 +494,7 @@ export default function PriceMap({
           }
 
           <div class="mt-2 pt-2 border-t text-xs text-muted-foreground text-center">
-             ${escapeHtml(metricLabel)} Rank: ${getColor(data[metric]) === "#800026" ? "Top Tier" : "Standard"}
+             ${escapeHtml(metricLabel)} Rank: ${getColor(data[metric]) === SEQUENTIAL_TOP ? "Top Tier" : "Standard"}
           </div>
         </div>
       `;
@@ -528,7 +542,7 @@ export default function PriceMap({
         // Reset style
         layer.setStyle({
           weight: 1,
-          color: "white",
+          color: SURFACE.paper,
           dashArray: "3",
           fillOpacity: 0.7,
         });
@@ -806,22 +820,24 @@ export default function PriceMap({
               <code className="font-mono">map_metrics</code>
             </p>
             <div className="mt-2 flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-[#800026]"></span>
-                <span>High</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-[#FD8D3C]"></span>
-                <span>Medium</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-[#FFEDA0]"></span>
-                <span>Low</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-[#cccccc] border border-border"></span>
-                <span>No observed value</span>
-              </div>
+              {[
+                { color: SEQUENTIAL_TOP, label: "High" },
+                {
+                  color:
+                    SEQUENTIAL_RAMP[Math.floor(SEQUENTIAL_RAMP.length / 2)],
+                  label: "Medium",
+                },
+                { color: SEQUENTIAL_RAMP[0], label: "Low" },
+                { color: NO_DATA, label: "No observed value" },
+              ].map((entry) => (
+                <div key={entry.label} className="flex items-center gap-2">
+                  <span
+                    className="w-4 h-4 rounded border border-border"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span>{entry.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

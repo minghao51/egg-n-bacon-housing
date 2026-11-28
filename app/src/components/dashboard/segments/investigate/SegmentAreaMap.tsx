@@ -5,6 +5,12 @@ import type {
   SegmentInvestigationMetric,
 } from "@/types/segments";
 import {
+  MAP_OUTLINE,
+  NO_DATA,
+  SEQUENTIAL_RAMP,
+  SURFACE,
+} from "@/constants/palette";
+import {
   formatSegmentMetric,
   segmentMetricEvidence,
 } from "@/components/dashboard/segments/lib/segment-evidence";
@@ -74,8 +80,6 @@ async function decompressGzip(buffer: ArrayBuffer): Promise<string> {
   return new TextDecoder().decode(buffer);
 }
 
-const COLORS = ["#e0f2fe", "#93c5fd", "#60a5fa", "#2563eb", "#1d4ed8"];
-
 export default function SegmentAreaMap({
   rows,
   selectedMetric,
@@ -132,10 +136,10 @@ export default function SegmentAreaMap({
     (value: number) => {
       const normalized = (value - minValue) / (maxValue - minValue || 1);
       const index = Math.min(
-        COLORS.length - 1,
-        Math.floor(normalized * (COLORS.length - 1)),
+        SEQUENTIAL_RAMP.length - 1,
+        Math.floor(normalized * (SEQUENTIAL_RAMP.length - 1)),
       );
-      return COLORS[index];
+      return SEQUENTIAL_RAMP[index];
     },
     [maxValue, minValue],
   );
@@ -149,10 +153,10 @@ export default function SegmentAreaMap({
       const isHighlighted = highlightedArea === areaKey;
 
       return {
-        fillColor: row ? getColor(row[selectedMetric]) : "#e5e7eb",
-        weight: isHighlighted ? 3 : 1,
+        fillColor: row ? getColor(row[selectedMetric]) : NO_DATA,
+        weight: isHighlighted ? MAP_OUTLINE.selected.weight : 1,
         opacity: 1,
-        color: isHighlighted ? "#1d4ed8" : "#ffffff",
+        color: isHighlighted ? MAP_OUTLINE.selected.color : SURFACE.card,
         dashArray: isHighlighted ? "" : "3",
         fillOpacity: row ? (isHighlighted ? 0.95 : 0.8) : 0.2,
       };
@@ -203,8 +207,8 @@ export default function SegmentAreaMap({
             return;
           }
           event.target.setStyle({
-            weight: 3,
-            color: "#1d4ed8",
+            weight: MAP_OUTLINE.selected.weight,
+            color: MAP_OUTLINE.selected.color,
             dashArray: "",
             fillOpacity: 0.95,
           });
@@ -270,18 +274,18 @@ export default function SegmentAreaMap({
         </div>
         <div className="space-y-1">
           <LegendRow
-            color={COLORS[COLORS.length - 1]}
+            color={SEQUENTIAL_RAMP[SEQUENTIAL_RAMP.length - 1]}
             label={`High (${formatSegmentMetric(maxValue, selectedMetric)})`}
           />
           <LegendRow
-            color={COLORS[Math.floor(COLORS.length / 2)]}
+            color={SEQUENTIAL_RAMP[Math.floor(SEQUENTIAL_RAMP.length / 2)]}
             label="Mid"
           />
           <LegendRow
-            color={COLORS[0]}
+            color={SEQUENTIAL_RAMP[0]}
             label={`Low (${formatSegmentMetric(minValue, selectedMetric)})`}
           />
-          <LegendRow color="#e5e7eb" label="Outside segment" />
+          <LegendRow color={NO_DATA} label="Outside segment" />
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import {
   Legend,
 } from "recharts";
 import type { ChartData } from "@/utils/data-parser";
+import { CATEGORICAL } from "@/constants/palette";
 import ClientChart from "./ClientChart";
 
 interface TimeSeriesChartProps {
@@ -30,14 +31,8 @@ export default function TimeSeriesChart({
     return point;
   });
 
-  // Generate colors for each dataset
-  const colors = [
-    "#3b82f6", // blue
-    "#10b981", // green
-    "#f59e0b", // amber
-    "#ef4444", // red
-    "#8b5cf6", // violet
-  ];
+  // Dataset series are arbitrary categories, not property types.
+  const colors = CATEGORICAL;
 
   return (
     <ClientChart className="w-full" style={{ height }}>

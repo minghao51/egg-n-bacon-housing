@@ -4,7 +4,16 @@
 
 @layer base {
   /*
-   * Fieldnotes palette — light theme.
+   * Fieldnotes palette — light only.
+   *
+   * Dark mode is not offered; `dark:` utilities are inert (66 of them across
+   * `.astro`/`.tsx` at the time of writing). The `.dark` token block that used
+   * to live here was the pre-token palette, was never contrast-reviewed, and
+   * the chart and map colours were never checked against it, so a toggle
+   * offering it was worse than no toggle. `tailwind.config.mjs` still has
+   * `darkMode: "class"`, but nothing applies the class, so the utilities cannot
+   * take effect. Removing the utilities themselves is a separate, larger sweep.
+   *
    * Every value is an HSL triplet so the existing `hsl(var(--token))` scheme
    * (and Tailwind's `hsl(var(--token) / <alpha>)`) keeps working unchanged.
    * Sources (hex -> HSL triplet -> hex round trip):
@@ -24,6 +33,10 @@
    *                                                  before using it as a brand colour.
    */
   :root {
+    /* Native controls, scrollbars and form widgets stay light even when the
+       visitor's OS prefers dark: the site has no dark palette to fall back on. */
+    color-scheme: light;
+
     /* Named Fieldnotes tokens (use as hsl(var(--paper)) etc.) */
     --paper: 42 35.7% 94.5%; /* #F6F3EC */
     --ink: 190.7 37.8% 14.5%; /* #172E33 */
@@ -51,7 +64,9 @@
     --secondary-foreground: 190.7 37.8% 14.5%; /* ink #172E33 */
     --muted: 42.4 30.9% 89.2%; /* derived surface #ECE7DB (see header) */
     --muted-foreground: 193.6 11.8% 36.5%; /* muted ink #526368 */
-    --accent: 156 23.8% 91.8%; /* selected fill #E5EFEB */
+    /* Warm hover surface; `--secondary` above is the cool selected fill, so
+       hover and selected stay distinguishable. */
+    --accent: 42.4 30.9% 89.2%; /* derived surface #ECE7DB (see header) */
     --accent-foreground: 190.7 37.8% 14.5%; /* ink #172E33 */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -59,44 +74,6 @@
     --input: 169.1 4.3% 50%; /* control border #7A8583 */
     --ring: 176.6 100% 21%; /* teal #006B65 */
     --radius: 0.5rem;
-  }
-
-  /*
-   * Dark palette: the core surface tokens remain the pre-existing values and
-   * are not design-reviewed. The named Fieldnotes tokens below are overridden
-   * only so text placed on them stays readable when the system prefers dark;
-   * chart colours are still unreviewed in dark mode.
-   */
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-
-    /* Readable dark overrides for the named tokens used as text backgrounds. */
-    --paper: 222.2 84% 4.9%;
-    --ink: 210 40% 98%;
-    --teal: 176 60% 62%;
-    --rust: 12 70% 62%;
-    --plum: 262 40% 72%;
-    --muted-ink: 193 12% 68%;
-    --control-border: 169 6% 62%;
-    --note: 38 55% 22%;
   }
 }
 
@@ -210,6 +187,59 @@
   @apply my-6 w-full border-collapse border border-border;
 }
 
+/*
+ * Bounded evidence tables (S11).
+ *
+ * `rehypeWrapTables` in `astro.config.mjs` wraps every rendered markdown table
+ * in `.table-scroll`. The cap is the whole point: the two largest evidence
+ * tables on `/analytics/findings` were 1,000 px and 1,496 px of a 16-screen
+ * page. Every row is still there and still readable — this is a scroll
+ * container, not a disclosure — but it scrolls inside 600 px instead of
+ * stretching the page. The keyboard focus ring comes from the global
+ * `[tabindex]:focus-visible` rule above, which `.table-scroll` picks up from its
+ * `tabindex="0"`; no second ring is defined here.
+ */
+.table-scroll {
+  @apply my-6 rounded-lg border border-border;
+  max-height: 37.5rem;
+  overflow: auto;
+  background: hsl(var(--card));
+  /* A horizontal drag inside the table must not also drag the page. */
+  overscroll-behavior-x: contain;
+}
+
+/* The wrapper owns the border and the rhythm now, so the table spans it. */
+.table-scroll > table {
+  @apply my-0 border-0;
+}
+
+/*
+ * Sticky header: the first row stays legible while the body scrolls under it.
+ * The background must be opaque (`--card`, the table's own surface) or the rows
+ * show through the header.
+ */
+.table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: hsl(var(--card));
+}
+
+/*
+ * Anchor targets must clear the fixed shell header (56px) and, from `md` to
+ * `xl`, the in-page nav that sticks directly under it — otherwise clicking an
+ * "On this page" link lands the heading underneath the bar.
+ */
+.prose :is(h1, h2, h3, h4)[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .prose :is(h1, h2, h3, h4)[id] {
+    scroll-margin-top: 8rem;
+  }
+}
+
 .prose th {
   @apply bg-muted px-4 py-2 text-left font-semibold text-foreground border border-border;
 }
@@ -249,12 +279,6 @@
   color: hsl(var(--foreground)) !important;
   font-size: 0.875rem !important;
   padding: 0.75rem !important;
-}
-
-.dark .custom-leaflet-tooltip {
-  background: hsl(var(--card)) !important;
-  border-color: hsl(var(--border)) !important;
-  color: hsl(var(--card-foreground)) !important;
 }
 
 /* Trends Dashboard Layout */

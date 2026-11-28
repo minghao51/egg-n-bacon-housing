@@ -6,6 +6,11 @@
  * bin arithmetic are exercised on small hand-built fixtures. One block reads
  * the published `public/data/planning_areas.geojson` because "55 planning areas
  * become 55 paths" is a property of that asset, not of a fixture.
+ *
+ * The `palette` block pins the fill contract the projection module used to own
+ * and no longer does: the explorer's five bins take five steps of the shared
+ * `SEQUENTIAL_RAMP` (`src/constants/palette.ts`), and "no value" is the neutral
+ * token rather than a sixth colour.
  */
 
 import { describe, expect, test } from "bun:test";
@@ -13,13 +18,22 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
-  MAP_NO_DATA_FILL,
-  MAP_PALETTE,
+  NO_DATA,
+  SEQUENTIAL_RAMP,
+  SEQUENTIAL_TOP,
+  sequentialStep,
+} from "@/constants/palette";
+import {
   binForValue,
   binIndex,
   projectPlanningAreas,
   quantileBins,
 } from "../../src/utils/geo-projection";
+
+/** The fills `ExplorerMap` gives its five bins, light to dark. */
+function explorerBinFills(): string[] {
+  return Array.from({ length: 5 }, (_, index) => sequentialStep(index, 5));
+}
 
 /** Ring helper: closes a ring the way GeoJSON does. */
 function ring(points: [number, number][]): [number, number][] {
@@ -594,25 +608,49 @@ describe("quantileBins", () => {
 describe("palette", () => {
   test("has one step per default bin", () => {
     const values = Array.from({ length: 30 }, (_, index) => (index + 1) * 1000);
-    expect(MAP_PALETTE).toHaveLength(5);
-    expect(MAP_PALETTE).toHaveLength(quantileBins(values).length);
+    const fills = explorerBinFills();
+    expect(fills).toHaveLength(5);
+    expect(fills).toHaveLength(quantileBins(values).length);
+    // Five distinct steps even though the ramp has seven: the bin count is the
+    // explorer's, not the ramp's, and no two bins may share a colour.
+    expect(new Set(fills).size).toBe(5);
+
+    // The same holds for every bucket count the maps ask for: PriceMap's seven
+    // thresholds, ExplorerMap's five quantile bins, and anything between.
+    for (let stepCount = 2; stepCount <= 7; stepCount += 1) {
+      const steps = Array.from({ length: stepCount }, (_, index) =>
+        sequentialStep(index, stepCount),
+      );
+      expect(new Set(steps).size).toBe(stepCount);
+    }
   });
 
   test("runs low to high, last step darkest", () => {
-    expect(MAP_PALETTE).toHaveLength(5);
-    for (const step of MAP_PALETTE) {
+    const fills = explorerBinFills();
+    expect(fills).toHaveLength(5);
+    for (const step of fills) {
       expectMatches(step, /^#[0-9A-F]{6}$/);
     }
-    const luminances = MAP_PALETTE.map(luminance);
+    const luminances = fills.map(luminance);
     for (let index = 0; index + 1 < luminances.length; index += 1) {
       const current = luminances[index] ?? 0;
       const next = luminances[index + 1] ?? 0;
       expect(current).toBeGreaterThan(next);
     }
+    // Literal ends, not derived from the helper: these catch a mapping that is
+    // internally consistent but wrong.
+    expect(fills[0]).toBe("#F1F7F5");
+    expect(fills[fills.length - 1]).toBe("#006B65");
+    // And they are the ramp's own ends, so the darkest bin is the documented
+    // teal.
+    expect(fills[0]).toBe(SEQUENTIAL_RAMP[0]);
+    expect(fills[fills.length - 1]).toBe(SEQUENTIAL_TOP);
   });
 
   test("no-data fill differs from every palette step", () => {
-    expectMatches(MAP_NO_DATA_FILL, /^#[0-9A-F]{6}$/);
-    expect(MAP_PALETTE).not.toContain(MAP_NO_DATA_FILL);
+    // No-data is the muted surface token, not a ramp colour: it can never be
+    // read as the lightest bin.
+    expect(NO_DATA).toBe("hsl(var(--muted))");
+    expect(SEQUENTIAL_RAMP).not.toContain(NO_DATA);
   });
 });

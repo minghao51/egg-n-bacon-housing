@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MAP_TILES_ATTRIBUTION, MAP_TILES_URL } from "@/config/map-tiles";
+import {
+  DIVERGING_RAMP,
+  MAP_OUTLINE,
+  NO_DATA,
+  SEQUENTIAL_RAMP,
+  SURFACE,
+} from "@/constants/palette";
 import type {
   LeaderboardDisplayRow,
   LeaderboardMetric,
@@ -76,34 +83,29 @@ interface LeafletLayerEvent {
   };
 }
 
-const PRICE_COLORS = ["#eff6ff", "#bfdbfe", "#60a5fa", "#2563eb", "#1e3a8a"];
-const DIVERGING_COLORS = [
-  "#7f1d1d",
-  "#dc2626",
-  "#fca5a5",
-  "#fef3c7",
-  "#bbf7d0",
-  "#22c55e",
-  "#14532d",
-];
-const YIELD_COLORS = ["#fefce8", "#d9f99d", "#86efac", "#22c55e", "#166534"];
-const OTHER_COLORS = ["#fef2f2", "#fdba74", "#fb7185", "#f97316", "#9a3412"];
-
-function getColorScale(metric: LeaderboardMetric): string[] {
-  if (metric.includes("price") || metric.includes("psf")) {
-    return PRICE_COLORS;
-  }
-  if (metric.includes("yield")) {
-    return YIELD_COLORS;
-  }
-  if (
+/**
+ * Signed metrics are the only ones that may use the diverging ramp: they carry
+ * a direction as well as a magnitude. Everything else is a magnitude.
+ */
+function isSignedMetric(metric: LeaderboardMetric): boolean {
+  return (
     metric.includes("growth") ||
     metric.includes("momentum") ||
     metric.includes("change")
-  ) {
-    return DIVERGING_COLORS;
+  );
+}
+
+function getColorScale(metric: LeaderboardMetric): readonly string[] {
+  if (metric.includes("price") || metric.includes("psf")) {
+    return SEQUENTIAL_RAMP;
   }
-  return OTHER_COLORS;
+  if (metric.includes("yield")) {
+    return SEQUENTIAL_RAMP;
+  }
+  if (isSignedMetric(metric)) {
+    return DIVERGING_RAMP;
+  }
+  return SEQUENTIAL_RAMP;
 }
 
 export default function LeaderboardMap({
@@ -187,7 +189,7 @@ export default function LeaderboardMap({
         metricData: dataDict,
         minValue: 0,
         maxValue: 1,
-        getColor: () => "#e5e7eb",
+        getColor: () => NO_DATA,
       };
     }
 
@@ -206,14 +208,10 @@ export default function LeaderboardMap({
 
     const getColorForValue = (value: number) => {
       if (Number.isNaN(value)) {
-        return "#e5e7eb";
+        return NO_DATA;
       }
 
-      if (
-        selectedMetric.includes("growth") ||
-        selectedMetric.includes("momentum") ||
-        selectedMetric.includes("change")
-      ) {
+      if (isSignedMetric(selectedMetric)) {
         const midpoint = 0;
         if (value >= midpoint) {
           const positiveRange = max - midpoint || 1;
@@ -261,10 +259,10 @@ export default function LeaderboardMap({
       const isHighlighted = highlightedArea === name;
 
       return {
-        fillColor: value !== undefined ? getColor(value) : "#e5e7eb",
-        weight: isHighlighted ? 3 : 1,
+        fillColor: value !== undefined ? getColor(value) : NO_DATA,
+        weight: isHighlighted ? MAP_OUTLINE.selected.weight : 1,
         opacity: 1,
-        color: isHighlighted ? "#2563eb" : "#ffffff",
+        color: isHighlighted ? MAP_OUTLINE.selected.color : SURFACE.card,
         dashArray: isHighlighted ? "" : "3",
         fillOpacity: isHighlighted ? 0.95 : 0.75,
       };
@@ -321,8 +319,8 @@ export default function LeaderboardMap({
       leafletLayer.on({
         mouseover: (event: LeafletLayerEvent) => {
           event.target.setStyle({
-            weight: 3,
-            color: "#2563eb",
+            weight: MAP_OUTLINE.selected.weight,
+            color: MAP_OUTLINE.selected.color,
             dashArray: "",
             fillOpacity: 0.95,
           });
@@ -380,19 +378,22 @@ export default function LeaderboardMap({
         <div className="mb-2 font-semibold">
           {metricMeta.label} {metricMeta.unit ? `(${metricMeta.unit})` : ""}
         </div>
-        {selectedMetric.includes("growth") ||
-        selectedMetric.includes("momentum") ||
-        selectedMetric.includes("change") ? (
+        {isSignedMetric(selectedMetric) ? (
           <div className="space-y-1">
+            {/* A diverging ramp reuses the property hues for direction, so the
+                legend has to say the direction in words. The labels stay
+                direction-only: the metric name is already the legend heading,
+                and a legacy metric id falls back to another metric's heading,
+                which would make "higher median price" out of a growth ramp. */}
             <LegendRow
-              color={DIVERGING_COLORS[DIVERGING_COLORS.length - 1]}
-              label="Positive"
+              color={DIVERGING_RAMP[DIVERGING_RAMP.length - 1]}
+              label="Above zero"
             />
             <LegendRow
-              color={DIVERGING_COLORS[Math.floor(DIVERGING_COLORS.length / 2)]}
-              label="Neutral"
+              color={DIVERGING_RAMP[Math.floor(DIVERGING_RAMP.length / 2)]}
+              label="At zero"
             />
-            <LegendRow color={DIVERGING_COLORS[0]} label="Negative" />
+            <LegendRow color={DIVERGING_RAMP[0]} label="Below zero" />
           </div>
         ) : (
           <div className="space-y-1">

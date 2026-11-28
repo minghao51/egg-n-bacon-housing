@@ -12,6 +12,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import ClientChart from "@/components/charts/ClientChart";
+import { PROPERTY_COLOURS } from "@/constants/palette";
 
 interface SegmentData {
   name: string;
@@ -39,12 +40,6 @@ interface SegmentsData {
   year_2025_ec: SegmentData[];
   year_2025_condo: SegmentData[];
 }
-
-const COLORS = {
-  HDB: "#10b981",
-  Condominium: "#3b82f6",
-  EC: "#f59e0b",
-};
 
 export default function SegmentsAnalysis({ data }: { data: SegmentsData }) {
   const [temporalFilter, setTemporalFilter] = useState<
@@ -226,7 +221,7 @@ export default function SegmentsAnalysis({ data }: { data: SegmentsData }) {
               <Scatter
                 name="HDB"
                 data={hdbData}
-                fill={COLORS.HDB}
+                fill={PROPERTY_COLOURS.hdb}
                 shape="circle"
               />
             )}
@@ -234,7 +229,7 @@ export default function SegmentsAnalysis({ data }: { data: SegmentsData }) {
               <Scatter
                 name="Condominium"
                 data={condoData}
-                fill={COLORS.Condominium}
+                fill={PROPERTY_COLOURS.condo}
                 shape="circle"
               />
             )}
@@ -242,7 +237,7 @@ export default function SegmentsAnalysis({ data }: { data: SegmentsData }) {
               <Scatter
                 name="EC"
                 data={ecData}
-                fill={COLORS.EC}
+                fill={PROPERTY_COLOURS.ec}
                 shape="circle"
               />
             )}
