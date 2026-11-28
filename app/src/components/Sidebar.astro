@@ -1,6 +1,21 @@
 ---
-import DarkModeToggle from './DarkModeToggle';
-import { getCollection } from 'astro:content';
+/**
+ * The application shell sidebar.
+ *
+ * It is a **per-section menu**, not a flat index of the whole site: the four
+ * primary destinations live in the fixed header (`PrimaryNav.astro`) at `lg`
+ * and up and at the top of the mobile drawer, and this sidebar lists only what
+ * belongs to the section the reader is in.
+ *
+ * Accessibility is load-bearing here and was audited: the mobile drawer is a
+ * real modal surface (focus trap, Escape, backdrop click, focus restore,
+ * `inert` when closed), and `aria-current` / active state come from the single
+ * matching implementation in `shell/nav-match.ts`.
+ */
+import PrimaryNav from './shell/PrimaryNav.astro';
+import ResearchSubNav from './shell/ResearchSubNav.astro';
+import { isActive, isCurrentPage, isResearchPath, stripBase } from './shell/nav-match';
+import { RESEARCH_SUBNAV } from './shell/destinations';
 import { DASHBOARD_NAV_ITEMS } from '@/constants/dashboard-nav';
 
 interface Props {
@@ -14,77 +29,82 @@ const { currentPath: rawCurrentPath = '' } = Astro.props;
 // with it. Strip it once here so active-state and `aria-current` matching work
 // at the root and under any configured base path.
 const basePath = import.meta.env.BASE_URL;
-const currentPath =
-  rawCurrentPath.length > 0 && rawCurrentPath.startsWith(basePath)
-    ? `/${rawCurrentPath.slice(basePath.length)}`
-    : rawCurrentPath;
+const currentPath = stripBase(rawCurrentPath || Astro.url.pathname, basePath);
 
-// Get all analytics docs dynamically
-const allDocs = await getCollection('analytics');
-const analyticsDocs = allDocs
-  .filter(doc => doc.data.status !== 'draft')
-  .map(doc => ({
-    title: doc.data.title || doc.id,
-    slug: doc.id.replace(/\.mdx$/, ''),
-  }))
-  .sort((a, b) => a.title.localeCompare(b.title));
+const dashboardItems = DASHBOARD_NAV_ITEMS.map((item) => {
+  const href = `${basePath}${item.path}`;
+  return {
+    ...item,
+    href,
+    active: isActive(currentPath, href, basePath),
+    current: isCurrentPage(currentPath, href, basePath, true),
+  };
+});
 
-function isActive(path: string, href: string): boolean {
-  if (!path) return false;
-  // Strip BASE_URL from href for comparison (path is base-stripped above).
-  // A base without a trailing slash must not produce a doubled `//` path.
-  const rawBase = import.meta.env.BASE_URL;
-  const baseHref =
-    rawBase !== "/" && href.startsWith(rawBase)
-      ? "/" + href.slice(rawBase.length)
-      : href.replace(rawBase, "/");
-  const normalizedPath = path.replace(/\/+$/, '') || '/';
+const catalogItems = [
+  { key: 'overview', label: 'Overview', path: 'catalog/', exact: true },
+  { key: 'bronze', label: 'Bronze', path: 'catalog/bronze', exact: false },
+  { key: 'silver', label: 'Silver', path: 'catalog/silver', exact: false },
+  { key: 'gold', label: 'Gold', path: 'catalog/gold', exact: false },
+  { key: 'platinum', label: 'Platinum', path: 'catalog/platinum', exact: false },
+].map((item) => {
+  const href = `${basePath}${item.path}`;
+  return {
+    ...item,
+    href,
+    active: isActive(currentPath, href, basePath),
+    current: isCurrentPage(currentPath, href, basePath, item.exact),
+  };
+});
 
-  if (baseHref.includes('/dashboard/')) {
-    const normalizedHref = baseHref.replace(/\/$/, '') || '/dashboard';
-    return normalizedPath === normalizedHref;
-  }
-  // Prefix match for analytics/catalog sections, tolerant of a missing
-  // trailing slash on either side (`trailingSlash: "ignore"`).
-  const sectionHref = baseHref.replace(/\/+$/, '') || '/';
-  return normalizedPath === sectionHref || normalizedPath.startsWith(`${sectionHref}/`);
-}
+// Which section menu this page belongs to. Everything else (Explore, an area
+// fieldnote, a bare route) has no section items of its own; the header and the
+// drawer still carry the four destinations, so nothing is unreachable.
+const showDashboardSection =
+  currentPath === '/' || currentPath === '/dashboard' || currentPath.startsWith('/dashboard/');
+const showResearchSection = isResearchPath(currentPath);
+const showCatalogSection =
+  currentPath === '/catalog' || currentPath.startsWith('/catalog/');
 
-/**
- * `isActive` also matches section roots: `analytics/`, `catalog/` and the
- * dashboard href `/dashboard` all prefix-match their child pages, so more than
- * one link can carry the active visual treatment. Only the page's own
- * destination may carry `aria-current="page"`, so section roots pass
- * `exactOnly = true` while deeper destinations keep the prefix rule (a dataset
- * page under `/catalog/<layer>/…` still belongs to its layer link).
- */
-function isCurrentPage(path: string, href: string, exactOnly = false): boolean {
-  if (!isActive(path, href)) return false;
-  if (!exactOnly) return true;
-  const baseHref = href.replace(import.meta.env.BASE_URL, '/').replace(/\/+$/, '') || '/';
-  const normalizedPath = path.replace(/\/+$/, '') || '/';
-  return normalizedPath === baseHref;
-}
+// A page carries at most one `aria-current="page"`. When the section menu
+// below already marks a link as the current page, the primary destination
+// steps down to `aria-current="location"` (see `destinationAriaCurrent`).
+const sectionHasCurrentLink =
+  (showDashboardSection && dashboardItems.some((item) => item.current)) ||
+  (showResearchSection &&
+    RESEARCH_SUBNAV.some((item) =>
+      isCurrentPage(currentPath, `${basePath}${item.href}`, basePath),
+    )) ||
+  (showCatalogSection && catalogItems.some((item) => item.current));
 ---
 
-<!-- Mobile top bar -->
-<header class="fixed top-0 left-0 right-0 h-14 bg-card border-b border-border flex items-center justify-between px-4 z-50 lg:hidden">
-  <button
-    id="mobile-menu-toggle"
-    class="p-2 -ml-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-    aria-label="Open navigation menu"
-    aria-expanded="false"
-  >
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  </button>
-  <a href={import.meta.env.BASE_URL} class="font-bold text-foreground text-sm">
-    Egg n Bacon Housing
-  </a>
-  <div class="w-10">
-    <DarkModeToggle client:load />
+<!-- Top bar: brand + hamburger below `lg`, the four destinations from `lg` up. -->
+<header
+  class="fixed top-0 left-0 lg:left-64 right-0 h-14 bg-card border-b border-border z-50"
+>
+  <div class="flex h-full items-center justify-between px-4 lg:hidden">
+    <button
+      id="mobile-menu-toggle"
+      class="p-2 -ml-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+    <a href={basePath} class="font-bold text-foreground text-sm">
+      Egg n Bacon Housing
+    </a>
+    {/* Balances the hamburger above so the brand stays centred: the right-hand
+        slot used to hold the dark-mode toggle and the site is light-only now. */}
+    <div class="w-10" aria-hidden="true"></div>
   </div>
+  <PrimaryNav
+    currentPath={currentPath}
+    variant="bar"
+    sectionHasCurrentLink={sectionHasCurrentLink}
+  />
 </header>
 
 <!-- Mobile backdrop -->
@@ -102,7 +122,7 @@ function isCurrentPage(path: string, href: string, exactOnly = false): boolean {
   aria-label="Main navigation"
 >
   <div class="p-6 flex items-center justify-between">
-    <a href={import.meta.env.BASE_URL} class="block hover:opacity-80 transition-opacity">
+    <a href={basePath} class="block hover:opacity-80 transition-opacity">
       <h2 class="text-xl font-bold text-foreground mb-2">Egg n Bacon Housing</h2>
       <p class="text-sm text-muted-foreground">Analytics Dashboard</p>
     </a>
@@ -118,215 +138,87 @@ function isCurrentPage(path: string, href: string, exactOnly = false): boolean {
   </div>
 
   <nav class="px-4 pb-4">
-    <div class="mb-4 hidden lg:block">
-      <DarkModeToggle client:load />
-    </div>
+    <!-- Global navigation for touch: from `lg` up it lives in the header. -->
+    <PrimaryNav
+      currentPath={currentPath}
+      variant="drawer"
+      sectionHasCurrentLink={sectionHasCurrentLink}
+    />
 
-    <!-- Dashboard Section -->
-    <div>
-      <div class="px-3 mb-3 flex items-center gap-2">
-        <div class="h-4 w-0.5 bg-primary rounded-full"></div>
-        <span class="text-xs font-bold text-foreground uppercase tracking-wider">
-          Dashboard
-        </span>
-      </div>
-      <div class="border-t border-border my-3"></div>
-      <ul class="space-y-1">
-        {
-          DASHBOARD_NAV_ITEMS.map((item) => {
-            const href = `${import.meta.env.BASE_URL}${item.path}`;
-
-            return (
+    {
+      showDashboardSection && (
+        <div class="mt-6">
+          <div class="px-3 mb-3 flex items-center gap-2">
+            <div class="h-4 w-0.5 bg-primary rounded-full" />
+            <span class="text-xs font-bold text-foreground uppercase tracking-wider">
+              Dashboard
+            </span>
+          </div>
+          <div class="border-t border-border my-3" />
+          <ul class="space-y-1">
+            {dashboardItems.map((item) => (
               <li>
                 <a
-                  href={href}
-                  aria-current={isCurrentPage(currentPath, href, true) ? "page" : undefined}
+                  href={item.href}
+                  aria-current={item.current ? 'page' : undefined}
                   class:list={[
-                    "block rounded-lg px-3 py-2 transition-colors",
-                    isActive(currentPath, href)
-                      ? "bg-accent/50 border-l-2 border-primary text-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    'block rounded-lg px-3 py-2 transition-colors',
+                    item.active
+                      ? 'bg-accent/50 border-l-2 border-primary text-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                   ]}
                 >
                   <span class="block text-sm font-medium">{item.label}</span>
-                  <span class="mt-1 block text-xs text-muted-foreground">{item.description}</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">
+                    {item.description}
+                  </span>
                 </a>
               </li>
-            );
-          })
-        }
-      </ul>
-    </div>
+            ))}
+          </ul>
+        </div>
+      )
+    }
 
-    <!-- Personas Section -->
-    <div class="mt-6">
-      <div class="px-3 mb-3 flex items-center gap-2">
-        <div class="h-4 w-0.5 bg-primary rounded-full"></div>
-        <span class="text-xs font-bold text-foreground uppercase tracking-wider">
-          Personas
-        </span>
-      </div>
-      <div class="border-t border-border my-3"></div>
-      <ul class="space-y-1">
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`}
-            aria-current={
-              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`)
-                ? "page"
-                : undefined
-            }
-            class:list={[
-              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/first-time-buyer`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-accent"
-            ]}
-          >
-            🏠
-            <span>First-Time Buyer</span>
-          </a>
-        </li>
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}analytics/personas/investor`}
-            aria-current={
-              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`)
-                ? "page"
-                : undefined
-            }
-            class:list={[
-              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/investor`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-accent"
-            ]}
-          >
-            💼
-            <span>Investor</span>
-          </a>
-        </li>
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}analytics/personas/upgrader`}
-            aria-current={
-              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`)
-                ? "page"
-                : undefined
-            }
-            class:list={[
-              "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/personas/upgrader`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-accent"
-            ]}
-          >
-            ⬆️
-            <span>Upgrader</span>
-          </a>
-        </li>
-      </ul>
-    </div>
+    {
+      showResearchSection && (
+        <div class="mt-6">
+          <ResearchSubNav currentPath={currentPath} />
+        </div>
+      )
+    }
 
-    <!-- Analytics Section -->
-    <div class="mt-6">
-      <div class="px-3 mb-3 flex items-center gap-2">
-        <div class="h-4 w-0.5 bg-primary rounded-full"></div>
-        <span class="text-xs font-bold text-foreground uppercase tracking-wider">
-          Analytics
-        </span>
-      </div>
-      <div class="border-t border-border my-3"></div>
-      <ul class="space-y-1">
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}analytics/`}
-            aria-current={
-              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/`, true) ? "page" : undefined
-            }
-            class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}analytics/`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            ]}
-          >
-            Analytics Index
-          </a>
-        </li>
-        {
-          analyticsDocs.map((doc) => (
-            <li>
-              <a
-                href={`${import.meta.env.BASE_URL}analytics/${doc.slug}`}
-                aria-current={
-                  isCurrentPage(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`)
-                    ? "page"
-                    : undefined
-                }
-                class:list={[
-                  "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  isActive(currentPath, `${import.meta.env.BASE_URL}analytics/${doc.slug}`)
-                    ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                ]}
-              >
-                {doc.title}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-
-    <!-- Data Catalog Section -->
-    <div class="mt-6">
-      <div class="px-3 mb-3 flex items-center gap-2">
-        <div class="h-4 w-0.5 bg-primary rounded-full"></div>
-        <span class="text-xs font-bold text-foreground uppercase tracking-wider">
-          Data Catalog
-        </span>
-      </div>
-      <div class="border-t border-border my-3"></div>
-      <ul class="space-y-1">
-        <li>
-          <a
-            href={`${import.meta.env.BASE_URL}catalog/`}
-            aria-current={
-              isCurrentPage(currentPath, `${import.meta.env.BASE_URL}catalog/`, true) ? "page" : undefined
-            }
-            class:list={[
-              "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              isActive(currentPath, `${import.meta.env.BASE_URL}catalog/`)
-                ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            ]}
-          >
-            Overview
-          </a>
-        </li>
-        {
-          ["bronze", "silver", "gold", "platinum"].map((layer) => (
-            <li>
-              <a
-                href={`${import.meta.env.BASE_URL}catalog/${layer}`}
-                aria-current={
-                  isCurrentPage(currentPath, `${import.meta.env.BASE_URL}catalog/${layer}`) ? "page" : undefined
-                }
-                class:list={[
-                  "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  isActive(currentPath, `${import.meta.env.BASE_URL}catalog/${layer}`)
-                    ? "text-foreground bg-accent/50 border-l-2 border-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                ]}
-              >
-                {layer.charAt(0).toUpperCase() + layer.slice(1)}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+    {
+      showCatalogSection && (
+        <div class="mt-6">
+          <div class="px-3 mb-3 flex items-center gap-2">
+            <div class="h-4 w-0.5 bg-primary rounded-full" />
+            <span class="text-xs font-bold text-foreground uppercase tracking-wider">
+              Data Catalog
+            </span>
+          </div>
+          <div class="border-t border-border my-3" />
+          <ul class="space-y-1">
+            {catalogItems.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={item.current ? 'page' : undefined}
+                  class:list={[
+                    'block px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                    item.active
+                      ? 'text-foreground bg-accent/50 border-l-2 border-primary'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
   </nav>
 </aside>
 

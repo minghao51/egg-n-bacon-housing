@@ -8,6 +8,7 @@ import {
   Tooltip,
 } from "recharts";
 import type { ChartData } from "@/utils/data-parser";
+import { CATEGORICAL } from "@/constants/palette";
 import ClientChart from "./ClientChart";
 
 interface StatisticalPlotProps {
@@ -23,15 +24,13 @@ export default function StatisticalPlot({
   const plotData: Record<string, string | number>[] = [];
 
   data.datasets.forEach((dataset, datasetIndex) => {
-    const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
-
     dataset.data.forEach((value, valueIndex) => {
       if (value !== null) {
         plotData.push({
           x: valueIndex,
           y: value,
           name: dataset.label,
-          color: colors[datasetIndex % colors.length],
+          color: CATEGORICAL[datasetIndex % CATEGORICAL.length],
         });
       }
     });
@@ -69,19 +68,12 @@ export default function StatisticalPlot({
             itemStyle={{ color: "hsl(var(--foreground))" }}
           />
           {data.datasets.map((dataset, index) => {
-            const colors = [
-              "#3b82f6",
-              "#10b981",
-              "#f59e0b",
-              "#ef4444",
-              "#8b5cf6",
-            ];
             return (
               <Scatter
                 key={dataset.label}
                 name={dataset.label}
                 dataKey={dataset.label}
-                fill={colors[index % colors.length]}
+                fill={CATEGORICAL[index % CATEGORICAL.length]}
                 shape="circle"
               />
             );

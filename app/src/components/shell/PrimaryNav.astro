@@ -1,0 +1,121 @@
+---
+/**
+ * The four primary destinations — Overview · Explore · Research · Data &
+ * methods — from `shell/destinations.ts`.
+ *
+ * `bar` (default) is the horizontal nav rendered inside the fixed `<header>`
+ * in `Sidebar.astro`, visible from `lg` up. Below `lg` four links plus a
+ * hamburger do not fit on a 390 px screen, so the destinations move into the
+ * drawer and this instance renders nothing.
+ *
+ * `drawer` is that mobile instance: the same four destinations, listed
+ * vertically at the top of the drawer, where mobile readers get their global
+ * navigation.
+ *
+ * Matching is delegated to `shell/nav-match.ts` — there is exactly one
+ * implementation of it in the tree.
+ */
+import { DESTINATIONS } from "./destinations";
+import {
+  destinationAriaCurrent,
+  isCurrentPage,
+  isResearchPath,
+  stripBase,
+} from "./nav-match";
+
+interface Props {
+  /**
+   * Pathname to match against — `Astro.url.pathname` (base included) or an
+   * already base-stripped path; `stripBase` is idempotent.
+   */
+  currentPath?: string;
+  variant?: "bar" | "drawer";
+  /**
+   * True when a section-subnav link on the same page is already the current
+   * page. The destination then reports `aria-current="location"` instead of
+   * `"page"`, so a page never carries two `aria-current="page"` links.
+   */
+  sectionHasCurrentLink?: boolean;
+}
+
+const {
+  currentPath: rawCurrentPath = Astro.url.pathname,
+  variant = "bar",
+  sectionHasCurrentLink = false,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const currentPath = stripBase(rawCurrentPath, base);
+
+const destinations = DESTINATIONS.map((destination) => {
+  const href = `${base}${destination.href}`;
+  // Research's own href only covers the Studies library, so the `/research/*`
+  // workspaces are matched through the shared `isResearchPath` predicate.
+  const active =
+    isCurrentPage(currentPath, href, base) ||
+    (destination.key === "research" && isResearchPath(currentPath));
+  return {
+    ...destination,
+    href,
+    active,
+    // One `aria-current="page"` per page: see `destinationAriaCurrent`.
+    ariaCurrent: destinationAriaCurrent(
+      active,
+      isCurrentPage(currentPath, href, base, true),
+      sectionHasCurrentLink,
+    ),
+  };
+});
+---
+
+{
+  variant === "bar" ? (
+    <nav aria-label="Primary" class="hidden h-full items-center gap-1 px-4 lg:flex">
+      {destinations.map((destination) => (
+        <a
+          href={destination.href}
+          aria-current={destination.ariaCurrent}
+          class:list={[
+            "relative inline-flex h-full items-center px-3 text-sm font-medium transition-colors",
+            destination.active
+              ? "text-foreground after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary"
+              : "text-muted-foreground hover:text-foreground",
+          ]}
+        >
+          {destination.label}
+        </a>
+      ))}
+    </nav>
+  ) : (
+    <nav aria-label="Primary" class="lg:hidden">
+      <div class="px-3 mb-3 flex items-center gap-2">
+        <div class="h-4 w-0.5 bg-primary rounded-full" />
+        <span class="text-xs font-bold text-foreground uppercase tracking-wider">
+          Sections
+        </span>
+      </div>
+      <div class="border-t border-border my-3" />
+      <ul class="space-y-1">
+        {destinations.map((destination) => (
+          <li>
+            <a
+              href={destination.href}
+              aria-current={destination.ariaCurrent}
+              class:list={[
+                "block rounded-lg px-3 py-2 transition-colors",
+                destination.active
+                  ? "bg-accent/50 border-l-2 border-primary text-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              ]}
+            >
+              <span class="block text-sm font-medium">{destination.label}</span>
+              <span class="mt-1 block text-xs text-muted-foreground">
+                {destination.description}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

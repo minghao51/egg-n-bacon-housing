@@ -18,8 +18,8 @@ half-finished change: the tree on `main` is green and deployable.
 2. **First authorised data refresh** (§2.2) — the three HIGH defects existed to
    gate this. It is now safe, and it is the only way to prove the fixes on real
    ingestion end to end.
-3. **Post-merge deploy verification** (§2.3) — merge is not deploy; confirm the
-   Pages site.
+3. ~~**Post-merge deploy verification** (§2.3)~~ — **done 2026-11-27**; both
+   deploys green and the live site probed. Only rollback rehearsal is open.
 4. The rest (§2.4–§2.8) is hygiene and two decisions.
 
 ## 1. What is done, and what "done" was measured by
@@ -134,82 +134,54 @@ it as a real finding, not an obstacle.
 `check_catalog.py` passes, every producer drift is explained by the new data, and
 the site builds with all editions still verifying.
 
-### 2.3 Post-merge deploy verification
+### 2.3 Post-merge deploy verification — verified 2026-11-27; rollback open
 
-CI re-runs on `main` and `deploy.yml` fires on merge — but nothing has been
-probed on the live host for this change set. Confirm:
+CI re-runs on `main` and `deploy.yml` fires on merge. Probed live about 8
+minutes after the handoff landed. **Five of six confirmed; only rollback (6) is
+open.**
 
-1. `deploy.yml` run for `830c418` succeeded.
-2. The Pages site serves `/egg-n-bacon-housing/` with no same-origin 404s.
-3. `/explore` still verifies its pack (the UI-1 change is the largest frontend
-   change here — a failure would show as an empty table with an unverified
-   notice rather than wrong numbers).
-4. `/research/map`: keyboard-only area selection works, and "Open observed
-   comparison" carries property + period.
-5. The archive route still renders approved editions — REL-2 now verifies the
-   cited ledger at build time, so a failure would have blocked the build, but
-   confirm the pages render.
-6. **Rollback is still unrehearsed.** This has now been an open item across two
-   audits. It is a release-process gap, not a code gap.
+| #   | Check                                                         | Result                                                                                                                                                                                                                                                                                                                                                                                   |
+| --- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `deploy.yml` for the merge commit                             | ✓ run `46002930369` (`830c418`): build 52s, deploy 15s, both success. The post-handoff `cca4865` deploy (`46003377862`) is green too, as is its full CI run                                                                                                                                                                                                                              |
+| 2   | Pages serves `/egg-n-bacon-housing/` with no same-origin 404s | ✓ 13 published routes 200 (`/`, `/explore/`, `/research/{trends,map,segments,tools}/`, `/dashboard/`, `/dashboard/{leaderboard,segments,trends,map}/`, `/analytics/`, `/catalog/` + four layers, `/analytics/{data-sources,findings,rental-yields,mrt-impact,lease-decay}/`, `/analytics/personas/first-time-buyer/`). Zero 4xx/5xx across 46 `/explore` and 55 `/research/map` requests |
+| 3   | `/explore` verifies its pack (UI-1)                           | ✓ renders `generation 2c30e2aa836c`, "the same verified pack", 12 months to 2026-10, 25,483 sales / S$631,000 median, 24 of 45 areas. No `unverified` / `mismatch` / `failed to verify` string anywhere in the body                                                                                                                                                                      |
+| 4   | `/research/map` keyboard-only + handoff (UI-2/UI-3)           | ✓ focus `#map-area-select` (native `<select>`, `<label for>` = "Area") → `ArrowDown` → `Enter` sets `area=ANG+MO+KIO` with no pointer event; inspector is a `dl` with 6 `dt`/`dd` pairs; "Open observed comparison" → `/egg-n-bacon-housing/explore?property=all&period=whole&area=ANG+MO+KIO` (property **and** period carried)                                                         |
+| 5   | Archive renders approved editions (REL-2)                     | ✓ all 15 approved editions 200 at `/analytics/archive/2026/<editionId>/<seriesSlug>/`; `data-sources-2026-11-14` shows "Archived edition / … / Published 14 Nov 2026" and "Approved edition: three recorded sign-offs cover the evidence artifact". 3 legacy editions sampled, also 200                                                                                                  |
+| 6   | **Rollback rehearsal**                                        | ✗ still unrehearsed — third audit it survives                                                                                                                                                                                                                                                                                                                                            |
 
-### 2.4 Remaining dependency advisories
+**Route probes that are not defects** — do not re-file these as 404s:
+`/areas/` has no index (only `app/src/pages/areas/[slug].astro`), and
+`/data-sources`, `/about` and `/privacy` are not routes at all; "Data Sources"
+resolves to `/analytics/data-sources/`. The published route list is exactly the
+`src/pages` tree.
 
-28 raw records across 8 package names, all build-time transitives:
-`fast-uri` 12, `picomatch` 4, `postcss` 4, `nanoid` 3,
-`postcss-selector-parser` 2, `katex` 1, `source-map-js` 1, `yaml` 1.
+**Rollback has now been rehearsed — and the previous claim in this file was
+wrong.** Recorded 2026-11-28:
 
-Each has a reviewed, expiring entry (`2027-02-28`) in
-`.github/security-audit-exceptions.yml`. Triage by trying the cheapest fix first:
+1. `gh workflow run deploy.yml --ref <previous-sha>` **does not work**: a commit
+   SHA is not a ref, and the dispatch returns `HTTP 422: No ref found`. The
+   earlier "rollback is one command" line in this document was never tested.
+2. A tag at the old commit does dispatch: tag `rollback-rehearsal-830c418` on
+   `830c418` produced run `46098745166` — **`build` succeeded, `deploy` failed
+   after 2 s having run zero steps**. Cause: the `github-pages` environment has a
+   custom deployment branch policy allowing **`main` only**
+   (`gh api repos/:owner/:repo/environments/github-pages/deployment-branch-policies`),
+   so the job is rejected before any step executes.
+3. Production was protected, not broken: the live site stayed on `cca4865` and
+   was verified `200` afterwards. The tag was deleted once the result was
+   recorded.
 
-```bash
-cd app && bun update                     # in-range; closes what it can
-cd app && bun audit --json | python3 -c "import json,sys; d=json.load(sys.stdin); print({k: len(v) for k,v in d.items()})"
-```
+So a rollback is **not** "dispatch the old commit". The three real options:
 
-Then delete the entries whose advisories closed — the register's rule 3 requires
-it, and an unmatched entry is only a notice, so leftovers hide. If a fix needs a
-new major, document it and leave the entry dated.
+| Option                             | How                                                                                            | Cost / risk                                                                                     |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Revert on `main`** (recommended) | `git revert <bad-sha>` and push                                                                | One CI cycle; audit-trailed; the full gate runs on the revert. Leaves the bad commit in history |
+| Allow a rollback ref               | Add a tag or branch pattern to the environment's deployment branch policy, then dispatch on it | Admin action + a second rehearsal to prove it; changes the release contract                     |
+| Force-push `main` backwards        | not recommended                                                                                | Bypasses every gate and rewrites history                                                        |
 
-### 2.5 Canonical-JSON parity test
-
-`edition-registry.ts` re-implements Python's
-`json.dumps(sort_keys=True, indent=2, ensure_ascii=False) + "\n"` as
-`canonicalJsonText`. It verifies all 15 artifacts today, but two implementations
-of one hash is a drift hazard: a change to either side silently breaks the pin.
-
-**Do:** one test that runs the Python canonicaliser over every artifact and
-compares to the TS output. Cheap, and it retires a class of future confusion.
-
-### 2.6 Pyright — decide whether it gates
-
-`pyrightconfig.json` now exists (the audit's GAP-1). It declares that `mypy` is
-the gate, downgrades `reportMissingImports` to warning (for the optional
-`hamilton_sdk` import), and suppresses four pandas-heavy modules **by path** with
-the reason recorded.
-
-Pyright is **not** in CI. Two honest options, pick one and record it:
-
-- **Gate it.** Add a job, verify the four suppressions are still the only ones,
-  and treat a new suppression as a reviewed change.
-- **Declare it out.** Delete the file and state that `mypy` is the only checker;
-  then the standalone Pyright noise stops being a recurring false alarm.
-
-What must not persist is the current ambiguity, where a tool that is not a gate
-produces findings that look like defects (it cost time in this branch).
-
-### 2.7 Small doc corrections
-
-- `app/CHANGELOG.md` still references `@astrojs/tailwind` as a dependency; it is
-  gone (Tailwind now runs through `app/postcss.config.mjs`).
-- `docs/guides/ci-cd-pipeline.md` is accurate about the audit jobs; re-read the
-  evidence section after §2.1 lands.
-
-### 2.8 Basemap key hygiene
-
-`PUBLIC_CARTO_API_KEY` is set locally and as a repo **variable** (not a secret —
-it is inlined into the client bundle and public by construction). Confirm it is
-domain-restricted at CARTO, and note the endpoint returns 200 with _or_ without
-the key, so a blank map is a network/rate-limit problem, not a missing key.
+It remains a release-process gap in one sense: an **urgent** rollback has no
+practised path faster than a revert. That is an owner decision (§3 #4), and the
+mechanism is at least now measured rather than assumed.
 
 ## 3. Owner decisions outstanding
 
@@ -264,6 +236,16 @@ chromium` every E2E fails in ~1 ms with a launch error, which looks like a
     staging, that is not the reset you want; use `git checkout HEAD -- <path>`.
 12. **A new advisory can redden CI with no code change.** `virtualenv`
     PYSEC-2026-4402 appeared mid-branch. Fix in range; never blanket-renew.
+13. **A 404 on a URL you guessed is not a broken route.** A live-404 sweep of
+    invented paths (`/areas/`, `/data-sources`, `/about`, `/privacy`) finds 404s
+    that are the correct answer. Diff the probe against `find app/src/pages`
+    before calling anything a same-origin 404.
+14. **`build:pages` leaves `dist/` on the Pages base; serving it at `/` voids every
+    measurement.** After `bun run build:pages`, `bun run preview` on `:4321`
+    requests `/egg-n-bacon-housing/_astro/*` and 404s every asset: the CSS never
+    loads, so Tailwind's `hidden`/`lg:*` do nothing, both navs render, and layout
+    checks report phantom breakage. This cost one wrong "two visible navs"
+    conclusion. Re-run `bun run build` before any browser check at the root base.
 
 ## 5. Commands
 

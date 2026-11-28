@@ -12,6 +12,7 @@ import {
   Cell,
 } from "recharts";
 import ClientChart from "@/components/charts/ClientChart";
+import { SINGLE_SERIES, propertyColour } from "@/constants/palette";
 import PriceTrendsChart from "./PriceTrendsChart";
 import TransactionVolumeChart from "./TransactionVolumeChart";
 import {
@@ -53,8 +54,6 @@ export interface MarketOverviewDashboardData {
     planning_area?: Record<string, number>;
   };
 }
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
 const PROPERTY_TYPE_LABELS: Record<PropertyTypeId, string> = {
   all: "All property types",
@@ -456,7 +455,10 @@ export default function MarketOverviewDashboard({
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
                   Source:{" "}
-                  <code className="font-mono">
+                  {/* The section key is one long token: let it break instead of
+                      pushing the card (and the page) past the viewport at
+                      tablet width. */}
+                  <code className="break-all font-mono">
                     dashboard_overview.stats.{section}
                   </code>
                 </p>
@@ -472,7 +474,7 @@ export default function MarketOverviewDashboard({
           {allTypes2025Summary}{" "}
           <span className="text-muted-foreground">
             &middot; from{" "}
-            <code className="font-mono">
+            <code className="break-all font-mono">
               dashboard_overview.stats.{sectionKey("year_2025", "all")}
             </code>
           </span>
@@ -562,7 +564,7 @@ export default function MarketOverviewDashboard({
           <span className="font-bold">Scope:</span> {eraLabel(era)} &middot;{" "}
           {PROPERTY_TYPE_LABELS[propertyType]} &middot; {snapshotCount} &middot;
           from{" "}
-          <code className="font-mono">
+          <code className="break-all font-mono">
             dashboard_overview.stats.{scopeSection}
           </code>
         </p>
@@ -636,13 +638,13 @@ export default function MarketOverviewDashboard({
                     `${name} ${((percent || 0) * 100).toFixed(0)}%`
                   }
                   outerRadius={100}
-                  fill="#8884d8"
+                  fill={SINGLE_SERIES}
                   dataKey="value"
                 >
-                  {propertyTypeData.map((entry, index) => (
+                  {propertyTypeData.map((entry) => (
                     <Cell
                       key={`cell-${entry.name}`}
-                      fill={COLORS[index % COLORS.length]}
+                      fill={propertyColour(entry.name)}
                     />
                   ))}
                 </Pie>
@@ -732,7 +734,11 @@ export default function MarketOverviewDashboard({
                   }}
                   itemStyle={{ color: "hsl(var(--foreground))" }}
                 />
-                <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                <Bar
+                  dataKey="value"
+                  fill={SINGLE_SERIES}
+                  radius={[0, 4, 4, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ClientChart>

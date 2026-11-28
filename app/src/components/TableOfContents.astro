@@ -1,7 +1,15 @@
 ---
 /**
  * TableOfContents.astro
- * Sticky right sidebar showing H2/H3 headings for document navigation
+ * In-page navigation for a study: H2/H3 headings of the rendered article.
+ *
+ * **One element, two presentations.** It used to be `hidden xl:block` — a fixed
+ * right rail that only existed at ≥1280 px, so a reader at 768–1279 px had no
+ * in-page navigation at all (S11, §6.4). It is now a single DOM node that is a
+ * sticky horizontal bar under the shell header from `md` up and the same
+ * right-rail geometry at `xl` and up. There is deliberately **not** a second
+ * copy: duplicating it would duplicate the landmark and every link, which was
+ * already fixed once in this codebase. Only CSS decides which shape shows.
  */
 
 interface TocItem {
@@ -18,30 +26,58 @@ interface Props {
 const { headings } = Astro.props;
 ---
 
-<aside class="hidden xl:block w-64 fixed right-0 top-0 h-full overflow-y-auto border-l border-border bg-card/50 backdrop-blur-sm">
-  <div class="p-6">
-    <h3 class="text-sm font-semibold text-foreground mb-4 uppercase tracking-wide">
+<!--
+  Geometry notes.
+  - `md`–`xl`: in flow at the top of `<main>`, sticky under the fixed shell
+    header (56px = `top-14`), so it occupies its own 44px band and nothing
+    underneath is ever covered.
+  - `xl` and up: `fixed` to the right edge with the original rail geometry
+    (`w-64`, `top-14`, `h-[calc(100vh-3.5rem)]`), matching the article's
+    `xl:mr-64` offset.
+  - Below `md` the bar would cost a phone reader more height than it saves, and
+    the article headings are directly in front of them.
+-->
+<aside
+  aria-labelledby="toc-heading"
+  class="hidden md:sticky md:top-14 md:z-30 md:block md:border-b md:border-border md:bg-card/95 md:backdrop-blur-sm xl:fixed xl:right-0 xl:top-14 xl:h-[calc(100vh-3.5rem)] xl:w-64 xl:overflow-y-auto xl:border-b-0 xl:border-l xl:bg-card/50"
+>
+  <div
+    class="md:flex md:items-center md:gap-4 md:overflow-x-auto md:px-4 md:py-2 xl:block xl:overflow-visible xl:p-6"
+  >
+    <h3
+      id="toc-heading"
+      class="md:shrink-0 text-xs font-semibold uppercase tracking-wide text-foreground xl:mb-4 xl:text-sm"
+    >
       On This Page
     </h3>
 
-    <nav class="space-y-2">
+    <nav
+      aria-label="On this page"
+      class="md:flex md:items-center md:gap-x-5 md:space-y-0 md:whitespace-nowrap xl:block xl:space-y-2 xl:whitespace-normal"
+    >
       {
         headings.map((heading) => (
-          <div id={`toc-${heading.id}`}>
+          /* `md:contents` keeps the per-heading wrapper (it carries the anchor
+             target id) out of the horizontal bar's layout without removing the
+             element or its links. */
+          <div id={`toc-${heading.id}`} class="md:contents xl:block">
             <a
               href={`#${heading.id}`}
-              class={`block text-sm py-1 transition-colors hover:text-foreground ${
+              class={`text-sm py-1 transition-colors hover:text-foreground md:inline-block xl:block ${
                 heading.level === 2
                   ? 'text-foreground font-medium'
-                  : 'text-muted-foreground pl-4'
+                  : 'text-muted-foreground xl:pl-4'
               }`}
             >
               {heading.text}
             </a>
 
             {
+              /* Astro's `headings` is a flat list of every H2/H3, so in the
+                 horizontal bar they all sit on one scrollable line; the rail
+                 below is the shape that can hold them vertically. */
               heading.children && heading.children.length > 0 && (
-                <div class="ml-4 mt-1 space-y-1">
+                <div class="ml-4 mt-1 space-y-1 hidden xl:block">
                   {heading.children.map((child) => (
                     <a
                       href={`#${child.id}`}

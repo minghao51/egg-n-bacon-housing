@@ -12,8 +12,8 @@
  *   gzip/JSON cache in `useGzipJson` keeps a revisit from re-downloading it.
  * - An area with no value (outside this section, below the sample threshold, or
  *   filtered out by the search) is never coloured from the data palette: it
- *   keeps `MAP_NO_DATA_FILL`, with a hatch pattern inside the section and
- *   reduced opacity outside it.
+ *   keeps `NO_DATA`, with a hatch pattern inside the section and reduced
+ *   opacity outside it.
  * - Areas outside the current section have no fieldnote link here: the page set
  *   covers the areas published in *some* joint section, not all 55 geometries,
  *   and a link that 404s is worse than no link.
@@ -22,6 +22,12 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { DATA_URLS } from "@/constants/data-urls";
+import {
+  MAP_OUTLINE,
+  NO_DATA,
+  SURFACE,
+  sequentialStep,
+} from "@/constants/palette";
 import { useGzipJson } from "@/hooks/useGzipJson";
 import { areaHref } from "@/utils/area-links";
 import type {
@@ -29,8 +35,6 @@ import type {
   ExplorerSelection,
 } from "@/utils/explorer-selection";
 import {
-  MAP_NO_DATA_FILL,
-  MAP_PALETTE,
   binIndex,
   projectPlanningAreas,
   quantileBins,
@@ -40,17 +44,22 @@ import {
 import type { ExplorerDataset, ExplorerRow } from "@/utils/observed-rows";
 import { METRIC_OPTIONS, propertyNoun } from "./ExplorerSettings";
 
-/** Bin count for the choropleth; matches the five steps of `MAP_PALETTE`. */
+/**
+ * Bin count for the choropleth. Five bins keep the published quantile cuts
+ * unchanged; the fills are five of the seven `SEQUENTIAL_RAMP` steps that
+ * `sequentialStep(index, BIN_COUNT)` picks (two steps skipped, none shared),
+ * so the ramp stays the only palette.
+ */
 const BIN_COUNT = 5;
 
 /** Cache key for the geometry, so a revisit inside the TTL is free. */
 const GEOMETRY_CACHE_KEY = "explore:planning_areas";
 
-/** Hairline between areas and the outline of the selected area. */
-const AREA_STROKE = "#F6F3EC";
-const SELECTED_STROKE = "#B64426";
-const FOCUS_STROKE = "#006B65";
-
+/**
+ * The hatch line is the one colour here without a token: it is a mid grey-green
+ * chosen to read against both the paper surface and the no-data fill, and it
+ * only ever appears inside a 6×6 pattern (and the legend's gradient of it).
+ */
 const NO_VALUE_PATTERN_ID = "explorer-map-no-value-hatch";
 
 /** `data-area-state` values; also the legend groups. */
@@ -161,7 +170,7 @@ function buildModel(
   const shapes: MapShape[] = projected.areas.map((area) => {
     const position = placed.get(area.areaId);
     if (position !== undefined) {
-      const index = Math.min(position.index, MAP_PALETTE.length - 1);
+      const index = Math.min(position.index, BIN_COUNT - 1);
       binCounts[position.index] = (binCounts[position.index] ?? 0) + 1;
       return {
         areaId: area.areaId,
@@ -169,7 +178,7 @@ function buildModel(
         path: area.path,
         href: areaHrefFor(area.slug, selection),
         state: "binned",
-        fill: MAP_PALETTE[index] ?? MAP_NO_DATA_FILL,
+        fill: sequentialStep(index, BIN_COUNT),
         value: position.value,
         bin: position.index,
       };
@@ -193,7 +202,7 @@ function buildModel(
         path: area.path,
         href: areaHrefFor(row.slug, selection),
         state: hiddenByFilters ? "filtered" : "no-value",
-        fill: MAP_NO_DATA_FILL,
+        fill: NO_DATA,
         value: null,
         bin: null,
       };
@@ -206,7 +215,7 @@ function buildModel(
       path: area.path,
       href: null,
       state: "outside",
-      fill: MAP_NO_DATA_FILL,
+      fill: NO_DATA,
       value: null,
       bin: null,
     };
@@ -372,7 +381,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
               patternUnits="userSpaceOnUse"
               patternTransform="rotate(45)"
             >
-              <rect width="6" height="6" fill={MAP_NO_DATA_FILL} />
+              <rect width="6" height="6" fill={NO_DATA} />
               <line
                 x1="0"
                 y1="0"
@@ -388,11 +397,19 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
             const selected =
               selection.area !== null && selection.area === shape.areaId;
             const focused = focusedArea === shape.areaId;
-            const stroke = focused
-              ? FOCUS_STROKE
-              : selected
-                ? SELECTED_STROKE
-                : AREA_STROKE;
+
+            // Solid for a locked selection, dashed for keyboard focus, paper
+            // otherwise — no nested ternary, so the rule for which state wins
+            // stays readable.
+            let stroke: string = SURFACE.paper;
+            let strokeWidth = 0.75;
+            if (focused) {
+              stroke = MAP_OUTLINE.focus.color;
+              strokeWidth = 3;
+            } else if (selected) {
+              stroke = MAP_OUTLINE.selected.color;
+              strokeWidth = 1.6;
+            }
 
             const path = (
               <path
@@ -405,7 +422,10 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
                 }
                 fillOpacity={shape.state === "outside" ? 0.5 : 1}
                 stroke={stroke}
-                strokeWidth={focused ? 3 : selected ? 1.6 : 0.75}
+                strokeDasharray={
+                  focused ? MAP_OUTLINE.focus.dashArray : undefined
+                }
+                strokeWidth={strokeWidth}
                 vectorEffect="non-scaling-stroke"
                 data-area-state={shape.state}
                 data-bin={shape.bin ?? undefined}
@@ -448,8 +468,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
                 aria-hidden="true"
                 className="inline-block h-4 w-4 shrink-0 rounded-sm border border-border"
                 style={{
-                  backgroundColor:
-                    MAP_PALETTE[Math.min(index, MAP_PALETTE.length - 1)],
+                  backgroundColor: sequentialStep(index, BIN_COUNT),
                 }}
               />
               <span className="text-foreground">
@@ -468,7 +487,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
               aria-hidden="true"
               className="inline-block h-4 w-4 shrink-0 rounded-sm border border-border"
               style={{
-                backgroundColor: MAP_NO_DATA_FILL,
+                backgroundColor: NO_DATA,
                 backgroundImage:
                   "repeating-linear-gradient(45deg, #7A8583 0 1px, transparent 1px 4px)",
               }}
@@ -484,7 +503,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
             <span
               aria-hidden="true"
               className="inline-block h-4 w-4 shrink-0 rounded-sm border border-border"
-              style={{ backgroundColor: MAP_NO_DATA_FILL, opacity: 0.5 }}
+              style={{ backgroundColor: NO_DATA, opacity: 0.5 }}
             />
             <span className="text-foreground">
               {`No value for this metric: ${noValueCount} ${
@@ -497,7 +516,7 @@ export default function ExplorerMap({ dataset, selection }: ExplorerMapProps) {
             <span
               aria-hidden="true"
               className="inline-block h-4 w-4 shrink-0 rounded-sm border border-border"
-              style={{ backgroundColor: MAP_NO_DATA_FILL, opacity: 0.5 }}
+              style={{ backgroundColor: NO_DATA, opacity: 0.5 }}
             />
             <span className="text-foreground">
               {`Outside this selection: ${outsideCount} ${

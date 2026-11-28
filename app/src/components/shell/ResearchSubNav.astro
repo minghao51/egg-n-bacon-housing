@@ -1,0 +1,78 @@
+---
+/**
+ * The one research subnav: Studies · Trends · Segments · Tools · Research map,
+ * from `shell/destinations.ts`.
+ *
+ * It replaced three copies of the same link list (the Studies library page,
+ * the research-map surface and an implicit third in the old flat sidebar), so
+ * there is now a single source for the hrefs and a single matching
+ * implementation (`shell/nav-match.ts`).
+ *
+ * It has exactly one presentation: a section list in the sidebar's section
+ * area, which is why this is not a second fixed bar — a second fixed bar would
+ * need another page offset on 15 page files. `Sidebar.astro` mounts it on
+ * every `analytics/` and `research/` route, so the pages do not repeat it.
+ */
+import { RESEARCH_SUBNAV } from "./destinations";
+import { isActive, isCurrentPage, stripBase } from "./nav-match";
+
+interface Props {
+  /**
+   * Pathname to match against — `Astro.url.pathname` (base included) or an
+   * already base-stripped path; `stripBase` is idempotent.
+   */
+  currentPath?: string;
+  /** Visible section label above the list. */
+  heading?: string;
+}
+
+const {
+  currentPath: rawCurrentPath = Astro.url.pathname,
+  heading = "Research",
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const currentPath = stripBase(rawCurrentPath, base);
+
+const links = RESEARCH_SUBNAV.map((item) => {
+  const href = `${base}${item.href}`;
+  return {
+    ...item,
+    href,
+    // A study page lives under `analytics/`, so Studies keeps the active
+    // treatment there, but only its own page may carry `aria-current`.
+    active: isActive(currentPath, href, base),
+    current: isCurrentPage(currentPath, href, base, true),
+  };
+});
+---
+
+<div>
+  <div class="px-3 mb-3 flex items-center gap-2">
+    <div class="h-4 w-0.5 bg-primary rounded-full" />
+    <span class="text-xs font-bold text-foreground uppercase tracking-wider">
+      {heading}
+    </span>
+  </div>
+  <div class="border-t border-border my-3" />
+  <ul class="space-y-1">
+    {
+      links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            aria-current={link.current ? "page" : undefined}
+            class:list={[
+              "block rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              link.active
+                ? "text-foreground bg-accent/50 border-l-2 border-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+            ]}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>

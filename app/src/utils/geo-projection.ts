@@ -59,18 +59,6 @@ export interface ProjectedMap {
   areas: ProjectedArea[];
 }
 
-/** Five sequential steps, low to high, last step darkest (design 09 legend). */
-export const MAP_PALETTE: readonly string[] = [
-  "#D2E4DB",
-  "#9BC7BA",
-  "#5DA392",
-  "#277D72",
-  "#005E58",
-];
-
-/** Fill for an area with no value: unavailable or below the sample threshold. */
-export const MAP_NO_DATA_FILL = "#E3E4DF";
-
 const DEFAULT_WIDTH = 960;
 const DEFAULT_HEIGHT = 640;
 const DEFAULT_PADDING = 8;

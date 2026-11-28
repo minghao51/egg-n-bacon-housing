@@ -1,112 +1,25 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import Sidebar from '@/components/Sidebar.astro';
-import MarketOverviewDashboard from '@/components/dashboard/MarketOverviewDashboard';
-import {
-  loadObservedPackFromDir,
-  summariseForDashboard,
-} from '@/utils/observed-pack-build';
-import fs from 'fs';
-import path from 'path';
-import zlib from 'zlib';
+/**
+ * `/dashboard` — the compatibility address for the Overview.
+ *
+ * The Overview destination is the site root, so this URL renders the same
+ * surface with a canonical link pointing at `/` and one honest line saying what
+ * it is. It stays a real, rendered page rather than a meta-refresh or redirect:
+ * several suites navigate here and assert the headings, and a redirect page
+ * would carry no content and no internal links.
+ */
+import OverviewSurface from '@/components/overview/OverviewSurface.astro';
 
-// Read the published assets at build time and hand the result to the island as
-// initial data, so the overview renders its numbers without a client fetch.
-function gunzip(data: Buffer) {
-  return zlib.gunzipSync(data).toString('utf-8');
-}
-
-const dataPath = path.resolve('public/data/dashboard_overview.json.gz');
-let dashboardData;
-
-try {
-  const rawData = fs.readFileSync(dataPath);
-  const decompressed = gunzip(rawData);
-  dashboardData = JSON.parse(decompressed);
-} catch (error) {
-  console.error("Failed to load dashboard data:", error);
-}
-
-// The v2 observed pack is verified at build time. When it is absent or fails
-// verification the page keeps the legacy snapshot and passes nothing, so no
-// number can silently come from an unverified payload.
-const observedResult = await loadObservedPackFromDir(
-  path.resolve('public/data'),
-);
-
-const currentData =
-  observedResult.state === 'ready'
-    ? {
-        hdb: summariseForDashboard(
-          observedResult.pack,
-          observedResult.manifest.generation,
-          'hdb',
-        ),
-        condo: summariseForDashboard(
-          observedResult.pack,
-          observedResult.manifest.generation,
-          'condo',
-        ),
-      }
-    : null;
-
-if (observedResult.state === 'invalid') {
-  console.error(
-    'v2 observed pack failed verification:',
-    observedResult.errors.join('; '),
-  );
-}
-
-// The monthly series are a separate published asset; the page never mixes
-// their figures with the annual overview medians.
-const trendsPath = path.resolve('public/data/dashboard_trends.json.gz');
-let trendsData;
-
-try {
-  const rawData = fs.readFileSync(trendsPath);
-  const decompressed = gunzip(rawData);
-  trendsData = JSON.parse(decompressed);
-} catch (error) {
-  console.error("Failed to load trends data:", error);
-}
+// Absolute, and derived from the same `site` + `base` pair the build uses, so
+// the canonical is correct under `/` and under `/egg-n-bacon-housing/` alike.
+const canonical = new URL(import.meta.env.BASE_URL, Astro.site ?? Astro.url).href;
+const rootHref = import.meta.env.BASE_URL;
 ---
 
-<Layout
+<OverviewSurface
   title="Dashboard overview - Egg n Bacon Housing"
-  description="What the published Singapore resale snapshot shows: 2025 median prices and transaction counts by property type, and where to compare areas, trends and segments."
->
-  <Sidebar currentPath={Astro.url.pathname} />
-
-  <main id="main-content" tabindex="-1" class="flex-1 pt-14 lg:pt-0 ml-0 lg:ml-64 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-      {/* Header */}
-      <header class="mb-8 max-w-3xl">
-        <p class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]">
-          The Singapore housing field guide
-        </p>
-        <h1 class="mt-3 text-3xl font-bold text-foreground">Overview</h1>
-        <p class="mt-2 text-muted-foreground">
-          Published observations of past sales, each labelled with the property type, the
-          period and the asset section it came from. Start with the kind of home, then compare
-          areas on the same terms in the observed explorer.
-        </p>
-      </header>
-
-      {/* Dashboard Content */}
-      {dashboardData ? (
-        <MarketOverviewDashboard
-          client:load
-          initialData={dashboardData}
-          trendsData={trendsData}
-          baseUrl={import.meta.env.BASE_URL}
-          currentData={currentData}
-        />
-      ) : (
-        <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
-          The published overview asset could not be loaded, so this page shows no market
-          figures. Re-run the dashboard export to publish <code class="font-mono">dashboard_overview.json.gz</code>.
-        </div>
-      )}
-    </div>
-  </main>
-</Layout>
+  description="Compatibility address for the Overview: 2025 median prices and transaction counts by property type, the definitions behind a median, and where to compare areas, trends and decision tools."
+  canonical={canonical}
+  compatNote={`Compatibility address for the Overview: this URL keeps working and renders the same figures as the site root, which is the canonical address. Every link below works from here unchanged.`}
+  compatHref={rootHref}
+/>

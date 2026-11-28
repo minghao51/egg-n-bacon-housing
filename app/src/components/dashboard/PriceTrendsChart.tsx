@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ClientChart from "@/components/charts/ClientChart";
+import { PROPERTY_COLOURS } from "@/constants/palette";
 
 interface TrendRecord {
   date: string;
@@ -56,21 +57,21 @@ export default function PriceTrendsChart({ data }: PriceTrendsChartProps) {
             <Line
               type="monotone"
               dataKey="Overall Price"
-              stroke="#3b82f6"
+              stroke={PROPERTY_COLOURS.all}
               strokeWidth={3}
               dot={false}
             />
             <Line
               type="monotone"
               dataKey="Condominium Price"
-              stroke="#ef4444"
+              stroke={PROPERTY_COLOURS.condo}
               strokeWidth={2}
               dot={false}
             />
             <Line
               type="monotone"
               dataKey="HDB Price"
-              stroke="#10b981"
+              stroke={PROPERTY_COLOURS.hdb}
               strokeWidth={2}
               dot={false}
             />

@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ClientChart from "@/components/charts/ClientChart";
+import { PROPERTY_COLOURS } from "@/constants/palette";
 
 interface TrendRecord {
   date: string;
@@ -51,9 +52,13 @@ export default function TransactionVolumeChart({
               itemStyle={{ color: "hsl(var(--foreground))" }}
             />
             <Legend />
-            <Bar dataKey="HDB Volume" stackId="a" fill="#10b981" />
-            <Bar dataKey="Condominium Volume" stackId="a" fill="#ef4444" />
-            <Bar dataKey="EC Volume" stackId="a" fill="#f59e0b" />
+            <Bar dataKey="HDB Volume" stackId="a" fill={PROPERTY_COLOURS.hdb} />
+            <Bar
+              dataKey="Condominium Volume"
+              stackId="a"
+              fill={PROPERTY_COLOURS.condo}
+            />
+            <Bar dataKey="EC Volume" stackId="a" fill={PROPERTY_COLOURS.ec} />
           </BarChart>
         </ResponsiveContainer>
       </ClientChart>

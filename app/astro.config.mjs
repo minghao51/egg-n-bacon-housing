@@ -45,6 +45,125 @@ function remarkFixImagePaths() {
   };
 }
 
+/**
+ * Bound every rendered markdown table.
+ *
+ * A GFM table renders inline at full height — on `/analytics/findings` two of
+ * them were 1,000 px and 1,496 px, a fifth of the page between them. Each
+ * `<table>` is wrapped here, at build time, in a scroll container instead: the
+ * table keeps all of its rows (nothing is hidden or disclosed behind a click),
+ * but the container caps its height and scrolls (S11).
+ *
+ * `role="region"` + `tabindex="0"` is the accessible way to make a scroll
+ * container reachable: a keyboard user cannot scroll a plain `<div>`, so the
+ * region is focusable and announces itself with the table's own first header
+ * cell as its name. The presentation (height cap, sticky header, focus ring)
+ * lives in `src/styles/globals.css` because the archive route renders the same
+ * markdown and must get the same treatment.
+ *
+ * One note travels with the wrapper. A study opts a table into a chart by
+ * writing a hidden `<div data-chart-metadata="true">` immediately before it;
+ * `InlineChartRenderer` finds that marker through
+ * `table.previousElementSibling`, so the marker moves inside the wrapper
+ * together with its table — the lookup still finds it. The chart itself is
+ * appended *after the wrapper*, not after the table, so it is a sibling of the
+ * scroll region and the height cap applies to the table alone. Without that,
+ * a cap would hide the chart the author asked for.
+ */
+function rehypeWrapTables() {
+  return function (tree) {
+    tree.children = wrapTablesIn(tree.children ?? []);
+  };
+}
+
+/**
+ * Replace every `<table>` in a children array with its scroll region. A chart
+ * marker sitting immediately before a table is carried into the same wrapper;
+ * everything else is walked recursively (a table inside a list item or a
+ * blockquote is wrapped too), while a table nested in a table cell is not —
+ * a scroll region inside another would trap the wheel.
+ */
+function wrapTablesIn(children) {
+  const wrapped = [];
+  for (const child of children) {
+    if (isElement(child, "table")) {
+      const markerIndex = chartMarkerIndex(wrapped);
+      const [marker] =
+        markerIndex === -1 ? [null] : wrapped.splice(markerIndex, 1);
+      wrapped.push(tableRegion(child, marker));
+      continue;
+    }
+    if (child.children) {
+      child.children = wrapTablesIn(child.children);
+    }
+    wrapped.push(child);
+  }
+  return wrapped;
+}
+
+const isBlankText = (node) => node?.type === "text" && node.value.trim() === "";
+
+/**
+ * Index of the chart marker sitting immediately before the current position.
+ * The newline the markdown block separator leaves behind is not content, so it
+ * is looked through rather than treated as an intervening sibling.
+ */
+function chartMarkerIndex(wrapped) {
+  let index = wrapped.length - 1;
+  while (index >= 0 && isBlankText(wrapped[index])) index--;
+  return index >= 0 && isChartMarker(wrapped[index]) ? index : -1;
+}
+
+const isElement = (node, tagName) =>
+  node?.type === "element" && node.tagName === tagName;
+
+/**
+ * A study opts a table into a chart with a hidden
+ * `<div data-chart-metadata="true">` written immediately before it. Raw HTML is
+ * still an unparsed `raw` node at this stage — `rehype-raw` runs after the user
+ * rehype plugins — so the marker arrives as text and an element branch is kept
+ * for the case where it was authored as an element instead.
+ */
+const isChartMarker = (node) =>
+  (isElement(node, "div") && node.properties?.dataChartMetadata === "true") ||
+  (node?.type === "raw" &&
+    /data-chart-metadata\s*=\s*["']true["']/.test(node.value));
+
+/** The text of a header cell, used as the region's accessible name. */
+function textOf(node) {
+  if (node.type === "text") return node.value;
+  if (!node.children) return "";
+  return node.children.map(textOf).join("");
+}
+
+/**
+ * The name comes from the header row, which is what the reader uses to tell
+ * one evidence table from another in a screen-reader region list.
+ */
+function tableLabel(table) {
+  const head = table.children?.find((child) => isElement(child, "thead"));
+  const firstRow = head?.children?.find((child) => isElement(child, "tr"));
+  const firstCell =
+    firstRow?.children?.find((child) => isElement(child, "th")) ??
+    firstRow?.children?.[0];
+  const label = firstCell ? textOf(firstCell).trim() : "";
+  return label === "" ? "Data table" : label;
+}
+
+function tableRegion(table, marker) {
+  return {
+    type: "element",
+    tagName: "div",
+    properties: {
+      className: ["table-scroll"],
+      role: "region",
+      tabIndex: 0,
+      ariaLabel: tableLabel(table),
+    },
+    children: marker === null ? [table] : [marker, table],
+  };
+}
+
 export default defineConfig({
   // One env file for the whole repository: the Python pipeline reads `.env` at
   // the repo root (pydantic-settings), so Vite's env dir is pointed at the
@@ -64,7 +183,7 @@ export default defineConfig({
     // defaults included), so rendering is unchanged.
     processor: unified({
       remarkPlugins: [remarkMath, remarkStripLeadingH1, remarkFixImagePaths],
-      rehypePlugins: [rehypeKatex],
+      rehypePlugins: [rehypeKatex, rehypeWrapTables],
     }),
   },
   site: isPagesDeploy

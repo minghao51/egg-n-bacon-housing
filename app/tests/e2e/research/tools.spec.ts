@@ -389,10 +389,13 @@ test.describe("Research tools", () => {
       .first()
       .click();
     await expect(page).toHaveURL(/research\/tools/);
+    // The dashboard group still says "Decision Tools", but the shared research
+    // subnav on `/research/*` labels the same route "Tools" — the destination
+    // link is what the page itself marks current.
     await expect(
       page
         .getByRole("navigation", { name: "Main navigation" })
-        .getByRole("link", { name: /Decision Tools/ }),
+        .getByRole("link", { name: /^Tools$/ }),
     ).toHaveAttribute("aria-current", "page");
   });
 

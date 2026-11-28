@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+import { NO_DATA } from "../../src/constants/palette";
+
 /**
  * S1 evidence-boundary regressions.
  *
@@ -76,10 +78,10 @@ test.describe("S1 evidence boundary", () => {
     // The old LISA/hotspot analytical scale (#fee090) is never painted now.
     expect(fills.filter((fill) => fill === "#fee090").length).toBe(0);
     // Observed geometry joins still resolve: Bishan has a non-neutral fill,
-    // not the "no record" grey that the pre-S1 lowercase join produced.
-    expect(fills.filter((fill) => fill !== "#cccccc").length).toBeGreaterThan(
-      0,
-    );
+    // not the "no record" fill that the pre-S1 lowercase join produced. The
+    // neutral is read from the palette rather than spelled as a literal, so a
+    // palette change keeps this assertion meaningful instead of vacuous.
+    expect(fills.filter((fill) => fill !== NO_DATA).length).toBeGreaterThan(0);
 
     // The archive fields are available for inspection instead of shading.
     await expect(

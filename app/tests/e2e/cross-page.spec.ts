@@ -3,8 +3,8 @@ import { test, expect } from "@playwright/test";
 test.describe("Cross-Page Navigation", () => {
   test("should navigate from home to dashboard and back", async ({ page }) => {
     await page.goto("/");
-    // The "Live Dashboard" teaser was removed in RF02 (no unsupported "live"
-    // claim); the home page links to the dashboard with the same destination.
+    // `/` is the Overview destination; `/dashboard` is its kept compatibility
+    // address, still linked from the sidebar's Dashboard section.
     await page.locator('a[href="/dashboard"]').first().click();
     await expect(page).toHaveURL(/dashboard/);
     await page.goto("/");
@@ -15,9 +15,22 @@ test.describe("Cross-Page Navigation", () => {
     page,
   }) => {
     await page.goto("/dashboard");
-    await page.getByText("Analytics Index").click();
+    // The header carries the four destinations; Research is the route to the
+    // Studies library now that the sidebar is a per-section menu.
+    await page
+      .getByRole("navigation", { name: "Primary" })
+      .getByRole("link", { name: "Research", exact: true })
+      .click();
     await expect(page).toHaveURL(/analytics/);
-    await page.getByRole("link", { name: /Overview Quick market/ }).click();
+    // The library no longer renders the dashboard group, so the way back is the
+    // Overview destination (site root); the compatibility address for it is
+    // still one click away from the sidebar.
+    await page
+      .getByRole("navigation", { name: "Primary" })
+      .getByRole("link", { name: "Overview", exact: true })
+      .click();
+    await expect(page).toHaveURL("/");
+    await page.locator('a[href="/dashboard"]').first().click();
     await expect(page).toHaveURL(/dashboard/);
   });
 
@@ -30,7 +43,10 @@ test.describe("Cross-Page Navigation", () => {
       .first()
       .click();
     await expect(page).toHaveURL(/personas\/first-time-buyer/);
-    await page.getByText("Analytics Index").click();
+    await page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: "Studies", exact: true })
+      .click();
     await expect(page).toHaveURL(/analytics\/?$/);
   });
 
@@ -39,24 +55,29 @@ test.describe("Cross-Page Navigation", () => {
   }) => {
     await page.goto("/dashboard");
 
+    // The dashboard group reaches each route: `/research/*` pages swap the
+    // group for the research subnav, so return to `/dashboard` between hops.
     await page
       .getByRole("link", { name: /Research map/ })
       .first()
       .click();
     await expect(page).toHaveURL(/research\/map/);
 
+    await page.goBack();
     await page
       .getByRole("link", { name: /Decision Tools/ })
       .first()
       .click();
     await expect(page).toHaveURL(/research\/tools/);
 
+    await page.goBack();
     await page
       .getByRole("link", { name: /Discover Segments/ })
       .first()
       .click();
     await expect(page).toHaveURL(/research\/segments/);
 
+    await page.goBack();
     await page
       .getByRole("link", { name: /Compare Areas/ })
       .first()
@@ -65,14 +86,23 @@ test.describe("Cross-Page Navigation", () => {
   });
 });
 
-test.describe("Dark Mode Toggle", () => {
-  test("should have dark mode toggle in sidebar", async ({ page }) => {
+test.describe("Light-only theme", () => {
+  test("offers no dark-mode toggle and declares a light colour-scheme", async ({
+    page,
+  }) => {
     await page.goto("/dashboard");
-    const toggle = page.locator(
-      'button[class*="toggle"], [aria-label*="dark"], [class*="DarkMode"]',
-    );
-    const count = await toggle.count();
-    expect(count).toBeGreaterThan(0);
+    // Dark mode was removed: the old `.dark` token block was never
+    // contrast-reviewed, so no control may offer it back.
+    await expect(
+      page.locator(
+        'button[aria-label*="dark" i], [class*="DarkMode"], [class*="theme-toggle"]',
+      ),
+    ).toHaveCount(0);
+    // Nothing applies the class, so the `dark:` utilities stay inert.
+    await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
+    // Native controls, scrollbars and form widgets stay light even when the
+    // visitor's OS prefers dark.
+    await expect(page.locator("html")).toHaveCSS("color-scheme", "light");
   });
 });
 
@@ -81,9 +111,17 @@ test.describe("Responsive Behavior", () => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto("/");
     await expect(page).toHaveTitle(/Egg n Bacon/);
+    // The four destinations are in the header bar at this width, and the
+    // sidebar tapers to the section menu for the current section.
+    const primary = page.getByRole("navigation", { name: "Primary" });
+    await expect(primary.getByRole("link")).toHaveCount(4);
     await expect(
-      page.getByRole("heading", { name: /Egg n Bacon/i }),
+      primary.getByRole("link", { name: "Overview", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+    await expect(
+      page.getByRole("navigation", { name: "Main navigation" }),
     ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator('a[href="/dashboard"]').first()).toBeVisible();
   });
 
@@ -111,7 +149,9 @@ test.describe("Data Loading", () => {
   test("should load analytics index data", async ({ page }) => {
     await page.goto("/analytics/");
     await page.waitForLoadState("networkidle");
-    await expect(page.getByText("Published studies")).toBeVisible();
+    await expect(
+      page.getByText("Published studies", { exact: true }),
+    ).toBeVisible();
   });
 });
 

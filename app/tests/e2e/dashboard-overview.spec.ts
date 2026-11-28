@@ -284,11 +284,13 @@ test.describe("Dashboard overview - published 2025 medians", () => {
   });
 
   test("the page keeps exactly one level-1 heading", async ({ page }) => {
+    // `/dashboard` renders the Overview surface, so the one `h1` is the
+    // Overview question — the same heading the site root carries.
     await page.goto("/dashboard");
 
     const headings = page.getByRole("heading", { level: 1 });
     await expect(headings).toHaveCount(1);
-    await expect(headings).toHaveText("Overview");
+    await expect(headings).toHaveText("What does a home cost here?");
   });
 
   test("the overview loads without console or page errors", async ({
