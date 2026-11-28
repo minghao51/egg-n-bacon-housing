@@ -35,8 +35,13 @@ test.describe("Pages base path", () => {
   }) => {
     await page.goto(at("/"));
     await expect(page).toHaveTitle(/Egg n Bacon/);
+    // The root is the Overview destination since D12: the editorial question is
+    // the page's one `h1`, in the same eyebrow-to-h1 shape as every other page.
     await expect(
-      page.getByRole("heading", { level: 1, name: /Egg n Bacon/ }),
+      page.getByRole("heading", {
+        level: 1,
+        name: /What does a home cost here\?/,
+      }),
     ).toBeVisible();
 
     const stylesheets = await page
@@ -97,13 +102,14 @@ test.describe("Pages base path", () => {
 
   test("every shipped route renders its heading", async ({ page }) => {
     const routes: Array<[string, RegExp]> = [
-      ["/", /Egg n Bacon/],
-      ["/dashboard/", /Overview/],
+      ["/", /What does a home cost here\?/],
+      ["/dashboard/", /What does a home cost here\?/],
       ["/dashboard/map/", /A layer is a claim/],
       ["/dashboard/trends/", /Make the assumptions editable/],
       ["/dashboard/segments/", /Find an archetype/],
       ["/dashboard/leaderboard/", /Compare Areas/],
       ["/explore/", /Same year\. Same housing type\./],
+      ["/data/", /Know what you.re comparing/],
       ["/research/trends/", /A year of prices, with the sales behind them/],
       ["/research/map/", /A layer is a claim/],
       ["/research/tools/", /Make the assumptions editable/],
@@ -221,6 +227,7 @@ test.describe("Pages base path", () => {
       "/research/trends/",
       "/analytics/",
       "/catalog/",
+      "/data/",
       "/explore/",
     ]) {
       await page.goto(at(pathname));

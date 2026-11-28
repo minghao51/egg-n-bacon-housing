@@ -8,7 +8,21 @@ test.describe("Dashboard - Market Overview", () => {
 
   test("should load market overview page", async ({ page }) => {
     await expect(page).toHaveURL(/dashboard/);
-    await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
+    // Same surface as the root, so the same one `h1`. This URL is the
+    // compatibility address: it says so, and its canonical points at the root.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "What does a home cost here?",
+    );
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      /\/$/,
+    );
+    await expect(page.locator('[data-compat-route="true"]')).toContainText(
+      "Compatibility address for the Overview",
+    );
+    await expect(
+      page.locator('[data-compat-route="true"]').getByRole("link"),
+    ).toHaveAttribute("href", /^\/.*$/);
   });
 
   test("shows the verified current-data window", async ({ page }) => {
@@ -66,7 +80,12 @@ test.describe("Dashboard - Market Overview", () => {
   });
 
   test("should navigate to analytics section", async ({ page }) => {
-    await page.getByText("Analytics Index").click();
+    // The Studies library is the research landing page and is reached from the
+    // header's Research destination, not from a flat sidebar list.
+    await page
+      .getByRole("navigation", { name: "Primary" })
+      .getByRole("link", { name: "Research", exact: true })
+      .click();
     await expect(page).toHaveURL(/analytics\/?$/);
   });
 

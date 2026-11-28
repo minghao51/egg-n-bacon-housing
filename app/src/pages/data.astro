@@ -1,0 +1,847 @@
+---
+/**
+ * `/data` — the Data & methods provenance guide.
+ *
+ * Design pack: `assets/svg/08-data-methods-desktop.svg`. Plan:
+ * `docs/plans/2026-11-27-sections-colour-and-functionality-proposal.md` §3
+ * (route map) and §8 (slice S12).
+ *
+ * The page exists for one claim: there are **three clocks**, not one "last
+ * updated". Observation period, coverage and export time answer different
+ * questions, they are carried by different fields, and they differ per asset,
+ * so a single "updated today" badge would be a lie.
+ *
+ * Every figure below is read from a committed asset at build time — nothing is
+ * typed in, and no figure is carried over from the design mock, whose snapshot
+ * is older than this build. Where an asset does not carry a clock at all the
+ * cell says so in words ("no embedded export timestamp") rather than showing a
+ * blank, because a blank reads as zero.
+ */
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import { THIN_SAMPLE_THRESHOLD } from '@/utils/explorer-selection';
+import fs from 'fs';
+import path from 'path';
+import zlib from 'zlib';
+
+const DATA_DIR = path.resolve('public/data');
+
+/** Read one committed asset. A failure returns `null`, never a default value. */
+function readAsset(relativePath: string): unknown {
+  try {
+    const raw = fs.readFileSync(path.join(DATA_DIR, relativePath));
+    const json = relativePath.endsWith('.gz')
+      ? zlib.gunzipSync(raw).toString('utf-8')
+      : raw.toString('utf-8');
+    return JSON.parse(json);
+  } catch (error) {
+    console.error(`/data: could not read ${relativePath}:`, error);
+    return null;
+  }
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function asArray(value: unknown): unknown[] | null {
+  return Array.isArray(value) ? value : null;
+}
+
+function asString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() !== '' ? value : null;
+}
+
+function asNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+/** Thousands separators, without depending on a locale's ICU data. */
+function count(value: number): string {
+  return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/**
+ * An asset timestamp, truncated to the minute exactly as the asset records it.
+ * None of these assets declares a timezone, so none is added here.
+ */
+function timestamp(value: string | null): string | null {
+  const match = value?.match(/^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}))?/);
+  if (!match) return null;
+  return match[2] ? `${match[1]} ${match[2]}` : match[1];
+}
+
+/** What a cell says when an asset genuinely does not carry that clock. */
+function missing(reason: string): string {
+  return `not recorded — ${reason}`;
+}
+
+// --- Read every committed asset once --------------------------------------
+
+// Annual national comparison.
+const overview = asRecord(readAsset('dashboard_overview.json.gz'));
+const overviewMeta = asRecord(overview?.['metadata']);
+const overviewStats = asRecord(overview?.['stats']);
+const overviewRange = asRecord(overviewMeta?.['date_range']);
+const wholeStat = asRecord(overviewStats?.['whole']);
+
+// Area comparison.
+const mapMetrics = asRecord(readAsset('map_metrics.json.gz'));
+
+// Monthly trend series.
+const trendRows = asArray(readAsset('dashboard_trends.json.gz'));
+
+// Spatial and predictive research generations.
+const spatialAsset = asRecord(readAsset('analytics/spatial_analysis.json.gz'));
+const featureAsset = asRecord(readAsset('analytics/feature_impact.json.gz'));
+const predictiveAsset = asRecord(
+  readAsset('analytics/predictive_analytics.json.gz'),
+);
+const segmentsAsset = asRecord(readAsset('segments_enhanced.json.gz'));
+
+// Measured-release identity (the one this build is sealed against).
+const release = asRecord(readAsset('dashboard-release-v2.json'));
+// The legacy v1 identity is still served — `/explore` reads it — and it does
+// carry an export time plus the inclusion rules the area surfaces apply.
+const legacyRelease = asRecord(readAsset('dashboard-release.json'));
+
+// The manifest pins what a build must publish, and its shape.
+const manifest = asRecord(readAsset('manifest.json'));
+
+// --- Annual national comparison ------------------------------------------
+
+const overviewStart = asString(overviewRange?.['start']);
+const overviewEnd = asString(overviewRange?.['end']);
+const overviewGeneratedAt = timestamp(asString(overviewMeta?.['generated_at']));
+const wholeCount = asNumber(wholeStat?.['count']);
+
+const legacyRange = asRecord(legacyRelease?.['observationRange']);
+const completeYear = asNumber(legacyRange?.['completeYear']);
+// The complete year is named by the release identity, and the matching stat
+// key is read from the overview asset — neither is typed in here.
+const annualStatKey =
+  completeYear !== null ? `year_${completeYear}` : 'year_2025';
+const annualStat = asRecord(overviewStats?.[annualStatKey]);
+const annualCount = asNumber(annualStat?.['count']);
+const annualYear =
+  completeYear !== null ? String(completeYear) : annualStatKey.slice(5);
+
+const periodAnnual =
+  overviewStart !== null && overviewEnd !== null
+    ? `${annualYear} complete year (stats.${annualStatKey}); the file records its range as ${overviewStart} → ${overviewEnd}`
+    : `${annualYear} complete year (stats.${annualStatKey}); the file records no date range`;
+
+const coverageAnnual =
+  annualCount !== null
+    ? `${count(annualCount)} transactions in the ${annualYear} window${
+        wholeCount !== null
+          ? `; ${count(wholeCount)} rows over all history`
+          : ''
+      }`
+    : missing(`dashboard_overview.json.gz has no stats.${annualStatKey}.count`);
+
+const exportedAnnual =
+  overviewGeneratedAt !== null
+    ? `${overviewGeneratedAt} in metadata.generated_at`
+    : missing('dashboard_overview.json.gz carries no metadata.generated_at');
+
+// --- Area comparison ------------------------------------------------------
+
+/** How many planning areas a `map_metrics` scope publishes, if it has one. */
+function areaCount(scope: string): number | null {
+  const scoped = asRecord(mapMetrics?.[scope]);
+  if (scoped === null) return null;
+  const areas = Object.keys(scoped).length;
+  return areas > 0 ? areas : null;
+}
+
+const hdbAreaCount = areaCount('hdb');
+const ecAreaCount = areaCount('ec');
+const condoAreaCount = areaCount('condo');
+
+// The keys this page counts. Every other key is a period scope, which the
+// asset publishes as a key prefix (`whole`, `pre_covid`, `recent`,
+// `year_2025`) with a `<scope>_<type>` variant per property type.
+const TYPE_SCOPES = ['hdb', 'ec', 'condo'];
+const isTypeVariant = (key: string): boolean =>
+  TYPE_SCOPES.some((type) => key === type || key.endsWith(`_${type}`));
+
+const periodScopes =
+  mapMetrics !== null
+    ? Object.keys(mapMetrics).filter((key) => !isTypeVariant(key))
+    : [];
+
+const coverageArea =
+  hdbAreaCount !== null
+    ? `${count(hdbAreaCount)} HDB planning areas${
+        ecAreaCount !== null ? `, ${count(ecAreaCount)} EC` : ''
+      }${condoAreaCount !== null ? `, ${count(condoAreaCount)} condo` : ''}`
+    : missing('map_metrics.json.gz publishes no area scopes');
+
+const periodArea =
+  periodScopes.length > 0
+    ? `${count(periodScopes.length)} period scopes as key prefixes (${periodScopes.join(', ')}), each with a per-type variant; the bare ${TYPE_SCOPES.join(', ')} keys counted here carry no period label, dates or as-of field`
+    : missing('map_metrics.json.gz could not be read as area scopes');
+
+// --- Monthly trend series -------------------------------------------------
+
+const trendCount = trendRows?.length ?? null;
+const trendFirstMonth =
+  trendRows !== null && trendRows.length > 0
+    ? asString(asRecord(trendRows[0])?.['date'])
+    : null;
+const trendLastMonth =
+  trendRows !== null && trendRows.length > 0
+    ? asString(asRecord(trendRows[trendRows.length - 1])?.['date'])
+    : null;
+
+/** `2026-10` → a month number, so a skipped month can be detected. */
+function monthIndex(month: string): number | null {
+  const match = month.match(/^(\d{4})-(\d{2})$/);
+  return match ? Number(match[1]) * 12 + Number(match[2]) - 1 : null;
+}
+
+const trendMonths = (trendRows ?? [])
+  .map((row) => asString(asRecord(row)?.['date']))
+  .filter((month): month is string => month !== null);
+
+// "One row per month" is only printed when the rows actually are contiguous.
+const trendIsMonthly =
+  trendMonths.length > 1 &&
+  trendMonths.every((month, index) => {
+    if (index === 0) return true;
+    const previous = monthIndex(trendMonths[index - 1]);
+    const current = monthIndex(month);
+    return previous !== null && current !== null && current - previous === 1;
+  });
+
+const coverageTrend =
+  trendCount !== null
+    ? trendIsMonthly
+      ? `${count(trendCount)} monthly rows, one per month, no gaps; contiguity of the rows is not evidence that the sources cover every month`
+      : `${count(trendCount)} monthly rows (not contiguous)`
+    : missing('dashboard_trends.json.gz could not be read as a series');
+
+const releaseCutoffMonth = asString(release?.['cutoffMonth']);
+const trendCutoffNote =
+  trendLastMonth !== null && releaseCutoffMonth !== null
+    ? trendLastMonth === releaseCutoffMonth
+      ? `last month ${trendLastMonth}, equal to the declared cutoff`
+      : `last month ${trendLastMonth}; the declared cutoff is ${releaseCutoffMonth}`
+    : null;
+
+const periodTrend =
+  trendFirstMonth !== null && trendLastMonth !== null
+    ? `${trendFirstMonth} → ${trendLastMonth}${
+        trendCutoffNote !== null ? ` (${trendCutoffNote})` : ''
+      }`
+    : missing('dashboard_trends.json.gz records no month bounds');
+
+// --- Spatial and predictive research assets ------------------------------
+
+/**
+ * How many planning areas an asset publishes under `key`. The research
+ * assets key an object by planning-area name; a plain array is also accepted,
+ * so a shape change does not silently produce a zero.
+ */
+function areaKeyCount(
+  asset: Record<string, unknown> | null,
+  key: string,
+): number | null {
+  const value = asset?.[key];
+  const asList = asArray(value);
+  const asMap = asRecord(value);
+  const size =
+    asList?.length ?? (asMap !== null ? Object.keys(asMap).length : 0);
+  return size > 0 ? size : null;
+}
+
+const spatialMeta = asRecord(spatialAsset?.['metadata']);
+const featureMeta = asRecord(featureAsset?.['metadata']);
+const predictiveMeta = asRecord(predictiveAsset?.['metadata']);
+
+const researchGeneratedAts = [
+  timestamp(asString(spatialMeta?.['generated_at'])),
+  timestamp(asString(featureMeta?.['generated_at'])),
+  timestamp(asString(predictiveMeta?.['generated_at'])),
+].filter((value): value is string => value !== null);
+
+const spatialAreaCount = areaKeyCount(spatialAsset, 'planning_areas');
+const featureAreaCount = areaKeyCount(featureAsset, 'planning_areas');
+const predictiveAreaCount = areaKeyCount(predictiveAsset, 'planning_areas');
+const trainingDate = asString(predictiveMeta?.['last_training_date']);
+const forecastHorizon = asString(predictiveMeta?.['forecast_horizon']);
+const segmentsLastUpdated = timestamp(asString(segmentsAsset?.['lastUpdated']));
+const segmentsAreaCount = areaKeyCount(segmentsAsset, 'planningAreas');
+
+const researchCoverage = [
+  spatialAreaCount !== null
+    ? `${count(spatialAreaCount)} planning areas in analytics/spatial_analysis.json.gz`
+    : null,
+  featureAreaCount !== null
+    ? `${count(featureAreaCount)} in analytics/feature_impact.json.gz`
+    : null,
+  predictiveAreaCount !== null
+    ? `${count(predictiveAreaCount)} in analytics/predictive_analytics.json.gz`
+    : null,
+]
+  .filter((part): part is string => part !== null)
+  .join('; ');
+
+const researchExport = [
+  researchGeneratedAts.length === 3 &&
+  new Set(researchGeneratedAts).size === 1
+    ? `${researchGeneratedAts[0]} in metadata.generated_at of all three analytics/*.json.gz files`
+    : researchGeneratedAts.length > 0
+      ? `${researchGeneratedAts.join(', ')} across analytics/*.json.gz`
+      : null,
+  segmentsLastUpdated !== null
+    ? `segments_enhanced.json.gz records ${segmentsLastUpdated} in lastUpdated`
+    : null,
+]
+  .filter((part): part is string => part !== null)
+  .join('; ');
+
+// --- The three clocks, one row per data family ---------------------------
+
+interface ClockRow {
+  family: string;
+  assets: string;
+  period: string;
+  coverage: string;
+  exported: string;
+  /** True when this asset carries no export timestamp at all. */
+  exportedMissing: boolean;
+  kind: string;
+}
+
+const clocks: ClockRow[] = [
+  {
+    family: 'Annual national comparison',
+    assets: 'dashboard_overview.json.gz · price medians and counts',
+    period: periodAnnual,
+    coverage: coverageAnnual,
+    exported: exportedAnnual,
+    exportedMissing: overviewGeneratedAt === null,
+    kind: 'Observed aggregate of included transaction rows',
+  },
+  {
+    family: 'Area comparison',
+    assets: 'map_metrics.json.gz · per planning area',
+    period: periodArea,
+    coverage: coverageArea,
+    exported: 'No embedded export timestamp — the file has no metadata field',
+    exportedMissing: true,
+    kind: 'Observed aggregate, the same metrics per planning area',
+  },
+  {
+    family: 'Monthly trend series',
+    assets: 'dashboard_trends.json.gz · month rows',
+    period: periodTrend,
+    coverage: coverageTrend,
+    exported:
+      'No embedded export timestamp — the file is a bare array with no metadata',
+    exportedMissing: true,
+    kind: 'Completed-month series, one row per month',
+  },
+  {
+    family: 'Spatial and predictive research',
+    assets: 'analytics/*.json.gz · separate research generation',
+    period:
+      trainingDate !== null
+        ? `No shared observation window; predictive_analytics.json.gz trains through ${trainingDate}${
+            forecastHorizon !== null
+              ? ` and forecasts ${forecastHorizon.replace(/_/g, ' ')}`
+              : ''
+          }`
+        : 'No shared observation window — coverage varies by research asset',
+    coverage:
+      researchCoverage !== ''
+        ? researchCoverage
+        : missing('the research assets publish no coverage fields'),
+    exported:
+      researchExport !== ''
+        ? researchExport
+        : 'No embedded export timestamp — no research asset carries metadata.generated_at',
+    exportedMissing: researchExport === '',
+    kind: 'Separate research generation, not a transaction median',
+  },
+];
+
+// --- Published-asset manifest -------------------------------------------
+
+const manifestAssets = asArray(manifest?.['assets']) ?? [];
+const manifestPaths = manifestAssets
+  .map((asset) => asString(asRecord(asset)?.['path']))
+  .filter((entry): entry is string => entry !== null);
+const compressedCount =
+  manifestPaths.filter((entry) => entry.endsWith('.gz')).length;
+
+const logicalSources = manifestAssets
+  .map((asset) => asString(asRecord(asset)?.['logicalSource']))
+  .filter((entry): entry is string => entry !== null);
+
+/** Published files the manifest attributes to one pipeline layer. */
+function layerAssetCount(layer: string): number | null {
+  const inLayer = logicalSources.filter((source) =>
+    source.startsWith(`${layer}/`),
+  ).length;
+  return inLayer > 0 ? inLayer : null;
+}
+
+const platinumAssets = layerAssetCount('platinum');
+const researchAssets = layerAssetCount('research');
+const goldAssets = layerAssetCount('gold');
+
+// --- The measured-release identity ---------------------------------------
+
+interface IdentityItem {
+  label: string;
+  value: string;
+  isMissing: boolean;
+}
+
+const releaseGeneration = asString(release?.['generation']);
+const legacyGeneratedAt = timestamp(asString(legacyRelease?.['generatedAt']));
+
+const identity: IdentityItem[] = [
+  {
+    label: 'Cutoff month',
+    value: releaseCutoffMonth ?? 'not recorded',
+    isMissing: releaseCutoffMonth === null,
+  },
+  {
+    label: 'Cutoff source',
+    value: asString(release?.['cutoffSource']) ?? 'not recorded',
+    isMissing: asString(release?.['cutoffSource']) === null,
+  },
+  {
+    label: 'Export time (v2 identity)',
+    value: timestamp(asString(release?.['generatedAt'])) ?? 'not recorded',
+    isMissing: timestamp(asString(release?.['generatedAt'])) === null,
+  },
+  {
+    label: 'Generation',
+    value:
+      releaseGeneration !== null
+        ? releaseGeneration.slice(0, 12)
+        : 'not recorded',
+    isMissing: releaseGeneration === null,
+  },
+  {
+    label: 'Method version',
+    value: asString(release?.['methodVersion']) ?? 'not recorded',
+    isMissing: asString(release?.['methodVersion']) === null,
+  },
+  {
+    label: 'Legacy identity export',
+    value:
+      legacyGeneratedAt !== null
+        ? `${legacyGeneratedAt} (dashboard-release.json)`
+        : 'not recorded',
+    isMissing: legacyGeneratedAt === null,
+  },
+  {
+    label: 'Complete year',
+    value: completeYear !== null ? String(completeYear) : 'not recorded',
+    isMissing: completeYear === null,
+  },
+  {
+    label: 'Published assets',
+    value:
+      manifestPaths.length > 0
+        ? `${count(manifestPaths.length)} files, ${count(compressedCount)} gzip-compressed`
+        : 'not recorded',
+    isMissing: manifestPaths.length === 0,
+  },
+];
+
+// --- Inclusion rules the area surfaces apply ----------------------------
+
+const inclusionRules = asRecord(legacyRelease?.['inclusionRules']);
+const excludedAreas = asArray(inclusionRules?.['excludedAreas'])?.length ?? null;
+const excludedRows = asNumber(inclusionRules?.['excludedTransactions']);
+const sourceRecords =
+  asArray(asRecord(legacyRelease?.['provenance'])?.['sources']) ?? null;
+const sourceRecordsWithPublication =
+  sourceRecords?.filter(
+    (source) => asString(asRecord(source)?.['sourcePublishedAt']) !== null,
+  ).length ?? null;
+
+// --- Honest gaps ---------------------------------------------------------
+
+const gaps: { title: string; detail: string }[] = [
+  {
+    title: 'Two assets carry no export clock at all',
+    detail:
+      'map_metrics.json.gz and dashboard_trends.json.gz are served exactly as the pipeline wrote them: no metadata envelope, no generated-at field, no as-of date. Export time describes a file, and for these two there is no file-level record of it. This page shows none rather than inferring one from a neighbouring asset.',
+  },
+  {
+    title: 'The shipped release identity does not record when it was produced',
+    detail:
+      'dashboard-release-v2.json pins the bytes it describes — cutoffMonth, generation, methodVersion — but its generatedAt is null. The legacy dashboard-release.json does record an export time, so the two identities each carry one half of the clock.',
+  },
+  {
+    title: 'Source freshness is not recorded',
+    detail: `dashboard-release.json lists ${sourceRecords?.length ?? 'its'} pipeline source records and ${sourceRecordsWithPublication ?? 'none'} of them carry a sourcePublishedAt. When the government or manual source was itself published is therefore unknown from the app assets: an export date is not source freshness, and market completeness cannot be inferred from it.`,
+  },
+  {
+    title: 'The national and area windows are not the same record',
+    detail:
+      overviewEnd !== null && releaseCutoffMonth !== null
+        ? `The overview asset records its observed range through ${overviewEnd} while the release identity declares a ${releaseCutoffMonth} cutoff. Both are reported above; this page does not reconcile them into one "last updated".`
+        : 'The overview and release assets do not state one shared window, so each is reported separately and neither becomes a single "last updated".',
+  },
+  {
+    title: 'Area medians drop rows the national median keeps',
+    detail:
+      excludedRows !== null && excludedAreas !== null
+        ? `The area surfaces exclude ${count(excludedRows)} transactions in ${excludedAreas} non-residential planning areas, while the national aggregates keep every row. Comparing an area median with the national median therefore compares two different row sets.`
+        : 'The area surfaces and the national aggregates are filtered differently, so an area median and a national median are not computed on the same rows.',
+  },
+  {
+    title: 'Research coverage is not one number',
+    detail:
+      [
+        hdbAreaCount !== null
+          ? `${count(hdbAreaCount)} HDB planning areas in map_metrics.json.gz`
+          : null,
+        segmentsAreaCount !== null
+          ? `${count(segmentsAreaCount)} in segments_enhanced.json.gz`
+          : null,
+        spatialAreaCount !== null
+          ? `${count(spatialAreaCount)} in analytics/spatial_analysis.json.gz`
+          : null,
+      ]
+        .filter((part): part is string => part !== null)
+        .join(', ') +
+      '. A missing planning area and an older model vintage change what a comparison means, so coverage is stated per asset rather than once.',
+  },
+];
+
+// --- Lineage: sources → … → the page a reader is looking at -------------
+
+const lineage: { step: string; detail: string }[] = [
+  {
+    step: 'Government and manual sources',
+    detail:
+      'Transaction records and their field lists are documented in the Data Sources study; the pipeline records each source file with its row count, column list and sha256 digest.',
+  },
+  {
+    step: 'Bronze',
+    detail:
+      'Raw ingestion, one artifact per source, unchanged apart from transport.',
+  },
+  {
+    step: 'Silver',
+    detail: 'Cleaned, typed and unified into one transaction table.',
+  },
+  {
+    step: 'Gold',
+    detail:
+      goldAssets !== null
+        ? `Feature-enriched layers plus the ${count(goldAssets)} published location-dimension files — the planning-area GeoJSON the map surfaces read.`
+        : 'Feature-enriched layers plus the published planning-area GeoJSON the map surfaces read.',
+  },
+  {
+    step: 'Platinum',
+    detail:
+      platinumAssets !== null
+        ? `The dashboard aggregates: ${count(platinumAssets)} published files, including the annual medians and the area metrics on this page.`
+        : 'The dashboard aggregates that the national and area surfaces read.',
+  },
+  {
+    step: 'Compressed app assets',
+    detail:
+      manifestPaths.length > 0
+        ? `${count(manifestPaths.length)} files pinned by manifest.json, ${count(compressedCount)} of them gzip-compressed${
+            researchAssets !== null
+              ? `, with ${count(researchAssets)} entries belonging to the separate research generations`
+              : ''
+          }. The manifest fixes each file's path and shape, not its freshness.`
+        : 'The manifest pins each published file path and shape, not its freshness.',
+  },
+  {
+    step: 'Static pages and React islands',
+    detail:
+      'This guide is a static page and reads the assets at build time; the explorer, the maps and the tools hydrate islands that fetch the same files in the browser. The catalog is the per-dataset view of the same graph.',
+  },
+];
+---
+
+<Layout
+  title="Data & methods - Egg n Bacon Housing"
+  description="How the published Singapore housing numbers are made: observation period, coverage and export time per data family, the definitions behind every claim, and the lineage from source to page."
+>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main
+    id="main-content"
+    tabindex="-1"
+    class="flex-1 pt-14 ml-0 lg:ml-64 transition-all duration-300"
+  >
+    <div class="mx-auto w-full max-w-[1320px] px-4 py-12 sm:px-8">
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]"
+        >
+          Data &amp; methods / Provenance guide
+        </p>
+        <h1 class="mt-3 text-4xl font-bold text-foreground sm:text-5xl">
+          Know what you’re comparing.
+        </h1>
+        <p class="mt-4 text-lg text-muted-foreground">
+          Observed transactions, derived indicators and research models are
+          different kinds of evidence. Each published asset carries its own
+          observation period, its own coverage and its own export record — and
+          where one of those is missing, this page says so instead of guessing.
+        </p>
+        <p class="mt-3 text-sm text-muted-foreground">
+          Every figure below is read from a committed asset when this page is
+          built. Nothing here is a live listing, a valuation or a forecast of
+          your own home.
+        </p>
+      </header>
+
+      <section class="mt-12" aria-labelledby="three-clocks">
+        <h2
+          id="three-clocks"
+          class="text-2xl font-bold text-foreground sm:text-3xl"
+        >
+          Three clocks, not one “last updated”.
+        </h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          Export time describes a file. Coverage describes the included
+          observations. Source freshness needs its own record. They disagree
+          across assets, so a generic badge would be a lie; the table keeps them
+          apart, per data family.
+        </p>
+
+        <div
+          class="mt-6 overflow-x-auto rounded-lg border border-border bg-card"
+          role="region"
+          tabindex="0"
+          aria-labelledby="three-clocks"
+        >
+          <table
+            class="w-full min-w-[900px] border-collapse text-left text-sm"
+          >
+            <caption class="sr-only">
+              Observation period, coverage, export status and kind of number,
+              per data family
+            </caption>
+            <thead class="bg-muted/40">
+              <tr
+                class="text-xs uppercase tracking-[1.2px] text-muted-foreground"
+              >
+                <th scope="col" class="px-4 py-3 font-bold">Data family</th>
+                <th scope="col" class="px-4 py-3 font-bold">
+                  Observation period
+                </th>
+                <th scope="col" class="px-4 py-3 font-bold">Coverage</th>
+                <th scope="col" class="px-4 py-3 font-bold">Export / status</th>
+                <th scope="col" class="px-4 py-3 font-bold">
+                  What the numbers are
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                clocks.map((clock) => (
+                  <tr class="border-t border-border align-top">
+                    <th scope="row" class="px-4 py-4 font-normal">
+                      <span class="block font-bold text-foreground">
+                        {clock.family}
+                      </span>
+                      <span class="mt-1 block text-xs text-muted-foreground">
+                        {clock.assets}
+                      </span>
+                    </th>
+                    <td class="px-4 py-4 text-foreground">{clock.period}</td>
+                    <td class="px-4 py-4 text-muted-foreground">
+                      {clock.coverage}
+                    </td>
+                    <td
+                      class:list={[
+                        'px-4 py-4',
+                        clock.exportedMissing
+                          ? 'text-muted-foreground'
+                          : 'text-foreground',
+                      ]}
+                    >
+                      {clock.exported}
+                    </td>
+                    <td class="px-4 py-4 text-muted-foreground">{clock.kind}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-3 max-w-3xl text-xs text-muted-foreground">
+          Date-times are the assets’ own strings, truncated to the minute; no
+          asset in this set declares a timezone, so none is added. Field names
+          are given because which field carries a clock is part of the claim.
+        </p>
+
+        <div class="mt-6 rounded-lg border border-border bg-card p-5">
+          <h3
+            class="text-sm font-bold uppercase tracking-[1.2px] text-muted-foreground"
+          >
+            The measured release this build was sealed against
+          </h3>
+          <dl class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {
+              identity.map((item) => (
+                <div>
+                  <dt class="text-xs uppercase tracking-[1.2px] text-muted-foreground">
+                    {item.label}
+                  </dt>
+                  <dd
+                    class:list={[
+                      'mt-1 text-sm',
+                      item.isMissing
+                        ? 'text-muted-foreground'
+                        : 'font-medium text-foreground',
+                    ]}
+                  >
+                    {item.value}
+                  </dd>
+                </div>
+              ))
+            }
+          </dl>
+          <p class="mt-4 text-xs text-muted-foreground">
+            Identity fields are read from dashboard-release-v2.json, except the
+            line that names dashboard-release.json. Where a field is null in the
+            file the value reads “not recorded”, not a date.
+          </p>
+        </div>
+      </section>
+
+      <section class="mt-12" aria-labelledby="definitions">
+        <h2
+          id="definitions"
+          class="text-2xl font-bold text-foreground sm:text-3xl"
+        >
+          Definitions beside the claims
+        </h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          These are the only three quantities the medians on this site are built
+          from. Nothing else is inferred from them.
+        </p>
+        <dl class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="rounded-lg border border-border bg-card p-5">
+            <dt class="text-sm font-bold text-foreground">Median</dt>
+            <dd class="mt-2 text-sm text-muted-foreground">
+              The midpoint of the ordered sale prices. When the count is even,
+              the two central values are averaged. It is a middle sale — not an
+              average, not an asking price, not a valuation.
+            </dd>
+          </div>
+          <div class="rounded-lg border border-border bg-card p-5">
+            <dt class="text-sm font-bold text-foreground">Median PSF</dt>
+            <dd class="mt-2 text-sm text-muted-foreground">
+              The median of each sale’s price divided by that sale’s floor area
+              in square feet. It is a median of per-sale rates, so it is not the
+              median price divided by the median floor area.
+            </dd>
+          </div>
+          <div class="rounded-lg border border-border bg-card p-5">
+            <dt class="text-sm font-bold text-foreground">Sample</dt>
+            <dd class="mt-2 text-sm text-muted-foreground">
+              The included transaction rows behind a figure. A sample of{' '}
+              <em>n</em> rows is not <em>n</em> independent buyers, and it holds
+              no listings, asking prices or unsold units.
+            </dd>
+          </div>
+        </dl>
+        <p class="mt-4 max-w-3xl text-xs text-muted-foreground">
+          In the explorer, an area with fewer than {THIN_SAMPLE_THRESHOLD} sales
+          in the selected period is flagged thin. That is a caution threshold
+          chosen for the view, not a significance test, and it moves with the
+          period and property type you select.
+        </p>
+      </section>
+
+      <section class="mt-12" aria-labelledby="lineage">
+        <h2 id="lineage" class="text-2xl font-bold text-foreground sm:text-3xl">
+          Trace the published data
+        </h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          One path, from a government or manually published record to the number
+          on a page. Every step is a published artifact; per-dataset detail
+          lives in the catalog rather than being copied here.
+        </p>
+        <ol class="mt-6 space-y-3">
+          {
+            lineage.map((stage, index) => (
+              <li class="flex gap-4 rounded-lg border border-border bg-card p-4">
+                <span class="mt-0.5 w-6 shrink-0 text-xs font-bold text-muted-foreground">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <p class="text-sm font-bold text-foreground">{stage.step}</p>
+                  <p class="mt-1 text-sm text-muted-foreground">
+                    {stage.detail}
+                  </p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            href={`${import.meta.env.BASE_URL}catalog/`}
+            class="inline-flex items-center rounded-lg border border-border bg-card px-4 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted/40"
+          >
+            Open the data catalog →
+          </a>
+          <a
+            href={`${import.meta.env.BASE_URL}analytics/data-sources`}
+            class="inline-flex items-center rounded-lg border border-border bg-card px-4 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted/40"
+          >
+            Read the Data Sources study →
+          </a>
+        </div>
+      </section>
+
+      <section class="mt-12" aria-labelledby="gaps">
+        <h2 id="gaps" class="text-2xl font-bold text-foreground sm:text-3xl">
+          What these assets do not record
+        </h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          Source freshness is not fully recorded, and some exports carry no
+          timestamp at all. These are stated in words rather than left as an
+          empty cell that would read as zero.
+        </p>
+        <dl class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {
+            gaps.map((gap) => (
+              <div class="rounded-lg border border-border bg-card p-5">
+                <dt class="text-sm font-bold text-foreground">{gap.title}</dt>
+                <dd class="mt-2 text-sm text-muted-foreground">
+                  {gap.detail}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <footer class="mt-12 border-t border-border pt-6">
+        <p class="max-w-3xl text-xs text-muted-foreground">
+          Before publishing research, audit units, model dates, synthetic
+          fallbacks and reproducibility — the catalog shows which artifacts
+          exist, and this page shows which clocks they carry.
+        </p>
+        <p class="mt-2 max-w-3xl text-xs text-muted-foreground">
+          Snapshot, not live: observed transactions are past sales, never
+          listings and never a valuation of any one home.
+        </p>
+      </footer>
+    </div>
+  </main>
+</Layout>

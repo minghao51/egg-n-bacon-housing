@@ -1,0 +1,280 @@
+---
+/**
+ * The Overview surface: the national picture on one page.
+ *
+ * `/` is the Overview destination (see `shell/destinations.ts`) and `/dashboard`
+ * is the compatibility address for the same surface, so the body lives here and
+ * both pages render it. This component owns the page's single `<h1>` — the
+ * question the overview answers — plus the editorial eyebrow and the
+ * `MarketOverviewDashboard` island with its build-time figures.
+ *
+ * The head (`title`, `description`) belongs to the caller: the two routes
+ * describe themselves differently on purpose (see the two pages), and only the
+ * compatibility route pins a canonical URL.
+ */
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import MarketOverviewDashboard from '@/components/dashboard/MarketOverviewDashboard';
+import {
+  loadObservedPackFromDir,
+  summariseForDashboard,
+} from '@/utils/observed-pack-build';
+import fs from 'fs';
+import path from 'path';
+import zlib from 'zlib';
+
+interface Props {
+  title: string;
+  description: string;
+  /**
+   * Absolute canonical URL, when this route is not the canonical one. `/`
+   * passes nothing (it is the canonical address); `/dashboard` passes the root.
+   */
+  canonical?: string;
+  /**
+   * Shown under the header when this route is a kept-working alias rather than
+   * the destination itself. Worded by the caller so the note can name the
+   * canonical address.
+   */
+  compatNote?: string;
+  /** Base-prefixed href of the canonical address, shown after the note. */
+  compatHref?: string;
+}
+
+const { title, description, canonical, compatNote, compatHref } = Astro.props;
+
+// Read the published assets at build time and hand the result to the island as
+// initial data, so the overview renders its numbers without a client fetch.
+function gunzip(data: Buffer) {
+  return zlib.gunzipSync(data).toString('utf-8');
+}
+
+const dataPath = path.resolve('public/data/dashboard_overview.json.gz');
+let dashboardData;
+
+try {
+  const rawData = fs.readFileSync(dataPath);
+  const decompressed = gunzip(rawData);
+  dashboardData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load dashboard data:", error);
+}
+
+// The v2 observed pack is verified at build time. When it is absent or fails
+// verification the page keeps the legacy snapshot and passes nothing, so no
+// number can silently come from an unverified payload.
+const observedResult = await loadObservedPackFromDir(
+  path.resolve('public/data'),
+);
+
+const currentData =
+  observedResult.state === 'ready'
+    ? {
+        hdb: summariseForDashboard(
+          observedResult.pack,
+          observedResult.manifest.generation,
+          'hdb',
+        ),
+        condo: summariseForDashboard(
+          observedResult.pack,
+          observedResult.manifest.generation,
+          'condo',
+        ),
+      }
+    : null;
+
+if (observedResult.state === 'invalid') {
+  console.error(
+    'v2 observed pack failed verification:',
+    observedResult.errors.join('; '),
+  );
+}
+
+// The monthly series are a separate published asset; the page never mixes
+// their figures with the annual overview medians.
+const trendsPath = path.resolve('public/data/dashboard_trends.json.gz');
+let trendsData;
+
+try {
+  const rawData = fs.readFileSync(trendsPath);
+  const decompressed = gunzip(rawData);
+  trendsData = JSON.parse(decompressed);
+} catch (error) {
+  console.error("Failed to load trends data:", error);
+}
+
+// --- Provenance line -------------------------------------------------------
+// The header says how much data the whole page rests on and what span it
+// covers. Every value below is derived from the published asset at build time —
+// the period, its transaction total, the all-history row count, the observed
+// span and the export stamp — so a re-export moves this line with the figures
+// in the type cards instead of leaving a typed-in number behind.
+const MONTH_NAMES = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+/** A published transaction count: `count`, else the exporter's `volume`. */
+function publishedCount(block: unknown): number | null {
+  if (typeof block !== 'object' || block === null) return null;
+  const { count, volume } = block as { count?: unknown; volume?: unknown };
+  const value = typeof count === 'number' ? count : volume;
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function isoYear(value: unknown): number | null {
+  if (typeof value !== 'string') return null;
+  const match = /^(\d{4})/.exec(value);
+  return match === null ? null : Number(match[1]);
+}
+
+/** `2026-11-03T22:27:16.664977` -> `3 Nov 2026`; no timezone shifting. */
+function formatExportStamp(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  if (match === null) return null;
+  const monthName = MONTH_NAMES[Number(match[2]) - 1];
+  const day = Number(match[3]);
+  if (monthName === undefined || !Number.isFinite(day) || day < 1) return null;
+  return `${day} ${monthName} ${match[1]}`;
+}
+
+const stats: Record<string, unknown> =
+  typeof dashboardData === 'object' &&
+  dashboardData !== null &&
+  typeof dashboardData.stats === 'object' &&
+  dashboardData.stats !== null
+    ? (dashboardData.stats as Record<string, unknown>)
+    : {};
+const metadata: Record<string, unknown> =
+  typeof dashboardData === 'object' &&
+  dashboardData !== null &&
+  typeof dashboardData.metadata === 'object' &&
+  dashboardData.metadata !== null
+    ? (dashboardData.metadata as Record<string, unknown>)
+    : {};
+const dateRange: Record<string, unknown> =
+  typeof metadata.date_range === 'object' && metadata.date_range !== null
+    ? (metadata.date_range as Record<string, unknown>)
+    : {};
+
+// The period's own aggregate (`stats.year_2025`), not a sum of the cards below:
+// it is the published figure, and today it equals the three type counts.
+const periodCount = publishedCount(stats.year_2025);
+const historyCount = publishedCount(stats.whole);
+const spanStart = isoYear(dateRange.start);
+const spanEnd = isoYear(dateRange.end);
+const spanYears =
+  spanStart !== null && spanEnd !== null ? spanEnd - spanStart : null;
+const exportStamp = formatExportStamp(metadata.generated_at);
+
+const formatCount = (value: number) => value.toLocaleString('en-SG');
+
+const provenance: string[] = [];
+if (periodCount !== null) {
+  provenance.push('2025 complete year');
+  provenance.push(`${formatCount(periodCount)} transactions`);
+}
+if (historyCount !== null) {
+  provenance.push(`${formatCount(historyCount)} rows in all history`);
+}
+if (spanStart !== null && spanEnd !== null) {
+  // The span in plain words, derived from the asset's date range: never a
+  // typed "36 yrs" that a re-export would leave behind.
+  provenance.push(
+    spanYears === null
+      ? `${spanStart}–${spanEnd}`
+      : `${spanStart}–${spanEnd} (${spanYears} years)`,
+  );
+}
+provenance.push('nominal SGD', 'repository snapshot');
+if (exportStamp !== null) provenance.push(`exported ${exportStamp}`);
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Sidebar currentPath={Astro.url.pathname} />
+
+  <main id="main-content" tabindex="-1" class="flex-1 pt-14 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+      {/* The one `h1` for both routes: the question this page answers. */}
+      <header class="mb-8 max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[1.6px] text-[hsl(var(--rust))]">
+          The Singapore housing field guide
+        </p>
+        <h1 class="mt-3 text-4xl font-bold text-foreground sm:text-5xl">
+          What does a home cost here?
+        </h1>
+        <p class="mt-4 text-lg text-muted-foreground">
+          Start with the kind of home. Then compare planning areas on the same
+          terms.
+        </p>
+        {
+          provenance.length > 0 && (
+            <p
+              data-overview-provenance="true"
+              class="mt-3 max-w-3xl break-words text-sm text-muted-foreground"
+            >
+              {provenance.join(' · ')} · from{' '}
+              <code class="break-all font-mono">dashboard_overview</code>
+            </p>
+          )
+        }
+        <p class="mt-3 text-sm text-muted-foreground">
+          Published observations of past sales, each labelled with the property
+          type, the period and the asset section it came from. A median is the
+          midpoint of ordered sale prices, not a listing quote, and the three
+          property types below are not a like-for-like price index.
+        </p>
+      </header>
+
+      {
+        compatNote && (
+          <p
+            data-compat-route="true"
+            class="mb-8 max-w-3xl rounded-lg border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground"
+          >
+            {compatNote}
+            {compatHref && (
+              <>
+                {' '}
+                <a
+                  href={compatHref}
+                  class="font-semibold text-[hsl(var(--teal))] underline underline-offset-2"
+                >
+                  Open the Overview at the site root
+                </a>
+                .
+              </>
+            )}
+          </p>
+        )
+      }
+
+      {/* Dashboard Content */}
+      {dashboardData ? (
+        <MarketOverviewDashboard
+          client:load
+          initialData={dashboardData}
+          trendsData={trendsData}
+          baseUrl={import.meta.env.BASE_URL}
+          currentData={currentData}
+        />
+      ) : (
+        <div class="p-8 text-center text-muted-foreground bg-card border border-border rounded-lg">
+          The published overview asset could not be loaded, so this page shows no market
+          figures. Re-run the dashboard export to publish <code class="font-mono">dashboard_overview.json.gz</code>.
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>
