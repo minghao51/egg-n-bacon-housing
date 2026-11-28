@@ -48,7 +48,11 @@ test.describe("Analytics Index Page", () => {
   test("should display counts derived from the collection", async ({
     page,
   }) => {
-    await expect(page.getByText("Published studies")).toBeVisible();
+    // Exact: the shell also describes the Research destination as covering
+    // "Published studies, trends, …" in the mobile drawer markup.
+    await expect(
+      page.getByText("Published studies", { exact: true }),
+    ).toBeVisible();
     await expect(page.getByText("Topics", { exact: true })).toBeVisible();
     await expect(page.getByText("Under unit review")).toBeVisible();
     // The retired "11 Years" coverage KPI is not a collection fact.

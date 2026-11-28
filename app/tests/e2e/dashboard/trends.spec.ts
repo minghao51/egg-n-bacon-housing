@@ -47,7 +47,15 @@ test.describe("Dashboard - Decision Tools wrapper", () => {
   });
 
   test("navigation back to the overview still works", async ({ page }) => {
-    await page.getByRole("link", { name: "Overview" }).first().click();
+    // "Overview" is ambiguous now: the header's Overview destination is the
+    // site root, while the dashboard group's item is the way back to
+    // `/dashboard`. This tests the section link.
+    const overviewLink = page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: /^Overview/ })
+      .first();
+    await expect(overviewLink).toHaveAttribute("href", "/dashboard");
+    await overviewLink.click();
     await expect(page).toHaveURL(/dashboard$/);
   });
 

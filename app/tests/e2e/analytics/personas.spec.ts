@@ -9,7 +9,9 @@ test.describe("Persona Pages", () => {
 
     test("should load first-time-buyer persona page", async ({ page }) => {
       await expect(page).toHaveURL(/analytics\/personas\/first-time-buyer/);
-      await expect(page.getByText("First-Time Buyer")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: "First-Time Home Buyer" }),
+      ).toBeVisible();
     });
 
     test("should display sidebar navigation", async ({ page }) => {
@@ -23,7 +25,10 @@ test.describe("Persona Pages", () => {
     });
 
     test("should navigate back to analytics index", async ({ page }) => {
-      await page.getByText("Analytics Index").click();
+      await page
+        .getByRole("navigation", { name: "Main navigation" })
+        .getByRole("link", { name: "Studies", exact: true })
+        .click();
       await expect(page).toHaveURL(/analytics\/?$/);
     });
   });

@@ -215,8 +215,11 @@ test.describe("Research segments", () => {
   }) => {
     await openResearchSegments(page);
 
+    // The shared research subnav names this route "Segments" (the dashboard
+    // group's "Discover Segments" label is not rendered on `/research/*`).
     const navLink = page
-      .getByRole("link", { name: /Discover Segments/ })
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: /^Segments$/ })
       .first();
     await expect(navLink).toHaveAttribute("href", /\/research\/segments$/);
     await expect(navLink).toHaveAttribute("aria-current", "page");

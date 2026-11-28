@@ -36,6 +36,13 @@ test.describe("Analytics Articles", () => {
 
   test("should navigate between articles using sidebar", async ({ page }) => {
     await page.goto("/analytics/lease-decay");
+    // The flat study list left the sidebar; the shell's route from one study to
+    // another is the subnav's Studies entry, then the study card it lists.
+    await page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: "Studies", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/analytics\/$/);
     await page
       .getByRole("link", { name: /MRT Impact/i })
       .first()
